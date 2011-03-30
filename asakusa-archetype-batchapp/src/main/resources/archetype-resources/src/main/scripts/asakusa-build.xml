@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="batch:compile:all" basedir=".">
+
+	<!-- ===================================================================== -->
+	<!--  プロパティの設定                                                    -->
+	<!-- ===================================================================== -->
+
+	<property environment="env" />
+
+	<!-- ===================================================================== -->
+	<!--  Asakusa提供の自動生成ツール                                  -->
+	<!-- ===================================================================== -->
+
+	<target name="modelgen" description="モデルクラスの生成を行います。同時にテストデータ定義シートを生成します。">
+
+		<property file="${asakusa.testtools.conf}" />
+		<mkdir dir="${asakusa.modelgen.output}" />
+		<mkdir dir="${output.directory}" />
+
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+
+			<transaction>
+                DROP DATABASE ${database.name}
+            </transaction>
+			<transaction>
+                CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8;
+            </transaction>
+		</sql>
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+			<fileset dir="${env.ASAKUSA_HOME}/bulkloader/sql">
+				<filename name="create_table.sql" />
+			</fileset>
+		</sql>
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+			<sort>
+				<fileset dir="src/main/sql/modelgen">
+					<include name="**/*.sql" />
+				</fileset>
+				<name xmlns="antlib:org.apache.tools.ant.types.resources.comparators" />
+			</sort>
+		</sql>
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpathref="compile_classpath">
+			<transaction>
+				<fileset dir="${env.ASAKUSA_HOME}/bulkloader/sql">
+					<filename name="insert_import_table_lock.sql" />
+				</fileset>
+			</transaction>
+		</sql>
+
+		<delete>
+			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
+		</delete>
+		<delete>
+			<fileset dir="${output.directory}" includes="**/*.xls" />
+		</delete>
+		<java classname="com.asakusafw.generator.ModelSheetGenerator"
+		      classpath="${compile_classpath}"
+		      fork="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_OUTPUT=${asakusa.modelgen.output}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_MODEL_INCLUDES=${asakusa.modelgen.includes}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_MODEL_EXCLUDES=${asakusa.modelgen.excludes}" />
+			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
+			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
+		</java>
+
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+			<transaction src="${asakusa.bulkloader.genddl}" />
+		</sql>
+
+	</target>
+
+	<target name="batch:compile:all" description="全てのバッチクラスに対してバッチコンパイルを実行します">
+
+		<path id="linkpath">
+			<pathelement path="${project.build.outputDirectory}" />
+		</path>
+
+		<delete dir="${asakusa.batchc.dir}" />
+		<mkdir dir="${asakusa.batchc.dir}" />
+
+		<java classname="com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver"
+		      classpath="${compile_classpath}"
+		      fork="true"
+		      failonerror="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-Dcom.asakusafw.compiler.options=${asakusa.compiler.options}" />
+			<jvmarg value="-ea" />
+			<arg value="-output" />
+			<arg value="${asakusa.batchc.dir}" />
+			<arg value="-package" />
+			<arg value="${asakusa.package.default}" />
+			<arg value="-compilerwork" />
+			<arg value="${asakusa.compilerwork.dir}" />
+			<arg value="-hadoopwork" />
+			<arg value="${asakusa.hadoopwork.dir}" />
+			<arg value="-link" />
+			<arg pathref="linkpath" />
+			<arg value="-scanpath" />
+			<arg value="${project.build.outputDirectory}" />
+			<arg value="-skiperror" />
+			<arg value="false" />
+		</java>
+
+		<jar destfile="target/${project.artifactId}-batchapps-${project.version}.jar">
+			<fileset dir="${asakusa.batchc.dir}" />
+		</jar>
+	</target>
+
+	<target name="install:dev">
+		<!-- 旧ASAKUSA_HOMEを退避 -->
+		<tstamp>
+			<format property="now.time" pattern="yyyyMMddHHmmss" />
+		</tstamp>
+		<move file="${env.ASAKUSA_HOME}"
+		      todir="${env.ASAKUSA_HOME}_${now.time}"
+		      failonerror="false" />
+		<mkdir dir="${env.ASAKUSA_HOME}" />
+		<mkdir dir="/tmp/asakusa" />
+
+		<!-- 開発環境のASAKUSAアーカイブを展開 -->
+		<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
+			<fileset dir="${project.build.directory}">
+				<include name="${project.artifactId}-${project.version}-asakusa-install-dev.tar.gz" />
+			</fileset>
+		</untar>
+		<delete dir="${env.ASAKUSA_HOME}/META-INF" />
+
+		<move todir="${env.HOME}">
+			<fileset dir="${env.ASAKUSA_HOME}/bulkloader/bin">
+				<include name=".bulkloader_db_profile" />
+				<include name=".bulkloader_hc_profile" />
+			</fileset>
+		</move>
+		<copy file="src/test/resources/testtools.properties"
+		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+
+		<!-- BulkLoaderの設定を開発環境用に置換 -->
+		<replace file="${env.HOME}/.bulkloader_db_profile"
+		         token="export ASAKUSA_HOME="
+		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_db_profile"
+		         token="export JAVA_HOME="
+		         value="export JAVA_HOME=${env.JAVA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export ASAKUSA_HOME="
+		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export JAVA_HOME="
+		         value="export JAVA_HOME=${env.JAVA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export HADOOP_HOME="
+		         value="export HADOOP_HOME=${env.HADOOP_HOME}" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="hadoop-cluster.user=asakusa"
+		         value="hadoop-cluster.user=${env.USER}" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="import.delete-tsv=1"
+		         value="import.delete-tsv=0" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="export.delete-tsv=1"
+		         value="export.delete-tsv=0" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="import.tsv-create-dir=temp"
+		         value="import.tsv-create-dir=/tmp/asakusa" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="export.tsv-create-dir=temp"
+		         value="export.tsv-create-dir=/tmp/asakusa" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hadoop-cluster.workingdir.use=false"
+		         value="hadoop-cluster.workingdir.use=true" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/log4j.xml"
+		         token="/var/log"
+		         value="${env.ASAKUSA_HOME}/log" />
+
+		<antcall target="switch:standalone" />
+
+		<!-- 開発環境用テーブル生成 -->
+		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/drop_table.sql" />
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/create_table.sql" />
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/insert_import_table_lock.sql" />
+		</sql>
+
+		<!-- パーミッション設定 -->
+		<chmod perm="755">
+			<fileset dir="${env.ASAKUSA_HOME}">
+				<include name="**/*.sh" />
+			</fileset>
+		</chmod>
+		<chmod perm="777" file="/tmp/asakusa" type="dir" />
+
+	</target>
+
+	<target name="switch:standalone">
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hdfs-protocol-host=hdfs://localhost:8020"
+		         value="hdfs-protocol-host=file:///" />
+	</target>
+
+	<target name="switch:pseudo">
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hdfs-protocol-host=file:///"
+		         value="hdfs-protocol-host=hdfs://localhost:8020" />
+	</target>
+</project>
+
