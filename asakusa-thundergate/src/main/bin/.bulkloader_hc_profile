@@ -1,0 +1,6 @@
+# .bulkloader_hc_profile
+export ASAKUSA_HOME=
+export JAVA_HOME=
+export HADOOP_HOME=
+export EXTRACTOR_JAVA_OPTS=
+export COLLECTOR_JAVA_OPTS=

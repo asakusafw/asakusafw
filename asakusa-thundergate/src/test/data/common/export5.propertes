@@ -1,0 +1,49 @@
+# 業務アプリケーション用のテーブル「XXX」「YYY」「ZZZ」をExport対象テーブルとして指定
+export.target-table=XXX,YYY,ZZZ
+
+# Export対象テーブル「XXX」の異常データテーブルを指定(XXXは重複チェックを行う)
+XXX.error-table=XXX_ERROR
+
+# Export対象テーブル「XXX」の「columnA」「columnB」「columnC」「columnD」「columnE」をExport対象カラムとして指定
+XXX.tsv-column=columnA,columnB,columnC,columnD,columnE
+# Export対象テーブル「YYY」の「columnA」「columnB」「columnC」をExport対象カラムとして指定
+YYY.tsv-column=columnA,columnB,columnC
+# Export対象テーブル「ZZZ」の「columnA」をExport対象カラムとして指定
+ZZZ.tsv-column=columnA
+
+# Export対象テーブル「XXX」の「columnA」「columnB」をExport対象テーブルにコピーする
+XXX.export-table-column=columnA,columnB
+# Export対象テーブル「YYY」の「columnA」「columnB」「columnC」をExport対象テーブルにコピーする
+YYY.export-table-column=columnA,columnB,columnC
+# Export対象テーブル「ZZZ」の「columnA」をExport対象テーブルにコピーする
+ZZZ.export-table-column=columnA
+
+# Export対象テーブル「XXX」の「columnA」「columnB」「columnC」「columnD」「columnE」を異常データテーブルにコピーする
+XXX.error-table-column=columnA,columnB,columnC,columnD,columnE
+
+# Export対象テーブル「XXX」のキー項目のカラム名を指定
+XXX.key-column=columnA
+# Export対象テーブル「XXX」のエラーコードを格納する異常データテーブルのカラム名を指定
+XXX.error-column=columnF
+# Export対象テーブル「XXX」の重複チェックエラー時に設定するエラーコードを指定
+XXX.error-code=ER01
+
+# Export対象テーブル「XXX」のJavaBeansクラス名を指定
+XXX.bean-name=com.asakusafw.bulkloader.bean.ImportTargetTableBean
+# Export対象テーブル「YYY」のJavaBeansクラス名を指定
+YYY.bean-name=com.asakusafw.bulkloader.bean.ImportBean
+# Export対象テーブル「ZZZ」のJavaBeansクラス名を指定
+ZZZ.bean-name=com.asakusafw.bulkloader.bean.ExporterBean
+
+# Export対象テーブル「XXX」のHDFS上の出力ディレクトリを指定
+XXX.hdfs-export-file=/asakusa/import/11/XXX_1,/asakusa/import/11/XXX_2
+# Export対象テーブル「YYY」のHDFS上の出力ディレクトリを指定
+YYY.hdfs-export-file=あいう
+# Export対象テーブル「ZZZ」のHDFS上の出力ディレクトリを指定
+ZZZ.hdfs-export-file=/asakusa/import/11/ZZZ
+
+# valueがないので無視される
+ZZZ.dummy=
+
+# 不明な設定
+XXX.export=xxx

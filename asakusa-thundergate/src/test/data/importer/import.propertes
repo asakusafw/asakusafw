@@ -1,0 +1,56 @@
+# 業務アプリケーション用のテーブル「XXX」「YYY」「ZZZ」をImport対象テーブルとして指定
+import.target-table=XXX,YYY,ZZZ
+
+# Import対象テーブル「XXX」の「columnA」「columnB」「columnC」をImport対象カラムとして指定
+XXX.target-column=columnA,columnB,columnC
+# Import対象テーブル「YYY」の「columnA」をImport対象カラムとして指定
+YYY.target-column=columnA
+# Import対象テーブル「ZZZ」の「columnA」「columnB」をImport対象カラムとして指定
+ZZZ.target-column=columnA,columnB
+
+# Import対象テーブル「XXX」の検索条件を指定
+XXX.search-condition=columnA='1' and columnB='2'
+# Import対象テーブル「YYY」の検索条件を指定
+YYY.search-condition=columnA='1' or columnB=(select columnB from tableA where column='3')
+# Import対象テーブル「ZZZ」の検索条件を指定(valueがないので無視される)
+ZZZ.search-condition=
+# Import対象テーブル「WWW」の検索条件を指定(Import対象テーブルに存在しないので無視される)
+WWW.search-condition=columnA='1' or columnB=(select columnB from tableA where column='3')
+
+# Import対象テーブル「XXX」のキャッシュ利用有無を指定
+XXX.use-cache=1
+# Import対象テーブル「YYY」のキャッシュ利用有無を指定
+YYY.use-cache=2
+# Import対象テーブル「ZZZ」のキャッシュ利用有無を指定
+ZZZ.use-cache=2
+
+# Import対象テーブル「XXX」のロック取得タイプを指定
+XXX.lock-type=3
+# Import対象テーブル「YYY」のロック取得タイプを指定
+YYY.lock-type=3
+# Import対象テーブル「ZZZ」のロック取得タイプを指定
+ZZZ.lock-type=3
+
+# Import対象テーブル「XXX」のロック済みの場合の取り扱いを指定
+XXX.locked-operation=2
+# Import対象テーブル「YYY」のロック済みの場合の取り扱いを指定
+YYY.locked-operation=2
+# Import対象テーブル「ZZZ」のロック済みの場合の取り扱いを指定
+ZZZ.locked-operation=2
+
+# Import対象テーブル「XXX」のJavaBeansクラス名を指定
+XXX.bean-name=com.asakusafw.bulkloader.bean.ImportTargetTableBean
+# Import対象テーブル「YYY」のJavaBeansクラス名を指定
+YYY.bean-name=com.asakusafw.bulkloader.bean.ImportBean
+# Import対象テーブル「ZZZ」のJavaBeansクラス名を指定
+ZZZ.bean-name=com.asakusafw.bulkloader.bean.ExporterBean
+
+# Import対象テーブル「XXX」のHDFS上の出力パスを指定
+XXX.hdfs-import-file=/${user}/${execution_id}/import_target1
+# Import対象テーブル「YYY」のHDFS上の出力パスを指定
+YYY.hdfs-import-file=/asakusa/import/11/YYY
+# Import対象テーブル「ZZZ」のHDFS上の出力パスを指定
+ZZZ.hdfs-import-file=/asakusa/import/11/ZZZ
+
+# 不明な設定
+XXX.import=xxx

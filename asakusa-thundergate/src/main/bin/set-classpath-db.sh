@@ -1,0 +1,10 @@
+#!/bin/sh
+#rem クラスパスを設定するコマンド
+#rem 引数（バッチID,ジョブフローID）
+
+BULK_LOADER_CLASSPATH=$ASAKUSA_HOME/bulkloader/conf
+BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/core/lib/asakusa-runtime.jar
+BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/bulkloader/lib/*
+BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/batchapps/$1/lib/jobflow-$2.jar
+
+export BULK_LOADER_CLASSPATH

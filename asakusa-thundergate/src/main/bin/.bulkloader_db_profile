@@ -1,0 +1,6 @@
+# .bulkloader_db_profile
+export ASAKUSA_HOME=
+export JAVA_HOME=
+export IMPORTER_JAVA_OPTS=
+export EXPORTER_JAVA_OPTS=
+export RECOVERER_JAVA_OPTS=

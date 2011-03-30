@@ -1,0 +1,8 @@
+import.target-table=XXX
+XXX.target-column=columnA,columnB,columnC
+XXX.search-condition=columnA='${user_name}' and columnB='${user_pass}'
+XXX.use-cache=1
+XXX.lock-type=1
+XXX.locked-operation=3
+XXX.bean-name=com.asakusafw.bulkloader.bean.ImportTargetTableBean
+XXX.hdfs-import-file=/asakusa/import/11/XXX
