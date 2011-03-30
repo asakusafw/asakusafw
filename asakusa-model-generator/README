@@ -1,0 +1,48 @@
+各種モデルクラスを生成するツール。
+
+Usage:
+    java -jar model-generator.jar
+
+    環境変数一覧 ({PREFIX} = "ASAKUSA_MODELGEN_")
+        {PREFIX}_OUTPUT
+            出力先のフォルダへのパス
+
+        {PREFIX}_JDBC
+            JDBCの接続設定を示したプロパティファイルへのパス。
+            以下の項目が存在すること
+                jdbc.driver = 使用するJDBC Driver
+                jdbc.url = 接続先のJDBC URL
+                jdbc.user = 接続ユーザー名
+                jdbc.password = 接続パスワード
+                database.name = データベース名
+
+        {PREFIX}_PACKAGE
+            出力先のパッケージ名
+
+        {PREFIX}_OUTPUT
+            出力先のディレクトリ
+
+        {PREFIX}_MODEL_INCLUDES
+            処理対象とするテーブル名やビュー名 (正規表現)
+
+        {PREFIX}_MODEL_EXCLUDES
+            処理対象から除外するテーブル名やビュー名 (正規表現)
+            ..INCLUDESでの指定よりも優先される
+
+
+主に以下のパッケージから構成される。
+
+* com.asakusafw.modelgen
+コマンドラインインターフェース。
+
+* com.asakusafw.modelgen.model
+生成するデータモデルプログラムのメタモデル。
+
+* com.asakusafw.modelgen.source
+データモデル情報を取り扱うクラス群。
+
+* com.asakusafw.modelgen.emitter
+データモデル情報からJavaのプログラムを生成するクラス群。
+
+* com.asakusafw.modelgen.view
+ビューの解析などを行うクラス群。
