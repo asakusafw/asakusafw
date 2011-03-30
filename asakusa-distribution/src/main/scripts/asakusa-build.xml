@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="asakusa-distribution" basedir=".">
+	<!-- ===================================================================== -->
+	<!--  プロパティの設定                                                                                                                                       -->
+	<!-- ===================================================================== -->
+
+	<!-- 環境変数 -->
+	<property environment="env" />
+
+	<!-- ==================================================== -->
+	<!--   開発環境へAsakusaをインストールします。         -->
+	<!-- ==================================================== -->
+
+	<target name="install:dev">
+		<!-- 旧ASAKUSA_HOMEを退避 -->
+		<tstamp>
+			<format property="now.time" pattern="yyyyMMddHHmmss" />
+		</tstamp>
+		<move file="${env.ASAKUSA_HOME}"
+		      todir="${env.ASAKUSA_HOME}_${now.time}"
+		      failonerror="false" />
+		<mkdir dir="${env.ASAKUSA_HOME}" />
+		<mkdir dir="/tmp/asakusa" />
+
+		<!-- 開発環境のASAKUSAアーカイブを展開 -->
+		<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
+			<fileset dir="${project.build.directory}">
+				<include name="${project.artifactId}-${project.version}-dev.tar.gz" />
+			</fileset>
+		</untar>
+
+		<move todir="${env.HOME}">
+			<fileset dir="${env.ASAKUSA_HOME}/bulkloader/bin">
+				<include name=".bulkloader_db_profile" />
+				<include name=".bulkloader_hc_profile" />
+			</fileset>
+		</move>
+		<move file="${env.ASAKUSA_HOME}/bulkloader/conf/[targetname]-jdbc.properties"
+		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+
+		<!-- BulkLoaderの設定を開発環境用に置換 -->
+		<replace file="${env.HOME}/.bulkloader_db_profile"
+		         token="export ASAKUSA_HOME="
+		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_db_profile"
+		         token="export JAVA_HOME="
+		         value="export JAVA_HOME=${env.JAVA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export ASAKUSA_HOME="
+		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export JAVA_HOME="
+		         value="export JAVA_HOME=${env.JAVA_HOME}" />
+		<replace file="${env.HOME}/.bulkloader_hc_profile"
+		         token="export HADOOP_HOME="
+		         value="export HADOOP_HOME=${env.HADOOP_HOME}" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="hadoop-cluster.user=asakusa"
+		         value="hadoop-cluster.user=${env.USER}" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="import.delete-tsv=1"
+		         value="import.delete-tsv=0" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="export.delete-tsv=1"
+		         value="export.delete-tsv=0" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="import.tsv-create-dir=temp"
+		         value="import.tsv-create-dir=/tmp/asakusa" />
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
+		         token="export.tsv-create-dir=temp"
+		         value="export.tsv-create-dir=/tmp/asakusa" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hadoop-cluster.workingdir.use=false"
+		         value="hadoop-cluster.workingdir.use=true" />
+
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/log4j.xml"
+		         token="/var/log"
+		         value="${env.ASAKUSA_HOME}/log" />
+
+		<antcall target="switch:standalone" />
+
+		<!-- 開発環境用テーブル生成 -->
+		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+		<sql driver="${jdbc.driver}"
+		     url="${jdbc.url}"
+		     userid="${jdbc.user}"
+		     password="${jdbc.password}"
+		     classpath="${compile_classpath}">
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/drop_table.sql" />
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/create_table.sql" />
+			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/insert_import_table_lock.sql" />
+		</sql>
+
+		<!-- パーミッション設定 -->
+		<chmod perm="755">
+			<fileset dir="${env.ASAKUSA_HOME}">
+				<include name="**/*.sh" />
+			</fileset>
+		</chmod>
+		<chmod perm="777" file="/tmp/asakusa" type="dir" />
+
+	</target>
+
+	<target name="switch:standalone">
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hdfs-protocol-host=hdfs://localhost:8020"
+		         value="hdfs-protocol-host=file:///" />
+	</target>
+
+	<target name="switch:pseudo">
+		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
+		         token="hdfs-protocol-host=file:///"
+		         value="hdfs-protocol-host=hdfs://localhost:8020" />
+	</target>
+
+</project>

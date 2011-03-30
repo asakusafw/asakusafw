@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Asakusa Framework Distribution Module</name>
+	<groupId>com.asakusafw</groupId>
+	<artifactId>asakusa-distribution</artifactId>
+	<parent>
+		<artifactId>asakusa-parent</artifactId>
+		<groupId>com.asakusafw</groupId>
+		<version>0.1.0</version>
+		<relativePath>../asakusa-parent</relativePath>
+	</parent>
+
+	<description>Asakusa Framework Distribution Module</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-distribution-exclude-lib</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/dev-exclude-lib.xml</descriptor>
+                                <descriptor>src/main/assembly/dev-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-db-exclude-lib.xml</descriptor>
+                                <descriptor>src/main/assembly/prod-db-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-hc-exclude-lib.xml</descriptor>
+                                <descriptor>src/main/assembly/prod-hc-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-cleaner-exclude-lib.xml</descriptor>
+                                <descriptor>src/main/assembly/prod-cleaner-exclude-lib-sources.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-cli</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/dev.xml</descriptor>
+								<descriptor>src/main/assembly/prod-db.xml</descriptor>
+								<descriptor>src/main/assembly/prod-hc.xml</descriptor>
+								<descriptor>src/main/assembly/prod-cleaner.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<target>
+								<property name="compile_classpath" refid="maven.compile.classpath" />
+								<ant antfile="${basedir}/src/main/scripts/asakusa-build.xml"
+									target="install:dev" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+</project>
