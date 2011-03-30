@@ -1,0 +1,43 @@
+ashigel compilerのコマンドラインインターフェース。
+
+下記のクラスを利用可能である。
+
+* com.asakusafw.compiler.bootstrap.OperatorCompilerDriver
+Operator DSLの演算子クラスをコンパイルする。
+Parameters:
+ -class <class-names>                コンパイル対象のクラス名一覧
+ -encoding <charset-name>            コンパイル対象の文字エンコーディング
+ -output </path/to/output>           コンパイル結果を出力する先のディレクトリ
+ -sourcepath </path/to/sourceroot>   コンパイル対象のソースコードを含むソースパス
+
+* com.asakusafw.compiler.bootstrap.JobFlowCompilerDriver
+Flow DSLで記述されたジョブフロークラスをコンパイルする。
+Parameters:
+ -class <class-name>                     コンパイル対象のジョブフロークラス名
+ -hadoopwork <jobflow/working>           Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)
+ -link <classlib.jar:/path/to/classes>   リンクするクラスライブラリの一覧
+ -output </path/to/output>               コンパイル結果を出力する先のディレクトリ
+ -package <pkg.name>                     コンパイル結果のベースパッケージ
+ -plugin <plugin-1.jar:plugin-2.jar>     利用するコンパイラプラグインの一覧
+
+* com.asakusafw.compiler.bootstrap.BatchCompilerDriver
+Batch DSLのバッチクラスをコンパイルする。
+Parameters:
+ -class <class-name>                     コンパイル対象のバッチクラス名
+ -hadoopwork <path/to/work>              Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)
+ -link <classlib.jar:/path/to/classes>   リンクするクラスライブラリの一覧
+ -output </path/to/output>               コンパイル結果を出力する先のディレクトリ
+ -package <pkg.name>                     コンパイル結果のベースパッケージ
+ -plugin <plugin-1.jar:plugin-2.jar>     利用するコンパイラプラグインの一覧
+
+* com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver
+フォルダに含まれる全てのバッチクラスをコンパイルする。
+Parameters:
+ -compilerwork </path/to/temporary>      コンパイラのワーキングディレクトリ
+ -hadoopwork <batch/working>             Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)
+ -link <classlib.jar:/path/to/classes>   リンクするクラスライブラリの一覧
+ -output </path/to/output>               コンパイル結果を出力する先のディレクトリ
+ -package <pkg.name>                     コンパイル結果のベースパッケージ
+ -plugin <plugin-1.jar:plugin-2.jar>     利用するコンパイラプラグインの一覧
+ -scanpath </path/to/classlib>           コンパイル対象のバッチを含むクラスライブラリ
+ -skiperror                              コンパイルエラーが発生しても続けて次のバッチをコンパイルする
