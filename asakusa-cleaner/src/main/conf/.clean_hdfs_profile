@@ -1,0 +1,4 @@
+# .clean_hdfs_profile
+export JAVA_HOME=
+export HADOOP_HOME=
+export HDFSCLEANER_JAVA_OPTS=

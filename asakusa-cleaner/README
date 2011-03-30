@@ -1,0 +1,17 @@
+ローカルファイルシステムおよびHDFSのファイルをクリーニングするツール。
+
+以下のパッケージから構成される。
+* com.asakusafw.cleaner.bean
+Cleanerの設定や内部情報を保持するBeanクラス。
+
+* com.asakusafw.cleaner.common
+Cleaner内部で利用するライブラリ。
+
+* com.asakusafw.cleaner.exception
+Cleaner内部で利用するExceptionクラス。
+
+* com.asakusafw.cleaner.log
+Cleaner内部で利用するログ出力のライブラリ。
+
+* com.asakusafw.cleaner.main
+Cleaner本体を構成するクラス。

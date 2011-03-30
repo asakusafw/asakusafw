@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+  <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+    <param name="Append" value="true"/>
+    <param name="DatePattern" value="yyyy-MM-dd"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %p [ %c{3} ] [%X{MESSAGE_ID}] %m%n"/>
+    </layout>
+  </appender>
+
+    <!-- All Logs -->
+  <category name="org.dbunit">
+      <priority value="error" />
+      <appender-ref ref="consoleAppender" />
+  </category>
+
+  <root>
+      <priority value="debug" />
+      <appender-ref ref="consoleAppender" />
+  </root>
+
+</log4j:configuration>
