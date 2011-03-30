@@ -1,0 +1,23 @@
+Asakusa DSLを「記述する」際に利用するボキャブラリ。
+
+主に以下のパッケージから構成される。
+
+* com.asakusafw.vocabulary.operator
+Operator DSLのボキャブラリ。
+演算子注釈の定義などを含む。
+
+* com.asakusafw.vocabulary.flow
+Flow DSLのボキャブラリ。
+フロー部品およびジョブフロークラスのベースクラスや、
+入出力を表すインターフェースを提供している。
+
+* com.asakusafw.vocabulary.batch
+Batch DSLのボキャブラリ。
+
+* com.asakusafw.vocabulary.external
+Flow DSLでジョブフローを書く際に利用する、外部入出力情報の記述。
+標準の入出力としてクラスター上のファイルを操作する入出力記述を提供している。
+
+* com.asakusafw.vocabulary.model
+各種DSLで利用するデータモデルクラスに関するボキャブラリ。
+
