@@ -1,0 +1,15 @@
+#!/bin/sh
+
+_OUTPUT_PATH=$1
+_BATCH_ID=$2
+_FLOW_ID=$3
+_EXECUTION_ID=$4
+_BATCH_ARGS=$5
+
+# please validate $_OUTPUT_PATH 
+
+echo "OUTPUT_PATH=$_OUTPUT_PATH"
+echo "BATCH_ID=$_BATCH_ID"
+echo "FLOW_ID=$_FLOW_ID"
+echo "EXECUTION_ID=$_EXECUTION_ID"
+echo "BATCH_ARGS=$_BATCH_ARGS"
