@@ -1,0 +1,26 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class TooManyCtors extends FlowDescription {
+
+    public TooManyCtors(
+            In<MockHoge> in,
+            Out<MockHoge> out
+            ) {
+    }
+
+    public TooManyCtors(
+            In<MockHoge> in,
+            Out<MockHoge> out,
+            int param
+            ) {
+    }
+
+    @Override
+    protected void describe() {
+    }
+}

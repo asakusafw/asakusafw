@@ -1,0 +1,18 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class Simple extends FlowDescription {
+
+    public Simple(
+            int a
+            ) {
+    }
+
+    @Override
+    protected void describe() {
+    }
+}

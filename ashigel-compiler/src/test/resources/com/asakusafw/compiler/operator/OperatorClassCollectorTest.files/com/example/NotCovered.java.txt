@@ -1,0 +1,16 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotCovered {
+
+    @MockOperator
+    public void method(String string) {
+        return;
+    }
+
+    public void uncovered(String string) {
+        return;
+    }
+}

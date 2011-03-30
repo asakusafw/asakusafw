@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Simple {
+
+    @Split
+    public abstract void example(MockJoined in, Result<MockHoge> hoge, Result<MockFoo> foo);
+}

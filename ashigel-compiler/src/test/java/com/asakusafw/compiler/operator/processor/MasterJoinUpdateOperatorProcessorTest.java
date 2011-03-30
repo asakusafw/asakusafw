@@ -1,0 +1,179 @@
+/**
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.compiler.operator.processor;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
+import com.asakusafw.compiler.operator.model.MockFoo;
+import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.compiler.operator.processor.MasterJoinUpdateOperatorProcessor;
+import com.asakusafw.vocabulary.flow.testing.MockIn;
+import com.asakusafw.vocabulary.flow.testing.MockOut;
+import com.ashigeru.util.graph.Graph;
+
+/**
+ * Test for {@link MasterJoinUpdateOperatorProcessor}.
+ */
+public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
+
+    /**
+     * 単純なテスト。
+     */
+    @Test
+    public void simple() {
+        add("com.example.Simple");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.SimpleFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Simple.example"));
+        assertThat(graph.getConnected("b"), isJust("Simple.example"));
+        assertThat(graph.getConnected("Simple.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * マスタ選択つき。
+     */
+    @Test
+    public void selector() {
+        add("com.example.Selector");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.SelectorFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Selector.example"));
+        assertThat(graph.getConnected("b"), isJust("Selector.example"));
+        assertThat(graph.getConnected("Selector.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * パラメータ化。
+     */
+    @Test
+    public void parameterized() {
+        add("com.example.Parameterized");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.ParameterizedFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b, 100);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Parameterized.example"));
+        assertThat(graph.getConnected("b"), isJust("Parameterized.example"));
+        assertThat(graph.getConnected("Parameterized.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * マスタ選択つきパラメータ化 (セレクタのパラメータ無し)。
+     */
+    @Test
+    public void parameterizedSelector() {
+        add("com.example.ParameterizedSelector");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.ParameterizedSelectorFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b, 100);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("ParameterizedSelector.example"));
+        assertThat(graph.getConnected("b"), isJust("ParameterizedSelector.example"));
+        assertThat(graph.getConnected("ParameterizedSelector.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * 抽象メソッド。
+     */
+    @Test
+    public void Abstract() {
+        add("com.example.Abstract");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+
+    /**
+     * voidでない。
+     */
+    @Test
+    public void Returns() {
+        add("com.example.Returns");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+
+    /**
+     * モデルでない。
+     */
+    @Test
+    public void NotModel() {
+        add("com.example.NotModel");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+
+    /**
+     * ユーザー定義パラメーターでない。
+     */
+    @Test
+    public void NotUserParameter() {
+        add("com.example.NotUserParameter");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+
+    /**
+     * キーの指定がない。
+     */
+    @Test
+    public void NoKey() {
+        add("com.example.NoKey");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+}

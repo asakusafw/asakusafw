@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Inverted {
+
+    @MasterJoin
+    public abstract MockJoined example(MockFoo master, MockHoge tx);
+}

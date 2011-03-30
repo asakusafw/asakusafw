@@ -1,0 +1,14 @@
+com.asakusafw.compiler.operator.processor.BranchOperatorProcessor
+com.asakusafw.compiler.operator.processor.CoGroupOperatorProcessor
+com.asakusafw.compiler.operator.processor.ConvertOperatorProcessor
+com.asakusafw.compiler.operator.processor.FoldOperatorProcessor
+com.asakusafw.compiler.operator.processor.GroupSortOperatorProcessor
+com.asakusafw.compiler.operator.processor.LoggingOperatorProcessor
+com.asakusafw.compiler.operator.processor.MasterBranchOperatorProcessor
+com.asakusafw.compiler.operator.processor.MasterCheckOperatorProcessor
+com.asakusafw.compiler.operator.processor.MasterJoinOperatorProcessor
+com.asakusafw.compiler.operator.processor.MasterJoinUpdateOperatorProcessor
+com.asakusafw.compiler.operator.processor.SplitOperatorProcessor
+com.asakusafw.compiler.operator.processor.SummarizeOperatorProcessor
+com.asakusafw.compiler.operator.processor.UniqueOperatorProcessor
+com.asakusafw.compiler.operator.processor.UpdateOperatorProcessor

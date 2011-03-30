@@ -1,0 +1,22 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotList {
+
+    @CoGroup
+    public void example(
+            @Key(group = "hoge") java.util.Set<MockHoge> a,
+            @Key(group = "foo") java.util.Set<MockFoo> b,
+            int a,
+            Result<MockHoge> r1,
+            Result<MockFoo> r2) {
+        r1.add(a.get(0));
+        r2.add(b.get(0));
+    }
+}

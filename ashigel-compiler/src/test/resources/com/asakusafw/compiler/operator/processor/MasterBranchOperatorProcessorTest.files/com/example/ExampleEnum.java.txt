@@ -1,0 +1,24 @@
+package com.example;
+
+public enum ExampleEnum {
+    
+    /**
+     * 不明。
+     */
+    UNKNOWN,
+
+    /**
+     * 高い。
+     */
+    HIGH,
+
+    /**
+     * 中間。
+     */
+    MIDDLE,
+
+    /**
+     * 低い。
+     */
+    LOW,
+}

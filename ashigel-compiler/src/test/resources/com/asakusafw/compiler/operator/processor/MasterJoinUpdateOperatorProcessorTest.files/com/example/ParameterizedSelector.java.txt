@@ -1,0 +1,29 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ParameterizedSelector {
+
+    @MasterJoinUpdate(selection = "select")
+    public void example(
+            @Key(group = "value") MockHoge master,
+            @Key(group = "value") MockFoo tx,
+            int threshold) {
+        return;
+    }
+
+    @MasterSelection
+    public MockHoge select(java.util.List<MockHoge> masters, MockFoo tx, int threshold) {
+        for (MockHoge master : masters) {
+            if (master.value >= 0) {
+                return master;
+            }
+        }
+        return null;
+    }
+}

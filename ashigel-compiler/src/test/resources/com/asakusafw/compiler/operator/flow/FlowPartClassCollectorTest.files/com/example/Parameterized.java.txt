@@ -1,0 +1,23 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class Parameterized extends FlowDescription {
+
+    public Parameterized(
+            In<MockHoge> in1,
+            Out<MockHoge> out1,
+            int param1,
+            In<MockFoo> in2,
+            Out<MockFoo> out2,
+            String param2
+            ) {
+    }
+
+    @Override
+    protected void describe() {
+    }
+}

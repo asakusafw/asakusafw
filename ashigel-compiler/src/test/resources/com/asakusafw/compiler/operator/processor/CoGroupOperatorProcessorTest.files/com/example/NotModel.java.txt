@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Simple {
+
+    @CoGroup
+    public void example(
+            @Key(group = "hoge") java.util.List<String> a,
+            @Key(group = "foo") java.util.List<Integer> b,
+            Result<String> r1,
+            Result<Integer> r2) {
+        r1.add(a.get(0));
+        r2.add(b.get(0));
+    }
+}

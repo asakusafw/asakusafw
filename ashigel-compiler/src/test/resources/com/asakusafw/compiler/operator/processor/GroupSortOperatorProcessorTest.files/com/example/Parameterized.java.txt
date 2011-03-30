@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Parameterized {
+
+    @GroupSort
+    public void example(
+            @Key(group = {}, order = {"value"}) java.util.List<MockHoge> in,
+            Result<MockHoge> first,
+            Result<MockHoge> last,
+            int index) {
+        first.add(in.get(index));
+        last.add(in.get(in.size() - index - 1));
+    }
+}

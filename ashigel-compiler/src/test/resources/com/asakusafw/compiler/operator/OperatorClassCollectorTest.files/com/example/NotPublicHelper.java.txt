@@ -1,0 +1,17 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotPublicHelper {
+
+    @MockOperator
+    public void method(String string) {
+        return;
+    }
+
+    @MockHelper
+    void helper(String string) {
+        return;
+    }
+}

@@ -1,0 +1,19 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public abstract class Abstract extends FlowDescription {
+
+    public Abstract(
+            In<MockHoge> in,
+            Out<MockHoge> out
+            ) {
+    }
+
+    @Override
+    protected void describe() {
+    }
+}

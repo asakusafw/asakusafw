@@ -1,0 +1,1063 @@
+/**
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.compiler.flow.plan;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.FlowGraphRewriter;
+import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
+import com.asakusafw.vocabulary.flow.graph.Connectivity;
+import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
+import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
+import com.asakusafw.vocabulary.flow.graph.FlowGraph;
+import com.asakusafw.vocabulary.flow.graph.FlowIn;
+import com.asakusafw.vocabulary.flow.graph.FlowOut;
+import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
+import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.vocabulary.flow.graph.PortConnection;
+import com.ashigeru.util.graph.Graph;
+import com.ashigeru.util.graph.Graphs;
+
+/**
+ * 演算子グラフの実行計画を立案する。
+ */
+public class StagePlanner {
+
+    static final Logger LOG = LoggerFactory.getLogger(StagePlanner.class);
+
+    private List<? extends FlowGraphRewriter> rewriters;
+
+    private final FlowCompilerOptions options;
+
+    private final List<StagePlanner.Diagnostic> diagnostics = new ArrayList<StagePlanner.Diagnostic>();
+
+    private int blockSequence = 1;
+
+    /**
+     * インスタンスを生成する。
+     * @param rewriters フローグラフを書き換えるオブジェクトの一覧
+     * @param options コンパイラオプション
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    public StagePlanner(
+            List<? extends FlowGraphRewriter> rewriters,
+            FlowCompilerOptions options) {
+        Precondition.checkMustNotBeNull(rewriters, "rewriters"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
+        this.rewriters = rewriters;
+        this.options = options;
+    }
+
+    /**
+     * 指定の演算子グラフを分析し、実行時のステージグラフに変換して返す。
+     * @param graph 対象のグラフ
+     * @return 変換結果、変換できない場合は{@code null}
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @see #getDiagnostics()
+     */
+    public StageGraph plan(FlowGraph graph) {
+        Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
+        if (validate(graph) == false) {
+            return null;
+        }
+        LOG.info("{}の実行計画を計算中", graph);
+        LOG.debug("フロー部品の圧縮: {}", options.isCompressFlowPart());
+        LOG.debug("並行ステージの圧縮: {}", options.isCompressConcurrentStage());
+
+        FlowGraph copy = FlowGraphUtil.deepCopy(graph);
+
+        if (rewrite(copy) == false) {
+            return null;
+        }
+
+        normalizeFlowGraph(copy);
+
+        StageGraph result = buildStageGraph(copy);
+
+        return result;
+    }
+
+    private boolean rewrite(FlowGraph graph) {
+        assert graph != null;
+        LOG.info("{}の書き換えを行います", graph);
+        boolean modified = false;
+        for (FlowGraphRewriter rewriter : rewriters) {
+            try {
+                modified |= rewriter.rewrite(graph);
+            } catch (RewriteException e) {
+                LOG.warn(MessageFormat.format(
+                        "グラフの書き換えに失敗しました: {0} ({1})",
+                        rewriter.getClass().getName(),
+                        e.getMessage()), e);
+                error(
+                        graph,
+                        Collections.<FlowElement>emptyList(),
+                        "グラフの書き換えに失敗しました ({0})",
+                        e.getMessage());
+                return false;
+            }
+        }
+        if (modified && validate(graph) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    private void unifyGlobalSideEffects(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}に出現する副作用のある演算子を処理します", graph);
+        for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
+            if (FlowGraphUtil.hasGlobalSideEffect(element)) {
+                LOG.debug("{}には副作用があるため、直後にチェックポイントが挿入されます", graph);
+                for (FlowElementOutput output : element.getOutputPorts()) {
+                    FlowGraphUtil.insertCheckpoint(output);
+                }
+            }
+        }
+    }
+
+    /**
+     * このオブジェクトで実行された処理の診断情報を返す。
+     * @return 処理の診断情報
+     */
+    public List<StagePlanner.Diagnostic> getDiagnostics() {
+        return diagnostics;
+    }
+
+    /**
+     * {@link #normalizeFlowGraph(FlowGraph)}が適用された前提で、
+     * 演算子グラフからステージグラフを構築する。
+     * @param graph 対象のグラフ
+     * @return 構築したステージグラフ
+     */
+    StageGraph buildStageGraph(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}に対するステージを計算します", graph);
+        FlowBlock input = buildInputBlock(graph);
+        FlowBlock output = buildOutputBlock(graph);
+        List<FlowBlock> computation = buildComputationBlocks(graph);
+        connectFlowBlocks(input, output, computation);
+        detachFlowBlocks(input, output, computation);
+        trimFlowBlocks(computation);
+
+        List<StageBlock> stageBlocks = buildStageBlocks(computation);
+        trimStageBlocks(stageBlocks);
+        sortStageBlocks(stageBlocks);
+
+        return new StageGraph(input, output, stageBlocks);
+    }
+
+    private void trimStageBlocks(List<StageBlock> blocks) {
+        assert blocks != null;
+        boolean changed;
+        LOG.debug("ステージブロックを整理しています");
+        do {
+            changed = false;
+            Iterator<StageBlock> iter = blocks.iterator();
+            while (iter.hasNext()) {
+                StageBlock block = iter.next();
+                changed |= block.compaction();
+                if (block.isEmpty()) {
+                    LOG.debug("{}は空になったため削除されます", block);
+                    iter.remove();
+                    changed = true;
+                }
+            }
+        } while (changed);
+    }
+
+    private void sortStageBlocks(List<StageBlock> stageBlocks) {
+        assert stageBlocks != null;
+        LOG.debug("ステージグラフのステージを整列しています");
+        Map<FlowBlock, StageBlock> membership = new HashMap<FlowBlock, StageBlock>();
+        for (StageBlock stage : stageBlocks) {
+            for (FlowBlock flow : stage.getMapBlocks()) {
+                membership.put(flow, stage);
+            }
+            for (FlowBlock flow : stage.getReduceBlocks()) {
+                membership.put(flow, stage);
+            }
+        }
+
+        Graph<StageBlock> graph = Graphs.newInstance();
+        for (Map.Entry<FlowBlock, StageBlock> entry : membership.entrySet()) {
+            FlowBlock flow = entry.getKey();
+            StageBlock stage = entry.getValue();
+            graph.addNode(stage);
+            for (FlowBlock.Output output : flow.getBlockOutputs()) {
+                for (FlowBlock.Connection conn : output.getConnections()) {
+                    FlowBlock succFlow = conn.getDownstream().getOwner();
+                    StageBlock succ = membership.get(succFlow);
+                    if (succ == null || succ == stage) {
+                        continue;
+                    }
+                    graph.addEdge(succ, stage);
+                }
+            }
+        }
+
+        List<StageBlock> ordered = Graphs.sortPostOrder(graph);
+        int stageNumber = 1;
+        for (StageBlock stage : ordered) {
+            stage.setStageNumber(stageNumber);
+            stageNumber++;
+        }
+
+        Collections.sort(stageBlocks, new Comparator<StageBlock>() {
+            @Override
+            public int compare(StageBlock o1, StageBlock o2) {
+                int n1 = o1.getStageNumber();
+                int n2 = o2.getStageNumber();
+                if (n1 == n2) {
+                    return 0;
+                } else if (n1 < n2) {
+                    return -1;
+                } else {
+                    return +1;
+                }
+            }
+        });
+    }
+
+    private List<StageBlock> buildStageBlocks(List<FlowBlock> blocks) {
+        assert blocks != null;
+        LOG.debug("{}に対するステージブロックを構成します", blocks);
+
+        List<StageBlock> results = new ArrayList<StageBlock>();
+        List<FlowBlockGroup> flowBlockGroups = collectFlowBlockGroups(blocks);
+        for (FlowBlockGroup group : flowBlockGroups) {
+            if (group.reducer) {
+                Set<FlowBlock> predecessors = getPredecessors(group.members);
+                assert predecessors.isEmpty() == false;
+                StageBlock stage = new StageBlock(predecessors, group.members);
+                results.add(stage);
+                LOG.debug("ステージ{}はレデュースブロック{}と先行する{}から作成されます", new Object[] {
+                        stage,
+                        group.members,
+                        predecessors,
+                });
+            } else {
+                StageBlock stage = new StageBlock(group.members, Collections.<FlowBlock>emptySet());
+                results.add(stage);
+                LOG.debug("ステージ{}はマップブロック{}から作成されます", stage, group.members);
+            }
+        }
+        return results;
+    }
+
+    private List<FlowBlockGroup> collectFlowBlockGroups(List<FlowBlock> blocks) {
+        assert blocks != null;
+
+        LOG.debug("ステージ中のブロックグループを検証しています");
+
+        // TODO グラフライブラリを使って書き換え
+        LinkedList<FlowBlockGroup> groups = new LinkedList<FlowBlockGroup>();
+        for (FlowBlock block : blocks) {
+            // Reducerが後続するMapperは対象としない
+            if (block.isReduceBlock() == false && block.isSucceedingReduceBlock()) {
+                continue;
+            }
+            groups.add(new FlowBlockGroup(block));
+        }
+
+        if (options.isCompressConcurrentStage() == false) {
+            LOG.debug("コンパイラの設定により並行ステージを圧縮は行いません");
+            return new ArrayList<FlowBlockGroup>(groups);
+        }
+        LOG.debug("並行ステージを圧縮しています");
+
+        // クリティカルパス距離の計算
+        computeCriticalPaths(groups);
+
+        // 合成可能なものをまとめる
+        List<FlowBlockGroup> results = new ArrayList<FlowBlockGroup>();
+        while (groups.isEmpty() == false) {
+            FlowBlockGroup first = groups.removeFirst();
+            Iterator<FlowBlockGroup> rest = groups.iterator();
+            while (rest.hasNext()) {
+                FlowBlockGroup next = rest.next();
+                if (first.combine(next)) {
+                    LOG.debug("ブロック{}と{}は合成されます", first.founder, next.founder);
+                    rest.remove();
+                }
+            }
+            results.add(first);
+        }
+        return results;
+    }
+
+    private void computeCriticalPaths(List<FlowBlockGroup> groups) {
+        assert groups != null;
+        Map<FlowBlock, FlowBlockGroup> mapping = new HashMap<FlowBlock, FlowBlockGroup>();
+        LinkedList<FlowBlockGroup> work = new LinkedList<FlowBlockGroup>();
+        for (FlowBlockGroup group : groups) {
+            work.add(group);
+            mapping.put(group.founder, group);
+        }
+
+        PROPAGATION: while (work.isEmpty() == false) {
+            int maxDistance = 0;
+            FlowBlockGroup first = work.removeFirst();
+            for (FlowBlock predecessor : first.predeceaseBlocks) {
+                FlowBlockGroup predGroup = mapping.get(predecessor);
+                if (predGroup.distance == -1) {
+                    work.addLast(first);
+                    continue PROPAGATION;
+                } else {
+                    maxDistance = Math.max(maxDistance, predGroup.distance);
+                }
+            }
+            first.distance = maxDistance + 1;
+        }
+    }
+
+    private Set<FlowBlock> getPredecessors(Set<FlowBlock> blocks) {
+        assert blocks != null;
+        Set<FlowBlock> results = new HashSet<FlowBlock>();
+        for (FlowBlock block : blocks) {
+            for (FlowBlock.Input input : block.getBlockInputs()) {
+                for (FlowBlock.Connection conn : input.getConnections()) {
+                    FlowBlock pred = conn.getUpstream().getOwner();
+                    results.add(pred);
+                }
+            }
+        }
+        return results;
+    }
+
+    /**
+     * 指定のグラフの入力ブロックを作成する。
+     * @param graph 対象のグラフ
+     * @return 演算子グラフへの入力のみを含むブロック
+     */
+    private FlowBlock buildInputBlock(FlowGraph graph) {
+        assert graph != null;
+        List<FlowElementOutput> outputs = new ArrayList<FlowElementOutput>();
+        Set<FlowElement> elements = new HashSet<FlowElement>();
+        for (FlowIn<?> node : graph.getFlowInputs()) {
+            outputs.add(node.toOutputPort());
+            elements.add(node.getFlowElement());
+        }
+        return FlowBlock.fromPorts(
+                nextBlockSequenceNumber(),
+                graph,
+                Collections.<FlowElementInput>emptyList(),
+                outputs,
+                elements);
+    }
+
+    /**
+     * 指定のグラフの出力ブロックを作成する。
+     * @param graph 対象のグラフ
+     * @return 演算子グラフからの出力のみを含むブロック
+     */
+    private FlowBlock buildOutputBlock(FlowGraph graph) {
+        assert graph != null;
+        List<FlowElementInput> inputs = new ArrayList<FlowElementInput>();
+        Set<FlowElement> elements = new HashSet<FlowElement>();
+        for (FlowOut<?> node : graph.getFlowOutputs()) {
+            inputs.add(node.toInputPort());
+            elements.add(node.getFlowElement());
+        }
+        return FlowBlock.fromPorts(
+                nextBlockSequenceNumber(),
+                graph,
+                inputs,
+                Collections.<FlowElementOutput>emptyList(),
+                elements);
+    }
+
+    /**
+     * {@link #normalizeFlowGraph(FlowGraph)}が行われていることを前提に、
+     * グラフから入出力を除くすべてのブロックを構築する。
+     * @param graph 対象のグラフ
+     * @return 構築したブロック
+     */
+    private List<FlowBlock> buildComputationBlocks(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}に出現するブロックを計算しています", graph);
+
+        // シャッフル境界から後続するステージ境界まで
+        Collection<FlowPath> shuffleSuccessors = new HashSet<FlowPath>();
+
+        // シャッフル境界から先行するステージ境界まで
+        Collection<FlowPath> shufflePredecessors = new HashSet<FlowPath>();
+
+        // ステージ境界から後続する任意の境界まで
+        Map<FlowElement, FlowPath> stageSuccessors = new HashMap<FlowElement, FlowPath>();
+
+        // ステージ境界から先行する任意の境界まで
+        Map<FlowElement, FlowPath> stagePredecessors = new HashMap<FlowElement, FlowPath>();
+        for (FlowElement boundary : FlowGraphUtil.collectBoundaries(graph)) {
+            boolean shuffle = FlowGraphUtil.isShuffleBoundary(boundary);
+            boolean success = FlowGraphUtil.hasSuccessors(boundary);
+            boolean predecease = FlowGraphUtil.hasPredecessors(boundary);
+            if (shuffle) {
+                assert success;
+                assert predecease;
+                shuffleSuccessors.add(FlowGraphUtil.getSucceedBoundaryPath(boundary));
+                shufflePredecessors.add(FlowGraphUtil.getPredeceaseBoundaryPath(boundary));
+            } else {
+                if (success) {
+                    stageSuccessors.put(boundary, FlowGraphUtil.getSucceedBoundaryPath(boundary));
+                }
+                if (predecease) {
+                    stagePredecessors.put(boundary, FlowGraphUtil.getPredeceaseBoundaryPath(boundary));
+                }
+            }
+        }
+
+        List<FlowBlock> results = new ArrayList<FlowBlock>();
+
+        // シャッフル境界から後続するステージ境界まで
+        results.addAll(collectShuffleToStage(graph, shuffleSuccessors));
+
+        // ステージ境界から後続するシャッフル境界まで
+        results.addAll(collectStageToShuffle(graph, shufflePredecessors, stageSuccessors));
+
+        // ステージ境界から後続するステージ境界まで
+        results.addAll(collectStageToStage(graph, stageSuccessors, stagePredecessors));
+
+        return results;
+    }
+
+    private List<FlowBlock> collectStageToStage(
+            FlowGraph graph,
+            Map<FlowElement, FlowPath> stageSuccessors,
+            Map<FlowElement, FlowPath> stagePredecessors) {
+        assert graph != null;
+        assert stageSuccessors != null;
+        assert stagePredecessors != null;
+        LOG.debug("{}のステージ境界からステージ境界までをマップブロックに切り出しています", graph);
+
+        // (ステージ境界, ステージ境界) は入力ごとにマップブロックにする
+        List<FlowBlock> results = new ArrayList<FlowBlock>();
+        Collection<FlowPath> ss = stageSuccessors.values();
+        for (FlowPath stageForward : ss) {
+
+            // このステージ境界に後続するステージ境界から、逆順のパスを抽出する
+            List<FlowPath> stageBackwards = new ArrayList<FlowPath>();
+            for (FlowElement arrival : stageForward.getArrivals()) {
+                if (FlowGraphUtil.isShuffleBoundary(arrival) == false) {
+                    FlowPath stageBackward = stagePredecessors.get(arrival);
+                    assert stageBackward != null;
+                    stageBackwards.add(stageBackward);
+                }
+            }
+
+            // 逆順のパスが空ならば、全てシャッフル境界が後続していたことになる
+            if (stageBackwards.isEmpty()) {
+                continue;
+            }
+
+            // 後続するステージ境界から逆順のパスの和となるパスを求める
+            FlowPath backward = FlowGraphUtil.union(stageBackwards);
+
+            // ステージ境界からステージ境界までの最小のパスを作成する
+            FlowPath path = stageForward.transposeIntersect(backward);
+            FlowBlock block = path.createBlock(
+                    graph,
+                    nextBlockSequenceNumber(),
+                    false,
+                    false);
+            results.add(block);
+            LOG.debug("{}から{}までがマップロックとして登録されました",
+                    block.getBlockInputs(),
+                    block.getBlockOutputs());
+        }
+        return results;
+    }
+
+    private List<FlowBlock> collectStageToShuffle(
+            FlowGraph graph,
+            Collection<FlowPath> shufflePredecessors,
+            Map<FlowElement, FlowPath> stageSuccessors) {
+        assert graph != null;
+        assert shufflePredecessors != null;
+        assert stageSuccessors != null;
+        LOG.debug("{}のステージ境界からシャッフル境界までをマップブロックに切り出しています", graph);
+
+        // (ステージ境界, シャッフル境界) は(入力, シャッフル)ごとにマップブロックにする
+        List<FlowBlock> results = new ArrayList<FlowBlock>();
+        for (FlowPath shuffleBackward : shufflePredecessors) {
+            Set<FlowElement> arrivals = shuffleBackward.getArrivals();
+            for (FlowElement stageStart : arrivals) {
+                assert FlowGraphUtil.isShuffleBoundary(stageStart) == false;
+
+                FlowPath stageForward = stageSuccessors.get(stageStart);
+                assert stageForward != null;
+
+                // 単一のステージから始まり、かつシャッフルから先行するパスのみ
+                FlowPath path = stageForward.transposeIntersect(shuffleBackward);
+                FlowBlock block = path.createBlock(
+                        graph,
+                        nextBlockSequenceNumber(),
+                        false,
+                        false);
+                results.add(block);
+                LOG.debug("{}から{}までがシャッフルブロックとして登録されました",
+                        block.getBlockInputs(),
+                        block.getBlockOutputs());
+            }
+        }
+        return results;
+    }
+
+    private List<FlowBlock> collectShuffleToStage(
+            FlowGraph graph,
+            Collection<FlowPath> shuffleSuccessors) {
+        assert graph != null;
+        assert shuffleSuccessors != null;
+        LOG.debug("{}のシャッフル境界からステージ境界までをレデュースブロックに切り出しています", graph);
+
+        // [シャッフル境界, ステージ境界) は必ず単一のレデュースブロックになる
+        List<FlowBlock> results = new ArrayList<FlowBlock>();
+        for (FlowPath path : shuffleSuccessors) {
+            FlowBlock block = path.createBlock(
+                    graph,
+                    nextBlockSequenceNumber(),
+                    true,
+                    false);
+            results.add(block);
+            LOG.debug("{}から{}までがレデュースブロックとして登録されました",
+                    block.getBlockInputs(),
+                    block.getBlockOutputs());
+        }
+        return results;
+    }
+
+    private int nextBlockSequenceNumber() {
+        return blockSequence++;
+    }
+
+    private void connectFlowBlocks(
+            FlowBlock inputBlock,
+            FlowBlock outputBlock,
+            List<FlowBlock> computationBlocks) {
+        assert inputBlock != null;
+        assert outputBlock != null;
+        assert computationBlocks != null;
+        LOG.debug("ブロック間の関係を計算しています");
+
+        List<FlowBlock> blocks = new ArrayList<FlowBlock>();
+        blocks.add(inputBlock);
+        blocks.add(outputBlock);
+        blocks.addAll(computationBlocks);
+
+        Map<PortConnection, Set<FlowBlock.Input>> mapping = new HashMap<PortConnection, Set<FlowBlock.Input>>();
+        for (FlowBlock block : blocks) {
+            for (FlowBlock.Input input : block.getBlockInputs()) {
+                for (PortConnection conn : input.getOriginalConnections()) {
+                    Set<FlowBlock.Input> mapped = mapping.get(conn);
+                    if (mapped == null) {
+                        mapped = new HashSet<FlowBlock.Input>();
+                        mapping.put(conn, mapped);
+                    }
+                    mapped.add(input);
+                }
+            }
+        }
+
+        for (FlowBlock block : blocks) {
+            for (FlowBlock.Output output : block.getBlockOutputs()) {
+                for (PortConnection conn : output.getOriginalConnections()) {
+                    Set<PortConnection> next = FlowGraphUtil.getSucceedingConnections(
+                            conn,
+                            mapping.keySet());
+                    for (PortConnection successor : next) {
+                        Set<FlowBlock.Input> connected = mapping.get(successor);
+                        for (FlowBlock.Input opposite : connected) {
+                            FlowBlock.connect(output, opposite);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void detachFlowBlocks(FlowBlock input, FlowBlock output, List<FlowBlock> computation) {
+        assert input != null;
+        assert output != null;
+        assert computation != null;
+        input.detach();
+        output.detach();
+        for (FlowBlock block : computation) {
+            block.detach();
+        }
+    }
+
+    private void trimFlowBlocks(List<FlowBlock> blocks) {
+        assert blocks != null;
+        boolean changed;
+        LOG.debug("演算子グラフの不要な要素を削除します");
+        do {
+            changed = false;
+            Iterator<FlowBlock> iter = blocks.iterator();
+            while (iter.hasNext()) {
+                FlowBlock block = iter.next();
+                changed |= block.compaction();
+                if (block.isEmpty()) {
+                    LOG.debug("{}は空になったため削除されます", block);
+                    iter.remove();
+                    changed = true;
+                }
+            }
+        } while (changed);
+    }
+
+    /**
+     * 演算子グラフを標準形に変換する。
+     * <ul>
+     * <li> フロー部品のインライン化 </li>
+     * <li> shuffle-shuffleへのチェックポイントの挿入 </li>
+     * <li> boundary-boundaryへのidentityの挿入 </li>
+     * <li> identityの分解 </li>
+     * <li> identityの最小化 </li>
+     * <li> フロー部品の標準形化 </li>
+     * </ul>
+     * @param graph 変換対象のグラフ
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    void normalizeFlowGraph(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}の演算子グラフを標準形に変換しています", graph);
+
+        inlineFlowParts(graph);
+
+        // FIXME at most onceの性質を持つ演算子の単一化
+        // とりあえずの措置として、直後にチェックポイントを配置する
+        unifyGlobalSideEffects(graph);
+
+        insertCheckpoints(graph);
+        insertIdentities(graph);
+        splitIdentities(graph);
+        reduceIdentities(graph);
+    }
+
+    private void inlineFlowParts(FlowGraph graph) {
+        assert graph != null;
+        for (FlowElement element : FlowGraphUtil.collectFlowParts(graph)) {
+            Inline inlineConfig = element.getAttribute(Inline.class);
+            if (inlineConfig == null || inlineConfig == Inline.DEFAULT) {
+                inlineConfig = options.isCompressFlowPart()
+                        ? Inline.FORCE_AGGREGATE
+                        : Inline.KEEP_SEGREGATED;
+            }
+            if (inlineConfig == Inline.FORCE_AGGREGATE) {
+                LOG.debug("フロー部品{}を圧縮します", element.getDescription().getName());
+                FlowGraphUtil.inlineFlowPart(element);
+            } else {
+                FlowGraphUtil.inlineFlowPart(element, FlowBoundary.STAGE);
+            }
+        }
+    }
+
+    /**
+     * shuffle -* shuffleとなるような接続を発見した際に、チェックポイントを挿入して
+     * shuffle -* stageとなるように変換する。
+     * @param graph 対象のグラフ
+     */
+    void insertCheckpoints(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}にステージ境界を挿入します", graph);
+        for (FlowElement element : FlowGraphUtil.collectBoundaries(graph)) {
+            insertCheckpoints(element);
+        }
+    }
+
+    private void insertCheckpoints(FlowElement element) {
+        assert element != null;
+        if (FlowGraphUtil.isShuffleBoundary(element) == false) {
+            return;
+        }
+        for (FlowElementOutput output : element.getOutputPorts()) {
+            Collection<FlowElement> successors = FlowGraphUtil.getSucceedingBoundaries(output);
+            for (FlowElement successor : successors) {
+                assert FlowGraphUtil.isBoundary(successor);
+                if (FlowGraphUtil.isShuffleBoundary(successor)) {
+                    LOG.debug("{}の直後にステージ境界を挿入します", output);
+                    FlowGraphUtil.insertCheckpoint(output);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * stage -1 boundaryとなるような接続を発見した際に、恒等関数を挿入して
+     * stage - identity - boundaryとなるように変換する。
+     * @param graph 対象のグラフ
+     */
+    void insertIdentities(FlowGraph graph) {
+        assert graph != null;
+        for (FlowElement element : FlowGraphUtil.collectBoundaries(graph)) {
+            insertIdentities(element);
+        }
+    }
+
+    private void insertIdentities(FlowElement element) {
+        assert element != null;
+        if (FlowGraphUtil.isStageBoundary(element) == false) {
+            return;
+        }
+        for (FlowElementOutput output : element.getOutputPorts()) {
+            for (FlowElementInput opposite : output.getOpposites()) {
+                FlowElement successor = opposite.getOwner();
+                if (FlowGraphUtil.isBoundary(successor)) {
+                    FlowGraphUtil.insertIdentity(output);
+                }
+            }
+        }
+    }
+
+    /**
+     * すべてのidentityの入出力が1:1になるようにidentityを分解する。
+     * @param graph 対象のグラフ
+     */
+    void splitIdentities(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}に出現する恒等演算子を分解します", graph);
+        boolean changed;
+        do {
+            changed = false;
+            for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
+                if (FlowGraphUtil.isIdentity(element)) {
+                    changed |= FlowGraphUtil.splitIdentity(element);
+                }
+            }
+        } while (changed);
+    }
+
+    /**
+     * {@link #splitIdentities(FlowGraph)}が適用されていることを前提に、
+     * 不要な恒等関数をすべて除去する。
+     * @param graph 対象のグラフ
+     * @see #insertIdentities(FlowGraph)
+     */
+    void reduceIdentities(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}に出現する不要な恒等演算子を削除します", graph);
+        boolean changed;
+        do {
+            changed = false;
+            for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
+                if (FlowGraphUtil.isIdentity(element) == false) {
+                    continue;
+                }
+                Set<FlowElement> preds = FlowGraphUtil.getPredecessors(element);
+                Set<FlowElement> succs = FlowGraphUtil.getSuccessors(element);
+                assert preds.size() == 1 && succs.size() == 1 : "all identities must be splitted";
+
+                // ブロック唯一の要素になりそうであれば残す
+                FlowElement pred = preds.iterator().next();
+                FlowElement succ = succs.iterator().next();
+                if (FlowGraphUtil.isStageBoundary(pred) && FlowGraphUtil.isBoundary(succ)) {
+                    continue;
+                }
+                LOG.debug("{}は不要な恒等演算子なので削除します", element);
+
+                changed = true;
+                FlowGraphUtil.skip(element);
+            }
+        } while (changed);
+    }
+
+    /**
+     * 演算子グラフの未結線や循環結線がないことを確認する。
+     * @param graph 対象のグラフ
+     * @return 未結線や循環結線が存在する場合
+     */
+    boolean validate(FlowGraph graph) {
+        assert graph != null;
+        LOG.debug("{}の正当性を検証しています", graph);
+
+        Graph<FlowElement> elements = FlowGraphUtil.toElementGraph(graph);
+
+        boolean valid = true;
+        valid &= validateConnection(graph, elements);
+        valid &= validateAcyclic(graph, elements);
+        for (FlowElement element : FlowGraphUtil.collectFlowParts(graph)) {
+            FlowPartDescription description = (FlowPartDescription) element.getDescription();
+            valid &= validate(description.getFlowGraph());
+        }
+
+        return valid;
+    }
+
+    private boolean validateConnection(FlowGraph graph, Graph<FlowElement> elements) {
+        assert graph != null;
+        assert elements != null;
+        LOG.debug("{}の結線に関する性等性を確認しています", graph);
+
+        boolean sawError = false;
+        for (FlowElement element : elements.getNodeSet()) {
+            Connectivity connectivity = element.getAttribute(Connectivity.class);
+            if (connectivity == null) {
+                connectivity = Connectivity.getDefault();
+            }
+            for (FlowElementInput port : element.getInputPorts()) {
+                if (port.getConnected().isEmpty() == false) {
+                    continue;
+                }
+                error(
+                        graph,
+                        Collections.singletonList(element),
+                        "{0}の入力{1}は結線されていません",
+                        element.getDescription().getName(),
+                        port.getDescription().getName());
+                sawError = true;
+            }
+            for (FlowElementOutput port : element.getOutputPorts()) {
+                if (port.getConnected().isEmpty() == false) {
+                    continue;
+                }
+                if (connectivity == Connectivity.MANDATORY) {
+                    error(
+                            graph,
+                            Collections.singletonList(element),
+                            "{0}の出力{1}は結線されていません",
+                            element.getDescription().getName(),
+                            port.getDescription().getName());
+                    sawError = true;
+                } else {
+                    LOG.debug("{}の出力{}に自動的に停止演算子を結線します",
+                            element.getDescription().getName(),
+                            port.getDescription().getName());
+                    FlowGraphUtil.stop(port);
+                }
+            }
+        }
+
+        return sawError == false;
+    }
+
+    private boolean validateAcyclic(FlowGraph graph, Graph<FlowElement> elements) {
+        assert graph != null;
+        assert elements != null;
+        LOG.debug("{}の循環を検出しています", graph);
+
+        Set<Set<FlowElement>> circuits = Graphs.findCircuit(elements);
+        for (Set<FlowElement> cyclic : circuits) {
+            List<FlowElement> context = new ArrayList<FlowElement>(cyclic);
+            List<String> names = new ArrayList<String>();
+            for (FlowElement elem : context) {
+                names.add(elem.getDescription().getName());
+            }
+            error(
+                    graph,
+                    context,
+                    "結線の循環を検出しました {0}",
+                    names);
+        }
+
+        return circuits.isEmpty();
+    }
+
+    private void error(
+            FlowGraph graph,
+            List<FlowElement> context,
+            String message,
+            Object... messageArguments) {
+        assert graph != null;
+        assert context != null;
+        assert message != null;
+        assert messageArguments != null;
+        String text;
+        if (messageArguments.length == 0) {
+            text = message;
+        } else {
+            text = MessageFormat.format(message, messageArguments);
+        }
+        diagnostics.add(new Diagnostic(graph, context, text));
+    }
+
+    /**
+     * 実行計画の診断情報。
+     */
+    public static class Diagnostic {
+
+        /**
+         * 診断対象のグラフ。
+         */
+        public final FlowGraph graph;
+
+        /**
+         * 診断情報の対象。
+         */
+        public final List<FlowElement> context;
+
+        /**
+         * 診断メッセージ。
+         */
+        public final String message;
+
+        /**
+         * インスタンスを生成する。
+         * @param graph 診断対象のグラフ
+         * @param context 診断情報の対象
+         * @param message 診断メッセージ
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public Diagnostic(
+                FlowGraph graph,
+                List<FlowElement> context,
+                String message) {
+            Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(message, "message"); //$NON-NLS-1$
+            this.graph = graph;
+            this.context = Collections.unmodifiableList(context);
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format(
+                    "{1} ({2})",
+                    graph,
+                    message,
+                    context);
+        }
+    }
+
+    private static class FlowBlockGroup {
+
+        final FlowBlock founder;
+
+        /**
+         * グループへの入力を生成する出力。
+         */
+        @SuppressWarnings("unused")
+        private final Set<FlowBlock.Output> groupSource;
+
+        /**
+         * 直接先行するブロック。
+         * ただし、
+         * - Reducerが後続しないMapperである
+         * - Reducerである
+         * のいずれか。
+         */
+        final Set<FlowBlock> predeceaseBlocks;
+
+        final Set<FlowBlock> members;
+
+        final boolean reducer;
+
+        int distance = -1;
+
+        FlowBlockGroup(FlowBlock flowBlock) {
+            assert flowBlock != null;
+            this.founder = flowBlock;
+            this.members = new HashSet<FlowBlock>();
+            this.members.add(flowBlock);
+            this.reducer = flowBlock.isReduceBlock();
+            this.groupSource = collectStageSource(flowBlock);
+            this.predeceaseBlocks = collectPredeceaseBlocks(flowBlock);
+        }
+
+        private Set<FlowBlock.Output> collectStageSource(FlowBlock flowBlock) {
+            assert flowBlock != null;
+            if (flowBlock.isReduceBlock()) {
+                Set<FlowBlock.Output> results = new HashSet<FlowBlock.Output>();
+                for (FlowBlock predecessor : getPredeceaseBlocks(flowBlock)) {
+                    assert predecessor.isReduceBlock() == false;
+                    results.addAll(collectBlockSource(predecessor));
+                }
+                return results;
+            } else {
+                return collectBlockSource(flowBlock);
+            }
+        }
+
+        private Set<FlowBlock> getPredeceaseBlocks(FlowBlock flowBlock) {
+            assert flowBlock != null;
+            Set<FlowBlock> results = new HashSet<FlowBlock>();
+            for (FlowBlock.Input input : flowBlock.getBlockInputs()) {
+                for (FlowBlock.Connection conn : input.getConnections()) {
+                    FlowBlock pred = conn.getUpstream().getOwner();
+                    results.add(pred);
+                }
+            }
+            return results;
+        }
+
+        private Set<FlowBlock.Output> collectBlockSource(FlowBlock flowBlock) {
+            assert flowBlock != null;
+            Set<FlowBlock.Output> results = new HashSet<FlowBlock.Output>();
+            for (FlowBlock.Input input : flowBlock.getBlockInputs()) {
+                for (FlowBlock.Connection conn : input.getConnections()) {
+                    results.add(conn.getUpstream());
+                }
+            }
+            return results;
+        }
+
+        private Set<FlowBlock> collectPredeceaseBlocks(FlowBlock flowBlock) {
+            assert flowBlock != null;
+            Set<FlowBlock> results = new HashSet<FlowBlock>();
+            LinkedList<FlowBlock> work = new LinkedList<FlowBlock>();
+            work.addLast(flowBlock);
+            while (work.isEmpty() == false) {
+                FlowBlock first = work.removeFirst();
+                Set<FlowBlock> preds = getPredeceaseBlocks(first);
+                for (FlowBlock block : preds) {
+                    // 入力ブロックは除外
+                    if (block.getBlockInputs().isEmpty()) {
+                        continue;
+                    }
+                    if (block.isReduceBlock() || block.isSucceedingReduceBlock() == false) {
+                        results.add(block);
+                    } else {
+                        work.addLast(block);
+                    }
+                }
+            }
+            return results;
+        }
+
+        boolean combine(FlowBlockGroup other) {
+            assert other != null;
+            // mapperどうし、またはreducerどうしでのみ合成
+            if (this.reducer != other.reducer) {
+                return false;
+            }
+            // 入力からの最大長が等しいものを合成
+            if (this.distance == -1 || this.distance != other.distance) {
+                return false;
+            }
+            this.members.addAll(other.members);
+            return true;
+        }
+    }
+}

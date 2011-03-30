@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotUserParameter {
+
+    @Branch
+    public ExampleEnum example(MockHoge hoge, Object param) {
+        if (hoge.value > 100) {
+            return ExampleEnum.HIGH;
+        }
+        else if (hoge.value > 50) {
+            return ExampleEnum.MIDDLE;
+        }
+        return ExampleEnum.LOW;
+    }
+}

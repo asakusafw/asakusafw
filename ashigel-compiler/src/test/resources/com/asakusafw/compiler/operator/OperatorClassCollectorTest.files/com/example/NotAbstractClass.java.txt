@@ -1,0 +1,12 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public class NotAbstractClass {
+
+    @MockOperator
+    public void method(String string) {
+        return;
+    }
+}

@@ -1,0 +1,30 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class Simple extends FlowDescription {
+
+    private In<MockHoge> in;
+    private Out<MockHoge> out;
+
+    public Simple(
+            In<MockHoge> in,
+            Out<MockHoge> out
+            ) {
+        this.in = in;
+        this.out = out;
+    }
+
+    @Override
+    protected void describe() {
+        if (Store.result != null) {
+            throw new AssertionError("duplicated");
+        }
+        Store.result = "OK";
+        
+        out.add(in);
+    }
+}

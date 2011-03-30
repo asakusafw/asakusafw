@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Parameterized {
+
+    @MasterJoin
+    public abstract MockJoined example(MockHoge master, MockFoo tx, int value);
+}

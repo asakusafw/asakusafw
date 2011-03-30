@@ -1,0 +1,20 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Simple {
+
+    /**
+     * 更新演算子のテスト。
+     * @param in 入力
+     * @param param パラメーター
+     */
+    @Update
+    public void example(MockHoge in, int param) {
+        in.value = param;
+    }
+}

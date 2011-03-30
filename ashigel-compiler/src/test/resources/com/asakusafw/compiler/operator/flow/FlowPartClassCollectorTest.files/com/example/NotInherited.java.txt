@@ -1,0 +1,18 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class NotInherited {
+
+    public NotInherited(
+            In<MockHoge> in,
+            Out<MockHoge> out
+            ) {
+    }
+
+    protected void describe() {
+    }
+}

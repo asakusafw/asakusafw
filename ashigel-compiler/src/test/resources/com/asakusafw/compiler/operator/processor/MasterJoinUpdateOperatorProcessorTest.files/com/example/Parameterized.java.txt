@@ -1,0 +1,19 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Parameterized {
+
+    @MasterJoinUpdate
+    public void example(
+            @Key(group = "value") MockHoge master,
+            @Key(group = "value") MockFoo tx,
+            int threshold) {
+        return;
+    }
+}

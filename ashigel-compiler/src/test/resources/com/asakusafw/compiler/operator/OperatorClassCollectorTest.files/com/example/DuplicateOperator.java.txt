@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class DuplicateOperator {
+
+    @MockOperator
+    @Update
+    public void method(String string) {
+        return;
+    }
+}

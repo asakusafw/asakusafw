@@ -1,0 +1,17 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class MethodConflicted {
+
+    @MockOperator
+    public void method(String string) {
+        return;
+    }
+
+    @Update
+    public void metHod(String string, String rest) {
+        return;
+    }
+}

@@ -1,0 +1,37 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class SelectorWithTooMatchParameters {
+
+    @MasterBranch(selection = "select")
+    public ExampleEnum example(
+            @Key(group = "value") MockHoge master,
+            @Key(group = "value") MockFoo tx) {
+        if (master == null) {
+            return ExampleEnum.UNKNOWN;
+        }
+        if (master.value > 100) {
+            return ExampleEnum.HIGH;
+        }
+        else if (master.value > 50) {
+            return ExampleEnum.MIDDLE;
+        }
+        return ExampleEnum.LOW;
+    }
+
+    @MasterSelection
+    public MockHoge select(java.util.List<MockHoge> masters, MockFoo tx, int over) {
+        for (MockHoge master : masters) {
+            if (master.value >= 0) {
+                return master;
+            }
+        }
+        return null;
+    }
+}

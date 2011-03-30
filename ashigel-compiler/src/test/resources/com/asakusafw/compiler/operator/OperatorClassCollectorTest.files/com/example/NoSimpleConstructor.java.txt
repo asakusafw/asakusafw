@@ -1,0 +1,20 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NoSimpleConstructor {
+
+    public NoSimpleConstructor(int a) {
+        return;
+    }
+
+    public <T extends Throwable >NoSimpleConstructor() throws T {
+        return;
+    }
+
+    @MockOperator
+    public void method(String string) {
+        return;
+    }
+}
