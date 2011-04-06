@@ -7,7 +7,7 @@ Asakusa consists of the following components: (1) MapReduce DSL compiler (Ashige
 ## Resources
 ### Japanese Documents
 * [Technical WhitePaper (PDF)](https://asakusafw.s3.amazonaws.com/documents/Whitepaper_014.pdf)
-* [Getting Started (ja)]: https://github.com/asakusafw/asakusafw/wiki/Getting-Started-(ja)
-* [Application Development Guide (ja)]: https://github.com/asakusafw/asakusafw/wiki/Application-Development-Guide-(ja)
-* [Deployment Guide (ja)]: https://github.com/asakusafw/asakusafw/wiki/Deployment-Guide-(ja)
-* [Target Platform (ja)]: https://github.com/asakusafw/asakusafw/wiki/Target-Platform-(ja)
+* [Getting Started (ja)][https://github.com/asakusafw/asakusafw/wiki/Getting-Started-(ja)]
+* [Application Development Guide (ja)][https://github.com/asakusafw/asakusafw/wiki/Application-Development-Guide-(ja)]
+* [Deployment Guide (ja)][https://github.com/asakusafw/asakusafw/wiki/Deployment-Guide-(ja)]
+* [Target Platform (ja)][https://github.com/asakusafw/asakusafw/wiki/Target-Platform-(ja)]
