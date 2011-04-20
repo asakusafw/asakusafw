@@ -1,0 +1,4 @@
+@thundergate.name()
+simple = {
+    value : INT;
+};

@@ -1,0 +1,4 @@
+@attribute(
+    e_qname = com.asakusafw.dmdl
+)
+simple = {a : INT; };

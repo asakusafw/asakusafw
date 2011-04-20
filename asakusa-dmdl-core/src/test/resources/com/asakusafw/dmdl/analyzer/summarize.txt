@@ -1,0 +1,8 @@
+a = { sid : LONG; value_a : INT; value_b : LONG; value_c : DATE; };
+summarized simple = a => {
+    any value_a -> key;
+    sum value_b -> sum;
+    count value_a -> count;
+    max value_c -> max;
+    min value_c -> min;
+} % key;

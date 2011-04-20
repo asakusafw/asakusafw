@@ -388,6 +388,14 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
             Precondition.checkMustNotBeNull(value, "value"); //$NON-NLS-1$
             return dataClass.assign(object, value);
         }
+
+        /**
+         * このデータオブジェクトの内容を消去する文を返す。
+         * @return 生成した文
+         */
+        public Statement createReset() {
+            return dataClass.reset(object);
+        }
     }
 
     /**

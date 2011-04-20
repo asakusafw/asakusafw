@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
+import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
@@ -61,5 +62,34 @@ import com.asakusafw.vocabulary.operator.Summarize;
      */
     public SummarizeFlowFactory.Simple simple(Source<Ex1> model) {
         return new SummarizeFlowFactory.Simple(model);
+    }
+    /**
+     * キー名を変更する演算子。
+     */
+    public static final class RenameKey implements Operator {
+        /**
+         *  結果
+         */
+        public final Source<ExSummarized2> out;
+        RenameKey(Source<Ex1> model) {
+            OperatorDescription.Builder builder = new OperatorDescription.Builder(Summarize.class);
+            builder.declare(SummarizeFlow.class, SummarizeFlowImpl.class, "renameKey");
+            builder.declareParameter(Ex1.class);
+            builder.addInput("model", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"string"}), Arrays.asList(new
+                    ShuffleKey.Order[]{})));
+            builder.addOutput("out", ExSummarized2.class);
+            builder.addAttribute(FlowBoundary.SHUFFLE);
+            FlowElementResolver resolver = builder.toResolver();
+            resolver.resolveInput("model", model);
+            this.out = resolver.resolveOutput("out");
+        }
+    }
+    /**
+     * キー名を変更する演算子。
+     * @param model モデル
+     * @return 生成した演算子オブジェクト
+     */
+    public SummarizeFlowFactory.RenameKey renameKey(Source<Ex1> model) {
+        return new SummarizeFlowFactory.RenameKey(model);
     }
 }

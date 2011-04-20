@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.asakusafw.vocabulary.model.JoinedModel;
+import com.asakusafw.vocabulary.model.Joined;
 
 
 /**
@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.model.JoinedModel;
  * また、戻り値型には結合結果のモデルオブジェクトの型を指定する。
  * 結合結果のモデルオブジェクトの型は、必ず結合対象の二つのモデルオブジェクトを結合したものを
  * 表現しなければならない。
- * 結合条件や結合方法については戻り値型に{@link JoinedModel 定義されている}ため、
+ * 結合条件や結合方法については戻り値型に{@link Joined 定義されている}ため、
  * ここでは特に指定しない。
  * </p>
  * <p>
@@ -73,7 +73,7 @@ import com.asakusafw.vocabulary.model.JoinedModel;
 &#64;MasterJoin
 public abstract Hoge join(HogeMst master, HogeTrn tx);
 </code></pre>
- * @see JoinedModel
+ * @see Joined
  * @see MasterSelection
  */
 @Target(ElementType.METHOD)

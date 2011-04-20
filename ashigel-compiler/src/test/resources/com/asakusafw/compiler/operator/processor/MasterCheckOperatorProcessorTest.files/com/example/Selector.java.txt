@@ -17,7 +17,7 @@ public abstract class Selector {
     @MasterSelection
     public MockHoge select(java.util.List<MockHoge> masters, MockFoo tx) {
         for (MockHoge master : masters) {
-            if (master.value >= 0) {
+            if (master.getValue() >= 0) {
                 return master;
             }
         }

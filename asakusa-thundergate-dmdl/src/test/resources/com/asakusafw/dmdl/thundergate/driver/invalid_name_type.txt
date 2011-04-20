@@ -1,0 +1,5 @@
+@thundergate.name(value = 100)
+simple = {
+    @thundergate.name(value = { "HELLO", "WORLD" })
+    value : INT;
+};

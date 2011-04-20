@@ -20,7 +20,7 @@ public abstract class ParameterizedSelector {
     @MasterSelection
     public MockHoge select(java.util.List<MockHoge> masters, MockFoo tx, int threshold) {
         for (MockHoge master : masters) {
-            if (master.value >= 0) {
+            if (master.getValue() >= 0) {
                 return master;
             }
         }

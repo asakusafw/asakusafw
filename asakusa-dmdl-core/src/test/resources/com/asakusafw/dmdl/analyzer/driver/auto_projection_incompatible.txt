@@ -1,0 +1,4 @@
+projective p1 = { value : DATE; };
+
+@auto_projection
+simple = { value : TEXT; };

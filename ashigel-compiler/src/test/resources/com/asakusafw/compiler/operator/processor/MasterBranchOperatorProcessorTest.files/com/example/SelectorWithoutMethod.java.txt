@@ -16,10 +16,10 @@ public abstract class SelectorWithoutAnnotated {
         if (master == null) {
             return ExampleEnum.UNKNOWN;
         }
-        if (master.value > 100) {
+        if (master.getValue() > 100) {
             return ExampleEnum.HIGH;
         }
-        else if (master.value > 50) {
+        else if (master.getValue() > 50) {
             return ExampleEnum.MIDDLE;
         }
         return ExampleEnum.LOW;

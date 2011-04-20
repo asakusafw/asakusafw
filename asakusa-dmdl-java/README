@@ -1,0 +1,20 @@
+Java data model class generator.
+
+usage: java -classpath ... com.asakusafw.dmdl.java.Main 
+ -output </path/to/output>                    output directory location
+ -package <pkg.name>                          package name of output Java files
+ -source <source-file.dmdl:/path/to/source>   source file or source directory paths
+ -plugin <plugin-1.jar:plugin-2.jar>          DMDL processor plug-ins (optional)
+ -sourceencoding <source-encoding>            input DMDL charset encoding (optional)
+ -targetencoding <target-encoding>            output Java charset encoding (optional)
+
+This project consists mainly of following packages.
+
+* com.asakusafw.dmdl.java
+Project root.
+
+* com.asakusafw.dmdl.java.emitter
+Java source program emitter.
+
+* com.asakusafw.dmdl.java.spi
+Extension point interfaces.

@@ -1,0 +1,2 @@
+@dmdl.unknown
+simple = { a : INT; };

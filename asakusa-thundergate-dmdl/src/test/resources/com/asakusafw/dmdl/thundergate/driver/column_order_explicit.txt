@@ -1,0 +1,8 @@
+simple = {
+    @thundergate.name(value = "COLUMN1")
+    value1 : INT;
+    @thundergate.name(value = "COLUMN2")
+    value2 : INT;
+    @thundergate.name(value = "COLUMN3")
+    value3 : INT;
+};

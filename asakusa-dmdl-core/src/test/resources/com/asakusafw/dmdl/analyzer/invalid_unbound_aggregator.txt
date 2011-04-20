@@ -1,0 +1,2 @@
+a = { a : INT; };
+summarized simple = a => { unbound.aggregator a -> a; };

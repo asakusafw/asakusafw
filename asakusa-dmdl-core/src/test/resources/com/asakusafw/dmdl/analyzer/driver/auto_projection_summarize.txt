@@ -1,0 +1,5 @@
+projective total = { value : DATE; };
+a = { date : DATE; };
+
+@auto_projection
+summarized simple = a => { max date -> value; };

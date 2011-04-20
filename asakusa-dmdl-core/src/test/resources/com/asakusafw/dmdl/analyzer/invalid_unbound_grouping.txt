@@ -1,0 +1,2 @@
+a = { a : INT; };
+summarized s = a => { any a -> other; } % a;

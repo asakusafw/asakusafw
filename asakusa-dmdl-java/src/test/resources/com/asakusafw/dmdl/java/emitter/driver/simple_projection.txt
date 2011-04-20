@@ -1,0 +1,1 @@
+projective simple = { sid : LONG; value : TEXT; };

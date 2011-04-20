@@ -25,7 +25,6 @@ import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.vocabulary.model.DataModel;
 import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
 import com.ashigeru.lang.java.model.syntax.Attribute;
 import com.ashigeru.lang.java.model.syntax.Expression;
@@ -118,7 +117,7 @@ public class ImplementationBuilder {
         Precondition.checkMustNotBeNull(from, "from"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(to, "to"); //$NON-NLS-1$
         this.statements.add(new ExpressionBuilder(factory, to)
-            .method(DataModel.Interface.METHOD_NAME_COPY_FROM, from)
+            .method("copyFrom", from)
             .toStatement());
     }
 

@@ -11,6 +11,6 @@ public abstract class LessParameters {
 
     @Fold
     public void example(@Key(group = "value") MockHoge left, int param) {
-        left.value += param;
+        left.setValue(left.getValue() + param);
     }
 }

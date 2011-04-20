@@ -1,0 +1,21 @@
+Core implmentations for Data Model Definition Language (DMDL).
+
+This project consists mainly of following packages.
+
+* com.asakusafw.dmdl.model
+Syntax models.
+
+* com.asakusafw.dmdl.semantics
+Semantic models.
+
+* com.asakusafw.dmdl.parser
+Syntax analyzer.
+
+* com.asakusafw.dmdl.analyzer
+Semantic analyzer.
+
+* com.asakusafw.dmdl.source
+Source repository abstractions.
+
+* com.asakusafw.dmdl.spi
+Extension point interfaces.

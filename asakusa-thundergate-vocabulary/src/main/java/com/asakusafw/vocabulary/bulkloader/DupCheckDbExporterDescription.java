@@ -15,12 +15,8 @@
  */
 package com.asakusafw.vocabulary.bulkloader;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import com.asakusafw.vocabulary.model.TableModel;
 
 
 /**
@@ -125,16 +121,7 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      * @return 重複チェックに成功した際に、エクスポート対象となるテーブルの名称
      */
     protected String getNormalTableName() {
-        TableModel meta = getNormalModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、テーブル名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getNormalTableName"));
-        }
-        return meta.name();
+        return AttributeHelper.getTableName(getNormalModelType());
     }
 
     /**
@@ -146,16 +133,7 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      * @return 重複チェックに失敗した際に、エクスポート対象となるテーブルの名称
      */
     protected String getErrorTableName() {
-        TableModel meta = getErrorModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、テーブル名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getErrorTableName"));
-        }
-        return meta.name();
+        return AttributeHelper.getTableName(getErrorModelType());
     }
 
     /**
@@ -167,16 +145,7 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      */
     @Override
     public final List<String> getColumnNames() {
-        TableModel meta = getModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、カラム名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getColumnNames"));
-        }
-        return Arrays.asList(meta.columns());
+        return AttributeHelper.getColumnNames(getModelType());
     }
 
     /**
@@ -188,16 +157,7 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      */
     @Override
     public List<String> getTargetColumnNames() {
-        TableModel meta = getNormalModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、カラム名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getNormalColumnNames"));
-        }
-        return Arrays.asList(meta.columns());
+        return AttributeHelper.getColumnNames(getNormalModelType());
     }
 
     /**
@@ -209,30 +169,12 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      * @return 重複チェックに成功した際に、エクスポート対象となるカラム名の一覧
      */
     protected List<String> getErrorColumnNames() {
-        TableModel meta = getErrorModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、カラム名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getErrorColumnNames"));
-        }
-        return Arrays.asList(meta.columns());
+        return AttributeHelper.getColumnNames(getErrorModelType());
     }
 
     @Override
     public List<String> getPrimaryKeyNames() {
-        TableModel meta = getModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、主キー名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    DupCheckDbExporterDescription.class.getSimpleName(),
-                    "getColumnNames"));
-        }
-        return Arrays.asList(meta.primary());
+        return AttributeHelper.getPrimaryKeyNames(getNormalModelType());
     }
 
     @Override

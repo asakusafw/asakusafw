@@ -11,6 +11,6 @@ public abstract class NoKey {
 
     @Fold
     public void example(MockHoge left, MockHoge right) {
-        left.value += right.value;
+        left.getValue() += right.getValue();
     }
 }

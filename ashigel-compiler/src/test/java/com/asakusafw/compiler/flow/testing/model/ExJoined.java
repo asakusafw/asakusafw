@@ -1,270 +1,177 @@
-/**
- * Copyright 2011 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.testing.model;
-
+import com.asakusafw.compiler.flow.testing.io.ExJoinedInput;
+import com.asakusafw.compiler.flow.testing.io.ExJoinedOutput;
+import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.ModelInputLocation;
+import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.vocabulary.model.Joined;
+import com.asakusafw.vocabulary.model.Key;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import javax.annotation.Generated;
-
-
 import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.runtime.value.IntOption;
-import com.asakusafw.runtime.value.LongOption;
-import com.asakusafw.vocabulary.model.DataModel;
-import com.asakusafw.vocabulary.model.JoinedModel;
-import com.asakusafw.vocabulary.model.Key;
-import com.asakusafw.vocabulary.model.ModelRef;
-import com.asakusafw.vocabulary.model.Property;
-
 /**
- * テーブル<code>EX1, EX2</code>を結合した結果のモデルクラス。
- * <p>
- * 以下のように結合されている:
- * </p>
- * <ul>
- * <li><code>EX1.VALUE == EX2.VALUE</code></li>
- * </ul>
+ * ex_joinedを表すデータモデルクラス。
  */
-@Generated("JoinedModelEntityEmitter:0.0.1")
-@DataModel
-@JoinedModel(from = @ModelRef(type = Ex1.class, key = @Key(group = { "value" })), join = @ModelRef(type = Ex2.class, key = @Key(group = { "value" })))
-@SuppressWarnings("deprecation")
-public class ExJoined implements Writable {
+@Joined(terms = {@Joined.Term(source = Ex1.class, mappings = {@Joined.Mapping(source = "sid", destination = "sid1"),@
+                Joined.Mapping(source = "value", destination = "value")}, shuffle = @Key(group = {"value"})),@Joined.
+            Term(source = Ex2.class, mappings = {@Joined.Mapping(source = "sid", destination = "sid2"),@Joined.Mapping(
+                source = "value", destination = "value")}, shuffle = @Key(group = {"value"}))})@ModelInputLocation(
+        ExJoinedInput.class)@ModelOutputLocation(ExJoinedOutput.class) public class ExJoined implements DataModel<
+        ExJoined>, Writable {
+    private final LongOption sid1 = new LongOption();
+    private final IntOption value = new IntOption();
+    private final LongOption sid2 = new LongOption();
+    @Override@SuppressWarnings("deprecation") public void reset() {
+        this.sid1.setNull();
+        this.value.setNull();
+        this.sid2.setNull();
+    }
+    @Override@SuppressWarnings("deprecation") public void copyFrom(ExJoined other) {
+        this.sid1.copyFrom(other.sid1);
+        this.value.copyFrom(other.value);
+        this.sid2.copyFrom(other.sid2);
+    }
     /**
-     * カラム<code>EX1.SID</code>の内容のフィールド。
-     */
-    @Property(from = @Property.Source(declaring = Ex1.class, name = "sid"))
-    private LongOption sid1 = new LongOption();
-    /**
-     * カラム<code>EX2.SID</code>の内容のフィールド。
-     */
-    @Property(join = @Property.Source(declaring = Ex2.class, name = "sid"))
-    private LongOption sid2 = new LongOption();
-    /**
-     * カラム<code>EX1.VALUE</code>および<code>EX2.VALUE</code>の内容のフィールド。
-     */
-    @Property(from = @Property.Source(declaring = Ex1.class, name = "value"), join = @Property.Source(declaring = Ex2.class, name = "value"))
-    private IntOption value = new IntOption();
-
-    /**
-     * カラム<code>EX1.SID</code>の内容を返す。
-     *
-     * @return カラム<code>EX1.SID</code>の内容
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
+     * sid1を返す。
+     * @return sid1
+     * @throws NullPointerException sid1の値が<code>null</code>である場合
      */
     public long getSid1() {
         return this.sid1.get();
     }
-
     /**
-     * カラム<code>EX1.SID</code>の内容を変更する。
-     *
-     * @param sid1
-     *            設定する値
+     * sid1を設定する。
+     * @param value0 設定する値
      */
-    public void setSid1(long sid1) {
-        this.sid1.modify(sid1);
+    @SuppressWarnings("deprecation") public void setSid1(long value0) {
+        this.sid1.modify(value0);
     }
-
     /**
-     * {@link #getSid1()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getSid1()}
+     * <code>null</code>を許すsid1を返す。
+     * @return sid1
      */
     public LongOption getSid1Option() {
         return this.sid1;
     }
-
     /**
-     * {@link #setSid1(long)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param sid1
-     *            設定する値、消去する場合は{@code null}
+     * sid1を設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    public void setSid1Option(LongOption sid1) {
-        this.sid1.copyFrom(sid1);
+    @SuppressWarnings("deprecation") public void setSid1Option(LongOption option) {
+        this.sid1.copyFrom(option);
     }
-
     /**
-     * カラム<code>EX2.SID</code>の内容を返す。
-     *
-     * @return カラム<code>EX2.SID</code>の内容
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
-     */
-    public long getSid2() {
-        return this.sid2.get();
-    }
-
-    /**
-     * カラム<code>EX2.SID</code>の内容を変更する。
-     *
-     * @param sid2
-     *            設定する値
-     */
-    public void setSid2(long sid2) {
-        this.sid2.modify(sid2);
-    }
-
-    /**
-     * {@link #getSid2()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getSid2()}
-     */
-    public LongOption getSid2Option() {
-        return this.sid2;
-    }
-
-    /**
-     * {@link #setSid2(long)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param sid2
-     *            設定する値、消去する場合は{@code null}
-     */
-    public void setSid2Option(LongOption sid2) {
-        this.sid2.copyFrom(sid2);
-    }
-
-    /**
-     * カラム<code>EX1.VALUE</code>および<code>EX2.VALUE</code>の内容を返す。
-     *
-     * @return カラム<code>EX1.VALUE</code>および<code>EX2.VALUE</code>の内容
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
+     * valueを返す。
+     * @return value
+     * @throws NullPointerException valueの値が<code>null</code>である場合
      */
     public int getValue() {
         return this.value.get();
     }
-
     /**
-     * カラム<code>EX1.VALUE</code>および<code>EX2.VALUE</code>の内容を変更する。
-     *
-     * @param value
-     *            設定する値
+     * valueを設定する。
+     * @param value0 設定する値
      */
-    public void setValue(int value) {
-        this.value.modify(value);
+    @SuppressWarnings("deprecation") public void setValue(int value0) {
+        this.value.modify(value0);
     }
-
     /**
-     * {@link #getValue()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getValue()}
+     * <code>null</code>を許すvalueを返す。
+     * @return value
      */
     public IntOption getValueOption() {
         return this.value;
     }
-
     /**
-     * {@link #setValue(int)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param value
-     *            設定する値、消去する場合は{@code null}
+     * valueを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    public void setValueOption(IntOption value) {
-        this.value.copyFrom(value);
+    @SuppressWarnings("deprecation") public void setValueOption(IntOption option) {
+        this.value.copyFrom(option);
     }
-
     /**
-     * 指定のオブジェクトが持つプロパティの内容を全てこのオブジェクトにコピーする。
-     *
-     * @param source
-     *            コピー元になるオブジェクト
+     * sid2を返す。
+     * @return sid2
+     * @throws NullPointerException sid2の値が<code>null</code>である場合
      */
-    public void copyFrom(ExJoined source) {
-        this.sid1.copyFrom(source.sid1);
-        this.sid2.copyFrom(source.sid2);
-        this.value.copyFrom(source.value);
+    public long getSid2() {
+        return this.sid2.get();
     }
-
-    @Override
-    public void write(DataOutput out) throws IOException {
-        sid1.write(out);
-        sid2.write(out);
-        value.write(out);
+    /**
+     * sid2を設定する。
+     * @param value0 設定する値
+     */
+    @SuppressWarnings("deprecation") public void setSid2(long value0) {
+        this.sid2.modify(value0);
     }
-
-    @Override
-    public void readFields(DataInput in) throws IOException {
-        sid1.readFields(in);
-        sid2.readFields(in);
-        value.readFields(in);
+    /**
+     * <code>null</code>を許すsid2を返す。
+     * @return sid2
+     */
+    public LongOption getSid2Option() {
+        return this.sid2;
     }
-
-    @Override
-    public int hashCode() {
+    /**
+     * sid2を設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     */
+    @SuppressWarnings("deprecation") public void setSid2Option(LongOption option) {
+        this.sid2.copyFrom(option);
+    }
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        result.append("class=ex_joined");
+        result.append(", sid1=");
+        result.append(this.sid1);
+        result.append(", value=");
+        result.append(this.value);
+        result.append(", sid2=");
+        result.append(this.sid2);
+        result.append("}");
+        return result.toString();
+    }
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
-        result += prime * result + sid1.hashCode();
-        result += prime * result + sid2.hashCode();
-        result += prime * result + value.hashCode();
+        result = prime * result + sid1.hashCode();
+        result = prime * result + value.hashCode();
+        result = prime * result + sid2.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    @Override public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if(this.getClass()!= obj.getClass()) {
             return false;
         }
         ExJoined other = (ExJoined) obj;
-        if (this.sid1.equals(other.sid1) == false) {
+        if(this.sid1.equals(other.sid1)== false) {
             return false;
         }
-        if (this.sid2.equals(other.sid2) == false) {
+        if(this.value.equals(other.value)== false) {
             return false;
         }
-        if (this.value.equals(other.value) == false) {
+        if(this.sid2.equals(other.sid2)== false) {
             return false;
         }
         return true;
     }
-
-    /**
-     * 2つのモデルオブジェクトを結合した結果を、このオブジェクトに設定する。
-     *
-     * @param left
-     *            結合されるモデルのオブジェクト
-     * @param right
-     *            結合するモデルのオブジェクト
-     */
-    public void joinFrom(Ex1 left, Ex2 right) {
-        this.sid1.copyFrom(left.getSidOption());
-        this.sid2.copyFrom(right.getSidOption());
-        this.value.copyFrom(left.getValueOption());
+    @Override public void write(DataOutput out) throws IOException {
+        sid1.write(out);
+        value.write(out);
+        sid2.write(out);
     }
-
-    /**
-     * この結合されたモデルを、もとの2つのモデルに分解して書き出す。
-     *
-     * @param left
-     *            結合されるモデルのオブジェクト
-     * @param right
-     *            結合するモデルのオブジェクト
-     */
-    public void splitInto(Ex1 left, Ex2 right) {
-        left.getSidOption().copyFrom(this.sid1);
-        right.getSidOption().copyFrom(this.sid2);
-        left.getValueOption().copyFrom(this.value);
-        right.getValueOption().copyFrom(this.value);
+    @Override public void readFields(DataInput in) throws IOException {
+        sid1.readFields(in);
+        value.readFields(in);
+        sid2.readFields(in);
     }
 }

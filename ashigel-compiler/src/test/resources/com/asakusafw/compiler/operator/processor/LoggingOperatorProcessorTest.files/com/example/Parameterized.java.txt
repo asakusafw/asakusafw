@@ -10,6 +10,6 @@ public abstract class Parameterized {
 
     @Logging
     public String example(MockHoge in, int delta) {
-        return "Hello, world" + (in.value + delta);
+        return "Hello, world" + (in.getValue() + delta);
     }
 }

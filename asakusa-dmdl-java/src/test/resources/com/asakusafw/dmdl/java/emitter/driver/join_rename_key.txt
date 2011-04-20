@@ -1,0 +1,6 @@
+a = { sid : LONG; value : TEXT; };
+b = { sid : LONG; value : DATE; };
+joined simple
+    = a -> { sid -> key; value -> a_value; } % key
+    + b -> { sid -> key; value -> b_value; } % key
+    ;

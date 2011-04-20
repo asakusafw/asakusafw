@@ -73,12 +73,32 @@
 		      classpath="${compile_classpath}"
 		      fork="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
-			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
-			<jvmarg value="-DASAKUSA_MODELGEN_OUTPUT=${asakusa.modelgen.output}" />
-			<jvmarg value="-DASAKUSA_MODELGEN_MODEL_INCLUDES=${asakusa.modelgen.includes}" />
-			<jvmarg value="-DASAKUSA_MODELGEN_MODEL_EXCLUDES=${asakusa.modelgen.excludes}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
+			<arg value="-jdbc" />
+			<arg value="${asakusa.testtools.conf}" />
+			<arg value="-output" />
+			<arg value="${asakusa.dmdl.dir}" />
+			<arg value="-encoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+			<arg value="-includes" />
+			<arg value="${asakusa.modelgen.includes}" />
+			<arg value="-excludes" />
+			<arg value="${asakusa.modelgen.excludes}" />
+		</java>
+		<java classname="com.asakusafw.dmdl.java.Main"
+		      classpath="${compile_classpath}"
+		      fork="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<arg value="-output" />
+			<arg value="${asakusa.modelgen.output}" />
+			<arg value="-package" />
+			<arg value="${asakusa.modelgen.package}" />
+			<arg value="-source" />
+			<arg value="${asakusa.dmdl.dir}" />
+            <arg value="-sourceencoding" />
+            <arg value="${asakusa.dmdl.encoding}" />
 		</java>
 
 		<sql driver="${jdbc.driver}"

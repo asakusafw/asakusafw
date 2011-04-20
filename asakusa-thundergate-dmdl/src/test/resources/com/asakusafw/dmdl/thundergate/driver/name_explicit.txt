@@ -1,0 +1,5 @@
+@thundergate.name(value = "TABLE")
+simple = {
+    @thundergate.name(value = "COLUMN")
+    value : INT;
+};

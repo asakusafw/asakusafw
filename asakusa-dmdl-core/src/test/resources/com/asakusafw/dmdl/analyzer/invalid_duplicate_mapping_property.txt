@@ -1,0 +1,3 @@
+a = { a : INT; b : TEXT; };
+b = { a : INT; };
+joined simple = a -> { a -> a; b -> a; } % a + b -> { a -> c; } % c;

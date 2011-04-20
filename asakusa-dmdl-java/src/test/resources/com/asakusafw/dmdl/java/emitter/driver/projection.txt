@@ -1,0 +1,4 @@
+projective a = { a : INT; };
+projective b = a + { b : INT; };
+projective c = { c : INT; };
+d = b + c;

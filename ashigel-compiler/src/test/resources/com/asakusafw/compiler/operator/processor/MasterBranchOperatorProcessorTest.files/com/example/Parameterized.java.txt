@@ -17,10 +17,10 @@ public abstract class Parameterized {
         if (master == null) {
             return ExampleEnum.UNKNOWN;
         }
-        if (master.value > threshold) {
+        if (master.getValue() > threshold) {
             return ExampleEnum.HIGH;
         }
-        else if (master.value > 50) {
+        else if (master.getValue() > 50) {
             return ExampleEnum.MIDDLE;
         }
         return ExampleEnum.LOW;

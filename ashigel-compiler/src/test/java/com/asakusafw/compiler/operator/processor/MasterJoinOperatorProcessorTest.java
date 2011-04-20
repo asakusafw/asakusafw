@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -24,7 +23,6 @@ import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.compiler.operator.model.MockJoined;
-import com.asakusafw.compiler.operator.processor.MasterJoinOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -35,10 +33,10 @@ import com.ashigeru.util.graph.Graph;
 public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト (ファクトリ)。
+     * 単純なテスト。
      */
     @Test
-    public void simple_Factory() {
+    public void simple() {
         add("com.example.Simple");
         ClassLoader loader = start(new MasterJoinOperatorProcessor());
         Object factory = create(loader, "com.example.SimpleFactory");
@@ -55,48 +53,6 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
         assertThat(graph.getConnected("a"), isJust("Simple.example"));
         assertThat(graph.getConnected("b"), isJust("Simple.example"));
         assertThat(graph.getConnected("Simple.example"), isJust("joined", "missed"));
-    }
-
-    /**
-     * 単純なテスト (実装)。
-     */
-    @Test
-    public void simple_Implementation() {
-        add("com.example.Simple");
-        ClassLoader loader = start(new MasterJoinOperatorProcessor());
-
-        Object impl = create(loader, "com.example.SimpleImpl");
-
-        MockHoge hoge = new MockHoge();
-        hoge.value = 100;
-        MockFoo foo = new MockFoo();
-        foo.value = 200;
-
-        MockJoined joined = (MockJoined) invoke(impl, "example", hoge, foo);
-
-        assertThat(joined.hogeValue, is(100));
-        assertThat(joined.fooValue, is(200));
-    }
-
-    /**
-     * 引数の順序を逆にしたテスト (実装)。
-     */
-    @Test
-    public void inverted_Implementation() {
-        add("com.example.Inverted");
-        ClassLoader loader = start(new MasterJoinOperatorProcessor());
-
-        Object impl = create(loader, "com.example.InvertedImpl");
-
-        MockHoge hoge = new MockHoge();
-        hoge.value = 100;
-        MockFoo foo = new MockFoo();
-        foo.value = 200;
-
-        MockJoined joined = (MockJoined) invoke(impl, "example", foo, hoge);
-
-        assertThat(joined.hogeValue, is(100));
-        assertThat(joined.fooValue, is(200));
     }
 
     /**

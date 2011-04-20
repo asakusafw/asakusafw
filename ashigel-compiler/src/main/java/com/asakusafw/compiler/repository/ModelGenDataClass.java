@@ -25,7 +25,6 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.value.ValueOption;
-import com.asakusafw.vocabulary.model.DataModel;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.Statement;
@@ -108,6 +107,14 @@ public class ModelGenDataClass implements DataClass {
     }
 
     @Override
+    public Statement reset(Expression object) {
+        Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
+        return new ExpressionBuilder(factory, object)
+            .method("reset")
+            .toStatement();
+    }
+
+    @Override
     public Expression createNewInstance(Type target) {
         Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
         return new TypeBuilder(factory, target)
@@ -120,7 +127,7 @@ public class ModelGenDataClass implements DataClass {
         Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, target)
-            .method(DataModel.Interface.METHOD_NAME_COPY_FROM, source)
+            .method("copyFrom", source)
             .toStatement();
     }
 

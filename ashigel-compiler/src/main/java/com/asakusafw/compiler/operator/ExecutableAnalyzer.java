@@ -41,15 +41,15 @@ import javax.tools.Diagnostic;
 import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.model.DataModel;
-import com.asakusafw.vocabulary.model.JoinedModel;
+import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Key;
-import com.asakusafw.vocabulary.model.SummarizedModel;
+import com.asakusafw.vocabulary.model.Summarized;
 import com.asakusafw.vocabulary.operator.Sticky;
 import com.asakusafw.vocabulary.operator.Volatile;
 import com.ashigeru.lang.java.model.syntax.DocBlock;
@@ -377,7 +377,7 @@ public class ExecutableAnalyzer {
         return key;
     }
 
-    private ShuffleKey toUncheckedShuffleKey(
+    ShuffleKey toUncheckedShuffleKey(
             int position,
             AnnotationMirror annotation) {
         assert annotation != null;
@@ -449,16 +449,15 @@ public class ExecutableAnalyzer {
     private String toPropertyName(String methodName) {
         assert methodName != null;
         StringBuilder buf = new StringBuilder();
-        if (methodName.startsWith("get")) {
-            buf.append(methodName, 3, methodName.length());
-        } else if (methodName.startsWith("is")) {
-            buf.append(methodName, 2, methodName.length());
+        if (methodName.length() < "getAOption".length()) {
+            return null;
+        }
+        if (methodName.startsWith("get") && methodName.endsWith("Option")) {
+            buf.append(methodName, "get".length(), methodName.length() - "Option".length());
         } else {
             return null;
         }
-        if (buf.length() == 0) {
-            return null;
-        }
+        assert buf.length() >= 1;
         char head = buf.charAt(0);
         if ('0' <= head && head <= '9' || 'a' <= head && head <= 'z') {
             return null;
@@ -524,16 +523,33 @@ public class ExecutableAnalyzer {
         return valueType.cast(content);
     }
 
-    static TypeMirror getModelRefType(AnnotationMirror annotation) {
-        assert annotation != null;
-        Map<String, AnnotationValue> values = getValues(annotation);
-        return getValue(TypeMirror.class, values, "type");
+    @SuppressWarnings("unchecked")
+    static List<? extends AnnotationValue> getList(
+            Map<String, AnnotationValue> valueMap,
+            String name) {
+        assert valueMap != null;
+        assert name != null;
+        AnnotationValue value = valueMap.get(name);
+        if (value == null) {
+            return null;
+        }
+        Object content = value.getValue();
+        if ((content instanceof List<?>) == false) {
+            return null;
+        }
+        return (List<? extends AnnotationValue>) content;
     }
 
-    static AnnotationMirror getModelRefKey(AnnotationMirror annotation) {
+    static TypeMirror getReduceTermType(AnnotationMirror annotation) {
         assert annotation != null;
         Map<String, AnnotationValue> values = getValues(annotation);
-        return getValue(AnnotationMirror.class, values, "key");
+        return getValue(TypeMirror.class, values, "source");
+    }
+
+    static AnnotationMirror getReduceTermKey(AnnotationMirror annotation) {
+        assert annotation != null;
+        Map<String, AnnotationValue> values = getValues(annotation);
+        return getValue(AnnotationMirror.class, values, "shuffle");
     }
 
     static Map<String, AnnotationValue> getValues(
@@ -654,7 +670,7 @@ public class ExecutableAnalyzer {
             if (element == null) {
                 return false;
             }
-            return element.getAnnotation(DataModel.class) != null;
+            return environment.getTypeUtils().isSubtype(type, environment.getDeclaredType(DataModel.class));
         }
 
         /**
@@ -664,18 +680,22 @@ public class ExecutableAnalyzer {
          * @return この型が結合モデルを表現する場合のみ{@code true}
          */
         public boolean isJoinedModel(TypeMirror a, TypeMirror b) {
-            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(JoinedModel.class));
+            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Joined.class));
             if (annotation == null) {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror from = getValue(AnnotationMirror.class, values, "from");
-            AnnotationMirror join = getValue(AnnotationMirror.class, values, "join");
-            if (from == null || join == null) {
+            List<? extends AnnotationValue> terms = getList(values, "terms");
+            if (terms == null
+                    || terms.size() != 2
+                    || (terms.get(0) instanceof AnnotationMirror) == false
+                    || (terms.get(1) instanceof AnnotationMirror) == false) {
                 return false;
             }
-            TypeMirror fromType = getModelRefType(from);
-            TypeMirror joinType = getModelRefType(join);
+            AnnotationMirror from = (AnnotationMirror) terms.get(0);
+            AnnotationMirror join = (AnnotationMirror) terms.get(1);
+            TypeMirror fromType = getReduceTermType(from);
+            TypeMirror joinType = getReduceTermType(join);
             if (fromType == null || joinType == null) {
                 return false;
             }
@@ -695,16 +715,19 @@ public class ExecutableAnalyzer {
          */
         public boolean isJoinFrom(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
-            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(JoinedModel.class));
+            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Joined.class));
             if (annotation == null) {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror from = getValue(AnnotationMirror.class, values, "from");
-            if (from == null) {
+            List<? extends AnnotationValue> terms = getList(values, "terms");
+            if (terms == null
+                    || terms.isEmpty()
+                    || (terms.get(0) instanceof AnnotationMirror) == false) {
                 return false;
             }
-            TypeMirror fromType = getModelRefType(from);
+            AnnotationMirror from = (AnnotationMirror) terms.get(0);
+            TypeMirror fromType = getReduceTermType(from);
             if (fromType == null) {
                 return false;
             }
@@ -719,30 +742,27 @@ public class ExecutableAnalyzer {
          */
         public ShuffleKey getJoinKey(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
-            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(JoinedModel.class));
+            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Joined.class));
             if (annotation == null) {
                 throw new IllegalArgumentException();
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror ref = getValue(AnnotationMirror.class, values, "from");
-            if (ref == null) {
+            List<? extends AnnotationValue> terms = getList(values, "terms");
+            if (terms == null) {
                 throw new IllegalArgumentException();
             }
-            AnnotationMirror refKey;
-            if (environment.getTypeUtils().isSameType(target, getModelRefType(ref))) {
-                refKey = getModelRefKey(ref);
-            } else {
-                ref = getValue(AnnotationMirror.class, values, "join");
-                if (ref == null) {
-                    throw new IllegalArgumentException();
+            for (AnnotationValue value : terms) {
+                if ((value instanceof AnnotationMirror) == false) {
+                    continue;
                 }
-                if (environment.getTypeUtils().isSameType(target, getModelRefType(ref))) {
-                    refKey = getModelRefKey(ref);
-                } else {
-                    throw new IllegalArgumentException();
+                AnnotationMirror term = (AnnotationMirror) value;
+                if (typeEqual(target, getReduceTermType(term))) {
+                    AnnotationMirror shuffle = getReduceTermKey(term);
+                    ShuffleKey key = toShuffleKey(-1, target, shuffle);
+                    return key;
                 }
             }
-            return toShuffleKey(-1, target, refKey);
+            throw new IllegalArgumentException();
         }
 
         /**
@@ -753,16 +773,16 @@ public class ExecutableAnalyzer {
          */
         public boolean isSummarizedModel(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
-            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(SummarizedModel.class));
+            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Summarized.class));
             if (annotation == null) {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror from = getValue(AnnotationMirror.class, values, "from");
+            AnnotationMirror from = getValue(AnnotationMirror.class, values, "term");
             if (from == null) {
                 return false;
             }
-            TypeMirror fromType = getModelRefType(from);
+            TypeMirror fromType = getReduceTermType(from);
             if (fromType == null) {
                 return false;
             }
@@ -775,19 +795,19 @@ public class ExecutableAnalyzer {
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
         public ShuffleKey getSummarizeKey() {
-            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(SummarizedModel.class));
+            AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Summarized.class));
             if (annotation == null) {
                 throw new IllegalArgumentException();
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror ref = getValue(AnnotationMirror.class, values, "from");
-            if (ref == null) {
+            AnnotationMirror reduce = getValue(AnnotationMirror.class, values, "term");
+            if (reduce == null) {
                 throw new IllegalArgumentException();
             }
-            TypeMirror refType = getModelRefType(ref);
-            AnnotationMirror refKey = getModelRefKey(ref);
-            if (refKey != null) {
-                return toShuffleKey(-1, refType, refKey);
+            TypeMirror shuffleType = getReduceTermType(reduce);
+            AnnotationMirror shuffleKey = getReduceTermKey(reduce);
+            if (shuffleKey != null) {
+                return toShuffleKey(-1, shuffleType, shuffleKey);
             }
             throw new IllegalArgumentException();
         }

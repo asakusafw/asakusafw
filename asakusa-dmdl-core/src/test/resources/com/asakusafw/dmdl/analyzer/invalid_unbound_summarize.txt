@@ -1,0 +1,1 @@
+summarized s = missing => { any a -> a; };

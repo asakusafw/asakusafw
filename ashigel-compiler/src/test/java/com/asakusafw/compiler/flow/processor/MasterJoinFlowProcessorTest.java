@@ -25,11 +25,13 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.compiler.flow.processor.flow.MasterJoinFlowRenameKey;
 import com.asakusafw.compiler.flow.processor.flow.MasterJoinFlowSelection;
 import com.asakusafw.compiler.flow.processor.flow.MasterJoinFlowTrivial;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
+import com.asakusafw.compiler.flow.testing.model.ExJoined2;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.compiler.util.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.CompilerTester.TestOutput;
@@ -107,6 +109,87 @@ public class MasterJoinFlowProcessorTest {
         List<ExJoined> joinedList = joined.toList(new Comparator<ExJoined>() {
             @Override
             public int compare(ExJoined o1, ExJoined o2) {
+                return o1.getSid2Option().compareTo(o2.getSid2Option());
+            }
+        });
+        List<Ex2> missingList = missing.toList(new Comparator<Ex2>() {
+            @Override
+            public int compare(Ex2 o1, Ex2 o2) {
+                return o1.getSidOption().compareTo(o2.getSidOption());
+            }
+        });
+        assertThat(joinedList.size(), is(4));
+        assertThat(missingList.size(), is(2));
+
+        assertThat(joinedList.get(0).getSid2(), is(1L));
+        assertThat(missingList.get(0).getSid(), is(2L));
+        assertThat(missingList.get(1).getSid(), is(3L));
+        assertThat(joinedList.get(1).getSid2(), is(4L));
+        assertThat(joinedList.get(2).getSid2(), is(5L));
+        assertThat(joinedList.get(3).getSid2(), is(6L));
+    }
+
+    /**
+     * キー名を変更するテスト。
+     * @throws Exception テストが失敗した場合
+     */
+    @Test
+    public void renameKey() throws Exception {
+        runRenameKey(DataSize.UNKNOWN);
+    }
+
+    /**
+     * キー名を変更してTINYを指定するテスト。
+     * @throws Exception テストが失敗した場合
+     */
+    @Test
+    public void renameKeyTiny() throws Exception {
+        runRenameKey(DataSize.TINY);
+    }
+
+    private void runRenameKey(DataSize dataSize) throws IOException {
+        TestInput<Ex1> in1 = tester.input(Ex1.class, "Ex1", dataSize);
+        TestInput<Ex2> in2 = tester.input(Ex2.class, "ex2");
+        TestOutput<ExJoined2> joined = tester.output(ExJoined2.class, "joined");
+        TestOutput<Ex2> missing = tester.output(Ex2.class, "missing");
+
+        Ex1 ex1 = new Ex1();
+        Ex2 ex2 = new Ex2();
+
+        ex1.setValue(10);
+        in1.add(ex1);
+        ex2.setValue(10);
+        ex2.setSid(1);
+        in2.add(ex2);
+
+        ex1.setValue(20);
+        in1.add(ex1);
+        ex2.setValue(21);
+        ex2.setSid(2);
+        in2.add(ex2);
+        ex2.setValue(22);
+        ex2.setSid(3);
+        in2.add(ex2);
+
+        ex1.setValue(30);
+        in1.add(ex1);
+        ex2.setValue(30);
+        ex2.setSid(4);
+        in2.add(ex2);
+        ex2.setValue(30);
+        ex2.setSid(5);
+        in2.add(ex2);
+        ex2.setValue(30);
+        ex2.setSid(6);
+        in2.add(ex2);
+
+        assertThat(tester.runFlow(new MasterJoinFlowRenameKey(
+                in1.flow(), in2.flow(),
+                joined.flow(), missing.flow())), is(true));
+
+        List<ExJoined2> joinedList = joined.toList(new Comparator<ExJoined2>() {
+            @Override
+            public int compare(ExJoined2 o1, ExJoined2 o2) {
                 return o1.getSid2Option().compareTo(o2.getSid2Option());
             }
         });

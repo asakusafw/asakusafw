@@ -23,11 +23,19 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.asakusafw.runtime.model.ModelInputLocation;
+import com.asakusafw.runtime.model.ModelOutputLocation;
+
 /**
  * モデルの入出力に関するオブジェクトを生成するファクトリの基底クラス。
  * @param <T> 取り扱うモデルオブジェクトの種類
  */
 public abstract class ModelIoFactory<T> {
+
+    static final Log LOG = LogFactory.getLog(ModelIoFactory.class);
 
     /**
      * モデルクラスの名前のパターン ($1 - ベースパッケージ, $2 - 単純名)。
@@ -207,6 +215,15 @@ public abstract class ModelIoFactory<T> {
      * @throws ClassNotFoundException クラスが見つからない場合
      */
     protected Class<?> findModelInputClass() throws ClassNotFoundException {
+        ModelInputLocation annotation = modelClass.getAnnotation(ModelInputLocation.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
+        LOG.warn(MessageFormat.format(
+                "{0}に注釈{1}が付与されていません。命名規約から{2}を検索します (deprecated)。",
+                modelClass.getName(),
+                ModelInputLocation.class.getName(),
+                ModelInput.class.getSimpleName()));
         return findClassFromModel(MODEL_INPUT_CLASS_FORMAT);
     }
 
@@ -219,6 +236,15 @@ public abstract class ModelIoFactory<T> {
      * @throws ClassNotFoundException クラスが見つからない場合
      */
     protected Class<?> findModelOutputClass() throws ClassNotFoundException {
+        ModelOutputLocation annotation = modelClass.getAnnotation(ModelOutputLocation.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
+        LOG.warn(MessageFormat.format(
+                "{0}に注釈{1}が付与されていません。命名規約から{2}を検索します (deprecated)。",
+                modelClass.getName(),
+                ModelOutputLocation.class.getName(),
+                ModelOutput.class.getSimpleName()));
         return findClassFromModel(MODEL_OUTPUT_CLASS_FORMAT);
     }
 

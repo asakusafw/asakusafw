@@ -1,0 +1,34 @@
+DMDL frontend to generate DMDL from ThunderGate DDL.
+
+usage: java -classpath ... com.asakusafw.dmdl.thundergate.Main
+ -jdbc </path/to/jdbc-config.properties>   Source JDBC properties
+ -output </path/to/output>                 Output directory location
+ -encoding <encoding>                      Output DMDL charset encoding (default=system encoding)
+ -includes <inclusion-regex>               Target name pattern of TABLE/VIEW (default=anything)
+ -excludes <exclusion-regex>               Exclusion name pattern of TABLE/VIEW (default=nothing)
+
+JDBC properties:
+    jdbc.driver = JDBC Driver class name
+    jdbc.url = Target JDBC URL
+    jdbc.user = Connection user name
+    jdbc.password = Connection password
+    database.name = Target database name
+
+
+This project consists mainly of following packages.
+
+* com.asakusafw.dmdl.thundergate
+Project root.
+
+* com.asakusafw.dmdl.thundergate.model
+ThunderGate data metamodels.
+
+* com.asakusafw.dmdl.thundergate.view
+"CREATE VIEW" statement analyzer.
+
+* com.asakusafw.dmdl.thundergate.emitter
+DMDL generators.
+
+* com.asakusafw.dmdl.thundergate.driver
+DMDL compiler extensions for ThunderGate.
+

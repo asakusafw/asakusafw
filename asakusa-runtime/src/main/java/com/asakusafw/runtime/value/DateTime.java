@@ -30,6 +30,38 @@ public class DateTime implements Comparable<DateTime> {
     private long elapsedSeconds = 0L;
 
     /**
+     * 0001/01/01 00:00:00 を表すインスタンスを生成する。
+     */
+    public DateTime() {
+        this(0L);
+    }
+
+    /**
+     * インスタンスを生成する。
+     * @param elapsedSeconds 0001/01/01 00:00:00 からの経過日数(0起算)
+     */
+    public DateTime(long elapsedSeconds) {
+        this.elapsedSeconds = elapsedSeconds;
+    }
+
+    /**
+     * インスタンスを生成する。
+     * @param year 年 (1-...)
+     * @param month 月 (1-12)
+     * @param day 日 (1-31)
+     * @param hour 時 (0-23)
+     * @param minute 分 (0-59)
+     * @param second 秒 (0-59)
+     */
+    public DateTime(
+            int year, int month, int day,
+            int hour, int minute, int second) {
+        int date = DateUtil.getDayFromDate(year, month, day);
+        int secondsInDay = DateUtil.getSecondFromTime(hour, minute, second);
+        this.elapsedSeconds = (long) date * 86400 + secondsInDay;
+    }
+
+    /**
      * 0001/01/01 00:00:00 からの経過日数を返す。
      * @return 0001/01/01 00:00:00 からの経過日数(0起算)
      */

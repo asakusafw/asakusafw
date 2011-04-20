@@ -23,7 +23,9 @@ import java.lang.annotation.Target;
 
 /**
  * 任意のデータモデルを表す注釈。
+ * @deprecated Use data model interface declared in asakusa-runtime.
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

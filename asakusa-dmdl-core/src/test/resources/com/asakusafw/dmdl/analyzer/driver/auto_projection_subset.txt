@@ -1,0 +1,4 @@
+projective p1 = { value : TEXT; };
+
+@auto_projection
+simple = { value : TEXT; extra : INT; };

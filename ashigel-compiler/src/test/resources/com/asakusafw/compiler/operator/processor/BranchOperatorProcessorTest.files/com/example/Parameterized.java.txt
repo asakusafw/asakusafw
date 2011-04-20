@@ -10,10 +10,10 @@ public abstract class Parameterized {
 
     @Branch
     public ExampleEnum example(MockHoge hoge, int high, int middle) {
-        if (hoge.value > high) {
+        if (hoge.getValue() > high) {
             return ExampleEnum.HIGH;
         }
-        else if (hoge.value > middle) {
+        else if (hoge.getValue() > middle) {
             return ExampleEnum.MIDDLE;
         }
         return ExampleEnum.LOW;

@@ -1,0 +1,46 @@
+@namespace(value = testing)
+ex1 = {
+    sid : LONG;
+    value : INT;
+    string : TEXT;
+};
+
+@namespace(value = testing)
+ex2 = ex1;
+
+@namespace(value = testing)
+joined ex_joined
+    = ex1 -> {
+        sid -> sid1;
+        value -> value;
+    } % value
+    + ex2 -> {
+        sid -> sid2;
+        value -> value;
+    } % value;
+
+@namespace(value = testing)
+summarized ex_summarized = ex1 => {
+    any string -> string;
+    sum value -> value;
+    count sid -> count;
+} % string;
+
+@namespace(value = testing)
+joined ex_joined2
+    = ex1 -> {
+        sid -> sid1;
+        value -> key;
+    } % key
+    + ex2 -> {
+        sid -> sid2;
+        value -> key;
+    } % key;
+
+@namespace(value = testing)
+summarized ex_summarized2 = ex1 => {
+    any string -> key;
+    sum value -> value;
+    count sid -> count;
+} % key;
+

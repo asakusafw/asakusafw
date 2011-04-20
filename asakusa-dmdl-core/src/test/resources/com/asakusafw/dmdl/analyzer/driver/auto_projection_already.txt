@@ -1,0 +1,5 @@
+projective p1 = { value : TEXT; };
+projective p2 = { data : TEXT; };
+
+@auto_projection
+simple = { value : TEXT; } + p2;

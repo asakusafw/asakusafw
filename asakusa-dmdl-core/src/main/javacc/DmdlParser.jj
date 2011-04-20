@@ -1,0 +1,1194 @@
+/*
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+options {
+    STATIC = false;
+    SUPPORT_CLASS_VISIBILITY_PUBLIC=false;
+    UNICODE_INPUT = true;
+    LOOKAHEAD = 1;
+    GRAMMAR_ENCODING = "UTF-8";
+}
+
+PARSER_BEGIN(JjDmdlParser)
+/*
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.dmdl.parser;
+
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asakusafw.dmdl.*;
+import com.asakusafw.dmdl.model.*;
+
+/**
+ * An implementation of the DMDL Script Parser.
+ */
+class JjDmdlParser {
+
+    static final Logger LOG = LoggerFactory.getLogger(JjDmdlParser.class);
+
+    private URI sourceFile;
+
+    private LinkedList<ParseFrame> frameStack;
+
+    /**
+     * Parse a DMDL Script and return a model object.
+     * @param source the source location
+     * @return the analyzed AST
+     * @throws ParseException if input text was not a valid DMDL script
+     */
+    AstScript parse(URI source) throws ParseException {
+        LOG.debug("Parse begin: {}", source);
+        this.sourceFile = source;
+        this.frameStack = new LinkedList<ParseFrame>();
+        AstScript script = Start();
+        assert frameStack.isEmpty() : frameStack;
+        LOG.debug("Parse end  : {}", source);
+        return script;
+    }
+    
+    ParseFrame[] getFrames() {
+        if (frameStack == null) {
+            return new ParseFrame[0];
+        }
+        return frameStack.toArray(new ParseFrame[frameStack.size()]);
+    }
+    
+    URI getSourceFile() {
+        return sourceFile;
+    }
+
+    private static <T> List<T> newList() {
+        return new ArrayList<T>();
+    }
+
+    private <T extends AstTerm<T>> AstModelDefinition<T> newModelDefinition(
+            Region region,
+            ModelDefinitionKind kind,
+            AstDescription description,
+            List<AstAttribute> attributes,
+            AstSimpleName name,
+            AstExpression<T> expression) {
+        return new AstModelDefinition<T>(region, kind, description, attributes, name, expression);
+    }
+
+    private void begin(String ruleName) {
+        assert ruleName != null;
+        LOG.trace("Frame Begin: {}", ruleName);
+        Token t = getToken(1);
+        ParseFrame frame = new ParseFrame(ruleName, t);
+        frameStack.addFirst(frame);
+    }
+
+    private Region end(String ruleName) {
+        assert ruleName != null;
+        LOG.trace("Frame End  : {}", ruleName);
+        Region region = peek(ruleName);
+        frameStack.removeFirst();
+        return region;
+    }
+
+    private Region peek(String ruleName) {
+        assert ruleName != null;
+        assert frameStack.isEmpty() == false : ruleName;
+        ParseFrame top = frameStack.getFirst();
+        assert ruleName.equals(top.getRuleName()) : ruleName + "/" + frameStack;
+        Token first = top.getStartToken();
+        Token next = getToken(1);
+        if (next == first) {
+            return null;
+        }
+        Token last = getToken(0);
+        if (last.kind == EOF) {
+            return null;
+        }
+        return region(first, last);
+    }
+    
+    private Region region(Token first, Token last) {
+        assert first != null;
+        assert last != null;
+        assert first.kind != EOF : "first token must not be EOF";
+        assert last.kind != EOF : "last token must not be EOF";
+        return new Region(
+            sourceFile,
+            first.beginLine, first.beginColumn,
+            last.endLine, last.endColumn);
+    }
+
+    static class ParseFrame {
+
+        private String ruleName;
+
+        private Token startToken;
+
+        /**
+         * Creates and returns a new instance.
+         * @param ruleName The rule name of this frame
+         * @param startToken start token
+         */
+        public ParseFrame(String ruleName, Token startToken) {
+            assert ruleName != null;
+            this.ruleName = ruleName;
+            this.startToken = startToken;
+        }
+
+        /**
+         * Returns the rule name of this frame.
+         * @return the rule name
+         */
+        public String getRuleName() {
+            return this.ruleName;
+        }
+
+        /**
+         * Returns the start token of this frame.
+         * @return the start token
+         */
+        public Token getStartToken() {
+            return startToken;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format(
+                "{0}@[{1}]",
+                this.ruleName,
+                this.startToken);
+        }
+    }
+}
+PARSER_END(JjDmdlParser)
+
+
+// White Spaces
+SKIP :
+{   " "
+|   "\t"
+|   "\r"
+|   "\n"
+}
+
+// Comments
+SKIP : {
+    "/*": BLOCK_COMMENT
+}
+<BLOCK_COMMENT> SKIP : {
+    "*/" : DEFAULT
+}
+<BLOCK_COMMENT> SKIP : {
+    <~[]>
+}
+SPECIAL_TOKEN : 
+{   <LINE_COMMENT
+    : "--" ( ~["\r", "\n"] )*
+    | "//" ( ~["\r", "\n"] )*
+    >
+}
+
+/* Literals
+<string-literal>:
+     '"' <string-char>* '"'
+<string-char>:
+     ~['"', '\']
+     '\' ['b', 't', 'n', 'f', 'r', '\', '"']
+     '\' 'u' ['0'-'9', 'A'-'F', 'a'-'f']{4}
+     '\' '0' ['0'-'3']? ['0'-'7']? ['0'-'7']
+<integer-literal>:
+     '0'
+     ['1'-'9']['0'-'9']*
+<decimal-literal>:
+     '.' ['0'-'9']+
+     '0.' ['0'-'9']*
+     ['1'-'9']['0'-'9']* '.' ['0'-'9']*
+<boolean-literal>:
+     'TRUE'
+     'FALSE'
+*/
+TOKEN :
+{   <STRING_LITERAL : "\"" (<STRING_CHAR>)* "\"">
+|   <#STRING_CHAR
+    : ~["\"", "\\"]
+    | "\\" ["b", "t", "n", "f", "r", "\\", "\""]
+    | "\\u" (["0"-"9", "A"-"F", "a"-"f"]){4}
+    | "\\0" (["0"-"3"])? (["0"-"7"])? ["0"-"7"]
+    >
+|   <INTEGER_LITERAL
+    : "0"
+    | ["1"-"9"] (["0"-"9"])*
+    >
+|   <DECIMAL_LITERAL
+    : "." (["0"-"9"])+
+    | "0." (["0"-"9"])*
+    | ["1"-"9"] (["0"-"9"])* "." (["0"-"9"])*
+    >
+|   <BOOLEAN_LITERAL
+    : "TRUE"
+    | "FALSE"
+    >
+}
+
+/* Keywords
+<keyword>:
+     'joined'
+     'summarized'
+     'any'
+     'sum'
+     'max'
+     'min'
+     'count'
+*/
+TOKEN :
+{   <PROJECTIVE: "projective">
+|   <JOINED: "joined">
+|   <SUMMARIZED: "summarized">
+//  aggregator function must not be in keywords
+}
+
+/* Name
+<name>:
+     <first-word>
+     <name> '_' <word>
+<first-word>:
+     ['a'-'z'] ['a'-'z', '0'-'9']*
+<word>:
+     ['a'-'z', '0'-'9']+
+*/
+TOKEN :
+{   <NAME
+    : ["a"-"z"] (["a"-"z", "0"-"9"])* ( "_" (["a"-"z", "0"-"9"])+ )*
+    >
+}
+
+/* Symbols
+<symbol>:
+     '@'
+     '='
+     ','
+     '.'
+     '+'
+     '&'
+     '%'
+     ':'
+     ';'
+     '->'
+     '=>'
+     '{'
+     '}'
+     '('
+     ')'
+*/
+TOKEN :
+{   "@"
+|   "="
+|   ","
+|   "."
+|   "+"
+|   "&"
+|   "%"
+|   ":"
+|   <END_OF_DECLARATION: ";">
+|   "->"
+|   "=>"
+|   <OPEN_BLOCK : "{">
+|   <CLOSE_BLOCK: "}">
+|   <OPEN_GROUP : "(">
+|   <CLOSE_GROUP: ")">
+}
+
+/* Basic Types
+<basic-type>:
+     'INT'
+     'LONG'
+     'BYTE'
+     'SHORT'
+     'DECIMAL'
+     'FLOAT'
+     'DOUBLE'
+     'TEXT'
+     'BOOLEAN'
+     'DATE'
+     'DATETIME'
+*/
+TOKEN :
+{   <INT: "INT">
+|   <LONG: "LONG">
+|   <BYTE: "BYTE">
+|   <SHORT: "SHORT">
+|   <DECIMAL: "DECIMAL">
+|   <FLOAT: "FLOAT">
+|   <DOUBLE: "DOUBLE">
+|   <TEXT: "TEXT">
+|   <BOOLEAN: "BOOLEAN">
+|   <DATE: "DATE">
+|   <DATETIME: "DATETIME">
+}
+
+// erroneous token
+TOKEN :
+{   <UNEXPECTED
+    : (~[])
+    | ["A"-"Z"] (["0"-"9", "A"-"Z", "a"-"z", "_"])*
+    >
+}
+
+// Goal Symbol
+private AstScript Start() :
+{
+    begin("start");
+    AstScript script;
+}
+{
+    script = Script()
+    <EOF>
+    {
+        end("start");
+        return script;
+    }
+}
+
+
+/* Literals
+<literal>:
+     <string>
+     <integer>
+     <decimal>
+     <boolean>
+*/
+private AstLiteral Literal() :
+{
+    begin("literal");
+    LiteralKind kind;
+    Token t;
+}
+{
+    (
+        t = <STRING_LITERAL>
+        {
+            kind = LiteralKind.STRING;
+        }
+    |
+        t = <INTEGER_LITERAL>
+        {
+            kind = LiteralKind.INTEGER;
+        }
+    |
+        t = <DECIMAL_LITERAL>
+        {
+            kind = LiteralKind.DECIMAL;
+        }
+    |
+        t = <BOOLEAN_LITERAL>
+        {
+            kind = LiteralKind.BOOLEAN;
+        }
+    )
+    {
+        Region region = end("literal");
+        return new AstLiteral(region, t.image, kind);
+    }
+}
+
+/* Basic Types
+<basic-type>:
+     'INT'
+     'LONG'
+     'BYTE'
+     'SHORT'
+     'DECIMAL'
+     'FLOAT'
+     'DOUBLE'
+     'TEXT'
+     'BOOLEAN'
+     'DATE'
+     'DATETIME'
+*/
+private AstBasicType BasicType() :
+{
+    begin("basic-type");
+    BasicTypeKind kind;
+}
+{
+    (
+        <INT>
+        {
+            kind = BasicTypeKind.INT;
+        }
+    |
+        <LONG>
+        {
+            kind = BasicTypeKind.LONG;
+        }
+    |
+        <BYTE>
+        {
+            kind = BasicTypeKind.BYTE;
+        }
+    |
+        <SHORT>
+        {
+            kind = BasicTypeKind.SHORT;
+        }
+    |
+        <DECIMAL>
+        {
+            kind = BasicTypeKind.DECIMAL;
+        }
+    |
+        <FLOAT>
+        {
+            kind = BasicTypeKind.FLOAT;
+        }
+    |
+        <DOUBLE>
+        {
+            kind = BasicTypeKind.DOUBLE;
+        }
+    |
+        <TEXT>
+        {
+            kind = BasicTypeKind.TEXT;
+        }
+    |
+        <BOOLEAN>
+        {
+            kind = BasicTypeKind.BOOLEAN;
+        }
+    |
+        <DATE>
+        {
+            kind = BasicTypeKind.DATE;
+        }
+    |
+        <DATETIME>
+        {
+            kind = BasicTypeKind.DATETIME;
+        }
+    )
+    {
+        Region region = end("basic-type");
+        return new AstBasicType(region, kind);
+    }
+}
+
+/* Types
+<type>:
+     <basic-type>
+*/
+private AstType Type() :
+{
+    begin("type");
+    AstType type;
+}
+{
+    type = BasicType()
+    {
+        end("type");
+        return type;
+    }
+}
+
+/* Names
+<name>
+*/
+private AstSimpleName Name() :
+{
+    begin("name");
+    Token t;
+}
+{
+    (
+        t = <NAME>
+    |
+        t = <PROJECTIVE>
+    |
+        t = <JOINED>
+    |
+        t = <SUMMARIZED>
+    )
+    {
+        Region region = end("name");
+        return new AstSimpleName(region, t.image);
+    }
+}
+
+/* Names
+<qname>:
+     <qname> '.' <name>
+     <name>
+*/
+private AstName QualifiedName() :
+{
+    begin("qname");
+    AstName qualifier;
+    AstSimpleName simpleName;
+}
+{
+    qualifier = Name()
+    (
+        "."
+        simpleName = Name()
+        {
+            Region region = peek("qname");
+            qualifier = new AstQualifiedName(region, qualifier, simpleName);
+        }
+    )*
+    {
+        end("qname");
+        return qualifier;
+    }
+}
+
+/* Script
+<script>:
+     <model-definition>*
+*/
+private AstScript Script() :
+{
+    begin("script");
+    List<AstModelDefinition<?>> list = newList();
+    AstModelDefinition<?> modelDefinition;
+}
+{
+    (
+        modelDefinition = ModelDefinition()
+        {
+            list.add(modelDefinition);
+        }
+    )*
+    {
+        Region region = end("script");
+        return new AstScript(region, list);
+    }
+}
+
+/* Model Definitions
+<script>:
+     <model-definition>*
+<model-definition>:
+     <record-model-definition>
+     <projective-model-definition>
+     <joined-model-definition>
+     <summarized-model-definition>
+*/
+private AstModelDefinition<?> ModelDefinition() :
+{
+    begin("model-definition");
+    AstDescription description = null;
+    List<AstAttribute> attributes;
+    AstSimpleName name;
+    AstExpression<?> rhs;
+    ModelDefinitionKind kind;
+}
+{
+    ( description = Description() )?
+    attributes = AttributeList()
+    (
+        LOOKAHEAD(2)
+        name = Name()
+        "="
+        rhs = RecordExpression()
+        {
+            kind = ModelDefinitionKind.RECORD;
+        }
+    |
+        <PROJECTIVE>
+        name = Name()
+        "="
+        rhs = RecordExpression()
+        {
+            kind = ModelDefinitionKind.PROJECTIVE;
+        }
+    |
+        <JOINED>
+        name = Name()
+        "="
+        rhs = JoinExpression()
+        {
+            kind = ModelDefinitionKind.JOINED;
+        }
+    |
+        <SUMMARIZED>
+        name = Name()
+        "="
+        rhs = SummarizeExpression()
+        {
+            kind = ModelDefinitionKind.SUMMARIZED;
+        }
+    )
+    <END_OF_DECLARATION>
+    {
+        Region region = end("model-definition");
+        return newModelDefinition(region, kind, description, attributes, name, rhs);
+    }
+}
+
+private List<AstAttribute> AttributeList() :
+{
+    List<AstAttribute> results = newList();
+    AstAttribute attribute;
+}
+{
+    (
+        attribute = Attribute()
+        {
+            results.add(attribute);
+        }
+    )*
+    {
+        return results;
+    }
+}
+
+/* Record Expressions
+<record-expression>:
+     <record-expression> '+' <record-term>
+     <record-term>
+*/
+private AstExpression<AstRecord> RecordExpression() :
+{
+    begin("record-expression");
+    List<AstRecord> terms = newList();
+    AstRecord term;
+}
+{
+    term = RecordTerm()
+    {
+        terms.add(term);
+    }
+    (
+        "+"
+        term = RecordTerm()
+        {
+            terms.add(term);
+        }
+    )*
+    {
+        Region region = end("record-expression");
+        if (terms.size() == 1) {
+            return terms.get(0);
+        }
+        return new AstUnionExpression<AstRecord>(region, terms);
+    }
+}
+
+/* Record Term
+<record-term>:
+     '{' <property-definition>+ '}'
+     <model-reference>
+*/
+private AstRecord RecordTerm() :
+{
+    begin("record-term");
+    List<AstPropertyDefinition> properties = newList();
+    AstPropertyDefinition property;
+    AstModelReference reference;
+}
+{
+    <OPEN_BLOCK>
+    (
+        property = PropertyDefinition()
+        {
+            properties.add(property);
+        }
+    )+
+    <CLOSE_BLOCK>
+    {
+        Region region = end("record-term");
+        return new AstRecordDefinition(region, properties);
+    }
+|
+    reference = ModelReference()
+    {
+        end("record-term");
+        return reference;
+    }
+}
+
+/* Model Reference
+<model-reference>:
+     <name>
+*/
+private AstModelReference ModelReference() :
+{
+    begin("model-reference");
+    AstSimpleName name;
+}
+{
+    name = Name()
+    {
+        Region region = end("model-reference");
+        return new AstModelReference(region, name);
+    }
+}
+
+/* Property Definitions
+<property-definition>:
+     <description>? <attribute>* <name> ':' <type> ';'
+*/
+private AstPropertyDefinition PropertyDefinition() :
+{
+    begin("property-definition");
+    AstDescription description = null;
+    List<AstAttribute> attributes;
+    AstSimpleName name;
+    AstType type;
+}
+{
+    ( description = Description() )?
+    attributes = AttributeList()
+    name = Name()
+    ":"
+    type = Type()
+    <END_OF_DECLARATION>
+    {
+        Region region = end("property-definition");
+        return new AstPropertyDefinition(region, description, attributes, name, type);
+    }
+}
+
+/* Join Expressions
+<join-expression>:
+     <join-expression> '+' <join-term>
+     <join-term>
+*/
+private AstExpression<AstJoin> JoinExpression() :
+{
+    begin("join-expression");
+    List<AstJoin> terms = newList();
+    AstJoin term;
+}
+{
+    term = JoinTerm()
+    {
+        terms.add(term);
+    }
+    (
+        "+"
+        term = JoinTerm()
+        {
+            terms.add(term);
+        }
+    )*
+    {
+        Region region = end("join-expression");
+        if (terms.size() == 1) {
+            return terms.get(0);
+        }
+        return new AstUnionExpression<AstJoin>(region, terms);
+    }
+}
+
+/* Join Terms
+<join-term>:
+     <model-reference> <model-mapping>? <grouping>?
+*/
+private AstJoin JoinTerm() :
+{
+    begin("join-term");
+    AstModelReference reference;
+    AstModelMapping mapping = null;
+    AstGrouping grouping = null;
+}
+{
+    reference = ModelReference()
+    (
+        mapping = ModelMapping()
+    )?
+    (
+        grouping = Grouping()
+    )?
+    {
+        Region region = end("join-term");
+        return new AstJoin(region, reference, mapping, grouping);
+    }
+}
+
+/* Summarize Expressions
+<summarize-expression>:
+     <summarize-term>
+*/
+private AstExpression<AstSummarize> SummarizeExpression() :
+{
+    begin("summarize-expression");
+    List<AstSummarize> terms = newList();
+    AstSummarize term;
+}
+{
+    term = SummarizeTerm()
+    {
+        terms.add(term);
+    }
+    (
+        "+"
+        term = SummarizeTerm()
+        {
+            terms.add(term);
+        }
+    )*
+    {
+        Region region = end("summarize-expression");
+        if (terms.size() == 1) {
+            return terms.get(0);
+        }
+        return new AstUnionExpression<AstSummarize>(region, terms);
+    }
+}
+
+/* Summarize Terms
+<summarize-term>:
+     <name> <model-folding> <grouping>?
+*/
+private AstSummarize SummarizeTerm() :
+{
+    begin("summarize-term");
+    AstModelReference reference;
+    AstModelFolding folding;
+    AstGrouping grouping = null;
+}
+{
+    reference = ModelReference()
+    folding = ModelFolding()
+    (
+        grouping = Grouping()
+    )?
+    {
+        Region region = end("summarize-term");
+        return new AstSummarize(region, reference, folding, grouping);
+    }
+}
+
+/* Descriptions
+<description>:
+     <string>
+*/
+private AstDescription Description() :
+{
+    begin("description");
+    Token t;
+}
+{
+    t = <STRING_LITERAL>
+    {
+        Region region = end("description");
+        return new AstDescription(region, t.image);
+    }
+}
+
+/* Attribtues
+<attribute>:
+     '@' <qname>
+     '@' <qname> '(' ')'
+     '@' <qname> '(' <attribute-element-list> ','? ')'
+*/
+private AstAttribute Attribute() :
+{
+    begin("attribute");
+    AstName name;
+    List<AstAttributeElement> elements = newList();
+}
+{
+    "@"
+    name = QualifiedName()
+    (
+        <OPEN_GROUP>
+        (
+            elements = AttributeElementList()
+            ( "," )?
+        |
+            {}
+        )
+        <CLOSE_GROUP>
+    )?
+    {
+        Region region = end("attribute");
+        return new AstAttribute(region, name, elements);
+    }
+}
+
+/* Attribute Element List
+<attribute-element-list>:
+     <attribute-element-list> ',' <attribute-element>
+     <attribute-element>
+*/
+private List<AstAttributeElement> AttributeElementList() :
+{
+    begin("attribute-element-list");
+    AstAttributeElement element;
+    List<AstAttributeElement> results = newList();
+}
+{
+    element = AttributeElement()
+    {
+        results.add(element);
+    }
+    (
+        LOOKAHEAD(2)
+        ","
+        element = AttributeElement()
+        {
+            results.add(element);
+        }
+    )*
+    {
+        end("attribute-element-list");
+        return results;
+    }
+}
+
+/* Attribute Element
+<attribute-element>:
+     <name> '=' <attribute-value>
+*/
+private AstAttributeElement AttributeElement() :
+{
+    begin("attribute-element-list");
+    AstSimpleName name;
+    AstAttributeValue value;
+}
+{
+    name = Name()
+    "="
+    value = AttributeValue()
+    {
+        Region region = end("attribute-element-list");
+        return new AstAttributeElement(region, name, value);
+    }
+}
+
+/* Attribute Value
+<attribute-value>:
+     <attribute-value-array>
+     <qname>
+     <literal>
+*/
+private AstAttributeValue AttributeValue() :
+{
+    begin("attribute-value");
+    AstAttributeValue value;
+}
+{
+    (
+        value = AttributeValueArray()
+    |
+        value = QualifiedName()
+    |
+        value = Literal()
+    )
+    {
+        end("attribute-value");
+        return value;
+    }
+}
+
+/* Array of attribute value
+<attribute-value-array>:
+     '{' '}'
+     '{' <attribute-value-list> ','? '}'
+<attribute-value-list>:
+     <attribute-value-list> ',' <attribute-value>
+     <attribute-value>
+*/
+private AstAttributeValueArray AttributeValueArray() :
+{
+    begin("attribute-value-array");
+    AstAttributeValue element;
+    List<AstAttributeValue> elements = newList();
+}
+{
+    <OPEN_BLOCK>
+    (
+        element = AttributeValue()
+        {
+            elements.add(element);
+        }
+        (
+            LOOKAHEAD(2)
+            ","
+            element = AttributeValue()
+            {
+                elements.add(element);
+            }
+        )*
+        ( "," )?
+    )?
+    <CLOSE_BLOCK>
+    {
+        Region region = end("attribute-value-array");
+        return new AstAttributeValueArray(region, elements);
+    }
+}
+
+
+/* Groupings
+<grouping>:
+     '%' <property-list>
+<property-list>:
+     <property-list> ',' <name>
+     <name>
+*/
+private AstGrouping Grouping() :
+{
+    begin("grouping");
+    AstSimpleName name;
+    List<AstSimpleName> properties = newList();
+}
+{
+    "%"
+    name = Name()
+    {
+        properties.add(name);
+    }
+    (
+        ","
+        name = Name()
+        {
+            properties.add(name);
+        }
+    )*
+    {
+        Region region = end("grouping");
+        return new AstGrouping(region, properties);
+    }
+}
+
+/* Model Mappings
+<model-mapping>:
+     '->' '{' <property-mapping>+ '}'
+*/
+private AstModelMapping ModelMapping() :
+{
+    begin("model-mapping");
+    AstPropertyMapping mapping;
+    List<AstPropertyMapping> mappings = newList();
+}
+{
+    "->"
+    <OPEN_BLOCK>
+    (
+        mapping = PropertyMapping()
+        {
+            mappings.add(mapping);
+        }
+    )+
+    <CLOSE_BLOCK>
+    {
+        Region region = end("model-mapping");
+        return new AstModelMapping(region, mappings);
+    }
+}
+
+/* Property Mappings
+<property-mapping>:
+     <description>? <attribute>* <name> '->' <name> ';'
+*/
+private AstPropertyMapping PropertyMapping() :
+{
+    begin("property-mapping");
+    AstDescription description = null;
+    List<AstAttribute> attributes = newList();
+    AstSimpleName from;
+    AstSimpleName to;
+}
+{
+    ( description = Description() )?
+    attributes = AttributeList()
+    from = Name()
+    "->"
+    to = Name()
+    <END_OF_DECLARATION>
+    {
+        Region region = end("property-mapping");
+        return new AstPropertyMapping(region, description, attributes, from, to);
+    }
+}
+
+/* Model Foldings
+<model-folding>:
+     '=>' '{' <property-folding>+ '}'
+*/
+private AstModelFolding ModelFolding() :
+{
+    begin("model-folding");
+    AstPropertyFolding folding;
+    List<AstPropertyFolding> foldings = newList();
+}
+{
+    "=>"
+    <OPEN_BLOCK>
+    (
+        folding = PropertyFolding()
+        {
+            foldings.add(folding);
+        }
+    )+
+    <CLOSE_BLOCK>
+    {
+        Region region = end("model-folding");
+        return new AstModelFolding(region, foldings);
+    }
+}
+
+/* Property Foldings
+<property-folding>:
+     <description>? <attribute>* <aggregator> <name> '->' <name> ';'
+<aggregator>:
+     'any'
+     'sum'
+     'max'
+     'min'
+     'count'
+*/
+private AstPropertyFolding PropertyFolding() :
+{
+    begin("property-folding");
+    AstDescription description = null;
+    List<AstAttribute> attributes = newList();
+    AstName aggregator;
+    AstSimpleName from;
+    AstSimpleName to;
+}
+{
+    ( description = Description() )?
+    attributes = AttributeList()
+    aggregator = QualifiedName()
+    from = Name()
+    ( "->" | "=>" )
+    to = Name()
+    <END_OF_DECLARATION>
+    {
+        Region region = end("property-folding");
+        return new AstPropertyFolding(region, description, attributes, aggregator, from, to);
+    }
+}

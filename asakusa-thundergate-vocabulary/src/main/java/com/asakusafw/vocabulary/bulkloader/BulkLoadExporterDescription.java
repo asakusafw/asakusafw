@@ -71,8 +71,8 @@ public abstract class BulkLoadExporterDescription implements ExporterDescription
     public abstract List<String> getTargetColumnNames();
 
     /**
-     * 主キーとなるカラム名の一覧を返す。
-     * @return 主キーとなるカラム名の一覧
+     * 主キーとなるプロパティ名の一覧を返す。
+     * @return 主キーとなるプロパティ名の一覧
      */
     public abstract List<String> getPrimaryKeyNames();
 

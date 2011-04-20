@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+
 import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
@@ -24,28 +25,27 @@ import com.asakusafw.runtime.core.Result;
 /**
  * {@link MasterJoinFlow}に関する演算子実装クラス。
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class MasterJoinFlowImpl extends MasterJoinFlow {
+@Generated("OperatorImplementationClassGenerator:0.0.1")
+public class MasterJoinFlowImpl extends MasterJoinFlow {
     /**
      * インスタンスを生成する。
      */
     public MasterJoinFlowImpl() {
         return;
     }
-    private Ex1 _cache_from = new Ex1();
-    private Ex2 _cache_join = new Ex2();
-    @Override public void split(ExJoined joined, Result<Ex1> ex1, Result<Ex2> ex2) {
-        joined.splitInto(this._cache_from, this._cache_join);
-        ex1.add(this._cache_from);
-        ex2.add(this._cache_join);
+
+    @Override
+    public void split(ExJoined joined, Result<Ex1> ex1, Result<Ex2> ex2) {
+        throw new UnsupportedOperationException();
     }
-    private ExJoined _cache_joined = new ExJoined();
-    @Override public ExJoined join(Ex1 ex1, Ex2 ex2) {
-        this._cache_joined.joinFrom(ex1, ex2);
-        return this._cache_joined;
+
+    @Override
+    public ExJoined join(Ex1 ex1, Ex2 ex2) {
+        throw new UnsupportedOperationException();
     }
-    private ExJoined _cache_joined0 = new ExJoined();
-    @Override public ExJoined selection(Ex1 ex1, Ex2 ex2) {
-        this._cache_joined0.joinFrom(ex1, ex2);
-        return this._cache_joined0;
+
+    @Override
+    public ExJoined selection(Ex1 ex1, Ex2 ex2) {
+        throw new UnsupportedOperationException();
     }
 }

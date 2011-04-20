@@ -15,12 +15,9 @@
  */
 package com.asakusafw.vocabulary.bulkloader;
 
-import com.asakusafw.vocabulary.model.DataModel;
-
 /**
  * 注釈のないテスト用のエラーモデル。
  */
-@DataModel
 public class NoErrorModel {
 
     // no members
