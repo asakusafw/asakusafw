@@ -79,7 +79,7 @@
 			<arg value="-jdbc" />
 			<arg value="${asakusa.testtools.conf}" />
 			<arg value="-output" />
-			<arg value="${asakusa.dmdl.dir}" />
+			<arg value="${asakusa.dmdl.fromddl.output}" />
 			<arg value="-encoding" />
 			<arg value="${asakusa.dmdl.encoding}" />
 			<arg value="-includes" />
@@ -96,7 +96,7 @@
 			<arg value="-package" />
 			<arg value="${asakusa.modelgen.package}" />
 			<arg value="-source" />
-			<arg value="${asakusa.dmdl.dir}" />
+			<arg value="${asakusa.dmdl.dir}:${asakusa.dmdl.fromddl.output}" />
             <arg value="-sourceencoding" />
             <arg value="${asakusa.dmdl.encoding}" />
 		</java>
