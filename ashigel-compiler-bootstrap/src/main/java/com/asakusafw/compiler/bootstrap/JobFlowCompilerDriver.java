@@ -123,8 +123,8 @@ public final class JobFlowCompilerDriver {
         String className = cmd.getOptionValue(OPT_CLASS.getOpt());
         String packageName = cmd.getOptionValue(OPT_PACKAGE.getOpt());
         String hadoopWork = cmd.getOptionValue(OPT_HADOOPWORK.getOpt());
-        String[] link = cmd.getOptionValues(OPT_LINK.getOpt());
-        String[] plugin = cmd.getOptionValues(OPT_PLUGIN.getOpt());
+        String link = cmd.getOptionValue(OPT_LINK.getOpt());
+        String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
 
         Class<? extends FlowDescription> flowDescription =
             Class.forName(className).asSubclass(FlowDescription.class);
@@ -132,13 +132,13 @@ public final class JobFlowCompilerDriver {
         File outputDirectory = new File(output);
         List<File> linkingResources = new ArrayList<File>();
         if (link != null) {
-            for (String s : link) {
+            for (String s : link.split(File.pathSeparator)) {
                 linkingResources.add(new File(s));
             }
         }
         final List<URL> pluginLocations = new ArrayList<URL>();
         if (plugin != null) {
-            for (String s : plugin) {
+            for (String s : plugin.split(File.pathSeparator)) {
                 try {
                     File file = new File(s);
                     if (file.exists() == false) {

@@ -132,8 +132,8 @@ public final class AllBatchCompilerDriver {
         String packageName = cmd.getOptionValue(OPT_PACKAGE.getOpt());
         String hadoopWork = cmd.getOptionValue(OPT_HADOOPWORK.getOpt());
         String compilerWork = cmd.getOptionValue(OPT_COMPILERWORK.getOpt());
-        String[] link = cmd.getOptionValues(OPT_LINK.getOpt());
-        String[] plugin = cmd.getOptionValues(OPT_PLUGIN.getOpt());
+        String link = cmd.getOptionValue(OPT_LINK.getOpt());
+        String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
         boolean skipError = cmd.hasOption(OPT_SKIPERROR.getOpt());
 
         File outputDirectory = new File(output);
@@ -141,13 +141,13 @@ public final class AllBatchCompilerDriver {
         File compilerWorkDirectory = new File(compilerWork);
         List<File> linkingResources = new ArrayList<File>();
         if (link != null) {
-            for (String s : link) {
+            for (String s : link.split(File.pathSeparator)) {
                 linkingResources.add(new File(s));
             }
         }
         List<URL> pluginLocations = new ArrayList<URL>();
         if (plugin != null) {
-            for (String s : plugin) {
+            for (String s : plugin.split(File.pathSeparator)) {
                 try {
                     File file = new File(s);
                     if (file.exists() == false) {
