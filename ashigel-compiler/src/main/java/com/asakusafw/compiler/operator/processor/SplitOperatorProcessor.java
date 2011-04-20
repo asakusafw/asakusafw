@@ -17,8 +17,6 @@ package com.asakusafw.compiler.operator.processor;
 
 import java.util.List;
 
-import javax.lang.model.type.TypeMirror;
-
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
@@ -27,13 +25,11 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
-import com.asakusafw.vocabulary.model.JoinedModel;
 import com.asakusafw.vocabulary.operator.Split;
-import com.ashigeru.lang.java.model.syntax.FieldAccessExpression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
+import com.ashigeru.lang.java.model.util.Models;
+import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
  * {@link Split 分割演算子}を処理する。
@@ -101,42 +97,11 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
 
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
-        ModelFactory f = context.factory;
-
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
-        TypeMirror fromType = a.getParameterType(1).getTypeArgument().getType();
-        TypeMirror joinType = a.getParameterType(2).getTypeArgument().getType();
-        SimpleName fromName = f.newSimpleName(a.getParameterName(1));
-        SimpleName joinName = f.newSimpleName(a.getParameterName(2));
-
-        if (a.getParameterType(0).isJoinFrom(fromType) == false) {
-            TypeMirror holdType = fromType;
-            SimpleName holdName = fromName;
-            fromType = joinType;
-            fromName = joinName;
-            joinType = holdType;
-            joinName = holdName;
-        }
-
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        FieldAccessExpression fromCache = builder.addModelObjectField(
-                fromType, "_cache_from");
-        FieldAccessExpression joinCache = builder.addModelObjectField(
-                joinType, "_cache_join");
-
-        SimpleName joined = f.newSimpleName(a.getParameterName(0));
-        builder.addStatement(new ExpressionBuilder(f, joined)
-            .method(JoinedModel.Interface.METHOD_NAME_SPLIT_INTO,
-                    fromCache,
-                    joinCache)
-            .toStatement());
-        builder.addStatement(new ExpressionBuilder(f, fromName)
-            .method("add", fromCache)
-            .toStatement());
-        builder.addStatement(new ExpressionBuilder(f, joinName)
-            .method("add", joinCache)
-            .toStatement());
-
+        ModelFactory f = context.factory;
+        builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
+            .newObject(Models.toLiteral(f, "分割演算子は組み込みの方法で処理されます"))
+            .toThrowStatement());
         return builder.toImplementation();
     }
 }

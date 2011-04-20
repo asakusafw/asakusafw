@@ -11,6 +11,6 @@ public abstract class ReturnsVoid {
     MockFoo foo = new MockFoo();
     @Convert
     public void example(MockHoge in, MockFoo foo) {
-        foo.value = in.value;
+        foo.setValue(in.getValue());
     }
 }

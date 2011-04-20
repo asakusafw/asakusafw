@@ -10,10 +10,10 @@ public abstract class Simple {
 
     @Branch
     public ExampleEnum example(MockHoge hoge) {
-        if (hoge.value > 100) {
+        if (hoge.getValue() > 100) {
             return ExampleEnum.HIGH;
         }
-        else if (hoge.value > 50) {
+        else if (hoge.getValue() > 50) {
             return ExampleEnum.MIDDLE;
         }
         return ExampleEnum.LOW;

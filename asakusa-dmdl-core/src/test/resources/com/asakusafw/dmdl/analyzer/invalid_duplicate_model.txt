@@ -1,0 +1,2 @@
+simple = { a : INT; };
+simple = { b : BOOLEAN; };

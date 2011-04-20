@@ -1,0 +1,4 @@
+simple = {
+    "With Description"
+    a : INT;
+};

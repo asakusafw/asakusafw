@@ -1,0 +1,2 @@
+@auto_projection(value = 1)
+simple = { value : TEXT; };

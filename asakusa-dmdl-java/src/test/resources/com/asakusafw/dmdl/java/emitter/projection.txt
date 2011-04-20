@@ -1,0 +1,2 @@
+projective projection = { hoge : INT; foo : TEXT; };
+record = projection + { extra : LONG; };

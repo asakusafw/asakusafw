@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.vocabulary.model.DataModel;
+import com.asakusafw.runtime.model.DataModel;
 
 /**
  * {@link ModelGenDataClass}を生成する{@code DataClass.Repository}の実装。
@@ -59,8 +59,10 @@ public class ModelGenDataClassRepository
             return null;
         }
         Class<?> aClass = (Class<?>) type;
-        if (aClass.isAnnotationPresent(DataModel.class) == false) {
-            LOG.debug("{}には{}の指定がないため、スキップされます", aClass.getName(), DataModel.class.getName());
+        if (DataModel.class.isAssignableFrom(aClass) == false) {
+            LOG.debug("{}は{}のサブタイプでないため、スキップされます",
+                    aClass.getName(),
+                    DataModel.class.getName());
             return null;
         }
 

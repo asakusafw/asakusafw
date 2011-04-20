@@ -30,13 +30,11 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.compiler.operator.processor.MasterKindOperatorAnalyzer.ResolveException;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.model.JoinedModel;
 import com.asakusafw.vocabulary.operator.MasterJoin;
-import com.ashigeru.lang.java.model.syntax.FieldAccessExpression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
+import com.ashigeru.lang.java.model.util.Models;
+import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
  * {@link MasterJoin マスタ結合演算子}を処理する。
@@ -128,28 +126,11 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
 
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
-        ModelFactory f = context.factory;
-
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
-        SimpleName fromName = f.newSimpleName(a.getParameterName(0));
-        SimpleName joinName = f.newSimpleName(a.getParameterName(1));
-        if (a.getReturnType().isJoinFrom(a.getParameterType(0).getType()) == false) {
-            SimpleName holdName = fromName;
-            fromName = joinName;
-            joinName = holdName;
-        }
-
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        FieldAccessExpression joinedCache = builder.addModelObjectField(
-                a.getReturnType().getType(),
-                "_cache_joined");
-        builder.addStatement(new ExpressionBuilder(f, joinedCache)
-            .method(JoinedModel.Interface.METHOD_NAME_JOIN_FROM,
-                    fromName,
-                    joinName)
-            .toStatement());
-        builder.addStatement(new ExpressionBuilder(f, joinedCache)
-            .toReturnStatement());
+        ModelFactory f = context.factory;
+        builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
+            .newObject(Models.toLiteral(f, "マスタ結合演算子は組み込みの方法で処理されます"))
+            .toThrowStatement());
         return builder.toImplementation();
     }
 }

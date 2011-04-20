@@ -1,0 +1,4 @@
+@attribute(
+    e_array = { 100, "Hello, world!", 3.141592, TRUE, }
+)
+simple = {a : INT; };

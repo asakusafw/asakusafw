@@ -11,6 +11,6 @@ public abstract class TooManyInput {
 
     @Fold
     public void example(@Key(group = "value") MockHoge left, MockHoge right, MockHoge over, int param) {
-        left.value += right.value;
+        left.setValue(left.getValue() + right.getValue());
     }
 }

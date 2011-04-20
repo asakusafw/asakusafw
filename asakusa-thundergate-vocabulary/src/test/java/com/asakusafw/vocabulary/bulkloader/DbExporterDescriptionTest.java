@@ -87,7 +87,7 @@ public class DbExporterDescriptionTest {
     @Test
     public void primaryKeyNames() {
         DbExporterDescription desc = new MockDbExporterDescription();
-        assertThat(desc.getPrimaryKeyNames(), is(Arrays.asList("A")));
+        assertThat(desc.getPrimaryKeyNames(), is(Arrays.asList("a")));
     }
 
     /**

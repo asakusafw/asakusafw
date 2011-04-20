@@ -17,6 +17,6 @@ public abstract class InconsistentType {
      */
     @Fold
     public void example(@Key(group = "value") MockHoge left, MockFoo right, int param) {
-        left.value += right.value;
+        left.setValue(left.getValue() + right.getValue());
     }
 }

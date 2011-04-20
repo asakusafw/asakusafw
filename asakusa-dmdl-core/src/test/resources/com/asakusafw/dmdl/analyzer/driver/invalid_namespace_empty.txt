@@ -1,0 +1,2 @@
+@namespace
+simple = { a : INT; };

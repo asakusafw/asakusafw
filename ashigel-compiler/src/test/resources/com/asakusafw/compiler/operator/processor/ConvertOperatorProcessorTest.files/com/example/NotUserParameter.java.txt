@@ -11,7 +11,7 @@ public abstract class NotUserParameter {
     MockFoo foo = new MockFoo();
     @Convert
     public MockFoo example(MockHoge in, Object param) {
-        foo.value = in.value;
+        foo.setValue(in.getValue());
         return foo;
     }
 }

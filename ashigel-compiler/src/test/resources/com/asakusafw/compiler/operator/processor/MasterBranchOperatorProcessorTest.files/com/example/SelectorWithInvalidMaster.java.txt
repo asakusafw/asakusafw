@@ -16,10 +16,10 @@ public abstract class SelectorWithInvalidMaster {
         if (master == null) {
             return ExampleEnum.UNKNOWN;
         }
-        if (master.value > 100) {
+        if (master.getValue() > 100) {
             return ExampleEnum.HIGH;
         }
-        else if (master.value > 50) {
+        else if (master.getValue() > 50) {
             return ExampleEnum.MIDDLE;
         }
         return ExampleEnum.LOW;
@@ -28,7 +28,7 @@ public abstract class SelectorWithInvalidMaster {
     @MasterSelection
     public MockHoge select(java.util.Set<MockHoge> masters, MockFoo tx) {
         for (MockHoge master : masters) {
-            if (master.value >= 0) {
+            if (master.getValue() >= 0) {
                 return master;
             }
         }

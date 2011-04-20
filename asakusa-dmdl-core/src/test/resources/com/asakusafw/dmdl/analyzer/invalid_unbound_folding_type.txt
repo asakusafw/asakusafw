@@ -1,0 +1,2 @@
+a = { a : DATE; };
+summarized simple = a => { sum a -> a; };

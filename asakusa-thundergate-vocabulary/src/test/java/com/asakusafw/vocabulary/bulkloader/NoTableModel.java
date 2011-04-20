@@ -15,12 +15,9 @@
  */
 package com.asakusafw.vocabulary.bulkloader;
 
-import com.asakusafw.vocabulary.model.DataModel;
-
 /**
  * 注釈のないテスト用のテーブルモデル。
  */
-@DataModel
 public class NoTableModel {
 
     // no members

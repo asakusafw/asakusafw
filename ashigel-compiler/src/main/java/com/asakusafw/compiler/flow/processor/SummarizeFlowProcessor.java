@@ -16,17 +16,29 @@
 package com.asakusafw.compiler.flow.processor;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.compiler.common.TargetOperator;
+import com.asakusafw.compiler.flow.DataClass;
+import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.compiler.flow.ShuffleDescription;
+import com.asakusafw.runtime.util.TypeUtil;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.model.SummarizedModel;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.model.Summarized;
+import com.asakusafw.vocabulary.model.Summarized.Aggregator;
 import com.asakusafw.vocabulary.operator.Summarize;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.ashigeru.lang.java.model.syntax.Statement;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
@@ -41,12 +53,43 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             FlowElementDescription element,
             FlowElementPortDescription port) {
         FlowElementPortDescription output = element.getOutputPorts().get(Summarize.ID_OUTPUT);
-        LinePartProcessor line = new Prologue(output.getDataType());
+        LinePartProcessor line = new Prologue(port.getDataType(), output.getDataType());
         line.initialize(getEnvironment());
         return new ShuffleDescription(
                 output.getDataType(),
-                port.getShuffleKey(),
+                rebuildShuffleKey(output, port),
                 line);
+    }
+
+    private ShuffleKey rebuildShuffleKey(FlowElementPortDescription output, FlowElementPortDescription input) {
+        assert output != null;
+        assert input != null;
+        Summarized summarized = TypeUtil.erase(output.getDataType()).getAnnotation(Summarized.class);
+        if (summarized == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "Internal Error: {0} does not declared in {1} ({2})",
+                    Summarized.class.getSimpleName(),
+                    output.getDataType(),
+                    output));
+        }
+
+        Map<String, String> mapping = new HashMap<String, String>();
+        for (Summarized.Folding folding : summarized.term().foldings()) {
+            mapping.put(folding.source(), folding.destination());
+        }
+        List<String> remapped = new ArrayList<String>();
+        for (String original : input.getShuffleKey().getGroupProperties()) {
+            String target = mapping.get(original);
+            if (target == null) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "Internal Error: Grouping key mismatched (output={0}, grouping={1}, mapping={2})",
+                        output.getDataType(),
+                        input.getShuffleKey(),
+                        mapping));
+            }
+            remapped.add(target);
+        }
+        return new ShuffleKey(remapped, Collections.<ShuffleKey.Order>emptyList());
     }
 
     @Override
@@ -62,22 +105,59 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             .toStatement());
 
         DataObjectMirror cache = context.createModelCache(output.getDataType());
-        Expression proc = context.getProcessInput(input);
 
+        List<Statement> combine = new ArrayList<Statement>();
+        DataClass outputType = getEnvironment().getDataClasses().load(output.getDataType());
+        Summarized summarized = TypeUtil.erase(output.getDataType()).getAnnotation(Summarized.class);
+        for (Summarized.Folding folding : summarized.term().foldings()) {
+            if (folding.aggregator() == Aggregator.ANY) {
+                continue;
+            }
+            combine.add(createAddSummarizeFor(context, folding, outputType, cache.get()));
+        }
         context.addProcess(input, f.newIfStatement(
                 init,
+                f.newBlock(combine),
                 f.newBlock(
-                        new ExpressionBuilder(context.getModelFactory(), cache.get())
-                            .method(SummarizedModel.Interface.METHOD_NAME_COMBINE_SUMMARIZATION, proc)
-                            .toStatement()),
-                f.newBlock(
-                        cache.createSet(proc),
+                        cache.createSet(context.getProcessInput(input)),
                         new ExpressionBuilder(f, init)
                             .assignFrom(Models.toLiteral(f, true))
                             .toStatement())));
 
         ResultMirror result = context.getOutput(output);
         context.addEnd(result.createAdd(cache.get()));
+    }
+
+    private Statement createAddSummarizeFor(
+            Context context,
+            Summarized.Folding folding,
+            DataClass summarizing,
+            Expression outputCache) {
+        assert context != null;
+        assert folding != null;
+        assert summarizing != null;
+        assert outputCache != null;
+        Property property = summarizing.findProperty(folding.destination());
+        Expression input = context.getProcessInput(context.getInputPort(Summarize.ID_INPUT));
+        ModelFactory f = context.getModelFactory();
+        // TODO for only DMDL
+        switch (folding.aggregator()) {
+        case MAX:
+            return new ExpressionBuilder(f, property.createGetter(outputCache))
+                .method("max", property.createGetter(input))
+                .toStatement();
+        case MIN:
+            return new ExpressionBuilder(f, property.createGetter(outputCache))
+                .method("min", property.createGetter(input))
+                .toStatement();
+        case SUM:
+        case COUNT:
+            return new ExpressionBuilder(f, property.createGetter(outputCache))
+                .method("add", property.createGetter(input))
+                .toStatement();
+        default:
+            throw new AssertionError();
+        }
     }
 
     @Override
@@ -87,21 +167,56 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
 
     static class Prologue extends LinePartProcessor {
 
-        private Type type;
+        private final Type inputType;
 
-        Prologue(Type type) {
-            assert type != null;
-            this.type = type;
+        private final Type outputType;
+
+        Prologue(Type inputType, Type outputType) {
+            assert inputType != null;
+            assert outputType != null;
+            this.inputType = inputType;
+            this.outputType = outputType;
         }
 
         @Override
         public void emitLinePart(Context context) {
-            Expression input = context.getInput();
-            DataObjectMirror cache = context.createModelCache(type);
-            context.add(new ExpressionBuilder(context.getModelFactory(), cache.get())
-                .method(SummarizedModel.Interface.METHOD_NAME_START_SUMMARIZATION, input)
-                .toStatement());
+            Summarized summarized = TypeUtil.erase(outputType).getAnnotation(Summarized.class);
+            DataObjectMirror cache = context.createModelCache(outputType);
+            DataClass inputData = getEnvironment().getDataClasses().load(inputType);
+            DataClass outputData = getEnvironment().getDataClasses().load(outputType);
+            for (Summarized.Folding folding : summarized.term().foldings()) {
+                context.add(createStartSummarizeFor(context, folding, inputData, outputData, cache.get()));
+            }
             context.setOutput(cache.get());
+        }
+
+        private Statement createStartSummarizeFor(
+                Context context,
+                Summarized.Folding folding,
+                DataClass input,
+                DataClass output,
+                Expression outputCache) {
+            Property source = input.findProperty(folding.source());
+            Property destination = output.findProperty(folding.destination());
+            ModelFactory f = context.getModelFactory();
+            // TODO for only DMDL
+            switch (folding.aggregator()) {
+            case ANY:
+            case MAX:
+            case MIN:
+            case SUM:
+                return new ExpressionBuilder(f, destination.createGetter(outputCache))
+                    .method("modify", new ExpressionBuilder(f, source.createGetter(context.getInput()))
+                        .method("get")
+                        .toExpression())
+                    .toStatement();
+            case COUNT:
+                return new ExpressionBuilder(f, destination.createGetter(outputCache))
+                    .method("modify", Models.toLiteral(f, 1L))
+                    .toStatement();
+            default:
+                throw new AssertionError();
+            }
         }
     }
 }

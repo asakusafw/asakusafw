@@ -65,6 +65,14 @@ public interface DataClass {
     Statement assign(Expression target, Expression source);
 
     /**
+     * このデータオブジェクトの内容を消去する文を返す。
+     * @param object 対象のオブジェクト
+     * @return 対象の文
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    Statement reset(Expression object);
+
+    /**
      * この型のデータを指定の{@link DataOutput}に書き出す文を返す。
      * @param object 書き出すオブジェクト
      * @param dataOutput {@link DataOutput}型の式
@@ -112,6 +120,17 @@ public interface DataClass {
         @Override
         public Property findProperty(String propertyName) {
             return null;
+        }
+
+        @Override
+        public Statement reset(Expression object) {
+            Statement statement = factory.newEmptyStatement();
+            statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
+                    MessageFormat.format(
+                            "Failed to resolve in \"reset\": {0}",
+                            runtimeType)
+            )));
+            return statement;
         }
 
         @Override

@@ -18,6 +18,7 @@ package com.asakusafw.compiler.flow.processor.operator;
 import com.asakusafw.compiler.flow.processor.SummarizeFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
+import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.vocabulary.operator.Summarize;
 
 
@@ -33,4 +34,12 @@ public abstract class SummarizeFlow {
      */
     @Summarize
     public abstract ExSummarized simple(Ex1 model);
+
+    /**
+     * キーの名前変更を含む演算子。
+     * @param model モデル
+     * @return 結果
+     */
+    @Summarize
+    public abstract ExSummarized2 renameKey(Ex1 model);
 }

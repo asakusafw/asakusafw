@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -24,8 +23,6 @@ import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.compiler.operator.model.MockJoined;
-import com.asakusafw.compiler.operator.processor.SplitOperatorProcessor;
-import com.asakusafw.runtime.testing.MockResult;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -39,7 +36,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
      * 単純な例。
      */
     @Test
-    public void simple_Factory() {
+    public void simple() {
         add("com.example.Simple");
         ClassLoader loader = start(new SplitOperatorProcessor());
 
@@ -56,56 +53,6 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
         Graph<String> graph = toGraph(in);
         assertThat(graph.getConnected("in"), isJust("Simple.example"));
         assertThat(graph.getConnected("Simple.example"), isJust("a", "b"));
-    }
-
-    /**
-     * 単純な例。
-     */
-    @Test
-    public void simple_Implementation() {
-        add("com.example.Simple");
-        ClassLoader loader = start(new SplitOperatorProcessor());
-
-        Object impl = create(loader, "com.example.SimpleImpl");
-
-        MockJoined joined = new MockJoined();
-        joined.hogeValue = 100;
-        joined.fooValue = 200;
-
-        MockResult<MockHoge> hoge = new MockResult<MockHoge>();
-        MockResult<MockFoo> foo = new MockResult<MockFoo>();
-
-        invoke(impl, "example", joined, hoge, foo);
-        assertThat(hoge.getResults().size(), is(1));
-        assertThat(foo.getResults().size(), is(1));
-
-        assertThat(hoge.getResults().get(0).value, is(100));
-        assertThat(foo.getResults().get(0).value, is(200));
-    }
-
-    /**
-     * 引数の順序を変えた例。
-     */
-    @Test
-    public void inverted_Implementation() {
-        add("com.example.Inverted");
-        ClassLoader loader = start(new SplitOperatorProcessor());
-
-        Object impl = create(loader, "com.example.InvertedImpl");
-
-        MockJoined joined = new MockJoined();
-        joined.hogeValue = 100;
-        joined.fooValue = 200;
-
-        MockResult<MockHoge> hoge = new MockResult<MockHoge>();
-        MockResult<MockFoo> foo = new MockResult<MockFoo>();
-
-        invoke(impl, "example", joined, foo, hoge);
-        assertThat(hoge.getResults().size(), is(1));
-        assertThat(foo.getResults().size(), is(1));
-
-        assertThat(hoge.getResults().get(0).value, is(100));
-        assertThat(foo.getResults().get(0).value, is(200));
     }
 
     /**

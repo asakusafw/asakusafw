@@ -1,0 +1,3 @@
+a = { a : INT; };
+b = a + { a : BOOLEAN; };
+c = { a : BOOLEAN; } + a;

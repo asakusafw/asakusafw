@@ -16,16 +16,21 @@
 package com.asakusafw.compiler.flow.processor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.asakusafw.compiler.common.TargetOperator;
+import com.asakusafw.compiler.flow.DataClass;
+import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
+import com.asakusafw.runtime.util.TypeUtil;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
+import com.ashigeru.lang.java.model.syntax.Statement;
 
 /**
  * {@link MasterJoin マスタ結合演算子}を処理する。
@@ -37,25 +42,47 @@ public class MasterJoinFlowProcessor extends RendezvousProcessor {
     public void emitRendezvous(Context context) {
         MasterKindFlowAnalyzer masterAnalyzer = new MasterKindFlowAnalyzer(context);
         ModelFactory f = context.getModelFactory();
-        OperatorDescription desc = context.getOperatorDescription();
 
         FlowElementPortDescription tx = context.getInputPort(MasterJoin.ID_INPUT_TRANSACTION);
 
         FlowElementPortDescription joinedPort = context.getOutputPort(MasterJoin.ID_OUTPUT_JOINED);
         FlowElementPortDescription missedPort = context.getOutputPort(MasterJoin.ID_OUTPUT_MISSED);
+
+        DataObjectMirror resultCache = context.createModelCache(joinedPort.getDataType());
+        DataClass outputType = getEnvironment().getDataClasses().load(joinedPort.getDataType());
+        List<Statement> process = new ArrayList<Statement>();
+        process.add(resultCache.createReset());
+
+        Joined annotation = TypeUtil.erase(joinedPort.getDataType()).getAnnotation(Joined.class);
+        Set<String> saw = new HashSet<String>();
+        for (Joined.Term term : annotation.terms()) {
+            DataClass inputType = getEnvironment().getDataClasses().load(term.source());
+            Expression input;
+            if (term.source().equals(context.getInputPort(MasterJoin.ID_INPUT_MASTER).getDataType())) {
+                input = masterAnalyzer.getGetRawMasterExpression();
+            } else {
+                input = context.getProcessInput(tx);
+            }
+            for (Joined.Mapping mapping : term.mappings()) {
+                if (saw.contains(mapping.destination())) {
+                    continue;
+                }
+                saw.add(mapping.destination());
+                Property sourceProperty = inputType.findProperty(mapping.source());
+                Property destinationProperty = outputType.findProperty(mapping.destination());
+                process.add(destinationProperty.createSetter(
+                        resultCache.get(),
+                        sourceProperty.createGetter(input)));
+            }
+        }
+
         ResultMirror joined = context.getOutput(joinedPort);
+        process.add(joined.createAdd(resultCache.get()));
+
         ResultMirror missed = context.getOutput(missedPort);
-
-        Expression impl = context.createImplementation();
-        List<Expression> arguments = new ArrayList<Expression>();
-        arguments.add(masterAnalyzer.getGetRawMasterExpression());
-        arguments.add(context.getProcessInput(tx));
-
         context.addProcess(tx, f.newIfStatement(
                 masterAnalyzer.getHasMasterExpresion(),
-                f.newBlock(joined.createAdd(new ExpressionBuilder(f, impl)
-                    .method(desc.getDeclaration().getName(), arguments)
-                    .toExpression())),
+                f.newBlock(process),
                 f.newBlock(missed.createAdd(context.getProcessInput(tx)))));
     }
 }

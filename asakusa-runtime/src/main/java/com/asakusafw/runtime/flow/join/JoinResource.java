@@ -167,7 +167,8 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
         try {
             lookupKeyBuffer.reset();
             LookUpKey k = buildRightKey(value, lookupKeyBuffer);
-            return table.get(k);
+            List<L> found = table.get(k);
+            return found;
         } catch (IOException e) {
             throw new LookUpException(MessageFormat.format(
                     "{0}に対する結合先を探す際にエラーが発生しました",

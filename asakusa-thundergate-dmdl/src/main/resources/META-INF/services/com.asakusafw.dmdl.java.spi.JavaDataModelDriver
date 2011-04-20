@@ -1,0 +1,3 @@
+com.asakusafw.dmdl.thundergate.driver.ColumnOrderEmitter
+com.asakusafw.dmdl.thundergate.driver.OriginalNameEmitter
+com.asakusafw.dmdl.thundergate.driver.PrimaryKeyEmitter

@@ -1,0 +1,17 @@
+mock_foo = {
+    value : INT;
+};
+
+mock_hoge = {
+    value : INT;
+};
+
+joined mock_joined
+= mock_hoge -> { value -> hoge_value; } % hoge_value
++ mock_foo -> { value -> foo_value; } % foo_value
+;
+
+summarized mock_summarized = mock_hoge => {
+    any value -> key;
+    count value -> count;
+} % key;

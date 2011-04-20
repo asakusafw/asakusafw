@@ -1,0 +1,4 @@
+projective a = { a : INT; };
+projective b = { b : LONG; };
+simple = a + b;
+

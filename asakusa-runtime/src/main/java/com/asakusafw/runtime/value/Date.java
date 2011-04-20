@@ -31,6 +31,31 @@ public class Date implements Comparable<Date> {
     private int elapsed = 0;
 
     /**
+     * 0001/01/01を表すインスタンスを生成する。
+     */
+    public Date() {
+        this(0);
+    }
+
+    /**
+     * インスタンスを生成する。
+     * @param year 年 (1-...)
+     * @param month 月 (1-12)
+     * @param day 日 (1-31)
+     */
+    public Date(int year, int month, int day) {
+        this(DateUtil.getDayFromDate(year, month, day));
+    }
+
+    /**
+     * インスタンスを生成する。
+     * @param elapsedDays 表す日付の0001/01/01からの経過日数(0起算)
+     */
+    public Date(int elapsedDays) {
+        this.elapsed = elapsedDays;
+    }
+
+    /**
      * 0001/01/01 からの経過日数を返す。
      * @return 0001/01/01 からの経過日数(0起算)
      */

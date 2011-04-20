@@ -1,282 +1,193 @@
-/**
- * Copyright 2011 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.testing.model;
-
+import com.asakusafw.compiler.flow.testing.io.ExSummarizedInput;
+import com.asakusafw.compiler.flow.testing.io.ExSummarizedOutput;
+import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.ModelInputLocation;
+import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.model.Summarized;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import javax.annotation.Generated;
-
-
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.runtime.value.LongOption;
-import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.vocabulary.model.DataModel;
-import com.asakusafw.vocabulary.model.Key;
-import com.asakusafw.vocabulary.model.ModelRef;
-import com.asakusafw.vocabulary.model.Property;
-import com.asakusafw.vocabulary.model.SummarizedModel;
-
 /**
- * テーブル<code>EX_SUMMARIZED</code>を集計した結果のモデルクラス。
- * <p>
- * グループ化はそれぞれ <code>[STRING]</code> で行っている。
- * </p>
+ * ex_summarizedを表すデータモデルクラス。
  */
-@Generated("SummarizeModelEntityEmitter:0.0.1")
-@DataModel
-@SummarizedModel(from = @ModelRef(type = Ex1.class, key = @Key(group = { "string" })))
-@SuppressWarnings("deprecation")
-public class ExSummarized implements Writable {
+@ModelInputLocation(ExSummarizedInput.class)@ModelOutputLocation(ExSummarizedOutput.class)@Summarized(term = @Summarized
+        .Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = 
+            "string", destination = "string"),@Summarized.Folding(aggregator = Summarized.Aggregator.SUM, source = 
+            "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "sid"
+            , destination = "count")}, shuffle = @Key(group = {"string"}))) public class ExSummarized implements 
+        DataModel<ExSummarized>, Writable {
+    private final StringOption string = new StringOption();
+    private final LongOption value = new LongOption();
+    private final LongOption count = new LongOption();
+    @Override@SuppressWarnings("deprecation") public void reset() {
+        this.string.setNull();
+        this.value.setNull();
+        this.count.setNull();
+    }
+    @Override@SuppressWarnings("deprecation") public void copyFrom(ExSummarized other) {
+        this.string.copyFrom(other.string);
+        this.value.copyFrom(other.value);
+        this.count.copyFrom(other.count);
+    }
     /**
-     * グループ化したカラム<code>STRING</code>の内容のフィールド。
-     */
-    @Property(from = @Property.Source(declaring = Ex1.class, name = "string"), aggregator = Property.Aggregator.IDENT)
-    private StringOption string = new StringOption();
-    /**
-     * カラム<code>VALUE</code>を<code>SUM()</code>で集約した結果のフィールド。
-     */
-    @Property(from = @Property.Source(declaring = Ex1.class, name = "value"), aggregator = Property.Aggregator.SUM)
-    private LongOption value = new LongOption();
-    /**
-     * カラム<code>SID</code>を<code>COUNT()</code>で集約した結果のフィールド。
-     */
-    @Property(from = @Property.Source(declaring = Ex1.class, name = "sid"), aggregator = Property.Aggregator.COUNT)
-    private LongOption count = new LongOption();
-
-    /**
-     * グループ化したカラム<code>STRING</code>の内容を返す。
-     *
-     * @return グループ化したカラム<code>STRING</code>の内容
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
+     * stringを返す。
+     * @return string
+     * @throws NullPointerException stringの値が<code>null</code>である場合
      */
     public Text getString() {
         return this.string.get();
     }
-
     /**
-     * グループ化したカラム<code>STRING</code>の内容を変更する。
-     *
-     * @param string
-     *            設定する値
+     * stringを設定する。
+     * @param value0 設定する値
      */
-    public void setString(Text string) {
-        this.string.modify(string);
+    @SuppressWarnings("deprecation") public void setString(Text value0) {
+        this.string.modify(value0);
     }
-
     /**
-     * グループ化したカラム<code>STRING</code>の内容を返す。
-     *
-     * @return グループ化したカラム<code>STRING</code>の内容
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
-     */
-    public String getStringAsString() {
-        return this.string.getAsString();
-    }
-
-    /**
-     * グループ化したカラム<code>STRING</code>の内容を変更する。
-     *
-     * @param string
-     *            設定する値
-     */
-    public void setStringAsString(String string) {
-        this.string.modify(string);
-    }
-
-    /**
-     * {@link #getString()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getString()}
+     * <code>null</code>を許すstringを返す。
+     * @return string
      */
     public StringOption getStringOption() {
         return this.string;
     }
-
     /**
-     * {@link #setString(Text)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param string
-     *            設定する値、消去する場合は{@code null}
+     * stringを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    public void setStringOption(StringOption string) {
-        this.string.copyFrom(string);
+    @SuppressWarnings("deprecation") public void setStringOption(StringOption option) {
+        this.string.copyFrom(option);
     }
-
     /**
-     * カラム<code>VALUE</code>を<code>SUM()</code>で集約した結果を返す。
-     *
-     * @return カラム<code>VALUE</code>を<code>SUM()</code>で集約した結果
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
+     * valueを返す。
+     * @return value
+     * @throws NullPointerException valueの値が<code>null</code>である場合
      */
     public long getValue() {
         return this.value.get();
     }
-
     /**
-     * カラム<code>VALUE</code>を<code>SUM()</code>で集約した結果を変更する。
-     *
-     * @param value
-     *            設定する値
+     * valueを設定する。
+     * @param value0 設定する値
      */
-    public void setValue(long value) {
-        this.value.modify(value);
+    @SuppressWarnings("deprecation") public void setValue(long value0) {
+        this.value.modify(value0);
     }
-
     /**
-     * {@link #getValue()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getValue()}
+     * <code>null</code>を許すvalueを返す。
+     * @return value
      */
     public LongOption getValueOption() {
         return this.value;
     }
-
     /**
-     * {@link #setValue(long)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param value
-     *            設定する値、消去する場合は{@code null}
+     * valueを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    public void setValueOption(LongOption value) {
-        this.value.copyFrom(value);
+    @SuppressWarnings("deprecation") public void setValueOption(LongOption option) {
+        this.value.copyFrom(option);
     }
-
     /**
-     * カラム<code>SID</code>を<code>COUNT()</code>で集約した結果を返す。
-     *
-     * @return カラム<code>SID</code>を<code>COUNT()</code>で集約した結果
-     * @throw NullPointerException 値に{@code null}が格納されていた場合
+     * countを返す。
+     * @return count
+     * @throws NullPointerException countの値が<code>null</code>である場合
      */
     public long getCount() {
         return this.count.get();
     }
-
     /**
-     * カラム<code>SID</code>を<code>COUNT()</code>で集約した結果を変更する。
-     *
-     * @param count
-     *            設定する値
+     * countを設定する。
+     * @param value0 設定する値
      */
-    public void setCount(long count) {
-        this.count.modify(count);
+    @SuppressWarnings("deprecation") public void setCount(long value0) {
+        this.count.modify(value0);
     }
-
     /**
-     * {@link #getCount()}の情報を{@code null}も表現可能な形式で返す。
-     *
-     * @return オプション形式の{@link #getCount()}
+     * <code>null</code>を許すcountを返す。
+     * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
-
     /**
-     * {@link #setCount(long)}を{@code null}が指定可能なオプションの形式で設定する。
-     *
-     * @param count
-     *            設定する値、消去する場合は{@code null}
+     * countを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    public void setCountOption(LongOption count) {
-        this.count.copyFrom(count);
+    @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
+        this.count.copyFrom(option);
     }
-
-    /**
-     * 指定のオブジェクトが持つプロパティの内容を全てこのオブジェクトにコピーする。
-     *
-     * @param source
-     *            コピー元になるオブジェクト
-     */
-    public void copyFrom(ExSummarized source) {
-        this.string.copyFrom(source.string);
-        this.value.copyFrom(source.value);
-        this.count.copyFrom(source.count);
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        result.append("class=ex_summarized");
+        result.append(", string=");
+        result.append(this.string);
+        result.append(", value=");
+        result.append(this.value);
+        result.append(", count=");
+        result.append(this.count);
+        result.append("}");
+        return result.toString();
     }
-
-    @Override
-    public void write(DataOutput out) throws IOException {
-        string.write(out);
-        value.write(out);
-        count.write(out);
-    }
-
-    @Override
-    public void readFields(DataInput in) throws IOException {
-        string.readFields(in);
-        value.readFields(in);
-        count.readFields(in);
-    }
-
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
-        result += prime * result + string.hashCode();
-        result += prime * result + value.hashCode();
-        result += prime * result + count.hashCode();
+        result = prime * result + string.hashCode();
+        result = prime * result + value.hashCode();
+        result = prime * result + count.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    @Override public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if(this.getClass()!= obj.getClass()) {
             return false;
         }
         ExSummarized other = (ExSummarized) obj;
-        if (this.string.equals(other.string) == false) {
+        if(this.string.equals(other.string)== false) {
             return false;
         }
-        if (this.value.equals(other.value) == false) {
+        if(this.value.equals(other.value)== false) {
             return false;
         }
-        if (this.count.equals(other.count) == false) {
+        if(this.count.equals(other.count)== false) {
             return false;
         }
         return true;
     }
-
     /**
-     * 指定のモデルを最初の要素として、このモデルの集計結果を初期化する。
-     *
-     * @param original
-     *            最初の要素となるモデル
+     * stringを返す。
+     * @return string
+     * @throws NullPointerException stringの値が<code>null</code>である場合
      */
-    public void startSummarization(Ex1 original) {
-        this.string.modify(original.getString());
-        this.value.modify(original.getValue());
-        this.count.modify(1);
+    public String getStringAsString() {
+        return this.string.getAsString();
     }
-
     /**
-     * このモデルに、指定のモデルの集計結果を合成する。
-     *
-     * @param original
-     *            合成するモデル
+     * stringを設定する。
+     * @param string0 設定する値
      */
-    public void combineSummarization(ExSummarized original) {
-        this.value.add(original.value);
-        this.count.add(original.count);
+    @SuppressWarnings("deprecation") public void setStringAsString(String string0) {
+        this.string.modify(string0);
+    }
+    @Override public void write(DataOutput out) throws IOException {
+        string.write(out);
+        value.write(out);
+        count.write(out);
+    }
+    @Override public void readFields(DataInput in) throws IOException {
+        string.readFields(in);
+        value.readFields(in);
+        count.readFields(in);
     }
 }

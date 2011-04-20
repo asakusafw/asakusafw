@@ -24,9 +24,12 @@
 		<module>../ashigel-compiler</module>
 		<module>../ashigel-compiler-bootstrap</module>
 		<module>../asakusa-model-generator</module>
+		<module>../asakusa-dmdl-core</module>
+		<module>../asakusa-dmdl-java</module>
 		<module>../asakusa-test-tools</module>
 		<module>../asakusa-test-driver</module>
 		<module>../asakusa-thundergate-vocabulary</module>
+		<module>../asakusa-thundergate-dmdl</module>
 		<module>../asakusa-thundergate-plugin</module>
 		<module>../asakusa-thundergate</module>
 		<module>../asakusa-cleaner</module>

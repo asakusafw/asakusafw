@@ -1,0 +1,2 @@
+@namespace(value="com.example")
+simple = { a : INT; };

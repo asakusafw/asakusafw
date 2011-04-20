@@ -93,16 +93,16 @@ public class DupCheckDbExporterDescriptionTest {
     }
 
     /**
-     * 主キーのカラム一覧。
+     * 主キーのプロパティ名一覧。
      */
     @Test
     public void primaryKeyNames() {
         BulkLoadExporterDescription desc = new MockDupCheckDbExporterDescription();
-        assertThat(desc.getPrimaryKeyNames(), is(Arrays.asList("A")));
+        assertThat(desc.getPrimaryKeyNames(), is(Arrays.asList("a")));
     }
 
     /**
-     * 主キーのカラム一覧。
+     * 主キーのプロパティ名一覧。
      */
     @Test(expected = RuntimeException.class)
     public void primaryKeyNames_invalid() {

@@ -1,0 +1,4 @@
+simple = {
+    @a @b @c
+    a : INT;
+};

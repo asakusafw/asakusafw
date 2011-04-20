@@ -15,17 +15,8 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.TypeElement;
-
-import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
@@ -36,8 +27,6 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.model.Property;
-import com.asakusafw.vocabulary.model.Property.Aggregator;
 import com.asakusafw.vocabulary.operator.Summarize;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
@@ -78,7 +67,6 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
         }
 
         ShuffleKey key = summarized.getSummarizeKey();
-        key = remap(key, a, summarizee, summarized);
         Summarize annotation = context.element.getAnnotation(Summarize.class);
         if (annotation == null) {
             a.error("注釈の解釈に失敗しました");
@@ -107,85 +95,6 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
                 a.getReturnType().getType(),
                 null);
         return builder.toDescriptor();
-    }
-
-    private ShuffleKey remap(
-            ShuffleKey key,
-            ExecutableAnalyzer analyzer,
-            TypeConstraint summarizee,
-            TypeConstraint summarized) {
-        assert analyzer != null;
-        assert summarizee != null;
-        assert summarized != null;
-        if (key == null) {
-            analyzer.error("{0}の@Keyを解析できませんでした", summarized.getType());
-            return null;
-        }
-        TypeElement source = summarizee.getTypeElement();
-        TypeElement target = summarized.getTypeElement();
-        assert source != null;
-        assert target != null;
-        Map<String, String> mapping = createMapping(analyzer, target);
-        if (analyzer.hasError()) {
-            return null;
-        }
-
-        List<String> remappedGroup = new ArrayList<String>();
-        for (String group : key.getGroupProperties()) {
-            String normalized = JavaName.of(group).toMemberName();
-            String remapped = mapping.get(normalized);
-            if (remapped == null) {
-                analyzer.error(
-                        "{0}のgroup指定されたプロパティ{1}を集計前のモデルから発見できませんでした",
-                        summarized.getType(),
-                        normalized);
-            } else {
-                remappedGroup.add(remapped);
-            }
-        }
-        if (analyzer.hasError()) {
-            return null;
-        }
-        return new ShuffleKey(remappedGroup, Collections.<ShuffleKey.Order>emptyList());
-    }
-
-    private Map<String, String> createMapping(
-            ExecutableAnalyzer analyzer,
-            TypeElement target) {
-        assert target != null;
-        Map<String, String> mapping = new HashMap<String, String>();
-        for (Element field : target.getEnclosedElements()) {
-            if (field.getKind() != ElementKind.FIELD) {
-                continue;
-            }
-            String sourceName = getSourceName(analyzer, target, field);
-            if (sourceName != null && mapping.containsKey(sourceName) == false) {
-                mapping.put(sourceName, field.getSimpleName().toString());
-            }
-        }
-        return mapping;
-    }
-
-    private String getSourceName(ExecutableAnalyzer analyzer, TypeElement target, Element field) {
-        assert analyzer != null;
-        assert target != null;
-        assert field != null;
-
-        // @Propertyが未指定のものは無視
-        Property property = field.getAnnotation(Property.class);
-        if (property == null) {
-            return null;
-        }
-
-        // グループ化に利用できないものは無視
-        if (property.aggregator() != Aggregator.IDENT) {
-            return null;
-        }
-        String sourceName = property.from().name();
-        if (sourceName.isEmpty()) {
-            return null;
-        }
-        return sourceName;
     }
 
     @Override

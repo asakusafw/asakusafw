@@ -15,13 +15,12 @@
  */
 package com.asakusafw.compiler.flow.testing.external;
 
-import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 
 /**
- * {@link Ex1}のモックエクスポーター記述。
+ * {@link ExSummarized}のモックエクスポーター記述。
  */
 public class ExSummarizedMockExporterDescription extends FileExporterDescription {
 

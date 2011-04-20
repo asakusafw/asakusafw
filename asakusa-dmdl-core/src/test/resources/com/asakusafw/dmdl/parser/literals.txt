@@ -1,0 +1,7 @@
+@attribute(
+    e_int = 100,
+    e_string = "Hello, world!",
+    e_decimal = 3.141592,
+    e_boolean = TRUE,
+)
+simple = {a : INT; };

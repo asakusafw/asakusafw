@@ -16,11 +16,13 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
+import com.asakusafw.compiler.flow.testing.model.ExJoined2;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
@@ -87,9 +89,9 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
             builder0.declare(MasterJoinFlow.class, MasterJoinFlowImpl.class, "join");
             builder0.declareParameter(Ex1.class);
             builder0.declareParameter(Ex2.class);
-            builder0.addInput("ex1", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new 
+            builder0.addInput("ex1", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
                     ShuffleKey.Order[]{})));
-            builder0.addInput("ex2", Ex2.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new 
+            builder0.addInput("ex2", Ex2.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
                     ShuffleKey.Order[]{})));
             builder0.addOutput("joined", ExJoined.class);
             builder0.addOutput("missed", Ex2.class);
@@ -111,6 +113,46 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
         return new MasterJoinFlowFactory.Join(ex1, ex2);
     }
     /**
+     * 結合する。
+     */
+    public static final class RenameKey implements Operator {
+        /**
+         *  結合結果
+         */
+        public final Source<ExJoined2> joined;
+        /**
+         * 結合に失敗したデータ
+         */
+        public final Source<Ex2> missed;
+        RenameKey(Source<Ex1> ex1, Source<Ex2> ex2) {
+            OperatorDescription.Builder builder0 = new OperatorDescription.Builder(MasterJoin.class);
+            builder0.declare(MasterJoinFlow.class, MasterJoinFlowImpl.class, "renameKey");
+            builder0.declareParameter(Ex1.class);
+            builder0.declareParameter(Ex2.class);
+            builder0.addInput("ex1", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
+                    ShuffleKey.Order[]{})));
+            builder0.addInput("ex2", Ex2.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
+                    ShuffleKey.Order[]{})));
+            builder0.addOutput("joined", ExJoined2.class);
+            builder0.addOutput("missed", Ex2.class);
+            builder0.addAttribute(FlowBoundary.SHUFFLE);
+            FlowElementResolver resolver0 = builder0.toResolver();
+            resolver0.resolveInput("ex1", ex1);
+            resolver0.resolveInput("ex2", ex2);
+            this.joined = resolver0.resolveOutput("joined");
+            this.missed = resolver0.resolveOutput("missed");
+        }
+    }
+    /**
+     * キー名を変更して結合する。
+     * @param ex1 マスタ
+     * @param ex2 トラン
+     * @return 生成した演算子オブジェクト
+     */
+    public MasterJoinFlowFactory.RenameKey renameKey(Source<Ex1> ex1, Source<Ex2> ex2) {
+        return new MasterJoinFlowFactory.RenameKey(ex1, ex2);
+    }
+    /**
      * セレクタつき。
      */
     public static final class Selection implements Operator {
@@ -127,9 +169,9 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
             builder1.declare(MasterJoinFlow.class, MasterJoinFlowImpl.class, "selection");
             builder1.declareParameter(Ex1.class);
             builder1.declareParameter(Ex2.class);
-            builder1.addInput("ex1", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new 
+            builder1.addInput("ex1", Ex1.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
                     ShuffleKey.Order[]{})));
-            builder1.addInput("ex2", Ex2.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new 
+            builder1.addInput("ex2", Ex2.class, new ShuffleKey(Arrays.asList(new String[]{"value"}), Arrays.asList(new
                     ShuffleKey.Order[]{})));
             builder1.addOutput("joined", ExJoined.class);
             builder1.addOutput("missed", Ex2.class);

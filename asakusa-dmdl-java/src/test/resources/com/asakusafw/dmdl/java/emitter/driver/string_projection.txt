@@ -1,0 +1,2 @@
+projective projection = { value : TEXT; };
+simple = { sid : LONG; } + projection;

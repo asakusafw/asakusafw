@@ -1,0 +1,5 @@
+summarized simple = source => {
+    any a -> a;
+    count b -> b;
+    com.asakusafw.aggregate c -> d;
+};

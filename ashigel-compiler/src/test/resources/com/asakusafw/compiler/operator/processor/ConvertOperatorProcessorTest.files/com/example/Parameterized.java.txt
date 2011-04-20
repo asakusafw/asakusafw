@@ -11,7 +11,7 @@ public abstract class Parameterized {
     MockFoo foo = new MockFoo();
     @Convert
     public MockFoo example(MockHoge in, int delta) {
-        foo.value = in.value + delta;
+        foo.setValue(in.getValue() + delta);
         return foo;
     }
 }

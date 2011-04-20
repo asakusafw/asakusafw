@@ -23,7 +23,9 @@ import java.lang.annotation.Target;
 
 /**
  * テーブルから構築されたモデルを表す注釈。
+ * @deprecated moved to asakusa-thundergate-vocabulary
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

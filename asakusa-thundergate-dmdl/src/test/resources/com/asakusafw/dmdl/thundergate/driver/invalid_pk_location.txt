@@ -1,0 +1,6 @@
+simple = {
+    @thundergate.primary_key(value = { value1 })
+    value1 : INT;
+    value2 : INT;
+    value3 : INT;
+};

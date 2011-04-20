@@ -15,6 +15,6 @@ public abstract class Simple {
      */
     @Update
     public void example(MockHoge in, int param) {
-        in.value = param;
+        in.setValue(param);
     }
 }

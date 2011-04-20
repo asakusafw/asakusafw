@@ -15,11 +15,7 @@
  */
 package com.asakusafw.vocabulary.bulkloader;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
-
-import com.asakusafw.vocabulary.model.TableModel;
 
 
 /**
@@ -66,16 +62,7 @@ public abstract class SecondaryImporterDescription extends BulkLoadImporterDescr
      */
     @Override
     public String getTableName() {
-        TableModel meta = getModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、テーブル名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    SecondaryImporterDescription.class.getSimpleName(),
-                    "getTableName"));
-        }
-        return meta.name();
+        return AttributeHelper.getTableName(getModelType());
     }
 
     /**
@@ -87,16 +74,7 @@ public abstract class SecondaryImporterDescription extends BulkLoadImporterDescr
      */
     @Override
     public List<String> getColumnNames() {
-        TableModel meta = getModelType().getAnnotation(TableModel.class);
-        if (meta == null) {
-            throw new UnsupportedOperationException(MessageFormat.format(
-                    "クラス{0}には@{1}の指定がないため、カラム名を自動的に判別できませんでした。{2}#{3}()をオーバーライドして明示的に指定して下さい",
-                    getClass().getName(),
-                    TableModel.class.getSimpleName(),
-                    SecondaryImporterDescription.class.getSimpleName(),
-                    "getColumnNames"));
-        }
-        return Arrays.asList(meta.columns());
+        return AttributeHelper.getColumnNames(getModelType());
     }
 
     /**

@@ -23,7 +23,9 @@ import java.lang.annotation.Target;
 
 /**
  * 他のモデルを集約したモデルを表す注釈。
+ * @deprecated replaced into {@link Summarized} since 0.2.0
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

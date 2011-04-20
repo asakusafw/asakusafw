@@ -1,0 +1,2 @@
+joined = { joined : INT; summarized : INT; };
+summarized = { joined : INT; summarized : INT; };

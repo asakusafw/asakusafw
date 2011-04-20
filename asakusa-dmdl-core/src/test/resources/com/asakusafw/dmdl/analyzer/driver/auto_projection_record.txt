@@ -1,0 +1,4 @@
+r1 = { value : TEXT; };
+
+@auto_projection
+simple = { value : TEXT; };

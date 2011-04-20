@@ -17,7 +17,7 @@ public abstract class Simple {
      */
     @Convert
     public MockFoo example(MockHoge in) {
-        foo.value = in.value;
+        foo.setValue(in.getValue());
         return foo;
     }
 }

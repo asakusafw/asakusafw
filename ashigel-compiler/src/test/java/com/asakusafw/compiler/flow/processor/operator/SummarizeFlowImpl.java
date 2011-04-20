@@ -18,12 +18,16 @@ import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
+import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 /**
  * {@link SummarizeFlow}に関する演算子実装クラス。
  */
-@Generated("com.asakusafw.compiler.operator.OperatorImplementationClassGenerator") public class 
+@Generated("com.asakusafw.compiler.operator.OperatorImplementationClassGenerator") public class
         SummarizeFlowImpl extends SummarizeFlow {
     @Override public ExSummarized simple(Ex1 model) {
+        throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
+    }
+    @Override public ExSummarized2 renameKey(Ex1 model) {
         throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
     }
 }
