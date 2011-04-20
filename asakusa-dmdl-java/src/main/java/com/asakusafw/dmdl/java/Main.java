@@ -70,7 +70,6 @@ public class Main {
 
         OPT_SOURCE_PATH = new Option("source", true, "source file or source directory paths");
         OPT_SOURCE_PATH.setArgName("source-file.dmdl" + File.pathSeparatorChar + "/path/to/source");
-        OPT_SOURCE_PATH.setValueSeparator(File.pathSeparatorChar);
         OPT_SOURCE_PATH.setRequired(true);
 
         OPT_PACKAGE = new Option("package", true, "package name of output Java files");
@@ -122,20 +121,21 @@ public class Main {
         }
     }
 
-    private static Configuration configure(String[] args) throws ParseException {
+    static Configuration configure(String[] args) throws ParseException {
+        assert args != null;
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
         String output = cmd.getOptionValue(OPT_OUTPUT.getOpt());
         String packageName = cmd.getOptionValue(OPT_PACKAGE.getOpt());
         Charset sourceEnc = consumeCharset(cmd, OPT_SOURCE_ENCODING);
         Charset targetEnc = consumeCharset(cmd, OPT_TARGET_ENCODING);
-        String[] sourcePaths = cmd.getOptionValues(OPT_SOURCE_PATH.getOpt());
-        String[] plugin = cmd.getOptionValues(OPT_PLUGIN.getOpt());
+        String sourcePaths = cmd.getOptionValue(OPT_SOURCE_PATH.getOpt());
+        String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
 
         File outputDirectory = new File(output);
         List<DmdlSourceRepository> sources = new ArrayList<DmdlSourceRepository>();
         if (sourcePaths != null) {
-            for (String s : sourcePaths) {
+            for (String s : sourcePaths.split(File.pathSeparator)) {
                 File file = new File(s);
                 if (file.isFile()) {
                     sources.add(new DmdlSourceFile(Collections.singletonList(file), sourceEnc));
@@ -172,10 +172,10 @@ public class Main {
         return Charset.forName(charset);
     }
 
-    private static ClassLoader loadPlugins(String[] plugin) {
+    private static ClassLoader loadPlugins(String plugin) {
         final List<URL> pluginLocations = new ArrayList<URL>();
         if (plugin != null) {
-            for (String s : plugin) {
+            for (String s : plugin.split(File.pathSeparator)) {
                 try {
                     File file = new File(s);
                     if (file.exists() == false) {
