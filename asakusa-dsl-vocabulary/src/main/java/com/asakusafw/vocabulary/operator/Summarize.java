@@ -36,6 +36,9 @@ import com.asakusafw.vocabulary.model.Summarized;
  * ここでは特に指定しない。
  * </p>
  * <p>
+ * なお、この演算子メソッドには型引数を定義できない。
+ * </p>
+ * <p>
  * この注釈を付与するメソッドは、下記の要件を満たす必要がある。
  * </p>
  * <ul>

@@ -24,15 +24,11 @@ import java.util.Set;
 
 import javax.lang.model.element.Element;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.operator.Callback;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
-import com.asakusafw.compiler.operator.flow.FlowClassEmitter;
-import com.asakusafw.compiler.operator.flow.FlowPartClass;
-import com.asakusafw.compiler.operator.flow.FlowPartClassCollector;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.vocabulary.flow.FlowPart;
@@ -98,7 +94,6 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
         assertThat(inner.getConnected("in"), isJust("out"));
     }
 
-
     /**
      * パラメータ化。
      * @throws Exception 例外が発生した場合
@@ -129,6 +124,56 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
         assertThat(graph.getConnected("a"), isJust("Parameterized"));
         assertThat(graph.getConnected("b"), isJust("Parameterized"));
         assertThat(graph.getConnected("Parameterized"), isJust("c", "d"));
+    }
+
+    /**
+     * 単純な例。
+     * @throws Exception 例外が発生した場合
+     */
+    @Test
+    public void generics() throws Exception {
+        add("com.example.Store");
+        add("com.example.Generic");
+        ClassLoader loader = start(new Collector());
+
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        MockOut<MockHoge> out = MockOut.of(MockHoge.class, "out");
+
+        Object operator = invoke(factory, "create", in);
+        assertStored(loader, "OK");
+
+        Source<MockHoge> flowOut = output(MockHoge.class, operator, "out");
+        out.add(flowOut);
+
+        FlowPartDescription desc = (FlowPartDescription) flowOut
+            .toOutputPort()
+            .getOwner()
+            .getDescription();
+
+        assertThat(desc.getInputPorts().size(), is(1));
+        assertThat(desc.getInputPorts().get(0).getName(), is("in"));
+        assertThat(desc.getInputPorts().get(0).getDataType(), is((Object) MockHoge.class));
+        assertThat(desc.getOutputPorts().size(), is(1));
+        assertThat(desc.getOutputPorts().get(0).getName(), is("out"));
+        assertThat(desc.getOutputPorts().get(0).getDataType(), is((Object) MockHoge.class));
+
+        Graph<String> graph = toGraph(in);
+        assertThat(graph.getConnected("in"), isJust("Generic"));
+        assertThat(graph.getConnected("Generic"), isJust("out"));
+
+        FlowGraph flow = desc.getFlowGraph();
+        assertThat(flow.getDescription(), is((Object) loader.loadClass("com.example.Generic")));
+        assertThat(flow.getFlowInputs().size(), is(1));
+        assertThat(flow.getFlowInputs().get(0).getDescription().getName(), is("in"));
+        assertThat(flow.getFlowInputs().get(0).getDescription().getDataType(), is((Object) MockHoge.class));
+        assertThat(flow.getFlowOutputs().size(), is(1));
+        assertThat(flow.getFlowOutputs().get(0).getDescription().getName(), is("out"));
+        assertThat(flow.getFlowOutputs().get(0).getDescription().getDataType(), is((Object) MockHoge.class));
+
+        Graph<String> inner = toGraph(flow.getFlowInputs());
+        assertThat(inner.getConnected("in"), isJust("out"));
     }
 
     private static void assertStored(ClassLoader loader, Object expected) {

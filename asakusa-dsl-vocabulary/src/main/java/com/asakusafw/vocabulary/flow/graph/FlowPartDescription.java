@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.Source;
 
 
 /**
@@ -225,6 +226,51 @@ public class FlowPartDescription implements FlowElementDescription {
                 throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
             }
             FlowOut<T> out = new FlowOut<T>(new OutputDescription(name, type));
+            flowOutputs.add(out);
+            return out;
+        }
+
+
+        /**
+         * フローへの入力ポートを新しく定義する。
+         * @param <T> 取り扱うデータの種類
+         * @param name ポートの名前
+         * @param typeReference 追加するポートと同様の型を持つソース
+         * @return 定義したポート
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public <T> FlowIn<T> addInput(String name, Source<T> typeReference) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (typeReference == null) {
+                throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+            }
+            FlowIn<T> in = new FlowIn<T>(new InputDescription(
+                    name,
+                    typeReference.toOutputPort().getDescription().getDataType()));
+            flowInputs.add(in);
+            return in;
+        }
+
+        /**
+         * フローからの出力ポートを新しく定義する。
+         * @param <T> 取り扱うデータの種類
+         * @param name ポートの名前
+         * @param typeReference 追加するポートと同様の型を持つソース
+         * @return 定義したポート
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public <T> FlowOut<T> addOutput(String name, Source<T> typeReference) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (typeReference == null) {
+                throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
+            }
+            FlowOut<T> out = new FlowOut<T>(new OutputDescription(
+                    name,
+                    typeReference.toOutputPort().getDescription().getDataType()));
             flowOutputs.add(out);
             return out;
         }

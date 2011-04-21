@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.asakusafw.vocabulary.flow.Source;
+
 /**
  * フローから利用される演算子の定義を表現する。
  */
@@ -468,6 +470,25 @@ public class OperatorDescription implements FlowElementDescription {
         /**
          * 演算子の入力ポートを追加する。
          * @param portName 追加するポートの名前
+         * @param typeReference 追加するポートと同様の型を持つソース
+         * @return このオブジェクト (メソッドチェイン用)
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public Builder addInput(String portName, Source<?> typeReference) {
+            if (portName == null) {
+                throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+            }
+            if (typeReference == null) {
+                throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
+            }
+            return addInput(
+                    portName,
+                    typeReference.toOutputPort().getDescription().getDataType());
+        }
+
+        /**
+         * 演算子の入力ポートを追加する。
+         * @param portName 追加するポートの名前
          * @param dataType 追加するポートのデータ型
          * @param key ポートのシャッフル条件
          * @return このオブジェクト (メソッドチェイン用)
@@ -478,7 +499,7 @@ public class OperatorDescription implements FlowElementDescription {
                 throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
             }
             if (dataType == null) {
-                throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
+                throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
             }
             if (key == null) {
                 throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
@@ -488,6 +509,27 @@ public class OperatorDescription implements FlowElementDescription {
                     dataType,
                     key));
             return this;
+        }
+
+        /**
+         * 演算子の入力ポートを追加する。
+         * @param portName 追加するポートの名前
+         * @param typeReference 追加するポートと同様の型を持つソース
+         * @param key ポートのシャッフル条件
+         * @return このオブジェクト (メソッドチェイン用)
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public Builder addInput(String portName, Source<?> typeReference, ShuffleKey key) {
+            if (portName == null) {
+                throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+            }
+            if (typeReference == null) {
+                throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
+            }
+            if (key == null) {
+                throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
+            }
+            return addInput(portName, typeReference.toOutputPort().getDescription().getDataType(), key);
         }
 
         /**
@@ -509,6 +551,23 @@ public class OperatorDescription implements FlowElementDescription {
                     dataType,
                     PortDirection.OUTPUT));
             return this;
+        }
+
+        /**
+         * 演算子の出力ポートを追加する。
+         * @param portName 追加するポートの名前
+         * @param typeReference 追加するポートと同様の型を持つソース
+         * @return このオブジェクト (メソッドチェイン用)
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public Builder addOutput(String portName, Source<?> typeReference) {
+            if (portName == null) {
+                throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+            }
+            if (typeReference == null) {
+                throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
+            }
+            return addOutput(portName, typeReference.toOutputPort().getDescription().getDataType());
         }
 
         /**

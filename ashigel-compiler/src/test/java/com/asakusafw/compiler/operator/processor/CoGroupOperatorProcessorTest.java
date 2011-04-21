@@ -22,7 +22,6 @@ import org.junit.Test;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.CoGroupOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -58,7 +57,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 単純なテスト。
+     * パラメータ化。
      */
     @Test
     public void parameterized() {
@@ -80,6 +79,31 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
         assertThat(graph.getConnected("a"), isJust("Parameterized.example"));
         assertThat(graph.getConnected("b"), isJust("Parameterized.example"));
         assertThat(graph.getConnected("Parameterized.example"), isJust("r1", "r2"));
+    }
+
+    /**
+     * ジェネリックメソッド。
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        ClassLoader loader = start(new CoGroupOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockHoge> r1 = MockOut.of(MockHoge.class, "r1");
+        MockOut<MockFoo> r2 = MockOut.of(MockFoo.class, "r2");
+
+        Object coGroup = invoke(factory, "example", a, b);
+        r1.add(output(MockHoge.class, coGroup, "r1"));
+        r2.add(output(MockFoo.class, coGroup, "r2"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Generic.example"));
+        assertThat(graph.getConnected("b"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("r1", "r2"));
     }
 
     /**
@@ -151,6 +175,15 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     @Test
     public void notUserParameter() {
         add("com.example.NotUserParameter");
+        error(new CoGroupOperatorProcessor());
+    }
+
+    /**
+     * 出力が不明なジェネリックメソッド。
+     */
+    @Test
+    public void unboundGenerics() {
+        add("com.example.UnboundGenerics");
         error(new CoGroupOperatorProcessor());
     }
 }

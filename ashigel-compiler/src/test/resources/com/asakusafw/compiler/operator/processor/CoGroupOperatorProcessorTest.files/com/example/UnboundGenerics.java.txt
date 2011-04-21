@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class UnboundGenerics {
+
+    @CoGroup
+    public <A extends MockProjection, B extends MockProjection> void
+    example(
+            @Key(group = "value") java.util.List<A> a,
+            @Key(group = "value") java.util.List<MockFoo> b,
+            Result<A> r1,
+            Result<B> r2) {
+        r1.add(a.get(0));
+    }
+}

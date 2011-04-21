@@ -40,7 +40,7 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("マスタつき更新演算子はabstractで宣言できません");
         }
@@ -74,7 +74,7 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
         }
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(getEnvironment(), context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }
@@ -96,7 +96,7 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
         builder.addAttribute(a.getObservationCount());
         builder.addAttribute(FlowBoundary.SHUFFLE);
         if (selector != null) {
-            builder.addOperatorHelper(getEnvironment(), selector);
+            builder.addOperatorHelper(selector);
         }
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
@@ -115,11 +115,13 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
                 "引き当ておよび更新が成功したデータ",
                 annotation.updatedPort(),
                 a.getParameterType(1).getType(),
+                a.getParameterName(1),
                 null);
         builder.addOutput(
                 "引き当てに失敗したデータ",
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
+                a.getParameterName(1),
                 null);
         for (int i = 2, n = a.countParameters(); i < n; i++) {
             builder.addParameter(

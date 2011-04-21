@@ -110,9 +110,6 @@ public class OperatorClassCollector {
 
     private void validateMethodModifiers(ExecutableElement method) {
         assert method != null;
-        if (method.getTypeParameters().isEmpty() == false) {
-            raiseInvalid(method, "演算子メソッド{0}には型引数を指定できません");
-        }
         if (method.getModifiers().contains(Modifier.PUBLIC) == false) {
             raiseInvalid(method, "演算子メソッド{0}はpublicとして宣言する必要があります");
         }

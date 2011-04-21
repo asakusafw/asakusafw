@@ -22,7 +22,6 @@ import org.junit.Test;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.compiler.operator.model.MockSummarized;
-import com.asakusafw.compiler.operator.processor.SummarizeOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -84,6 +83,15 @@ public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
     @Test
     public void Parameterized() {
         add("com.example.Parameterized");
+        error(new SummarizeOperatorProcessor());
+    }
+
+    /**
+     * Generic method.
+     */
+    @Test
+    public void Generic() {
+        add("com.example.Generic");
         error(new SummarizeOperatorProcessor());
     }
 }

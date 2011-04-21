@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.BranchOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -79,6 +78,31 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
         Graph<String> graph = toGraph(in);
         assertThat(graph.getConnected("in"), isJust("Parameterized.example"));
         assertThat(graph.getConnected("Parameterized.example"), isJust("high", "middle", "low"));
+    }
+
+    /**
+     * ジェネリックメソッド。
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        add("com.example.ExampleEnum");
+        ClassLoader loader = start(new BranchOperatorProcessor());
+
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        MockOut<MockHoge> high = MockOut.of(MockHoge.class, "high");
+        MockOut<MockHoge> middle = MockOut.of(MockHoge.class, "middle");
+        MockOut<MockHoge> low = MockOut.of(MockHoge.class, "low");
+        Object branch = invoke(factory, "example", in);
+        high.add(output(MockHoge.class, branch, "high"));
+        middle.add(output(MockHoge.class, branch, "middle"));
+        low.add(output(MockHoge.class, branch, "low"));
+
+        Graph<String> graph = toGraph(in);
+        assertThat(graph.getConnected("in"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("high", "middle", "low"));
     }
 
     /**

@@ -45,7 +45,7 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract() == false) {
             a.error("重複検出演算子はabstractで宣言する必要があります");
         }
@@ -85,11 +85,13 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
                 "項目の内容が一意であるデータが流れる出力",
                 "unique",
                 a.getParameterType(0).getType(),
+                a.getParameterName(0),
                 null);
         builder.addOutput(
                 "項目の内容が一意でないデータが流れる出力",
                 "duplicated",
                 a.getParameterType(0).getType(),
+                a.getParameterName(0),
                 null);
         return builder.toDescriptor();
     }
@@ -97,7 +99,7 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        ModelFactory f = context.factory;
+        ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
             .newObject(Models.toLiteral(f, "重複検出演算子は組み込みの方法で処理されます"))
             .toStatement());

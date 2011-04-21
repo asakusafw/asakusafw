@@ -113,4 +113,13 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
         add("com.example.Parameterized");
         error(new MasterJoinOperatorProcessor());
     }
+
+    /**
+     * Generic method.
+     */
+    @Test
+    public void Generic() {
+        add("com.example.Generic");
+        error(new MasterJoinOperatorProcessor());
+    }
 }

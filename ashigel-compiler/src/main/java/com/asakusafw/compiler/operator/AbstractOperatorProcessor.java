@@ -62,14 +62,6 @@ public abstract class AbstractOperatorProcessor implements OperatorProcessor {
         }
     }
 
-    /**
-     * このプロセッサが利用可能なコンパイラの環境オブジェクトを返す。
-     * @return コンパイラの環境オブジェクト
-     */
-    public OperatorCompilingEnvironment getEnvironment() {
-        return environment;
-    }
-
     @Override
     public Class<? extends Annotation> getTargetAnnotationType() {
         return targetOperatorAnnotation;

@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
+import javax.lang.model.type.TypeMirror;
+
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
@@ -40,7 +42,7 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("グループ整列演算子はabstractで宣言できません");
         }
@@ -97,10 +99,16 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
                 0,
                 key);
         for (int i = 1; i < startParameters; i++) {
+            TypeMirror outputType = a.getParameterType(i).getTypeArgument().getType();
+            String found = builder.findInput(outputType);
+            if (found == null && a.getReturnType().isProjectiveModel()) {
+                a.error("出力型{0}に対する入力が見つかりません", outputType);
+            }
             builder.addOutput(
                     a.getParameterDocument(i),
                     a.getParameterName(i),
-                    a.getParameterType(i).getTypeArgument().getType(),
+                    outputType,
+                    found,
                     i);
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {

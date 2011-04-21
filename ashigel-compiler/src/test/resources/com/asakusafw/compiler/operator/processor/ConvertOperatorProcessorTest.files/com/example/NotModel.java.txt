@@ -6,7 +6,7 @@ import com.asakusafw.compiler.operator.processor.*;
 import com.asakusafw.runtime.core.*;
 import com.asakusafw.vocabulary.operator.*;
 
-public abstract class Simple {
+public abstract class NotModel {
 
     MockFoo foo = new MockFoo();
     @Convert

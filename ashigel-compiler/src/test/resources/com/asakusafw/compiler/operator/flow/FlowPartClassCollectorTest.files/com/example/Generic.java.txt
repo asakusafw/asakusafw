@@ -1,0 +1,16 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class Generic<P extends MockProjection> extends FlowDescription {
+
+    public Generic(In<P> in, Out<P> out) {
+    }
+
+    @Override
+    protected void describe() {
+    }
+}

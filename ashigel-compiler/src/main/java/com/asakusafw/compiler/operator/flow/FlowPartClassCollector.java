@@ -25,6 +25,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import com.asakusafw.compiler.common.Precondition;
@@ -33,6 +36,7 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
+import com.asakusafw.compiler.operator.PortTypeDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.ashigeru.lang.java.model.syntax.DocElement;
 
@@ -119,6 +123,11 @@ public class FlowPartClassCollector {
             sawError = true;
             return null;
         }
+        outputPorts = inferTypeVariables(analyzer, inputPorts, outputPorts);
+        if (analyzer.hasError()) {
+            sawError = true;
+            return null;
+        }
         return new FlowPartClass(
                 aClass,
                 documentation,
@@ -131,32 +140,77 @@ public class FlowPartClassCollector {
             ExecutableAnalyzer analyzer, int index) {
         TypeConstraint type = analyzer.getParameterType(index);
         if (type.isIn()) {
-            return toPort(analyzer, type, index, OperatorPortDeclaration.Kind.INPUT);
+            return toPort(OperatorPortDeclaration.Kind.INPUT, analyzer, type, index);
         } else if (type.isOut()) {
-            return toPort(analyzer, type, index, OperatorPortDeclaration.Kind.OUTPUT);
+            return toPort(OperatorPortDeclaration.Kind.OUTPUT, analyzer, type, index);
         } else {
             return toParameter(analyzer, index, type);
         }
     }
 
+    private List<OperatorPortDeclaration> inferTypeVariables(
+            ExecutableAnalyzer analyzer,
+            List<OperatorPortDeclaration> inputPorts,
+            List<OperatorPortDeclaration> outputPorts) {
+        assert inputPorts != null;
+        assert outputPorts != null;
+        Types types = environment.getTypeUtils();
+        List<OperatorPortDeclaration> inferred = new ArrayList<OperatorPortDeclaration>();
+        for (OperatorPortDeclaration output : outputPorts) {
+            TypeMirror outputType = output.getType().getRepresentation();
+            if (outputType.getKind() != TypeKind.TYPEVAR) {
+                inferred.add(new OperatorPortDeclaration(
+                        output.getKind(),
+                        output.getDocumentation(),
+                        output.getName(),
+                        PortTypeDescription.direct(outputType),
+                        output.getParameterPosition(),
+                        null));
+            } else {
+                boolean found = false;
+                for (OperatorPortDeclaration input : inputPorts) {
+                    if (types.isSameType(outputType, input.getType().getRepresentation())) {
+                        inferred.add(new OperatorPortDeclaration(
+                                output.getKind(),
+                                output.getDocumentation(),
+                                output.getName(),
+                                PortTypeDescription.reference(outputType, input.getName()),
+                                output.getParameterPosition(),
+                                null));
+                        found = true;
+                        break;
+                    }
+                }
+                if (found == false) {
+                    inferred.add(output);
+                    analyzer.error(
+                            output.getParameterPosition(),
+                            "{0}の型{1}は入力と関係のない型です",
+                            output.getName(),
+                            output.getType().getRepresentation());
+                }
+            }
+        }
+        return inferred;
+    }
+
     private OperatorPortDeclaration toPort(
+            OperatorPortDeclaration.Kind kind,
             ExecutableAnalyzer analyzer,
             TypeConstraint type,
-            int index,
-            OperatorPortDeclaration.Kind direction) {
+            int index) {
         assert analyzer != null;
         assert type != null;
-        assert direction != null;
         TypeConstraint dataType = type.getTypeArgument();
         if (dataType.isModel() == false) {
             analyzer.error(index, "モデルオブジェクト型以外は入出力に指定できません");
             return null;
         }
         return new OperatorPortDeclaration(
-                direction,
+                kind,
                 analyzer.getParameterDocument(index),
                 analyzer.getParameterName(index),
-                dataType.getType(),
+                PortTypeDescription.reference(dataType.getType(), analyzer.getParameterName(index)),
                 index,
                 null);
     }
@@ -175,7 +229,7 @@ public class FlowPartClassCollector {
                 OperatorPortDeclaration.Kind.CONSTANT,
                 analyzer.getParameterDocument(index),
                 analyzer.getParameterName(index),
-                type.getType(),
+                PortTypeDescription.direct(type.getType()),
                 index,
                 null);
     }
@@ -232,9 +286,6 @@ public class FlowPartClassCollector {
         }
         if (type.getModifiers().contains(Modifier.ABSTRACT)) {
             raiseInvalidClass(type, "フロー部品クラス{0}はabstractとして宣言できません");
-        }
-        if (type.getTypeParameters().isEmpty() == false) {
-            raiseInvalidClass(type, "フロー部品クラス{0}には型引数を指定できません");
         }
         return true;
     }

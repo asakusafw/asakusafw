@@ -22,7 +22,8 @@ import org.junit.Test;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.MasterCheckOperatorProcessor;
+import com.asakusafw.compiler.operator.model.MockKeyValue1;
+import com.asakusafw.compiler.operator.model.MockKeyValue2;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -76,6 +77,29 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
         assertThat(graph.getConnected("a"), isJust("Selector.example"));
         assertThat(graph.getConnected("b"), isJust("Selector.example"));
         assertThat(graph.getConnected("Selector.example"), isJust("found", "missed"));
+    }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        ClassLoader loader = start(new MasterCheckOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockKeyValue1> a = MockIn.of(MockKeyValue1.class, "a");
+        MockIn<MockKeyValue2> b = MockIn.of(MockKeyValue2.class, "b");
+        MockOut<MockKeyValue2> found = MockOut.of(MockKeyValue2.class, "found");
+        MockOut<MockKeyValue2> missed = MockOut.of(MockKeyValue2.class, "missed");
+        Object masterCheck = invoke(factory, "example", a, b);
+        found.add(output(MockKeyValue2.class, masterCheck, "found"));
+        missed.add(output(MockKeyValue2.class, masterCheck, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Generic.example"));
+        assertThat(graph.getConnected("b"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("found", "missed"));
     }
 
     /**

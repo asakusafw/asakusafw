@@ -22,7 +22,8 @@ import org.junit.Test;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.MasterBranchOperatorProcessor;
+import com.asakusafw.compiler.operator.model.MockKeyValue1;
+import com.asakusafw.compiler.operator.model.MockKeyValue2;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -180,6 +181,36 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
         assertThat(graph.getConnected("a"), isJust("ParameterizedSelector2.example"));
         assertThat(graph.getConnected("b"), isJust("ParameterizedSelector2.example"));
         assertThat(graph.getConnected("ParameterizedSelector2.example"), isJust("unknown", "high", "middle", "low"));
+    }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        add("com.example.ExampleEnum");
+        ClassLoader loader = start(new MasterBranchOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockKeyValue1> a = MockIn.of(MockKeyValue1.class, "a");
+        MockIn<MockKeyValue2> b = MockIn.of(MockKeyValue2.class, "b");
+
+        MockOut<MockKeyValue2> unknown = MockOut.of(MockKeyValue2.class, "unknown");
+        MockOut<MockKeyValue2> high = MockOut.of(MockKeyValue2.class, "high");
+        MockOut<MockKeyValue2> middle = MockOut.of(MockKeyValue2.class, "middle");
+        MockOut<MockKeyValue2> low = MockOut.of(MockKeyValue2.class, "low");
+
+        Object masterBranch = invoke(factory, "example", a, b);
+        unknown.add(output(MockKeyValue2.class, masterBranch, "unknown"));
+        high.add(output(MockKeyValue2.class, masterBranch, "high"));
+        middle.add(output(MockKeyValue2.class, masterBranch, "middle"));
+        low.add(output(MockKeyValue2.class, masterBranch, "low"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Generic.example"));
+        assertThat(graph.getConnected("b"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("unknown", "high", "middle", "low"));
     }
 
     /**

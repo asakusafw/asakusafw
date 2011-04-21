@@ -23,7 +23,9 @@ import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration.Kind;
@@ -191,6 +193,26 @@ public class OperatorMethodDescriptor {
         }
 
         /**
+         * Returns an input name which has the specified type variable.
+         * @param type target type
+         * @return the matched input name, or {@code null} if not exists or is not a projective model
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public String findInput(TypeMirror type) {
+            Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
+            if (type.getKind() != TypeKind.TYPEVAR) {
+                return null;
+            }
+            Types types = context.environment.getTypeUtils();
+            for (OperatorPortDeclaration input : inputPorts) {
+                if (types.isSameType(type, input.getType().getRepresentation())) {
+                    return input.getName();
+                }
+            }
+            return null;
+        }
+
+        /**
          * 演算子の説明を設定する。
          * @param description 設定する説明
          */
@@ -232,12 +254,11 @@ public class OperatorMethodDescriptor {
                 ShuffleKey shuffleKey) {
             Precondition.checkMustNotBeNull(documentation, "documentation"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(varName, "varName"); //$NON-NLS-1$
-            Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
             inputPorts.add(new OperatorPortDeclaration(
                     Kind.INPUT,
                     documentation,
                     varName,
-                    type,
+                    PortTypeDescription.reference(type, varName),
                     position,
                     shuffleKey));
         }
@@ -247,6 +268,7 @@ public class OperatorMethodDescriptor {
          * @param documentation 変数の説明
          * @param varName 変数の名前
          * @param type 変数の型
+         * @param correspondedInputName この出力と同じ型を持つ変数の名前
          * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
          * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
          */
@@ -254,15 +276,22 @@ public class OperatorMethodDescriptor {
                 List<? extends DocElement> documentation,
                 String varName,
                 TypeMirror type,
+                String correspondedInputName,
                 Integer position) {
             Precondition.checkMustNotBeNull(documentation, "documentation"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(varName, "varName"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
+            PortTypeDescription typeDesc;
+            if (correspondedInputName != null) {
+                typeDesc = PortTypeDescription.reference(type, correspondedInputName);
+            } else {
+                typeDesc = PortTypeDescription.direct(type);
+            }
             outputPorts.add(new OperatorPortDeclaration(
                     Kind.OUTPUT,
                     documentation,
                     varName,
-                    type,
+                    typeDesc,
                     position,
                     null));
         }
@@ -272,6 +301,7 @@ public class OperatorMethodDescriptor {
          * @param documentation 変数の説明
          * @param varName 変数の名前
          * @param type 変数の型
+         * @param correspondedInputName この出力と同じ型を持つ変数の名前
          * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
          * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
          */
@@ -279,15 +309,17 @@ public class OperatorMethodDescriptor {
                 String documentation,
                 String varName,
                 TypeMirror type,
+                String correspondedInputName,
                 Integer position) {
-            Precondition.checkMustNotBeNull(varName, "varName"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(documentation, "documentation"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(varName, "varName"); //$NON-NLS-1$
             List<? extends DocElement> elements = Collections.emptyList();
             if (documentation != null) {
                 elements = Collections.singletonList(Models.getModelFactory()
                     .newDocText(documentation));
             }
-            addOutput(elements, varName, type, position);
+            addOutput(elements, varName, type, correspondedInputName, position);
         }
 
         /**
@@ -310,7 +342,7 @@ public class OperatorMethodDescriptor {
                     Kind.CONSTANT,
                     documentation,
                     varName,
-                    type,
+                    PortTypeDescription.direct(type),
                     position,
                     null));
         }
@@ -332,7 +364,7 @@ public class OperatorMethodDescriptor {
          */
         public void addAttribute(Enum<? extends FlowElementAttribute> constant) {
             Precondition.checkMustNotBeNull(constant, "constant"); //$NON-NLS-1$
-            ModelFactory f = context.factory;
+            ModelFactory f = context.environment.getFactory();
             ImportBuilder ib = context.importer;
             Expression attribute = new TypeBuilder(f, ib.toType(constant.getDeclaringClass()))
                 .field(constant.name())
@@ -342,19 +374,17 @@ public class OperatorMethodDescriptor {
 
         /**
          * 属性を追加する。
-         * @param environment 環境オブジェクト
          * @param helperMethod 補助演算子を表すメソッド
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
-        public void addOperatorHelper(OperatorCompilingEnvironment environment, ExecutableElement helperMethod) {
-            Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
+        public void addOperatorHelper(ExecutableElement helperMethod) {
             Precondition.checkMustNotBeNull(helperMethod, "helperMethod"); //$NON-NLS-1$
-            ModelFactory f = context.factory;
+            ModelFactory f = context.environment.getFactory();
             ImportBuilder ib = context.importer;
             Jsr269 conv = new Jsr269(f);
             List<Expression> parameterTypeLiterals = new ArrayList<Expression>();
             for (VariableElement parameter : helperMethod.getParameters()) {
-                TypeMirror type = environment.getErasure(parameter.asType());
+                TypeMirror type = context.environment.getErasure(parameter.asType());
                 parameterTypeLiterals.add(new TypeBuilder(f, ib.resolve(conv.convert(type)))
                     .dotClass()
                     .toExpression());

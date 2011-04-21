@@ -22,7 +22,6 @@ import org.junit.Test;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.MasterJoinUpdateOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -130,6 +129,81 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
         assertThat(graph.getConnected("a"), isJust("ParameterizedSelector.example"));
         assertThat(graph.getConnected("b"), isJust("ParameterizedSelector.example"));
         assertThat(graph.getConnected("ParameterizedSelector.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("Generic.example"));
+        assertThat(graph.getConnected("b"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * generic operator and generic selector.
+     */
+    @Test
+    public void genericSelector() {
+        add("com.example.GenericSelector1");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericSelector1Factory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("GenericSelector1.example"));
+        assertThat(graph.getConnected("b"), isJust("GenericSelector1.example"));
+        assertThat(graph.getConnected("GenericSelector1.example"), isJust("updated", "missed"));
+    }
+
+    /**
+     * plain operator and generic selector.
+     */
+    @Test
+    public void genericSelector_plainOperator() {
+        add("com.example.GenericSelector2");
+        ClassLoader loader = start(new MasterJoinUpdateOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericSelector2Factory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockFoo> updated = MockOut.of(MockFoo.class, "updated");
+        MockOut<MockFoo> missed = MockOut.of(MockFoo.class, "missed");
+
+        Object masterJoinUpdate = invoke(factory, "example", a, b);
+        updated.add(output(MockFoo.class, masterJoinUpdate, "updated"));
+        missed.add(output(MockFoo.class, masterJoinUpdate, "missed"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("GenericSelector2.example"));
+        assertThat(graph.getConnected("b"), isJust("GenericSelector2.example"));
+        assertThat(graph.getConnected("GenericSelector2.example"), isJust("updated", "missed"));
     }
 
     /**

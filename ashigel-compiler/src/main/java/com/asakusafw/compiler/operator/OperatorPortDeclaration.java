@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.lang.model.type.TypeMirror;
-
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.ashigeru.lang.java.model.syntax.DocElement;
@@ -36,7 +34,7 @@ public class OperatorPortDeclaration {
 
     private String name;
 
-    private TypeMirror type;
+    private PortTypeDescription type;
 
     private Integer position;
 
@@ -56,7 +54,7 @@ public class OperatorPortDeclaration {
             Kind kind,
             List<? extends DocElement> documentation,
             String name,
-            TypeMirror type,
+            PortTypeDescription type,
             Integer position,
             ShuffleKey shuffleKey) {
         Precondition.checkMustNotBeNull(kind, "kind"); //$NON-NLS-1$
@@ -104,10 +102,10 @@ public class OperatorPortDeclaration {
     }
 
     /**
-     * 変数の型を返す。
-     * @return 変数の型
+     * ポートの型を返す。
+     * @return ポートの型
      */
-    public TypeMirror getType() {
+    public PortTypeDescription getType() {
         return this.type;
     }
 

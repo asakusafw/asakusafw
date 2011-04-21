@@ -43,12 +43,15 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
+        if (a.isGeneric()) {
+            a.error("単純集計演算子はジェネリックメソッドで宣言できません");
+        }
         if (a.isAbstract() == false) {
             a.error("単純集計演算子はabstractで宣言する必要があります");
         }
         TypeConstraint summarized = a.getReturnType();
-        if (summarized.isModel() == false) {
+        if (summarized.isConcreteModel() == false) {
             a.error("単純集計演算子は戻り値にモデルオブジェクト型を指定する必要があります");
         }
         TypeConstraint summarizee = a.getParameterType(0);
@@ -93,6 +96,7 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
                 a.getReturnDocument(),
                 annotation.summarizedPort(),
                 a.getReturnType().getType(),
+                null,
                 null);
         return builder.toDescriptor();
     }
@@ -100,7 +104,7 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        ModelFactory f = context.factory;
+        ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
             .newObject(Models.toLiteral(f, "単純集計演算子は組み込みの方法で処理されます"))
             .toThrowStatement());

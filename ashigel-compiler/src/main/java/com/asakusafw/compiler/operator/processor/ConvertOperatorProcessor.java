@@ -34,11 +34,11 @@ public class ConvertOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("変換演算子はabstractで宣言できません");
         }
-        if (a.getReturnType().isModel() == false) {
+        if (a.getReturnType().isConcreteModel() == false) {
             a.error("変換演算子は戻り値にモデルオブジェクト型を指定する必要があります");
         }
         if (a.getParameterType(0).isModel() == false) {
@@ -74,11 +74,13 @@ public class ConvertOperatorProcessor extends AbstractOperatorProcessor {
                 "入力された内容",
                 annotation.originalPort(),
                 a.getParameterType(0).getType(),
+                a.getParameterName(0),
                 0);
         builder.addOutput(
                 a.getReturnDocument(),
                 annotation.convertedPort(),
                 a.getReturnType().getType(),
+                null,
                 null);
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             builder.addParameter(

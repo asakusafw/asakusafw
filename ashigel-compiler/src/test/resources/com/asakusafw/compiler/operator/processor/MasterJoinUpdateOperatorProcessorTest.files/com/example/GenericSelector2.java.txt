@@ -1,0 +1,29 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class GenericSelector2 {
+
+    @MasterJoinUpdate(selection = "select")
+    public void example(
+            @Key(group = "value") MockHoge master,
+            @Key(group = "value") MockFoo tx) {
+        return;
+    }
+
+    @MasterSelection
+    public <M extends MockProjection, T extends MockProjection>
+    M select(java.util.List<M> masters, T tx) {
+        for (M master : masters) {
+            if (master.getValue() >= 0) {
+                return master;
+            }
+        }
+        return null;
+    }
+}

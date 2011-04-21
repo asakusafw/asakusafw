@@ -16,9 +16,13 @@
 package com.asakusafw.compiler.operator.util;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
@@ -32,6 +36,7 @@ import com.ashigeru.lang.java.model.syntax.Literal;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Type;
+import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
 import com.ashigeru.lang.java.model.util.ImportBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
@@ -200,5 +205,73 @@ public class GeneratorUtil {
         Type source = t(Out.class);
         Type modelType = t(type);
         return factory.newParameterizedType(source, Collections.singletonList(modelType));
+    }
+
+    /**
+     * Returns the representation for type parameter declarations of the executable element.
+     * @param element target element
+     * @return the corresponded represention
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    public List<TypeParameterDeclaration> toTypeParameters(ExecutableElement element) {
+        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        return toTypeParameters(element.getTypeParameters());
+    }
+
+    /**
+     * Returns the representation for type parameter declarations of the type element.
+     * @param element target element
+     * @return the corresponded represention
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    public List<TypeParameterDeclaration> toTypeParameters(TypeElement element) {
+        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        return toTypeParameters(element.getTypeParameters());
+    }
+
+    private List<TypeParameterDeclaration> toTypeParameters(
+            List<? extends TypeParameterElement> typeParameters) {
+        assert typeParameters != null;
+        List<TypeParameterDeclaration> results = new ArrayList<TypeParameterDeclaration>();
+        for (TypeParameterElement typeParameter : typeParameters) {
+            SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
+            List<Type> typeBounds = new ArrayList<Type>();
+            for (TypeMirror typeBound : typeParameter.getBounds()) {
+                typeBounds.add(t(typeBound));
+            }
+            results.add(factory.newTypeParameterDeclaration(name, typeBounds));
+        }
+        return results;
+    }
+
+    /**
+     * Returns the representation for type variables of the executable element.
+     * @param element target element
+     * @return the corresponded represention
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    public List<Type> toTypeVariables(ExecutableElement element) {
+        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        return toTypeVariables(element.getTypeParameters());
+    }
+
+    /**
+     * Returns the representation for type variables of the type element.
+     * @param element target element
+     * @return the corresponded represention
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     */
+    public List<Type> toTypeVariables(TypeElement element) {
+        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        return toTypeVariables(element.getTypeParameters());
+    }
+
+    private List<Type> toTypeVariables(List<? extends TypeParameterElement> typeParameters) {
+        List<Type> results = new ArrayList<Type>();
+        for (TypeParameterElement typeParameter : typeParameters) {
+            SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
+            results.add(factory.newNamedType(name));
+        }
+        return results;
     }
 }

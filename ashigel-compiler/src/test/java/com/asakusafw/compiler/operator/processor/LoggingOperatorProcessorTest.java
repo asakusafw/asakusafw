@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.LoggingOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -67,6 +66,25 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
         Graph<String> graph = toGraph(in);
         assertThat(graph.getConnected("in"), isJust("Parameterized.example"));
         assertThat(graph.getConnected("Parameterized.example"), isJust("out"));
+    }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        ClassLoader loader = start(new LoggingOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        MockOut<MockHoge> out = MockOut.of(MockHoge.class, "out");
+        Object logging = invoke(factory, "example", in);
+        out.add(output(MockHoge.class, logging, "out"));
+
+        Graph<String> graph = toGraph(in);
+        assertThat(graph.getConnected("in"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("out"));
     }
 
     /**

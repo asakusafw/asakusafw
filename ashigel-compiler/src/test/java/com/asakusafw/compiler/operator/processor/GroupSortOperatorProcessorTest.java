@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
-import com.asakusafw.compiler.operator.processor.GroupSortOperatorProcessor;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
@@ -71,6 +70,27 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
         Graph<String> graph = toGraph(in);
         assertThat(graph.getConnected("in"), isJust("Parameterized.example"));
         assertThat(graph.getConnected("Parameterized.example"), isJust("a", "b"));
+    }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        ClassLoader loader = start(new GroupSortOperatorProcessor());
+        Object factory = create(loader, "com.example.GenericFactory");
+
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        MockOut<MockHoge> a = MockOut.of(MockHoge.class, "a");
+        MockOut<MockHoge> b = MockOut.of(MockHoge.class, "b");
+        Object gs = invoke(factory, "example", in);
+        a.add(output(MockHoge.class, gs, "first"));
+        b.add(output(MockHoge.class, gs, "last"));
+
+        Graph<String> graph = toGraph(in);
+        assertThat(graph.getConnected("in"), isJust("Generic.example"));
+        assertThat(graph.getConnected("Generic.example"), isJust("a", "b"));
     }
 
     /**
@@ -142,6 +162,15 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     @Test
     public void NotVoid() {
         add("com.example.NotVoid");
+        error(new GroupSortOperatorProcessor());
+    }
+
+    /**
+     * output port uses unbound type variables.
+     */
+    @Test
+    public void UnboundGenerics() {
+        add("com.example.UnboundGenerics");
         error(new GroupSortOperatorProcessor());
     }
 }

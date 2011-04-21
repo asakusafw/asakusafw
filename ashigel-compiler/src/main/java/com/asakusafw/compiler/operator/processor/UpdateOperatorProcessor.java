@@ -34,7 +34,7 @@ public class UpdateOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("更新演算子はabstractで宣言できません");
         }
@@ -73,6 +73,7 @@ public class UpdateOperatorProcessor extends AbstractOperatorProcessor {
                 "結果",
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
+                a.getParameterName(0),
                 0);
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             builder.addParameter(

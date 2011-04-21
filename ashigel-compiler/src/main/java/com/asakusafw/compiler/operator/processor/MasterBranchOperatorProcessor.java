@@ -45,7 +45,7 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("マスタ分岐演算子はabstractで宣言できません");
         }
@@ -85,7 +85,7 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
         }
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(getEnvironment(), context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }
@@ -98,7 +98,7 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
         builder.addAttribute(FlowBoundary.SHUFFLE);
         builder.addAttribute(a.getObservationCount());
         if (selector != null) {
-            builder.addOperatorHelper(getEnvironment(), selector);
+            builder.addOperatorHelper(selector);
         }
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
@@ -118,6 +118,7 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
                     a.getDocument(var),
                     JavaName.of(var.getSimpleName().toString()).toMemberName(),
                     a.getParameterType(1).getType(),
+                    a.getParameterName(1),
                     null);
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {

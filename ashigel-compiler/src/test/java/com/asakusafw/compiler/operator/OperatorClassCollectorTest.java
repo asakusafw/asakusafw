@@ -22,14 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.operator.OperatorClass;
-import com.asakusafw.compiler.operator.OperatorClassCollector;
-import com.asakusafw.compiler.operator.OperatorCompilerException;
-import com.asakusafw.compiler.operator.OperatorMethod;
-import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.asakusafw.compiler.operator.processor.UpdateOperatorProcessor;
 
 /**
@@ -109,16 +103,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 総称メソッドはエラー。
-     */
-    @Test
-    public void methodValidate_generic() {
-        add("com.example.Generic");
-        error(new Collector(new MockOperatorProcessor()));
-    }
-
-    /**
-     * 総称メソッドはエラー。
+     * 重複するメソッドはエラー。
      */
     @Test
     public void methodValidate_duplicateOperator() {

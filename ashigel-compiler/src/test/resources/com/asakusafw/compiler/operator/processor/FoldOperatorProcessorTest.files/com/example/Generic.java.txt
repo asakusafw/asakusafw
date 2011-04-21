@@ -1,0 +1,23 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Generic {
+
+    /**
+     * 畳み込み演算子のテスト。
+     * @param left 途中結果
+     * @param right 畳み込み対象
+     * @param param パラメーター
+     */
+    @Fold
+    public <P extends MockProjection>
+    void example(@Key(group = "value") P left, P right, int param) {
+        left.setValue(left.getValue() + right.getValue());
+    }
+}

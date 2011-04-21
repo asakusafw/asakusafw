@@ -39,7 +39,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("ロギング演算子はabstractで宣言できません");
         }
@@ -68,7 +68,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
 
         List<DocElement> elements = new ArrayList<DocElement>();
         elements.addAll(a.getExecutableDocument());
-        elements.add(context.factory.newDocText(
+        elements.add(context.environment.getFactory().newDocText(
                 "<p>なお、この演算子の出力は結線しなくても自動的に停止演算子に結線される。</p>"));
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
@@ -85,6 +85,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
                 "入力された内容",
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
+                a.getParameterName(0),
                 0);
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             builder.addParameter(

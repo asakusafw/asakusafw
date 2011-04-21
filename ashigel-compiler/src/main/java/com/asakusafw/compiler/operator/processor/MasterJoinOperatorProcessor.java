@@ -46,12 +46,15 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
+        if (a.isGeneric()) {
+            a.error("マスタ結合演算子はジェネリックメソッドで宣言できません");
+        }
         if (a.isAbstract() == false) {
             a.error("マスタ結合演算子はabstractで宣言する必要があります");
         }
         TypeConstraint joined = a.getReturnType();
-        if (joined.isModel() == false) {
+        if (joined.isConcreteModel() == false) {
             a.error("マスタ結合演算子は戻り値にモデルオブジェクト型を指定する必要があります");
         }
         TypeConstraint master = a.getParameterType(0);
@@ -67,7 +70,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
         }
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(getEnvironment(), context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }
@@ -96,7 +99,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
         builder.addAttribute(FlowBoundary.SHUFFLE);
         builder.addAttribute(a.getObservationCount());
         if (selector != null) {
-            builder.addOperatorHelper(getEnvironment(), selector);
+            builder.addOperatorHelper(selector);
         }
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
@@ -115,11 +118,13 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
                 a.getReturnDocument(),
                 annotation.joinedPort(),
                 a.getReturnType().getType(),
+                null,
                 null);
         builder.addOutput(
                 "結合に失敗したデータ",
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
+                a.getParameterName(1),
                 null);
         return builder.toDescriptor();
     }
@@ -127,7 +132,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        ModelFactory f = context.factory;
+        ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
             .newObject(Models.toLiteral(f, "マスタ結合演算子は組み込みの方法で処理されます"))
             .toThrowStatement());

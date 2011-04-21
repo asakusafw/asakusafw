@@ -36,6 +36,9 @@ import com.asakusafw.vocabulary.model.Key;
  * {@link Key#group() グループ化}のためのプロパティ名を指定する。
  * </p>
  * <p>
+ * 引数には同メソッドで宣言した型変数を利用できる。
+ * </p>
+ * <p>
  * この注釈を付与するメソッドは、下記の要件を満たす必要がある。
  * </p>
  * <ul>

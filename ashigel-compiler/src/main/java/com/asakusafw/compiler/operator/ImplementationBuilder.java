@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
@@ -37,6 +38,7 @@ import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
 import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
+import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.ImportBuilder;
@@ -69,7 +71,7 @@ public class ImplementationBuilder {
     public ImplementationBuilder(OperatorProcessor.Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         this.element = context.element;
-        this.factory = context.factory;
+        this.factory = context.environment.getFactory();
         this.importer = context.importer;
         this.names = context.names;
         this.converter = new Jsr269(factory);
@@ -177,10 +179,13 @@ public class ImplementationBuilder {
                     .annotation(importer.toType(Override.class))
                     .Public()
                     .toAttributes(),
+                toTypeParameters(),
                 importer.resolve(converter.convert(element.getReturnType())),
                 factory.newSimpleName(element.getSimpleName().toString()),
                 toParameters(),
-                statements);
+                0,
+                Collections.<Type>emptyList(),
+                factory.newBlock(statements));
     }
 
     private List<FormalParameterDeclaration> toParameters() {
@@ -194,6 +199,23 @@ public class ImplementationBuilder {
                     (i == n - 1) && element.isVarArgs(),
                     factory.newSimpleName(var.getSimpleName().toString()),
                     0));
+        }
+        return results;
+    }
+
+    private List<TypeParameterDeclaration> toTypeParameters() {
+        List<? extends TypeParameterElement> typeParameters = element.getTypeParameters();
+        if (typeParameters.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<TypeParameterDeclaration> results = new ArrayList<TypeParameterDeclaration>();
+        for (TypeParameterElement typeParameter : typeParameters) {
+            SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
+            List<Type> typeBounds = new ArrayList<Type>();
+            for (TypeMirror typeBound : typeParameter.getBounds()) {
+                typeBounds.add(importer.resolve(converter.convert(typeBound)));
+            }
+            results.add(factory.newTypeParameterDeclaration(name, typeBounds));
         }
         return results;
     }

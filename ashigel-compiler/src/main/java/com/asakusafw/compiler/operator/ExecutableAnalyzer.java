@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -170,6 +172,14 @@ public class ExecutableAnalyzer {
      */
     public boolean isAbstract() {
         return executable.getModifiers().contains(Modifier.ABSTRACT);
+    }
+
+    /**
+     * Returns {@code true} iff this element is declared as a generic method.
+     * @return {@code true} iff this element is declared as a generic method
+     */
+    public boolean isGeneric() {
+        return executable.getTypeParameters().isEmpty() == false;
     }
 
     /**
@@ -368,12 +378,7 @@ public class ExecutableAnalyzer {
         if (key == null) {
             return null;
         }
-        Element elem = environment.getTypeUtils().asElement(type);
-        if ((elem instanceof TypeElement) == false) {
-            error(position, "型{0}には@Keyを指定できません", type);
-            return null;
-        }
-        checkShuffleKey(position, (TypeElement) elem, key);
+        checkShuffleKey(position, type, key);
         return key;
     }
 
@@ -403,16 +408,20 @@ public class ExecutableAnalyzer {
         return new ShuffleKey(group, formedOrder);
     }
 
-    private void checkShuffleKey(int position, TypeElement type, ShuffleKey key) {
+    private void checkShuffleKey(int position, TypeMirror type, ShuffleKey key) {
         assert type != null;
         assert key != null;
-        Set<String> properties = createPropertyNameTable(type);
+        List<TypeElement> types = collectUpperBounds(type);
+        Set<String> properties = new HashSet<String>();
+        for (TypeElement typeElement : types) {
+            properties.addAll(createPropertyNameTable(typeElement));
+        }
         for (String name : key.getGroupProperties()) {
             String propName = JavaName.of(name).toMemberName();
             if (properties.contains(propName) == false) {
                 error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
                         name,
-                        type.getQualifiedName());
+                        type);
             }
         }
         for (ShuffleKey.Order order : key.getOrderings()) {
@@ -420,9 +429,42 @@ public class ExecutableAnalyzer {
             if (properties.contains(propName) == false) {
                 error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
                         order.getProperty(),
-                        type.getQualifiedName());
+                        type);
             }
         }
+    }
+
+    private List<TypeElement> collectUpperBounds(TypeMirror type) {
+        assert type != null;
+        LinkedList<TypeMirror> works = new LinkedList<TypeMirror>();
+        works.add(type);
+        Set<TypeMirror> saw = new HashSet<TypeMirror>();
+        List<TypeElement> types = new ArrayList<TypeElement>();
+        int countDown = 100; // avoid infinite loop
+        while (works.isEmpty() == false && --countDown >= 0) {
+            TypeMirror target = works.removeFirst();
+            if (saw.contains(target)) {
+                continue;
+            }
+            saw.add(target);
+            Element element = environment.getTypeUtils().asElement(target);
+            if (element == null) {
+                continue;
+            }
+            switch (element.getKind()) {
+            case CLASS:
+            case INTERFACE:
+                types.add((TypeElement) element);
+                break;
+            case TYPE_PARAMETER:
+                works.addAll(((TypeParameterElement) element).getBounds());
+                break;
+            default:
+                // ignore other types
+                continue;
+            }
+        }
+        return types;
     }
 
     private Set<String> createPropertyNameTable(TypeElement type) {
@@ -611,6 +653,14 @@ public class ExecutableAnalyzer {
         }
 
         /**
+         * この型が型変数を表現する場合のみ{@code true}を返す。
+         * @return この型が型変数を表現する場合のみ{@code true}
+         */
+        public boolean isTypeVariable() {
+            return type.getKind() == TypeKind.TYPEVAR;
+        }
+
+        /**
          * この型が任意の列挙型を表現する場合のみ{@code true}を返す。
          * @return 任意の列挙型を表現する場合のみ{@code true}
          */
@@ -670,7 +720,29 @@ public class ExecutableAnalyzer {
             if (element == null) {
                 return false;
             }
+            return isProjectiveModel() || isConcreteModel();
+        }
+
+        /**
+         * この型が射影でないモデルを表現する場合のみ{@code true}を返す。
+         * @return この型が射影でないモデルを表現する場合のみ{@code true}
+         */
+        public boolean isConcreteModel() {
+            if (element == null) {
+                return false;
+            }
             return environment.getTypeUtils().isSubtype(type, environment.getDeclaredType(DataModel.class));
+        }
+
+        /**
+         * この型が射影モデルを表現する場合のみ{@code true}を返す。
+         * @return この型が射影モデルを表現する場合のみ{@code true}
+         */
+        public boolean isProjectiveModel() {
+            if (element == null) {
+                return false;
+            }
+            return type.getKind() == TypeKind.TYPEVAR;
         }
 
         /**

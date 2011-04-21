@@ -80,9 +80,9 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
         results.add(createConstructor());
         for (OperatorMethod method : operatorClass.getMethods()) {
             OperatorProcessor.Context context = new OperatorProcessor.Context(
+                    environment,
                     method.getAnnotation(),
                     method.getElement(),
-                    factory,
                     importer,
                     names);
             OperatorProcessor processor = method.getProcessor();

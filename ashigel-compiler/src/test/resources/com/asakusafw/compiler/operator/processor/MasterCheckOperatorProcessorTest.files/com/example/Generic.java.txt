@@ -1,0 +1,17 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Generic {
+
+    @MasterCheck
+    public abstract <M extends MockKey, T extends MockKey>
+    boolean example(
+        @Key(group = "key") M master,
+        @Key(group = "key") T tx);
+}

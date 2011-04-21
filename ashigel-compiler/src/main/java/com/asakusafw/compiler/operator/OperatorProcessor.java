@@ -23,7 +23,6 @@ import javax.lang.model.element.ExecutableElement;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
 import com.ashigeru.lang.java.model.util.ImportBuilder;
 
@@ -78,6 +77,11 @@ public interface OperatorProcessor {
     class Context {
 
         /**
+         * 環境。
+         */
+        public final OperatorCompilingEnvironment environment;
+
+        /**
          * 演算子注釈。
          */
         public final AnnotationMirror annotation;
@@ -86,11 +90,6 @@ public interface OperatorProcessor {
          * 処理対象の要素。
          */
         public final ExecutableElement element;
-
-        /**
-         * 利用中のモデルファクトリー。
-         */
-        public final ModelFactory factory;
 
         /**
          * 利用中のインポーター。
@@ -104,27 +103,27 @@ public interface OperatorProcessor {
 
         /**
          * インスタンスを生成する。
+         * @param environment 処理環境
          * @param annotation 処理対象の演算子注釈
          * @param element 処理対象の要素
-         * @param factory 利用中のモデルファクトリー
          * @param importer 利用中のインポーター
          * @param names 衝突しない名前の生成器
          * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
          */
         public Context(
+                OperatorCompilingEnvironment environment,
                 AnnotationMirror annotation,
                 ExecutableElement element,
-                ModelFactory factory,
                 ImportBuilder importer,
                 NameGenerator names) {
+            Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(annotation, "annotation"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-            Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(importer, "importer"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(names, "names"); //$NON-NLS-1$
+            this.environment = environment;
             this.annotation = annotation;
             this.element = element;
-            this.factory = factory;
             this.importer = importer;
             this.names = names;
         }

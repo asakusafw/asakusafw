@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Generic {
+
+    @Branch
+    public <P extends MockProjection> ExampleEnum example(P hoge) {
+        if (hoge.getValue() > 100) {
+            return ExampleEnum.HIGH;
+        }
+        else if (hoge.getValue() > 50) {
+            return ExampleEnum.MIDDLE;
+        }
+        return ExampleEnum.LOW;
+    }
+}

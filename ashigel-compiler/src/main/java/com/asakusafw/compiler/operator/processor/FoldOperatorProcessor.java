@@ -37,7 +37,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("畳み込み演算子はabstractで宣言できません");
         }
@@ -61,7 +61,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        if (getEnvironment().getTypeUtils().isSameType(left.getType(), right.getType()) == false) {
+        if (context.environment.getTypeUtils().isSameType(left.getType(), right.getType()) == false) {
             a.error(1, "畳み込み演算子の1つ目の引数と2つ目の引数は同じ型である必要があります");
         }
         ShuffleKey foldKey = a.getParameterKey(0);
@@ -94,6 +94,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
                 "畳み込みの結果",
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
+                Fold.INPUT,
                 0);
         for (int i = 2, n = a.countParameters(); i < n; i++) {
             builder.addParameter(

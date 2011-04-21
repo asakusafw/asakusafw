@@ -40,7 +40,7 @@ public class BranchOperatorProcessor extends AbstractOperatorProcessor {
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
             a.error("分岐演算子はabstractで宣言できません");
         }
@@ -79,6 +79,7 @@ public class BranchOperatorProcessor extends AbstractOperatorProcessor {
                     a.getDocument(var),
                     JavaName.of(var.getSimpleName().toString()).toMemberName(),
                     a.getParameterType(0).getType(),
+                    a.getParameterName(0),
                     null);
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {

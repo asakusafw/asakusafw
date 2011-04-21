@@ -26,16 +26,13 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.operator.Callback;
-import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
+import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
-import com.asakusafw.compiler.operator.flow.FlowPartClass;
-import com.asakusafw.compiler.operator.flow.FlowPartClassCollector;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.vocabulary.flow.FlowPart;
@@ -63,10 +60,10 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
                 OperatorPortDeclaration in = find("in", aClass.getInputPorts());
                 OperatorPortDeclaration out = find("out", aClass.getOutputPorts());
 
-                assertTypeEquals(env, in.getType(), MockHoge.class);
+                assertTypeEquals(env, in.getType().getRepresentation(), MockHoge.class);
                 assertThat(in.getParameterPosition(), is(0));
 
-                assertTypeEquals(env, out.getType(), MockHoge.class);
+                assertTypeEquals(env, out.getType().getRepresentation(), MockHoge.class);
                 assertThat(out.getParameterPosition(), is(1));
             }
         });
@@ -94,19 +91,52 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
                 OperatorPortDeclaration param1 = find("param1", aClass.getParameters());
                 OperatorPortDeclaration param2 = find("param2", aClass.getParameters());
 
-                assertTypeEquals(env, in1.getType(), MockHoge.class);
+                assertTypeEquals(env, in1.getType().getRepresentation(), MockHoge.class);
                 assertThat(in1.getParameterPosition(), is(0));
-                assertTypeEquals(env, out1.getType(), MockHoge.class);
+                assertTypeEquals(env, out1.getType().getRepresentation(), MockHoge.class);
                 assertThat(out1.getParameterPosition(), is(1));
-                assertThat(param1.getType().getKind(), is(TypeKind.INT));
+                assertThat(param1.getType().getRepresentation().getKind(), is(TypeKind.INT));
                 assertThat(param1.getParameterPosition(), is(2));
 
-                assertTypeEquals(env, in2.getType(), MockFoo.class);
+                assertTypeEquals(env, in2.getType().getRepresentation(), MockFoo.class);
                 assertThat(in2.getParameterPosition(), is(3));
-                assertTypeEquals(env, out2.getType(), MockFoo.class);
+                assertTypeEquals(env, out2.getType().getRepresentation(), MockFoo.class);
                 assertThat(out2.getParameterPosition(), is(4));
-                assertTypeEquals(env, param2.getType(), String.class);
+                assertTypeEquals(env, param2.getType().getRepresentation(), String.class);
                 assertThat(param2.getParameterPosition(), is(5));
+            }
+        });
+    }
+
+    /**
+     * generic flow part.
+     */
+    @Test
+    public void generics() {
+        add("com.example.Generic");
+        start(new Collector() {
+            @Override
+            protected void onCollected(List<FlowPartClass> results) {
+                assertThat(results.isEmpty(), is(false));
+                FlowPartClass aClass = results.get(0);
+                assertThat(aClass.getInputPorts().size(), is(1));
+                assertThat(aClass.getOutputPorts().size(), is(1));
+                assertThat(aClass.getParameters().size(), is(0));
+
+                OperatorPortDeclaration in = find("in", aClass.getInputPorts());
+                OperatorPortDeclaration out = find("out", aClass.getOutputPorts());
+
+                assertThat("input/output are same", env.getTypeUtils().isSameType(
+                        in.getType().getRepresentation(),
+                        out.getType().getRepresentation()),
+                        is(true));
+
+                assertThat("input/output use type variable",
+                        in.getType().getRepresentation().getKind(),
+                        is(TypeKind.TYPEVAR));
+
+                assertThat(in.getParameterPosition(), is(0));
+                assertThat(out.getParameterPosition(), is(1));
             }
         });
     }
@@ -175,15 +205,6 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * クラス宣言に型引数。
-     */
-    @Test
-    public void TypeParameters() {
-        add("com.example.TypeParameters");
-        error(new Collector());
-    }
-
-    /**
      * コンストラクタに型引数。
      */
     @Test
@@ -207,6 +228,15 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     @Test
     public void NotModel() {
         add("com.example.NotModel");
+        error(new Collector());
+    }
+
+    /**
+     * Output ports have source type of unbound type variables.
+     */
+    @Test
+    public void UnboundGenerics() {
+        add("com.example.UnboundGenerics");
         error(new Collector());
     }
 

@@ -40,15 +40,17 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     public OperatorMethodDescriptor describe(Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
-
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
+        if (a.isGeneric()) {
+            a.error("分割演算子はジェネリックメソッドで宣言できません");
+        }
         if (a.isAbstract() == false) {
             a.error("分割演算子はabstractを指定する必要があります");
         }
         if (a.getReturnType().isVoid() == false) {
             a.error("分割演算子は戻り値にvoidを指定する必要があります");
         }
-        if (a.getParameterType(0).isModel() == false) {
+        if (a.getParameterType(0).isConcreteModel() == false) {
             a.error(0, "分割演算子の最初の引数はモデルオブジェクト型である必要があります");
         }
         for (int i = 1; i <= 2; i++) {
@@ -85,11 +87,13 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterDocument(1),
                 a.getParameterName(1),
                 a.getParameterType(1).getTypeArgument().getType(),
+                null,
                 1);
         builder.addOutput(
                 a.getParameterDocument(2),
                 a.getParameterName(2),
                 a.getParameterType(2).getTypeArgument().getType(),
+                null,
                 2);
 
         return builder.toDescriptor();
@@ -98,7 +102,7 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
         ImplementationBuilder builder = new ImplementationBuilder(context);
-        ModelFactory f = context.factory;
+        ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
             .newObject(Models.toLiteral(f, "分割演算子は組み込みの方法で処理されます"))
             .toThrowStatement());

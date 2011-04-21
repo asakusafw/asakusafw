@@ -20,12 +20,7 @@ import java.util.List;
 import javax.lang.model.type.TypeKind;
 import javax.tools.Diagnostic;
 
-
 import com.asakusafw.compiler.common.TargetOperator;
-import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
-import com.asakusafw.compiler.operator.ExecutableAnalyzer;
-import com.asakusafw.compiler.operator.ImplementationBuilder;
-import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -42,17 +37,17 @@ public class MockOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     public OperatorMethodDescriptor describe(Context context) {
         if (context.element.getParameters().size() != 2) {
-            getEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
+            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     "invalid parameters");
             return null;
         }
         if (context.element.getReturnType().getKind() == TypeKind.VOID) {
-            getEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
+            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                 "invalid return type");
             return null;
         }
 
-        ExecutableAnalyzer a = new ExecutableAnalyzer(getEnvironment(), context.element);
+        ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.countParameters() != 2) {
             return null;
         }
@@ -77,6 +72,7 @@ public class MockOperatorProcessor extends AbstractOperatorProcessor {
                 a.getReturnDocument(),
                 "out",
                 a.getReturnType().getType(),
+                null,
                 null);
 
         return builder.toDescriptor();
@@ -84,7 +80,7 @@ public class MockOperatorProcessor extends AbstractOperatorProcessor {
 
     @Override
     protected List<? extends TypeBodyDeclaration> override(Context context) {
-        ModelFactory factory = context.factory;
+        ModelFactory factory = context.environment.getFactory();
         ImplementationBuilder builder = new ImplementationBuilder(context);
         builder.addStatement(new ExpressionBuilder(factory, builder.getParameterName(0))
             .apply(InfixOperator.PLUS, builder.getParameterName(1))

@@ -108,4 +108,13 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
         add("com.example.Parameterized");
         error(new SplitOperatorProcessor());
     }
+
+    /**
+     * generic method.
+     */
+    @Test
+    public void Generic() {
+        add("com.example.Generic");
+        error(new SplitOperatorProcessor());
+    }
 }

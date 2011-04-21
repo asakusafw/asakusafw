@@ -1,0 +1,19 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Generic {
+
+    /**
+     * 集計結果を返す。
+     * @param in 集計対象
+     * @return 集計結果
+     */
+    @Summarize
+    public abstract <P extends MockProjection>
+    MockSummarized example(MockHoge in);
+}

@@ -37,13 +37,10 @@ import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.After;
 
-import com.asakusafw.compiler.operator.OperatorCompiler;
-import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -363,6 +360,7 @@ public class OperatorCompilerTestRoot {
             }
         }
 
+        compiler.addArguments("-Xlint:unchecked");
         for (JavaFileObject java : sources) {
             compiler.addSource(java);
         }
