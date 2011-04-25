@@ -65,7 +65,6 @@ public abstract class Callback {
         this.env = new OperatorCompilingEnvironment(
                 pEnv,
                 Models.getModelFactory(),
-                getClass().getClassLoader(),
                 OperatorCompilerOptions.parse(pEnv.getOptions()));
         this.round = rEnv;
         this.types = pEnv.getTypeUtils();

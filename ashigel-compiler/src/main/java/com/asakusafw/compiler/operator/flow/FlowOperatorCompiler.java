@@ -59,7 +59,6 @@ public class FlowOperatorCompiler implements Processor {
         this.environment = new OperatorCompilingEnvironment(
                 processingEnv,
                 Models.getModelFactory(),
-                getClass().getClassLoader(),
                 OperatorCompilerOptions.parse(processingEnv.getOptions()));
     }
 

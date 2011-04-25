@@ -53,7 +53,7 @@ import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.MapUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
-import com.asakusafw.compiler.repository.ModelGenDataClassRepository;
+import com.asakusafw.compiler.repository.SpiDataClassRepository;
 import com.asakusafw.compiler.repository.SpiExternalIoDescriptionProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowElementProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
@@ -98,7 +98,7 @@ public class JobflowCompilerTestRoot {
         config.setFactory(Models.getModelFactory());
         config.setProcessors(new SpiFlowElementProcessorRepository());
         config.setExternals(new SpiExternalIoDescriptionProcessorRepository());
-        config.setDataClasses(new ModelGenDataClassRepository());
+        config.setDataClasses(new SpiDataClassRepository());
         config.setGraphRewriters(new SpiFlowGraphRewriterRepository());
         config.setPackager(packager);
         config.setRootPackageName("com.example");

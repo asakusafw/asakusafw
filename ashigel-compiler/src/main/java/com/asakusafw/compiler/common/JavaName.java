@@ -119,12 +119,34 @@ public class JavaName {
     }
 
     /**
+     * この名前の先頭のセグメントを削除する。
+     * @throws IllegalStateException この名前が単一のセグメントからなる場合
+     */
+    public void removeFirst() {
+        if (words.size() == 1) {
+            throw new IllegalStateException();
+        }
+        words.remove(0);
+    }
+
+    /**
      * この名前の末尾に指定のセグメントを追加する。
      * @param segment 追加するセグメント
      * @throws IllegalArgumentException 不正なセグメントが指定された場合
      */
     public void addLast(String segment) {
         words.add(normalize(segment));
+    }
+
+    /**
+     * この名前の末尾のセグメントを削除する。
+     * @throws IllegalStateException この名前が単一のセグメントからなる場合
+     */
+    public void removeLast() {
+        if (words.size() == 1) {
+            throw new IllegalStateException();
+        }
+        words.remove(words.size() - 1);
     }
 
     private String capitalize(String segment) {

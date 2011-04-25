@@ -33,7 +33,7 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
-import com.asakusafw.compiler.repository.ModelGenDataClassRepository;
+import com.asakusafw.compiler.repository.SpiDataClassRepository;
 import com.asakusafw.compiler.repository.SpiExternalIoDescriptionProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowElementProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
@@ -177,7 +177,7 @@ public final class DirectBatchCompiler {
         assert flowCompilerOptions != null;
         BatchCompilerConfiguration config = new BatchCompilerConfiguration();
         config.setBatchId(batchId);
-        config.setDataClasses(new ModelGenDataClassRepository());
+        config.setDataClasses(new SpiDataClassRepository());
         config.setExternals(new SpiExternalIoDescriptionProcessorRepository());
         config.setGraphRewriters(new SpiFlowGraphRewriterRepository());
         config.setFactory(Models.getModelFactory());

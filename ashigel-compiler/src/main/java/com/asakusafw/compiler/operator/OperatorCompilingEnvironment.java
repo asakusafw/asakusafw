@@ -39,36 +39,30 @@ import com.ashigeru.lang.java.model.syntax.ModelFactory;
  */
 public class OperatorCompilingEnvironment {
 
-    private ProcessingEnvironment processingEnvironment;
+    private final ProcessingEnvironment processingEnvironment;
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private ClassLoader serviceClassLoader;
+    private final OperatorCompilerOptions options;
 
-    private OperatorCompilerOptions options;
-
-    private Map<Class<?>, DeclaredType> rawTypeCache = new HashMap<Class<?>, DeclaredType>();
+    private final Map<Class<?>, DeclaredType> rawTypeCache = new HashMap<Class<?>, DeclaredType>();
 
     /**
      * インスタンスを生成する。
      * @param processingEnvironment 注釈プロセッサの実行環境
      * @param factory Java DOMを構築するためのファクトリ
-     * @param serviceClassLoader サービスをロードするためのクラスローダー
      * @param options コンパイラオプション
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public OperatorCompilingEnvironment(
             ProcessingEnvironment processingEnvironment,
             ModelFactory factory,
-            ClassLoader serviceClassLoader,
             OperatorCompilerOptions options) {
         Precondition.checkMustNotBeNull(processingEnvironment, "processingEnvironment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
-        Precondition.checkMustNotBeNull(serviceClassLoader, "serviceClassLoader"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
         this.processingEnvironment = processingEnvironment;
         this.factory = factory;
-        this.serviceClassLoader = serviceClassLoader;
         this.options = options;
     }
 
@@ -93,7 +87,7 @@ public class OperatorCompilingEnvironment {
      * @return サービスをロードするためのクラスローダー
      */
     public ClassLoader getServiceClassLoader() {
-        return serviceClassLoader;
+        return options.getServiceClassLoader();
     }
 
     /**
@@ -139,6 +133,20 @@ public class OperatorCompilingEnvironment {
         // TODO add header comments
         Filer filer = getProcessingEnvironment().getFiler();
         new Jsr269(factory).emit(filer, unit);
+    }
+
+    /**
+     * Loads a mirror of the data model corresponded to the specified type.
+     * @param type the corresponded type
+     * @return the loaded data model mirror,
+     *     or {@code null} if the type does not represent a valid data model for this repository
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public DataModelMirror loadDataModel(TypeMirror type) {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        return options.getDataModelRepository().load(this, type);
     }
 
     /**

@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.List;
 
 import com.asakusafw.compiler.batch.WorkflowProcessor.Repository;
-import com.asakusafw.compiler.flow.DataClass;
+import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowElementProcessor;
@@ -36,7 +36,7 @@ public class BatchCompilerConfiguration {
 
     private FlowElementProcessor.Repository flowElements;
 
-    private DataClass.Repository dataClasses;
+    private DataClassRepository dataClasses;
 
     private ExternalIoDescriptionProcessor.Repository externals;
 
@@ -112,7 +112,7 @@ public class BatchCompilerConfiguration {
      * データモデルを操作するオブジェクトのリポジトリーを返す。
      * @return データモデルを操作するオブジェクトのリポジトリー
      */
-    public DataClass.Repository getDataClasses() {
+    public DataClassRepository getDataClasses() {
         return dataClasses;
     }
 
@@ -120,7 +120,7 @@ public class BatchCompilerConfiguration {
      * データモデルを操作するオブジェクトのリポジトリーを設定する。
      * @param dataClasses 設定するリポジトリー
      */
-    public void setDataClasses(DataClass.Repository dataClasses) {
+    public void setDataClasses(DataClassRepository dataClasses) {
         this.dataClasses = dataClasses;
     }
 

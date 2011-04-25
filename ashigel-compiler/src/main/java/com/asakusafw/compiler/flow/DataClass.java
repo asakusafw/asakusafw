@@ -179,20 +179,6 @@ public interface DataClass {
     }
 
     /**
-     * データクラスを格納するリポジトリ。
-     */
-    interface Repository extends FlowCompilingEnvironment.Initializable {
-
-        /**
-         * 指定の型に対するデータクラスを返す。
-         * @param type 対象の型
-         * @return 対応するデータクラス、解析できない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-         */
-        DataClass load(java.lang.reflect.Type type);
-    }
-
-    /**
      * それぞれのデータが有するプロパティ。
      */
     interface Property {

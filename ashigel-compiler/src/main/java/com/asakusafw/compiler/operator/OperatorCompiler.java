@@ -37,7 +37,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,13 +68,19 @@ public class OperatorCompiler implements Processor {
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
-        OperatorCompilerOptions options = loadOptions(processingEnv);
-        this.environment = new OperatorCompilingEnvironment(
-                processingEnv,
-                Models.getModelFactory(),
-                getClass().getClassLoader(),
-                options);
-        this.subProcessors = loadSubProcessors(environment);
+        try {
+            OperatorCompilerOptions options = loadOptions(processingEnv);
+            this.environment = new OperatorCompilingEnvironment(
+                    processingEnv,
+                    Models.getModelFactory(),
+                    options);
+            this.subProcessors = loadSubProcessors(environment);
+        } catch (RuntimeException e) {
+            environment.getMessager().printMessage(
+                    Diagnostic.Kind.ERROR,
+                    e.getMessage());
+            LOG.debug(e.getMessage(), e);
+        }
     }
 
     /**
@@ -83,6 +88,7 @@ public class OperatorCompiler implements Processor {
      * @param processingEnv 処理環境
      * @return オプション項目の一覧
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * @throws OperatorCompilerException 引数の解析に失敗した場合
      */
     protected OperatorCompilerOptions loadOptions(ProcessingEnvironment processingEnv) {
         Precondition.checkMustNotBeNull(processingEnv, "processingEnv"); //$NON-NLS-1$

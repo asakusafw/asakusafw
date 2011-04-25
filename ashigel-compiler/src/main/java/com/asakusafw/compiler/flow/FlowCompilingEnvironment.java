@@ -113,7 +113,7 @@ public class FlowCompilingEnvironment {
      * この環境で利用可能なデータクラスのリポジトリを返す。
      * @return 利用可能なデータクラスのリポジトリ
      */
-    public DataClass.Repository getDataClasses() {
+    public DataClassRepository getDataClasses() {
         return config.getDataClasses();
     }
 

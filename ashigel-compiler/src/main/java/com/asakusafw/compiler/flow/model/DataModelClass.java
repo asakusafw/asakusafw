@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.repository;
+package com.asakusafw.compiler.flow.model;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.compiler.repository.ValueOptionProperty;
+import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -33,9 +36,9 @@ import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
- * {@code model-generator}によって生成されたクラスを対象とした{@link DataClass}の実装。
+ * {@link DataModel}を利用した{@link DataClass}の実装。
  */
-public class ModelGenDataClass implements DataClass {
+public class DataModelClass implements DataClass {
 
     private ModelFactory factory;
 
@@ -50,11 +53,11 @@ public class ModelGenDataClass implements DataClass {
      * @return 生成したインスタンス
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    public static ModelGenDataClass create(FlowCompilingEnvironment environment, Class<?> type) {
+    public static DataModelClass create(FlowCompilingEnvironment environment, Class<?> type) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         Map<String, Property> properties = collectProperties(environment, type);
-        return new ModelGenDataClass(environment.getModelFactory(), type, properties);
+        return new DataModelClass(environment.getModelFactory(), type, properties);
     }
 
     private static Map<String, DataClass.Property> collectProperties(
@@ -63,12 +66,9 @@ public class ModelGenDataClass implements DataClass {
         assert environment != null;
         assert aClass != null;
         Map<String, Property> results = new HashMap<String, DataClass.Property>();
-        for (Field field : aClass.getDeclaredFields()) {
-            if (field.isSynthetic() || field.getName().indexOf('$') >= 0) {
-                // skip internal field
-                continue;
-            }
-            Class<?> propertyType = field.getType();
+        for (Method method : aClass.getMethods()) {
+            String propertyName = toPropertyName(method);
+            Class<?> propertyType = method.getReturnType();
             if (propertyType == ValueOption.class
                     || ValueOption.class.isAssignableFrom(propertyType) == false) {
                 continue;
@@ -77,12 +77,28 @@ public class ModelGenDataClass implements DataClass {
             @SuppressWarnings("unchecked")
             Class<? extends ValueOption<?>> valueOptionType =
                 (Class<? extends ValueOption<?>>) propertyType;
-            results.put(field.getName(), new ValueOptionProperty(
+            results.put(propertyName, new ValueOptionProperty(
                     environment.getModelFactory(),
-                    JavaName.of(field.getName()).toMemberName(),
+                    propertyName,
                     valueOptionType));
         }
         return results;
+    }
+
+    private static String toPropertyName(Method method) {
+        assert method != null;
+        JavaName name = JavaName.of(method.getName());
+        List<String> segments = name.getSegments();
+        if (segments.size() <= 2) {
+            return null;
+        }
+        if (segments.get(0).equals("get") == false
+                || segments.get(segments.size() - 1).equals("option") == false) {
+            return null;
+        }
+        name.removeLast();
+        name.removeFirst();
+        return name.toMemberName();
     }
 
     /**
@@ -92,7 +108,7 @@ public class ModelGenDataClass implements DataClass {
      * @param properties プロパティの一覧
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    protected ModelGenDataClass(ModelFactory factory, Class<?> type, Map<String, Property> properties) {
+    protected DataModelClass(ModelFactory factory, Class<?> type, Map<String, Property> properties) {
         Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(properties, "properties"); //$NON-NLS-1$
@@ -175,7 +191,7 @@ public class ModelGenDataClass implements DataClass {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ModelGenDataClass other = (ModelGenDataClass) obj;
+        DataModelClass other = (DataModelClass) obj;
         if (type.equals(other.type) == false) {
             return false;
         }

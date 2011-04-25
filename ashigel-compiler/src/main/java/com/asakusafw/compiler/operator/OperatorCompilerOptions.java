@@ -19,22 +19,33 @@ import java.text.MessageFormat;
 import java.util.Map;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.repository.SpiDataModelMirrorRepository;
 
 /**
  * Operator DSLコンパイラのオプション一覧。
  */
-public class OperatorCompilerOptions {
+public final class OperatorCompilerOptions {
+
+    private ClassLoader serviceClassLoader;
+    private DataModelMirrorRepository dataModelRepository;
+
+    private OperatorCompilerOptions() {
+        return;
+    }
 
     /**
      * 注釈プロセッサのオプションを解析してこのオブジェクトを返す。
      * @param options 注釈プロセッサのオプション一覧
      * @return 解析結果
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * @throws OperatorCompilerException 引数の解析に失敗した場合
      */
     public static OperatorCompilerOptions parse(Map<String, String> options) {
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
-        // 必要に応じて
-        return new OperatorCompilerOptions();
+        OperatorCompilerOptions result = new OperatorCompilerOptions();
+        result.serviceClassLoader = OperatorCompilerOptions.class.getClassLoader();
+        result.dataModelRepository = new SpiDataModelMirrorRepository(result.serviceClassLoader);
+        return result;
     }
 
     @Override
@@ -42,5 +53,21 @@ public class OperatorCompilerOptions {
         return MessageFormat.format(
                 "{0}'{''}'",
                 getClass().getSimpleName());
+    }
+
+    /**
+     * Returns the class loader to load compiler plug-ins.
+     * @return a compiler plug-ins loader
+     */
+    public ClassLoader getServiceClassLoader() {
+        return serviceClassLoader;
+    }
+
+    /**
+     * Returns the data model repository.
+     * @return the data model repository
+     */
+    public DataModelMirrorRepository getDataModelRepository() {
+        return dataModelRepository;
     }
 }

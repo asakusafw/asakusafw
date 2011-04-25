@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
+import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
@@ -229,7 +230,7 @@ public class ShuffleAnalyzer {
 
         Type inputType = input.getDescription().getDataType();
 
-        DataClass.Repository dataClasses = environment.getDataClasses();
+        DataClassRepository dataClasses = environment.getDataClasses();
         DataClass source = dataClasses.load(inputType);
         DataClass target = dataClasses.load(desciption.getOutputType());
         if (source == null) {

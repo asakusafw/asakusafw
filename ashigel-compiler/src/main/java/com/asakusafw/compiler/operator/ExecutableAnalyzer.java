@@ -19,12 +19,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -32,7 +28,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -40,10 +35,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.operator.DataModelMirror.Kind;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Out;
@@ -313,7 +307,11 @@ public class ExecutableAnalyzer {
         if (arg.exists()) {
             type = arg;
         }
-        return toShuffleKey(index, type.getType(), findAnnotation(parameter, environment.getDeclaredType(Key.class)));
+        DataModelMirror model = environment.loadDataModel(type.getType());
+        if (model == null) {
+            return null;
+        }
+        return toShuffleKey(index, model, findAnnotation(parameter, environment.getDeclaredType(Key.class)));
     }
 
     /**
@@ -369,7 +367,7 @@ public class ExecutableAnalyzer {
 
     ShuffleKey toShuffleKey(
             int position,
-            TypeMirror type,
+            DataModelMirror model,
             AnnotationMirror annotation) {
         if (annotation == null) {
             return null;
@@ -378,7 +376,7 @@ public class ExecutableAnalyzer {
         if (key == null) {
             return null;
         }
-        checkShuffleKey(position, type, key);
+        checkShuffleKey(position, model, key);
         return key;
     }
 
@@ -408,104 +406,23 @@ public class ExecutableAnalyzer {
         return new ShuffleKey(group, formedOrder);
     }
 
-    private void checkShuffleKey(int position, TypeMirror type, ShuffleKey key) {
-        assert type != null;
+    private void checkShuffleKey(int position, DataModelMirror model, ShuffleKey key) {
+        assert model != null;
         assert key != null;
-        List<TypeElement> types = collectUpperBounds(type);
-        Set<String> properties = new HashSet<String>();
-        for (TypeElement typeElement : types) {
-            properties.addAll(createPropertyNameTable(typeElement));
-        }
         for (String name : key.getGroupProperties()) {
-            String propName = JavaName.of(name).toMemberName();
-            if (properties.contains(propName) == false) {
+            if (model.findProperty(name) == null) {
                 error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
                         name,
-                        type);
+                        model);
             }
         }
         for (ShuffleKey.Order order : key.getOrderings()) {
-            String propName = JavaName.of(order.getProperty()).toMemberName();
-            if (properties.contains(propName) == false) {
+            if (model.findProperty(order.getProperty()) == null) {
                 error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
                         order.getProperty(),
-                        type);
+                        model);
             }
         }
-    }
-
-    private List<TypeElement> collectUpperBounds(TypeMirror type) {
-        assert type != null;
-        LinkedList<TypeMirror> works = new LinkedList<TypeMirror>();
-        works.add(type);
-        Set<TypeMirror> saw = new HashSet<TypeMirror>();
-        List<TypeElement> types = new ArrayList<TypeElement>();
-        int countDown = 100; // avoid infinite loop
-        while (works.isEmpty() == false && --countDown >= 0) {
-            TypeMirror target = works.removeFirst();
-            if (saw.contains(target)) {
-                continue;
-            }
-            saw.add(target);
-            Element element = environment.getTypeUtils().asElement(target);
-            if (element == null) {
-                continue;
-            }
-            switch (element.getKind()) {
-            case CLASS:
-            case INTERFACE:
-                types.add((TypeElement) element);
-                break;
-            case TYPE_PARAMETER:
-                works.addAll(((TypeParameterElement) element).getBounds());
-                break;
-            default:
-                // ignore other types
-                continue;
-            }
-        }
-        return types;
-    }
-
-    private Set<String> createPropertyNameTable(TypeElement type) {
-        assert type != null;
-        Set<String> properties = new HashSet<String>();
-        for (Element member : environment.getElementUtils().getAllMembers(type)) {
-            if (member.getModifiers().contains(Modifier.PUBLIC)  == false) {
-                continue;
-            }
-            if (member.getKind() == ElementKind.METHOD) {
-                String methodName = member.getSimpleName().toString();
-                String propertyName = toPropertyName(methodName);
-                if (propertyName != null) {
-                    properties.add(propertyName);
-                }
-            }
-            if (member.getKind() == ElementKind.FIELD) {
-                properties.add(member.getSimpleName().toString());
-            }
-        }
-        return properties;
-    }
-
-    private String toPropertyName(String methodName) {
-        assert methodName != null;
-        StringBuilder buf = new StringBuilder();
-        if (methodName.length() < "getAOption".length()) {
-            return null;
-        }
-        if (methodName.startsWith("get") && methodName.endsWith("Option")) {
-            buf.append(methodName, "get".length(), methodName.length() - "Option".length());
-        } else {
-            return null;
-        }
-        assert buf.length() >= 1;
-        char head = buf.charAt(0);
-        if ('0' <= head && head <= '9' || 'a' <= head && head <= 'z') {
-            return null;
-        }
-        buf.setCharAt(0, Character.toLowerCase(head));
-        return buf.toString();
     }
 
     List<String> toStringList(AnnotationValue value) {
@@ -717,10 +634,8 @@ public class ExecutableAnalyzer {
          * @return この型がモデルを表現する場合のみ{@code true}
          */
         public boolean isModel() {
-            if (element == null) {
-                return false;
-            }
-            return isProjectiveModel() || isConcreteModel();
+            DataModelMirror model = environment.loadDataModel(type);
+            return model != null;
         }
 
         /**
@@ -728,10 +643,8 @@ public class ExecutableAnalyzer {
          * @return この型が射影でないモデルを表現する場合のみ{@code true}
          */
         public boolean isConcreteModel() {
-            if (element == null) {
-                return false;
-            }
-            return environment.getTypeUtils().isSubtype(type, environment.getDeclaredType(DataModel.class));
+            DataModelMirror model = environment.loadDataModel(type);
+            return model != null && model.getKind() == Kind.CONCRETE;
         }
 
         /**
@@ -739,10 +652,8 @@ public class ExecutableAnalyzer {
          * @return この型が射影モデルを表現する場合のみ{@code true}
          */
         public boolean isProjectiveModel() {
-            if (element == null) {
-                return false;
-            }
-            return type.getKind() == TypeKind.TYPEVAR;
+            DataModelMirror model = environment.loadDataModel(type);
+            return model != null && model.getKind() == Kind.PARTIAL;
         }
 
         /**
@@ -814,8 +725,9 @@ public class ExecutableAnalyzer {
          */
         public ShuffleKey getJoinKey(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
+            DataModelMirror model = environment.loadDataModel(target);
             AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Joined.class));
-            if (annotation == null) {
+            if (model == null || annotation == null) {
                 throw new IllegalArgumentException();
             }
             Map<String, AnnotationValue> values = getValues(annotation);
@@ -830,7 +742,7 @@ public class ExecutableAnalyzer {
                 AnnotationMirror term = (AnnotationMirror) value;
                 if (typeEqual(target, getReduceTermType(term))) {
                     AnnotationMirror shuffle = getReduceTermKey(term);
-                    ShuffleKey key = toShuffleKey(-1, target, shuffle);
+                    ShuffleKey key = toShuffleKey(-1, model, shuffle);
                     return key;
                 }
             }
@@ -877,9 +789,10 @@ public class ExecutableAnalyzer {
                 throw new IllegalArgumentException();
             }
             TypeMirror shuffleType = getReduceTermType(reduce);
+            DataModelMirror model = environment.loadDataModel(shuffleType);
             AnnotationMirror shuffleKey = getReduceTermKey(reduce);
-            if (shuffleKey != null) {
-                return toShuffleKey(-1, shuffleType, shuffleKey);
+            if (model != null && shuffleKey != null) {
+                return toShuffleKey(-1, model, shuffleKey);
             }
             throw new IllegalArgumentException();
         }

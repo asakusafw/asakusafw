@@ -28,7 +28,7 @@ public class FlowCompilerConfiguration {
 
     private FlowElementProcessor.Repository processors;
 
-    private DataClass.Repository dataClasses;
+    private DataClassRepository dataClasses;
 
     private ExternalIoDescriptionProcessor.Repository externals;
 
@@ -98,7 +98,7 @@ public class FlowCompilerConfiguration {
      * データモデルを操作するオブジェクトのリポジトリーを返す。
      * @return データモデルを操作するオブジェクトのリポジトリー
      */
-    public DataClass.Repository getDataClasses() {
+    public DataClassRepository getDataClasses() {
         return dataClasses;
     }
 
@@ -106,7 +106,7 @@ public class FlowCompilerConfiguration {
      * データモデルを操作するオブジェクトのリポジトリーを設定する。
      * @param dataClasses 設定するリポジトリー
      */
-    public void setDataClasses(DataClass.Repository dataClasses) {
+    public void setDataClasses(DataClassRepository dataClasses) {
         this.dataClasses = dataClasses;
     }
 

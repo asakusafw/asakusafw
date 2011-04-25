@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.repository;
+package com.asakusafw.compiler.flow.model;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -26,17 +26,18 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
+import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.model.DataModel;
 
 /**
- * {@link ModelGenDataClass}を生成する{@code DataClass.Repository}の実装。
+ * {@link DataModelClass}を生成する{@code DataClass.Repository}の実装。
  */
-public class ModelGenDataClassRepository
+public class DataModelClassRepository
         extends FlowCompilingEnvironment.Initialized
-        implements DataClass.Repository {
+        implements DataClassRepository {
 
-    static final Logger LOG = LoggerFactory.getLogger(ModelGenDataClassRepository.class);
+    static final Logger LOG = LoggerFactory.getLogger(DataModelClassRepository.class);
 
     private Reference<Map<Type, DataClass>> cache;
 
@@ -66,7 +67,7 @@ public class ModelGenDataClassRepository
             return null;
         }
 
-        ModelGenDataClass created = ModelGenDataClass.create(getEnvironment(), aClass);
+        DataModelClass created = DataModelClass.create(getEnvironment(), aClass);
         if (created == null) {
             return null;
         }
