@@ -20,6 +20,8 @@
 		<slf4j.version>1.6.1</slf4j.version>
 		<junit.version>4.8.2</junit.version>
 		<hamcrest.version>1.1</hamcrest.version>
+		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<profiles>
@@ -81,7 +83,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-					<encoding>UTF-8</encoding>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -90,7 +92,7 @@
 				<version>2.3.2</version>
 				<configuration>
 					<fork>true</fork>
-					<encoding>UTF-8</encoding>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
@@ -148,10 +150,10 @@
 							<name>.settings/org.eclipse.jdt.core.prefs</name>
 							<content>
 <![CDATA[
-encoding//src/main/java=UTF-8
-encoding//src/main/resources=UTF-8
-encoding//src/test/java=UTF-8
-encoding//src/test/resources=UTF-8
+encoding//src/main/java=${project.build.sourceEncoding}
+encoding//src/main/resources=${project.build.sourceEncoding}
+encoding//src/test/java=${project.build.sourceEncoding}
+encoding//src/test/resources=${project.build.sourceEncoding}
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
 org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.processAnnotations=enabled
