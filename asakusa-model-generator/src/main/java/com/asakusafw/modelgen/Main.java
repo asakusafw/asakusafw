@@ -303,7 +303,8 @@ public class Main implements Callable<ModelRepository> {
             value = System.getProperty(var);
             if (value == null) {
                 value = System.getenv(var);
-            } else {
+            }
+            if (value != null) {
                 break;
             }
         }

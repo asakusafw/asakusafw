@@ -111,7 +111,8 @@ public final class HadoopBulkLoaderDDLGenerator {
             value = System.getProperty(var);
             if (value == null) {
                 value = System.getenv(var);
-            } else {
+            }
+            if (value != null) {
                 break;
             }
         }
