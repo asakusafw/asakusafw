@@ -178,6 +178,8 @@ public abstract class TestDriverBase {
                     prop.getProperty("asakusa.modelgen.package"));
             System.setProperty("ASAKUSA_MODELGEN_OUTPUT",
                     prop.getProperty("asakusa.modelgen.output"));
+            System.setProperty("ASAKUSA_TESTTOOLS_CONF",
+                    prop.getProperty("asakusa.testtools.conf"));
 
             String testDataDirPath = prop
                     .getProperty("asakusa.testdriver.testdata.dir");

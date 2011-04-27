@@ -76,6 +76,8 @@
 			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
 			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${asakusa.testtools.conf}" />
+			<jvmarg value="-DASAKUSA_TESTTOOLS_CONF=${asakusa.testtools.conf}" />
 			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-jdbc" />
 			<arg value="${asakusa.testtools.conf}" />
