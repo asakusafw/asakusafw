@@ -176,10 +176,6 @@ public final class Constants {
      */
     public static final String PROP_KEY_SYS_COLUMN_TEMP_SID = "table.sys-column-temp-sid";
     /**
-     * システムカラムのカラム名 重複チェックフラグ。
-     */
-    public static final String PROP_KEY_SYS_COLUMN_DUPULICATION_FLG = "table.sys-column-dupulicate-flg";
-    /**
      * プロパティKEY インポート処理が正常終了した場合に、Exporterで生成したインポート中間TSVファイルを削除する。
      */
     public static final String PROP_KEY_IMPORT_TSV_DELETE = "import.delete-tsv";
