@@ -200,7 +200,8 @@ public class DBCleanerTest {
     @Test
     public void executeTest04() throws Exception {
         Properties p = System.getProperties();
-        p.remove(Constants.ASAKUSA_HOME);
+        p.setProperty(Constants.ASAKUSA_HOME, "hoge");
+
         ConfigurationLoader.setSysProp(p);
         System.setProperties(p);
 
