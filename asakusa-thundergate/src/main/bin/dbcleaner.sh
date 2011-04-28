@@ -22,7 +22,7 @@ dbcleaner.sh
 EOF
 }
 
-source ~/.bulkloader_db_profile
+. ~/.bulkloader_db_profile
 export BULKLOADER_HOME="$ASAKUSA_HOME/bulkloader"
 
 CLASSPATH=$ASAKUSA_HOME/bulkloader/conf

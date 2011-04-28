@@ -35,7 +35,7 @@ shift
 export BULKLOADER_ARGS="$1"
 shift
 
-source ~/.bulkloader_hc_profile 1>&2
+. ~/.bulkloader_hc_profile 1>&2
 export BULKLOADER_HOME=$ASAKUSA_HOME/bulkloader 1>&2
 
 LOGFILE_BASENAME="extractor"

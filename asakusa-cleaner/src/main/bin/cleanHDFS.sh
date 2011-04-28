@@ -27,7 +27,7 @@ CLEAN_CLASSPATH=$DIR/conf
 CLEAN_CLASSPATH=$CLEAN_CLASSPATH:$DIR/lib/*
 
 export CLEANER_HOME=$DIR
-source $DIR/conf/.clean_hdfs_profile
+. $DIR/conf/.clean_hdfs_profile
 
 if [ $# -eq 2 ]; then
   $JAVA_HOME/bin/java $HDFSCLEANER_JAVA_OPTS -Dclean.home=$DIR -Dlogfile.basename=$LOGFILE_BASENAME -classpath $CLEAN_CLASSPATH $CLASS_NAME $1 $USER_NAME $2
