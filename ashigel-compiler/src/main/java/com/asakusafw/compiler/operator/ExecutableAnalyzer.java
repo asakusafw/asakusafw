@@ -671,12 +671,12 @@ public class ExecutableAnalyzer {
             List<? extends AnnotationValue> terms = getList(values, "terms");
             if (terms == null
                     || terms.size() != 2
-                    || (terms.get(0) instanceof AnnotationMirror) == false
-                    || (terms.get(1) instanceof AnnotationMirror) == false) {
+                    || (terms.get(0).getValue() instanceof AnnotationMirror) == false
+                    || (terms.get(1).getValue() instanceof AnnotationMirror) == false) {
                 return false;
             }
-            AnnotationMirror from = (AnnotationMirror) terms.get(0);
-            AnnotationMirror join = (AnnotationMirror) terms.get(1);
+            AnnotationMirror from = (AnnotationMirror) terms.get(0).getValue();
+            AnnotationMirror join = (AnnotationMirror) terms.get(1).getValue();
             TypeMirror fromType = getReduceTermType(from);
             TypeMirror joinType = getReduceTermType(join);
             if (fromType == null || joinType == null) {
@@ -706,10 +706,10 @@ public class ExecutableAnalyzer {
             List<? extends AnnotationValue> terms = getList(values, "terms");
             if (terms == null
                     || terms.isEmpty()
-                    || (terms.get(0) instanceof AnnotationMirror) == false) {
+                    || (terms.get(0).getValue() instanceof AnnotationMirror) == false) {
                 return false;
             }
-            AnnotationMirror from = (AnnotationMirror) terms.get(0);
+            AnnotationMirror from = (AnnotationMirror) terms.get(0).getValue();
             TypeMirror fromType = getReduceTermType(from);
             if (fromType == null) {
                 return false;
@@ -736,10 +736,10 @@ public class ExecutableAnalyzer {
                 throw new IllegalArgumentException();
             }
             for (AnnotationValue value : terms) {
-                if ((value instanceof AnnotationMirror) == false) {
+                if ((value.getValue() instanceof AnnotationMirror) == false) {
                     continue;
                 }
-                AnnotationMirror term = (AnnotationMirror) value;
+                AnnotationMirror term = (AnnotationMirror) value.getValue();
                 if (typeEqual(target, getReduceTermType(term))) {
                     AnnotationMirror shuffle = getReduceTermKey(term);
                     ShuffleKey key = toShuffleKey(-1, model, shuffle);
