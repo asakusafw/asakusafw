@@ -162,10 +162,11 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テーブル名
      * @return 入力インターフェース
      */
+    @SuppressWarnings("unchecked")
     public <T> In<T> createIn(String tableName) {
 
         Class<?> modelType = testUtils.getClassByTablename(tableName);
-        return createIn(modelType);
+        return (In<T>) createIn(modelType);
     }
 
     /**
@@ -177,7 +178,7 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            データモデルクラス
      * @return 入力インターフェース
      */
-    public <T> In<T> createIn(Class<?> modelType) {
+    public <T> In<T> createIn(Class<T> modelType) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateIn(tableName, tableName);
@@ -202,9 +203,10 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 入力インターフェース
      */
+    @SuppressWarnings("unchecked")
     public <T> In<T> createIn(String tableName, String excelFileName) {
         Class<?> modelType = testUtils.getClassByTablename(tableName);
-        return createIn(modelType, excelFileName);
+        return (In<T>) createIn(modelType, excelFileName);
     }
 
     /**
@@ -221,7 +223,7 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 入力インターフェース
      */
-    public <T> In<T> createIn(Class<?> modelType, String excelFileName) {
+    public <T> In<T> createIn(Class<T> modelType, String excelFileName) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         createIndividually = true;
@@ -254,9 +256,10 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テーブル名
      * @return 出力インターフェース
      */
+    @SuppressWarnings("unchecked")
     public <T> Out<T> createOut(String tableName) {
         Class<?> modelType = testUtils.getClassByTablename(tableName);
-        return createOut(modelType);
+        return (Out<T>) createOut(modelType);
     }
 
     /**
@@ -268,7 +271,7 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            データモデルクラス
      * @return 出力インターフェース
      */
-    public <T> Out<T> createOut(Class<?> modelType) {
+    public <T> Out<T> createOut(Class<T> modelType) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateOut(tableName, tableName);
@@ -293,10 +296,11 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 出力インターフェース
      */
+    @SuppressWarnings("unchecked")    
     public <T> Out<T> createOut(String tableName, String excelFileName) {
 
         Class<?> modelType = testUtils.getClassByTablename(tableName);
-        return createOut(modelType, excelFileName);
+        return (Out<T>) createOut(modelType, excelFileName);
 
     }
 
@@ -314,7 +318,7 @@ public class FlowPartTestDriver extends TestDriverBase {
      *            テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 出力インターフェース
      */
-    public <T> Out<T> createOut(Class<?> modelType, String excelFileName) {
+    public <T> Out<T> createOut(Class<T> modelType, String excelFileName) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         loadIndividually = true;
