@@ -195,6 +195,10 @@ public class HDFSCleaner {
         try {
             Configuration conf = new Configuration();
             fs = cleanPath.getFileSystem(conf);
+            if (fs == null) {
+                Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "Path.getFileSystemの戻り値がnull", cleanPath.toString());
+                return false;
+            }
         } catch (IOException e) {
             Log.log(e, CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "HDFSのファイルシステムの取得に失敗", cleanPath.toString());
             return false;
