@@ -1,0 +1,11 @@
+Test input preparator and result inspector skeletons.
+
+This project consists mainly of following packages.
+
+* com.asakusafw.testdriver.core
+Core implementation classes.
+There are also extension point interfaces for each test data definition in this package.
+
+* com.asakusafw.testdriver.file
+Test input preparator and result inspector implementation on each Cluster DFS.
+

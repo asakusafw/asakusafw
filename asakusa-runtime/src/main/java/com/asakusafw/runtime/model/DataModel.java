@@ -16,7 +16,7 @@
 package com.asakusafw.runtime.model;
 
 /**
- * Asakusaが利用する全てのデータモデルが実装すべきインターフェース。
+ * Asakusaが利用する標準のデータモデルが実装すべきインターフェース。
  * <p>
  * このインターフェースにプロパティ{@code p}を追加する場合、以下のメソッドを定義する必要がある。
  * ただし、{@code p}の名前をCamelCaseの形式で表記したものを{@code <PropName>}とし、

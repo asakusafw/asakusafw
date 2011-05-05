@@ -1,0 +1,200 @@
+/**
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.testdriver.file;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.hadoop.conf.Configurable;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.ReflectionUtils;
+import org.mortbay.log.Log;
+
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.testdriver.core.AbstractImporterPreparator;
+import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.ImporterPreparator;
+import com.asakusafw.vocabulary.external.FileImporterDescription;
+
+/**
+ * Implementation of {@link ImporterPreparator} for {@link FileImporterDescription}s.
+ * @since 0.2.0
+ */
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class FileImporterPreparator extends AbstractImporterPreparator<FileImporterDescription> {
+
+    private final ConfigurationFactory configurations;
+
+    /**
+     * Creates a new instance with default configurations.
+     */
+    public FileImporterPreparator() {
+        this(ConfigurationFactory.getDefault());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param configurations the configuration factory
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public FileImporterPreparator(ConfigurationFactory configurations) {
+        if (configurations == null) {
+            throw new IllegalArgumentException("configurations must not be null"); //$NON-NLS-1$
+        }
+        this.configurations = configurations;
+    }
+
+    @Override
+    public <V> ModelOutput<V> open(
+            DataModelDefinition<V> definition,
+            FileImporterDescription description) throws IOException {
+        Set<String> path = description.getPaths();
+        if (path.isEmpty()) {
+            return new ModelOutput<V>() {
+                @Override
+                public void close() throws IOException {
+                    return;
+                }
+                @Override
+                public void write(V model) throws IOException {
+                    return;
+                }
+            };
+        }
+        final String destination = path.iterator().next();
+        Configuration conf = configurations.newInstance();
+        Job job = new Job(conf);
+        final File temporaryDir = File.createTempFile("asakusa", ".tempdir");
+        if (temporaryDir.delete() == false || temporaryDir.mkdirs() == false) {
+            throw new IOException("Failed to create temporary directory");
+        }
+        URI uri = temporaryDir.toURI();
+        FileOutputFormat.setOutputPath(job, new Path(uri));
+        TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
+        FileOutputFormat output = getOpposite(conf, description.getInputFormat());
+        OutputFormatDriver<V> result = new OutputFormatDriver<V>(context, output, NullWritable.get()) {
+            @Override
+            public void close() throws IOException {
+                super.close();
+                deploy(destination, temporaryDir);
+            }
+        };
+        return result;
+    }
+
+    private FileOutputFormat getOpposite(Configuration conf, Class<?> inputFormat) throws IOException {
+        assert conf != null;
+        assert inputFormat != null;
+        String inputFormatName = inputFormat.getName();
+        String outputFormatName = infer(inputFormatName);
+        if (outputFormatName == null) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to infer opposite OutputFormat: {0}",
+                    inputFormat.getName()));
+        }
+        try {
+            Class<?> loaded = inputFormat.getClassLoader().loadClass(outputFormatName);
+            FileOutputFormat instance = (FileOutputFormat) ReflectionUtils.newInstance(loaded, conf);
+            if (instance instanceof Configurable) {
+                ((Configurable) instance).setConf(conf);
+            }
+            return instance;
+        } catch (Exception e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to create opposite OutputFormat: {0}",
+                    inputFormat.getName()), e);
+        }
+    }
+
+    private static final Pattern INPUT = Pattern.compile("\\binput\\b|Input(?![a-z])");
+    private String infer(String inputFormatName) {
+        assert inputFormatName != null;
+        Matcher matcher = INPUT.matcher(inputFormatName);
+        StringBuilder buf = new StringBuilder();
+        int start = 0;
+        while (matcher.find()) {
+            String group = matcher.group();
+            buf.append(inputFormatName.substring(start, matcher.start()));
+            if (group.equals("input")) {
+                buf.append("output");
+            } else {
+                buf.append("Output");
+            }
+            start = matcher.end();
+        }
+        buf.append(inputFormatName.substring(start));
+        return buf.toString();
+    }
+
+    void deploy(String destination, File temporaryDir) throws IOException {
+        assert destination != null;
+        assert temporaryDir != null;
+        try {
+            File result = findResult(temporaryDir);
+            copy(result, destination);
+        } finally {
+            delete(temporaryDir);
+        }
+    }
+
+    private File findResult(File temporaryDir) throws IOException {
+        assert temporaryDir != null;
+        for (File file : temporaryDir.listFiles()) {
+            if (file.getName().startsWith("part-")) {
+                return file;
+            }
+        }
+        throw new FileNotFoundException("Cannot find commited result");
+    }
+
+    private void copy(File result, String destination) throws IOException {
+        assert result != null;
+        assert destination != null;
+        Configuration conf = configurations.newInstance();
+        FileSystem fs = FileSystem.get(conf);
+        try {
+            Path target = new Path(destination);
+            fs.copyFromLocalFile(new Path(result.toURI()), target);
+        } finally {
+            fs.close();
+        }
+    }
+
+    private void delete(File target) {
+        assert target != null;
+        if (target.isDirectory()) {
+            for (File child : target.listFiles()) {
+                delete(child);
+            }
+        }
+        if (target.delete() == false) {
+            Log.warn("Failed to delete temporary resource: {}", target);
+        }
+    }
+}

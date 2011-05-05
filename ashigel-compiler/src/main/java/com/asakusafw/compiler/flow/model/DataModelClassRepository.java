@@ -29,6 +29,7 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 
 /**
  * {@link DataModelClass}を生成する{@code DataClass.Repository}の実装。
@@ -36,6 +37,8 @@ import com.asakusafw.runtime.model.DataModel;
 public class DataModelClassRepository
         extends FlowCompilingEnvironment.Initialized
         implements DataClassRepository {
+
+    private static final String KIND = "DMDL";
 
     static final Logger LOG = LoggerFactory.getLogger(DataModelClassRepository.class);
 
@@ -60,18 +63,10 @@ public class DataModelClassRepository
             return null;
         }
         Class<?> aClass = (Class<?>) type;
-        if (DataModel.class.isAssignableFrom(aClass) == false) {
-            LOG.debug("{}は{}のサブタイプでないため、スキップされます",
-                    aClass.getName(),
-                    DataModel.class.getName());
+        if (isSuitable(aClass) == false) {
             return null;
         }
-
         DataModelClass created = DataModelClass.create(getEnvironment(), aClass);
-        if (created == null) {
-            return null;
-        }
-
         if (cacheMap == null) {
             cacheMap = new HashMap<Type, DataClass>();
             cache = new SoftReference<Map<Type, DataClass>>(cacheMap);
@@ -81,4 +76,29 @@ public class DataModelClassRepository
         return created;
     }
 
+    private boolean isSuitable(Class<?> aClass) {
+        assert aClass != null;
+        if (DataModel.class.isAssignableFrom(aClass) == false) {
+            LOG.debug("{}は{}のサブタイプでないため、スキップされます",
+                    aClass.getName(),
+                    DataModel.class.getName());
+            return false;
+        }
+        DataModelKind kind = aClass.getAnnotation(DataModelKind.class);
+        if (kind == null) {
+            LOG.debug("{}は{}の指定がないため、スキップされます",
+                    aClass.getName(),
+                    DataModelKind.class.getName());
+            return false;
+        }
+        if (kind.value().equals(KIND) == false) {
+            LOG.debug("{}は@{}(\"{}\")の指定がないため、スキップされます", new Object[] {
+                    aClass.getName(),
+                    DataModelKind.class.getName(),
+                    KIND,
+            });
+            return false;
+        }
+        return true;
+    }
 }

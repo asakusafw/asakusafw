@@ -1,124 +1,183 @@
 package com.asakusafw.compiler.bulkloader.testing.model;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.bulkloader.testing.io.MockTableModelInput;
 import com.asakusafw.compiler.bulkloader.testing.io.MockTableModelOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
+
 /**
  * mock_table_modelを表すデータモデルクラス。
  */
-@ColumnOrder(value = {"A", "B", "C"})@ModelInputLocation(MockTableModelInput.class)@ModelOutputLocation(
-        MockTableModelOutput.class)@OriginalName(value = "MOCK")@PrimaryKey(value = {"a"}) public class MockTableModel 
-        implements DataModel<MockTableModel>, Writable {
+@DataModelKind("DMDL")
+@ColumnOrder(value = { "A", "B", "C" })
+@ModelInputLocation(MockTableModelInput.class)
+@ModelOutputLocation(MockTableModelOutput.class)
+@OriginalName(value = "MOCK")
+@PrimaryKey(value = { "a" })
+public class MockTableModel implements DataModel<MockTableModel>, Writable {
     private final IntOption a = new IntOption();
     private final IntOption b = new IntOption();
     private final IntOption c = new IntOption();
-    @Override@SuppressWarnings("deprecation") public void reset() {
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void reset() {
         this.a.setNull();
         this.b.setNull();
         this.c.setNull();
     }
-    @Override@SuppressWarnings("deprecation") public void copyFrom(MockTableModel other) {
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void copyFrom(MockTableModel other) {
         this.a.copyFrom(other.a);
         this.b.copyFrom(other.b);
         this.c.copyFrom(other.c);
     }
+
     /**
      * aを返す。
+     *
      * @return a
-     * @throws NullPointerException aの値が<code>null</code>である場合
+     * @throws NullPointerException
+     *             aの値が<code>null</code>である場合
      */
     public int getA() {
         return this.a.get();
     }
+
     /**
      * aを設定する。
-     * @param value 設定する値
+     *
+     * @param value
+     *            設定する値
      */
-    @SuppressWarnings("deprecation") public void setA(int value) {
+    @SuppressWarnings("deprecation")
+    public void setA(int value) {
         this.a.modify(value);
     }
+
     /**
      * <code>null</code>を許すaを返す。
+     *
      * @return a
      */
-    @OriginalName(value = "A") public IntOption getAOption() {
+    @OriginalName(value = "A")
+    public IntOption getAOption() {
         return this.a;
     }
+
     /**
      * aを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     *
+     * @param option
+     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation") public void setAOption(IntOption option) {
+    @SuppressWarnings("deprecation")
+    public void setAOption(IntOption option) {
         this.a.copyFrom(option);
     }
+
     /**
      * bを返す。
+     *
      * @return b
-     * @throws NullPointerException bの値が<code>null</code>である場合
+     * @throws NullPointerException
+     *             bの値が<code>null</code>である場合
      */
     public int getB() {
         return this.b.get();
     }
+
     /**
      * bを設定する。
-     * @param value 設定する値
+     *
+     * @param value
+     *            設定する値
      */
-    @SuppressWarnings("deprecation") public void setB(int value) {
+    @SuppressWarnings("deprecation")
+    public void setB(int value) {
         this.b.modify(value);
     }
+
     /**
      * <code>null</code>を許すbを返す。
+     *
      * @return b
      */
-    @OriginalName(value = "B") public IntOption getBOption() {
+    @OriginalName(value = "B")
+    public IntOption getBOption() {
         return this.b;
     }
+
     /**
      * bを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     *
+     * @param option
+     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation") public void setBOption(IntOption option) {
+    @SuppressWarnings("deprecation")
+    public void setBOption(IntOption option) {
         this.b.copyFrom(option);
     }
+
     /**
      * cを返す。
+     *
      * @return c
-     * @throws NullPointerException cの値が<code>null</code>である場合
+     * @throws NullPointerException
+     *             cの値が<code>null</code>である場合
      */
     public int getC() {
         return this.c.get();
     }
+
     /**
      * cを設定する。
-     * @param value 設定する値
+     *
+     * @param value
+     *            設定する値
      */
-    @SuppressWarnings("deprecation") public void setC(int value) {
+    @SuppressWarnings("deprecation")
+    public void setC(int value) {
         this.c.modify(value);
     }
+
     /**
      * <code>null</code>を許すcを返す。
+     *
      * @return c
      */
-    @OriginalName(value = "C") public IntOption getCOption() {
+    @OriginalName(value = "C")
+    public IntOption getCOption() {
         return this.c;
     }
+
     /**
      * cを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     *
+     * @param option
+     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation") public void setCOption(IntOption option) {
+    @SuppressWarnings("deprecation")
+    public void setCOption(IntOption option) {
         this.c.copyFrom(option);
     }
-    @Override public String toString() {
+
+    @Override
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("{");
         result.append("class=mock_table_model");
@@ -131,7 +190,9 @@ import org.apache.hadoop.io.Writable;
         result.append("}");
         return result.toString();
     }
-    @Override public int hashCode() {
+
+    @Override
+    public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + a.hashCode();
@@ -139,34 +200,40 @@ import org.apache.hadoop.io.Writable;
         result = prime * result + c.hashCode();
         return result;
     }
-    @Override public boolean equals(Object obj) {
-        if(this == obj) {
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
         MockTableModel other = (MockTableModel) obj;
-        if(this.a.equals(other.a)== false) {
+        if (this.a.equals(other.a) == false) {
             return false;
         }
-        if(this.b.equals(other.b)== false) {
+        if (this.b.equals(other.b) == false) {
             return false;
         }
-        if(this.c.equals(other.c)== false) {
+        if (this.c.equals(other.c) == false) {
             return false;
         }
         return true;
     }
-    @Override public void write(DataOutput out) throws IOException {
+
+    @Override
+    public void write(DataOutput out) throws IOException {
         a.write(out);
         b.write(out);
         c.write(out);
     }
-    @Override public void readFields(DataInput in) throws IOException {
+
+    @Override
+    public void readFields(DataInput in) throws IOException {
         a.readFields(in);
         b.readFields(in);
         c.readFields(in);

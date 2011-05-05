@@ -36,7 +36,9 @@ import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.ModelKind;
 import com.ashigeru.lang.java.model.syntax.Modifier;
 import com.ashigeru.lang.java.model.syntax.ModifierKind;
+import com.ashigeru.lang.java.model.syntax.Name;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
+import com.ashigeru.lang.java.model.syntax.SingleElementAnnotation;
 import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
@@ -171,6 +173,12 @@ public class StringPropertyDriver implements JavaDataModelDriver {
             if (attribute.getModelKind() == ModelKind.MODIFIER) {
                 ModifierKind kind = ((Modifier) attribute).getModifierKind();
                 if (kind == ModifierKind.PUBLIC || kind == ModifierKind.ABSTRACT) {
+                    continue;
+                }
+            } else if (attribute.getModelKind() == ModelKind.SINGLE_ELEMENT_ANNOTATION) {
+                SingleElementAnnotation an = (SingleElementAnnotation) attribute;
+                Name name = an.getType().getName();
+                if (name.toNameString().equals(SuppressWarnings.class.getSimpleName())) {
                     continue;
                 }
             }

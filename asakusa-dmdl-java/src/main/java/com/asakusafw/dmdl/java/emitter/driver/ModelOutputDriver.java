@@ -117,8 +117,6 @@ public class ModelOutputDriver implements JavaDataModelDriver {
                                 model.getSymbol().getName())
                         .toJavadoc(),
                     new AttributeBuilder(f)
-                        .annotation(context.resolve(SuppressWarnings.class),
-                                Models.toLiteral(f, "deprecation"))
                         .Public()
                         .Final()
                         .toAttributes(),

@@ -1,0 +1,32 @@
+// package base: com.asakusafw.testdriver
+
+@namespace(value = testing)
+projective projection = {
+    data : TEXT;
+};
+
+@namespace(value = testing)
+simple = projection;
+
+@namespace(value = testing)
+variety = {
+    p_int : INT;
+    p_long : LONG;
+    p_byte : BYTE;
+    p_short : SHORT;
+    p_decimal : DECIMAL;
+/*
+    p_float : FLOAT;
+    p_double : DOUBLE;
+*/
+    p_text : TEXT;
+    p_boolean : BOOLEAN;
+    p_date : DATE;
+    p_datetime : DATETIME;
+};
+
+@namespace(value = testing)
+naming = {
+    a : INT;
+    very_very_very_long_name : LONG;
+};

@@ -219,7 +219,7 @@ public final class TypeUtil {
             for (Type t : pt.getActualTypeArguments()) {
                 Type subst = substitute(t, mapping);
                 if (subst == null) {
-                    return null;
+                    return raw;
                 }
                 arguments.add(subst);
             }
@@ -286,9 +286,9 @@ public final class TypeUtil {
 
     private static class SimpleParameterizedType implements ParameterizedType {
 
-        private Class<?> rawType;
+        private final Class<?> rawType;
 
-        private List<Type> typeArguments;
+        private final List<Type> typeArguments;
 
         SimpleParameterizedType(
                 Class<?> rawType,
