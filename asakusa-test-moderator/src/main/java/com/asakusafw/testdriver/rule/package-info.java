@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.excel;
-
-import java.io.IOException;
-import java.net.URI;
-
-import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.VerifyRule;
-import com.asakusafw.testdriver.core.VerifyRuleProvider;
-
 /**
- * Provides {@link VerifyRule} from Excel Sheet.
- * @since 0.2.0
+ * Tiny rule builder.
  */
-public class ExcelSheetRuleProvider implements VerifyRuleProvider {
-
-    @Override
-    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
-        // TODO VerifyRuleProvider#get
-        return null;
-    }
-}
+package com.asakusafw.testdriver.rule;

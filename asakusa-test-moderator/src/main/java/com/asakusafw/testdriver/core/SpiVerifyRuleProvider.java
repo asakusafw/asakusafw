@@ -41,9 +41,9 @@ public class SpiVerifyRuleProvider implements VerifyRuleProvider {
     }
 
     @Override
-    public VerifyRule get(URI source) throws IOException {
+    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
         for (VerifyRuleProvider service : elements) {
-            VerifyRule result = service.get(source);
+            VerifyRule result = service.get(definition, source);
             if (result != null) {
                 return result;
             }

@@ -18,7 +18,6 @@ package com.asakusafw.testdriver.core;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.net.URI;
 import org.junit.Test;
 
@@ -29,18 +28,18 @@ import org.junit.Test;
 public class SpiVerifyRuleProviderTest extends SpiTestRoot {
 
     /**
-     * Test method for {@link SpiVerifyRuleProvider#get(URI)}.
+     * Test method for {@link SpiVerifyRuleProvider#get(DataModelDefinition, URI)}.
      * @throws Exception if failed
      */
     @Test
     public void open() throws Exception {
-        ClassLoader cl = register(VerifyRuleProvider.class, Example.class);
+        ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyRule rule = target.get(new URI("testing:dummy"));
+        VerifyRule rule = target.get(ValueDefinition.of(String.class), new URI("default:rule"));
         assertThat(rule, not(nullValue()));
 
         DataModelReflection ref = ValueDefinition.of(String.class).toReflection("Hello, world!");
-        assertThat(rule.getKey(ref), is((Object) "Hello, world!"));
+        assertThat(rule.getKey(ref), is((Object) ref));
     }
 
     /**
@@ -49,32 +48,9 @@ public class SpiVerifyRuleProviderTest extends SpiTestRoot {
      */
     @Test
     public void open_notfound() throws Exception {
-        ClassLoader cl = register(VerifyRuleProvider.class, Example.class);
+        ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyRule rule = target.get(new URI("dummy:dummy"));
+        VerifyRule rule = target.get(ValueDefinition.of(String.class), new URI("missing:rule"));
         assertThat(rule, is(nullValue()));
-    }
-
-    /**
-     * Example service.
-     */
-    public static class Example implements VerifyRuleProvider {
-
-        @Override
-        public VerifyRule get(URI source) throws IOException {
-            if (source.getScheme().equals("testing") == false) {
-                return null;
-            }
-            return new VerifyRule() {
-                @Override
-                public Object getKey(DataModelReflection target) {
-                    return ValueDefinition.of(String.class).toObject(target);
-                }
-                @Override
-                public Object verify(DataModelReflection expected, DataModelReflection actual) {
-                    return null;
-                }
-            };
-        }
     }
 }

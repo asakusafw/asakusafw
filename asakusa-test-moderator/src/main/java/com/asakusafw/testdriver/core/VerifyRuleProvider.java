@@ -35,11 +35,13 @@ public interface VerifyRuleProvider {
      * If this object does not support the {@link URI},
      * this method will return {@code null}.
      * </p>
+     * @param <T> type of data model
+     * @param definition the data model definition
      * @param source the target identifier
      * @return the created {@link VerifyRule},
      *     or {@code null} if the specified source is not valid for this object
      * @throws IOException if failed to load a {@link VerifyRule} from the source
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    VerifyRule get(URI source) throws IOException;
+    <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException;
 }

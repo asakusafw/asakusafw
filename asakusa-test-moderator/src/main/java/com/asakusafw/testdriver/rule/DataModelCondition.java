@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.excel;
-
-import java.io.IOException;
-import java.net.URI;
-
-import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.VerifyRule;
-import com.asakusafw.testdriver.core.VerifyRuleProvider;
+package com.asakusafw.testdriver.rule;
 
 /**
- * Provides {@link VerifyRule} from Excel Sheet.
+ * Condition of data model objects.
  * @since 0.2.0
  */
-public class ExcelSheetRuleProvider implements VerifyRuleProvider {
+public enum DataModelCondition {
 
-    @Override
-    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
-        // TODO VerifyRuleProvider#get
-        return null;
-    }
+    /**
+     * Passes if actual result is missing.
+     */
+    IGNORE_ABSENT,
+
+    /**
+     * Passes if expected data is missing.
+     */
+    IGNORE_UNEXPECTED,
 }

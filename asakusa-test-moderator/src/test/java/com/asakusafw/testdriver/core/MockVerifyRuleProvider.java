@@ -65,7 +65,7 @@ public class MockVerifyRuleProvider implements VerifyRuleProvider {
     }
 
     @Override
-    public VerifyRule get(URI source) throws IOException {
+    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
         return rules.get(source);
     }
 }

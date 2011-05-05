@@ -102,31 +102,63 @@ public class TestResultInspector {
         if (rule == null) {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
+        DataModelDefinition<?> definition = findDefinition(description);
+        VerifyRule ruleDesc = findRule(definition, rule);
+        return inspect(description, expected, ruleDesc);
+    }
+
+    /**
+     * Inspects the target exporter's output using specified expected data and rule.
+     * @param description target exporter
+     * @param expected the expected data
+     * @param rule the verification rule between expected and actual result
+     * @return detected invalid differences
+     * @throws IOException if failed to inspect the result
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public List<Difference> inspect(
+            ExporterDescription description,
+            URI expected,
+            VerifyRule rule) throws IOException {
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        if (expected == null) {
+            throw new IllegalArgumentException("expected must not be null"); //$NON-NLS-1$
+        }
+        if (rule == null) {
+            throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
+        }
+        DataModelDefinition<?> definition = findDefinition(description);
+        DataModelSource expectedDesc = findSource(definition, expected);
+        VerifyEngine engine = buildVerifier(definition, rule, expectedDesc);
+        List<Difference> results = inspect(definition, description, engine);
+        return results;
+    }
+
+    private DataModelDefinition<?> findDefinition(ExporterDescription description) throws IOException {
+        assert description != null;
         DataModelDefinition<?> definition = adapter.get(description.getModelType());
         if (definition == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to adapt {0}: (adaptor not found)",
                     description.getModelType().getName()));
         }
-        List<Difference> results = inspect(definition, description, expected, rule);
-        return results;
+        return definition;
     }
 
     private <T> List<Difference> inspect(
             DataModelDefinition<T> definition,
             ExporterDescription description,
-            URI expected,
-            URI rule) throws IOException {
+            VerifyEngine engine) throws IOException {
         assert definition != null;
         assert description != null;
-        assert expected != null;
-        assert rule != null;
-        VerifyEngine verifier = buildVerifier(definition, expected, rule);
+        assert engine != null;
         DataModelSource target = targets.open(definition, description);
         try {
             List<Difference> results = new ArrayList<Difference>();
-            results.addAll(verifier.inspectInput(target));
-            results.addAll(verifier.inspectRest());
+            results.addAll(engine.inspectInput(target));
+            results.addAll(engine.inspectRest());
             return results;
         } finally {
             target.close();
@@ -135,25 +167,36 @@ public class TestResultInspector {
 
     private VerifyEngine buildVerifier(
             DataModelDefinition<?> definition,
-            URI expectedUri,
-            URI ruleUri) throws IOException {
+            VerifyRule rule,
+            DataModelSource expected) throws IOException {
         assert definition != null;
-        assert expectedUri != null;
+        assert rule != null;
+        VerifyEngine engine = new VerifyEngine(rule);
+        engine.addExpected(expected);
+        return engine;
+    }
+
+    private DataModelSource findSource(DataModelDefinition<?> definition, URI uri) throws IOException {
+        assert definition != null;
+        assert uri != null;
+        DataModelSource expected = sources.open(definition, uri);
+        if (expected == null) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to load an expected data set: {0}",
+                    uri));
+        }
+        return expected;
+    }
+
+    private VerifyRule findRule(DataModelDefinition<?> definition, URI ruleUri) throws IOException {
+        assert definition != null;
         assert ruleUri != null;
-        VerifyRule rule = rules.get(ruleUri);
+        VerifyRule rule = rules.get(definition, ruleUri);
         if (rule == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to load a verify rule: {0}",
                     ruleUri));
         }
-        VerifyEngine engine = new VerifyEngine(rule);
-        DataModelSource expected = sources.open(definition, expectedUri);
-        if (expected == null) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to load an expected data set: {0}",
-                    expectedUri));
-        }
-        engine.addExpected(expected);
-        return engine;
+        return rule;
     }
 }

@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.excel;
+package com.asakusafw.testdriver.rule;
 
-import java.io.IOException;
-import java.net.URI;
-
-import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.VerifyRule;
-import com.asakusafw.testdriver.core.VerifyRuleProvider;
+import java.text.MessageFormat;
 
 /**
- * Provides {@link VerifyRule} from Excel Sheet.
+ * Accepts iff both values are equal.
  * @since 0.2.0
  */
-public class ExcelSheetRuleProvider implements VerifyRuleProvider {
+public class Equals implements ValuePredicate<Object> {
 
     @Override
-    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
-        // TODO VerifyRuleProvider#get
-        return null;
+    public boolean accepts(Object expected, Object actual) {
+        if (expected == null) {
+            return actual == null;
+        }
+        return expected.equals(actual);
+    }
+
+    @Override
+    public String describeExpected(Object expected, Object actual) {
+        return MessageFormat.format(
+                "= {0}",
+                Util.format(expected));
     }
 }
