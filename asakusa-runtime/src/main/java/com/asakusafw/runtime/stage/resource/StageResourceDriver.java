@@ -19,7 +19,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
@@ -30,6 +33,8 @@ import org.apache.hadoop.mapreduce.Job;
  * ステージリソースを利用するためのドライバ。
  */
 public class StageResourceDriver implements Closeable {
+
+    static final Log LOG = LogFactory.getLog(StageResourceDriver.class);
 
     private final Configuration configuration;
 
@@ -79,11 +84,26 @@ public class StageResourceDriver implements Closeable {
         if (resourceName == null) {
             throw new IllegalArgumentException("cacheName must not be null"); //$NON-NLS-1$
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("finding cache: " + resourceName);
+        }
         Path cache = new Path(resourceName);
         if (fileSystem.exists(cache)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("symlink found: " + cache);
+            }
             return cache;
         }
-        return findCacheForLocalMode(resourceName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("symlink not found: " + resourceName);
+        }
+        Path directPath = findCacheForLocalMode(resourceName);
+        if (directPath == null || fileSystem.exists(directPath) == false) {
+            LOG.warn(MessageFormat.format(
+                    "Failed to resolve stage resource \"{0}\"",
+                    resourceName));
+        }
+        return directPath;
     }
 
     private Path findCacheForLocalMode(String resourceName) throws IOException {
@@ -91,17 +111,26 @@ public class StageResourceDriver implements Closeable {
         String remoteName = null;
         for (URI uri : DistributedCache.getCacheFiles(configuration)) {
             if (resourceName.equals(uri.getFragment())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("fragment matched: " + uri);
+                }
                 String rpath = uri.getPath();
                 remoteName = rpath.substring(rpath.lastIndexOf('/') + 1);
                 break;
             }
         }
         if (remoteName == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("fragment not matched: " + resourceName);
+            }
             return null;
         }
         for (Path path : DistributedCache.getLocalCacheFiles(configuration)) {
             String localName = path.getName();
             if (remoteName.equals(localName)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("local path matched: " + path);
+                }
                 return path;
             }
         }
