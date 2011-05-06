@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>simple</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class SimpleOutput implements ModelOutput<Simple> {
+public final class SimpleOutput implements ModelOutput<Simple> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

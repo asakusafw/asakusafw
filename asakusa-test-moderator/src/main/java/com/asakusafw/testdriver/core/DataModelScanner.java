@@ -113,13 +113,31 @@ public abstract class DataModelScanner<C, E extends Throwable> {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }
         for (PropertyName name : definition.getProperties()) {
-            Class<?> type = definition.getType(name);
-            Callback callback = CALLBACKS.get(type);
-            if (callback == null) {
-                anyProperty(name, context);
-            } else {
-                callback.apply(this, name, context);
-            }
+            scan(definition, name, context);
+        }
+    }
+
+    /**
+     * Scans about single property.
+     * @param definition the model definition
+     * @param name target property name
+     * @param context context object (nullable)
+     * @throws E if failed
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void scan(DataModelDefinition<?> definition, PropertyName name, C context) throws E {
+        if (definition == null) {
+            throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        Class<?> type = definition.getType(name);
+        Callback callback = CALLBACKS.get(type);
+        if (callback == null) {
+            anyProperty(name, context);
+        } else {
+            callback.apply(this, name, context);
         }
     }
 

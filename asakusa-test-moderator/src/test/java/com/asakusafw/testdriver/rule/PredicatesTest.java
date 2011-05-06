@@ -171,6 +171,30 @@ public class PredicatesTest {
     }
 
     /**
+     * Test method for compares date/time.
+     */
+    @Test
+    public void dateAndTime() {
+        ValuePredicate<Calendar> p = Predicates.timeRange(0, 0);
+        assertThat(p.accepts(d(2000, 1, 1), t(2000, 1, 1, 0, 0, 0)), is(true));
+        assertThat(p.accepts(t(2000, 1, 1, 0, 0, 0), d(2000, 1, 1)), is(true));
+    }
+
+    private Calendar t(
+            int y, int mo, int d,
+            int h, int mi, int s) {
+        Calendar c = Calendar.getInstance();
+        c.clear();
+        c.set(Calendar.YEAR, y);
+        c.set(Calendar.MONTH, mo -1);
+        c.set(Calendar.DATE, d);
+        c.set(Calendar.HOUR_OF_DAY, h);
+        c.set(Calendar.MINUTE, mi);
+        c.set(Calendar.SECOND, s);
+        return c;
+    }
+
+    /**
      * Test method for {@link Predicates#containsString()}.
      */
     @Test

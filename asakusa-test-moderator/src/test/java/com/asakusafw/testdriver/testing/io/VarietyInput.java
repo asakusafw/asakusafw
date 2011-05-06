@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>variety</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class VarietyInput implements ModelInput<Variety> {
+public final class VarietyInput implements ModelInput<Variety> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

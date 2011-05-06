@@ -30,6 +30,10 @@ public class ExcelSheetSourceProvider implements SourceProvider {
 
     @Override
     public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
+        String fragment = source.getFragment();
+        if (fragment == null) {
+            return null;
+        }
         // TODO SourceProvider#open
         return null;
     }

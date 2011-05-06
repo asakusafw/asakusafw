@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 /**
  * projectionを表す射影モデルインターフェース。
  */
-@DataModelKind("DMDL")@ModelInputLocation(ProjectionInput.class)@ModelOutputLocation(ProjectionOutput.class) public 
+@DataModelKind("DMDL")@ModelInputLocation(ProjectionInput.class)@ModelOutputLocation(ProjectionOutput.class) public
         interface Projection {
     /**
      * dataを返す。
@@ -42,5 +42,5 @@ import org.apache.hadoop.io.Text;
      * dataを設定する。
      * @param data0 設定する値
      */
-    @SuppressWarnings("deprecation") void setDataAsString(String data0);
+    void setDataAsString(String data0);
 }
