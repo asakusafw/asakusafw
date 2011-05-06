@@ -100,7 +100,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
                         id,
                         cell.getColumnIndex() + 1));
             }
-            names.put(property, cell.getColumnIndex());
+            results.put(property, cell.getColumnIndex());
         }
         return results;
     }
