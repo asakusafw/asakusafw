@@ -19,9 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -110,10 +107,7 @@ public class FileExporterRetrieverTest {
     private void put(String path, byte[] bytes) throws IOException {
         FSDataOutputStream output = fileSystem.create(new Path(path), true);
         try {
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, "UTF-8"));
-            writer.println("Hello, world!");
-            writer.println("This is a test.");
-            writer.close();
+            output.write(bytes);
         } finally {
             output.close();
         }

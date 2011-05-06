@@ -43,8 +43,8 @@ public class FloatRange implements ValuePredicate<Number> {
             return false;
         }
         double e = expected.doubleValue();
-        double a = expected.doubleValue();
-        return (e + lowerBound <= a && a < e + upperBound);
+        double a = actual.doubleValue();
+        return (e + lowerBound <= a && a <= e + upperBound);
     }
 
     @Override

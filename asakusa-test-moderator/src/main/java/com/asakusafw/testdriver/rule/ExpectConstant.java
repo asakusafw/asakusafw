@@ -47,6 +47,6 @@ public class ExpectConstant<T> implements ValuePredicate<T> {
 
     @Override
     public String describeExpected(T expected, T actual) {
-        return describeExpected(constant, actual);
+        return successor.describeExpected(constant, actual);
     }
 }

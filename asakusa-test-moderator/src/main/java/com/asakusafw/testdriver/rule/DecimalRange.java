@@ -43,8 +43,8 @@ public class DecimalRange implements ValuePredicate<BigDecimal> {
         if (expected == null || actual == null) {
             return false;
         }
-        return 0 <= expected.add(lowerBound).compareTo(actual)
-            && expected.add(upperBound).compareTo(actual) <= 0;
+        return expected.add(lowerBound).compareTo(actual) <= 0
+            && actual.compareTo(expected.add(upperBound)) <= 0;
     }
 
     @Override

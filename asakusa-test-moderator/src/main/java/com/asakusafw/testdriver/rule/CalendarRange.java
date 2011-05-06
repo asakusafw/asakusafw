@@ -47,8 +47,8 @@ public class CalendarRange implements ValuePredicate<Calendar> {
         if (expected == null || actual == null) {
             return false;
         }
-        return 0 <= add(expected, lowerBound).compareTo(actual)
-            && add(expected, upperBound).compareTo(actual) <= 0;
+        return add(expected, lowerBound).compareTo(actual) <= 0
+            && actual.compareTo(add(expected, upperBound)) <= 0;
     }
 
     @Override

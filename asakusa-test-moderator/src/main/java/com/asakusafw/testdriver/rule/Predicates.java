@@ -112,6 +112,14 @@ public final class Predicates {
         return new CalendarRange(lower, upper, Calendar.SECOND);
     }
 
+    /**
+     * Returns {@link ContainsString} predicate.
+     * @return the created predicate
+     */
+    public static ValuePredicate<String> containsString() {
+        return new ContainsString();
+    }
+
     private Predicates() {
         return;
     }

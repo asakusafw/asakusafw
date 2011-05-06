@@ -44,8 +44,8 @@ public class IntegerRange implements ValuePredicate<Number> {
         }
         // TODO avoid overflow
         long e = expected.longValue();
-        long a = expected.longValue();
-        return (e + lowerBound <= a && a < e + upperBound);
+        long a = actual.longValue();
+        return (e + lowerBound <= a && a <= e + upperBound);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.asakusafw.testdriver.rule.VerifyRuleBuilder;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -108,6 +109,41 @@ public class TestResultInspector {
     }
 
     /**
+     * Creates a {@link VerifyRuleBuilder} for the target model class.
+     * @param modelClass target model class
+     * @return created {@link VerifyRuleBuilder}
+     * @throws IOException if failed to create
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public VerifyRuleBuilder rule(Class<?> modelClass) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
+        DataModelDefinition<?> definition = findDefinition(modelClass);
+        return new VerifyRuleBuilder(definition);
+    }
+
+    /**
+     * Converts {@link ModelVerifier} into {@link VerifyRule}.
+     * @param <T> type of model
+     * @param modelClass class of model
+     * @param verifier target verifier
+     * @return converted rule
+     * @throws IOException if failed to convert
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public <T> VerifyRule rule(Class<? extends T> modelClass, ModelVerifier<T> verifier) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
+        if (verifier == null) {
+            throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
+        }
+        DataModelDefinition<? extends T> definition = findDefinition(modelClass);
+        return new ModelVerifierDriver<T>(verifier, definition);
+    }
+
+    /**
      * Inspects the target exporter's output using specified expected data and rule.
      * @param description target exporter
      * @param expected the expected data
@@ -138,11 +174,16 @@ public class TestResultInspector {
 
     private DataModelDefinition<?> findDefinition(ExporterDescription description) throws IOException {
         assert description != null;
-        DataModelDefinition<?> definition = adapter.get(description.getModelType());
+        return findDefinition(description.getModelType());
+    }
+
+    private <T> DataModelDefinition<T> findDefinition(Class<T> modelClass) throws IOException {
+        assert modelClass != null;
+        DataModelDefinition<T> definition = adapter.get(modelClass);
         if (definition == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to adapt {0}: (adaptor not found)",
-                    description.getModelType().getName()));
+                    modelClass.getName()));
         }
         return definition;
     }
