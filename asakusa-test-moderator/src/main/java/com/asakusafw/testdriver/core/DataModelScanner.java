@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver.core;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ public abstract class DataModelScanner<C, E extends Throwable> {
         map.put(Integer.class, new Callback() {
             @Override
             <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.integerProperty(n, c);
+                s.intProperty(n, c);
             }
         });
         map.put(Long.class, new Callback() {
@@ -71,6 +72,12 @@ public abstract class DataModelScanner<C, E extends Throwable> {
             @Override
             <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
                 s.doubleProperty(n, c);
+            }
+        });
+        map.put(BigInteger.class, new Callback() {
+            @Override
+            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
+                s.integerProperty(n, c);
             }
         });
         map.put(BigDecimal.class, new Callback() {
@@ -152,7 +159,7 @@ public abstract class DataModelScanner<C, E extends Throwable> {
      * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
      * @throws E if failed
      */
-    public void integerProperty(PropertyName name, C context) throws E {
+    public void intProperty(PropertyName name, C context) throws E {
         anyProperty(name, context);
     }
 
@@ -163,6 +170,16 @@ public abstract class DataModelScanner<C, E extends Throwable> {
      * @throws E if failed
      */
     public void longProperty(PropertyName name, C context) throws E {
+        anyProperty(name, context);
+    }
+
+    /**
+     * Invoked each {@link BigInteger} property.
+     * @param name property name
+     * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
+     * @throws E if failed
+     */
+    public void integerProperty(PropertyName name, C context) throws E {
         anyProperty(name, context);
     }
 
