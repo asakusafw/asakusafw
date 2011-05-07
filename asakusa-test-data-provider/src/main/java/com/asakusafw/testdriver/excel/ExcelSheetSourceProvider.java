@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.excel;
 
 import java.io.IOException;
 import java.net.URI;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
@@ -24,17 +25,22 @@ import com.asakusafw.testdriver.core.SourceProvider;
 
 /**
  * Provides {@link DataModelSource} from Excel Sheet.
+ * This accepts URI:
+ * <ul>
+ * <li> which is also a valid URL to obtain an Excel workbook, </li>
+ * <li> whose "path" segment ends with ".xls", or </li>
+ * <li> whose "fragment" is "#:" + 0-origin sheet number or "#" + sheet name </li>
+ * </ul>
  * @since 0.2.0
  */
 public class ExcelSheetSourceProvider implements SourceProvider {
 
     @Override
     public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
-        String fragment = source.getFragment();
-        if (fragment == null) {
+        Sheet sheet = Util.extract(source);
+        if (sheet == null) {
             return null;
         }
-        // TODO SourceProvider#open
-        return null;
+        return new ExcelSheetDataModelSource(definition, source, sheet);
     }
 }

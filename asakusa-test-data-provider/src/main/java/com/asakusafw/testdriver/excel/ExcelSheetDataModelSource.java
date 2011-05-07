@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -36,6 +38,8 @@ import com.asakusafw.testdriver.core.PropertyName;
  * @since 0.2.0
  */
 public class ExcelSheetDataModelSource implements DataModelSource {
+
+    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetDataModelSource.class);
 
     private final DataModelDefinition<?> definition;
 
@@ -102,6 +106,11 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             }
             results.put(property, cell.getColumnIndex());
         }
+        if (results.isEmpty()) {
+            throw new IOException(MessageFormat.format(
+                    "最初の行はプロパティ名の一覧でなければなりません: (id={0})",
+                    id));
+        }
         return results;
     }
 
@@ -114,25 +123,40 @@ public class ExcelSheetDataModelSource implements DataModelSource {
 
     @Override
     public DataModelReflection next() throws IOException {
-        Row row = sheet.getRow(nextRowNumber);
-        if (row == null) {
-            return null;
-        }
-        ExcelCellDriver driver = new ExcelCellDriver(definition, id);
-        for (Map.Entry<PropertyName, Integer> entry : names.entrySet()) {
-            Cell cell = row.getCell(entry.getValue(), Row.CREATE_NULL_AS_BLANK);
-            int type = cell.getCellType();
-            if (type == Cell.CELL_TYPE_FORMULA || type == Cell.CELL_TYPE_ERROR) {
-                throw new IOException(MessageFormat.format(
-                        "セルに数式を利用できません: (pos=({1}, {2}), id={0})",
+        while (nextRowNumber <= sheet.getLastRowNum()) {
+            Row row = sheet.getRow(nextRowNumber++);
+            if (row == null) {
+                LOG.warn(MessageFormat.format(
+                        "有効な値を含まない行はスキップします: (row={1}, id={0})",
                         id,
-                        row.getRowNum() + 1,
-                        cell.getColumnIndex() + 1));
+                        nextRowNumber));
+                continue;
             }
-            driver.process(entry.getKey(), cell);
+            boolean sawFilled = false;
+            ExcelCellDriver driver = new ExcelCellDriver(definition, id);
+            for (Map.Entry<PropertyName, Integer> entry : names.entrySet()) {
+                Cell cell = row.getCell(entry.getValue(), Row.CREATE_NULL_AS_BLANK);
+                int type = cell.getCellType();
+                if (type == Cell.CELL_TYPE_FORMULA || type == Cell.CELL_TYPE_ERROR) {
+                    throw new IOException(MessageFormat.format(
+                            "セルに数式を利用できません: (pos=({1}, {2}), id={0})",
+                            id,
+                            row.getRowNum() + 1,
+                            cell.getColumnIndex() + 1));
+                }
+                sawFilled |= (type != Cell.CELL_TYPE_BLANK);
+                driver.process(entry.getKey(), cell);
+            }
+            if (sawFilled) {
+                return driver.getReflection();
+            } else {
+                LOG.warn(MessageFormat.format(
+                        "有効な値を含まない行はスキップします: (row={1}, id={0})",
+                        id,
+                        row.getRowNum() + 1));
+            }
         }
-        nextRowNumber++;
-        return driver.getReflection();
+        return null;
     }
 
     @Override

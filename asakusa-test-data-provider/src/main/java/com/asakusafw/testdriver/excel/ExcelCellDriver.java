@@ -102,7 +102,7 @@ class ExcelCellDriver {
                 } else if (string.equalsIgnoreCase("false")) {
                     builder.add(name, false);
                 } else {
-                    raise(name, context, "boolean");
+                    throw exception(name, context, "boolean");
                 }
             }
         }
@@ -110,18 +110,21 @@ class ExcelCellDriver {
         @Override
         public void byteProperty(PropertyName name, Cell context) throws IOException {
             long value = toLong(name, context, "byte");
+            checkRange(name, context, value, Byte.MIN_VALUE, Byte.MAX_VALUE);
             builder.add(name, (byte) value);
         }
 
         @Override
         public void shortProperty(PropertyName name, Cell context) throws IOException {
             long value = toLong(name, context, "short");
+            checkRange(name, context, value, Short.MIN_VALUE, Short.MAX_VALUE);
             builder.add(name, (short) value);
         }
 
         @Override
         public void intProperty(PropertyName name, Cell context) throws IOException {
             long value = toLong(name, context, "int");
+            checkRange(name, context, value, Integer.MIN_VALUE, Integer.MAX_VALUE);
             builder.add(name, (int) value);
         }
 
@@ -139,12 +142,39 @@ class ExcelCellDriver {
                 return (long) cell.getNumericCellValue();
             } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
                 try {
-                    return Long.parseLong(cell.getStringCellValue());
+                    return Long.parseLong(stripNumber(cell.getStringCellValue()));
                 } catch (NumberFormatException e) {
                     // fall through
                 }
             }
-            throw raise(name, cell, expected);
+            throw exception(name, cell, expected);
+        }
+
+        private String stripNumber(String string) {
+            if (string == null) {
+                return null;
+            }
+            String trimmed = string.trim().replaceAll("[_,]", "");
+            if (trimmed.startsWith("+")) {
+                return trimmed.substring(1).trim();
+            }
+            return trimmed;
+        }
+
+        private void checkRange(PropertyName name, Cell cell, long value, int min, int max) throws IOException {
+            assert name != null;
+            assert cell != null;
+            if (value < min || max < value) {
+                throw new IOException(MessageFormat.format(
+                        "{0}は{2}~{3}を指定してください: {1} (cell=({5}, {6}), id={4})",
+                        name,
+                        value,
+                        min,
+                        max,
+                        id,
+                        cell.getRowIndex() + 1,
+                        cell.getColumnIndex() + 1));
+            }
         }
 
         @Override
@@ -156,7 +186,7 @@ class ExcelCellDriver {
         @Override
         public void doubleProperty(PropertyName name, Cell context) throws IOException {
             double value = toDouble(name, context, "double");
-            builder.add(name, (float) value);
+            builder.add(name, value);
         }
 
         private double toDouble(PropertyName name, Cell cell, String expected) throws IOException {
@@ -167,12 +197,12 @@ class ExcelCellDriver {
                 return cell.getNumericCellValue();
             } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
                 try {
-                    return Double.parseDouble(cell.getStringCellValue());
+                    return Double.parseDouble(stripNumber(cell.getStringCellValue()));
                 } catch (NumberFormatException e) {
                     // fall through
                 }
             }
-            throw raise(name, cell, expected);
+            throw exception(name, cell, expected);
         }
 
         @Override
@@ -195,12 +225,12 @@ class ExcelCellDriver {
                 return new BigDecimal(context.getNumericCellValue());
             } else if (context.getCellType() == Cell.CELL_TYPE_STRING) {
                 try {
-                    return new BigDecimal(context.getStringCellValue());
+                    return new BigDecimal(stripNumber(context.getStringCellValue()));
                 } catch (NumberFormatException e) {
                     // fall through
                 }
             }
-            throw raise(name, context, expected);
+            throw exception(name, context, expected);
         }
 
         @Override
@@ -218,7 +248,7 @@ class ExcelCellDriver {
         @Override
         public void calendarProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-                throw raise(name, context, "date/datetime");
+                throw exception(name, context, "date/datetime");
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(context.getDateCellValue());
@@ -232,15 +262,16 @@ class ExcelCellDriver {
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
                     calendar.get(Calendar.SECOND));
+            builder.add(name, result);
         }
 
         @Override
         public void anyProperty(PropertyName name, Cell context) throws IOException {
-            raise(name, context, "(BLANK)");
+            throw exception(name, context, "(BLANK)");
         }
 
-        private IOException raise(PropertyName name, Cell cell, String expected) throws IOException {
-            throw new IOException(MessageFormat.format(
+        private IOException exception(PropertyName name, Cell cell, String expected) {
+            return new IOException(MessageFormat.format(
                     "{0}は{1}を指定してください: (cell=({3}, {4}), id={2})",
                     name,
                     expected,

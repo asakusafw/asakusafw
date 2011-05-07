@@ -29,7 +29,8 @@ import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
 
 /**
- * Provides {@link DataModelSource} from JSON Array.
+ * Provides {@link DataModelSource} from JSON object enumeration.
+ * This accepts URI which is compatible as a valid URL and ends with ".json".
  * @since 0.2.0
  */
 public class JsonSourceProvider implements SourceProvider {
