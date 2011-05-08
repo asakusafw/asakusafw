@@ -44,6 +44,20 @@ public class PredicatesTest {
     }
 
     /**
+     * Test method for {@link Predicates#isNull()}.
+     */
+    @Test
+    public void isNull() {
+        ValuePredicate<Object> p = Predicates.isNull();
+        assertThat(p.accepts(100, null), is(true));
+        assertThat(p.accepts(200, 100), is(false));
+        assertThat(p.accepts(null, 200), is(false));
+
+        // no exceptions
+        p.describeExpected(100, 200);
+    }
+
+    /**
      * Test method for {@link Predicates#not(ValuePredicate)}.
      */
     @Test

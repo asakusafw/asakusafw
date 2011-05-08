@@ -29,9 +29,10 @@ import com.asakusafw.testdriver.core.DataModelScanner;
 import com.asakusafw.testdriver.core.PropertyName;
 
 /**
+ * Extracts a model object from a row on Excel sheet.
  * @since 0.2.0
  */
-class ExcelCellDriver {
+class ExcelDataDriver {
 
     private final Engine engine;
 
@@ -41,7 +42,7 @@ class ExcelCellDriver {
      * @param id source ID (nullable)
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ExcelCellDriver(DataModelDefinition<?> definition, URI id) {
+    public ExcelDataDriver(DataModelDefinition<?> definition, URI id) {
         if (definition == null) {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }

@@ -28,14 +28,16 @@ import org.junit.Test;
 public class SpiVerifyRuleProviderTest extends SpiTestRoot {
 
     /**
-     * Test method for {@link SpiVerifyRuleProvider#get(DataModelDefinition, URI)}.
+     * Test method for {@link SpiVerifyRuleProvider#get(DataModelDefinition, VerifyContext, URI)}.
      * @throws Exception if failed
      */
     @Test
     public void open() throws Exception {
         ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyRule rule = target.get(ValueDefinition.of(String.class), new URI("default:rule"));
+        VerifyContext context = new VerifyContext();
+        context.testFinished();
+        VerifyRule rule = target.get(ValueDefinition.of(String.class), context, new URI("default:rule"));
         assertThat(rule, not(nullValue()));
 
         DataModelReflection ref = ValueDefinition.of(String.class).toReflection("Hello, world!");
@@ -50,7 +52,9 @@ public class SpiVerifyRuleProviderTest extends SpiTestRoot {
     public void open_notfound() throws Exception {
         ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyRule rule = target.get(ValueDefinition.of(String.class), new URI("missing:rule"));
+        VerifyContext context = new VerifyContext();
+        context.testFinished();
+        VerifyRule rule = target.get(ValueDefinition.of(String.class), context, new URI("missing:rule"));
         assertThat(rule, is(nullValue()));
     }
 }

@@ -87,15 +87,23 @@ public class TestResultInspector {
     /**
      * Inspects the target exporter's output using specified expected data and rule.
      * @param description target exporter
+     * @param context current verification context
      * @param expected the expected data
      * @param rule the verification rule between expected and actual result
      * @return detected invalid differences
      * @throws IOException if failed to inspect the result
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public List<Difference> inspect(ExporterDescription description, URI expected, URI rule) throws IOException {
+    public List<Difference> inspect(
+            ExporterDescription description,
+            VerifyContext context,
+            URI expected,
+            URI rule) throws IOException {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         if (expected == null) {
             throw new IllegalArgumentException("expected must not be null"); //$NON-NLS-1$
@@ -104,7 +112,7 @@ public class TestResultInspector {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<?> definition = findDefinition(description);
-        VerifyRule ruleDesc = findRule(definition, rule);
+        VerifyRule ruleDesc = findRule(definition, context, rule);
         return inspect(description, expected, ruleDesc);
     }
 
@@ -229,10 +237,12 @@ public class TestResultInspector {
         return expected;
     }
 
-    private VerifyRule findRule(DataModelDefinition<?> definition, URI ruleUri) throws IOException {
+    private VerifyRule findRule(
+            DataModelDefinition<?> definition, VerifyContext context, URI ruleUri) throws IOException {
         assert definition != null;
+        assert context != null;
         assert ruleUri != null;
-        VerifyRule rule = rules.get(definition, ruleUri);
+        VerifyRule rule = rules.get(definition, context, ruleUri);
         if (rule == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to load a verify rule: {0}",

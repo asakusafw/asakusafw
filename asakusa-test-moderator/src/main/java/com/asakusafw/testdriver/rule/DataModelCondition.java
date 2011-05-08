@@ -22,6 +22,11 @@ package com.asakusafw.testdriver.rule;
 public enum DataModelCondition {
 
     /**
+     * Passes if both expected and actual is present.
+     */
+    IGNORE_MATCHED,
+
+    /**
      * Passes if actual result is missing.
      */
     IGNORE_ABSENT,

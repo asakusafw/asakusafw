@@ -27,6 +27,7 @@ public interface ValuePredicate<T> {
      * @param expected the expected value (nullable)
      * @param actual the actual value (nullable)
      * @return {@code true} iff both values satisfy this predicate, {@code false} otherwise.
+     * @throws IllegalArgumentException if failed to calculate its satisfaction
      */
     boolean accepts(T expected, T actual);
 

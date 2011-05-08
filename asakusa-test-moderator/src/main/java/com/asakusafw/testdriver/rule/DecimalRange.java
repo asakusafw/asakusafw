@@ -41,7 +41,7 @@ public class DecimalRange implements ValuePredicate<BigDecimal> {
     @Override
     public boolean accepts(BigDecimal expected, BigDecimal actual) {
         if (expected == null || actual == null) {
-            return false;
+            throw new IllegalArgumentException();
         }
         return expected.add(lowerBound).compareTo(actual) <= 0
             && actual.compareTo(expected.add(upperBound)) <= 0;

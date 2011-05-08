@@ -56,6 +56,14 @@ public final class Predicates {
     }
 
     /**
+     * Returns {@link IsNull} predicate.
+     * @return the created predicate
+     */
+    public static ValuePredicate<Object> isNull() {
+        return new IsNull();
+    }
+
+    /**
      * Returns {@link FloatRange} predicate.
      * @param lower lower bounds
      * @param upper upper bounds
@@ -110,6 +118,16 @@ public final class Predicates {
      */
     public static ValuePredicate<Calendar> timeRange(int lower, int upper) {
         return new CalendarRange(lower, upper, Calendar.SECOND);
+    }
+
+    /**
+     * Returns {@link Period} predicate.
+     * @param begin start time
+     * @param end finish time
+     * @return the created predicate
+     */
+    public static ValuePredicate<Calendar> period(Calendar begin, Calendar end) {
+        return new Period(begin, end);
     }
 
     /**

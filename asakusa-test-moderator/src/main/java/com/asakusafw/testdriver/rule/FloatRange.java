@@ -40,7 +40,7 @@ public class FloatRange implements ValuePredicate<Number> {
     @Override
     public boolean accepts(Number expected, Number actual) {
         if (expected == null || actual == null) {
-            return false;
+            throw new IllegalArgumentException();
         }
         double e = expected.doubleValue();
         double a = actual.doubleValue();

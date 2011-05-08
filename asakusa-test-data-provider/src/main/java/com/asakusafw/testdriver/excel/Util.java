@@ -94,6 +94,30 @@ final class Util {
         }
     }
 
+    static String buildText(String symbol, String title) {
+        assert symbol != null;
+        assert title != null;
+        if (symbol.equalsIgnoreCase(title)) {
+            return symbol;
+        } else {
+            return MessageFormat.format(
+                    "{0} ({1})", //$NON-NLS-1$
+                    title,
+                    symbol);
+        }
+    }
+
+    private static final Pattern TEXT = Pattern.compile(".*\\(([0-9A-Za-z_\\- ]+)\\)");
+    static String extractSymbol(String text) {
+        assert text != null;
+        Matcher matcher = TEXT.matcher(text);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        } else {
+            return text;
+        }
+    }
+
     private Util() {
         return;
     }

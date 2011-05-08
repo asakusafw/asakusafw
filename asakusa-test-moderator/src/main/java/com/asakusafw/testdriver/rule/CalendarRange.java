@@ -45,7 +45,7 @@ public class CalendarRange implements ValuePredicate<Calendar> {
     @Override
     public boolean accepts(Calendar expected, Calendar actual) {
         if (expected == null || actual == null) {
-            return false;
+            throw new IllegalArgumentException();
         }
         return add(expected, lowerBound).compareTo(actual) <= 0
             && actual.compareTo(add(expected, upperBound)) <= 0;

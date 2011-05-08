@@ -15,29 +15,22 @@
  */
 package com.asakusafw.testdriver.rule;
 
-import java.text.MessageFormat;
-
 /**
- * Accepts iff actual contains expected string.
+ * Accepts iff both expected and actual value are null.
  * @since 0.2.0
  */
-public class ContainsString implements ValuePredicate<String> {
+public class BothAreNull implements ValuePredicate<Object> {
 
     @Override
-    public boolean accepts(String expected, String actual) {
-        if (expected == null || actual == null) {
-            throw new IllegalArgumentException();
-        }
-        return actual.indexOf(expected) >= 0;
+    public boolean accepts(Object expected, Object actual) {
+        return expected == null && actual == null;
     }
 
     @Override
-    public String describeExpected(String expected, String actual) {
-        if (expected == null) {
-            return "(error)";
+    public String describeExpected(Object expected, Object actual) {
+        if (expected != null) {
+            return "(never)";
         }
-        return MessageFormat.format(
-                "文字列{0}を含む",
-                Util.format(expected));
+        return "is null";
     }
 }

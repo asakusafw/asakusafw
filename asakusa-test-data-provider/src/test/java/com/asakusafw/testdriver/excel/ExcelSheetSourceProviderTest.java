@@ -27,6 +27,8 @@ import org.junit.Test;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
+import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.SpiSourceProvider;
 import com.asakusafw.testdriver.json.Simple;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
@@ -70,6 +72,24 @@ public class ExcelSheetSourceProviderTest {
         Simple s1 = next(source);
         assertThat(s1.number, is(300));
         assertThat(s1.text, is("ccc"));
+
+        end(source);
+    }
+
+    /**
+     * opens sheet via service provider.
+     * @throws Exception if occur
+     */
+    @Test
+    public void spi() throws Exception {
+        SourceProvider provider = new SpiSourceProvider(ExcelSheetSourceProvider.class.getClassLoader());
+        URI uri = uri("workbook.xls", ":1");
+        DataModelSource source = provider.open(SIMPLE, uri);
+        assertThat(source, not(nullValue()));
+
+        Simple s1 = next(source);
+        assertThat(s1.number, is(200));
+        assertThat(s1.text, is("bbb"));
 
         end(source);
     }

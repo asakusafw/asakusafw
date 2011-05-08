@@ -92,6 +92,9 @@ public class VerifyRuleInterpretor implements VerifyRule {
                         Util.formatMap(getKey(expected)));
             }
         }
+        if (modelConditions.contains(DataModelCondition.IGNORE_MATCHED)) {
+            return null;
+        }
         return checkProperties(expected, actual);
     }
 

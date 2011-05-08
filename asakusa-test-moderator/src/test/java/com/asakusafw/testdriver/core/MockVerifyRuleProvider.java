@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.core;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -65,7 +64,7 @@ public class MockVerifyRuleProvider implements VerifyRuleProvider {
     }
 
     @Override
-    public <T> VerifyRule get(DataModelDefinition<T> definition, URI source) throws IOException {
+    public <T> VerifyRule get(DataModelDefinition<T> definition, VerifyContext context, URI source) {
         return rules.get(source);
     }
 }

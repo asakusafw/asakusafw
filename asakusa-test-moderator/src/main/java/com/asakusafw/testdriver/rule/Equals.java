@@ -18,21 +18,24 @@ package com.asakusafw.testdriver.rule;
 import java.text.MessageFormat;
 
 /**
- * Accepts iff both values are equal.
+ * Accepts iff both values are equal and not null.
  * @since 0.2.0
  */
 public class Equals implements ValuePredicate<Object> {
 
     @Override
     public boolean accepts(Object expected, Object actual) {
-        if (expected == null) {
-            return actual == null;
+        if (expected == null || actual == null) {
+            throw new IllegalArgumentException();
         }
         return expected.equals(actual);
     }
 
     @Override
     public String describeExpected(Object expected, Object actual) {
+        if (expected == null) {
+            return "(error)";
+        }
         return MessageFormat.format(
                 "= {0}",
                 Util.format(expected));

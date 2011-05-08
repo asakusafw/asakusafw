@@ -133,7 +133,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
                 continue;
             }
             boolean sawFilled = false;
-            ExcelCellDriver driver = new ExcelCellDriver(definition, id);
+            ExcelDataDriver driver = new ExcelDataDriver(definition, id);
             for (Map.Entry<PropertyName, Integer> entry : names.entrySet()) {
                 Cell cell = row.getCell(entry.getValue(), Row.CREATE_NULL_AS_BLANK);
                 int type = cell.getCellType();

@@ -84,8 +84,12 @@ public class PropertyCondition<T> {
         T e = type.cast(expected);
         T a = type.cast(actual);
         for (ValuePredicate<? super T> predicate : predicates) {
-            if (predicate.accepts(e, a)) {
-                return true;
+            try {
+                if (predicate.accepts(e, a)) {
+                    return true;
+                }
+            } catch (IllegalArgumentException ex) {
+                // this means "ERROR" in ternary, continue checking rest conditions
             }
         }
         return false;
