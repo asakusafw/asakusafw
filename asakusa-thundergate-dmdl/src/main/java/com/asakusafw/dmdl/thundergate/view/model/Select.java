@@ -42,8 +42,8 @@ public class Select {
     /**
      * Creates and returns a new instance.
      * @param name the name of target projection
-     * @param aggregator
-     * @param alias
+     * @param aggregator aggregator function
+     * @param alias column name in the result view
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public Select(Name name, Aggregator aggregator, Name alias) {
