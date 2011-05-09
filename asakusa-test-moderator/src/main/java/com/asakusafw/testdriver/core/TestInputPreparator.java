@@ -74,6 +74,29 @@ public class TestInputPreparator {
     }
 
     /**
+     * Opens the target importer's input to prepare it.
+     * @param <T> type of data model
+     * @param type class of data model
+     * @param description target importer
+     * @return model object sink to prepare the importer's input
+     * @throws IOException if failed to open the importer
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public <T> ModelOutput<T> prepare(Class<T> type, ImporterDescription description) throws IOException {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        if (type != description.getModelType()) {
+            throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
+        }
+        DataModelDefinition<T> definition = findDefinition(type);
+        return targets.open(definition, description);
+    }
+
+    /**
      * Prepares the target importer's input using the specified source.
      * @param description target importer
      * @param source test data
@@ -87,13 +110,19 @@ public class TestInputPreparator {
         if (source == null) {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = adapter.get(description.getModelType());
+        DataModelDefinition<?> definition = findDefinition(description.getModelType());
+        prepare(definition, description, source);
+    }
+
+    private <T> DataModelDefinition<T> findDefinition(Class<T> type) throws IOException {
+        assert type != null;
+        DataModelDefinition<T> definition = adapter.get(type);
         if (definition == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to adapt {0}: (adaptor not found)",
-                    description.getModelType().getName()));
+                    type.getName()));
         }
-        prepare(definition, description, source);
+        return definition;
     }
 
     private <T> void prepare(

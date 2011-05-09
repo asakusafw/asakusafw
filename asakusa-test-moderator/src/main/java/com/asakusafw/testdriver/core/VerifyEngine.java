@@ -150,6 +150,7 @@ public class VerifyEngine {
     }
 
     private Difference verify(Object key, DataModelReflection expected, DataModelReflection actual) {
+        assert key != null;
         assert expected != null || actual != null;
         Object result = rule.verify(expected, actual);
         if (result == null) {

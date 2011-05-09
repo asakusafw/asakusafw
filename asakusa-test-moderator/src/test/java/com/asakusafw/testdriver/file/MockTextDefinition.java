@@ -15,6 +15,9 @@
  */
 package com.asakusafw.testdriver.file;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.hadoop.io.Text;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -32,6 +35,11 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
     @Override
     public Class<Text> getModelClass() {
         return Text.class;
+    }
+
+    @Override
+    public Collection<PropertyName> getProperties() {
+        return Collections.singleton(VALUE);
     }
 
     @Override

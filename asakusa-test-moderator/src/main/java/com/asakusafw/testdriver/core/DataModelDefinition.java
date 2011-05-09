@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver.core;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,12 @@ public interface DataModelDefinition<T> {
      * @return data model class
      */
     Class<T> getModelClass();
+
+    /**
+     * returns the all public property names.
+     * @return property names
+     */
+    Collection<PropertyName> getProperties();
 
     /**
      * Returns the property type.

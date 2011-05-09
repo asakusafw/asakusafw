@@ -15,6 +15,9 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * {@link DataModelDefinition} which only holds single value.
  * @param <T> type of holding value
@@ -55,6 +58,11 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
     @Override
     public Class<T> getModelClass() {
         return type;
+    }
+
+    @Override
+    public Collection<PropertyName> getProperties() {
+        return Collections.singleton(VALUE);
     }
 
     @Override

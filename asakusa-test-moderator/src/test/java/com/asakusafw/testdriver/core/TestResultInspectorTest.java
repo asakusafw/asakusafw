@@ -31,6 +31,12 @@ import org.junit.Test;
  */
 public class TestResultInspectorTest extends SpiTestRoot {
 
+    private final VerifyContext context;
+    {
+        context = new VerifyContext();
+        context.testFinished();
+    }
+
     /**
      * simple testing.
      * @throws Exception if failed
@@ -47,6 +53,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create("1:Hello, world!"),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
         assertThat(results.size(), is(0));
@@ -66,6 +73,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create("MOCK"),
+                context,
                 uri("default:source"),
                 uri("default:rule"));
         assertThat(results.toString(), results.size(), is(0));
@@ -87,6 +95,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create("1:BAD"),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
         assertThat(results.size(), is(1));
@@ -108,6 +117,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create(),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
         assertThat(results.size(), is(1));
@@ -129,6 +139,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create("1:Hello, world!", "2:BAD"),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
         assertThat(results.size(), is(1));
@@ -150,6 +161,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         List<Difference> results = inspector.inspect(
                 MockExporterRetriever.create("2:Hello, world!"),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
         assertThat(results.toString(), results.size(), is(2));
@@ -171,6 +183,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         inspector.inspect(
                 MockExporterRetriever.create("1:Hello, world!"),
+                context,
                 uri("testing:src"),
                 uri("testing:rule"));
     }
@@ -191,6 +204,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         inspector.inspect(
                 MockExporterRetriever.create("1:Hello, world!"),
+                context,
                 uri("unknown:src"),
                 uri("testing:rule"));
     }
@@ -211,6 +225,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
 
         inspector.inspect(
                 MockExporterRetriever.create("1:Hello, world!"),
+                context,
                 uri("testing:src"),
                 uri("unknown:rule"));
     }

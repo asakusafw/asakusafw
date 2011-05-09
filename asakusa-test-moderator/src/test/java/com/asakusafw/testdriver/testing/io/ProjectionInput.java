@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>projection</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class ProjectionInput implements ModelInput<Projection> {
+public final class ProjectionInput implements ModelInput<Projection> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

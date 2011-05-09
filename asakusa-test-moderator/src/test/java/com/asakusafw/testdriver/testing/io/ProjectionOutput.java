@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>projection</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class ProjectionOutput implements ModelOutput<Projection> {
+public final class ProjectionOutput implements ModelOutput<Projection> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

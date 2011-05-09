@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -236,6 +237,11 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     @Override
     public Class<T> getModelClass() {
         return modelClass;
+    }
+
+    @Override
+    public Collection<PropertyName> getProperties() {
+        return Collections.unmodifiableCollection(accessors.keySet());
     }
 
     @Override
