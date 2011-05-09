@@ -96,6 +96,8 @@ public enum ConditionSheetItem {
     private int col;
 
     private ConditionSheetItem(String name, int row, int col, ItemType itemType) {
+        assert name != null;
+        assert itemType != null;
         this.name = name;
         this.row = row;
         this.col = col;

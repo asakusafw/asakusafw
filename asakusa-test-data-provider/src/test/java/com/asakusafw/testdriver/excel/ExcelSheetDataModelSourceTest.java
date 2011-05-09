@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
-import com.asakusafw.testdriver.json.Simple;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -550,7 +549,7 @@ public class ExcelSheetDataModelSourceTest {
     }
 
     private ExcelSheetDataModelSource open(String file) throws IOException {
-        URL resource = getClass().getResource(file);
+        URL resource = getClass().getResource("data/" + file);
         assertThat(file, resource, not(nullValue()));
         URI uri;
         try {

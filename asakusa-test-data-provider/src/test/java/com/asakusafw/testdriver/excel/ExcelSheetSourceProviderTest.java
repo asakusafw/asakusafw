@@ -29,7 +29,6 @@ import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
 import com.asakusafw.testdriver.core.SpiSourceProvider;
-import com.asakusafw.testdriver.json.Simple;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -187,7 +186,7 @@ public class ExcelSheetSourceProviderTest {
     }
 
     private URI uri(String file, String fragment) throws Exception {
-        URL url = getClass().getResource(file);
+        URL url = getClass().getResource("data/" + file);
         assertThat(file, url, not(nullValue()));
         URI resource = url.toURI();
         URI uri = new URI(

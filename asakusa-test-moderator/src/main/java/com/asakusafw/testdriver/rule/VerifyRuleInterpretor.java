@@ -107,7 +107,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
                 differences.add(MessageFormat.format(
                         "\"{0}\"(={1})が正しくありません: {2}",
                         condition.getPropertyName(),
-                        Util.format(actual),
+                        Util.format(a),
                         condition.describeExpected(e, a)));
             }
         }

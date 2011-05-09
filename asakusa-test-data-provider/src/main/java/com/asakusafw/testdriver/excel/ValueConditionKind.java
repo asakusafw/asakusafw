@@ -24,32 +24,32 @@ public enum ValueConditionKind {
     /**
      * Always accepts.
      */
-    ANY("any", "検査対象外", "すべて"),
+    ANY("-", "検査対象外", "すべて"),
 
     /**
      * Used as comparing key.
      */
-    KEY("key", "検査キー", "すべて"),
+    KEY("Key", "検査キー", "すべて"),
 
     /**
      * Accepts if matched.
      */
-    EQUAL("equal", "完全一致", "すべて"),
+    EQUAL("=", "完全一致", "すべて"),
 
     /**
      * Accepts if expected data appeares in the actual data.
      */
-    CONTAIN("contain", "部分一致", "文字列"),
+    CONTAIN("<=", "部分一致", "文字列"),
 
     /**
      * Accepts if actual date/time is between test started date and its finished date.
      */
-    TODAY("today", "現在日付", "日付または時刻"),
+    TODAY("Today", "現在日付", "日付または時刻"),
 
     /**
      * Accepts if actual date/time is between test started time and its finished time.
      */
-    NOW("now", "現在時刻", "日付または時刻"),
+    NOW("Now", "現在時刻", "日付または時刻"),
     ;
 
     private final String symbol;
@@ -98,7 +98,7 @@ public enum ValueConditionKind {
         }
         String symbol = Util.extractSymbol(text);
         for (ValueConditionKind kind : values()) {
-            if (kind.symbol.equals(symbol)) {
+            if (kind.symbol.equalsIgnoreCase(symbol)) {
                 return kind;
             }
         }

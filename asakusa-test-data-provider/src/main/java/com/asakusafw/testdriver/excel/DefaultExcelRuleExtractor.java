@@ -65,7 +65,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         TotalConditionKind kind = TotalConditionKind.fromOption(text);
         if (kind == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" {2}",
+                    "{0}の値が不正です: \"{1}\" 期待値:{2}",
                     RuleSheetFormat.TOTAL_CONDITION.getTitle(),
                     text,
                     Arrays.asList(TotalConditionKind.getOptions())));
@@ -111,6 +111,9 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
                     cell.getColumnIndex() + 1));
         }
         String name = cell.getStringCellValue();
+        if (name.isEmpty()) {
+            return null;
+        }
         return name;
     }
 
@@ -123,7 +126,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         ValueConditionKind condition = ValueConditionKind.fromOption(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) {2}",
+                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) 期待値:{2}",
                     RuleSheetFormat.VALUE_CONDITION.getTitle(),
                     cell,
                     row.getRowNum() + 1,
@@ -142,7 +145,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         NullityConditionKind condition = NullityConditionKind.fromOption(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) {2}",
+                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) 期待値:{2}",
                     RuleSheetFormat.NULLITY_CONDITION.getTitle(),
                     cell,
                     row.getRowNum() + 1,

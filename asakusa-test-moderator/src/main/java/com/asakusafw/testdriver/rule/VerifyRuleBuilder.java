@@ -119,7 +119,7 @@ public class VerifyRuleBuilder {
                 PropertyCondition<?> cond = new PropertyCondition(
                         entry.getKey(),
                         definition.getType(entry.getKey()),
-                        properties);
+                        property.predicates);
                 properties.add(cond);
             }
         }

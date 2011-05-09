@@ -27,6 +27,8 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
+import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.SpiSourceProvider;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -44,6 +46,24 @@ public class JsonSourceProviderTest {
     @Test
     public void simple() throws Exception {
         JsonSourceProvider provider = new JsonSourceProvider();
+        DataModelSource source = provider.open(SIMPLE, uri("simple.json"));
+        assertThat(source, not(nullValue()));
+        try {
+            Simple s1 = SIMPLE.toObject(source.next());
+            assertThat(s1.number, is(100));
+            assertThat(source.next(), is(nullValue()));
+        } finally {
+            source.close();
+        }
+    }
+
+    /**
+     * via SPI.
+     * @throws Exception if failed
+     */
+    @Test
+    public void spi() throws Exception {
+        SourceProvider provider = new SpiSourceProvider(JsonSourceProvider.class.getClassLoader());
         DataModelSource source = provider.open(SIMPLE, uri("simple.json"));
         assertThat(source, not(nullValue()));
         try {

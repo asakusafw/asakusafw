@@ -72,9 +72,6 @@ public class Period implements ValuePredicate<Calendar> {
 
     @Override
     public String describeExpected(Calendar expected, Calendar actual) {
-        if (expected == null) {
-            return "(error)";
-        }
         return MessageFormat.format(
                 "{0} ~ {1}",
                 begin == null ? "..." : Util.format(begin),

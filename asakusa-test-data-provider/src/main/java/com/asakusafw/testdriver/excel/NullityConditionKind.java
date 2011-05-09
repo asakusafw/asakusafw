@@ -24,27 +24,27 @@ public enum NullityConditionKind {
     /**
      * Accepts if .
      */
-    NORMAL("normal", "通常比較"),
+    NORMAL("-", "通常比較"), //$NON-NLS-1$
 
     /**
      * Accepts if actual data is null.
      */
-    ACCEPT_ABSENT("accept absent", "NULLなら常に成功"),
+    ACCEPT_ABSENT("AA", "NULLなら常に成功"), //$NON-NLS-1$
 
     /**
      * Deny if actual data is null.
      */
-    DENY_ABSENT("deny absent", "NULLなら常に失敗"),
+    DENY_ABSENT("DA", "NULLなら常に失敗"), //$NON-NLS-1$
 
     /**
      * Accepts if actual data is not null.
      */
-    ACCEPT_PRESENT("accept present", "NULLでなければ常に成功"),
+    ACCEPT_PRESENT("AP", "NULLでなければ常に成功"), //$NON-NLS-1$
 
     /**
      * Deny if actual data is not null.
      */
-    DENY_PRESENT("deny present", "NULLでなければ常に成功"),
+    DENY_PRESENT("DP", "NULLでなければ常に成功"), //$NON-NLS-1$
     ;
 
     private final String symbol;
@@ -89,7 +89,7 @@ public enum NullityConditionKind {
         }
         String symbol = Util.extractSymbol(text);
         for (NullityConditionKind kind : values()) {
-            if (kind.symbol.equals(symbol)) {
+            if (kind.symbol.equalsIgnoreCase(symbol)) {
                 return kind;
             }
         }

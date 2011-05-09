@@ -33,9 +33,9 @@ final class Util {
         if (value instanceof Calendar) {
             Calendar c = (Calendar) value;
             if (c.isSet(Calendar.HOUR_OF_DAY)) {
-                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
-            } else {
                 return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
+            } else {
+                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
             }
         }
         return String.valueOf(value);

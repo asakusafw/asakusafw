@@ -101,13 +101,13 @@ final class Util {
             return symbol;
         } else {
             return MessageFormat.format(
-                    "{0} ({1})", //$NON-NLS-1$
+                    "{0} [{1}]", //$NON-NLS-1$
                     title,
                     symbol);
         }
     }
 
-    private static final Pattern TEXT = Pattern.compile(".*\\(([0-9A-Za-z_\\- ]+)\\)");
+    private static final Pattern TEXT = Pattern.compile(".*\\[(.*?)\\]");
     static String extractSymbol(String text) {
         assert text != null;
         Matcher matcher = TEXT.matcher(text);

@@ -23,7 +23,7 @@ import java.util.Set;
 import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**
- * Kind of predicate about total set of model object.
+ * Kind of predicate about all set of model object.
  * @since 0.2.0
  */
 public enum TotalConditionKind {
@@ -31,28 +31,28 @@ public enum TotalConditionKind {
     /**
      * Accepts iff all data matched.
      */
-    STRICT("strict", "全てのデータを検査"),
+    STRICT("Strict", "全てのデータを検査"), //$NON-NLS-1$
 
     /**
      * Accepts iff only existing expected data matched.
      */
-    SKIP_UNEXPECTED("ignore unexpected", "余計なデータを無視", DataModelCondition.IGNORE_UNEXPECTED),
+    SKIP_UNEXPECTED("Expect", "余計なデータを無視", DataModelCondition.IGNORE_UNEXPECTED), //$NON-NLS-1$
 
     /**
      * Accepts iff only existing actual data matched.
      */
-    SKIP_ABSENT("ignore absent", "存在しないデータを無視", DataModelCondition.IGNORE_ABSENT),
+    SKIP_ABSENT("Actual", "存在しないデータを無視", DataModelCondition.IGNORE_ABSENT), //$NON-NLS-1$
 
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    INTERSECT("only present", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED,
+    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED,
             DataModelCondition.IGNORE_ABSENT),
 
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    SKIP_ALL("ignore all", "検査しない", DataModelCondition.IGNORE_UNEXPECTED,
+    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED,
             DataModelCondition.IGNORE_ABSENT,
             DataModelCondition.IGNORE_MATCHED),
 
@@ -103,7 +103,7 @@ public enum TotalConditionKind {
         }
         String symbol = Util.extractSymbol(text);
         for (TotalConditionKind kind : values()) {
-            if (kind.symbol.equals(symbol)) {
+            if (kind.symbol.equalsIgnoreCase(symbol)) {
                 return kind;
             }
         }
