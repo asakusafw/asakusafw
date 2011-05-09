@@ -70,6 +70,8 @@ public class HDFSCleaner {
         String[] prop = new String[1];
         String mode = null;
         String user = null;
+        FileSystem fs = null;
+        
         if (args.length > 0) {
             mode = args[0];
         }
@@ -130,6 +132,21 @@ public class HDFSCleaner {
                 try {
                     // クリーニングを実行
                     Path cleanDir = bean[i].getCleanDir();
+                    // ファイルシステムを取得
+                    try {
+                        Configuration conf = new Configuration();
+                        fs = cleanDir.getFileSystem(conf);
+                        if (fs == null) {
+                            Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "Path.getFileSystemの戻り値がnull", cleanDir.toString());
+                            cleanResult = false;
+                            continue;
+                        }
+                    } catch (IOException e) {
+                        Log.log(e, CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "HDFSのファイルシステムの取得に失敗", cleanDir.toString());
+                        cleanResult = false;
+                        continue;
+                    }
+                    
                     boolean target = bean[i].hasExecutionId();
                     String pattern = bean[i].getPattern();
                     Log.log(
@@ -141,7 +158,7 @@ public class HDFSCleaner {
                             mode,
                             target,
                             now);
-                    if (cleanDir(cleanDir, target, pattern, keepDate, now, recursive)) {
+                    if (cleanDir(fs, cleanDir, target, pattern, keepDate, now, recursive)) {
                         Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_SUCCESS, cleanDir.toString(), keepDate, mode);
                     } else {
                         Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_FAIL, cleanDir.toString(), keepDate, mode);
@@ -150,6 +167,10 @@ public class HDFSCleaner {
                 } catch (CleanerSystemException e) {
                     Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
                     cleanResult = false;
+                } finally {
+                    if (fs != null) {
+                        fs.close();
+                    }
                 }
             }
 
@@ -174,6 +195,7 @@ public class HDFSCleaner {
     }
     /**
      * クリーニング対象ディレクトリをクリーニングする。
+     * @param fs HDFSを表すファイルシステム
      * @param cleanPath HDFS上のクリーニング対象ディレクトリのパス
      * @param isSetExecutionId ジョブフロー実行IDが指定されているかどうか
      * @param pattern クリーニングパターン
@@ -184,26 +206,13 @@ public class HDFSCleaner {
      * @throws CleanerSystemException
      */
     private boolean cleanDir(
+            FileSystem fs,
             Path cleanPath,
             boolean isSetExecutionId,
             String pattern,
             int keepDate,
             Date now,
             boolean recursive) throws CleanerSystemException {
-        // ファイルシステムを取得
-        FileSystem fs = null;
-        try {
-            Configuration conf = new Configuration();
-            fs = cleanPath.getFileSystem(conf);
-            if (fs == null) {
-                Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "Path.getFileSystemの戻り値がnull", cleanPath.toString());
-                return false;
-            }
-        } catch (IOException e) {
-            Log.log(e, CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "HDFSのファイルシステムの取得に失敗", cleanPath.toString());
-            return false;
-        }
-
         try {
             if (!fs.exists(cleanPath)) {
                 // 指定されたディレクトリが存在しない
@@ -251,7 +260,7 @@ public class HDFSCleaner {
                         }
                     } else {
                         // 子ファイルが存在する場合、再帰的にクリーニング処理を行う。
-                        if (cleanDir(path, false, pattern, keepDate, now, recursive)) {
+                        if (cleanDir(fs, path, false, pattern, keepDate, now, recursive)) {
                             // 子ファイルが全て削除された場合はディレクトリを削除する
                             childdirStatus = getListStatus(fs, path);
                             if (childdirStatus.length == 0) {
