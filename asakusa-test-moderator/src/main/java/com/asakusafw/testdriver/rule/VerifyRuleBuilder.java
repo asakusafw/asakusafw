@@ -25,6 +25,7 @@ import java.util.TreeMap;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.core.VerifyRule;
 
 /**
@@ -87,7 +88,7 @@ public class VerifyRuleBuilder {
         }
         String[] words = name.split("_|-|\\s+");
         PropertyName propertyName = PropertyName.newInstance(words);
-        Class<?> type = definition.getType(propertyName);
+        PropertyType type = definition.getType(propertyName);
         if (type == null) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "\"{0}\"にプロパティ\"{1}\"は定義されていません",
@@ -118,7 +119,7 @@ public class VerifyRuleBuilder {
                 @SuppressWarnings({ "unchecked", "rawtypes" })
                 PropertyCondition<?> cond = new PropertyCondition(
                         entry.getKey(),
-                        definition.getType(entry.getKey()),
+                        definition.getType(entry.getKey()).getRepresentation(),
                         property.predicates);
                 properties.add(cond);
             }
@@ -134,13 +135,13 @@ public class VerifyRuleBuilder {
 
         private final PropertyName name;
 
-        private final Class<?> type;
+        private final PropertyType type;
 
         boolean key;
 
         final List<ValuePredicate<?>> predicates;
 
-        Property(PropertyName name, Class<?> type) {
+        Property(PropertyName name, PropertyType type) {
             assert name != null;
             assert type != null;
             this.name = name;
@@ -161,7 +162,7 @@ public class VerifyRuleBuilder {
          * Returns the type of this property.
          * @return the type
          */
-        public Class<?> getType() {
+        public PropertyType getType() {
             return type;
         }
 

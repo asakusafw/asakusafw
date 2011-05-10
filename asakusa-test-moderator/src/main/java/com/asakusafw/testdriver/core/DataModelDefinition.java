@@ -52,21 +52,11 @@ public interface DataModelDefinition<T> {
 
     /**
      * Returns the property type.
-     * This can returns one of the following type:
-     * <ul>
-     * <li> wrapper types of any primitive types, </li>
-     * <li> {@link java.lang.String}, </li>
-     * <li> {@link java.math.BigInteger}, </li>
-     * <li> {@link java.math.BigDecimal}, </li>
-     * <li> {@link java.util.Calendar}, </li>
-     * <li> {@link DataModelDefinition}, </li>
-     * <li> or {@link java.lang.Object} (means "variant"). </li>
-     * </ul>
      * @param name the property name
      * @return property type, or {@code null} if no such property exists
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    Class<?> getType(PropertyName name);
+    PropertyType getType(PropertyName name);
 
     /**
      * Returns the property's annotation for the specified annotation type.
@@ -152,12 +142,12 @@ public interface DataModelDefinition<T> {
                         name,
                         definition));
             }
-            Class<?> type = definition.getType(name);
-            if (type != null && value != null && type.isInstance(value) == false) {
+            PropertyType type = definition.getType(name);
+            if (type != null && value != null && type.getRepresentation().isInstance(value) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "The property \"{0}\" must be type of {1}, but was {2} ({3})",
                         name,
-                        type.getName(),
+                        type,
                         value,
                         definition));
             }

@@ -24,6 +24,7 @@ import org.apache.hadoop.io.Text;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Mock data model definition for {@link Text} type.
@@ -49,9 +50,9 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
     }
 
     @Override
-    public Class<?> getType(PropertyName name) {
+    public PropertyType getType(PropertyName name) {
         if (VALUE.equals(name)) {
-            return String.class;
+            return PropertyType.STRING;
         }
         return null;
     }

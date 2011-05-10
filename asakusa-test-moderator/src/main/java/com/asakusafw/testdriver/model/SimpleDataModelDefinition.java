@@ -18,23 +18,19 @@ package com.asakusafw.testdriver.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Simple {@link DataModelDefinition} for classes which declare public fields directly.
@@ -54,20 +50,16 @@ import com.asakusafw.testdriver.core.PropertyName;
  */
 public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
 
-    private static final Set<Class<?>> TYPES = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
-                    Boolean.class,
-                    Byte.class,
-                    Short.class,
-                    Integer.class,
-                    Long.class,
-                    Float.class,
-                    Double.class,
-                    BigInteger.class,
-                    BigDecimal.class,
-                    String.class,
-                    Calendar.class,
-            })));
+    private static final Map<Class<?>, PropertyType> TYPES;
+    static {
+        Map<Class<?>, PropertyType> map = new HashMap<Class<?>, PropertyType>();
+        for (PropertyType type : PropertyType.values()) {
+            map.put(type.getRepresentation(), type);
+        }
+        // special rule
+        map.put(PropertyType.DATETIME.getRepresentation(), PropertyType.DATETIME);
+        TYPES = Collections.unmodifiableMap(map);
+    }
 
     private final Class<T> modelClass;
 
@@ -103,7 +95,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
         if (Modifier.isPublic(field.getModifiers()) == false) {
             return null;
         }
-        if (TYPES.contains(field.getType()) == false) {
+        if (TYPES.containsKey(field.getType()) == false) {
             return null;
         }
         String name = field.getName();
@@ -139,9 +131,40 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
-    public Class<?> getType(PropertyName name) {
+    public PropertyType getType(PropertyName name) {
         Field field = fields.get(name);
-        return field == null ? null : field.getType();
+        return field == null ? null : getType(name, field.getType());
+    }
+
+    /**
+     * Returns property type kind corresponded to the property name and type.
+     * @param name property name
+     * @param type property type
+     * @return property type kind, or {@code null} without suitable correponded kind
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static PropertyType getType(PropertyName name, Class<?> type) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        PropertyType kind = TYPES.get(type);
+        if (kind == null) {
+            return null;
+        }
+        if (kind.getRepresentation() == Calendar.class) {
+            List<String> words = name.getWords();
+            if (words.contains(PropertyType.DATE.name().toLowerCase())) {
+                return PropertyType.DATE;
+            } else if (words.contains(PropertyType.TIME.name().toLowerCase())) {
+                return PropertyType.TIME;
+            } else if (words.contains(PropertyType.DATETIME.name().toLowerCase())) {
+                return PropertyType.DATETIME;
+            }
+        }
+        return kind;
     }
 
     @Override
