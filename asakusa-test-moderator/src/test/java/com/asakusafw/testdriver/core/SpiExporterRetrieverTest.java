@@ -40,7 +40,7 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
     }
 
     /**
-     * Test method for {@link SpiExporterRetriever#open(DataModelDefinition, ExporterDescription)}.
+     * Test method for {@link SpiExporterRetriever#createSource(DataModelDefinition, ExporterDescription)}.
      * @throws Exception if failed
      */
     @Test
@@ -49,7 +49,7 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
         ClassLoader cl = register(ExporterRetriever.class, MockExporterRetriever.class);
 
         SpiExporterRetriever target = new SpiExporterRetriever(cl);
-        DataModelSource source = target.open(ValueDefinition.of(String.class), desc);
+        DataModelSource source = target.createSource(ValueDefinition.of(String.class), desc);
         assertThat(ValueDefinition.of(String.class).toObject(source.next()), is("Hello, world!"));
     }
 
@@ -62,6 +62,6 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
         Desc desc = MockExporterRetriever.create("Hello, world!");
 
         SpiExporterRetriever target = new SpiExporterRetriever(getClass().getClassLoader());
-        target.open(ValueDefinition.of(String.class), desc);
+        target.createSource(ValueDefinition.of(String.class), desc);
     }
 }

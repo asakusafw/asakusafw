@@ -203,7 +203,7 @@ public class TestResultInspector {
         assert definition != null;
         assert description != null;
         assert engine != null;
-        DataModelSource target = targets.open(definition, description);
+        DataModelSource target = targets.createSource(definition, description);
         try {
             List<Difference> results = new ArrayList<Difference>();
             results.addAll(engine.inspectInput(target));

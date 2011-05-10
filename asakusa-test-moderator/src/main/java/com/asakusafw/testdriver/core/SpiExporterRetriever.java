@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -63,12 +64,13 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
     }
 
     @Override
-    public <V> DataModelSource open(
+    public <V> void truncate(
             DataModelDefinition<V> definition,
             ExporterDescription description) throws IOException {
         for (ExporterRetriever<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                return delegate(definition, element, description);
+                truncate0(definition, element, description);
+                return;
             }
         }
         throw new IOException(MessageFormat.format(
@@ -76,13 +78,63 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
                 description));
     }
 
-    private <T extends ExporterDescription, V> DataModelSource delegate(
+    private <T extends ExporterDescription, V> void truncate0(
+            DataModelDefinition<V> definition,
+            ExporterRetriever<T> preparator,
+            ExporterDescription description) throws IOException {
+        assert definition != null;
+        assert preparator != null;
+        assert description != null;
+        T desc = preparator.getDescriptionClass().cast(description);
+        preparator.truncate(definition, desc);
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            ExporterDescription description) throws IOException {
+        for (ExporterRetriever<?> element : elements) {
+            if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
+                return createOutput0(definition, element, description);
+            }
+        }
+        throw new IOException(MessageFormat.format(
+                "Failed to open results of {0} (does not supported)",
+                description));
+    }
+
+    private <T extends ExporterDescription, V> ModelOutput<V> createOutput0(
+            DataModelDefinition<V> definition,
+            ExporterRetriever<T> retriever,
+            ExporterDescription description) throws IOException {
+        assert definition != null;
+        assert retriever != null;
+        assert description != null;
+        T desc = retriever.getDescriptionClass().cast(description);
+        return retriever.createOutput(definition, desc);
+    }
+
+    @Override
+    public <V> DataModelSource createSource(
+            DataModelDefinition<V> definition,
+            ExporterDescription description) throws IOException {
+        for (ExporterRetriever<?> element : elements) {
+            if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
+                return createSource0(definition, element, description);
+            }
+        }
+        throw new IOException(MessageFormat.format(
+                "Failed to open results of {0} (does not supported)",
+                description));
+    }
+
+    private <T extends ExporterDescription, V> DataModelSource createSource0(
             DataModelDefinition<?> definition,
             ExporterRetriever<T> retriever,
             ExporterDescription description) throws IOException {
         assert retriever != null;
         assert description != null;
         T desc = retriever.getDescriptionClass().cast(description);
-        return retriever.open(definition, desc);
+        return retriever.createSource(definition, desc);
     }
 }

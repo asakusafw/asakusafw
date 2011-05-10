@@ -43,7 +43,7 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
     }
 
     /**
-     * Test method for {@link SpiImporterPreparator#open(DataModelDefinition, ImporterDescription)}.
+     * Test method for {@link SpiImporterPreparator#createOutput(DataModelDefinition, ImporterDescription)}.
      * @throws IOException if failed
      */
     @Test
@@ -51,7 +51,7 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
         Desc desc = MockImporterPreparator.create();
         ClassLoader cl = register(ImporterPreparator.class, MockImporterPreparator.class);
         SpiImporterPreparator target = new SpiImporterPreparator(cl);
-        ModelOutput<String> source = target.open(ValueDefinition.of(String.class), desc);
+        ModelOutput<String> source = target.createOutput(ValueDefinition.of(String.class), desc);
         source.write("Hello, world!");
         source.close();
 
@@ -66,6 +66,6 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
     public void open_notfound() throws IOException {
         Desc desc = MockImporterPreparator.create();
         SpiImporterPreparator target = new SpiImporterPreparator(getClass().getClassLoader());
-        target.open(ValueDefinition.of(String.class), desc);
+        target.createOutput(ValueDefinition.of(String.class), desc);
     }
 }

@@ -18,6 +18,9 @@ package com.asakusafw.testdriver.core;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -44,8 +47,32 @@ public class MockExporterRetriever extends AbstractExporterRetriever<MockExporte
     }
 
     @Override
-    public <V> DataModelSource open(DataModelDefinition<V> definition, Desc description) throws IOException {
+    public <V> void truncate(DataModelDefinition<V> definition, Desc description) throws IOException {
+        description.lines.clear();
+    }
+
+    @Override
+    public <V> DataModelSource createSource(
+            DataModelDefinition<V> definition,
+            Desc description) throws IOException {
         return new IteratorDataModelSource(ValueDefinition.of(String.class), description.lines.iterator());
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            Desc description) throws IOException {
+        final List<String> lines = description.lines;
+        return new ModelOutput<V>() {
+            @Override
+            public void write(V model) throws IOException {
+                lines.add(String.valueOf(model));
+            }
+            @Override
+            public void close() throws IOException {
+                return;
+            }
+        };
     }
 
     /**
@@ -54,9 +81,9 @@ public class MockExporterRetriever extends AbstractExporterRetriever<MockExporte
      */
     public static class Desc implements ExporterDescription {
 
-        final Iterable<String> lines;
+        final List<String> lines;
 
-        Desc(Iterable<String> lines) {
+        Desc(List<String> lines) {
             this.lines = lines;
         }
 

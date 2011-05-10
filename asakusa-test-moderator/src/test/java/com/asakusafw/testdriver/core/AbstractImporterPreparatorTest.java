@@ -18,8 +18,6 @@ package com.asakusafw.testdriver.core;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
@@ -39,8 +37,13 @@ public class AbstractImporterPreparatorTest {
     public void getDescriptionClass() {
         class Target extends AbstractImporterPreparator<FileImporterDescription> {
             @Override
-            public <V> ModelOutput<V> open(DataModelDefinition<V> definition,
-                    FileImporterDescription description) throws IOException {
+            public <V> void truncate(DataModelDefinition<V> definition,
+                    FileImporterDescription description) {
+                return;
+            }
+            @Override
+            public <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition,
+                    FileImporterDescription description) {
                 return null;
             }
         }
@@ -56,8 +59,12 @@ public class AbstractImporterPreparatorTest {
         @SuppressWarnings("rawtypes")
         class Target extends AbstractImporterPreparator {
             @Override
-            public ModelOutput open(DataModelDefinition definition, ImporterDescription description)
-                    throws IOException {
+            public void truncate(DataModelDefinition definition, ImporterDescription description) {
+                return;
+            }
+            @Override
+            public ModelOutput createOutput(DataModelDefinition definition,
+                    ImporterDescription description) {
                 return null;
             }
         }

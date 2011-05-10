@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.core;
 
 import java.io.IOException;
 
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -38,6 +39,30 @@ public interface ExporterRetriever<T extends ExporterDescription> {
     Class<T> getDescriptionClass();
 
     /**
+     * Truncates the resource which the exporter will use.
+     * <p>
+     * If target resource does not support truncate operations,
+     * this method has no effects.
+     * </p>
+     * @param <V> type of model
+     * @param definition the data model definition
+     * @param description the description
+     * @throws IOException if failed to open the target
+     */
+    <V> void truncate(DataModelDefinition<V> definition, T description) throws IOException;
+
+    /**
+     * Creates a {@link ModelOutput} to prepare what the exporter will use.
+     * @param <V> type of model
+     * @param definition the data model definition
+     * @param description the description
+     * @return the created {@link ModelOutput}
+     * @throws IOException if failed to open the target
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition, T description) throws IOException;
+
+    /**
      * Creates a {@link DataModelSource} to retrieve what the target exporter had created.
      * @param <V> type of model
      * @param definition the data model definition
@@ -46,5 +71,5 @@ public interface ExporterRetriever<T extends ExporterDescription> {
      * @throws IOException if failed to open the target
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    <V> DataModelSource open(DataModelDefinition<V> definition, T description) throws IOException;
+    <V> DataModelSource createSource(DataModelDefinition<V> definition, T description) throws IOException;
 }

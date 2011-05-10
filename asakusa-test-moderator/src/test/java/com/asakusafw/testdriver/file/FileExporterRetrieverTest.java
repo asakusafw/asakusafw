@@ -86,7 +86,7 @@ public class FileExporterRetrieverTest {
         put("target/testing/hello", "Hello, world!\nThis is a test.\n".getBytes("UTF-8"));
 
         MockTextDefinition definition = new MockTextDefinition();
-        DataModelSource result = retriever.open(definition, exporter);
+        DataModelSource result = retriever.createSource(definition, exporter);
         try {
             DataModelReflection ref;
             ref = result.next();

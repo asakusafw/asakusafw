@@ -28,8 +28,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractExporterRetriever;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
@@ -65,7 +67,26 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     }
 
     @Override
-    public <V> DataModelSource open(
+    public <V> void truncate(
+            DataModelDefinition<V> definition,
+            FileExporterDescription description) throws IOException {
+        // do nothing
+        return;
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            FileExporterDescription description) throws IOException {
+        final String destination = description.getPathPrefix().replace('*', '_');
+        Configuration conf = configurations.newInstance();
+        FileOutputFormat output = ReflectionUtils.newInstance(description.getOutputFormat(), conf);
+        FileDeployer deployer = new FileDeployer(conf);
+        return deployer.openOutput(destination, output);
+    }
+
+    @Override
+    public <V> DataModelSource createSource(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
         Configuration conf = configurations.newInstance();

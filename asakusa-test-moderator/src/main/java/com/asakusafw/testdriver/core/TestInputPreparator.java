@@ -93,7 +93,7 @@ public class TestInputPreparator {
             throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
-        return targets.open(definition, description);
+        return targets.createOutput(definition, description);
     }
 
     /**
@@ -136,7 +136,7 @@ public class TestInputPreparator {
                     source));
         }
         try {
-            ModelOutput<T> output = targets.open(definition, desctipion);
+            ModelOutput<T> output = targets.createOutput(definition, desctipion);
             try {
                 while (true) {
                     DataModelReflection next = input.next();

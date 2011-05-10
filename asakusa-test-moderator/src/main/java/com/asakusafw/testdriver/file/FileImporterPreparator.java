@@ -15,10 +15,7 @@
  */
 package com.asakusafw.testdriver.file;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -26,16 +23,8 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
-import org.mortbay.log.Log;
-
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractImporterPreparator;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -71,7 +60,15 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     }
 
     @Override
-    public <V> ModelOutput<V> open(
+    public <V> void truncate(
+            DataModelDefinition<V> definition,
+            FileImporterDescription description) throws IOException {
+        // do nothing
+        return;
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             FileImporterDescription description) throws IOException {
         Set<String> path = description.getPaths();
@@ -87,25 +84,11 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
                 }
             };
         }
-        final String destination = path.iterator().next();
+        String destination = path.iterator().next();
         Configuration conf = configurations.newInstance();
-        Job job = new Job(conf);
-        final File temporaryDir = File.createTempFile("asakusa", ".tempdir");
-        if (temporaryDir.delete() == false || temporaryDir.mkdirs() == false) {
-            throw new IOException("Failed to create temporary directory");
-        }
-        URI uri = temporaryDir.toURI();
-        FileOutputFormat.setOutputPath(job, new Path(uri));
-        TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
         FileOutputFormat output = getOpposite(conf, description.getInputFormat());
-        OutputFormatDriver<V> result = new OutputFormatDriver<V>(context, output, NullWritable.get()) {
-            @Override
-            public void close() throws IOException {
-                super.close();
-                deploy(destination, temporaryDir);
-            }
-        };
-        return result;
+        FileDeployer deployer = new FileDeployer(conf);
+        return deployer.openOutput(destination, output);
     }
 
     private FileOutputFormat getOpposite(Configuration conf, Class<?> inputFormat) throws IOException {
@@ -150,51 +133,5 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
         }
         buf.append(inputFormatName.substring(start));
         return buf.toString();
-    }
-
-    void deploy(String destination, File temporaryDir) throws IOException {
-        assert destination != null;
-        assert temporaryDir != null;
-        try {
-            File result = findResult(temporaryDir);
-            copy(result, destination);
-        } finally {
-            delete(temporaryDir);
-        }
-    }
-
-    private File findResult(File temporaryDir) throws IOException {
-        assert temporaryDir != null;
-        for (File file : temporaryDir.listFiles()) {
-            if (file.getName().startsWith("part-")) {
-                return file;
-            }
-        }
-        throw new FileNotFoundException("Cannot find commited result");
-    }
-
-    private void copy(File result, String destination) throws IOException {
-        assert result != null;
-        assert destination != null;
-        Configuration conf = configurations.newInstance();
-        FileSystem fs = FileSystem.get(conf);
-        try {
-            Path target = new Path(destination);
-            fs.copyFromLocalFile(new Path(result.toURI()), target);
-        } finally {
-            fs.close();
-        }
-    }
-
-    private void delete(File target) {
-        assert target != null;
-        if (target.isDirectory()) {
-            for (File child : target.listFiles()) {
-                delete(child);
-            }
-        }
-        if (target.delete() == false) {
-            Log.warn("Failed to delete temporary resource: {}", target);
-        }
     }
 }

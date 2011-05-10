@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
@@ -38,7 +39,17 @@ public class AbstractExporterRetrieverTest {
     public void getDescriptionClass() {
         class Target extends AbstractExporterRetriever<FileExporterDescription> {
             @Override
-            public <V> DataModelSource open(DataModelDefinition<V> definition,
+            public <V> void truncate(DataModelDefinition<V> definition,
+                    FileExporterDescription description) throws IOException {
+                return;
+            }
+            @Override
+            public <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition,
+                    FileExporterDescription description) throws IOException {
+                return null;
+            }
+            @Override
+            public <V> DataModelSource createSource(DataModelDefinition<V> definition,
                     FileExporterDescription description) throws IOException {
                 return null;
             }
@@ -55,7 +66,16 @@ public class AbstractExporterRetrieverTest {
         @SuppressWarnings("rawtypes")
         class Target extends AbstractExporterRetriever {
             @Override
-            public DataModelSource open(DataModelDefinition definition,
+            public void truncate(DataModelDefinition definition, ExporterDescription description) {
+                return;
+            }
+            @Override
+            public ModelOutput createOutput(DataModelDefinition definition,
+                    ExporterDescription description) throws IOException {
+                return null;
+            }
+            @Override
+            public DataModelSource createSource(DataModelDefinition definition,
                     ExporterDescription description) throws IOException {
                 return null;
             }

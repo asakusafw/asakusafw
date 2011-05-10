@@ -88,7 +88,7 @@ public class FileImporterPreparatorTest {
     @Test
     public void simple() throws Exception {
         FileImporterPreparator target = new FileImporterPreparator(factory);
-        ModelOutput<Text> open = target.open(
+        ModelOutput<Text> open = target.createOutput(
                 new MockTextDefinition(),
                 new MockFileImporter(Text.class, TextInputFormat.class, "target/testing/input"));
         try {

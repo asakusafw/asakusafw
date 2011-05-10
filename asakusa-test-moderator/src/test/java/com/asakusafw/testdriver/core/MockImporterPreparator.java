@@ -45,7 +45,16 @@ public class MockImporterPreparator extends AbstractImporterPreparator<MockImpor
     }
 
     @Override
-    public <V> ModelOutput<V> open(DataModelDefinition<V> definition, Desc description) throws IOException {
+    public <V> void truncate(
+            DataModelDefinition<V> definition,
+            Desc description) throws IOException {
+        description.lines.clear();
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            Desc description) throws IOException {
         final List<String> lines = description.lines;
         return new ModelOutput<V>() {
             @Override

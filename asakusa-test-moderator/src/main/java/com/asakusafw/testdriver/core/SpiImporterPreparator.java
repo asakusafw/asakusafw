@@ -64,12 +64,38 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
     }
 
     @Override
-    public <V> ModelOutput<V> open(
+    public <V> void truncate(
             DataModelDefinition<V> definition,
             ImporterDescription description) throws IOException {
         for (ImporterPreparator<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                return delegate(definition, element, description);
+                truncate0(definition, element, description);
+                return;
+            }
+        }
+        throw new IOException(MessageFormat.format(
+                "Failed to truncate {0} (does not supported)",
+                description));
+    }
+
+    private <T extends ImporterDescription, V> void truncate0(
+            DataModelDefinition<V> definition,
+            ImporterPreparator<T> preparator,
+            ImporterDescription description) throws IOException {
+        assert definition != null;
+        assert preparator != null;
+        assert description != null;
+        T desc = preparator.getDescriptionClass().cast(description);
+        preparator.truncate(definition, desc);
+    }
+
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            ImporterDescription description) throws IOException {
+        for (ImporterPreparator<?> element : elements) {
+            if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
+                return createOutput0(definition, element, description);
             }
         }
         throw new IOException(MessageFormat.format(
@@ -77,13 +103,14 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
                 description));
     }
 
-    private <T extends ImporterDescription, V> ModelOutput<V> delegate(
+    private <T extends ImporterDescription, V> ModelOutput<V> createOutput0(
             DataModelDefinition<V> definition,
-            ImporterPreparator<T> retriever,
+            ImporterPreparator<T> preparator,
             ImporterDescription description) throws IOException {
-        assert retriever != null;
+        assert definition != null;
+        assert preparator != null;
         assert description != null;
-        T desc = retriever.getDescriptionClass().cast(description);
-        return retriever.open(definition, desc);
+        T desc = preparator.getDescriptionClass().cast(description);
+        return preparator.createOutput(definition, desc);
     }
 }
