@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -61,6 +62,11 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return type.getAnnotation(annotationType);
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.singleton(VALUE);
     }
@@ -70,6 +76,11 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
         if (VALUE.equals(name)) {
             return type;
         }
+        return null;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
         return null;
     }
 

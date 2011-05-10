@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +33,16 @@ public interface DataModelDefinition<T> {
      * @return data model class
      */
     Class<T> getModelClass();
+
+    /**
+     * Returns this element's annotation for the specified annotation type.
+     * @param <A> type of annotation
+     * @param annotationType class of annotation
+     * @return this element's annotation for the specified annotation type,
+     *     or {@code null} if does not present
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <A extends Annotation> A getAnnotation(Class<A> annotationType);
 
     /**
      * returns the all public property names.
@@ -56,6 +67,17 @@ public interface DataModelDefinition<T> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     Class<?> getType(PropertyName name);
+
+    /**
+     * Returns the property's annotation for the specified annotation type.
+     * @param <A> type of annotation
+     * @param name target property
+     * @param annotationType class of annotation
+     * @return this property's annotation for the specified annotation type,
+     *     or {@code null} if neither the property nor its specified annotation do not present
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType);
 
     /**
      * Starts to build a new {@link DataModelReflection}.

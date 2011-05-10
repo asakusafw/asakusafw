@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -128,6 +129,11 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return modelClass.getAnnotation(annotationType);
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.unmodifiableCollection(fields.keySet());
     }
@@ -136,6 +142,12 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
     public Class<?> getType(PropertyName name) {
         Field field = fields.get(name);
         return field == null ? null : field.getType();
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
+        Field field = fields.get(name);
+        return field == null ? null : field.getAnnotation(annotationType);
     }
 
     @Override

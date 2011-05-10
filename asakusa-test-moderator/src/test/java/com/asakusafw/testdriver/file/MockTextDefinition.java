@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.file;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -38,6 +39,11 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return null;
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.singleton(VALUE);
     }
@@ -47,6 +53,11 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
         if (VALUE.equals(name)) {
             return String.class;
         }
+        return null;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
         return null;
     }
 

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -240,6 +241,14 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        if (annotationType == null) {
+            throw new IllegalArgumentException("annotationType must not be null"); //$NON-NLS-1$
+        }
+        return modelClass.getAnnotation(annotationType);
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.unmodifiableCollection(accessors.keySet());
     }
@@ -258,6 +267,21 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             throw new AssertionError(accessor.getReturnType());
         }
         return driver.valueType;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (annotationType == null) {
+            throw new IllegalArgumentException("annotationType must not be null"); //$NON-NLS-1$
+        }
+        Method accessor = accessors.get(name);
+        if (accessor == null) {
+            return null;
+        }
+        return accessor.getAnnotation(annotationType);
     }
 
     @Override
