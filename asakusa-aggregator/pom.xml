@@ -33,6 +33,7 @@
 		<module>../asakusa-thundergate-vocabulary</module>
 		<module>../asakusa-thundergate-dmdl</module>
 		<module>../asakusa-thundergate-plugin</module>
+		<module>../asakusa-thundergate-test-moderator</module>
 		<module>../asakusa-thundergate</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-archetype-batchapp</module>
