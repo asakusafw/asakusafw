@@ -114,7 +114,14 @@ public class ExcelSheetSourceProviderTest {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("workbook.xls", null);
         DataModelSource source = provider.open(SIMPLE, uri);
-        assertThat(source, is(nullValue()));
+        assertThat(source, not(nullValue()));
+
+        // the first sheet
+        Simple s1 = next(source);
+        assertThat(s1.number, is(100));
+        assertThat(s1.text, is("aaa"));
+
+        end(source);
     }
 
     /**

@@ -38,6 +38,8 @@ final class Util {
 
     private static final String EXTENSION = ".xls";
 
+    private static final String FRAGMENT_FIRST_SHEET = ":0";
+
     static Sheet extract(URI source) throws IOException {
         assert source != null;
         String path = source.getPath();
@@ -46,7 +48,8 @@ final class Util {
         }
         String fragment = source.getFragment();
         if (fragment == null) {
-            return null;
+            // the first sheet
+            fragment = FRAGMENT_FIRST_SHEET;
         }
         Matcher matcher = FRAGMENT.matcher(fragment);
         if (matcher.matches() == false) {
