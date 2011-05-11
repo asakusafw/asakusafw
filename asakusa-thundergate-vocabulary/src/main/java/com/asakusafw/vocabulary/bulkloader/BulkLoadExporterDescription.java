@@ -43,6 +43,12 @@ public abstract class BulkLoadExporterDescription implements ExporterDescription
     public abstract String getTargetName();
 
     /**
+     * エクスポート対象のテーブルモデルを表すクラスを返す。
+     * @return エクスポート対象のテーブルモデルを表すクラス
+     */
+    public abstract Class<?> getTableModelClass();
+
+    /**
      * エクスポート対象のテーブル名を返す。
      * @return エクスポート対象のテーブル名
      */
@@ -89,18 +95,21 @@ public abstract class BulkLoadExporterDescription implements ExporterDescription
      */
     public static class DuplicateRecordCheck {
 
-        private String tableName;
+        private final Class<?> tableModelClass;
 
-        private List<String> columnNames;
+        private final String tableName;
 
-        private List<String> checkColumnNames;
+        private final List<String> columnNames;
 
-        private String errorCodeColumnName;
+        private final List<String> checkColumnNames;
 
-        private String errorCodeValue;
+        private final String errorCodeColumnName;
+
+        private final String errorCodeValue;
 
         /**
          * インスタンスを生成する。
+         * @param tableModelClass 重複チェックに失敗した際に出力先とするテーブルの構造を表すモデルクラス
          * @param tableName 重複チェックに失敗した際に出力先とするテーブル名
          * @param columnNames 重複チェックに失敗した際に出力するカラム一覧
          * @param checkColumnNames 重複チェックに利用するカラム名の一覧
@@ -109,11 +118,15 @@ public abstract class BulkLoadExporterDescription implements ExporterDescription
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
         public DuplicateRecordCheck(
+                Class<?> tableModelClass,
                 String tableName,
                 List<String> columnNames,
                 List<String> checkColumnNames,
                 String errorCodeColumnName,
                 String errorCodeValue) {
+            if (tableModelClass == null) {
+                throw new IllegalArgumentException("tableModelClass must not be null"); //$NON-NLS-1$
+            }
             if (tableName == null) {
                 throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
             }
@@ -129,11 +142,20 @@ public abstract class BulkLoadExporterDescription implements ExporterDescription
             if (errorCodeValue == null) {
                 throw new IllegalArgumentException("errorCodeValue must not be null"); //$NON-NLS-1$
             }
+            this.tableModelClass = tableModelClass;
             this.tableName = tableName;
             this.columnNames = columnNames;
             this.checkColumnNames = checkColumnNames;
             this.errorCodeColumnName = errorCodeColumnName;
             this.errorCodeValue = errorCodeValue;
+        }
+
+        /**
+         * 重複チェックに失敗した際に出力先とするテーブルの構造を表すモデルクラスを返す。
+         * @return モデルクラス
+         */
+        public Class<?> getTableModelClass() {
+            return tableModelClass;
         }
 
         /**

@@ -16,6 +16,8 @@
 package com.asakusafw.testdriver.bulkloader;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractImporterPreparator;
@@ -33,15 +35,41 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
     public <V> void truncate(
             DataModelDefinition<V> definition,
             BulkLoadImporterDescription description) throws IOException {
-        // TODO implement
-        throw new IOException();
+        Configuration conf = Configuration.load(description.getTargetName());
+        Util.truncate(conf, description.getTableName());
     }
 
     @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             BulkLoadImporterDescription description) throws IOException {
-        // TODO implement
-        throw new IOException();
+        Configuration conf = Configuration.load(description.getTargetName());
+        TableInfo<V> info = buildTableInfo(definition, description);
+        Connection conn = conf.open();
+        boolean green = false;
+        try {
+            ModelOutput<V> output = new TableOutput<V>(info, conn);
+            green = true;
+            return output;
+        } finally {
+            if (green == false) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignored.
+                }
+            }
+        }
+    }
+
+    private <V> TableInfo<V> buildTableInfo(
+            DataModelDefinition<V> definition,
+            BulkLoadImporterDescription description) {
+        assert definition != null;
+        assert description != null;
+        return new TableInfo<V>(
+                definition,
+                description.getTableName(),
+                description.getColumnNames());
     }
 }

@@ -70,6 +70,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> void truncate(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
+        checkType(definition, description);
         // do nothing
         return;
     }
@@ -78,7 +79,8 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
-        final String destination = description.getPathPrefix().replace('*', '_');
+        checkType(definition, description);
+        String destination = description.getPathPrefix().replace('*', '_');
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = ReflectionUtils.newInstance(description.getOutputFormat(), conf);
         FileDeployer deployer = new FileDeployer(conf);
@@ -89,6 +91,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> DataModelSource createSource(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
+        checkType(definition, description);
         Configuration conf = configurations.newInstance();
         Job job = new Job(conf);
         FileInputFormat.setInputPaths(job, new Path(description.getPathPrefix()));
@@ -96,6 +99,17 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
         InputFormat<?, V> format = getOpposite(conf, description.getOutputFormat());
         InputFormatDriver<V> result = new InputFormatDriver<V>(definition, context, format);
         return result;
+    }
+
+    private <V> void checkType(DataModelDefinition<V> definition,
+            FileExporterDescription description) throws IOException {
+        if (definition.getModelClass() != description.getModelType()) {
+            throw new IOException(MessageFormat.format(
+                    "型が一致しません: モデルの型={0}, エクスポータの型={1} ({2})",
+                    definition.getModelClass().getName(),
+                    description.getModelType().getName(),
+                    description));
+        }
     }
 
     private FileInputFormat getOpposite(Configuration conf, Class<?> outputFormat) throws IOException {

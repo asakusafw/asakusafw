@@ -43,6 +43,11 @@ import java.util.List;
  */
 public abstract class DbExporterDescription extends BulkLoadExporterDescription {
 
+    @Override
+    public final Class<?> getTableModelClass() {
+        return getModelType();
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -52,7 +57,7 @@ public abstract class DbExporterDescription extends BulkLoadExporterDescription 
      */
     @Override
     public String getTableName() {
-        return AttributeHelper.getTableName(getModelType());
+        return AttributeHelper.getTableName(getTableModelClass());
     }
 
     /**
@@ -64,7 +69,7 @@ public abstract class DbExporterDescription extends BulkLoadExporterDescription 
      */
     @Override
     public List<String> getColumnNames() {
-        return AttributeHelper.getColumnNames(getModelType());
+        return AttributeHelper.getColumnNames(getTableModelClass());
     }
 
     @Override
@@ -74,7 +79,7 @@ public abstract class DbExporterDescription extends BulkLoadExporterDescription 
 
     @Override
     public List<String> getPrimaryKeyNames() {
-        return AttributeHelper.getPrimaryKeyNames(getModelType());
+        return AttributeHelper.getPrimaryKeyNames(getTableModelClass());
     }
 
     @Override

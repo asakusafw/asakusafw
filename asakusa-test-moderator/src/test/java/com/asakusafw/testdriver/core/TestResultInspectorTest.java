@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.asakusafw.testdriver.core.MockExporterRetriever.Desc;
+
 /**
  * Test for {@link TestResultInspector}.
  * @since 0.2.0
@@ -51,8 +53,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:Hello, world!");
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create("1:Hello, world!"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -71,8 +75,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
         ClassLoader loader = register(ExporterRetriever.class, MockExporterRetriever.class);
         TestResultInspector inspector = new TestResultInspector(loader);
 
+        Desc desc = MockExporterRetriever.create("MOCK");
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create("MOCK"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("default:source"),
                 uri("default:rule"));
@@ -93,8 +99,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:BAD");
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create("1:BAD"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -115,8 +123,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create();
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create(),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -137,8 +147,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:Hello, world!", "2:BAD");
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create("1:Hello, world!", "2:BAD"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -159,8 +171,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("2:Hello, world!");
         List<Difference> results = inspector.inspect(
-                MockExporterRetriever.create("2:Hello, world!"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -181,8 +195,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:Hello, world!");
         inspector.inspect(
-                MockExporterRetriever.create("1:Hello, world!"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("testing:rule"));
@@ -202,8 +218,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:Hello, world!");
         inspector.inspect(
-                MockExporterRetriever.create("1:Hello, world!"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("unknown:src"),
                 uri("testing:rule"));
@@ -223,8 +241,10 @@ public class TestResultInspectorTest extends SpiTestRoot {
                     .add(uri("testing:rule"), rule()),
                 new MockExporterRetriever().wrap());
 
+        Desc desc = MockExporterRetriever.create("1:Hello, world!");
         inspector.inspect(
-                MockExporterRetriever.create("1:Hello, world!"),
+                desc.getModelType(),
+                desc,
                 context,
                 uri("testing:src"),
                 uri("unknown:rule"));

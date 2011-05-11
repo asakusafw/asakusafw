@@ -100,6 +100,11 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
      */
     protected abstract String getErrorCodeValue();
 
+    @Override
+    public final Class<?> getTableModelClass() {
+        return getNormalModelType();
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -187,6 +192,7 @@ public abstract class DupCheckDbExporterDescription extends BulkLoadExporterDesc
         errorColumnNames.remove(errorCodeColumnName);
 
         return new DuplicateRecordCheck(
+                getErrorModelType(),
                 errorTableName,
                 errorColumnNames,
                 getCheckColumnNames(),
