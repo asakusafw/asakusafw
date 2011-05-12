@@ -28,7 +28,7 @@ import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
  * @since 0.2.0
  */
 @PrimaryKey("number")
-@OriginalName("SIMPLE")
+@OriginalName("DUP_CHECK")
 @ColumnOrder({
     "NUMBER",
     "TEXT",
@@ -43,7 +43,7 @@ import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
     "C_TIME",
     "C_DATETIME"
 })
-public class Simple {
+public class DupCheck {
 
     /**
      * int.
@@ -153,7 +153,7 @@ public class Simple {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Simple other = (Simple) obj;
+        DupCheck other = (DupCheck) obj;
         if (bigDecimalValue == null) {
             if (other.bigDecimalValue != null) {
                 return false;
@@ -250,6 +250,6 @@ public class Simple {
 
     @Override
     public String toString() {
-        return new SimpleDataModelDefinition<Simple>(Simple.class).toReflection(this).toString();
+        return new SimpleDataModelDefinition<DupCheck>(DupCheck.class).toReflection(this).toString();
     }
 }

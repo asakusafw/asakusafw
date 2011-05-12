@@ -140,6 +140,7 @@ public class TableInfo<T> {
             }
             String columnName = getOriginalName(name);
             if (columnName == null) {
+                // currently may not null
                 continue;
             }
             results.put(columnName, name);
@@ -154,21 +155,22 @@ public class TableInfo<T> {
         if (a != null) {
             return a.value();
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "The property \"{1}\" (in {0}) is not annotated with {2}, column name will be inferred",
-                    definition.getModelClass().getName(),
-                    name,
-                    OriginalName.class.getSimpleName()));
-        }
 
         Iterator<String> iter = name.getWords().iterator();
         assert iter.hasNext();
         StringBuilder buf = new StringBuilder();
         buf.append(iter.next());
         while (iter.hasNext()) {
-            buf.append(false);
+            buf.append('_');
             buf.append(iter.next());
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "The property \"{1}\" (in {0}) is not annotated with {2}, column name will be inferred as \"{3}\"",
+                    definition.getModelClass().getName(),
+                    name,
+                    OriginalName.class.getSimpleName(),
+                    buf));
         }
         return buf.toString();
     }

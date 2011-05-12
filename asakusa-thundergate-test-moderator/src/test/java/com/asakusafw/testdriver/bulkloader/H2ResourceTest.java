@@ -54,13 +54,13 @@ public class H2ResourceTest {
     @Test
     public void execute_resource() throws Exception {
         h2.execute("INSERT INTO TESTING (NUMBER, TEXT) VALUES(100, 'Hello, world!')");
-        List<Object[]> results = h2.query("SELECT NUMBER, TEXT FROM TESTING");
+        List<List<Object>> results = h2.query("SELECT NUMBER, TEXT FROM TESTING");
         assertThat(results.size(), is(1));
 
-        Object[] columns = results.get(0);
-        assertThat(columns.length, is(2));
-        assertThat(columns[0], is((Object) 100));
-        assertThat(columns[1], is((Object) "Hello, world!"));
+        List<Object> columns = results.get(0);
+        assertThat(columns.size(), is(2));
+        assertThat(columns.get(0), is((Object) 100));
+        assertThat(columns.get(1), is((Object) "Hello, world!"));
     }
 
     /**

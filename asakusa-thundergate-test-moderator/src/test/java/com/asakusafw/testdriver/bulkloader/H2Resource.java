@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.rules.TestWatchman;
@@ -60,11 +61,7 @@ public class H2Resource extends TestWatchman {
     public void starting(FrameworkMethod method) {
         org.h2.Driver.load();
         this.context = method.getMethod().getDeclaringClass();
-        try {
-            this.connection = DriverManager.getConnection("jdbc:h2:mem:" + name);
-        } catch (SQLException e) {
-            throw new AssertionError(e);
-        }
+        this.connection = open();
         boolean green = false;
         try {
             leakcheck();
@@ -96,11 +93,23 @@ public class H2Resource extends TestWatchman {
     }
 
     /**
+     * Creates a new connection.
+     * @return the created connection
+     */
+    public Connection open() {
+        try {
+            return DriverManager.getConnection("jdbc:h2:mem:" + name);
+        } catch (SQLException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
      * Returns query result columns list.
      * @param sql target SQL
      * @return result rows list that contains columns array
      */
-    public List<Object[]> query(String sql) {
+    public List<List<Object>> query(String sql) {
         try {
             return query0(sql);
         } catch (Exception e) {
@@ -113,9 +122,9 @@ public class H2Resource extends TestWatchman {
      * @param sql target SQL
      * @return result rows list that contains columns array
      */
-    public Object[] single(String sql) {
+    public List<Object> single(String sql) {
         try {
-            List<Object[]> query = query0(sql);
+            List<List<Object>> query = query0(sql);
             assertThat(sql, query.size(), is(1));
             return query.get(0);
         } catch (Exception e) {
@@ -130,30 +139,30 @@ public class H2Resource extends TestWatchman {
      */
     public int count(String table) {
         try {
-            List<Object[]> r = query0(MessageFormat.format("SELECT COUNT(*) FROM {0}", table));
+            List<List<Object>> r = query0(MessageFormat.format("SELECT COUNT(*) FROM {0}", table));
             if (r.size() != 1) {
                 return -1;
             }
-            return ((Number) r.get(0)[0]).intValue();
+            return ((Number) r.get(0).get(0)).intValue();
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
     }
 
-    private List<Object[]> query0(String sql) throws SQLException {
+    private List<List<Object>> query0(String sql) throws SQLException {
         Statement s = connection.createStatement();
         try {
             ResultSet rs = s.executeQuery(sql);
             ResultSetMetaData meta = rs.getMetaData();
             int size = meta.getColumnCount();
-            List<Object[]> results = new ArrayList<Object[]>();
+            List<List<Object>> results = new ArrayList<List<Object>>();
             while (rs.next()) {
                 Object[] columns = new Object[size];
                 for (int i = 0; i < size; i++) {
                     columns[i] = rs.getObject(i + 1);
                 }
-                results.add(columns);
+                results.add(Arrays.asList(columns));
             }
             return results;
         } finally {
