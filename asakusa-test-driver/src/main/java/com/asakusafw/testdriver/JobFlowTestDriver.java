@@ -110,7 +110,7 @@ public class JobFlowTestDriver extends TestDriverBase {
 
         try {
             // クラスタワークディレクトリ初期化
-            initializeClusterDirectory(clusterWorkDir);
+            initializeClusterDirectory(driverContext.getClusterWorkDir());
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
@@ -122,8 +122,8 @@ public class JobFlowTestDriver extends TestDriverBase {
                     jobFlowDriver.hasError());
             JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-            String flowId = className.substring(className.lastIndexOf(".") + 1) + "_" + methodName;
-            File compileWorkDir = new File(compileWorkBaseDir, flowId);
+            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1) + "_" + driverContext.getMethodName();
+            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
@@ -134,13 +134,13 @@ public class JobFlowTestDriver extends TestDriverBase {
                 batchId,
                 flowId,
                 "test.jobflow",
-                Location.fromPath(clusterWorkDir + "/" + executionId, '/'),
+                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] {
                         DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
                 }),
                 jobFlowDescriptionClass.getClassLoader(),
-                options);
+                driverContext.getOptions());
 
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
@@ -150,8 +150,8 @@ public class JobFlowTestDriver extends TestDriverBase {
 
             CommandContext context = new CommandContext(
                     System.getenv("ASAKUSA_HOME") + "/",
-                    executionId,
-                    batchArgs);
+                    driverContext.getExecutionId(),
+                    driverContext.getBatchArgs());
 
             Map<String, String> dPropMap = createHadoopProperties(context);
 

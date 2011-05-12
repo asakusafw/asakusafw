@@ -24,9 +24,9 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.testdriver.TestDriverBase;
@@ -37,13 +37,14 @@ import com.asakusafw.testdriver.core.ImporterPreparator;
 import com.asakusafw.testdriver.core.SourceProvider;
 import com.asakusafw.testdriver.core.TestInputPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
+import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRuleProvider;
 import com.asakusafw.testdriver.excel.ExcelSheetRuleProvider;
 import com.asakusafw.testdriver.excel.ExcelSheetSourceProvider;
 import com.asakusafw.testdriver.file.FileExporterRetriever;
 import com.asakusafw.testdriver.file.FileImporterPreparator;
 import com.asakusafw.testdriver.model.DefaultDataModelAdapter;
-import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.testdriver.model.DefaultDataModelDefinition;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
@@ -66,7 +67,8 @@ public class NewFlowPartTestDriver extends TestDriverBase {
      * @return テスト入力データオブジェクト。
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
-        FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(flowDescriptionDriver, name, modelType);
+        FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(
+                driverContext, flowDescriptionDriver, name, modelType);
         inputs.add(input);
         return input;
     }
@@ -80,7 +82,8 @@ public class NewFlowPartTestDriver extends TestDriverBase {
      * @return テスト入力データオブジェクト。
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
-        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<T>(flowDescriptionDriver, name, modelType);
+        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<T>(
+                driverContext, flowDescriptionDriver, name, modelType);
         outputs.add(output);
         return output;
     }
@@ -94,24 +97,24 @@ public class NewFlowPartTestDriver extends TestDriverBase {
     public void runTest(FlowDescription flowDescription) throws IOException {
 
         // クラスタワークディレクトリ初期化
-        initializeClusterDirectory(clusterWorkDir); 
+        initializeClusterDirectory(driverContext.getClusterWorkDir()); 
 
         // TODO Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
         // TODO Sourceプロバイダ、ImporterPreparatorの切り替え
         // TestInputPrepatatorの生成
         DataModelAdapter adapter = new DefaultDataModelAdapter();
-        SourceProvider sources = new ExcelSheetSourceProvider();
+        SourceProvider source = new ExcelSheetSourceProvider();
         ImporterPreparator targets = new FileImporterPreparator();
-        TestInputPreparator preparator = new TestInputPreparator(adapter, sources, targets);
         
         for (FlowPartDriverInput<?> input : inputs) {
-            preparator.prepare(input.getModelType(), input.getImporterDescription());
+            TestInputPreparator preparator = new TestInputPreparator(adapter, source, targets);
+            preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
         }
         
         // フローコンパイラの実行
-        String flowId = className.substring(className.lastIndexOf('.') + 1)
-                + "_" + methodName;
-        File compileWorkDir = new File(compileWorkBaseDir, flowId);
+        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1)
+                + "_" + driverContext.getMethodName();
+        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
@@ -122,10 +125,10 @@ public class NewFlowPartTestDriver extends TestDriverBase {
                 "test.batch", flowId, "test.flowpart", createTempLocation(),
                 compileWorkDir, Arrays.asList(new File[] { DirectFlowCompiler
                         .toLibraryPath(flowDescription.getClass()) }),
-                flowDescription.getClass().getClassLoader(), options);
+                flowDescription.getClass().getClassLoader(), driverContext.getOptions());
 
         CommandContext context = new CommandContext(
-                System.getenv("ASAKUSA_HOME") + "/", executionId, batchArgs);
+                System.getenv("ASAKUSA_HOME") + "/", driverContext.getExecutionId(), driverContext.getBatchArgs());
 
         Map<String, String> dPropMap = createHadoopProperties(context);
 
@@ -140,19 +143,26 @@ public class NewFlowPartTestDriver extends TestDriverBase {
         VerifyRuleProvider provider = new ExcelSheetRuleProvider();
         ExporterRetriever retriever = new FileExporterRetriever();
         TestResultInspector inspector = new TestResultInspector(
-                adapter, sources, provider, retriever);
+                adapter, source, provider, retriever);
+        VerifyContext verifyContext = new VerifyContext();
         
         for (FlowPartDriverOutput output : outputs) {
             // TODO ModelVerifierの切り替え
-            inspector.inspect(output.getExporterDescription(), output.getExpected()
-                    new ExcelSheetRuleProvider().get(definition, context, output.));
+            inspector.inspect(
+                    output.getModelType(),
+                    output.getExporterDescription(),
+                    output.getExpectedUri(),
+                    new ExcelSheetRuleProvider().get(
+                            new DefaultDataModelDefinition(output.getModelType()),
+                            new VerifyContext(),
+                            output.getVerifyRuleUri()));
         }
         
     }
     
     private Location createTempLocation() {
-        Location location = Location.fromPath(clusterWorkDir, '/')
-                .append(executionId).append("temp");
+        Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
+                .append(driverContext.getExecutionId()).append("temp");
         return location;
     }
     

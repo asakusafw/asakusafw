@@ -66,28 +66,10 @@ public abstract class TestDriverBase {
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
-    /** OSのユーザ名。 */
-    protected String osUser;
-
     /** Hadoopコマンドの絶対パス。 */
     protected String hadoopCmd;
     /** HadoopJobRun(HadoopコマンドのWrapper)コマンドの絶対パス。 */
     protected String hadoopJobRunCmd;
-    /** DSLCompilerのローカルワークディレクトリ。 */
-    protected String compileWorkBaseDir;
-    /** DSLCompilerのクラスタワークディレクトリ。 */
-    protected String clusterWorkDir;
-
-    /** テストクラスのクラス名。 */
-    protected String className;
-    /** テストクラスのメソッド名。 */
-    protected String methodName;
-
-    /**
-     * ジョブフローの実行ID。 (テストドライバでダミーの値をセットする)
-     */
-    protected String executionId;
-
     /** テストデータ生成・検証ツールオブジェクト。 */
     protected TestUtils testUtils;
     /** TestUtils生成時に指定するテストデータ定義シートのファイルリスト。 */
@@ -95,20 +77,8 @@ public abstract class TestDriverBase {
     /** TestUtils生成時に指定するテストデータ定義シートのディレクトリ（testDataFileListと排他)。 */
     protected File testDataDir;
 
-    /**
-     * 実行時の追加設定一覧 (Property Name, Property Value)。
-     */
-    protected final Map<String, String> extraConfigurations = new TreeMap<String, String>();
-
-    /**
-     * バッチ実行時引数 (ASAKUSA_BATCH_ARGS)。
-     */
-    protected final Map<String, String> batchArgs = new TreeMap<String, String>();
-
-    /**
-     * コンパイラオプション。
-     */
-    protected final FlowCompilerOptions options = new FlowCompilerOptions();
+    protected TestDriverContext driverContext = new TestDriverContext(
+            new TreeMap<String, String>(), new TreeMap<String, String>(), new FlowCompilerOptions());
 
     /**
      * コンストラクタ。
@@ -146,16 +116,16 @@ public abstract class TestDriverBase {
 
         // 呼び出し元のクラス名とメソッド名を取得
         StackTraceElement e = new Exception().getStackTrace()[4];
-        className = e.getClassName().substring(
-                e.getClassName().lastIndexOf(".") + 1);
-        methodName = e.getMethodName();
+        driverContext.setClassName(e.getClassName().substring(
+                e.getClassName().lastIndexOf(".") + 1));
+        driverContext.setMethodName(e.getMethodName());
 
         // executionIdの生成 (テスト時にわかりやすいようにクラス名_メソッド名_タイムスタンプ)
         Calendar cal = Calendar.getInstance();
         String ts = new SimpleDateFormat("yyyyMMddHHmmss")
                 .format(cal.getTime());
 
-        executionId = className + "_" + methodName + "_" + ts;
+        driverContext.setExecutionId(driverContext.getClassName() + "_" + driverContext.getMethodName() + "_" + ts);
     }
 
     /**
@@ -188,8 +158,8 @@ public abstract class TestDriverBase {
             }
             if (testDataFileList == null) {
                 testDataDir = new File(testDataDirPath
-                        + System.getProperty("file.separator") + className
-                        + System.getProperty("file.separator") + methodName);
+                        + System.getProperty("file.separator") + driverContext.getClassName()
+                        + System.getProperty("file.separator") + driverContext.getMethodName());
                 testUtils = new TestUtils(testDataDir);
             } else {
                 testUtils = new TestUtils(testDataFileList);
@@ -201,7 +171,7 @@ public abstract class TestDriverBase {
         }
 
         // OS情報
-        this.osUser = System.getenv("USER");
+        this.driverContext.setOsUser(System.getenv("USER"));
 
         // パス関連
         this.hadoopCmd = System.getenv("HADOOP_HOME") + "/bin/hadoop";
@@ -210,15 +180,15 @@ public abstract class TestDriverBase {
         this.hadoopJobRunCmd = System.getenv("ASAKUSA_HOME")
                 + "/experimental/bin/hadoop_job_run.sh";
 
-        this.compileWorkBaseDir = System
-                .getProperty("asakusa.testdriver.compilerwork.dir");
-        if (compileWorkBaseDir == null) {
-            compileWorkBaseDir = COMPILERWORK_DIR_DEFAULT;
+        this.driverContext.setCompileWorkBaseDir(System
+                .getProperty("asakusa.testdriver.compilerwork.dir"));
+        if (driverContext.getCompileWorkBaseDir() == null) {
+            driverContext.setCompileWorkBaseDir(COMPILERWORK_DIR_DEFAULT);
         }
-        this.clusterWorkDir = System
-                .getProperty("asakusa.testdriver.hadoopwork.dir");
-        if (clusterWorkDir == null) {
-            clusterWorkDir = HADOOPWORK_DIR_DEFAULT;
+        this.driverContext.setClusterWorkDir(System
+                .getProperty("asakusa.testdriver.hadoopwork.dir"));
+        if (driverContext.getClusterWorkDir() == null) {
+            driverContext.setClusterWorkDir(HADOOPWORK_DIR_DEFAULT);
         }
     }
 
@@ -313,7 +283,7 @@ public abstract class TestDriverBase {
      */
     protected void savePlan(File targetDirectory, TestExecutionPlan plan)
             throws IOException {
-        LOG.info("{}のテスト用実行計画を保存しています", executionId);
+        LOG.info("{}のテスト用実行計画を保存しています", driverContext.getExecutionId());
         File file = new File(targetDirectory, "test-execution-plan.ser");
         FileOutputStream output = new FileOutputStream(file);
         try {
@@ -323,7 +293,7 @@ public abstract class TestDriverBase {
         } finally {
             output.close();
         }
-        LOG.info("{}のテスト用実行計画を保存しました: {}", executionId, file.getAbsolutePath());
+        LOG.info("{}のテスト用実行計画を保存しました: {}", driverContext.getExecutionId(), file.getAbsolutePath());
     }
 
     /**
@@ -363,8 +333,8 @@ public abstract class TestDriverBase {
         }
         // ジョブの実行時にOSユーザ名とMMインスタンスIDをJavaシステムプロパティとして渡す
         Map<String, String> dPropMap = new HashMap<String, String>();
-        dPropMap.put(AbstractStageClient.PROP_USER, osUser);
-        dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, executionId);
+        dPropMap.put(AbstractStageClient.PROP_USER, driverContext.getOsUser());
+        dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, driverContext.getExecutionId());
 
         // 変数表を設定に渡す
         dPropMap.put(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS,
@@ -374,7 +344,7 @@ public abstract class TestDriverBase {
         dPropMap.putAll(getPluginProperties());
 
         // 追加設定の情報をシステムプロパティとして渡す
-        dPropMap.putAll(extraConfigurations);
+        dPropMap.putAll(driverContext.getExtraConfigurations());
         return dPropMap;
     }
 
@@ -545,9 +515,9 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
         }
         if (value != null) {
-            extraConfigurations.put(key, value);
+            driverContext.getExtraConfigurations().put(key, value);
         } else {
-            extraConfigurations.remove(key);
+            driverContext.getExtraConfigurations().remove(key);
         }
     }
 
@@ -566,9 +536,9 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
         }
         if (value != null) {
-            batchArgs.put(key, value);
+            driverContext.getBatchArgs().put(key, value);
         } else {
-            batchArgs.remove(key);
+            driverContext.getBatchArgs().remove(key);
         }
     }
 
@@ -580,23 +550,23 @@ public abstract class TestDriverBase {
      */
     public void setOptimize(int level) {
         if (level <= 0) {
-            options.setCompressConcurrentStage(false);
-            options.setCompressFlowPart(false);
-            options.setHashJoinForSmall(false);
-            options.setHashJoinForTiny(false);
-            options.setEnableCombiner(false);
+            driverContext.getOptions().setCompressConcurrentStage(false);
+            driverContext.getOptions().setCompressFlowPart(false);
+            driverContext.getOptions().setHashJoinForSmall(false);
+            driverContext.getOptions().setHashJoinForTiny(false);
+            driverContext.getOptions().setEnableCombiner(false);
         } else if (level == 1) {
-            options.setCompressConcurrentStage(FlowCompilerOptions.Item.compressConcurrentStage.defaultValue);
-            options.setCompressFlowPart(FlowCompilerOptions.Item.compressFlowPart.defaultValue);
-            options.setHashJoinForSmall(FlowCompilerOptions.Item.hashJoinForSmall.defaultValue);
-            options.setHashJoinForTiny(FlowCompilerOptions.Item.hashJoinForTiny.defaultValue);
-            options.setEnableCombiner(FlowCompilerOptions.Item.enableCombiner.defaultValue);
+            driverContext.getOptions().setCompressConcurrentStage(FlowCompilerOptions.Item.compressConcurrentStage.defaultValue);
+            driverContext.getOptions().setCompressFlowPart(FlowCompilerOptions.Item.compressFlowPart.defaultValue);
+            driverContext.getOptions().setHashJoinForSmall(FlowCompilerOptions.Item.hashJoinForSmall.defaultValue);
+            driverContext.getOptions().setHashJoinForTiny(FlowCompilerOptions.Item.hashJoinForTiny.defaultValue);
+            driverContext.getOptions().setEnableCombiner(FlowCompilerOptions.Item.enableCombiner.defaultValue);
         } else {
-            options.setCompressConcurrentStage(true);
-            options.setCompressFlowPart(true);
-            options.setHashJoinForSmall(true);
-            options.setHashJoinForTiny(true);
-            options.setEnableCombiner(true);
+            driverContext.getOptions().setCompressConcurrentStage(true);
+            driverContext.getOptions().setCompressFlowPart(true);
+            driverContext.getOptions().setHashJoinForSmall(true);
+            driverContext.getOptions().setHashJoinForTiny(true);
+            driverContext.getOptions().setEnableCombiner(true);
         }
     }
 
@@ -607,7 +577,7 @@ public abstract class TestDriverBase {
      *            デバッグ情報を残す場合に{@code true}、捨てる場合に{@code false}
      */
     public void setDebug(boolean enable) {
-        options.setEnableDebugLogging(enable);
+        driverContext.getOptions().setEnableDebugLogging(enable);
     }
 
     /**

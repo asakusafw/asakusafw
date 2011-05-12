@@ -110,7 +110,7 @@ public class FlowPartTestDriver extends TestDriverBase {
     public void runTest(FlowDescription flowDescription) throws Throwable {
 
         // クラスタワークディレクトリ初期化
-        initializeClusterDirectory(clusterWorkDir);
+        initializeClusterDirectory(driverContext.getClusterWorkDir());
 
         // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
         if (createIndividually) {
@@ -120,9 +120,9 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
 
         // フローコンパイラの実行
-        String flowId = className.substring(className.lastIndexOf('.') + 1)
-                + "_" + methodName;
-        File compileWorkDir = new File(compileWorkBaseDir, flowId);
+        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1)
+                + "_" + driverContext.getMethodName();
+        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
@@ -130,13 +130,13 @@ public class FlowPartTestDriver extends TestDriverBase {
         FlowGraph flowGraph = flowDescriptionDriver
                 .createFlowGraph(flowDescription);
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph,
-                "test.batch", flowId, "test.flowpart", createTempLocation(),
+                "test.batch", flowId, "test.flowpart", FlowPartTestDriverUtils.createTempLocation(driverContext),
                 compileWorkDir, Arrays.asList(new File[] { DirectFlowCompiler
                         .toLibraryPath(flowDescription.getClass()) }),
-                flowDescription.getClass().getClassLoader(), options);
+                flowDescription.getClass().getClassLoader(), driverContext.getOptions());
 
         CommandContext context = new CommandContext(
-                System.getenv("ASAKUSA_HOME") + "/", executionId, batchArgs);
+                System.getenv("ASAKUSA_HOME") + "/", driverContext.getExecutionId(), driverContext.getBatchArgs());
 
         Map<String, String> dPropMap = createHadoopProperties(context);
 
@@ -182,7 +182,7 @@ public class FlowPartTestDriver extends TestDriverBase {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateIn(tableName, tableName);
-        String path = createInputLocation(tableName).toPath('/');
+        String path = FlowPartTestDriverUtils.createInputLocation(driverContext, tableName).toPath('/');
         LOG.info("DirectImporterDescription生成:Path=" + path);
         ImporterDescription desc = new DirectImporterDescription(modelType,
                 path);
@@ -230,7 +230,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         loadIndividually = true;
         addCreateIn(tableName, excelFileName);
 
-        String path = createInputLocation(excelFileName).toPath('/');
+        String path = FlowPartTestDriverUtils.createInputLocation(driverContext, excelFileName).toPath('/');
 
         LOG.info("DirectImporterDescription生成:Path=" + excelFileName);
 
@@ -275,7 +275,7 @@ public class FlowPartTestDriver extends TestDriverBase {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateOut(tableName, tableName);
-        String path = createOutputLocation(tableName).toPath('/');
+        String path = FlowPartTestDriverUtils.createOutputLocation(driverContext, tableName).toPath('/');
         LOG.info("DirectExporterDescription生成:Path=" + path);
         ExporterDescription desc = new DirectExporterDescription(modelType,
                 path);
@@ -324,7 +324,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         loadIndividually = true;
         addCreateOut(tableName, excelFileName);
 
-        String path = createOutputLocation(excelFileName).toPath('/');
+        String path = FlowPartTestDriverUtils.createOutputLocation(driverContext, excelFileName).toPath('/');
 
         LOG.info("DirectExporterDescription生成:Path=" + excelFileName);
 
@@ -497,54 +497,16 @@ public class FlowPartTestDriver extends TestDriverBase {
                 || name.equals("_logs");
     }
 
-    private Location createInputLocation(String tableName) {
-        Location location = Location.fromPath(clusterWorkDir, '/')
-                .append(executionId).append("input")
-                .append(normalize(tableName));
-        return location;
-    }
-
-    private Location createOutputLocation(String tableName) {
-        Location location = Location.fromPath(clusterWorkDir, '/')
-                .append(executionId).append("output")
-                .append(normalize(tableName)).asPrefix();
-        return location;
-    }
-
-    private Location createTempLocation() {
-        Location location = Location.fromPath(clusterWorkDir, '/')
-                .append(executionId).append("temp");
-        return location;
-    }
-
     private String createInputSequenceFilePath(FileSystem fs, String tableName) {
-        Location location = createInputLocation(tableName);
+        Location location = FlowPartTestDriverUtils.createInputLocation(driverContext, tableName);
         return new Path(fs.getWorkingDirectory(), location.toPath('/'))
                 .toString();
     }
 
     private String createOutputSequenceFilePath(FileSystem fs, String tableName) {
-        Location location = createOutputLocation(tableName);
+        Location location = FlowPartTestDriverUtils.createOutputLocation(driverContext, tableName);
         return new Path(fs.getWorkingDirectory(), location.toPath('/'))
                 .toString();
     }
 
-    private String normalize(String targetName) {
-        // MultipleInputs/Outputsではアルファベットと数字だけしかつかえない
-        StringBuilder buf = new StringBuilder();
-        for (char c : targetName.toCharArray()) {
-            // 0 はエスケープ記号に
-            if ('1' <= c && c <= '9' || 'A' <= c && c <= 'Z' || 'a' <= c
-                    && c <= 'z') {
-                buf.append(c);
-            } else if (c <= 0xff) {
-                buf.append('0');
-                buf.append(String.format("%02x", (int) c));
-            } else {
-                buf.append("0u");
-                buf.append(String.format("%04x", (int) c));
-            }
-        }
-        return buf.toString();
-    }
 }

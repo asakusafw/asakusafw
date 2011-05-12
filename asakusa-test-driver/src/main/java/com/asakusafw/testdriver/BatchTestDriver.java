@@ -64,7 +64,7 @@ public class BatchTestDriver extends TestDriverBase {
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) throws Throwable {
 
         // クラスタワークディレクトリ初期化
-        initializeClusterDirectory(clusterWorkDir);
+        initializeClusterDirectory(driverContext.getClusterWorkDir());
 
         // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
         storeDatabase();
@@ -77,7 +77,7 @@ public class BatchTestDriver extends TestDriverBase {
         BatchClass batchClass = batchDriver.getBatchClass();
 
         batchId = batchClass.getConfig().name();
-        File compileWorkDir = new File(compileWorkBaseDir, batchId + System.getProperty("file.separator") + executionId);
+        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), batchId + System.getProperty("file.separator") + driverContext.getExecutionId());
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
@@ -88,14 +88,14 @@ public class BatchTestDriver extends TestDriverBase {
         DirectBatchCompiler.compile(
                 batchDescriptionClass,
                 "test.batch",
-                Location.fromPath(clusterWorkDir + "/" + executionId, '/'),
+                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
                 compilerOutputDir,
                 compilerLocalWorkingDir,
                 Arrays.asList(new File[] {
                         DirectFlowCompiler.toLibraryPath(batchDescriptionClass)
                 }),
                 batchDescriptionClass.getClassLoader(),
-                options);
+                driverContext.getOptions());
 
         // バッチコンパイラが生成したテスト用シェルスクリプトを実行
         String[] batchRunCmd = new String[] {
@@ -104,7 +104,7 @@ public class BatchTestDriver extends TestDriverBase {
         };
         // 環境変数に-Dの引数一覧を積む
         StringBuilder dProps = new StringBuilder();
-        for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
+        for (Map.Entry<String, String> entry : driverContext.getExtraConfigurations().entrySet()) {
             dProps.append(MessageFormat.format(
                     " -D \"{0}={1}\"",
                     entry.getKey(),
@@ -114,7 +114,7 @@ public class BatchTestDriver extends TestDriverBase {
         CommandContext context = new CommandContext(
                 System.getenv("ASAKUSA_HOME") + "/",
                 "dummy",
-                batchArgs);
+                driverContext.getBatchArgs());
 
         Map<String, String> environment = new TreeMap<String, String>();
         environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, context.getVariableList());
