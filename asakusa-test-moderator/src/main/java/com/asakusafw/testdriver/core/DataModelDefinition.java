@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +35,16 @@ public interface DataModelDefinition<T> {
     Class<T> getModelClass();
 
     /**
+     * Returns this element's annotation for the specified annotation type.
+     * @param <A> type of annotation
+     * @param annotationType class of annotation
+     * @return this element's annotation for the specified annotation type,
+     *     or {@code null} if does not present
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <A extends Annotation> A getAnnotation(Class<A> annotationType);
+
+    /**
      * returns the all public property names.
      * @return property names
      */
@@ -41,21 +52,22 @@ public interface DataModelDefinition<T> {
 
     /**
      * Returns the property type.
-     * This can returns one of the following type:
-     * <ul>
-     * <li> wrapper types of any primitive types, </li>
-     * <li> {@link java.lang.String}, </li>
-     * <li> {@link java.math.BigInteger}, </li>
-     * <li> {@link java.math.BigDecimal}, </li>
-     * <li> {@link java.util.Calendar}, </li>
-     * <li> {@link DataModelDefinition}, </li>
-     * <li> or {@link java.lang.Object} (means "variant"). </li>
-     * </ul>
      * @param name the property name
      * @return property type, or {@code null} if no such property exists
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    Class<?> getType(PropertyName name);
+    PropertyType getType(PropertyName name);
+
+    /**
+     * Returns the property's annotation for the specified annotation type.
+     * @param <A> type of annotation
+     * @param name target property
+     * @param annotationType class of annotation
+     * @return this property's annotation for the specified annotation type,
+     *     or {@code null} if neither the property nor its specified annotation do not present
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType);
 
     /**
      * Starts to build a new {@link DataModelReflection}.
@@ -130,12 +142,12 @@ public interface DataModelDefinition<T> {
                         name,
                         definition));
             }
-            Class<?> type = definition.getType(name);
-            if (type != null && value != null && type.isInstance(value) == false) {
+            PropertyType type = definition.getType(name);
+            if (type != null && value != null && type.getRepresentation().isInstance(value) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "The property \"{0}\" must be type of {1}, but was {2} ({3})",
                         name,
-                        type.getName(),
+                        type,
                         value,
                         definition));
             }

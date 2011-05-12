@@ -17,9 +17,6 @@ package com.asakusafw.testdriver.core;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Scans properties in {@link DataModelDefinition}.
@@ -28,78 +25,6 @@ import java.util.Map;
  * @since 0.2.0
  */
 public abstract class DataModelScanner<C, E extends Throwable> {
-
-    private static final Map<Class<?>, Callback> CALLBACKS;
-    static {
-        Map<Class<?>, Callback> map = new HashMap<Class<?>, Callback>();
-        map.put(Boolean.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.booleanProperty(n, c);
-            }
-        });
-        map.put(Byte.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.byteProperty(n, c);
-            }
-        });
-        map.put(Short.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.shortProperty(n, c);
-            }
-        });
-        map.put(Integer.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.intProperty(n, c);
-            }
-        });
-        map.put(Long.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.longProperty(n, c);
-            }
-        });
-        map.put(Float.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.floatProperty(n, c);
-            }
-        });
-        map.put(Double.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.doubleProperty(n, c);
-            }
-        });
-        map.put(BigInteger.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.integerProperty(n, c);
-            }
-        });
-        map.put(BigDecimal.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.decimalProperty(n, c);
-            }
-        });
-        map.put(String.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.stringProperty(n, c);
-            }
-        });
-        map.put(Calendar.class, new Callback() {
-            @Override
-            <C, E extends Throwable> void apply(DataModelScanner<C, E> s, PropertyName n, C c) throws E {
-                s.calendarProperty(n, c);
-            }
-        });
-        CALLBACKS = map;
-    }
 
     /**
      * Starts scan and visits each property method.
@@ -132,12 +57,60 @@ public abstract class DataModelScanner<C, E extends Throwable> {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        Class<?> type = definition.getType(name);
-        Callback callback = CALLBACKS.get(type);
-        if (callback == null) {
+        PropertyType type = definition.getType(name);
+        if (type == null) {
             anyProperty(name, context);
         } else {
-            callback.apply(this, name, context);
+            switch (type) {
+            case BOOLEAN:
+                booleanProperty(name, context);
+                break;
+            case BYTE:
+                byteProperty(name, context);
+                break;
+            case DATE:
+                dateProperty(name, context);
+                break;
+            case DATETIME:
+                datetimeProperty(name, context);
+                break;
+            case DECIMAL:
+                decimalProperty(name, context);
+                break;
+            case DOUBLE:
+                doubleProperty(name, context);
+                break;
+            case FLOAT:
+                floatProperty(name, context);
+                break;
+            case INT:
+                intProperty(name, context);
+                break;
+            case INTEGER:
+                integerProperty(name, context);
+                break;
+            case LONG:
+                longProperty(name, context);
+                break;
+            case OBJECT:
+                objectProperty(name, context);
+                break;
+            case SEQUENCE:
+                sequenceProperty(name, context);
+                break;
+            case SHORT:
+                shortProperty(name, context);
+                break;
+            case STRING:
+                stringProperty(name, context);
+                break;
+            case TIME:
+                timeProperty(name, context);
+                break;
+            default:
+                anyProperty(name, context);
+                break;
+            }
         }
     }
 
@@ -242,12 +215,52 @@ public abstract class DataModelScanner<C, E extends Throwable> {
     }
 
     /**
-     * Invoked each {@link Calendar} property.
+     * Invoked each {@link PropertyType#DATE} property.
      * @param name property name
      * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
      * @throws E if failed
      */
-    public void calendarProperty(PropertyName name, C context) throws E {
+    public void dateProperty(PropertyName name, C context) throws E {
+        anyProperty(name, context);
+    }
+
+    /**
+     * Invoked each {@link PropertyType#TIME} property.
+     * @param name property name
+     * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
+     * @throws E if failed
+     */
+    public void timeProperty(PropertyName name, C context) throws E {
+        anyProperty(name, context);
+    }
+
+    /**
+     * Invoked each {@link PropertyType#DATETIME} property.
+     * @param name property name
+     * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
+     * @throws E if failed
+     */
+    public void datetimeProperty(PropertyName name, C context) throws E {
+        anyProperty(name, context);
+    }
+
+    /**
+     * Invoked each {@link Sequence} property.
+     * @param name property name
+     * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
+     * @throws E if failed
+     */
+    public void sequenceProperty(PropertyName name, C context) throws E {
+        anyProperty(name, context);
+    }
+
+    /**
+     * Invoked each {@link DataModelReflection} property.
+     * @param name property name
+     * @param context context object (specified in {@link #scan(DataModelDefinition, Object)})
+     * @throws E if failed
+     */
+    public void objectProperty(PropertyName name, C context) throws E {
         anyProperty(name, context);
     }
 
@@ -272,15 +285,5 @@ public abstract class DataModelScanner<C, E extends Throwable> {
         private _() {
             return;
         }
-    }
-
-    private abstract static class Callback {
-
-        Callback() {
-            return;
-        }
-
-        abstract <C, E extends Throwable> void apply(
-                DataModelScanner<C, E> scanner, PropertyName name, C context) throws E;
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import com.asakusafw.runtime.value.ValueOption;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Default implementation of {@link DataModelDefinition}.
@@ -54,7 +56,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     private static final Map<Class<?>, ValueDriver<?>> VALUE_DRIVERS;
     static {
         Map<Class<?>, ValueDriver<?>> map = new HashMap<Class<?>, ValueDriver<?>>();
-        map.put(BooleanOption.class, new ValueDriver<BooleanOption>(Boolean.class) {
+        map.put(BooleanOption.class, new ValueDriver<BooleanOption>(PropertyType.BOOLEAN) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(BooleanOption holder, Object value) {
@@ -65,7 +67,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(ByteOption.class, new ValueDriver<ByteOption>(Byte.class) {
+        map.put(ByteOption.class, new ValueDriver<ByteOption>(PropertyType.BYTE) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(ByteOption holder, Object value) {
@@ -76,7 +78,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(ShortOption.class, new ValueDriver<ShortOption>(Short.class) {
+        map.put(ShortOption.class, new ValueDriver<ShortOption>(PropertyType.SHORT) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(ShortOption holder, Object value) {
@@ -87,7 +89,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(IntOption.class, new ValueDriver<IntOption>(Integer.class) {
+        map.put(IntOption.class, new ValueDriver<IntOption>(PropertyType.INT) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(IntOption holder, Object value) {
@@ -98,7 +100,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(LongOption.class, new ValueDriver<LongOption>(Long.class) {
+        map.put(LongOption.class, new ValueDriver<LongOption>(PropertyType.LONG) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(LongOption holder, Object value) {
@@ -109,7 +111,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(DecimalOption.class, new ValueDriver<DecimalOption>(BigDecimal.class) {
+        map.put(DecimalOption.class, new ValueDriver<DecimalOption>(PropertyType.DECIMAL) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(DecimalOption holder, Object value) {
@@ -120,7 +122,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.get();
             }
         });
-        map.put(StringOption.class, new ValueDriver<StringOption>(String.class) {
+        map.put(StringOption.class, new ValueDriver<StringOption>(PropertyType.STRING) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(StringOption holder, Object value) {
@@ -131,7 +133,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return holder.getAsString();
             }
         });
-        map.put(DateOption.class, new ValueDriver<DateOption>(Calendar.class) {
+        map.put(DateOption.class, new ValueDriver<DateOption>(PropertyType.DATE) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(DateOption holder, Object value) {
@@ -151,7 +153,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
                 return calendar;
             }
         });
-        map.put(DateTimeOption.class, new ValueDriver<DateTimeOption>(Calendar.class) {
+        map.put(DateTimeOption.class, new ValueDriver<DateTimeOption>(PropertyType.DATETIME) {
             @SuppressWarnings("deprecation")
             @Override
             void modify(DateTimeOption holder, Object value) {
@@ -240,12 +242,20 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        if (annotationType == null) {
+            throw new IllegalArgumentException("annotationType must not be null"); //$NON-NLS-1$
+        }
+        return modelClass.getAnnotation(annotationType);
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.unmodifiableCollection(accessors.keySet());
     }
 
     @Override
-    public Class<?> getType(PropertyName name) {
+    public PropertyType getType(PropertyName name) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -258,6 +268,21 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             throw new AssertionError(accessor.getReturnType());
         }
         return driver.valueType;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (annotationType == null) {
+            throw new IllegalArgumentException("annotationType must not be null"); //$NON-NLS-1$
+        }
+        Method accessor = accessors.get(name);
+        if (accessor == null) {
+            return null;
+        }
+        return accessor.getAnnotation(annotationType);
     }
 
     @Override
@@ -335,9 +360,9 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
 
     static abstract class ValueDriver<T> {
 
-        final Class<?> valueType;
+        final PropertyType valueType;
 
-        ValueDriver(Class<?> valueType) {
+        ValueDriver(PropertyType valueType) {
             assert valueType != null;
             this.valueType = valueType;
         }

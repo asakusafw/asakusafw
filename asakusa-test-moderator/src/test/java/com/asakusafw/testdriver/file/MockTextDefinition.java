@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.file;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -23,6 +24,7 @@ import org.apache.hadoop.io.Text;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Mock data model definition for {@link Text} type.
@@ -38,15 +40,25 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return null;
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.singleton(VALUE);
     }
 
     @Override
-    public Class<?> getType(PropertyName name) {
+    public PropertyType getType(PropertyName name) {
         if (VALUE.equals(name)) {
-            return String.class;
+            return PropertyType.STRING;
         }
+        return null;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
         return null;
     }
 

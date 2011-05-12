@@ -86,6 +86,7 @@ public class TestResultInspector {
 
     /**
      * Inspects the target exporter's output using specified expected data and rule.
+     * @param modelClass class of data model
      * @param description target exporter
      * @param context current verification context
      * @param expected the expected data
@@ -95,10 +96,14 @@ public class TestResultInspector {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public List<Difference> inspect(
+            Class<?> modelClass,
             ExporterDescription description,
             VerifyContext context,
             URI expected,
             URI rule) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
@@ -111,9 +116,9 @@ public class TestResultInspector {
         if (rule == null) {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = findDefinition(description);
+        DataModelDefinition<?> definition = findDefinition(modelClass);
         VerifyRule ruleDesc = findRule(definition, context, rule);
-        return inspect(description, expected, ruleDesc);
+        return inspect(modelClass, description, expected, ruleDesc);
     }
 
     /**
@@ -153,6 +158,7 @@ public class TestResultInspector {
 
     /**
      * Inspects the target exporter's output using specified expected data and rule.
+     * @param modelClass class of data model
      * @param description target exporter
      * @param expected the expected data
      * @param rule the verification rule between expected and actual result
@@ -161,9 +167,13 @@ public class TestResultInspector {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public List<Difference> inspect(
+            Class<?> modelClass,
             ExporterDescription description,
             URI expected,
             VerifyRule rule) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
@@ -173,16 +183,11 @@ public class TestResultInspector {
         if (rule == null) {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = findDefinition(description);
+        DataModelDefinition<?> definition = findDefinition(modelClass);
         DataModelSource expectedDesc = findSource(definition, expected);
         VerifyEngine engine = buildVerifier(definition, rule, expectedDesc);
         List<Difference> results = inspect(definition, description, engine);
         return results;
-    }
-
-    private DataModelDefinition<?> findDefinition(ExporterDescription description) throws IOException {
-        assert description != null;
-        return findDefinition(description.getModelType());
     }
 
     private <T> DataModelDefinition<T> findDefinition(Class<T> modelClass) throws IOException {

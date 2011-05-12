@@ -98,19 +98,23 @@ public class TestInputPreparator {
 
     /**
      * Prepares the target importer's input using the specified source.
+     * @param type class of data model
      * @param description target importer
      * @param source test data
      * @throws IOException if failed to prepare the importer
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void prepare(ImporterDescription description, URI source) throws IOException {
+    public void prepare(Class<?> type, ImporterDescription description, URI source) throws IOException {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         if (source == null) {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = findDefinition(description.getModelType());
+        DataModelDefinition<?> definition = findDefinition(type);
         prepare(definition, description, source);
     }
 

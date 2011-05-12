@@ -181,21 +181,69 @@ public class JsonObjectDriver extends DataModelScanner<JsonObject, IOException> 
         builder.add(name, prop.getAsString());
     }
 
-    private static final Pattern CALENDAR = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})(\\s+(\\d{2}):(\\d{2}):(\\d{2}))?");
+    private static final Pattern DATE = Pattern.compile("(\\d{3,})-(\\d{1,2})-(\\d{1,2})");
     @Override
-    public void calendarProperty(PropertyName name, JsonObject context) throws IOException {
+    public void dateProperty(PropertyName name, JsonObject context) throws IOException {
         JsonElement prop = property(context, name);
         if (prop == null) {
             return;
         }
         String string = prop.getAsString();
-        Matcher matcher = CALENDAR.matcher(string);
+        Matcher matcher = DATE.matcher(string);
         if (matcher.matches() == false) {
             throw new IOException(MessageFormat.format(
-                    "invalid date/datetime property \"{0}\", must be either \"{2}\", \"{3}\", but \"{1}\"",
+                    "invalid date property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
                     name,
                     string,
-                    "yyyy-mm-dd",
+                    "yyyy-mm-dd"));
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, Integer.parseInt(matcher.group(1)));
+        calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)) - 1);
+        calendar.set(Calendar.DATE, Integer.parseInt(matcher.group(3)));
+        builder.add(name, calendar);
+    }
+
+    private static final Pattern TIME = Pattern.compile("(\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+    @Override
+    public void timeProperty(PropertyName name, JsonObject context) throws IOException {
+        JsonElement prop = property(context, name);
+        if (prop == null) {
+            return;
+        }
+        String string = prop.getAsString();
+        Matcher matcher = TIME.matcher(string);
+        if (matcher.matches() == false) {
+            throw new IOException(MessageFormat.format(
+                    "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
+                    name,
+                    string,
+                    "hh:mm:ss"));
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(matcher.group(1)));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(matcher.group(2)) - 1);
+        calendar.set(Calendar.SECOND, Integer.parseInt(matcher.group(3)));
+        builder.add(name, calendar);
+    }
+
+    private static final Pattern DATETIME = Pattern.compile(
+            "(\\d{3,})-(\\d{1,2})-(\\d{1,2})\\s+(\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+    @Override
+    public void datetimeProperty(PropertyName name, JsonObject context) throws IOException {
+        JsonElement prop = property(context, name);
+        if (prop == null) {
+            return;
+        }
+        String string = prop.getAsString();
+        Matcher matcher = DATETIME.matcher(string);
+        if (matcher.matches() == false) {
+            throw new IOException(MessageFormat.format(
+                    "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
+                    name,
+                    string,
                     "yyyy-mm-dd hh:mm:ss"));
         }
         Calendar calendar = Calendar.getInstance();
@@ -203,11 +251,9 @@ public class JsonObjectDriver extends DataModelScanner<JsonObject, IOException> 
         calendar.set(Calendar.YEAR, Integer.parseInt(matcher.group(1)));
         calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)) - 1);
         calendar.set(Calendar.DATE, Integer.parseInt(matcher.group(3)));
-        if (matcher.group(4) != null) {
-            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(matcher.group(5)));
-            calendar.set(Calendar.MINUTE, Integer.parseInt(matcher.group(6)));
-            calendar.set(Calendar.SECOND, Integer.parseInt(matcher.group(7)));
-        }
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(matcher.group(4)));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(matcher.group(5)));
+        calendar.set(Calendar.SECOND, Integer.parseInt(matcher.group(6)));
         builder.add(name, calendar);
     }
 }

@@ -15,8 +15,11 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
+
+import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
  * {@link DataModelDefinition} which only holds single value.
@@ -31,6 +34,8 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
     public static final PropertyName VALUE = PropertyName.newInstance("value");
 
     private final Class<T> type;
+
+    private final PropertyType kind;
 
     /**
      * Creates a new instance.
@@ -53,6 +58,10 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
         this.type = type;
+        this.kind = SimpleDataModelDefinition.getType(VALUE, type);
+        if (kind == null) {
+            throw new IllegalArgumentException(type.getName());
+        }
     }
 
     @Override
@@ -61,15 +70,25 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
     }
 
     @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return type.getAnnotation(annotationType);
+    }
+
+    @Override
     public Collection<PropertyName> getProperties() {
         return Collections.singleton(VALUE);
     }
 
     @Override
-    public Class<?> getType(PropertyName name) {
+    public PropertyType getType(PropertyName name) {
         if (VALUE.equals(name)) {
-            return type;
+            return kind;
         }
+        return null;
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(PropertyName name, Class<A> annotationType) {
         return null;
     }
 

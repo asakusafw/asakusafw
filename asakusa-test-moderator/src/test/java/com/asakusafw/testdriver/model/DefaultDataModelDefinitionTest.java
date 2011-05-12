@@ -28,6 +28,7 @@ import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.testing.model.Naming;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.testdriver.testing.model.Variety;
@@ -64,15 +65,15 @@ public class DefaultDataModelDefinitionTest {
     public void getType() {
         DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<Variety>(Variety.class);
         assertThat(def.getType(p("missing")), is(nullValue()));
-        assertThat(def.getType(p("p_int")), is((Object) Integer.class));
-        assertThat(def.getType(p("p_long")), is((Object) Long.class));
-        assertThat(def.getType(p("p_byte")), is((Object) Byte.class));
-        assertThat(def.getType(p("p_short")), is((Object) Short.class));
-        assertThat(def.getType(p("p_decimal")), is((Object) BigDecimal.class));
-        assertThat(def.getType(p("p_text")), is((Object) String.class));
-        assertThat(def.getType(p("p_boolean")), is((Object) Boolean.class));
-        assertThat(def.getType(p("p_date")), is((Object) Calendar.class));
-        assertThat(def.getType(p("p_datetime")), is((Object) Calendar.class));
+        assertThat(def.getType(p("p_int")), is(PropertyType.INT));
+        assertThat(def.getType(p("p_long")), is(PropertyType.LONG));
+        assertThat(def.getType(p("p_byte")), is(PropertyType.BYTE));
+        assertThat(def.getType(p("p_short")), is(PropertyType.SHORT));
+        assertThat(def.getType(p("p_decimal")), is(PropertyType.DECIMAL));
+        assertThat(def.getType(p("p_text")), is(PropertyType.STRING));
+        assertThat(def.getType(p("p_boolean")), is(PropertyType.BOOLEAN));
+        assertThat(def.getType(p("p_date")), is(PropertyType.DATE));
+        assertThat(def.getType(p("p_datetime")), is(PropertyType.DATETIME));
     }
 
     /**

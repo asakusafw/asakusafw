@@ -540,6 +540,11 @@ public class BulkLoaderIoProcessorTest {
         }
 
         @Override
+        public Class<?> getTableModelClass() {
+            return Ex1.class;
+        }
+
+        @Override
         public String getTargetName() {
             return target;
         }

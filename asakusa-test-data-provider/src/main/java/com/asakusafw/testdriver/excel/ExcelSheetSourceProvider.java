@@ -29,7 +29,10 @@ import com.asakusafw.testdriver.core.SourceProvider;
  * <ul>
  * <li> which is also a valid URL to obtain an Excel workbook, </li>
  * <li> whose "path" segment ends with ".xls", or </li>
- * <li> whose "fragment" is "#:" + 0-origin sheet number or "#" + sheet name </li>
+ * <li>
+ *     whose "fragment" is "#:" + 0-origin sheet number, "#" + sheet name,
+ *     or null (which means the first sheet)
+ * </li>
  * </ul>
  * @since 0.2.0
  */

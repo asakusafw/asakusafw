@@ -247,7 +247,40 @@ class ExcelDataDriver {
         }
 
         @Override
-        public void calendarProperty(PropertyName name, Cell context) throws IOException {
+        public void dateProperty(PropertyName name, Cell context) throws IOException {
+            if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+                throw exception(name, context, "date/datetime");
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(context.getDateCellValue());
+
+            Calendar result = Calendar.getInstance();
+            result.clear();
+            result.set(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DATE));
+            builder.add(name, result);
+        }
+
+        @Override
+        public void timeProperty(PropertyName name, Cell context) throws IOException {
+            if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+                throw exception(name, context, "date/datetime");
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(context.getDateCellValue());
+
+            Calendar result = Calendar.getInstance();
+            result.clear();
+            result.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+            result.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            result.set(Calendar.SECOND, calendar.get(Calendar.SECOND));
+            builder.add(name, result);
+        }
+
+        @Override
+        public void datetimeProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
                 throw exception(name, context, "date/datetime");
             }

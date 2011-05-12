@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRule;
 import com.asakusafw.testdriver.core.VerifyRuleProvider;
@@ -44,6 +45,15 @@ import com.asakusafw.testdriver.rule.VerifyRuleBuilder.Property;
 
 /**
  * Provides {@link VerifyRule} from Excel Sheet.
+ * This accepts URI:
+ * <ul>
+ * <li> which is also a valid URL to obtain an Excel workbook, </li>
+ * <li> whose "path" segment ends with ".xls", or </li>
+ * <li>
+ *     whose "fragment" is "#:" + 0-origin sheet number, "#" + sheet name,
+ *     or null (which means the first sheet)
+ * </li>
+ * </ul>
  * @since 0.2.0
  */
 public class ExcelSheetRuleProvider implements VerifyRuleProvider {
@@ -199,22 +209,27 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             property.accept(Predicates.equals());
             break;
         case CONTAIN:
-            if (property.getType() != String.class) {
+            if (property.getType() == PropertyType.STRING) {
+                property.accept(containsString());
+            } else {
                 throw typeError(property, ValueConditionKind.CONTAIN);
             }
-            property.accept(containsString());
             break;
         case TODAY:
-            if (property.getType() != Calendar.class) {
+            if (property.getType() == PropertyType.DATE
+                    || property.getType() == PropertyType.DATETIME) {
+                property.accept(createTodayPredicate(context));
+            } else {
                 throw typeError(property, ValueConditionKind.TODAY);
             }
-            property.accept(createTodayPredicate(context));
             break;
         case NOW:
-            if (property.getType() != Calendar.class) {
+            if (property.getType() == PropertyType.DATE
+                    || property.getType() == PropertyType.DATETIME) {
+                property.accept(createNowPredicate(context));
+            } else {
                 throw typeError(property, ValueConditionKind.NOW);
             }
-            property.accept(createNowPredicate(context));
             break;
         }
     }

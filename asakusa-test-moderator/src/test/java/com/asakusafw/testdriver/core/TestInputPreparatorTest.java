@@ -45,7 +45,7 @@ public class TestInputPreparatorTest extends SpiTestRoot {
                     .add(uri("testing:src"), "Hello, world!"),
                 new MockImporterPreparator().wrap());
         Desc desc = MockImporterPreparator.create();
-        prep.prepare(desc, uri("testing:src"));
+        prep.prepare(desc.getModelType(), desc, uri("testing:src"));
         assertThat(desc.lines, is(Arrays.asList("Hello, world!")));
     }
 
@@ -61,7 +61,7 @@ public class TestInputPreparatorTest extends SpiTestRoot {
 
         TestInputPreparator prep = new TestInputPreparator(loader);
         Desc desc = MockImporterPreparator.create();
-        prep.prepare(desc, uri("default:source"));
+        prep.prepare(desc.getModelType(), desc, uri("default:source"));
         assertThat(desc.lines, is(Arrays.asList("MOCK")));
     }
 
@@ -77,7 +77,7 @@ public class TestInputPreparatorTest extends SpiTestRoot {
                     .add(uri("testing:src"), "Hello, world!"),
                 new MockImporterPreparator().wrap());
         Desc desc = MockImporterPreparator.create();
-        prep.prepare(desc, uri("testing:src"));
+        prep.prepare(desc.getModelType(), desc, uri("testing:src"));
     }
 
     /**
@@ -92,7 +92,7 @@ public class TestInputPreparatorTest extends SpiTestRoot {
                     .add(uri("testing:src"), "Hello, world!"),
                 new MockImporterPreparator().wrap());
         Desc desc = MockImporterPreparator.create();
-        prep.prepare(desc, uri("unknown:src"));
+        prep.prepare(desc.getModelType(), desc, uri("unknown:src"));
     }
 
     private URI uri(String str) {
