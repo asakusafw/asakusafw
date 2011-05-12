@@ -85,14 +85,14 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * コンストラクタ。
      * <p>
-     * 使い方の注意点は{@link FlowPartTestDriver#FlowPartTestDriver()}を参照。
+     * 使い方の注意点は{@link NewFlowPartTestDriver#FlowPartTestDriver()}を参照。
      * </p>
      *
      * @param testDataFileList
      *            テストデータ定義シートのパスを示すFileのリスト
      * @throws RuntimeException
      *             インスタンスの生成に失敗した場合
-     * @see FlowPartTestDriver#FlowPartTestDriver()
+     * @see NewFlowPartTestDriver#FlowPartTestDriver()
      */
     public FlowPartTestDriver(List<File> testDataFileList)
             throws RuntimeException {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.api;
+package com.asakusafw.testdriver.newapi;
 
 import java.net.URI;
 
