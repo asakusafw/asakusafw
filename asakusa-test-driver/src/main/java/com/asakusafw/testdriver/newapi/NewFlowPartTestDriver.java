@@ -34,10 +34,6 @@ import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.core.DataModelAdapter;
 import com.asakusafw.testdriver.core.ExporterRetriever;
 import com.asakusafw.testdriver.core.ImporterPreparator;
-import com.asakusafw.testdriver.core.MockDataModelAdapter;
-import com.asakusafw.testdriver.core.MockImporterPreparator;
-import com.asakusafw.testdriver.core.MockSourceProvider;
-import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.SourceProvider;
 import com.asakusafw.testdriver.core.TestInputPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
@@ -101,7 +97,7 @@ public class NewFlowPartTestDriver extends TestDriverBase {
         initializeClusterDirectory(clusterWorkDir); 
 
         // TODO Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
-        // TODO SourceProvider/
+        // TODO Sourceプロバイダ、ImporterPreparatorの切り替え
         // TestInputPrepatatorの生成
         DataModelAdapter adapter = new DefaultDataModelAdapter();
         SourceProvider sources = new ExcelSheetSourceProvider();
@@ -139,14 +135,17 @@ public class NewFlowPartTestDriver extends TestDriverBase {
         executePlan(plan, jobflowInfo.getPackageFile());
         
         // TODO Excel上の期待値とシーケンスファイル上の実際値を比較する。
+        // TODO ExporterRetriever、Importerプリパレータの切り替え
+        
         VerifyRuleProvider provider = new ExcelSheetRuleProvider();
         ExporterRetriever retriever = new FileExporterRetriever();
         TestResultInspector inspector = new TestResultInspector(
                 adapter, sources, provider, retriever);
         
         for (FlowPartDriverOutput output : outputs) {
-            inspector.inspect(output.getExporterDescription(), output.getExpected(), 
-                inspector.rule(output.getModelType(), output.getModelVerifier()));
+            // TODO ModelVerifierの切り替え
+            inspector.inspect(output.getExporterDescription(), output.getExpected()
+                    new ExcelSheetRuleProvider().get(definition, context, output.));
         }
         
     }
