@@ -20,6 +20,10 @@ import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
+import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
+import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
+import com.asakusafw.vocabulary.external.ExporterDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription;
 
 
 /**
@@ -27,13 +31,13 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
  */
 public class JobflowInfo {
 
-    private File packageFile;
+    private final File packageFile;
 
-    private File sourceArchive;
+    private final File sourceArchive;
 
-    private List<StageInfo> stages;
+    private final List<StageInfo> stages;
 
-    private JobflowModel jobflow;
+    private final JobflowModel jobflow;
 
     /**
      * インスタンスを生成する。
@@ -56,6 +60,42 @@ public class JobflowInfo {
         this.packageFile = packageArchive;
         this.sourceArchive = sourceArchive;
         this.stages = stages;
+    }
+
+    /**
+     * Returns a {@link ImporterDescription} object in this jobflow which has the specified {@code Input ID}.
+     * @param inputId target input ID
+     * @return the corresponded {@link ImporterDescription}, or {@code null} if no such input exists
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public ImporterDescription findImporter(String inputId) {
+        if (inputId == null) {
+            throw new IllegalArgumentException("inputId must not be null"); //$NON-NLS-1$
+        }
+        for (Import importer : jobflow.getImports()) {
+            if (inputId.equals(importer.getId())) {
+                return importer.getDescription().getImporterDescription();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a {@link ExporterDescription} object in this jobflow which has the specified {@code Output ID}.
+     * @param outputId target output ID
+     * @return the corresponded {@link ExporterDescription}, or {@code null} if no such output exists
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public ExporterDescription findExporter(String outputId) {
+        if (outputId == null) {
+            throw new IllegalArgumentException("outputId must not be null"); //$NON-NLS-1$
+        }
+        for (Export exporter : jobflow.getExports()) {
+            if (outputId.equals(exporter.getId())) {
+                return exporter.getDescription().getExporterDescription();
+            }
+        }
+        return null;
     }
 
     /**
