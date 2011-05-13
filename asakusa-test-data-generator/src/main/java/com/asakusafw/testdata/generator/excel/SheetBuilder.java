@@ -38,6 +38,8 @@ import com.asakusafw.testdriver.excel.ValueConditionKind;
  */
 public class SheetBuilder {
 
+    private static final int MINIMUM_COLUMN_WIDTH = 2560;
+
     private final WorkbookInfo info;
 
     private final ModelDeclaration model;
@@ -102,7 +104,14 @@ public class SheetBuilder {
             }
             index++;
         }
+        adjustDataWidth(sheet);
         sawDataSheet = name;
+    }
+
+    private void adjustDataWidth(HSSFSheet sheet) {
+        assert sheet != null;
+        int lastColumn = sheet.getRow(0).getLastCellNum();
+        adjustColumnWidth(sheet, lastColumn);
     }
 
     /**
@@ -123,6 +132,7 @@ public class SheetBuilder {
         fillRuleFormat(sheet);
         fillRuleTotalCondition(sheet);
         fillRulePropertyConditions(sheet);
+        adjustRuleWidth(sheet);
         sawRuleSheet = name;
     }
 
@@ -196,6 +206,26 @@ public class SheetBuilder {
                 NullityConditionKind.getOptions(),
                 start, RuleSheetFormat.NULLITY_CONDITION.getColumnIndex(),
                 end, RuleSheetFormat.NULLITY_CONDITION.getColumnIndex());
+    }
+
+    private void adjustRuleWidth(HSSFSheet sheet) {
+        assert sheet != null;
+        int lastColumn = 0;
+        for (RuleSheetFormat format : RuleSheetFormat.values()) {
+            lastColumn = Math.max(lastColumn, format.getColumnIndex());
+        }
+        adjustColumnWidth(sheet, lastColumn);
+    }
+
+    private void adjustColumnWidth(HSSFSheet sheet, int lastColumn) {
+        assert sheet != null;
+        for (int i = 0; i <= lastColumn; i++) {
+            sheet.autoSizeColumn(i);
+            int width = sheet.getColumnWidth(i);
+            if (width < MINIMUM_COLUMN_WIDTH) {
+                sheet.setColumnWidth(i, MINIMUM_COLUMN_WIDTH);
+            }
+        }
     }
 
     private HSSFCell getCell(HSSFSheet sheet, RuleSheetFormat item, int rowOffset, int columnOffset) {

@@ -46,7 +46,7 @@ public class ExcelSheetSourceProviderTest {
     @Test
     public void open_bynumber() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", ":1");
+        URI uri = uri("data/workbook.xls", ":1");
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, not(nullValue()));
 
@@ -64,7 +64,7 @@ public class ExcelSheetSourceProviderTest {
     @Test
     public void open_byname() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", "c");
+        URI uri = uri("data/workbook.xls", "c");
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, not(nullValue()));
 
@@ -82,7 +82,7 @@ public class ExcelSheetSourceProviderTest {
     @Test
     public void spi() throws Exception {
         SourceProvider provider = new SpiSourceProvider(ExcelSheetSourceProvider.class.getClassLoader());
-        URI uri = uri("workbook.xls", ":1");
+        URI uri = uri("data/workbook.xls", ":1");
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, not(nullValue()));
 
@@ -94,13 +94,39 @@ public class ExcelSheetSourceProviderTest {
     }
 
     /**
+     * integration with test-data-generator.
+     * @throws Exception if occur
+     */
+    @Test
+    public void integration() throws Exception {
+        ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
+        URI uri = uri("it/simple.xls", "input");
+        DataModelSource source = provider.open(SIMPLE, uri);
+        assertThat(source, not(nullValue()));
+
+        Simple s1 = next(source);
+        assertThat(s1.number, is(100));
+        assertThat(s1.text, is("aaa"));
+
+        Simple s2 = next(source);
+        assertThat(s2.number, is(200));
+        assertThat(s2.text, is("bbb"));
+
+        Simple s3 = next(source);
+        assertThat(s3.number, is(300));
+        assertThat(s3.text, is("ccc"));
+
+        end(source);
+    }
+
+    /**
      * invalid file name.
      * @throws Exception if occur
      */
     @Test
     public void invalid_file() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("simple.json", ":1");
+        URI uri = uri("data/simple.json", ":1");
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, is(nullValue()));
     }
@@ -112,7 +138,7 @@ public class ExcelSheetSourceProviderTest {
     @Test
     public void missing_fragment() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", null);
+        URI uri = uri("data/workbook.xls", null);
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, not(nullValue()));
 
@@ -131,7 +157,7 @@ public class ExcelSheetSourceProviderTest {
     @Test
     public void invalid_fragment() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", ":");
+        URI uri = uri("data/workbook.xls", ":");
         DataModelSource source = provider.open(SIMPLE, uri);
         assertThat(source, is(nullValue()));
     }
@@ -154,7 +180,7 @@ public class ExcelSheetSourceProviderTest {
     @Test(expected = IOException.class)
     public void invalid_workbook() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("invalid_format.xls", ":0");
+        URI uri = uri("data/invalid_format.xls", ":0");
         provider.open(SIMPLE, uri);
     }
 
@@ -165,7 +191,7 @@ public class ExcelSheetSourceProviderTest {
     @Test(expected = IOException.class)
     public void invalid_sheet_bynumber() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", ":100");
+        URI uri = uri("data/workbook.xls", ":100");
         provider.open(SIMPLE, uri);
     }
 
@@ -176,7 +202,7 @@ public class ExcelSheetSourceProviderTest {
     @Test(expected = IOException.class)
     public void invalid_sheet_byname() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
-        URI uri = uri("workbook.xls", "no such sheet");
+        URI uri = uri("data/workbook.xls", "no such sheet");
         provider.open(SIMPLE, uri);
     }
 
@@ -193,7 +219,7 @@ public class ExcelSheetSourceProviderTest {
     }
 
     private URI uri(String file, String fragment) throws Exception {
-        URL url = getClass().getResource("data/" + file);
+        URL url = getClass().getResource(file);
         assertThat(file, url, not(nullValue()));
         URI resource = url.toURI();
         URI uri = new URI(
