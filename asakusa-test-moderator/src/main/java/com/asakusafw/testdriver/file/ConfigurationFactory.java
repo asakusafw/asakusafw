@@ -120,6 +120,7 @@ public class ConfigurationFactory {
         try {
             Thread.currentThread().setContextClassLoader(loader);
             Configuration conf = new Configuration(true);
+            conf.setStrings("fs.file.impl", AsakusaTestLocalFileSystem.class.getName());
             return conf;
         } finally {
             Thread.currentThread().setContextClassLoader(context);
