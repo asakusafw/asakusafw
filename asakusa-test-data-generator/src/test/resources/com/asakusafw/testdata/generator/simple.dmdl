@@ -1,0 +1,7 @@
+projective p = {
+    value : INT;
+};
+
+a = p;
+b = p;
+c = p;

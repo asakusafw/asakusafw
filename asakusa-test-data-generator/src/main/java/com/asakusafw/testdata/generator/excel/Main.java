@@ -87,6 +87,11 @@ public class Main {
      * @param args program arguments
      */
     public static void main(String... args) {
+        System.exit(start(args));
+    }
+
+    static int start(String... args) {
+        assert args != null;
         GenerateTask task;
         try {
             CommandLineParser parser = new BasicParser();
@@ -111,15 +116,15 @@ public class Main {
             System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, "input/output data sheet");
             System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, "expected data and its rule sheets");
             System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, "input/output data and rule sheets");
-            System.exit(1);
-            return;
+            return 1;
         }
         try {
             task.process();
         } catch (IOException e) {
             e.printStackTrace(System.out);
-            System.exit(1);
+            return 1;
         }
+        return 0;
     }
 
     private static TemplateGenerator getGenerator(CommandLine cmd) {

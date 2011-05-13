@@ -53,7 +53,7 @@ public class ExcelTesterRoot {
      * Test name.
      */
     @Rule
-    public TestName name = new TestName();
+    public TestName testName = new TestName();
 
     /**
      * Loads a DMDL script and returns the specified model.
@@ -68,7 +68,7 @@ public class ExcelTesterRoot {
 
         DmdlSourceResource repo = new DmdlSourceResource(Arrays.asList(resource), Charset.forName("UTF-8"));
         ClassLoader loader = ExcelTesterRoot.class.getClassLoader();
-        AnalyzeTask task = new AnalyzeTask(name.getMethodName(), loader);
+        AnalyzeTask task = new AnalyzeTask(testName.getMethodName(), loader);
         try {
             DmdlSemantics results = task.process(repo);
             ModelDeclaration decl = results.findModelDeclaration(model);
