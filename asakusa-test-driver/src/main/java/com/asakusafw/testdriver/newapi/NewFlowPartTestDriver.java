@@ -146,7 +146,7 @@ public class NewFlowPartTestDriver extends TestDriverBase {
                 adapter, source, provider, retriever);
         VerifyContext verifyContext = new VerifyContext();
         
-        for (FlowPartDriverOutput output : outputs) {
+        for (FlowPartDriverOutput<?> output : outputs) {
             // TODO ModelVerifierの切り替え
             inspector.inspect(
                     output.getModelType(),
