@@ -84,7 +84,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = ReflectionUtils.newInstance(description.getOutputFormat(), conf);
         FileDeployer deployer = new FileDeployer(conf);
-        return deployer.openOutput(destination, output);
+        return deployer.openOutput(definition, destination, output);
     }
 
     @Override

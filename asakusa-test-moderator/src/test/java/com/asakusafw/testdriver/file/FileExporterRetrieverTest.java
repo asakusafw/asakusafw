@@ -23,8 +23,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.After;
 import org.junit.Before;
@@ -83,7 +86,7 @@ public class FileExporterRetrieverTest {
         MockFileExporter exporter = new MockFileExporter(Text.class, TextOutputFormat.class, "target/testing/hello");
         FileExporterRetriever retriever = new FileExporterRetriever(factory);
 
-        put("target/testing/hello", "Hello, world!\nThis is a test.\n".getBytes("UTF-8"));
+        putTextRaw("target/testing/hello", "Hello, world!\nThis is a test.\n".getBytes("UTF-8"));
 
         MockTextDefinition definition = new MockTextDefinition();
         DataModelSource result = retriever.createSource(definition, exporter);
@@ -104,12 +107,58 @@ public class FileExporterRetrieverTest {
         }
     }
 
-    private void put(String path, byte[] bytes) throws IOException {
+    /**
+     * using sequence file.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void sequenceFile() throws Exception {
+        MockFileExporter exporter = new MockFileExporter(Text.class, SequenceFileOutputFormat.class, "target/testing/hello");
+        FileExporterRetriever retriever = new FileExporterRetriever(factory);
+
+        putTextSequenceFile("target/testing/hello", "Hello, world!", "This is a test.");
+
+        MockTextDefinition definition = new MockTextDefinition();
+        DataModelSource result = retriever.createSource(definition, exporter);
+        try {
+            DataModelReflection ref;
+            ref = result.next();
+            assertThat(ref, is(not(nullValue())));
+            assertThat(definition.toObject(ref), is(new Text("Hello, world!")));
+
+            ref = result.next();
+            assertThat(ref, is(not(nullValue())));
+            assertThat(definition.toObject(ref), is(new Text("This is a test.")));
+
+            ref = result.next();
+            assertThat(ref, is(nullValue()));
+        } finally {
+            result.close();
+        }
+    }
+
+    private void putTextRaw(String path, byte[] bytes) throws IOException {
         FSDataOutputStream output = fileSystem.create(new Path(path), true);
         try {
             output.write(bytes);
         } finally {
             output.close();
+        }
+    }
+
+    private void putTextSequenceFile(String path, String... lines) throws IOException {
+        SequenceFile.Writer writer = new SequenceFile.Writer(
+                fileSystem,
+                factory.newInstance(),
+                new Path(path),
+                NullWritable.class,
+                Text.class);
+        try {
+            for (String s : lines) {
+                writer.append(NullWritable.get(), new Text(s));
+            }
+        } finally {
+            writer.close();
         }
     }
 
