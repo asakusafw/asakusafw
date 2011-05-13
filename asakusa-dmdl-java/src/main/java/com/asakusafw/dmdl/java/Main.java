@@ -15,20 +15,12 @@
  */
 package com.asakusafw.dmdl.java;
 
+import static com.asakusafw.dmdl.util.CommandLineUtils.*;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -40,9 +32,6 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.dmdl.source.CompositeSourceRepository;
-import com.asakusafw.dmdl.source.DmdlSourceDirectory;
-import com.asakusafw.dmdl.source.DmdlSourceFile;
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.util.Filer;
@@ -127,79 +116,22 @@ public class Main {
         CommandLine cmd = parser.parse(OPTIONS, args);
         String output = cmd.getOptionValue(OPT_OUTPUT.getOpt());
         String packageName = cmd.getOptionValue(OPT_PACKAGE.getOpt());
-        Charset sourceEnc = consumeCharset(cmd, OPT_SOURCE_ENCODING);
-        Charset targetEnc = consumeCharset(cmd, OPT_TARGET_ENCODING);
+        Charset sourceEnc = parseCharset(cmd.getOptionValue(OPT_SOURCE_ENCODING.getOpt()));
+        Charset targetEnc = parseCharset(cmd.getOptionValue(OPT_TARGET_ENCODING.getOpt()));
         String sourcePaths = cmd.getOptionValue(OPT_SOURCE_PATH.getOpt());
         String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
 
         File outputDirectory = new File(output);
-        List<DmdlSourceRepository> sources = new ArrayList<DmdlSourceRepository>();
-        if (sourcePaths != null) {
-            for (String s : sourcePaths.split(File.pathSeparator)) {
-                File file = new File(s);
-                if (file.isFile()) {
-                    sources.add(new DmdlSourceFile(Collections.singletonList(file), sourceEnc));
-                } else if (file.isDirectory()) {
-                    sources.add(new DmdlSourceDirectory(
-                            file,
-                            sourceEnc,
-                            Pattern.compile(".*\\.dmdl"),
-                            Pattern.compile("^\\..*")));
-                } else {
-                    LOG.warn("{}がありません", file);
-                }
-            }
-        }
-        ClassLoader serviceLoader = loadPlugins(plugin);
+        DmdlSourceRepository source = buildRepository(parseFileList(sourcePaths), sourceEnc);
+        ClassLoader serviceLoader = buildPluginLoader(Main.class.getClassLoader(), parseFileList(plugin));
 
         ModelFactory factory = Models.getModelFactory();
         return new Configuration(
                 factory,
-                new CompositeSourceRepository(sources),
+                source,
                 Models.toName(factory, packageName),
                 new Filer(outputDirectory, targetEnc),
                 serviceLoader,
                 Locale.getDefault());
-    }
-
-    private static Charset consumeCharset(CommandLine cmd, Option option) {
-        assert cmd != null;
-        assert option != null;
-        String charset = cmd.getOptionValue(option.getOpt());
-        if (charset == null) {
-            return Charset.defaultCharset();
-        }
-        return Charset.forName(charset);
-    }
-
-    private static ClassLoader loadPlugins(String plugin) {
-        final List<URL> pluginLocations = new ArrayList<URL>();
-        if (plugin != null) {
-            for (String s : plugin.split(File.pathSeparator)) {
-                try {
-                    File file = new File(s);
-                    if (file.exists() == false) {
-                        throw new FileNotFoundException(file.getAbsolutePath());
-                    }
-                    URL url = file.toURI().toURL();
-                    pluginLocations.add(url);
-                } catch (IOException e) {
-                    LOG.warn(MessageFormat.format(
-                            "Failed to load plugin \"{0}\"",
-                            s),
-                            e);
-                }
-            }
-        }
-        ClassLoader serviceLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                URLClassLoader loader = new URLClassLoader(
-                        pluginLocations.toArray(new URL[pluginLocations.size()]),
-                        Main.class.getClassLoader());
-                return loader;
-            }
-        });
-        return serviceLoader;
     }
 }
