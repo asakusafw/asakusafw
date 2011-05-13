@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.newapi;
+package com.asakusafw.testdriver;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,69 +23,57 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
-import com.asakusafw.testdriver.FlowPartTestDriverUtils;
-import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.In;
 
 /**
  * フロー部品のテスト入力データオブジェクト。
+ * @since 0.2.0
  * 
- * @param <T>
- *            モデルクラス
+ * @param <T> モデルクラス
  */
 public class FlowPartDriverInput<T> {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(FlowPartDriverInput.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
 
     private String name;
     private Class<T> modelType;
     private ImporterDescription importerDescription;
-
     private URI sourceUri;
-    private FlowDescriptionDriver flowDescriptionDriver;
+    private FlowDescriptionDriver descDriver;
     private TestDriverContext driverContext;
 
     /**
      * コンストラクタ
      * 
-     * @param driverContext
-     *            テストドライバコンテキスト。
-     * @param flowDescriptionDriver
-     *            フロー定義ドライバ。
-     * @param name
-     *            入力の名前。
-     * @param modelType
-     *            モデルクラス。
+     * @param driverContext テストドライバコンテキスト。
+     * @param descDriver フロー定義ドライバ。
+     * @param name 入力の名前。
+     * @param modelType モデルクラス。
      */
-    public FlowPartDriverInput(TestDriverContext driverContext,
-            FlowDescriptionDriver flowDescriptionDriver, String name,
+    public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
         this.name = name;
         this.modelType = modelType;
-        this.flowDescriptionDriver = flowDescriptionDriver;
+        this.descDriver = descDriver;
         this.driverContext = driverContext;
     }
 
     /**
      * テスト実行時に使用する入力データを指定する。
      * 
-     * @param sourcePath
-     *            入力データのパス。
+     * @param sourcePath 入力データのパス。
      * @return this。
      */
     public FlowPartDriverInput<T> prepare(String sourcePath) {
-        return prepare(sourcePath, ":0");
+        return prepare(sourcePath, null);
     }
 
     /**
      * テスト実行時に使用する入力データを指定する。
      * 
-     * @param sourcePath
-     *            入力データのパス。
-     * @param fragment
-     *            フラグメント。
+     * @param sourcePath 入力データのパス。
+     * @param fragment フラグメント。
      * @return this。
      */
     public FlowPartDriverInput<T> prepare(String sourcePath, String fragment) {
@@ -93,19 +81,16 @@ public class FlowPartDriverInput<T> {
         LOG.info("prepare - ModelType:" + modelType);
 
         try {
-            this.sourceUri = FlowPartTestDriverUtils
-                    .toUri(sourcePath, fragment);
-            LOG.info("Source URI:" + sourceUri);
+            this.sourceUri = FlowPartDriverUtils.toUri(sourcePath, fragment);
+            LOG.info("Source URI:" + sourceUri + ", Fragment:" + fragment);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid sourcePath:" + sourcePath, e);
+            throw new IllegalArgumentException("invalid source URI:" + sourcePath + ", fragment:" + fragment, e);
         }
 
-        String importPath = FlowPartTestDriverUtils.createInputLocation(
-                driverContext, name).toPath('/');
+        String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
         LOG.info("Import Path=" + importPath);
 
-        importerDescription = new DirectImporterDescription(modelType,
-                importPath);
+        importerDescription = new DirectImporterDescription(modelType, importPath);
         return this;
     }
 
@@ -115,7 +100,7 @@ public class FlowPartDriverInput<T> {
      * @return 入力インターフェース。
      */
     public In<T> createIn() {
-        return flowDescriptionDriver.createIn(name, importerDescription);
+        return descDriver.createIn(name, importerDescription);
     }
 
     /**

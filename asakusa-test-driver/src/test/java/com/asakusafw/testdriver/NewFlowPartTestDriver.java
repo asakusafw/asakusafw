@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.newapi;
+package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +29,8 @@ import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.FlowPartDriverInput;
+import com.asakusafw.testdriver.FlowPartDriverOutput;
 import com.asakusafw.testdriver.TestDriverBase;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.core.DataModelAdapter;
@@ -50,7 +52,11 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * フロー部品用のテストドライバクラス。
+ * @since 0.2.0
+ * 
+ * SPIを使わずにTestInputPreparator、TestResultInspector を使った場合の例
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class NewFlowPartTestDriver extends TestDriverBase {
 
     private List<FlowPartDriverInput<?>> inputs = new LinkedList<FlowPartDriverInput<?>>();
@@ -99,8 +105,6 @@ public class NewFlowPartTestDriver extends TestDriverBase {
         // クラスタワークディレクトリ初期化
         initializeClusterDirectory(driverContext.getClusterWorkDir()); 
 
-        // TODO Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
-        // TODO Sourceプロバイダ、ImporterPreparatorの切り替え
         // TestInputPrepatatorの生成
         DataModelAdapter adapter = new DefaultDataModelAdapter();
         SourceProvider source = new ExcelSheetSourceProvider();
@@ -137,17 +141,12 @@ public class NewFlowPartTestDriver extends TestDriverBase {
         savePlan(compileWorkDir, plan);
         executePlan(plan, jobflowInfo.getPackageFile());
         
-        // TODO Excel上の期待値とシーケンスファイル上の実際値を比較する。
-        // TODO ExporterRetriever、Importerプリパレータの切り替え
-        
         VerifyRuleProvider provider = new ExcelSheetRuleProvider();
         ExporterRetriever retriever = new FileExporterRetriever();
         TestResultInspector inspector = new TestResultInspector(
                 adapter, source, provider, retriever);
-        VerifyContext verifyContext = new VerifyContext();
         
         for (FlowPartDriverOutput<?> output : outputs) {
-            // TODO ModelVerifierの切り替え
             inspector.inspect(
                     output.getModelType(),
                     output.getExporterDescription(),
@@ -163,6 +162,7 @@ public class NewFlowPartTestDriver extends TestDriverBase {
     private Location createTempLocation() {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
                 .append(driverContext.getExecutionId()).append("temp");
+        
         return location;
     }
     

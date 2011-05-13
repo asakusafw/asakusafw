@@ -56,8 +56,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class FlowPartTestDriver extends TestDriverBase {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(FlowPartTestDriver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FlowPartTestDriver.class);
 
     private FlowDescriptionDriver flowDescriptionDriver = new FlowDescriptionDriver();
 
@@ -75,8 +74,7 @@ public class FlowPartTestDriver extends TestDriverBase {
      * （呼び出し元のテストクラス名、テストメソッド名に基づいて入出力データを取得・生成するため）
      * </p>
      *
-     * @throws RuntimeException
-     *             インスタンスの生成に失敗した場合
+     * @throws RuntimeException インスタンスの生成に失敗した場合
      */
     public FlowPartTestDriver() throws RuntimeException {
         super();
@@ -85,27 +83,22 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * コンストラクタ。
      * <p>
-     * 使い方の注意点は{@link NewFlowPartTestDriver#FlowPartTestDriver()}を参照。
+     * 使い方の注意点は{@link FlowPartTestDriver#FlowPartTestDriver()}を参照。
      * </p>
      *
-     * @param testDataFileList
-     *            テストデータ定義シートのパスを示すFileのリスト
-     * @throws RuntimeException
-     *             インスタンスの生成に失敗した場合
-     * @see NewFlowPartTestDriver#FlowPartTestDriver()
+     * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
+     * @throws RuntimeException インスタンスの生成に失敗した場合
+     * @see FlowPartTestDriver#FlowPartTestDriver()
      */
-    public FlowPartTestDriver(List<File> testDataFileList)
-            throws RuntimeException {
+    public FlowPartTestDriver(List<File> testDataFileList) throws RuntimeException {
         super(testDataFileList);
     }
 
     /**
      * フロー部品のテストを実行し、テスト結果を検証します。
      *
-     * @param flowDescription
-     *            フロー部品クラスのインスタンス
-     * @throws Throwable
-     *             テストの実行に失敗した場合
+     * @param flowDescription フロー部品クラスのインスタンス
+     * @throws Throwable テストの実行に失敗した場合
      */
     public void runTest(FlowDescription flowDescription) throws Throwable {
 
@@ -120,28 +113,25 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
 
         // フローコンパイラの実行
-        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1)
-                + "_" + driverContext.getMethodName();
+        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
+                + driverContext.getMethodName();
         File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        FlowGraph flowGraph = flowDescriptionDriver
-                .createFlowGraph(flowDescription);
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph,
-                "test.batch", flowId, "test.flowpart", FlowPartTestDriverUtils.createTempLocation(driverContext),
-                compileWorkDir, Arrays.asList(new File[] { DirectFlowCompiler
-                        .toLibraryPath(flowDescription.getClass()) }),
+        FlowGraph flowGraph = flowDescriptionDriver.createFlowGraph(flowDescription);
+        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
+                FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
+                Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
                 flowDescription.getClass().getClassLoader(), driverContext.getOptions());
 
-        CommandContext context = new CommandContext(
-                System.getenv("ASAKUSA_HOME") + "/", driverContext.getExecutionId(), driverContext.getBatchArgs());
+        CommandContext context = new CommandContext(System.getenv("ASAKUSA_HOME") + "/",
+                driverContext.getExecutionId(), driverContext.getBatchArgs());
 
         Map<String, String> dPropMap = createHadoopProperties(context);
 
-        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context,
-                dPropMap);
+        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
         savePlan(compileWorkDir, plan);
         executePlan(plan, jobflowInfo.getPackageFile());
 
@@ -156,10 +146,8 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * フロー部品の入力オブジェクトを生成します。
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param tableName
-     *            テーブル名
+     * @param <T> データモデルクラス
+     * @param tableName テーブル名
      * @return 入力インターフェース
      */
     @SuppressWarnings("unchecked")
@@ -172,20 +160,17 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * フロー部品の入力オブジェクトを生成します。
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param modelType
-     *            データモデルクラス
+     * @param <T> データモデルクラス
+     * @param modelType データモデルクラス
      * @return 入力インターフェース
      */
     public <T> In<T> createIn(Class<T> modelType) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateIn(tableName, tableName);
-        String path = FlowPartTestDriverUtils.createInputLocation(driverContext, tableName).toPath('/');
+        String path = FlowPartDriverUtils.createInputLocation(driverContext, tableName).toPath('/');
         LOG.info("DirectImporterDescription生成:Path=" + path);
-        ImporterDescription desc = new DirectImporterDescription(modelType,
-                path);
+        ImporterDescription desc = new DirectImporterDescription(modelType, path);
         return flowDescriptionDriver.createIn(tableName, desc);
     }
 
@@ -195,12 +180,9 @@ public class FlowPartTestDriver extends TestDriverBase {
      * フロー部品の入力に同一モデル（テーブル）が複数存在する場合は このメソッドを使います。
      * </p>
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param tableName
-     *            テーブル名
-     * @param excelFileName
-     *            テストデータ定義シートファイル名(.xlsを除いた値)
+     * @param <T> データモデルクラス
+     * @param tableName テーブル名
+     * @param excelFileName テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 入力インターフェース
      */
     @SuppressWarnings("unchecked")
@@ -215,12 +197,9 @@ public class FlowPartTestDriver extends TestDriverBase {
      * フロー部品の入力に同一モデル（テーブル）が複数存在する場合は このメソッドを使います。
      * </p>
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param modelType
-     *            データモデルクラス
-     * @param excelFileName
-     *            テストデータ定義シートファイル名(.xlsを除いた値)
+     * @param <T> データモデルクラス
+     * @param modelType データモデルクラス
+     * @param excelFileName テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 入力インターフェース
      */
     public <T> In<T> createIn(Class<T> modelType, String excelFileName) {
@@ -230,12 +209,11 @@ public class FlowPartTestDriver extends TestDriverBase {
         loadIndividually = true;
         addCreateIn(tableName, excelFileName);
 
-        String path = FlowPartTestDriverUtils.createInputLocation(driverContext, excelFileName).toPath('/');
+        String path = FlowPartDriverUtils.createInputLocation(driverContext, excelFileName).toPath('/');
 
         LOG.info("DirectImporterDescription生成:Path=" + excelFileName);
 
-        DirectImporterDescription desc = new DirectImporterDescription(
-                modelType, path);
+        DirectImporterDescription desc = new DirectImporterDescription(modelType, path);
 
         String inName;
         int offset = excelFileName.lastIndexOf('/');
@@ -250,10 +228,8 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * フロー部品の出力オブジェクトを生成します。
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param tableName
-     *            テーブル名
+     * @param <T> データモデルクラス
+     * @param tableName テーブル名
      * @return 出力インターフェース
      */
     @SuppressWarnings("unchecked")
@@ -265,20 +241,17 @@ public class FlowPartTestDriver extends TestDriverBase {
     /**
      * フロー部品の出力オブジェクトを生成します。
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param modelType
-     *            データモデルクラス
+     * @param <T> データモデルクラス
+     * @param modelType データモデルクラス
      * @return 出力インターフェース
      */
     public <T> Out<T> createOut(Class<T> modelType) {
 
         String tableName = testUtils.getTablenameByClass(modelType);
         addCreateOut(tableName, tableName);
-        String path = FlowPartTestDriverUtils.createOutputLocation(driverContext, tableName).toPath('/');
+        String path = FlowPartDriverUtils.createOutputLocation(driverContext, tableName).toPath('/');
         LOG.info("DirectExporterDescription生成:Path=" + path);
-        ExporterDescription desc = new DirectExporterDescription(modelType,
-                path);
+        ExporterDescription desc = new DirectExporterDescription(modelType, path);
         return flowDescriptionDriver.createOut(tableName, desc);
     }
 
@@ -288,15 +261,12 @@ public class FlowPartTestDriver extends TestDriverBase {
      * フロー部品の出力に同一モデル（テーブル）が複数存在する場合は このメソッドを使います。
      * </p>
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param tableName
-     *            テーブル名
-     * @param excelFileName
-     *            テストデータ定義シートファイル名(.xlsを除いた値)
+     * @param <T> データモデルクラス
+     * @param tableName テーブル名
+     * @param excelFileName テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 出力インターフェース
      */
-    @SuppressWarnings("unchecked")    
+    @SuppressWarnings("unchecked")
     public <T> Out<T> createOut(String tableName, String excelFileName) {
 
         Class<?> modelType = testUtils.getClassByTablename(tableName);
@@ -310,12 +280,9 @@ public class FlowPartTestDriver extends TestDriverBase {
      * フロー部品の出力に同一モデル（テーブル）が複数存在する場合は このメソッドを使います。
      * </p>
      *
-     * @param <T>
-     *            データモデルクラス
-     * @param modelType
-     *            データモデルクラス
-     * @param excelFileName
-     *            テストデータ定義シートファイル名(.xlsを除いた値)
+     * @param <T> データモデルクラス
+     * @param modelType データモデルクラス
+     * @param excelFileName テストデータ定義シートファイル名(.xlsを除いた値)
      * @return 出力インターフェース
      */
     public <T> Out<T> createOut(Class<T> modelType, String excelFileName) {
@@ -324,16 +291,14 @@ public class FlowPartTestDriver extends TestDriverBase {
         loadIndividually = true;
         addCreateOut(tableName, excelFileName);
 
-        String path = FlowPartTestDriverUtils.createOutputLocation(driverContext, excelFileName).toPath('/');
+        String path = FlowPartDriverUtils.createOutputLocation(driverContext, excelFileName).toPath('/');
 
         LOG.info("DirectExporterDescription生成:Path=" + excelFileName);
 
-        DirectExporterDescription desc = new DirectExporterDescription(
-                modelType, path);
+        DirectExporterDescription desc = new DirectExporterDescription(modelType, path);
 
         String outName;
-        int offset = excelFileName.lastIndexOf(System
-                .getProperty("file.separator"));
+        int offset = excelFileName.lastIndexOf(System.getProperty("file.separator"));
         if (offset > -1) {
             outName = excelFileName.substring(offset + 1);
         } else {
@@ -374,8 +339,7 @@ public class FlowPartTestDriver extends TestDriverBase {
             for (String excelFileName : fileList) {
                 List<File> inFileList = new ArrayList<File>();
                 if (testDataDir != null) {
-                    inFileList
-                            .add(new File(testDataDir, excelFileName + ".xls"));
+                    inFileList.add(new File(testDataDir, excelFileName + ".xls"));
                 } else {
                     for (File file : testDataFileList) {
                         if (file.getPath().endsWith(excelFileName + ".xls")) {
@@ -390,8 +354,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
     }
 
-    private void createSequenceFile(String tablename, String excelFileName)
-            throws Throwable {
+    private void createSequenceFile(String tablename, String excelFileName) throws Throwable {
 
         Configuration conf = new Configuration();
         FileSystem fs = null;
@@ -401,12 +364,10 @@ public class FlowPartTestDriver extends TestDriverBase {
             fs = FileSystem.get(conf);
             fs.setWorkingDirectory(fs.getHomeDirectory());
 
-            URI seqFilePath = new URI(createInputSequenceFilePath(fs,
-                    excelFileName));
+            URI seqFilePath = new URI(createInputSequenceFilePath(fs, excelFileName));
             LOG.info("SequenceFileを作成します:Path=" + seqFilePath);
 
-            writer = SequenceFile.createWriter(fs, conf,
-                    new Path(seqFilePath.getPath()), NullWritable.class,
+            writer = SequenceFile.createWriter(fs, conf, new Path(seqFilePath.getPath()), NullWritable.class,
                     testUtils.getClassByTablename(tablename));
 
             testUtils.storeToSequenceFile(tablename, writer);
@@ -437,8 +398,7 @@ public class FlowPartTestDriver extends TestDriverBase {
             for (String excelFileName : fileList) {
                 List<File> outFileList = new ArrayList<File>();
                 if (testDataDir != null) {
-                    outFileList.add(new File(testDataDir, excelFileName
-                            + ".xls"));
+                    outFileList.add(new File(testDataDir, excelFileName + ".xls"));
                 } else {
                     for (File file : testDataFileList) {
                         if (file.getPath().endsWith(excelFileName + ".xls")) {
@@ -457,8 +417,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
     }
 
-    private void loadSequenceFile(String tablename, String excelFileName)
-            throws Throwable {
+    private void loadSequenceFile(String tablename, String excelFileName) throws Throwable {
 
         Configuration conf = new Configuration();
         FileSystem fs = null;
@@ -466,8 +425,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         fs = FileSystem.get(conf);
         fs.setWorkingDirectory(fs.getHomeDirectory());
         try {
-            FileStatus[] status = fs.globStatus(new Path(
-                    createOutputSequenceFilePath(fs, excelFileName)));
+            FileStatus[] status = fs.globStatus(new Path(createOutputSequenceFilePath(fs, excelFileName)));
             Path[] listedPaths = FileUtil.stat2Paths(status);
             for (Path path : listedPaths) {
                 if (isSystemFile(path)) {
@@ -493,20 +451,17 @@ public class FlowPartTestDriver extends TestDriverBase {
     private boolean isSystemFile(Path path) {
         assert path != null;
         String name = path.getName();
-        return name.equals(FileOutputCommitter.SUCCEEDED_FILE_NAME)
-                || name.equals("_logs");
+        return name.equals(FileOutputCommitter.SUCCEEDED_FILE_NAME) || name.equals("_logs");
     }
 
     private String createInputSequenceFilePath(FileSystem fs, String tableName) {
-        Location location = FlowPartTestDriverUtils.createInputLocation(driverContext, tableName);
-        return new Path(fs.getWorkingDirectory(), location.toPath('/'))
-                .toString();
+        Location location = FlowPartDriverUtils.createInputLocation(driverContext, tableName);
+        return new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
     }
 
     private String createOutputSequenceFilePath(FileSystem fs, String tableName) {
-        Location location = FlowPartTestDriverUtils.createOutputLocation(driverContext, tableName);
-        return new Path(fs.getWorkingDirectory(), location.toPath('/'))
-                .toString();
+        Location location = FlowPartDriverUtils.createOutputLocation(driverContext, tableName);
+        return new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
     }
 
 }

@@ -77,6 +77,7 @@ public abstract class TestDriverBase {
     /** TestUtils生成時に指定するテストデータ定義シートのディレクトリ（testDataFileListと排他)。 */
     protected File testDataDir;
 
+    /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
     protected TestDriverContext driverContext = new TestDriverContext(
             new TreeMap<String, String>(), new TreeMap<String, String>(), new FlowCompilerOptions());
 
