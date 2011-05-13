@@ -27,11 +27,11 @@ import com.asakusafw.compiler.common.Precondition;
  */
 public class BatchInfo {
 
-    private Workflow workflow;
+    private final Workflow workflow;
 
-    private List<JobflowInfo> jobflows;
+    private final List<JobflowInfo> jobflows;
 
-    private File output;
+    private final File output;
 
     /**
      * インスタンスを生成する。
@@ -50,6 +50,24 @@ public class BatchInfo {
         this.workflow = workflow;
         this.output = output;
         this.jobflows = jobflows;
+    }
+
+    /**
+     * Returns a {@link JobflowInfo} object in this batch which has the specified {@code Flow ID}.
+     * @param flowId target Flow ID
+     * @return the found {@link JobflowInfo}, or {@code null} if no such a jobflow exists
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public JobflowInfo findJobflow(String flowId) {
+        if (flowId == null) {
+            throw new IllegalArgumentException("flowId must not be null"); //$NON-NLS-1$
+        }
+        for (JobflowInfo info : jobflows) {
+            if (info.getJobflow().getFlowId().equals(flowId)) {
+                return info;
+            }
+        }
+        return null;
     }
 
     /**
