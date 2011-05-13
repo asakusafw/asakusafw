@@ -16,6 +16,8 @@
 package com.asakusafw.dmdl.java;
 
 import java.io.IOException;
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +69,13 @@ public class GenerateTask {
         }
         DmdlSemantics semantics = analyze();
         JavaModelClassGenerator generator = new JavaModelClassGenerator(semantics, conf, driver);
-        for (ModelDeclaration model : semantics.getDeclaredModels()) {
+        Collection<ModelDeclaration> models = semantics.getDeclaredModels();
+        LOG.info("{}個のモデルからJavaデータモデルクラスを生成します", models.size());
+        for (ModelDeclaration model : models) {
+            LOG.info("データモデルクラスを生成しています: {}", model.getName());
             generator.emit(model);
         }
+        LOG.info("データモデルクラスの生成が完了しました");
     }
 
     private DmdlSemantics analyze() throws IOException {

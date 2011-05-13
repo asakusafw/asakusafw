@@ -77,6 +77,7 @@ public class AnalyzeTask {
         }
         DmdlAnalyzer analyzer = parse(repository);
         try {
+            LOG.info("モデルの内容を解析します");
             return analyzer.resolve();
         } catch (DmdlSemanticException e) {
             LOG.error("モデルの解析に失敗しました", e);
@@ -112,10 +113,12 @@ public class AnalyzeTask {
             while (cursor.next()) {
                 count++;
                 URI name = cursor.getIdentifier();
+                LOG.info("DMDLスクリプトを解析します: {}", name);
                 Reader resource = cursor.openResource();
                 try {
                     AstScript script = parser.parse(resource, name);
                     for (AstModelDefinition<?> model : script.models) {
+                        LOG.info("モデルを追加します: {}", model.name);
                         analyzer.addModel(model);
                     }
                 } catch (DmdlSyntaxException e) {
@@ -127,6 +130,7 @@ public class AnalyzeTask {
                     resource.close();
                 }
             }
+            LOG.info("{}個のモデルが定義されています", count);
         } finally {
             cursor.close();
         }
