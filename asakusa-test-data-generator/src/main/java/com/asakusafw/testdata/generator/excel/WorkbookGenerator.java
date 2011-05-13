@@ -67,7 +67,7 @@ public class WorkbookGenerator implements TemplateGenerator {
         if (model == null) {
             throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
         }
-        LOG.info("Building workbook: {}", model.getName());
+        LOG.info("ワークブックを作成しています: {}", model.getName());
         if (output.isDirectory() == false && output.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
                     "出力先のディレクトリを生成できませんでした: {0}",
@@ -78,9 +78,11 @@ public class WorkbookGenerator implements TemplateGenerator {
         for (SheetFormat sheet : format.getSheets()) {
             switch (sheet.getKind()) {
             case DATA:
+                LOG.debug("Building data sheet: {}.{}", model.getName(), sheet.getName());
                 builder.addData(sheet.getName());
                 break;
             case RULE:
+                LOG.debug("Building rule sheet: {}.{}", model.getName(), sheet.getName());
                 builder.addRule(sheet.getName());
                 break;
             }

@@ -30,6 +30,8 @@ import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractExporterRetriever;
@@ -44,6 +46,8 @@ import com.asakusafw.vocabulary.external.FileExporterDescription;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class FileExporterRetriever extends AbstractExporterRetriever<FileExporterDescription> {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileExporterRetriever.class);
 
     private final ConfigurationFactory configurations;
 
@@ -70,8 +74,8 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> void truncate(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
+        // TODO do truncate target directory?
         checkType(definition, description);
-        // do nothing
         return;
     }
 
@@ -79,6 +83,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
+        LOG.info("エクスポート先の初期値を設定します: {}", description);
         checkType(definition, description);
         String destination = description.getPathPrefix().replace('*', '_');
         Configuration conf = configurations.newInstance();
@@ -91,6 +96,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> DataModelSource createSource(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
+        LOG.info("エクスポート結果を取得します: {}", description);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();
         Job job = new Job(conf);
@@ -115,6 +121,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     private FileInputFormat getOpposite(Configuration conf, Class<?> outputFormat) throws IOException {
         assert conf != null;
         assert outputFormat != null;
+        LOG.debug("Finding opposite InputFormat: {}", outputFormat.getName());
         String outputFormatName = outputFormat.getName();
         String inputFormatName = infer(outputFormatName);
         if (inputFormatName == null) {
@@ -122,6 +129,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
                     "Failed to infer opposite OutputFormat: {0}",
                     outputFormat.getName()));
         }
+        LOG.debug("Inferred opposite InputFormat: {}", inputFormatName);
         try {
             Class<?> loaded = outputFormat.getClassLoader().loadClass(inputFormatName);
             FileInputFormat instance = (FileInputFormat) ReflectionUtils.newInstance(loaded, conf);
@@ -155,6 +163,4 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
         buf.append(outputFormatName.substring(start));
         return buf.toString();
     }
-
-
 }

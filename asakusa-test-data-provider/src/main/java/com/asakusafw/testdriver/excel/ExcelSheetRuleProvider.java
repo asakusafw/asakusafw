@@ -29,6 +29,8 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.PropertyType;
@@ -58,6 +60,8 @@ import com.asakusafw.testdriver.rule.VerifyRuleBuilder.Property;
  */
 public class ExcelSheetRuleProvider implements VerifyRuleProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetRuleProvider.class);
+
     private static final List<ExcelRuleExtractor> EXTRACTORS;
     static {
         List<ExcelRuleExtractor> drivers = new ArrayList<ExcelRuleExtractor>();
@@ -73,10 +77,13 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
         if (sheet == null) {
             return null;
         }
+        LOG.debug("Finding Excel sheet extractor: {}", source);
         ExcelRuleExtractor extractor = findExtractor(sheet);
         if (extractor == null) {
+            LOG.debug("Valid Excel sheet extractor is not found: {}", source);
             return null;
         }
+        LOG.info("Excelシートをテスト条件に利用します: {}", source);
         try {
             return resolve(definition, context, sheet, extractor);
         } catch (ExcelRuleExtractor.FormatException e) {

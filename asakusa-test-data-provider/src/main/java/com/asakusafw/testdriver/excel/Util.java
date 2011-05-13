@@ -27,12 +27,16 @@ import java.util.regex.Pattern;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Common utilities for this package.
  * @since 0.2.0
  */
 final class Util {
+
+    static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     private static final Pattern FRAGMENT = Pattern.compile(":(\\d+)|([^:].*)");
 
@@ -44,18 +48,22 @@ final class Util {
         assert source != null;
         String path = source.getPath();
         if (path == null || path.endsWith(EXTENSION) == false) {
+            LOG.debug("Not a Excel workbook: {}", source);
             return null;
         }
         String fragment = source.getFragment();
         if (fragment == null) {
             // the first sheet
             fragment = FRAGMENT_FIRST_SHEET;
+            LOG.debug("Fragment is not set, using first sheet: {}", source);
         }
         Matcher matcher = FRAGMENT.matcher(fragment);
         if (matcher.matches() == false) {
+            LOG.info("Invalid fragment: {}", source);
             return null;
         }
 
+        LOG.debug("Processing Excel workbook: {}", source);
         URL url = source.toURL();
         InputStream in = url.openStream();
         Workbook book;
@@ -72,6 +80,7 @@ final class Util {
 
         if (matcher.group(1) != null) {
             int sheetNumber = Integer.parseInt(matcher.group(1));
+            LOG.debug("Opening sheet by index : {}", sheetNumber);
             try {
                 Sheet sheet = book.getSheetAt(sheetNumber);
                 assert sheet != null;
@@ -83,8 +92,8 @@ final class Util {
                         sheetNumber), e);
             }
         } else {
-            String name = matcher.group(2);
-            String sheetName = name;
+            String sheetName = matcher.group(2);
+            LOG.debug("Opening sheet by name : {}", sheetName);
             assert sheetName != null;
             Sheet sheet = book.getSheet(sheetName);
             if (sheet == null) {

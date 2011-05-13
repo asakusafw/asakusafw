@@ -16,7 +16,9 @@
 package com.asakusafw.testdriver.core;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class VerifyEngine {
 
     private final Map<Object, DataModelReflection> expectedRest;
 
+    private final Map<Object, DataModelReflection> sawActual;
+
     /**
      * Creates a new instance.
      * @param rule the verification strategy
@@ -42,6 +46,7 @@ public class VerifyEngine {
         }
         this.rule = rule;
         this.expectedRest = new LinkedHashMap<Object, DataModelReflection>();
+        this.sawActual = new HashMap<Object, DataModelReflection>();
     }
 
     /**
@@ -53,7 +58,8 @@ public class VerifyEngine {
      * </p>
      * @param expected the expected input
      * @return this object (for method chain)
-     * @throws IOException if failed to obtain model objects from the input
+     * @throws IOException if failed to obtain model objects from the input,
+     *     or the input key is already registered
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public VerifyEngine addExpected(DataModelSource expected) throws IOException {
@@ -66,7 +72,15 @@ public class VerifyEngine {
                 if (next == null) {
                     break;
                 }
-                expectedRest.put(rule.getKey(next), next);
+                Object key = rule.getKey(next);
+                DataModelReflection old = expectedRest.put(key, next);
+                if (old != null) {
+                    throw new IOException(MessageFormat.format(
+                            "期待値のキーが重複しています: {0} ({1} <=> {2})",
+                            key,
+                            old,
+                            next));
+                }
             }
         } finally {
             expected.close();
@@ -94,7 +108,8 @@ public class VerifyEngine {
      * </p>
      * @param input the input to verify
      * @return differences between the input and the expected, or an empty list if successfully verified
-     * @throws IOException if failed to obtain model objects from the input
+     * @throws IOException if failed to obtain model objects from the input,
+     *     or the input key is already presented
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @see #inspectRest()
      */
@@ -110,10 +125,20 @@ public class VerifyEngine {
                     break;
                 }
                 Object key = rule.getKey(actual);
-                DataModelReflection expected = expectedRest.remove(key);
-                Difference diff = verify(key, expected, actual);
-                if (diff != null) {
-                    results.add(diff);
+                DataModelReflection saw = sawActual.get(key);
+                if (saw != null) {
+                    results.add(new Difference(actual, null, MessageFormat.format(
+                            "結果のキーが重複しています: {0} ({1} <=> {2})",
+                            key,
+                            saw,
+                            actual)));
+                } else {
+                    sawActual.put(key, actual);
+                    DataModelReflection expected = expectedRest.remove(key);
+                    Difference diff = verify(key, expected, actual);
+                    if (diff != null) {
+                        results.add(diff);
+                    }
                 }
             }
         } finally {
@@ -146,6 +171,7 @@ public class VerifyEngine {
             }
         }
         expectedRest.clear();
+        sawActual.clear();
         return results;
     }
 

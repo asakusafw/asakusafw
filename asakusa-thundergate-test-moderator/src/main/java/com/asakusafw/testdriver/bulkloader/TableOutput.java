@@ -26,6 +26,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -37,6 +40,8 @@ import com.asakusafw.testdriver.core.PropertyName;
  * @param <T> type of model object to be inserted
  */
 public class TableOutput<T> implements ModelOutput<T> {
+
+    static final Logger LOG = LoggerFactory.getLogger(TableOutput.class);
 
     private final DataModelDefinition<T> definition;
 
@@ -110,6 +115,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         private PreparedStatement createStatement() throws SQLException {
             assert table != null;
             assert connection != null;
+            LOG.debug("Building insert statement: {}", table);
             Set<String> columns = table.getColumnsToProperties().keySet();
             return connection.prepareStatement(MessageFormat.format(
                     "INSERT INTO {0} ({1}) VALUES ({2})",

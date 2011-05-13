@@ -71,6 +71,7 @@ public class GenerateTask {
     public void process() throws IOException {
         DmdlSemantics semantics = analyze();
         for (ModelDeclaration model : semantics.getDeclaredModels()) {
+            LOG.info("テンプレートを生成しています: {}", model.getName().identifier);
             generator.generate(model);
         }
     }

@@ -25,6 +25,9 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelDefinition.Builder;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -37,6 +40,8 @@ import com.asakusafw.testdriver.core.PropertyName;
  * @param <T> type of model object to be obtained
  */
 public class TableSource<T> implements DataModelSource {
+
+    static final Logger LOG = LoggerFactory.getLogger(TableSource.class);
 
     private final SqlDriver driver;
 
@@ -105,6 +110,7 @@ public class TableSource<T> implements DataModelSource {
         private ResultSet select() throws SQLException {
             assert table != null;
             assert connection != null;
+            LOG.debug("Building select statement: {}", table);
             Set<String> columns = table.getColumnsToProperties().keySet();
             Statement statement = connection.createStatement();
             boolean green = false;
@@ -133,7 +139,8 @@ public class TableSource<T> implements DataModelSource {
                 this.index++;
                 scan(def, name, builder);
             }
-            return builder.build();
+            DataModelReflection ref = builder.build();
+            return ref;
         }
 
         public void close() throws SQLException {

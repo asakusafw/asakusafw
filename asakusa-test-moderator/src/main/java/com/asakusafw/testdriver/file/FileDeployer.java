@@ -29,6 +29,8 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.mortbay.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -38,6 +40,8 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
  * @since 0.2.0
  */
 final class FileDeployer {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileDeployer.class);
 
     private final Configuration configuration;
 
@@ -59,6 +63,7 @@ final class FileDeployer {
             FileOutputFormat<? super NullWritable, ? super V> output) throws IOException {
         assert destination != null;
         assert output != null;
+        LOG.debug("Opening {} using {}", destination, output.getClass().getName());
         Job job = new Job(configuration);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(definition.getModelClass());
@@ -66,6 +71,7 @@ final class FileDeployer {
         if (temporaryDir.delete() == false || temporaryDir.mkdirs() == false) {
             throw new IOException("Failed to create temporary directory");
         }
+        LOG.debug("Using staging deploy target: {}", temporaryDir);
         URI uri = temporaryDir.toURI();
         FileOutputFormat.setOutputPath(job, new Path(uri));
         TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
@@ -82,6 +88,7 @@ final class FileDeployer {
     void deploy(String destination, File temporaryDir) throws IOException {
         assert destination != null;
         assert temporaryDir != null;
+        LOG.debug("Deploying staging results: {} -> {}", temporaryDir, destination);
         try {
             File result = findResult(temporaryDir);
             copy(result, destination);

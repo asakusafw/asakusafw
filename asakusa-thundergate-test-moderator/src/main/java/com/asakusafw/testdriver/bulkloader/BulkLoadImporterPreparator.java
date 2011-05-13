@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractImporterPreparator;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -31,12 +34,16 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
  */
 public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkLoadImporterDescription> {
 
+    static final Logger LOG = LoggerFactory.getLogger(BulkLoadImporterPreparator.class);
+
     @Override
     public <V> void truncate(
             DataModelDefinition<V> definition,
             BulkLoadImporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
-        Util.truncate(conf, description.getTableName());
+        String tableName = description.getTableName();
+        LOG.info("インポート元のテーブル{}の内容を消去します", tableName);
+        Util.truncate(conf, tableName);
     }
 
     @Override
@@ -45,6 +52,8 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
             BulkLoadImporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         TableInfo<V> info = buildTableInfo(definition, description);
+        LOG.info("インポート元の初期値を設定します: テーブル{}", info.getTableName());
+        LOG.debug("Opening output: {}", info);
         Connection conn = conf.open();
         boolean green = false;
         try {

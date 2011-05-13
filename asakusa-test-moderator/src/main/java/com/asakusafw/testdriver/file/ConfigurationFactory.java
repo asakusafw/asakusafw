@@ -61,6 +61,7 @@ public class ConfigurationFactory {
     }
 
     private static URL getConfigurationPath() {
+        LOG.debug("Detecting default configuration");
         String homeString = System.getenv("HADOOP_HOME");
         if (homeString == null) {
             LOG.warn(MessageFormat.format(
@@ -68,6 +69,7 @@ public class ConfigurationFactory {
                     "HADOOP_HOME"));
             return null;
         }
+        LOG.debug("Hadoop is installed at: {}", homeString);
         File home = new File(homeString);
         File conf = new File(home, "conf");
         if (conf.isDirectory() == false) {

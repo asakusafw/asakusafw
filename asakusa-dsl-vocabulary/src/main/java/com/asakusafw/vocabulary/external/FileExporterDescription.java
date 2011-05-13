@@ -15,6 +15,8 @@
  */
 package com.asakusafw.vocabulary.external;
 
+import java.text.MessageFormat;
+
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
@@ -49,5 +51,13 @@ public abstract class FileExporterDescription implements ExporterDescription {
     @SuppressWarnings("rawtypes")
     public Class<? extends FileOutputFormat> getOutputFormat() {
         return SequenceFileOutputFormat.class;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "FileExporter({1}, {0})",
+                getPathPrefix(),
+                getOutputFormat().getClass().getSimpleName());
     }
 }
