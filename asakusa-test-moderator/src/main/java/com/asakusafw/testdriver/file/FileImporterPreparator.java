@@ -91,7 +91,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = getOpposite(conf, description.getInputFormat());
         FileDeployer deployer = new FileDeployer(conf);
-        return deployer.openOutput(destination, output);
+        return deployer.openOutput(definition, destination, output);
     }
 
     private <V> void checkType(DataModelDefinition<V> definition,

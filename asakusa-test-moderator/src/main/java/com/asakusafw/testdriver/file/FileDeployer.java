@@ -31,6 +31,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.mortbay.log.Log;
 
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.testdriver.core.DataModelDefinition;
 
 /**
  * Open output and finally deployes result data.
@@ -53,11 +54,14 @@ final class FileDeployer {
     }
 
     public <V> ModelOutput<V> openOutput(
+            DataModelDefinition<V> definition,
             final String destination,
             FileOutputFormat<? super NullWritable, ? super V> output) throws IOException {
         assert destination != null;
         assert output != null;
         Job job = new Job(configuration);
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(definition.getModelClass());
         final File temporaryDir = File.createTempFile("asakusa", ".tempdir");
         if (temporaryDir.delete() == false || temporaryDir.mkdirs() == false) {
             throw new IOException("Failed to create temporary directory");

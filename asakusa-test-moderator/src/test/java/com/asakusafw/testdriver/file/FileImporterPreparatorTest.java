@@ -31,8 +31,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.junit.After;
 import org.junit.Before;
@@ -102,6 +105,38 @@ public class FileImporterPreparatorTest {
         assertThat(scanner.nextLine(), is("Hello, world!"));
         assertThat(scanner.hasNextLine(), is(false));
         scanner.close();
+    }
+
+    /**
+     * sequence file.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void sequenceFile() throws Exception {
+        FileImporterPreparator target = new FileImporterPreparator(factory);
+        ModelOutput<Text> open = target.createOutput(
+                new MockTextDefinition(),
+                new MockFileImporter(Text.class, SequenceFileInputFormat.class, "target/testing/input"));
+        try {
+            open.write(new Text("Hello, world!"));
+            open.write(new Text("This is a test."));
+        } finally {
+            open.close();
+        }
+        SequenceFile.Reader reader = new SequenceFile.Reader(
+                fileSystem,
+                new Path("target/testing/input"),
+                factory.newInstance());
+        try {
+            Text text = new Text();
+            assertThat(reader.next(NullWritable.get(), text), is(true));
+            assertThat(text.toString(), is("Hello, world!"));
+            assertThat(reader.next(NullWritable.get(), text), is(true));
+            assertThat(text.toString(), is("This is a test."));
+            assertThat(reader.next(NullWritable.get(), text), is(false));
+        } finally {
+            reader.close();
+        }
     }
 
     private InputStream loadResult(String path) throws IOException {
