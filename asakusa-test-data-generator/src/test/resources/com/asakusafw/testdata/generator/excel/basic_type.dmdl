@@ -1,0 +1,13 @@
+simple = {
+    p_int : INT;
+    p_long : LONG;
+    p_byte : BYTE;
+    p_short : SHORT;
+    p_decimal : DECIMAL;
+    p_float : FLOAT;
+    p_double : DOUBLE;
+    p_text : TEXT;
+    p_boolean : BOOLEAN;
+    p_date : DATE;
+    p_datetime : DATETIME;
+};

@@ -1,0 +1,28 @@
+Test data template generator.
+
+This project consists mainly of following packages.
+
+* com.asakusafw.testdata.generator
+Project root.
+
+* com.asakusafw.testdata.generator.excel
+Excel test data template generator.
+
+===
+Excel Test Template Generator
+===
+usage: java -classpath ... com.asakusafw.testdata.generator.excel.Main ...
+ -format <one-of-[DATA, RULE, INOUT, INSPECT, ALL]>   output format
+ -output </path/to/output>                            output directory location
+ -source <source-file.dmdl:/path/to/source>           source file or source directory paths
+ -encoding <source-encoding>                    input DMDL charset encoding (optional)
+ -plugin <plugin-1.jar:plugin-2.jar>                  DMDL processor plug-ins (optional)
+output formats (specify in "-format"):
+     DATA - only data sheet
+     RULE - only rule sheet
+    INOUT - input/output data sheet
+  INSPECT - expected data and its rule sheets
+      ALL - input/output data and rule sheets
+
+example:
+java ...Main -format ALL -output /tmp/excel -source /tmp/dmdl
