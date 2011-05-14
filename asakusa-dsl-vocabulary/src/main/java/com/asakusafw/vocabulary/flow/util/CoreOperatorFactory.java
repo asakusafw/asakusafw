@@ -21,10 +21,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 
 /**
@@ -223,6 +225,29 @@ public class CoreOperatorFactory {
         return new Checkpoint<T>(type, in);
     }
 
+    /**
+     * 入力されたデータを指定のデータ型に射影する。
+     * <p>
+     * 入力するデータ型は変換後のデータ型の全てのプロパティを有していなければならない。
+     * この演算子の処理結果は、入力されたデータのうち変換後のデータ型に含まれる
+     * 全てのプロパティをコピーしたデータになる。
+     * </p>
+     * @param <T> 変換後のデータの種類
+     * @param in 射影対象の入力
+     * @param targetType 射影する型
+     * @return 射影演算子
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public <T> Project<T> project(Source<?> in, Class<T> targetType) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        if (targetType == null) {
+            throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
+        }
+        return new Project<T>(in, targetType);
+    }
+
     private <T> Type getPortType(Source<T> source) {
         assert source != null;
         FlowElementOutput port = source.toOutputPort();
@@ -234,15 +259,14 @@ public class CoreOperatorFactory {
      * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
      * @param <T> 取り扱うデータの種類
      */
-    public static final class Empty<T>
-            implements Source<T> {
+    public static final class Empty<T> implements Source<T> {
 
         /**
          * この演算子の唯一の出力。
          */
         public final Source<T> out;
 
-        private FlowElementResolver resolver;
+        private final FlowElementResolver resolver;
 
         Empty(Type type) {
             assert type != null;
@@ -266,15 +290,14 @@ public class CoreOperatorFactory {
      * 複数の入力をまとめて、単一の出力とする演算子。
      * @param <T> 取り扱うデータの種類
      */
-    public static final class Confluent<T>
-            implements Source<T> {
+    public static final class Confluent<T> implements Source<T> {
 
         /**
          * この演算子の唯一の出力。
          */
         public final Source<T> out;
 
-        private FlowElementResolver resolver;
+        private final FlowElementResolver resolver;
 
         Confluent(Type type, List<Source<T>> input) {
             assert type != null;
@@ -302,17 +325,18 @@ public class CoreOperatorFactory {
      * 以降に失敗した場合に永続化したデータを利用して再試行できるようにする。
      * @param <T> 取り扱うデータの種類
      */
-    public static final class Checkpoint<T>
-            implements Source<T> {
+    public static final class Checkpoint<T> implements Source<T> {
 
         /**
          * この演算子の唯一の出力。
          */
         public final Source<T> out;
 
-        private FlowElementResolver resolver;
+        private final FlowElementResolver resolver;
 
         Checkpoint(Type type, Source<T> in) {
+            assert type != null;
+            assert in != null;
             this.out = this;
             PseudElementDescription desc = new PseudElementDescription(
                     CHECKPOINT_NAME,
@@ -322,6 +346,39 @@ public class CoreOperatorFactory {
                     FlowBoundary.STAGE);
             this.resolver = new FlowElementResolver(desc);
             resolver.resolveInput(INPUT_PORT_NAME, in);
+        }
+
+        @Override
+        public FlowElementOutput toOutputPort() {
+            return resolver.getOutput(OUTPUT_PORT_NAME);
+        }
+    }
+
+    /**
+     * 入力されたデータを指定のデータ型に射影する。
+     * @param <T> 変換後の型
+     * @since 0.2.0
+     */
+    public static final class Project<T> implements Operator, Source<T> {
+
+        /**
+         * この演算子の唯一の出力。
+         */
+        public final Source<T> out;
+
+        private final FlowElementResolver resolver;
+
+        Project(Source<?> in, Class<T> targetClass) {
+            assert in != null;
+            assert targetClass != null;
+            OperatorDescription.Builder builder =
+                new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Project.class);
+            builder.declare(Project.class, Project.class, "toString");
+            builder.addInput(INPUT_PORT_NAME, in);
+            builder.addOutput(OUTPUT_PORT_NAME, targetClass);
+            this.resolver = builder.toResolver();
+            this.resolver.resolveInput(INPUT_PORT_NAME, in);
+            this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
         }
 
         @Override
