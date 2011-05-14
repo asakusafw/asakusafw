@@ -20,19 +20,19 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.operator.Project;
+import com.asakusafw.vocabulary.operator.Extend;
 import com.ashigeru.lang.java.model.syntax.Expression;
 
 /**
- * {@link Project 射影演算子}を処理する。
+ * {@link Extend 拡張演算子}を処理する。
  */
-@TargetOperator(Project.class)
-public class ProjectFlowProcessor extends LinePartProcessor {
+@TargetOperator(Extend.class)
+public class ExtendFlowProcessor extends LinePartProcessor {
 
     @Override
     public void emitLinePart(Context context) {
-        FlowElementPortDescription input = context.getInputPort(Project.ID_INPUT);
-        FlowElementPortDescription output = context.getOutputPort(Project.ID_OUTPUT);
+        FlowElementPortDescription input = context.getInputPort(Extend.ID_INPUT);
+        FlowElementPortDescription output = context.getOutputPort(Extend.ID_OUTPUT);
         DataObjectMirror cache = context.createModelCache(output.getDataType());
         context.setOutput(cache.get());
 
@@ -45,15 +45,15 @@ public class ProjectFlowProcessor extends LinePartProcessor {
         context.add(cache.createReset());
         Expression inputObject = context.getInput();
         Expression outputObject = cache.get();
-        for (DataClass.Property sinkProperty : sinkType.getProperties()) {
-            Property sourceProperty = sourceType.findProperty(sinkProperty.getName());
-            if (sourceProperty == null) {
+        for (DataClass.Property sourceProperty : sourceType.getProperties()) {
+            Property sinkProperty = sinkType.findProperty(sourceProperty.getName());
+            if (sinkProperty == null) {
                 getEnvironment().error(
                         "{0}において、{2}.{3}に対応するプロパティが{1}に定義されていません",
                         context.getOperatorDescription().getName(),
-                        sourceType,
                         sinkType,
-                        sinkProperty.getName());
+                        sourceType,
+                        sourceProperty.getName());
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
                         "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",

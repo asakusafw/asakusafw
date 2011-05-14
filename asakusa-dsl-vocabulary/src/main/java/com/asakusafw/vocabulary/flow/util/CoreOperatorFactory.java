@@ -248,6 +248,29 @@ public class CoreOperatorFactory {
         return new Project<T>(in, targetType);
     }
 
+    /**
+     * 入力されたデータを指定のデータ型に拡張する。
+     * <p>
+     * 変換後のデータ型は入力するデータ型の全てのプロパティを有していなければならない。
+     * この演算子の処理結果は、入力されたデータ型に含まれる全てのプロパティをコピーしたデータになる。
+     * また、入力されたデータに含まれないプロパティは、それぞれの初期値となる。
+     * </p>
+     * @param <T> 変換後のデータの種類
+     * @param in 射影対象の入力
+     * @param targetType 射影する型
+     * @return 射影演算子
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public <T> Extend<T> extend(Source<?> in, Class<T> targetType) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        if (targetType == null) {
+            throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
+        }
+        return new Extend<T>(in, targetType);
+    }
+
     private <T> Type getPortType(Source<T> source) {
         assert source != null;
         FlowElementOutput port = source.toOutputPort();
@@ -378,6 +401,41 @@ public class CoreOperatorFactory {
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();
             this.resolver.resolveInput(INPUT_PORT_NAME, in);
+            this.resolver.setName("project");
+            this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
+        }
+
+        @Override
+        public FlowElementOutput toOutputPort() {
+            return resolver.getOutput(OUTPUT_PORT_NAME);
+        }
+    }
+
+    /**
+     * 入力されたデータを指定のデータ型に拡張する。
+     * @param <T> 変換後の型
+     * @since 0.2.0
+     */
+    public static final class Extend<T> implements Operator, Source<T> {
+
+        /**
+         * この演算子の唯一の出力。
+         */
+        public final Source<T> out;
+
+        private final FlowElementResolver resolver;
+
+        Extend(Source<?> in, Class<T> targetClass) {
+            assert in != null;
+            assert targetClass != null;
+            OperatorDescription.Builder builder =
+                new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Extend.class);
+            builder.declare(Extend.class, Extend.class, "toString");
+            builder.addInput(INPUT_PORT_NAME, in);
+            builder.addOutput(OUTPUT_PORT_NAME, targetClass);
+            this.resolver = builder.toResolver();
+            this.resolver.resolveInput(INPUT_PORT_NAME, in);
+            this.resolver.setName("extend");
             this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
         }
 
