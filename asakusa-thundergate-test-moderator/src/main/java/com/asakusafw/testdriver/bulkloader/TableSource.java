@@ -94,17 +94,19 @@ public class TableSource<T> implements DataModelSource {
 
         private final Connection connection;
 
+        private final Statement statement;
+
         private final ResultSet resultSet;
 
-        private int index;
+        private int index = 1;
 
         SqlDriver(TableInfo<?> table, Connection connection) throws SQLException {
             assert table != null;
             assert connection != null;
             this.table = table;
             this.connection = connection;
+            this.statement = connection.createStatement();
             this.resultSet = select();
-            this.index = -1;
         }
 
         private ResultSet select() throws SQLException {
@@ -112,7 +114,6 @@ public class TableSource<T> implements DataModelSource {
             assert connection != null;
             LOG.debug("Building select statement: {}", table);
             Set<String> columns = table.getColumnsToProperties().keySet();
-            Statement statement = connection.createStatement();
             boolean green = false;
             try {
                 ResultSet rs = statement.executeQuery(MessageFormat.format(
@@ -132,26 +133,23 @@ public class TableSource<T> implements DataModelSource {
             if (resultSet.next() == false) {
                 return null;
             }
-            index = 0;
+            index = 1;
             DataModelDefinition<?> def = table.getDefinition();
             Builder<?> builder = def.newReflection();
             for (PropertyName name : table.getColumnsToProperties().values()) {
-                this.index++;
                 scan(def, name, builder);
+                index++;
             }
             DataModelReflection ref = builder.build();
             return ref;
         }
 
         public void close() throws SQLException {
-            if (resultSet.isClosed()) {
-                return;
-            }
             try {
-                Statement stmt = resultSet.getStatement();
-                resultSet.close();
-                if (stmt != null && stmt.isClosed() == false) {
-                    stmt.close();
+                try {
+                    resultSet.close();
+                } finally {
+                    statement.close();
                 }
             } finally {
                 connection.close();

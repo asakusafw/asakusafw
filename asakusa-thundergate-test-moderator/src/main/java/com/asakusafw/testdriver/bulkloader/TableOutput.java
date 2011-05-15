@@ -101,7 +101,7 @@ public class TableOutput<T> implements ModelOutput<T> {
 
         private final PreparedStatement statement;
 
-        private int index;
+        private int index = 1;
 
         DmlDriver(TableInfo<?> table, Connection connection) throws SQLException {
             assert table != null;
@@ -109,7 +109,6 @@ public class TableOutput<T> implements ModelOutput<T> {
             this.table = table;
             this.connection = connection;
             this.statement = createStatement();
-            this.index = -1;
         }
 
         private PreparedStatement createStatement() throws SQLException {
@@ -127,19 +126,16 @@ public class TableOutput<T> implements ModelOutput<T> {
         public void insert(DataModelReflection ref) throws SQLException {
             assert ref != null;
             statement.clearParameters();
-            index = 0;
+            index = 1;
             DataModelDefinition<?> def = table.getDefinition();
             for (PropertyName name : table.getColumnsToProperties().values()) {
-                this.index++;
                 scan(def, name, ref);
+                index++;
             }
             statement.executeUpdate();
         }
 
         public void close() throws SQLException {
-            if (statement.isClosed()) {
-                return;
-            }
             try {
                 statement.close();
             } finally {

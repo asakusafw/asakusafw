@@ -226,6 +226,17 @@ public class TableOutputTest {
     }
 
     /**
+     * re-closed.
+     * @throws Exception if occur
+     */
+    @Test
+    public void reclose() throws Exception {
+        TableOutput<Simple> output = new TableOutput<Simple>(info("NUMBER", "TEXT"), h2.open());
+        output.close();
+        output.close();
+    }
+
+    /**
      * dropped.
      * @throws Exception if occur
      */
