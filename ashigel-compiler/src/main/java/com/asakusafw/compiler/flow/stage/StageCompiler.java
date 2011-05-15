@@ -44,25 +44,25 @@ public class StageCompiler {
 
     static final Logger LOG = LoggerFactory.getLogger(StageCompiler.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
-    private ShuffleAnalyzer shuffleAnalyzer;
-    private StageAnalyzer mapredAnalyzer;
+    private final ShuffleAnalyzer shuffleAnalyzer;
+    private final StageAnalyzer mapredAnalyzer;
 
-    private ShuffleKeyEmitter shuffleKeyEmitter;
-    private ShuffleValueEmitter shuffleValueEmitter;
-    private ShuffleGroupingComparatorEmitter shuffleGroupingEmitter;
-    private ShuffleSortComparatorEmitter shuffleSortingEmitter;
-    private ShufflePartitionerEmitter shuffleParitioningEmitter;
+    private final ShuffleKeyEmitter shuffleKeyEmitter;
+    private final ShuffleValueEmitter shuffleValueEmitter;
+    private final ShuffleGroupingComparatorEmitter shuffleGroupingEmitter;
+    private final ShuffleSortComparatorEmitter shuffleSortingEmitter;
+    private final ShufflePartitionerEmitter shuffleParitioningEmitter;
 
-    private FlowResourceEmitter flowResourceEmitter;
-    private MapFragmentEmitter mapFragmentEmitter;
-    private ShuffleFragmentEmitter shuffleFragmentEmitter;
-    private ReduceFragmentEmitter reduceFragmentEmitter;
+    private final FlowResourceEmitter flowResourceEmitter;
+    private final MapFragmentEmitter mapFragmentEmitter;
+    private final ShuffleFragmentEmitter shuffleFragmentEmitter;
+    private final ReduceFragmentEmitter reduceFragmentEmitter;
 
-    private MapperEmitter mapperEmitter;
-    private ReducerEmitter reducerEmitter;
-    private CombinerEmitter combinerEmitter;
+    private final MapperEmitter mapperEmitter;
+    private final ReducerEmitter reducerEmitter;
+    private final CombinerEmitter combinerEmitter;
 
     /**
      * インスタンスを生成する。
@@ -109,6 +109,9 @@ public class StageCompiler {
         for (StageBlock block : graph.getStages()) {
             StageModel model = compileStage(block, resourceMap);
             results.add(model);
+        }
+        if (environment.hasError()) {
+            throw new IOException("ここまでのエラーによりコンパイルは中断されました");
         }
         return results;
     }

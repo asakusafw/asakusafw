@@ -34,17 +34,17 @@ import com.asakusafw.vocabulary.flow.Source;
  */
 public class OperatorDescription implements FlowElementDescription {
 
-    private Declaration declaration;
+    private final Declaration declaration;
 
-    private List<FlowElementPortDescription> inputPorts;
+    private final List<FlowElementPortDescription> inputPorts;
 
-    private List<FlowElementPortDescription> outputPorts;
+    private final List<FlowElementPortDescription> outputPorts;
 
-    private List<FlowResourceDescription> resources;
+    private final List<FlowResourceDescription> resources;
 
-    private List<Parameter> parameters;
+    private final List<Parameter> parameters;
 
-    private Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
+    private final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
 
     private String name;
 
@@ -179,15 +179,15 @@ public class OperatorDescription implements FlowElementDescription {
      */
     public static class Declaration {
 
-        private Class<? extends Annotation> annotationType;
+        private final Class<? extends Annotation> annotationType;
 
-        private Class<?> declaring;
+        private final Class<?> declaring;
 
-        private Class<?> implementing;
+        private final Class<?> implementing;
 
-        private String name;
+        private final String name;
 
-        private List<Class<?>> parameterTypes;
+        private final List<Class<?>> parameterTypes;
 
         /**
          * インスタンスを生成する。
@@ -297,11 +297,11 @@ public class OperatorDescription implements FlowElementDescription {
      */
     public static class Parameter {
 
-        private String name;
+        private final String name;
 
-        private Type type;
+        private final Type type;
 
-        private Object value;
+        private final Object value;
 
         /**
          * インスタンスを生成する。
@@ -361,7 +361,7 @@ public class OperatorDescription implements FlowElementDescription {
      */
     public static class Builder {
 
-        private Class<? extends Annotation> annotationType;
+        private final Class<? extends Annotation> annotationType;
 
         private Class<?> declaring;
 
@@ -369,17 +369,17 @@ public class OperatorDescription implements FlowElementDescription {
 
         private String name;
 
-        private List<Class<?>> parameterTypes;
+        private final List<Class<?>> parameterTypes;
 
-        private List<FlowElementPortDescription> inputPorts;
+        private final List<FlowElementPortDescription> inputPorts;
 
-        private List<FlowElementPortDescription> outputPorts;
+        private final List<FlowElementPortDescription> outputPorts;
 
-        private List<FlowResourceDescription> resources;
+        private final List<FlowResourceDescription> resources;
 
-        private List<Parameter> parameters;
+        private final List<Parameter> parameters;
 
-        private List<FlowElementAttribute> attributes;
+        private final List<FlowElementAttribute> attributes;
 
         /**
          * インスタンスを生成する。
