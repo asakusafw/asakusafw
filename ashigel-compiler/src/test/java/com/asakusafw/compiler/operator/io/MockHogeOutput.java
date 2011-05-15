@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_hoge</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockHogeOutput implements ModelOutput<MockHoge> {
+public final class MockHogeOutput implements ModelOutput<MockHoge> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

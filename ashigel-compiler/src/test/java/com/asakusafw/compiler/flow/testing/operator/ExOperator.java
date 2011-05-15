@@ -36,31 +36,53 @@ import com.asakusafw.vocabulary.operator.Volatile;
 /**
  * テスト用の演算子。
  */
-@SuppressWarnings("all")
 public abstract class ExOperator {
 
+    /**
+     * Update operator.
+     * @param model target object
+     * @param value value to be set
+     */
     @Update
     public void update(Ex1 model, int value) {
-        model.getValueOption().modify(value);
+        model.setValue(value);
     }
 
+    /**
+     * Volatile.
+     * @param model target object
+     */
     @Volatile
     @Update
     public void random(Ex1 model) {
-        model.getValueOption().modify((int) (Math.random() * Integer.MAX_VALUE));
+        model.setValue((int) (Math.random() * Integer.MAX_VALUE));
     }
 
+    /**
+     * sticky (raise error).
+     * @param model target object
+     */
     @Sticky
     @Update
     public void error(Ex1 model) {
         throw new IllegalStateException();
     }
 
+    /**
+     * folding operator.
+     * @param a context
+     * @param b feld
+     */
     @Fold
     public void foldAdd(@Key(group = "STRING") Ex1 a, Ex1 b) {
         a.getValueOption().add(b.getValueOption());
     }
 
+    /**
+     * cogroup operator.
+     * @param list target list
+     * @param result result
+     */
     @CoGroup
     public void cogroupAdd(@Key(group = "STRING", order = "SID") List<Ex1> list, Result<Ex1> result) {
         Iterator<Ex1> iter = list.iterator();
@@ -72,6 +94,11 @@ public abstract class ExOperator {
         result.add(first);
     }
 
+    /**
+     * branch operator.
+     * @param model target model
+     * @return result
+     */
     @Branch
     public Answer branch(Ex1 model) {
         int value = model.getValueOption().get();
@@ -84,9 +111,21 @@ public abstract class ExOperator {
         return Answer.CANCEL;
     }
 
+    /**
+     * summarize operator.
+     * @param model target object
+     * @return results
+     */
     @Summarize
     public abstract ExSummarized summarize(Ex1 model);
 
+    /**
+     * complex cogroup opetator.
+     * @param ex1 model1
+     * @param ex2 model2
+     * @param r1 output1
+     * @param r2 output2
+     */
     @CoGroup
     public void cogroup(
             @Key(group = "value", order = "sid") List<Ex1> ex1,
@@ -101,17 +140,34 @@ public abstract class ExOperator {
         }
     }
 
+    /**
+     * logging operator.
+     * @param ex1 model
+     * @return result
+     */
     @Logging
     public String logging(Ex1 ex1) {
         return ex1.getStringOption().toString();
     }
 
+    /**
+     * answer kind.
+     */
     public enum Answer {
 
+        /**
+         * yes.
+         */
         YES,
 
+        /**
+         * no.
+         */
         NO,
 
+        /**
+         * canceled.
+         */
         CANCEL,
     }
 }

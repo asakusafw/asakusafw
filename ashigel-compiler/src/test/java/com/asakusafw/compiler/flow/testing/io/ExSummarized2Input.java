@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>ex_summarized2</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class ExSummarized2Input implements ModelInput<ExSummarized2> {
+public final class ExSummarized2Input implements ModelInput<ExSummarized2> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

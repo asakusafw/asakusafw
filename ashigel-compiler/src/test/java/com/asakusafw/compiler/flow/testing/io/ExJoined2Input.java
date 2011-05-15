@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>ex_joined2</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class ExJoined2Input implements ModelInput<ExJoined2> {
+public final class ExJoined2Input implements ModelInput<ExJoined2> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。
