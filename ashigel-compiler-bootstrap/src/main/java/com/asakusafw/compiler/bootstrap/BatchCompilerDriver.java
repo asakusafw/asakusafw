@@ -221,7 +221,7 @@ public final class BatchCompilerDriver {
                     serviceLoader,
                     FlowCompilerOptions.load(System.getProperties()));
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error(
                     MessageFormat.format(
                             "コンパイルはエラーにより中断しました ({0})",

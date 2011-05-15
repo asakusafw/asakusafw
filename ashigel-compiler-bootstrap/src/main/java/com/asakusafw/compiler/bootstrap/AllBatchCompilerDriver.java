@@ -195,7 +195,7 @@ public final class AllBatchCompilerDriver {
             } finally {
                 cursor.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error(MessageFormat.format(
                     "バッチクラスの検索に失敗しました ({0})",
                     scanPath),
