@@ -403,8 +403,22 @@ public abstract class AbstractStageClient extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
-        Job job = new Job(conf);
+        Job job = createJob(conf);
+        return submit(job);
+    }
 
+    /**
+     * Creates a new job.
+     * @param conf asakusa job configuration
+     * @return the created job
+     * @throws IOException if failed to create a new job
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public Job createJob(Configuration conf) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        Job job = new Job(conf);
         VariableTable variables = getPathParser(job.getConfiguration());
         configureJobInfo(job, variables);
         configureStageInput(job, variables);
@@ -412,8 +426,7 @@ public abstract class AbstractStageClient extends Configured implements Tool {
         configureShuffle(job, variables);
         configureStageResource(job, variables);
         configureStage(job, variables);
-
-        return submit(job);
+        return job;
     }
 
     private int submit(Job job) throws IOException, InterruptedException, ClassNotFoundException {
