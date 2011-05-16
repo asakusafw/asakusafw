@@ -16,7 +16,9 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * フロー部品用のテストドライバクラス。
  */
-public class FlowPartTestDriver extends TestDriverBase {
+public class FlowPartTestDriver extends TestDriverTestToolsBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartTestDriver.class);
 
@@ -68,29 +70,21 @@ public class FlowPartTestDriver extends TestDriverBase {
 
     /**
      * コンストラクタ。
-     * <p>
-     * 使い方：本コンストラクタは、必ずJUnitのテストメソッドから直接呼び出して下さい。
-     * テストメソッド内で、ユーティリティクラスやプライベートメソッドを経由して呼び出すことは出来ません。
-     * （呼び出し元のテストクラス名、テストメソッド名に基づいて入出力データを取得・生成するため）
-     * </p>
      *
      * @throws RuntimeException インスタンスの生成に失敗した場合
      */
-    public FlowPartTestDriver() throws RuntimeException {
+    public FlowPartTestDriver() {
         super();
     }
 
     /**
      * コンストラクタ。
-     * <p>
-     * 使い方の注意点は{@link FlowPartTestDriver#FlowPartTestDriver()}を参照。
-     * </p>
      *
      * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see FlowPartTestDriver#FlowPartTestDriver()
      */
-    public FlowPartTestDriver(List<File> testDataFileList) throws RuntimeException {
+    public FlowPartTestDriver(List<File> testDataFileList) {
         super(testDataFileList);
     }
 
@@ -98,48 +92,51 @@ public class FlowPartTestDriver extends TestDriverBase {
      * フロー部品のテストを実行し、テスト結果を検証します。
      *
      * @param flowDescription フロー部品クラスのインスタンス
-     * @throws Throwable テストの実行に失敗した場合
      */
-    public void runTest(FlowDescription flowDescription) throws Throwable {
+    public void runTest(FlowDescription flowDescription) {
 
-        // クラスタワークディレクトリ初期化
-        initializeClusterDirectory(driverContext.getClusterWorkDir());
-
-        // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
-        if (createIndividually) {
-            createSequenceFilesIndividually();
-        } else {
-            createSequenceFiles();
-        }
-
-        // フローコンパイラの実行
-        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
-                + driverContext.getMethodName();
-        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
-        if (compileWorkDir.exists()) {
-            FileUtils.forceDelete(compileWorkDir);
-        }
-
-        FlowGraph flowGraph = flowDescriptionDriver.createFlowGraph(flowDescription);
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
-                FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
-                Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
-                flowDescription.getClass().getClassLoader(), driverContext.getOptions());
-
-        CommandContext context = new CommandContext(System.getenv("ASAKUSA_HOME") + "/",
-                driverContext.getExecutionId(), driverContext.getBatchArgs());
-
-        Map<String, String> dPropMap = createHadoopProperties(context);
-
-        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-        savePlan(compileWorkDir, plan);
-        executePlan(plan, jobflowInfo.getPackageFile());
-
-        // テスト結果検証ツールを実行し、Excel上の期待値とシーケンスファイル上の実際値を比較する。
-        if (loadIndividually) {
-            loadAndInspectSequenceFilesIndividually();
-        } else {
-            loadAndInspectSequenceFiles();
+        try {
+            // クラスタワークディレクトリ初期化
+            initializeClusterDirectory(driverContext.getClusterWorkDir());
+    
+            // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
+            if (createIndividually) {
+                createSequenceFilesIndividually();
+            } else {
+                createSequenceFiles();
+            }
+    
+            // フローコンパイラの実行
+            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
+                    + driverContext.getMethodName();
+            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+            if (compileWorkDir.exists()) {
+                FileUtils.forceDelete(compileWorkDir);
+            }
+    
+            FlowGraph flowGraph = flowDescriptionDriver.createFlowGraph(flowDescription);
+            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
+                    FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
+                    Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
+                    flowDescription.getClass().getClassLoader(), driverContext.getOptions());
+    
+            CommandContext context = new CommandContext(System.getenv("ASAKUSA_HOME") + "/",
+                    driverContext.getExecutionId(), driverContext.getBatchArgs());
+    
+            Map<String, String> dPropMap = createHadoopProperties(context);
+    
+            TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
+            savePlan(compileWorkDir, plan);
+            executePlan(plan, jobflowInfo.getPackageFile());
+    
+            // テスト結果検証ツールを実行し、Excel上の期待値とシーケンスファイル上の実際値を比較する。
+            if (loadIndividually) {
+                loadAndInspectSequenceFilesIndividually();
+            } else {
+                loadAndInspectSequenceFiles();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -325,13 +322,13 @@ public class FlowPartTestDriver extends TestDriverBase {
         fileListPerTable.add(fileName);
     }
 
-    private void createSequenceFiles() throws Throwable {
+    private void createSequenceFiles() {
         for (String table : testUtils.getTablenames()) {
             createSequenceFile(table, table);
         }
     }
 
-    private void createSequenceFilesIndividually() throws Throwable {
+    private void createSequenceFilesIndividually() {
 
         for (Map.Entry<String, List<String>> entry : createInMap.entrySet()) {
             String tablename = entry.getKey();
@@ -348,13 +345,17 @@ public class FlowPartTestDriver extends TestDriverBase {
                         }
                     }
                 }
-                testUtils = new TestUtils(inFileList);
+                try {
+                    testUtils = new TestUtils(inFileList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 createSequenceFile(tablename, excelFileName);
             }
         }
     }
 
-    private void createSequenceFile(String tablename, String excelFileName) throws Throwable {
+    private void createSequenceFile(String tablename, String excelFileName) {
 
         Configuration conf = new Configuration();
         FileSystem fs = null;
@@ -371,17 +372,25 @@ public class FlowPartTestDriver extends TestDriverBase {
                     testUtils.getClassByTablename(tablename));
 
             testUtils.storeToSequenceFile(tablename, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         } finally {
-            if (writer != null) {
-                writer.close();
-            }
-            if (fs != null) {
-                fs.close();
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+                if (fs != null) {
+                    fs.close();
+                }
+            } catch (IOException e) {
+                //nop
             }
         }
     }
 
-    private void loadAndInspectSequenceFiles() throws Throwable {
+    private void loadAndInspectSequenceFiles() throws IOException {
         for (String table : testUtils.getTablenames()) {
             loadSequenceFile(table, table);
         }
@@ -390,7 +399,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
     }
 
-    private void loadAndInspectSequenceFilesIndividually() throws Throwable {
+    private void loadAndInspectSequenceFilesIndividually() throws IOException {
 
         for (Map.Entry<String, List<String>> entry : createOutMap.entrySet()) {
             String tablename = entry.getKey();
@@ -407,7 +416,11 @@ public class FlowPartTestDriver extends TestDriverBase {
                         }
                     }
                 }
-                testUtils = new TestUtils(outFileList);
+                try {
+                    testUtils = new TestUtils(outFileList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 loadSequenceFile(tablename, excelFileName);
                 if (!testUtils.inspect()) {
                     Assert.fail(testUtils.getCauseMessage());
@@ -417,7 +430,7 @@ public class FlowPartTestDriver extends TestDriverBase {
         }
     }
 
-    private void loadSequenceFile(String tablename, String excelFileName) throws Throwable {
+    private void loadSequenceFile(String tablename, String excelFileName) throws IOException {
 
         Configuration conf = new Configuration();
         FileSystem fs = null;

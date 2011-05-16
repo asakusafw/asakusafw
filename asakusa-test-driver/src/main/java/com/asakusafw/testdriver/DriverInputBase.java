@@ -138,7 +138,7 @@ public abstract class DriverInputBase<T> {
     protected void setSourceUri(String sourcePath, String fragment) {
         try {
             sourceUri = DriverInputBase.toUri(sourcePath, fragment);
-            LOG.info("Source URI:" + sourceUri + ", Fragment:" + fragment);
+            LOG.info("Source URI:" + sourceUri);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid source URI:" + sourcePath + ", fragment:" + fragment, e);
         }

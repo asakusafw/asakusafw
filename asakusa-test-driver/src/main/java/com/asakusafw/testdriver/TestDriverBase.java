@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +54,6 @@ import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
-import com.asakusafw.testtools.TestUtils;
 
 /**
  * テストドライバの基底クラス。
@@ -62,25 +62,23 @@ public abstract class TestDriverBase {
 
     private static final Logger LOG = LoggerFactory
             .getLogger(TestDriverBase.class);
-    private static final String TESTDATA_DIR_DEFAULT = "src/test/data/excel";
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
+
+    /** テストデータ格納先のデフォルト値 */
+    protected static final String TESTDATA_DIR_DEFAULT = "src/test/data/excel";
 
     /** Hadoopコマンドの絶対パス。 */
     protected String hadoopCmd;
     /** HadoopJobRun(HadoopコマンドのWrapper)コマンドの絶対パス。 */
     protected String hadoopJobRunCmd;
-    /** テストデータ生成・検証ツールオブジェクト。 */
-    protected TestUtils testUtils;
-    /** TestUtils生成時に指定するテストデータ定義シートのファイルリスト。 */
-    protected List<File> testDataFileList;
-    /** TestUtils生成時に指定するテストデータ定義シートのディレクトリ（testDataFileListと排他)。 */
-    protected File testDataDir;
-
+    /** build.properties */
+    protected Properties buildProperties;
+    
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
     protected TestDriverContext driverContext = new TestDriverContext(
             new TreeMap<String, String>(), new TreeMap<String, String>(), new FlowCompilerOptions());
-
+    
     /**
      * コンストラクタ。
      *
@@ -88,19 +86,6 @@ public abstract class TestDriverBase {
      *             初期化に失敗した場合
      */
     public TestDriverBase() throws RuntimeException {
-        initialize();
-    }
-
-    /**
-     * コンストラクタ。
-     *
-     * @param testDataFileList
-     *            テストデータ定義シートのパスを示すFileのリスト
-     * @throws RuntimeException
-     *             初期化に失敗した場合
-     */
-    public TestDriverBase(List<File> testDataFileList) throws RuntimeException {
-        this.testDataFileList = testDataFileList;
         initialize();
     }
 
@@ -115,8 +100,26 @@ public abstract class TestDriverBase {
      */
     protected void setTestClassInformation() throws RuntimeException {
 
-        // 呼び出し元のクラス名とメソッド名を取得
-        StackTraceElement e = new Exception().getStackTrace()[4];
+        // 呼び出し元のテストクラス名とテストメソッド名を取得
+        StackTraceElement e = null;
+        for (StackTraceElement elm : new Exception().getStackTrace()) {
+            try {
+                Class<?> clazz = Class.forName(elm.getClassName());
+                Method method = clazz.getDeclaredMethod(elm.getMethodName(), new Class[] {});
+                if (method.getAnnotation(org.junit.Test.class) != null) {
+                    e = elm;
+                    break;
+                }
+            } catch (ClassNotFoundException ex) {
+                continue;
+            } catch (NoSuchMethodException ex) {
+                continue;
+            }
+        }
+        if (e == null) {
+            throw new RuntimeException("not called from Junit Test Method.");
+        }
+        
         driverContext.setClassName(e.getClassName().substring(
                 e.getClassName().lastIndexOf(".") + 1));
         driverContext.setMethodName(e.getMethodName());
@@ -135,7 +138,7 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             初期化に失敗した場合
      */
-    private void initialize() throws RuntimeException {
+    protected void initialize() throws RuntimeException {
         // クラス名/メソッド名を使った変数を初期化
         setTestClassInformation();
 
@@ -143,28 +146,12 @@ public abstract class TestDriverBase {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(buildPropertiesFile);
-            Properties prop = new Properties();
-            prop.load(fis);
+            buildProperties = new Properties();
+            buildProperties.load(fis);
             System.setProperty("ASAKUSA_MODELGEN_PACKAGE",
-                    prop.getProperty("asakusa.modelgen.package"));
+                    buildProperties.getProperty("asakusa.modelgen.package"));
             System.setProperty("ASAKUSA_MODELGEN_OUTPUT",
-                    prop.getProperty("asakusa.modelgen.output"));
-            System.setProperty("ASAKUSA_TESTTOOLS_CONF",
-                    prop.getProperty("asakusa.testtools.conf"));
-
-            String testDataDirPath = prop
-                    .getProperty("asakusa.testdriver.testdata.dir");
-            if (testDataDirPath == null) {
-                testDataDirPath = TESTDATA_DIR_DEFAULT;
-            }
-            if (testDataFileList == null) {
-                testDataDir = new File(testDataDirPath
-                        + System.getProperty("file.separator") + driverContext.getClassName()
-                        + System.getProperty("file.separator") + driverContext.getMethodName());
-                testUtils = new TestUtils(testDataDir);
-            } else {
-                testUtils = new TestUtils(testDataFileList);
-            }
+                    buildProperties.getProperty("asakusa.modelgen.output"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

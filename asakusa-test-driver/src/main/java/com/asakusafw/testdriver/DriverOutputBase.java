@@ -103,7 +103,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
         try {
             expectedUri = DriverInputBase.toUri(expectedPath, expectedFlagment);
-            LOG.info("Expected URI:" + expectedUri + ", Fragment:" + expectedFlagment);
+            LOG.info("Expected URI:" + expectedUri);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid expected URI. expectedPath:" + expectedPath
                     + ", expectedFlagment:" + expectedFlagment, e);
@@ -120,7 +120,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
         try {
             verifyRuleUri = DriverInputBase.toUri(verifyRulePath, verifyRuleFlagment);
-            LOG.info("Verify Rule URI:" + verifyRuleUri + ", Fragment:" + verifyRuleFlagment);
+            LOG.info("Verify Rule URI:" + verifyRuleUri);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath
                     + ", verifyRuleFlagment:" + verifyRuleFlagment, e);
