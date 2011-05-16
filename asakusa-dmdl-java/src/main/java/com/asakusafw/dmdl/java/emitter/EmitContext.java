@@ -46,6 +46,8 @@ import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -365,10 +367,12 @@ public final class EmitContext {
                 return resolve(IntOption.class);
             case LONG:
                 return resolve(LongOption.class);
+            case FLOAT:
+                return resolve(FloatOption.class);
+            case DOUBLE:
+                return resolve(DoubleOption.class);
             case TEXT:
                 return resolve(StringOption.class);
-            case DOUBLE:
-            case FLOAT:
             default:
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Unsupported basic type: {0}",

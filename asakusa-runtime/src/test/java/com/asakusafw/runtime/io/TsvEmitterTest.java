@@ -38,6 +38,8 @@ import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -51,7 +53,7 @@ public class TsvEmitterTest {
 
     private static final String LONG_STRING = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづ";
 
-    private StringWriter buffer = new StringWriter();
+    private final StringWriter buffer = new StringWriter();
 
     private TsvEmitter emitter;
 
@@ -297,6 +299,116 @@ public class TsvEmitterTest {
         assertThat(value.get(), is(Long.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Long.MIN_VALUE));
+
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * floatの値を出力するテスト。
+     * @throws Exception 例外が発生した場合
+     */
+    @Test
+    public void emitFloat() throws Exception {
+        FloatOption value = new FloatOption();
+
+        value.modify(+0.f);
+        emitter.emit(value);
+        value.modify(-0.f);
+        emitter.emit(value);
+        value.modify(+10.5f);
+        emitter.emit(value);
+        value.modify(-10.5f);
+        emitter.emit(value);
+        emitter.endRecord();
+
+        value.setNull();
+        emitter.emit(value);
+        value.modify(Float.POSITIVE_INFINITY);
+        emitter.emit(value);
+        value.modify(Float.NEGATIVE_INFINITY);
+        emitter.emit(value);
+        value.modify(Float.NaN);
+        emitter.emit(value);
+        emitter.endRecord();
+
+        emitter.close();
+        emitter.close();
+
+        RecordParser parser = parser();
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(+0.f));
+        parser.fill(value);
+        assertThat(value.get(), is(-0.f));
+        parser.fill(value);
+        assertThat(value.get(), is(+10.5f));
+        parser.fill(value);
+        assertThat(value.get(), is(-10.5f));
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.isNull(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.POSITIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.NEGATIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.NaN));
+
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * doubleの値を出力するテスト。
+     * @throws Exception 例外が発生した場合
+     */
+    @Test
+    public void emitDouble() throws Exception {
+        DoubleOption value = new DoubleOption();
+
+        value.modify(+0.d);
+        emitter.emit(value);
+        value.modify(-0.d);
+        emitter.emit(value);
+        value.modify(+10.5d);
+        emitter.emit(value);
+        value.modify(-10.5d);
+        emitter.emit(value);
+        emitter.endRecord();
+
+        value.setNull();
+        emitter.emit(value);
+        value.modify(Float.POSITIVE_INFINITY);
+        emitter.emit(value);
+        value.modify(Float.NEGATIVE_INFINITY);
+        emitter.emit(value);
+        value.modify(Float.NaN);
+        emitter.emit(value);
+        emitter.endRecord();
+
+        emitter.close();
+        emitter.close();
+
+        RecordParser parser = parser();
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(+0.d));
+        parser.fill(value);
+        assertThat(value.get(), is(-0.d));
+        parser.fill(value);
+        assertThat(value.get(), is(+10.5d));
+        parser.fill(value);
+        assertThat(value.get(), is(-10.5d));
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.isNull(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.POSITIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.NEGATIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.NaN));
 
         assertThat(parser.next(), is(false));
     }

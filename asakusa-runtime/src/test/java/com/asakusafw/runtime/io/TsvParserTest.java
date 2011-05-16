@@ -34,6 +34,8 @@ import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -202,6 +204,70 @@ public class TsvParserTest {
         assertThat(value.get(), is(Long.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Long.MIN_VALUE));
+
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * floatの値を解析するテスト。
+     * @throws Exception 例外が発生した場合
+     */
+    @Test
+    public void fillFloat() throws Exception {
+        FloatOption value = new FloatOption();
+        create("float");
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(+0.f));
+        parser.fill(value);
+        assertThat(value.get(), is(-0.f));
+        parser.fill(value);
+        assertThat(value.get(), is(+10.5f));
+        parser.fill(value);
+        assertThat(value.get(), is(-10.5f));
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.isNull(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.POSITIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.NEGATIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Float.NaN));
+
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * floatの値を解析するテスト。
+     * @throws Exception 例外が発生した場合
+     */
+    @Test
+    public void fillDouble() throws Exception {
+        DoubleOption value = new DoubleOption();
+        create("float");
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(+0.d));
+        parser.fill(value);
+        assertThat(value.get(), is(-0.d));
+        parser.fill(value);
+        assertThat(value.get(), is(+10.5d));
+        parser.fill(value);
+        assertThat(value.get(), is(-10.5d));
+
+        assertThat(parser.next(), is(true));
+        parser.fill(value);
+        assertThat(value.isNull(), is(true));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.POSITIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.NEGATIVE_INFINITY));
+        parser.fill(value);
+        assertThat(value.get(), is(Double.NaN));
 
         assertThat(parser.next(), is(false));
     }
