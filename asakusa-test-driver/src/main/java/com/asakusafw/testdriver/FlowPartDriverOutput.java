@@ -15,18 +15,12 @@
  */
 package com.asakusafw.testdriver;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
-import com.asakusafw.testdriver.core.ModelVerifier;
-import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
@@ -35,20 +29,9 @@ import com.asakusafw.vocabulary.flow.Out;
  * 
  * @param <T> モデルクラス
  */
-public class FlowPartDriverOutput<T> {
+public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverOutput.class);
-
-    private String name;
-    private Class<T> modelType;
-    private ImporterDescription importerDesc;
-    private ExporterDescription exporterDesc;
-    private URI sourceUri;
-    private URI expectedUri;
-    private URI verifyRuleUri;
-    private ModelVerifier<T> modelVerifier;
-    private FlowDescriptionDriver descDriver;
-    private TestDriverContext driverContext;
 
     /**
      * コンストラクタ
@@ -60,10 +43,7 @@ public class FlowPartDriverOutput<T> {
      */
     public FlowPartDriverOutput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        this.name = name;
-        this.modelType = modelType;
-        this.descDriver = descDriver;
-        this.driverContext = driverContext;
+        super(driverContext, descDriver, name, modelType);
     }
 
     /**
@@ -85,19 +65,13 @@ public class FlowPartDriverOutput<T> {
      */
     public FlowPartDriverOutput<T> prepare(String sourcePath, String fragment) {
 
-        LOG.info("ModelType:" + modelType);
-
-        try {
-            this.sourceUri = FlowPartDriverUtils.toUri(sourcePath, fragment);
-            LOG.info("Source URI:" + sourceUri + ", Fragment:" + fragment);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid source URI:" + sourcePath + ", fragment:" + fragment, e);
-        }
+        LOG.info("prepare - ModelType:" + getModelType());
+        setSourceUri(sourcePath, fragment);
 
         String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
         LOG.info("Import Path=" + importPath);
 
-        importerDesc = new DirectImporterDescription(modelType, importPath);
+        importerDescription = new DirectImporterDescription(modelType, importPath);
         return this;
     }
 
@@ -125,27 +99,13 @@ public class FlowPartDriverOutput<T> {
             String verifyRuleFlagment) {
 
         LOG.info("verify - ModelType:" + modelType);
-
-        try {
-            this.expectedUri = FlowPartDriverUtils.toUri(expectedPath, expectedFlagment);
-            LOG.info("Expected URI:" + expectedUri + ", Fragment:" + expectedFlagment);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid expected URI. expectedPath:" + expectedPath
-                    + ", expectedFlagment:" + expectedFlagment, e);
-        }
-
-        try {
-            this.verifyRuleUri = FlowPartDriverUtils.toUri(verifyRulePath, verifyRuleFlagment);
-            LOG.info("Verify Rule URI:" + verifyRuleUri + ", Fragment:" + verifyRuleFlagment);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath
-                    + ", verifyRuleFlagment:" + verifyRuleFlagment, e);
-        }
+        setExpectedUri(expectedPath, expectedFlagment);
+        setVerifyRuleUri(verifyRulePath, verifyRuleFlagment);
 
         String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
         LOG.info("Export Path=" + exportPath);
 
-        exporterDesc = new DirectExporterDescription(modelType, exportPath);
+        exporterDescription = new DirectExporterDescription(modelType, exportPath);
         return this;
     }
 
@@ -155,56 +115,7 @@ public class FlowPartDriverOutput<T> {
      * @return 出力インターフェース。
      */
     public Out<T> createOut() {
-        return descDriver.createOut(name, exporterDesc);
-    }
-
-    /**
-     * @return the expectedUri
-     */
-    public URI getExpectedUri() {
-        return expectedUri;
-    }
-
-    /**
-     * @return the verifyRuleUri
-     */
-    public URI getVerifyRuleUri() {
-        return verifyRuleUri;
-    }
-
-    /**
-     * @return the modelType
-     */
-    public Class<T> getModelType() {
-        return modelType;
-    }
-
-    /**
-     * @return the sourceUri
-     */
-    public URI getSourceUri() {
-        return sourceUri;
-    }
-
-    /**
-     * @return the importerDesc
-     */
-    public ImporterDescription getImporterDescription() {
-        return importerDesc;
-    }
-
-    /**
-     * @return the exporterDesc
-     */
-    public ExporterDescription getExporterDescription() {
-        return exporterDesc;
-    }
-
-    /**
-     * @return the modelVerifier
-     */
-    public ModelVerifier<T> getModelVerifier() {
-        return modelVerifier;
+        return descDriver.createOut(name, exporterDescription);
     }
 
 }

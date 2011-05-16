@@ -15,15 +15,11 @@
  */
 package com.asakusafw.testdriver;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
-import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.In;
 
 /**
@@ -32,16 +28,9 @@ import com.asakusafw.vocabulary.flow.In;
  * 
  * @param <T> モデルクラス
  */
-public class FlowPartDriverInput<T> {
+public class FlowPartDriverInput<T> extends DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
-
-    private String name;
-    private Class<T> modelType;
-    private ImporterDescription importerDescription;
-    private URI sourceUri;
-    private FlowDescriptionDriver descDriver;
-    private TestDriverContext driverContext;
 
     /**
      * コンストラクタ
@@ -53,12 +42,9 @@ public class FlowPartDriverInput<T> {
      */
     public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        this.name = name;
-        this.modelType = modelType;
-        this.descDriver = descDriver;
-        this.driverContext = driverContext;
+        super(driverContext, descDriver, name, modelType);
     }
-
+    
     /**
      * テスト実行時に使用する入力データを指定する。
      * 
@@ -78,14 +64,8 @@ public class FlowPartDriverInput<T> {
      */
     public FlowPartDriverInput<T> prepare(String sourcePath, String fragment) {
 
-        LOG.info("prepare - ModelType:" + modelType);
-
-        try {
-            this.sourceUri = FlowPartDriverUtils.toUri(sourcePath, fragment);
-            LOG.info("Source URI:" + sourceUri + ", Fragment:" + fragment);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid source URI:" + sourcePath + ", fragment:" + fragment, e);
-        }
+        LOG.info("prepare - ModelType:" + getModelType());
+        setSourceUri(sourcePath, fragment);
 
         String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
         LOG.info("Import Path=" + importPath);
@@ -101,27 +81,6 @@ public class FlowPartDriverInput<T> {
      */
     public In<T> createIn() {
         return descDriver.createIn(name, importerDescription);
-    }
-
-    /**
-     * @return the modelType
-     */
-    public Class<T> getModelType() {
-        return modelType;
-    }
-
-    /**
-     * @return the importerDescription
-     */
-    public ImporterDescription getImporterDescription() {
-        return importerDescription;
-    }
-
-    /**
-     * @return the sourceUri
-     */
-    public URI getSourceUri() {
-        return sourceUri;
     }
 
 }

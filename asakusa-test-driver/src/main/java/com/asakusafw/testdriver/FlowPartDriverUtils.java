@@ -15,9 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import com.asakusafw.compiler.flow.Location;
 
@@ -71,21 +68,6 @@ class FlowPartDriverUtils {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
                 .append(driverContext.getExecutionId()).append("temp");
         return location;
-    }
-
-    /**
-     * パス文字列からURIを生成する。
-     * 
-     * @param path パス文字列
-     * @param fragment URIに付加するフラグメント識別子
-     * @return ワーキングのリソース位置
-     * @throws URISyntaxException 引数の値がURIとして不正な値であった場合
-     */
-    public static URI toUri(String path, String fragment) throws URISyntaxException {
-        URI resource = new File(path).toURI();
-        URI uri = new URI(resource.getScheme(), resource.getUserInfo(), resource.getHost(), resource.getPort(),
-                resource.getPath(), resource.getQuery(), fragment);
-        return uri;
     }
 
     private static String normalize(String name) {

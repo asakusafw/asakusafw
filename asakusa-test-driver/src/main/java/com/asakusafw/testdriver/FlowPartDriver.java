@@ -53,7 +53,7 @@ public class FlowPartDriver extends TestDriverBase {
      * @param modelType ModelType。
      * @return テスト入力データオブジェクト。
      */
-    public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
+    public <T> DriverInputBase<T> input(String name, Class<T> modelType) {
         FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(driverContext, descDriver, name, modelType);
         inputs.add(input);
         return input;
