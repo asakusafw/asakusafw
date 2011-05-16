@@ -1,14 +1,15 @@
 package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockProjectionInput;
 import com.asakusafw.compiler.operator.io.MockProjectionOutput;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 /**
  * mock_projectionを表す射影モデルインターフェース。
  */
-@ModelInputLocation(MockProjectionInput.class)@ModelOutputLocation(MockProjectionOutput.class) public interface
-        MockProjection {
+@DataModelKind("DMDL")@ModelInputLocation(MockProjectionInput.class)@ModelOutputLocation(MockProjectionOutput.class) 
+        public interface MockProjection {
     /**
      * valueを返す。
      * @return value

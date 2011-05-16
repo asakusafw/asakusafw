@@ -2,6 +2,7 @@ package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockKeyValue2Input;
 import com.asakusafw.compiler.operator.io.MockKeyValue2Output;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -14,8 +15,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * mock_key_value2を表すデータモデルクラス。
  */
-@ModelInputLocation(MockKeyValue2Input.class)@ModelOutputLocation(MockKeyValue2Output.class) public class MockKeyValue2
-        implements DataModel<MockKeyValue2>, MockKey, MockProjection, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(MockKeyValue2Input.class)@ModelOutputLocation(MockKeyValue2Output.class) 
+        public class MockKeyValue2 implements DataModel<MockKeyValue2>, MockKey, MockProjection, Writable {
     private final StringOption key = new StringOption();
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {

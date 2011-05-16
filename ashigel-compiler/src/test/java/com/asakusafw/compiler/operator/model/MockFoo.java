@@ -2,6 +2,7 @@ package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockFooInput;
 import com.asakusafw.compiler.operator.io.MockFooOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -12,8 +13,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * mock_fooを表すデータモデルクラス。
  */
-@ModelInputLocation(MockFooInput.class)@ModelOutputLocation(MockFooOutput.class) public class MockFoo implements
-        DataModel<MockFoo>, MockProjection, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(MockFooInput.class)@ModelOutputLocation(MockFooOutput.class) public class 
+        MockFoo implements DataModel<MockFoo>, MockProjection, Writable {
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.value.setNull();

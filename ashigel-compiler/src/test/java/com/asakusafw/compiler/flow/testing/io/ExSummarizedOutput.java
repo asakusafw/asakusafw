@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>ex_summarized</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class ExSummarizedOutput implements ModelOutput<ExSummarized> {
+public final class ExSummarizedOutput implements ModelOutput<ExSummarized> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

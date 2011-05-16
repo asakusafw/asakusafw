@@ -2,6 +2,7 @@ package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockSummarizedInput;
 import com.asakusafw.compiler.operator.io.MockSummarizedOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -15,11 +16,11 @@ import org.apache.hadoop.io.Writable;
 /**
  * mock_summarizedを表すデータモデルクラス。
  */
-@ModelInputLocation(MockSummarizedInput.class)@ModelOutputLocation(MockSummarizedOutput.class)@Summarized(term = @
-        Summarized.Term(source = MockHoge.class, foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY,
-            source = "value", destination = "key"),@Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source
-            = "value", destination = "count")}, shuffle = @Key(group = {"value"}))) public class MockSummarized
-        implements DataModel<MockSummarized>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(MockSummarizedInput.class)@ModelOutputLocation(MockSummarizedOutput.class)@
+        Summarized(term = @Summarized.Term(source = MockHoge.class, foldings = {@Summarized.Folding(aggregator = 
+            Summarized.Aggregator.ANY, source = "value", destination = "key"),@Summarized.Folding(aggregator = 
+            Summarized.Aggregator.COUNT, source = "value", destination = "count")}, shuffle = @Key(group = {"value"}))) 
+        public class MockSummarized implements DataModel<MockSummarized>, Writable {
     private final IntOption key = new IntOption();
     private final LongOption count = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {

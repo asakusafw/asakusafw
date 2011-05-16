@@ -15,6 +15,8 @@
  */
 package com.asakusafw.vocabulary.external;
 
+import java.text.MessageFormat;
+
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
@@ -27,11 +29,13 @@ public abstract class FileExporterDescription implements ExporterDescription {
     /**
      * エクスポート先のファイルへのパスの接頭辞を返す。
      * <p>
-     * パスの各セグメントは{@code /}で区切り、末尾には{@code -*}を付与すること
-     * (付与しなかった場合にはエラーとなる)。
+     * パスの各セグメントは{@code /}で区切り、末尾には{@code -*}を付与すること。
+     * また、末尾のセグメント(ファイル名の接頭辞)には数字とアルファベットのみ指定できる。
      * </p>
      * <p>
-     * なお、末尾のセグメントには数字とアルファベットのみ指定できる。
+     * パスには必ずひとつ以上のディレクトリを含めなければならない。
+     * また、同ディレクトリがエクスポートの実行時に存在していた場合、
+     * エクスポート処理が失敗する可能性がある。
      * </p>
      * @return エクスポート先のファイルが出力されるパスの接頭辞
      */
@@ -49,5 +53,13 @@ public abstract class FileExporterDescription implements ExporterDescription {
     @SuppressWarnings("rawtypes")
     public Class<? extends FileOutputFormat> getOutputFormat() {
         return SequenceFileOutputFormat.class;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "FileExporter({1}, {0})",
+                getPathPrefix(),
+                getOutputFormat().getClass().getSimpleName());
     }
 }

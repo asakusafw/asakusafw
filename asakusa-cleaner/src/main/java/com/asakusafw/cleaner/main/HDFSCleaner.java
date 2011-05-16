@@ -71,7 +71,7 @@ public class HDFSCleaner {
         String mode = null;
         String user = null;
         FileSystem fs = null;
-        
+
         if (args.length > 0) {
             mode = args[0];
         }
@@ -146,7 +146,7 @@ public class HDFSCleaner {
                         cleanResult = false;
                         continue;
                     }
-                    
+
                     boolean target = bean[i].hasExecutionId();
                     String pattern = bean[i].getPattern();
                     Log.log(

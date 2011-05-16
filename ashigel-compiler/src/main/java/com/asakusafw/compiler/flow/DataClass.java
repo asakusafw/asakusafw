@@ -19,6 +19,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.ashigeru.lang.java.model.syntax.Expression;
@@ -38,6 +40,12 @@ public interface DataClass {
      * @return このデータ型のJavaでの表現
      */
     java.lang.reflect.Type getType();
+
+    /**
+     * このデータで利用可能な全てのプロパティを返す。
+     * @return 利用可能な全てのプロパティ
+     */
+    Collection<? extends Property> getProperties();
 
     /**
      * 指定の名前を持つプロパティを返す。
@@ -95,9 +103,9 @@ public interface DataClass {
      */
     class Unresolved implements DataClass {
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private java.lang.reflect.Type runtimeType;
+        private final java.lang.reflect.Type runtimeType;
 
         /**
          * インスタンスを生成する。
@@ -115,6 +123,11 @@ public interface DataClass {
         @Override
         public java.lang.reflect.Type getType() {
             return runtimeType;
+        }
+
+        @Override
+        public Collection<? extends Property> getProperties() {
+            return Collections.emptySet();
         }
 
         @Override

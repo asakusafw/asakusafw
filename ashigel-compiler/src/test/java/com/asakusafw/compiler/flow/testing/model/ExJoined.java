@@ -2,6 +2,7 @@ package com.asakusafw.compiler.flow.testing.model;
 import com.asakusafw.compiler.flow.testing.io.ExJoinedInput;
 import com.asakusafw.compiler.flow.testing.io.ExJoinedOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -15,12 +16,12 @@ import org.apache.hadoop.io.Writable;
 /**
  * ex_joinedを表すデータモデルクラス。
  */
-@Joined(terms = {@Joined.Term(source = Ex1.class, mappings = {@Joined.Mapping(source = "sid", destination = "sid1"),@
-                Joined.Mapping(source = "value", destination = "value")}, shuffle = @Key(group = {"value"})),@Joined.
-            Term(source = Ex2.class, mappings = {@Joined.Mapping(source = "sid", destination = "sid2"),@Joined.Mapping(
-                source = "value", destination = "value")}, shuffle = @Key(group = {"value"}))})@ModelInputLocation(
-        ExJoinedInput.class)@ModelOutputLocation(ExJoinedOutput.class) public class ExJoined implements DataModel<
-        ExJoined>, Writable {
+@DataModelKind("DMDL")@Joined(terms = {@Joined.Term(source = Ex1.class, mappings = {@Joined.Mapping(source = "sid", 
+                destination = "sid1"),@Joined.Mapping(source = "value", destination = "value")}, shuffle = @Key(group = 
+            {"value"})),@Joined.Term(source = Ex2.class, mappings = {@Joined.Mapping(source = "sid", destination = 
+                "sid2"),@Joined.Mapping(source = "value", destination = "value")}, shuffle = @Key(group = {"value"}))})@
+        ModelInputLocation(ExJoinedInput.class)@ModelOutputLocation(ExJoinedOutput.class) public class ExJoined 
+        implements DataModel<ExJoined>, Writable {
     private final LongOption sid1 = new LongOption();
     private final IntOption value = new IntOption();
     private final LongOption sid2 = new LongOption();

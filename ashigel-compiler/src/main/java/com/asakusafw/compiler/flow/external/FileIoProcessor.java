@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.mapreduce.InputFormat;
 
@@ -46,6 +47,8 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  */
 public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
+    private static final Pattern VALID_OUTPUT_NAME = Pattern.compile("[0-9A-Za-z]+");
+
     private static final String MODULE_NAME = "fileio";
 
     @Override
@@ -60,8 +63,41 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        // TODO パスの妥当性を検査する？
-        return true;
+        boolean valid = true;
+        for (OutputDescription output : outputs) {
+            FileExporterDescription desc = extract(output);
+            String pathPrefix = desc.getPathPrefix();
+            if (pathPrefix == null) {
+                valid = false;
+                getEnvironment().error(
+                        "{0}のパスが指定されていません",
+                        desc.getClass().getName());
+            } else {
+                Location location = Location.fromPath(pathPrefix, '/');
+                if (location.isPrefix() == false) {
+                    valid = false;
+                    getEnvironment().error(
+                            "{0}はパスの接尾辞(-*)でなければなりません: {1}",
+                            desc.getClass().getName(),
+                            pathPrefix);
+                }
+                if (location.getParent() == null) {
+                    valid = false;
+                    getEnvironment().error(
+                            "{0}には最低ひとつのディレクトリの指定が必要です: {1}",
+                            desc.getClass().getName(),
+                            pathPrefix);
+                }
+                if (VALID_OUTPUT_NAME.matcher(location.getName()).matches() == false) {
+                    valid = false;
+                    getEnvironment().error(
+                            "{0}のファイル名(末尾のセグメント)は英数字のみ利用できます: {1}",
+                            desc.getClass().getName(),
+                            pathPrefix);
+                }
+            }
+        }
+        return valid;
     }
 
     @SuppressWarnings("rawtypes")

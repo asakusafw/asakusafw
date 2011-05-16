@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_key_value2</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockKeyValue2Output implements ModelOutput<MockKeyValue2> {
+public final class MockKeyValue2Output implements ModelOutput<MockKeyValue2> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

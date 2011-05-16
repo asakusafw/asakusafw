@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_projection</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockProjectionOutput implements ModelOutput<MockProjection> {
+public final class MockProjectionOutput implements ModelOutput<MockProjection> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

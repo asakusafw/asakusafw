@@ -79,7 +79,7 @@ public abstract HogeTotal summarize(Hoge hoge);
 public @interface Summarize {
 
     /**
-     * 入力ポートの番剛。
+     * 入力ポートの番号。
      */
     int ID_INPUT = 0;
 

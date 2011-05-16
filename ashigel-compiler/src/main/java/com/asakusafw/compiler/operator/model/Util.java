@@ -21,6 +21,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -28,9 +29,10 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.JavaName;
-import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.DataModelMirror.PropertyMirror;
+import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
@@ -45,6 +47,9 @@ final class Util {
         if (type.getKind() != TypeKind.DECLARED) {
             return false;
         }
+        if (isKindMatched(environment, type) == false) {
+            return false;
+        }
         TypeMirror datamodel = environment.getDeclaredType(DataModel.class);
         return environment.getTypeUtils().isSubtype(type, datamodel);
     }
@@ -56,8 +61,31 @@ final class Util {
             return false;
         }
         TypeVariable var = (TypeVariable) type;
-        Element parent = var.asElement().getEnclosingElement();
+        TypeParameterElement parameter = (TypeParameterElement) var.asElement();
+        if (hasKindMatched(environment, parameter) == false) {
+            return false;
+        }
+        Element parent = parameter.getEnclosingElement();
         return parent != null && isOperatorSource(environment, parent);
+    }
+
+    private static boolean isKindMatched(OperatorCompilingEnvironment environment, TypeMirror type) {
+        assert environment != null;
+        assert type != null;
+        TypeElement element = (TypeElement) environment.getTypeUtils().asElement(type);
+        DataModelKind kind = element.getAnnotation(DataModelKind.class);
+        return kind != null && kind.value().equals("DMDL");
+    }
+
+    private static boolean hasKindMatched(OperatorCompilingEnvironment environment, TypeParameterElement parameter) {
+        assert environment != null;
+        assert parameter != null;
+        for (TypeMirror bound : parameter.getBounds()) {
+            if (isKindMatched(environment, bound)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isOperatorSource(OperatorCompilingEnvironment environment, Element element) {

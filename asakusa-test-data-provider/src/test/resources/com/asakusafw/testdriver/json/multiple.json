@@ -1,0 +1,12 @@
+{
+    "number" : 100
+}
+
+{
+    "text" : "Hello, world!"
+}
+
+{
+    "boolean_value" : true,
+    "double_value" : 100.5
+}

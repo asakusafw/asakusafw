@@ -17,6 +17,8 @@ package com.asakusafw.compiler.flow.model;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +42,11 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  */
 public class DataModelClass implements DataClass {
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private Class<?> type;
+    private final Class<?> type;
 
-    private Map<String, DataClass.Property> properties;
+    private final Map<String, DataClass.Property> properties;
 
     /**
      * インスタンスを生成して返す。
@@ -163,6 +165,11 @@ public class DataModelClass implements DataClass {
         return new ExpressionBuilder(factory, object)
             .method("readFields", dataInput)
             .toStatement();
+    }
+
+    @Override
+    public Collection<? extends Property> getProperties() {
+        return Collections.unmodifiableCollection(properties.values());
     }
 
     @Override

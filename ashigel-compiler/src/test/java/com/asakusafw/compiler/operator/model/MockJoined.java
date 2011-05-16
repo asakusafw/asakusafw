@@ -2,6 +2,7 @@ package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockJoinedInput;
 import com.asakusafw.compiler.operator.io.MockJoinedOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -14,11 +15,11 @@ import org.apache.hadoop.io.Writable;
 /**
  * mock_joinedを表すデータモデルクラス。
  */
-@Joined(terms = {@Joined.Term(source = MockHoge.class, mappings = {@Joined.Mapping(source = "value", destination =
-                "hogeValue")}, shuffle = @Key(group = {"value"})),@Joined.Term(source = MockFoo.class, mappings = {@
-                Joined.Mapping(source = "value", destination = "fooValue")}, shuffle = @Key(group = {"value"}))})@
-        ModelInputLocation(MockJoinedInput.class)@ModelOutputLocation(MockJoinedOutput.class) public class MockJoined
-        implements DataModel<MockJoined>, Writable {
+@DataModelKind("DMDL")@Joined(terms = {@Joined.Term(source = MockHoge.class, mappings = {@Joined.Mapping(source = 
+                "value", destination = "hogeValue")}, shuffle = @Key(group = {"value"})),@Joined.Term(source = MockFoo.
+            class, mappings = {@Joined.Mapping(source = "value", destination = "fooValue")}, shuffle = @Key(group = {
+                "value"}))})@ModelInputLocation(MockJoinedInput.class)@ModelOutputLocation(MockJoinedOutput.class) 
+        public class MockJoined implements DataModel<MockJoined>, Writable {
     private final IntOption hogeValue = new IntOption();
     private final IntOption fooValue = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {

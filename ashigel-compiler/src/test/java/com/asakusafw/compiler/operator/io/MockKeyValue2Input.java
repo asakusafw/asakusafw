@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_key_value2</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class MockKeyValue2Input implements ModelInput<MockKeyValue2> {
+public final class MockKeyValue2Input implements ModelInput<MockKeyValue2> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

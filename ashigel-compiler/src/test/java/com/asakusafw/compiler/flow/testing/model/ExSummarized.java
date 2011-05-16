@@ -2,6 +2,7 @@ package com.asakusafw.compiler.flow.testing.model;
 import com.asakusafw.compiler.flow.testing.io.ExSummarizedInput;
 import com.asakusafw.compiler.flow.testing.io.ExSummarizedOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.LongOption;
@@ -16,12 +17,12 @@ import org.apache.hadoop.io.Writable;
 /**
  * ex_summarizedを表すデータモデルクラス。
  */
-@ModelInputLocation(ExSummarizedInput.class)@ModelOutputLocation(ExSummarizedOutput.class)@Summarized(term = @Summarized
-        .Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = 
-            "string", destination = "string"),@Summarized.Folding(aggregator = Summarized.Aggregator.SUM, source = 
-            "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "sid"
-            , destination = "count")}, shuffle = @Key(group = {"string"}))) public class ExSummarized implements 
-        DataModel<ExSummarized>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(ExSummarizedInput.class)@ModelOutputLocation(ExSummarizedOutput.class)@
+        Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.
+            Aggregator.ANY, source = "string", destination = "string"),@Summarized.Folding(aggregator = Summarized.
+            Aggregator.SUM, source = "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.
+            Aggregator.COUNT, source = "sid", destination = "count")}, shuffle = @Key(group = {"string"}))) public class 
+        ExSummarized implements DataModel<ExSummarized>, Writable {
     private final StringOption string = new StringOption();
     private final LongOption value = new LongOption();
     private final LongOption count = new LongOption();

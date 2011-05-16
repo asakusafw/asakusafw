@@ -1,6 +1,7 @@
 package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockKeyInput;
 import com.asakusafw.compiler.operator.io.MockKeyOutput;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.StringOption;
@@ -8,7 +9,8 @@ import org.apache.hadoop.io.Text;
 /**
  * mock_keyを表す射影モデルインターフェース。
  */
-@ModelInputLocation(MockKeyInput.class)@ModelOutputLocation(MockKeyOutput.class) public interface MockKey {
+@DataModelKind("DMDL")@ModelInputLocation(MockKeyInput.class)@ModelOutputLocation(MockKeyOutput.class) public interface 
+        MockKey {
     /**
      * keyを返す。
      * @return key
@@ -40,5 +42,5 @@ import org.apache.hadoop.io.Text;
      * keyを設定する。
      * @param key0 設定する値
      */
-    @SuppressWarnings("deprecation") void setKeyAsString(String key0);
+    void setKeyAsString(String key0);
 }

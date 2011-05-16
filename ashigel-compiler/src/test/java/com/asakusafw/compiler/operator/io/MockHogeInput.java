@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_hoge</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class MockHogeInput implements ModelInput<MockHoge> {
+public final class MockHogeInput implements ModelInput<MockHoge> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

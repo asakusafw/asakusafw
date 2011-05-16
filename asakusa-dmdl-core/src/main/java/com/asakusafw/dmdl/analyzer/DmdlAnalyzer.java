@@ -119,8 +119,7 @@ public class DmdlAnalyzer {
                     definition.name,
                     "The model \"{0}\" is duplicated.",
                     definition.name.identifier));
-        }
-        else {
+        } else {
             world.declareModel(
                     definition,
                     definition.name,
@@ -132,6 +131,7 @@ public class DmdlAnalyzer {
 
     private void computeDependencies(AstModelDefinition<?> definition) {
         assert definition != null;
+        LOG.debug("Computing dependencies: {}", definition.name);
         Set<AstSimpleName> references = new HashSet<AstSimpleName>();
         definition.expression.accept(references, ModelSymbolCollector.INSTANCE);
         modelDependencies.addNode(definition.name.identifier);
@@ -163,6 +163,7 @@ public class DmdlAnalyzer {
     }
 
     private void resolveSymbols() {
+        LOG.debug("Resolving symbols");
         Set<Set<String>> circuits = Graphs.findCircuit(modelDependencies);
         if (circuits.isEmpty() == false) {
             for (Set<String> loop : circuits) {
@@ -189,6 +190,7 @@ public class DmdlAnalyzer {
     private void resolveModelSymbol(ModelDeclaration model) {
         assert model != null;
         AstModelDefinition<?> definition = model.getOriginalAst();
+        LOG.debug("Resolving model definition: {}", definition.name);
         switch (definition.kind) {
         case RECORD:
             resolveRecord(model, definition.asRecord().expression);
@@ -212,9 +214,11 @@ public class DmdlAnalyzer {
             AstExpression<AstRecord> expression) {
         assert model != null;
         assert expression != null;
+        LOG.debug("Resolving record: {}", model.getName());
         RecordExpressionResolver resolver = new RecordExpressionResolver();
         expression.accept(model, resolver);
         ProjectionsTrait projections = new ProjectionsTrait(expression, resolver.projections);
+        LOG.debug("Record {} has projections: {}", model.getName(), projections.getProjections());
         model.putTrait(ProjectionsTrait.class, projections);
     }
 
@@ -223,8 +227,10 @@ public class DmdlAnalyzer {
             AstExpression<AstJoin> expression) {
         assert model != null;
         assert expression != null;
+        LOG.debug("Resolving joined: {}", model.getName());
         List<ReduceTerm<AstJoin>> results = new ArrayList<ReduceTerm<AstJoin>>();
         for (AstJoin term : extract(expression)) {
+            LOG.debug("Resolving joined term: {} -> {}", model.getName(), term.reference.name);
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
             if (source.findDeclaration() == null) {
                 report(new Diagnostic(
@@ -380,8 +386,10 @@ public class DmdlAnalyzer {
             AstExpression<AstSummarize> expression) {
         assert model != null;
         assert expression != null;
+        LOG.debug("Resolving summarized: {}", model.getName());
         List<ReduceTerm<AstSummarize>> results = new ArrayList<ReduceTerm<AstSummarize>>();
         for (AstSummarize term : extract(expression)) {
+            LOG.debug("Resolving summarized term: {} -> {}", model.getName(), term.reference.name);
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
             if (source.findDeclaration() == null) {
                 report(new Diagnostic(
@@ -564,6 +572,7 @@ public class DmdlAnalyzer {
 
     private void resolveAttributes() {
         for (ModelDeclaration model : context.getWorld().getDeclaredModels()) {
+            LOG.debug("Resolving attributes: {}", model.getName());
             resolveAttributes(model);
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 resolveAttributes(property);
@@ -575,6 +584,7 @@ public class DmdlAnalyzer {
         assert declaration != null;
         for (AstAttribute attribute : declaration.getAttributes()) {
             String name = attribute.name.toString();
+            LOG.debug("Resolving attribute: {} -> {}", declaration.getName(), name);
             AttributeDriver driver = context.findAttributeDriver(attribute);
             if (driver == null) {
                 report(new Diagnostic(
@@ -584,6 +594,7 @@ public class DmdlAnalyzer {
                         name));
                 continue;
             }
+            LOG.debug("Processing attribute: {} -> {}", name, driver);
             driver.process(context.getWorld(), declaration, attribute);
         }
     }

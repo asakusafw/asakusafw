@@ -2,6 +2,7 @@ package com.asakusafw.compiler.flow.testing.model;
 import com.asakusafw.compiler.flow.testing.io.Ex1Input;
 import com.asakusafw.compiler.flow.testing.io.Ex1Output;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -15,8 +16,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * ex1を表すデータモデルクラス。
  */
-@ModelInputLocation(Ex1Input.class)@ModelOutputLocation(Ex1Output.class) public class Ex1 implements DataModel<Ex1>, 
-        Writable {
+@DataModelKind("DMDL")@ModelInputLocation(Ex1Input.class)@ModelOutputLocation(Ex1Output.class) public class Ex1 
+        implements DataModel<Ex1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     private final StringOption string = new StringOption();

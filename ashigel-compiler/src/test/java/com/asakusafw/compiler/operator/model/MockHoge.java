@@ -2,6 +2,7 @@ package com.asakusafw.compiler.operator.model;
 import com.asakusafw.compiler.operator.io.MockHogeInput;
 import com.asakusafw.compiler.operator.io.MockHogeOutput;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
@@ -12,8 +13,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * mock_hogeを表すデータモデルクラス。
  */
-@ModelInputLocation(MockHogeInput.class)@ModelOutputLocation(MockHogeOutput.class) public class MockHoge implements
-        DataModel<MockHoge>, MockProjection, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(MockHogeInput.class)@ModelOutputLocation(MockHogeOutput.class) public class 
+        MockHoge implements DataModel<MockHoge>, MockProjection, Writable {
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.value.setNull();

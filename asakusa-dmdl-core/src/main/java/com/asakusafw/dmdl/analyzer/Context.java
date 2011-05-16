@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstType;
 import com.asakusafw.dmdl.semantics.Declaration;
@@ -32,6 +35,8 @@ import com.asakusafw.dmdl.spi.TypeDriver;
  * A context of semantic analyzer.
  */
 public class Context {
+
+    static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
     private final DmdlSemantics world;
 
@@ -109,6 +114,7 @@ public class Context {
         assert drivers != null;
         List<TypeDriver> results = new ArrayList<TypeDriver>();
         for (TypeDriver driver : drivers) {
+            LOG.debug("Activating type driver: {}", driver.getClass().getName());
             results.add(driver);
         }
         return results;
@@ -119,6 +125,7 @@ public class Context {
         assert flatDrivers != null;
         Map<String, List<AttributeDriver>> group = new HashMap<String, List<AttributeDriver>>();
         for (AttributeDriver driver : flatDrivers) {
+            LOG.debug("Activating attribute driver: {}", driver.getClass().getName());
             String target = driver.getTargetName();
             List<AttributeDriver> groupDrivers = group.get(target);
             if (groupDrivers == null) {
@@ -131,12 +138,12 @@ public class Context {
         Map<String, AttributeDriver> results = new HashMap<String, AttributeDriver>();
         for (Map.Entry<String, List<AttributeDriver>> entry : group.entrySet()) {
             String target = entry.getKey();
+            LOG.debug("Enabling attribute: {}", target);
             List<AttributeDriver> targetDrivers = entry.getValue();
             AttributeDriver singular;
             if (targetDrivers.size() == 1) {
                 singular = targetDrivers.get(0);
-            }
-            else {
+            } else {
                 assert targetDrivers.isEmpty() == false;
                 singular = new CompositeAttributeDriver(targetDrivers);
             }

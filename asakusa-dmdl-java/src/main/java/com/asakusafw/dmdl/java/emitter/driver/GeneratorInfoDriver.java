@@ -18,14 +18,12 @@ package com.asakusafw.dmdl.java.emitter.driver;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.runtime.model.DataModelKind;
 import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.Type;
@@ -33,7 +31,7 @@ import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
 /**
- * Attaches a <code>&#64;Generated</code> annotation.
+ * Attaches a <code>&#64;DataModelKind</code> annotation.
  * @since 0.2.0
  */
 public class GeneratorInfoDriver implements JavaDataModelDriver {
@@ -54,10 +52,8 @@ public class GeneratorInfoDriver implements JavaDataModelDriver {
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
         ModelFactory f = context.getModelFactory();
         return new AttributeBuilder(f)
-            .annotation(context.resolve(Generated.class),
-                "value", f.newArrayInitializer(new Expression[] {
-                        Models.toLiteral(f, GENERATOR_IDENTIFIER),
-                }))
+            .annotation(context.resolve(DataModelKind.class),
+                    Models.toLiteral(f, GENERATOR_IDENTIFIER))
             .toAnnotations();
     }
 
