@@ -35,6 +35,8 @@ import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -108,6 +110,28 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             }
             @Override
             Object extract(LongOption holder) {
+                return holder.get();
+            }
+        });
+        map.put(FloatOption.class, new ValueDriver<FloatOption>(PropertyType.FLOAT) {
+            @SuppressWarnings("deprecation")
+            @Override
+            void modify(FloatOption holder, Object value) {
+                holder.modify(cast(Number.class, value).floatValue());
+            }
+            @Override
+            Object extract(FloatOption holder) {
+                return holder.get();
+            }
+        });
+        map.put(DoubleOption.class, new ValueDriver<DoubleOption>(PropertyType.DOUBLE) {
+            @SuppressWarnings("deprecation")
+            @Override
+            void modify(DoubleOption holder, Object value) {
+                holder.modify(cast(Number.class, value).doubleValue());
+            }
+            @Override
+            Object extract(DoubleOption holder) {
                 return holder.get();
             }
         });

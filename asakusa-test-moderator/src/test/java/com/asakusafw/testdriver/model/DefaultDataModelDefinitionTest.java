@@ -69,6 +69,8 @@ public class DefaultDataModelDefinitionTest {
         assertThat(def.getType(p("p_long")), is(PropertyType.LONG));
         assertThat(def.getType(p("p_byte")), is(PropertyType.BYTE));
         assertThat(def.getType(p("p_short")), is(PropertyType.SHORT));
+        assertThat(def.getType(p("p_float")), is(PropertyType.FLOAT));
+        assertThat(def.getType(p("p_double")), is(PropertyType.DOUBLE));
         assertThat(def.getType(p("p_decimal")), is(PropertyType.DECIMAL));
         assertThat(def.getType(p("p_text")), is(PropertyType.STRING));
         assertThat(def.getType(p("p_boolean")), is(PropertyType.BOOLEAN));
@@ -87,6 +89,8 @@ public class DefaultDataModelDefinitionTest {
         object.setPLong(200);
         object.setPByte((byte) 127);
         object.setPShort((short) 300);
+        object.setPFloat(1.5f);
+        object.setPDouble(2.5d);
         object.setPDecimal(new BigDecimal("3.141592"));
         object.setPTextAsString("Hello, world!");
         object.setPBoolean(true);
@@ -98,6 +102,8 @@ public class DefaultDataModelDefinitionTest {
         assertThat(ref.getValue(p("p_long")), is((Object) 200L));
         assertThat(ref.getValue(p("p_byte")), is((Object) (byte) 127));
         assertThat(ref.getValue(p("p_short")), is((Object) (short) 300));
+        assertThat(ref.getValue(p("p_float")), is((Object) 1.5f));
+        assertThat(ref.getValue(p("p_double")), is((Object) 2.5d));
         assertThat(ref.getValue(p("p_decimal")), is((Object) new BigDecimal("3.141592")));
         assertThat(ref.getValue(p("p_text")), is((Object) "Hello, world!"));
         assertThat(ref.getValue(p("p_boolean")), is((Object) true));
@@ -118,6 +124,9 @@ public class DefaultDataModelDefinitionTest {
         object.setPLong(200);
         object.setPByte((byte) 127);
         object.setPShort((short) 300);
+        object.setPFloat(1.5f);
+        object.setPDouble(2.5d);
+        object.setPByte((byte) 127);
         object.setPDecimal(new BigDecimal("3.141592"));
         object.setPTextAsString("Hello, world!");
         object.setPBoolean(true);

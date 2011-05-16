@@ -28,6 +28,8 @@ public final class VarietyInput implements ModelInput<Variety> {
         parser.fill(model.getPByteOption());
         parser.fill(model.getPShortOption());
         parser.fill(model.getPDecimalOption());
+        parser.fill(model.getPFloatOption());
+        parser.fill(model.getPDoubleOption());
         parser.fill(model.getPTextOption());
         parser.fill(model.getPBooleanOption());
         parser.fill(model.getPDateOption());
