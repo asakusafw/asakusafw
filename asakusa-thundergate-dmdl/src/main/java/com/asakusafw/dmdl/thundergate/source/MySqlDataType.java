@@ -46,6 +46,16 @@ public enum MySqlDataType {
     LONG("bigint", PropertyTypeKind.LONG),
 
     /**
+     * 4バイト整数。
+     */
+    FLOAT("float", PropertyTypeKind.FLOAT),
+
+    /**
+     * 8バイト整数。
+     */
+    DOUBLE("double", PropertyTypeKind.DOUBLE),
+
+    /**
      * 10進数。
      */
     DECIMAL("decimal", PropertyTypeKind.BIG_DECIMAL),
