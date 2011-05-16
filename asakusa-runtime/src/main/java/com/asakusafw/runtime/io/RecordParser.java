@@ -23,6 +23,8 @@ import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -68,64 +70,80 @@ public interface RecordParser extends Closeable {
      * </p>
      * 次のレコードが存在する場合のみ{@code true}を返す。
      * @return 次のレコードが存在する場合のみ{@code true}
-     * @throws RecordFormatException TSVの形式が正しくない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの形式が正しくない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     boolean next() throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(BooleanOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(ByteOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(ShortOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(IntOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(LongOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
+     */
+    void fill(FloatOption option) throws RecordFormatException, IOException;
+
+    /**
+     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
+     * @param option 格納先のオブジェクト
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
+     */
+    void fill(DoubleOption option) throws RecordFormatException, IOException;
+
+    /**
+     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
+     * @param option 格納先のオブジェクト
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(DecimalOption option) throws RecordFormatException, IOException;
 
     /**
      * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(StringOption option) throws RecordFormatException, IOException;
 
@@ -135,8 +153,8 @@ public interface RecordParser extends Closeable {
      * 年、月、日のいずれかに0が指定された場合、同セルを空のセルとして取扱う。
      * </p>
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(DateOption option) throws RecordFormatException, IOException;
 
@@ -146,8 +164,8 @@ public interface RecordParser extends Closeable {
      * 年、月、日のいずれかに0が指定された場合、同セルを空のセルとして取扱う。
      * </p>
      * @param option 格納先のオブジェクト
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * @throws RecordFormatException レコードの内容を解釈できない場合
+     * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(DateTimeOption option) throws RecordFormatException, IOException;
 

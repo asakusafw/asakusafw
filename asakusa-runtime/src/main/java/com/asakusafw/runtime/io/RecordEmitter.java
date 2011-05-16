@@ -23,6 +23,8 @@ import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -99,6 +101,20 @@ public interface RecordEmitter extends Closeable {
      * @throws IOException 書き出しに失敗した場合
      */
     void emit(LongOption option) throws IOException;
+
+    /**
+     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
+     * @param option 書き出す対象のオブジェクト
+     * @throws IOException 書き出しに失敗した場合
+     */
+    void emit(FloatOption option) throws IOException;
+
+    /**
+     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
+     * @param option 書き出す対象のオブジェクト
+     * @throws IOException 書き出しに失敗した場合
+     */
+    void emit(DoubleOption option) throws IOException;
 
     /**
      * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
