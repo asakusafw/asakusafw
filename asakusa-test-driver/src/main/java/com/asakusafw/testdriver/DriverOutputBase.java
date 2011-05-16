@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -33,25 +32,23 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverOutputBase.class);
-    
+
     /** 期待値URI */
     protected URI expectedUri;
     /** 検証ルールURI */
     protected URI verifyRuleUri;
-    /** エクスポータ記述 */    
+    /** エクスポータ記述 */
     protected ExporterDescription exporterDescription;
-        
+
     /**
      * コンストラクタ
      * 
      * @param driverContext テストドライバコンテキスト。
-     * @param descDriver フロー定義ドライバ。
      * @param name 入力の名前。
      * @param modelType モデルクラス。
      */
-    public DriverOutputBase(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
-            Class<T> modelType) {
-        super(driverContext, descDriver, name, modelType);
+    public DriverOutputBase(TestDriverContext driverContext, String name, Class<T> modelType) {
+        super(driverContext, name, modelType);
     }
 
     /**
@@ -95,7 +92,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected void setExporterDescription(ExporterDescription exporterDescription) {
         this.exporterDescription = exporterDescription;
     }
-    
+
     /**
      * set expected URI from expected path and fragment string.
      * 
@@ -129,5 +126,5 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
                     + ", verifyRuleFlagment:" + verifyRuleFlagment, e);
         }
     }
-    
+
 }

@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -34,13 +33,11 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 public abstract class DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverInputBase.class);
-    
+
     /** データ名 */
     protected String name;
     /** モデル型 */
     protected Class<T> modelType;
-    /** フロー記述ドライバ */
-    protected FlowDescriptionDriver descDriver;
     /** テストドライバコンテキスト */
     protected TestDriverContext driverContext;
 
@@ -53,18 +50,15 @@ public abstract class DriverInputBase<T> {
      * コンストラクタ
      * 
      * @param driverContext テストドライバコンテキスト。
-     * @param descDriver フロー定義ドライバ。
      * @param name 入力の名前。
      * @param modelType モデルクラス。
      */
-    public DriverInputBase(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
-            Class<T> modelType) {
+    public DriverInputBase(TestDriverContext driverContext, String name, Class<T> modelType) {
         this.name = name;
         this.modelType = modelType;
-        this.descDriver = descDriver;
         this.driverContext = driverContext;
     }
-    
+
     /**
      * @return the name
      */
@@ -91,20 +85,6 @@ public abstract class DriverInputBase<T> {
      */
     protected void setModelType(Class<T> modelType) {
         this.modelType = modelType;
-    }
-
-    /**
-     * @return the descDriver
-     */
-    protected FlowDescriptionDriver getDescDriver() {
-        return descDriver;
-    }
-
-    /**
-     * @param descDriver the descDriver to set
-     */
-    protected void setDescDriver(FlowDescriptionDriver descDriver) {
-        this.descDriver = descDriver;
     }
 
     /**
@@ -148,7 +128,7 @@ public abstract class DriverInputBase<T> {
     protected void setImporterDescription(ImporterDescription importerDescription) {
         this.importerDescription = importerDescription;
     }
-    
+
     /**
      * set source URI from source path and fragment string.
      * 

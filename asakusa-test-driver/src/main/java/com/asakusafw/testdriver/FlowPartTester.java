@@ -38,7 +38,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  * フロー部品用のテストドライバクラス。
  * @since 0.2.0
  */
-public class FlowPartDriver extends TestDriverBase {
+public class FlowPartTester extends TestDriverBase {
 
     private List<FlowPartDriverInput<?>> inputs = new LinkedList<FlowPartDriverInput<?>>();
     private List<FlowPartDriverOutput<?>> outputs = new LinkedList<FlowPartDriverOutput<?>>();
@@ -53,7 +53,7 @@ public class FlowPartDriver extends TestDriverBase {
      * @param modelType ModelType。
      * @return テスト入力データオブジェクト。
      */
-    public <T> DriverInputBase<T> input(String name, Class<T> modelType) {
+    public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
         FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(driverContext, descDriver, name, modelType);
         inputs.add(input);
         return input;

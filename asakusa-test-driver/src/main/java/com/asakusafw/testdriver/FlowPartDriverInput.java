@@ -32,6 +32,9 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
 
+    /** フロー記述ドライバ */
+    protected FlowDescriptionDriver descDriver;
+    
     /**
      * コンストラクタ
      * 
@@ -42,9 +45,24 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> {
      */
     public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        super(driverContext, descDriver, name, modelType);
+        super(driverContext, name, modelType);
+        this.descDriver = descDriver;
     }
     
+    /**
+     * @return the descDriver
+     */
+    protected FlowDescriptionDriver getDescDriver() {
+        return descDriver;
+    }
+
+    /**
+     * @param descDriver the descDriver to set
+     */
+    protected void setDescDriver(FlowDescriptionDriver descDriver) {
+        this.descDriver = descDriver;
+    }
+
     /**
      * テスト実行時に使用する入力データを指定する。
      * 
