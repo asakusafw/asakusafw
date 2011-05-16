@@ -181,8 +181,8 @@ public final class FloatOption extends ValueOption<FloatOption> {
             }
             return nullValue ? -1 : +1;
         }
-        int left = Float.floatToIntBits(value);
-        int right = Float.floatToIntBits(o.value);
+        int left = encode(value) - Integer.MIN_VALUE;
+        int right = encode(o.value) - Integer.MIN_VALUE;
         if (left == right) {
             return 0;
         }
@@ -207,7 +207,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            out.writeInt(Float.floatToIntBits(value) - Integer.MIN_VALUE);
+            out.writeInt(encode(value));
         }
     }
 
@@ -215,7 +215,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
     @Override
     public void readFields(DataInput in) throws IOException {
         if (in.readBoolean()) {
-            modify(Float.intBitsToFloat(in.readInt() + Integer.MIN_VALUE));
+            modify(decode(in.readInt()));
         } else {
             setNull();
         }
@@ -233,7 +233,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
             setNull();
             return 1;
         } else if (limit - offset >= 1 + 1) {
-            modify(Float.intBitsToFloat(ByteArrayUtil.readInt(bytes, offset + 1) + Integer.MIN_VALUE));
+            modify(decode(ByteArrayUtil.readInt(bytes, offset + 1)));
             return 4 + 1;
         } else {
             throw new IOException(MessageFormat.format(
@@ -267,5 +267,17 @@ public final class FloatOption extends ValueOption<FloatOption> {
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
         return WritableComparator.compareBytes(b1, s1, l1, b2, s2, l2);
+    }
+
+    private static int encode(float decoded) {
+        int bits = Float.floatToIntBits(decoded);
+        bits ^= Integer.MIN_VALUE | (bits >> Integer.SIZE - 1);
+        return bits;
+    }
+
+    private static float decode(int encoded) {
+        int bits = encoded;
+        bits ^= Integer.MIN_VALUE | ~(bits >> Integer.SIZE - 1);
+        return Float.intBitsToFloat(bits);
     }
 }

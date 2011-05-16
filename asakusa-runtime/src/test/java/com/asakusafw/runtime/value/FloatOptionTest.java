@@ -109,11 +109,13 @@ public class FloatOptionTest extends ValueOptionTestRoot {
         FloatOption b = new FloatOption();
         FloatOption c = new FloatOption();
         FloatOption d = new FloatOption();
+        FloatOption e = new FloatOption();
 
         a.modify(-10);
         b.modify(0);
         c.modify(30);
         d.modify(-10);
+        e.modify(-30);
 
         assertThat(compare(a, b), lessThan(0));
         assertThat(compare(b, c), lessThan(0));
@@ -122,6 +124,7 @@ public class FloatOptionTest extends ValueOptionTestRoot {
         assertThat(compare(b, a), greaterThan(0));
         assertThat(compare(c, b), greaterThan(0));
         assertThat(compare(a, d), is(0));
+        assertThat(compare(d, e), greaterThan(0));
     }
 
     /**

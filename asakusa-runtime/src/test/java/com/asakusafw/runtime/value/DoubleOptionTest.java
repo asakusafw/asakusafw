@@ -109,11 +109,13 @@ public class DoubleOptionTest extends ValueOptionTestRoot {
         DoubleOption b = new DoubleOption();
         DoubleOption c = new DoubleOption();
         DoubleOption d = new DoubleOption();
+        DoubleOption e = new DoubleOption();
 
-        a.modify(Long.MIN_VALUE);
+        a.modify(-10);
         b.modify(0);
         c.modify(50);
-        d.modify(Long.MIN_VALUE);
+        d.modify(-10);
+        e.modify(-30);
 
         assertThat(compare(a, b), lessThan(0));
         assertThat(compare(b, c), lessThan(0));
@@ -122,6 +124,7 @@ public class DoubleOptionTest extends ValueOptionTestRoot {
         assertThat(compare(b, a), greaterThan(0));
         assertThat(compare(c, b), greaterThan(0));
         assertThat(compare(a, d), is(0));
+        assertThat(compare(a, e), greaterThan(0));
     }
 
     /**

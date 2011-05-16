@@ -166,8 +166,8 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
             }
             return nullValue ? -1 : +1;
         }
-        long left = Double.doubleToLongBits(value);
-        long right = Double.doubleToLongBits(o.value);
+        long left = encode(value) - Long.MIN_VALUE;
+        long right = encode(o.value) - Long.MIN_VALUE;
         if (left == right) {
             return 0;
         }
@@ -192,7 +192,7 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            out.writeLong(Double.doubleToLongBits(value) - Long.MIN_VALUE);
+            out.writeLong(encode(value));
         }
     }
 
@@ -200,7 +200,7 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
     @Override
     public void readFields(DataInput in) throws IOException {
         if (in.readBoolean()) {
-            modify(Double.longBitsToDouble(in.readLong() + Long.MIN_VALUE));
+            modify(decode(in.readLong()));
         } else {
             setNull();
         }
@@ -218,7 +218,7 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
             setNull();
             return 1;
         } else if (limit - offset >= 1 + 1) {
-            modify(Double.longBitsToDouble(ByteArrayUtil.readLong(bytes, offset + 1) + Long.MIN_VALUE));
+            modify(decode(ByteArrayUtil.readLong(bytes, offset + 1)));
             return 8 + 1;
         } else {
             throw new IOException(MessageFormat.format(
@@ -252,5 +252,17 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
         return WritableComparator.compareBytes(b1, s1, l1, b2, s2, l2);
+    }
+
+    private static long encode(double decoded) {
+        long bits = Double.doubleToLongBits(decoded);
+        bits ^= Long.MIN_VALUE | (bits >> Long.SIZE - 1);
+        return bits;
+    }
+
+    private static double decode(long encoded) {
+        long bits = encoded;
+        bits ^= Long.MIN_VALUE | ~(bits >> Long.SIZE - 1);
+        return Double.longBitsToDouble(bits);
     }
 }
