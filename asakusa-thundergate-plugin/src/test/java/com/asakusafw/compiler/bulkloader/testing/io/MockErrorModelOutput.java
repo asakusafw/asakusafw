@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_error_model</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockErrorModelOutput implements ModelOutput<MockErrorModel> {
+public final class MockErrorModelOutput implements ModelOutput<MockErrorModel> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

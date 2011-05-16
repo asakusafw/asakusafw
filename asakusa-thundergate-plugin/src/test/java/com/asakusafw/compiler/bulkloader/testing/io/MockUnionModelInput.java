@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_union_model</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class MockUnionModelInput implements ModelInput<MockUnionModel> {
+public final class MockUnionModelInput implements ModelInput<MockUnionModel> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。
