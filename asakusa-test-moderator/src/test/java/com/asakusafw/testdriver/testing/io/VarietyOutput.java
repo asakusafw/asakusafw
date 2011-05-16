@@ -25,6 +25,8 @@ public final class VarietyOutput implements ModelOutput<Variety> {
         emitter.emit(model.getPByteOption());
         emitter.emit(model.getPShortOption());
         emitter.emit(model.getPDecimalOption());
+        emitter.emit(model.getPFloatOption());
+        emitter.emit(model.getPDoubleOption());
         emitter.emit(model.getPTextOption());
         emitter.emit(model.getPBooleanOption());
         emitter.emit(model.getPDateOption());

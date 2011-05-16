@@ -35,6 +35,8 @@ import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -75,13 +77,13 @@ public class TsvEmitter implements RecordEmitter {
 
     private static final int BUFFER_SIZE = 2048;
 
-    private Writer writer;
+    private final Writer writer;
 
-    private CharsetDecoder decoder;
+    private final CharsetDecoder decoder;
 
-    private StringBuilder lineBuffer;
+    private final StringBuilder lineBuffer;
 
-    private char[] writeBuffer;
+    private final char[] writeBuffer;
 
     private boolean headOfLine;
 
@@ -175,6 +177,24 @@ public class TsvEmitter implements RecordEmitter {
 
     @Override
     public void emit(LongOption option) throws IOException {
+        startCell();
+        if (emitNull(option)) {
+            return;
+        }
+        lineBuffer.append(option.get());
+    }
+
+    @Override
+    public void emit(FloatOption option) throws IOException {
+        startCell();
+        if (emitNull(option)) {
+            return;
+        }
+        lineBuffer.append(option.get());
+    }
+
+    @Override
+    public void emit(DoubleOption option) throws IOException {
         startCell();
         if (emitNull(option)) {
             return;

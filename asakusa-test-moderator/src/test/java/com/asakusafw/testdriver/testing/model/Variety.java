@@ -10,6 +10,8 @@ import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -32,6 +34,8 @@ import org.apache.hadoop.io.Writable;
     private final ByteOption pByte = new ByteOption();
     private final ShortOption pShort = new ShortOption();
     private final DecimalOption pDecimal = new DecimalOption();
+    private final FloatOption pFloat = new FloatOption();
+    private final DoubleOption pDouble = new DoubleOption();
     private final StringOption pText = new StringOption();
     private final BooleanOption pBoolean = new BooleanOption();
     private final DateOption pDate = new DateOption();
@@ -42,6 +46,8 @@ import org.apache.hadoop.io.Writable;
         this.pByte.setNull();
         this.pShort.setNull();
         this.pDecimal.setNull();
+        this.pFloat.setNull();
+        this.pDouble.setNull();
         this.pText.setNull();
         this.pBoolean.setNull();
         this.pDate.setNull();
@@ -53,6 +59,8 @@ import org.apache.hadoop.io.Writable;
         this.pByte.copyFrom(other.pByte);
         this.pShort.copyFrom(other.pShort);
         this.pDecimal.copyFrom(other.pDecimal);
+        this.pFloat.copyFrom(other.pFloat);
+        this.pDouble.copyFrom(other.pDouble);
         this.pText.copyFrom(other.pText);
         this.pBoolean.copyFrom(other.pBoolean);
         this.pDate.copyFrom(other.pDate);
@@ -204,6 +212,64 @@ import org.apache.hadoop.io.Writable;
         this.pDecimal.copyFrom(option);
     }
     /**
+     * p_floatを返す。
+     * @return p_float
+     * @throws NullPointerException p_floatの値が<code>null</code>である場合
+     */
+    public float getPFloat() {
+        return this.pFloat.get();
+    }
+    /**
+     * p_floatを設定する。
+     * @param value 設定する値
+     */
+    @SuppressWarnings("deprecation") public void setPFloat(float value) {
+        this.pFloat.modify(value);
+    }
+    /**
+     * <code>null</code>を許すp_floatを返す。
+     * @return p_float
+     */
+    public FloatOption getPFloatOption() {
+        return this.pFloat;
+    }
+    /**
+     * p_floatを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     */
+    @SuppressWarnings("deprecation") public void setPFloatOption(FloatOption option) {
+        this.pFloat.copyFrom(option);
+    }
+    /**
+     * p_doubleを返す。
+     * @return p_double
+     * @throws NullPointerException p_doubleの値が<code>null</code>である場合
+     */
+    public double getPDouble() {
+        return this.pDouble.get();
+    }
+    /**
+     * p_doubleを設定する。
+     * @param value 設定する値
+     */
+    @SuppressWarnings("deprecation") public void setPDouble(double value) {
+        this.pDouble.modify(value);
+    }
+    /**
+     * <code>null</code>を許すp_doubleを返す。
+     * @return p_double
+     */
+    public DoubleOption getPDoubleOption() {
+        return this.pDouble;
+    }
+    /**
+     * p_doubleを設定する。
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     */
+    @SuppressWarnings("deprecation") public void setPDoubleOption(DoubleOption option) {
+        this.pDouble.copyFrom(option);
+    }
+    /**
      * p_textを返す。
      * @return p_text
      * @throws NullPointerException p_textの値が<code>null</code>である場合
@@ -333,6 +399,10 @@ import org.apache.hadoop.io.Writable;
         result.append(this.pShort);
         result.append(", pDecimal=");
         result.append(this.pDecimal);
+        result.append(", pFloat=");
+        result.append(this.pFloat);
+        result.append(", pDouble=");
+        result.append(this.pDouble);
         result.append(", pText=");
         result.append(this.pText);
         result.append(", pBoolean=");
@@ -352,6 +422,8 @@ import org.apache.hadoop.io.Writable;
         result = prime * result + pByte.hashCode();
         result = prime * result + pShort.hashCode();
         result = prime * result + pDecimal.hashCode();
+        result = prime * result + pFloat.hashCode();
+        result = prime * result + pDouble.hashCode();
         result = prime * result + pText.hashCode();
         result = prime * result + pBoolean.hashCode();
         result = prime * result + pDate.hashCode();
@@ -382,6 +454,12 @@ import org.apache.hadoop.io.Writable;
             return false;
         }
         if(this.pDecimal.equals(other.pDecimal)== false) {
+            return false;
+        }
+        if(this.pFloat.equals(other.pFloat)== false) {
+            return false;
+        }
+        if(this.pDouble.equals(other.pDouble)== false) {
             return false;
         }
         if(this.pText.equals(other.pText)== false) {
@@ -419,6 +497,8 @@ import org.apache.hadoop.io.Writable;
         pByte.write(out);
         pShort.write(out);
         pDecimal.write(out);
+        pFloat.write(out);
+        pDouble.write(out);
         pText.write(out);
         pBoolean.write(out);
         pDate.write(out);
@@ -430,6 +510,8 @@ import org.apache.hadoop.io.Writable;
         pByte.readFields(in);
         pShort.readFields(in);
         pDecimal.readFields(in);
+        pFloat.readFields(in);
+        pDouble.readFields(in);
         pText.readFields(in);
         pBoolean.readFields(in);
         pDate.readFields(in);

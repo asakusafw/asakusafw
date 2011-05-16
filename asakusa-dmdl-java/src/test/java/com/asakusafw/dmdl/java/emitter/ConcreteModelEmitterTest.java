@@ -78,6 +78,12 @@ public class ConcreteModelEmitterTest extends GeneratorTesterRoot {
         object.set("type_long", 200L);
         assertThat(object.get("type_long"), eq(200L));
 
+        object.set("type_float", 300.f);
+        assertThat(object.get("type_float"), eq(300.f));
+
+        object.set("type_double", 400.d);
+        assertThat(object.get("type_double"), eq(400.d));
+
         object.set("type_decimal", new BigDecimal("1234.567"));
         assertThat(object.get("type_decimal"), eq(new BigDecimal("1234.567")));
 

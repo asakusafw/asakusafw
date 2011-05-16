@@ -41,6 +41,16 @@ public enum PropertyTypeKind {
     LONG(false),
 
     /**
+     * 単精度浮動小数点数。
+     */
+    FLOAT(false),
+
+    /**
+     * 倍精度浮動小数点数。
+     */
+    DOUBLE(false),
+
+    /**
      * 任意の10進数。
      */
     BIG_DECIMAL(true),
