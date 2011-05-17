@@ -55,7 +55,19 @@ public enum RuleSheetFormat {
      * and it must be one of {@link NullityConditionKind#getOptions()}.
      */
     NULLITY_CONDITION("NULLの比較", 2, 2),
+
+    /**
+     * Title of comments of property.
+     * Each item must be set on the same column below this cell.
+     */
+    COMMENTS("コメント", 2, 3),
     ;
+
+    /**
+     * Format ID which this extractor supports.
+     * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
+     */
+    public static final String FORMAT_VERSION = "EVR-1.0.0";
 
     private final String title;
 

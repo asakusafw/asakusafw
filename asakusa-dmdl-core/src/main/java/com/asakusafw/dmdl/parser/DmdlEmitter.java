@@ -377,7 +377,7 @@ public class DmdlEmitter {
 
     private static class Context {
 
-        private PrintWriter writer;
+        private final PrintWriter writer;
 
         private int indent;
 

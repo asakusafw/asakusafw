@@ -201,7 +201,7 @@ public class TestDataHolder {
      * PreparedStatementにmodelObjectの値を設定する。
      * @param ps PreparedStetement
      * @param model Modelオブジェクト
-     * @throws SQLException
+     * @throws SQLException パラメーターの設定に失敗した場合
      */
     private void setModelValue(PreparedStatement ps, Writable model) throws SQLException {
         int parameterIndex = 0;

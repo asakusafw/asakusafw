@@ -28,6 +28,8 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.Text;
 
@@ -37,6 +39,8 @@ import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
@@ -73,6 +77,12 @@ finally {
 @SuppressWarnings("deprecation")
 public final class TsvParser implements RecordParser {
 
+    private static final Pattern SPECIAL_FLOAT = Pattern.compile("(\\+?Inf.*)|(-Inf.*)|((\\+|-)?[Nn]a[Nn])");
+
+    private static final int SPECIAL_FLOAT_POSITIVE_INF = 1;
+
+    private static final int SPECIAL_FLOAT_NEGATIVE_INF = 2;
+
     private static final Charset TEXT_ENCODE = Charset.forName("UTF-8");
 
     private static final int INITIAL_BUFFER_SIZE = 2048;
@@ -89,7 +99,7 @@ public final class TsvParser implements RecordParser {
 
     private CharBuffer wrappedCharBuffer;
 
-    private ByteBuffer encodeBuffer;
+    private final ByteBuffer encodeBuffer;
 
     /**
      * インスタンスを生成する。
@@ -232,6 +242,68 @@ public final class TsvParser implements RecordParser {
             value = -value;
         }
         option.modify(value);
+        fillLookAhead();
+    }
+
+    @Override
+    public void fill(FloatOption option) throws RecordFormatException, IOException {
+        checkCellStart();
+        if (applyNull(option)) {
+            return;
+        }
+        assertHasRest(option, lookAhead);
+        charBuffer[0] = (char) lookAhead;
+        int length = readString(1, option);
+        String string = new String(charBuffer, 0, length + 1);
+        try {
+            option.modify(Float.parseFloat(string));
+        } catch (NumberFormatException e) {
+            Matcher matcher = SPECIAL_FLOAT.matcher(string);
+            if (matcher.matches()) {
+                if (matcher.group(SPECIAL_FLOAT_POSITIVE_INF) != null) {
+                    option.modify(Float.POSITIVE_INFINITY);
+                } else if (matcher.group(SPECIAL_FLOAT_NEGATIVE_INF) != null) {
+                    option.modify(Float.NEGATIVE_INFINITY);
+                } else {
+                    option.modify(Float.NaN);
+                }
+            } else {
+                throw new RecordFormatException(MessageFormat.format(
+                        "Invalid character in floating-point context {0}",
+                        string), e);
+            }
+        }
+        fillLookAhead();
+    }
+
+    @Override
+    public void fill(DoubleOption option) throws RecordFormatException, IOException {
+        checkCellStart();
+        if (applyNull(option)) {
+            return;
+        }
+        assertHasRest(option, lookAhead);
+        charBuffer[0] = (char) lookAhead;
+        int length = readString(1, option);
+        String string = new String(charBuffer, 0, length + 1);
+        try {
+            option.modify(Double.parseDouble(string));
+        } catch (NumberFormatException e) {
+            Matcher matcher = SPECIAL_FLOAT.matcher(string);
+            if (matcher.matches()) {
+                if (matcher.group(SPECIAL_FLOAT_POSITIVE_INF) != null) {
+                    option.modify(Double.POSITIVE_INFINITY);
+                } else if (matcher.group(SPECIAL_FLOAT_NEGATIVE_INF) != null) {
+                    option.modify(Double.NEGATIVE_INFINITY);
+                } else {
+                    option.modify(Double.NaN);
+                }
+            } else {
+                throw new RecordFormatException(MessageFormat.format(
+                        "Invalid character in floating-point context {0}",
+                        string), e);
+            }
+        }
         fillLookAhead();
     }
 

@@ -191,6 +191,17 @@ public class TableSourceTest {
     }
 
     /**
+     * re-closed.
+     * @throws Exception if occur
+     */
+    @Test
+    public void reclose() throws Exception {
+        TableSource<Simple> source = new TableSource<Simple>(info("NUMBER", "TEXT"), h2.open());
+        source.close();
+        source.close();
+    }
+
+    /**
      * dropped.
      * @throws Exception if occur
      */

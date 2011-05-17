@@ -1,3 +1,5 @@
+-- package com.asakusafw.compiler.bulkloader
+
 @namespace(value = testing)
 system_columns = {
     @thundergate.name(value = "SID")

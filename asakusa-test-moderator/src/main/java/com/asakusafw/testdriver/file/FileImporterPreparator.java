@@ -25,6 +25,8 @@ import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractImporterPreparator;
@@ -38,6 +40,8 @@ import com.asakusafw.vocabulary.external.FileImporterDescription;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class FileImporterPreparator extends AbstractImporterPreparator<FileImporterDescription> {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileImporterPreparator.class);
 
     private final ConfigurationFactory configurations;
 
@@ -64,8 +68,8 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     public <V> void truncate(
             DataModelDefinition<V> definition,
             FileImporterDescription description) throws IOException {
+        // TODO do truncate target directory?
         checkType(definition, description);
-        // do nothing
         return;
     }
 
@@ -73,6 +77,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             FileImporterDescription description) throws IOException {
+        LOG.info("エクスポート元の初期値を設定します: {}", description);
         checkType(definition, description);
         Set<String> path = description.getPaths();
         if (path.isEmpty()) {
@@ -108,6 +113,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     private FileOutputFormat getOpposite(Configuration conf, Class<?> inputFormat) throws IOException {
         assert conf != null;
         assert inputFormat != null;
+        LOG.debug("Finding opposite OutputFormat: {}", inputFormat.getName());
         String inputFormatName = inputFormat.getName();
         String outputFormatName = infer(inputFormatName);
         if (outputFormatName == null) {
@@ -115,6 +121,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
                     "Failed to infer opposite OutputFormat: {0}",
                     inputFormat.getName()));
         }
+        LOG.debug("Inferred oppsite OutputFormat: {}", outputFormatName);
         try {
             Class<?> loaded = inputFormat.getClassLoader().loadClass(outputFormatName);
             FileOutputFormat instance = (FileOutputFormat) ReflectionUtils.newInstance(loaded, conf);

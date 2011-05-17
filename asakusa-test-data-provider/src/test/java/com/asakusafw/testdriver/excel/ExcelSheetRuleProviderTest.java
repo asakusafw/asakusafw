@@ -48,7 +48,24 @@ public class ExcelSheetRuleProviderTest {
     @Test
     public void simple() throws Exception {
         ExcelSheetRuleProvider provider = new ExcelSheetRuleProvider();
-        VerifyRule rule = provider.get(SIMPLE, context(10), uri("simple.xls", ":0"));
+        VerifyRule rule = provider.get(SIMPLE, context(10), uri("verify/simple.xls", ":0"));
+        assertThat(rule, not(nullValue()));
+
+        assertThat(rule.getKey(obj(100, "a")), equalTo(rule.getKey(obj(100, "b"))));
+        assertThat(rule.getKey(obj(100, "a")), not(equalTo(rule.getKey(obj(200, "a")))));
+
+        assertThat(rule.verify(obj(1, "a"), obj(2, "a")), is(nullValue()));
+        assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
+    }
+
+    /**
+     * integration test with test-data-generator.
+     * @throws Exception if occur
+     */
+    @Test
+    public void integration() throws Exception {
+        ExcelSheetRuleProvider provider = new ExcelSheetRuleProvider();
+        VerifyRule rule = provider.get(SIMPLE, context(10), uri("it/simple.xls", ":2"));
         assertThat(rule, not(nullValue()));
 
         assertThat(rule.getKey(obj(100, "a")), equalTo(rule.getKey(obj(100, "b"))));
@@ -65,7 +82,7 @@ public class ExcelSheetRuleProviderTest {
     @Test
     public void spi() throws Exception {
         VerifyRuleProvider provider = new SpiVerifyRuleProvider(ExcelSheetRuleProvider.class.getClassLoader());
-        VerifyRule rule = provider.get(SIMPLE, context(10), uri("simple.xls", ":0"));
+        VerifyRule rule = provider.get(SIMPLE, context(10), uri("verify/simple.xls", ":0"));
         assertThat(rule, not(nullValue()));
 
         assertThat(rule.getKey(obj(100, "a")), equalTo(rule.getKey(obj(100, "b"))));
@@ -81,7 +98,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void strict() throws Exception {
-        VerifyRule rule = rule("strict.xls");
+        VerifyRule rule = rule("verify/strict.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), not(nullValue()));
@@ -94,7 +111,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void ignore_absent() throws Exception {
-        VerifyRule rule = rule("ignore_absent.xls");
+        VerifyRule rule = rule("verify/ignore_absent.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), not(nullValue()));
@@ -107,7 +124,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void ignore_unexpected() throws Exception {
-        VerifyRule rule = rule("ignore_unexpected.xls");
+        VerifyRule rule = rule("verify/ignore_unexpected.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), is(nullValue()));
@@ -120,7 +137,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void intersect() throws Exception {
-        VerifyRule rule = rule("intersect.xls");
+        VerifyRule rule = rule("verify/intersect.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), is(nullValue()));
@@ -133,7 +150,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void skip() throws Exception {
-        VerifyRule rule = rule("skip.xls");
+        VerifyRule rule = rule("verify/skip.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), is(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), is(nullValue()));
@@ -146,7 +163,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test(expected = IOException.class)
     public void name_unknown() throws Exception {
-        rule("name_unknown.xls");
+        rule("verify/name_unknown.xls");
     }
 
     /**
@@ -155,7 +172,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void name_empty() throws Exception {
-        VerifyRule rule = rule("name_empty.xls");
+        VerifyRule rule = rule("verify/name_empty.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(2, "b")), not(nullValue()));
@@ -167,7 +184,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void value_any() throws Exception {
-        VerifyRule rule = rule("value_any.xls");
+        VerifyRule rule = rule("verify/value_any.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(2, "b")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(null, null)), is(nullValue()));
@@ -181,7 +198,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void value_keys() throws Exception {
-        VerifyRule rule = rule("value_keys.xls");
+        VerifyRule rule = rule("verify/value_keys.xls");
         assertThat(rule.getKey(obj(1, "a")), equalTo(rule.getKey(obj(1, "a"))));
         assertThat(rule.getKey(obj(2, "b")), equalTo(rule.getKey(obj(2, "b"))));
         assertThat(rule.getKey(obj(1, "a")), not(equalTo(rule.getKey(obj(2, "a")))));
@@ -199,7 +216,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void value_equal() throws Exception {
-        VerifyRule rule = rule("value_equal.xls");
+        VerifyRule rule = rule("verify/value_equal.xls");
         assertThat(rule.verify(obj(1, "a"), obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(2, "b"), obj(2, "b")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), not(nullValue()));
@@ -212,7 +229,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void value_contain() throws Exception {
-        VerifyRule rule = rule("value_contain.xls");
+        VerifyRule rule = rule("verify/value_contain.xls");
         assertThat(rule.verify(obj(0, "ab"), obj(0, "ab")), is(nullValue()));
         assertThat(rule.verify(obj(0, "ab"), obj(0, "aba")), is(nullValue()));
         assertThat(rule.verify(obj(0, "ab"), obj(0, "aca")), not(nullValue()));
@@ -225,7 +242,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test(expected = IOException.class)
     public void value_contain_error() throws Exception {
-        rule("value_contain_error.xls");
+        rule("verify/value_contain_error.xls");
     }
 
     /**
@@ -236,7 +253,7 @@ public class ExcelSheetRuleProviderTest {
     public void value_today() throws Exception {
         // 2011/03/31 23:00:00 -> 23:30:00
         VerifyContext context = context(30);
-        VerifyRule rule = rule("value_today.xls", context);
+        VerifyRule rule = rule("verify/value_today.xls", context);
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
@@ -258,7 +275,7 @@ public class ExcelSheetRuleProviderTest {
     public void value_today_started_yesterday() throws Exception {
         // 2011/03/31 23:00:00 -> 2011/04/01 0:30:00
         VerifyContext context = context(90);
-        VerifyRule rule = rule("value_today.xls", context);
+        VerifyRule rule = rule("verify/value_today.xls", context);
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
@@ -278,7 +295,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test(expected = IOException.class)
     public void value_today_error() throws Exception {
-        rule("value_today_error.xls");
+        rule("verify/value_today_error.xls");
     }
 
     /**
@@ -289,7 +306,7 @@ public class ExcelSheetRuleProviderTest {
     public void value_now() throws Exception {
         // 2011/03/31 23:00:00 -> 23:30:00
         VerifyContext context = context(30);
-        VerifyRule rule = rule("value_now.xls", context);
+        VerifyRule rule = rule("verify/value_now.xls", context);
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
@@ -315,7 +332,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test(expected = IOException.class)
     public void value_now_error() throws Exception {
-        rule("value_now_error.xls");
+        rule("verify/value_now_error.xls");
     }
 
     /**
@@ -324,7 +341,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void nullity_normal() throws Exception {
-        VerifyRule rule = rule("nullity_normal.xls");
+        VerifyRule rule = rule("verify/nullity_normal.xls");
         assertThat(rule.verify(obj(0, "a"), obj(0, "a")), is(nullValue()));
         assertThat(rule.verify(obj(null, "a"), obj(null, "a")), is(nullValue()));
         assertThat(rule.verify(obj(0, null), obj(0, null)), is(nullValue()));
@@ -338,7 +355,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void nullity_AA() throws Exception {
-        VerifyRule rule = rule("nullity_AA.xls");
+        VerifyRule rule = rule("verify/nullity_AA.xls");
         assertThat(rule.verify(obj(0, "a"), obj(0, "a")), not(nullValue()));
         assertThat(rule.verify(obj(0, null), obj(0, "a")), not(nullValue()));
         assertThat(rule.verify(obj(0, "a"), obj(0, null)), is(nullValue()));
@@ -351,7 +368,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void nullity_AP() throws Exception {
-        VerifyRule rule = rule("nullity_AP.xls");
+        VerifyRule rule = rule("verify/nullity_AP.xls");
         assertThat(rule.verify(obj(0, "a"), obj(0, "a")), is(nullValue()));
         assertThat(rule.verify(obj(0, null), obj(0, "a")), is(nullValue()));
         assertThat(rule.verify(obj(0, "a"), obj(0, null)), not(nullValue()));
@@ -364,7 +381,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void nullity_DP() throws Exception {
-        VerifyRule rule = rule("nullity_DP.xls");
+        VerifyRule rule = rule("verify/nullity_DP.xls");
         assertThat(rule.verify(obj(0, "a"), obj(null, "a")), not(nullValue()));
         assertThat(rule.verify(obj(0, null), obj(null, "a")), not(nullValue()));
         assertThat(rule.verify(obj(0, "a"), obj(null, null)), is(nullValue()));
@@ -379,7 +396,7 @@ public class ExcelSheetRuleProviderTest {
      */
     @Test
     public void nullity_DA() throws Exception {
-        VerifyRule rule = rule("nullity_DA.xls");
+        VerifyRule rule = rule("verify/nullity_DA.xls");
         assertThat(rule.verify(obj(0, "a"), obj(0, "a")), is(nullValue()));
         assertThat(rule.verify(obj(0, null), obj(0, "a")), is(nullValue()));
         assertThat(rule.verify(obj(0, "a"), obj(0, null)), not(nullValue()));
@@ -419,7 +436,7 @@ public class ExcelSheetRuleProviderTest {
     }
 
     private URI uri(String file, String fragment) throws Exception {
-        URL url = getClass().getResource("verify/" + file);
+        URL url = getClass().getResource(file);
         assertThat(file, url, not(nullValue()));
         URI resource = url.toURI();
         URI uri = new URI(

@@ -44,6 +44,7 @@ public class DmdlParser {
         if (source == null) {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Parsing DMDL: {}", identifier);
         JjDmdlParser parser = new JjDmdlParser(source);
         try {
             return parser.parse(identifier);

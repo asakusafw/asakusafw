@@ -18,6 +18,8 @@ package com.asakusafw.testdriver.excel;
 import java.io.IOException;
 import java.net.URI;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
@@ -38,12 +40,15 @@ import com.asakusafw.testdriver.core.SourceProvider;
  */
 public class ExcelSheetSourceProvider implements SourceProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSourceProvider.class);
+
     @Override
     public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
         Sheet sheet = Util.extract(source);
         if (sheet == null) {
             return null;
         }
+        LOG.info("Excelシートをデータソースに利用します: {}", source);
         return new ExcelSheetDataModelSource(definition, source, sheet);
     }
 }

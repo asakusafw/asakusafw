@@ -144,6 +144,7 @@ public class Configuration {
         if (targetName == null) {
             throw new IllegalArgumentException("targetName must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Loading JDBC configuration: {}", targetName);
         String path = MessageFormat.format(FILE_PATTERN, targetName);
         URL resource = findResource(path);
         if (resource == null) {
@@ -152,6 +153,7 @@ public class Configuration {
                 throw new FileNotFoundException(path);
             }
         }
+        LOG.debug("Using JDBC configuration: {}", resource);
         return load(resource);
     }
 
@@ -203,7 +205,9 @@ public class Configuration {
         String url = extract(K_URL, properties, true, resource);
         String user = extract(K_USER, properties, false, resource);
         String password = extract(K_PASSWORD, properties, false, resource);
-        return new Configuration(driver, url, user, password);
+        Configuration configuration = new Configuration(driver, url, user, password);
+        LOG.debug("JDBC configuration: {}", configuration);
+        return configuration;
     }
 
     private static String extract(
@@ -254,5 +258,15 @@ public class Configuration {
                     "{0}を開けませんでした",
                     url), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "JDBC(driver={0}, url={1}, user={2}, password?={3}",
+                driver,
+                url,
+                user,
+                password != null);
     }
 }

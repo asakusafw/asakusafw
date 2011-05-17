@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_joined</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockJoinedOutput implements ModelOutput<MockJoined> {
+public final class MockJoinedOutput implements ModelOutput<MockJoined> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

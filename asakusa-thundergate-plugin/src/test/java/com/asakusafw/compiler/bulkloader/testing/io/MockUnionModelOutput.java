@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>mock_union_model</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class MockUnionModelOutput implements ModelOutput<MockUnionModel> {
+public final class MockUnionModelOutput implements ModelOutput<MockUnionModel> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

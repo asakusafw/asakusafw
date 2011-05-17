@@ -1,0 +1,7 @@
+"Simple Data Model"
+simple = {
+    "Integer value"
+    number : INT;
+    "Textual value"
+    text : TEXT;
+};

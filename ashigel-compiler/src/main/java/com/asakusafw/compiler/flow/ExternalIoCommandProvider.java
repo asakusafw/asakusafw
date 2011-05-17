@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,9 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * ジョブフローを処理するためのコマンドを提供する。
  */
-public class ExternalIoCommandProvider {
+public class ExternalIoCommandProvider implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * このコマンドプロバイダーの名前を返す。
@@ -94,11 +97,11 @@ public class ExternalIoCommandProvider {
      */
     public static class CommandContext {
 
-        private String homePathPrefix;
+        private final String homePathPrefix;
 
-        private String executionId;
+        private final String executionId;
 
-        private String variableList;
+        private final String variableList;
 
         /**
          * インスタンスを生成する。
@@ -166,13 +169,13 @@ public class ExternalIoCommandProvider {
      */
     public static class Command {
 
-        private List<String> commandLine;
+        private final List<String> commandLine;
 
-        private String moduleName;
+        private final String moduleName;
 
-        private String profileName;
+        private final String profileName;
 
-        private Map<String, String> environment;
+        private final Map<String, String> environment;
 
         /**
          * インスタンスを生成する。

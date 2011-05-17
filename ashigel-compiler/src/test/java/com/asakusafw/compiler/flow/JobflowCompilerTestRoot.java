@@ -61,6 +61,7 @@ import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.ashigeru.lang.java.jsr199.testing.VolatileCompiler;
 import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
 import com.ashigeru.lang.java.model.syntax.Name;
@@ -76,7 +77,7 @@ public class JobflowCompilerTestRoot {
      */
     protected boolean dump = true;
 
-    private VolatileCompiler javaCompiler = new VolatileCompiler();
+    private final VolatileCompiler javaCompiler = new VolatileCompiler();
 
     private VolatilePackager packager = new VolatilePackager();
 
@@ -139,10 +140,16 @@ public class JobflowCompilerTestRoot {
         JobFlowDriver analyzed = JobFlowDriver.analyze(aClass);
         assertThat(analyzed.getDiagnostics().toString(), analyzed.hasError(), is(false));
         JobFlowClass flow = analyzed.getJobFlowClass();
+        FlowGraph flowGraph = flow.getGraph();
+        return flowToStageGraph(flowGraph);
+    }
+
+    private StageGraph flowToStageGraph(FlowGraph flowGraph) {
+        assert flowGraph != null;
         StagePlanner planner = new StagePlanner(
                 environment.getGraphRewriters().getRewriters(),
                 environment.getOptions());
-        StageGraph planned = planner.plan(flow.getGraph());
+        StageGraph planned = planner.plan(flowGraph);
         assertThat(planner.getDiagnostics().toString(),
                 planner.getDiagnostics().isEmpty(),
                 is(true));

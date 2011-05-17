@@ -21,18 +21,25 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Common utilities for this package.
  * @since 0.2.0
  */
 final class Util {
 
+    static final Logger LOG = LoggerFactory.getLogger(Util.class);
+
     static <T> List<T> loadService(Class<T> spi, ClassLoader loader) {
         assert spi != null;
         assert loader != null;
+        LOG.info("{}のプラグインを登録しています", spi.getSimpleName());
         ServiceLoader<T> services = ServiceLoader.load(spi, loader);
         List<T> results = new ArrayList<T>();
         for (T service : services) {
+            LOG.debug("Activating {}", service.getClass().getName());
             results.add(service);
         }
         Collections.sort(results, new Comparator<Object>() {

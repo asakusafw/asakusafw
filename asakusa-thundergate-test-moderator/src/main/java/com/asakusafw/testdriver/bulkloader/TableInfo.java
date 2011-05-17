@@ -180,4 +180,13 @@ public class TableInfo<T> {
         assert type != null;
         return SUPPORTED_TYPES.contains(type);
     }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "Table({0}, model={1}, mapping={2})",
+                tableName,
+                definition.getModelClass().getName(),
+                columnsToProperties);
+    }
 }

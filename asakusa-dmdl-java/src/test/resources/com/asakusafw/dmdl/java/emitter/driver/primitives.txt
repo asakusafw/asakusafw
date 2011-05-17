@@ -4,8 +4,8 @@ primitives = {
     type_byte : BYTE;
     type_short : SHORT;
     type_decimal : DECIMAL;
-//    type_float : FLOAT;
-//    type_double : DOUBLE;
+    type_float : FLOAT;
+    type_double : DOUBLE;
     type_text : TEXT;
     type_boolean : BOOLEAN;
     type_date : DATE;

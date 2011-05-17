@@ -24,6 +24,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
@@ -35,6 +38,8 @@ import com.asakusafw.testdriver.core.SourceProvider;
  */
 public class JsonSourceProvider implements SourceProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(JsonSourceProvider.class);
+
     private static final String EXTENSION = ".json";
 
     private static final Charset ENCONDING = Charset.forName("UTF-8");
@@ -45,6 +50,7 @@ public class JsonSourceProvider implements SourceProvider {
         if (path == null || path.endsWith(EXTENSION) == false) {
             return null;
         }
+        LOG.info("JSONファイルをデータソースに利用します: {}", source);
         URL url = source.toURL();
         InputStream input = url.openStream();
         boolean established = false;

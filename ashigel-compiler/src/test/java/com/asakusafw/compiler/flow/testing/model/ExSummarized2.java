@@ -1,12 +1,4 @@
 package com.asakusafw.compiler.flow.testing.model;
-
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
 import com.asakusafw.compiler.flow.testing.io.ExSummarized2Input;
 import com.asakusafw.compiler.flow.testing.io.ExSummarized2Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -17,166 +9,121 @@ import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
-
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
  * ex_summarized2を表すデータモデルクラス。
  */
-@DataModelKind("DMDL")
-@ModelInputLocation(ExSummarized2Input.class)
-@ModelOutputLocation(ExSummarized2Output.class)
-@Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {
-        @Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = "string", destination = "key"),
-        @Summarized.Folding(aggregator = Summarized.Aggregator.SUM, source = "value", destination = "value"),
-        @Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "sid", destination = "count") }, shuffle = @Key(group = { "string" })))
-public class ExSummarized2 implements DataModel<ExSummarized2>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(ExSummarized2Input.class)@ModelOutputLocation(ExSummarized2Output.class)@
+        Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.
+            Aggregator.ANY, source = "string", destination = "key"),@Summarized.Folding(aggregator = Summarized.
+            Aggregator.SUM, source = "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.
+            Aggregator.COUNT, source = "sid", destination = "count")}, shuffle = @Key(group = {"string"}))) public class 
+        ExSummarized2 implements DataModel<ExSummarized2>, Writable {
     private final StringOption key = new StringOption();
     private final LongOption value = new LongOption();
     private final LongOption count = new LongOption();
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void reset() {
+    @Override@SuppressWarnings("deprecation") public void reset() {
         this.key.setNull();
         this.value.setNull();
         this.count.setNull();
     }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void copyFrom(ExSummarized2 other) {
+    @Override@SuppressWarnings("deprecation") public void copyFrom(ExSummarized2 other) {
         this.key.copyFrom(other.key);
         this.value.copyFrom(other.value);
         this.count.copyFrom(other.count);
     }
-
     /**
      * keyを返す。
-     *
      * @return key
-     * @throws NullPointerException
-     *             keyの値が<code>null</code>である場合
+     * @throws NullPointerException keyの値が<code>null</code>である場合
      */
     public Text getKey() {
         return this.key.get();
     }
-
     /**
      * keyを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setKey(Text value0) {
+    @SuppressWarnings("deprecation") public void setKey(Text value0) {
         this.key.modify(value0);
     }
-
     /**
      * <code>null</code>を許すkeyを返す。
-     *
      * @return key
      */
     public StringOption getKeyOption() {
         return this.key;
     }
-
     /**
      * keyを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setKeyOption(StringOption option) {
+    @SuppressWarnings("deprecation") public void setKeyOption(StringOption option) {
         this.key.copyFrom(option);
     }
-
     /**
      * valueを返す。
-     *
      * @return value
-     * @throws NullPointerException
-     *             valueの値が<code>null</code>である場合
+     * @throws NullPointerException valueの値が<code>null</code>である場合
      */
     public long getValue() {
         return this.value.get();
     }
-
     /**
      * valueを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setValue(long value0) {
+    @SuppressWarnings("deprecation") public void setValue(long value0) {
         this.value.modify(value0);
     }
-
     /**
      * <code>null</code>を許すvalueを返す。
-     *
      * @return value
      */
     public LongOption getValueOption() {
         return this.value;
     }
-
     /**
      * valueを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setValueOption(LongOption option) {
+    @SuppressWarnings("deprecation") public void setValueOption(LongOption option) {
         this.value.copyFrom(option);
     }
-
     /**
      * countを返す。
-     *
      * @return count
-     * @throws NullPointerException
-     *             countの値が<code>null</code>である場合
+     * @throws NullPointerException countの値が<code>null</code>である場合
      */
     public long getCount() {
         return this.count.get();
     }
-
     /**
      * countを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setCount(long value0) {
+    @SuppressWarnings("deprecation") public void setCount(long value0) {
         this.count.modify(value0);
     }
-
     /**
      * <code>null</code>を許すcountを返す。
-     *
      * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
-
     /**
      * countを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setCountOption(LongOption option) {
+    @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
         this.count.copyFrom(option);
     }
-
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("{");
         result.append("class=ex_summarized2");
@@ -189,9 +136,7 @@ public class ExSummarized2 implements DataModel<ExSummarized2>, Writable {
         result.append("}");
         return result.toString();
     }
-
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + key.hashCode();
@@ -199,62 +144,49 @@ public class ExSummarized2 implements DataModel<ExSummarized2>, Writable {
         result = prime * result + count.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    @Override public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if(this.getClass()!= obj.getClass()) {
             return false;
         }
         ExSummarized2 other = (ExSummarized2) obj;
-        if (this.key.equals(other.key) == false) {
+        if(this.key.equals(other.key)== false) {
             return false;
         }
-        if (this.value.equals(other.value) == false) {
+        if(this.value.equals(other.value)== false) {
             return false;
         }
-        if (this.count.equals(other.count) == false) {
+        if(this.count.equals(other.count)== false) {
             return false;
         }
         return true;
     }
-
     /**
      * keyを返す。
-     *
      * @return key
-     * @throws NullPointerException
-     *             keyの値が<code>null</code>である場合
+     * @throws NullPointerException keyの値が<code>null</code>である場合
      */
     public String getKeyAsString() {
         return this.key.getAsString();
     }
-
     /**
      * keyを設定する。
-     *
-     * @param key0
-     *            設定する値
+     * @param key0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setKeyAsString(String key0) {
+    @SuppressWarnings("deprecation") public void setKeyAsString(String key0) {
         this.key.modify(key0);
     }
-
-    @Override
-    public void write(DataOutput out) throws IOException {
+    @Override public void write(DataOutput out) throws IOException {
         key.write(out);
         value.write(out);
         count.write(out);
     }
-
-    @Override
-    public void readFields(DataInput in) throws IOException {
+    @Override public void readFields(DataInput in) throws IOException {
         key.readFields(in);
         value.readFields(in);
         count.readFields(in);

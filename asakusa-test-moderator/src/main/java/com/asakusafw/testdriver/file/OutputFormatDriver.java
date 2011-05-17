@@ -22,6 +22,8 @@ import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -32,11 +34,13 @@ import com.asakusafw.runtime.io.ModelOutput;
  */
 public class OutputFormatDriver<V> implements ModelOutput<V> {
 
+    static final Logger LOG = LoggerFactory.getLogger(OutputFormatDriver.class);
+
     private final TaskAttemptContext context;
 
     private final Object key;
 
-    private OutputFormat<?, ?> format;
+    private final OutputFormat<?, ?> format;
 
     @SuppressWarnings("rawtypes")
     private final RecordWriter writer;
@@ -54,6 +58,16 @@ public class OutputFormatDriver<V> implements ModelOutput<V> {
             TaskAttemptContext context,
             OutputFormat<? super K, ? super V> format,
             K key) throws IOException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (format == null) {
+            throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
+        }
+        LOG.debug("Emulating OutputFormat: {}", format.getClass().getName());
         this.context = context;
         this.format = format;
         this.key = key;
@@ -76,6 +90,7 @@ public class OutputFormatDriver<V> implements ModelOutput<V> {
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Committing output results: {}", format.getClass().getName());
         try {
             writer.close(context);
             OutputCommitter comitter = format.getOutputCommitter(context);

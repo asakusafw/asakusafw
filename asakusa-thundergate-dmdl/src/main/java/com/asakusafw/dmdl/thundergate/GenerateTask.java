@@ -36,7 +36,7 @@ public class GenerateTask implements Callable<ModelRepository> {
 
     static final Logger LOG = LoggerFactory.getLogger(GenerateTask.class);
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     /**
      * インスタンスを生成する。
@@ -131,7 +131,7 @@ public class GenerateTask implements Callable<ModelRepository> {
     private void emit(ModelRepository repository) {
         List<ModelDescription> models = repository.all();
         int total = models.size();
-        LOG.info("{}個のモデルを出力しています: {}",
+        LOG.info("{}個のモデルをDMDLとして出力しています: {}",
                 total,
                 configuration.getOutput());
 

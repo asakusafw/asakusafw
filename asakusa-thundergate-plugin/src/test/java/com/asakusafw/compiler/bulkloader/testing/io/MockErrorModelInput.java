@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_error_model</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class MockErrorModelInput implements ModelInput<MockErrorModel> {
+public final class MockErrorModelInput implements ModelInput<MockErrorModel> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

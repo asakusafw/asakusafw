@@ -29,6 +29,7 @@
 		<module>../asakusa-test-tools</module>
 		<module>../asakusa-test-moderator</module>
 		<module>../asakusa-test-data-provider</module>
+		<module>../asakusa-test-data-generator</module>
 		<module>../asakusa-test-driver</module>
 		<module>../asakusa-thundergate-vocabulary</module>
 		<module>../asakusa-thundergate-dmdl</module>

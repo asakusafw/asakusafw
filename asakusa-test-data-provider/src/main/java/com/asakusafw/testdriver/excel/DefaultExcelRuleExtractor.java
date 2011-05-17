@@ -38,7 +38,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
      * Format ID which this extractor supports.
      * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
      */
-    public static final String FORMAT = "EVR-1.0.0";
+    public static final String FORMAT = RuleSheetFormat.FORMAT_VERSION;
 
     @Override
     public boolean supports(Sheet sheet) {

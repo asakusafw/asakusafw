@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.hadoop.io.Writable;
@@ -35,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 
 import com.asakusafw.modelgen.emitter.JavaName;
 import com.asakusafw.modelgen.source.MySqlDataType;
@@ -77,13 +79,13 @@ public class ExcelUtils {
      */
     public static final long EXCEL_MIN_LONG = -999999999999999L;
 
-    private String filename;
-    private String tablename;
-    private RowMatchingCondition rowMatchingCondition;
-    private HSSFWorkbook workbook;
-    private HSSFSheet inputDataSheet;
-    private HSSFSheet outputDataSheet;
-    private HSSFSheet testConditionSheet;
+    private final String filename;
+    private final String tablename;
+    private final RowMatchingCondition rowMatchingCondition;
+    private final HSSFWorkbook workbook;
+    private final HSSFSheet inputDataSheet;
+    private final HSSFSheet outputDataSheet;
+    private final HSSFSheet testConditionSheet;
 
     /**
      * 日付型のフォーマッタ。
@@ -100,7 +102,7 @@ public class ExcelUtils {
     /**
      * カラム情報のリスト。
      */
-    private List<ColumnInfo> columnInfos;
+    private final List<ColumnInfo> columnInfos;
 
 
     /**
@@ -173,7 +175,7 @@ public class ExcelUtils {
      */
     private HSSFCell getCell(HSSFSheet sheet, int rownum, int col) {
         HSSFRow row = sheet.getRow(rownum);
-        if (row == null) {
+        if (isEmpty(row)) {
             String fmt = "Excelファイルが異常です(空行), file = %s, sheet = %s, row = %d";
             String msg = String.format(fmt, filename, sheet.getSheetName(), rownum);
             throw new InvalidExcelBookException(msg);
@@ -278,7 +280,7 @@ public class ExcelUtils {
         for (;;) {
             rownum++;
             HSSFRow row = testConditionSheet.getRow(rownum);
-            if (row == null) {
+            if (isEmpty(row)) {
                 break;
             }
 
@@ -453,7 +455,7 @@ public class ExcelUtils {
         for (;;) {
             rownum++;
             HSSFRow row = sheet.getRow(rownum);
-            if (row == null) {
+            if (isEmpty(row)) {
                 break;
             }
             Writable model;
@@ -465,7 +467,7 @@ public class ExcelUtils {
                 throw new RuntimeException(e);
             }
             for (int col = 0; col < columnInfos.size(); col++) {
-                HSSFCell cell = getCell(sheet, row, col);
+                HSSFCell cell = row.getCell(col, Row.CREATE_NULL_AS_BLANK);
                 MySqlDataType type = columnInfos.get(col).getDataType();
                 ValueOption<?> vo;
                 switch (type) {
@@ -513,6 +515,23 @@ public class ExcelUtils {
             list.add(model);
         }
         return list;
+    }
+
+    /**
+     * Returns {@code true} iff the specified row does not exist or has only blank cells.
+     * @param row the target row
+     * @return {@code true} if is empty
+     */
+    private boolean isEmpty(HSSFRow row) {
+        if (row == null) {
+            return true;
+        }
+        for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext();) {
+            if (iter.next().getCellType() != Cell.CELL_TYPE_BLANK) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -491,15 +491,20 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         return targetName;
     }
 
-    static class CommandProvider extends ExternalIoCommandProvider {
+    /**
+     * Provides lifecycle commands for ThunderGate.
+     */
+    public static class CommandProvider extends ExternalIoCommandProvider {
 
-        private String batchId;
+        private static final long serialVersionUID = 5091727772482760422L;
 
-        private String flowId;
+        private final String batchId;
 
-        private String primary;
+        private final String flowId;
 
-        private List<String> secondaries;
+        private final String primary;
+
+        private final List<String> secondaries;
 
         CommandProvider(String batchId, String flowId, String primary, List<String> secondaries) {
             assert batchId != null;
@@ -508,7 +513,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             this.batchId = batchId;
             this.flowId = flowId;
             this.primary = primary;
-            this.secondaries = secondaries;
+            this.secondaries = new ArrayList<String>(secondaries);
         }
 
         @Override

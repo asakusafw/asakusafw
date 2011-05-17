@@ -23,6 +23,8 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -34,6 +36,8 @@ import com.asakusafw.testdriver.core.DataModelSource;
  * @since 0.2.0
  */
 public class InputFormatDriver<V> implements DataModelSource {
+
+    static final Logger LOG = LoggerFactory.getLogger(InputFormatDriver.class);
 
     private final DataModelDefinition<V> definition;
 
@@ -66,10 +70,12 @@ public class InputFormatDriver<V> implements DataModelSource {
         if (format == null) {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Emulating InputFormat: {}", format.getClass().getName());
         this.definition = definition;
         this.context = context;
         this.format = format;
         try {
+            LOG.debug("Computing input splits: {}", format.getClass().getName());
             this.splits = new LinkedList<InputSplit>(format.getSplits(context));
         } catch (InterruptedException e) {
             throw (InterruptedIOException) new InterruptedIOException().initCause(e);

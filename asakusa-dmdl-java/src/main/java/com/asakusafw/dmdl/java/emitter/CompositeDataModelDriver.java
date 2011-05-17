@@ -22,6 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
@@ -34,6 +37,8 @@ import com.ashigeru.lang.java.model.syntax.Type;
  * Composition of {@link JavaDataModelDriver}.
  */
 public class CompositeDataModelDriver implements JavaDataModelDriver {
+
+    static final Logger LOG = LoggerFactory.getLogger(CompositeDataModelDriver.class);
 
     private final List<JavaDataModelDriver> drivers;
 
@@ -55,6 +60,7 @@ public class CompositeDataModelDriver implements JavaDataModelDriver {
         ServiceLoader<JavaDataModelDriver> loader =
             ServiceLoader.load(JavaDataModelDriver.class, serviceClassLoader);
         for (JavaDataModelDriver driver : loader) {
+            LOG.debug("Activating Java data model driver: ", driver.getClass().getName());
             results.add(driver);
         }
         Collections.sort(results, new Comparator<Object>() {

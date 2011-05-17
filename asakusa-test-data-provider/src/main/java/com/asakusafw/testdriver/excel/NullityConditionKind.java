@@ -27,24 +27,24 @@ public enum NullityConditionKind {
     NORMAL("-", "通常比較"), //$NON-NLS-1$
 
     /**
-     * Accepts if actual data is null.
+     * Accepts if actual value is null.
      */
     ACCEPT_ABSENT("AA", "NULLなら常に成功"), //$NON-NLS-1$
 
     /**
-     * Deny if actual data is null.
+     * Deny if actual value is null.
      */
     DENY_ABSENT("DA", "NULLなら常に失敗"), //$NON-NLS-1$
 
     /**
-     * Accepts if actual data is not null.
+     * Accepts if actual value is not null.
      */
     ACCEPT_PRESENT("AP", "NULLでなければ常に成功"), //$NON-NLS-1$
 
     /**
-     * Deny if actual data is not null.
+     * Deny if actual value is not null.
      */
-    DENY_PRESENT("DP", "NULLでなければ常に成功"), //$NON-NLS-1$
+    DENY_PRESENT("DP", "NULLでなければ常に失敗"), //$NON-NLS-1$
     ;
 
     private final String symbol;

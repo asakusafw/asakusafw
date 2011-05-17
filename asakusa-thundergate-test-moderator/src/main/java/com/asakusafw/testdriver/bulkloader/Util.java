@@ -18,6 +18,7 @@ package com.asakusafw.testdriver.bulkloader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
@@ -32,9 +33,14 @@ final class Util {
         try {
             Connection conn = config.open();
             try {
-                conn.createStatement().execute(MessageFormat.format(
-                        "TRUNCATE TABLE {0}",
-                        tableName));
+                Statement statement = conn.createStatement();
+                try {
+                    statement.execute(MessageFormat.format(
+                            "TRUNCATE TABLE {0}",
+                            tableName));
+                } finally {
+                    statement.close();
+                }
             } finally {
                 conn.close();
             }

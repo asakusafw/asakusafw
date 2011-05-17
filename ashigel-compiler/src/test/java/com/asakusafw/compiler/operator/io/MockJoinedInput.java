@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_joined</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class MockJoinedInput implements ModelInput<MockJoined> {
+public final class MockJoinedInput implements ModelInput<MockJoined> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。

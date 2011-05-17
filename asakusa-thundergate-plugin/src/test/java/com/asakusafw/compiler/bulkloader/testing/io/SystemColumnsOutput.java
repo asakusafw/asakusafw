@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * <code>system_columns</code>をTSVなどのレコード形式で出力する。
  */
-@SuppressWarnings("deprecation") public final class SystemColumnsOutput implements ModelOutput<SystemColumns> {
+public final class SystemColumnsOutput implements ModelOutput<SystemColumns> {
     private final RecordEmitter emitter;
     /**
      * インスタンスを生成する。

@@ -22,6 +22,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.AbstractExporterRetriever;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -36,11 +39,14 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription.Duplicate
  */
 public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoadExporterDescription> {
 
+    static final Logger LOG = LoggerFactory.getLogger(BulkLoadExporterRetriever.class);
+
     @Override
     public <V> void truncate(DataModelDefinition<V> definition,
             BulkLoadExporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         String tableName = detectTableName(definition, description);
+        LOG.info("エクスポート先のテーブル{}の内容を消去します", tableName);
         Util.truncate(conf, tableName);
     }
 
@@ -49,6 +55,8 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
             BulkLoadExporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         TableInfo<V> info = buildTableInfo(definition, description);
+        LOG.info("エクスポート先の初期値を設定します: テーブル{}", info.getTableName());
+        LOG.debug("Opening output: {}", info);
         Connection conn = conf.open();
         boolean green = false;
         try {
@@ -71,6 +79,8 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
             BulkLoadExporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         TableInfo<V> info = buildTableInfo(definition, description);
+        LOG.info("エクスポート結果を取得します: テーブル{}", info.getTableName());
+        LOG.debug("Opening results: {}", info);
         Connection conn = conf.open();
         boolean green = false;
         try {
@@ -126,6 +136,7 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
             BulkLoadExporterDescription description) throws IOException {
         assert definition != null;
         assert description != null;
+        LOG.debug("Detecting export target");
         Class<?> modelClass = definition.getModelClass();
         DuplicateRecordCheck dupcheck = description.getDuplicateRecordCheck();
         if (dupcheck != null && modelClass == dupcheck.getTableModelClass()) {

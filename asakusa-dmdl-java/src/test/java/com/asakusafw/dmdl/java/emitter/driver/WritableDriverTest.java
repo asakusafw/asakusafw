@@ -61,6 +61,8 @@ public class WritableDriverTest extends GeneratorTesterRoot {
         object.set("type_short", (short) 256);
         object.set("type_int", 100);
         object.set("type_long", 200L);
+        object.set("type_float", 300.f);
+        object.set("type_double", 400.d);
         object.set("type_decimal", new BigDecimal("1234.567"));
         object.set("type_text", new Text("Hello, world!"));
         object.set("type_date", new Date(2011, 3, 31));

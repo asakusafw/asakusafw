@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>system_columns</code>を読み出す
  */
-@SuppressWarnings("deprecation") public final class SystemColumnsInput implements ModelInput<SystemColumns> {
+public final class SystemColumnsInput implements ModelInput<SystemColumns> {
     private final RecordParser parser;
     /**
      * インスタンスを生成する。
