@@ -2,6 +2,12 @@
 Asakusa Framework
 =================
 
-..  toctree::
-    :maxdepth: 2
+.. toctree::
+   :hidden:
 
+   index_ja
+
+Other Languages
+===============
+
+* :doc:`index_ja` (Japanese)
