@@ -79,7 +79,7 @@ public final class DbUtils {
                 sb.append("'");
             }
         }
-        sb.append("\n)");
+        sb.append("\n) engine=innodb");
         String sql = sb.toString();
         Statement stmt = null;
         try {
