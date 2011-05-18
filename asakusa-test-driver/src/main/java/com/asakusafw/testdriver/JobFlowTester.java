@@ -46,11 +46,12 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 public class JobFlowTester extends TestDriverBase {
 
     /** バッチID。 */
-    private String batchId = "bid";
+    protected String batchId = "bid";
+    /** 入力データのリスト。 */
+    protected List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
+    /** 出力データのリスト。 */
+    protected List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
 
-    private List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
-    private List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
-    
     /**
      * テスト入力データを指定する。
      * 
@@ -78,7 +79,7 @@ public class JobFlowTester extends TestDriverBase {
         outputs.add(output);
         return output;
     }
-    
+
     /**
      * ジョブフローのテストを実行し、テスト結果を検証します。
      * @param jobFlowDescriptionClass ジョブフロークラスのクラスオブジェクト
@@ -93,30 +94,22 @@ public class JobFlowTester extends TestDriverBase {
 
             // フローコンパイラの実行
             JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
-            assertFalse(
-                    jobFlowDriver.getDiagnostics().toString(),
-                    jobFlowDriver.hasError());
+            assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
             JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1) + "_" + driverContext.getMethodName();
+            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1)
+                    + "_" + driverContext.getMethodName();
             File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
 
             FlowGraph flowGraph = jobFlowClass.getGraph();
-            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
-                flowGraph,
-                batchId,
-                flowId,
-                "test.jobflow",
-                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
-                compileWorkDir,
-                Arrays.asList(new File[] {
-                        DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
-                }),
-                jobFlowDescriptionClass.getClassLoader(),
-                driverContext.getOptions());
+            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, batchId, flowId, "test.jobflow",
+                    Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
+                    compileWorkDir,
+                    Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass) }),
+                    jobFlowDescriptionClass.getClassLoader(), driverContext.getOptions());
 
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
@@ -124,21 +117,19 @@ public class JobFlowTester extends TestDriverBase {
             File destDir = new File(System.getenv("ASAKUSA_HOME"), "batchapps/" + batchId + "/lib");
             FileUtils.copyFileToDirectory(srcFile, destDir);
 
-            CommandContext context = new CommandContext(
-                    System.getenv("ASAKUSA_HOME") + "/",
-                    driverContext.getExecutionId(),
-                    driverContext.getBatchArgs());
+            CommandContext context = new CommandContext(System.getenv("ASAKUSA_HOME") + "/",
+                    driverContext.getExecutionId(), driverContext.getBatchArgs());
 
             Map<String, String> dPropMap = createHadoopProperties(context);
 
             TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
             savePlan(compileWorkDir, plan);
-            
+
             // テストデータの配置
             TestInputPreparator preparator = new TestInputPreparator(classLoader);
             for (JobFlowDriverInput<?> input : inputs) {
                 //TODO 構成検討
-                ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());                
+                ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                 preparator.truncate(input.getModelType(), importerDescription);
             }
             for (JobFlowDriverInput<?> input : inputs) {
@@ -146,12 +137,12 @@ public class JobFlowTester extends TestDriverBase {
                 input.setImporterDescription(importerDescription);
                 preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
             }
- 
-            VerifyContext verifyContext = new VerifyContext();
-            // コンパイル結果のジョブフローを実行
-            executePlan(plan, jobflowInfo.getPackageFile());
 
-            verifyContext.testFinished();            
+            // コンパイル結果のジョブフローを実行            
+            VerifyContext verifyContext = new VerifyContext();
+            executePlan(plan, jobflowInfo.getPackageFile());
+            verifyContext.testFinished();
+
             // 実行結果の検証
             TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
             for (JobFlowDriverOutput<?> output : outputs) {
@@ -160,7 +151,7 @@ public class JobFlowTester extends TestDriverBase {
                 inspector.inspect(output.getModelType(), output.getExporterDescription(), verifyContext,
                         output.getExpectedUri(), output.getVerifyRuleUri());
             }
-            
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

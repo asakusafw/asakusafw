@@ -54,7 +54,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
     }
 
     /**
-     * ジョブフローのテストを実行し、テスト結果を検証します。
+     * バッチのテストを実行し、テスト結果を検証します。
      * @param batchDescriptionClass バッチクラスのクラスオブジェクト
      */
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {

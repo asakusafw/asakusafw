@@ -114,12 +114,14 @@ public class FlowPartTester extends TestDriverBase {
         savePlan(compileWorkDir, plan);
 
         // コンパイル結果のジョブフローを実行
+        VerifyContext verifyContext = new VerifyContext();
         executePlan(plan, jobflowInfo.getPackageFile());
+        verifyContext.testFinished();
 
         // 実行結果の検証
         TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
         for (FlowPartDriverOutput<?> output : outputs) {
-            inspector.inspect(output.getModelType(), output.getExporterDescription(), new VerifyContext(),
+            inspector.inspect(output.getModelType(), output.getExporterDescription(), verifyContext,
                     output.getExpectedUri(), output.getVerifyRuleUri());
         }
 
