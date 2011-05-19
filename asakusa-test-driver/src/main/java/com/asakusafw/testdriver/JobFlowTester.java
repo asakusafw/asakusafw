@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.JobFlowClass;
@@ -32,6 +33,7 @@ import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestInputPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
@@ -128,14 +130,27 @@ public class JobFlowTester extends TestDriverBase {
             // テストデータの配置
             TestInputPreparator preparator = new TestInputPreparator(classLoader);
             for (JobFlowDriverInput<?> input : inputs) {
-                //TODO 構成検討
                 ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                 preparator.truncate(input.getModelType(), importerDescription);
             }
+            for (JobFlowDriverOutput<?> output : outputs) {
+                ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                preparator.truncate(output.getModelType(), importerDescription);
+            }
+
             for (JobFlowDriverInput<?> input : inputs) {
-                ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                input.setImporterDescription(importerDescription);
-                preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                if (input.sourceUri != null) {
+                    ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                    input.setImporterDescription(importerDescription);
+                    preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                }
+            }
+            for (JobFlowDriverOutput<?> output : outputs) {
+                if (output.sourceUri != null) {
+                    ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                    output.setImporterDescription(importerDescription);
+                    preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
+                }
             }
 
             // コンパイル結果のジョブフローを実行            
@@ -145,13 +160,24 @@ public class JobFlowTester extends TestDriverBase {
 
             // 実行結果の検証
             TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
+            StringBuilder sb = new StringBuilder("\n");
+            boolean failed = false;
             for (JobFlowDriverOutput<?> output : outputs) {
-                ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-                output.setExporterDescription(exporterDescription);
-                inspector.inspect(output.getModelType(), output.getExporterDescription(), verifyContext,
-                        output.getExpectedUri(), output.getVerifyRuleUri());
+                if (output.expectedUri != null) {
+                    ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                    output.setExporterDescription(exporterDescription);
+                    List<Difference> diffList = inspector.inspect(output.getModelType(),
+                            output.getExporterDescription(), verifyContext, output.getExpectedUri(),
+                            output.getVerifyRuleUri());
+                    for (Difference difference : diffList) {
+                        failed = true;
+                        sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                    }
+                }
             }
-
+            if (failed) {
+                Assert.fail(sb.toString());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

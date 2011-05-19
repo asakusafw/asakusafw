@@ -46,8 +46,10 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
      */
     public FlowPartDriverOutput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        super(driverContext, name, modelType);
+        this.driverContext = driverContext;
         this.descDriver = descDriver;
+        this.name = name;
+        this.modelType = modelType;
     }
 
     /**

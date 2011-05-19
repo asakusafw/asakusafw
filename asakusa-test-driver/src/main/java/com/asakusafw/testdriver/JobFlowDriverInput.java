@@ -36,7 +36,9 @@ public class JobFlowDriverInput<T> extends DriverInputBase<T> {
      * @param modelType モデルクラス。
      */
     public JobFlowDriverInput(TestDriverContext driverContext, String name, Class<T> modelType) {
-        super(driverContext, name, modelType);
+        this.driverContext = driverContext;
+        this.name = name;
+        this.modelType = modelType;
     }
         
     /**

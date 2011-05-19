@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 
 import com.asakusafw.compiler.batch.BatchClass;
 import com.asakusafw.compiler.batch.BatchDriver;
@@ -34,6 +35,7 @@ import com.asakusafw.compiler.testing.BatchInfo;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestInputPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
@@ -98,21 +100,23 @@ public class BatchTester extends TestDriverBase {
             for (JobflowInfo jobflowInfo : jobflowInfos) {
                 String flowId = jobflowInfo.getJobflow().getFlowId();
                 JobFlowTester driver = jobFlowMap.get(flowId);
-                List<JobFlowDriverInput<?>> inputs = driver.inputs;
 
                 TestInputPreparator preparator = new TestInputPreparator(classLoader);
-                for (JobFlowDriverInput<?> input : inputs) {
+                for (JobFlowDriverInput<?> input : driver.inputs) {
                     ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                     preparator.truncate(input.getModelType(), importerDescription);
                 }
+                for (JobFlowDriverOutput<?> output : driver.outputs) {
+                    ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                    preparator.truncate(output.getModelType(), importerDescription);
+                }
+
             }
 
             // バッチに含まれるジョブフローを実行
             for (JobflowInfo jobflowInfo : jobflowInfos) {
                 String flowId = jobflowInfo.getJobflow().getFlowId();
                 JobFlowTester driver = jobFlowMap.get(flowId);
-                List<JobFlowDriverInput<?>> inputs = driver.inputs;
-                List<JobFlowDriverOutput<?>> outputs = driver.outputs;
 
                 // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
                 String jobFlowJarName = "jobflow-" + flowId + ".jar";
@@ -130,27 +134,48 @@ public class BatchTester extends TestDriverBase {
 
                 // テストデータの配置
                 TestInputPreparator preparator = new TestInputPreparator(classLoader);
-                for (JobFlowDriverInput<?> input : inputs) {
-                    ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                    input.setImporterDescription(importerDescription);
-                    preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                for (JobFlowDriverInput<?> input : driver.inputs) {
+                    if (input.sourceUri != null) {
+                        ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                        input.setImporterDescription(importerDescription);
+                        preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                    }
+                }
+                for (JobFlowDriverOutput<?> output : driver.outputs) {
+                    if (output.sourceUri != null) {
+                        ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                        output.setImporterDescription(importerDescription);
+                        preparator.prepare(output.getModelType(), output.getImporterDescription(),
+                                output.getSourceUri());
+                    }
                 }
 
                 // コンパイル結果のジョブフローを実行                
                 VerifyContext verifyContext = new VerifyContext();
                 executePlan(plan, jobflowInfo.getPackageFile());
                 verifyContext.testFinished();
-                
+
                 // 実行結果の検証
                 TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-                for (JobFlowDriverOutput<?> output : outputs) {
-                    ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-                    output.setExporterDescription(exporterDescription);
-                    inspector.inspect(output.getModelType(), output.getExporterDescription(), verifyContext,
-                            output.getExpectedUri(), output.getVerifyRuleUri());
+                StringBuilder sb = new StringBuilder("\n");
+                boolean failed = false;
+                for (JobFlowDriverOutput<?> output : driver.outputs) {
+                    if (output.expectedUri != null) {
+                        ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                        output.setExporterDescription(exporterDescription);
+                        List<Difference> diffList = inspector.inspect(output.getModelType(),
+                                output.getExporterDescription(), verifyContext, output.getExpectedUri(),
+                                output.getVerifyRuleUri());
+                        for (Difference difference : diffList) {
+                            failed = true;
+                            sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                        }
+                    }
+                }
+                if (failed) {
+                    Assert.fail(sb.toString());
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

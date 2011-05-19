@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestInputPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
@@ -88,9 +90,16 @@ public class FlowPartTester extends TestDriverBase {
         // テストデータの配置
         TestInputPreparator preparator = new TestInputPreparator(classLoader);
         for (FlowPartDriverInput<?> input : inputs) {
-            preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+            if (input.sourceUri != null) {
+                preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+            }
         }
-
+        for (FlowPartDriverOutput<?> output : outputs) {
+            if (output.sourceUri != null) {
+                preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
+            }
+        }
+        
         // フローコンパイラの実行
         String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
                 + driverContext.getMethodName();
@@ -120,11 +129,21 @@ public class FlowPartTester extends TestDriverBase {
 
         // 実行結果の検証
         TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
+        StringBuilder sb = new StringBuilder("\n");
+        boolean failed = false;
         for (FlowPartDriverOutput<?> output : outputs) {
-            inspector.inspect(output.getModelType(), output.getExporterDescription(), verifyContext,
-                    output.getExpectedUri(), output.getVerifyRuleUri());
+            if (output.expectedUri != null) {
+                List<Difference> diffList = inspector.inspect(output.getModelType(), output.getExporterDescription(),
+                        verifyContext, output.getExpectedUri(), output.getVerifyRuleUri());
+                for (Difference difference : diffList) {
+                    failed = true;
+                    sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                }
+            }
         }
-
+        if (failed) {
+            Assert.fail(sb.toString());
+        }
     }
 
 }

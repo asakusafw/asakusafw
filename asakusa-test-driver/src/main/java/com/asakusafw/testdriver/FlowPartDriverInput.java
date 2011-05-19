@@ -45,8 +45,10 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> {
      */
     public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        super(driverContext, name, modelType);
+        this.driverContext = driverContext;
         this.descDriver = descDriver;
+        this.name = name;
+        this.modelType = modelType;
     }
     
     /**

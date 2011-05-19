@@ -47,19 +47,6 @@ public abstract class DriverInputBase<T> {
     protected ImporterDescription importerDescription;
 
     /**
-     * コンストラクタ
-     * 
-     * @param driverContext テストドライバコンテキスト。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
-     */
-    public DriverInputBase(TestDriverContext driverContext, String name, Class<T> modelType) {
-        this.name = name;
-        this.modelType = modelType;
-        this.driverContext = driverContext;
-    }
-
-    /**
      * @return the name
      */
     protected String getName() {

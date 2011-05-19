@@ -41,17 +41,6 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected ExporterDescription exporterDescription;
 
     /**
-     * コンストラクタ
-     * 
-     * @param driverContext テストドライバコンテキスト。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
-     */
-    public DriverOutputBase(TestDriverContext driverContext, String name, Class<T> modelType) {
-        super(driverContext, name, modelType);
-    }
-
-    /**
      * @return the expectedUri
      */
     protected URI getExpectedUri() {
