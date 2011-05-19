@@ -379,6 +379,20 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+            <groupId>com.asakusafw</groupId>
+            <artifactId>asakusa-thundergate-test-moderator</artifactId>
+            <version>${asakusafw.version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.asakusafw</groupId>
+            <artifactId>asakusa-test-data-generator</artifactId>
+            <version>${asakusafw.version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.jdbc.version}</version>
