@@ -4,8 +4,9 @@ Asakusa Framework
 
 
 ..  toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    dsl/index_ja
     dmdl/index_ja
     document/index_ja
 
