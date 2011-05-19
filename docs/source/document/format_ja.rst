@@ -125,7 +125,7 @@
     * - faq
       - 全員
       - FAQ的なもの
-    * - start
+    * - getting-started
       - U, M
       - 最も簡素な方法でモジュールを利用する手順
     * - user-guide
