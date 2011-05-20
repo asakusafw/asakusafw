@@ -38,7 +38,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * ジョブフロー用のテストドライバクラス。
  */
-public class JobFlowTestDriver extends TestDriverBase {
+public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /** バッチID。 */
     private String batchId;
@@ -47,56 +47,47 @@ public class JobFlowTestDriver extends TestDriverBase {
      * コンストラクタ。
      * <p>
      * バッチIDはデフォルト値("bid")を使用します。
-     * 使い方：本コンストラクタは、必ずJUnitのテストメソッドから直接呼び出して下さい。
-     * テストメソッド内で、ユーティリティクラスやプライベートメソッドを経由して呼び出すことは出来ません。
-     * （呼び出し元のテストクラス名、テストメソッド名に基づいて入出力データを取得・生成するため）
      * </p>
      * @throws RuntimeException インスタンスの生成に失敗した場合
      */
-    public JobFlowTestDriver() throws RuntimeException {
+    public JobFlowTestDriver() {
         super();
         this.batchId = "bid";
     }
 
     /**
      * コンストラクタ。
-     * <p>
-     * 使い方の注意点は{@link JobFlowTestDriver#JobFlowTestDriver()}を参照。
-     * </p>
+     * 
      * @param batchId バッチID
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see JobFlowTestDriver#JobFlowTestDriver()
      */
-    public JobFlowTestDriver(String batchId) throws RuntimeException {
+    public JobFlowTestDriver(String batchId) {
         super();
         this.batchId = batchId;
     }
 
     /**
      * コンストラクタ。
-     * <p>
-     * 使い方の注意点は{@link JobFlowTestDriver#JobFlowTestDriver()}を参照。
-     * </p>
+     * 
      * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see JobFlowTestDriver#JobFlowTestDriver()
      */
-    public JobFlowTestDriver(List<File> testDataFileList) throws RuntimeException {
+    public JobFlowTestDriver(List<File> testDataFileList) {
         super(testDataFileList);
         this.batchId = "bid";
     }
 
     /**
      * コンストラクタ。
-     * <p>
-     * 使い方の注意点は{@link JobFlowTestDriver#JobFlowTestDriver()}を参照。
-     * </p>
+     * 
      * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
      * @param batchId バッチID
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see JobFlowTestDriver#JobFlowTestDriver()
      */
-    public JobFlowTestDriver(List<File> testDataFileList, String batchId) throws RuntimeException {
+    public JobFlowTestDriver(List<File> testDataFileList, String batchId) {
         super(testDataFileList);
         this.batchId = batchId;
     }
@@ -106,11 +97,11 @@ public class JobFlowTestDriver extends TestDriverBase {
      * @param jobFlowDescriptionClass ジョブフロークラスのクラスオブジェクト
      * @throws RuntimeException テストの実行に失敗した場合
      */
-    public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) throws RuntimeException {
+    public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) {
 
         try {
             // クラスタワークディレクトリ初期化
-            initializeClusterDirectory(clusterWorkDir);
+            initializeClusterDirectory(driverContext.getClusterWorkDir());
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
@@ -122,8 +113,8 @@ public class JobFlowTestDriver extends TestDriverBase {
                     jobFlowDriver.hasError());
             JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-            String flowId = className.substring(className.lastIndexOf(".") + 1) + "_" + methodName;
-            File compileWorkDir = new File(compileWorkBaseDir, flowId);
+            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1) + "_" + driverContext.getMethodName();
+            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
@@ -134,13 +125,13 @@ public class JobFlowTestDriver extends TestDriverBase {
                 batchId,
                 flowId,
                 "test.jobflow",
-                Location.fromPath(clusterWorkDir + "/" + executionId, '/'),
+                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] {
                         DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
                 }),
                 jobFlowDescriptionClass.getClassLoader(),
-                options);
+                driverContext.getOptions());
 
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
@@ -150,8 +141,8 @@ public class JobFlowTestDriver extends TestDriverBase {
 
             CommandContext context = new CommandContext(
                     System.getenv("ASAKUSA_HOME") + "/",
-                    executionId,
-                    batchArgs);
+                    driverContext.getExecutionId(),
+                    driverContext.getBatchArgs());
 
             Map<String, String> dPropMap = createHadoopProperties(context);
 

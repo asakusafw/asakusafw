@@ -118,6 +118,24 @@ public class TestInputPreparator {
         prepare(definition, description, source);
     }
 
+    /**
+     * Truncate the target importer's input.
+     * @param type class of data model
+     * @param description target importer
+     * @throws IOException if failed to prepare the importer
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void truncate(Class<?> type, ImporterDescription description) throws IOException {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        DataModelDefinition<?> definition = findDefinition(type);
+        targets.truncate(definition, description);
+    }
+    
     private <T> DataModelDefinition<T> findDefinition(Class<T> type) throws IOException {
         assert type != null;
         DataModelDefinition<T> definition = adapter.get(type);

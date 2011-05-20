@@ -1,12 +1,4 @@
 package com.asakusafw.compiler.bulkloader.testing.model;
-
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
 import com.asakusafw.compiler.bulkloader.testing.io.Ex1Input;
 import com.asakusafw.compiler.bulkloader.testing.io.Ex1Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -19,168 +11,118 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
-
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
  * ex1を表すデータモデルクラス。
  */
-@DataModelKind("DMDL")
-@ColumnOrder(value = { "SID", "VALUE", "STRING" })
-@ModelInputLocation(Ex1Input.class)
-@ModelOutputLocation(Ex1Output.class)
-@OriginalName(value = "EX1")
-@PrimaryKey(value = { "sid" })
-public class Ex1 implements DataModel<Ex1>, Writable {
+@ColumnOrder(value = {"SID", "VALUE", "STRING"})@DataModelKind("DMDL")@ModelInputLocation(Ex1Input.class)@
+        ModelOutputLocation(Ex1Output.class)@OriginalName(value = "EX1")@PrimaryKey(value = {"sid"}) public class Ex1 
+        implements DataModel<Ex1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     private final StringOption string = new StringOption();
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void reset() {
+    @Override@SuppressWarnings("deprecation") public void reset() {
         this.sid.setNull();
         this.value.setNull();
         this.string.setNull();
     }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void copyFrom(Ex1 other) {
+    @Override@SuppressWarnings("deprecation") public void copyFrom(Ex1 other) {
         this.sid.copyFrom(other.sid);
         this.value.copyFrom(other.value);
         this.string.copyFrom(other.string);
     }
-
     /**
      * sidを返す。
-     *
      * @return sid
-     * @throws NullPointerException
-     *             sidの値が<code>null</code>である場合
+     * @throws NullPointerException sidの値が<code>null</code>である場合
      */
     public long getSid() {
         return this.sid.get();
     }
-
     /**
      * sidを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setSid(long value0) {
+    @SuppressWarnings("deprecation") public void setSid(long value0) {
         this.sid.modify(value0);
     }
-
     /**
      * <code>null</code>を許すsidを返す。
-     *
      * @return sid
      */
-    @OriginalName(value = "SID")
-    public LongOption getSidOption() {
+    @OriginalName(value = "SID") public LongOption getSidOption() {
         return this.sid;
     }
-
     /**
      * sidを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setSidOption(LongOption option) {
+    @SuppressWarnings("deprecation") public void setSidOption(LongOption option) {
         this.sid.copyFrom(option);
     }
-
     /**
      * valueを返す。
-     *
      * @return value
-     * @throws NullPointerException
-     *             valueの値が<code>null</code>である場合
+     * @throws NullPointerException valueの値が<code>null</code>である場合
      */
     public int getValue() {
         return this.value.get();
     }
-
     /**
      * valueを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setValue(int value0) {
+    @SuppressWarnings("deprecation") public void setValue(int value0) {
         this.value.modify(value0);
     }
-
     /**
      * <code>null</code>を許すvalueを返す。
-     *
      * @return value
      */
-    @OriginalName(value = "VALUE")
-    public IntOption getValueOption() {
+    @OriginalName(value = "VALUE") public IntOption getValueOption() {
         return this.value;
     }
-
     /**
      * valueを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setValueOption(IntOption option) {
+    @SuppressWarnings("deprecation") public void setValueOption(IntOption option) {
         this.value.copyFrom(option);
     }
-
     /**
      * stringを返す。
-     *
      * @return string
-     * @throws NullPointerException
-     *             stringの値が<code>null</code>である場合
+     * @throws NullPointerException stringの値が<code>null</code>である場合
      */
     public Text getString() {
         return this.string.get();
     }
-
     /**
      * stringを設定する。
-     *
-     * @param value0
-     *            設定する値
+     * @param value0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setString(Text value0) {
+    @SuppressWarnings("deprecation") public void setString(Text value0) {
         this.string.modify(value0);
     }
-
     /**
      * <code>null</code>を許すstringを返す。
-     *
      * @return string
      */
-    @OriginalName(value = "STRING")
-    public StringOption getStringOption() {
+    @OriginalName(value = "STRING") public StringOption getStringOption() {
         return this.string;
     }
-
     /**
      * stringを設定する。
-     *
-     * @param option
-     *            設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
      */
-    @SuppressWarnings("deprecation")
-    public void setStringOption(StringOption option) {
+    @SuppressWarnings("deprecation") public void setStringOption(StringOption option) {
         this.string.copyFrom(option);
     }
-
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("{");
         result.append("class=ex1");
@@ -193,9 +135,7 @@ public class Ex1 implements DataModel<Ex1>, Writable {
         result.append("}");
         return result.toString();
     }
-
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + sid.hashCode();
@@ -203,62 +143,49 @@ public class Ex1 implements DataModel<Ex1>, Writable {
         result = prime * result + string.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    @Override public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if(this.getClass()!= obj.getClass()) {
             return false;
         }
         Ex1 other = (Ex1) obj;
-        if (this.sid.equals(other.sid) == false) {
+        if(this.sid.equals(other.sid)== false) {
             return false;
         }
-        if (this.value.equals(other.value) == false) {
+        if(this.value.equals(other.value)== false) {
             return false;
         }
-        if (this.string.equals(other.string) == false) {
+        if(this.string.equals(other.string)== false) {
             return false;
         }
         return true;
     }
-
     /**
      * stringを返す。
-     *
      * @return string
-     * @throws NullPointerException
-     *             stringの値が<code>null</code>である場合
+     * @throws NullPointerException stringの値が<code>null</code>である場合
      */
     public String getStringAsString() {
         return this.string.getAsString();
     }
-
     /**
      * stringを設定する。
-     *
-     * @param string0
-     *            設定する値
+     * @param string0 設定する値
      */
-    @SuppressWarnings("deprecation")
-    public void setStringAsString(String string0) {
+    @SuppressWarnings("deprecation") public void setStringAsString(String string0) {
         this.string.modify(string0);
     }
-
-    @Override
-    public void write(DataOutput out) throws IOException {
+    @Override public void write(DataOutput out) throws IOException {
         sid.write(out);
         value.write(out);
         string.write(out);
     }
-
-    @Override
-    public void readFields(DataInput in) throws IOException {
+    @Override public void readFields(DataInput in) throws IOException {
         sid.readFields(in);
         value.readFields(in);
         string.readFields(in);

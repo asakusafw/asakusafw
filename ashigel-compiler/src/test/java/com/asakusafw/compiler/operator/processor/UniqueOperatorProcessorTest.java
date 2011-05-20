@@ -27,7 +27,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.ashigeru.util.graph.Graph;
 
 /**
- * Test for {@link UniqueOperatorProcessor}.
+ * Test for {@code UniqueOperatorProcessor}.
  */
 @SuppressWarnings("deprecation")
 public class UniqueOperatorProcessorTest extends OperatorCompilerTestRoot {
