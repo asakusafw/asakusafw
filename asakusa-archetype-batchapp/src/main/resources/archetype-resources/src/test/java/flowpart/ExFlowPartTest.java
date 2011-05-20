@@ -15,15 +15,17 @@
  */
 package ${package}.flowpart;
 
-import com.asakusafw.testdriver.FlowPartTestDriver;
+import org.junit.Test;
+
+import test.flowpart.ExFlowPart;
+import test.modelgen.table.model.Ex1;
+
+import ${package}.modelgen.table.model.Ex1;
+
+import com.asakusafw.testdriver.FlowPartTester;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
-
-import org.junit.Test;
-
-import ${package}.flowpart.ExFlowPart;
-import ${package}.modelgen.table.model.Ex1;
 
 /**
  * サンプル：フロー部品のテストクラス
@@ -34,17 +36,19 @@ public class ExFlowPartTest {
      * サンプル：フロー部品の実行
      * 
      * @throws Throwable 
-     */        
+     */
     @Test
     public void testExample() throws Throwable {
 
-    	FlowPartTestDriver driver = new FlowPartTestDriver();
-        In<Ex1> in = driver.createIn(Ex1.class);
-        Out<Ex1> out = driver.createOut(Ex1.class);
+        String testDataSheet = "EX1.xls";
+
+        FlowPartTester driver = new FlowPartTester(this.getClass());
+
+        In<Ex1> in = driver.input("ex1", Ex1.class).prepare(testDataSheet);
+        Out<Ex1> out = driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet+ "#:2");
 
         FlowDescription flowDesc = new ExFlowPart(in, out);
-
         driver.runTest(flowDesc);
     }
-    
+
 }

@@ -15,9 +15,14 @@
  */
 package ${package}.jobflow;
 
-import com.asakusafw.testdriver.JobFlowTestDriver;
-
 import org.junit.Test;
+
+import test.jobflow.ExJobFlow;
+import test.modelgen.table.model.Ex1;
+
+import ${package}.modelgen.table.model.Ex1;
+
+import com.asakusafw.testdriver.JobFlowTester;
 
 /**
  * サンプル：ジョブフローのテストクラス
@@ -28,13 +33,18 @@ public class ExJobFlowTest {
      * サンプル：ジョブフローの実行
      * 
      * @throws Throwable 
-     */    
-	@Test
-	public void testExample() throws Throwable {
+     */
+    @Test
+    public void testExample() throws Throwable {
 
-		JobFlowTestDriver driver = new JobFlowTestDriver();
+        String testDataSheet = "EX1.xls";
 
-		driver.runTest(ExJobFlow.class);
-	}
+        JobFlowTester driver = new JobFlowTester(this.getClass());
+
+        driver.input("ex1", Ex1.class).prepare(testDataSheet);
+        driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet + "#:2");
+
+        driver.runTest(ExJobFlow.class);
+    }
 
 }

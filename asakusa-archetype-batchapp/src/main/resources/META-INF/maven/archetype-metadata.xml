@@ -17,6 +17,12 @@
 				<include>**/*.java</include>
 			</includes>
 		</fileSet>
+		<fileSet filtered="false" packaged="true">
+			<directory>src/test/resources</directory>
+			<includes>
+				<include>**/*.xls</include>
+			</includes>
+		</fileSet>
 		<fileSet filtered="false" packaged="false" encoding="UTF-8">
 			<directory>src</directory>
 			<includes>
@@ -24,15 +30,7 @@
 			</includes>
 			<excludes>
 				<exclude>**/*.java</exclude>
-			</excludes>
-		</fileSet>
-		<fileSet filtered="false" packaged="false" encoding="UTF-8">
-			<directory>target</directory>
-			<includes>
-				<include>**/*</include>
-			</includes>
-			<excludes>
-				<exclude>**/*.java</exclude>
+				<exclude>**/*.xls</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet filtered="true" packaged="false" encoding="UTF-8">
@@ -46,9 +44,9 @@
 		<fileSet filtered="false" packaged="false" encoding="UTF-8">
 			<directory>src/main/resources</directory>
 		</fileSet>
-        <fileSet filtered="false" packaged="false" encoding="UTF-8">
-            <directory>src/main/dmdl</directory>
-        </fileSet>
+		<fileSet filtered="false" packaged="false" encoding="UTF-8">
+			<directory>src/main/dmdl</directory>
+		</fileSet>
 		<fileSet filtered="false" packaged="false" encoding="UTF-8">
 			<directory>target/generated-sources/annotations</directory>
 		</fileSet>

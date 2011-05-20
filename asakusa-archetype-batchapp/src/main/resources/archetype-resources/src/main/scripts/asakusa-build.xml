@@ -13,9 +13,9 @@
 
 	<target name="modelgen" description="モデルクラスの生成を行います。同時にテストデータ定義シートを生成します。">
 
-		<property file="${asakusa.testtools.conf}" />
+		<property file="${asakusa.jdbc.conf}" />
 		<mkdir dir="${asakusa.modelgen.output}" />
-		<mkdir dir="${output.directory}" />
+		<mkdir dir="${asakusa.testdatasheet.output}" />
 
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
@@ -67,7 +67,8 @@
 			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
 		</delete>
 		<delete>
-			<fileset dir="${output.directory}" includes="**/*.xls" />
+			<fileset dir="${asakusa.testdatasheet.output}"
+			         includes="**/*.xls" />
 		</delete>
 		<java classname="com.asakusafw.generator.ModelSheetGenerator"
 		      classpath="${compile_classpath}"
@@ -76,11 +77,10 @@
 			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
 			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
-			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${asakusa.testtools.conf}" />
-			<jvmarg value="-DASAKUSA_TESTTOOLS_CONF=${asakusa.testtools.conf}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${asakusa.jdbc.conf}" />
 			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-jdbc" />
-			<arg value="${asakusa.testtools.conf}" />
+			<arg value="${asakusa.jdbc.conf}" />
 			<arg value="-output" />
 			<arg value="${asakusa.dmdl.fromddl.output}" />
 			<arg value="-encoding" />
@@ -105,6 +105,19 @@
 			<arg value="-targetencoding" />
 			<arg value="${project.build.sourceEncoding}" />
 		</java>
+		<java classname="com.asakusafw.testdata.generator.excel.Main"
+		      classpath="${compile_classpath}"
+		      fork="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<arg value="-format" />
+			<arg value="${asakusa.testdatasheet.format}" />
+			<arg value="-output" />
+			<arg value="${asakusa.testdatasheet.output}" />
+			<arg value="-source" />
+			<arg path="${asakusa.dmdl.dir}:${asakusa.dmdl.fromddl.output}" />
+			<arg value="-encoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+		</java>
 
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
@@ -113,6 +126,51 @@
 		     classpath="${compile_classpath}">
 			<transaction src="${asakusa.bulkloader.genddl}" />
 		</sql>
+
+	</target>
+
+	<target name="modelgen:only-dmdl"
+	        description="モデルクラスの生成を行います。同時にテストデータ定義シートを生成します。">
+
+		<property file="${asakusa.jdbc.conf}" />
+		<mkdir dir="${asakusa.modelgen.output}" />
+		<mkdir dir="${asakusa.testdatasheet.output}" />
+
+		<delete>
+			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
+		</delete>
+		<delete>
+			<fileset dir="${asakusa.testdatasheet.output}"
+			         includes="**/*.xls" />
+		</delete>
+		<java classname="com.asakusafw.dmdl.java.Main"
+		      classpath="${compile_classpath}"
+		      fork="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<arg value="-output" />
+			<arg value="${asakusa.modelgen.output}" />
+			<arg value="-package" />
+			<arg value="${asakusa.modelgen.package}" />
+			<arg value="-source" />
+			<arg path="${asakusa.dmdl.dir}" />
+			<arg value="-sourceencoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+			<arg value="-targetencoding" />
+			<arg value="${project.build.sourceEncoding}" />
+		</java>
+		<java classname="com.asakusafw.testdata.generator.excel.Main"
+		      classpath="${compile_classpath}"
+		      fork="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<arg value="-format" />
+			<arg value="${asakusa.testdatasheet.format}" />
+			<arg value="-output" />
+			<arg value="${asakusa.testdatasheet.output}" />
+			<arg value="-source" />
+			<arg path="${asakusa.dmdl.dir}" />
+			<arg value="-encoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+		</java>
 
 	</target>
 
@@ -178,7 +236,7 @@
 				<include name=".bulkloader_hc_profile" />
 			</fileset>
 		</move>
-		<copy file="src/test/resources/testtools.properties"
+		<copy file="src/test/resources/asakusa-jdbc.properties"
 		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
 
 		<!-- BulkLoaderの設定を開発環境用に置換 -->

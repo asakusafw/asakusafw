@@ -15,24 +15,35 @@
  */
 package ${package}.batch;
 
-import com.asakusafw.testdriver.BatchTestDriver;
+import ${package}.modelgen.table.model.Ex1;
 
 import org.junit.Test;
+
+import test.batch.ExBatch;
+import test.modelgen.table.model.Ex1;
+
+import com.asakusafw.testdriver.BatchTester;
+import com.asakusafw.testdriver.JobFlowTester;
 
 /**
  * サンプル：バッチのテストクラス
  */
 public class ExBatchTest {
-    
+
     /**
      * サンプル：バッチの実行
      * @throws Throwable テストに失敗した場合
-     */        
+     */
     @Test
     public void testExample() throws Throwable {
-        
-        BatchTestDriver driver = new BatchTestDriver();
-        driver.runTest(ExBatch.class);
-        
+
+        BatchTester batchDriver = new BatchTester(this.getClass());
+        String testDataSheet = "EX1.xls";
+
+        JobFlowTester driver = batchDriver.jobflow("ex");
+        driver.input("ex1", Ex1.class).prepare(testDataSheet);
+        driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet + "#:2");
+
+        batchDriver.runTest(ExBatch.class);
     }
 }

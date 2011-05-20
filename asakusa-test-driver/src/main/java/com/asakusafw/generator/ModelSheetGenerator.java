@@ -53,7 +53,6 @@ public final class ModelSheetGenerator {
             i++;
         }
 
-        com.asakusafw.testtools.templategen.Main.main(tablesArray);
         HadoopBulkLoaderDDLGenerator.main(tablesArray);
     }
 

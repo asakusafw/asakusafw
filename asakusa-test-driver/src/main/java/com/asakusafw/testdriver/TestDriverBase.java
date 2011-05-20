@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,109 +54,79 @@ import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
-import com.asakusafw.testtools.TestUtils;
 
 /**
  * テストドライバの基底クラス。
  */
 public abstract class TestDriverBase {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(TestDriverBase.class);
-    private static final String TESTDATA_DIR_DEFAULT = "src/test/data/excel";
+    private static final Logger LOG = LoggerFactory.getLogger(TestDriverBase.class);
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
-    /** OSのユーザ名。 */
-    protected String osUser;
+    /** テストデータ格納先のデフォルト値 */
+    protected static final String TESTDATA_DIR_DEFAULT = "src/test/data/excel";
 
     /** Hadoopコマンドの絶対パス。 */
     protected String hadoopCmd;
     /** HadoopJobRun(HadoopコマンドのWrapper)コマンドの絶対パス。 */
     protected String hadoopJobRunCmd;
-    /** DSLCompilerのローカルワークディレクトリ。 */
-    protected String compileWorkBaseDir;
-    /** DSLCompilerのクラスタワークディレクトリ。 */
-    protected String clusterWorkDir;
+    /** build.properties */
+    protected Properties buildProperties;
 
-    /** テストクラスのクラス名。 */
-    protected String className;
-    /** テストクラスのメソッド名。 */
-    protected String methodName;
-
-    /**
-     * ジョブフローの実行ID。 (テストドライバでダミーの値をセットする)
-     */
-    protected String executionId;
-
-    /** テストデータ生成・検証ツールオブジェクト。 */
-    protected TestUtils testUtils;
-    /** TestUtils生成時に指定するテストデータ定義シートのファイルリスト。 */
-    protected List<File> testDataFileList;
-    /** TestUtils生成時に指定するテストデータ定義シートのディレクトリ（testDataFileListと排他)。 */
-    protected File testDataDir;
-
-    /**
-     * 実行時の追加設定一覧 (Property Name, Property Value)。
-     */
-    protected final Map<String, String> extraConfigurations = new TreeMap<String, String>();
-
-    /**
-     * バッチ実行時引数 (ASAKUSA_BATCH_ARGS)。
-     */
-    protected final Map<String, String> batchArgs = new TreeMap<String, String>();
-
-    /**
-     * コンパイラオプション。
-     */
-    protected final FlowCompilerOptions options = new FlowCompilerOptions();
+    /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
+    protected TestDriverContext driverContext = new TestDriverContext(new TreeMap<String, String>(),
+            new TreeMap<String, String>(), new FlowCompilerOptions());
 
     /**
      * コンストラクタ。
-     *
-     * @throws RuntimeException
-     *             初期化に失敗した場合
+     * 
+     * @param callerClass 呼出元クラス
      */
-    public TestDriverBase() throws RuntimeException {
-        initialize();
-    }
-
-    /**
-     * コンストラクタ。
-     *
-     * @param testDataFileList
-     *            テストデータ定義シートのパスを示すFileのリスト
-     * @throws RuntimeException
-     *             初期化に失敗した場合
-     */
-    public TestDriverBase(List<File> testDataFileList) throws RuntimeException {
-        this.testDataFileList = testDataFileList;
+    public TestDriverBase(Class<?> callerClass) {
+        driverContext.setCallerClass(callerClass);
         initialize();
     }
 
     /**
      * テストクラスのクラス名とメソッド名を抽出する。
-     * <p>
-     * スタックトレースから抽出しているので、本メソッドの呼出階層の変更に注意すること。
-     * </p>
-     *
-     * @throws RuntimeException
-     *             抽出に失敗した場合
      */
-    protected void setTestClassInformation() throws RuntimeException {
+    protected void setTestClassInformation() {
 
-        // 呼び出し元のクラス名とメソッド名を取得
-        StackTraceElement e = new Exception().getStackTrace()[4];
-        className = e.getClassName().substring(
-                e.getClassName().lastIndexOf(".") + 1);
-        methodName = e.getMethodName();
+        // 呼び出し元のテストクラス名とテストメソッド名を取得
+        Class<?> clazz = null;
+        Method method = null;
+        boolean wasCalledTestMethod = false;
+        for (StackTraceElement elm : new Exception().getStackTrace()) {
+            try {
+                clazz = Class.forName(elm.getClassName());
+                method = clazz.getDeclaredMethod(elm.getMethodName(), new Class[] {});
+                if (method.getAnnotation(org.junit.Test.class) != null) {
+                    wasCalledTestMethod = true;
+                    break;
+                }
+            } catch (ClassNotFoundException ex) {
+                continue;
+            } catch (NoSuchMethodException ex) {
+                continue;
+            }
+        }
+        if (wasCalledTestMethod && clazz != null && method != null) {
+            driverContext.setClassName(clazz.getSimpleName());
+            driverContext.setMethodName(method.getName());
+        } else {
+            if (driverContext.getCallerClass() != null) {
+                // JUnitのテストメソッドから呼ばれなかった場合
+                driverContext.setClassName(driverContext.getCallerClass().getSimpleName());
+                driverContext.setMethodName("");
+            } else {
+                throw new RuntimeException("テストメソッドからテストドライバを起動していないか、呼出元クラスがnull。");
+            }
+        }
 
         // executionIdの生成 (テスト時にわかりやすいようにクラス名_メソッド名_タイムスタンプ)
-        Calendar cal = Calendar.getInstance();
-        String ts = new SimpleDateFormat("yyyyMMddHHmmss")
-                .format(cal.getTime());
-
-        executionId = className + "_" + methodName + "_" + ts;
+        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+        driverContext.setExecutionId(driverContext.getClassName() + "_" + driverContext.getMethodName() + "_" + ts);
     }
 
     /**
@@ -164,7 +135,7 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             初期化に失敗した場合
      */
-    private void initialize() throws RuntimeException {
+    protected void initialize() throws RuntimeException {
         // クラス名/メソッド名を使った変数を初期化
         setTestClassInformation();
 
@@ -172,28 +143,10 @@ public abstract class TestDriverBase {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(buildPropertiesFile);
-            Properties prop = new Properties();
-            prop.load(fis);
-            System.setProperty("ASAKUSA_MODELGEN_PACKAGE",
-                    prop.getProperty("asakusa.modelgen.package"));
-            System.setProperty("ASAKUSA_MODELGEN_OUTPUT",
-                    prop.getProperty("asakusa.modelgen.output"));
-            System.setProperty("ASAKUSA_TESTTOOLS_CONF",
-                    prop.getProperty("asakusa.testtools.conf"));
-
-            String testDataDirPath = prop
-                    .getProperty("asakusa.testdriver.testdata.dir");
-            if (testDataDirPath == null) {
-                testDataDirPath = TESTDATA_DIR_DEFAULT;
-            }
-            if (testDataFileList == null) {
-                testDataDir = new File(testDataDirPath
-                        + System.getProperty("file.separator") + className
-                        + System.getProperty("file.separator") + methodName);
-                testUtils = new TestUtils(testDataDir);
-            } else {
-                testUtils = new TestUtils(testDataFileList);
-            }
+            buildProperties = new Properties();
+            buildProperties.load(fis);
+            System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
+            System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -201,24 +154,21 @@ public abstract class TestDriverBase {
         }
 
         // OS情報
-        this.osUser = System.getenv("USER");
+        this.driverContext.setOsUser(System.getenv("USER"));
 
         // パス関連
         this.hadoopCmd = System.getenv("HADOOP_HOME") + "/bin/hadoop";
         // TODO should enable to rewrite ASAKUSA_HOME
         // (also need to rewrite thundergate)
-        this.hadoopJobRunCmd = System.getenv("ASAKUSA_HOME")
-                + "/experimental/bin/hadoop_job_run.sh";
+        this.hadoopJobRunCmd = System.getenv("ASAKUSA_HOME") + "/experimental/bin/hadoop_job_run.sh";
 
-        this.compileWorkBaseDir = System
-                .getProperty("asakusa.testdriver.compilerwork.dir");
-        if (compileWorkBaseDir == null) {
-            compileWorkBaseDir = COMPILERWORK_DIR_DEFAULT;
+        this.driverContext.setCompileWorkBaseDir(System.getProperty("asakusa.testdriver.compilerwork.dir"));
+        if (driverContext.getCompileWorkBaseDir() == null) {
+            driverContext.setCompileWorkBaseDir(COMPILERWORK_DIR_DEFAULT);
         }
-        this.clusterWorkDir = System
-                .getProperty("asakusa.testdriver.hadoopwork.dir");
-        if (clusterWorkDir == null) {
-            clusterWorkDir = HADOOPWORK_DIR_DEFAULT;
+        this.driverContext.setClusterWorkDir(System.getProperty("asakusa.testdriver.hadoopwork.dir"));
+        if (driverContext.getClusterWorkDir() == null) {
+            driverContext.setClusterWorkDir(HADOOPWORK_DIR_DEFAULT);
         }
     }
 
@@ -232,8 +182,7 @@ public abstract class TestDriverBase {
      * @throws IllegalArgumentException
      *             引数に{@code null}が指定された場合
      */
-    protected void initializeClusterDirectory(String pathString)
-            throws IOException {
+    protected void initializeClusterDirectory(String pathString) throws IOException {
         if (pathString == null) {
             throw new IllegalArgumentException("pathString must not be null"); //$NON-NLS-1$
         }
@@ -263,40 +212,34 @@ public abstract class TestDriverBase {
      *            プロパティの一覧
      * @return 作成した実行計画
      */
-    protected TestExecutionPlan createExecutionPlan(JobflowInfo info,
-            CommandContext context, Map<String, String> properties) {
+    protected TestExecutionPlan createExecutionPlan(JobflowInfo info, CommandContext context,
+            Map<String, String> properties) {
 
         List<Job> jobs = new ArrayList<Job>();
         for (StageInfo stage : info.getStages()) {
-            jobs.add(new Job(stage.getClassName(), context.getExecutionId(),
-                    properties));
+            jobs.add(new Job(stage.getClassName(), context.getExecutionId(), properties));
         }
 
         List<Command> initializers = new ArrayList<Command>();
         List<Command> importers = new ArrayList<Command>();
         List<Command> exporters = new ArrayList<Command>();
         List<Command> finalizers = new ArrayList<Command>();
-        for (ExternalIoCommandProvider provider : info.getJobflow()
-                .getCompiled().getCommandProviders()) {
-            initializers
-                    .addAll(convert(provider.getInitializeCommand(context)));
+        for (ExternalIoCommandProvider provider : info.getJobflow().getCompiled().getCommandProviders()) {
+            initializers.addAll(convert(provider.getInitializeCommand(context)));
             importers.addAll(convert(provider.getImportCommand(context)));
             exporters.addAll(convert(provider.getExportCommand(context)));
             finalizers.addAll(convert(provider.getFinalizeCommand(context)));
         }
 
-        return new TestExecutionPlan(info.getJobflow().getFlowId(),
-                context.getExecutionId(), initializers, importers, jobs,
-                exporters, finalizers);
+        return new TestExecutionPlan(info.getJobflow().getFlowId(), context.getExecutionId(), initializers, importers,
+                jobs, exporters, finalizers);
     }
 
-    private List<TestExecutionPlan.Command> convert(
-            List<ExternalIoCommandProvider.Command> commands) {
+    private List<TestExecutionPlan.Command> convert(List<ExternalIoCommandProvider.Command> commands) {
         List<TestExecutionPlan.Command> results = new ArrayList<TestExecutionPlan.Command>();
         for (ExternalIoCommandProvider.Command cmd : commands) {
-            results.add(new TestExecutionPlan.Command(cmd.getCommandTokens(),
-                    cmd.getModuleName(), cmd.getProfileName(), cmd
-                            .getEnvironment()));
+            results.add(new TestExecutionPlan.Command(cmd.getCommandTokens(), cmd.getModuleName(),
+                    cmd.getProfileName(), cmd.getEnvironment()));
         }
         return results;
     }
@@ -311,9 +254,8 @@ public abstract class TestDriverBase {
      * @throws IOException
      *             保存に失敗した場合
      */
-    protected void savePlan(File targetDirectory, TestExecutionPlan plan)
-            throws IOException {
-        LOG.info("{}のテスト用実行計画を保存しています", executionId);
+    protected void savePlan(File targetDirectory, TestExecutionPlan plan) throws IOException {
+        LOG.info("{}のテスト用実行計画を保存しています", driverContext.getExecutionId());
         File file = new File(targetDirectory, "test-execution-plan.ser");
         FileOutputStream output = new FileOutputStream(file);
         try {
@@ -323,7 +265,7 @@ public abstract class TestDriverBase {
         } finally {
             output.close();
         }
-        LOG.info("{}のテスト用実行計画を保存しました: {}", executionId, file.getAbsolutePath());
+        LOG.info("{}のテスト用実行計画を保存しました: {}", driverContext.getExecutionId(), file.getAbsolutePath());
     }
 
     /**
@@ -336,8 +278,7 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             実行に失敗した場合
      */
-    protected void executePlan(TestExecutionPlan plan, File jobflowPackageFile)
-            throws RuntimeException {
+    protected void executePlan(TestExecutionPlan plan, File jobflowPackageFile) throws RuntimeException {
         try {
             runJobFlowCommands(plan.getInitializers());
             runJobFlowCommands(plan.getImporters());
@@ -363,18 +304,17 @@ public abstract class TestDriverBase {
         }
         // ジョブの実行時にOSユーザ名とMMインスタンスIDをJavaシステムプロパティとして渡す
         Map<String, String> dPropMap = new HashMap<String, String>();
-        dPropMap.put(AbstractStageClient.PROP_USER, osUser);
-        dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, executionId);
+        dPropMap.put(AbstractStageClient.PROP_USER, driverContext.getOsUser());
+        dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, driverContext.getExecutionId());
 
         // 変数表を設定に渡す
-        dPropMap.put(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS,
-                context.getVariableList());
+        dPropMap.put(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS, context.getVariableList());
 
         // 各種プラグインの初期化情報をシステムプロパティとして渡す
         dPropMap.putAll(getPluginProperties());
 
         // 追加設定の情報をシステムプロパティとして渡す
-        dPropMap.putAll(extraConfigurations);
+        dPropMap.putAll(driverContext.getExtraConfigurations());
         return dPropMap;
     }
 
@@ -388,14 +328,12 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             実行に失敗した場合
      */
-    private void runJobflowJobs(File jobflowPackageFile, List<Job> jobs)
-            throws RuntimeException {
+    private void runJobflowJobs(File jobflowPackageFile, List<Job> jobs) throws RuntimeException {
         // DSLコンパイラが生成したHadoopジョブの各ステージを順番に実行する。
         // 各Hadoopジョブを実行した都度、hadoopコマンドの戻り値の検証を行う。
         for (Job job : jobs) {
-            HadoopJobInfo jobElement = new HadoopJobInfo(job.getExecutionId(),
-                    jobflowPackageFile.getAbsolutePath(), job.getClassName(),
-                    job.getProperties());
+            HadoopJobInfo jobElement = new HadoopJobInfo(job.getExecutionId(), jobflowPackageFile.getAbsolutePath(),
+                    job.getClassName(), job.getProperties());
             runHadoopJob(jobElement);
         }
     }
@@ -408,8 +346,7 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             実行に失敗した場合
      */
-    private void runJobFlowCommands(List<TestExecutionPlan.Command> cmdList)
-            throws RuntimeException {
+    private void runJobFlowCommands(List<TestExecutionPlan.Command> cmdList) throws RuntimeException {
         // DSLコンパイラが生成したコマンドを順番に実行する。
         // 各コマンドを実行した都度、終了コードの検証を行う。
         for (TestExecutionPlan.Command command : cmdList) {
@@ -427,11 +364,9 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             ジョブの実行に失敗した場合
      */
-    protected void runHadoopJob(HadoopJobInfo hadoopJobInfo)
-            throws RuntimeException {
+    protected void runHadoopJob(HadoopJobInfo hadoopJobInfo) throws RuntimeException {
 
-        String[] shellCmd = { hadoopJobRunCmd, hadoopJobInfo.getClassName(),
-                hadoopJobInfo.getJarName() };
+        String[] shellCmd = { hadoopJobRunCmd, hadoopJobInfo.getClassName(), hadoopJobInfo.getJarName() };
         Map<String, String> dPropMap = hadoopJobInfo.getDPropMap();
         if (dPropMap != null) {
             dPropMap.keySet();
@@ -444,14 +379,11 @@ public abstract class TestDriverBase {
             shellCmd = list.toArray(new String[list.size()]);
         }
 
-        int exitValue = runShell(shellCmd,
-                Collections.<String, String> emptyMap());
+        int exitValue = runShell(shellCmd, Collections.<String, String> emptyMap());
         if (exitValue != 0) {
             // 異常終了
-            Assert.assertThat(
-                    "Hadoopジョブの実行に失敗しました。ジョブフローID= "
-                            + hadoopJobInfo.getJobFlowId() + ", コマンド= "
-                            + toStirngShellCmdArray(shellCmd), exitValue, is(0));
+            Assert.assertThat("Hadoopジョブの実行に失敗しました。ジョブフローID= " + hadoopJobInfo.getJobFlowId() + ", コマンド= "
+                    + toStirngShellCmdArray(shellCmd), exitValue, is(0));
         }
     }
 
@@ -466,8 +398,7 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             スクリプトの実行に失敗した場合
      */
-    protected int runShell(String[] shellCmd,
-            Map<String, String> environmentVariables) throws RuntimeException {
+    protected int runShell(String[] shellCmd, Map<String, String> environmentVariables) throws RuntimeException {
 
         LOG.info("【COMMAND】 " + toStirngShellCmdArray(shellCmd));
 
@@ -522,12 +453,9 @@ public abstract class TestDriverBase {
      * @throws RuntimeException
      *             スクリプトの実行に失敗した場合
      */
-    protected void runShellAndAssert(String[] shellCmd,
-            Map<String, String> variables) throws RuntimeException {
+    protected void runShellAndAssert(String[] shellCmd, Map<String, String> variables) throws RuntimeException {
         int exitValue = runShell(shellCmd, variables);
-        Assert.assertThat(
-                "コマンドの実行に失敗しました。= " + toStirngShellCmdArray(shellCmd),
-                exitValue, is(0));
+        Assert.assertThat("コマンドの実行に失敗しました。= " + toStirngShellCmdArray(shellCmd), exitValue, is(0));
     }
 
     /**
@@ -545,9 +473,9 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
         }
         if (value != null) {
-            extraConfigurations.put(key, value);
+            driverContext.getExtraConfigurations().put(key, value);
         } else {
-            extraConfigurations.remove(key);
+            driverContext.getExtraConfigurations().remove(key);
         }
     }
 
@@ -566,9 +494,9 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
         }
         if (value != null) {
-            batchArgs.put(key, value);
+            driverContext.getBatchArgs().put(key, value);
         } else {
-            batchArgs.remove(key);
+            driverContext.getBatchArgs().remove(key);
         }
     }
 
@@ -580,23 +508,24 @@ public abstract class TestDriverBase {
      */
     public void setOptimize(int level) {
         if (level <= 0) {
-            options.setCompressConcurrentStage(false);
-            options.setCompressFlowPart(false);
-            options.setHashJoinForSmall(false);
-            options.setHashJoinForTiny(false);
-            options.setEnableCombiner(false);
+            driverContext.getOptions().setCompressConcurrentStage(false);
+            driverContext.getOptions().setCompressFlowPart(false);
+            driverContext.getOptions().setHashJoinForSmall(false);
+            driverContext.getOptions().setHashJoinForTiny(false);
+            driverContext.getOptions().setEnableCombiner(false);
         } else if (level == 1) {
-            options.setCompressConcurrentStage(FlowCompilerOptions.Item.compressConcurrentStage.defaultValue);
-            options.setCompressFlowPart(FlowCompilerOptions.Item.compressFlowPart.defaultValue);
-            options.setHashJoinForSmall(FlowCompilerOptions.Item.hashJoinForSmall.defaultValue);
-            options.setHashJoinForTiny(FlowCompilerOptions.Item.hashJoinForTiny.defaultValue);
-            options.setEnableCombiner(FlowCompilerOptions.Item.enableCombiner.defaultValue);
+            driverContext.getOptions().setCompressConcurrentStage(
+                    FlowCompilerOptions.Item.compressConcurrentStage.defaultValue);
+            driverContext.getOptions().setCompressFlowPart(FlowCompilerOptions.Item.compressFlowPart.defaultValue);
+            driverContext.getOptions().setHashJoinForSmall(FlowCompilerOptions.Item.hashJoinForSmall.defaultValue);
+            driverContext.getOptions().setHashJoinForTiny(FlowCompilerOptions.Item.hashJoinForTiny.defaultValue);
+            driverContext.getOptions().setEnableCombiner(FlowCompilerOptions.Item.enableCombiner.defaultValue);
         } else {
-            options.setCompressConcurrentStage(true);
-            options.setCompressFlowPart(true);
-            options.setHashJoinForSmall(true);
-            options.setHashJoinForTiny(true);
-            options.setEnableCombiner(true);
+            driverContext.getOptions().setCompressConcurrentStage(true);
+            driverContext.getOptions().setCompressFlowPart(true);
+            driverContext.getOptions().setHashJoinForSmall(true);
+            driverContext.getOptions().setHashJoinForTiny(true);
+            driverContext.getOptions().setEnableCombiner(true);
         }
     }
 
@@ -607,7 +536,7 @@ public abstract class TestDriverBase {
      *            デバッグ情報を残す場合に{@code true}、捨てる場合に{@code false}
      */
     public void setDebug(boolean enable) {
-        options.setEnableDebugLogging(enable);
+        driverContext.getOptions().setEnableDebugLogging(enable);
     }
 
     /**
