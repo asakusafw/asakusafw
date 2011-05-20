@@ -17,6 +17,9 @@ package ${package}.jobflow;
 
 import org.junit.Test;
 
+import test.jobflow.ExJobFlow;
+import test.modelgen.table.model.Ex1;
+
 import ${package}.modelgen.table.model.Ex1;
 
 import com.asakusafw.testdriver.JobFlowTester;
@@ -34,11 +37,12 @@ public class ExJobFlowTest {
     @Test
     public void testExample() throws Throwable {
 
-        String testDataSheet = "src/test/data/excel/ExJobFlowTest/testExample/EX1.xls";
+        String testDataSheet = "EX1.xls";
 
-        JobFlowTester driver = new JobFlowTester();
+        JobFlowTester driver = new JobFlowTester(this.getClass());
+
         driver.input("ex1", Ex1.class).prepare(testDataSheet);
-        driver.output("ex1", Ex1.class).verify(testDataSheet, ":1", testDataSheet, ":2");
+        driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet + "#:2");
 
         driver.runTest(ExJobFlow.class);
     }

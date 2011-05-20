@@ -35,6 +35,8 @@ public class TestDriverContext {
     private String className;
     /** テストクラスのメソッド名。 */
     private String methodName;
+    /** テストクラスの呼出元クラス。 */
+    private Class<?> callerClass;
     
     /** ジョブフローの実行ID。 (テストドライバでダミーの値をセットする)*/
     private String executionId;
@@ -182,6 +184,20 @@ public class TestDriverContext {
      */
     public void setOptions(FlowCompilerOptions options) {
         this.options = options;
+    }
+
+    /**
+     * @return the callerClass
+     */
+    protected Class<?> getCallerClass() {
+        return callerClass;
+    }
+
+    /**
+     * @param callerClass the callerClass to set
+     */
+    protected void setCallerClass(Class<?> callerClass) {
+        this.callerClass = callerClass;
     }
 
 }

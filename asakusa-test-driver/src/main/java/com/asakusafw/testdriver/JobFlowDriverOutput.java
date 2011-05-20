@@ -49,20 +49,9 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
      * @return this。
      */
     public JobFlowDriverOutput<T> prepare(String sourcePath) {
-        return prepare(sourcePath, null);
-    }
-
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     * 
-     * @param sourcePath 入力データのパス。
-     * @param fragment フラグメント。
-     * @return this。
-     */
-    public JobFlowDriverOutput<T> prepare(String sourcePath, String fragment) {
 
         LOG.info("prepare - ModelType:" + getModelType());
-        setSourceUri(sourcePath, fragment);
+        setSourceUri(sourcePath);
         return this;
     }
 
@@ -74,24 +63,10 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
      * @return this。
      */
     public JobFlowDriverOutput<T> verify(String expectedPath, String verifyRulePath) {
-        return verify(expectedPath, null, verifyRulePath, null);
-    }
-
-    /**
-     * テスト結果の検証データを指定する
-     * 
-     * @param expectedPath 期待値データのパス。
-     * @param expectedFlagment 期待値データのフラグメント識別子。
-     * @param verifyRulePath 検証ルールのパス。
-     * @param verifyRuleFlagment 検証ルールのフラグメント識別子。
-     * @return this。
-     */
-    public JobFlowDriverOutput<T> verify(String expectedPath, String expectedFlagment, String verifyRulePath,
-            String verifyRuleFlagment) {
 
         LOG.info("verify - ModelType:" + modelType);
-        setExpectedUri(expectedPath, expectedFlagment);
-        setVerifyRuleUri(verifyRulePath, verifyRuleFlagment);
+        setExpectedUri(expectedPath);
+        setVerifyRuleUri(verifyRulePath);
         return this;
     }    
     

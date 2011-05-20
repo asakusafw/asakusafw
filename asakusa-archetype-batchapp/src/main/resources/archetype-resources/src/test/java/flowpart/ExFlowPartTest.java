@@ -17,6 +17,9 @@ package ${package}.flowpart;
 
 import org.junit.Test;
 
+import test.flowpart.ExFlowPart;
+import test.modelgen.table.model.Ex1;
+
 import ${package}.modelgen.table.model.Ex1;
 
 import com.asakusafw.testdriver.FlowPartTester;
@@ -37,16 +40,15 @@ public class ExFlowPartTest {
     @Test
     public void testExample() throws Throwable {
 
-        String testDataSheet = "src/test/data/excel/ExFlowPartTest/testExample/EX1.xls";
+        String testDataSheet = "EX1.xls";
 
-        FlowPartTester driver = new FlowPartTester();
+        FlowPartTester driver = new FlowPartTester(this.getClass());
 
-        In<Ex1> in = driver.input("ex1", Ex1.class).prepare(testDataSheet).createIn();
-        Out<Ex1> out = driver.output("ex1", Ex1.class).verify(testDataSheet, ":1", testDataSheet, ":2").createOut();
+        In<Ex1> in = driver.input("ex1", Ex1.class).prepare(testDataSheet);
+        Out<Ex1> out = driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet+ "#:2");
 
         FlowDescription flowDesc = new ExFlowPart(in, out);
         driver.runTest(flowDesc);
-
     }
 
 }

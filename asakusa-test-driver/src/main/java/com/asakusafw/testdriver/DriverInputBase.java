@@ -15,9 +15,9 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,17 +117,16 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * set source URI from source path and fragment string.
+     * set source URI from source path.
      * 
      * @param sourcePath source path.
-     * @param fragment fragment id.
      */
-    protected void setSourceUri(String sourcePath, String fragment) {
+    protected void setSourceUri(String sourcePath) {
         try {
-            sourceUri = DriverInputBase.toUri(sourcePath, fragment);
+            sourceUri = toUri(sourcePath);
             LOG.info("Source URI:" + sourceUri);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid source URI:" + sourcePath + ", fragment:" + fragment, e);
+            throw new IllegalArgumentException("invalid source URI:" + sourcePath, e);
         }
     }
 
@@ -135,15 +134,20 @@ public abstract class DriverInputBase<T> {
      * パス文字列からURIを生成する。
      * 
      * @param path パス文字列
-     * @param fragment URIに付加するフラグメント識別子
      * @return ワーキングのリソース位置
      * @throws URISyntaxException 引数の値がURIとして不正な値であった場合
      */
-    public static URI toUri(String path, String fragment) throws URISyntaxException {
-        URI resource = new File(path).toURI();
-        URI uri = new URI(resource.getScheme(), resource.getUserInfo(), resource.getHost(), resource.getPort(),
-                resource.getPath(), resource.getQuery(), fragment);
-        return uri;
+    public URI toUri(String path) throws URISyntaxException {
+        URI uri = new URI(path);
+        if (uri.getScheme() != null) {
+            return uri;
+        }
+
+        URL url = driverContext.getCallerClass().getResource(uri.getPath());
+        URI resourceUri = url.toURI();
+        URI withFragmentUri = new URI(resourceUri.getScheme(), resourceUri.getUserInfo(), resourceUri.getHost(), resourceUri.getPort(),
+                resourceUri.getPath(), resourceUri.getQuery(), uri.getFragment());
+        return withFragmentUri;
     }
 
 }

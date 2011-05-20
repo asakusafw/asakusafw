@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.vocabulary.flow.In;
+import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 /**
  * フロー部品のテスト入力データオブジェクト。
@@ -28,13 +29,15 @@ import com.asakusafw.vocabulary.flow.In;
  * 
  * @param <T> モデルクラス
  */
-public class FlowPartDriverInput<T> extends DriverInputBase<T> {
+public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
 
     /** フロー記述ドライバ */
     protected FlowDescriptionDriver descDriver;
-    
+
+    private In<T> in;
+
     /**
      * コンストラクタ
      * 
@@ -49,20 +52,11 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> {
         this.descDriver = descDriver;
         this.name = name;
         this.modelType = modelType;
-    }
-    
-    /**
-     * @return the descDriver
-     */
-    protected FlowDescriptionDriver getDescDriver() {
-        return descDriver;
-    }
 
-    /**
-     * @param descDriver the descDriver to set
-     */
-    protected void setDescDriver(FlowDescriptionDriver descDriver) {
-        this.descDriver = descDriver;
+        String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
+        LOG.info("Import Path=" + importPath);
+        importerDescription = new DirectImporterDescription(modelType, importPath);
+        in = descDriver.createIn(name, importerDescription);
     }
 
     /**
@@ -72,35 +66,14 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> {
      * @return this。
      */
     public FlowPartDriverInput<T> prepare(String sourcePath) {
-        return prepare(sourcePath, null);
-    }
-
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     * 
-     * @param sourcePath 入力データのパス。
-     * @param fragment フラグメント。
-     * @return this。
-     */
-    public FlowPartDriverInput<T> prepare(String sourcePath, String fragment) {
-
-        LOG.info("prepare - ModelType:" + getModelType());
-        setSourceUri(sourcePath, fragment);
-
-        String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
-        LOG.info("Import Path=" + importPath);
-
-        importerDescription = new DirectImporterDescription(modelType, importPath);
+        LOG.info("prepare - ModelType:" + getModelType() + ", SourcePath:" + sourcePath);
+        setSourceUri(sourcePath);
         return this;
     }
 
-    /**
-     * フロー部品の入力オブジェクトを生成する。
-     * 
-     * @return 入力インターフェース。
-     */
-    public In<T> createIn() {
-        return descDriver.createIn(name, importerDescription);
+    @Override
+    public FlowElementOutput toOutputPort() {
+        return in.toOutputPort();
     }
 
 }

@@ -25,7 +25,7 @@ public class TestDriverTestToolsBase extends TestDriverBase {
      * @throws RuntimeException 初期化に失敗した場合
      */
     public TestDriverTestToolsBase() {
-        super();
+        super(null);
     }
 
     /**
@@ -35,7 +35,7 @@ public class TestDriverTestToolsBase extends TestDriverBase {
      * @throws RuntimeException 初期化に失敗した場合
      */
     public TestDriverTestToolsBase(List<File> testDataFileList) {
-        super();
+        super(null);
         this.testDataFileList = testDataFileList;
     }
 

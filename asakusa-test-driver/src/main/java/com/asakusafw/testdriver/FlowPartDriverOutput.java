@@ -22,6 +22,7 @@ import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.vocabulary.flow.Out;
+import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * フロー部品のテスト出力データオブジェクト。
@@ -29,13 +30,15 @@ import com.asakusafw.vocabulary.flow.Out;
  * 
  * @param <T> モデルクラス
  */
-public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
+public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverOutput.class);
 
     /** フロー記述ドライバ */
     protected FlowDescriptionDriver descDriver;
-    
+
+    private Out<T> out;
+
     /**
      * コンストラクタ
      * 
@@ -50,22 +53,13 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
         this.descDriver = descDriver;
         this.name = name;
         this.modelType = modelType;
+
+        String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
+        LOG.info("Export Path=" + exportPath);
+        exporterDescription = new DirectExporterDescription(modelType, exportPath);
+        out = descDriver.createOut(name, exporterDescription);
     }
 
-    /**
-     * @return the descDriver
-     */
-    protected FlowDescriptionDriver getDescDriver() {
-        return descDriver;
-    }
-
-    /**
-     * @param descDriver the descDriver to set
-     */
-    protected void setDescDriver(FlowDescriptionDriver descDriver) {
-        this.descDriver = descDriver;
-    }
-    
     /**
      * テスト実行時に使用する入力データを指定する。
      * 
@@ -73,24 +67,11 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
      * @return this。
      */
     public FlowPartDriverOutput<T> prepare(String sourcePath) {
-        return prepare(sourcePath, null);
-    }
-
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     * 
-     * @param sourcePath 入力データのパス。
-     * @param fragment フラグメント。
-     * @return this。
-     */
-    public FlowPartDriverOutput<T> prepare(String sourcePath, String fragment) {
-
         LOG.info("prepare - ModelType:" + getModelType());
-        setSourceUri(sourcePath, fragment);
+        setSourceUri(sourcePath);
 
         String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
         LOG.info("Import Path=" + importPath);
-
         importerDescription = new DirectImporterDescription(modelType, importPath);
         return this;
     }
@@ -103,39 +84,16 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T>{
      * @return this。
      */
     public FlowPartDriverOutput<T> verify(String expectedPath, String verifyRulePath) {
-        return verify(expectedPath, null, verifyRulePath, null);
-    }
-
-    /**
-     * テスト結果の検証データを指定する
-     * 
-     * @param expectedPath 期待値データのパス。
-     * @param expectedFlagment 期待値データのフラグメント識別子。
-     * @param verifyRulePath 検証ルールのパス。
-     * @param verifyRuleFlagment 検証ルールのフラグメント識別子。
-     * @return this。
-     */
-    public FlowPartDriverOutput<T> verify(String expectedPath, String expectedFlagment, String verifyRulePath,
-            String verifyRuleFlagment) {
 
         LOG.info("verify - ModelType:" + modelType);
-        setExpectedUri(expectedPath, expectedFlagment);
-        setVerifyRuleUri(verifyRulePath, verifyRuleFlagment);
-
-        String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
-        LOG.info("Export Path=" + exportPath);
-
-        exporterDescription = new DirectExporterDescription(modelType, exportPath);
+        setExpectedUri(expectedPath);
+        setVerifyRuleUri(verifyRulePath);
         return this;
     }
 
-    /**
-     * フロー部品の出力オブジェクトを生成する。
-     * 
-     * @return 出力インターフェース。
-     */
-    public Out<T> createOut() {
-        return descDriver.createOut(name, exporterDescription);
+    @Override
+    public void add(Source<T> source) {
+        out.add(source);
     }
 
 }

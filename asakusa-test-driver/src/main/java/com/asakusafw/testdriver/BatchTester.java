@@ -51,13 +51,22 @@ public class BatchTester extends TestDriverBase {
     private Map<String, JobFlowTester> jobFlowMap = new HashMap<String, JobFlowTester>();
 
     /**
+     * コンストラクタ。
+     * 
+     * @param callerClass 呼出元クラス
+     */
+    public BatchTester(Class<?> callerClass) {
+        super(callerClass);
+    }
+    
+    /**
      * バッチに含まれるジョブフローを指定する。
      * 
      * @param name ジョブフロー名。ジョブフロークラスのアノテーションnameの値を指定する。
      * @return ジョブフローテストドライバ。
      */
     public JobFlowTester jobflow(String name) {
-        JobFlowTester driver = new JobFlowTester();
+        JobFlowTester driver = new JobFlowTester(driverContext.getCallerClass());
         jobFlowMap.put(name, driver);
         return driver;
     }

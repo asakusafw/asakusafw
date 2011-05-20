@@ -48,20 +48,9 @@ public class JobFlowDriverInput<T> extends DriverInputBase<T> {
      * @return this。
      */
     public JobFlowDriverInput<T> prepare(String sourcePath) {
-        return prepare(sourcePath, null);
-    }
-
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     * 
-     * @param sourcePath 入力データのパス。
-     * @param fragment フラグメント。
-     * @return this。
-     */
-    public JobFlowDriverInput<T> prepare(String sourcePath, String fragment) {
 
         LOG.info("prepare - ModelType:" + getModelType());
-        setSourceUri(sourcePath, fragment);
+        setSourceUri(sourcePath);
         return this;
     }    
 }

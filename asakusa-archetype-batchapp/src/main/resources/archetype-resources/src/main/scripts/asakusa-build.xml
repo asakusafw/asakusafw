@@ -15,7 +15,7 @@
 
 		<property file="${asakusa.jdbc.conf}" />
 		<mkdir dir="${asakusa.modelgen.output}" />
-		<mkdir dir="${output.directory}" />
+		<mkdir dir="${asakusa.testdatasheet.output}" />
 
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
@@ -67,7 +67,8 @@
 			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
 		</delete>
 		<delete>
-			<fileset dir="${output.directory}" includes="**/*.xls" />
+			<fileset dir="${asakusa.testdatasheet.output}"
+			         includes="**/*.xls" />
 		</delete>
 		<java classname="com.asakusafw.generator.ModelSheetGenerator"
 		      classpath="${compile_classpath}"

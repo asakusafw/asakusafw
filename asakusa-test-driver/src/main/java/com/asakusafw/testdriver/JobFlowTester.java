@@ -55,6 +55,15 @@ public class JobFlowTester extends TestDriverBase {
     protected List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
 
     /**
+     * コンストラクタ。
+     * 
+     * @param callerClass 呼出元クラス
+     */
+    public JobFlowTester(Class<?> callerClass) {
+        super(callerClass);
+    }
+
+    /**
      * テスト入力データを指定する。
      * 
      * @param <T> ModelType。

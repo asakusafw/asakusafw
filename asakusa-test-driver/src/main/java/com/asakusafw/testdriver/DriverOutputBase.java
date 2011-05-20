@@ -83,36 +83,32 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * set expected URI from expected path and fragment string.
+     * set expected URI from expected path.
      * 
      * @param expectedPath expected path.
-     * @param expectedFlagment fragment id.
      */
-    protected void setExpectedUri(String expectedPath, String expectedFlagment) {
+    protected void setExpectedUri(String expectedPath) {
 
         try {
-            expectedUri = DriverInputBase.toUri(expectedPath, expectedFlagment);
+            expectedUri = toUri(expectedPath);
             LOG.info("Expected URI:" + expectedUri);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid expected URI. expectedPath:" + expectedPath
-                    + ", expectedFlagment:" + expectedFlagment, e);
+            throw new IllegalArgumentException("invalid expected URI. expectedPath:" + expectedPath, e);
         }
     }
 
     /**
-     * set verifyRule URI from verifyRule path and fragment string.
+     * set verifyRule URI from verifyRule path.
      * 
      * @param verifyRulePath expected path.
-     * @param verifyRuleFlagment fragment id.
      */
-    protected void setVerifyRuleUri(String verifyRulePath, String verifyRuleFlagment) {
+    protected void setVerifyRuleUri(String verifyRulePath) {
 
         try {
-            verifyRuleUri = DriverInputBase.toUri(verifyRulePath, verifyRuleFlagment);
+            verifyRuleUri = toUri(verifyRulePath);
             LOG.info("Verify Rule URI:" + verifyRuleUri);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath
-                    + ", verifyRuleFlagment:" + verifyRuleFlagment, e);
+            throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath, e);
         }
     }
 

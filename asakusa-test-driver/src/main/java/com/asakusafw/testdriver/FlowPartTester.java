@@ -48,6 +48,15 @@ public class FlowPartTester extends TestDriverBase {
     private FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
 
     /**
+     * コンストラクタ。
+     * 
+     * @param callerClass 呼出元クラス
+     */
+    public FlowPartTester(Class<?> callerClass) {
+        super(callerClass);
+    }
+
+    /**
      * テスト入力データを指定する。
      * 
      * @param <T> ModelType。
@@ -99,7 +108,7 @@ public class FlowPartTester extends TestDriverBase {
                 preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
             }
         }
-        
+
         // フローコンパイラの実行
         String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
                 + driverContext.getMethodName();

@@ -15,9 +15,12 @@
  */
 package ${package}.batch;
 
+import ${package}.modelgen.table.model.Ex1;
+
 import org.junit.Test;
 
-import ${package}.modelgen.table.model.Ex1;
+import test.batch.ExBatch;
+import test.modelgen.table.model.Ex1;
 
 import com.asakusafw.testdriver.BatchTester;
 import com.asakusafw.testdriver.JobFlowTester;
@@ -34,12 +37,12 @@ public class ExBatchTest {
     @Test
     public void testExample() throws Throwable {
 
-        BatchTester batchDriver = new BatchTester();
-        String testDataSheet = "src/test/data/excel/ExBatchTest/testExample/EX1.xls";
+        BatchTester batchDriver = new BatchTester(this.getClass());
+        String testDataSheet = "EX1.xls";
 
         JobFlowTester driver = batchDriver.jobflow("ex");
         driver.input("ex1", Ex1.class).prepare(testDataSheet);
-        driver.output("ex1", Ex1.class).verify(testDataSheet, ":1", testDataSheet, ":2");
+        driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet + "#:2");
 
         batchDriver.runTest(ExBatch.class);
     }
