@@ -190,7 +190,12 @@ public final class Configuration {
             conf.setJdbcUser(findProperty(props, Constants.K_JDBC_USER));
             conf.setJdbcPassword(findProperty(props, Constants.K_JDBC_PASSWORD));
             conf.setDatabaseName(findProperty(props, Constants.K_DATABASE_NAME));
-            conf.setOutputDirectory(findProperty(props, Constants.K_OUTPUT_DIR));
+            
+            String outputDir = findVariable(Constants.ENV_TEMPLATEGEN_OUTPUT_DIR, false);
+            if (outputDir == null) {
+                outputDir = findProperty(props, Constants.K_OUTPUT_DIR);
+            }
+            conf.setOutputDirectory(outputDir);
         } catch (IOException e) {
             throw new IllegalStateException(MessageFormat.format(
                     "設定ファイルの読み出しに失敗しました: {0}={1}",

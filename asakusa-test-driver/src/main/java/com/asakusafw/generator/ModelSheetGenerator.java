@@ -15,6 +15,7 @@
  */
 package com.asakusafw.generator;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -53,6 +54,12 @@ public final class ModelSheetGenerator {
             i++;
         }
 
+        if ("true".equals(System.getProperty("ASAKUSA_V01_TEMPLATEGEN_RUN"))) {
+            String outputDir = System.getProperty("ASAKUSA_TESTDATASHEET_OUTPUT") + "_v01_format";
+            new File(outputDir).mkdir();
+            System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", outputDir);
+            com.asakusafw.testtools.templategen.Main.main(tablesArray);
+        }
         HadoopBulkLoaderDDLGenerator.main(tablesArray);
     }
 
