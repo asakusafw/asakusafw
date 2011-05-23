@@ -78,6 +78,8 @@
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
 			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
 			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${asakusa.jdbc.conf}" />
+            <jvmarg value="-DASAKUSA_V01_TEMPLATEGEN_RUN=${asakusa.testdatasheet.v01.generate}" />
+            <jvmarg value="-DASAKUSA_TESTDATASHEET_OUTPUT=${asakusa.testdatasheet.output}" />
 			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-jdbc" />
 			<arg value="${asakusa.jdbc.conf}" />
@@ -109,6 +111,7 @@
 		      classpath="${compile_classpath}"
 		      fork="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-format" />
 			<arg value="${asakusa.testdatasheet.format}" />
 			<arg value="-output" />

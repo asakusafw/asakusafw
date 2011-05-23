@@ -44,6 +44,11 @@ public final class Constants {
     public static final List<String> ENV_BASE_PACKAGE = buildEnvProperties("MODELGEN_PACKAGE");
 
     /**
+     * テンプレートジェネレータの出力ディレクトリを示す環境変数名。
+     */
+    public static final List<String> ENV_TEMPLATEGEN_OUTPUT_DIR = buildEnvProperties("TEMPLATEGEN_OUTPUT_DIR");
+    
+    /**
      * JDBCの設定ファイル内に記述する、JDBC Driverのキー。
      */
     public static final String K_JDBC_DRIVER = "jdbc.driver";
