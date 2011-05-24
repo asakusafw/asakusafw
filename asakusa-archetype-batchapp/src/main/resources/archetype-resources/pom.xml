@@ -225,7 +225,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<executions>
 					<execution>
 						<id>modelgen</id>
-						<phase>process-resources</phase>
+						<phase>generate-sources</phase>
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
