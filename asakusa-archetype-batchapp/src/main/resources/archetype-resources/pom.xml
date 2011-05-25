@@ -138,7 +138,7 @@
 						<exclude>com.asakusafw:asakusa-distribution</exclude>
 						<exclude>com.asakusafw:asakusa-cleaner</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate</exclude>
-						<exclude>ashigel-compiler-bootstrap</exclude>
+						<exclude>com.asakusafw:ashigel-compiler-bootstrap</exclude>
 						<exclude>org.eclipse.jdt:core</exclude>
 					</excludes>
 					<additionalConfig>
