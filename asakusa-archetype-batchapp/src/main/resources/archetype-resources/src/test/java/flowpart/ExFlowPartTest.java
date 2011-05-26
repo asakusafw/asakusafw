@@ -17,8 +17,8 @@ package ${package}.flowpart;
 
 import org.junit.Test;
 
-import test.flowpart.ExFlowPart;
-import test.modelgen.table.model.Ex1;
+import ${package}.flowpart.ExFlowPart;
+import ${package}.modelgen.table.model.Ex1;
 
 import ${package}.modelgen.table.model.Ex1;
 

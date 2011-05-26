@@ -17,8 +17,8 @@ package ${package}.jobflow;
 
 import org.junit.Test;
 
-import test.jobflow.ExJobFlow;
-import test.modelgen.table.model.Ex1;
+import ${package}.jobflow.ExJobFlow;
+import ${package}.modelgen.table.model.Ex1;
 
 import ${package}.modelgen.table.model.Ex1;
 
