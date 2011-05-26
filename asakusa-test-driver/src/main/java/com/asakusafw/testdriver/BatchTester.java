@@ -142,20 +142,22 @@ public class BatchTester extends TestDriverBase {
                 savePlan(compileWorkDir, plan);
 
                 // テストデータの配置
-                TestInputPreparator preparator = new TestInputPreparator(classLoader);
-                for (JobFlowDriverInput<?> input : driver.inputs) {
-                    if (input.sourceUri != null) {
-                        ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                        input.setImporterDescription(importerDescription);
-                        preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                if (driver != null) {
+                    TestInputPreparator preparator = new TestInputPreparator(classLoader);
+                    for (JobFlowDriverInput<?> input : driver.inputs) {
+                        if (input.sourceUri != null) {
+                            ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                            input.setImporterDescription(importerDescription);
+                            preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                        }
                     }
-                }
-                for (JobFlowDriverOutput<?> output : driver.outputs) {
-                    if (output.sourceUri != null) {
-                        ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                        output.setImporterDescription(importerDescription);
-                        preparator.prepare(output.getModelType(), output.getImporterDescription(),
-                                output.getSourceUri());
+                    for (JobFlowDriverOutput<?> output : driver.outputs) {
+                        if (output.sourceUri != null) {
+                            ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                            output.setImporterDescription(importerDescription);
+                            preparator.prepare(output.getModelType(), output.getImporterDescription(),
+                                    output.getSourceUri());
+                        }
                     }
                 }
 
@@ -165,24 +167,26 @@ public class BatchTester extends TestDriverBase {
                 verifyContext.testFinished();
 
                 // 実行結果の検証
-                TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-                StringBuilder sb = new StringBuilder("\n");
-                boolean failed = false;
-                for (JobFlowDriverOutput<?> output : driver.outputs) {
-                    if (output.expectedUri != null) {
-                        ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-                        output.setExporterDescription(exporterDescription);
-                        List<Difference> diffList = inspector.inspect(output.getModelType(),
-                                output.getExporterDescription(), verifyContext, output.getExpectedUri(),
-                                output.getVerifyRuleUri());
-                        for (Difference difference : diffList) {
-                            failed = true;
-                            sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                if (driver != null) {
+                    TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
+                    StringBuilder sb = new StringBuilder("\n");
+                    boolean failed = false;
+                    for (JobFlowDriverOutput<?> output : driver.outputs) {
+                        if (output.expectedUri != null) {
+                            ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                            output.setExporterDescription(exporterDescription);
+                            List<Difference> diffList = inspector.inspect(output.getModelType(),
+                                    output.getExporterDescription(), verifyContext, output.getExpectedUri(),
+                                    output.getVerifyRuleUri());
+                            for (Difference difference : diffList) {
+                                failed = true;
+                                sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                            }
                         }
                     }
-                }
-                if (failed) {
-                    Assert.fail(sb.toString());
+                    if (failed) {
+                        Assert.fail(sb.toString());
+                    }
                 }
             }
         } catch (IOException e) {
