@@ -38,9 +38,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class StagePlannerTest {
 
-    private FlowGraphGenerator gen = new FlowGraphGenerator();
+    private final FlowGraphGenerator gen = new FlowGraphGenerator();
 
-    private StagePlanner planner = new StagePlanner(
+    private final StagePlanner planner = new StagePlanner(
             Collections.<FlowGraphRewriter>emptyList(),
             new FlowCompilerOptions());
 
@@ -527,9 +527,8 @@ public class StagePlannerTest {
         gen.defineInput("in");
         gen.defineOutput("out");
         gen.connect("in", "out");
-        FlowGraph graph = normalize();
 
-        StageGraph stages = planner.buildStageGraph(graph);
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -549,9 +548,8 @@ public class StagePlannerTest {
         gen.defineOperator("op", "in", "out");
         gen.defineOutput("out");
         gen.connect("in", "op").connect("op", "out");
-        FlowGraph graph = normalize();
 
-        StageGraph stages = planner.buildStageGraph(graph);
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -585,9 +583,8 @@ public class StagePlannerTest {
         gen.defineOperator("op", "in", "out", FlowBoundary.SHUFFLE);
         gen.defineOutput("out");
         gen.connect("in", "op").connect("op", "out");
-        FlowGraph graph = normalize();
 
-        StageGraph stages = planner.buildStageGraph(graph);
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -629,9 +626,8 @@ public class StagePlannerTest {
         gen.defineOperator("op2", "in", "out", FlowBoundary.SHUFFLE);
         gen.defineOutput("out");
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
-        FlowGraph graph = normalize();
 
-        StageGraph stages = planner.buildStageGraph(graph);
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -667,7 +663,7 @@ public class StagePlannerTest {
      * {@link StagePlanner#plan(FlowGraph)}
      */
     @Test
-    public void plan_recurse() {
+    public void plan_flowpart() {
         FlowGraphGenerator comp = new FlowGraphGenerator();
         comp.defineInput("in");
         comp.defineOperator("op1", "in", "out");
@@ -679,9 +675,8 @@ public class StagePlannerTest {
         gen.defineFlowPart("c", comp.toGraph());
         gen.defineOutput("out");
         gen.connect("in", "c").connect("c", "out");
-        FlowGraph graph = normalize();
 
-        StageGraph stages = planner.buildStageGraph(graph);
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -713,11 +708,168 @@ public class StagePlannerTest {
         assertThat(reducerOp.getDescription(), is(comp.desc("op2")));
     }
 
-    private FlowGraph normalize() {
-        FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(true));
-        planner.normalizeFlowGraph(graph);
-        return graph;
+    /**
+     * {@link StagePlanner#plan(FlowGraph)}
+     */
+    @Test
+    public void plan_flowpart_nested() {
+        FlowGraphGenerator fp2 = new FlowGraphGenerator();
+        fp2.defineInput("in");
+        fp2.defineOperator("op1", "in", "out");
+        fp2.defineOutput("out");
+        fp2.connect("in", "op1").connect("op1", "out");
+
+        FlowGraphGenerator fp1 = new FlowGraphGenerator();
+        fp1.defineInput("in");
+        fp1.defineFlowPart("fp2", fp2.toGraph());
+        fp1.defineOutput("out");
+        fp1.connect("in", "fp2").connect("fp2", "out");
+
+        gen.defineInput("in");
+        gen.defineFlowPart("fp1", fp1.toGraph());
+        gen.defineOutput("out");
+        gen.connect("in", "fp1").connect("fp1", "out");
+
+        StageGraph stages = planner.plan(gen.toGraph());
+
+        assertThat(stages.getInput().getBlockOutputs().size(), is(1));
+        assertThat(stages.getOutput().getBlockInputs().size(), is(1));
+        assertThat(stages.getStages().size(), is(1));
+
+        StageBlock mr = stages.getStages().get(0);
+        assertThat(mr.getMapBlocks().size(), is(1));
+        assertThat(mr.getReduceBlocks().isEmpty(), is(true));
+
+        FlowBlock mapper = single(mr.getMapBlocks());
+
+        assertThat(FlowBlock.isConnected(
+                stages.getInput().getBlockOutputs().get(0),
+                mapper.getBlockInputs().get(0)), is(true));
+        assertThat(FlowBlock.isConnected(
+                mapper.getBlockOutputs().get(0),
+                stages.getOutput().getBlockInputs().get(0)), is(true));
+
+        assertThat(mapper.getElements().size(), is(1));
+        FlowElement mapperOp = single(mapper.getElements());
+        assertThat(mapperOp.getDescription(), is(fp2.desc("op1")));
+    }
+
+    /**
+     * {@link StagePlanner#plan(FlowGraph)}
+     */
+    @Test
+    public void plan_flowpart_deep() {
+        FlowGraphGenerator fp4 = new FlowGraphGenerator();
+        fp4.defineInput("in");
+        fp4.defineOperator("op1", "in", "out");
+        fp4.defineOutput("out");
+        fp4.connect("in", "op1").connect("op1", "out");
+
+        FlowGraphGenerator fp3 = new FlowGraphGenerator();
+        fp3.defineInput("in");
+        fp3.defineFlowPart("fp4", fp4.toGraph());
+        fp3.defineOutput("out");
+        fp3.connect("in", "fp4").connect("fp4", "out");
+
+        FlowGraphGenerator fp2 = new FlowGraphGenerator();
+        fp2.defineInput("in");
+        fp2.defineFlowPart("fp3", fp3.toGraph());
+        fp2.defineOutput("out");
+        fp2.connect("in", "fp3").connect("fp3", "out");
+
+        FlowGraphGenerator fp1 = new FlowGraphGenerator();
+        fp1.defineInput("in");
+        fp1.defineFlowPart("fp2", fp2.toGraph());
+        fp1.defineOutput("out");
+        fp1.connect("in", "fp2").connect("fp2", "out");
+
+        gen.defineInput("in");
+        gen.defineFlowPart("fp1", fp1.toGraph());
+        gen.defineOutput("out");
+        gen.connect("in", "fp1").connect("fp1", "out");
+
+        StageGraph stages = planner.plan(gen.toGraph());
+
+        assertThat(stages.getInput().getBlockOutputs().size(), is(1));
+        assertThat(stages.getOutput().getBlockInputs().size(), is(1));
+        assertThat(stages.getStages().size(), is(1));
+
+        StageBlock mr = stages.getStages().get(0);
+        assertThat(mr.getMapBlocks().size(), is(1));
+        assertThat(mr.getReduceBlocks().isEmpty(), is(true));
+
+        FlowBlock mapper = single(mr.getMapBlocks());
+
+        assertThat(FlowBlock.isConnected(
+                stages.getInput().getBlockOutputs().get(0),
+                mapper.getBlockInputs().get(0)), is(true));
+        assertThat(FlowBlock.isConnected(
+                mapper.getBlockOutputs().get(0),
+                stages.getOutput().getBlockInputs().get(0)), is(true));
+
+        assertThat(mapper.getElements().size(), is(1));
+        FlowElement mapperOp = single(mapper.getElements());
+        assertThat(mapperOp.getDescription(), is(fp4.desc("op1")));
+    }
+
+    /**
+     * {@link StagePlanner#plan(FlowGraph)}
+     */
+    @Test
+    public void plan_flowpart_wide() {
+        FlowGraphGenerator fp2a = new FlowGraphGenerator();
+        fp2a.defineInput("in");
+        fp2a.defineOperator("op1", "in", "out");
+        fp2a.defineOutput("out");
+        fp2a.connect("in", "op1").connect("op1", "out");
+
+        FlowGraphGenerator fp2b = new FlowGraphGenerator();
+        fp2b.defineInput("in");
+        fp2b.defineOperator("op2", "in", "out");
+        fp2b.defineOutput("out");
+        fp2b.connect("in", "op2").connect("op2", "out");
+
+        FlowGraphGenerator fp1 = new FlowGraphGenerator();
+        fp1.defineInput("in");
+        fp1.defineFlowPart("fp2a", fp2a.toGraph());
+        fp1.defineFlowPart("fp2b", fp2b.toGraph());
+        fp1.defineOutput("out");
+        fp1.connect("in", "fp2a").connect("fp2a", "fp2b").connect("fp2b", "out");
+
+        gen.defineInput("in");
+        gen.defineFlowPart("fp1", fp1.toGraph());
+        gen.defineOutput("out");
+        gen.connect("in", "fp1").connect("fp1", "out");
+
+        FlowCompilerOptions options = new FlowCompilerOptions();
+        options.setCompressFlowPart(true);
+        StagePlanner opt = new StagePlanner(
+                Collections.<FlowGraphRewriter>emptyList(),
+                options);
+        StageGraph stages = opt.plan(gen.toGraph());
+
+        assertThat(stages.getInput().getBlockOutputs().size(), is(1));
+        assertThat(stages.getOutput().getBlockInputs().size(), is(1));
+        assertThat(stages.getStages().size(), is(1));
+
+        StageBlock mr = stages.getStages().get(0);
+        assertThat(mr.getMapBlocks().size(), is(1));
+        assertThat(mr.getReduceBlocks().isEmpty(), is(true));
+
+        FlowBlock mapper = single(mr.getMapBlocks());
+
+        assertThat(FlowBlock.isConnected(
+                stages.getInput().getBlockOutputs().get(0),
+                mapper.getBlockInputs().get(0)), is(true));
+        assertThat(FlowBlock.isConnected(
+                mapper.getBlockOutputs().get(0),
+                stages.getOutput().getBlockInputs().get(0)), is(true));
+
+        assertThat(mapper.getElements().size(), is(2));
+
+        FlowElement op1 = single(mapper.getBlockInputs()).getElementPort().getOwner();
+        assertThat(op1.getDescription(), is(fp2a.get("op1").getDescription()));
+        assertThat(succ(op1).getDescription(), is(fp2b.get("op2").getDescription()));
     }
 
     private void deletePseuds(FlowGraph graph) {

@@ -44,13 +44,13 @@ public class FlowBlock {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowBlock.class);
 
-    private int serialNumber;
+    private final int serialNumber;
 
-    private FlowGraph source;
+    private final FlowGraph source;
 
-    private List<FlowBlock.Input> blockInputs;
+    private final List<FlowBlock.Input> blockInputs;
 
-    private List<FlowBlock.Output> blockOutputs;
+    private final List<FlowBlock.Output> blockOutputs;
 
     private Set<FlowElement> elements;
 
@@ -250,6 +250,9 @@ public class FlowBlock {
         FlowBlock.Connection conn = new FlowBlock.Connection(upstream, downstream);
         upstream.addConnection(conn);
         downstream.addConnection(conn);
+
+        assert upstream.getElementPort().getDescription().getDataType().equals(
+                downstream.getElementPort().getDescription().getDataType());
     }
 
     /**
@@ -561,7 +564,7 @@ public class FlowBlock {
 
         private FlowElementInput input;
 
-        private List<Connection> connections;
+        private final List<Connection> connections;
 
         private Set<PortConnection> originalConnections;
 
@@ -643,7 +646,7 @@ public class FlowBlock {
 
         private FlowElementOutput output;
 
-        private List<Connection> connections;
+        private final List<Connection> connections;
 
         private Set<PortConnection> originalConnections;
 
@@ -732,9 +735,9 @@ public class FlowBlock {
      */
     public static class Connection {
 
-        private FlowBlock.Output upstream;
+        private final FlowBlock.Output upstream;
 
-        private FlowBlock.Input downstream;
+        private final FlowBlock.Input downstream;
 
         /**
          * インスタンスを生成する。

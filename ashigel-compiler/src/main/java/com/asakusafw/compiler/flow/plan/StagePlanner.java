@@ -56,7 +56,7 @@ public class StagePlanner {
 
     static final Logger LOG = LoggerFactory.getLogger(StagePlanner.class);
 
-    private List<? extends FlowGraphRewriter> rewriters;
+    private final List<? extends FlowGraphRewriter> rewriters;
 
     private final FlowCompilerOptions options;
 
@@ -668,6 +668,10 @@ public class StagePlanner {
     private void inlineFlowParts(FlowGraph graph) {
         assert graph != null;
         for (FlowElement element : FlowGraphUtil.collectFlowParts(graph)) {
+            // first, inlines nested flow parts
+            FlowPartDescription desc = (FlowPartDescription) element.getDescription();
+            inlineFlowParts(desc.getFlowGraph());
+
             Inline inlineConfig = element.getAttribute(Inline.class);
             if (inlineConfig == null || inlineConfig == Inline.DEFAULT) {
                 inlineConfig = options.isCompressFlowPart()
@@ -681,6 +685,7 @@ public class StagePlanner {
                 FlowGraphUtil.inlineFlowPart(element, FlowBoundary.STAGE);
             }
         }
+        assert FlowGraphUtil.collectFlowParts(graph).isEmpty() : FlowGraphUtil.collectFlowParts(graph);
     }
 
     /**
@@ -818,7 +823,7 @@ public class StagePlanner {
     private boolean validateConnection(FlowGraph graph, Graph<FlowElement> elements) {
         assert graph != null;
         assert elements != null;
-        LOG.debug("{}の結線に関する性等性を確認しています", graph);
+        LOG.debug("{}の結線に関する正当性を確認しています", graph);
 
         boolean sawError = false;
         for (FlowElement element : elements.getNodeSet()) {
