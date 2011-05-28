@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,6 @@ public class WorkbookGenerator implements TemplateGenerator {
         if (model == null) {
             throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
         }
-        LOG.info("ワークブックを作成しています: {}", model.getName());
         if (output.isDirectory() == false && output.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
                     "出力先のディレクトリを生成できませんでした: {0}",
@@ -89,7 +89,7 @@ public class WorkbookGenerator implements TemplateGenerator {
         }
 
         File file = new File(output, format.getFileName(model));
-        LOG.info("Emitting workbook: {}", file);
+        LOG.debug("Emitting workbook: {}", file);
 
         OutputStream out = new FileOutputStream(file);
         try {
