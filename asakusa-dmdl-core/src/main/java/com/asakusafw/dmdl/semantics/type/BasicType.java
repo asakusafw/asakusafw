@@ -78,6 +78,7 @@ public class BasicType implements Type {
             case LONG:
                 return new BasicType(originalAst, BasicTypeKind.LONG);
             case DECIMAL:
+                return new BasicType(originalAst, BasicTypeKind.DECIMAL);
             case FLOAT:
             case DOUBLE:
                 return new BasicType(originalAst, BasicTypeKind.DOUBLE);

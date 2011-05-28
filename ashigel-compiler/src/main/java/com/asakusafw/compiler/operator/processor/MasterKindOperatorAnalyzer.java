@@ -81,6 +81,9 @@ public final class MasterKindOperatorAnalyzer {
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
+        if (selectorParams.size() == 1) {
+            return;
+        }
         DataModelMirror operatorTx = environment.loadDataModel(operatorParams.get(1).asType());
         DataModelMirror selectorTx = environment.loadDataModel(selectorParams.get(1).asType());
         if (isValidTx(operatorTx, selectorTx) == false) {
@@ -157,11 +160,6 @@ public final class MasterKindOperatorAnalyzer {
                     "マスタ選択を行うメソッド{0}には、{1}のリストをとる第1引数が必要です",
                     selectorMethod.getSimpleName(),
                     operatorParams.get(0).asType()));
-        } else if (selectorParams.size() == 1) {
-            throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}には、{1}をとる第2引数が必要です",
-                    selectorMethod.getSimpleName(),
-                    operatorParams.get(1).asType()));
         }
     }
 

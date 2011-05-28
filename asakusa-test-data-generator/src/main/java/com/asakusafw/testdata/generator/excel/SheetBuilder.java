@@ -23,6 +23,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
@@ -38,7 +40,11 @@ import com.asakusafw.testdriver.excel.ValueConditionKind;
  */
 public class SheetBuilder {
 
+    static final Logger LOG = LoggerFactory.getLogger(SheetBuilder.class);
+
     private static final int MINIMUM_COLUMN_WIDTH = 2560;
+
+    private static final int MAX_COLUMN_INDEX = 255;
 
     private final WorkbookInfo info;
 
@@ -83,6 +89,10 @@ public class SheetBuilder {
         HSSFRow valueRow = sheet.createRow(1);
         int index = 0;
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
+            if (index > MAX_COLUMN_INDEX) {
+                LOG.warn("データシートに追加できるプロパティ数は{}までです: {}", MAX_COLUMN_INDEX, model.getName());
+                break;
+            }
             HSSFCell title = titleRow.createCell(index);
             title.setCellStyle(info.titleStyle);
             title.setCellValue(property.getName().identifier);
