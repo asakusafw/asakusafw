@@ -21,13 +21,14 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
+import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * フロー部品のテスト出力データオブジェクト。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<T> {
@@ -37,11 +38,11 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
     /** フロー記述ドライバ */
     protected FlowDescriptionDriver descDriver;
 
-    private Out<T> out;
+    private final Out<T> out;
 
     /**
      * コンストラクタ
-     * 
+     *
      * @param driverContext テストドライバコンテキスト。
      * @param descDriver フロー定義ドライバ。
      * @param name 入力の名前。
@@ -62,7 +63,7 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
 
     /**
      * テスト実行時に使用する入力データを指定する。
-     * 
+     *
      * @param sourcePath 入力データのパス。
      * @return this。
      */
@@ -78,7 +79,7 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
 
     /**
      * テスト結果の検証データを指定する
-     * 
+     *
      * @param expectedPath 期待値データのパス。
      * @param verifyRulePath 検証ルールのパス。
      * @return this。
@@ -88,6 +89,20 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
         LOG.info("verify - ModelType:" + modelType);
         setExpectedUri(expectedPath);
         setVerifyRuleUri(verifyRulePath);
+        return this;
+    }
+
+    /**
+     * テスト結果の検証データを指定する
+     *
+     * @param expectedPath 期待値データのパス
+     * @param modelVerifier 検証ルール
+     * @return this。
+     */
+    public FlowPartDriverOutput<T> verify(String expectedPath, ModelVerifier<? super T> modelVerifier) {
+        LOG.info("verify - ModelType:" + modelType);
+        setExpectedUri(expectedPath);
+        setModelVerifier(modelVerifier);
         return this;
     }
 

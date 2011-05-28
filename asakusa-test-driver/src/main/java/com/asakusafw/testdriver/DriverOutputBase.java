@@ -21,12 +21,13 @@ import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
  * テストドライバのテスト出力データの親クラス。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 public class DriverOutputBase<T> extends DriverInputBase<T> {
@@ -35,8 +36,8 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     /** 期待値URI */
     protected URI expectedUri;
-    /** 検証ルールURI */
-    protected URI verifyRuleUri;
+    /** 検証ルール */
+    protected VerifyRuleHolder<T> verifyRule;
     /** エクスポータ記述 */
     protected ExporterDescription exporterDescription;
 
@@ -55,17 +56,19 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * @return the verifyRuleUri
+     * Returns the verify rule for this output.
+     * @return the verify rule if exists, {@code null} otherwise
      */
-    protected URI getVerifyRuleUri() {
-        return verifyRuleUri;
+    public VerifyRuleHolder<T> getVerifyRule() {
+        return verifyRule;
     }
 
     /**
-     * @param verifyRuleUri the verifyRuleUri to set
+     * Sets the verify rule for this output.
+     * @param verifyRule the rule to set, {@code null} to clear verify rules
      */
-    protected void setVerifyRuleUri(URI verifyRuleUri) {
-        this.verifyRuleUri = verifyRuleUri;
+    public void setVerifyRule(VerifyRuleHolder<T> verifyRule) {
+        this.verifyRule = verifyRule;
     }
 
     /**
@@ -84,7 +87,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     /**
      * set expected URI from expected path.
-     * 
+     *
      * @param expectedPath expected path.
      */
     protected void setExpectedUri(String expectedPath) {
@@ -98,18 +101,92 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
+     * Sets a {@link ModelVerifier} as verify rule for this output.
+     * @param verifier the verifier
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    protected void setModelVerifier(ModelVerifier<? super T> verifier) {
+        if (verifier == null) {
+            throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
+        }
+        this.verifyRule = new VerifyRuleHolder<T>(verifier);
+        LOG.info("Model Verifier: {}", verifier);
+    }
+
+    /**
      * set verifyRule URI from verifyRule path.
-     * 
+     *
      * @param verifyRulePath expected path.
      */
     protected void setVerifyRuleUri(String verifyRulePath) {
-
         try {
-            verifyRuleUri = toUri(verifyRulePath);
+            URI verifyRuleUri = toUri(verifyRulePath);
             LOG.info("Verify Rule URI:" + verifyRuleUri);
+            setVerifyRule(new VerifyRuleHolder<T>(verifyRuleUri));
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath, e);
         }
     }
 
+    /**
+     * Holds verifier as {@link URI} or {@link ModelVerifier}.
+     * @param <T> output model object type
+     * @since 0.2.0
+     */
+    public static class VerifyRuleHolder<T> {
+
+        private final URI uri;
+
+        private final ModelVerifier<? super T> verifier;
+
+        /**
+         * Creates a new instance from {@link URI}.
+         * @param uri verifier URI
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public VerifyRuleHolder(URI uri) {
+            if (uri == null) {
+                throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
+            }
+            this.uri = uri;
+            this.verifier = null;
+        }
+
+        /**
+         * Creates a new instance from {@link ModelVerifier}.
+         * @param verifier verifier object
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public VerifyRuleHolder(ModelVerifier<? super T> verifier) {
+            if (verifier == null) {
+                throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
+            }
+            this.uri = null;
+            this.verifier = verifier;
+        }
+
+        /**
+         * Returns {@code true} iff this holder has a verifier as URI.
+         * @return {@code true} iff this holder has a verifier as URI
+         */
+        public boolean hasUri() {
+            return uri != null;
+        }
+
+        /**
+         * Returns the verifier URI.
+         * @return the verifier URI if defined, {@code null} otherwise
+         */
+        public URI getUri() {
+            return uri;
+        }
+
+        /**
+         * Returns the verifier.
+         * @return the verifier if defined, {@code null} otherwise
+         */
+        public ModelVerifier<? super T> getVerifier() {
+            return verifier;
+        }
+    }
 }

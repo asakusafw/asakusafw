@@ -18,20 +18,22 @@ package com.asakusafw.testdriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.ModelVerifier;
+
 /**
  * ジョブフローのテスト出力データオブジェクト。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 
 public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverOutput.class);
-    
+
     /**
      * コンストラクタ
-     * 
+     *
      * @param driverContext テストドライバコンテキスト。
      * @param name 入力の名前。
      * @param modelType モデルクラス。
@@ -44,7 +46,7 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
 
     /**
      * テスト実行時に使用する入力データを指定する。
-     * 
+     *
      * @param sourcePath 入力データのパス。
      * @return this。
      */
@@ -57,7 +59,7 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
 
     /**
      * テスト結果の検証データを指定する
-     * 
+     *
      * @param expectedPath 期待値データのパス。
      * @param verifyRulePath 検証ルールのパス。
      * @return this。
@@ -68,6 +70,19 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
         setExpectedUri(expectedPath);
         setVerifyRuleUri(verifyRulePath);
         return this;
-    }    
-    
+    }
+
+    /**
+     * テスト結果の検証データを指定する
+     *
+     * @param expectedPath 期待値データのパス
+     * @param modelVerifier 検証ルール
+     * @return this。
+     */
+    public JobFlowDriverOutput<T> verify(String expectedPath, ModelVerifier<? super T> modelVerifier) {
+        LOG.info("verify - ModelType:" + modelType);
+        setExpectedUri(expectedPath);
+        setModelVerifier(modelVerifier);
+        return this;
+    }
 }

@@ -52,8 +52,12 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.testdriver.DriverOutputBase.VerifyRuleHolder;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.core.Difference;
+import com.asakusafw.testdriver.core.TestResultInspector;
+import com.asakusafw.testdriver.core.VerifyContext;
 
 /**
  * テストドライバの基底クラス。
@@ -80,7 +84,7 @@ public abstract class TestDriverBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param callerClass 呼出元クラス
      */
     public TestDriverBase(Class<?> callerClass) {
@@ -558,6 +562,43 @@ public abstract class TestDriverBase {
         return sb.toString().trim();
     }
 
+    /**
+     * Inspects output and returns differences between expected and actual results.
+     * @param <T> output data type
+     * @param output output object
+     * @param context verification context
+     * @param inspector inspector to be used in verification
+     * @return the differences if exists, or empty list otherwise
+     * @throws IOException if failed to obtain expected or actual results
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    protected <T> List<Difference> inspect(
+            DriverOutputBase<T> output,
+            VerifyContext context,
+            TestResultInspector inspector) throws IOException {
+        if (output == null) {
+            throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (inspector == null) {
+            throw new IllegalArgumentException("inspector must not be null"); //$NON-NLS-1$
+        }
+        VerifyRuleHolder<T> ruleHolder = output.getVerifyRule();
+        if (ruleHolder.hasUri()) {
+            return inspector.inspect(output.getModelType(),
+                    output.getExporterDescription(),
+                    context,
+                    output.getExpectedUri(),
+                    ruleHolder.getUri());
+        } else {
+            return inspector.inspect(output.getModelType(),
+                    output.getExporterDescription(),
+                    output.getExpectedUri(),
+                    inspector.rule(output.getModelType(), ruleHolder.getVerifier()));
+        }
+    }
 }
 
 /**
@@ -567,7 +608,7 @@ class InputStreamThread extends Thread {
 
     private BufferedReader br;
 
-    private List<String> list = new ArrayList<String>();
+    private final List<String> list = new ArrayList<String>();
 
     /**
      * コンストラクタ。
