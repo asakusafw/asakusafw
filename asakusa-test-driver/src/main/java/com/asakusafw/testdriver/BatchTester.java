@@ -48,20 +48,20 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  */
 public class BatchTester extends TestDriverBase {
 
-    private Map<String, JobFlowTester> jobFlowMap = new HashMap<String, JobFlowTester>();
+    private final Map<String, JobFlowTester> jobFlowMap = new HashMap<String, JobFlowTester>();
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param callerClass 呼出元クラス
      */
     public BatchTester(Class<?> callerClass) {
         super(callerClass);
     }
-    
+
     /**
      * バッチに含まれるジョブフローを指定する。
-     * 
+     *
      * @param name ジョブフロー名。ジョブフロークラスのアノテーションnameの値を指定する。
      * @return ジョブフローテストドライバ。
      */
@@ -161,7 +161,7 @@ public class BatchTester extends TestDriverBase {
                     }
                 }
 
-                // コンパイル結果のジョブフローを実行                
+                // コンパイル結果のジョブフローを実行
                 VerifyContext verifyContext = new VerifyContext();
                 executePlan(plan, jobflowInfo.getPackageFile());
                 verifyContext.testFinished();
@@ -175,9 +175,7 @@ public class BatchTester extends TestDriverBase {
                         if (output.expectedUri != null) {
                             ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
                             output.setExporterDescription(exporterDescription);
-                            List<Difference> diffList = inspector.inspect(output.getModelType(),
-                                    output.getExporterDescription(), verifyContext, output.getExpectedUri(),
-                                    output.getVerifyRuleUri());
+                            List<Difference> diffList = inspect(output, verifyContext, inspector);
                             for (Difference difference : diffList) {
                                 failed = true;
                                 sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
@@ -193,5 +191,4 @@ public class BatchTester extends TestDriverBase {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -52,8 +52,12 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.testdriver.DriverOutputBase.VerifyRuleHolder;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.core.Difference;
+import com.asakusafw.testdriver.core.TestResultInspector;
+import com.asakusafw.testdriver.core.VerifyContext;
 
 /**
  * テストドライバの基底クラス。
@@ -61,6 +65,8 @@ import com.asakusafw.testdriver.TestExecutionPlan.Job;
 public abstract class TestDriverBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestDriverBase.class);
+
+    private static final String BUILD_PROPERTIES_FILE = "build.properties";
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
@@ -80,7 +86,7 @@ public abstract class TestDriverBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param callerClass 呼出元クラス
      */
     public TestDriverBase(Class<?> callerClass) {
@@ -139,18 +145,23 @@ public abstract class TestDriverBase {
         // クラス名/メソッド名を使った変数を初期化
         setTestClassInformation();
 
-        File buildPropertiesFile = new File("build.properties");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(buildPropertiesFile);
-            buildProperties = new Properties();
-            buildProperties.load(fis);
-            System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
-            System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(fis);
+        File buildPropertiesFile = new File(BUILD_PROPERTIES_FILE);
+        if (buildPropertiesFile.exists()) {
+            LOG.info("ビルド設定情報をロードしています: {}", buildPropertiesFile);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(buildPropertiesFile);
+                buildProperties = new Properties();
+                buildProperties.load(fis);
+                System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
+                System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                IOUtils.closeQuietly(fis);
+            }
+        } else {
+            LOG.info("ビルド設定情報が存在しないため、スキップします: {}", BUILD_PROPERTIES_FILE);
         }
 
         // OS情報
@@ -558,6 +569,43 @@ public abstract class TestDriverBase {
         return sb.toString().trim();
     }
 
+    /**
+     * Inspects output and returns differences between expected and actual results.
+     * @param <T> output data type
+     * @param output output object
+     * @param context verification context
+     * @param inspector inspector to be used in verification
+     * @return the differences if exists, or empty list otherwise
+     * @throws IOException if failed to obtain expected or actual results
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    protected <T> List<Difference> inspect(
+            DriverOutputBase<T> output,
+            VerifyContext context,
+            TestResultInspector inspector) throws IOException {
+        if (output == null) {
+            throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (inspector == null) {
+            throw new IllegalArgumentException("inspector must not be null"); //$NON-NLS-1$
+        }
+        VerifyRuleHolder<T> ruleHolder = output.getVerifyRule();
+        if (ruleHolder.hasUri()) {
+            return inspector.inspect(output.getModelType(),
+                    output.getExporterDescription(),
+                    context,
+                    output.getExpectedUri(),
+                    ruleHolder.getUri());
+        } else {
+            return inspector.inspect(output.getModelType(),
+                    output.getExporterDescription(),
+                    output.getExpectedUri(),
+                    inspector.rule(output.getModelType(), ruleHolder.getVerifier()));
+        }
+    }
 }
 
 /**
@@ -567,7 +615,7 @@ class InputStreamThread extends Thread {
 
     private BufferedReader br;
 
-    private List<String> list = new ArrayList<String>();
+    private final List<String> list = new ArrayList<String>();
 
     /**
      * コンストラクタ。

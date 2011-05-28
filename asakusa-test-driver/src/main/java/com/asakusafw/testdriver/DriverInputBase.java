@@ -18,6 +18,7 @@ package com.asakusafw.testdriver;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 /**
  * テストドライバのテスト入力データの親クラス。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 public abstract class DriverInputBase<T> {
@@ -118,7 +119,7 @@ public abstract class DriverInputBase<T> {
 
     /**
      * set source URI from source path.
-     * 
+     *
      * @param sourcePath source path.
      */
     protected void setSourceUri(String sourcePath) {
@@ -132,7 +133,7 @@ public abstract class DriverInputBase<T> {
 
     /**
      * パス文字列からURIを生成する。
-     * 
+     *
      * @param path パス文字列
      * @return ワーキングのリソース位置
      * @throws URISyntaxException 引数の値がURIとして不正な値であった場合
@@ -144,6 +145,12 @@ public abstract class DriverInputBase<T> {
         }
 
         URL url = driverContext.getCallerClass().getResource(uri.getPath());
+        if (url == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "指定されたリソースが見つかりません: {0} (検索クラス: {1})",
+                    path,
+                    driverContext.getCallerClass().getName()));
+        }
         URI resourceUri = url.toURI();
         URI withFragmentUri = new URI(resourceUri.getScheme(), resourceUri.getUserInfo(), resourceUri.getHost(), resourceUri.getPort(),
                 resourceUri.getPath(), resourceUri.getQuery(), uri.getFragment());

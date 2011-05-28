@@ -42,14 +42,14 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class FlowPartTester extends TestDriverBase {
 
-    private List<FlowPartDriverInput<?>> inputs = new LinkedList<FlowPartDriverInput<?>>();
-    private List<FlowPartDriverOutput<?>> outputs = new LinkedList<FlowPartDriverOutput<?>>();
+    private final List<FlowPartDriverInput<?>> inputs = new LinkedList<FlowPartDriverInput<?>>();
+    private final List<FlowPartDriverOutput<?>> outputs = new LinkedList<FlowPartDriverOutput<?>>();
 
-    private FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
+    private final FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param callerClass 呼出元クラス
      */
     public FlowPartTester(Class<?> callerClass) {
@@ -58,7 +58,7 @@ public class FlowPartTester extends TestDriverBase {
 
     /**
      * テスト入力データを指定する。
-     * 
+     *
      * @param <T> ModelType。
      * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する。
      * @param modelType ModelType。
@@ -72,7 +72,7 @@ public class FlowPartTester extends TestDriverBase {
 
     /**
      * テスト結果の出力データ（期待値データ）を指定する。
-     * 
+     *
      * @param <T> ModelType。
      * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する。
      * @param modelType ModelType。
@@ -86,7 +86,7 @@ public class FlowPartTester extends TestDriverBase {
 
     /**
      * フロー部品のテストを実行し、テスト結果を検証する。
-     * 
+     *
      * @param flowDescription フロー部品クラスのインスタンス
      * @throws IOException
      */
@@ -142,8 +142,7 @@ public class FlowPartTester extends TestDriverBase {
         boolean failed = false;
         for (FlowPartDriverOutput<?> output : outputs) {
             if (output.expectedUri != null) {
-                List<Difference> diffList = inspector.inspect(output.getModelType(), output.getExporterDescription(),
-                        verifyContext, output.getExpectedUri(), output.getVerifyRuleUri());
+                List<Difference> diffList = inspect(output, verifyContext, inspector);
                 for (Difference difference : diffList) {
                     failed = true;
                     sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");

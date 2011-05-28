@@ -56,7 +56,7 @@ public class JobFlowTester extends TestDriverBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param callerClass 呼出元クラス
      */
     public JobFlowTester(Class<?> callerClass) {
@@ -65,7 +65,7 @@ public class JobFlowTester extends TestDriverBase {
 
     /**
      * テスト入力データを指定する。
-     * 
+     *
      * @param <T> ModelType。
      * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する。
      * @param modelType ModelType。
@@ -79,7 +79,7 @@ public class JobFlowTester extends TestDriverBase {
 
     /**
      * テスト結果の出力データ（期待値データ）を指定する。
-     * 
+     *
      * @param <T> ModelType。
      * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する。
      * @param modelType ModelType。
@@ -162,7 +162,7 @@ public class JobFlowTester extends TestDriverBase {
                 }
             }
 
-            // コンパイル結果のジョブフローを実行            
+            // コンパイル結果のジョブフローを実行
             VerifyContext verifyContext = new VerifyContext();
             executePlan(plan, jobflowInfo.getPackageFile());
             verifyContext.testFinished();
@@ -175,9 +175,7 @@ public class JobFlowTester extends TestDriverBase {
                 if (output.expectedUri != null) {
                     ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
                     output.setExporterDescription(exporterDescription);
-                    List<Difference> diffList = inspector.inspect(output.getModelType(),
-                            output.getExporterDescription(), verifyContext, output.getExpectedUri(),
-                            output.getVerifyRuleUri());
+                    List<Difference> diffList = inspect(output, verifyContext, inspector);
                     for (Difference difference : diffList) {
                         failed = true;
                         sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
