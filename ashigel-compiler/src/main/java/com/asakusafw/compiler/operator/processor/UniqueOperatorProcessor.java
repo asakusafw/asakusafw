@@ -102,7 +102,7 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
             .newObject(Models.toLiteral(f, "重複検出演算子は組み込みの方法で処理されます"))
-            .toStatement());
+            .toThrowStatement());
         return builder.toImplementation();
     }
 }
