@@ -65,6 +65,8 @@ import com.asakusafw.testdriver.core.VerifyContext;
 public abstract class TestDriverBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestDriverBase.class);
+
+    private static final String BUILD_PROPERTIES_FILE = "build.properties";
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
@@ -143,18 +145,23 @@ public abstract class TestDriverBase {
         // クラス名/メソッド名を使った変数を初期化
         setTestClassInformation();
 
-        File buildPropertiesFile = new File("build.properties");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(buildPropertiesFile);
-            buildProperties = new Properties();
-            buildProperties.load(fis);
-            System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
-            System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(fis);
+        File buildPropertiesFile = new File(BUILD_PROPERTIES_FILE);
+        if (buildPropertiesFile.exists()) {
+            LOG.info("ビルド設定情報をロードしています: {}", buildPropertiesFile);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(buildPropertiesFile);
+                buildProperties = new Properties();
+                buildProperties.load(fis);
+                System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
+                System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                IOUtils.closeQuietly(fis);
+            }
+        } else {
+            LOG.info("ビルド設定情報が存在しないため、スキップします: {}", BUILD_PROPERTIES_FILE);
         }
 
         // OS情報
