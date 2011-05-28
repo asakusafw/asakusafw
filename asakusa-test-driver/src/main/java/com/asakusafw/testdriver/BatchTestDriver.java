@@ -46,7 +46,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @throws RuntimeException インスタンスの生成に失敗した場合
      */
     public BatchTestDriver() throws RuntimeException {
@@ -65,23 +65,23 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
-    
+
             // バッチコンパイラの実行
             BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
             assertFalse(
                     batchDriver.getDiagnostics().toString(),
                     batchDriver.hasError());
             BatchClass batchClass = batchDriver.getBatchClass();
-    
+
             batchId = batchClass.getConfig().name();
             File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), batchId + System.getProperty("file.separator") + driverContext.getExecutionId());
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
-    
+
             File compilerOutputDir = new File(compileWorkDir, "output");
             File compilerLocalWorkingDir = new File(compileWorkDir, "build");
-    
+
             DirectBatchCompiler.compile(
                     batchDescriptionClass,
                     "test.batch",
@@ -93,7 +93,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
                     }),
                     batchDescriptionClass.getClassLoader(),
                     driverContext.getOptions());
-    
+
             // バッチコンパイラが生成したテスト用シェルスクリプトを実行
             String[] batchRunCmd = new String[] {
                     "sh",
@@ -107,18 +107,18 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
                         entry.getKey(),
                         entry.getValue()));
             }
-    
+
             CommandContext context = new CommandContext(
-                    System.getenv("ASAKUSA_HOME") + "/",
+                    getFrameworkHomePath().getAbsolutePath() + "/",
                     "dummy",
                     driverContext.getBatchArgs());
-    
+
             Map<String, String> environment = new TreeMap<String, String>();
             environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, context.getVariableList());
             environment.put(ExperimentalWorkflowProcessor.K_OPTS, dProps.toString());
-    
+
             runShellAndAssert(batchRunCmd, environment);
-    
+
             // テスト結果検証ツールを実行し、Excel上の期待値とDB上の実際値を比較する。
             loadDatabase();
             if (!testUtils.inspect()) {

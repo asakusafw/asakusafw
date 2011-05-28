@@ -15,7 +15,10 @@
  */
 package com.asakusafw.testdriver;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.testdriver.testing.operator.SimpleFlowPart;
@@ -28,6 +31,14 @@ import com.asakusafw.vocabulary.flow.Out;
  */
 public class FlowPartTesterTest {
 
+    static final Logger LOG = LoggerFactory.getLogger(FlowPartTesterTest.class);
+
+    /**
+     * Temporary framework installation target.
+     */
+    @Rule
+    public FrameworkDeployer framework = new FrameworkDeployer();
+
     /**
      * simple testing.
      * @throws Exception if failed
@@ -35,6 +46,7 @@ public class FlowPartTesterTest {
     @Test
     public void simple() throws Exception {
         FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));

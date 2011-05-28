@@ -41,7 +41,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /** バッチID。 */
-    private String batchId;
+    private final String batchId;
 
     /**
      * コンストラクタ。
@@ -57,7 +57,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param batchId バッチID
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see JobFlowTestDriver#JobFlowTestDriver()
@@ -69,7 +69,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
      * @throws RuntimeException インスタンスの生成に失敗した場合
      * @see JobFlowTestDriver#JobFlowTestDriver()
@@ -81,7 +81,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /**
      * コンストラクタ。
-     * 
+     *
      * @param testDataFileList テストデータ定義シートのパスを示すFileのリスト
      * @param batchId バッチID
      * @throws RuntimeException インスタンスの生成に失敗した場合
@@ -136,11 +136,11 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
             File srcFile = new File(compileWorkDir, jobFlowJarName);
-            File destDir = new File(System.getenv("ASAKUSA_HOME"), "batchapps/" + batchId + "/lib");
+            File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
             FileUtils.copyFileToDirectory(srcFile, destDir);
 
             CommandContext context = new CommandContext(
-                    System.getenv("ASAKUSA_HOME") + "/",
+                    getFrameworkHomePath().getAbsolutePath() + "/",
                     driverContext.getExecutionId(),
                     driverContext.getBatchArgs());
 

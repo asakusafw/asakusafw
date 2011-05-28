@@ -125,11 +125,13 @@ public class JobFlowTester extends TestDriverBase {
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
             File srcFile = new File(compileWorkDir, jobFlowJarName);
-            File destDir = new File(System.getenv("ASAKUSA_HOME"), "batchapps/" + batchId + "/lib");
+            File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
             FileUtils.copyFileToDirectory(srcFile, destDir);
 
-            CommandContext context = new CommandContext(System.getenv("ASAKUSA_HOME") + "/",
-                    driverContext.getExecutionId(), driverContext.getBatchArgs());
+            CommandContext context = new CommandContext(
+                    getFrameworkHomePath().getAbsolutePath() + "/",
+                    driverContext.getExecutionId(),
+                    driverContext.getBatchArgs());
 
             Map<String, String> dPropMap = createHadoopProperties(context);
 
