@@ -17,16 +17,15 @@ package com.asakusafw.testdriver;
 
 import org.junit.Rule;
 import org.junit.Test;
-import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
+
+import com.asakusafw.testdriver.testing.batch.SimpleBatch;
 import com.asakusafw.testdriver.testing.model.Simple;
-import com.asakusafw.vocabulary.flow.In;
-import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * Test for {@link FlowPartTester}.
+ * Test for {@link BatchTester}.
  * @since 0.2.0
  */
-public class FlowPartTesterTest {
+public class BatchTesterTest {
 
     /**
      * Temporary framework installation target.
@@ -39,10 +38,10 @@ public class FlowPartTesterTest {
      */
     @Test
     public void simple() {
-        FlowPartTester tester = new FlowPartTester(getClass());
+        BatchTester tester = new BatchTester(getClass());
         tester.setFrameworkHomePath(framework.getFrameworkHome());
-        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
-        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.runTest(new SimpleFlowPart(in, out));
+        tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.jobflow("simple").output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleBatch.class);
     }
 }

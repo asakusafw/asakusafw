@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
@@ -74,8 +75,27 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     public <V> void truncate(
             DataModelDefinition<V> definition,
             FileExporterDescription description) throws IOException {
-        // TODO do truncate target directory?
         checkType(definition, description);
+        LOG.info("エクスポート先をクリアしています: {}", description);
+        Configuration config = configurations.newInstance();
+        FileSystem fs = FileSystem.get(config);
+        try {
+            Path path = new Path(description.getPathPrefix());
+            Path output = path.getParent();
+            Path target;
+            if (output == null) {
+                LOG.warn("エクスポート先のディレクトリはベースディレクトリなので削除されません: {}", path);
+                target = path;
+            } else {
+                LOG.warn("エクスポート先をディレクトリごと削除します: {}", output);
+                target = output;
+            }
+            LOG.debug("ファイルを削除します: {}", target);
+            boolean succeed = fs.delete(target, true);
+            LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
+        } finally {
+            fs.close();
+        }
         return;
     }
 

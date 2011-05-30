@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
@@ -68,8 +70,19 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     public <V> void truncate(
             DataModelDefinition<V> definition,
             FileImporterDescription description) throws IOException {
-        // TODO do truncate target directory?
         checkType(definition, description);
+        LOG.info("インポート元をクリアしています: {}", description);
+        Configuration config = configurations.newInstance();
+        FileSystem fs = FileSystem.get(config);
+        try {
+            for (String path : description.getPaths()) {
+                LOG.debug("ファイルを削除しています: {}", path);
+                boolean succeed = fs.delete(new Path(path), true);
+                LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, path);
+            }
+        } finally {
+            fs.close();
+        }
         return;
     }
 
@@ -77,7 +90,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             FileImporterDescription description) throws IOException {
-        LOG.info("エクスポート元の初期値を設定します: {}", description);
+        LOG.info("インポート元の初期値を設定します: {}", description);
         checkType(definition, description);
         Set<String> path = description.getPaths();
         if (path.isEmpty()) {

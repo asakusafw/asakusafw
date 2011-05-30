@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -154,13 +155,25 @@ public class JobFlowTester extends TestDriverBase {
         LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
         TestDataPreparator preparator = new TestDataPreparator(classLoader);
         for (JobFlowDriverInput<?> input : inputs) {
-            LOG.debug("入力{}を初期化しています");
+            LOG.debug("入力{}を初期化しています", input.getName());
             ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+            if (importerDescription == null) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "入力{1}はジョブフロー{0}に定義されていません",
+                        jobFlowDescriptionClass.getName(),
+                        input.getName()));
+            }
             preparator.truncate(input.getModelType(), importerDescription);
         }
         for (JobFlowDriverOutput<?> output : outputs) {
-            LOG.debug("出力{}を初期化しています");
+            LOG.debug("出力{}を初期化しています", output.getName());
             ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+            if (exporterDescription == null) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "出力{1}はジョブフロー{0}に定義されていません",
+                        jobFlowDescriptionClass.getName(),
+                        output.getName()));
+            }
             preparator.truncate(output.getModelType(), exporterDescription);
         }
 

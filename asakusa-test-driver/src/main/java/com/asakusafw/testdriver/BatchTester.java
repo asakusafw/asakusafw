@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +70,11 @@ public class BatchTester extends TestDriverBase {
      * @return ジョブフローテストドライバ。
      */
     public JobFlowTester jobflow(String name) {
-        JobFlowTester driver = new JobFlowTester(driverContext.getCallerClass());
-        jobFlowMap.put(name, driver);
+        JobFlowTester driver = jobFlowMap.get(name);
+        if (driver == null) {
+            driver = new JobFlowTester(driverContext.getCallerClass());
+            jobFlowMap.put(name, driver);
+        }
         return driver;
     }
 
@@ -116,31 +120,58 @@ public class BatchTester extends TestDriverBase {
                 Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(batchDescriptionClass) }),
                 batchDescriptionClass.getClassLoader(), driverContext.getOptions());
 
+        // ジョブフロー名の検査
+        for (String flowId : jobFlowMap.keySet()) {
+            if (batchInfo.findJobflow(flowId) == null) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "ジョブフロー{1}はバッチ{0}に定義されていません",
+                        driverContext.getCallerClass().getName(),
+                        flowId));
+            }
+        }
+
         // バッチ実行前のtruncate
         LOG.info("テストデータを初期化しています: {}", driverContext.getCallerClass().getName());
-        List<JobflowInfo> jobflowInfos = batchInfo.getJobflows();
-        for (JobflowInfo jobflowInfo : jobflowInfos) {
-            String flowId = jobflowInfo.getJobflow().getFlowId();
-            JobFlowTester driver = jobFlowMap.get(flowId);
+        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+            String flowId = entry.getKey();
+            JobFlowTester driver = entry.getValue();
+            JobflowInfo jobflowInfo = batchInfo.findJobflow(flowId);
+            assert jobflowInfo != null;
 
             LOG.debug("ジョブフローの入出力を初期化しています: {}", flowId);
             TestDataPreparator preparator = new TestDataPreparator(classLoader);
             for (JobFlowDriverInput<?> input : driver.inputs) {
-                LOG.debug("入力{}を初期化しています");
+                LOG.debug("入力{}を初期化しています", input.getName());
                 ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                if (importerDescription == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "入力{2}はジョブフロー{0}#{1}に定義されていません",
+                            batchDescriptionClass.getName(),
+                            flowId,
+                            input.getName()));
+                }
                 preparator.truncate(input.getModelType(), importerDescription);
             }
             for (JobFlowDriverOutput<?> output : driver.outputs) {
-                LOG.debug("出力{}を初期化しています");
-                ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                preparator.truncate(output.getModelType(), importerDescription);
+                LOG.debug("出力{}を初期化しています", output.getName());
+                ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                if (exporterDescription == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "出力{2}はジョブフロー{0}#{1}に定義されていません",
+                            batchDescriptionClass.getName(),
+                            flowId,
+                            output.getName()));
+                }
+                preparator.truncate(output.getModelType(), exporterDescription);
             }
         }
 
         // バッチに含まれるジョブフローを実行
-        for (JobflowInfo jobflowInfo : jobflowInfos) {
-            String flowId = jobflowInfo.getJobflow().getFlowId();
-            JobFlowTester driver = jobFlowMap.get(flowId);
+        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+            String flowId = entry.getKey();
+            JobFlowTester driver = entry.getValue();
+            JobflowInfo jobflowInfo = batchInfo.findJobflow(flowId);
+            assert jobflowInfo != null;
 
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
@@ -167,16 +198,15 @@ public class BatchTester extends TestDriverBase {
                         LOG.debug("入力{}を配置しています: {}", input.getName(), input.getSourceUri());
                         ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                         input.setImporterDescription(importerDescription);
-                        preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                        preparator.prepare(input.getModelType(), importerDescription, input.getSourceUri());
                     }
                 }
                 for (JobFlowDriverOutput<?> output : driver.outputs) {
                     if (output.sourceUri != null) {
                         LOG.debug("出力{}を配置しています: {}", output.getName(), output.getSourceUri());
-                        ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                        output.setImporterDescription(importerDescription);
-                        preparator.prepare(output.getModelType(), output.getImporterDescription(),
-                                output.getSourceUri());
+                        ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                        output.setExporterDescription(exporterDescription);
+                        preparator.prepare(output.getModelType(), exporterDescription, output.getSourceUri());
                     }
                 }
             }

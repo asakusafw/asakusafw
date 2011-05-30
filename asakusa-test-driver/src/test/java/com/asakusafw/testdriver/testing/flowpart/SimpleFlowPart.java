@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.testing.operator;
+package com.asakusafw.testdriver.testing.flowpart;
 
 import com.asakusafw.testdriver.testing.model.Simple;
+import com.asakusafw.testdriver.testing.operator.SimpleOperatorFactory;
 import com.asakusafw.testdriver.testing.operator.SimpleOperatorFactory.SetValue;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.FlowPart;
