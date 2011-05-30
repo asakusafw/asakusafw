@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
@@ -86,11 +84,17 @@ public class FlowPartTester extends TestDriverBase {
 
     /**
      * フロー部品のテストを実行し、テスト結果を検証する。
-     *
      * @param flowDescription フロー部品クラスのインスタンス
-     * @throws IOException
      */
-    public void runTest(FlowDescription flowDescription) throws IOException {
+    public void runTest(FlowDescription flowDescription) {
+        try {
+            runTestInternal(flowDescription);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void runTestInternal(FlowDescription flowDescription) throws IOException {
 
         // 初期化
         initializeClusterDirectory(driverContext.getClusterWorkDir());
@@ -133,27 +137,29 @@ public class FlowPartTester extends TestDriverBase {
         TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
         savePlan(compileWorkDir, plan);
 
-        // コンパイル結果のジョブフローを実行
+        // コンパイル結果のフロー部品を実行
         VerifyContext verifyContext = new VerifyContext();
         executePlan(plan, jobflowInfo.getPackageFile());
         verifyContext.testFinished();
 
         // 実行結果の検証
         TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%n"));
         boolean failed = false;
         for (FlowPartDriverOutput<?> output : outputs) {
             if (output.expectedUri != null) {
                 List<Difference> diffList = inspect(output, verifyContext, inspector);
                 for (Difference difference : diffList) {
                     failed = true;
-                    sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
+                    sb.append(String.format("%s: %s%n",
+                            output.getModelType().getSimpleName(),
+                            difference));
                 }
             }
         }
         if (failed) {
-            Assert.fail(sb.toString());
+            throw new AssertionError(sb);
         }
     }
-
 }

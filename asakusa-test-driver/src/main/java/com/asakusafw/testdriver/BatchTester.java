@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-
 import com.asakusafw.compiler.batch.BatchClass;
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
@@ -77,120 +75,126 @@ public class BatchTester extends TestDriverBase {
      * @throws RuntimeException テストの実行に失敗した場合
      */
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {
-
         try {
-            // 初期化
-            initializeClusterDirectory(driverContext.getClusterWorkDir());
-            ClassLoader classLoader = this.getClass().getClassLoader();
-
-            // バッチコンパイラの実行
-            BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
-            assertFalse(batchDriver.getDiagnostics().toString(), batchDriver.hasError());
-            BatchClass batchClass = batchDriver.getBatchClass();
-
-            String batchId = batchClass.getConfig().name();
-            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), batchId
-                    + System.getProperty("file.separator") + driverContext.getExecutionId());
-            if (compileWorkDir.exists()) {
-                FileUtils.forceDelete(compileWorkDir);
-            }
-
-            File compilerOutputDir = new File(compileWorkDir, "output");
-            File compilerLocalWorkingDir = new File(compileWorkDir, "build");
-
-            BatchInfo batchInfo = DirectBatchCompiler.compile(batchDescriptionClass, "test.batch",
-                    Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
-                    compilerOutputDir, compilerLocalWorkingDir,
-                    Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(batchDescriptionClass) }),
-                    batchDescriptionClass.getClassLoader(), driverContext.getOptions());
-
-            // バッチ実行前のtruncate
-            List<JobflowInfo> jobflowInfos = batchInfo.getJobflows();
-            for (JobflowInfo jobflowInfo : jobflowInfos) {
-                String flowId = jobflowInfo.getJobflow().getFlowId();
-                JobFlowTester driver = jobFlowMap.get(flowId);
-
-                TestInputPreparator preparator = new TestInputPreparator(classLoader);
-                for (JobFlowDriverInput<?> input : driver.inputs) {
-                    ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                    preparator.truncate(input.getModelType(), importerDescription);
-                }
-                for (JobFlowDriverOutput<?> output : driver.outputs) {
-                    ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                    preparator.truncate(output.getModelType(), importerDescription);
-                }
-
-            }
-
-            // バッチに含まれるジョブフローを実行
-            for (JobflowInfo jobflowInfo : jobflowInfos) {
-                String flowId = jobflowInfo.getJobflow().getFlowId();
-                JobFlowTester driver = jobFlowMap.get(flowId);
-
-                // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
-                String jobFlowJarName = "jobflow-" + flowId + ".jar";
-                File srcFile = new File(compilerOutputDir, "lib/" + jobFlowJarName);
-                File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
-                FileUtils.copyFileToDirectory(srcFile, destDir);
-
-                CommandContext context = new CommandContext(
-                        getFrameworkHomePath().getAbsolutePath() + "/",
-                        driverContext.getExecutionId(),
-                        driverContext.getBatchArgs());
-
-                Map<String, String> dPropMap = createHadoopProperties(context);
-
-                TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-                savePlan(compileWorkDir, plan);
-
-                // テストデータの配置
-                if (driver != null) {
-                    TestInputPreparator preparator = new TestInputPreparator(classLoader);
-                    for (JobFlowDriverInput<?> input : driver.inputs) {
-                        if (input.sourceUri != null) {
-                            ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                            input.setImporterDescription(importerDescription);
-                            preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
-                        }
-                    }
-                    for (JobFlowDriverOutput<?> output : driver.outputs) {
-                        if (output.sourceUri != null) {
-                            ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                            output.setImporterDescription(importerDescription);
-                            preparator.prepare(output.getModelType(), output.getImporterDescription(),
-                                    output.getSourceUri());
-                        }
-                    }
-                }
-
-                // コンパイル結果のジョブフローを実行
-                VerifyContext verifyContext = new VerifyContext();
-                executePlan(plan, jobflowInfo.getPackageFile());
-                verifyContext.testFinished();
-
-                // 実行結果の検証
-                if (driver != null) {
-                    TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-                    StringBuilder sb = new StringBuilder("\n");
-                    boolean failed = false;
-                    for (JobFlowDriverOutput<?> output : driver.outputs) {
-                        if (output.expectedUri != null) {
-                            ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-                            output.setExporterDescription(exporterDescription);
-                            List<Difference> diffList = inspect(output, verifyContext, inspector);
-                            for (Difference difference : diffList) {
-                                failed = true;
-                                sb.append(output.getModelType().getSimpleName() + ": " + difference.getDiagnostic() + "\n");
-                            }
-                        }
-                    }
-                    if (failed) {
-                        Assert.fail(sb.toString());
-                    }
-                }
-            }
+            runTestInternal(batchDescriptionClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
+        // 初期化
+        initializeClusterDirectory(driverContext.getClusterWorkDir());
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
+        // バッチコンパイラの実行
+        BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
+        assertFalse(batchDriver.getDiagnostics().toString(), batchDriver.hasError());
+        BatchClass batchClass = batchDriver.getBatchClass();
+
+        String batchId = batchClass.getConfig().name();
+        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), batchId
+                + System.getProperty("file.separator") + driverContext.getExecutionId());
+        if (compileWorkDir.exists()) {
+            FileUtils.forceDelete(compileWorkDir);
+        }
+
+        File compilerOutputDir = new File(compileWorkDir, "output");
+        File compilerLocalWorkingDir = new File(compileWorkDir, "build");
+
+        BatchInfo batchInfo = DirectBatchCompiler.compile(batchDescriptionClass, "test.batch",
+                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
+                compilerOutputDir, compilerLocalWorkingDir,
+                Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(batchDescriptionClass) }),
+                batchDescriptionClass.getClassLoader(), driverContext.getOptions());
+
+        // バッチ実行前のtruncate
+        List<JobflowInfo> jobflowInfos = batchInfo.getJobflows();
+        for (JobflowInfo jobflowInfo : jobflowInfos) {
+            String flowId = jobflowInfo.getJobflow().getFlowId();
+            JobFlowTester driver = jobFlowMap.get(flowId);
+
+            TestInputPreparator preparator = new TestInputPreparator(classLoader);
+            for (JobFlowDriverInput<?> input : driver.inputs) {
+                ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                preparator.truncate(input.getModelType(), importerDescription);
+            }
+            for (JobFlowDriverOutput<?> output : driver.outputs) {
+                ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                preparator.truncate(output.getModelType(), importerDescription);
+            }
+
+        }
+
+        // バッチに含まれるジョブフローを実行
+        for (JobflowInfo jobflowInfo : jobflowInfos) {
+            String flowId = jobflowInfo.getJobflow().getFlowId();
+            JobFlowTester driver = jobFlowMap.get(flowId);
+
+            // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
+            String jobFlowJarName = "jobflow-" + flowId + ".jar";
+            File srcFile = new File(compilerOutputDir, "lib/" + jobFlowJarName);
+            File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
+            FileUtils.copyFileToDirectory(srcFile, destDir);
+
+            CommandContext context = new CommandContext(
+                    getFrameworkHomePath().getAbsolutePath() + "/",
+                    driverContext.getExecutionId(),
+                    driverContext.getBatchArgs());
+
+            Map<String, String> dPropMap = createHadoopProperties(context);
+
+            TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
+            savePlan(compileWorkDir, plan);
+
+            // テストデータの配置
+            if (driver != null) {
+                TestInputPreparator preparator = new TestInputPreparator(classLoader);
+                for (JobFlowDriverInput<?> input : driver.inputs) {
+                    if (input.sourceUri != null) {
+                        ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
+                        input.setImporterDescription(importerDescription);
+                        preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
+                    }
+                }
+                for (JobFlowDriverOutput<?> output : driver.outputs) {
+                    if (output.sourceUri != null) {
+                        ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
+                        output.setImporterDescription(importerDescription);
+                        preparator.prepare(output.getModelType(), output.getImporterDescription(),
+                                output.getSourceUri());
+                    }
+                }
+            }
+
+            // コンパイル結果のジョブフローを実行
+            VerifyContext verifyContext = new VerifyContext();
+            executePlan(plan, jobflowInfo.getPackageFile());
+            verifyContext.testFinished();
+
+            // 実行結果の検証
+            if (driver != null) {
+                TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
+                StringBuilder sb = new StringBuilder();
+                sb.append(String.format("%n"));
+                boolean failed = false;
+                for (JobFlowDriverOutput<?> output : driver.outputs) {
+                    if (output.expectedUri != null) {
+                        ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
+                        output.setExporterDescription(exporterDescription);
+                        List<Difference> diffList = inspect(output, verifyContext, inspector);
+                        for (Difference difference : diffList) {
+                            failed = true;
+                            sb.append(String.format("%s: %s%n",
+                                    output.getModelType().getSimpleName(),
+                                    difference));
+                        }
+                    }
+                }
+                if (failed) {
+                    throw new AssertionError(sb);
+                }
+            }
         }
     }
 }

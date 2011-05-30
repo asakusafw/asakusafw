@@ -41,10 +41,9 @@ public class FlowPartTesterTest {
 
     /**
      * simple testing.
-     * @throws Exception if failed
      */
     @Test
-    public void simple() throws Exception {
+    public void simple() {
         FlowPartTester tester = new FlowPartTester(getClass());
         tester.setFrameworkHomePath(framework.getFrameworkHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
