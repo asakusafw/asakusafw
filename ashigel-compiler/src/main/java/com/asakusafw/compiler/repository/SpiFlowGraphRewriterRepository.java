@@ -45,7 +45,7 @@ public class SpiFlowGraphRewriterRepository
                 getEnvironment().getServiceClassLoader());
         for (FlowGraphRewriter rewriter : services) {
             rewriter.initialize(getEnvironment());
-            LOG.info("{}が利用可能になります",
+            LOG.debug("{}が利用可能になります",
                     rewriter.getClass().getName());
             rewriters.add(rewriter);
         }

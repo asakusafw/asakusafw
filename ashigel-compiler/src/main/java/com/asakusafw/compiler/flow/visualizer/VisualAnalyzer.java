@@ -47,7 +47,7 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertFlowGraph(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.info("{}の構造を可視化用に分析しています", graph);
+        LOG.debug("{}の構造を可視化用に分析しています", graph);
         Set<VisualNode> nodes = new HashSet<VisualNode>();
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             nodes.add(convertElement(element));
@@ -63,7 +63,7 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertStageGraph(StageGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.info("{}の構造を可視化用に分析しています", graph);
+        LOG.debug("{}の構造を可視化用に分析しています", graph);
         Set<VisualNode> nodes = new HashSet<VisualNode>();
         nodes.add(convertBlock("(source)", graph.getInput()));
         for (StageBlock stage : graph.getStages()) {
@@ -81,7 +81,7 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertStageBlock(StageBlock stage) {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
-        LOG.info("{}の構造を可視化用に分析しています", stage);
+        LOG.debug("{}の構造を可視化用に分析しています", stage);
         Set<VisualNode> nodes = new HashSet<VisualNode>();
         for (FlowBlock head : stage.getMapBlocks()) {
             for (FlowBlock.Input input : head.getBlockInputs()) {

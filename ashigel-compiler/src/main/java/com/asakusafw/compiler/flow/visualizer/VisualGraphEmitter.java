@@ -74,7 +74,7 @@ public final class VisualGraphEmitter {
     public static void emit(VisualGraph graph, boolean partial, OutputStream stream) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stream, "stream"); //$NON-NLS-1$
-        LOG.info("可視化したグラフを出力しています");
+        LOG.debug("可視化したグラフを出力しています");
         EmitContext context = new EmitContext(stream);
         try {
             List<Relation> relations = analyzeRelations(graph, partial);
@@ -159,7 +159,7 @@ public final class VisualGraphEmitter {
 
     private static class RelationCollector extends VisualNodeVisitor<Void, Void, NoThrow> {
 
-        private boolean partial;
+        private final boolean partial;
 
         private final Set<Relation> saw = new HashSet<Relation>();
 
@@ -537,7 +537,7 @@ public final class VisualGraphEmitter {
 
         private static final int INDENT_UNIT = 4;
 
-        private PrintWriter writer;
+        private final PrintWriter writer;
 
         private int indent = 0;
 

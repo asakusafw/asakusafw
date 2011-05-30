@@ -217,9 +217,8 @@ public abstract class TestDriverBase {
         try {
             fs = FileSystem.get(conf);
             Path path = new Path(fs.getHomeDirectory(), pathString);
-            LOG.info("クラスタワークディレクトリを初期化します。Path=" + path);
+            LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
             fs.delete(path, true);
-
         } finally {
             if (fs != null) {
                 fs.close();
@@ -281,8 +280,8 @@ public abstract class TestDriverBase {
      *             保存に失敗した場合
      */
     protected void savePlan(File targetDirectory, TestExecutionPlan plan) throws IOException {
-        LOG.info("{}のテスト用実行計画を保存しています", driverContext.getExecutionId());
         File file = new File(targetDirectory, "test-execution-plan.ser");
+        LOG.info("{}のテスト用実行計画を保存しています: {}", driverContext.getExecutionId(), file.getAbsolutePath());
         FileOutputStream output = new FileOutputStream(file);
         try {
             ObjectOutputStream oos = new ObjectOutputStream(output);
@@ -291,7 +290,6 @@ public abstract class TestDriverBase {
         } finally {
             output.close();
         }
-        LOG.info("{}のテスト用実行計画を保存しました: {}", driverContext.getExecutionId(), file.getAbsolutePath());
     }
 
     /**

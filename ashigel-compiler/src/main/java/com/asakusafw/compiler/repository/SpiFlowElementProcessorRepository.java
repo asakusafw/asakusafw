@@ -70,7 +70,7 @@ public class SpiFlowElementProcessorRepository
                         proc.getClass().getName());
                 continue;
             }
-            LOG.info("{}が利用可能になります ({})",
+            LOG.debug("{}が利用可能になります ({})",
                     targetType.getName(),
                     proc.getClass().getName());
             saw.put(targetType, proc);

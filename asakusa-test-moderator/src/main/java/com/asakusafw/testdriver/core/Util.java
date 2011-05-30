@@ -35,7 +35,7 @@ final class Util {
     static <T> List<T> loadService(Class<T> spi, ClassLoader loader) {
         assert spi != null;
         assert loader != null;
-        LOG.info("{}のプラグインを登録しています", spi.getSimpleName());
+        LOG.debug("{}のプラグインを登録しています", spi.getSimpleName());
         ServiceLoader<T> services = ServiceLoader.load(spi, loader);
         List<T> results = new ArrayList<T>();
         for (T service : services) {

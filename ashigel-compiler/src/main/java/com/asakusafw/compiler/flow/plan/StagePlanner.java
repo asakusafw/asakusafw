@@ -110,7 +110,7 @@ public class StagePlanner {
 
     private boolean rewrite(FlowGraph graph) {
         assert graph != null;
-        LOG.info("{}の書き換えを行います", graph);
+        LOG.debug("{}の書き換えを行います", graph);
         boolean modified = false;
         for (FlowGraphRewriter rewriter : rewriters) {
             try {

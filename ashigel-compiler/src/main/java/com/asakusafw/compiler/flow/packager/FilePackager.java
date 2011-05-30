@@ -71,15 +71,15 @@ public class FilePackager
 
     private static final String CLASS_DIRECTORY = "bin";
 
-    private File sourceDirectory;
+    private final File sourceDirectory;
 
-    private File classDirectory;
+    private final File classDirectory;
 
-    private Filer sourceFiler;
+    private final Filer sourceFiler;
 
-    private Filer resourceFiler;
+    private final Filer resourceFiler;
 
-    private List<? extends ResourceRepository> resourceRepositories;
+    private final List<? extends ResourceRepository> resourceRepositories;
 
     /**
      * インスタンスを生成する。
@@ -153,7 +153,7 @@ public class FilePackager
 
     @Override
     public void packageSources(OutputStream output) throws IOException {
-        LOG.info("生成されたソースプログラムをパッケージングします");
+        LOG.debug("生成されたソースプログラムをパッケージングします");
         JarOutputStream jar = new JarOutputStream(output);
         try {
             List<ResourceRepository> repos = new ArrayList<ResourceRepository>();
@@ -253,9 +253,8 @@ public class FilePackager
         assert compiler != null;
         assert sources != null;
 
-        LOG.info("{}にクラスファイルを生成しています ({}個のファイル)",
-                classDirectory,
-                sources.size());
+        LOG.info("生成されたソースファイルをコンパイルしています ({}個のファイル)", sources.size());
+        LOG.debug("コンパイル結果の出力先: {}", classDirectory);
 
         mkdir(sourceDirectory);
         mkdir(classDirectory);

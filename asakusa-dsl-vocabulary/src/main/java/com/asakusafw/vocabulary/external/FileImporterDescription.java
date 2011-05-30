@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.external;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 import org.apache.hadoop.io.NullWritable;
@@ -52,5 +53,13 @@ public abstract class FileImporterDescription implements ImporterDescription {
     @SuppressWarnings("rawtypes")
     public Class<? extends FileInputFormat> getInputFormat() {
         return SequenceFileInputFormat.class;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "FileImporter({1}, {0})",
+                getPaths(),
+                getInputFormat().getSimpleName());
     }
 }

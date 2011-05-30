@@ -60,6 +60,6 @@ public abstract class FileExporterDescription implements ExporterDescription {
         return MessageFormat.format(
                 "FileExporter({1}, {0})",
                 getPathPrefix(),
-                getOutputFormat().getClass().getSimpleName());
+                getOutputFormat().getSimpleName());
     }
 }

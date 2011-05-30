@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.compiler.batch.BatchClass;
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
@@ -34,7 +37,7 @@ import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.testdriver.core.Difference;
-import com.asakusafw.testdriver.core.TestInputPreparator;
+import com.asakusafw.testdriver.core.TestDataPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.batch.BatchDescription;
@@ -45,6 +48,8 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * バッチ用のテストドライバクラス。
  */
 public class BatchTester extends TestDriverBase {
+
+    static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
     private final Map<String, JobFlowTester> jobFlowMap = new HashMap<String, JobFlowTester>();
 
@@ -83,7 +88,10 @@ public class BatchTester extends TestDriverBase {
     }
 
     private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
+        LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
+
         // 初期化
+        LOG.info("バッチをコンパイルしています: {}", batchDescriptionClass.getName());
         initializeClusterDirectory(driverContext.getClusterWorkDir());
         ClassLoader classLoader = this.getClass().getClassLoader();
 
@@ -109,21 +117,24 @@ public class BatchTester extends TestDriverBase {
                 batchDescriptionClass.getClassLoader(), driverContext.getOptions());
 
         // バッチ実行前のtruncate
+        LOG.info("テストデータを初期化しています: {}", driverContext.getCallerClass().getName());
         List<JobflowInfo> jobflowInfos = batchInfo.getJobflows();
         for (JobflowInfo jobflowInfo : jobflowInfos) {
             String flowId = jobflowInfo.getJobflow().getFlowId();
             JobFlowTester driver = jobFlowMap.get(flowId);
 
-            TestInputPreparator preparator = new TestInputPreparator(classLoader);
+            LOG.debug("ジョブフローの入出力を初期化しています: {}", flowId);
+            TestDataPreparator preparator = new TestDataPreparator(classLoader);
             for (JobFlowDriverInput<?> input : driver.inputs) {
+                LOG.debug("入力{}を初期化しています");
                 ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                 preparator.truncate(input.getModelType(), importerDescription);
             }
             for (JobFlowDriverOutput<?> output : driver.outputs) {
+                LOG.debug("出力{}を初期化しています");
                 ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
                 preparator.truncate(output.getModelType(), importerDescription);
             }
-
         }
 
         // バッチに含まれるジョブフローを実行
@@ -148,10 +159,12 @@ public class BatchTester extends TestDriverBase {
             savePlan(compileWorkDir, plan);
 
             // テストデータの配置
+            LOG.info("ジョブフローのテストデータを配置しています: {}#{}", batchDescriptionClass.getName(), flowId);
             if (driver != null) {
-                TestInputPreparator preparator = new TestInputPreparator(classLoader);
+                TestDataPreparator preparator = new TestDataPreparator(classLoader);
                 for (JobFlowDriverInput<?> input : driver.inputs) {
                     if (input.sourceUri != null) {
+                        LOG.debug("入力{}を配置しています: {}", input.getName(), input.getSourceUri());
                         ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
                         input.setImporterDescription(importerDescription);
                         preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
@@ -159,6 +172,7 @@ public class BatchTester extends TestDriverBase {
                 }
                 for (JobFlowDriverOutput<?> output : driver.outputs) {
                     if (output.sourceUri != null) {
+                        LOG.debug("出力{}を配置しています: {}", output.getName(), output.getSourceUri());
                         ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
                         output.setImporterDescription(importerDescription);
                         preparator.prepare(output.getModelType(), output.getImporterDescription(),
@@ -168,11 +182,13 @@ public class BatchTester extends TestDriverBase {
             }
 
             // コンパイル結果のジョブフローを実行
+            LOG.info("ジョブフローを実行しています: {}#{}", batchDescriptionClass.getName(), flowId);
             VerifyContext verifyContext = new VerifyContext();
             executePlan(plan, jobflowInfo.getPackageFile());
             verifyContext.testFinished();
 
             // 実行結果の検証
+            LOG.info("ジョブフローの実行結果を検証しています: {}#{}", batchDescriptionClass.getName(), flowId);
             if (driver != null) {
                 TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
                 StringBuilder sb = new StringBuilder();
@@ -180,9 +196,18 @@ public class BatchTester extends TestDriverBase {
                 boolean failed = false;
                 for (JobFlowDriverOutput<?> output : driver.outputs) {
                     if (output.expectedUri != null) {
+                        LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
                         ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
                         output.setExporterDescription(exporterDescription);
                         List<Difference> diffList = inspect(output, verifyContext, inspector);
+                        if (diffList.isEmpty() == false) {
+                            LOG.warn("{}#{}の出力{}には{}個の差異があります", new Object[] {
+                                    batchDescriptionClass.getName(),
+                                    flowId,
+                                    output.getName(),
+                                    diffList.size(),
+                            });
+                        }
                         for (Difference difference : diffList) {
                             failed = true;
                             sb.append(String.format("%s: %s%n",
