@@ -16,9 +16,12 @@
 package com.asakusafw.compiler.testing;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
@@ -81,6 +84,18 @@ public class JobflowInfo {
     }
 
     /**
+     * Returns pairs of input ID and its {@link ImporterDescription} in this jobflow.
+     * @return pairs of input ID and its {@link ImporterDescription}
+     */
+    public Map<String, ImporterDescription> getImporterMap() {
+        Map<String, ImporterDescription> results = new HashMap<String, ImporterDescription>();
+        for (Import importer : jobflow.getImports()) {
+            results.put(importer.getId(), importer.getDescription().getImporterDescription());
+        }
+        return results;
+    }
+
+    /**
      * Returns a {@link ExporterDescription} object in this jobflow which has the specified {@code Output ID}.
      * @param outputId target output ID
      * @return the corresponded {@link ExporterDescription}, or {@code null} if no such output exists
@@ -96,6 +111,26 @@ public class JobflowInfo {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns pairs of output ID and its {@link ExporterDescription} in this jobflow.
+     * @return pairs of output ID and its {@link ExporterDescription}
+     */
+    public Map<String, ExporterDescription> getExporterMap() {
+        Map<String, ExporterDescription> results = new HashMap<String, ExporterDescription>();
+        for (Export exporter : jobflow.getExports()) {
+            results.put(exporter.getId(), exporter.getDescription().getExporterDescription());
+        }
+        return results;
+    }
+
+    /**
+     * Returns {@link ExternalIoCommandProvider}s for this jobflow.
+     * @return {@link ExternalIoCommandProvider}s
+     */
+    public List<ExternalIoCommandProvider> getCommandProviders() {
+        return jobflow.getCompiled().getCommandProviders();
     }
 
     /**

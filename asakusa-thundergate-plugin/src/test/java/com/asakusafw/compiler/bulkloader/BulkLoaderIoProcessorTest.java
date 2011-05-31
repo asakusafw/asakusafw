@@ -76,7 +76,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -128,7 +128,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -293,7 +293,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -316,7 +316,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -339,7 +339,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -362,7 +362,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -453,7 +453,7 @@ public class BulkLoaderIoProcessorTest {
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -483,11 +483,11 @@ public class BulkLoaderIoProcessorTest {
 
     static class Import extends BulkLoadImporterDescription {
 
-        private Mode mode;
+        private final Mode mode;
 
-        private String target;
+        private final String target;
 
-        private LockType lock;
+        private final LockType lock;
 
         Import(Mode mode, String target, LockType lock) {
             this.mode = mode;
@@ -533,7 +533,7 @@ public class BulkLoaderIoProcessorTest {
 
     static class Export extends BulkLoadExporterDescription {
 
-        private String target;
+        private final String target;
 
         Export(String target) {
             this.target = target;

@@ -249,7 +249,7 @@ public abstract class TestDriverBase {
         List<Command> importers = new ArrayList<Command>();
         List<Command> exporters = new ArrayList<Command>();
         List<Command> finalizers = new ArrayList<Command>();
-        for (ExternalIoCommandProvider provider : info.getJobflow().getCompiled().getCommandProviders()) {
+        for (ExternalIoCommandProvider provider : info.getCommandProviders()) {
             initializers.addAll(convert(provider.getInitializeCommand(context)));
             importers.addAll(convert(provider.getImportCommand(context)));
             exporters.addAll(convert(provider.getExportCommand(context)));
