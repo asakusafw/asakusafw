@@ -44,7 +44,7 @@ public class TestDriverTestToolsBase extends TestDriverBase {
         super.initialize();
 
         try {
-            System.setProperty("ASAKUSA_TESTTOOLS_CONF", buildProperties.getProperty("asakusa.testtools.conf"));
+            System.setProperty("ASAKUSA_TESTTOOLS_CONF", buildProperties.getProperty("asakusa.jdbc.conf"));
             System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", buildProperties.getProperty("asakusa.testdatasheet.output"));
             String testDataDirPath = buildProperties.getProperty("asakusa.testdriver.testdata.dir");
             if (testDataDirPath == null) {
