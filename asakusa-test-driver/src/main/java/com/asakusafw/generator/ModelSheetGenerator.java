@@ -31,20 +31,20 @@ public final class ModelSheetGenerator {
      * ・モデル定義から該当するテーブル用のテストデータ定義シートを生成
      * ・ThnderGateのロック管理テーブル用DDLを生成
      * </p>
-     * 
+     *
      * @param args asakusa-thundergate-dmdlのReadmeを参照
      * @throws Exception
      *             操作に失敗した場合
      */
     public static void main(String[] args) throws Exception {
 
-        com.asakusafw.dmdl.thundergate.Configuration dmdlTgConf = 
+        com.asakusafw.dmdl.thundergate.Configuration dmdlTgConf =
             com.asakusafw.dmdl.thundergate.Main.loadConfigurationFromArguments(args);
 
-        com.asakusafw.dmdl.thundergate.model.ModelRepository repository = 
+        com.asakusafw.dmdl.thundergate.model.ModelRepository repository =
             new com.asakusafw.dmdl.thundergate.GenerateTask(dmdlTgConf).call();
 
-        List<com.asakusafw.dmdl.thundergate.model.TableModelDescription> tables = 
+        List<com.asakusafw.dmdl.thundergate.model.TableModelDescription> tables =
             repository.allTables();
         String[] tablesArray = new String[tables.size()];
 
@@ -54,12 +54,14 @@ public final class ModelSheetGenerator {
             i++;
         }
 
+        System.setProperty("ASAKUSA_TESTTOOLS_CONF", System.getProperty("ASAKUSA_MODELGEN_JDBC"));
         if ("true".equals(System.getProperty("ASAKUSA_V01_TEMPLATEGEN_RUN"))) {
             String outputDir = System.getProperty("ASAKUSA_TESTDATASHEET_OUTPUT") + "_v01_format";
             new File(outputDir).mkdir();
             System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", outputDir);
             com.asakusafw.testtools.templategen.Main.main(tablesArray);
         }
+
         HadoopBulkLoaderDDLGenerator.main(tablesArray);
     }
 
