@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.List;
@@ -51,5 +52,10 @@ public abstract class AbstractExporterRetriever<T extends ExporterDescription>
                     getClass().getName()));
         }
         return (Class<T>) first;
+    }
+
+    @Override
+    public <V> void truncate(DataModelDefinition<V> definition, T description) throws IOException {
+        truncate(description);
     }
 }

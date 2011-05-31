@@ -72,10 +72,7 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     }
 
     @Override
-    public <V> void truncate(
-            DataModelDefinition<V> definition,
-            FileExporterDescription description) throws IOException {
-        checkType(definition, description);
+    public void truncate(FileExporterDescription description) throws IOException {
         LOG.info("エクスポート先をクリアしています: {}", description);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
@@ -96,7 +93,6 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
         } finally {
             fs.close();
         }
-        return;
     }
 
     @Override

@@ -42,10 +42,25 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
     static final Logger LOG = LoggerFactory.getLogger(BulkLoadExporterRetriever.class);
 
     @Override
+    public void truncate(BulkLoadExporterDescription description) throws IOException {
+        Configuration conf = Configuration.load(description.getTargetName());
+        truncate(conf, description.getTableName());
+        if (description.getDuplicateRecordCheck() != null) {
+            truncate(conf, description.getDuplicateRecordCheck().getTableName());
+        }
+    }
+
+    @Override
     public <V> void truncate(DataModelDefinition<V> definition,
             BulkLoadExporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         String tableName = detectTableName(definition, description);
+        truncate(conf, tableName);
+    }
+
+    private void truncate(Configuration conf, String tableName) throws IOException {
+        assert conf != null;
+        assert tableName != null;
         LOG.info("エクスポート先のテーブル{}の内容を消去します", tableName);
         Util.truncate(conf, tableName);
     }

@@ -37,8 +37,7 @@ public class AbstractImporterPreparatorTest {
     public void getDescriptionClass() {
         class Target extends AbstractImporterPreparator<FileImporterDescription> {
             @Override
-            public <V> void truncate(DataModelDefinition<V> definition,
-                    FileImporterDescription description) {
+            public void truncate(FileImporterDescription description) {
                 return;
             }
             @Override
@@ -59,7 +58,7 @@ public class AbstractImporterPreparatorTest {
         @SuppressWarnings("rawtypes")
         class Target extends AbstractImporterPreparator {
             @Override
-            public void truncate(DataModelDefinition definition, ImporterDescription description) {
+            public void truncate(ImporterDescription description) {
                 return;
             }
             @Override

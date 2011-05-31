@@ -64,6 +64,28 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
     }
 
     @Override
+    public void truncate(ImporterDescription description) throws IOException {
+        for (ImporterPreparator<?> element : elements) {
+            if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
+                truncate0(element, description);
+                return;
+            }
+        }
+        throw new IOException(MessageFormat.format(
+                "Failed to truncate {0} (does not supported)",
+                description));
+    }
+
+    private <T extends ImporterDescription> void truncate0(
+            ImporterPreparator<T> preparator,
+            ImporterDescription description) throws IOException {
+        assert preparator != null;
+        assert description != null;
+        T desc = preparator.getDescriptionClass().cast(description);
+        preparator.truncate(desc);
+    }
+
+    @Override
     public <V> void truncate(
             DataModelDefinition<V> definition,
             ImporterDescription description) throws IOException {

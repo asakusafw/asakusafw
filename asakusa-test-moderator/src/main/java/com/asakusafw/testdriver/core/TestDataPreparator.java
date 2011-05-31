@@ -174,7 +174,7 @@ public class TestDataPreparator {
     }
 
     /**
-     * Truncate the target importer's input.
+     * Truncates the target importer's input.
      * @param type class of data model
      * @param description target importer
      * @throws IOException if failed to prepare the importer
@@ -192,7 +192,20 @@ public class TestDataPreparator {
     }
 
     /**
-     * Truncate the target exporter's output.
+     * Truncates the target importer's input.
+     * @param description target importer
+     * @throws IOException if failed to prepare the importer
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void truncate(ImporterDescription description) throws IOException {
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        importers.truncate(description);
+    }
+
+    /**
+     * Truncates the target exporter's output.
      * @param type class of data model
      * @param description target importer
      * @throws IOException if failed to prepare the importer
@@ -207,6 +220,19 @@ public class TestDataPreparator {
         }
         DataModelDefinition<?> definition = findDefinition(type);
         exporters.truncate(definition, description);
+    }
+
+    /**
+     * Truncates the target exporter's output.
+     * @param description target importer
+     * @throws IOException if failed to prepare the importer
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void truncate(ExporterDescription description) throws IOException {
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
+        }
+        exporters.truncate(description);
     }
 
     private <T> DataModelDefinition<T> findDefinition(Class<T> type) throws IOException {

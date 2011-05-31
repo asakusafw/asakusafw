@@ -40,6 +40,17 @@ public interface ImporterPreparator<T extends ImporterDescription> {
     Class<T> getDescriptionClass();
 
     /**
+     * Truncates all resources which the importer will use.
+     * <p>
+     * If target resources do not support truncate operations,
+     * this method has no effects.
+     * </p>
+     * @param description the description
+     * @throws IOException if failed to open the target
+     */
+    void truncate(T description) throws IOException;
+
+    /**
      * Truncates the resource which the importer will use.
      * <p>
      * If target resource does not support truncate operations,
