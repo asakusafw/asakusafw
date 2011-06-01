@@ -124,6 +124,29 @@ public class TestDriverContext {
     }
 
     /**
+     * Returns the compiler working directory.
+     * @return the compiler working directory
+     * @see #setCompileWorkBaseDir(String)
+     * @see #setClassName(String)
+     * @see #setMethodName(String)
+     */
+    public File getCompilerWorkingDirectory() {
+        File work;
+        File base = new File(getCompileWorkBaseDir());
+        if (getClassName() != null) {
+            String sub = getClassName();
+            sub = sub.substring(sub.lastIndexOf('.') + 1);
+            if (getMethodName() != null) {
+                sub = sub + "_" + getMethodName();
+            }
+            work = new File(base, sub);
+        } else {
+            work = base;
+        }
+        return work;
+    }
+
+    /**
      * @return the osUser
      */
     public String getOsUser() {

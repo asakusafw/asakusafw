@@ -106,6 +106,36 @@ public class FlowPartTester extends TestDriverBase {
         initializeClusterDirectory(driverContext.getClusterWorkDir());
         ClassLoader classLoader = this.getClass().getClassLoader();
 
+        // フローコンパイラの実行
+        LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
+        String batchId = "testing";
+        String flowId = driverContext.getMethodName();
+        File compileWorkDir = driverContext.getCompilerWorkingDirectory();
+        if (compileWorkDir.exists()) {
+            FileUtils.forceDelete(compileWorkDir);
+        }
+
+        FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
+        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
+                flowGraph,
+                batchId,
+                flowId,
+                "test.flowpart",
+                FlowPartDriverUtils.createWorkingLocation(driverContext),
+                compileWorkDir,
+                Arrays.asList(new File[] {
+                        DirectFlowCompiler.toLibraryPath(flowDescription.getClass())
+                }),
+                flowDescription.getClass().getClassLoader(),
+                driverContext.getOptions());
+
+        CommandContext context = driverContext.getCommandContext();
+
+        Map<String, String> dPropMap = createHadoopProperties(context);
+
+        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
+        savePlan(compileWorkDir, plan);
+
         // テストデータの配置
         LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
         TestDataPreparator preparator = new TestDataPreparator(classLoader);
@@ -121,28 +151,6 @@ public class FlowPartTester extends TestDriverBase {
                 preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
             }
         }
-
-        // フローコンパイラの実行
-        LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
-        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
-                + driverContext.getMethodName();
-        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
-        if (compileWorkDir.exists()) {
-            FileUtils.forceDelete(compileWorkDir);
-        }
-
-        FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
-                FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
-                Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
-                flowDescription.getClass().getClassLoader(), driverContext.getOptions());
-
-        CommandContext context = driverContext.getCommandContext();
-
-        Map<String, String> dPropMap = createHadoopProperties(context);
-
-        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-        savePlan(compileWorkDir, plan);
 
         // コンパイル結果のフロー部品を実行
         LOG.info("フロー部品を実行しています: {}", flowDescription.getClass().getName());

@@ -107,9 +107,8 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
             }
 
             // フローコンパイラの実行
-            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
-                    + driverContext.getMethodName();
-            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+            String flowId = driverContext.getMethodName();
+            File compileWorkDir = driverContext.getCompilerWorkingDirectory();
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }

@@ -174,8 +174,7 @@ public class BatchTester extends TestDriverBase {
             assert jobflowInfo != null;
 
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
-            String jobFlowJarName = "jobflow-" + flowId + ".jar";
-            File srcFile = new File(compilerOutputDir, "lib/" + jobFlowJarName);
+            File srcFile = jobflowInfo.getPackageFile();
             File destDir = driverContext.getJobflowPackageLocation(batchId);
             FileUtils.copyFileToDirectory(srcFile, destDir);
 

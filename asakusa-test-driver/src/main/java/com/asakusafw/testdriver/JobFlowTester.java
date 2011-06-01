@@ -50,9 +50,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 public class JobFlowTester extends TestDriverBase {
 
     static final Logger LOG = LoggerFactory.getLogger(JobFlowTester.class);
-
-    /** バッチID。 */
-    protected String batchId = "bid";
     /** 入力データのリスト。 */
     protected List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
     /** 出力データのリスト。 */
@@ -121,23 +118,22 @@ public class JobFlowTester extends TestDriverBase {
         assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
         JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-        String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1)
-                + "_" + driverContext.getMethodName();
-        File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+        String batchId = "bid";
+        String flowId = jobFlowClass.getConfig().name();
+        File compileWorkDir = driverContext.getCompilerWorkingDirectory();
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
 
         FlowGraph flowGraph = jobFlowClass.getGraph();
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, batchId, flowId, "test.jobflow",
-                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
+                Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass) }),
                 jobFlowDescriptionClass.getClassLoader(), driverContext.getOptions());
 
         // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
-        String jobFlowJarName = "jobflow-" + flowId + ".jar";
-        File srcFile = new File(compileWorkDir, jobFlowJarName);
+        File srcFile = jobflowInfo.getPackageFile();
         File destDir = driverContext.getJobflowPackageLocation(batchId);
         FileUtils.copyFileToDirectory(srcFile, destDir);
 
