@@ -112,7 +112,7 @@ public class BulkLoaderIoProcessorRunTest {
         assertThat(results.get(1).getValue(), is(1));
         assertThat(results.get(2).getValue(), is(2));
 
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 
@@ -185,7 +185,7 @@ public class BulkLoaderIoProcessorRunTest {
         assertThat(results.get(1).getValue(), is(1));
         assertThat(results.get(2).getValue(), is(2));
 
-        List<ExternalIoCommandProvider> commands = info.getJobflow().getCompiled().getCommandProviders();
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
         ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
         assertThat(provider, not(nullValue()));
 

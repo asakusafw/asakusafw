@@ -39,8 +39,7 @@ public class AbstractExporterRetrieverTest {
     public void getDescriptionClass() {
         class Target extends AbstractExporterRetriever<FileExporterDescription> {
             @Override
-            public <V> void truncate(DataModelDefinition<V> definition,
-                    FileExporterDescription description) throws IOException {
+            public void truncate(FileExporterDescription description) throws IOException {
                 return;
             }
             @Override
@@ -66,7 +65,7 @@ public class AbstractExporterRetrieverTest {
         @SuppressWarnings("rawtypes")
         class Target extends AbstractExporterRetriever {
             @Override
-            public void truncate(DataModelDefinition definition, ExporterDescription description) {
+            public void truncate(ExporterDescription description) {
                 return;
             }
             @Override

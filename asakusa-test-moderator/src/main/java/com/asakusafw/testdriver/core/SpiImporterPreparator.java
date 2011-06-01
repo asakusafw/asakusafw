@@ -64,12 +64,10 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
     }
 
     @Override
-    public <V> void truncate(
-            DataModelDefinition<V> definition,
-            ImporterDescription description) throws IOException {
+    public void truncate(ImporterDescription description) throws IOException {
         for (ImporterPreparator<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                truncate0(definition, element, description);
+                truncate0(element, description);
                 return;
             }
         }
@@ -78,15 +76,13 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
                 description));
     }
 
-    private <T extends ImporterDescription, V> void truncate0(
-            DataModelDefinition<V> definition,
+    private <T extends ImporterDescription> void truncate0(
             ImporterPreparator<T> preparator,
             ImporterDescription description) throws IOException {
-        assert definition != null;
         assert preparator != null;
         assert description != null;
         T desc = preparator.getDescriptionClass().cast(description);
-        preparator.truncate(definition, desc);
+        preparator.truncate(desc);
     }
 
     @Override

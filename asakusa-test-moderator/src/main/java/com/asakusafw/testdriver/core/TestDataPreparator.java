@@ -174,39 +174,29 @@ public class TestDataPreparator {
     }
 
     /**
-     * Truncate the target importer's input.
-     * @param type class of data model
+     * Truncates the target importer's input.
      * @param description target importer
      * @throws IOException if failed to prepare the importer
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void truncate(Class<?> type, ImporterDescription description) throws IOException {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
+    public void truncate(ImporterDescription description) throws IOException {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = findDefinition(type);
-        importers.truncate(definition, description);
+        importers.truncate(description);
     }
 
     /**
-     * Truncate the target exporter's output.
-     * @param type class of data model
+     * Truncates the target exporter's output.
      * @param description target importer
      * @throws IOException if failed to prepare the importer
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void truncate(Class<?> type, ExporterDescription description) throws IOException {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
+    public void truncate(ExporterDescription description) throws IOException {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        DataModelDefinition<?> definition = findDefinition(type);
-        exporters.truncate(definition, description);
+        exporters.truncate(description);
     }
 
     private <T> DataModelDefinition<T> findDefinition(Class<T> type) throws IOException {

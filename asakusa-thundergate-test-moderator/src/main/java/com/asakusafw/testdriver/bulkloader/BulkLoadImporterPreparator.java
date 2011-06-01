@@ -37,9 +37,7 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
     static final Logger LOG = LoggerFactory.getLogger(BulkLoadImporterPreparator.class);
 
     @Override
-    public <V> void truncate(
-            DataModelDefinition<V> definition,
-            BulkLoadImporterDescription description) throws IOException {
+    public void truncate(BulkLoadImporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         String tableName = description.getTableName();
         LOG.info("インポート元のテーブル{}の内容を消去します", tableName);

@@ -40,17 +40,15 @@ public interface ImporterPreparator<T extends ImporterDescription> {
     Class<T> getDescriptionClass();
 
     /**
-     * Truncates the resource which the importer will use.
+     * Truncates all resources which the importer will use.
      * <p>
-     * If target resource does not support truncate operations,
+     * If target resources do not support truncate operations,
      * this method has no effects.
      * </p>
-     * @param <V> type of model
-     * @param definition the data model definition
      * @param description the description
      * @throws IOException if failed to open the target
      */
-    <V> void truncate(DataModelDefinition<V> definition, T description) throws IOException;
+    void truncate(T description) throws IOException;
 
     /**
      * Creates a {@link ModelOutput} to prepare the resource which the importer will use.

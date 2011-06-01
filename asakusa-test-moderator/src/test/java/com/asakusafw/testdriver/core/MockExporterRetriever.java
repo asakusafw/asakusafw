@@ -47,7 +47,7 @@ public class MockExporterRetriever extends AbstractExporterRetriever<MockExporte
     }
 
     @Override
-    public <V> void truncate(DataModelDefinition<V> definition, Desc description) throws IOException {
+    public void truncate(Desc description) throws IOException {
         description.lines.clear();
     }
 

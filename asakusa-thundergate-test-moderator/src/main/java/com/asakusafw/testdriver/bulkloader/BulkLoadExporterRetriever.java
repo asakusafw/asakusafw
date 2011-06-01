@@ -42,10 +42,17 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
     static final Logger LOG = LoggerFactory.getLogger(BulkLoadExporterRetriever.class);
 
     @Override
-    public <V> void truncate(DataModelDefinition<V> definition,
-            BulkLoadExporterDescription description) throws IOException {
+    public void truncate(BulkLoadExporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
-        String tableName = detectTableName(definition, description);
+        truncate(conf, description.getTableName());
+        if (description.getDuplicateRecordCheck() != null) {
+            truncate(conf, description.getDuplicateRecordCheck().getTableName());
+        }
+    }
+
+    private void truncate(Configuration conf, String tableName) throws IOException {
+        assert conf != null;
+        assert tableName != null;
         LOG.info("エクスポート先のテーブル{}の内容を消去します", tableName);
         Util.truncate(conf, tableName);
     }
@@ -95,15 +102,6 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
                     // ignored.
                 }
             }
-        }
-    }
-
-    private String detectTableName(DataModelDefinition<?> definition,
-            BulkLoadExporterDescription description) throws IOException {
-        if (isNormalTarget(definition, description)) {
-            return description.getTableName();
-        } else {
-            return description.getDuplicateRecordCheck().getTableName();
         }
     }
 

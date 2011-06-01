@@ -67,10 +67,7 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     }
 
     @Override
-    public <V> void truncate(
-            DataModelDefinition<V> definition,
-            FileImporterDescription description) throws IOException {
-        checkType(definition, description);
+    public void truncate(FileImporterDescription description) throws IOException {
         LOG.info("インポート元をクリアしています: {}", description);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);

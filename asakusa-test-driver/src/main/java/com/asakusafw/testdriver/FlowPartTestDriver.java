@@ -35,10 +35,6 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
@@ -57,8 +53,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  * フロー部品用のテストドライバクラス。
  */
 public class FlowPartTestDriver extends TestDriverTestToolsBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FlowPartTestDriver.class);
 
     private final FlowDescriptionDriver flowDescriptionDriver = new FlowDescriptionDriver();
 
@@ -96,8 +90,10 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
     public void runTest(FlowDescription flowDescription) {
 
         try {
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+
             // クラスタワークディレクトリ初期化
-            initializeClusterDirectory(driverContext.getClusterWorkDir());
+            executor.cleanWorkingDirectory();
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
             if (createIndividually) {
@@ -107,29 +103,20 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
             }
 
             // フローコンパイラの実行
-            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf('.') + 1) + "_"
-                    + driverContext.getMethodName();
-            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+            String batchId = "flow";
+            String flowId = "part";
+            File compileWorkDir = driverContext.getCompilerWorkingDirectory();
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
 
             FlowGraph flowGraph = flowDescriptionDriver.createFlowGraph(flowDescription);
-            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
+            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, batchId, flowId, "test.flowpart",
                     FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
                     Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
                     flowDescription.getClass().getClassLoader(), driverContext.getOptions());
 
-            CommandContext context = new CommandContext(
-                    getFrameworkHomePath().getAbsolutePath() + "/",
-                    driverContext.getExecutionId(),
-                    driverContext.getBatchArgs());
-
-            Map<String, String> dPropMap = createHadoopProperties(context);
-
-            TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-            savePlan(compileWorkDir, plan);
-            executePlan(plan, jobflowInfo.getPackageFile());
+            executor.runJobflow(jobflowInfo);
 
             // テスト結果検証ツールを実行し、Excel上の期待値とシーケンスファイル上の実際値を比較する。
             if (loadIndividually) {

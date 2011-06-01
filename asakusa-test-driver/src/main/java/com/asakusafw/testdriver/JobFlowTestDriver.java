@@ -21,12 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.JobFlowClass;
 import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.compiler.flow.Location;
@@ -100,8 +97,10 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
     public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) {
 
         try {
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+
             // クラスタワークディレクトリ初期化
-            initializeClusterDirectory(driverContext.getClusterWorkDir());
+            executor.cleanWorkingDirectory();
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
@@ -113,8 +112,8 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                     jobFlowDriver.hasError());
             JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1) + "_" + driverContext.getMethodName();
-            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+            String flowId = jobFlowClass.getConfig().name();
+            File compileWorkDir = driverContext.getCompilerWorkingDirectory();
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
@@ -125,7 +124,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                 batchId,
                 flowId,
                 "test.jobflow",
-                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
+                Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] {
                         DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
@@ -133,22 +132,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                 jobFlowDescriptionClass.getClassLoader(),
                 driverContext.getOptions());
 
-            // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
-            String jobFlowJarName = "jobflow-" + flowId + ".jar";
-            File srcFile = new File(compileWorkDir, jobFlowJarName);
-            File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
-            FileUtils.copyFileToDirectory(srcFile, destDir);
-
-            CommandContext context = new CommandContext(
-                    getFrameworkHomePath().getAbsolutePath() + "/",
-                    driverContext.getExecutionId(),
-                    driverContext.getBatchArgs());
-
-            Map<String, String> dPropMap = createHadoopProperties(context);
-
-            TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-            savePlan(compileWorkDir, plan);
-            executePlan(plan, jobflowInfo.getPackageFile());
+            executor.runJobflow(jobflowInfo);
 
             // テスト結果検証ツールを実行し、Excel上の期待値とDB上の実際値を比較する。
             loadDatabase();

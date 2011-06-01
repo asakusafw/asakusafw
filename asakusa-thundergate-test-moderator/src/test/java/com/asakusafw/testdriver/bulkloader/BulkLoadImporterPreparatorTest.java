@@ -110,26 +110,9 @@ public class BulkLoadImporterPreparatorTest {
         BulkLoadImporterPreparator prep = new BulkLoadImporterPreparator();
 
         assertThat(h2.count("SIMPLE"), is(1));
-        prep.truncate(SIMPLE, NORMAL);
+        prep.truncate(NORMAL);
 
         assertThat(h2.count("SIMPLE"), is(0));
-    }
-
-    /**
-     * attempt to truncate invalid table.
-     * @throws Exception if occur
-     */
-    @Test(expected = IOException.class)
-    public void truncate_missing() throws Exception {
-        Simple simple = new Simple();
-        simple.number = 100;
-        simple.text = "Hello, world!";
-        insert(simple);
-
-        context.put("importer", "importer");
-
-        BulkLoadImporterPreparator prep = new BulkLoadImporterPreparator();
-        prep.truncate(SIMPLE, MISSING);
     }
 
     /**
