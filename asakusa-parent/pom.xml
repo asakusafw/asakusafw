@@ -19,7 +19,7 @@
 
 	<properties>
 		<cloudera.cdh.version>0.20.2-cdh3u0</cloudera.cdh.version>
-		<mysql.jdbc.version>5.1.13</mysql.jdbc.version>
+		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 		<commons.io.version>2.0.1</commons.io.version>
