@@ -47,12 +47,6 @@
 		<fileSet filtered="false" packaged="false" encoding="UTF-8">
 			<directory>src/main/dmdl</directory>
 		</fileSet>
-		<fileSet filtered="false" packaged="false" encoding="UTF-8">
-			<directory>target/generated-sources/annotations</directory>
-		</fileSet>
-		<fileSet filtered="false" packaged="false" encoding="UTF-8">
-			<directory>target/generated-sources/modelgen</directory>
-		</fileSet>
 
 	</fileSets>
 </archetype-descriptor>
