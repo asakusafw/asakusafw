@@ -20,19 +20,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
-import com.asakusafw.testdriver.core.Difference;
-import com.asakusafw.testdriver.core.TestDataPreparator;
-import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -102,10 +96,6 @@ public class FlowPartTester extends TestDriverBase {
     private void runTestInternal(FlowDescription flowDescription) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
-        // 初期化
-        initializeClusterDirectory(driverContext.getClusterWorkDir());
-        ClassLoader classLoader = this.getClass().getClassLoader();
-
         // フローコンパイラの実行
         LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
         String batchId = "testing";
@@ -129,63 +119,23 @@ public class FlowPartTester extends TestDriverBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
-        CommandContext context = driverContext.getCommandContext();
+        // 初期化
+        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
+        JobflowExecutor executor = new JobflowExecutor(driverContext);
+        executor.cleanWorkingDirectory();
+        executor.cleanInputOutput(jobflowInfo);
 
-        Map<String, String> dPropMap = createHadoopProperties(context);
-
-        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-        savePlan(compileWorkDir, plan);
-
-        // テストデータの配置
         LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
-        TestDataPreparator preparator = new TestDataPreparator(classLoader);
-        for (FlowPartDriverInput<?> input : inputs) {
-            if (input.sourceUri != null) {
-                LOG.debug("入力{}を配置しています: {}", input.getName(), input.getSourceUri());
-                preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
-            }
-        }
-        for (FlowPartDriverOutput<?> output : outputs) {
-            if (output.sourceUri != null) {
-                LOG.debug("出力{}を配置しています: {}", output.getName(), output.getSourceUri());
-                preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
-            }
-        }
+        executor.prepareInput(jobflowInfo, inputs);
+        executor.prepareOutput(jobflowInfo, outputs);
 
-        // コンパイル結果のフロー部品を実行
         LOG.info("フロー部品を実行しています: {}", flowDescription.getClass().getName());
         VerifyContext verifyContext = new VerifyContext();
-        executePlan(plan, jobflowInfo.getPackageFile());
+        executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
         // 実行結果の検証
         LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
-        TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%n"));
-        boolean failed = false;
-        for (FlowPartDriverOutput<?> output : outputs) {
-            if (output.expectedUri != null) {
-                LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
-                List<Difference> diffList = inspect(output, verifyContext, inspector);
-                if (diffList.isEmpty() == false) {
-                    LOG.warn("{}の出力{}には{}個の差異があります", new Object[] {
-                            flowDescription.getClass().getName(),
-                            output.getName(),
-                            diffList.size(),
-                    });
-                }
-                for (Difference difference : diffList) {
-                    failed = true;
-                    sb.append(String.format("%s: %s%n",
-                            output.getModelType().getSimpleName(),
-                            difference));
-                }
-            }
-        }
-        LOG.info("実行結果を検証しました(succeeded={}): {}", !failed, driverContext.getCallerClass().getName());
-        if (failed) {
-            throw new AssertionError(sb);
-        }
+        executor.verify(jobflowInfo, verifyContext, outputs);
     }
 }

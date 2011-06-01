@@ -64,8 +64,8 @@ public class FrameworkDeployer implements MethodRule {
 
     void deploySubmitScript() throws IOException {
         LOG.debug("Deploying submit script");
-        File source = new File("src/main/dist", TestDriverBase.SUBMIT_JOB_SCRIPT);
-        File target = new File(getFrameworkHome(), TestDriverBase.SUBMIT_JOB_SCRIPT);
+        File source = new File("src/main/dist", TestDriverContext.SUBMIT_JOB_SCRIPT);
+        File target = new File(getFrameworkHome(), TestDriverContext.SUBMIT_JOB_SCRIPT);
         copy(source, target);
         target.setExecutable(true);
     }

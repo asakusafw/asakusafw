@@ -57,7 +57,8 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
 
         // クラスタワークディレクトリ初期化
         try {
-            initializeClusterDirectory(driverContext.getClusterWorkDir());
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+            executor.cleanWorkingDirectory();
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
@@ -108,7 +109,13 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
             environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, context.getVariableList());
             environment.put(ExperimentalWorkflowProcessor.K_OPTS, dProps.toString());
 
-            runShellAndAssert(batchRunCmd, environment);
+            int exitCode = executor.runShell(batchRunCmd, environment);
+            if (exitCode != 0) {
+                throw new AssertionError(MessageFormat.format(
+                        "バッチの実行に失敗しました (exitCode={0}): {1}",
+                        exitCode,
+                        batchDescriptionClass.getName()));
+            }
 
             // テスト結果検証ツールを実行し、Excel上の期待値とDB上の実際値を比較する。
             loadDatabase();

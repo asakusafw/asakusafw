@@ -19,28 +19,19 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.JobFlowClass;
 import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
-import com.asakusafw.testdriver.core.Difference;
-import com.asakusafw.testdriver.core.TestDataPreparator;
-import com.asakusafw.testdriver.core.TestResultInspector;
 import com.asakusafw.testdriver.core.VerifyContext;
-import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
@@ -108,10 +99,6 @@ public class JobFlowTester extends TestDriverBase {
     private void runTestInternal(Class<? extends FlowDescription> jobFlowDescriptionClass) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
-        // 初期化
-        initializeClusterDirectory(driverContext.getClusterWorkDir());
-        ClassLoader classLoader = this.getClass().getClassLoader();
-
         // フローコンパイラの実行
         LOG.info("ジョブフローをコンパイルしています: {}", jobFlowDescriptionClass.getName());
         JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
@@ -126,103 +113,34 @@ public class JobFlowTester extends TestDriverBase {
         }
 
         FlowGraph flowGraph = jobFlowClass.getGraph();
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, batchId, flowId, "test.jobflow",
+        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
+                flowGraph,
+                batchId,
+                flowId,
+                "test.jobflow",
                 Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compileWorkDir,
-                Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass) }),
-                jobFlowDescriptionClass.getClassLoader(), driverContext.getOptions());
+                Arrays.asList(new File[] {
+                        DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
+                }),
+                jobFlowDescriptionClass.getClassLoader(),
+                driverContext.getOptions());
 
-        // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
-        File srcFile = jobflowInfo.getPackageFile();
-        File destDir = driverContext.getJobflowPackageLocation(batchId);
-        FileUtils.copyFileToDirectory(srcFile, destDir);
+        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
+        JobflowExecutor executor = new JobflowExecutor(driverContext);
+        executor.cleanWorkingDirectory();
+        executor.cleanInputOutput(jobflowInfo);
 
-        CommandContext context = driverContext.getCommandContext();
-
-        Map<String, String> dPropMap = createHadoopProperties(context);
-
-        TestExecutionPlan plan = createExecutionPlan(jobflowInfo, context, dPropMap);
-        savePlan(compileWorkDir, plan);
-
-        // テストデータの配置
         LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
-        TestDataPreparator preparator = new TestDataPreparator(classLoader);
-        for (JobFlowDriverInput<?> input : inputs) {
-            LOG.debug("入力{}を初期化しています", input.getName());
-            ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-            if (importerDescription == null) {
-                throw new IllegalStateException(MessageFormat.format(
-                        "入力{1}はジョブフロー{0}に定義されていません",
-                        jobFlowDescriptionClass.getName(),
-                        input.getName()));
-            }
-            preparator.truncate(input.getModelType(), importerDescription);
-        }
-        for (JobFlowDriverOutput<?> output : outputs) {
-            LOG.debug("出力{}を初期化しています", output.getName());
-            ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-            if (exporterDescription == null) {
-                throw new IllegalStateException(MessageFormat.format(
-                        "出力{1}はジョブフロー{0}に定義されていません",
-                        jobFlowDescriptionClass.getName(),
-                        output.getName()));
-            }
-            preparator.truncate(output.getModelType(), exporterDescription);
-        }
+        executor.prepareInput(jobflowInfo, inputs);
+        executor.prepareOutput(jobflowInfo, outputs);
 
-        for (JobFlowDriverInput<?> input : inputs) {
-            if (input.sourceUri != null) {
-                LOG.debug("入力{}を配置しています: {}", input.getName(), input.getSourceUri());
-                ImporterDescription importerDescription = jobflowInfo.findImporter(input.getName());
-                input.setImporterDescription(importerDescription);
-                preparator.prepare(input.getModelType(), input.getImporterDescription(), input.getSourceUri());
-            }
-        }
-        for (JobFlowDriverOutput<?> output : outputs) {
-            if (output.sourceUri != null) {
-                LOG.debug("出力{}を配置しています: {}", output.getName(), output.getSourceUri());
-                ImporterDescription importerDescription = jobflowInfo.findImporter(output.getName());
-                output.setImporterDescription(importerDescription);
-                preparator.prepare(output.getModelType(), output.getImporterDescription(), output.getSourceUri());
-            }
-        }
-
-        // コンパイル結果のジョブフローを実行
         LOG.info("ジョブフローを実行しています: {}", jobFlowDescriptionClass.getName());
         VerifyContext verifyContext = new VerifyContext();
-        executePlan(plan, jobflowInfo.getPackageFile());
+        executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
-        // 実行結果の検証
         LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
-        TestResultInspector inspector = new TestResultInspector(this.getClass().getClassLoader());
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%n"));
-        boolean failed = false;
-        for (JobFlowDriverOutput<?> output : outputs) {
-            if (output.expectedUri != null) {
-                LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
-                ExporterDescription exporterDescription = jobflowInfo.findExporter(output.getName());
-                output.setExporterDescription(exporterDescription);
-                List<Difference> diffList = inspect(output, verifyContext, inspector);
-                if (diffList.isEmpty() == false) {
-                    LOG.warn("{}の出力{}には{}個の差異があります", new Object[] {
-                            jobFlowDescriptionClass.getName(),
-                            output.getName(),
-                            diffList.size(),
-                    });
-                }
-                for (Difference difference : diffList) {
-                    failed = true;
-                    sb.append(String.format("%s: %s%n",
-                            output.getModelType().getSimpleName(),
-                            difference));
-                }
-            }
-        }
-        LOG.info("実行結果を検証しました(succeeded={}): {}", !failed, driverContext.getCallerClass().getName());
-        if (failed) {
-            throw new AssertionError(sb);
-        }
+        executor.verify(jobflowInfo, verifyContext, outputs);
     }
 }

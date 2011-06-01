@@ -34,6 +34,11 @@ public class TestDriverContext {
      */
     public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
 
+    /**
+     * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
+     */
+    public static final String SUBMIT_JOB_SCRIPT = "experimental/bin/hadoop_job_run.sh";
+
 
     private File frameworkHomePath;
     /** OSのユーザ名。 */
