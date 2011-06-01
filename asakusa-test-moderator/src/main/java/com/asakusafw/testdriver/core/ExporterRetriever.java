@@ -50,19 +50,6 @@ public interface ExporterRetriever<T extends ExporterDescription> {
     void truncate(T description) throws IOException;
 
     /**
-     * Truncates the resource which the exporter will use.
-     * <p>
-     * If target resource does not support truncate operations,
-     * this method has no effects.
-     * </p>
-     * @param <V> type of model
-     * @param definition the data model definition
-     * @param description the description
-     * @throws IOException if failed to open the target
-     */
-    <V> void truncate(DataModelDefinition<V> definition, T description) throws IOException;
-
-    /**
      * Creates a {@link ModelOutput} to prepare what the exporter will use.
      * @param <V> type of model
      * @param definition the data model definition

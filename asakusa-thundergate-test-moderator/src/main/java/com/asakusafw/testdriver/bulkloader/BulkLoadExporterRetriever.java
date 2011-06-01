@@ -50,14 +50,6 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
         }
     }
 
-    @Override
-    public <V> void truncate(DataModelDefinition<V> definition,
-            BulkLoadExporterDescription description) throws IOException {
-        Configuration conf = Configuration.load(description.getTargetName());
-        String tableName = detectTableName(definition, description);
-        truncate(conf, tableName);
-    }
-
     private void truncate(Configuration conf, String tableName) throws IOException {
         assert conf != null;
         assert tableName != null;
@@ -110,15 +102,6 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
                     // ignored.
                 }
             }
-        }
-    }
-
-    private String detectTableName(DataModelDefinition<?> definition,
-            BulkLoadExporterDescription description) throws IOException {
-        if (isNormalTarget(definition, description)) {
-            return description.getTableName();
-        } else {
-            return description.getDuplicateRecordCheck().getTableName();
         }
     }
 

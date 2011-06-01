@@ -86,32 +86,6 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
     }
 
     @Override
-    public <V> void truncate(
-            DataModelDefinition<V> definition,
-            ExporterDescription description) throws IOException {
-        for (ExporterRetriever<?> element : elements) {
-            if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                truncate0(definition, element, description);
-                return;
-            }
-        }
-        throw new IOException(MessageFormat.format(
-                "Failed to open results of {0} (does not supported)",
-                description));
-    }
-
-    private <T extends ExporterDescription, V> void truncate0(
-            DataModelDefinition<V> definition,
-            ExporterRetriever<T> preparator,
-            ExporterDescription description) throws IOException {
-        assert definition != null;
-        assert preparator != null;
-        assert description != null;
-        T desc = preparator.getDescriptionClass().cast(description);
-        preparator.truncate(definition, desc);
-    }
-
-    @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             ExporterDescription description) throws IOException {

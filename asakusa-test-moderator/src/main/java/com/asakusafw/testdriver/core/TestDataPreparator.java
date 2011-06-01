@@ -175,24 +175,6 @@ public class TestDataPreparator {
 
     /**
      * Truncates the target importer's input.
-     * @param type class of data model
-     * @param description target importer
-     * @throws IOException if failed to prepare the importer
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public void truncate(Class<?> type, ImporterDescription description) throws IOException {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
-        if (description == null) {
-            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
-        }
-        DataModelDefinition<?> definition = findDefinition(type);
-        importers.truncate(definition, description);
-    }
-
-    /**
-     * Truncates the target importer's input.
      * @param description target importer
      * @throws IOException if failed to prepare the importer
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -202,24 +184,6 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         importers.truncate(description);
-    }
-
-    /**
-     * Truncates the target exporter's output.
-     * @param type class of data model
-     * @param description target importer
-     * @throws IOException if failed to prepare the importer
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public void truncate(Class<?> type, ExporterDescription description) throws IOException {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
-        if (description == null) {
-            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
-        }
-        DataModelDefinition<?> definition = findDefinition(type);
-        exporters.truncate(definition, description);
     }
 
     /**

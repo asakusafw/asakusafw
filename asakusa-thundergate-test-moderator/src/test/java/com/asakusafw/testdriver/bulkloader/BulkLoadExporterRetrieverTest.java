@@ -152,7 +152,7 @@ public class BulkLoadExporterRetrieverTest {
     public ConfigurationContext context = new ConfigurationContext();
 
     /**
-     * truncate normal table.
+     * truncate tables.
      * @throws Exception if occur
      */
     @Test
@@ -172,59 +172,10 @@ public class BulkLoadExporterRetrieverTest {
 
         assertThat(h2.count("SIMPLE"), is(1));
         assertThat(h2.count("DUP_CHECK"), is(1));
-        exporter.truncate(SIMPLE, NORMAL);
+        exporter.truncate(NORMAL);
 
         assertThat(h2.count("SIMPLE"), is(0));
-        assertThat(h2.count("DUP_CHECK"), is(1));
-    }
-
-    /**
-     * truncate error table.
-     * @throws Exception if occur
-     */
-    @Test
-    public void truncate_error() throws Exception {
-        Simple simple = new Simple();
-        simple.number = 100;
-        simple.text = "Hello, world!";
-        insert(simple, SIMPLE, "SIMPLE");
-
-        DupCheck dc = new DupCheck();
-        dc.number = 100;
-        dc.text = "Hello, world!";
-        insert(dc, DUP_CHECK, "DUP_CHECK");
-
-        context.put("exporter", "exporter");
-        BulkLoadExporterRetriever exporter = new BulkLoadExporterRetriever();
-
-        assertThat(h2.count("SIMPLE"), is(1));
-        assertThat(h2.count("DUP_CHECK"), is(1));
-        exporter.truncate(DUP_CHECK, NORMAL);
-
-        assertThat(h2.count("SIMPLE"), is(1));
         assertThat(h2.count("DUP_CHECK"), is(0));
-    }
-
-    /**
-     * attempt to truncate with invalid type.
-     * @throws Exception if occur
-     */
-    @Test(expected = IOException.class)
-    public void truncate_invalid() throws Exception {
-        context.put("exporter", "exporter");
-        BulkLoadExporterRetriever exporter = new BulkLoadExporterRetriever();
-        exporter.truncate(new SimpleDataModelDefinition<Invalid>(Invalid.class), NORMAL);
-    }
-
-    /**
-     * attempt to truncate missing table.
-     * @throws Exception if occur
-     */
-    @Test(expected = IOException.class)
-    public void truncate_missing() throws Exception {
-        context.put("exporter", "exporter");
-        BulkLoadExporterRetriever exporter = new BulkLoadExporterRetriever();
-        exporter.truncate(SIMPLE, MISSING);
     }
 
     /**
