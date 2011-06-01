@@ -109,7 +109,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
             }
 
             CommandContext context = new CommandContext(
-                    getFrameworkHomePath().getAbsolutePath() + "/",
+                    driverContext.getFrameworkHomePath().getAbsolutePath() + "/",
                     "dummy",
                     driverContext.getBatchArgs());
 

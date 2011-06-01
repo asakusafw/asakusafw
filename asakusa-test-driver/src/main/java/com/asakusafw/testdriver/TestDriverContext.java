@@ -15,16 +15,27 @@
  */
 package com.asakusafw.testdriver;
 
+import java.io.File;
+import java.text.MessageFormat;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
  */
 public class TestDriverContext {
-    
+
+    /**
+     * Environmental variable: the framework home path.
+     */
+    public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
+
+
+    private File frameworkHomePath;
     /** OSのユーザ名。 */
     private String osUser;
     /** AshigelCompilerのローカルワークディレクトリ。 */
@@ -37,7 +48,7 @@ public class TestDriverContext {
     private String methodName;
     /** テストクラスの呼出元クラス。 */
     private Class<?> callerClass;
-    
+
     /** ジョブフローの実行ID。 (テストドライバでダミーの値をセットする)*/
     private String executionId;
     /** 実行時の追加設定一覧 (Property Name, Property Value)。*/
@@ -48,16 +59,68 @@ public class TestDriverContext {
     private FlowCompilerOptions options;
 
     /**
-     * コンストラクタ 
-     * @param extraConfigurations 実行時の追加設定一覧
-     * @param batchArgs バッチ実行時引数
-     * @param options コンパイラオプション
+     * Creates a new instance.
      */
-    public TestDriverContext(Map<String, String> extraConfigurations,
-            Map<String, String> batchArgs, FlowCompilerOptions options) {
-        this.extraConfigurations = extraConfigurations;
-        this.batchArgs = batchArgs;
-        this.options = options;
+    public TestDriverContext() {
+        this.extraConfigurations = new TreeMap<String, String>();
+        this.batchArgs = new TreeMap<String, String>();
+        this.options = new FlowCompilerOptions();
+    }
+
+    /**
+     * Sets the path to the framework installed location.
+     * @param frameworkHomePath the path to the framework install location, or {@code null} to reset location
+     */
+    public void setFrameworkHomePath(File frameworkHomePath) {
+        this.frameworkHomePath = frameworkHomePath;
+    }
+
+    /**
+     * Returns the framework home path.
+     * @return the path, or default path from environmental variable {@code ASAKUSA_HOME}
+     * @throws IllegalStateException if neither the framework home path nor the environmental variable were set
+     */
+    public File getFrameworkHomePath() {
+        if (frameworkHomePath == null) {
+            String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
+            if (defaultHomePath == null) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "環境変数{0}が未設定です",
+                        ENV_FRAMEWORK_PATH));
+            }
+            return new File(defaultHomePath);
+        }
+        return frameworkHomePath;
+    }
+
+    /**
+     * Returns the path to the jobflow package (*.jar) deployment directory.
+     * This method refers the {@link #getFrameworkHomePath() framework installed location}.
+     * @param batchId target batch ID
+     * @return the path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #setFrameworkHomePath(File)
+     */
+    public File getJobflowPackageLocation(String batchId) {
+        if (batchId == null) {
+            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
+        }
+        File apps = new File(getFrameworkHomePath(), "batchapps");
+        File batch = new File(apps, batchId);
+        File lib = new File(batch, "lib");
+        return lib;
+    }
+
+    /**
+     * Returns the command context for this attempt.
+     * @return the command context
+     */
+    public CommandContext getCommandContext() {
+        CommandContext context = new CommandContext(
+                getFrameworkHomePath().getAbsolutePath() + "/",
+                getExecutionId(),
+                getBatchArgs());
+        return context;
     }
 
     /**

@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -72,12 +69,7 @@ public abstract class TestDriverBase {
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     /**
-     * Environmental variable: the framework home path.
-     */
-    private static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
-
-    /**
-     * Path to the script to submit a stage job (relative path from {@link #getFrameworkHomePath()}).
+     * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
      */
     protected static final String SUBMIT_JOB_SCRIPT = "experimental/bin/hadoop_job_run.sh";
 
@@ -92,14 +84,11 @@ public abstract class TestDriverBase {
     @Deprecated
     protected String hadoopJobRunCmd;
 
-    private File frameworkHomePath;
-
     /** build.properties */
     protected Properties buildProperties;
 
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
-    protected TestDriverContext driverContext = new TestDriverContext(new TreeMap<String, String>(),
-            new TreeMap<String, String>(), new FlowCompilerOptions());
+    protected TestDriverContext driverContext = new TestDriverContext();
 
     /**
      * コンストラクタ。
@@ -186,7 +175,8 @@ public abstract class TestDriverBase {
 
         // パス関連
         this.hadoopCmd = new File(System.getenv("HADOOP_HOME"), "bin/hadoop").getPath();
-        this.hadoopJobRunCmd = new File(System.getenv(ENV_FRAMEWORK_PATH), SUBMIT_JOB_SCRIPT).getPath();
+        this.hadoopJobRunCmd = new File(System.getenv(TestDriverContext.ENV_FRAMEWORK_PATH), SUBMIT_JOB_SCRIPT)
+            .getPath();
 
         this.driverContext.setCompileWorkBaseDir(System.getProperty("asakusa.testdriver.compilerwork.dir"));
         if (driverContext.getCompileWorkBaseDir() == null) {
@@ -391,7 +381,7 @@ public abstract class TestDriverBase {
     protected void runHadoopJob(HadoopJobInfo hadoopJobInfo) throws RuntimeException {
 
         String[] shellCmd = {
-                new File(getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath(),
+                new File(driverContext.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath(),
                 hadoopJobInfo.getClassName(),
                 hadoopJobInfo.getJarName()
         };
@@ -408,7 +398,7 @@ public abstract class TestDriverBase {
         }
 
         Map<String, String> variables = new HashMap<String, String>();
-        variables.put(ENV_FRAMEWORK_PATH, getFrameworkHomePath().getAbsolutePath());
+        variables.put(TestDriverContext.ENV_FRAMEWORK_PATH, driverContext.getFrameworkHomePath().getAbsolutePath());
 
         int exitValue = runShell(shellCmd, variables);
         if (exitValue != 0) {
@@ -578,25 +568,7 @@ public abstract class TestDriverBase {
      * @param frameworkHomePath フレームワークのホームパス、未設定に戻す場合は{@code null}
      */
     public void setFrameworkHomePath(File frameworkHomePath) {
-        this.frameworkHomePath = frameworkHomePath;
-    }
-
-    /**
-     * Returns the framework home path.
-     * @return the path, or default path from environmental variable {@code ASAKUSA_HOME}
-     * @throws IllegalStateException if neither the framework home path nor the environmental variable were set
-     */
-    protected File getFrameworkHomePath() {
-        if (frameworkHomePath == null) {
-            String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
-            if (defaultHomePath == null) {
-                throw new IllegalStateException(MessageFormat.format(
-                        "環境変数{0}が未設定です",
-                        ENV_FRAMEWORK_PATH));
-            }
-            return new File(defaultHomePath);
-        }
-        return frameworkHomePath;
+        driverContext.setFrameworkHomePath(frameworkHomePath);
     }
 
     /**

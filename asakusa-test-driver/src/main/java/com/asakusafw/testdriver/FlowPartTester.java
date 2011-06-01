@@ -137,10 +137,7 @@ public class FlowPartTester extends TestDriverBase {
                 Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
                 flowDescription.getClass().getClassLoader(), driverContext.getOptions());
 
-        CommandContext context = new CommandContext(
-                getFrameworkHomePath().getAbsolutePath() + "/",
-                driverContext.getExecutionId(),
-                driverContext.getBatchArgs());
+        CommandContext context = driverContext.getCommandContext();
 
         Map<String, String> dPropMap = createHadoopProperties(context);
 

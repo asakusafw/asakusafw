@@ -136,11 +136,11 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
             // ジョブフローのjarをImporter/Exporterが要求するディレクトリにコピー
             String jobFlowJarName = "jobflow-" + flowId + ".jar";
             File srcFile = new File(compileWorkDir, jobFlowJarName);
-            File destDir = new File(getFrameworkHomePath().getAbsolutePath(), "batchapps/" + batchId + "/lib");
+            File destDir = driverContext.getJobflowPackageLocation(batchId);
             FileUtils.copyFileToDirectory(srcFile, destDir);
 
             CommandContext context = new CommandContext(
-                    getFrameworkHomePath().getAbsolutePath() + "/",
+                    driverContext.getFrameworkHomePath().getAbsolutePath() + "/",
                     driverContext.getExecutionId(),
                     driverContext.getBatchArgs());
 
