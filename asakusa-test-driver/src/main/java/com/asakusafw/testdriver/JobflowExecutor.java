@@ -203,7 +203,7 @@ public class JobflowExecutor {
     private Map<String, String> createHadoopProperties(CommandContext commands) {
         assert commands != null;
         Map<String, String> dPropMap = new HashMap<String, String>();
-        dPropMap.put(AbstractStageClient.PROP_USER, System.getProperty("user.name"));
+        dPropMap.put(AbstractStageClient.PROP_USER, context.getOsUser());
         dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, commands.getExecutionId());
         dPropMap.put(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
         dPropMap.putAll(context.getExtraConfigurations());

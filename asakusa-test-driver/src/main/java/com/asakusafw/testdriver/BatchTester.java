@@ -149,6 +149,8 @@ public class BatchTester extends TestDriverBase {
                         batchDescriptionClass.getName(), flowId);
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
             }
+
+            driverContext.changeExecutionId();
         }
     }
 }

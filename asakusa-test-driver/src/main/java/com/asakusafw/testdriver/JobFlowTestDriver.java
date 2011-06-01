@@ -112,8 +112,8 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                     jobFlowDriver.hasError());
             JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-            String flowId = driverContext.getClassName().substring(driverContext.getClassName().lastIndexOf(".") + 1) + "_" + driverContext.getMethodName();
-            File compileWorkDir = new File(driverContext.getCompileWorkBaseDir(), flowId);
+            String flowId = jobFlowClass.getConfig().name();
+            File compileWorkDir = driverContext.getCompilerWorkingDirectory();
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
@@ -124,7 +124,7 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                 batchId,
                 flowId,
                 "test.jobflow",
-                Location.fromPath(driverContext.getClusterWorkDir() + "/" + driverContext.getExecutionId(), '/'),
+                Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] {
                         DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)

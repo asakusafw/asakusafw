@@ -99,7 +99,7 @@ public class FlowPartTester extends TestDriverBase {
         // フローコンパイラの実行
         LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
         String batchId = "testing";
-        String flowId = driverContext.getMethodName();
+        String flowId = "flowpart";
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);

@@ -16,10 +16,6 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 
 /**
@@ -27,78 +23,19 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
  */
 public abstract class TestDriverBase {
 
-    private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
-    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
-
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
-    protected TestDriverContext driverContext = new TestDriverContext();
+    protected TestDriverContext driverContext;
 
     /**
-     * コンストラクタ。
-     *
-     * @param callerClass 呼出元クラス
+     * Creates a new instance.
+     * @param callerClass the caller class
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TestDriverBase(Class<?> callerClass) {
-        driverContext.setCallerClass(callerClass);
-        initialize();
-    }
-
-    /**
-     * テストクラスのクラス名とメソッド名を抽出する。
-     */
-    protected void setTestClassInformation() {
-
-        // 呼び出し元のテストクラス名とテストメソッド名を取得
-        Class<?> clazz = null;
-        Method method = null;
-        boolean wasCalledTestMethod = false;
-        for (StackTraceElement elm : new Exception().getStackTrace()) {
-            try {
-                clazz = Class.forName(elm.getClassName());
-                method = clazz.getDeclaredMethod(elm.getMethodName(), new Class[] {});
-                if (method.getAnnotation(org.junit.Test.class) != null) {
-                    wasCalledTestMethod = true;
-                    break;
-                }
-            } catch (ClassNotFoundException ex) {
-                continue;
-            } catch (NoSuchMethodException ex) {
-                continue;
-            }
+        if (callerClass == null) {
+            throw new IllegalArgumentException("callerClass must not be null"); //$NON-NLS-1$
         }
-        if (wasCalledTestMethod && clazz != null && method != null) {
-            driverContext.setClassName(clazz.getSimpleName());
-            driverContext.setMethodName(method.getName());
-        } else {
-            if (driverContext.getCallerClass() != null) {
-                // JUnitのテストメソッドから呼ばれなかった場合
-                driverContext.setClassName(driverContext.getCallerClass().getSimpleName());
-                driverContext.setMethodName("");
-            } else {
-                throw new RuntimeException("テストメソッドからテストドライバを起動していないか、呼出元クラスがnull。");
-            }
-        }
-
-        // executionIdの生成 (テスト時にわかりやすいようにクラス名_メソッド名_タイムスタンプ)
-        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
-        driverContext.setExecutionId(driverContext.getClassName() + "_" + driverContext.getMethodName() + "_" + ts);
-    }
-
-    private void initialize() {
-        // クラス名/メソッド名を使った変数を初期化
-        setTestClassInformation();
-
-        // OS情報
-        this.driverContext.setOsUser(System.getenv("USER"));
-
-        this.driverContext.setCompileWorkBaseDir(System.getProperty("asakusa.testdriver.compilerwork.dir"));
-        if (driverContext.getCompileWorkBaseDir() == null) {
-            driverContext.setCompileWorkBaseDir(COMPILERWORK_DIR_DEFAULT);
-        }
-        this.driverContext.setClusterWorkDir(System.getProperty("asakusa.testdriver.hadoopwork.dir"));
-        if (driverContext.getClusterWorkDir() == null) {
-            driverContext.setClusterWorkDir(HADOOPWORK_DIR_DEFAULT);
-        }
+        this.driverContext = new TestDriverContext(callerClass);
     }
 
     /**

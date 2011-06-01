@@ -3,6 +3,7 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,7 +42,8 @@ public class TestDriverTestToolsBase extends TestDriverBase {
      * @throws RuntimeException 初期化に失敗した場合
      */
     public TestDriverTestToolsBase() {
-        super(null);
+        super(findCaller().getDeclaringClass());
+        initialize(findCaller());
     }
 
     /**
@@ -51,14 +53,31 @@ public class TestDriverTestToolsBase extends TestDriverBase {
      * @throws RuntimeException 初期化に失敗した場合
      */
     public TestDriverTestToolsBase(List<File> testDataFileList) {
-        super(null);
+        super(findCaller().getDeclaringClass());
         this.testDataFileList = testDataFileList;
-        initialize();
+        initialize(findCaller());
     }
 
-    private void initialize() {
-        try {
+    private static Method findCaller() {
+        StackTraceElement[] trace = new Throwable().getStackTrace();
+        for (StackTraceElement element : trace) {
+            try {
+                Class<?> aClass = Class.forName(element.getClassName());
+                if (TestDriverTestToolsBase.class.isAssignableFrom(aClass)) {
+                    continue;
+                }
+                Method method = aClass.getDeclaredMethod(element.getMethodName());
+                return method;
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        throw new IllegalStateException("テストドライバのインスタンスを作成したテストを特定できませんでした");
+    }
 
+    private void initialize(Method caller) {
+        assert caller != null;
+        try {
             File buildPropertiesFile = new File(BUILD_PROPERTIES_FILE);
             if (buildPropertiesFile.exists()) {
                 LOG.info("ビルド設定情報をロードしています: {}", buildPropertiesFile);
@@ -84,9 +103,12 @@ public class TestDriverTestToolsBase extends TestDriverBase {
                 testDataDirPath = TESTDATA_DIR_DEFAULT;
             }
             if (testDataFileList == null) {
-                testDataDir = new File(testDataDirPath + System.getProperty("file.separator")
-                        + driverContext.getClassName() + System.getProperty("file.separator")
-                        + driverContext.getMethodName());
+                testDataDir = new File(
+                        testDataDirPath
+                        + File.separatorChar
+                        + caller.getDeclaringClass().getSimpleName()
+                        + File.separatorChar
+                        + caller.getName());
                 testUtils = new TestUtils(testDataDir);
             } else {
                 testUtils = new TestUtils(testDataFileList);

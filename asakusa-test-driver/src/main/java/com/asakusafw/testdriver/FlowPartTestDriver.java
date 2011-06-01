@@ -103,14 +103,15 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
             }
 
             // フローコンパイラの実行
-            String flowId = driverContext.getMethodName();
+            String batchId = "flow";
+            String flowId = "part";
             File compileWorkDir = driverContext.getCompilerWorkingDirectory();
             if (compileWorkDir.exists()) {
                 FileUtils.forceDelete(compileWorkDir);
             }
 
             FlowGraph flowGraph = flowDescriptionDriver.createFlowGraph(flowDescription);
-            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, "test.batch", flowId, "test.flowpart",
+            JobflowInfo jobflowInfo = DirectFlowCompiler.compile(flowGraph, batchId, flowId, "test.flowpart",
                     FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
                     Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
                     flowDescription.getClass().getClassLoader(), driverContext.getOptions());

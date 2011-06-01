@@ -40,33 +40,27 @@ public class TestDriverContext {
     public static final String SUBMIT_JOB_SCRIPT = "experimental/bin/hadoop_job_run.sh";
 
 
-    private File frameworkHomePath;
-    /** OSのユーザ名。 */
-    private String osUser;
-    /** AshigelCompilerのローカルワークディレクトリ。 */
-    private String compileWorkBaseDir;
-    /** Hadoopのワークディレクトリ。 */
-    private String clusterWorkDir;
-    /** テストクラスのクラス名。 */
-    private String className;
-    /** テストクラスのメソッド名。 */
-    private String methodName;
-    /** テストクラスの呼出元クラス。 */
-    private Class<?> callerClass;
+    private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
+    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
-    /** ジョブフローの実行ID。 (テストドライバでダミーの値をセットする)*/
-    private String executionId;
-    /** 実行時の追加設定一覧 (Property Name, Property Value)。*/
-    private Map<String, String> extraConfigurations;
-    /** バッチ実行時引数 (ASAKUSA_BATCH_ARGS)。*/
-    private Map<String, String> batchArgs;
-    /** コンパイラオプション。*/
-    private FlowCompilerOptions options;
+    private File frameworkHomePath;
+    private final Class<?> callerClass;
+    private final Map<String, String> extraConfigurations;
+    private final Map<String, String> batchArgs;
+    private final FlowCompilerOptions options;
+
+    private int executionCount;
 
     /**
      * Creates a new instance.
+     * @param contextClass context class (will use to detect test resources)
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public TestDriverContext() {
+    public TestDriverContext(Class<?> contextClass) {
+        if (contextClass == null) {
+            throw new IllegalArgumentException("contextClass must not be null"); //$NON-NLS-1$
+        }
+        this.callerClass = contextClass;
         this.extraConfigurations = new TreeMap<String, String>();
         this.batchArgs = new TreeMap<String, String>();
         this.options = new FlowCompilerOptions();
@@ -131,108 +125,62 @@ public class TestDriverContext {
     /**
      * Returns the compiler working directory.
      * @return the compiler working directory
-     * @see #setCompileWorkBaseDir(String)
-     * @see #setClassName(String)
-     * @see #setMethodName(String)
      */
     public File getCompilerWorkingDirectory() {
-        File work;
-        File base = new File(getCompileWorkBaseDir());
-        if (getClassName() != null) {
-            String sub = getClassName();
-            sub = sub.substring(sub.lastIndexOf('.') + 1);
-            if (getMethodName() != null) {
-                sub = sub + "_" + getMethodName();
-            }
-            work = new File(base, sub);
-        } else {
-            work = base;
-        }
-        return work;
+        return new File(getCompileWorkBaseDir());
     }
 
     /**
      * @return the osUser
      */
     public String getOsUser() {
-        return osUser;
-    }
-
-    /**
-     * @param osUser the osUser to set
-     */
-    public void setOsUser(String osUser) {
-        this.osUser = osUser;
+        String user = System.getenv("USER");
+        return user;
     }
 
     /**
      * @return the compileWorkBaseDir
      */
     public String getCompileWorkBaseDir() {
-        return compileWorkBaseDir;
-    }
-
-    /**
-     * @param compileWorkBaseDir the compileWorkBaseDir to set
-     */
-    public void setCompileWorkBaseDir(String compileWorkBaseDir) {
-        this.compileWorkBaseDir = compileWorkBaseDir;
+        String dir = System.getProperty("asakusa.testdriver.compilerwork.dir");
+        if (dir == null) {
+            return COMPILERWORK_DIR_DEFAULT;
+        }
+        return dir;
     }
 
     /**
      * @return the clusterWorkDir
      */
     public String getClusterWorkDir() {
-        return clusterWorkDir;
+        String dir = System.getProperty("asakusa.testdriver.hadoopwork.dir");
+        if (dir == null) {
+            return HADOOPWORK_DIR_DEFAULT;
+        }
+        return dir;
     }
 
     /**
-     * @param clusterWorkDir the clusterWorkDir to set
+     * @return the callerClass
      */
-    public void setClusterWorkDir(String clusterWorkDir) {
-        this.clusterWorkDir = clusterWorkDir;
+    public Class<?> getCallerClass() {
+        return callerClass;
     }
 
     /**
-     * @return the className
-     */
-    public String getClassName() {
-        return className;
-    }
-
-    /**
-     * @param className the className to set
-     */
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    /**
-     * @return the methodName
-     */
-    public String getMethodName() {
-        return methodName;
-    }
-
-    /**
-     * @param methodName the methodName to set
-     */
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    /**
-     * @return the executionId
+     * Returns the current execution ID.
+     * @return current execution ID
+     * @see #changeExecutionId()
      */
     public String getExecutionId() {
-        return executionId;
+        return String.format("%s_%d", getCallerClass().getSimpleName(), executionCount);
     }
 
     /**
-     * @param executionId the executionId to set
+     * Change current {@link #getExecutionId() execution ID} into a unique string.
      */
-    public void setExecutionId(String executionId) {
-        this.executionId = executionId;
+    public void changeExecutionId() {
+        executionCount++;
     }
 
     /**
@@ -243,24 +191,10 @@ public class TestDriverContext {
     }
 
     /**
-     * @param extraConfigurations the extraConfigurations to set
-     */
-    public void setExtraConfigurations(Map<String, String> extraConfigurations) {
-        this.extraConfigurations = extraConfigurations;
-    }
-
-    /**
      * @return the batchArgs
      */
     public Map<String, String> getBatchArgs() {
         return batchArgs;
-    }
-
-    /**
-     * @param batchArgs the batchArgs to set
-     */
-    public void setBatchArgs(Map<String, String> batchArgs) {
-        this.batchArgs = batchArgs;
     }
 
     /**
@@ -269,26 +203,4 @@ public class TestDriverContext {
     public FlowCompilerOptions getOptions() {
         return options;
     }
-
-    /**
-     * @param options the options to set
-     */
-    public void setOptions(FlowCompilerOptions options) {
-        this.options = options;
-    }
-
-    /**
-     * @return the callerClass
-     */
-    protected Class<?> getCallerClass() {
-        return callerClass;
-    }
-
-    /**
-     * @param callerClass the callerClass to set
-     */
-    protected void setCallerClass(Class<?> callerClass) {
-        this.callerClass = callerClass;
-    }
-
 }
