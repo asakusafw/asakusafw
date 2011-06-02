@@ -38,13 +38,13 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/main/assembly/dev-exclude-lib.xml</descriptor>
-                                <descriptor>src/main/assembly/dev-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/dev-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-db-exclude-lib.xml</descriptor>
-                                <descriptor>src/main/assembly/prod-db-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-db-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-hc-exclude-lib.xml</descriptor>
-                                <descriptor>src/main/assembly/prod-hc-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-hc-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-cleaner-exclude-lib.xml</descriptor>
-                                <descriptor>src/main/assembly/prod-cleaner-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-cleaner-exclude-lib-sources.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
