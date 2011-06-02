@@ -9,4 +9,3 @@ Asakusa Framework
     dsl/index_ja
     dmdl/index_ja
     document/index_ja
-
