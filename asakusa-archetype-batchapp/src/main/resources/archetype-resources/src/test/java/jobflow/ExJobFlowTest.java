@@ -15,12 +15,9 @@
  */
 package ${package}.jobflow;
 
+import ${package}.modelgen.table.model.Ex1;
+
 import org.junit.Test;
-
-import ${package}.jobflow.ExJobFlow;
-import ${package}.modelgen.table.model.Ex1;
-
-import ${package}.modelgen.table.model.Ex1;
 
 import com.asakusafw.testdriver.JobFlowTester;
 

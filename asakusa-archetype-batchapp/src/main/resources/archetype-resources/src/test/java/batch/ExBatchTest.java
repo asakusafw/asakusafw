@@ -19,9 +19,6 @@ import ${package}.modelgen.table.model.Ex1;
 
 import org.junit.Test;
 
-import ${package}.batch.ExBatch;
-import ${package}.modelgen.table.model.Ex1;
-
 import com.asakusafw.testdriver.BatchTester;
 import com.asakusafw.testdriver.JobFlowTester;
 
