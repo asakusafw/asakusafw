@@ -11,10 +11,6 @@ DSLの構成
 
 Asakusa DSLは3種類のDSLで構成されています。
 
-* `Operator DSL`_
-* `Flow DSL`_
-* `Batch DSL`_
-
 Operator DSL
 ------------
 
@@ -41,4 +37,9 @@ Batch DSLはデータフローを組み合わせて複雑なバッチ処理の�
 ..  toctree::
     :maxdepth: 1
 
+    getting-started_ja
+    user-guide_ja
+    with-thundergate_ja
+    operators_ja
     generic-dataflow_ja
+    developer-guide_ja
