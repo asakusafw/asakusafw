@@ -15,12 +15,9 @@
  */
 package ${package}.flowpart;
 
+import ${package}.modelgen.table.model.Ex1;
+
 import org.junit.Test;
-
-import ${package}.flowpart.ExFlowPart;
-import ${package}.modelgen.table.model.Ex1;
-
-import ${package}.modelgen.table.model.Ex1;
 
 import com.asakusafw.testdriver.FlowPartTester;
 import com.asakusafw.vocabulary.flow.FlowDescription;
