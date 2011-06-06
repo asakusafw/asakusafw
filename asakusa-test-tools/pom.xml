@@ -33,6 +33,7 @@
 						<ASAKUSA_TESTTOOLS_CONF>${project.build.testOutputDirectory}/testtools.properties</ASAKUSA_TESTTOOLS_CONF>
 						<ASAKUSA_MODELGEN_PACKAGE>test.modelgen</ASAKUSA_MODELGEN_PACKAGE>
 					</systemPropertyVariables>
+					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 		</plugins>

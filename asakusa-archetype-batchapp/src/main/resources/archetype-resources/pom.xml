@@ -107,7 +107,6 @@
 						<include>**/*Test.java</include>
 					</includes>
 					<forkMode>once</forkMode>
-					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 			<plugin>
