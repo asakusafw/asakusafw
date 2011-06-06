@@ -15,7 +15,7 @@
  */
 package com.asakusafw.testdriver;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,7 +91,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
 
             // バッチコンパイラが生成したテスト用シェルスクリプトを実行
             String[] batchRunCmd = new String[] {
-                    "sh",
+                    "/bin/bash",
                     ExperimentalWorkflowProcessor.getScriptOutput(compilerOutputDir).getAbsolutePath(),
             };
             // 環境変数に-Dの引数一覧を積む
