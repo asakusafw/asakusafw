@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #LocalFileCleaner起動コマンド
 
 usage() {

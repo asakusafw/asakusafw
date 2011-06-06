@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Exporter起動コマンド
 
 usage() {

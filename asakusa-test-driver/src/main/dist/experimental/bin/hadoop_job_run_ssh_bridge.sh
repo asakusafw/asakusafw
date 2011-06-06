@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 REMOTE_HADOOP_JOB_RUN_SH=/home/asakusa/asakusa/experimental/bin/hadoop_job_run.sh
 SSHPATH=/usr/bin/ssh

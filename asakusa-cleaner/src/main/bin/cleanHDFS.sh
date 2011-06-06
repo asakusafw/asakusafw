@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #HDFSCleaner起動コマンド
 
 usage() {

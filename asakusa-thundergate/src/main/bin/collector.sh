@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Collector起動コマンド
 
 usage() {

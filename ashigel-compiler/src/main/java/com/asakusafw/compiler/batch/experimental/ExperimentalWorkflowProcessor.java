@@ -135,7 +135,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         OutputStream output = getEnvironment().openResource(PATH);
         try {
             Context context = new Context(output);
-            context.put("#!/bin/sh");
+            context.put("#!/bin/bash");
             context.put("");
 
             context.put("### Move to the working directory");
