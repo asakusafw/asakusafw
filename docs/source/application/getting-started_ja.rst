@@ -39,20 +39,20 @@ Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインス�
     tar xvzf quickstart-cdh3vm.tar.gz
     cd cdh3vm
     ./setup.sh
+    source ~/.asakusarc
     
-セットアップ中にMySQLのrootパスワードの登録、および確認の入力を促すダイアログが数回表示されます。任意のパスワード（パスワードなしでもかまいません）を指定してください。
 
 成功したら屋形船が表示されます。
 
 サンプルプログラムの実行
 ========================
-セットアップスクリプトを実行すると、Asakusa Frameworkを使って実装されたいくつかのサンプルアプリケーション用プロジェクトが配置されます。
+セットアップスクリプトを実行すると、$HOME/workspace配下にAsakusa Frameworkを使って実装されたいくつかのサンプルアプリケーション用プロジェクトが配置されます。
 
 このうち、簡単な在庫引当のバッチアプリケーション（商品マスタと注文明細の突合を行い、商品ごとの注文数の合計を算出）を実行してみます。
 
 ..  code-block:: sh
 
-    cd asakusafw-examples/example-tutorial
+    cd $HOME/workspace/asakusafw-examples/example-tutorial
     mvn clean test -Dtest=TutorialBatchTest
     
 このテストプログラムの実行によって、Asakusa Frameworkは以下のような処理が行われています。
