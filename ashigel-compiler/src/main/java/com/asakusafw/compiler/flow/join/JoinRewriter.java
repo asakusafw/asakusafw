@@ -24,12 +24,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
@@ -94,9 +96,22 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         assert input != null;
         InputDescription desc = input.getDescription();
         ImporterDescription importer = desc.getImporterDescription();
-        if (desc.getImporterDescription() == null) {
+        if (importer == null) {
             return false;
         }
+        if (isSupportedSize(desc) == false) {
+            return false;
+        }
+        if (isSequenceFormat(desc) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isSupportedSize(InputDescription desc) {
+        assert desc != null;
+        ImporterDescription importer = desc.getImporterDescription();
+        assert importer != null;
         FlowCompilerOptions options = getEnvironment().getOptions();
         switch (importer.getDataSize()) {
             case TINY:
@@ -108,6 +123,17 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
             default:
                 return false;
         }
+    }
+
+    private boolean isSequenceFormat(InputDescription desc) {
+        assert desc != null;
+        assert desc.getImporterDescription() != null;
+        ExternalIoDescriptionProcessor proc = getEnvironment().getExternals().findProcessor(desc);
+        if (proc == null) {
+            return false;
+        }
+        // FIXME currently side data join is only supported for SequenceFileInputFormat.
+        return (Class<?>) proc.getInputFormatType(desc) == SequenceFileInputFormat.class;
     }
 
     private boolean rewriteSuccessors(InputDescription source, FlowIn<?> input) {
