@@ -39,10 +39,14 @@ Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインス�
     tar xvzf quickstart-cdh3vm.tar.gz
     cd cdh3vm
     ./setup.sh
-    source ~/.asakusarc
-    
 
 成功したら屋形船が表示されます。
+
+Terminal上で実行中のシェルに対してAsakusa Framework用の環境変数を適用します。
+
+..  code-block:: sh
+
+    source ~/.asakusarc
 
 サンプルプログラムの実行
 ========================
@@ -69,15 +73,15 @@ Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインス�
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは任意のディレクトリを指定します。
-
-起動時に作成されたワークスペースディレクトリに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
+アプリケーションの開発にEclipseを使用する場合、まずEclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
 
 ..  code-block:: sh
 
     mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
 
-次に、アプリケーション用プロジェクトに対してEclipseプロジェクト用の定義ファイルを作成します。
+Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは上記で-Declipse.workspaceに指定した値と同じディレクトリを指定します。
+
+作業したいアプリケーション用プロジェクトに対して、Eclipseプロジェクト用の定義ファイルを作成します。
 
 ..  code-block:: sh
 
