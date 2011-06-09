@@ -55,7 +55,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログからA
 
 アーキタイプカタログのURL:http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
 
-以下にプロジェクト作成例を示します。
+現状では提供されているアーキタイプは「asakusa-archetype-batchapp」のみです。以下にプロジェクト作成例を示します。
 
 ..  code-block:: sh
 
@@ -94,3 +94,74 @@ assembly:singleとantrun:runを組み合わせて、以下のようにAsakusa Fr
     cd batchapp-sample
     mvn assembly:single antrun:run
 
+プロジェクトのディレクトリ構成
+------------------------------
+アーキタイプ「asakusa-archetype-batchapp」から生成されたAsakusaのプロジェクト構成は以下の通りです。
+
+..  code-block:: sh
+
+    project
+    |-- pom.xml
+    |-- build.properties
+    `-- src
+    |   |-- main
+    |   |   `-- java
+    |   |   |   `-- ${package}
+    |   |   |       `-- batch      : バッチDSLクラス
+    |   |   |       `-- flowpart   : フローDSL(フロー部品)クラス
+    |   |   |       `-- jobflow    : フローDSL(ジョブフロー)クラス
+    |   |   |       `-- operator   : 演算子クラス
+    |   |   |
+    |   |   `-- assembly           : ローカル環境へAsakusa Frameworkをインストールするためのスクリプト。
+    |   |   `-- dmdl               : モデルクラス生成用のDMDLスクリプト。
+    |   |   `-- scripts            : Asakusa Frameworkが提供する自動生成ツールやコンパイラの制御スクリプト
+    |   |   `-- sql                : モデルクラス生成用のDDL記述SQLファイル。
+    |   |   
+    |   `-- test
+    |       `-- java
+    |       |   `-- ${package}
+    |       |       `-- batch      : バッチDSLテストクラス
+    |       |       `-- flowpart   : フローDSL(フロー部品)テストクラス
+    |       |       `-- jobflow    : フローDSL(ジョブフロー)テストクラス
+    |       |       `-- operator   : 演算子テストクラス (プロジェクト生成時は存在しません)
+    |       |
+    |       `-- resources
+    |           `-- asakusa-jdbc.properties    : Asakusa FrameworkのDB設定ファイル
+    |           `-- asakusa-resources.xml      : Asakusa Framework Core Runtime用の定義ファイル
+    |           `-- logback-test.xml           : 開発環境上のテスト時に使用されるログ設定ファイル
+    |           |
+    |           `-- ${package}
+    |               `-- batch      : バッチDSL用テストデータ
+    |               `-- flowpart   : フローDSL(フロー部品)テストデータ
+    |               `-- jobflow    : フローDSL(ジョブフロー)テストデータ
+    |
+    `-- target ※Mavenが標準でtarget配下に出力するファイルの説明は省略
+       |-- ${artifactid}-batchapps-${version}.jar 
+       |      : Ashigel Compilerによりバッチコンパイルされたバッチアプリケーションのアーカイブ。
+       |        Mavenのpacageフェーズの実行により生成される。
+       |
+       |-- ${artifactid}-XX.jar         : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
+       |-- ${artifactid}-XX-sources.jar : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
+       |
+       |-- batchc       : Ashigel Compilerによるバッチコンパイル結果の出力ディレクトリ。Mavenのpacageフェーズの実行により生成される。
+       |-- batchcwork   : Ashigel Compilerによるバッチコンパイルのワークディレクトリ。
+       |-- dmdl         : モデルクラス生成用のDDL記述SQLファイルから生成されるDMDLスクリプト。
+       |-- excel        : テストデータ定義シート生成用のディレクトリ。Mavenのgenerate-sourcesフェーズの実行により生成される。
+       |-- excel_v01    : Asakusa0.1形式のテストデータ定義シート生成用のディレクトリ。デフォルトの設定では出力されない。
+       |-- sql          : Thndergate用のDDL作成用ディレクトリ。Mavenのgenerate-sourcesフェーズの実行により生成される。
+       |-- testdriver   : Asakusa Frameworkのテストドライバが使用するワークディレクトリ。
+       |
+       |-- generated-sources
+           `-- annotations
+           |    `-- ${package}
+           |        `-- flowpart   : 注釈プロセッサによって生成される演算子ファクトリクラス
+           |        `-- operator   : 注釈プロセッサによって生成される演算子ファクトリと実装クラス
+           `-- modelgen
+                `-- ${package}
+                    `-- modelgen
+                       `-- table
+                       |  `-- model   : テーブル構造を元に作成したデータモデルクラス
+                       |  `-- io      : テーブル構造を元に作成したデータモデルの入出力ドライバクラス
+                       `-- view
+                          `-- model   : ビュー情報を元に作成したデータモデルクラス
+                          `-- io      : ビュー情報を元に作成したデータモデルの入出力ドライバクラス
