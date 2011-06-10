@@ -2,6 +2,6 @@
 Asakusa DSLユーザーガイド
 =========================
 
-この文書では、Asakusa DSLおよびAshigelコンパイラの利用方法について紹介します。
+この文書では、Asakusa DSLおよびDSLコンパイラの利用方法について紹介します。
 
-TODO
+..  todo:: Asakusa DSL > User Guide

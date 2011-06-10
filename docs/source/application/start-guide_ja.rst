@@ -12,15 +12,9 @@ Cloudera VMはVMWare上で動作します。VMWare Player(Windows/Linux)やVMWar
 
 ..  [#] https://downloads.cloudera.com/cloudera-demo-0.3.7.vmwarevm.tar.bz2
 
-ログイン画面が表示されたらユーザ: ``cloudera`` を選択し、パスワード: ``cloudera`` を入力してログインします。
+ログイン画面が表示されたらユーザ: ``cloudera`` を選択します。ユーザ選択後、画面下からキーボード配列を選択出来ます。デフォルトではキーボードレイアウトがUSに設定されているため、必要に応じて"Japan"(日本語レイアウト)を選択するとよいでしょう。
 
-Cloudera VMはデフォルトでキーボードレイアウトがUSに設定されているため、必要に応じて以下の手順で日本語レイアウトに変更します。
-
-#. メニューから [System] -> [Preferences] -> [Keyboard] を選択する。
-#. [Layouts]タブを選択し、[Add...]ボタンを押す。
-#. [Country]プルダウンから"Japan"を選択し、[Add]ボタンを押す。
-#. レイアウト一覧から"Japan"を選択して[Move Up]ボタンを押し、"Japan"が一番上の状態にする。 
-#. [Close]ボタンを押す。
+パスワード: ``cloudera`` を入力してログインします。
 
 Asakusa Frameworkのセットアップ
 ===============================
@@ -39,10 +33,14 @@ Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインス�
     tar xvzf quickstart-cdh3vm.tar.gz
     cd cdh3vm
     ./setup.sh
-    source ~/.asakusarc
-    
 
 成功したら屋形船が表示されます。
+
+Terminal上で実行中のシェルに対してAsakusa Framework用の環境変数を適用します。
+
+..  code-block:: sh
+
+    source ~/.asakusarc
 
 サンプルプログラムの実行
 ========================
@@ -65,19 +63,19 @@ Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインス�
 
 なお、Cloudera VM上で動作するHadoopは、デフォルトでは「擬似分散モード」で起動しています。Asakusa Frameworkによって実行されたMapReduceジョブやHDFSの状態は、Hadoopが提供する管理画面から確認することができます（Cloudera VMのFirefoxは、あらかじめブックマークツールバーにHadoop管理画面へのリンクが登録されています）。
 
-また、MySQLについては、 ``asakusa`` という名前のデータベースを使ってテストプログラムが実行されるようセットアップされているので、テストプログラムの実行結果の様子はこのデータベースの内容を見ることで確認することができます。
+またMySQLは、 ``asakusa`` という名前のデータベースを使ってテストプログラムが実行されるようセットアップされています。テストプログラムの処理結果データはこのデータベースの内容を見ることで確認することができます。
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは任意のディレクトリを指定します。
-
-起動時に作成されたワークスペースディレクトリに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
+アプリケーションの開発にEclipseを使用する場合、まずEclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
 
 ..  code-block:: sh
 
     mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
 
-次に、アプリケーション用プロジェクトに対してEclipseプロジェクト用の定義ファイルを作成します。
+Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは上記で-Declipse.workspaceに指定した値と同じディレクトリを指定します。
+
+作業したいアプリケーション用プロジェクトに対して、Eclipseプロジェクト用の定義ファイルを作成します。
 
 ..  code-block:: sh
 

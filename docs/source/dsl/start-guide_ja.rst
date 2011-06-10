@@ -10,7 +10,7 @@ asakusa-archetype-batchappの利用方法については :doc:`../application/ma
 ============================
 Asakusa DSLで取り扱う処理対象のデータモデルは、特定の形式で定義されたJavaのクラスで表されます。
 
-これらのクラスを作成する方法は、 :doc:`../dmdl/getting-started_ja` を参照して下さい。
+これらのクラスを作成する方法は、 :doc:`../dmdl/start-guide_ja` を参照して下さい。
 
 
 演算子を記述する
@@ -270,7 +270,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 --------------
 演算子のテストは、通常のJavaメソッドをテストする方法でテストして下さい。
 
-より詳しくは、 :doc:`../testing/getting-started_ja` を参照して下さい。
+より詳しくは、 :doc:`../testing/start-guide_ja` を参照して下さい。
 
 なお、フレームワークAPIを利用したメソッドをテストする場合、フレームワークAPIをモックに差し替えてテストすることも可能です。
 
@@ -328,6 +328,9 @@ Hadoopファイルシステム上のファイルをインポートする場合�
 ``Class<? extends FileInputFormat> getInputFormat()``
     処理対象とするファイルの形式を表すクラス [#]_ を指定します。
     このとき、キーは ``NullWritable`` で値は ``getModelType()`` に指定した型である必要があります。
+
+``DataSize getDataSize()``
+    このインポータが取り込むデータサイズの分類を指定します。
 
 ..  [#] ``org.apache.hadoop.mapreduce.FileInputFormat`` のサブクラス
 
@@ -632,7 +635,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 --------------------
 ジョブフローのテストは、Asakusa Frameworkが提供するテストドライバを利用して行います。
 
-詳しくは、 :doc:`../testing/getting-started_ja` を参照して下さい。
+詳しくは、 :doc:`../testing/start-guide_ja` を参照して下さい。
 
 
 バッチを記述する

@@ -298,6 +298,7 @@ TOKEN :
      ','
      '.'
      '+'
+     '*'
      '&'
      '%'
      ':'
@@ -306,6 +307,8 @@ TOKEN :
      '=>'
      '{'
      '}'
+     '['
+     ']'
      '('
      ')'
 */
@@ -315,6 +318,7 @@ TOKEN :
 |   ","
 |   "."
 |   "+"
+|   "*"
 |   "&"
 |   "%"
 |   ":"
@@ -323,6 +327,8 @@ TOKEN :
 |   "=>"
 |   <OPEN_BLOCK : "{">
 |   <CLOSE_BLOCK: "}">
+|   <OPEN_SEQUENCE : "[">
+|   <CLOSE_SEQUENCE : "]">
 |   <OPEN_GROUP : "(">
 |   <CLOSE_GROUP: ")">
 }
@@ -505,6 +511,11 @@ private AstBasicType BasicType() :
 /* Types
 <type>:
      <basic-type>
+     <reference-type>
+     <sequence-type>
+
+<sequence-type>:
+    <type> '*'
 */
 private AstType Type() :
 {
@@ -512,10 +523,38 @@ private AstType Type() :
     AstType type;
 }
 {
-    type = BasicType()
+    (
+        type = BasicType()
+    |
+        type = ReferenceType()
+    )
+    (
+        "*"
+        {
+            Region region = peek("type");
+            type = new AstSequenceType(region, type);
+        }
+    )*
     {
         end("type");
         return type;
+    }
+}
+
+/* Reference Types
+<reference-type>:
+    <name>
+*/
+private AstReferenceType ReferenceType() :
+{
+    begin("model-type");
+    AstSimpleName name;
+}
+{
+    name = Name()
+    {
+        Region region = end("model-type");
+        return new AstReferenceType(region, name);
     }
 }
 

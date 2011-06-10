@@ -395,14 +395,16 @@ DMDLスクリプトからJavaデータモデルクラスを生成する場合、
 Asakusa Frameworkの ``asakusa-dmdl-java-*.jar`` の
 ``com.asakusafw.dmdl.java.Main`` クラスを次の引数で起動します。
 
--output             出力先のディレクトリ
--package            生成するクラスのベースパッケージ名
--source             コンパイルするDMDLスクリプトやディレクトリ
--sourceencoding     DMDLスクリプトのエンコーディング (default: UTF-8)
--targetencoding     生成するJavaのエンコーディング (default: UTF-8)
--plugin             DMDLコンパイラのプラグイン [#]_ ファイル (default: なし)
+..  code-block:: none
 
-..  [#] :: `DMDLコンパイラプラグインの利用`_ を参照
+    -output             出力先のディレクトリ
+    -package            生成するクラスのベースパッケージ名
+    -source             コンパイルするDMDLスクリプトやディレクトリ
+    -sourceencoding     DMDLスクリプトのエンコーディング (default: UTF-8)
+    -targetencoding     生成するJavaのエンコーディング (default: UTF-8)
+    -plugin             DMDLコンパイラのプラグイン [#]_ ファイル (default: なし)
+
+..  [#] `DMDLコンパイラプラグインの利用`_ を参照
 
 Javaクラスの対応付け
 --------------------
@@ -421,7 +423,7 @@ DMDLコンパイラは、DMDLで定義されたデータモデルごとに、
 データモデル名
     DMDLスクリプトで定義したデータモデル名を、CamelCaseの形式 [#]_ に変換したもの。
 
-..  [#] :: 例: hello_world -> HelloWorld
+..  [#] 例: hello_world -> HelloWorld
 
 プロパティの対応付け
 --------------------
@@ -469,9 +471,9 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
     * - SHORT
       - short (ShortOption)
 
-..  [#] :: ``org.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
-..  [#] :: ``com.asakusafw.value.Date``
-..  [#] :: ``com.asakusafw.value.DateTime``
+..  [#] ``org.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
+..  [#] ``com.asakusafw.value.Date``
+..  [#] ``com.asakusafw.value.DateTime``
 
 データモデルの属性
 ==================
