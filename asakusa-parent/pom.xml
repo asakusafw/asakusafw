@@ -183,7 +183,6 @@
 							<include>**/*Test.java</include>
 						</includes>
 						<forkMode>once</forkMode>
-						<testFailureIgnore>true</testFailureIgnore>
 						<systemProperties>
 							<property>
 								<name>net.sourceforge.cobertura.datafile</name>

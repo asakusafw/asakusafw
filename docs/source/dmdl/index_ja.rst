@@ -34,7 +34,7 @@ DMDLコンパイラは外部システムとの連係情報を自動的に生成�
 ..  toctree::
     :maxdepth: 1
 
-    getting-started_ja
+    start-guide_ja
     user-guide_ja
     with-thundergate_ja
     developer-guide_ja

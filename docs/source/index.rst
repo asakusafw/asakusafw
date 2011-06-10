@@ -7,7 +7,14 @@ Asakusa Framework
 
    index_ja
 
-Other Languages
-===============
+Languages
+=========
 
-* :doc:`index_ja` (Japanese)
+* Japanese
+
+  * :doc:`index_ja`
+
+ToDo
+====
+
+.. todolist::

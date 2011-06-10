@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Recoverer起動コマンド
 
 usage() {

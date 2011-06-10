@@ -146,14 +146,6 @@ public interface AstNode {
         R visitModelReference(C context, AstModelReference node);
 
         /**
-         * Called back from {@link AstModelType}.
-         * @param context the context of this visitor
-         * @param node the node invoked {@link AstNode#accept(Object, Visitor)}
-         * @return the result
-         */
-        R visitModelType(C context, AstModelType node);
-
-        /**
          * Called back from {@link AstPropertyDefinition}.
          * @param context the context of this visitor
          * @param node the node invoked {@link AstNode#accept(Object, Visitor)}
@@ -176,6 +168,14 @@ public interface AstNode {
          * @return the result
          */
         R visitPropertyMapping(C context, AstPropertyMapping node);
+
+        /**
+         * Called back from {@link AstReferenceType}.
+         * @param context the context of this visitor
+         * @param node the node invoked {@link AstNode#accept(Object, Visitor)}
+         * @return the result
+         */
+        R visitReferenceType(C context, AstReferenceType node);
 
         /**
          * Called back from {@link AstRecordDefinition}.
@@ -304,11 +304,6 @@ public interface AstNode {
         }
 
         @Override
-        public R visitModelType(C context, AstModelType node) {
-            return null;
-        }
-
-        @Override
         public R visitPropertyDefinition(C context, AstPropertyDefinition node) {
             return null;
         }
@@ -325,6 +320,11 @@ public interface AstNode {
 
         @Override
         public R visitRecordDefinition(C context, AstRecordDefinition node) {
+            return null;
+        }
+
+        @Override
+        public R visitReferenceType(C context, AstReferenceType node) {
             return null;
         }
 

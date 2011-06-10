@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 _OUTPUT_PATH=$1
 _BATCH_ID=$2

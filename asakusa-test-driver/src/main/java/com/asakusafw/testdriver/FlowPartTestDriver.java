@@ -35,12 +35,14 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.junit.Assert;
+
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.file.ConfigurationFactory;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -346,13 +348,12 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
 
     private void createSequenceFile(String tablename, String excelFileName) {
 
-        Configuration conf = new Configuration();
         FileSystem fs = null;
         SequenceFile.Writer writer = null;
 
         try {
+            Configuration conf = ConfigurationFactory.getDefault().newInstance();
             fs = FileSystem.get(conf);
-            fs.setWorkingDirectory(fs.getHomeDirectory());
 
             URI seqFilePath = new URI(createInputSequenceFilePath(fs, excelFileName));
             LOG.info("SequenceFileを作成します:Path=" + seqFilePath);

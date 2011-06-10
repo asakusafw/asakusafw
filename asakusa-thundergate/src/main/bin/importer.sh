@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Importer起動コマンド
 
 usage() {
