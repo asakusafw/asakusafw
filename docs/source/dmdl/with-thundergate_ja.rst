@@ -182,11 +182,13 @@ DMDLスクリプトからJavaデータモデルクラスを生成する場合、
 Asakusa Frameworkの ``asakusa-thundergate-dmdl-*.jar`` の
 ``com.asakusafw.dmdl.thundergate.Main`` クラスを次の引数で起動します。
 
- -jdbc      JDBCの設定情報を記載したプロパティファイル
- -output    DMDLスクリプトを出力するディレクトリ
- -encoding  出力するDMDLスクリプトのエンコーディング (default: UTF-8)
- -includes  対象とするテーブル/ビュー名の正規表現パターン (default: 全て)
- -excludes  除外とするテーブル/ビュー名の正規表現パターン (default: なし)
+..  code-block:: none
+
+    -jdbc      JDBCの設定情報を記載したプロパティファイル
+    -output    DMDLスクリプトを出力するディレクトリ
+    -encoding  出力するDMDLスクリプトのエンコーディング (default: UTF-8)
+    -includes  対象とするテーブル/ビュー名の正規表現パターン (default: 全て)
+    -excludes  除外とするテーブル/ビュー名の正規表現パターン (default: なし)
 
 また、 ``-jdbc`` の引数には、下記のような情報を含むファイルのパスを指定します。
 このファイルはJavaの ``*.properties`` ファイル形式で記述します。
