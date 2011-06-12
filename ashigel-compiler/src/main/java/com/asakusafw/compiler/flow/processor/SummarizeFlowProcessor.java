@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
@@ -32,6 +33,7 @@ import com.asakusafw.compiler.flow.ShuffleDescription;
 import com.asakusafw.runtime.util.TypeUtil;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.PartialAggregation;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.model.Summarized;
 import com.asakusafw.vocabulary.model.Summarized.Aggregator;
@@ -162,7 +164,14 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
 
     @Override
     public boolean isPartial(FlowElementDescription description) {
-        return true;
+        Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
+        PartialAggregation partial = description.getAttribute(PartialAggregation.class);
+        if (partial == PartialAggregation.PARTIAL) {
+            return true;
+        } else if (partial == PartialAggregation.TOTAL) {
+            return false;
+        }
+        return getEnvironment().getOptions().isEnableCombiner();
     }
 
     static class Prologue extends LinePartProcessor {
