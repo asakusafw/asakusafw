@@ -21,6 +21,7 @@ import java.util.List;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.InputBuffer;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.CoGroup;
 import com.ashigeru.lang.java.model.syntax.Expression;
@@ -38,9 +39,14 @@ public class CoGroupFlowProcessor extends RendezvousProcessor {
     public void emitRendezvous(Context context) {
         ModelFactory f = context.getModelFactory();
         OperatorDescription desc = context.getOperatorDescription();
+        InputBuffer bufferKind = desc.getAttribute(InputBuffer.class);
+        assert bufferKind != null;
+
         List<Expression> arguments = new ArrayList<Expression>();
+        List<ListBufferMirror> buffers = new ArrayList<ListBufferMirror>();
         for (FlowElementPortDescription input : desc.getInputPorts()) {
-            ListBufferMirror list = context.createListBuffer(input.getDataType());
+            ListBufferMirror list = context.createListBuffer(input.getDataType(), bufferKind);
+            buffers.add(list);
 
             context.addBegin(list.createBegin());
 
@@ -62,5 +68,9 @@ public class CoGroupFlowProcessor extends RendezvousProcessor {
         context.addEnd(new ExpressionBuilder(f, impl)
             .method(desc.getDeclaration().getName(), arguments)
             .toStatement());
+
+        for (ListBufferMirror list : buffers) {
+            context.addEnd(list.createShrink());
+        }
     }
 }

@@ -25,10 +25,13 @@ import java.util.NoSuchElementException;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.runtime.flow.ArrayListBuffer;
+import com.asakusafw.runtime.flow.FileMapListBuffer;
 import com.asakusafw.runtime.flow.ListBuffer;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
+import com.asakusafw.vocabulary.flow.graph.InputBuffer;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
@@ -296,14 +299,17 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         /**
          * {@link ListBuffer}のインスタンスを生成し、それを参照するための式を返す。
          * @param type リストの要素型
+         * @param bufferKind the input buffer kind
          * @return 生成した式
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
-        public ListBufferMirror createListBuffer(java.lang.reflect.Type type) {
+        public ListBufferMirror createListBuffer(java.lang.reflect.Type type, InputBuffer bufferKind) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(bufferKind, "bufferKind"); //$NON-NLS-1$
             Type elementType = importer.toType(type);
+            Class<?> bufferType = inputBufferTypeFromKind(bufferKind);
             Type listType = importer.resolve(factory.newParameterizedType(
-                    Models.toType(factory, ListBuffer.class),
+                    Models.toType(factory, bufferType),
                     Collections.singletonList(elementType)));
             Expression list = addField(
                     listType,
@@ -317,6 +323,17 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
                 component = new DataClass.Unresolved(factory, type);
             }
             return new ListBufferMirror(factory, list, component, elementType);
+        }
+
+        private Class<?> inputBufferTypeFromKind(InputBuffer kind) {
+            assert kind != null;
+            switch (kind) {
+            case HEAP:
+                return ArrayListBuffer.class;
+            case SWAP:
+                return FileMapListBuffer.class;
+            }
+            throw new AssertionError(kind);
         }
 
         /**
@@ -347,9 +364,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
      */
     public static class DataObjectMirror {
 
-        private Expression object;
+        private final Expression object;
 
-        private DataClass dataClass;
+        private final DataClass dataClass;
 
         /**
          * インスタンスを生成する。
@@ -403,9 +420,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
      */
     public static class ResultMirror {
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private Expression object;
+        private final Expression object;
 
         /**
          * インスタンスを生成する。
@@ -458,13 +475,15 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
 
         private static final String IS_EXPAND_REQUIRED = "isExpandRequired";
 
-        private ModelFactory factory;
+        private static final String SHRINK = "shrink";
 
-        private Expression object;
+        private final ModelFactory factory;
 
-        private DataClass dataClass;
+        private final Expression object;
 
-        private Type elementType;
+        private final DataClass dataClass;
+
+        private final Type elementType;
 
         /**
          * インスタンスを生成する。
@@ -548,13 +567,24 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * {@link ListBuffer}の終了処理を行う文を返す。
+         * {@link ListBuffer}の更新終了処理を行う文を返す。
          * @return 生成した文
          * @see ListBuffer#end()
          */
         public Statement createEnd() {
             return new ExpressionBuilder(factory, object)
                 .method(END)
+                .toStatement();
+        }
+
+        /**
+         * {@link ListBuffer}の参照終了処理を行う文を返す。
+         * @return 生成した文
+         * @see ListBuffer#end()
+         */
+        public Statement createShrink() {
+            return new ExpressionBuilder(factory, object)
+                .method(SHRINK)
                 .toStatement();
         }
     }

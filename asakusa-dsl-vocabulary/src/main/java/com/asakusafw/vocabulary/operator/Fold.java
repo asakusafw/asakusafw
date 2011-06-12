@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.asakusafw.vocabulary.flow.graph.PartialAggregation;
 import com.asakusafw.vocabulary.model.Key;
 
 
@@ -106,6 +107,15 @@ public @interface Fold {
      * 入力元のポート名。
      */
     String INPUT = "in";
+
+    /**
+     * 部分集約の設定。
+     * <p>
+     * この演算子で部分集約を可能にした場合、
+     * 現在はメソッド内でフレームワークAPIを利用できなくなる。
+     * </p>
+     */
+    PartialAggregation partialAggregation() default PartialAggregation.DEFAULT;
 
     /**
      * 出力先のポート名。
