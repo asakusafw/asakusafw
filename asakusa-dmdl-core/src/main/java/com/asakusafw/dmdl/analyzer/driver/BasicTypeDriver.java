@@ -24,7 +24,7 @@ import com.asakusafw.dmdl.spi.TypeDriver;
 /**
  * Resolves basic type in formed of {@link AstBasicType}.
  */
-public class BasicTypeDriver implements TypeDriver {
+public class BasicTypeDriver extends TypeDriver {
 
     @Override
     public BasicType resolve(DmdlSemantics world, AstType syntax) {

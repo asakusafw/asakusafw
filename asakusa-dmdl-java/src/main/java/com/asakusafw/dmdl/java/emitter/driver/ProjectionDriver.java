@@ -23,16 +23,13 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
-import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
-import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.Type;
 
 /**
  * Enables models projectable.
  */
-public class ProjectionDriver implements JavaDataModelDriver {
+public class ProjectionDriver extends JavaDataModelDriver {
 
     @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
@@ -45,20 +42,5 @@ public class ProjectionDriver implements JavaDataModelDriver {
             results.add(context.resolve(projection));
         }
         return results;
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

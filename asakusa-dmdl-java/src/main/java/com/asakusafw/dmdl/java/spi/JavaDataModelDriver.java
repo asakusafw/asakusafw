@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.java.spi;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -32,8 +33,11 @@ import com.ashigeru.lang.java.model.syntax.Type;
  * and put the class name in
  * {@code META-INF/services/com.asakusafw.dmdl.java.spi.JavaDataModelDriver}.
  * </p>
+ * <p>
+ * All default implementation will do nothing.
+ * </p>
  */
-public interface JavaDataModelDriver {
+public abstract class JavaDataModelDriver {
 
     /**
      * Returns the interface types to implement to the model.
@@ -42,7 +46,9 @@ public interface JavaDataModelDriver {
      * @return the list of interface types
      * @throws IOException if failed to create other models
      */
-    List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException;
+    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the method declarations to mixin to the model.
@@ -51,7 +57,9 @@ public interface JavaDataModelDriver {
      * @return the list of method declarations
      * @throws IOException if failed to create other models
      */
-    List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) throws IOException;
+    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) throws IOException {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the type annotations to attach to the model.
@@ -60,7 +68,9 @@ public interface JavaDataModelDriver {
      * @return the list of annotations
      * @throws IOException if failed to create other models
      */
-    List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException;
+    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the type annotations to attach to the property.
@@ -69,5 +79,8 @@ public interface JavaDataModelDriver {
      * @return the list of annotations
      * @throws IOException if failed to create other models
      */
-    List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) throws IOException;
+    public List<Annotation> getMemberAnnotations(
+            EmitContext context, PropertyDeclaration property) throws IOException {
+        return Collections.emptyList();
+    }
 }

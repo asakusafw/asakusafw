@@ -22,31 +22,18 @@ import java.util.List;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
 import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
 /**
  * Emits {@link PrimaryKey} annotations.
  */
-public class PrimaryKeyEmitter implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class PrimaryKeyEmitter extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
@@ -65,10 +52,4 @@ public class PrimaryKeyEmitter implements JavaDataModelDriver {
                     "value", f.newArrayInitializer(properties))
             .toAnnotations();
     }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
-    }
-
 }

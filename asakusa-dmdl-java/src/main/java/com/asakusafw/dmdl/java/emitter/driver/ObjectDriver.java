@@ -25,7 +25,6 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
@@ -41,12 +40,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 /**
  * Overrides default {@link Object} methods.
  */
-public class ObjectDriver implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class ObjectDriver extends JavaDataModelDriver {
 
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
@@ -196,15 +190,5 @@ public class ObjectDriver implements JavaDataModelDriver {
                         context.resolve(Object.class),
                         obj)),
                 statements);
-    }
-
-    @Override
-    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }
