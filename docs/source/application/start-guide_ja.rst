@@ -20,10 +20,13 @@ Asakusa Frameworkのセットアップ
 ===============================
 Asakusa FrameworkはCloudera VM用にセットアップスクリプトを提供しています。このセットアップスクリプトを実行すると以下のモジュールがインストールされ、Asakusa Frameworkを利用するための初期設定が行われます。
 
- * MySQL Server 5.1
- * Apache Maven 3.0
- * Asakusa Framework 本体
- * Asakusa Framework サンプルプログラム
+ * Asakusa Framework 本体のインストールと初期設定
+ * Asakusa Framework サンプルプログラムのインストール
+ * Ruby 1.8 のインストール
+ * Git 1.7 のインストール
+ * MySQL Server 5.1 のインストールと初期設定
+ * Apache Maven 3.0 のインルトール
+ * SSHの初期設定
 
 Terminalを起動し、以下の手順に沿ってAsakusa Frameworkをインストールしてください。
 
@@ -74,6 +77,9 @@ Eclipseを使ったアプリケーションの開発
     mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
 
 Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは上記で-Declipse.workspaceに指定した値と同じディレクトリを指定します。
+
+..  warning::
+    Eclipseをデスクトップ環境のファイラーやショートカットから起動する場合、ログインシェルに環境変数を適用する必要があるため、Eclipse起動前にいったんログアウトして再ログインしてください。なお上述のsetup.shを実行後、既に一度でもログアウトもしくはOSの停止/再起動を行っている場合は再ログインは不要です。
 
 作業したいアプリケーション用プロジェクトに対して、Eclipseプロジェクト用の定義ファイルを作成します。
 
