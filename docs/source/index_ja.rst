@@ -8,5 +8,6 @@ Asakusa Framework
 
     application/index_ja
     dsl/index_ja
+    testing/index_ja
     dmdl/index_ja
     document/index_ja
