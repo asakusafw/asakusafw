@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.asakusafw.vocabulary.flow.graph.PartialAggregation;
+import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.model.Summarized;
 
 
@@ -91,6 +91,7 @@ public @interface Summarize {
 
     /**
      * 部分集約の設定。
+     * @since 0.2.0
      */
     PartialAggregation partialAggregation() default PartialAggregation.DEFAULT;
 

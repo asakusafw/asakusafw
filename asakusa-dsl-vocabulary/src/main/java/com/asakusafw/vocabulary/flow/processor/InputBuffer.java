@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.vocabulary.flow.graph;
+package com.asakusafw.vocabulary.flow.processor;
+
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
 /**
  * Listを引数に取る演算子の、入力バッファの性質。
@@ -22,16 +24,22 @@ package com.asakusafw.vocabulary.flow.graph;
 public enum InputBuffer implements FlowElementAttribute {
 
     /**
-     * 入力バッファをヒープ上に構築する。
+     * 入力バッファをヒープ上に構築し、バッファが足りなくなったら自動的に拡張する。
      * <p>
      * 高速なバッファとして利用できる代わりに、
      * ヒープ上に乗る程度のサイズのグループのみを取り扱える。
      * </p>
      */
-    HEAP,
+    EXPAND,
 
     /**
      * 巨大な入力データを取り扱えるようにするが、<em>{@code List}の動作に制約がかかる</em>。
+     * <p>
+     * 入力バッファをヒープ上に構築し、バッファが足りなくなったら内部的な
+     * スワップ領域にオブジェクトを退避する。
+     * ヒープ上に配置されるオブジェクトは全体の一部で、残りはファイルシステム上などの
+     * ヒープを利用しない領域に保存する。
+     * </p>
      * <p>
      * このオプションを指定した場合、それぞれの{@code List}からはひとつずつしかオブジェクトを取り出せなくなる。
      * 2つ以上オブジェクトを取り出した場合、最後に取り出したオブジェクト以外は
@@ -43,7 +51,7 @@ public enum InputBuffer implements FlowElementAttribute {
      * つまり、次のようなプログラムを書いた場合の動作は保証されない。
      * </p>
 <pre><code>
-&#64;CoGroup(largeInput = true)
+&#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
 public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     // 二つ取り出すとaの内容が保証されない
     Hoge a = list.get(0);
@@ -61,7 +69,7 @@ public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
 Hoge a = new Hoge();
 Hoge b = new Hoge();
 
-&#64;CoGroup(largeInput = true)
+&#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
 public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     a.copyFrom(list.get(0));
     b.copyFrom(list.get(1));
@@ -74,7 +82,7 @@ public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
      * 下記のようにひとつずつ取り出して使う場合にはコピーは必要ない。
      * </p>
 <pre><code>
-&#64;CoGroup(largeInput = true)
+&#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
 public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     for (Hoge hoge : list) {
         hoge.setValue(100);
@@ -82,12 +90,6 @@ public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     }
 }
 </code></pre>
-     * <p>
-     * このオプションを指定すると、演算子メソッドの引数に指定したリストは
-     * 内部的に「スワップ領域」をもつようになる。
-     * Java VMのヒープ上に配置されるオブジェクトは全体の一部で、残りはファイルシステム上などの
-     * ヒープを利用しない領域に保存する。
-     * </p>
      */
-    SWAP,
+    ESCAPE,
 }

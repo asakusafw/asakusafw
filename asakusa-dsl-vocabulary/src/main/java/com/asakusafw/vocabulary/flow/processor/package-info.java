@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * テストドライバ用のクラス群。
- * <p>
- * アプリケーションテスト開発者は本パッケージで提供するクラス郡を使用してテストメソッドを記述する。
- * </p>
+ * 演算子ごとの特性を表す。
  */
-package com.asakusafw.testdriver;
+package com.asakusafw.vocabulary.flow.processor;
+

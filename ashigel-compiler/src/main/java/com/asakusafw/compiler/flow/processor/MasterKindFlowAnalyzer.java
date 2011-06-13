@@ -23,9 +23,9 @@ import com.asakusafw.compiler.flow.FlowElementProcessor.DataObjectMirror;
 import com.asakusafw.compiler.flow.FlowElementProcessor.ListBufferMirror;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.InputBuffer;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -135,7 +135,7 @@ public class MasterKindFlowAnalyzer {
         FlowElementPortDescription master = desc.getInputPorts().get(0);
         FlowElementPortDescription tx = desc.getInputPorts().get(1);
 
-        ListBufferMirror list = context.createListBuffer(master.getDataType(), InputBuffer.HEAP);
+        ListBufferMirror list = context.createListBuffer(master.getDataType(), InputBuffer.EXPAND);
         context.addBegin(list.createBegin());
         Expression proc = context.getProcessInput(master);
         context.addProcess(master, list.createAdvance(proc));

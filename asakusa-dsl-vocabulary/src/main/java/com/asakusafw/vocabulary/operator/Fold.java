@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.asakusafw.vocabulary.flow.graph.PartialAggregation;
+import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.model.Key;
 
 
@@ -114,6 +114,7 @@ public @interface Fold {
      * この演算子で部分集約を可能にした場合、
      * 現在はメソッド内でフレームワークAPIを利用できなくなる。
      * </p>
+     * @since 0.2.0
      */
     PartialAggregation partialAggregation() default PartialAggregation.DEFAULT;
 

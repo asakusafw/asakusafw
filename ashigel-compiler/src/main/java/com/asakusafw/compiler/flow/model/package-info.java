@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.vocabulary.flow.graph;
-
 /**
- * 部分集約の性質。
- * @since 0.2.0
+ * Default implementation of data model classes.
  */
-public enum PartialAggregation implements FlowElementAttribute {
+package com.asakusafw.compiler.flow.model;
 
-    /**
-     * 部分集約を許さない。
-     */
-    TOTAL,
-
-    /**
-     * 部分集約を許す。
-     * <p>
-     * 部分集約を可能にした演算子の内部では、フレームワークAPIを利用できない。
-     * </p>
-     */
-    PARTIAL,
-
-    /**
-     * デフォルトの設定に従う。
-     */
-    DEFAULT,
-}

@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
 
-import com.asakusafw.vocabulary.flow.graph.InputBuffer;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.model.Key;
 
 /**
@@ -101,7 +101,8 @@ public @interface GroupSort {
      * デフォルトではヒープ上に高速な入力バッファを構築し、
      * 巨大なグループに対しの処理は行えない。
      * </p>
+     * @since 0.2.0
      * @see InputBuffer
      */
-    InputBuffer inputBuffer() default InputBuffer.HEAP;
+    InputBuffer inputBuffer() default InputBuffer.EXPAND;
 }

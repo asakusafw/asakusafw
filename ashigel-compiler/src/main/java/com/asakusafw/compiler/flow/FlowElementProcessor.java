@@ -31,8 +31,8 @@ import com.asakusafw.runtime.flow.ListBuffer;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.asakusafw.vocabulary.flow.graph.InputBuffer;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -328,9 +328,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         private Class<?> inputBufferTypeFromKind(InputBuffer kind) {
             assert kind != null;
             switch (kind) {
-            case HEAP:
+            case EXPAND:
                 return ArrayListBuffer.class;
-            case SWAP:
+            case ESCAPE:
                 return FileMapListBuffer.class;
             }
             throw new AssertionError(kind);
