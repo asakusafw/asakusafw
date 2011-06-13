@@ -37,7 +37,7 @@ The attributed declaration must be:
 <li> a model attribute </li>
 </ul>
  */
-public class NamespaceDriver implements AttributeDriver {
+public class NamespaceDriver extends AttributeDriver {
 
     /**
      * The attribute name.

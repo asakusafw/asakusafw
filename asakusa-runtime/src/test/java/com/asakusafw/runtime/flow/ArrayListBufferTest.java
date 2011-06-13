@@ -20,22 +20,22 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.runtime.flow.ListBuffer;
-
 /**
- * Test for {@link ListBuffer}.
+ * Test for {@link ArrayListBuffer}.
  */
-public class ListBufferTest {
+public class ArrayListBufferTest {
 
     /**
      * 空のリストを作成する。
      */
     @Test
     public void createEmpty() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
         buf.begin();
         buf.end();
         assertThat(buf.size(), is(0));
+
+        buf.shrink();
     }
 
     /**
@@ -43,7 +43,7 @@ public class ListBufferTest {
      */
     @Test
     public void createSingle() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
@@ -52,6 +52,8 @@ public class ListBufferTest {
         buf.end();
         assertThat(buf.size(), is(1));
         assertThat(buf.get(0), is(new Holder("Hello")));
+
+        buf.shrink();
     }
 
     /**
@@ -59,12 +61,13 @@ public class ListBufferTest {
      */
     @Test
     public void reuse() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
         buf.advance().value = "Hello";
         buf.end();
+        buf.shrink();
 
         buf.begin();
         assertThat(buf.getCursorPosition(), is(0));
@@ -73,6 +76,7 @@ public class ListBufferTest {
 
         assertThat(buf.size(), is(1));
         assertThat(buf.get(0), is(new Holder("World")));
+        buf.shrink();
     }
 
     /**
@@ -82,7 +86,7 @@ public class ListBufferTest {
     public void createBigList() {
         int size = 100000;
 
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
         buf.begin();
         for (int i = 0; i < size; i++) {
             if (buf.isExpandRequired()) {
@@ -97,6 +101,8 @@ public class ListBufferTest {
         for (int i = 0; i < size; i++) {
             assertThat(buf.get(i).value, is(String.valueOf(i)));
         }
+
+        buf.shrink();
     }
 
     /**
@@ -104,10 +110,14 @@ public class ListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void advance_OutOfBounds() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
-        buf.begin();
-        while (true) {
-            buf.advance();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        try {
+            buf.begin();
+            while (true) {
+                buf.advance();
+            }
+        } finally {
+            buf.shrink();
         }
     }
 
@@ -116,10 +126,14 @@ public class ListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_UpperOutOfBounds() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
-        buf.begin();
-        buf.end();
-        buf.get(0);
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        try {
+            buf.begin();
+            buf.end();
+            buf.get(0);
+        } finally {
+            buf.shrink();
+        }
     }
 
     /**
@@ -127,10 +141,14 @@ public class ListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_LowerOutOfBounds() {
-        ListBuffer<Holder> buf = new ListBuffer<Holder>();
-        buf.begin();
-        buf.end();
-        buf.get(-1);
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        try {
+            buf.begin();
+            buf.end();
+            buf.get(-1);
+        } finally {
+            buf.shrink();
+        }
     }
 
     static class Holder {

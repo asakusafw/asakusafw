@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * テストドライバ用のクラス群。
- * <p>
- * アプリケーションテスト開発者は本パッケージで提供するクラス郡を使用してテストメソッドを記述する。
- * </p>
+ * Default implementation of data model classes.
  */
-package com.asakusafw.testdriver;
+package com.asakusafw.compiler.flow.model;
+

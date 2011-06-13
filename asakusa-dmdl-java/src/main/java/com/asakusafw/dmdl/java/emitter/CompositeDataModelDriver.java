@@ -36,7 +36,7 @@ import com.ashigeru.lang.java.model.syntax.Type;
 /**
  * Composition of {@link JavaDataModelDriver}.
  */
-public class CompositeDataModelDriver implements JavaDataModelDriver {
+public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(CompositeDataModelDriver.class);
 

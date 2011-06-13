@@ -42,7 +42,7 @@ The attributed declaration must be:
 <li> value=[array of property symbols] </li>
 </ul>
  */
-public class PrimaryKeyDriver implements AttributeDriver {
+public class PrimaryKeyDriver extends AttributeDriver {
 
     /**
      * The attribute name.

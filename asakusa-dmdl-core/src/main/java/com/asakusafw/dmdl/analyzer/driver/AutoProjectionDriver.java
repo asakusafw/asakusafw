@@ -45,7 +45,7 @@ The attributed declaration must be:
 <li> with no attribute elements </li>
 </ul>
  */
-public class AutoProjectionDriver implements AttributeDriver {
+public class AutoProjectionDriver extends AttributeDriver {
 
     /**
      * The attribute name.

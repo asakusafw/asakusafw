@@ -128,7 +128,7 @@ public class CompositeDataModelDriverTest extends GeneratorTesterRoot {
         assertThat(object.invoke("hello"), is((Object) "hello"));
     }
 
-    static class TrackingDriver implements JavaDataModelDriver {
+    static class TrackingDriver extends JavaDataModelDriver {
 
         final Set<String> interfaces = new HashSet<String>();
         final Set<String> methods = new HashSet<String>();

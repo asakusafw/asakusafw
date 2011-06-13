@@ -46,7 +46,7 @@ public class ViewAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(ViewAnalyzer.class);
 
-    private final List<View> added = new ArrayList<View>();
+    private final List<CreateView> added = new ArrayList<CreateView>();
 
     /**
      * この解析器に指定のビューを追加する。
@@ -57,7 +57,7 @@ public class ViewAnalyzer {
         if (view == null) {
             throw new IllegalArgumentException("view must not be null"); //$NON-NLS-1$
         }
-        added.add(new View(view));
+        added.add(view);
     }
 
     /**
@@ -72,14 +72,14 @@ public class ViewAnalyzer {
         }
 
         LOG.info("ビューの関係を解析しています ({}個のビュー)", added.size());
-        List<View> sorted = sort();
+        List<CreateView> sorted = sort();
 
         Map<Name, ModelDescription> context = new HashMap<Name, ModelDescription>();
         List<ModelDescription> analyzed = new ArrayList<ModelDescription>();
-        for (View view : sorted) {
-            LOG.info("ビューの構造を解析しています: {}", view.ast.name);
+        for (CreateView view : sorted) {
+            LOG.info("ビューの構造を解析しています: {}", view.name);
             ModelDescription model = transform(view, repository, context);
-            context.put(view.ast.name, model);
+            context.put(view.name, model);
             if (model != null) {
                 analyzed.add(model);
             }
@@ -95,57 +95,54 @@ public class ViewAnalyzer {
     }
 
     private ModelDescription transform(
-            View target,
+            CreateView target,
             ModelRepository repository,
             Map<Name, ModelDescription> context) {
         assert target != null;
         assert repository != null;
         assert context != null;
 
-        CreateView ast = target.ast;
-
         // 先に外部依存関係を解決してcontextに登録する
-        if (resolveDependency(ast, repository, context) == false) {
+        if (resolveDependency(target, repository, context) == false) {
             return null;
         }
 
-        Kind kind = ast.getKind();
+        Kind kind = target.getKind();
         if (kind == Kind.JOINED) {
             return transformJoined(target, context);
         } else if (kind == Kind.SUMMARIZED) {
             return transformSummarized(target, context);
         } else {
             LOG.error("{}は処理できない種類のビューです: {}",
-                    ast.name,
-                    ast);
+                    target.name,
+                    target);
             return null;
         }
     }
 
     private JoinedModelDescription transformJoined(
-            View target,
+            CreateView target,
             Map<Name, ModelDescription> context) {
         assert target != null;
-        assert target.ast.getKind() == CreateView.Kind.JOINED;
+        assert target.getKind() == CreateView.Kind.JOINED;
         assert context != null;
-        CreateView ast = target.ast;
-        assert context.get(ast.from.table) != null;
-        assert context.get(ast.from.join.table) != null;
+        assert context.get(target.from.table) != null;
+        assert context.get(target.from.join.table) != null;
 
         JoinedModelBuilder builder = new JoinedModelBuilder(
-                ast.name.token,
-                context.get(ast.from.table),
-                ast.from.alias,
-                context.get(ast.from.join.table),
-                ast.from.join.alias);
+                target.name.token,
+                context.get(target.from.table),
+                target.from.alias,
+                context.get(target.from.join.table),
+                target.from.join.alias);
 
         // 結合条件
-        for (On on : ast.from.join.condition) {
+        for (On on : target.from.join.condition) {
             builder.on(on.left.token, on.right.token);
         }
 
         // カラムの追加
-        for (Select select : ast.selectList) {
+        for (Select select : target.selectList) {
             assert select.aggregator == Aggregator.IDENT;
             builder.add(select.alias.token, select.name.token);
         }
@@ -154,26 +151,25 @@ public class ViewAnalyzer {
     }
 
     private ModelDescription transformSummarized(
-            View target,
+            CreateView target,
             Map<Name, ModelDescription> context) {
         assert target != null;
-        assert target.ast.getKind() == CreateView.Kind.SUMMARIZED;
+        assert target.getKind() == CreateView.Kind.SUMMARIZED;
 
-        CreateView ast = target.ast;
-        assert context.get(ast.from.table) != null;
+        assert context.get(target.from.table) != null;
 
         SummarizedModelBuilder builder = new SummarizedModelBuilder(
-                ast.name.token,
-                context.get(ast.from.table),
-                ast.from.alias);
+                target.name.token,
+                context.get(target.from.table),
+                target.from.alias);
 
         // グループ化
-        for (Name name : ast.groupBy) {
+        for (Name name : target.groupBy) {
             builder.groupBy(name.token);
         }
 
         // カラムの追加
-        for (Select select : ast.selectList) {
+        for (Select select : target.selectList) {
             builder.add(
                     select.alias.token,
                     select.aggregator,
@@ -214,13 +210,13 @@ public class ViewAnalyzer {
         return success;
     }
 
-    private List<View> sort() {
-        Map<Name, View> map = new HashMap<Name, View>();
+    private List<CreateView> sort() {
+        Map<Name, CreateView> map = new HashMap<Name, CreateView>();
         Graph<Name> dependencies = Graphs.newInstance();
-        for (View view : added) {
-            Name name = view.ast.name;
+        for (CreateView view : added) {
+            Name name = view.name;
             map.put(name, view);
-            for (Name dependTo : view.ast.getDependencies()) {
+            for (Name dependTo : view.getDependencies()) {
                 dependencies.addEdge(name, dependTo);
             }
         }
@@ -236,24 +232,14 @@ public class ViewAnalyzer {
         // 依存関係の逆順に整列
         List<Name> sorted = Graphs.sortPostOrder(dependencies);
 
-        List<View> results = new ArrayList<View>();
+        List<CreateView> results = new ArrayList<CreateView>();
         for (Name name : sorted) {
             // 外部参照でないものについてのみ結果に残す
-            View view = map.get(name);
+            CreateView view = map.get(name);
             if (view != null) {
                 results.add(view);
             }
         }
         return results;
-    }
-
-    private static class View {
-
-        CreateView ast;
-
-        View(CreateView ast) {
-            assert ast != null;
-            this.ast = ast;
-        }
     }
 }

@@ -27,13 +27,13 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * {@code META-INF/services/com.asakusafw.dmdl.spi.AttributeDriver}.
  * </p>
  */
-public interface AttributeDriver {
+public abstract class AttributeDriver {
 
     /**
      * Returns the qualified name of the target attribute.
      * @return the target attribute name
      */
-    String getTargetName();
+    public abstract String getTargetName();
 
     /**
      * Processes and modifies the attributed declaration.
@@ -42,7 +42,7 @@ public interface AttributeDriver {
      * @param declaration the declaration with the {@code attribute}
      * @see #getTargetName()
      */
-    void process(
+    public abstract void process(
             DmdlSemantics environment,
             Declaration declaration,
             AstAttribute attribute);

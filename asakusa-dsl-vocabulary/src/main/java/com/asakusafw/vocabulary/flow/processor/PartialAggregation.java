@@ -13,10 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.vocabulary.flow.processor;
+
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+
 /**
- * テストドライバ用のクラス群。
- * <p>
- * アプリケーションテスト開発者は本パッケージで提供するクラス郡を使用してテストメソッドを記述する。
- * </p>
+ * 部分集約の性質。
+ * @since 0.2.0
  */
-package com.asakusafw.testdriver;
+public enum PartialAggregation implements FlowElementAttribute {
+
+    /**
+     * 部分集約を許さない。
+     */
+    TOTAL,
+
+    /**
+     * 部分集約を許す。
+     * <p>
+     * 部分集約を可能にした演算子の内部では、フレームワークAPIを利用できない。
+     * </p>
+     */
+    PARTIAL,
+
+    /**
+     * デフォルトの設定に従う。
+     */
+    DEFAULT,
+}

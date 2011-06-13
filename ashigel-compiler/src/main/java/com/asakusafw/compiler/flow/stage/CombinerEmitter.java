@@ -67,7 +67,7 @@ public class CombinerEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(CombinerEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -88,10 +88,6 @@ public class CombinerEmitter {
      */
     public CompiledType emit(StageModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
-        if (environment.getOptions().isEnableCombiner() == false) {
-            LOG.debug("Combinerは設定により無効化されています");
-            return null;
-        }
         if (canCombine(model) == false) {
             LOG.debug("{}に対してコンバイナークラスは不要です", model);
             return null;
@@ -123,21 +119,21 @@ public class CombinerEmitter {
 
     private static class Engine {
 
-        private List<ReduceUnit> reduceUnits;
+        private final List<ReduceUnit> reduceUnits;
 
-        private ShuffleModel shuffle;
+        private final ShuffleModel shuffle;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private NameGenerator names;
+        private final NameGenerator names;
 
-        private SimpleName context;
+        private final SimpleName context;
 
-        private Map<ShuffleModel.Segment, SimpleName> shuffleNames;
+        private final Map<ShuffleModel.Segment, SimpleName> shuffleNames;
 
-        private Map<Fragment, SimpleName> rendezvousNames;
+        private final Map<Fragment, SimpleName> rendezvousNames;
 
         Engine(FlowCompilingEnvironment environment, StageModel model) {
             assert environment != null;

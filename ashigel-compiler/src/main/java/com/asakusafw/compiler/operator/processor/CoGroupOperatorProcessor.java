@@ -112,10 +112,16 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
         if (a.hasError()) {
             return null;
         }
+        CoGroup annotation = context.element.getAnnotation(CoGroup.class);
+        if (annotation == null) {
+            a.error("注釈の解釈に失敗しました");
+            return null;
+        }
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(FlowBoundary.SHUFFLE);
         builder.addAttribute(a.getObservationCount());
+        builder.addAttribute(annotation.inputBuffer());
         builder.setDocumentation(a.getExecutableDocument());
         for (int i = 0; i < startResults; i++) {
             builder.addInput(

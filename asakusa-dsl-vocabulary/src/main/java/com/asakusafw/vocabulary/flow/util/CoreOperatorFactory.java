@@ -237,6 +237,7 @@ public class CoreOperatorFactory {
      * @param targetType 射影する型
      * @return 射影演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.0
      */
     public <T> Project<T> project(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -260,6 +261,7 @@ public class CoreOperatorFactory {
      * @param targetType 射影する型
      * @return 射影演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.0
      */
     public <T> Extend<T> extend(Source<?> in, Class<T> targetType) {
         if (in == null) {

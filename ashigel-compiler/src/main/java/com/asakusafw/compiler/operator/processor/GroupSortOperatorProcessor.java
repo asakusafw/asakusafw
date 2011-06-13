@@ -86,11 +86,17 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             a.error("グループ整列演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
             return null;
         }
+        GroupSort annotation = context.element.getAnnotation(GroupSort.class);
+        if (annotation == null) {
+            a.error("注釈の解釈に失敗しました");
+            return null;
+        }
 
         // redirect to @CoGroup
         Builder builder = new Builder(CoGroup.class, context);
         builder.addAttribute(FlowBoundary.SHUFFLE);
         builder.addAttribute(a.getObservationCount());
+        builder.addAttribute(annotation.inputBuffer());
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
                 a.getParameterDocument(0),
