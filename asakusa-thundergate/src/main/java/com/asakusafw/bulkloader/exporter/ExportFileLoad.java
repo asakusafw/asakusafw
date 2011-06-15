@@ -144,10 +144,11 @@ public class ExportFileLoad {
             ExportTargetTableBean tableBean = bean.getExportTargetTable(tableName);
             List<File> exportFileList = tableBean.getExportFiles();
 
+            long recordCount = 0;
             // Export対象テーブルに該当するファイル数分繰り返す
             for (File file : exportFileList) {
                 // ファイルをDBにロードする
-                load(
+                recordCount += load(
                         tableBean.getExportTempTableName(),
                         file,
                         tableBean.getExportTsvColumn(),
@@ -160,6 +161,15 @@ public class ExportFileLoad {
                         tableBean.getExportTempTableName(),
                         file.getAbsolutePath());
             }
+            Log.log(
+                    getClass(),
+                    MessageIdConst.PRF_EXPORT_COUNT,
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId(),
+                    tableName,
+                    recordCount);
 
             PreparedStatement stmt = null;
             if (tableBean.isDuplicateCheck()) {
@@ -611,16 +621,17 @@ public class ExportFileLoad {
      * @param file エクスポートファイル
      * @param exportTsvColumn TSVのカラム名一覧
      * @param conn コネクション
+     * @return 更新した件数
      * @throws BulkLoaderSystemException SQL例外が発生した場合
      */
-    private void load(
+    private long load(
             String tempTableName,
             File file,
             List<String> exportTsvColumn,
             Connection conn) throws BulkLoaderSystemException {
         // ロードするファイルが空の場合はSQLを発行しない
         if (isEmpty(file)) {
-            return;
+            return 0;
         }
 
         // Load用のSQLを作成
@@ -637,8 +648,9 @@ public class ExportFileLoad {
         try {
             // LOADを実行
             stmt = conn.prepareStatement(sql.toString());
-            DBConnection.executeUpdate(stmt, sql.toString(), new String[0]);
+            long count = DBConnection.executeUpdate(stmt, sql.toString(), new String[0]);
             DBConnection.commit(conn);
+            return count;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,

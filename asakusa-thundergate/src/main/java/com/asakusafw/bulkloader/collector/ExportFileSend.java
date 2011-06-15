@@ -114,8 +114,10 @@ public class ExportFileSend {
                             MessageIdConst.COL_SEND_HDFSFILE,
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
                     long countInFile = send(targetTableModel, filePath.get(i), zos, tableName);
-                    isPutEntry |=  countInFile > 0;
-                    recordCount += countInFile;
+                    if (countInFile >= 0) {
+                        isPutEntry = true;
+                        recordCount += countInFile;
+                    }
                     Log.log(
                             this.getClass(),
                             MessageIdConst.COL_SEND_HDFSFILE_SUCCESS,
@@ -175,7 +177,7 @@ public class ExportFileSend {
      * @param filePath Exportファイル
      * @param zos 出力先の{@link ZipOutputStream}
      * @param tableName テーブル名
-     * @return ZipOutputStreamに追加したエントリの数
+     * @return 書きだしたレコード数、エントリをひとつも書き出さなかった場合は -1
      * @throws BulkLoaderSystemException 入出力に関するシステム例外が発生した場合
      */
     protected <T extends Writable> long send(
@@ -210,6 +212,7 @@ public class ExportFileSend {
                         MessageIdConst.COL_EXPORT_FILE_FOUND,
                         listedPaths.length, tableName, filePath);
             }
+            boolean addEntry = false;
             for (Path path : listedPaths) {
                 // ファイルがシステムファイルの場合はスキップする
                 if (isSystemFile(path)) {
@@ -227,7 +230,7 @@ public class ExportFileSend {
                         fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
                         ZipEntry ze = new ZipEntry(fileName);
                         zos.putNextEntry(ze);
-                        count++;
+                        addEntry = true;
 
                         ModelOutput<T> modelOut = null;
                         try {
@@ -246,6 +249,7 @@ public class ExportFileSend {
                             while (reader.next(NullWritable.get(), model)) {
                                 // Modolを書き出す
                                 modelOut.write(model);
+                                count++;
                                 // 最大ファイルサイズに達したかチェックする
                                 // charからbyteに変換する部分でバッファされるため、
                                 // 必ずしも分割サイズで分割されない。(バッファ分の誤差がある)
@@ -278,7 +282,12 @@ public class ExportFileSend {
                     }
                 }
             }
-            return count;
+            if (addEntry) {
+                return count;
+            } else {
+                assert count == 0;
+                return -1;
+            }
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,
