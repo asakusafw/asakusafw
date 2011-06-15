@@ -187,7 +187,6 @@ public class ExportFileSend {
             String tableName) throws BulkLoaderSystemException {
         FileSystem fs = null;
         String fileName = null;
-        long count = 0;
 
         // 最大ファイルサイズを取得する
         long maxSize = Long.parseLong(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_LOAD_MAX_SIZE));
@@ -205,13 +204,14 @@ public class ExportFileSend {
                         this.getClass(),
                         MessageIdConst.COL_EXPORT_FILE_NOT_FOUND,
                         tableName, filePath);
-                return count;
+                return -1;
             } else {
                 Log.log(
                         this.getClass(),
                         MessageIdConst.COL_EXPORT_FILE_FOUND,
                         listedPaths.length, tableName, filePath);
             }
+            long count = 0;
             boolean addEntry = false;
             for (Path path : listedPaths) {
                 // ファイルがシステムファイルの場合はスキップする
