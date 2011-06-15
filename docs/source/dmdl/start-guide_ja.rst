@@ -13,7 +13,7 @@ Data Model Definition Language (DMDL)はAsakusa Frameworkで利用可能なデ�
 
 DMDLスクリプトを作成する
 ------------------------
-asakusa-archetype-batchappを利用してプロジェクトを作成した場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` フォルダ以下に配置してください。また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
+asakusa-archetype-batchappを利用してプロジェクトを作成した場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
 
 データモデルを定義する
 ----------------------
