@@ -245,7 +245,7 @@ asakusa-archetype-batchappを利用したプロジェクトでは、
 ``<Excelのファイル名>#<シート名>`` 
 という形式で指定します。
 
-上記の一連の結果を、 ``In<データモデル型>`` の変数に保持します。
+上記の一連の結果を、 ``In<データモデル型>`` [#]_ の変数に保持します。
 
 ..  code-block:: java
 
@@ -260,7 +260,7 @@ asakusa-archetype-batchappを利用したプロジェクトでは、
 ``output`` に続けて、 ``verify`` で期待データとテスト条件をそれぞれ指定します。
 指定方法は入力データと同様です。
 
-出力の定義結果は、 ``Out<データモデル型>`` の変数に保存します。
+出力の定義結果は、 ``Out<データモデル型>`` [#]_ の変数に保存します。
 
 ..  code-block:: java
 
@@ -341,5 +341,5 @@ asakusa-archetype-batchappを利用したプロジェクトでは、
 * 入出力を指定する前に、それらを定義したジョブフローのID [#]_ を指定する
 * ``runTest`` メソッドにはバッチクラス( ``.class`` )を指定する
 
-..  [#] ``com.asakusafw.testdriver.Batch``
+..  [#] ``com.asakusafw.testdriver.BatchTester``
 ..  [#] 注釈 ``@JobFlow`` の ``name`` に指定した文字列を利用して下さい
