@@ -25,9 +25,7 @@
 	        depends="modelgen:ddl-dmdl, modelgen:only-dmdl">
 	</target>
 
-	<target name="modelgen:ddl-dmdl"
-	        description="MySQLを使用したModelGenerator処理を行います。"
-	        if="asakusa.build.database.enabled">
+	<target name="modelgen:ddl-dmdl" description="MySQLを使用したModelGenerator処理を行います。" if="asakusa.build.database.enabled">
 
 		<property file="${asakusa.jdbc.conf}" />
 		<mkdir dir="${asakusa.modelgen.output}" />
@@ -83,12 +81,12 @@
 			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
 		</delete>
 		<delete>
-			<fileset dir="${asakusa.testdatasheet.output}"
-			         includes="**/*.xls" />
+			<fileset dir="${asakusa.testdatasheet.output}" includes="**/*.xls" />
 		</delete>
 		<java classname="com.asakusafw.generator.ModelSheetGenerator"
 		      classpath="${compile_classpath}"
-		      fork="true">
+		      fork="true"
+		      failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
@@ -108,9 +106,7 @@
 			<arg value="-excludes" />
 			<arg value="${asakusa.modelgen.excludes}" />
 		</java>
-		<java classname="com.asakusafw.dmdl.java.Main"
-		      classpath="${compile_classpath}"
-		      fork="true">
+		<java classname="com.asakusafw.dmdl.java.Main" classpath="${compile_classpath}" fork="true" failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<arg value="-output" />
 			<arg value="${asakusa.modelgen.output}" />
@@ -147,12 +143,9 @@
 			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
 		</delete>
 		<delete>
-			<fileset dir="${asakusa.testdatasheet.output}"
-			         includes="**/*.xls" />
+			<fileset dir="${asakusa.testdatasheet.output}" includes="**/*.xls" />
 		</delete>
-		<java classname="com.asakusafw.dmdl.java.Main"
-		      classpath="${compile_classpath}"
-		      fork="true">
+		<java classname="com.asakusafw.dmdl.java.Main" classpath="${compile_classpath}" fork="true" failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<arg value="-output" />
 			<arg value="${asakusa.modelgen.output}" />
@@ -168,11 +161,11 @@
 		<antcall target="testdata:sheet-generated" />
 	</target>
 
-	<target name="testdata:sheet-generated"
-	        if="asakusa.build.testdatasheet.generate">
+	<target name="testdata:sheet-generated" if="asakusa.build.testdatasheet.generate">
 		<java classname="com.asakusafw.testdata.generator.excel.Main"
 		      classpath="${compile_classpath}"
-		      fork="true">
+		      fork="true"
+		      failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-format" />
@@ -228,9 +221,7 @@
 		<tstamp>
 			<format property="now.time" pattern="yyyyMMddHHmmss" />
 		</tstamp>
-		<move file="${env.ASAKUSA_HOME}"
-		      todir="${env.ASAKUSA_HOME}_${now.time}"
-		      failonerror="false" />
+		<move file="${env.ASAKUSA_HOME}" todir="${env.ASAKUSA_HOME}_${now.time}" failonerror="false" />
 		<mkdir dir="${env.ASAKUSA_HOME}" />
 		<mkdir dir="/tmp/asakusa" />
 
