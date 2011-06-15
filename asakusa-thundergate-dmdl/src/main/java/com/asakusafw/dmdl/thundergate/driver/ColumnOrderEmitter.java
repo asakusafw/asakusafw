@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.driver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -26,26 +25,14 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
 /**
  * Emits {@link ColumnOrder} annotations.
  */
-public class ColumnOrderEmitter implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class ColumnOrderEmitter extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
@@ -64,10 +51,4 @@ public class ColumnOrderEmitter implements JavaDataModelDriver {
                     "value", f.newArrayInitializer(columns))
             .toAnnotations();
     }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
-    }
-
 }

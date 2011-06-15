@@ -36,7 +36,7 @@ The attributed declaration must be:
 <li> with value=[string-literal] </li>
 </ul>
  */
-public class OriginalNameDriver implements AttributeDriver {
+public class OriginalNameDriver extends AttributeDriver {
 
     /**
      * The attribute name.

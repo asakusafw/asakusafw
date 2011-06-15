@@ -27,7 +27,7 @@ import com.asakusafw.dmdl.semantics.Type;
  * {@code META-INF/services/com.asakusafw.dmdl.spi.TypeDriver}.
  * </p>
  */
-public interface TypeDriver {
+public abstract class TypeDriver {
 
     /**
      * Processes and modifies the attributed declaration.
@@ -35,5 +35,5 @@ public interface TypeDriver {
      * @param syntax the syntactic form of the type
      * @return the corresponded semantic form, or {@code null} if can not resolve
      */
-    Type resolve(DmdlSemantics environment, AstType syntax);
+    public abstract Type resolve(DmdlSemantics environment, AstType syntax);
 }

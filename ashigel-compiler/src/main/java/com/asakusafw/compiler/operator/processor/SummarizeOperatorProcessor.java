@@ -85,6 +85,7 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(FlowBoundary.SHUFFLE);
         builder.addAttribute(a.getObservationCount());
+        builder.addAttribute(annotation.partialAggregation());
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
                 a.getParameterDocument(0),

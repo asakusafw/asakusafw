@@ -68,16 +68,16 @@ public class DmdlSyntaxException extends Exception {
         ParseFrame[] frames = parser.getFrames();
         if (frames.length == 0) {
             return MessageFormat.format(
-                    "Invalid DMDL Script {0} ({1})",
+                    "Invalid DMDL Script {0}: {1}",
                     parser.getSourceFile(),
                     getReason(exception, parser));
         } else {
             ParseFrame top = frames[0];
             return MessageFormat.format(
-                    "Invalid DMDL Script {0} in the grammar: {1} ({2})",
+                    "Invalid DMDL Script {0} in the grammar: {1} (in \"{2}\")",
                     parser.getSourceFile(),
-                    top.getRuleName(),
-                    getReason(exception, parser));
+                    getReason(exception, parser),
+                    top.getRuleName());
         }
     }
 
@@ -85,9 +85,6 @@ public class DmdlSyntaxException extends Exception {
         assert exception != null;
         assert parser != null;
         Token token = parser.getToken(1);
-        if (token.kind == EOF) {
-            return "unexpected EOF";
-        }
         if (token.kind == UNEXPECTED) {
             return MessageFormat.format(
                     "invalid token: \"{0}\"",
@@ -104,6 +101,9 @@ public class DmdlSyntaxException extends Exception {
                         "missing {0}?",
                         exception.tokenImage[END_OF_DECLARATION]);
             }
+        }
+        if (token.kind == EOF) {
+            return "unexpected EOF";
         }
         if (token.image == null || token.image.isEmpty()) {
             return exception.tokenImage[token.kind];

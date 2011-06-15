@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-
 import org.apache.hadoop.io.Writable;
 import org.junit.Assume;
 import org.junit.Test;
@@ -30,6 +29,7 @@ import com.asakusafw.compiler.flow.processor.CoGroupFlowProcessor;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp1;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp2;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp3;
+import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowSwap;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowWithParameter;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
@@ -250,5 +250,42 @@ public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
 
         assertThat(result.getResults().size(), is(1));
         assertThat(result.getResults().get(0).getValue(), is(500));
+    }
+
+    /**
+     * スワップ付きバッファでのテスト。
+     */
+    @Test
+    public void swap() {
+        List<StageModel> stages = compile(CoGroupFlowSwap.class);
+        StageModel stage = stages.get(0);
+        Assume.assumeThat(stage.getReduceUnits().size(), is(1));
+        ReduceUnit reduce = stage.getReduceUnits().get(0);
+        Fragment fragment = reduce.getFragments().get(0);
+        Name name = fragment.getCompiled().getQualifiedName();
+
+        ClassLoader loader = start();
+        PortMapper mapper = new PortMapper(fragment);
+        MockResult<Ex1> result = mapper.create("r1");
+
+        @SuppressWarnings("unchecked")
+        Rendezvous<Writable> f = (Rendezvous<Writable>) create(loader, name, mapper.toArguments());
+
+        Segment segment = stage.getShuffleModel().findSegment(fragment.getInputPorts().get(0));
+        SegmentedWritable value = createShuffleValue(loader, stage);
+
+        Ex1 ex1 = new Ex1();
+        ex1.setStringAsString("string");
+
+        f.begin();
+        for (int i = 0; i < 100000; i++) {
+            ex1.setValue(10);
+            setShuffleValue(segment, value, ex1);
+            f.process(value);
+        }
+        f.end();
+
+        assertThat(result.getResults().size(), is(1));
+        assertThat(result.getResults().get(0).getValue(), is(100000 * 10));
     }
 }

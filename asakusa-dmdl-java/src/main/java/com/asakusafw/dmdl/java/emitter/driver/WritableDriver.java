@@ -30,7 +30,6 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
@@ -44,13 +43,10 @@ import com.ashigeru.lang.java.model.util.Models;
 /**
  * Implements {@link Writable} interface.
  */
-public class WritableDriver implements JavaDataModelDriver {
+public class WritableDriver extends JavaDataModelDriver {
 
     @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        if (model.getOriginalAst().kind == ModelDefinitionKind.PROJECTIVE) {
-            return Collections.emptyList();
-        }
         return Collections.singletonList(context.resolve(Writable.class));
     }
 
@@ -121,15 +117,5 @@ public class WritableDriver implements JavaDataModelDriver {
                 0,
                 Collections.singletonList(context.resolve(IOException.class)),
                 f.newBlock(statements));
-    }
-
-    @Override
-    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

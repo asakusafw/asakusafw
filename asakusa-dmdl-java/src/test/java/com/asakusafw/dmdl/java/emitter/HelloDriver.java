@@ -20,12 +20,9 @@ import java.util.List;
 
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.Models;
@@ -33,7 +30,7 @@ import com.ashigeru.lang.java.model.util.Models;
 /**
  * Creates a new method {@code def hello() = "hello"}.
  */
-public class HelloDriver implements JavaDataModelDriver {
+public class HelloDriver extends JavaDataModelDriver {
 
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
@@ -48,20 +45,5 @@ public class HelloDriver implements JavaDataModelDriver {
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, Models.toLiteral(f, "hello"))
                     .toReturnStatement())));
-    }
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

@@ -32,7 +32,7 @@ import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstModelFolding;
 import com.asakusafw.dmdl.model.AstModelMapping;
 import com.asakusafw.dmdl.model.AstModelReference;
-import com.asakusafw.dmdl.model.AstModelType;
+import com.asakusafw.dmdl.model.AstReferenceType;
 import com.asakusafw.dmdl.model.AstName;
 import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.model.AstPropertyDefinition;
@@ -234,12 +234,6 @@ public class DmdlEmitter {
         }
 
         @Override
-        public Void visitModelType(Context context, AstModelType node) {
-            node.name.accept(context, this);
-            return null;
-        }
-
-        @Override
         public Void visitPropertyDefinition(Context context, AstPropertyDefinition node) {
             if (node.description != null) {
                 node.description.accept(context, this);
@@ -306,10 +300,15 @@ public class DmdlEmitter {
         }
 
         @Override
+        public Void visitReferenceType(Context context, AstReferenceType node) {
+            node.name.accept(context, this);
+            return null;
+        }
+
+        @Override
         public Void visitSequenceType(Context context, AstSequenceType node) {
-            context.print("[");
             node.elementType.accept(context, this);
-            context.print("]");
+            context.print("*");
             return null;
         }
 

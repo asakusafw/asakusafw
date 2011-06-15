@@ -18,11 +18,13 @@ package com.asakusafw.compiler.flow.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Fold;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -75,6 +77,13 @@ public class FoldFlowProcessor extends RendezvousProcessor {
 
     @Override
     public boolean isPartial(FlowElementDescription description) {
-        return true;
+        Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
+        PartialAggregation partial = description.getAttribute(PartialAggregation.class);
+        if (partial == PartialAggregation.PARTIAL) {
+            return true;
+        } else if (partial == PartialAggregation.TOTAL) {
+            return false;
+        }
+        return getEnvironment().getOptions().isEnableCombiner();
     }
 }

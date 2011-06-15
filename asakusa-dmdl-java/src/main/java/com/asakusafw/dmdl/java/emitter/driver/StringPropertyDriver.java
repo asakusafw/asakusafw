@@ -28,7 +28,6 @@ import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
-import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.Attribute;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
@@ -39,7 +38,6 @@ import com.ashigeru.lang.java.model.syntax.ModifierKind;
 import com.ashigeru.lang.java.model.syntax.Name;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.SingleElementAnnotation;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.JavadocBuilder;
@@ -48,14 +46,9 @@ import com.ashigeru.lang.java.model.util.Models;
 /**
  * Implements {@code *AsString} methods.
  */
-public class StringPropertyDriver implements JavaDataModelDriver {
+public class StringPropertyDriver extends JavaDataModelDriver {
 
     private static final BasicType TEXT_TYPE = new BasicType(null, BasicTypeKind.TEXT);
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
 
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
@@ -185,15 +178,5 @@ public class StringPropertyDriver implements JavaDataModelDriver {
             results.add(attribute);
         }
         return results;
-    }
-
-    @Override
-    public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

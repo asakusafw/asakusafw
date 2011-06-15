@@ -24,6 +24,7 @@ import com.asakusafw.compiler.flow.processor.CoGroupFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
@@ -45,6 +46,18 @@ public abstract class CoGroupFlow {
         withParameter(a1, r1, 0);
     }
 
+
+    /**
+     * valueの合計を返す。
+     * @param a1 グループ
+     * @param r1 結果
+     */
+    @CoGroup(inputBuffer = InputBuffer.ESCAPE)
+    public void swap(
+            @Key(group = "string") List<Ex1> a1,
+            Result<Ex1> r1) {
+        withParameter(a1, r1, 0);
+    }
     /**
      * valueの合計を返す。
      * @param a1 グループ

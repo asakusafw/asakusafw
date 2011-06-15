@@ -152,7 +152,7 @@ public class Context {
         return results;
     }
 
-    private static class CompositeAttributeDriver implements AttributeDriver {
+    private static class CompositeAttributeDriver extends AttributeDriver {
 
         final List<AttributeDriver> drivers;
 

@@ -68,7 +68,7 @@ public final class BatchCompilerDriver {
         OPT_PACKAGE.setRequired(true);
 
         OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)");
-        OPT_HADOOPWORK.setArgName("jobflow/working");
+        OPT_HADOOPWORK.setArgName("batch/working");
         OPT_HADOOPWORK.setRequired(true);
 
         OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ");
@@ -90,6 +90,7 @@ public final class BatchCompilerDriver {
         OPTIONS.addOption(OPT_OUTPUT);
         OPTIONS.addOption(OPT_PACKAGE);
         OPTIONS.addOption(OPT_HADOOPWORK);
+        OPTIONS.addOption(OPT_COMPILERWORK);
         OPTIONS.addOption(OPT_LINK);
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_CLASS);

@@ -39,9 +39,7 @@ import com.ashigeru.lang.java.model.syntax.ArrayInitializer;
 import com.ashigeru.lang.java.model.syntax.ClassLiteral;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.Literal;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 import com.ashigeru.lang.java.model.util.TypeBuilder;
@@ -49,17 +47,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 /**
  * Implements summarized-model feature.
  */
-public class SummarizeDriver implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class SummarizeDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
@@ -151,10 +139,5 @@ public class SummarizeDriver implements JavaDataModelDriver {
                     "group", f.newArrayInitializer(properties))
             .toAnnotations()
             .get(0);
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

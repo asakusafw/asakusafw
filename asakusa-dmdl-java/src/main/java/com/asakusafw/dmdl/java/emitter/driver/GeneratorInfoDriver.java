@@ -15,18 +15,14 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
@@ -34,19 +30,9 @@ import com.ashigeru.lang.java.model.util.Models;
  * Attaches a <code>&#64;DataModelKind</code> annotation.
  * @since 0.2.0
  */
-public class GeneratorInfoDriver implements JavaDataModelDriver {
+public class GeneratorInfoDriver extends JavaDataModelDriver {
 
     private static final String GENERATOR_IDENTIFIER = "DMDL";
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
@@ -55,10 +41,5 @@ public class GeneratorInfoDriver implements JavaDataModelDriver {
             .annotation(context.resolve(DataModelKind.class),
                     Models.toLiteral(f, GENERATOR_IDENTIFIER))
             .toAnnotations();
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 }

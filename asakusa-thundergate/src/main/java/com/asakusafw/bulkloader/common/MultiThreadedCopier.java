@@ -65,12 +65,13 @@ public final class MultiThreadedCopier<T> {
      * @param input 入力
      * @param output 出力
      * @param working コピー時に仲介するデータモデルクラスの一覧
+     * @return コピーした件数
      * @throws IOException 入出力に失敗した場合
      * @throws InterruptedException スレッドに割り込まれた場合
      * @throws IllegalArgumentException {@code working}が空であった場合、
      *      または引数に{@code null}が指定された場合
      */
-    public static <T> void copy(
+    public static <T> long copy(
             ModelInput<T> input,
             ModelOutput<T> output,
             Collection<T> working) throws IOException, InterruptedException {
@@ -86,10 +87,10 @@ public final class MultiThreadedCopier<T> {
         if (working.isEmpty()) {
             throw new IllegalArgumentException("working must not be empty"); //$NON-NLS-1$
         }
-        new MultiThreadedCopier<T>(input, output, working).start();
+        return new MultiThreadedCopier<T>(input, output, working).process();
     }
 
-    private void start() throws IOException, InterruptedException {
+    private long process() throws IOException, InterruptedException {
         task.start();
         while (true) {
             T model = takeBuffer();
@@ -101,6 +102,7 @@ public final class MultiThreadedCopier<T> {
         task.finished.set(true);
         task.join();
         checkException();
+        return task.count;
     }
 
     private T takeBuffer() throws IOException, InterruptedException {
@@ -148,6 +150,8 @@ public final class MultiThreadedCopier<T> {
 
         final AtomicReference<Throwable> occurred = new AtomicReference<Throwable>();
 
+        long count;
+
         OutputTask(BlockingQueue<T> source, BlockingQueue<T> buffer, ModelOutput<T> sink) {
             assert source != null;
             assert buffer != null;
@@ -155,6 +159,7 @@ public final class MultiThreadedCopier<T> {
             this.source = source;
             this.buffer = buffer;
             this.sink = sink;
+            this.count = 0;
         }
 
         @Override
@@ -184,6 +189,7 @@ public final class MultiThreadedCopier<T> {
                 } else {
                     sink.write(next);
                     buffer.add(next);
+                    count++;
                 }
             }
         }

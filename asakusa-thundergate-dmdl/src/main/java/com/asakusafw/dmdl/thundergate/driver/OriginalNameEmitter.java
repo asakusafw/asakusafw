@@ -26,26 +26,14 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 import com.ashigeru.lang.java.model.syntax.Annotation;
 import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.Models;
 
 /**
  * Emits {@link OriginalName} annotations.
  */
-public class OriginalNameEmitter implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class OriginalNameEmitter extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {

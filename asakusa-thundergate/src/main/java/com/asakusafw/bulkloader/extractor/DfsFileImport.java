@@ -110,12 +110,21 @@ public class DfsFileImport {
                         tableName, dfsFilePath.toString(), targetTableModel.toString());
 
                 // ファイルをSequenceFileに変換してDFSに書き出す
-                write(targetTableModel, dfsFilePath, new ZipEntryInputStream(zipIs));
+                long recordCount = write(targetTableModel, dfsFilePath, new ZipEntryInputStream(zipIs));
 
                 Log.log(
                         this.getClass(),
                         MessageIdConst.EXT_CREATE_HDFSFILE_SUCCESS,
                         tableName, dfsFilePath.toString(), targetTableModel.toString());
+                Log.log(
+                        this.getClass(),
+                        MessageIdConst.PRF_EXTRACT_COUNT,
+                        bean.getTargetName(),
+                        bean.getBatchId(),
+                        bean.getJobflowId(),
+                        bean.getExecutionId(),
+                        tableName,
+                        recordCount);
             }
             // 正常終了
             return true;
@@ -146,20 +155,21 @@ public class DfsFileImport {
      * @param <T> Import対象テーブルに対応するModelのクラス型
      * @param targetTableModel Import対象テーブルに対応するModelのクラス
      * @param dfsFilePath HFSF上のファイル名
-     * @param zipEntryInputStream ZipOutputStream
-     * @throws BulkLoaderSystemException 読み出しと出力に失敗した場合
+     * @param inputStream ZipOutputStream
+     * @return 書きだした件数
+     * @throws BulkLoaderSystemException 読み出しや出力に失敗した場合
      */
-    protected <T> void write(
+    protected <T> long write(
             Class<T> targetTableModel,
             URI dfsFilePath,
-            ZipEntryInputStream zipEntryInputStream) throws BulkLoaderSystemException {
+            InputStream inputStream) throws BulkLoaderSystemException {
         ModelInput<T> modelIn = null;
         FileSystem fs = null;
         SequenceFile.Writer writer = null;
         try {
             // TSVファイルをBeanに変換するオブジェクトを生成する
             TsvIoFactory<T> factory = new TsvIoFactory<T>(targetTableModel);
-            modelIn = factory.createModelInput(zipEntryInputStream);
+            modelIn = factory.createModelInput(inputStream);
 
             // SequenceFileをDFSに出力するオブジェクトを生成する
             Configuration conf = new Configuration();
@@ -183,7 +193,7 @@ public class DfsFileImport {
                     NullWritable.class,
                     targetTableModel,
                     compType);
-            MultiThreadedCopier.copy(modelIn, new SequenceFileModelOutput<T>(writer), working);
+            return MultiThreadedCopier.copy(modelIn, new SequenceFileModelOutput<T>(writer), working);
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,

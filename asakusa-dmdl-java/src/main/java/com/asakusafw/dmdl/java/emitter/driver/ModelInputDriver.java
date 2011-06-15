@@ -49,17 +49,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 /**
  * Generates {@link ModelInput} for each data model.
  */
-public class ModelInputDriver implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class ModelInputDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException {

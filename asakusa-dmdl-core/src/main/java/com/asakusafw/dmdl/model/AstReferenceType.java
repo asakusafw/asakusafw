@@ -20,7 +20,7 @@ import com.asakusafw.dmdl.Region;
 /**
  * Represents a model as a type.
  */
-public class AstModelType extends AbstractAstNode implements AstType {
+public class AstReferenceType extends AbstractAstNode implements AstType {
 
     private final Region region;
 
@@ -35,7 +35,7 @@ public class AstModelType extends AbstractAstNode implements AstType {
      * @param name the name of the target model
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstModelType(Region region, AstSimpleName name) {
+    public AstReferenceType(Region region, AstSimpleName name) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -53,7 +53,7 @@ public class AstModelType extends AbstractAstNode implements AstType {
         if (visitor == null) {
             throw new IllegalArgumentException("visitor must not be null"); //$NON-NLS-1$
         }
-        R result = visitor.visitModelType(context, this);
+        R result = visitor.visitReferenceType(context, this);
         return result;
     }
 
@@ -76,7 +76,7 @@ public class AstModelType extends AbstractAstNode implements AstType {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AstModelType other = (AstModelType) obj;
+        AstReferenceType other = (AstReferenceType) obj;
         if (!name.equals(other.name)) {
             return false;
         }

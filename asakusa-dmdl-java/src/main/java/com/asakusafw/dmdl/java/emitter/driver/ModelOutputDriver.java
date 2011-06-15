@@ -33,7 +33,6 @@ import com.ashigeru.lang.java.model.syntax.ClassDeclaration;
 import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
@@ -49,17 +48,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 /**
  * Generates {@link ModelOutput} for each data model.
  */
-public class ModelOutputDriver implements JavaDataModelDriver {
-
-    @Override
-    public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
-        return Collections.emptyList();
-    }
+public class ModelOutputDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException {
@@ -80,11 +69,6 @@ public class ModelOutputDriver implements JavaDataModelDriver {
                 "{0}Output");
         Generator.emit(next, model);
         return context.resolve(next.getQualifiedTypeName());
-    }
-
-    @Override
-    public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) {
-        return Collections.emptyList();
     }
 
     private static class Generator {
