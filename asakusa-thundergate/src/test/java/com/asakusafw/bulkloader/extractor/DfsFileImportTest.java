@@ -17,25 +17,6 @@ package com.asakusafw.bulkloader.extractor;
 
 import static org.junit.Assert.*;
 
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import test.modelgen.table.model.ImportTarget1;
-
-import com.asakusafw.bulkloader.bean.ImportBean;
-import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
-import com.asakusafw.bulkloader.common.ConfigurationLoader;
-import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
-import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
-import com.asakusafw.bulkloader.extractor.DfsFileImport;
-import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,6 +31,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import test.modelgen.table.model.ImportTarget1;
+
+import com.asakusafw.bulkloader.bean.ImportBean;
+import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
+import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
+import com.asakusafw.bulkloader.common.ConfigurationLoader;
+import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.bulkloader.testutil.UnitTestUtil;
+import com.asakusafw.runtime.io.ZipEntryInputStream;
 
 
 /**
@@ -129,8 +128,8 @@ public class DfsFileImportTest {
                 return fis;
             }
             @Override
-            protected <T> void write(Class<T> targetTableModel,
-                    URI hdfsFilePath, ZipEntryInputStream zipEntryInputStream)
+            protected <T> long write(Class<T> targetTableModel,
+                    URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
                 FileOutputStream fos = null;
                 try {
@@ -139,7 +138,6 @@ public class DfsFileImportTest {
                     File file = new File("target/asakusa-thundergate/SEND_OUT" + String.valueOf(count) + ".tsv");
                     file.createNewFile();
                     fos = new FileOutputStream(file);
-
 
                     byte[] b = new byte[1024];
                     while (true) {
@@ -160,6 +158,7 @@ public class DfsFileImportTest {
                         }
                     }
                 }
+                return 1;
             }
         };
         boolean result = fileImport.importFile(bean, "hadoop");
@@ -215,8 +214,8 @@ public class DfsFileImportTest {
                 return fis;
             }
             @Override
-            protected <T> void write(Class<T> targetTableModel,
-                    URI hdfsFilePath, ZipEntryInputStream zipEntryInputStream)
+            protected <T> long write(Class<T> targetTableModel,
+                    URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
                 FileOutputStream fos = null;
                 try {
@@ -224,7 +223,6 @@ public class DfsFileImportTest {
                     File file = new File("target/asakusa-thundergate/SEND_OUT" + String.valueOf(count) + ".tsv");
                     file.createNewFile();
                     fos = new FileOutputStream(file);
-
 
                     byte[] b = new byte[1024];
                     while (true) {
@@ -245,6 +243,7 @@ public class DfsFileImportTest {
                         }
                     }
                 }
+                return 1;
             }
         };
         boolean result = fileImport.importFile(bean, "asakusa");
@@ -295,8 +294,8 @@ public class DfsFileImportTest {
                 return fis;
             }
             @Override
-            protected <T> void write(Class<T> targetTableModel,
-                    URI hdfsFilePath, ZipEntryInputStream zipEntryInputStream)
+            protected <T> long write(Class<T> targetTableModel,
+                    URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
                 FileOutputStream fos = null;
                 try {
@@ -325,6 +324,7 @@ public class DfsFileImportTest {
                         }
                     }
                 }
+                return 1;
             }
         };
         boolean result = fileImport.importFile(bean, "asakusa");
@@ -369,8 +369,8 @@ public class DfsFileImportTest {
                 return fis;
             }
             @Override
-            protected <T> void write(Class<T> targetTableModel,
-                    URI hdfsFilePath, ZipEntryInputStream zipEntryInputStream)
+            protected <T> long write(Class<T> targetTableModel,
+                    URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
                 throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "dummy");
             }
@@ -424,8 +424,8 @@ public class DfsFileImportTest {
                 return fis;
             }
             @Override
-            protected <T> void write(Class<T> targetTableModel,
-                    URI hdfsFilePath, ZipEntryInputStream zipEntryInputStream)
+            protected <T> long write(Class<T> targetTableModel,
+                    URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
                 FileOutputStream fos = null;
                 try {
@@ -454,6 +454,7 @@ public class DfsFileImportTest {
                         }
                     }
                 }
+                return 1;
             }
         };
         boolean result = fileImport.importFile(bean, "hadoop");

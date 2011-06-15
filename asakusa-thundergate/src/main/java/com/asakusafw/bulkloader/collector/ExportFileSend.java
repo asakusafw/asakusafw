@@ -92,7 +92,8 @@ public class ExportFileSend {
             boolean isPutEntry = false;
             for (String tableName : l) {
                 ExportTargetTableBean targetTable = bean.getExportTargetTable(tableName);
-                Class<?> targetTableModel = targetTable.getExportTargetType();
+                Class<? extends Writable> targetTableModel =
+                    targetTable.getExportTargetType().asSubclass(Writable.class);
 
                 List<String> filePath;
                 if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
@@ -105,21 +106,33 @@ public class ExportFileSend {
 
                 // Export対象テーブルに対するディレクトリ数分繰り返す
                 int fileCount = filePath.size();
+                long recordCount = 0;
                 for (int i = 0; i < fileCount; i++) {
                     // Exportファイルを送信
                     Log.log(
                             this.getClass(),
                             MessageIdConst.COL_SEND_HDFSFILE,
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
-                    if (send(targetTableModel.asSubclass(Writable.class),
-                            filePath.get(i), zos, tableName)) {
+                    long countInFile = send(targetTableModel, filePath.get(i), zos, tableName);
+                    if (countInFile >= 0) {
                         isPutEntry = true;
+                        recordCount += countInFile;
                     }
                     Log.log(
                             this.getClass(),
                             MessageIdConst.COL_SEND_HDFSFILE_SUCCESS,
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
                 }
+
+                Log.log(
+                        this.getClass(),
+                        MessageIdConst.PRF_COLLECT_COUNT,
+                        bean.getTargetName(),
+                        bean.getBatchId(),
+                        bean.getJobflowId(),
+                        bean.getExecutionId(),
+                        tableName,
+                        recordCount);
             }
 
             if (!isPutEntry) {
@@ -164,17 +177,16 @@ public class ExportFileSend {
      * @param filePath Exportファイル
      * @param zos 出力先の{@link ZipOutputStream}
      * @param tableName テーブル名
-     * @return ZipOutputStreamに一つでもZipEntryを追加した場合は{@code true}、そうでなければ{@code false}
+     * @return 書きだしたレコード数、エントリをひとつも書き出さなかった場合は -1
      * @throws BulkLoaderSystemException 入出力に関するシステム例外が発生した場合
      */
-    protected <T extends Writable> boolean send(
+    protected <T extends Writable> long send(
             Class<T> targetTableModel,
             String filePath,
             ZipOutputStream zos,
             String tableName) throws BulkLoaderSystemException {
         FileSystem fs = null;
         String fileName = null;
-        boolean isPutEntry = false;
 
         // 最大ファイルサイズを取得する
         long maxSize = Long.parseLong(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_LOAD_MAX_SIZE));
@@ -192,13 +204,15 @@ public class ExportFileSend {
                         this.getClass(),
                         MessageIdConst.COL_EXPORT_FILE_NOT_FOUND,
                         tableName, filePath);
-                return isPutEntry;
+                return -1;
             } else {
                 Log.log(
                         this.getClass(),
                         MessageIdConst.COL_EXPORT_FILE_FOUND,
                         listedPaths.length, tableName, filePath);
             }
+            long count = 0;
+            boolean addEntry = false;
             for (Path path : listedPaths) {
                 // ファイルがシステムファイルの場合はスキップする
                 if (isSystemFile(path)) {
@@ -216,7 +230,7 @@ public class ExportFileSend {
                         fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
                         ZipEntry ze = new ZipEntry(fileName);
                         zos.putNextEntry(ze);
-                        isPutEntry = true;
+                        addEntry = true;
 
                         ModelOutput<T> modelOut = null;
                         try {
@@ -235,6 +249,7 @@ public class ExportFileSend {
                             while (reader.next(NullWritable.get(), model)) {
                                 // Modolを書き出す
                                 modelOut.write(model);
+                                count++;
                                 // 最大ファイルサイズに達したかチェックする
                                 // charからbyteに変換する部分でバッファされるため、
                                 // 必ずしも分割サイズで分割されない。(バッファ分の誤差がある)
@@ -267,7 +282,12 @@ public class ExportFileSend {
                     }
                 }
             }
-            return isPutEntry;
+            if (addEntry) {
+                return count;
+            } else {
+                assert count == 0;
+                return -1;
+            }
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,
