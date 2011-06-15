@@ -138,8 +138,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
        |      : Ashigel Compilerによりバッチコンパイルされたバッチアプリケーションのアーカイブ。
        |        Mavenのpacageフェーズの実行により生成される。
        |
-       |-- ${artifactid}-XX.jar         : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
-       |-- ${artifactid}-XX-sources.jar : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
+       |-- ${artifactid}-${version}.jar         : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
+       |-- ${artifactid}-${version}-sources.jar : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
        |
        |-- batchc       : Ashigel Compilerによるバッチコンパイル結果の出力ディレクトリ。Mavenのpacageフェーズの実行により生成される。
        |-- batchcwork   : Ashigel Compilerによるバッチコンパイルのワークディレクトリ。
@@ -188,7 +188,7 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 
 モデルの定義情報をSQLのDDLとして記述する場合
 --------------------------------------------
-モデルクラスをSQLのDDLとして記述する場合、SQLファイルはプロジェクトの ``src/main/sql`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.sql`` の拡張子を付けて保存してください。
+モデルクラスをSQLのDDLとして記述する場合、SQLファイルはプロジェクトの ``src/main/sql/modelgen`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.sql`` の拡張子を付けて保存してください。
 
 SQLファイルは複数配置することが出来ます。上記ディレクトリ配下にサブディレクトリを作成し、そこにSQLファイルを配置することも可能です。SQLファイルを複数配置した場合、ディレクトリ名・ファイル名の昇順にSQLが実行されます。
 
@@ -205,13 +205,12 @@ Maven:モデルの生成とテストデータ定義シートの生成
 
     mvn generate-sources
 
-モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述する TODO ビルド定義ファイルのプロパティXXX にて変更することが出来ます。
+モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述するビルド定義ファイルにて変更することが出来ます。
 
-.. todo:: ビルド定義ファイルへのリンク
+また、generate-sources フェーズを実行すると、以下のファイルも合わせて生成されます。
 
-また、generate-sources フェーズを実行すると、テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、TODO テストドライバ を参照して下さい。
-
-.. todo:: テストドライバへのリンク
+* テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel_ja` を参照して下さい。
+* ThunderGateが使用する管理テーブル用DDLスクリプトが ``target/sql`` 配下に生成され、開発環境用のデータベースに対してこのSQLが実行されます。ThunderGateが要求するテーブルが自動的に作成されるため、テストドライバを使ったテストがすぐに行える状態になります。
 
 Asakusa DSLのバッチコンパイルとアプリケーションアーカイブの生成
 ===============================================================
@@ -237,25 +236,133 @@ Maven:バッチコンパイル
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
-``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては TODO [[Deployment Guide]]」を参照して下さい。
+``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administration-guide_ja` を参照して下さい。
 
-.. todo:: AdministrationGuideへのリンク
+..  note::
+    バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。これらのファイルはMavenの標準の ``package`` フェーズの処理により作成されるjarファイルですが、Asakusa Frameworkではこれらのファイルは使用しません。これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
 
 バッチコンパイルオプションの指定
 --------------------------------
 
 バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。設定できる値は「+<有効にするオプション名>」や「-<無効にするオプション名>」のように、オプション名の先頭に「+」や「-」を指定します。また、複数のオプションを指定するには「,」(カンマ)でそれぞれを区切ります。
 
-指定出来るバッチコンパイルのオプションについては、 TODO DSLユーザガイド を参照してください。
+指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide_ja`  を参照してください。
 
-.. todo:: コンパイルオプションへのリンク
+Eclipseを使ったアプリケーションの開発
+=====================================
+Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。詳しくは、  :doc:`start-guide_ja` の `Eclipseを使ったアプリケーションの開発` を参照して下さい。
 
-Eclipse
-==================
-TODO スタートガイドへのリンク
+``build.properties`` ビルド定義ファイル
+=======================================
+アーキタイプから作成したプロジェクトの ``build.properties`` はプロジェクトのビルドや各種ツールの動作を設定します。設定項目について以下に説明します。
 
-ビルド定義ファイル
-==================
+項目値が択一式の項目については、デフォルト値を **太字** で示しています。
 
-TODO build.properties について
+---------------------
 
+General Settings
+
+  asakusa.database.enabled 
+    ( **true** or false ) このプロパティをfalseにすると、Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
+    
+    ThunderGateを使用せず、モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用しない構成で開発を行うことが可能になります。
+
+  asakusa.jdbc.conf
+    Asakusa Frameworkの各コンポーネントがデータベースを使用する際に使用する、データベースに関する接続情報を定義するファイルパスを指定します。アーキタイプから生成したプロジェクトでは、デフォルト値で指定したパス上にデータベース定義ファイルが生成されます。通常は変更する必要がありません。
+
+---------------------
+
+Batch Compile Settings
+
+  asakusa.package.default
+    バッチコンパイル時に生成されるHadoopのジョブ、及びMapReduce関連クラスのJavaパッケージを指定します。デフォルト値はアーキタイプ生成時に指定した ``package`` の値に ``.batchapp`` を付与した値になります。
+
+  asakusa.batchc.dir
+    バッチコンパイル時に生成されるHadoopのジョブ、及びMapReduce関連クラスの出力ディレクトリを指定します。 ``package`` フェーズを実行した時に生成されるjarファイルは、このディレクトリ配下のソースをアーカイブしたものになります。
+
+  asakusa.compilerwork.dir
+    バッチコンパイル時にコンパイラが使用するワークディレクトリを指定します。
+
+  asakusa.hadoopwork.dir
+    Asakusa Frameworkがジョブフローの実行毎にデータを配置するHadoopファイルシステム上のディレクトリを、ユーザのホームディレクトリからの相対パスで指定します。
+    
+    パスに文字列 ``${execution_id}`` が含まれる場合、ワークフローエンジンから指定されたexecution_idによって置換されます。デフォルト値はexecution_idが指定されているため、ジョブフローの実行毎にファイルシステム上は異なるディレクトリが使用されることになります。
+
+---------------------
+
+Model Generator Settings
+
+  asakusa.modelgen.package
+    モデルジェネレータによるモデル生成時にモデルクラスに付与されるJavaパッケージを指定します。デフォルト値は、アーキタイプ生成時に指定した ``package`` の値に ``.modelgen`` を付与した値になります。
+
+  asakusa.modelgen.includes
+    ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象とするモデル名を正規表現の書式で指定します。
+    
+  asakusa.modelgen.excludes
+    ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象外とするモデル名を正規表現の書式で指定します。デフォルト値はThunderGateが使用する管理テーブルを生成対象外とするよう指定されています。特に理由が無い限り、デフォルト値で指定されている値は削除しないようにして下さい。
+
+  asakusa.modelgen.output
+    モデルジェネレータが生成するモデルクラス用Javaソースの出力ディレクトリを指定します。アーキタイプが提供するEclipseの設定情報と対応しているため、特に理由が無い限りはデフォルト値を変更しないようにしてください。この値を変更する場合、合わせてpom.xmlの修正も必要となります。
+
+  asakusa.dmdl.encoding
+    DMDLスクリプトが使用する文字エンコーディングを指定します。
+
+  asakusa.dmdl.dir
+    DMDLスクリプトを配置するディレクトリを指定します。
+
+---------------------
+
+ThunderGate Settings
+
+  asakusa.bulkloader.tables
+    ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプト（後述の「asakusa.bulkloader.genddl」で指定したファイル）に含める対象テーブルを指定します。このプロパティにインポート、及びエクスポート対象テーブルのみを指定することで、余分な管理テーブルの生成を抑止することが出来ます。開発時にはデフォルト（コメントアウト）の状態で特に問題ありません。
+
+  asakusa.bulkloader.genddl
+    ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプトのファイルパスを指定します。
+
+  asakusa.dmdl.fromddl.output
+    ``generate-sources`` フェーズ実行時にモデル定義情報となるDDLスクリプトから生成するDMDLスクリプトの出力先を指定します。
+
+---------------------
+
+TestDriver Settings
+
+  asakusa.testdatasheet.generate
+    ( **true** or false ) このプロパティをfalseにすると、``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
+
+  asakusa.testdatasheet.format
+    ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートのフォーマットを指定します。以下の値を指定することが出来ます。
+      * DATA: テストデータ定義シートにテストデータの入力データ用シートのみを含めます。
+      * RULE: テストデータ定義シートにテストデータの検証ルール用シートのみを含めます。
+      * INOUT: テストデータ定義シートにテストデータの入力データ用シートと出力（期待値）用シートを含めます。
+      * INSPECT: テストデータ定義シートにテストデータの出力（期待値）用シートと検証ルール用シートのみを含めます。
+      * **ALL**: テストデータ定義シートに入力データ用シート、出力（期待値）用シート、検証ルール用シートを含めます。
+
+  asakusa.testdatasheet.output
+    ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートの出力ディレクトリを指定します。
+
+  asakusa.testdriver.compilerwork.dir
+    テストドライバの実行時にテストドライバの内部で実行されるバッチコンパイルに対してコンパイラが使用するワークディレクトリを指定します。 
+    
+    ``asakusa.compilerwork.dir`` と同じ働きですが、この項目はテストドライバの実行時にのみ使われます。
+
+  asakusa.testdriver.hadoopwork.dir
+    テストドライバの実行時にテストドライバの内部で使用される、ジョブフローの実行毎にデータを配置するHadoopファイルシステム上のディレクトリを、ユーザのホームディレクトリからの相対パスで指定します。Hadoopのスタンドアロンモード使用時には、OS上のユーザのホームディレクトリが使用されます。
+
+    ``asakusa.hadoopwork.dir`` と同じ働きですが、この項目はテストドライバの実行時にのみ使われます。
+
+---------------------
+
+TestDriver Settings (for Asakusa 0.1 asakusa-test-tools)
+
+  asakusa.testdatasheet.v01.generate
+    ( true or **false** ) Asakusa Framework 0.1 仕様のテストデータ定義シートを出力するかを設定します（デフォルトは出力しない）。 このプロパティをtrueにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートが ``target/excel_v01`` ディレクトリ配下に出力されるようになります。
+
+  asakusa.testdriver.testdata.dir
+    テストドライバの実行時に、テストドライバが参照するテストデータ定義シートの配置ディレクトリを指定します。
+    
+    このプロパティは、テストドライバAPIのうち、Asakusa Framework 0.1 から存在する ``*TestDriver`` というクラスの実行時のみ使用されます。Asakusa Framework 0.2 から追加された ``*Tester`` 系のテストドライバAPIは、この値を使用せず、テストドライバ実行時のクラスパスからテストデータ定義シートを参照するようになっています。
+
+  asakusa.excelgen.tables
+    Asakusa Framework 0.1 仕様のテストデータ定義シート生成ツールをMavenコマンドから実行 ( ``mvn exec:java -Dexec.mainClass=com.asakusafw.testtools.templategen.Main`` )した場合に、テストデータシート生成ツールが生成の対象とするテーブルをスペース区切りで指定します。
+    
