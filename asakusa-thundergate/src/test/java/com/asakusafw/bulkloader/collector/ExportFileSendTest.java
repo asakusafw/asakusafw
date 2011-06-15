@@ -17,12 +17,6 @@ package com.asakusafw.bulkloader.collector;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,18 +32,21 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Writable;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import test.modelgen.table.model.ImportTarget1;
 
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
-import com.asakusafw.bulkloader.collector.ExportFileSend;
+import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.FileCompType;
 import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -189,7 +186,7 @@ public class ExportFileSendTest {
         DummyExportFileSend send = new DummyExportFileSend() {
 
             @Override
-            protected <T extends Writable> boolean send(Class<T> targetTableModel,
+            protected <T extends Writable> long send(Class<T> targetTableModel,
                     String dir, ZipOutputStream zos, String tableName)
                     throws BulkLoaderSystemException {
                 FileInputStream fis = null;
@@ -213,7 +210,7 @@ public class ExportFileSendTest {
                         e1.printStackTrace();
                     }
                 }
-                return true;
+                return 1;
             }
             @Override
             protected OutputStream getOutputStream() {
@@ -288,7 +285,7 @@ public class ExportFileSendTest {
         ExportFileSend send = new ExportFileSend() {
 
             @Override
-            protected <T extends Writable> boolean send(Class<T> targetTableModel,
+            protected <T extends Writable> long send(Class<T> targetTableModel,
                     String dir, ZipOutputStream zos, String tableName)
                     throws BulkLoaderSystemException {
                 FileInputStream fis = null;
@@ -312,7 +309,7 @@ public class ExportFileSendTest {
                         e1.printStackTrace();
                     }
                 }
-                return true;
+                return 1;
             }
             @Override
             protected OutputStream getOutputStream() {
@@ -375,7 +372,7 @@ public class ExportFileSendTest {
         ExportFileSend send = new ExportFileSend() {
 
             @Override
-            protected <T extends Writable> boolean send(Class<T> targetTableModel,
+            protected <T extends Writable> long send(Class<T> targetTableModel,
                     String dir, ZipOutputStream zos, String tableName)
                     throws BulkLoaderSystemException {
                 throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "dummy");
@@ -441,10 +438,10 @@ public class ExportFileSendTest {
              * @see com.asakusafw.bulkloader.collector.DummyExportFileSend#send(java.lang.Class, java.lang.String, java.util.zip.ZipOutputStream, java.lang.String)
              */
             @Override
-            protected <T extends Writable> boolean send(
+            protected <T extends Writable> long send(
                     Class<T> targetTableModel, String dir, ZipOutputStream zos,
                     String tableName) throws BulkLoaderSystemException {
-                return false;
+                return 0;
             }
 
         };
@@ -568,7 +565,7 @@ public class ExportFileSendTest {
             ExportFileSend send = new ExportFileSend();
             URI inUri = inFile.toURI();
             String inStr = inUri.toString();
-            boolean isPutEntry = send.send(targetTableModel, inStr, zos, tableName);
+            boolean isPutEntry = send.send(targetTableModel, inStr, zos, tableName) > 0;
             if (!isPutEntry) {
                 ZipEntry ze = new ZipEntry("DUMMY_FILE");
                 try {
@@ -657,7 +654,7 @@ public class ExportFileSendTest {
             ExportFileSend send = new ExportFileSend();
             URI inUri = inFile.toURI();
             String inStr = inUri.toString();
-            boolean isPutEntry = send.send(targetTableModel, inStr, zos, tableName);
+            boolean isPutEntry = send.send(targetTableModel, inStr, zos, tableName) > 0;
             if (!isPutEntry) {
                 ZipEntry ze = new ZipEntry("DUMMY_FILE");
                 try {
@@ -725,11 +722,11 @@ public class ExportFileSendTest {
 class DummyExportFileSend extends ExportFileSend {
     List<String> dirs = new ArrayList<String>();
     @Override
-    protected <T extends Writable> boolean send(Class<T> targetTableModel,
+    protected <T extends Writable> long send(Class<T> targetTableModel,
             String dir, ZipOutputStream zos, String tableName)
             throws BulkLoaderSystemException {
         dirs.add(dir);
-        return true;
+        return 1;
     }
     public List<String> getDirs() {
         return dirs;
