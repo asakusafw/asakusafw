@@ -57,10 +57,10 @@ public class FlowCompilerOptions {
         /**
          * オプション項目: フロー部品のインライン化の際に、可能な限りステージ数が少なくなるようにインライン化する。
          * <p>
-         * デフォルトではインライン化の際に前後にチェックポイントを挿入する (false)。
+         * デフォルトではステージが少なくなるように修正する (true)。
          * </p>
          */
-        compressFlowPart(false) {
+        compressFlowPart(true) {
             @Override void setTo(FlowCompilerOptions options, boolean value) {
                 options.setCompressFlowPart(value);
             }
