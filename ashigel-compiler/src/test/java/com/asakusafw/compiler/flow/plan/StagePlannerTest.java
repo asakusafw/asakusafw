@@ -40,9 +40,18 @@ public class StagePlannerTest {
 
     private final FlowGraphGenerator gen = new FlowGraphGenerator();
 
-    private final StagePlanner planner = new StagePlanner(
-            Collections.<FlowGraphRewriter>emptyList(),
-            new FlowCompilerOptions());
+    private StagePlanner getPlanner() {
+        FlowCompilerOptions options = new FlowCompilerOptions();
+        options.setCompressConcurrentStage(false);
+        options.setCompressFlowPart(false);
+        options.setEnableCombiner(false);
+        options.setEnableDebugLogging(true);
+        options.setHashJoinForSmall(false);
+        options.setHashJoinForTiny(false);
+        return new StagePlanner(
+                Collections.<FlowGraphRewriter>emptyList(),
+                options);
+        }
 
     /**
      * {@link StagePlanner#validate(FlowGraph)}
@@ -55,7 +64,7 @@ public class StagePlannerTest {
         gen.connect("in", "op.in").connect("op.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(true));
+        assertThat(getPlanner().validate(graph), is(true));
     }
 
     /**
@@ -69,7 +78,7 @@ public class StagePlannerTest {
         gen.connect("in", "op.in").connect("op.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(false));
+        assertThat(getPlanner().validate(graph), is(false));
     }
 
     /**
@@ -83,7 +92,7 @@ public class StagePlannerTest {
         gen.connect("in", "op.in").connect("op.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(false));
+        assertThat(getPlanner().validate(graph), is(false));
     }
 
     /**
@@ -97,7 +106,7 @@ public class StagePlannerTest {
         gen.connect("in", "op.in").connect("op.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(true));
+        assertThat(getPlanner().validate(graph), is(true));
     }
 
     /**
@@ -113,7 +122,7 @@ public class StagePlannerTest {
         gen.connect("op", "back").connect("back", "op");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(false));
+        assertThat(getPlanner().validate(graph), is(false));
     }
 
     /**
@@ -134,7 +143,7 @@ public class StagePlannerTest {
         gen.connect("in", "c.in").connect("c.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        assertThat(planner.validate(graph), is(false));
+        assertThat(getPlanner().validate(graph), is(false));
     }
 
     /**
@@ -151,7 +160,7 @@ public class StagePlannerTest {
         gen.connect("op1.b", "out2");
 
         FlowGraph graph = gen.toGraph();
-        planner.insertCheckpoints(graph);
+        getPlanner().insertCheckpoints(graph);
         assertThat(FlowGraphUtil.collectBoundaries(graph),
                 not(gen.getAsSet("in1", "op1", "op2", "out1", "out2")));
 
@@ -182,7 +191,7 @@ public class StagePlannerTest {
         gen.connect("op1.b", "out2");
 
         FlowGraph graph = gen.toGraph();
-        planner.insertCheckpoints(graph);
+        getPlanner().insertCheckpoints(graph);
 
         assertThat(FlowGraphUtil.collectBoundaries(graph),
                 is(gen.getAsSet("in1", "op1", "out1", "out2")));
@@ -198,7 +207,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op.in").connect("op.out", "out");
         FlowGraph graph = gen.toGraph();
-        planner.insertIdentities(graph);
+        getPlanner().insertIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op", "out")));
@@ -215,7 +224,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
         FlowGraph graph = gen.toGraph();
-        planner.insertIdentities(graph);
+        getPlanner().insertIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 not(gen.getAsSet("in", "op1", "op2", "out")));
@@ -244,7 +253,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
         FlowGraph graph = gen.toGraph();
-        planner.insertIdentities(graph);
+        getPlanner().insertIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 not(gen.getAsSet("in", "op1", "op2", "out")));
@@ -273,7 +282,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
         FlowGraph graph = gen.toGraph();
-        planner.insertIdentities(graph);
+        getPlanner().insertIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "op2", "out")));
@@ -290,7 +299,7 @@ public class StagePlannerTest {
         gen.connect("in", "op.in").connect("op.out", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.splitIdentities(graph);
+        getPlanner().splitIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op", "out")));
@@ -310,7 +319,7 @@ public class StagePlannerTest {
         gen.connect("in2", "id").connect("id", "out2");
 
         FlowGraph graph = gen.toGraph();
-        planner.splitIdentities(graph);
+        getPlanner().splitIdentities(graph);
 
         Set<FlowElement> succ1 = FlowGraphUtil.getSuccessors(gen.get("in1"));
         Set<FlowElement> succ2 = FlowGraphUtil.getSuccessors(gen.get("in2"));
@@ -354,7 +363,7 @@ public class StagePlannerTest {
         gen.connect("in1", "id2").connect("id2", "out2");
 
         FlowGraph graph = gen.toGraph();
-        planner.splitIdentities(graph);
+        getPlanner().splitIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in1", "id1", "id2", "out1", "out2")));
@@ -372,7 +381,7 @@ public class StagePlannerTest {
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.reduceIdentities(graph);
+        getPlanner().reduceIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "op2", "out")));
@@ -393,7 +402,7 @@ public class StagePlannerTest {
         gen.connect("in", "op1").connect("op1", "id").connect("id", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.reduceIdentities(graph);
+        getPlanner().reduceIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "out")));
@@ -414,7 +423,7 @@ public class StagePlannerTest {
         gen.connect("in", "id").connect("id", "op1").connect("op1", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.reduceIdentities(graph);
+        getPlanner().reduceIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "out")));
@@ -434,7 +443,7 @@ public class StagePlannerTest {
         gen.connect("in", "id").connect("id", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.reduceIdentities(graph);
+        getPlanner().reduceIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "id", "out")));
@@ -455,7 +464,7 @@ public class StagePlannerTest {
         gen.connect("in", "op1").connect("op1", "id").connect("id", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.reduceIdentities(graph);
+        getPlanner().reduceIdentities(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "out")));
@@ -478,7 +487,7 @@ public class StagePlannerTest {
         gen.connect("id", "out2");
 
         FlowGraph graph = gen.toGraph();
-        planner.normalizeFlowGraph(graph);
+        getPlanner().normalizeFlowGraph(graph);
 
         assertThat(FlowGraphUtil.collectElements(graph),
                 is(gen.getAsSet("in", "op1", "out1", "out2")));
@@ -510,7 +519,7 @@ public class StagePlannerTest {
         gen.connect("in", "c").connect("c.out1", "out").connect("c.out2", "out");
 
         FlowGraph graph = gen.toGraph();
-        planner.normalizeFlowGraph(graph);
+        getPlanner().normalizeFlowGraph(graph);
         deletePseuds(graph);
 
         assertThat(succ(gen.get("in")), is(comp.get("op1")));
@@ -528,7 +537,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -549,7 +558,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op").connect("op", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -584,7 +593,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op").connect("op", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -627,7 +636,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "op1").connect("op1", "op2").connect("op2", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -676,7 +685,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "c").connect("c", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -730,7 +739,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "fp1").connect("fp1", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));
@@ -788,7 +797,7 @@ public class StagePlannerTest {
         gen.defineOutput("out");
         gen.connect("in", "fp1").connect("fp1", "out");
 
-        StageGraph stages = planner.plan(gen.toGraph());
+        StageGraph stages = getPlanner().plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));

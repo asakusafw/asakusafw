@@ -49,7 +49,7 @@ public class FlowCompilerOptions {
          * </p>
          */
         enableCombiner(false) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setEnableCombiner(value);
             }
         },
@@ -57,11 +57,11 @@ public class FlowCompilerOptions {
         /**
          * オプション項目: フロー部品のインライン化の際に、可能な限りステージ数が少なくなるようにインライン化する。
          * <p>
-         * デフォルトではインライン化の際に前後にチェックポイントを挿入する (false)。
+         * デフォルトではステージが少なくなるように修正する (true)。
          * </p>
          */
-        compressFlowPart(false) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+        compressFlowPart(true) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setCompressFlowPart(value);
             }
         },
@@ -73,7 +73,7 @@ public class FlowCompilerOptions {
          * </p>
          */
         compressConcurrentStage(true) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setCompressConcurrentStage(value);
             }
         },
@@ -85,7 +85,7 @@ public class FlowCompilerOptions {
          * </p>
          */
         hashJoinForTiny(true) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setHashJoinForTiny(value);
             }
         },
@@ -97,7 +97,7 @@ public class FlowCompilerOptions {
          * </p>
          */
         hashJoinForSmall(false) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setHashJoinForSmall(value);
             }
         },
@@ -109,7 +109,7 @@ public class FlowCompilerOptions {
          * </p>
          */
         enableDebugLogging(false) {
-            @Override void setTo(FlowCompilerOptions options, boolean value) {
+            @Override public void setTo(FlowCompilerOptions options, boolean value) {
                 options.setEnableDebugLogging(value);
             }
         },
@@ -124,7 +124,13 @@ public class FlowCompilerOptions {
             this.defaultValue = defaultValue;
         }
 
-        abstract void setTo(FlowCompilerOptions options, boolean value);
+        /**
+         * オプション一覧のこの項目に対して値を設定する。
+         * @param options 対象のオプション一覧
+         * @param value 設定する値
+         * @throws IllegalArgumentException if any parameter is {@code null}
+         */
+        public abstract void setTo(FlowCompilerOptions options, boolean value);
     }
 
     private volatile boolean enableCombiner;
