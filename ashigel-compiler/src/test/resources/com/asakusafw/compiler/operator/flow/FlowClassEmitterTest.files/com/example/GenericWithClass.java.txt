@@ -1,0 +1,30 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.flow.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.vocabulary.flow.*;
+import com.asakusafw.vocabulary.flow.util.*;
+
+@FlowPart
+public class GenericWithClass<A extends MockProjection, B extends MockProjection> extends FlowDescription {
+
+    private In<A> in;
+    private Out<B> out;
+    private Class<B> type;
+
+    public GenericWithClass(In<A> in, Out<B> out, Class<B> type) {
+        this.in = in;
+        this.out = out;
+        this.type = type;
+    }
+
+    @Override
+    protected void describe() {
+        if (Store.result != null) {
+            throw new AssertionError("duplicated");
+        }
+        Store.result = "OK";
+        CoreOperatorFactory c = new CoreOperatorFactory();
+        out.add(c.project(in, type));
+    }
+}

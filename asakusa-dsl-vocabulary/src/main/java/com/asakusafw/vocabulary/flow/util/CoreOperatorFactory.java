@@ -15,7 +15,8 @@
  */
 package com.asakusafw.vocabulary.flow.util;
 
-import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.*;
+import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.INPUT_PORT_NAME;
+import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.OUTPUT_PORT_NAME;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -53,6 +54,16 @@ public class CoreOperatorFactory {
      * チェックポイント演算子の共通インスタンス名。
      */
     public static final String CHECKPOINT_NAME = "checkpoint";
+
+    /**
+     * 射影演算子の共通インスタンス名。
+     */
+    public static final String PROJECT_NAME = "project";
+
+    /**
+     * 拡張演算子の共通インスタンス名。
+     */
+    public static final String EXTEND_NAME = "extend";
 
     /**
      * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
@@ -403,7 +414,7 @@ public class CoreOperatorFactory {
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();
             this.resolver.resolveInput(INPUT_PORT_NAME, in);
-            this.resolver.setName("project");
+            this.resolver.setName(PROJECT_NAME);
             this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
         }
 
@@ -437,7 +448,7 @@ public class CoreOperatorFactory {
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();
             this.resolver.resolveInput(INPUT_PORT_NAME, in);
-            this.resolver.setName("extend");
+            this.resolver.setName(EXTEND_NAME);
             this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
         }
 
