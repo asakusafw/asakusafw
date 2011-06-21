@@ -173,8 +173,8 @@ Asakusa Frameworkでは、モデルの定義情報の記述するために、以
 1. モデルの定義情報をDMDL(Data Model Definition Language)として記述する [#]_ 
 2. モデルの定義情報をSQLのDDLとして記述する [#]_ 
 
-..  [#] :doc:`../dmdl/start-guide_ja` 
-..  [#] :doc:`../dmdl/with-thundergate_ja` 
+..  [#] :doc:`../dmdl/start-guide` 
+..  [#] :doc:`../dmdl/with-thundergate` 
 
 モデル定義情報の記述方法については上述のドキュメントを参照してください。
 
@@ -209,7 +209,7 @@ Maven:モデルの生成とテストデータ定義シートの生成
 
 また、generate-sources フェーズを実行すると、以下のファイルも合わせて生成されます。
 
-* テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel_ja` を参照して下さい。
+* テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel` を参照して下さい。
 * ThunderGateが使用する管理テーブル用DDLスクリプトが ``target/sql`` 配下に生成され、開発環境用のデータベースに対してこのSQLが実行されます。ThunderGateが要求するテーブルが自動的に作成されるため、テストドライバを使ったテストがすぐに行える状態になります。
 
 Asakusa DSLのバッチコンパイルとアプリケーションアーカイブの生成
@@ -236,7 +236,7 @@ Maven:バッチコンパイル
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
-``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administration-guide_ja` を参照して下さい。
+``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administration-guide` を参照して下さい。
 
 ..  note::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。これらのファイルはMavenの標準の ``package`` フェーズの処理により作成されるjarファイルですが、Asakusa Frameworkではこれらのファイルは使用しません。これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
@@ -246,11 +246,11 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。設定できる値は「+<有効にするオプション名>」や「-<無効にするオプション名>」のように、オプション名の先頭に「+」や「-」を指定します。また、複数のオプションを指定するには「,」(カンマ)でそれぞれを区切ります。
 
-指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide_ja`  を参照してください。
+指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide`  を参照してください。
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。詳しくは、  :doc:`start-guide_ja` の `Eclipseを使ったアプリケーションの開発` を参照して下さい。
+Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。詳しくは、  :doc:`start-guide` の `Eclipseを使ったアプリケーションの開発` を参照して下さい。
 
 ``build.properties`` ビルド定義ファイル
 =======================================

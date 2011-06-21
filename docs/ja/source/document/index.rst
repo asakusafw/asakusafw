@@ -5,6 +5,6 @@
 ..  toctree::
     :maxdepth: 2
 
-    install_ja
-    format_ja
+    install
+    format
 

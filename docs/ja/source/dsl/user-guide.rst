@@ -71,7 +71,7 @@ Asakusa DSLにおいて、演算子は
 このフレームワークでの標準的な設計開発手法です。
 
 演算子には「種類」というものがあり、それぞれ入出力や処理の内容に制限を与えています。
-:doc:`operators_ja` から演算子の種類を選択し、実際の処理内容を決めていきます。
+:doc:`operators` から演算子の種類を選択し、実際の処理内容を決めていきます。
 
 それぞれの演算子は、Askausaが提供するOperator DSLを使って記述します。
 DSLといっても難しいものではなく、通常のJavaのメソッド宣言に
@@ -115,7 +115,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 * ``static`` として宣言しない
 * 演算子クラス内の他のあらゆる演算子メソッドと名前が衝突 [#]_ しない
 
-演算子の一覧や、演算子注釈については :doc:`operators_ja` を参照してください。
+演算子の一覧や、演算子注釈については :doc:`operators` を参照してください。
 
 以下は、演算子メソッドの例です。
 
@@ -220,7 +220,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
     @Key(group = {}, order = "count DESC")
 
 
-キーの指定が必要な演算子については、 :doc:`operators_ja` を参照してください。
+キーの指定が必要な演算子については、 :doc:`operators` を参照してください。
 
 演算子の多相化
 ~~~~~~~~~~~~~~
@@ -235,9 +235,9 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
           model.setValue(100);
      }
 
-詳しくは :doc:`generic-dataflow_ja` を参照してください。
+詳しくは :doc:`generic-dataflow` を参照してください。
 
-..  [#] :doc:`../dmdl/user-guide_ja`
+..  [#] :doc:`../dmdl/user-guide`
 
 フレームワークAPI
 -----------------
@@ -423,7 +423,7 @@ Operator DSLコンパイラは、 `フロー部品`_ に対する演算子 (フ�
 * 演算子ファクトリメソッド名は常に ``create``
 * 演算子オブジェクトクラス名はフロー部品の名前と同じ
 
-なお、フロー演算子については :doc:`operators_ja` を参照してください。
+なお、フロー演算子については :doc:`operators` を参照してください。
 
 
 Flow DSL
@@ -463,7 +463,7 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate_ja` を参照してください。
+詳しくは :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -484,7 +484,7 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate_ja` を参照してください。
+詳しくは :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -604,7 +604,7 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
 
 作成した演算子を利用するには、その演算子クラスに対応する `演算子ファクトリ`_ を経由します。
 また、「コア演算子」という組み込みの演算子ファクトリも用意されています。
-コア演算子については :doc:`operators_ja` を参照してください。
+コア演算子については :doc:`operators` を参照してください。
 
 以下は、フロー記述メソッドの例です。
 
@@ -667,7 +667,7 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
     一部の値のみが異なる複数のデータフローをフロー部品として抽出すると、
     データフローの再利用性が高まります。
 型引数を利用できる
-    フロー部品は :doc:`generic-dataflow_ja` に対応しています。
+    フロー部品は :doc:`generic-dataflow` に対応しています。
     データフロー内で利用するデータモデルの種類を型引数として宣言でき、
     内部では多相化した演算子を利用できます。
 
@@ -690,7 +690,7 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
 
 ..  note::
     フロー部品クラスはジョブフロークラスと異なり、型引数の宣言が可能です。
-    詳しくは :doc:`generic-dataflow_ja` を参照してください。
+    詳しくは :doc:`generic-dataflow` を参照してください。
 
 以下はフロー部品クラスの例です。
 
@@ -769,7 +769,7 @@ Asakusa Frameworkでは、通常Flow DSLのプログラムを直接コンパイ�
 
 なお、フロー部品を `Operator DSLコンパイラ`_ に掛けると「フロー演算子」を作成します。
 これはジョブフローやフロー部品に、他のフロー部品を組み込むための演算子です。
-フロー演算子については、 :doc:`operators_ja` を参照してください。
+フロー演算子については、 :doc:`operators` を参照してください。
 
 
 Batch DSL
@@ -1023,7 +1023,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 
 ..  [#] ``java`` コマンドの起動引数に ``-Dcom.asakusafw.compiler.options=...``
     の形式で指定します
-..  [#] :doc:`operators_ja` の単純集計演算子や畳み込み演算子を参照
+..  [#] :doc:`operators` の単純集計演算子や畳み込み演算子を参照
 ..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
 
 ワークフロー記述
@@ -1035,4 +1035,4 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 
 標準では、Experimental Shell Scriptという、各ジョブを直列化して
 順に実行するだけのbashのスクリプトを生成しています。
-Experimental Shell Scriptについては、 :doc:`../application/start-guide_ja` などを参照してください。
+Experimental Shell Scriptについては、 :doc:`../application/start-guide` などを参照してください。

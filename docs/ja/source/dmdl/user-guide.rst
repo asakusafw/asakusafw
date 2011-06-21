@@ -587,8 +587,8 @@ ThunderGateとの連携
 ThunderGateが利用するデータベースの情報から、
 DMDLスクリプトを自動的に生成できます。
 
-詳しくは :doc:`with-thundergate_ja` を参照してください。
+詳しくは :doc:`with-thundergate` を参照してください。
 
 DMDLコンパイラプラグインの開発
 ------------------------------
-詳しくは :doc:`developer-guide_ja` を参照して下さい。
+詳しくは :doc:`developer-guide` を参照して下さい。
