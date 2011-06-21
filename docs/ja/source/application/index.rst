@@ -45,7 +45,7 @@ Mavenのゴール実行と統合されます。
 ..  toctree::
     :maxdepth: 1
 
-    start-guide_ja
-    user-guide_ja
-    administration-guide_ja
-    maven-archetype_ja
+    start-guide
+    user-guide
+    administration-guide
+    maven-archetype

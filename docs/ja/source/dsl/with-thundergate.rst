@@ -5,7 +5,7 @@ Asakusa DSLとThunderGateの連携
 この文書では、ThunderGateと連携してデータベースを操作するバッチアプリケーションを
 Asakusa DSLで記述する方法について紹介します。
 
-ThunderGateについての情報は、 :doc:`../thundergate/user-guide_ja` を参照して下さい。
+ThunderGateについての情報は、 :doc:`../thundergate/user-guide` を参照して下さい。
 
 基本的な連携の方法
 ==================
@@ -25,7 +25,7 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
 ``String getTargetName()``
     インポータが使用するターゲット名（データソースを表す識別子）を戻り値に指定します。
     インポータは実行時に $ASAKUSA_HOME/bulkloader/conf 配下に配置した[ターゲット名]-jdbc.properties に記述されたデータベース接続情報定義ファイルを使用してデータベースに対するアクセスを行います。
-    このファイルの内容については :doc:`../thundergate/user-guide_ja` を参照して下さい。
+    このファイルの内容については :doc:`../thundergate/user-guide` を参照して下さい。
 
 ``Class<?> getModelType()``
     インポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
@@ -396,4 +396,4 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
   * 重複チェックに失敗した場合には、エラーカラムに「重複エラー」の情報を設定して、エラーテーブルに情報を書き出す
 
 ..  [#] より厳密には、「エラーコードカラム」に対応するプロパティはユニオンモデルに不要です
-..  [#] DMDLの利用方法は、 :doc:`../dmdl/user-guide_ja` を参照して下さい
+..  [#] DMDLの利用方法は、 :doc:`../dmdl/user-guide` を参照して下さい

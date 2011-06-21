@@ -4,7 +4,7 @@ DMDLスタートガイド
 
 この文書では、asakusa-archetype-batchappを利用したプロジェクト構成で、DMDLを使ってJavaのデータモデルクラスを生成する方法について簡単に紹介します。
 
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype_ja` を参照してください。また、コマンドライン等からDMDLを利用する場合には、 :doc:`user-guide_ja` を参照してください。
+asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。また、コマンドライン等からDMDLを利用する場合には、 :doc:`user-guide` を参照してください。
 
 DMDLを記述する
 ==============
@@ -189,5 +189,5 @@ ThunderGateとの連携
 
 asakusa-archetype-batchapを利用している場合、DMDLコンパイラの実行前にThunderGateが利用するデータベースの情報を分析して、データベース内に定義されたテーブルやビューの情報を元に、対応するデータモデルの定義を記述するDMDLを自動的に生成します。
 
-ThunderGateとの連携について、詳しくは :doc:`with-thundergate_ja` を参照してください。
+ThunderGateとの連携について、詳しくは :doc:`with-thundergate` を参照してください。
 

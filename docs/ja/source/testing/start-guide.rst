@@ -5,8 +5,8 @@
 この文書では、asakusa-archetype-batchappを利用したプロジェクト構成で、
 Asakusa Frameworkを使ったバッチアプリケーションをテストする方法について簡単に紹介します。
 
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype_ja` を参照してください。
-また、テストのより詳しい情報は :doc:`user-guide_ja` を参照して下さい。
+asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。
+また、テストのより詳しい情報は :doc:`user-guide` を参照して下さい。
 
 演算子のテスト
 ==============
@@ -31,11 +31,11 @@ asakusa-archetype-batchappの利用方法については :doc:`../application/ma
 
 ..  warning::
     上記の手順だけではフレームワークAPIを利用した演算子メソッドをテストできません。
-    フレームワークAPIについては :doc:`../dsl/user-guide_ja` を、
-    そのテスト方法については :doc:`user-guide_ja` をそれぞれ参照してください。
+    フレームワークAPIについては :doc:`../dsl/user-guide` を、
+    そのテスト方法については :doc:`user-guide` をそれぞれ参照してください。
 
 ..  [#] このクラスは「演算子実装クラス」と呼ばれ、Opeerator DSLコンパイラが自動的に生成します。
-    詳しくは :doc:`../dsl/start-guide_ja` を参照してください。
+    詳しくは :doc:`../dsl/start-guide` を参照してください。
 
 結果型を利用する演算子のテスト
 ------------------------------
@@ -74,7 +74,7 @@ asakusa-archetype-batchappの利用方法については :doc:`../application/ma
         }
     };
 
-なお、結果型を引数に指定する演算子については :doc:`../dsl/operators_ja` を参照してください。
+なお、結果型を引数に指定する演算子については :doc:`../dsl/operators` を参照してください。
 
 ..  [#] ``com.asakusafw.runtime.core.Result``
 ..  [#] ``com.asakusafw.runtime.testing.MockResult``
@@ -150,9 +150,9 @@ Asakusa Frameworkはこの一連の処理を自動的に行う
 このファイルには、上記の3種類のシートが含められます。
 
 なお、このテンプレートはDMDLで記述されたデータモデルを元に作成しています。
-DMDLに利用方法は `../dmdl/start-guide_ja` を参照してください。
+DMDLに利用方法は `../dmdl/start-guide` を参照してください。
 また、ThunderGate向けのデータモデルを生成する方法は、
-`../dmdl/with-thundergate_ja` を参照してください。
+`../dmdl/with-thundergate` を参照してください。
 
 入力、期待データの作成
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -189,7 +189,7 @@ Excelファイルのテストデータテンプレートを利用する場合、
 
 出力と期待データのペアを作れなかった場合の動作は、シート上部の「全体の比較」で選択します。
 
-上記についての詳しい情報は、 :doc:`user-guide_ja` を参照してください。
+上記についての詳しい情報は、 :doc:`user-guide` を参照してください。
 
 
 テストデータの配置

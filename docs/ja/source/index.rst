@@ -2,17 +2,14 @@
 Asakusa Framework
 =================
 
-.. toctree::
-   :hidden:
+..  toctree::
+    :maxdepth: 1
 
-   index_ja
-
-Languages
-=========
-
-* Japanese
-
-  * :doc:`index_ja`
+    application/index
+    dsl/index
+    testing/index
+    dmdl/index
+    document/index
 
 ToDo
 ====

@@ -37,9 +37,9 @@ Batch DSLはデータフローを組み合わせて複雑なバッチ処理の�
 ..  toctree::
     :maxdepth: 1
 
-    start-guide_ja
-    user-guide_ja
-    with-thundergate_ja
-    operators_ja
-    generic-dataflow_ja
-    developer-guide_ja
+    start-guide
+    user-guide
+    with-thundergate
+    operators
+    generic-dataflow
+    developer-guide
