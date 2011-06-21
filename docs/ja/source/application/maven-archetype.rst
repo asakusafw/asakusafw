@@ -39,11 +39,11 @@ setup_batchapp_project.shは以下の引数を指定して実行します。
       
 ..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:https://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
     
-例えばAsakusa Framework 0.2.0(SNAPSHOT)を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
+例えばAsakusa Framework ver.0.2-SNAPSHOTを使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
 
 ..  code-block:: sh
 
-    ./setup_batchapp_project.sh com.example batchapp-sample 0.2.0-SNAPSHOT
+    ./setup_batchapp_project.sh com.example batchapp-sample 0.2-SNAPSHOT
 
 Maven:プロジェクトの作成とAsakusa Frameworkのインストール
 ---------------------------------------------------------
@@ -63,8 +63,9 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     ...
     Choose version: 
     1: 0.1.0
-    2: 0.1.1-SNAPSHOT
-    3: 0.2.0-SNAPSHOT
+    2: 0.2.0-RC1
+    3: 0.2-SNAPSHOT
+    4: 0.3-SNAPSHOT
 
     Choose a number: 3: ※3を入力
     ...
