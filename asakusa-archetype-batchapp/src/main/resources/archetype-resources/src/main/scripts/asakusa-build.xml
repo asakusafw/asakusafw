@@ -239,7 +239,7 @@
 				<include name=".bulkloader_hc_profile" />
 			</fileset>
 		</move>
-		<copy file="src/test/resources/asakusa-jdbc.properties"
+		<copy file="src/test/resources/asakusa-test.properties"
 		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
 
 		<!-- BulkLoaderの設定を開発環境用に置換 -->
@@ -297,7 +297,7 @@
 
 	<target name="install:dev:create-table" if="asakusa.build.database.enabled">
 		<!-- ThunderGate用テーブル生成 -->
-		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+		<property file="src/test/resources/asakusa-test.properties" />
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
 		     userid="${jdbc.user}"
