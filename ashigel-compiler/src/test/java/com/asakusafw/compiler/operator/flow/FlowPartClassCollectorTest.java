@@ -15,14 +15,16 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -137,6 +139,45 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
 
                 assertThat(in.getParameterPosition(), is(0));
                 assertThat(out.getParameterPosition(), is(1));
+            }
+        });
+    }
+
+    /**
+     * generic flow part with specified output class.
+     */
+    @Test
+    public void genericWithClass() {
+        add("com.example.GenericWithClass");
+        start(new Collector() {
+            @Override
+            protected void onCollected(List<FlowPartClass> results) {
+                assertThat(results.isEmpty(), is(false));
+                FlowPartClass aClass = results.get(0);
+                assertThat(aClass.getInputPorts().size(), is(1));
+                assertThat(aClass.getOutputPorts().size(), is(1));
+                assertThat(aClass.getParameters().size(), is(1));
+
+                OperatorPortDeclaration in = find("in", aClass.getInputPorts());
+                OperatorPortDeclaration out = find("out", aClass.getOutputPorts());
+                OperatorPortDeclaration param = aClass.getParameters().get(0);
+
+                assertThat("param is <: Class<?>", env.getTypeUtils().isSameType(
+                        env.getErasure(param.getType().getRepresentation()),
+                        env.getDeclaredType(Class.class)),
+                        is(true));
+                assertThat("output/param are same", env.getTypeUtils().isSameType(
+                        out.getType().getRepresentation(),
+                        ((DeclaredType) param.getType().getRepresentation()).getTypeArguments().get(0)),
+                        is(true));
+
+                assertThat("input/output use type variable",
+                        in.getType().getRepresentation().getKind(),
+                        is(TypeKind.TYPEVAR));
+
+                assertThat(in.getParameterPosition(), is(0));
+                assertThat(out.getParameterPosition(), is(1));
+                assertThat(param.getParameterPosition(), is(2));
             }
         });
     }
