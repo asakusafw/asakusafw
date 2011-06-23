@@ -184,7 +184,7 @@ public class Configuration {
         assert path != null;
         String home = System.getenv("ASAKUSA_HOME");
         if (home != null) {
-            File file = new File(home, "conf/" + path);
+            File file = new File(home, "bulkloader/conf/" + path);
             if (file.isFile() != false) {
                 try {
                     return file.toURI().toURL();
