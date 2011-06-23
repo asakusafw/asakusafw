@@ -4,7 +4,7 @@
 	<name>Asakusa Framework Parent POM</name>
 	<groupId>com.asakusafw</groupId>
 	<artifactId>asakusa-parent</artifactId>
-	<version>0.2.0-RC2</version>
+	<version>0.2.0-RC3</version>
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework Parent POM</description>
