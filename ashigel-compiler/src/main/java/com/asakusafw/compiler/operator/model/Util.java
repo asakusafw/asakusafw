@@ -66,7 +66,11 @@ final class Util {
             return false;
         }
         Element parent = parameter.getEnclosingElement();
-        return parent != null && isOperatorSource(environment, parent);
+        // MEMO Eclipse JDT returns null for "TypeParameterElement.enclosingElement."
+        if (parent == null) {
+            return true;
+        }
+        return isOperatorSource(environment, parent);
     }
 
     private static boolean isKindMatched(OperatorCompilingEnvironment environment, TypeMirror type) {

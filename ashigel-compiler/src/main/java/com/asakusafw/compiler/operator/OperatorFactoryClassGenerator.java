@@ -198,9 +198,17 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         return results;
     }
 
-    private MethodDeclaration createRenamer(Context context, NamedType objectType) {
+    private MethodDeclaration createRenamer(Context context, NamedType rawObjectType) {
         assert context != null;
-        assert objectType != null;
+        assert rawObjectType != null;
+        Type objectType;
+        if (context.element.getTypeParameters().isEmpty()) {
+            objectType = rawObjectType;
+        } else {
+            objectType = new TypeBuilder(factory, rawObjectType)
+                .parameterize(util.toTypeVariables(context.element))
+                .toType();
+        }
         SimpleName newName = context.names.create("newName");
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)

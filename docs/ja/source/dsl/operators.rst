@@ -583,7 +583,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Branch``
+      - ``Convert``
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -665,7 +665,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 ..  code-block:: java
 
     // スレッド安全なので変換後の結果オブジェクトを再利用可能にする
-    private Foo foo = new Foo();
+    private final Foo foo = new Foo();
 
     /**
      * レコードHogeを等価なFooに変換して返す。
