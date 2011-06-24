@@ -3,7 +3,7 @@ ThunderGateを利用したアプリケーションのテスト
 =============================================
 
 この文書では、ThunderGateを利用したアプリケーションのテストについて紹介します。
-ThunderGateを利用したアプリケーションについては :doc:`../dsl/with-thundergate_ja` を、
+ThunderGateを利用したアプリケーションについては :doc:`../dsl/with-thundergate` を、
 テストドライバの一般的な利用方法については :doc:`user-guide` をそれぞれ参照してください。
 
 テストの流れ

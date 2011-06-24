@@ -7,6 +7,7 @@ Asakusa Framework
 
     application/index
     dsl/index
+    thundergate/index
     testing/index
     dmdl/index
     document/index
