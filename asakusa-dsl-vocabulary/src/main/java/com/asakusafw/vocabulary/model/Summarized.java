@@ -93,6 +93,7 @@ public @interface Summarized {
 
         /**
          * Sum of element in bag.
+         * This throws {@link NullPointerException} if {@code null} exists.
          */
         SUM,
 
@@ -103,11 +104,13 @@ public @interface Summarized {
 
         /**
          * Maximum of element in bag.
+         * This throws {@link NullPointerException} if {@code null} exists.
          */
         MAX,
 
         /**
          * Minimum of element in bag.
+         * This throws {@link NullPointerException} if {@code null} exists.
          */
         MIN,
     }
