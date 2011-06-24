@@ -39,6 +39,10 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
     インポータが利用する抽出条件をSQLの条件式で指定します。
     指定する文字列はMySQL形式の ``WHERE`` 以降の文字列である必要があります。
 
+    ここには ``${変数名}`` の形式で、バッチ起動時の引数やあらかじめ宣言された変数を利用できます。
+    利用可能な変数はコンテキストAPIで参照できるものと同様です。
+    詳しくは :doc:`user-guide` を参照してください。
+
 ``DataSize getDataSize()``
     インポートするデータのおおよそのサイズを指定します。
     コンパイラはこのデータサイズをヒントに実行計画を作成します。
@@ -63,10 +67,32 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
         }
     }
 
+以下の例では、バッチ引数で指定した ``parameter`` 変数を利用して条件式を指定しています。
+
+..  code-block:: java
+
+    public class HogeFromDb extends DbImporterDescription {
+
+        public String getTargetName() {
+            return "asakusa";
+        }
+
+        public Class<?> getModelType() {
+            return Hoge.class;
+        }
+
+        public String getWhere() {
+            return "NAME = '${parameter}'";
+        }
+
+        public LockType getLockType() {
+            return LockType.ROW;
+        }
+    }
+
 ..  [#] ``com.asakusafw.vocabulary.bulkloader.DbImporterDescription``
 ..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` を利用して下さい
 ..  [#] ``com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType``
-
 
 データベースのテーブルにエクスポートする
 ----------------------------------------

@@ -1701,6 +1701,28 @@ Flow DSLからは次のように利用します。
 
 ..  [#] :doc:`../dmdl/user-guide`
 
+NULLに対する集約関数の動作
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+単純集計演算子を利用して集約するフィールドにNULLが含まれている場合、
+それぞれ以下のように動作します。
+
+..  list-table:: NULLに対する集約関数の動作
+    :widths: 3 7
+    :header-rows: 1
+
+    * - 集約関数
+      - NULL値が含まれる場合の動作
+    * - any
+      - NULL値も他の値と同様に取り扱う
+    * - sum
+      - ``NullPointerException`` をスローする
+    * - max
+      - ``NullPointerException`` をスローする
+    * - min
+      - ``NullPointerException`` をスローする
+    * - count
+      - NULL値も他の値と同様に取り扱う
+
 単純集計演算子の実装
 ~~~~~~~~~~~~~~~~~~~~
 単純集計演算子の演算子メソッドには次のような情報を指定します。
