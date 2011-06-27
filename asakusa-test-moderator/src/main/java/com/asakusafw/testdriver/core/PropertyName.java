@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,9 @@ import java.util.List;
  */
 public class PropertyName implements Comparable<PropertyName> {
 
-    private final List<String> words;
+    private final List<String> originalWords;
+
+    private final List<String> normalized;
 
     /**
      * Creates a new instance.
@@ -34,9 +37,29 @@ public class PropertyName implements Comparable<PropertyName> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     private PropertyName(List<String> words) {
+        this.originalWords = words;
+        this.normalized = normalize(words);
+    }
+
+    private static List<String> normalize(List<String> words) {
         assert words != null;
-        assert words.isEmpty() == false;
-        this.words = words;
+        List<String> results = new ArrayList<String>(words.size());
+        Iterator<String> iter = words.iterator();
+        assert iter.hasNext();
+        String last = iter.next();
+        while (iter.hasNext()) {
+            String next = iter.next();
+            assert next.isEmpty() == false;
+            char c = next.charAt(0);
+            if ('0' <= c && c <= '9') {
+                last += next;
+            } else {
+                results.add(last);
+                last = next;
+            }
+        }
+        results.add(last);
+        return Collections.unmodifiableList(results);
     }
 
     /**
@@ -84,14 +107,14 @@ public class PropertyName implements Comparable<PropertyName> {
      * @return the words in this property name
      */
     public List<String> getWords() {
-        return words;
+        return originalWords;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + words.hashCode();
+        result = prime * result + normalized.hashCode();
         return result;
     }
 
@@ -107,7 +130,7 @@ public class PropertyName implements Comparable<PropertyName> {
             return false;
         }
         PropertyName other = (PropertyName) obj;
-        if (!words.equals(other.words)) {
+        if (!normalized.equals(other.normalized)) {
             return false;
         }
         return true;
@@ -115,8 +138,8 @@ public class PropertyName implements Comparable<PropertyName> {
 
     @Override
     public int compareTo(PropertyName o) {
-        Iterator<String> left = words.iterator();
-        Iterator<String> right = o.words.iterator();
+        Iterator<String> left = normalized.iterator();
+        Iterator<String> right = o.normalized.iterator();
         while (true) {
             if (left.hasNext() == false) {
                 if (right.hasNext() == false) {
@@ -138,7 +161,7 @@ public class PropertyName implements Comparable<PropertyName> {
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        Iterator<String> iter = words.iterator();
+        Iterator<String> iter = originalWords.iterator();
         assert iter.hasNext();
         buf.append(iter.next());
         while (iter.hasNext()) {
