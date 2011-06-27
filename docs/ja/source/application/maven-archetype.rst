@@ -93,6 +93,23 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     cd batchapp-sample
     mvn assembly:single antrun:run
 
+..  warning::
+    ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。このディレクトリはデフォルトの設定では /tmp/asakusa となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで /tmp ディレクトリがクリアされるため、再起動後にこのディレクトリを再度作成する必要があります。
+    
+    テンポラリディレクトリを変更する場合、$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
+    
+    例えばテンポラリディレクトリを /var/tmp/asakusa に変更する場合は以下のようにします。
+
+    * $ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.propertiesの変更
+    
+        * import.tsv-create-dir=/var/tmp/asakusa/importer
+        * export.tsv-create-dir=/var/tmp/asakusa/exporter
+    
+    * テンポラリディレクトリの作成
+    
+        * mkdir -p -m 777 /var/tmp/asakusa/importer
+        * mkdir -p -m 777 /var/tmp/asakusa/exporter
+
 プロジェクトのディレクトリ構成
 ------------------------------
 アーキタイプ ``asakusa-archetype-batchapp`` から生成されたAsakusaのプロジェクト構成は以下の通りです。
