@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,9 +35,28 @@ public class PropertyName implements Comparable<PropertyName> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     private PropertyName(List<String> words) {
+        this.words = normalize(words);
+    }
+
+    private static List<String> normalize(List<String> words) {
         assert words != null;
-        assert words.isEmpty() == false;
-        this.words = words;
+        List<String> results = new ArrayList<String>(words.size());
+        Iterator<String> iter = words.iterator();
+        assert iter.hasNext();
+        String last = iter.next();
+        while (iter.hasNext()) {
+            String next = iter.next();
+            assert next.isEmpty() == false;
+            char c = next.charAt(0);
+            if ('0' <= c && c <= '9') {
+                last += next;
+            } else {
+                results.add(last);
+                last = next;
+            }
+        }
+        results.add(last);
+        return Collections.unmodifiableList(results);
     }
 
     /**
