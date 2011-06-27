@@ -210,7 +210,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
 テストの実行
 ------------
-`テストデータの準備`_ を完了したら、それぞれのデータフローをテストします。
+`テストデータの作成`_ を完了したら、それぞれのデータフローをテストします。
 ここでは、テストハーネスに `JUnit`_ を利用した場合のテスト方法を紹介します。
 いずれの場合も、テスト対象のクラスに対応するテストクラスを作成してください。
 
@@ -450,6 +450,8 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 この設定には、 各 ``Tester`` クラスの ``setBatchArg`` という
 メソッドから設定します。
 
+..  code-block:: java
+
     @Test
     public void testExample() {
         BatchTester tester = new BatchTester(getClass());
@@ -472,6 +474,8 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
 その他、各 ``Tester`` クラスの ``configure`` メソッドを利用して
 個々のプラグインの設定を行うことも可能です。
+
+..  code-block:: java
 
     @Test
     public void testExample() {
