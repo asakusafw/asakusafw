@@ -253,10 +253,12 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
 
 ..  code-block:: sh
 
-    mv batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf batchapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f batchapp-batchapps-*.jar
+    rm -fr META-INF
 
 ..  warning::
     デプロイ対象とするjarファイルを間違えないようにしてください。デプロイ対象ファイルは「${artifactId}-**batchapps**-{version}.jar」のようにアーティファクトIDの後に **batchapps** が付くjarファイルです。
@@ -267,16 +269,21 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
     * batchapp-{version}-sources.jar：デプロイ対象ファイルではありません。
     * batchapp-{version}.jar：デプロイ対象ファイルではありません。
 
+..  warning::
+    $ASAKUSA_HOME/batchapps ディレクトリ直下にはバッチIDを示すディレクトリのみが配置されるようにして下さい。展開前のjarファイル(batchapp-batchapps-*.jar)や、jarを展開した結果作成されるMETA-INFディレクトリなどは上述のコマンド例のように削除してください。
+
 データベースノードへサンプルアプリケーションをデプロイ
 ------------------------------------------------------
 1. サンプルアプリケーションのアプリケーションファイルを「$ASAKUSA_HOME/batchapps」配下に配置します。Hadoopクラスターへデプロイしたファイルと同じファイルを同様の手順で配置します。
 
 ..  code-block:: sh
 
-    mv batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf batchapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f batchapp-batchapps-*.jar
+    rm -fr META-INF
 
 2. $ASAKUSA_HOME/bulkloader/conf/[targetname]-jdbc.properties をコピーし、同ディレクトリにasakusa-jdbc.properties を作成します。
 
@@ -400,10 +407,12 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 
 ..  code-block:: sh
 
-    mv abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf abcapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f abcapp-batchapps-*.jar
+    rm -fr META-INF
 
 ..  warning::
     デプロイ対象とするjarファイルを間違えないようにしてください。デプロイ対象ファイルは「${artifactId}-**batchapps**-{version}.jar」のようにアーティファクトIDの後に **batchapps** が付くjarファイルです。
@@ -413,6 +422,9 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
     * **abcapp-batchapps-{version}.jar** ：デプロイ対象ファイルです。
     * abcapp-{version}-sources.jar：デプロイ対象ファイルではありません。
     * abcapp-{version}.jar：デプロイ対象ファイルではありません。
+
+..  warning::
+    $ASAKUSA_HOME/batchapps ディレクトリ直下にはバッチIDを示すディレクトリのみが配置されるようにして下さい。展開前のjarファイル(abcapp-batchapps-*.jar)や、jarを展開した結果作成されるMETA-INFディレクトリなどは上述のコマンド例のように削除してください。
 
 2. アプリケーション共通ライブラリを配置します。バッチアプリケーションで使用する共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用している場合、jarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置します。以下はApache Commons Langを配置する例です。
 
@@ -426,10 +438,12 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 
 ..  code-block:: sh
 
-    mv abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
-    jar -xf batchapp-batchapps-*.jar
+    jar -xf abcapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f abcapp-batchapps-*.jar
+    rm -fr META-INF
 
 2. $ASAKUSA_HOME/bulkloader/conf/[targetname]-jdbc.properties をコピーし、アプリケーションで使用するデータソース（target)に合わせたデータソース定義ファイルを作成します。以下はtarget「appdb」に対応するデータソース定義ファイルを作成する例です。
 
@@ -458,7 +472,7 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
     * ThunderGateのImport/Export対象テーブルには、Import/Export処理用に付随するシステムテーブル（「テーブル名_RL」が必要となります。
     * これらのテーブルを作成するためのDDLは、開発環境上でモデルジェネレータを実行した際にbuild.propertiesのキー「asakusa.bulkloader.genddl」で指定したパス（デフォルトはアプリケーションプロジェクトの「target/sql/bulkloader_generated_table.sql」）に生成され、これを使用することも出来ますが、このDDLには中間データ格納用のモデルを作成するためのDDLも含まれるため、アプリケーション側で必要なテーブルに対するDDLを別途管理し、実行することを推奨します。
 
-6. ThnderGate用のテーブル作成スクリプトを実行します。ここで実行するSQLにはデータベースに格納されている全テーブル名を使ってレコードを生成する処理が含まれるため、「サンプルアプリケーションのデプロイ」で実施した場合でも、この手順は必ず再度実施してください。
+6. ThunderGate用のテーブル作成スクリプトを実行します。ここで実行するSQLにはデータベースに格納されている全テーブル名を使ってレコードを生成する処理が含まれるため、「サンプルアプリケーションのデプロイ」で実施した場合でも、この手順は必ず再度実施してください。
 
 ..  code-block:: sh
 
