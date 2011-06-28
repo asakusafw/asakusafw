@@ -928,6 +928,8 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 ..  [#] ``com.asakusafw.compiler.bootstrap.BatchCompilerDriver``
 ..  [#] ``com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver``
 
+.. _batch-compile-options:
+
 コンパイルオプション
 ~~~~~~~~~~~~~~~~~~~~
 `Batch DSLコンパイラ`_ を実行する際に、 ``com.asakusafw.compiler.options``

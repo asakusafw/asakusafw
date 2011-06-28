@@ -12,6 +12,11 @@ Asakusa Framework
     dmdl/index
     document/index
 
+Release Notes
+=============
+
+:doc:`release-notes`
+
 ToDo
 ====
 
