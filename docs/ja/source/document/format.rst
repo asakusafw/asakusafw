@@ -69,8 +69,8 @@
       - Asakusa DSL
       - 各種DSLおよびコンパイラ
     * - thundergate/
-      - Thunder Gate
-      - Thunder Gate
+      - ThunderGate
+      - ThunderGate
     * - testing/
       - Test Driver
       - テストドライバ

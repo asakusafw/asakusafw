@@ -356,7 +356,7 @@ ThunderGate Settings
 TestDriver Settings
 
   asakusa.testdatasheet.generate
-    ( **true** or false ) このプロパティをfalseにすると、``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
+    ( **true** or false ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
 
   asakusa.testdatasheet.format
     ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートのフォーマットを指定します。以下の値を指定することが出来ます。
