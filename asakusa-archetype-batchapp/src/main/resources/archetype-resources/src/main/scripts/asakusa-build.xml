@@ -207,7 +207,6 @@
 			<arg value="-scanpath" />
 			<arg value="${project.build.outputDirectory}" />
 			<arg value="-skiperror" />
-			<arg value="false" />
 		</java>
 
 		<jar destfile="target/${project.artifactId}-batchapps-${project.version}.jar">
