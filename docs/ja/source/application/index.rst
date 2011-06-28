@@ -47,5 +47,5 @@ Mavenのゴール実行と統合されます。
 
     start-guide
     user-guide
-    administration-guide
+    administrator-guide
     maven-archetype
