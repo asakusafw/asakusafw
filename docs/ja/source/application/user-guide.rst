@@ -2,7 +2,7 @@
 Asakusa Framework アプリケーション ユーザーガイド
 =================================================
 
-この文書では、Linux OS上にAsakusa Frameworkの開発環境を構築する手順を解説します。また、Asakusa Frameworkを使った開発の流れを簡単に説明します。
+この文書では、Linux OS上にAsakusa Frameworkの開発環境を構築する手順を解説します。
 
 開発環境の構築
 ==============
@@ -105,7 +105,7 @@ MavenのインストールについてはMavenの次のサイト等 [#]_ を参�
 ..  [#] http://maven.apache.org/users/index.html
 
 ASAKUSA_USERの環境変数設定
----------------------------
+--------------------------
 ASAKUSA_USERに必須の環境変数を設定します。
 
 * JAVA_HOME: JDKインストールディレクトリパス。
@@ -137,3 +137,28 @@ ASAKUSA_USERの環境変数の設定例は以下の通りです。
 開発環境にEclipse等のIDE環境を使う場合は、上記の環境変数が適用されたシェルから起動してください。
 
 なお、IDEをデスクトップから起動する場合は一旦ログアウトし、再ログインしてからIDEを起動してください。
+
+.. _user-guide-eclipse:
+
+Eclipseを使ったアプリケーションの開発
+-------------------------------------
+アプリケーションの開発にEclipseを使用する場合、まずEclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
+
+..  code-block:: sh
+
+    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
+
+開発環境上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは上記で-Declipse.workspaceに指定した値と同じディレクトリを指定します。
+
+..  warning::
+    Eclipseをデスクトップ環境のファイラーやショートカットから起動する場合、ログインシェルに環境変数を適用する必要があるためEclipse起動前にいったんログアウトして再ログインしてください。
+
+作業したいアプリケーション用プロジェクトに対して、Eclipseプロジェクト用の定義ファイルを作成します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
+
+これでEclipseからプロジェクトをImport出来る状態になりました。Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
+
+..  [#] http://www.eclipse.org/downloads/
