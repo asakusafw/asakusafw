@@ -11,15 +11,20 @@ Enhancements
 ------------
 * [ :issue:`10` ] - support CDH3u0
 * [ :issue:`17` ] - New data model generator
+    * See: :doc:`dmdl/index`
 * [ :issue:`18` ] - Generic operators support
+    * See: :doc:`dsl/generic-dataflow`
 * [ :issue:`19` ] - TestDriver enhancement for loosely-coupled architecture
+    * See: :doc:`testing/index`
 * [ :issue:`23` ] - Floating point number support
+    * See: :doc:`dmdl/with-thundergate`
 * [ :issue:`32` ] - CoGroup/GroupSort for very large group
+    * See: :doc:`dsl/operators`
 * [ :issue:`36` ] - ThunderGate should show # of imported/exporting records
 
 Revisions
 ---------
-* [ :issue:`26` ] - modelgen should be binded to generate-sources phase (not process-resources phase).
+* [ :issue:`26` ] - modelgen should be bound to generate-sources phase (not process-resources phase).
 * [ :issue:`40` ] - Enable compiler option "compressFlowPart" default value
 
 Bug fixes

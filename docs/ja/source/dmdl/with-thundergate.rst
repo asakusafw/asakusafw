@@ -60,6 +60,10 @@ MySQLに定義されたテーブルごとに、DMDLのレコードモデルを�
       - LONG
     * - DECIMAL
       - DECIMAL
+    * - FLOAT
+      - FLOAT
+    * - DOUBLE
+      - DOUBLE
     * - DATE
       - DATE
     * - DATETIME
