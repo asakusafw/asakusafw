@@ -52,6 +52,7 @@ public class StreamRedirectThread extends Thread {
      * @param closeInput リダイレクト元のストリームを終了時に閉じる
      * @param closeOutput リダイレクト先のストリームを終了時に閉じる
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @since 0.2.0
      */
     public StreamRedirectThread(
             InputStream input, OutputStream output,
