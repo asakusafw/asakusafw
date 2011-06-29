@@ -53,6 +53,7 @@ Bug fixes
 * [ :issue:`31` ] - Failed to "side data join" if input is not a SequenceFile
 * [ :issue:`44` ] - Javac hides direct cause of compilation errors
 * [ :issue:`46` ] - cleanHDFS.sh/cleanLocalFS.sh does not work.
+* [ :issue:`47` ] - ThunderGate closes standard error stream unexpectedly
 
 Others
 ------
