@@ -77,6 +77,17 @@ public class StreamRedirectThreadTest {
     }
 
     /**
+     * Exit quietly on output error.
+     * @throws Exception if occur
+     */
+    @Test(timeout = 10000)
+    public void consumeInputOnOutputError() throws Exception {
+        StreamRedirectThread t = new StreamRedirectThread(in, new ErroneousOutputStream(5));
+        t.run();
+        assertThat("input stream must be consumed", in.read(), is(-1));
+    }
+
+    /**
      * automatically close input.
      */
     @Test(timeout = 10000)
