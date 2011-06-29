@@ -70,6 +70,7 @@ public class StreamRedirectThread extends Thread {
 
     @Override
     public void run() {
+        boolean outputFailed = false;
         try {
             InputStream in = input;
             OutputStream out = output;
@@ -79,7 +80,17 @@ public class StreamRedirectThread extends Thread {
                 if (read == -1) {
                     break;
                 }
-                out.write(buf, 0, read);
+                if (outputFailed == false) {
+                    try {
+                        out.write(buf, 0, read);
+                    } catch (IOException e) {
+                        outputFailed = true;
+                        Log.log(
+                                e,
+                                this.getClass(),
+                                MessageIdConst.CMN_LOG_REDIRECT_ERROR);
+                    }
+                }
             }
         } catch (IOException e) {
             Log.log(
