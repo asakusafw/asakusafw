@@ -36,9 +36,8 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
  * This locates a configuration file with following order:
  * <ol>
  * <li> {@code <classpath-root>/<target-name>-jdbc.properties} </li>
- * <li> {@code <local-config-path>/<target-name>-jdbc.properties} </li>
  * <li> {@code <classpath-root>/asakusa-test.properties} </li>
- * <li> {@code <local-config-path>/asakusa-test.properties} </li>
+ * <li> {@code <local-config-path>/<target-name>-jdbc.properties} </li>
  * </ol>
  * Note that, classpath root is determined by using a context class loader,
  * or a defining class loader of this class if context class loader is not defined.
@@ -148,10 +147,7 @@ public class Configuration {
         String path = MessageFormat.format(FILE_PATTERN, targetName);
         URL resource = findResource(path);
         if (resource == null) {
-            resource = findResource(COMMON_FILE);
-            if (resource == null) {
-                throw new FileNotFoundException(path);
-            }
+            throw new FileNotFoundException(path);
         }
         LOG.debug("Using JDBC configuration: {}", resource);
         return load(resource);
@@ -159,14 +155,36 @@ public class Configuration {
 
     private static URL findResource(String path) {
         assert path != null;
+        URL specifiedResource = findResourceOnClassPath(path);
+        if (specifiedResource != null) {
+            return specifiedResource;
+        }
+
+        URL defaultResource = findResourceOnClassPath(COMMON_FILE);
+        if (defaultResource != null) {
+            return defaultResource;
+        }
+
+        URL contextResource = findResourceOnHomePath(path);
+        if (contextResource != null) {
+            return contextResource;
+        }
+
+        return null;
+    }
+
+    private static URL findResourceOnClassPath(String path) {
+        assert path != null;
         ClassLoader loader = getClassLoader();
         URL classPath = loader.getResource(path);
-        if (classPath != null) {
-            return classPath;
-        }
+        return classPath;
+    }
+
+    private static URL findResourceOnHomePath(String path) {
+        assert path != null;
         String home = System.getenv("ASAKUSA_HOME");
         if (home != null) {
-            File file = new File(home, "conf/" + path);
+            File file = new File(home, "bulkloader/conf/" + path);
             if (file.isFile() != false) {
                 try {
                     return file.toURI().toURL();

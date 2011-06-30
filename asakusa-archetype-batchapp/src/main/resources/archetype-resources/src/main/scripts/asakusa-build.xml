@@ -27,7 +27,7 @@
 
 	<target name="modelgen:ddl-dmdl" description="MySQLを使用したModelGenerator処理を行います。" if="asakusa.build.database.enabled">
 
-		<property file="${asakusa.jdbc.conf}" />
+		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
 
@@ -91,12 +91,12 @@
 			<jvmarg value="-DASAKUSA_BULKLOADER_GENDDL=${asakusa.bulkloader.genddl}" />
 			<jvmarg value="-DASAKUSA_BULKLOADER_TABLES=${asakusa.bulkloader.tables}" />
 			<jvmarg value="-DASAKUSA_MODELGEN_PACKAGE=${asakusa.modelgen.package}" />
-			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${asakusa.jdbc.conf}" />
+			<jvmarg value="-DASAKUSA_MODELGEN_JDBC=${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 			<jvmarg value="-DASAKUSA_V01_TEMPLATEGEN_RUN=${asakusa.testdatasheet.v01.generate}" />
 			<jvmarg value="-DASAKUSA_TESTDATASHEET_OUTPUT=${asakusa.testdatasheet.output}" />
 			<jvmarg value="-Djava.awt.headless=true" />
 			<arg value="-jdbc" />
-			<arg value="${asakusa.jdbc.conf}" />
+			<arg value="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 			<arg value="-output" />
 			<arg value="${asakusa.dmdl.fromddl.output}" />
 			<arg value="-encoding" />
@@ -135,7 +135,6 @@
 	        description="MySQLを使用しないModelGenerator処理を行います。"
 	        unless="asakusa.build.database.enabled">
 
-		<property file="${asakusa.jdbc.conf}" />
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
 
@@ -208,7 +207,6 @@
 			<arg value="-scanpath" />
 			<arg value="${project.build.outputDirectory}" />
 			<arg value="-skiperror" />
-			<arg value="false" />
 		</java>
 
 		<jar destfile="target/${project.artifactId}-batchapps-${project.version}.jar">
@@ -239,8 +237,8 @@
 				<include name=".bulkloader_hc_profile" />
 			</fileset>
 		</move>
-		<copy file="src/test/resources/asakusa-jdbc.properties"
-		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+		<copy file="${env.ASAKUSA_HOME}/bulkloader/conf/[targetname]-jdbc.properties"
+		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 
 		<!-- BulkLoaderの設定を開発環境用に置換 -->
 		<replace file="${env.HOME}/.bulkloader_db_profile"
@@ -297,7 +295,7 @@
 
 	<target name="install:dev:create-table" if="asakusa.build.database.enabled">
 		<!-- ThunderGate用テーブル生成 -->
-		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/asakusa-jdbc.properties" />
+		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
 		     userid="${jdbc.user}"

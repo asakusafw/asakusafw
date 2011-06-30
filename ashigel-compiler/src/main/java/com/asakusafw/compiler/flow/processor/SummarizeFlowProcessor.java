@@ -211,6 +211,9 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             // TODO for only DMDL
             switch (folding.aggregator()) {
             case ANY:
+                return destination.createSetter(
+                        outputCache,
+                        source.createGetter(context.getInput()));
             case MAX:
             case MIN:
             case SUM:

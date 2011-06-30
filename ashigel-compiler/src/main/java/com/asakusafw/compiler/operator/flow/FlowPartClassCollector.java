@@ -123,7 +123,7 @@ public class FlowPartClassCollector {
             sawError = true;
             return null;
         }
-        outputPorts = inferTypeVariables(analyzer, inputPorts, outputPorts);
+        outputPorts = inferTypeVariables(analyzer, inputPorts, outputPorts, parameters);
         if (analyzer.hasError()) {
             sawError = true;
             return null;
@@ -151,38 +151,27 @@ public class FlowPartClassCollector {
     private List<OperatorPortDeclaration> inferTypeVariables(
             ExecutableAnalyzer analyzer,
             List<OperatorPortDeclaration> inputPorts,
-            List<OperatorPortDeclaration> outputPorts) {
+            List<OperatorPortDeclaration> outputPorts,
+            List<OperatorPortDeclaration> parameters) {
+        assert analyzer != null;
         assert inputPorts != null;
         assert outputPorts != null;
-        Types types = environment.getTypeUtils();
+        assert parameters != null;
         List<OperatorPortDeclaration> inferred = new ArrayList<OperatorPortDeclaration>();
         for (OperatorPortDeclaration output : outputPorts) {
-            TypeMirror outputType = output.getType().getRepresentation();
-            if (outputType.getKind() != TypeKind.TYPEVAR) {
+            if (output.getType().getRepresentation().getKind() != TypeKind.TYPEVAR) {
                 inferred.add(new OperatorPortDeclaration(
                         output.getKind(),
                         output.getDocumentation(),
                         output.getName(),
-                        PortTypeDescription.direct(outputType),
+                        PortTypeDescription.direct(output.getType().getRepresentation()),
                         output.getParameterPosition(),
                         null));
             } else {
-                boolean found = false;
-                for (OperatorPortDeclaration input : inputPorts) {
-                    if (types.isSameType(outputType, input.getType().getRepresentation())) {
-                        inferred.add(new OperatorPortDeclaration(
-                                output.getKind(),
-                                output.getDocumentation(),
-                                output.getName(),
-                                PortTypeDescription.reference(outputType, input.getName()),
-                                output.getParameterPosition(),
-                                null));
-                        found = true;
-                        break;
-                    }
-                }
-                if (found == false) {
-                    inferred.add(output);
+                OperatorPortDeclaration outputType = inferOutputType(output, inputPorts, parameters);
+                if (outputType != null) {
+                    inferred.add(outputType);
+                } else {
                     analyzer.error(
                             output.getParameterPosition(),
                             "{0}の型{1}は入力と関係のない型です",
@@ -192,6 +181,54 @@ public class FlowPartClassCollector {
             }
         }
         return inferred;
+    }
+
+    private OperatorPortDeclaration inferOutputType(
+            OperatorPortDeclaration output,
+            List<OperatorPortDeclaration> inputPorts,
+            List<OperatorPortDeclaration> parameters) {
+        assert output != null;
+        assert inputPorts != null;
+        assert parameters != null;
+        Types types = environment.getTypeUtils();
+        TypeMirror outputType = output.getType().getRepresentation();
+        for (OperatorPortDeclaration input : inputPorts) {
+            if (types.isSameType(outputType, input.getType().getRepresentation())) {
+                return new OperatorPortDeclaration(
+                        output.getKind(),
+                        output.getDocumentation(),
+                        output.getName(),
+                        PortTypeDescription.reference(outputType, input.getName()),
+                        output.getParameterPosition(),
+                        null);
+            }
+        }
+        DeclaredType classType = environment.getDeclaredType(Class.class);
+        for (OperatorPortDeclaration param : parameters) {
+            // check is form of M<T>
+            TypeMirror paramType = param.getType().getRepresentation();
+            if (paramType.getKind() != TypeKind.DECLARED) {
+                continue;
+            }
+            DeclaredType declParamType = (DeclaredType) paramType;
+            if (declParamType.getTypeArguments().size() != 1) {
+                continue;
+            }
+            // check is <: Class<?>
+            if (types.isSameType(environment.getErasure(paramType), classType) == false) {
+                continue;
+            }
+            if (types.isSameType(declParamType.getTypeArguments().get(0), outputType)) {
+                return new OperatorPortDeclaration(
+                        output.getKind(),
+                        output.getDocumentation(),
+                        output.getName(),
+                        PortTypeDescription.reference(outputType, param.getName()),
+                        output.getParameterPosition(),
+                        null);
+            }
+        }
+        return null;
     }
 
     private OperatorPortDeclaration toPort(

@@ -31,6 +31,10 @@ public class StreamRedirectThread extends Thread {
 
     private final OutputStream output;
 
+    private final boolean closeInput;
+
+    private final boolean closeOutput;
+
     /**
      * インスタンスを生成する。
      * @param input リダイレクトする内容
@@ -38,6 +42,21 @@ public class StreamRedirectThread extends Thread {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public StreamRedirectThread(InputStream input, OutputStream output) {
+        this(input, output, false, false);
+    }
+
+    /**
+     * インスタンスを生成する。
+     * @param input リダイレクトする内容
+     * @param output リダイレクト先のストリーム
+     * @param closeInput リダイレクト元のストリームを終了時に閉じる
+     * @param closeOutput リダイレクト先のストリームを終了時に閉じる
+     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @since 0.2.0
+     */
+    public StreamRedirectThread(
+            InputStream input, OutputStream output,
+            boolean closeInput, boolean closeOutput) {
         if (input == null) {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
@@ -46,10 +65,13 @@ public class StreamRedirectThread extends Thread {
         }
         this.input = input;
         this.output = output;
+        this.closeInput = closeInput;
+        this.closeOutput = closeOutput;
     }
 
     @Override
     public void run() {
+        boolean outputFailed = false;
         try {
             InputStream in = input;
             OutputStream out = output;
@@ -59,7 +81,17 @@ public class StreamRedirectThread extends Thread {
                 if (read == -1) {
                     break;
                 }
-                out.write(buf, 0, read);
+                if (outputFailed == false) {
+                    try {
+                        out.write(buf, 0, read);
+                    } catch (IOException e) {
+                        outputFailed = true;
+                        Log.log(
+                                e,
+                                this.getClass(),
+                                MessageIdConst.CMN_LOG_REDIRECT_ERROR);
+                    }
+                }
             }
         } catch (IOException e) {
             Log.log(
@@ -67,8 +99,12 @@ public class StreamRedirectThread extends Thread {
                     this.getClass(),
                     MessageIdConst.CMN_LOG_REDIRECT_ERROR);
         } finally {
-            close(input);
-            close(output);
+            if (closeInput) {
+                close(input);
+            }
+            if (closeOutput) {
+                close(output);
+            }
         }
     }
 

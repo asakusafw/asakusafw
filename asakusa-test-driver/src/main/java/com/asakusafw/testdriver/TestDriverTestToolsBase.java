@@ -96,7 +96,8 @@ public class TestDriverTestToolsBase extends TestDriverBase {
             } else {
                 LOG.info("ビルド設定情報が存在しないため、スキップします: {}", BUILD_PROPERTIES_FILE);
             }
-            System.setProperty("ASAKUSA_TESTTOOLS_CONF", buildProperties.getProperty("asakusa.jdbc.conf"));
+            System.setProperty("ASAKUSA_TESTTOOLS_CONF", System.getenv("ASAKUSA_HOME") + "/bulkloader/conf/" +
+                    buildProperties.getProperty("asakusa.database.target") + "-jdbc.properties");
             System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", buildProperties.getProperty("asakusa.testdatasheet.output"));
             String testDataDirPath = buildProperties.getProperty("asakusa.testdriver.testdata.dir");
             if (testDataDirPath == null) {
