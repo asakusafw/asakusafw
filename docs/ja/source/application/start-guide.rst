@@ -6,6 +6,8 @@ Asakusa Framework スタートガイド
 
 .. _Cloudera's Hadoop Demo VM: https://ccp.cloudera.com/display/SUPPORT/Cloudera's+Hadoop+Demo+VM
 
+なお、Cloudera VMを使わずに任意のLinux OS上に開発環境を構築する場合の手順は、 :doc:`user-guide` を参照してください。
+
 Cloudera VMの起動
 =================
 Cloudera VMはVMWare上で動作します。VMWare Player(Windows/Linux)やVMWare Fusion(Mac)をインストール済みのマシン上で、次のURL [#]_ から仮想イメージファイルをダウンロードし、この仮想マシンを実行してください。
@@ -70,23 +72,8 @@ Terminal上で実行中のシェルに対してAsakusa Framework用の環境変�
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-アプリケーションの開発にEclipseを使用する場合、まずEclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ワークスペースをデフォルト値($HOME/workspce)に指定して起動した場合は以下のコマンドを実行します。
+Eclipseを使ったアプリケーションの開発については、 :doc:`user-guide` の :ref:`user-guide-eclipse` を参照して下さい。
 
-..  code-block:: sh
-
-    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
-
-Cloudera VM上でEclipseをダウンロード [#]_ し、Eclipseを起動します。ワークスペースは上記で-Declipse.workspaceに指定した値と同じディレクトリを指定します。
-
-..  warning::
-    Eclipseをデスクトップ環境のファイラーやショートカットから起動する場合、ログインシェルに環境変数を適用する必要があるため、Eclipse起動前にいったんログアウトして再ログインしてください。なお上述のsetup.shを実行後、既に一度でもログアウトもしくはOSの停止/再起動を行っている場合は再ログインは不要です。
-
-作業したいアプリケーション用プロジェクトに対して、Eclipseプロジェクト用の定義ファイルを作成します。
-
-..  code-block:: sh
-
-    mvn eclipse:eclipse
-
-これでEclipseからプロジェクトをImport出来る状態になりました。Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
-
-..  [#] http://www.eclipse.org/downloads/
+バッチアプリケーションの実装
+============================
+Asakusa Framework では Asakusa DSL と呼ばれるバッチアプリケーション記述用のDSLを使ってアプリケーションを実装します。Asakusa DSL については :doc:`../dsl/start-guide` を参照してください。

@@ -2,12 +2,12 @@
 DMDLとThunderGateの連携
 =======================
 
-Asakusa Framework 0.2では、Thunder Gateが利用している
+Asakusa Framework 0.2では、ThunderGateが利用している
 データベースのテーブル定義情報や、ビューの定義情報などから
 対応するDMDLスクリプトを生成できるようになっています。
 このため、0.1で提供していたモデルジェネレータは非推奨となりました。
 
-0.2以降では、Thunder Gateが利用しているMySQLの
+0.2以降では、ThunderGateが利用しているMySQLの
 メタデータを分析し、対応するデータモデルをDMDLの形式で
 生成する「DMDLジェネレータ」を提供しています。
 
@@ -60,6 +60,10 @@ MySQLに定義されたテーブルごとに、DMDLのレコードモデルを�
       - LONG
     * - DECIMAL
       - DECIMAL
+    * - FLOAT
+      - FLOAT
+    * - DOUBLE
+      - DOUBLE
     * - DATE
       - DATE
     * - DATETIME
@@ -206,7 +210,7 @@ Asakusa Frameworkの ``asakusa-thundergate-dmdl-*.jar`` の
 ----------------------------
 
 DMDLジェネレータが生成するDMDLスクリプトには、
-Thunder Gateが利用する様々な属性が付けられています。
+ThunderGateが利用する様々な属性が付けられています。
 
 以下は、DMDLジェネレータが単純なテーブルに対して生成した
 DMDLスクリプトの例です。
@@ -240,7 +244,7 @@ DMDLコンパイラのプラグインの指定に ``asakusa-thundergate-dmdl-*.j
 データモデルの定義に ``@thundergate.name(value = "<名前>")`` を指定すると、
 データモデルの元になったテーブル名やビュー名を保持させられます。
 
-これらの情報は、Asakusa DSLからThunder Gateを利用する際にも利用されます [#]_ 。
+これらの情報は、Asakusa DSLからThunderGateを利用する際にも利用されます [#]_ 。
 
 ..  [#] ``DbImporterDescription`` や ``DbExporterDescription`` を利用する際に、
     テーブル名やカラム名などを省略していますが、かわりにここで指定した名前を利用しています。
@@ -251,7 +255,7 @@ DMDLコンパイラのプラグインの指定に ``asakusa-thundergate-dmdl-*.j
 ``@thundergate.primary_key(value = {<主キーの一覧>})`` を指定すると、
 主キーとして取り扱われるプロパティの情報を保持させられます。
 
-この情報は、Thunder Gateがエクスポート処理を高速化する際になどに利用しています。
+この情報は、ThunderGateがエクスポート処理を高速化する際になどに利用しています。
 
 射影モデルの登録
 ~~~~~~~~~~~~~~~~

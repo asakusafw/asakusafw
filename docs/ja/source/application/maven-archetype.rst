@@ -93,6 +93,23 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     cd batchapp-sample
     mvn assembly:single antrun:run
 
+..  warning::
+    ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。このディレクトリはデフォルトの設定では /tmp/asakusa となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで /tmp ディレクトリがクリアされるため、再起動後にこのディレクトリを再度作成する必要があります。
+    
+    テンポラリディレクトリを変更する場合、$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
+    
+    例えばテンポラリディレクトリを /var/tmp/asakusa に変更する場合は以下のようにします。
+
+    * $ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.propertiesの変更
+    
+        * import.tsv-create-dir=/var/tmp/asakusa/importer
+        * export.tsv-create-dir=/var/tmp/asakusa/exporter
+    
+    * テンポラリディレクトリの作成
+    
+        * mkdir -p -m 777 /var/tmp/asakusa/importer
+        * mkdir -p -m 777 /var/tmp/asakusa/exporter
+
 プロジェクトのディレクトリ構成
 ------------------------------
 アーキタイプ ``asakusa-archetype-batchapp`` から生成されたAsakusaのプロジェクト構成は以下の通りです。
@@ -213,6 +230,8 @@ Maven:モデルの生成とテストデータ定義シートの生成
 * テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel` を参照して下さい。
 * ThunderGateが使用する管理テーブル用DDLスクリプトが ``target/sql`` 配下に生成され、開発環境用のデータベースに対してこのSQLが実行されます。ThunderGateが要求するテーブルが自動的に作成されるため、テストドライバを使ったテストがすぐに行える状態になります。
 
+.. _maven-archetype-batch-compile:
+
 Asakusa DSLのバッチコンパイルとアプリケーションアーカイブの生成
 ===============================================================
 Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタにデプロイするためには、Ashigelコンパイラのバッチコンパイルを実行し、バッチアプリケーション用のアーカイブファイルを作成します。
@@ -237,7 +256,7 @@ Maven:バッチコンパイル
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
-``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administration-guide` を参照して下さい。
+``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administrator-guide` を参照して下さい。
 
 ..  note::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。これらのファイルはMavenの標準の ``package`` フェーズの処理により作成されるjarファイルですが、Asakusa Frameworkではこれらのファイルは使用しません。これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
@@ -247,11 +266,13 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。設定できる値は「+<有効にするオプション名>」や「-<無効にするオプション名>」のように、オプション名の先頭に「+」や「-」を指定します。また、複数のオプションを指定するには「,」(カンマ)でそれぞれを区切ります。
 
-指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide`  を参照してください。
+指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。詳しくは、  :doc:`start-guide` の `Eclipseを使ったアプリケーションの開発` を参照して下さい。
+Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。
+
+詳しくは、 :doc:`user-guide` の :ref:`user-guide-eclipse` を参照して下さい。
 
 ``build.properties`` ビルド定義ファイル
 =======================================
@@ -335,7 +356,7 @@ ThunderGate Settings
 TestDriver Settings
 
   asakusa.testdatasheet.generate
-    ( **true** or false ) このプロパティをfalseにすると、``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
+    ( **true** or false ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
 
   asakusa.testdatasheet.format
     ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートのフォーマットを指定します。以下の値を指定することが出来ます。

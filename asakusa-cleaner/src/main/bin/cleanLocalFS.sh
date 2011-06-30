@@ -20,7 +20,7 @@ LOGFILE_BASENAME="localFileCleaner"
 CLASS_NAME="com.asakusafw.cleaner.main.LocalFileCleaner"
 
 D=`dirname $0`
-DIR=`cd $D;pwd`
+DIR=`cd $D/..;pwd`
 USER_NAME=$(whoami)
 
 CLEAN_CLASSPATH=$DIR/conf

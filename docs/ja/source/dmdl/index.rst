@@ -9,9 +9,9 @@ Data Model Definition Languare (DMDL)は、Asakusa Frameworkで利用するJava�
 
 Asakusa Framewokを利用する場合、DMDLを利用してデータモデルを作成することが推奨されます。これは、次のような理由があります。
 
-* `Asakusa DSLとの連携`_
-* `Hadoopの連携`_
-* `他システムとの連携`_
+* Asakusa DSLとの連携
+* Hadoopの連携
+* 他システムとの連携
 
 Asakusa DSLとの連携
 -------------------

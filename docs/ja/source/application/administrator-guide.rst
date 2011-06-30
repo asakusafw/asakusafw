@@ -86,11 +86,12 @@ Asakusa Frameworkのデプロイアーカイブ生成
     * HadoopクラスターのHadoopクライアントノードに展開するアーカイブ。
 2. asakusa-distribution-${version}-prod-db.tar.gz
     * データベースノードに展開するアーカイブ。
-
-また、targetディレクトリには以下のファイルも作成されますが本ドキュメントによる手順では使用しません。
-
 3. asakusa-distribution-${version}-prod-cleaner.tar.gz
     * Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
+
+また、targetディレクトリには以下のファイルも作成されますが、
+このファイルは開発環境で使用するアーカイブのため本ドキュメントによる手順では使用しません。
+
 4. asakusa-distribution-${version}-dev.tar.gz
     * Asakusa Frameworkの開発環境のインストールに使用するアーカイブ
 
@@ -100,7 +101,7 @@ Asakusa Frameworkのデプロイアーカイブ生成
 
 1. バッチコンパイルにより生成したバッチアプリケーションのjarファイル（「${artifactid}-batchapps-${version}.jar」）
     * 開発環境上でバッチコンパイルを実行すると、ワークスペース上の「target」配下に作成されます。
-    * 詳しくは  :doc:`maven-archetype` の「Asakusa DSLのバッチコンパイルとアプリケーションアーカイブの生成」 を参照してください。
+    * 詳しくは  :doc:`maven-archetype` の :ref:`maven-archetype-batch-compile` を参照してください。
 2. アプリケーション共通ライブラリ
     * バッチアプリケーションで使用する共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）が必要な場合はそのjarファイルを用意します。
 3. アプリケーション用テーブルDDL
@@ -253,10 +254,12 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
 
 ..  code-block:: sh
 
-    mv batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf batchapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f batchapp-batchapps-*.jar
+    rm -fr META-INF
 
 ..  warning::
     デプロイ対象とするjarファイルを間違えないようにしてください。デプロイ対象ファイルは「${artifactId}-**batchapps**-{version}.jar」のようにアーティファクトIDの後に **batchapps** が付くjarファイルです。
@@ -267,16 +270,21 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
     * batchapp-{version}-sources.jar：デプロイ対象ファイルではありません。
     * batchapp-{version}.jar：デプロイ対象ファイルではありません。
 
+..  warning::
+    $ASAKUSA_HOME/batchapps ディレクトリ直下にはバッチIDを示すディレクトリのみが配置されるようにして下さい。展開前のjarファイルや、jarを展開した結果作成されるMETA-INFディレクトリなどは上述のコマンド例のように削除してください。
+
 データベースノードへサンプルアプリケーションをデプロイ
 ------------------------------------------------------
 1. サンプルアプリケーションのアプリケーションファイルを「$ASAKUSA_HOME/batchapps」配下に配置します。Hadoopクラスターへデプロイしたファイルと同じファイルを同様の手順で配置します。
 
 ..  code-block:: sh
 
-    mv batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp batchapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf batchapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f batchapp-batchapps-*.jar
+    rm -fr META-INF
 
 2. $ASAKUSA_HOME/bulkloader/conf/[targetname]-jdbc.properties をコピーし、同ディレクトリにasakusa-jdbc.properties を作成します。
 
@@ -400,10 +408,12 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 
 ..  code-block:: sh
 
-    mv abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar -xf abcapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f abcapp-batchapps-*.jar
+    rm -fr META-INF
 
 ..  warning::
     デプロイ対象とするjarファイルを間違えないようにしてください。デプロイ対象ファイルは「${artifactId}-**batchapps**-{version}.jar」のようにアーティファクトIDの後に **batchapps** が付くjarファイルです。
@@ -413,6 +423,9 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
     * **abcapp-batchapps-{version}.jar** ：デプロイ対象ファイルです。
     * abcapp-{version}-sources.jar：デプロイ対象ファイルではありません。
     * abcapp-{version}.jar：デプロイ対象ファイルではありません。
+
+..  warning::
+    $ASAKUSA_HOME/batchapps ディレクトリ直下にはバッチIDを示すディレクトリのみが配置されるようにして下さい。展開前のjarファイルや、jarを展開した結果作成されるMETA-INFディレクトリなどは上述のコマンド例のように削除してください。
 
 2. アプリケーション共通ライブラリを配置します。バッチアプリケーションで使用する共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用している場合、jarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置します。以下はApache Commons Langを配置する例です。
 
@@ -426,10 +439,12 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 
 ..  code-block:: sh
 
-    mv abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp abcapp-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
-    jar -xf batchapp-batchapps-*.jar
+    jar -xf abcapp-batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
+    rm -f abcapp-batchapps-*.jar
+    rm -fr META-INF
 
 2. $ASAKUSA_HOME/bulkloader/conf/[targetname]-jdbc.properties をコピーし、アプリケーションで使用するデータソース（target)に合わせたデータソース定義ファイルを作成します。以下はtarget「appdb」に対応するデータソース定義ファイルを作成する例です。
 
@@ -458,7 +473,7 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
     * ThunderGateのImport/Export対象テーブルには、Import/Export処理用に付随するシステムテーブル（「テーブル名_RL」が必要となります。
     * これらのテーブルを作成するためのDDLは、開発環境上でモデルジェネレータを実行した際にbuild.propertiesのキー「asakusa.bulkloader.genddl」で指定したパス（デフォルトはアプリケーションプロジェクトの「target/sql/bulkloader_generated_table.sql」）に生成され、これを使用することも出来ますが、このDDLには中間データ格納用のモデルを作成するためのDDLも含まれるため、アプリケーション側で必要なテーブルに対するDDLを別途管理し、実行することを推奨します。
 
-6. ThnderGate用のテーブル作成スクリプトを実行します。ここで実行するSQLにはデータベースに格納されている全テーブル名を使ってレコードを生成する処理が含まれるため、「サンプルアプリケーションのデプロイ」で実施した場合でも、この手順は必ず再度実施してください。
+6. ThunderGate用のテーブル作成スクリプトを実行します。ここで実行するSQLにはデータベースに格納されている全テーブル名を使ってレコードを生成する処理が含まれるため、「サンプルアプリケーションのデプロイ」で実施した場合でも、この手順は必ず再度実施してください。
 
 ..  code-block:: sh
 
@@ -540,3 +555,80 @@ Asakusa Frameworkを拡張したアプリケーション固有の実行時プラ
     $ASAKUSA_HOME/batchapps/(バッチID)/bin/experimental.sh
 
 3. MySQLの出力結果テーブルを確認します。
+
+クリーニングツールのデプロイ
+============================
+Asakusa Frameworkにはローカルファイル、及び分散ファイルシステム上のファイルをクリーニングするためのツールが付属しています。
+
+クリーニングツールの使用は任意ですが、特に分散ファイルシステムについては、Asakusa Frameworkのデフォルトの動作では
+アプリケーションを実行した際に処理したファイルが分散ファイルシステム上に残り続けるため、
+クリーニングツールを使用して定期的にクリーニングを行うことを推奨致します。
+
+本ドキュメントではクリーニングツールのデプロイ方法を説明します。クリーニングツールの設定等の詳細については「Asakusa Cleaner User Guide」 [#]_ を参照して下さい
+
+..  [#] https://asakusafw.s3.amazonaws.com/documents/AsakusaCleaner_UserGuide.pdf
+
+各ノードへのクリーニングツールのデプロイ
+----------------------------------------
+クリーニングツールはデータベースノードとHadoopクラスタの各ノードへデプロイします。全ノードでデプロイ手順は共通です。
+
+1. ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusa-distribution-${version}-prod-cleaner.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
+
+..  code-block:: sh
+
+    mv asakusa-distribution-*-prod-hc.tar.gz $ASAKUSA_HOME
+    cd $ASAKUSA_HOME
+    tar -xzf asakusa-distribution-*-prod-cleaner.tar.gz
+    find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
+
+2. クリーニング用ログ設定ファイルを編集します。$ASAKUSA_HOME/cleaner/conf/log4j.xmlを編集し、任意のログディレクトリを指定します。
+    * ログファイル名は「${logfile.basename}.log」のままとしてください。
+    * 指定したログディレクトリが存在しない場合はディレクトリを作成しておいてください。ログディレクトリはASAKUSA_USERが書き込み可能である必要があります。
+
+..  note::
+    以下手順3～手順4はHDFSクリーニングツールを使う場合に実施します。
+
+3. $ASAKUSA_HOME/cleaner/conf/.clean_hdfs_profileを編集し、以下の変数を環境に合わせて設定します。
+
+..  code-block:: sh
+
+    export JAVA_HOME=/usr/java/default
+    export HADOOP_HOME=/usr/lib/hadoop
+
+4. $ASAKUSA_HOME/cleaner/conf/clean-hdfs-conf.properties を編集し、クリーニングの設定を行います。
+    * 「hdfs-protocol-host」は$HADOOP_HOME/conf/core-site.xml の fs.default.name と同じ値に変更します。
+
+..  code-block:: properties
+
+    # File path of log4j.xml (optional)
+    log.conf-path=/home/asakusa/asakusa/cleaner/conf/log4j.xml
+    # Protocol and host name with HDFS (required)
+    hdfs-protocol-host=hdfs://(MASTERNODE_HOSTNAME):8020
+    # Directory for cleaning (required)
+    clean.hdfs-dir.0=/${user}/target/hadoopwork
+    # Cleaning Pattern (required)
+    clean.hdfs-pattern.0=.*
+    # Preservation period date of file (optional)
+    clean.hdfs-keep-date=10
+
+..  note::
+    以下手順5～手順6はローカルファイルクリーニングツールを使う場合に実施します。
+
+5. $ASAKUSA_HOME/cleaner/conf/.clean_local_profileを編集し、以下の変数を環境に合わせて設定します。
+
+..  code-block:: sh
+
+    export JAVA_HOME=/usr/java/default
+
+6. $ASAKUSA_HOME/cleaner/conf/clean-localfs-conf.properties を編集し、クリーニングの設定を行います。
+
+..  code-block:: properties
+
+    # File path of log4j.xml (optional)
+    log.conf-path=/home/asakusa/asakusa/cleaner/conf/log4j.xml
+    # Directory for cleaning (required)
+    clean.local-dir.0=/home/asakusa/asakusa/log
+    # Cleaning Pattern (required)
+    clean.local-pattern.0=.*\.log\.*
+    # Preservation period date of file (optional)
+    clean.local-keep-date=10

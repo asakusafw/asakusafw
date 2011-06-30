@@ -1,5 +1,5 @@
 ============
-Thunder Gate
+ThunderGate
 ============
 
 ..  todo:: ThunderGate > Index
