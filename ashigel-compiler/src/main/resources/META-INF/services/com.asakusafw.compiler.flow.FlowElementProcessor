@@ -2,6 +2,7 @@ com.asakusafw.compiler.flow.processor.BranchFlowProcessor
 com.asakusafw.compiler.flow.processor.CoGroupFlowProcessor
 com.asakusafw.compiler.flow.processor.ConvertFlowProcessor
 com.asakusafw.compiler.flow.processor.ExtendFlowProcessor
+com.asakusafw.compiler.flow.processor.ExtractFlowProcessor
 com.asakusafw.compiler.flow.processor.FoldFlowProcessor
 com.asakusafw.compiler.flow.processor.LoggingFlowProcessor
 com.asakusafw.compiler.flow.processor.MasterBranchFlowProcessor

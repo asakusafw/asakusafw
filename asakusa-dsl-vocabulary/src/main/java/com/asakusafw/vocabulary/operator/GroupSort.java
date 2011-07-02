@@ -76,7 +76,7 @@ import com.asakusafw.vocabulary.model.Key;
 <pre><code>
 /**
  &#42; レコードHogeを名前ごとに年齢の若い順に並べ、先頭と末尾だけをそれぞれ結果に流す。
- &#42; &#64;param joined グループごとのリスト
+ &#42; &#64;param hogeList グループごとのリスト
  &#42; &#64;param first グループごとの先頭要素
  &#42; &#64;param last グループごとの末尾要素
  &#42;&#47;
