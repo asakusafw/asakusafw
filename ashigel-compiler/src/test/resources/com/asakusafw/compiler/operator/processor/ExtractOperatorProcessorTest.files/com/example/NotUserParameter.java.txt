@@ -7,15 +7,15 @@ import com.asakusafw.runtime.core.*;
 import com.asakusafw.vocabulary.model.*;
 import com.asakusafw.vocabulary.operator.*;
 
-public abstract class NotVoid {
+public abstract class NotUserParameter {
 
-    @GroupSort
-    public int example(
-            @Key(group = {}, order = {"value"}) java.util.List<MockHoge> in,
+    @Extract
+    public void example(
+            MockHoge in,
             Result<MockHoge> first,
-            Result<MockHoge> last) {
-        first.add(in.get(0));
-        last.add(in.get(in.size() - 1));
-        return 1;
+            Result<MockHoge> last,
+            Object param) {
+        first.add(in);
+        last.add(in);
     }
 }

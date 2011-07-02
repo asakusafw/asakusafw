@@ -9,13 +9,13 @@ import com.asakusafw.vocabulary.operator.*;
 
 public abstract class NotVoid {
 
-    @GroupSort
+    @Extract
     public int example(
-            @Key(group = {}, order = {"value"}) java.util.List<MockHoge> in,
+            MockHoge in,
             Result<MockHoge> first,
             Result<MockHoge> last) {
-        first.add(in.get(0));
-        last.add(in.get(in.size() - 1));
+        first.add(in);
+        last.add(in);
         return 1;
     }
 }

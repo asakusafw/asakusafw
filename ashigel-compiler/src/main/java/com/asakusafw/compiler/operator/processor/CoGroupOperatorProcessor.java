@@ -132,15 +132,16 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
                     keys.get(i));
         }
         for (int i = startResults; i < startParameters; i++) {
-            TypeMirror outputType = a.getParameterType(i).getTypeArgument().getType();
-            String found = builder.findInput(outputType);
-            if (found == null && a.getReturnType().isProjectiveModel()) {
-                a.error("出力型{0}に対する入力が見つかりません", outputType);
+            TypeConstraint outputType = a.getParameterType(i).getTypeArgument();
+            TypeMirror outputTypeMirror = outputType.getType();
+            String found = builder.findInput(outputTypeMirror);
+            if (found == null && outputType.isProjectiveModel()) {
+                a.error("出力型{0}に対する入力が見つかりません", outputTypeMirror);
             }
             builder.addOutput(
                     a.getParameterDocument(i),
                     a.getParameterName(i),
-                    outputType,
+                    outputTypeMirror,
                     found,
                     i);
         }

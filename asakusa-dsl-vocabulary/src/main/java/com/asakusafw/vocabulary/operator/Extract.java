@@ -74,7 +74,7 @@ private B b = new B();
  &#42; &#64;param bResult bの抽出結果
  &#42;&#47;
 &#64;Extract
-public void firstLast(
+public void extractFields(
         Hoge hoge,
         Result&lt;A&gt; aResult,
         Result&lt;B&gt; bResult) {

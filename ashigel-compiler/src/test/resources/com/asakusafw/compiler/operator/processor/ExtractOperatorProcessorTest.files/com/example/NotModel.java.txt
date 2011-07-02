@@ -7,11 +7,14 @@ import com.asakusafw.runtime.core.*;
 import com.asakusafw.vocabulary.model.*;
 import com.asakusafw.vocabulary.operator.*;
 
-public abstract class Abstract {
+public abstract class NotModel {
 
-    @GroupSort
-    public abstract void example(
-            @Key(group = {}, order = {"value"}) java.util.List<MockHoge> in,
-            Result<MockHoge> first,
-            Result<MockHoge> last);
+    @Extract
+    public void example(
+            String in,
+            Result<String> first,
+            Result<String> last) {
+        first.add(in);
+        last.add(in);
+    }
 }

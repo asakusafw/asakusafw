@@ -7,11 +7,13 @@ import com.asakusafw.runtime.core.*;
 import com.asakusafw.vocabulary.model.*;
 import com.asakusafw.vocabulary.operator.*;
 
-public abstract class Abstract {
+public abstract class UnboundGenerics {
 
-    @GroupSort
-    public abstract void example(
-            @Key(group = {}, order = {"value"}) java.util.List<MockHoge> in,
-            Result<MockHoge> first,
-            Result<MockHoge> last);
+    @Extract
+    public <P extends MockProjection>
+    void example(
+            MockHoge in,
+            Result<P> first,
+            Result<P> last) {
+    }
 }
