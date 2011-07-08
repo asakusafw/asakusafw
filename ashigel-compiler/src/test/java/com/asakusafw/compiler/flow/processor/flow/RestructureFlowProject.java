@@ -15,7 +15,7 @@
  */
 package com.asakusafw.compiler.flow.processor.flow;
 
-import com.asakusafw.compiler.flow.processor.ExtendFlowProcessor;
+import com.asakusafw.compiler.flow.processor.RestructureFlowProcessor;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.external.Part1MockExporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
@@ -27,13 +27,13 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
-import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Extend;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
 
 /**
- * Test flow for {@link ExtendFlowProcessor}。
+ * Test flow for {@link RestructureFlowProcessor}。
  */
 @JobFlow(name = "testing")
-public class ExtendFlowInvalid extends FlowDescription {
+public class RestructureFlowProject extends FlowDescription {
 
     private final In<Ex1> in;
 
@@ -44,7 +44,7 @@ public class ExtendFlowInvalid extends FlowDescription {
      * @param in input channel
      * @param out output channel
      */
-    public ExtendFlowInvalid(
+    public RestructureFlowProject(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)
             In<Ex1> in,
             @Export(name = "e1", description = Part1MockExporterDescription.class)
@@ -56,7 +56,7 @@ public class ExtendFlowInvalid extends FlowDescription {
     @Override
     protected void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
-        Extend<Part1> project = core.extend(in, Part1.class);
+        Restructure<Part1> project = core.restructure(in, Part1.class);
         out.add(project);
     }
 }

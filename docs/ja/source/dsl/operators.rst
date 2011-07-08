@@ -625,7 +625,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 ..  note::
     0.1.xではレコードから不要なプロパティを除去したり、
     新たなプロパティを追加する際にもこの変換演算子を利用していました。
-    0.2.0以降、そのような単純な用途では `射影演算子`_ や `拡張演算子`_ の利用を推奨しています。
+    現在、そのような単純な用途では `射影演算子`_ や `拡張演算子`_ 、 `再構築演算子`_ の利用を推奨しています。
 
 
 変換演算子の実装
@@ -807,12 +807,83 @@ Flow DSLからは次のように利用します。
     @Override
     protected void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
-        Extend<Hoge> op = core.project(in, Hoge.class);
+        Project<Hoge> op = core.project(in, Hoge.class);
         out.add(op);
     }
 
 上記の例では、 ``Hoge`` が持つすべてのプロパティを ``Foo`` も持っていなければなりません。
 そうでない場合、コンパイル時にエラーとなります。
+
+
+再構築演算子
+------------
+レコードの内容を別の型に移し替える演算子です。
+元の型と移し替える先の型のうち、両者に共通するプロパティのみをコピーします。
+
+..  list-table:: 再構築演算子の概要
+    :widths: 4 6
+    :header-rows: 1
+
+    * - 項目
+      - 説明
+    * - 分類
+      - コア
+    * - 導入
+      - 0.2.1
+    * - メソッド
+      - ``restructure``
+    * - 性能特性
+      - Map
+    * - 入力数
+      - 1
+    * - 出力数
+      - 1
+
+..  list-table:: 再構築演算子の入出力
+    :widths: 2 2 2 2 8
+    :header-rows: 1
+
+    * - 分類
+      - 名前
+      - 単位
+      - 型
+      - 備考
+    * - 入力
+      - in
+      - レコード
+      - 任意
+      - 
+    * - 出力
+      - out
+      - レコード
+      - 任意
+      - 
+
+..  attention::
+    再構築演算子は、 `拡張演算子`_ や `射影演算子`_ の制約を緩めたものです。
+    これらの演算子が利用できる場面では通常再構築演算子も利用できますが、
+    データ構造がむやみに変更された際にコンパイラによるチェックが甘くなります。
+    拡張演算子や射影演算子で十分である場合、できるだけそちらを利用することを推奨します。
+
+再構築演算子の実装
+~~~~~~~~~~~~~~~~~~
+再構築演算子はコア演算子に分類されるため、Operator DSLでの実装はありません。
+Flow DSLからは次のように利用します。
+
+..  code-block:: java
+
+    In<Foo> in;
+    Out<Hoge> out;
+
+    @Override
+    protected void describe() {
+        CoreOperatorFactory core = new CoreOperatorFactory();
+        Restructure<Hoge> op = core.restructure(in, Hoge.class);
+        out.add(op);
+    }
+
+上記の例では、 ``Hoge`` と ``Foo`` に共通するプロパティのみが、
+``Hoge`` ( ``in`` ) から ``Foo`` にコピーされます。
 
 抽出演算子
 ----------

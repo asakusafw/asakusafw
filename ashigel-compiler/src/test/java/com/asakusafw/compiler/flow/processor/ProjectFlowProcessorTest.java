@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
@@ -34,7 +33,7 @@ import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import com.asakusafw.compiler.flow.testing.model.Part;
+import com.asakusafw.compiler.flow.testing.model.Part1;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.testing.MockResult;
 import com.ashigeru.lang.java.model.syntax.Name;
@@ -55,7 +54,7 @@ public class ProjectFlowProcessorTest extends JobflowCompilerTestRoot {
 
         ClassLoader loader = start();
         PortMapper mapper = new PortMapper(fragment);
-        MockResult<Part> result = mapper.create("out");
+        MockResult<Part1> result = mapper.create("out");
 
         @SuppressWarnings("unchecked")
         Result<Ex1> f = (Result<Ex1>) create(loader, name, mapper.toArguments());
@@ -67,7 +66,7 @@ public class ProjectFlowProcessorTest extends JobflowCompilerTestRoot {
         f.add(in);
 
         assertThat(result.getResults().size(), is(1));
-        Part out = result.getResults().get(0);
+        Part1 out = result.getResults().get(0);
         assertThat(out.getSid(), is(10L));
         assertThat(out.getValue(), is(100));
     }

@@ -10,6 +10,7 @@ com.asakusafw.compiler.flow.processor.MasterCheckFlowProcessor
 com.asakusafw.compiler.flow.processor.MasterJoinFlowProcessor
 com.asakusafw.compiler.flow.processor.MasterJoinUpdateFlowProcessor
 com.asakusafw.compiler.flow.processor.ProjectFlowProcessor
+com.asakusafw.compiler.flow.processor.RestructureFlowProcessor
 com.asakusafw.compiler.flow.processor.SplitFlowProcessor
 com.asakusafw.compiler.flow.processor.SummarizeFlowProcessor
 com.asakusafw.compiler.flow.processor.UpdateFlowProcessor
