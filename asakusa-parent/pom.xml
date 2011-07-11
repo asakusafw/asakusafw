@@ -57,7 +57,7 @@
 		<repository>
 			<id>com.asakusafw.releases</id>
 			<name>Asakusa Framework Repository</name>
-			<url>https://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -65,7 +65,7 @@
 		<repository>
 			<id>com.asakusafw.snapshots</id>
 			<name>Asakusa Framework Snapshot Repository</name>
-			<url>https://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
