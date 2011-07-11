@@ -15,8 +15,7 @@
  */
 package com.asakusafw.vocabulary.flow.util;
 
-import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.INPUT_PORT_NAME;
-import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.OUTPUT_PORT_NAME;
+import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -64,6 +63,11 @@ public class CoreOperatorFactory {
      * 拡張演算子の共通インスタンス名。
      */
     public static final String EXTEND_NAME = "extend";
+
+    /**
+     * 再構築演算子の共通インスタンス名。
+     */
+    public static final String RESTRUCTURE_NAME = "restructure";
 
     /**
      * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
@@ -243,6 +247,10 @@ public class CoreOperatorFactory {
      * この演算子の処理結果は、入力されたデータのうち変換後のデータ型に含まれる
      * 全てのプロパティをコピーしたデータになる。
      * </p>
+     * <p>
+     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
+     * この演算子を含むフローのコンパイルは失敗する。
+     * </p>
      * @param <T> 変換後のデータの種類
      * @param in 射影対象の入力
      * @param targetType 射影する型
@@ -267,10 +275,14 @@ public class CoreOperatorFactory {
      * この演算子の処理結果は、入力されたデータ型に含まれる全てのプロパティをコピーしたデータになる。
      * また、入力されたデータに含まれないプロパティは、それぞれの初期値となる。
      * </p>
+     * <p>
+     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
+     * この演算子を含むフローのコンパイルは失敗する。
+     * </p>
      * @param <T> 変換後のデータの種類
-     * @param in 射影対象の入力
+     * @param in 拡張対象の入力
      * @param targetType 射影する型
-     * @return 射影演算子
+     * @return 拡張演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.0
      */
@@ -282,6 +294,34 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
         return new Extend<T>(in, targetType);
+    }
+
+    /**
+     * 入力されたデータを指定のデータ型に再構築する。
+     * <p>
+     * この演算子の処理結果は、入力されたデータ型に含まれるプロパティのうち、
+     * 対象のデータ型にも含まれるプロパティのみをすべてコピーしたデータになる。
+     * また、入力されたデータに含まれないプロパティは、それぞれの初期値となる。
+     * </p>
+     * <p>
+     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
+     * この演算子を含むフローのコンパイルは失敗する。
+     * </p>
+     * @param <T> 変換後のデータの種類
+     * @param in 再構築対象の入力
+     * @param targetType 射影する型
+     * @return 再構築演算子
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.1
+     */
+    public <T> Restructure<T> restructure(Source<?> in, Class<T> targetType) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        if (targetType == null) {
+            throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
+        }
+        return new Restructure<T>(in, targetType);
     }
 
     private <T> Type getPortType(Source<T> source) {
@@ -449,6 +489,40 @@ public class CoreOperatorFactory {
             this.resolver = builder.toResolver();
             this.resolver.resolveInput(INPUT_PORT_NAME, in);
             this.resolver.setName(EXTEND_NAME);
+            this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
+        }
+
+        @Override
+        public FlowElementOutput toOutputPort() {
+            return resolver.getOutput(OUTPUT_PORT_NAME);
+        }
+    }
+
+    /**
+     * 入力されたデータを指定のデータ型に再構築する。
+     * @param <T> 変換後の型
+     * @since 0.2.1
+     */
+    public static final class Restructure<T> implements Operator, Source<T> {
+
+        /**
+         * この演算子の唯一の出力。
+         */
+        public final Source<T> out;
+
+        private final FlowElementResolver resolver;
+
+        Restructure(Source<?> in, Class<T> targetClass) {
+            assert in != null;
+            assert targetClass != null;
+            OperatorDescription.Builder builder =
+                new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Restructure.class);
+            builder.declare(Restructure.class, Restructure.class, "toString");
+            builder.addInput(INPUT_PORT_NAME, in);
+            builder.addOutput(OUTPUT_PORT_NAME, targetClass);
+            this.resolver = builder.toResolver();
+            this.resolver.resolveInput(INPUT_PORT_NAME, in);
+            this.resolver.setName(RESTRUCTURE_NAME);
             this.out = this.resolver.resolveOutput(OUTPUT_PORT_NAME);
         }
 

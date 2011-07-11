@@ -15,11 +15,11 @@
  */
 package com.asakusafw.compiler.flow.processor.flow;
 
-import com.asakusafw.compiler.flow.processor.ExtendFlowProcessor;
+import com.asakusafw.compiler.flow.processor.RestructureFlowProcessor;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
-import com.asakusafw.compiler.flow.testing.external.Part1MockExporterDescription;
+import com.asakusafw.compiler.flow.testing.external.Ex2MockExporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.compiler.flow.testing.model.Part1;
+import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
@@ -27,28 +27,28 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
-import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Extend;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
 
 /**
- * Test flow for {@link ExtendFlowProcessor}。
+ * Test flow for {@link RestructureFlowProcessor}。
  */
 @JobFlow(name = "testing")
-public class ExtendFlowInvalid extends FlowDescription {
+public class RestructureFlowSame extends FlowDescription {
 
     private final In<Ex1> in;
 
-    private final Out<Part1> out;
+    private final Out<Ex2> out;
 
     /**
      * Creates a new instance.
      * @param in input channel
      * @param out output channel
      */
-    public ExtendFlowInvalid(
+    public RestructureFlowSame(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)
             In<Ex1> in,
-            @Export(name = "e1", description = Part1MockExporterDescription.class)
-            Out<Part1> out) {
+            @Export(name = "e1", description = Ex2MockExporterDescription.class)
+            Out<Ex2> out) {
         this.in = in;
         this.out = out;
     }
@@ -56,7 +56,7 @@ public class ExtendFlowInvalid extends FlowDescription {
     @Override
     protected void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
-        Extend<Part1> project = core.extend(in, Part1.class);
+        Restructure<Ex2> project = core.restructure(in, Ex2.class);
         out.add(project);
     }
 }

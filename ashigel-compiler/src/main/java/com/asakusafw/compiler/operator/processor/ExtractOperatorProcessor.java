@@ -24,17 +24,14 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
-import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.operator.CoGroup;
-import com.asakusafw.vocabulary.operator.GroupSort;
+import com.asakusafw.vocabulary.operator.Extract;
 
 
 /**
- * {@link GroupSort グループ整列演算子}を処理する。
+ * {@link Extract 抽出演算子}を処理する。
  */
-@TargetOperator(GroupSort.class)
-public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
+@TargetOperator(Extract.class)
+public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
 
     private static final int RESULT_START = 1;
 
@@ -44,15 +41,13 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("グループ整列演算子はabstractで宣言できません");
+            a.error("抽出演算子はabstractで宣言できません");
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("グループ整列演算子は戻り値にvoidを指定する必要があります");
+            a.error("抽出演算子は戻り値にvoidを指定する必要があります");
         }
-        if (a.getParameterType(0).isList() == false) {
-            a.error(0, "グループ整列演算子の最初の引数はリスト型(java.util.List)である必要があります");
-        } else if (a.getParameterType(0).getTypeArgument().isModel() == false) {
-            a.error(0, "グループ整列演算子の最初の引数はリストのモデルオブジェクト型である必要があります");
+        if (a.getParameterType(0).isModel() == false) {
+            a.error(0, "抽出演算子の最初の引数はモデルオブジェクト型である必要があります");
         }
 
         int startParameters = RESULT_START;
@@ -61,13 +56,13 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             if (param.isResult() == false) {
                 break;
             } else if (param.getTypeArgument().isModel() == false) {
-                a.error(i, "グループ整列演算子の結果は結果のモデルオブジェクト型である必要があります");
+                a.error(i, "抽出演算子の結果は結果のモデルオブジェクト型である必要があります");
             } else {
                 startParameters++;
             }
         }
         if (startParameters == RESULT_START) { // 結果型がない
-            a.error("グループ整列演算子の引数には一つ以上の結果(Result)型を指定する必要があります");
+            a.error("抽出演算子の引数には一つ以上の結果(Result)型を指定する必要があります");
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {
             TypeConstraint param = a.getParameterType(i);
@@ -81,29 +76,14 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        ShuffleKey key = a.getParameterKey(0);
-        if (key == null) {
-            a.error("グループ整列演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
-            return null;
-        }
-        GroupSort annotation = context.element.getAnnotation(GroupSort.class);
-        if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
-            return null;
-        }
-
-        // redirect to @CoGroup
-        Builder builder = new Builder(CoGroup.class, context);
-        builder.addAttribute(FlowBoundary.SHUFFLE);
+        Builder builder = new Builder(Extract.class, context);
         builder.addAttribute(a.getObservationCount());
-        builder.addAttribute(annotation.inputBuffer());
         builder.setDocumentation(a.getExecutableDocument());
         builder.addInput(
                 a.getParameterDocument(0),
                 a.getParameterName(0),
-                a.getParameterType(0).getTypeArgument().getType(),
-                0,
-                key);
+                a.getParameterType(0).getType(),
+                0);
         for (int i = 1; i < startParameters; i++) {
             TypeConstraint outputType = a.getParameterType(i).getTypeArgument();
             TypeMirror outputTypeMirror = outputType.getType();

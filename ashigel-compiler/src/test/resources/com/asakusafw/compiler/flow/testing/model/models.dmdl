@@ -1,13 +1,17 @@
 @namespace(value = testing)
-part = {
+part1 = {
     sid : LONG;
     value : INT;
 };
 
 @namespace(value = testing)
-ex1 = part + {
+part2 = {
+    sid : LONG;
     string : TEXT;
 };
+
+@namespace(value = testing)
+ex1 = part1 + part2;
 
 @namespace(value = testing)
 ex2 = ex1;

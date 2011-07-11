@@ -17,9 +17,9 @@ package com.asakusafw.compiler.flow.processor.flow;
 
 import com.asakusafw.compiler.flow.processor.ProjectFlowProcessor;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
-import com.asakusafw.compiler.flow.testing.external.PartMockExporterDescription;
+import com.asakusafw.compiler.flow.testing.external.Part1MockExporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.compiler.flow.testing.model.Part;
+import com.asakusafw.compiler.flow.testing.model.Part1;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
@@ -37,7 +37,7 @@ public class ProjectFlowSimple extends FlowDescription {
 
     private final In<Ex1> in;
 
-    private final Out<Part> out;
+    private final Out<Part1> out;
 
     /**
      * Creates a new instance.
@@ -47,8 +47,8 @@ public class ProjectFlowSimple extends FlowDescription {
     public ProjectFlowSimple(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)
             In<Ex1> in,
-            @Export(name = "e1", description = PartMockExporterDescription.class)
-            Out<Part> out) {
+            @Export(name = "e1", description = Part1MockExporterDescription.class)
+            Out<Part1> out) {
         this.in = in;
         this.out = out;
     }
@@ -56,7 +56,7 @@ public class ProjectFlowSimple extends FlowDescription {
     @Override
     protected void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
-        Project<Part> project = core.project(in, Part.class);
+        Project<Part1> project = core.project(in, Part1.class);
         out.add(project);
     }
 }

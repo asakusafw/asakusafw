@@ -1,6 +1,7 @@
 com.asakusafw.compiler.operator.processor.BranchOperatorProcessor
 com.asakusafw.compiler.operator.processor.CoGroupOperatorProcessor
 com.asakusafw.compiler.operator.processor.ConvertOperatorProcessor
+com.asakusafw.compiler.operator.processor.ExtractOperatorProcessor
 com.asakusafw.compiler.operator.processor.FoldOperatorProcessor
 com.asakusafw.compiler.operator.processor.GroupSortOperatorProcessor
 com.asakusafw.compiler.operator.processor.LoggingOperatorProcessor
