@@ -19,7 +19,7 @@ Asakusa Frameworkが提供すMavenアーキタイプ ``asakusa-archetype-batchap
 
 ..  code-block:: sh
 
-    wget https://raw.github.com/asakusafw/asakusafw-contrib/master/development-utilities/scripts/setup_batchapp_project.sh
+    wget http://raw.github.com/asakusafw/asakusafw-contrib/master/development-utilities/scripts/setup_batchapp_project.sh
     chmod +x setup_batchapp_project.sh
 
 setup_batchapp_project.shは以下の引数を指定して実行します。
@@ -37,13 +37,13 @@ setup_batchapp_project.shは以下の引数を指定して実行します。
     * - 3
       - Asakusa Frameworkのpom.xml上のVersion [#]_ 
       
-..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:https://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
     
-例えばAsakusa Framework ver.0.2-SNAPSHOTを使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
+例えばAsakusa Framework ver.0.2.0を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
 
 ..  code-block:: sh
 
-    ./setup_batchapp_project.sh com.example batchapp-sample 0.2-SNAPSHOT
+    ./setup_batchapp_project.sh com.example batchapp-sample 0.2.0
 
 Maven:プロジェクトの作成とAsakusa Frameworkのインストール
 ---------------------------------------------------------
@@ -63,11 +63,12 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     ...
     Choose version: 
     1: 0.1.0
-    2: 0.2.0-RC3
-    3: 0.2-SNAPSHOT
-    4: 0.3-SNAPSHOT
-
-    Choose a number: 3: ※3を入力
+    2: 0.2-SNAPSHOT
+    3: 0.2.0
+    4: 0.2.1-RC1
+    5: 0.3-SNAPSHOT
+    
+    Choose a number: 5: ※3を入力
     ...
     Define value for property 'groupId': : com.example ※任意の値を入力
     Define value for property 'artifactId': : batchapp-sample ※任意の値を入力

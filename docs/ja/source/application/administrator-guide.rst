@@ -478,7 +478,7 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 ..  code-block:: sh
 
     cd $ASAKUSA_HOME/bulkloader/sql
-    mysql -u asakusa -pasakusa -D asakusa < create_table.sql
+    mysql -u appuser -pappuser -D appdb < create_table.sql
     mysql -u appuser -pappuser -D appdb < insert_import_table_lock.sql
 
 ..  note::
