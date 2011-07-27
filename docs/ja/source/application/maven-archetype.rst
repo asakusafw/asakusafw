@@ -275,6 +275,76 @@ Eclipseを使ってアプリケーションを開発する場合、アーキタ�
 
 詳しくは、 :doc:`user-guide` の :ref:`user-guide-eclipse` を参照して下さい。
 
+アプリケーション用依存ライブラリの追加
+======================================
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義(<dependency>)を追加します。これに加えて依存するjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置する必要があります。以下はApache Commons Langを配置する例です。
+
+pom.xmlの編集
+-------------
+
+pom.xmlの<dependencies>配下に依存定義を追加します。
+
+..  code-block:: sh
+
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons.lang.version}</version>
+    </dependency>
+
+Mavenリポジトリからjarファイルを取得
+------------------------------------
+
+Mavenでコンパイルを実行します。依存するjarファイルがローカルリポジトリに配置されます。
+
+..  code-block:: sh
+
+    mvn compile
+
+Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
+
+Asausaの拡張ライブラリディレクトリへjarファイルを配置
+-----------------------------------------------------
+
+ローカルリポジトリに配置されたjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置します。
+
+..  code-block:: sh
+
+    cp $HOME/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+
+Asakusa Frameworkのバージョンアップ
+===================================
+開発環境のAsakusa Frameworkをバージョンする手順を示します。
+
+なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順についてはRelease Note等を参照してください。
+
+pom.xml上のバージョンを更新
+---------------------------
+pom.xmlの10行目にある「<asakusafw.version」の値を
+更新したいバージョンに書き換えます。
+
+..  code-block:: sh
+
+    <asakusafw.version>0.2.1-RC1</asakusafw.version>
+
+Asakusa Frameworkの再セットアップ
+---------------------------------
+Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフェーズ（ゴール）を実行します。
+
+..  code-block:: sh
+
+    mvn assembly:single antrun:run compile
+
+Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
+
 ``build.properties`` ビルド定義ファイル
 =======================================
 アーキタイプから作成したプロジェクトの ``build.properties`` はプロジェクトのビルドや各種ツールの動作を設定します。設定項目について以下に説明します。
