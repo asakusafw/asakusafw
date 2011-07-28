@@ -74,6 +74,14 @@ MySQLに定義されたテーブルごとに、DMDLのレコードモデルを�
       - TEXT
     * - VARCHAR
       - TEXT
+    * - TINYTEXT
+      - TEXT
+    * - TEXT
+      - TEXT
+    * - MEDIUMTEXT
+      - TEXT
+    * - LONGTEXT
+      - TEXT
 
 たとえば、以下のようなテーブルについて考えます。
 

@@ -19,7 +19,7 @@ Asakusa Frameworkが提供すMavenアーキタイプ ``asakusa-archetype-batchap
 
 ..  code-block:: sh
 
-    wget https://raw.github.com/asakusafw/asakusafw-contrib/master/development-utilities/scripts/setup_batchapp_project.sh
+    wget http://raw.github.com/asakusafw/asakusafw-contrib/master/development-utilities/scripts/setup_batchapp_project.sh
     chmod +x setup_batchapp_project.sh
 
 setup_batchapp_project.shは以下の引数を指定して実行します。
@@ -37,13 +37,13 @@ setup_batchapp_project.shは以下の引数を指定して実行します。
     * - 3
       - Asakusa Frameworkのpom.xml上のVersion [#]_ 
       
-..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:https://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
     
-例えばAsakusa Framework ver.0.2-SNAPSHOTを使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
+例えばAsakusa Framework ver.0.2.0を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
 
 ..  code-block:: sh
 
-    ./setup_batchapp_project.sh com.example batchapp-sample 0.2-SNAPSHOT
+    ./setup_batchapp_project.sh com.example batchapp-sample 0.2.0
 
 Maven:プロジェクトの作成とAsakusa Frameworkのインストール
 ---------------------------------------------------------
@@ -63,11 +63,12 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     ...
     Choose version: 
     1: 0.1.0
-    2: 0.2.0-RC3
-    3: 0.2-SNAPSHOT
-    4: 0.3-SNAPSHOT
-
-    Choose a number: 3: ※3を入力
+    2: 0.2-SNAPSHOT
+    3: 0.2.0
+    4: 0.2.1-RC1
+    5: 0.3-SNAPSHOT
+    
+    Choose a number: 5: ※3を入力
     ...
     Define value for property 'groupId': : com.example ※任意の値を入力
     Define value for property 'artifactId': : batchapp-sample ※任意の値を入力
@@ -273,6 +274,76 @@ Eclipseを使ったアプリケーションの開発
 Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。
 
 詳しくは、 :doc:`user-guide` の :ref:`user-guide-eclipse` を参照して下さい。
+
+アプリケーション用依存ライブラリの追加
+======================================
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義(<dependency>)を追加します。これに加えて依存するjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置する必要があります。以下はApache Commons Langを配置する例です。
+
+pom.xmlの編集
+-------------
+
+pom.xmlの<dependencies>配下に依存定義を追加します。
+
+..  code-block:: sh
+
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons.lang.version}</version>
+    </dependency>
+
+Mavenリポジトリからjarファイルを取得
+------------------------------------
+
+Mavenでコンパイルを実行します。依存するjarファイルがローカルリポジトリに配置されます。
+
+..  code-block:: sh
+
+    mvn compile
+
+Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
+
+Asausaの拡張ライブラリディレクトリへjarファイルを配置
+-----------------------------------------------------
+
+ローカルリポジトリに配置されたjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置します。
+
+..  code-block:: sh
+
+    cp $HOME/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+
+Asakusa Frameworkのバージョンアップ
+===================================
+開発環境のAsakusa Frameworkをバージョンする手順を示します。
+
+なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順についてはRelease Note等を参照してください。
+
+pom.xml上のバージョンを更新
+---------------------------
+pom.xmlの10行目にある「<asakusafw.version」の値を
+更新したいバージョンに書き換えます。
+
+..  code-block:: sh
+
+    <asakusafw.version>0.2.1-RC1</asakusafw.version>
+
+Asakusa Frameworkの再セットアップ
+---------------------------------
+Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフェーズ（ゴール）を実行します。
+
+..  code-block:: sh
+
+    mvn assembly:single antrun:run compile
+
+Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
 
 ``build.properties`` ビルド定義ファイル
 =======================================

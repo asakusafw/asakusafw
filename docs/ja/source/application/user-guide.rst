@@ -24,6 +24,25 @@ Asakusa Frameworkを開発するためのLinuxデスクトップ環境（以下�
     * VMWare Fusion 3.1.2 以上(MacOS)
     * VMWare Server 2.0.2 (Linux)
 
+ディストリビューション固有の環境設定
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+開発環境でAsakusa ThunderGateを実行させる場合、以下の設定を行ってください。
+
+CentOS
+^^^^^^
+
+* SELinuxは無効にしてください。
+
+Ubuntu
+^^^^^^
+
+* AppArmorのMySQL用プロファイルを無効にしてください。以下設定例です。
+
+..  code-block:: sh
+
+    sudo mv /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+    sudo /etc/init.d/apparmor restart
+
 OSユーザ作成とsshの設定
 -----------------------
 Asakusa Frameworkによる開発を行うためのOSユーザ（このドキュメントでは「ASAKUSA_USER」と記します）を作成します。
@@ -162,3 +181,43 @@ Eclipseを使ったアプリケーションの開発
 これでEclipseからプロジェクトをImport出来る状態になりました。Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
 
 ..  [#] http://www.eclipse.org/downloads/
+
+スタンドアロンモード/疑似分散モードの切替
+-----------------------------------------
+開発環境では通常はHadoopのスタンドアロンモードを使用して開発しますが、
+疑似分散モード上でAsakusaのアプリケーションを動作させることも可能です。
+
+スタンドアロンモードから疑似分散モードへ切り替えるには、
+以下の手順に従います。
+
+Hadoopのモードを切り替える
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Hadoopを疑似分散モードへ切り替えます。疑似分散モードの設定方法やモードの切替手順については、以下を参照して下さい [#]_ 。
+
+..  [#] https://ccp.cloudera.com/display/CDHDOC/CDH3+Deployment+in+Pseudo-Distributed+Mode
+
+ThunderGateの設定変更
+~~~~~~~~~~~~~~~~~~~~~
+ThunderGateの以下の設定ファイルを変更します。
+
+$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-hc.propertiesを編集します。
+    * 「hdfs-protocol-host」を$HADOOP_HOME/conf/core-site.xml の fs.default.name と同じ値 (デフォルト値は"hdfs://localhost:8020")に変更します。
+    * 「hadoop-cluster.workingdir.use」をfalseに変更します。
+
+..  code-block:: sh
+    
+    # Protocol and host name with HDFS(required)
+    hdfs-protocol-host=hdfs://localhost:8020
+    # Is the file I/O position made work directory (optional)
+    hadoop-cluster.workingdir.use=false
+
+疑似分散モードからスタンドアロンモードに戻す場合は、
+上記で変更した設定を元に戻し、Hadoopのデーモンを停止します。
+
+Hadoopモード切替スクリプト
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Asakusa Framework の contrib リポジトリには、HadoopとAsakusa Frameworkのモード切替を行うためのスクリプトが公開されています。
+
+..  [#] https://raw.github.com/asakusafw/asakusafw-contrib/master/quick-start/cdh3vm/bin/switch_to_pseudo.sh
+..  [#] https://raw.github.com/asakusafw/asakusafw-contrib/master/quick-start/cdh3vm/bin/switch_to_standalone.sh
+

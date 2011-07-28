@@ -4,6 +4,27 @@
 Asakusa Framework Release Notes
 ===============================
 
+Release 0.2.1
+=============
+
+Enhancements
+------------
+* [ :issue:`38` ] - Supports CLOB for property type
+    * See: :doc:`dmdl/with-thundergate`
+* [ :issue:`41` ] - Support new operator "Extract"
+    * See: :doc:`dsl/operators`
+* [ :issue:`50` ] - Support new operator "Restructure"
+    * See: :doc:`dsl/operators`
+
+Bug fixes
+---------
+* [ :issue:`49` ] - Failed to synthesize record models with same property
+* [ :issue:`51` ] - Repository url of pom.xml defines https unnecessarily
+
+Others
+------
+* [ :issue:`52` ] - 0.2.1 Documentation
+
 Release 0.2.0
 =============
 
