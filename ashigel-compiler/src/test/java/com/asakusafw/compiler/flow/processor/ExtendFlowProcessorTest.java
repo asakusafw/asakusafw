@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
@@ -34,7 +33,7 @@ import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import com.asakusafw.compiler.flow.testing.model.Part;
+import com.asakusafw.compiler.flow.testing.model.Part1;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.testing.MockResult;
 import com.ashigeru.lang.java.model.syntax.Name;
@@ -58,9 +57,9 @@ public class ExtendFlowProcessorTest extends JobflowCompilerTestRoot {
         MockResult<Ex1> result = mapper.create("out");
 
         @SuppressWarnings("unchecked")
-        Result<Part> f = (Result<Part>) create(loader, name, mapper.toArguments());
+        Result<Part1> f = (Result<Part1>) create(loader, name, mapper.toArguments());
 
-        Part in = new Part();
+        Part1 in = new Part1();
         in.setSid(10L);
         in.setValue(100);
         f.add(in);

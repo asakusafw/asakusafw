@@ -17,9 +17,9 @@ package com.asakusafw.compiler.flow.processor.flow;
 
 import com.asakusafw.compiler.flow.processor.ProjectFlowProcessor;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockExporterDescription;
-import com.asakusafw.compiler.flow.testing.external.PartMockImporterDescription;
+import com.asakusafw.compiler.flow.testing.external.Part1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.compiler.flow.testing.model.Part;
+import com.asakusafw.compiler.flow.testing.model.Part1;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Project;
 @JobFlow(name = "testing")
 public class ProjectFlowInvalid extends FlowDescription {
 
-    private final In<Part> in;
+    private final In<Part1> in;
 
     private final Out<Ex1> out;
 
@@ -45,8 +45,8 @@ public class ProjectFlowInvalid extends FlowDescription {
      * @param out output channel
      */
     public ProjectFlowInvalid(
-            @Import(name = "e1", description = PartMockImporterDescription.class)
-            In<Part> in,
+            @Import(name = "e1", description = Part1MockImporterDescription.class)
+            In<Part1> in,
             @Export(name = "e1", description = Ex1MockExporterDescription.class)
             Out<Ex1> out) {
         this.in = in;

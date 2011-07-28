@@ -1,6 +1,6 @@
 package com.asakusafw.compiler.flow.testing.model;
-import com.asakusafw.compiler.flow.testing.io.PartInput;
-import com.asakusafw.compiler.flow.testing.io.PartOutput;
+import com.asakusafw.compiler.flow.testing.io.Part1Input;
+import com.asakusafw.compiler.flow.testing.io.Part1Output;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
@@ -12,17 +12,17 @@ import java.io.DataOutput;
 import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 /**
- * partを表すデータモデルクラス。
+ * part1を表すデータモデルクラス。
  */
-@DataModelKind("DMDL")@ModelInputLocation(PartInput.class)@ModelOutputLocation(PartOutput.class) public class Part 
-        implements DataModel<Part>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(Part1Input.class)@ModelOutputLocation(Part1Output.class) public class Part1 
+        implements DataModel<Part1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.sid.setNull();
         this.value.setNull();
     }
-    @Override@SuppressWarnings("deprecation") public void copyFrom(Part other) {
+    @Override@SuppressWarnings("deprecation") public void copyFrom(Part1 other) {
         this.sid.copyFrom(other.sid);
         this.value.copyFrom(other.value);
     }
@@ -87,7 +87,7 @@ import org.apache.hadoop.io.Writable;
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("{");
-        result.append("class=part");
+        result.append("class=part1");
         result.append(", sid=");
         result.append(this.sid);
         result.append(", value=");
@@ -112,7 +112,7 @@ import org.apache.hadoop.io.Writable;
         if(this.getClass()!= obj.getClass()) {
             return false;
         }
-        Part other = (Part) obj;
+        Part1 other = (Part1) obj;
         if(this.sid.equals(other.sid)== false) {
             return false;
         }

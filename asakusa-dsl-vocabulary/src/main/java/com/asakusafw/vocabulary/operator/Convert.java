@@ -63,7 +63,7 @@ import java.lang.annotation.Target;
  * 例:
  * </p>
 <pre><code>
-// スレッド安全なので変換後の結果オブジェクトを再利用可能にする
+// スレッド安全なので変換後の結果オブジェクトを再利用可能
 private Foo foo = new Foo();
 
 /**

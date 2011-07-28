@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotUserParameter {
+
+    @Extract
+    public void example(
+            MockHoge in,
+            Result<MockHoge> first,
+            Result<MockHoge> last,
+            Object param) {
+        first.add(in);
+        last.add(in);
+    }
+}

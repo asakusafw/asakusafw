@@ -648,7 +648,7 @@ public class DmdlAnalyzer {
                 PropertyDeclaration other = model.findPropertyDeclaration(property.getName().identifier);
                 if (other != null) {
                     LOG.debug("property {} is duplicated", property.getSymbol());
-                    if (property.getType().equals(other.getType()) == false) {
+                    if (property.getType().isSame(other.getType()) == false) {
                         report(new Diagnostic(
                                 Level.ERROR,
                                 node,

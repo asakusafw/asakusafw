@@ -15,22 +15,24 @@
  */
 package com.asakusafw.compiler.flow.testing.external;
 
-import com.asakusafw.compiler.flow.testing.model.Part;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import java.util.Collections;
+import java.util.Set;
 
+import com.asakusafw.compiler.flow.testing.model.Part2;
+import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
- * {@link Part}のモックエクスポーター記述。
+ * {@link Part2}のモックインポーター記述。
  */
-public class PartMockExporterDescription extends FileExporterDescription {
+public class Part2MockImporterDescription extends FileImporterDescription {
 
     @Override
     public Class<?> getModelType() {
-        return Part.class;
+        return Part2.class;
     }
 
     @Override
-    public String getPathPrefix() {
-        return "target/testing/out/" + getModelType().getSimpleName() + "-*";
+    public Set<String> getPaths() {
+        return Collections.singleton("target/testing/in/" + getModelType().getSimpleName());
     }
 }

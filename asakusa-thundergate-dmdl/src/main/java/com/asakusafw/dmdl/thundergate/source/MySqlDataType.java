@@ -83,7 +83,28 @@ public enum MySqlDataType {
     /**
      * 可変長文字列。
      */
-    VARCHAR("varchar", PropertyTypeKind.STRING);
+    VARCHAR("varchar", PropertyTypeKind.STRING),
+
+    /**
+     * Character large objects (~2^8-1bytes).
+     */
+    TINYTEXT("tinytext", PropertyTypeKind.STRING),
+
+    /**
+     * Character large objects (~2^16-1bytes).
+     */
+    TEXT("text", PropertyTypeKind.STRING),
+
+    /**
+     * Character large objects (~2^24-1bytes).
+     */
+    MEDIUMTEXT("mediumtext", PropertyTypeKind.STRING),
+
+    /**
+     * Character large objects (~2^32-1bytes).
+     */
+    LONGTEXT("longtext", PropertyTypeKind.STRING),
+    ;
 
     /**
      * MySQLで使用するデータ型を表す文字列。
