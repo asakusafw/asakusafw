@@ -16,16 +16,23 @@
 package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputFormat;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
@@ -38,21 +45,87 @@ import com.asakusafw.runtime.flow.ResultOutput;
  */
 public class StageOutputDriver {
 
-    private final MultipleOutputs<?, ?> multipleOutputs;
+    private static final String K_NAMES = "com.asakusafw.stage.output.names";
 
-    private final Map<String, Result<?>> resultSinks;
+    private static final String K_FORMAT_PREFIX = "com.asakusafw.stage.output.format.";
+
+    private static final String K_KEY_PREFIX = "com.asakusafw.stage.output.key.";
+
+    private static final String K_VALUE_PREFIX = "com.asakusafw.stage.output.value.";
+
+    private final Map<String, ResultOutput<?>> resultSinks;
 
     /**
      * インスタンスを生成する。
      * @param context 現在のタスク試行コンテキスト
+     * @throws IOException 出力の初期化に失敗した場合
+     * @throws InterruptedException 出力の初期化に失敗した場合
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
-    public StageOutputDriver(TaskInputOutputContext<?, ?, ?, ?> context) {
+    public StageOutputDriver(
+            TaskInputOutputContext<?, ?, ?, ?> context) throws IOException, InterruptedException {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        this.multipleOutputs = ResultOutput.createMultipleOutputs(context);
-        this.resultSinks = new HashMap<String, Result<?>>();
+        this.resultSinks = buildSinks(context);
+    }
+
+    private Map<String, ResultOutput<?>> buildSinks(
+            TaskInputOutputContext<?, ?, ?, ?> context) throws IOException, InterruptedException {
+        assert context != null;
+        Map<String, ResultOutput<?>> results = new HashMap<String, ResultOutput<?>>();
+        Configuration conf = context.getConfiguration();
+        for (String name : conf.getStringCollection(K_NAMES)) {
+            ResultOutput<?> sink = buildSink(context, name);
+            results.put(name, sink);
+        }
+        return results;
+    }
+
+    private ResultOutput<?> buildSink(
+            TaskInputOutputContext<?, ?, ?, ?> context,
+            String name) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        Configuration conf = context.getConfiguration();
+        Job job = new Job(conf);
+        @SuppressWarnings("rawtypes")
+        Class<? extends OutputFormat> formatClass = conf.getClass(
+                getPropertyName(K_FORMAT_PREFIX, name),
+                null,
+                OutputFormat.class);
+        Class<?> keyClass = conf.getClass(getPropertyName(K_KEY_PREFIX, name), null);
+        Class<?> valueClass = conf.getClass(getPropertyName(K_VALUE_PREFIX, name), null);
+
+        if (formatClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "OutputFormat is not declared for output \"{0}\"",
+                    name));
+        }
+        if (keyClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "Output key type is not declared for output \"{0}\"",
+                    name));
+        }
+        if (valueClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "Output value type is not declared for output \"{0}\"",
+                    name));
+        }
+
+        job.setOutputFormatClass(formatClass);
+        job.setOutputKeyClass(keyClass);
+        job.setOutputValueClass(valueClass);
+        TaskAttemptContext localContext = new TaskAttemptContext(
+                job.getConfiguration(),
+                context.getTaskAttemptID());
+        BackDoor.setOutputFilePrefix(localContext, name);
+
+        OutputFormat<?, ?> format = ReflectionUtils.newInstance(
+                formatClass,
+                localContext.getConfiguration());
+        RecordWriter<?, ?> writer = format.getRecordWriter(localContext);
+        return new ResultOutput<Writable>(localContext, writer);
     }
 
     /**
@@ -68,19 +141,19 @@ public class StageOutputDriver {
      * @throws InterruptedException 出力の作成時に割り込みが発行された場合
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
+    @SuppressWarnings("unchecked")
     public synchronized <T extends Writable> Result<T> getResultSink(
             String name) throws IOException, InterruptedException {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        @SuppressWarnings("unchecked")
-        Result<T> sink = (Result<T>) resultSinks.get(name);
-        if (sink != null) {
-            return sink;
+        ResultOutput<?> sink = resultSinks.get(name);
+        if (sink == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Output \"{0}\" is not declared",
+                    name));
         }
-        sink = new ResultOutput<T>(multipleOutputs, name);
-        resultSinks.put(name, sink);
-        return sink;
+        return (Result<T>) sink;
     }
 
     /**
@@ -90,7 +163,9 @@ public class StageOutputDriver {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public void close() throws IOException, InterruptedException {
-        multipleOutputs.close();
+        for (ResultOutput<?> output : resultSinks.values()) {
+            output.close();
+        }
     }
 
     /**
@@ -140,6 +215,51 @@ public class StageOutputDriver {
         if (valueClass == null) {
             throw new IllegalArgumentException("valueClass must not be null"); //$NON-NLS-1$
         }
-        MultipleOutputs.addNamedOutput(job, name, formatClass, keyClass, valueClass);
+        if (isValidName(name) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Output name \"{0}\" is not valid",
+                    name));
+        }
+        Configuration conf = job.getConfiguration();
+        Set<String> names = new TreeSet<String>(conf.getStringCollection(K_NAMES));
+        if (names.contains(name)) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Output name \"{0}\" is already declared",
+                    name));
+        }
+        names.add(name);
+        conf.setStrings(K_NAMES, names.toArray(new String[names.size()]));
+        conf.setClass(getPropertyName(K_FORMAT_PREFIX, name), formatClass, OutputFormat.class);
+        conf.setClass(getPropertyName(K_KEY_PREFIX, name), keyClass, Object.class);
+        conf.setClass(getPropertyName(K_VALUE_PREFIX, name), valueClass, Object.class);
+    }
+
+    private static String getPropertyName(String prefix, String name) {
+        assert prefix != null;
+        assert name != null;
+        return prefix + name;
+    }
+
+    private static boolean isValidName(String name) {
+        assert name != null;
+        for (char c : name.toCharArray()) {
+            if (isValidNameChar(c) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isValidNameChar(char c) {
+        return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
+    }
+
+    private abstract static class BackDoor extends FileOutputFormat<Object, Object> {
+
+        static void setOutputFilePrefix(JobContext context, String name) {
+            assert context != null;
+            assert name != null;
+            FileOutputFormat.setOutputName(context, name);
+        }
     }
 }
