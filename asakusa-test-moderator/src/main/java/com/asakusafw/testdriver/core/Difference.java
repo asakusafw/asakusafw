@@ -16,6 +16,13 @@
 package com.asakusafw.testdriver.core;
 
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.asakusafw.runtime.value.Date;
+import com.asakusafw.runtime.value.DateTime;
 
 /**
  * Describes about a pair of the expected data and the actual data.
@@ -69,8 +76,33 @@ public class Difference {
     public String toString() {
         return MessageFormat.format(
                 "{2}: expected <{0}>, but was <{1}>",
-                getExpected(),
-                getActual(),
+                formatMap(getExpected()),
+                formatMap(getActual()),
                 getDiagnostic());
+    }
+
+    private static String format(Object value) {
+        if (value instanceof Calendar) {
+            Calendar c = (Calendar) value;
+            if (c.isSet(Calendar.HOUR_OF_DAY)) {
+                return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
+            } else {
+                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
+            }
+        }
+        return String.valueOf(value);
+    }
+
+    private static Map<Object, String> formatMap(DataModelReflection reflection) {
+        if (reflection == null) {
+            return null;
+        } else {
+            Map<?, ?> map = reflection.properties;
+            Map<Object, String> results = new LinkedHashMap<Object, String>();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                results.put(entry.getKey(), format(entry.getValue()));
+            }
+            return results;
+        }
     }
 }
