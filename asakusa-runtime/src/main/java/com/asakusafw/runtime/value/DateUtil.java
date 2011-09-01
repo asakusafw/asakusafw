@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.value;
 
+import java.util.Calendar;
+
 /**
  * 日付に関するユーティリティ群。
  */
@@ -113,6 +115,36 @@ public final class DateUtil {
     }
 
     /**
+     * 日付を西暦0001/01/01からの経過日数に変換して返す。
+     * @param calendar 対象のカレンダー
+     * @return 日付に対応する西暦0001/01/01からの経過日数
+     * @since 0.2.2
+     */
+    public static int getDayFromCalendar(Calendar calendar) {
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return getDayFromDate(year, month, day);
+    }
+
+    /**
+     * 西暦0001/01/01からの経過日数で指定された日付を対象のカレンダーに設定する。
+     * 時、分、秒、ミリ秒のフィールドは0に設定される。
+     * @param days 西暦0001/01/01からの経過日数
+     * @param calendar 対象のカレンダー
+     * @since 0.2.2
+     */
+    public static void setDayToCalendar(int days, Calendar calendar) {
+        int year = getYearFromDay(days);
+        int daysInYear = days - getDayFromYear(year);
+        boolean leap = isLeap(year);
+        int month = getMonthOfYear(daysInYear, leap);
+        int day = getDayOfMonth(daysInYear, leap);
+        calendar.set(year, month - 1, day, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    /**
      * 時刻を秒数に変換して返す。
      * @param hour 時
      * @param minute 分
@@ -125,6 +157,45 @@ public final class DateUtil {
         result += minute * 60;
         result += second;
         return result;
+    }
+
+    /**
+     * 時刻を西暦0001/01/01 00:00:00からの経過秒数に変換して返す。
+     * @param calendar 対象のカレンダー
+     * @return 西暦0001/01/01 00:00:00からの経過秒数 (0起算)
+     * @since 0.2.2
+     */
+    public static long getSecondFromCalendar(Calendar calendar) {
+        int days = getDayFromCalendar(calendar);
+        long result = (long) days * 86400;
+        result += calendar.get(Calendar.HOUR_OF_DAY) * 60 * 60;
+        result += calendar.get(Calendar.MINUTE) * 60;
+        result += calendar.get(Calendar.SECOND);
+        return result;
+    }
+
+    /**
+     * 西暦0001/01/01 00:00:00からの経過秒数で指定された時刻を対象のカレンダーに設定する。
+     * ミリ秒のフィールドは0に設定される。
+     * @param seconds 西暦0001/01/01 00:00:00からの経過秒数
+     * @param calendar 対象のカレンダー
+     * @since 0.2.2
+     */
+    public static void setSecondToCalendar(long seconds, Calendar calendar) {
+        int days = getDayFromSeconds(seconds);
+        int year = getYearFromDay(days);
+        int daysInYear = days - getDayFromYear(year);
+        boolean leap = isLeap(year);
+        int month = getMonthOfYear(daysInYear, leap);
+        int day = getDayOfMonth(daysInYear, leap);
+
+        int rest = getSecondOfDay(seconds);
+        int hour = rest / (60 * 60);
+        int minute = rest / 60 % 60;
+        int second = rest % 60;
+
+        calendar.set(year, month - 1, day, hour, minute, second);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 
     /**

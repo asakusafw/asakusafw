@@ -96,6 +96,7 @@ public class ConcreteModelEmitter {
      * @throws IOException if failed to emit a source program
      */
     public void emit() throws IOException {
+        driver.generateResources(context, model);
         context.emit(f.newClassDeclaration(
                 new JavadocBuilder(f)
                     .text("{0}を表すデータモデルクラス。", context.getDescription(model))

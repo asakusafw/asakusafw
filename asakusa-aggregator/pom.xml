@@ -36,6 +36,14 @@
 		<module>../asakusa-thundergate-plugin</module>
 		<module>../asakusa-thundergate-test-moderator</module>
 		<module>../asakusa-thundergate</module>
+		<module>../asakusa-windgate-core</module>
+		<module>../asakusa-windgate-jdbc</module>
+		<module>../asakusa-windgate-hadoopfs</module>
+		<module>../asakusa-windgate-vocabulary</module>
+		<module>../asakusa-windgate-dmdl</module>
+		<module>../asakusa-windgate-plugin</module>
+		<module>../asakusa-windgate-test-moderator</module>
+		<module>../asakusa-windgate-bootstrap</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-archetype-batchapp</module>
 		<module>../asakusa-distribution</module>
