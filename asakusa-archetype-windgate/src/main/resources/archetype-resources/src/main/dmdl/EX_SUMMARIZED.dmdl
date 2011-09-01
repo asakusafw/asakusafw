@@ -1,0 +1,22 @@
+"EX1を集約したモデル"
+@auto_projection
+@namespace(
+    value = view
+)
+summarized ex_summarized = ex1 => {
+    "IDENT(STRING)"
+    @windgate.column(
+        value = "STRING"
+    )
+    any string -> string;
+    "SUM(VALUE)"
+    @windgate.column(
+        value = "VALUE"
+    )
+    sum value -> value;
+    "COUNT(SID)"
+    @windgate.column(
+        value = "count"
+    )
+    count sid -> count;
+} % string;

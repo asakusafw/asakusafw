@@ -39,12 +39,18 @@
 							<descriptors>
 								<descriptor>src/main/assembly/dev-exclude-lib.xml</descriptor>
 								<descriptor>src/main/assembly/dev-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/dev-windgate-exclude-lib.xml</descriptor>
+								<descriptor>src/main/assembly/dev-windgate-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-db-exclude-lib.xml</descriptor>
 								<descriptor>src/main/assembly/prod-db-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-hc-exclude-lib.xml</descriptor>
 								<descriptor>src/main/assembly/prod-hc-exclude-lib-sources.xml</descriptor>
 								<descriptor>src/main/assembly/prod-cleaner-exclude-lib.xml</descriptor>
 								<descriptor>src/main/assembly/prod-cleaner-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate-exclude-lib.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate-ssh-exclude-lib.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate-ssh-exclude-lib-sources.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -59,23 +65,10 @@
 								<descriptor>src/main/assembly/prod-db.xml</descriptor>
 								<descriptor>src/main/assembly/prod-hc.xml</descriptor>
 								<descriptor>src/main/assembly/prod-cleaner.xml</descriptor>
+								<descriptor>src/main/assembly/dev-windgate.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate.xml</descriptor>
+								<descriptor>src/main/assembly/prod-windgate-ssh.xml</descriptor>
 							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<configuration>
-							<target>
-								<property name="compile_classpath" refid="maven.compile.classpath" />
-								<ant antfile="${basedir}/src/main/scripts/asakusa-build.xml"
-									target="install:dev" />
-							</target>
 						</configuration>
 					</execution>
 				</executions>
@@ -97,6 +90,26 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-bootstrap</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-jdbc</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

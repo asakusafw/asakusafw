@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="batch:compile:all" basedir=".">
+
+	<!-- ===================================================================== -->
+	<!--  Properties                                                           -->
+	<!-- ===================================================================== -->
+
+	<property environment="env" />
+	<property file="build.properties" />
+
+	<condition property="asakusa.build.testdatasheet.generate">
+		<equals arg1="${asakusa.testdatasheet.generate}" arg2="true" />
+	</condition>
+
+	<!-- ===================================================================== -->
+	<!--  Model Generator Task                                                 -->
+	<!-- ===================================================================== -->
+
+	<target name="modelgen" description="Run Model Generator" depends="modelgen:only-dmdl">
+	</target>
+
+	<target name="modelgen:only-dmdl" description="Run Model Generator without Database">
+
+		<mkdir dir="${asakusa.modelgen.output}" />
+		<mkdir dir="${asakusa.testdatasheet.output}" />
+
+		<delete>
+			<fileset dir="${asakusa.modelgen.output}" includes="**/*.java" />
+		</delete>
+		<delete>
+			<fileset dir="${asakusa.testdatasheet.output}" includes="**/*.xls" />
+		</delete>
+		<java classname="com.asakusafw.dmdl.java.Main" classpath="${compile_classpath}" fork="true" failonerror="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<arg value="-output" />
+			<arg value="${asakusa.modelgen.output}" />
+			<arg value="-package" />
+			<arg value="${asakusa.modelgen.package}" />
+			<arg value="-source" />
+			<arg path="${asakusa.dmdl.dir}" />
+			<arg value="-sourceencoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+			<arg value="-targetencoding" />
+			<arg value="${project.build.sourceEncoding}" />
+		</java>
+		<antcall target="testdata:sheet-generated" />
+	</target>
+
+	<target name="testdata:sheet-generated" if="asakusa.build.testdatasheet.generate">
+		<java classname="com.asakusafw.testdata.generator.excel.Main"
+		      classpath="${compile_classpath}"
+		      fork="true"
+		      failonerror="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-Djava.awt.headless=true" />
+			<arg value="-format" />
+			<arg value="${asakusa.testdatasheet.format}" />
+			<arg value="-output" />
+			<arg value="${asakusa.testdatasheet.output}" />
+			<arg value="-source" />
+			<arg path="${asakusa.dmdl.dir}" />
+			<arg value="-encoding" />
+			<arg value="${asakusa.dmdl.encoding}" />
+		</java>
+	</target>
+
+	<target name="batch:compile:all" description="Run batch compile for all batch classes">
+
+		<path id="linkpath">
+			<pathelement path="${project.build.outputDirectory}" />
+		</path>
+
+		<delete dir="${asakusa.batchc.dir}" />
+		<mkdir dir="${asakusa.batchc.dir}" />
+
+		<java classname="com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver"
+		      classpath="${compile_classpath}"
+		      fork="true"
+		      failonerror="true">
+			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-Dcom.asakusafw.compiler.options=${asakusa.compiler.options}" />
+			<jvmarg value="-ea" />
+			<arg value="-output" />
+			<arg value="${asakusa.batchc.dir}" />
+			<arg value="-package" />
+			<arg value="${asakusa.package.default}" />
+			<arg value="-compilerwork" />
+			<arg value="${asakusa.compilerwork.dir}" />
+			<arg value="-hadoopwork" />
+			<arg value="${asakusa.hadoopwork.dir}" />
+			<arg value="-link" />
+			<arg pathref="linkpath" />
+			<arg value="-scanpath" />
+			<arg value="${project.build.outputDirectory}" />
+			<arg value="-skiperror" />
+		</java>
+
+		<jar destfile="target/${project.artifactId}-batchapps-${project.version}.jar">
+			<fileset dir="${asakusa.batchc.dir}" />
+		</jar>
+	</target>
+
+	<target name="install:dev">
+		<tstamp>
+			<format property="now.time" pattern="yyyyMMddHHmmss" />
+		</tstamp>
+		<move file="${env.ASAKUSA_HOME}" todir="${env.ASAKUSA_HOME}_${now.time}" failonerror="false" />
+		<mkdir dir="${env.ASAKUSA_HOME}" />
+
+		<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
+			<fileset dir="${project.build.directory}">
+				<include name="${project.artifactId}-${project.version}-asakusa-install-dev.tar.gz" />
+			</fileset>
+		</untar>
+		<delete dir="${env.ASAKUSA_HOME}/META-INF" />
+
+		<chmod perm="755">
+			<fileset dir="${env.ASAKUSA_HOME}">
+				<include name="**/*.sh" />
+			</fileset>
+		</chmod>
+		<antcall target="switch:standalone" />
+	</target>
+</project>
+
