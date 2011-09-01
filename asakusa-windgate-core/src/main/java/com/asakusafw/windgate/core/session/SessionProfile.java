@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.BaseProfile;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
@@ -28,6 +31,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider> {
+
+    static final Logger LOG = LoggerFactory.getLogger(SessionProfile.class);
 
     /**
      * Key name of session provider.
@@ -104,6 +109,7 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring session profile");
         String className = properties.getProperty(KEY_PROVIDER);
         Class<? extends SessionProvider> provider = loadProviderClass(className, loader, SessionProvider.class);
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
@@ -120,6 +126,7 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Saving session profile: {}");
         PropertiesUtil.checkAbsentKey(properties, KEY_PROVIDER);
         PropertiesUtil.checkAbsentKeyPrefix(properties, KEY_PREFIX);
         properties.setProperty(KEY_PROVIDER, providerClass.getName());

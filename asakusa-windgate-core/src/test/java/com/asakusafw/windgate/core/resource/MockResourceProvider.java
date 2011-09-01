@@ -67,7 +67,7 @@ public class MockResourceProvider extends ResourceProvider {
     }
 
     @Override
-    public void abort(String sessionId) throws IOException {
-        return;
+    public ResourceManipulator createManipulator() throws IOException {
+        throw new UnsupportedOperationException();
     }
 }

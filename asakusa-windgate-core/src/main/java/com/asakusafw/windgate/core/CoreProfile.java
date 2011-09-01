@@ -19,6 +19,9 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.process.ProcessProvider;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
@@ -27,6 +30,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class CoreProfile {
+
+    static final Logger LOG = LoggerFactory.getLogger(CoreProfile.class);
 
     private static final char QUALIFIER = '.';
 
@@ -81,6 +86,7 @@ public class CoreProfile {
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring core profile");
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
         int maxThreads = getInt(config, KEY_MAX_THREADS, DEFAULT_MAX_THREADS);
         return new CoreProfile(maxThreads);
@@ -91,7 +97,9 @@ public class CoreProfile {
         assert name != null;
         String value = config.get(name);
         if (value == null) {
-            // TODO logging
+            LOG.debug("Core profile \"{}\" is not defined, \"{}\" will be used.",
+                    name,
+                    defaultValue);
             return defaultValue;
         }
         try {
@@ -115,6 +123,7 @@ public class CoreProfile {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Saving core profile");
         PropertiesUtil.checkAbsentKeyPrefix(properties, KEY_PREFIX);
 
         properties.setProperty(KEY_PREFIX + KEY_MAX_THREADS, String.valueOf(getMaxThreads()));

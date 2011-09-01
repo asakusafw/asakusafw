@@ -21,6 +21,9 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.session.SessionMirror;
 
 /**
@@ -28,6 +31,8 @@ import com.asakusafw.windgate.core.session.SessionMirror;
  * @since 0.2.3
  */
 class FileSessionMirror extends SessionMirror {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileSessionMirror.class);
 
     private final String id;
 
@@ -64,17 +69,20 @@ class FileSessionMirror extends SessionMirror {
 
     @Override
     public void complete() throws IOException {
+        LOG.debug("Completing session: {}", id);
         delete();
     }
 
     @Override
     public void abort() throws IOException {
+        LOG.debug("Aborting session: {}", id);
         delete();
     }
 
     private void delete() throws IOException {
         FileSessionProvider.invalidate(file);
         close();
+        LOG.debug("Deleting session file: {}", path);
         if (path.delete() == false) {
             throw new IOException(MessageFormat.format(
                     "Failed to delete session object (id=\"{0}\", path=\"{1}\")",
@@ -86,15 +94,16 @@ class FileSessionMirror extends SessionMirror {
     @Override
     public synchronized void close() {
         if (closed == false) {
+            LOG.debug("Closing session file: {}", path);
             try {
                 lock.release();
             } catch (IOException e) {
-                // TODO logging
+                // TODO logging WARN
             }
             try {
                 file.close();
             } catch (IOException e) {
-                // TODO logging
+                // TODO logging WARN
             }
         }
         closed = true;

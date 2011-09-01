@@ -20,6 +20,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
 import com.asakusafw.windgate.core.session.SessionException;
@@ -33,6 +36,8 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  * @since 0.2.3
  */
 public class AbortTask {
+
+    static final Logger LOG = LoggerFactory.getLogger(AbortTask.class);
 
     private final String sessionId;
 
@@ -58,7 +63,8 @@ public class AbortTask {
 
     private SessionProvider loadSessionProvider(SessionProfile session) throws IOException {
         assert session != null;
-        // TODO logging
+        LOG.debug("Loading session provider: {}",
+                session.getProviderClass().getName());
         SessionProvider result = session.createProvider();
         return result;
     }
@@ -68,7 +74,9 @@ public class AbortTask {
         assert resources != null;
         List<ResourceProvider> results = new ArrayList<ResourceProvider>();
         for (ResourceProfile profile : resources) {
-            // TODO logging
+            LOG.debug("Loading resource provider \"{}\": {}",
+                    profile.getName(),
+                    profile.getProviderClass().getName());
             ResourceProvider provider = profile.createProvider();
             results.add(provider);
         }
@@ -101,12 +109,17 @@ public class AbortTask {
 
     private boolean doAbortSingle(String targetSessionId) throws IOException {
         assert targetSessionId != null;
+        // TODO logging INFO session
         SessionMirror session;
         try {
+            LOG.debug("Attempting to open session {}",
+                    targetSessionId);
             session = sessionProvider.open(targetSessionId);
         } catch (SessionException e) {
             if (e.getReason() == Reason.NOT_EXIST) {
                 // it seems that the session was already completed/aborted.
+                LOG.debug("Session was already disposed: {}",
+                        targetSessionId);
                 return false;
             }
             throw e;
@@ -114,12 +127,14 @@ public class AbortTask {
         try {
             int failureCount = 0;
             for (ResourceProvider provider : resourceProviders) {
-                // TODO logging
+                LOG.debug("Attempting to abort resource {} (session={})",
+                        provider.getClass().getName(),
+                        targetSessionId);
                 try {
                     provider.abort(session.getId());
                 } catch (IOException e) {
                     failureCount++;
-                    // TODO logging
+                    // TODO logging WARN
                 }
             }
             if (failureCount > 0) {
@@ -133,7 +148,7 @@ public class AbortTask {
             try {
                 session.close();
             } catch (IOException e) {
-                // TODO warn
+                // TODO logging warn
             }
         }
     }

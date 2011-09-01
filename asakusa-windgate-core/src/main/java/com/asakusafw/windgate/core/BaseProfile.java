@@ -18,6 +18,9 @@ package com.asakusafw.windgate.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Abstract superclass of any profiles.
  * @param <S> this class type
@@ -25,6 +28,8 @@ import java.text.MessageFormat;
  * @since 0.2.3
  */
 public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BaseProvider<S>> {
+
+    static final Logger LOG = LoggerFactory.getLogger(BaseProfile.class);
 
     /**
      * Key qualifier.
@@ -56,6 +61,8 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
      * @throws IOException if failed to create an instance or attach this profile
      */
     public T createProvider() throws IOException {
+        LOG.debug("Creating a provider instance: {}",
+                getProviderClass().getName());
         try {
             T instance = getProviderClass().newInstance();
             instance.configure(getThis());
@@ -93,6 +100,8 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
         if (providerInterface == null) {
             throw new IllegalArgumentException("providerInterface must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Loading provider class: {}",
+                className);
         Class<?> loaded;
         try {
             loaded = loader.loadClass(className);

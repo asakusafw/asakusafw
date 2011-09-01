@@ -17,6 +17,9 @@ package com.asakusafw.windgate.core.process.plain;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;
@@ -32,6 +35,8 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  */
 public class PlainProcessProvider extends ProcessProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(PlainProcessProvider.class);
+
     @Override
     protected void configure(ProcessProfile profile) {
         return;
@@ -39,37 +44,61 @@ public class PlainProcessProvider extends ProcessProvider {
 
     @Override
     public <T> void execute(DriverFactory drivers, ProcessScript<T> script) throws IOException {
+        LOG.debug("Start executing plain process for process \"{}\"",
+                script.getName());
+
         IOException exception = null;
         SourceDriver<T> source = null;
         DrainDriver<T> drain = null;
         try {
+            LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
+                    script.getSourceScript().getResourceName(),
+                    script.getName());
             source = drivers.createSource(script);
+            LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
+                    script.getDrainScript().getResourceName(),
+                    script.getName());
             drain = drivers.createDrain(script);
+            LOG.debug("Preparing source driver for resource \"{}\" in process \"{}\"",
+                    script.getSourceScript().getResourceName(),
+                    script.getName());
             source.prepare();
+            LOG.debug("Preparing drain driver for resource \"{}\" in process \"{}\"",
+                    script.getSourceScript().getResourceName(),
+                    script.getName());
             drain.prepare();
+
+            long count = 0;
+            // TODO logging INFO
             while (source.next()) {
                 T obj = source.get();
                 drain.put(obj);
+                count++;
             }
+            // TODO logging INFO, count
         } catch (IOException e) {
             exception = e;
-            // TODO logging
+            // TODO logging ERROR
         } finally {
             try {
                 if (source != null) {
+                    LOG.debug("Closing source driver in process \"{}\"",
+                            script.getName());
                     source.close();
                 }
             } catch (IOException e) {
                 exception = exception == null ? e : exception;
-                // TODO logging
+                // TODO logging ERROR
             }
             try {
                 if (drain != null) {
+                    LOG.debug("Closing drain driver in process \"{}\"",
+                            script.getName());
                     drain.close();
                 }
             } catch (IOException e) {
                 exception = exception == null ? e : exception;
-                // TODO logging
+                // TODO logging ERROR
             }
         }
         if (exception != null) {

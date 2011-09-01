@@ -93,10 +93,7 @@ then
 fi
 
 _WG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
-if [ -d "$_WG_ROOT/conf" ]
-then
-    _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/conf"
-fi
+_WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/conf"
 if [ -d "$_WG_ROOT/lib" ]
 then
     for f in $(ls "$_WG_ROOT/lib/")

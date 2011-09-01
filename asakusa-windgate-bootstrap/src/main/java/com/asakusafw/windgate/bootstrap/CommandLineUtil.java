@@ -72,14 +72,17 @@ public final class CommandLineUtil {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Loading properties: {}", path);
         String scheme = path.getScheme();
         if (scheme == null) {
             File file = new File(path.getPath());
+            LOG.debug("Loading properties from local path: {}", file);
             FileInputStream in = new FileInputStream(file);
             return loadProperties(path, in);
         } else if (scheme.equals(SCHEME_CLASSPATH)) {
             ClassLoader cl = loader == null ? ClassLoader.getSystemClassLoader() : loader;
             String rest = path.getSchemeSpecificPart();
+            LOG.debug("Loading properties from class path: {}", rest);
             InputStream in = cl.getResourceAsStream(rest);
             if (in == null) {
                 throw new FileNotFoundException(MessageFormat.format(
@@ -89,6 +92,7 @@ public final class CommandLineUtil {
             return loadProperties(path, in);
         } else {
             URL url = path.toURL();
+            LOG.debug("Loading properties from URL: {}", url);
             InputStream in = url.openStream();
             return loadProperties(path, in);
         }
@@ -151,7 +155,7 @@ public final class CommandLineUtil {
                 URL url = file.toURI().toURL();
                 pluginLocations.add(url);
             } catch (IOException e) {
-                // TODO logging
+                // TODO logging WARN
                 LOG.warn(MessageFormat.format(
                         "Failed to load plugin \"{0}\"",
                         file),
@@ -218,7 +222,7 @@ Character:
             } else if (kv.length == 2) {
                 addArgument(results, unescape(kv[0]), unescape(kv[1]));
             } else {
-                // TODO logging
+                // TODO logging WARN
                 LOG.warn("Invalid argument \"{}\", in \"{}\"",
                         pair,
                         results);
@@ -232,7 +236,7 @@ Character:
         assert key != null;
         assert value != null;
         if (results.containsKey(key)) {
-            // TODO logging
+            // TODO logging WARN
             LOG.warn("The key \"{}\" is duplicated in the arguments. \"{}={}\" will be ignored", new Object[] {
                     key,
                     key,

@@ -31,12 +31,16 @@ import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.compress.CompressionCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Accessors for {@link SequenceFile}.
  * @since 0.2.3
  */
 public final class SequenceFileUtil {
+
+    static final Logger LOG = LoggerFactory.getLogger(SequenceFileUtil.class);
 
     /**
      * Creates a new reader.
@@ -60,6 +64,8 @@ public final class SequenceFileUtil {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating sequence file reader for {}",
+                status.getPath());
         return new SequenceFile.Reader(
                 new InputStreamFileSystem(status, in),
                 status.getPath(),
@@ -93,6 +99,9 @@ public final class SequenceFileUtil {
         if (valueClass == null) {
             throw new IllegalArgumentException("valueClass must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating sequence file writer for output (key={}, value={})",
+                keyClass.getName(),
+                valueClass.getName());
         FSDataOutputStream output = new FSDataOutputStream(out, null);
         if (codec != null) {
             return SequenceFile.createWriter(conf, output, keyClass, valueClass, CompressionType.BLOCK, codec);

@@ -18,6 +18,7 @@ package com.asakusafw.windgate.file.resource;
 import java.io.IOException;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
@@ -28,20 +29,20 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
  */
 public class FileResourceProvider extends ResourceProvider {
 
-    private ResourceProfile profile;
+    private volatile String name;
 
     @Override
-    protected void configure(ResourceProfile prf) throws IOException {
-        this.profile = prf;
+    protected void configure(ResourceProfile profile) throws IOException {
+        this.name = profile.getName();
     }
 
     @Override
     public ResourceMirror create(String sessionId, ParameterList arguments) throws IOException {
-        return new FileResourceMirror(profile.getName());
+        return new FileResourceMirror(name);
     }
 
     @Override
-    public void abort(String sessionId) throws IOException {
-        return;
+    public ResourceManipulator createManipulator() throws IOException {
+        return new FileResourceManipulator(name);
     }
 }

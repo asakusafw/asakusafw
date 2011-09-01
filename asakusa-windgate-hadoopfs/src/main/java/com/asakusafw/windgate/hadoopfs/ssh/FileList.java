@@ -68,6 +68,7 @@ public final class FileList {
         if (input == null) {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating a new file list reader");
         return new Reader(input);
     }
 
@@ -82,6 +83,7 @@ public final class FileList {
         if (output == null) {
             throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating a new file list writer");
         return new Writer(output);
     }
 
@@ -107,6 +109,7 @@ public final class FileList {
 
         Reader(InputStream input) throws IOException {
             assert input != null;
+            // TODO logging INFO
             this.input = new ZipInputStream(input);
             ZipEntry first = this.input.getNextEntry();
             if (first == null || first.getName().equals(FIRST_ENTRY_NAME) == false) {
@@ -126,7 +129,9 @@ public final class FileList {
                 if (entry == null) {
                     throw new IOException("Found unexpected end of file in file list");
                 }
+                LOG.debug("Opening the next entry in file list: {}", entry.getName());
                 if (entry.getName().equals(LAST_ENTRY_NAME)) {
+                    // TODO logging INFO
                     sawEof = true;
                     sawNext = false;
                     return false;
@@ -157,7 +162,7 @@ public final class FileList {
             try {
                 current.readFields(buffer);
             } catch (Exception e) {
-                // TODO logging
+                // TODO logging WARN
                 LOG.error(MessageFormat.format(
                         "File list is broken (missing file status): {}",
                         entry.getName()), e);
@@ -195,6 +200,7 @@ public final class FileList {
 
         @Override
         public void close() throws IOException {
+            LOG.debug("Closing file list reader");
             sawNext = false;
             input.close();
         }
@@ -219,6 +225,7 @@ public final class FileList {
             this.output = new ZipOutputStream(output);
             this.output.setMethod(ZipOutputStream.DEFLATED);
             this.output.setLevel(0);
+            // TODO logging INFO
             this.output.putNextEntry(new ZipEntry(FIRST_ENTRY_NAME));
             this.output.closeEntry();
         }
@@ -238,6 +245,7 @@ public final class FileList {
                 throw new IllegalAccessError("status.path must not be null"); //$NON-NLS-1$
             }
             ZipEntry entry = createEntryFromStatus(status);
+            LOG.debug("Putting next entry: {}", entry.getName());
             output.putNextEntry(entry);
             return new ZipEntryOutputStream(output);
         }
@@ -254,6 +262,8 @@ public final class FileList {
         @Override
         public void close() throws IOException {
             if (closed == false) {
+                LOG.debug("Closing file list writer");
+                // TODO logging INFO
                 output.putNextEntry(new ZipEntry(LAST_ENTRY_NAME));
                 output.closeEntry();
                 output.close();

@@ -19,8 +19,11 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.conf.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
@@ -32,12 +35,16 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
  */
 public class JschHadoopFsProvider extends ResourceProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(JschHadoopFsProvider.class);
+
     private volatile Configuration configuration;
 
     private volatile SshProfile sshProfile;
 
     @Override
     protected void configure(ResourceProfile profile) throws IOException {
+        LOG.debug("Configuring Hadoop FS via JSch resource \"{}\"",
+                profile.getName());
         this.configuration = new Configuration();
         try {
             this.sshProfile = SshProfile.convert(configuration, profile);
@@ -56,11 +63,17 @@ public class JschHadoopFsProvider extends ResourceProvider {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating Hadoop FS via JSch resource {} for session {}",
+                sshProfile.getResourceName(),
+                sessionId);
         return new JschHadoopFsMirror(configuration, sshProfile, arguments);
     }
 
     @Override
-    public void abort(String sessionId) throws IOException {
-        return;
+    public ResourceManipulator createManipulator() throws IOException {
+        LOG.debug("Creating Hadoop FS via JSch resource manipulator {}",
+                sshProfile.getResourceName());
+        // TODO JschHadoopFsProvider#createManipulator
+        return null;
     }
 }

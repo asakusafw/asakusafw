@@ -22,6 +22,10 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -38,6 +42,8 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess.OperationKind;
  * @since 0.2.3
  */
 public class JdbcResourceMirror extends ResourceMirror {
+
+    static final Logger LOG = LoggerFactory.getLogger(JdbcResourceMirror.class);
 
     private final JdbcProfile profile;
 
@@ -70,6 +76,8 @@ public class JdbcResourceMirror extends ResourceMirror {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Preparing JDBC resource: {}",
+                getName());
         for (ProcessScript<?> process : script.getProcesses()) {
             if (process.getSourceScript().getResourceName().equals(getName())) {
                 convert(process, DriverScript.Kind.SOURCE);
@@ -86,8 +94,12 @@ public class JdbcResourceMirror extends ResourceMirror {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
+                getName(),
+                script.getName());
         JdbcScript<T> jdbcScript = convert(script, DriverScript.Kind.SOURCE);
         T object = newDataModel(script);
+        // TODO logging INFO
         Connection connection = profile.openConnection();
         boolean succeed = false;
         try {
@@ -97,9 +109,12 @@ public class JdbcResourceMirror extends ResourceMirror {
         } finally {
             if (succeed == false) {
                 try {
+                    LOG.debug("Disposing source driver for resource \"{}\" in process \"{}\"",
+                            getName(),
+                            script.getName());
                     connection.close();
                 } catch (SQLException e) {
-                    // TODO logging
+                    // TODO logging WARN
                 }
             }
         }
@@ -110,7 +125,11 @@ public class JdbcResourceMirror extends ResourceMirror {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
+                getName(),
+                script.getName());
         JdbcScript<T> jdbcScript = convert(script, DriverScript.Kind.DRAIN);
+        // TODO logging INFO
         Connection connection = profile.openConnection();
         boolean succeed = false;
         try {
@@ -120,9 +139,12 @@ public class JdbcResourceMirror extends ResourceMirror {
         } finally {
             if (succeed == false) {
                 try {
+                    LOG.debug("Disposing drain driver for resource \"{}\" in process \"{}\"",
+                            getName(),
+                            script.getName());
                     connection.close();
                 } catch (SQLException e) {
-                    // TODO logging
+                    // TODO logging WARN
                 }
             }
         }
@@ -130,7 +152,8 @@ public class JdbcResourceMirror extends ResourceMirror {
 
     @Override
     public void close() throws IOException {
-        return;
+        LOG.debug("Closing JDBC resource: {}",
+                getName());
     }
 
     private <T> JdbcScript<T> convert(ProcessScript<T> process, DriverScript.Kind kind) throws IOException {
@@ -153,12 +176,14 @@ public class JdbcResourceMirror extends ResourceMirror {
         String condition = extract(process, kind, JdbcProcess.CONDITION, false);
         if (kind == DriverScript.Kind.SOURCE) {
             if (condition == null || condition.isEmpty()) {
+                LOG.debug("Where clause is not specified in source process \"{}\"",
+                        getName(),
+                        process.getName());
                 condition = null;
             } else {
                 try {
                     condition = arguments.replace(condition, true);
                 } catch (IllegalArgumentException e) {
-                    // TODO logging
                     throw new IOException(MessageFormat.format(
                             "\"{3}\" failed to resolve parameters: \"{4}\" (resource={0}, process={1}, kind={2})",
                             getName(),
@@ -198,7 +223,6 @@ public class JdbcResourceMirror extends ResourceMirror {
         Map<String, String> conf = process.getDriverScript(kind).getConfiguration();
         String value = conf.get(item.key());
         if (mandatory && (value == null || value.isEmpty())) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "Resource \"{0}\" requires config \"{3}\" (process={1}, kind={2})",
                     getName(),
@@ -211,16 +235,21 @@ public class JdbcResourceMirror extends ResourceMirror {
 
     private <T> T newDataModel(ProcessScript<T> script) throws IOException {
         assert script != null;
+        Class<T> dataClass = script.getDataClass();
+        LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
+                dataClass.getName(),
+                getName(),
+                script.getName(),
+        });
         try {
-            T object = script.getDataClass().newInstance();
+            T object = dataClass.newInstance();
             return object;
         } catch (Exception e) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "Failed to create a new instance: {2} (resource={0}, process={1})",
                     getName(),
                     script.getName(),
-                    script.getDataClass().getName()), e);
+                    dataClass.getName()), e);
         }
     }
 
@@ -228,11 +257,17 @@ public class JdbcResourceMirror extends ResourceMirror {
     private <T> DataModelJdbcSupport<? super T> loadSupport(
             ProcessScript<T> script,
             String supportClassName) throws IOException {
+        assert script != null;
+        assert supportClassName != null;
+        LOG.debug("Creating JDBC support object: {} (resource={}, process={})", new Object[] {
+                supportClassName,
+                getName(),
+                script.getName(),
+        });
         Class<?> supportClass;
         try {
             supportClass = Class.forName(supportClassName, true, profile.getClassLoader());
         } catch (ClassNotFoundException e) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "Failed to load a JDBC support class: {2} (resource={0}, process={1})",
                     getName(),
@@ -240,7 +275,6 @@ public class JdbcResourceMirror extends ResourceMirror {
                     supportClassName), e);
         }
         if (DataModelJdbcSupport.class.isAssignableFrom(supportClass) == false) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "JDBC support class must be a subtype of {3}: {2} (resource={0}, process={1})",
                     getName(),
@@ -252,7 +286,6 @@ public class JdbcResourceMirror extends ResourceMirror {
         try {
             obj = supportClass.asSubclass(DataModelJdbcSupport.class).newInstance();
         } catch (Exception e) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "Failed to create a JDBC support object: {2} (resource={0}, process={1})",
                     getName(),
@@ -260,7 +293,6 @@ public class JdbcResourceMirror extends ResourceMirror {
                     supportClass.getName()), e);
         }
         if (obj.getSupportedType().isAssignableFrom(script.getDataClass()) == false) {
-            // TODO logging
             throw new IOException(MessageFormat.format(
                     "JDBC support class {2} does not support data model: {3} (resource={0}, process={1})",
                     getName(),

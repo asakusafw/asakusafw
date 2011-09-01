@@ -71,10 +71,39 @@ public class JschConnectionTest {
         } finally {
             in.close();
         }
+        File target = folder.newFolder("dummy-install");
+        putShell(target, SshProfile.COMMAND_GET);
+        putShell(target, SshProfile.COMMAND_PUT);
+        putShell(target, SshProfile.COMMAND_DELETE);
+
+        p.setProperty("resource.fs.target", target.getAbsolutePath());
+
         Collection<? extends ResourceProfile> rps = ResourceProfile.loadFrom(p, getClass().getClassLoader());
         assertThat(rps.size(), is(1));
         ResourceProfile rp = rps.iterator().next();
         this.profile = SshProfile.convert(new Configuration(), rp);
+    }
+
+    private void putShell(File directory, String file) throws IOException {
+        InputStream in = getClass().getResourceAsStream(file);
+        assertThat(file, in, is(notNullValue()));
+        try {
+            File target = new File(directory, file);
+            target.getParentFile().mkdirs();
+            FileOutputStream output = new FileOutputStream(target);
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = in.read(buf);
+                if (read < 0) {
+                    break;
+                }
+                output.write(buf, 0, read);
+            }
+            output.close();
+            assertThat(target.getName(), target.setExecutable(true), is(true));
+        } finally {
+            in.close();
+        }
     }
 
     /**
@@ -120,6 +149,28 @@ public class JschConnectionTest {
         }
         String result = get(file);
         assertThat(result, is("Hello, world!"));
+    }
+
+    /**
+     * Execute delete.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete() throws Exception {
+        File file = folder.newFile("testing");
+        JschConnection conn = new JschConnection(profile, profile.getDeleteCommand() + " " + file.getAbsolutePath());
+        try {
+            conn.redirectStandardOutput(System.out, true);
+            OutputStream out = conn.openStandardInput();
+            conn.connect();
+            out.write("Hello, world!".getBytes("UTF-8"));
+            out.close();
+            int exit = conn.waitForExit(10000);
+            assertThat(exit, is(0));
+        } finally {
+            conn.close();
+        }
+        assertThat(file.toString(), file.exists(), is(false));
     }
 
     private void put(File file, String content) throws IOException {

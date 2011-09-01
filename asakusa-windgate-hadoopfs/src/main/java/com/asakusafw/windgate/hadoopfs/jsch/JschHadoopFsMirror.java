@@ -18,6 +18,8 @@ package com.asakusafw.windgate.hadoopfs.jsch;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
@@ -33,6 +35,8 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
  */
 public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {
 
+    static final Logger LOG = LoggerFactory.getLogger(JschHadoopFsMirror.class);
+
     /**
      * Creates a new instance.
      * @param configuration the hadoop configuration
@@ -45,13 +49,19 @@ public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {
     }
 
     @Override
-    protected SshConnection openConnection(SshProfile sshProfile, String command) throws IOException {
-        if (sshProfile == null) {
-            throw new IllegalArgumentException("sshProfile must not be null"); //$NON-NLS-1$
+    protected SshConnection openConnection(SshProfile profile, String command) throws IOException {
+        if (profile == null) {
+            throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         if (command == null) {
             throw new IllegalArgumentException("command must not be null"); //$NON-NLS-1$
         }
-        return new JschConnection(sshProfile, command);
+        LOG.debug("Opening JSch connection: {}@{}:{} - {}", new Object[] {
+                profile.getUser(),
+                profile.getHost(),
+                String.valueOf(profile.getPort()),
+                command,
+        });
+        return new JschConnection(profile, command);
     }
 }

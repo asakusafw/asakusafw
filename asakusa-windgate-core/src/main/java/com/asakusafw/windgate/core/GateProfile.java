@@ -21,6 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
@@ -31,6 +34,8 @@ import com.asakusafw.windgate.core.session.SessionProfile;
  * @since 0.2.3
  */
 public class GateProfile {
+
+    static final Logger LOG = LoggerFactory.getLogger(GateProfile.class);
 
     private final CoreProfile core;
 
@@ -117,6 +122,7 @@ public class GateProfile {
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring WindGate profile");
         Properties copy = (Properties) properties.clone();
         CoreProfile core = CoreProfile.loadFrom(copy, loader);
         CoreProfile.removeCorrespondingKeys(copy);
@@ -127,7 +133,7 @@ public class GateProfile {
         Collection<? extends ResourceProfile> resources = ResourceProfile.loadFrom(copy, loader);
         ResourceProfile.removeCorrespondingKeys(copy);
         if (copy.isEmpty() == false) {
-            // TODO logging
+            // TODO logging WARN
         }
         return new GateProfile(core, session, processes, resources);
     }

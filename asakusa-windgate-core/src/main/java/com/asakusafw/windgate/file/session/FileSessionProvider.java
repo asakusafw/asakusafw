@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.session.SessionException;
 import com.asakusafw.windgate.core.session.SessionException.Reason;
@@ -38,6 +41,8 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  * @since 0.2.3
  */
 public class FileSessionProvider extends SessionProvider {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileSessionProvider.class);
 
     private static final String VALID_STRING = "VALID";
 
@@ -57,7 +62,11 @@ public class FileSessionProvider extends SessionProvider {
 
     @Override
     protected void configure(SessionProfile profile) throws IOException {
+        LOG.debug("Configuring file sessions: {}",
+                profile.getProviderClass().getName());
         directory = prepareDirectory(profile);
+        LOG.debug("Configured file sessions: {}",
+                directory);
     }
 
     /**
@@ -79,6 +88,7 @@ public class FileSessionProvider extends SessionProvider {
         }
         String path;
         try {
+            LOG.debug("Resolving session directory path: {}", rawPath);
             ParameterList environment = new ParameterList(System.getenv());
             path = environment.replace(rawPath, true);
         } catch (IllegalArgumentException e) {
@@ -98,6 +108,7 @@ public class FileSessionProvider extends SessionProvider {
 
     @Override
     public List<String> getCreatedIds() throws IOException {
+        LOG.debug("Collecting sessions: {}", directory);
         File[] files = directory.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -122,6 +133,7 @@ public class FileSessionProvider extends SessionProvider {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating session: {}", id);
         return attach(id, true, false);
     }
 
@@ -130,12 +142,14 @@ public class FileSessionProvider extends SessionProvider {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Opening session: {}", id);
         return attach(id, false, false);
     }
 
     @Override
     public void delete(String id) throws IOException {
         assert id != null;
+        LOG.debug("Deleting session: {}", id);
         SessionMirror session = attach(id, false, true);
         session.abort();
     }
@@ -147,6 +161,7 @@ public class FileSessionProvider extends SessionProvider {
         RandomAccessFile file = null;
         FileLock lock = null;
         try {
+            LOG.debug("Opening session file: {}", path);
             file = new RandomAccessFile(path, "rw");
             lock = acquireLock(id, file);
             State state = getSessionState(id, file);
@@ -176,14 +191,14 @@ public class FileSessionProvider extends SessionProvider {
                     try {
                         lock.release();
                     } catch (IOException e) {
-                        // TODO logging
+                        // TODO logging WARN
                     }
                 }
                 if (file != null) {
                     try {
                         file.close();
                     } catch (IOException e) {
-                        // TODO logging
+                        // TODO logging WARN
                     }
                 }
             }
@@ -192,13 +207,18 @@ public class FileSessionProvider extends SessionProvider {
     private FileLock acquireLock(String id, RandomAccessFile file) throws IOException {
         assert id != null;
         assert file != null;
+        LOG.debug("Acquiring lock: {}", id);
         try {
             FileLock lock = file.getChannel().tryLock();
             if (lock != null) {
                 return lock;
             }
+            LOG.debug("Failed to acquire lock: {}", id);
         } catch (OverlappingFileLockException e) {
             // fall through
+            LOG.debug(MessageFormat.format(
+                    "Failed to acquire lock: {0}",
+                    id), e);
         }
         throw new SessionException(id, Reason.ACQUIRED);
     }
@@ -206,6 +226,7 @@ public class FileSessionProvider extends SessionProvider {
     private void createSession(RandomAccessFile file) throws IOException {
         assert file != null;
         assert file.getFilePointer() == 0L;
+        LOG.debug("Initializing session file: {}", file);
         file.write(VALID);
         file.getFD().sync();
     }
@@ -213,6 +234,7 @@ public class FileSessionProvider extends SessionProvider {
     private State getSessionState(String id, RandomAccessFile file) throws IOException {
         assert file != null;
         file.seek(0L);
+        LOG.debug("Loading session file: {}", file);
         byte[] buf = new byte[VALID.length];
         int length = file.read(buf);
         file.seek(file.length());
@@ -226,6 +248,7 @@ public class FileSessionProvider extends SessionProvider {
 
     static void invalidate(RandomAccessFile file) throws IOException {
         assert file != null;
+        LOG.debug("Disposing session file: {}", file);
         file.seek(0L);
         file.write(DISPOSED);
     }

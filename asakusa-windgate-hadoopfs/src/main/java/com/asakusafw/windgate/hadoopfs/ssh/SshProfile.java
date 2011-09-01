@@ -20,6 +20,8 @@ import java.text.MessageFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
@@ -31,20 +33,27 @@ import com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsMirror;
  */
 public class SshProfile {
 
-    /**
-     * The key of GET command.
-     */
-    public static final String KEY_GET_COMMAND = "get";
+    static final Logger LOG = LoggerFactory.getLogger(SshProfile.class);
 
     /**
-     * The key of PUT command.
+     * The remote 'get' command path.
      */
-    public static final String KEY_PUT_COMMAND = "put";
+    public static final String COMMAND_GET = "bin/get.sh";
 
     /**
-     * The key of DELETE command.
+     * The remote 'put' command path.
      */
-    public static final String KEY_DELETE_COMMAND = "delete";
+    public static final String COMMAND_PUT = "bin/put.sh";
+
+    /**
+     * The remote 'delete' command path.
+     */
+    public static final String COMMAND_DELETE = "bin/delete.sh";
+
+    /**
+     * The key of remote target installed path.
+     */
+    public static final String KEY_TARGET = "target";
 
     /**
      * The key of user name.
@@ -79,9 +88,7 @@ public class SshProfile {
 
     private final String resourceName;
 
-    private final String getCommand;
-
-    private final String putCommand;
+    private final String target;
 
     private final String user;
 
@@ -98,9 +105,7 @@ public class SshProfile {
     /**
      * Creates a new instance.
      * @param name the resource name
-     * @param getCommand the get command
-     * @param putCommand the put command
-     * @param deleteCommand the put command
+     * @param target the remote target installed path
      * @param user the connection user name
      * @param host the connection target host
      * @param port the connection target port
@@ -111,9 +116,7 @@ public class SshProfile {
      */
     public SshProfile(
             String name,
-            String getCommand,
-            String putCommand,
-            String deleteCommand,
+            String target,
             String user,
             String host,
             int port,
@@ -123,14 +126,8 @@ public class SshProfile {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        if (getCommand == null) {
-            throw new IllegalArgumentException("getCommand must not be null"); //$NON-NLS-1$
-        }
-        if (putCommand == null) {
-            throw new IllegalArgumentException("putCommand must not be null"); //$NON-NLS-1$
-        }
-        if (deleteCommand == null) {
-            throw new IllegalArgumentException("deleteCommand must not be null"); //$NON-NLS-1$
+        if (target == null) {
+            throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
         if (user == null) {
             throw new IllegalArgumentException("user must not be null"); //$NON-NLS-1$
@@ -145,8 +142,7 @@ public class SshProfile {
             throw new IllegalArgumentException("passPhrase must not be null"); //$NON-NLS-1$
         }
         this.resourceName = name;
-        this.getCommand = getCommand;
-        this.putCommand = putCommand;
+        this.target = target;
         this.user = user;
         this.host = host;
         this.port = port;
@@ -170,9 +166,7 @@ public class SshProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String name = profile.getName();
-        String getCommand = extract(profile, KEY_GET_COMMAND);
-        String putCommand = extract(profile, KEY_PUT_COMMAND);
-        String deleteCommand = extract(profile, KEY_DELETE_COMMAND);
+        String target = extract(profile, KEY_TARGET);
         String user = extract(profile, KEY_USER);
         String host = extract(profile, KEY_HOST);
         int port;
@@ -217,9 +211,7 @@ public class SshProfile {
         }
         return new SshProfile(
                 name,
-                getCommand,
-                putCommand,
-                deleteCommand,
+                target,
                 user,
                 host,
                 port,
@@ -250,11 +242,19 @@ public class SshProfile {
     }
 
     /**
+     * Return the remote installation path.
+     * @return the remote installation path
+     */
+    public String getTarget() {
+        return target;
+    }
+
+    /**
      * Returns the get command.
      * @return the get command
      */
     public String getGetCommand() {
-        return getCommand;
+        return getCommand(COMMAND_GET);
     }
 
     /**
@@ -262,7 +262,26 @@ public class SshProfile {
      * @return the put command
      */
     public String getPutCommand() {
-        return putCommand;
+        return getCommand(COMMAND_PUT);
+    }
+
+    /**
+     * Returns the delete command.
+     * @return the delete command
+     */
+    public String getDeleteCommand() {
+        return getCommand(COMMAND_DELETE);
+    }
+
+    private String getCommand(String command) {
+        assert command != null;
+        StringBuilder buf = new StringBuilder();
+        buf.append(target);
+        if (target.endsWith("/") == false) {
+            buf.append('/');
+        }
+        buf.append(command);
+        return buf.toString();
     }
 
     /**

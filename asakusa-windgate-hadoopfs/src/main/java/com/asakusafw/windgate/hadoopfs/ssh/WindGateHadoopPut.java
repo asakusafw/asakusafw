@@ -22,12 +22,16 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Puts files onto Hadoop File System from {@link FileList} in the standard input.
  * @since 0.2.3
  */
 public class WindGateHadoopPut {
+
+    static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopPut.class);
 
     private static final int BUFFER_SIZE = 1024 * 1024;
 
@@ -55,8 +59,10 @@ public class WindGateHadoopPut {
         if (args == null) {
             throw new IllegalArgumentException("args must not be null"); //$NON-NLS-1$
         }
+        // TODO logging INFO
         Configuration conf = new Configuration();
         int result = new WindGateHadoopPut(conf).execute(args);
+        // TODO logging INFO
         System.exit(result);
     }
 
@@ -69,9 +75,10 @@ public class WindGateHadoopPut {
         }
         FileList.Reader reader;
         try {
+            // TODO logging INFO
             reader = FileList.createReader(new BufferedInputStream(System.in, BUFFER_SIZE));
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -80,7 +87,7 @@ public class WindGateHadoopPut {
             reader.close();
             return 0;
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -108,10 +115,11 @@ public class WindGateHadoopPut {
         assert fs != null;
         assert status != null;
         assert input != null;
-        // TODO logging
+        // TODO logging INFO
         System.err.printf("Storing %s%n", status.getPath());
         FSDataOutputStream output = fs.create(status.getPath(), true, BUFFER_SIZE);
         try {
+            long size = 0;
             try {
                 byte[] buf = new byte[256];
                 while (true) {
@@ -120,10 +128,12 @@ public class WindGateHadoopPut {
                         break;
                     }
                     output.write(buf, 0, read);
+                    size += read;
                 }
             } finally {
                 output.close();
             }
+            // TODO logging INFO, size
         } finally {
             output.close();
         }

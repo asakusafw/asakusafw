@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.hadoop.io.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
@@ -72,6 +74,8 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  */
 public class JdbcSupportEmitter extends JavaDataModelDriver {
 
+    static final Logger LOG = LoggerFactory.getLogger(JdbcSupportEmitter.class);
+
     /**
      * Category name for JDBC support.
      */
@@ -90,7 +94,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 model,
                 CATEGORY_JDBC,
                 "{0}JdbcSupport");
+        LOG.debug("Generating JDBC support for {}",
+                context.getQualifiedTypeName().toNameString());
         Generator.emit(next, model);
+        LOG.debug("Generated JDBC support for {}: {}",
+                context.getQualifiedTypeName().toNameString(),
+                next.getQualifiedTypeName().toNameString());
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -113,7 +122,9 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             return false;
         }
 
-        // TODO logging
+        LOG.warn("@{} is not declared in some properties: {}",
+                JdbcSupportDriver.TARGET_NAME,
+                model.getName().identifier);
         return false;
     }
 

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -81,7 +82,7 @@ public class WindGateAbort {
             Configuration conf = parseConfiguration(args);
             task = new AbortTask(conf.profile, conf.sessionId);
         } catch (Exception e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
@@ -107,11 +108,11 @@ public class WindGateAbort {
             task.execute();
             return 0;
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace();
             return 1;
         } catch (InterruptedException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace();
             return 1;
         }
@@ -119,17 +120,25 @@ public class WindGateAbort {
 
     static Configuration parseConfiguration(String[] args) throws ParseException {
         assert args != null;
+        LOG.debug("Analyzing WindGateAbort bootstrap arguments: {}", Arrays.toString(args));
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
 
         String profile = cmd.getOptionValue(OPT_PROFILE.getOpt());
+        LOG.debug("WindGate profile: {}", profile);
         String sessionId = cmd.getOptionValue(OPT_SESSION_ID.getOpt());
+        LOG.debug("WindGate sessionId: {}", sessionId);
         String plugins = cmd.getOptionValue(OPT_PLUGIN.getOpt());
+        LOG.debug("WindGate plugin: {}", plugins);
 
+        LOG.debug("Loading plugins: {}", plugins);
         List<File> pluginFiles = CommandLineUtil.parseFileList(plugins);
         ClassLoader loader = CommandLineUtil.buildPluginLoader(WindGateAbort.class.getClassLoader(), pluginFiles);
 
         Configuration result = new Configuration();
+
+        LOG.debug("Loading profile: {}", profile);
         try {
             Properties properties = CommandLineUtil.loadProperties(new URI(profile), loader);
             result.profile = GateProfile.loadFrom(properties, loader);
@@ -144,6 +153,7 @@ public class WindGateAbort {
             result.sessionId = sessionId;
         }
 
+        LOG.debug("Analyzed WindGateAbort bootstrap arguments");
         return result;
     }
 

@@ -22,6 +22,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelResultSet;
 
@@ -31,6 +34,10 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelResu
  * @since 0.2.3
  */
 public class JdbcSourceDriver<T> implements SourceDriver<T> {
+
+    static final Logger LOG = LoggerFactory.getLogger(JdbcSourceDriver.class);
+
+    private final JdbcProfile profile;
 
     private final JdbcScript<T> script;
 
@@ -69,6 +76,7 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
         if (object == null) {
             throw new IllegalArgumentException("object must not be null"); //$NON-NLS-1$
         }
+        this.profile = profile;
         this.script = script;
         this.connection = connection;
         this.object = object;
@@ -76,12 +84,21 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
     @Override
     public void prepare() throws IOException {
+        LOG.debug("Preparing JDBC resource source (resource={}, table={})",
+                profile.getResourceName(),
+                script.getTableName());
         try {
             this.resultSet = prepareResultSet();
         } catch (SQLException e) {
-            // TODO logging
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to prepare JDBC source (resource={0}, table={1}, columns={2})",
+                    profile.getResourceName(),
+                    script.getTableName(),
+                    script.getColumnNames()), e);
         }
+        LOG.debug("Creating ResultSet support {} for {}",
+                script.getSupport().getClass().getName(),
+                script.getColumnNames());
         support = script.getSupport().createResultSetSupport(resultSet, script.getColumnNames());
     }
 
@@ -90,7 +107,10 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
         Statement statement = connection.createStatement();
         boolean succeed = false;
         try {
+            // TODO logging INFO, table?
+            LOG.debug("Executing SQL: {}", sql);
             ResultSet result = statement.executeQuery(sql);
+            LOG.debug("Executed SQL: {}", sql);
             succeed = true;
             return result;
         } finally {
@@ -98,7 +118,7 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    // TODO logging
+                    // TODO logging WARN
                 }
             }
         }
@@ -127,9 +147,11 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
             sawNext = support.next(object);
             return sawNext;
         } catch (SQLException e) {
-            // TODO logging
             sawNext = false;
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to fetch next object from JDBC source (resource={0}, table={1})",
+                    profile.getResourceName(),
+                    script.getTableName()), e);
         }
     }
 
@@ -143,33 +165,36 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Closing JDBC resource source (resource={}, table={})",
+                profile.getResourceName(),
+                script.getTableName());
         sawNext = false;
         if (resultSet != null) {
             Statement statement = null;
             try {
                 statement = resultSet.getStatement();
             } catch (SQLException e) {
-                // TODO logging
+                // TODO logging warn
             }
             try {
                 resultSet.close();
                 resultSet = null;
                 support = null;
             } catch (SQLException e) {
-                // TODO logging
+                // TODO logging warn
             }
             try {
                 if (statement != null) {
                     statement.close();
                 }
             } catch (SQLException e) {
-                // TODO logging
+                // TODO logging warn
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            // TODO logging
+            // TODO logging warn
         }
     }
 }

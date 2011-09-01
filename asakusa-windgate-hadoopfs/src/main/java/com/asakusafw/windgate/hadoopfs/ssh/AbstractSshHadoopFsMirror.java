@@ -31,6 +31,9 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableFactories;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -50,6 +53,8 @@ import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
  * @see FileProcess
  */
 public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
+
+    static final Logger LOG = LoggerFactory.getLogger(AbstractSshHadoopFsMirror.class);
 
     private final Configuration configuration;
 
@@ -86,6 +91,11 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
 
     @Override
     public void prepare(GateScript script) throws IOException {
+        if (script == null) {
+            throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
+        }
+        LOG.debug("Preparing Hadoop FS via SSH resource: {}",
+                getName());
         for (ProcessScript<?> process : script.getProcesses()) {
             if (process.getSourceScript().getResourceName().equals(getName())) {
                 getPath(process, DriverScript.Kind.SOURCE);
@@ -99,13 +109,18 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     @SuppressWarnings("unchecked")
     @Override
     public <T> SourceDriver<T> createSource(final ProcessScript<T> script) throws IOException {
+        LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
+                getName(),
+                script.getName());
         List<String> path = getPath(script, DriverScript.Kind.SOURCE);
+        // TODO logging INFO
         NullWritable key = NullWritable.get();
-        Writable value = newDataModel(script.getDataClass());
+        Writable value = newDataModel(script);
         final SshConnection connection = openGet(path);
         boolean succeeded = false;
         try {
             InputStream output = connection.openStandardOutput();
+            // TODO logging INFO
             connection.connect();
             FileList.Reader fileList = FileList.createReader(output);
             SequenceFileProvider provider = new FileListSequenceFileProvider(configuration, fileList);
@@ -114,6 +129,9 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 @Override
                 public void close() throws IOException {
                     try {
+                        LOG.debug("Closing source driver for resource \"{}\" in process \"{}\"",
+                                getName(),
+                                script.getName());
                         super.close();
                         int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
                         if (exit != 0) {
@@ -129,7 +147,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                         try {
                             connection.close();
                         } catch (IOException e) {
-                            // TODO logging
+                            // TODO logging WARN
                         }
                     }
                 }
@@ -146,11 +164,16 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     @SuppressWarnings("unchecked")
     @Override
     public <T> DrainDriver<T> createDrain(final ProcessScript<T> script) throws IOException {
+        LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
+                getName(),
+                script.getName());
         List<String> path = getPath(script, DriverScript.Kind.DRAIN);
+        // TODO logging INFO
         final SshConnection connection = openPut();
         boolean succeeded = false;
         try {
             OutputStream input = connection.openStandardInput();
+            // TODO logging INFO
             connection.connect();
             final FileList.Writer fileList = FileList.createWriter(input);
             SequenceFile.Writer writer = SequenceFileUtil.openWriter(
@@ -164,6 +187,9 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 @Override
                 public void close() throws IOException {
                     try {
+                        LOG.debug("Closing drain driver for resource \"{}\" in process \"{}\"",
+                                getName(),
+                                script.getName());
                         super.close();
                         fileList.close();
                         int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
@@ -180,7 +206,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                         try {
                             connection.close();
                         } catch (IOException e) {
-                            // TODO logging
+                            // TODO logging WARN
                         }
                     }
                 }
@@ -286,24 +312,38 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         return results;
     }
 
-    private Writable newDataModel(Class<?> dataClass) throws IOException {
-        assert dataClass != null;
+    private Writable newDataModel(ProcessScript<?> script) throws IOException {
+        assert script != null;
+        Class<?> dataClass = script.getDataClass();
+        LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
+                dataClass.getName(),
+                getName(),
+                script.getName(),
+        });
         if (Writable.class.isAssignableFrom(dataClass) == false) {
-            // TODO logging
-            throw new IOException();
+            throw new IOException(MessageFormat.format(
+                    "Data model class {2} must be a subtype of {3} (resource={0}, process={1})",
+                    getName(),
+                    script.getName(),
+                    dataClass.getName(),
+                    Writable.class.getName()));
         }
         try {
             return WritableFactories.newInstance(
                     dataClass.asSubclass(Writable.class),
                     configuration);
         } catch (Exception e) {
-            // TODO logging
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to create a new instance: {2} (resource={0}, process={1})",
+                    getName(),
+                    script.getName(),
+                    dataClass.getName()), e);
         }
     }
 
     @Override
     public void close() throws IOException {
-        return;
+        LOG.debug("Closing Hadoop FS via SSH resource: {}",
+                getName());
     }
 }

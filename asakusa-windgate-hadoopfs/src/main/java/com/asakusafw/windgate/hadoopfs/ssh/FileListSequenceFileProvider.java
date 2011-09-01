@@ -21,6 +21,8 @@ import java.io.InputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.io.SequenceFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileProvider;
 import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
@@ -30,6 +32,8 @@ import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
  * @since 0.2.3
  */
 public class FileListSequenceFileProvider implements SequenceFileProvider {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileListSequenceFileProvider.class);
 
     private final Configuration conf;
 
@@ -63,6 +67,7 @@ public class FileListSequenceFileProvider implements SequenceFileProvider {
         InputStream content = fileList.openContent();
         boolean succeeded = false;
         try {
+            LOG.debug("Opening next sequence file: {}", status.getPath());
             SequenceFile.Reader reader = SequenceFileUtil.openReader(content, status, conf);
             succeeded = true;
             return reader;
@@ -75,6 +80,7 @@ public class FileListSequenceFileProvider implements SequenceFileProvider {
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Closing sequence file list");
         fileList.close();
     }
 }

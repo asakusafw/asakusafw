@@ -66,8 +66,20 @@ public class AbstractSshHadoopFsMirrorTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private final SshProfile profile = new SshProfile(
-            "dummy", "get", "put", "delete", "user", "host", 0, "id", "pass", null);
+    private final SshProfile profile = new SshProfile("dummy", "dummy", "user", "host", 0, "id", "pass", null) {
+        @Override
+        public String getGetCommand() {
+            return "get";
+        }
+        @Override
+        public String getPutCommand() {
+            return "put";
+        }
+        @Override
+        public String getDeleteCommand() {
+            return "delete";
+        }
+    };
 
     volatile String lastCommand;
 

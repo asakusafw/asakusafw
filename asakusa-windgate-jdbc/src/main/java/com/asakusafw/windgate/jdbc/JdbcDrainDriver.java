@@ -23,6 +23,9 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPreparedStatement;
 
@@ -32,6 +35,10 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPrep
  * @since 0.2.3
  */
 public class JdbcDrainDriver<T> implements DrainDriver<T> {
+
+    static final Logger LOG = LoggerFactory.getLogger(JdbcDrainDriver.class);
+
+    private final JdbcProfile profile;
 
     private final JdbcScript<T> script;
 
@@ -73,6 +80,7 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
         if (connection == null) {
             throw new IllegalArgumentException("connection must not be null"); //$NON-NLS-1$
         }
+        this.profile = profile;
         this.script = script;
         this.connection = connection;
         this.batchPutUnit = profile.getBatchPutUnit();
@@ -81,16 +89,25 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
 
     @Override
     public void prepare() throws IOException {
+        LOG.debug("Preparing JDBC resource drain (resource={}, table={})",
+                profile.getResourceName(),
+                script.getTableName());
         try {
             if (truncateOnPrepare) {
                 truncate();
             }
             this.statement = prepareStatement();
         } catch (SQLException e) {
-            // TODO logging
             sawError = true;
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to prepare JDBC drain (resource={0}, table={1}, columns={2})",
+                    profile.getResourceName(),
+                    script.getTableName(),
+                    script.getColumnNames()), e);
         }
+        LOG.debug("Creating PreparedStatement support {} for {}",
+                script.getSupport().getClass().getName(),
+                script.getColumnNames());
         support = script.getSupport().createPreparedStatementSupport(statement, script.getColumnNames());
         putLimitRest = batchPutUnit;
     }
@@ -101,8 +118,10 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
                 script.getTableName());
         Statement truncater = connection.createStatement();
         try {
-            // TODO logging
+            // TODO logging INFO, table
+            LOG.debug("Executing SQL: {}", sql);
             truncater.execute(sql);
+            LOG.debug("Executed SQL: {}", sql);
         } finally {
             truncater.close();
         }
@@ -110,6 +129,7 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
 
     private PreparedStatement prepareStatement() throws SQLException {
         String sql = createSql();
+        LOG.debug("Preparing SQL: {}", sql);
         return connection.prepareStatement(sql);
     }
 
@@ -129,9 +149,12 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             support.setParameters(object);
             statement.addBatch();
         } catch (SQLException e) {
-            // TODO logging
             sawError = true;
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to put object to JDBC drain: {2} (resource={0}, table={1})",
+                    profile.getResourceName(),
+                    script.getTableName(),
+                    object), e);
         }
         putLimitRest--;
         if (putLimitRest == 0) {
@@ -143,39 +166,47 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
     private void flush() throws IOException {
         assert putLimitRest != batchPutUnit;
         try {
+            LOG.debug("Flushing {} rows into {}",
+                    batchPutUnit - putLimitRest,
+                    script.getTableName());
             statement.executeBatch();
             connection.commit();
             putCount += batchPutUnit - putLimitRest;
             putLimitRest = batchPutUnit;
         } catch (SQLException e) {
-            // TODO logging
             sawError = true;
-            throw new IOException(e);
+            throw new IOException(MessageFormat.format(
+                    "Failed to flush table into JDBC drain (resource={0}, table={1})",
+                    profile.getResourceName(),
+                    script.getTableName()), e);
         }
     }
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Closing JDBC resource drain (resource={}, table={})",
+                profile.getResourceName(),
+                script.getTableName());
         IOException occurred = null;
         if (statement != null) {
             if (sawError == false && putLimitRest != batchPutUnit) {
                 try {
                     flush();
                 } catch (IOException e) {
-                    // TODO logging
+                    // TODO logging WARN
                     occurred = e;
                 }
             }
             try {
                 statement.close();
             } catch (SQLException e) {
-                // TODO logging
+                // TODO logging WARN
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            // TODO logging
+            // TODO logging WARN
         }
         if (occurred != null) {
             throw occurred;

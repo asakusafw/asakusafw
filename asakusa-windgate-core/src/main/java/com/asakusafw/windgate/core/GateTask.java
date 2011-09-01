@@ -62,7 +62,7 @@ public class GateTask {
 
     final GateScript script;
 
-    private final String sessionId;
+    final String sessionId;
 
     private final boolean createSession;
 
@@ -113,7 +113,8 @@ public class GateTask {
 
     private SessionProvider loadSessionProvider(SessionProfile session) throws IOException {
         assert session != null;
-        // TODO logging
+        LOG.debug("Loading session provider: {}",
+                session.getProviderClass().getName());
         SessionProvider result = session.createProvider();
         return result;
     }
@@ -123,7 +124,9 @@ public class GateTask {
         assert resources != null;
         List<ResourceProvider> results = new ArrayList<ResourceProvider>();
         for (ResourceProfile profile : resources) {
-            // TODO logging
+            LOG.debug("Loading resource provider \"{}\": {}",
+                    profile.getName(),
+                    profile.getProviderClass().getName());
             ResourceProvider provider = profile.createProvider();
             results.add(provider);
         }
@@ -135,7 +138,9 @@ public class GateTask {
         assert processes != null;
         Map<String, ProcessProvider> results = new TreeMap<String, ProcessProvider>();
         for (ProcessProfile profile : processes) {
-            // TODO logging
+            LOG.debug("Loading process provider \"{}\": {}",
+                    profile.getName(),
+                    profile.getProviderClass().getName());
             assert results.containsKey(profile.getName()) == false;
             ProcessProvider provider = profile.createProvider();
             results.put(profile.getName(), provider);
@@ -159,6 +164,8 @@ public class GateTask {
             runGateProcesses(resources);
             if (completeSession) {
                 fireSessionCompleted(resources);
+
+                // TODO log INFO
                 session.complete();
             }
         } finally {
@@ -172,8 +179,12 @@ public class GateTask {
 
     private SessionMirror attachSession(boolean create) throws IOException {
         if (create) {
+            LOG.debug("Creating session: {}",
+                    sessionId);
             return sessionProvider.create(sessionId);
         } else {
+            LOG.debug("Opening session: {}",
+                    sessionId);
             return sessionProvider.open(sessionId);
         }
     }
@@ -181,7 +192,8 @@ public class GateTask {
     private List<ResourceMirror> createResources() throws IOException {
         List<ResourceMirror> results = new ArrayList<ResourceMirror>();
         for (ResourceProvider provider : resourceProviders) {
-            // TODO logging
+            LOG.debug("Creating resource: {}",
+                    provider.getClass().getName());
             // NOTE each initialization can be done in multi-threaded
             ResourceMirror resource = provider.create(sessionId, arguments);
             results.add(resource);
@@ -194,9 +206,11 @@ public class GateTask {
         for (final ResourceMirror resource : resources) {
             if (resource.isTransactional()) {
                 try {
+                    LOG.debug("Initializing transactional resource \"{}\" for session \"{}\"",
+                            resource.getName(),
+                            sessionId);
                     resource.onSessionCreated();
                 } catch (IOException e) {
-                    // TODO logging
                     throw new IOException(MessageFormat.format(
                             "Failed to initialize session: {0}",
                             sessionId), e);
@@ -209,6 +223,9 @@ public class GateTask {
                 Future<?> future = executor.submit(new Callable<Void>() {
                     @Override
                     public Void call() throws IOException {
+                        LOG.debug("Initializing resource \"{}\" for session \"{}\"",
+                                resource.getName(),
+                                sessionId);
                         resource.onSessionCreated();
                         return null;
                     }
@@ -231,6 +248,8 @@ public class GateTask {
             Future<?> future = executor.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws IOException {
+                    LOG.debug("Preparing resource \"{}\"",
+                            resource.getName());
                     resource.prepare(script);
                     return null;
                 }
@@ -253,6 +272,9 @@ public class GateTask {
             Future<?> future = executor.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws IOException {
+                    LOG.debug("Starting gate process: {}",
+                            process.getName(),
+                            sessionId);
                     processProvider.execute(drivers, process);
                     return null;
                 }
@@ -275,6 +297,9 @@ public class GateTask {
                 Future<?> future = executor.submit(new Callable<Void>() {
                     @Override
                     public Void call() throws IOException {
+                        LOG.debug("Finalizing resource \"{}\" for session \"{}\"",
+                                resource.getName(),
+                                sessionId);
                         resource.onSessionCompleting();
                         return null;
                     }
@@ -291,9 +316,11 @@ public class GateTask {
         for (final ResourceMirror resource : resources) {
             if (resource.isTransactional()) {
                 try {
+                    LOG.debug("Finalizing transactional resource \"{}\" for session \"{}\"",
+                            resource.getName(),
+                            sessionId);
                     resource.onSessionCompleting();
                 } catch (IOException e) {
-                    // TODO logging
                     throw new IOException(MessageFormat.format(
                             "Failed to complete session: {0}",
                             sessionId), e);
@@ -313,18 +340,19 @@ public class GateTask {
                 futures.addLast(future);
                 // continue
             } catch (InterruptedException e) {
+                // TODO logging WARN
                 futures.addLast(future);
                 cancelAll(futures);
                 // continue
             } catch (CancellationException e) {
                 failureCount++;
-                // TODO logging
-                LOG.warn("fail", e);
+                // TODO logging INFO
+                LOG.info("fail", e);
             } catch (ExecutionException e) {
                 failureCount++;
                 cancelAll(futures);
-                // TODO logging
-                LOG.warn("fail", e);
+                // TODO logging ERROR
+                LOG.error("fail", e);
             }
         }
         return failureCount;

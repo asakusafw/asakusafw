@@ -26,12 +26,16 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Deletes files from Hadoop File System and report them as {@link FileList} to the standard output.
  * @since 0.2.3
  */
 public class WindGateHadoopDelete {
+
+    static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopDelete.class);
 
     private static final int BUFFER_SIZE = 1024 * 1024;
 
@@ -58,8 +62,10 @@ public class WindGateHadoopDelete {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
+        // TODO logging INFO
         Configuration conf = new Configuration();
         int result = new WindGateHadoopDelete(conf).execute(args);
+        // TODO logging INFO
         System.exit(result);
     }
 
@@ -76,9 +82,10 @@ public class WindGateHadoopDelete {
         }
         FileList.Writer writer;
         try {
+            // TODO logging INFO
             writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -87,7 +94,7 @@ public class WindGateHadoopDelete {
             writer.close();
             return 0;
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -99,7 +106,7 @@ public class WindGateHadoopDelete {
         FileSystem fs = FileSystem.get(conf);
         try {
             for (Path path : paths) {
-                // TODO logging
+                // TODO logging INFO
                 System.err.printf("Finding %s%n", path);
                 FileStatus[] results = fs.globStatus(path);
                 if (results == null) {
@@ -118,8 +125,7 @@ public class WindGateHadoopDelete {
         assert fs != null;
         assert status != null;
         assert drain != null;
-        // TODO logging
-        System.err.printf("Deleting %s%n", status.getPath());
+        LOG.debug("Deleting file: {}", status.getPath());
         OutputStream output = drain.openNext(status);
         try {
             String failReason = null;
@@ -131,7 +137,7 @@ public class WindGateHadoopDelete {
                     }
                 }
             } catch (IOException e) {
-                // TODO logging
+                // TODO logging WARN
                 e.printStackTrace(System.err);
                 failReason = e.toString();
             }

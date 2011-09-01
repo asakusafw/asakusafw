@@ -1,26 +1,21 @@
 #!/bin/sh
 
 _WG_ROOT="$(dirname $0)/.."
-if [ "$HADOOP_HOME" = "" ]
-then
-    . "$_WG_ROOT/etc/env.sh"
-fi
+
+. "$_WG_ROOT/conf/env.sh"
+
 if [ "$HADOOP_HOME" = "" -o ! -d "$HADOOP_HOME" ]
 then
     echo '$HADOOP_HOME'" is invalid: $HADOOP_HOME" 1>&2
     exit 1
 fi
 
+_WG_CLASSPATH="$_WG_ROOT/conf"
 if [ -d "$_WG_ROOT/lib" ]
 then
     for f in $(ls "$_WG_ROOT/lib/")
     do
-        if [ "$_WG_CLASSPATH" = "" ]
-        then
-            _WG_CLASSPATH="$_WG_ROOT/lib/$f"
-        else
-            _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
-        fi
+        _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
     done
 fi
 

@@ -101,7 +101,9 @@ public class WindGate {
      * @param args program arguments
      */
     public static void main(String... args) {
+        // TODO logging INFO
         int status = execute(args);
+        // TODO logging INFO
         System.exit(status);
     }
 
@@ -117,7 +119,8 @@ public class WindGate {
                     conf.mode.completesSession,
                     conf.arguments);
         } catch (Exception e) {
-            // TODO logging
+            // TODO logging ERROR
+
             e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
@@ -141,11 +144,11 @@ public class WindGate {
             task.execute();
             return 0;
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace();
             return 1;
         } catch (InterruptedException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace();
             return 1;
         }
@@ -153,16 +156,25 @@ public class WindGate {
 
     static Configuration parseConfiguration(String[] args) throws ParseException {
         assert args != null;
+        LOG.debug("Analyzing WindGate bootstrap arguments: {}", Arrays.toString(args));
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
 
         String mode = cmd.getOptionValue(OPT_MODE.getOpt());
+        LOG.debug("WindGate mode: {}", mode);
         String profile = cmd.getOptionValue(OPT_PROFILE.getOpt());
+        LOG.debug("WindGate profile: {}", profile);
         String script = cmd.getOptionValue(OPT_SCRIPT.getOpt());
+        LOG.debug("WindGate script: {}", script);
         String sessionId = cmd.getOptionValue(OPT_SESSION_ID.getOpt());
+        LOG.debug("WindGate sessionId: {}", sessionId);
         String plugins = cmd.getOptionValue(OPT_PLUGIN.getOpt());
+        LOG.debug("WindGate plugin: {}", plugins);
         String arguments = cmd.getOptionValue(OPT_ARGUMENTS.getOpt());
+        LOG.debug("WindGate arguments: {}", arguments);
 
+        LOG.debug("Loading plugins: {}", plugins);
         List<File> pluginFiles = CommandLineUtil.parseFileList(plugins);
         ClassLoader loader = CommandLineUtil.buildPluginLoader(WindGate.class.getClassLoader(), pluginFiles);
 
@@ -174,6 +186,8 @@ public class WindGate {
                     mode,
                     Arrays.toString(ExecutionKind.values())));
         }
+
+        LOG.debug("Loading profile: {}", profile);
         try {
             Properties properties = CommandLineUtil.loadProperties(new URI(profile), loader);
             result.profile = GateProfile.loadFrom(properties, loader);
@@ -182,6 +196,8 @@ public class WindGate {
                     "Invalid profile \"{0}\".",
                     profile), e);
         }
+
+        LOG.debug("Loading script: {}", script);
         try {
             Properties properties = CommandLineUtil.loadProperties(new URI(script), loader);
             result.script = GateScript.loadFrom(properties, loader);
@@ -196,8 +212,11 @@ public class WindGate {
                     sessionId));
         }
         result.sessionId = sessionId;
+
+        LOG.debug("Parsing arguments: {}", arguments);
         result.arguments = CommandLineUtil.parseArguments(arguments);
 
+        LOG.debug("Analyzed WindGate bootstrap arguments");
         return result;
     }
 

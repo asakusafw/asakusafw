@@ -21,6 +21,9 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.hadoopfs.ssh.SshConnection;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 import com.jcraft.jsch.ChannelExec;
@@ -34,11 +37,15 @@ import com.jcraft.jsch.Session;
  */
 class JschConnection implements SshConnection {
 
+    static final Logger LOG = LoggerFactory.getLogger(JschConnection.class);
+
     private final Session session;
 
     private final ChannelExec channel;
 
     private final SshProfile profile;
+
+    private final String command;
 
     /**
      * Creates a new instance.
@@ -55,12 +62,14 @@ class JschConnection implements SshConnection {
             throw new IllegalArgumentException("command must not be null"); //$NON-NLS-1$
         }
         this.profile = profile;
+        this.command = command;
         try {
             JSch jsch = new JSch();
             jsch.addIdentity(profile.getPrivateKey(), profile.getPassPhrase());
             session = jsch.getSession(profile.getUser(), profile.getHost(), profile.getPort());
             session.setConfig("StrictHostKeyChecking", "no");
             session.setTimeout((int) TimeUnit.SECONDS.toMillis(60));
+            // TODO logging INFO
             session.connect();
             boolean succeeded = false;
             try {
@@ -70,21 +79,24 @@ class JschConnection implements SshConnection {
                 succeeded = true;
             } finally {
                 if (succeeded == false) {
+                    LOG.debug("Disconnecting SSH session (failed to initialize command channel)");
                     session.disconnect();
                 }
             }
         } catch (JSchException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to open ssh session: {0}@{1}:{2}",
+                    "Failed to open ssh session: {0}@{1}:{2} - {3}",
                     profile.getUser(),
                     profile.getHost(),
-                    String.valueOf(profile.getPort())), e);
+                    String.valueOf(profile.getPort()),
+                    command), e);
         }
     }
 
     @Override
     public void connect() throws IOException {
         try {
+            // TODO logging INFO
             channel.connect((int) TimeUnit.SECONDS.toMillis(60));
         } catch (JSchException e) {
             throw new IOException(MessageFormat.format(
@@ -97,21 +109,29 @@ class JschConnection implements SshConnection {
 
     @Override
     public OutputStream openStandardInput() throws IOException {
+        LOG.debug("Opening remote standard input: {}",
+                command);
         return channel.getOutputStream();
     }
 
     @Override
     public InputStream openStandardOutput() throws IOException {
+        LOG.debug("Opening remote standard output: {}",
+                command);
         return channel.getInputStream();
     }
 
     @Override
     public void redirectStandardOutput(OutputStream output, boolean dontClose) {
+        LOG.debug("Redirecting remote standard output: {}",
+                command);
         channel.setOutputStream(output, dontClose);
     }
 
     @Override
     public int waitForExit(long timeout) throws InterruptedException, IOException {
+        LOG.debug("Waiting for remote command exit: {}",
+                command);
         long until = System.currentTimeMillis() + timeout;
         while (until > System.currentTimeMillis()) {
             if (channel.isClosed()) {
@@ -120,14 +140,20 @@ class JschConnection implements SshConnection {
             Thread.sleep(100);
         }
         if (channel.isClosed() == false) {
-            // TODO logging
-            throw new IOException("Exit time out");
+            throw new IOException(MessageFormat.format(
+                    "Failed to wait for exit remote command: {0}@{1}:{2} - {3}",
+                    profile.getUser(),
+                    profile.getHost(),
+                    String.valueOf(profile.getPort()),
+                    command));
         }
         return channel.getExitStatus();
     }
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Closing SSH connection: {}",
+                command);
         try {
             channel.disconnect();
         } finally {

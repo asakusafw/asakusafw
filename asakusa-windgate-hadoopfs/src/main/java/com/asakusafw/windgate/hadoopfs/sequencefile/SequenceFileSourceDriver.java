@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.resource.SourceDriver;
 
@@ -30,6 +32,8 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  * @since 0.2.3
  */
 public class SequenceFileSourceDriver<K extends Writable, V extends Writable> implements SourceDriver<V> {
+
+    static final Logger LOG = LoggerFactory.getLogger(SequenceFileSourceDriver.class);
 
     private final SequenceFileProvider provider;
 
@@ -74,7 +78,6 @@ public class SequenceFileSourceDriver<K extends Writable, V extends Writable> im
         while (true) {
             if (reader == null) {
                 if (provider.next()) {
-                    // TODO logging
                     reader = provider.open();
                 } else {
                     sawNext = false;
@@ -102,10 +105,15 @@ public class SequenceFileSourceDriver<K extends Writable, V extends Writable> im
 
     @Override
     public void close() throws IOException {
-        if (reader != null) {
-            reader.close();
-        }
-        provider.close();
+        LOG.debug("Closing sequence file source");
         sawNext = false;
+        try {
+            if (reader != null) {
+                reader.close();
+                reader = null;
+            }
+        } finally {
+            provider.close();
+        }
     }
 }

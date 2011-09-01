@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.resource.DrainDriver;
 
@@ -29,6 +31,8 @@ import com.asakusafw.windgate.core.resource.DrainDriver;
  * @since 0.2.3
  */
 public class SequenceFileDrainDriver<K extends Writable, V extends Writable> implements DrainDriver<V> {
+
+    static final Logger LOG = LoggerFactory.getLogger(SequenceFileDrainDriver.class);
 
     private final SequenceFile.Writer writer;
 
@@ -63,6 +67,7 @@ public class SequenceFileDrainDriver<K extends Writable, V extends Writable> imp
 
     @Override
     public void close() throws IOException {
+        LOG.debug("Closing sequence file drain");
         writer.close();
     }
 }

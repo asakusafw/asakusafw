@@ -20,6 +20,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
@@ -27,6 +30,8 @@ import com.asakusafw.windgate.core.resource.ResourceProfile;
  * @since 0.2.3
  */
 public class JdbcProfile {
+
+    static final Logger LOG = LoggerFactory.getLogger(JdbcProfile.class);
 
     /**
      * The profile key of fully qualified JDBC driver class name.
@@ -179,6 +184,8 @@ public class JdbcProfile {
      * @throws IOException if failed to create a new connection
      */
     public Connection openConnection() throws IOException {
+        LOG.debug("Opening JDBC connection: {}",
+                url);
         try {
             Class.forName(driver, true, classLoader);
             Connection conn = DriverManager.getConnection(url, user, password);
@@ -188,6 +195,8 @@ public class JdbcProfile {
                 succeed = true;
             } finally {
                 if (succeed == false) {
+                    LOG.debug("Disposing JDBC connection: {}",
+                            url);
                     conn.close();
                 }
             }

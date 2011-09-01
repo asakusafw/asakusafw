@@ -43,10 +43,7 @@ then
     done
 fi
 
-if [ -d "$_WG_ROOT/conf" ]
-then
-    _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/conf"
-fi
+_WG_CLASSPATH="$_WG_ROOT/conf"
 if [ -d "$_WG_ROOT/lib" ]
 then
     for f in $(ls "$_WG_ROOT/lib/")
@@ -58,12 +55,7 @@ if [ "$ASAKUSA_HOME" != "" -a -d "$ASAKUSA_HOME/core/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/core/lib/")
     do
-        if [ "$_WG_CLASSPATH" = "" ]
-        then
-            _WG_CLASSPATH="$ASAKUSA_HOME/core/lib/$f"
-        else
-            _WG_CLASSPATH="$_WG_CLASSPATH:$ASAKUSA_HOME/core/lib/$f"
-        fi
+        _WG_CLASSPATH="$_WG_CLASSPATH:$ASAKUSA_HOME/core/lib/$f"
     done
 fi
 

@@ -26,6 +26,9 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.BaseProfile;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
@@ -34,6 +37,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public final class ResourceProfile extends BaseProfile<ResourceProfile, ResourceProvider> {
+
+    static final Logger LOG = LoggerFactory.getLogger(ResourceProfile.class);
 
     /**
      * Resource name pattern.
@@ -131,10 +136,13 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring resources profile");
         List<ResourceProfile> results = new ArrayList<ResourceProfile>();
         Map<String, Map<String, String>> resources = partitioning(properties);
         for (Map.Entry<String, Map<String, String>> partitionPair : resources.entrySet()) {
             String name = partitionPair.getKey();
+            LOG.debug("Restoring resource profile: {}",
+                    name);
             Map<String, String> partition = partitionPair.getValue();
             assert isValidName(name);
 
@@ -188,6 +196,8 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Saving process profile: {}",
+                getName());
         String providerKey = KEY_PREFIX + name;
         String keyPrefix = providerKey + QUALIFIER;
         PropertiesUtil.checkAbsentKey(properties, providerKey);

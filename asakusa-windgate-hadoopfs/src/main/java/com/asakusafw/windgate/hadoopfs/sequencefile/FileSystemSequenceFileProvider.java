@@ -21,12 +21,16 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of {@link SequenceFileProvider} using {@link FileSystem}.
  * @since 0.2.3
  */
 public class FileSystemSequenceFileProvider implements SequenceFileProvider {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileSystemSequenceFileProvider.class);
 
     private final Configuration configuration;
 
@@ -76,6 +80,7 @@ public class FileSystemSequenceFileProvider implements SequenceFileProvider {
         if (current == null) {
             throw new IOException("Current sequence file is not prepared");
         }
+        // TODO logging INFO
         return new SequenceFile.Reader(fileSystem, current, configuration);
     }
 

@@ -33,16 +33,33 @@ public abstract class ResourceProvider extends BaseProvider<ResourceProfile> {
      * @param sessionId the current session ID
      * @param arguments argument (key and value pairs)
      * @return the created {@link ResourceMirror}
-     * @throws IOException if failed to provide the specified {@link ResourceMirror}
+     * @throws IOException if failed to create the specified {@link ResourceMirror}
      */
     public abstract ResourceMirror create(String sessionId, ParameterList arguments) throws IOException;
 
     /**
-     * Aborts a resouce corresponded to the specified session.
+     * Aborts the specified session corresponding to this resouce.
+     * The default implementation does nothing.
      * @param sessionId the target session ID
      * @throws IOException if failed to abort the resource
      */
-    public abstract void abort(String sessionId) throws IOException;
+    public void abort(String sessionId) throws IOException {
+        return;
+    }
 
-    // TODO provideTestingAdapter
+    /**
+     * Aborts all sessions corresponding to this resouce.
+     * The default implementation does nothing.
+     * @throws IOException
+     */
+    public void abortAll() throws IOException {
+        return;
+    }
+
+    /**
+     * Provides a new {@link ResourceManipulator}.
+     * @return the created {@link ResourceManipulator}
+     * @throws IOException if failed to create a {@link ResourceManipulator}
+     */
+    public abstract ResourceManipulator createManipulator() throws IOException;
 }

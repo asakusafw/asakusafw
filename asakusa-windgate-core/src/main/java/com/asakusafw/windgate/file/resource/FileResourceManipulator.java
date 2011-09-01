@@ -20,19 +20,16 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import com.asakusafw.windgate.core.DriverScript;
-import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.resource.DrainDriver;
-import com.asakusafw.windgate.core.resource.ResourceMirror;
+import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.SourceDriver;
-import com.asakusafw.windgate.core.vocabulary.FileProcess;
 
 /**
- * {@link ResourceMirror} using files.
+ * {@link ResourceManipulator} corresponded to {@link FileResourceMirror}.
  * @since 0.2.3
- * @see FileProcess
  */
-public class FileResourceMirror extends ResourceMirror {
+public class FileResourceManipulator extends ResourceManipulator {
 
     private final String name;
 
@@ -41,7 +38,7 @@ public class FileResourceMirror extends ResourceMirror {
      * @param name the resource name
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public FileResourceMirror(String name) {
+    public FileResourceManipulator(String name) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -54,39 +51,38 @@ public class FileResourceMirror extends ResourceMirror {
     }
 
     @Override
-    public void prepare(GateScript script) throws IOException {
-        return;
+    public void cleanupSource(ProcessScript<?> script) throws IOException {
+        cleanup(script, DriverScript.Kind.SOURCE);
     }
 
     @Override
-    public <T> SourceDriver<T> createSource(ProcessScript<T> script) throws IOException {
-        File file = getPath(script, DriverScript.Kind.SOURCE);
-        return new FileSourceDriver<T>(script.getDataClass(), file);
+    public void cleanupDrain(ProcessScript<?> script) throws IOException {
+        cleanup(script, DriverScript.Kind.DRAIN);
+    }
+
+    private void cleanup(ProcessScript<?> script, DriverScript.Kind kind) throws IOException {
+        assert script != null;
+        assert kind != null;
+        File file = FileResourceMirror.getPath(script, kind);
+        if (file.exists() && file.delete() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to cleanup the {3}: {2} (resource={0}, process={1})",
+                    getName(),
+                    script.getName(),
+                    file.getPath(),
+                    kind.prefix));
+        }
     }
 
     @Override
-    public <T> DrainDriver<T> createDrain(ProcessScript<T> script) throws IOException {
-        File file = getPath(script, DriverScript.Kind.DRAIN);
+    public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
+        File file = FileResourceMirror.getPath(script, DriverScript.Kind.SOURCE);
         return new FileDrainDriver<T>(script.getDataClass(), file);
     }
 
     @Override
-    public void close() throws IOException {
-        return;
-    }
-
-    static File getPath(ProcessScript<?> script, DriverScript.Kind kind) throws IOException {
-        assert script != null;
-        assert kind != null;
-        String path = script.getDriverScript(kind).getConfiguration().get(FileProcess.FILE.key());
-        if (path == null) {
-            throw new IOException(MessageFormat.format(
-                    "The configuration \"{0}\" is not specified ({1}.{2}.{0}).",
-                    FileProcess.FILE.key(),
-                    script.getName(),
-                    kind.prefix));
-        }
-        File file = new File(path);
-        return file;
+    public <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException {
+        File file = FileResourceMirror.getPath(script, DriverScript.Kind.DRAIN);
+        return new FileSourceDriver<T>(script.getDataClass(), file);
     }
 }

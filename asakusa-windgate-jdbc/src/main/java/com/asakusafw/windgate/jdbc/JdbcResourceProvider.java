@@ -18,7 +18,11 @@ package com.asakusafw.windgate.jdbc;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
@@ -29,10 +33,14 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
  */
 public class JdbcResourceProvider extends ResourceProvider {
 
+    static final Logger LOG = LoggerFactory.getLogger(JdbcResourceProvider.class);
+
     private volatile JdbcProfile jdbcProfile;
 
     @Override
     protected void configure(ResourceProfile profile) throws IOException {
+        LOG.debug("Configuring JDBC resource \"{}\"",
+                profile.getName());
         try {
             this.jdbcProfile = JdbcProfile.convert(profile);
         } catch (IllegalArgumentException e) {
@@ -44,11 +52,17 @@ public class JdbcResourceProvider extends ResourceProvider {
 
     @Override
     public ResourceMirror create(String sessionId, ParameterList arguments) throws IOException {
+        LOG.debug("Creating JDBC resource {} for session {}",
+                jdbcProfile.getResourceName(),
+                sessionId);
         return new JdbcResourceMirror(jdbcProfile, arguments);
     }
 
     @Override
-    public void abort(String sessionId) throws IOException {
-        return;
+    public ResourceManipulator createManipulator() throws IOException {
+        LOG.debug("Creating JDBC resource manipulator {}",
+                jdbcProfile.getResourceName());
+        // TODO JdbcResourceProvider#createManipulator
+        return null;
     }
 }

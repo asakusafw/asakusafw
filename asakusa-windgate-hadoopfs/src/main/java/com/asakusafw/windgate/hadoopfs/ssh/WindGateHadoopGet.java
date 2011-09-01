@@ -27,12 +27,16 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Gets files from Hadoop File System and write them as {@link FileList} to the standard output.
  * @since 0.2.3
  */
 public class WindGateHadoopGet {
+
+    static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopGet.class);
 
     private static final int BUFFER_SIZE = 1024 * 1024;
 
@@ -57,8 +61,10 @@ public class WindGateHadoopGet {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
+        // TODO logging INFO
         Configuration conf = new Configuration();
         int result = new WindGateHadoopGet(conf).execute(args);
+        // TODO logging INFO
         System.exit(result);
     }
 
@@ -73,11 +79,13 @@ public class WindGateHadoopGet {
         for (String arg : args) {
             paths.add(new Path(arg));
         }
+        // TODO logging INFO
         FileList.Writer writer;
         try {
+            // TODO logging INFO
             writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -86,7 +94,7 @@ public class WindGateHadoopGet {
             writer.close();
             return 0;
         } catch (IOException e) {
-            // TODO logging
+            // TODO logging ERROR
             e.printStackTrace(System.err);
             return 1;
         }
@@ -99,8 +107,7 @@ public class WindGateHadoopGet {
         try {
             for (Path path : paths) {
                 boolean found = false;
-                // TODO logging
-                System.err.printf("Finding %s%n", path);
+                // TODO logging INFO
                 FileStatus[] results = fs.globStatus(path);
                 if (results != null) {
                     for (FileStatus status : results) {
@@ -124,8 +131,7 @@ public class WindGateHadoopGet {
         assert fs != null;
         assert status != null;
         assert drain != null;
-        // TODO logging
-        System.err.printf("Loading %s%n", status.getPath());
+        // TODO logging INFO, with size
         FSDataInputStream stream = fs.open(status.getPath(), BUFFER_SIZE);
         try {
             OutputStream output = drain.openNext(status);

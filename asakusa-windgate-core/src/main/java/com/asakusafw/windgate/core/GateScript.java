@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
@@ -32,6 +35,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class GateScript {
+
+    static final Logger LOG = LoggerFactory.getLogger(GateScript.class);
 
     static final char QUALIFIER = '.';
 
@@ -71,9 +76,11 @@ public class GateScript {
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring WindGate script");
         Map<String, Map<String, String>> partitions = partitioning(properties);
         List<ProcessScript<?>> processes = new ArrayList<ProcessScript<?>>();
         for (Map.Entry<String, Map<String, String>> entry : partitions.entrySet()) {
+            LOG.debug("Restoring WindGate process: {}", entry.getKey());
             ProcessScript<?> process = loadProcess(entry.getKey(), entry.getValue(), loader);
             processes.add(process);
         }
@@ -114,6 +121,8 @@ public class GateScript {
         DriverScript sourceScript = loadDriver(name, DriverScript.Kind.SOURCE, conf);
         DriverScript drainScript = loadDriver(name, DriverScript.Kind.DRAIN, conf);
 
+        LOG.debug("Loading data model class: {}",
+                dataClassName);
         Class<?> dataClass;
         try {
             dataClass = loader.loadClass(dataClassName);
@@ -185,6 +194,7 @@ public class GateScript {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Saving WindGate script");
         for (ProcessScript<?> process : processes) {
             PropertiesUtil.checkAbsentKeyPrefix(properties, process.getName() + QUALIFIER);
         }

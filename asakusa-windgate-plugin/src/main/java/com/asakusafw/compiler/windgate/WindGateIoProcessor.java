@@ -99,7 +99,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        LOG.debug("Validating WindGate Vocabularies (batch={0}, flow={1})",
+        LOG.debug("Validating WindGate Vocabularies (batch={}, flow={})",
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
         boolean valid = true;
@@ -112,11 +112,6 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                             desc.getClass().getName()));
                 }
             } catch (IllegalStateException e) {
-                LOG.debug(MessageFormat.format(
-                        "Importer description \"{0}\" is invalid (batch={1}, flow={2})",
-                        input.getName(),
-                        getEnvironment().getBatchId(),
-                        getEnvironment().getFlowId()), e);
                 getEnvironment().error(
                         "Importer description \"{0}\" is invalid (batch={1}, flow={2}): {3}",
                         input.getName(),
@@ -135,11 +130,6 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                             desc.getClass().getName()));
                 }
             } catch (IllegalStateException e) {
-                LOG.debug(MessageFormat.format(
-                        "Exporter description \"{0}\" is invalid (batch={1}, flow={2})",
-                        output.getName(),
-                        getEnvironment().getBatchId(),
-                        getEnvironment().getFlowId()), e);
                 getEnvironment().error(
                         "Exporter description \"{0}\" is invalid (batch={1}, flow={2}): {3}",
                         output.getName(),
@@ -168,7 +158,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         if (context.getOutputs().isEmpty()) {
             return Collections.emptyList();
         }
-        LOG.debug("Emitting epilogue stages for WindGate (batch={0}, flow={1})",
+        LOG.debug("Emitting epilogue stages for WindGate (batch={}, flow={})",
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
 
@@ -232,14 +222,29 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public void emitPackage(IoContext context) throws IOException {
+        LOG.debug("Emitting process scripts for WindGate (batch={}, flow={})",
+                getEnvironment().getBatchId(),
+                getEnvironment().getFlowId());
         Map<String, GateScript> importers = toImporterScripts(context.getInputs());
         Map<String, GateScript> exporters = toExporterScripts(context.getOutputs());
 
         for (Map.Entry<String, GateScript> entry : importers.entrySet()) {
-            emitScript(getScriptLocation(true, entry.getKey()), entry.getValue());
+            String script = getScriptLocation(true, entry.getKey());
+            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] {
+                    script,
+                    getEnvironment().getBatchId(),
+                    getEnvironment().getFlowId(),
+            });
+            emitScript(script, entry.getValue());
         }
         for (Map.Entry<String, GateScript> entry : exporters.entrySet()) {
-            emitScript(getScriptLocation(false, entry.getKey()), entry.getValue());
+            String script = getScriptLocation(false, entry.getKey());
+            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] {
+                    script,
+                    getEnvironment().getBatchId(),
+                    getEnvironment().getFlowId(),
+            });
+            emitScript(script, entry.getValue());
         }
     }
 

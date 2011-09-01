@@ -28,6 +28,12 @@ import com.asakusafw.windgate.core.ProcessScript;
 public abstract class ResourceMirror implements Closeable {
 
     /**
+     * Returns the name of this resource.
+     * @return the name of this resource
+     */
+    public abstract String getName();
+
+    /**
      * Returns whether this resource is transactional.
      * Transactional resources must be up to one in the profile.
      * If this is transactional resource,
@@ -59,12 +65,6 @@ public abstract class ResourceMirror implements Closeable {
     public void onSessionCompleting() throws IOException {
         return;
     }
-
-    /**
-     * Returns the name of this resource.
-     * @return the name of this resource
-     */
-    public abstract String getName();
 
     /**
      * Prepares this resource for the specified execution.

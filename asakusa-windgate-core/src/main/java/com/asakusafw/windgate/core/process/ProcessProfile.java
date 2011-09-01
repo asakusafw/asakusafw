@@ -26,6 +26,9 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.windgate.core.BaseProfile;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
@@ -34,6 +37,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider> {
+
+    static final Logger LOG = LoggerFactory.getLogger(ProcessProfile.class);
 
     /**
      * Process name pattern.
@@ -134,10 +139,13 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Restoring processes profile");
         List<ProcessProfile> results = new ArrayList<ProcessProfile>();
         Map<String, Map<String, String>> processs = partitioning(properties);
         for (Map.Entry<String, Map<String, String>> partitionPair : processs.entrySet()) {
             String name = partitionPair.getKey();
+            LOG.debug("Restoring process profile: {}",
+                    name);
             Map<String, String> partition = partitionPair.getValue();
             assert isValidName(name);
 
@@ -191,6 +199,8 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Saving process profile: {}",
+                getName());
         String providerKey = KEY_PREFIX + name;
         String keyPrefix = providerKey + QUALIFIER;
         PropertiesUtil.checkAbsentKey(properties, providerKey);
