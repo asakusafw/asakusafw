@@ -18,14 +18,13 @@ package ${package}.jobflow;
 import java.util.Arrays;
 import java.util.List;
 
-import ${package}.modelgen.dmdl.model.Ex1;
-import ${package}.modelgen.dmdl.jdbc.Ex1JdbcSupport;
+import ${package}.modelgen.table.model.Ex1;
+import ${package}.modelgen.table.jdbc.Ex1JdbcSupport;
 
-import com.asakusafw.example.windgate.modelgen.dmdl.jdbc.DocumentJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
 /**
- * Export EX1 into WindGate.
+ * Export EX2 from WindGate.
  */
 public class Ex1ToDb extends DefaultDbExporterDescription {
 
@@ -36,7 +35,7 @@ public class Ex1ToDb extends DefaultDbExporterDescription {
     
     @Override
     public String getTableName() {
-        return "EX1";
+        return "EX2";
     }
 
     @Override

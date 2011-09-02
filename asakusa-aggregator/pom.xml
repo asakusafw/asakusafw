@@ -38,6 +38,7 @@
 		<module>../asakusa-thundergate</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-archetype-batchapp</module>
+		<module>../asakusa-archetype-windgate</module>
 		<module>../asakusa-distribution</module>
 	</modules>
 

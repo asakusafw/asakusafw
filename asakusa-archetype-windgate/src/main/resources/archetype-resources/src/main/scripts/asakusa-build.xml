@@ -119,7 +119,6 @@
 				<include name="**/*.sh" />
 			</fileset>
 		</chmod>
-		<antcall target="switch:standalone" />
 	</target>
 </project>
 

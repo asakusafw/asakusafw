@@ -18,10 +18,9 @@ package ${package}.jobflow;
 import java.util.Arrays;
 import java.util.List;
 
-import ${package}.modelgen.dmdl.model.Ex1;
-import ${package}.modelgen.dmdl.jdbc.Ex1JdbcSupport;
+import ${package}.modelgen.table.model.Ex1;
+import ${package}.modelgen.table.jdbc.Ex1JdbcSupport;
 
-import com.asakusafw.example.windgate.modelgen.dmdl.jdbc.DocumentJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
 /**
