@@ -1,0 +1,15 @@
+-- package com.asakusafw.compiler.windgate
+
+@namespace(value = testing)
+simple = {
+    @windgate.column(value = "VALUE")
+    value : TEXT;
+};
+
+@namespace(value = testing)
+pair = {
+    @windgate.column(value = "KEY")
+    key : INT;
+    @windgate.column(value = "VALUE")
+    value : TEXT;
+};

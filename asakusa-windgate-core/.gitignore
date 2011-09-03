@@ -1,0 +1,5 @@
+logback-test.xml
+/.settings
+/target
+/.classpath
+/.project

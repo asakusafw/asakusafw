@@ -111,7 +111,6 @@ public class AnalyzeTask {
         Cursor cursor = source.createCursor();
         try {
             while (cursor.next()) {
-                count++;
                 URI name = cursor.getIdentifier();
                 LOG.info("DMDLスクリプトを解析します: {}", name);
                 Reader resource = cursor.openResource();
@@ -120,6 +119,7 @@ public class AnalyzeTask {
                     for (AstModelDefinition<?> model : script.models) {
                         LOG.info("モデルを追加します: {}", model.name);
                         analyzer.addModel(model);
+                        count++;
                     }
                 } catch (DmdlSyntaxException e) {
                     LOG.error(MessageFormat.format(
