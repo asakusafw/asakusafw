@@ -23,6 +23,7 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>windgate-ssh/lib</outputDirectory>
 			<includes>
+				<include>com.asakusafw:asakusa-windgate-core</include>
 				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
 			</includes>
 			<fileMode>0644</fileMode>
