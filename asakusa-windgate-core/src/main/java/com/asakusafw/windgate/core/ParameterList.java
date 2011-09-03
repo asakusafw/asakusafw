@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ParameterList {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(ParameterList.class);
+
     static final Logger LOG = LoggerFactory.getLogger(ParameterList.class);
 
     private static final Pattern VARIABLE = Pattern.compile("\\$\\{(.*?)\\}");
@@ -66,26 +68,6 @@ public class ParameterList {
     }
 
     /**
-     * Converts name into the corresponding variable expression.
-     * @param name the variable name
-     * @return the converted expression
-     * @throws IllegalArgumentException if the name is invalid format, any parameter is {@code null}
-     */
-    public static String toVariable(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        String expr = "${" + name + "}";
-        if (VARIABLE.matcher(expr).matches() == false) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "\"{0}\" is not a valid variable name",
-                    name));
-        }
-        return expr;
-    }
-
-
-    /**
      * Replaces parameters in the target string.
      * The parameters are represented as <code>${variable-name}</code>.
      * @param string target string
@@ -107,6 +89,8 @@ public class ParameterList {
             String replacement = parameters.get(name);
             if (replacement == null) {
                 if (strict) {
+                    WGLOG.error("E99001",
+                            name);
                     throw new IllegalArgumentException(MessageFormat.format(
                             "parameter \"{0}\" is not defined in the list: {1}",
                             name,

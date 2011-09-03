@@ -15,6 +15,6 @@
  */
 
 /**
- * Resource implementation using the local file system.
+ * Resource implementation using the local file system (for testing).
  */
 package com.asakusafw.windgate.file.resource;

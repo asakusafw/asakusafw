@@ -38,10 +38,12 @@ import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProcessScript;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileDrainDriver;
 import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileProvider;
 import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileSourceDriver;
@@ -54,11 +56,13 @@ import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
  */
 public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
 
+    static final WindGateLogger WGLOG = new HadoopFsLogger(AbstractSshHadoopFsMirror.class);
+
     static final Logger LOG = LoggerFactory.getLogger(AbstractSshHadoopFsMirror.class);
 
     private final Configuration configuration;
 
-    private final SshProfile profile;
+    final SshProfile profile;
 
     private final ParameterList arguments;
 
@@ -112,15 +116,13 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        List<String> path = getPath(script, DriverScript.Kind.SOURCE);
-        // TODO logging INFO
+        final List<String> path = getPath(script, DriverScript.Kind.SOURCE);
         NullWritable key = NullWritable.get();
         Writable value = newDataModel(script);
         final SshConnection connection = openGet(path);
         boolean succeeded = false;
         try {
             InputStream output = connection.openStandardOutput();
-            // TODO logging INFO
             connection.connect();
             FileList.Reader fileList = FileList.createReader(output);
             SequenceFileProvider provider = new FileListSequenceFileProvider(configuration, fileList);
@@ -135,19 +137,30 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                         super.close();
                         int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
                         if (exit != 0) {
+                            WGLOG.error("E13001",
+                                    profile.getResourceName(),
+                                    script.getName(),
+                                    path);
                             throw new IOException(MessageFormat.format(
                                     "SSH connection returns unexpected exit code: (code={0}, process={1}:source)",
                                     String.valueOf(exit),
                                     script.getName()));
                         }
                     } catch (InterruptedException e) {
+                        WGLOG.error(e, "E13001",
+                                profile.getResourceName(),
+                                script.getName(),
+                                path);
                         Thread.currentThread().interrupt();
                         throw new IOException("Failed to exit remote process", e);
                     } finally {
                         try {
                             connection.close();
                         } catch (IOException e) {
-                            // TODO logging WARN
+                            WGLOG.warn(e, "W13001",
+                                    profile.getResourceName(),
+                                    script.getName(),
+                                    path);
                         }
                     }
                 }
@@ -156,7 +169,14 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             return (SourceDriver<T>) result;
         } finally {
             if (succeeded == false) {
-                connection.close();
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    WGLOG.warn(e, "W13001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                }
             }
         }
     }
@@ -167,13 +187,11 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        List<String> path = getPath(script, DriverScript.Kind.DRAIN);
-        // TODO logging INFO
+        final List<String> path = getPath(script, DriverScript.Kind.DRAIN);
         final SshConnection connection = openPut();
         boolean succeeded = false;
         try {
             OutputStream input = connection.openStandardInput();
-            // TODO logging INFO
             connection.connect();
             final FileList.Writer fileList = FileList.createWriter(input);
             SequenceFile.Writer writer = SequenceFileUtil.openWriter(
@@ -194,19 +212,30 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                         fileList.close();
                         int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
                         if (exit != 0) {
+                            WGLOG.error("E14001",
+                                    profile.getResourceName(),
+                                    script.getName(),
+                                    path);
                             throw new IOException(MessageFormat.format(
                                     "SSH connection returns unexpected exit code: (code={0}, process={1}:drain)",
                                     String.valueOf(exit),
                                     script.getName()));
                         }
                     } catch (InterruptedException e) {
+                        WGLOG.error(e, "E14001",
+                                profile.getResourceName(),
+                                script.getName(),
+                                path);
                         Thread.currentThread().interrupt();
                         throw new IOException("Failed to exit remote process", e);
                     } finally {
                         try {
                             connection.close();
                         } catch (IOException e) {
-                            // TODO logging WARN
+                            WGLOG.warn(e, "W14001",
+                                    profile.getResourceName(),
+                                    script.getName(),
+                                    path);
                         }
                     }
                 }
@@ -215,7 +244,14 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             return (DrainDriver<T>) result;
         } finally {
             if (succeeded == false) {
-                connection.close();
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    WGLOG.warn(e, "W14001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                }
             }
         }
     }
@@ -270,6 +306,12 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         DriverScript script = proc.getDriverScript(kind);
         String pathString = script.getConfiguration().get(FILE.key());
         if (pathString == null) {
+            WGLOG.error("E11001",
+                    getName(),
+                    proc.getName(),
+                    kind.prefix,
+                    FILE.key(),
+                    pathString);
             throw new IOException(MessageFormat.format(
                     "Process \"{1}\" must declare \"{3}\": (resource={0}, kind={2})",
                     getName(),
@@ -287,6 +329,12 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 String resolved = arguments.replace(path, true);
                 results.add(resolved);
             } catch (IllegalArgumentException e) {
+                WGLOG.error(e, "E11001",
+                        getName(),
+                        proc.getName(),
+                        kind.prefix,
+                        FILE.key(),
+                        pathString);
                 throw new IOException(MessageFormat.format(
                         "Failed to resolve the {2} path: {3} (resource={0}, process={1})",
                         getName(),
@@ -296,6 +344,12 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             }
         }
         if (kind == DriverScript.Kind.SOURCE && results.size() <= 0) {
+            WGLOG.error("E11001",
+                    getName(),
+                    proc.getName(),
+                    kind.prefix,
+                    FILE.key(),
+                    pathString);
             throw new IOException(MessageFormat.format(
                     "source path must be greater than 0: {2} (resource={0}, process={1})",
                     getName(),
@@ -303,6 +357,12 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     results));
         }
         if (kind == DriverScript.Kind.DRAIN && results.size() != 1) {
+            WGLOG.error("E11001",
+                    getName(),
+                    proc.getName(),
+                    kind.prefix,
+                    FILE.key(),
+                    pathString);
             throw new IOException(MessageFormat.format(
                     "drain path must be one: {2} (resource={0}, process={1})",
                     getName(),
@@ -321,6 +381,11 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 script.getName(),
         });
         if (Writable.class.isAssignableFrom(dataClass) == false) {
+            WGLOG.error("E11001",
+                    getName(),
+                    script.getName(),
+                    FILE.key(),
+                    dataClass.getName());
             throw new IOException(MessageFormat.format(
                     "Data model class {2} must be a subtype of {3} (resource={0}, process={1})",
                     getName(),
@@ -333,6 +398,11 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     dataClass.asSubclass(Writable.class),
                     configuration);
         } catch (Exception e) {
+            WGLOG.error("E11001",
+                    getName(),
+                    script.getName(),
+                    FILE.key(),
+                    dataClass.getName());
             throw new IOException(MessageFormat.format(
                     "Failed to create a new instance: {2} (resource={0}, process={1})",
                     getName(),

@@ -32,11 +32,16 @@ import org.apache.hadoop.io.DataOutputBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+
 /**
  * A file list transfer protocol.
  * @since 0.2.3
  */
 public final class FileList {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(FileList.class);
 
     static final Logger LOG = LoggerFactory.getLogger(FileList.class);
 
@@ -109,7 +114,6 @@ public final class FileList {
 
         Reader(InputStream input) throws IOException {
             assert input != null;
-            // TODO logging INFO
             this.input = new ZipInputStream(input);
             ZipEntry first = this.input.getNextEntry();
             if (first == null || first.getName().equals(FIRST_ENTRY_NAME) == false) {
@@ -131,7 +135,6 @@ public final class FileList {
                 }
                 LOG.debug("Opening the next entry in file list: {}", entry.getName());
                 if (entry.getName().equals(LAST_ENTRY_NAME)) {
-                    // TODO logging INFO
                     sawEof = true;
                     sawNext = false;
                     return false;
@@ -162,10 +165,8 @@ public final class FileList {
             try {
                 current.readFields(buffer);
             } catch (Exception e) {
-                // TODO logging WARN
-                LOG.error(MessageFormat.format(
-                        "File list is broken (missing file status): {}",
-                        entry.getName()), e);
+                WGLOG.warn(e, "W19001",
+                        entry.getName());
                 return false;
             }
             return true;
@@ -225,7 +226,6 @@ public final class FileList {
             this.output = new ZipOutputStream(output);
             this.output.setMethod(ZipOutputStream.DEFLATED);
             this.output.setLevel(0);
-            // TODO logging INFO
             this.output.putNextEntry(new ZipEntry(FIRST_ENTRY_NAME));
             this.output.closeEntry();
         }
@@ -263,7 +263,6 @@ public final class FileList {
         public void close() throws IOException {
             if (closed == false) {
                 LOG.debug("Closing file list writer");
-                // TODO logging INFO
                 output.putNextEntry(new ZipEntry(LAST_ENTRY_NAME));
                 output.closeEntry();
                 output.close();

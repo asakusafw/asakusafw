@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
@@ -29,11 +30,16 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+
 /**
  * Deletes files from Hadoop File System and report them as {@link FileList} to the standard output.
  * @since 0.2.3
  */
 public class WindGateHadoopDelete {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopDelete.class);
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopDelete.class);
 
@@ -62,16 +68,18 @@ public class WindGateHadoopDelete {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
-        // TODO logging INFO
+        WGLOG.info("I20000");
         Configuration conf = new Configuration();
         int result = new WindGateHadoopDelete(conf).execute(args);
-        // TODO logging INFO
+        WGLOG.info("I22999", result);
         System.exit(result);
     }
 
     int execute(String... args) {
         assert args != null;
         if (args.length == 0) {
+            WGLOG.error("E22001",
+                    Arrays.toString(args));
             System.err.printf("usage: java -classpath ... %s file1 [file2 ...]%n",
                     WindGateHadoopDelete.class.getName());
             return 1;
@@ -80,22 +88,18 @@ public class WindGateHadoopDelete {
         for (String arg : args) {
             paths.add(new Path(arg));
         }
-        FileList.Writer writer;
         try {
-            // TODO logging INFO
-            writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
-        } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace(System.err);
-            return 1;
-        }
-        try {
+            WGLOG.info("I22001",
+                    paths);
+            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
             doDelete(paths, writer);
+            WGLOG.info("I22002",
+                    paths);
             writer.close();
             return 0;
         } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace(System.err);
+            WGLOG.error(e, "E22002",
+                    paths);
             return 1;
         }
     }
@@ -106,8 +110,9 @@ public class WindGateHadoopDelete {
         FileSystem fs = FileSystem.get(conf);
         try {
             for (Path path : paths) {
-                // TODO logging INFO
-                System.err.printf("Finding %s%n", path);
+                WGLOG.info("I22003",
+                        fs.getUri(),
+                        path);
                 FileStatus[] results = fs.globStatus(path);
                 if (results == null) {
                     continue;
@@ -125,7 +130,9 @@ public class WindGateHadoopDelete {
         assert fs != null;
         assert status != null;
         assert drain != null;
-        LOG.debug("Deleting file: {}", status.getPath());
+        WGLOG.info("I22004",
+                fs.getUri(),
+                status.getPath());
         OutputStream output = drain.openNext(status);
         try {
             String failReason = null;
@@ -133,12 +140,16 @@ public class WindGateHadoopDelete {
                 boolean deleted = fs.delete(status.getPath(), true);
                 if (deleted == false) {
                     if (fs.exists(status.getPath())) {
+                        WGLOG.warn("W22001",
+                                fs.getUri(),
+                                status.getPath());
                         failReason = "Unknown";
                     }
                 }
             } catch (IOException e) {
-                // TODO logging WARN
-                e.printStackTrace(System.err);
+                WGLOG.warn(e, "W22001",
+                        fs.getUri(),
+                        status.getPath());
                 failReason = e.toString();
             }
             if (failReason != null) {

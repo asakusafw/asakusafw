@@ -32,6 +32,8 @@ import com.asakusafw.windgate.core.session.SessionMirror;
  */
 class FileSessionMirror extends SessionMirror {
 
+    static final FileSessionLogger WGLOG = new FileSessionLogger(FileSessionMirror.class);
+
     static final Logger LOG = LoggerFactory.getLogger(FileSessionMirror.class);
 
     private final String id;
@@ -80,10 +82,20 @@ class FileSessionMirror extends SessionMirror {
     }
 
     private void delete() throws IOException {
-        FileSessionProvider.invalidate(file);
+        try {
+            FileSessionProvider.invalidate(path, file);
+        } catch (IOException e) {
+            WGLOG.error(e, "E02001",
+                    id,
+                    path);
+            throw e;
+        }
         close();
         LOG.debug("Deleting session file: {}", path);
         if (path.delete() == false) {
+            WGLOG.error("E02002",
+                    id,
+                    path);
             throw new IOException(MessageFormat.format(
                     "Failed to delete session object (id=\"{0}\", path=\"{1}\")",
                     id,
@@ -98,12 +110,16 @@ class FileSessionMirror extends SessionMirror {
             try {
                 lock.release();
             } catch (IOException e) {
-                // TODO logging WARN
+                WGLOG.warn(e, "W01005",
+                        id,
+                        path);
             }
             try {
                 file.close();
             } catch (IOException e) {
-                // TODO logging WARN
+                WGLOG.warn(e, "W01006",
+                        id,
+                        path);
             }
         }
         closed = true;

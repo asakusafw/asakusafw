@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.WindGateCoreLogger;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
@@ -37,6 +39,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public final class ResourceProfile extends BaseProfile<ResourceProfile, ResourceProvider> {
+
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(ResourceProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ResourceProfile.class);
 
@@ -165,6 +169,8 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
         while (map.isEmpty() == false) {
             String name = map.firstKey();
             if (isValidName(name) == false) {
+                WGLOG.error("E02004",
+                        name);
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Invalid resource name: \"{0}\"",
                         name));

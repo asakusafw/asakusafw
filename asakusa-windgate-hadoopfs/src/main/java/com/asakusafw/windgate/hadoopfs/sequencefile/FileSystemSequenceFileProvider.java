@@ -24,11 +24,16 @@ import org.apache.hadoop.io.SequenceFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+
 /**
  * An implementation of {@link SequenceFileProvider} using {@link FileSystem}.
  * @since 0.2.3
  */
 public class FileSystemSequenceFileProvider implements SequenceFileProvider {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(FileSystemSequenceFileProvider.class);
 
     static final Logger LOG = LoggerFactory.getLogger(FileSystemSequenceFileProvider.class);
 
@@ -80,7 +85,9 @@ public class FileSystemSequenceFileProvider implements SequenceFileProvider {
         if (current == null) {
             throw new IOException("Current sequence file is not prepared");
         }
-        // TODO logging INFO
+        WGLOG.info("I09001",
+                fileSystem.getUri(),
+                current);
         return new SequenceFile.Reader(fileSystem, current, configuration);
     }
 

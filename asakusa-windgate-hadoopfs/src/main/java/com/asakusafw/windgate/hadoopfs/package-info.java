@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * A plain process implementation.
+ * WindGate resources using Hadoop FileSystem core classes.
  */
-package com.asakusafw.windgate.core.process.plain;
+package com.asakusafw.windgate.hadoopfs;

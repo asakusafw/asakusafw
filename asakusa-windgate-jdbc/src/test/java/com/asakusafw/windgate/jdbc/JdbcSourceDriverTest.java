@@ -54,6 +54,7 @@ public class JdbcSourceDriverTest {
         Connection conn = h2.open();
         try {
             JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
@@ -78,6 +79,7 @@ public class JdbcSourceDriverTest {
         Connection conn = h2.open();
         try {
             JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
@@ -113,6 +115,7 @@ public class JdbcSourceDriverTest {
         Connection conn = h2.open();
         try {
             JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
@@ -146,6 +149,7 @@ public class JdbcSourceDriverTest {
         Connection conn = h2.open();
         try {
             JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
@@ -171,6 +175,7 @@ public class JdbcSourceDriverTest {
         Connection conn = h2.open();
         try {
             JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),

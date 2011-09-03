@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
@@ -30,6 +31,8 @@ import com.asakusafw.windgate.core.resource.ResourceProfile;
  * @since 0.2.3
  */
 public class JdbcProfile {
+
+    static final WindGateLogger WGLOG = new JdbcLogger(JdbcProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JdbcProfile.class);
 
@@ -101,7 +104,7 @@ public class JdbcProfile {
             throw new IllegalArgumentException("url must not be null"); //$NON-NLS-1$
         }
         if (batchPutUnit <= 0L) {
-            throw new IllegalArgumentException("batchPutUnit must be > 0");
+            throw new IllegalArgumentException("batchPutUnit must be > 0"); //$NON-NLS-1$
         }
         this.resourceName = resourceName;
         this.classLoader = classLoader == null ? ClassLoader.getSystemClassLoader() : classLoader;
@@ -137,12 +140,28 @@ public class JdbcProfile {
                 batchPutUnit = Long.parseLong(batchPutUnitString);
             }
         } catch (NumberFormatException e) {
+            WGLOG.error("E00001",
+                    profile.getName(),
+                    KEY_BATCH_PUT_UNIT,
+                    batchPutUnitString);
             throw new IllegalArgumentException(MessageFormat.format(
                     "The \"{1}\" must be a valid number: {2} (resource={0})",
                     profile.getName(),
                     KEY_BATCH_PUT_UNIT,
                     batchPutUnitString), e);
         }
+        if (batchPutUnit <= 0) {
+            WGLOG.error("E00001",
+                    profile.getName(),
+                    KEY_BATCH_PUT_UNIT,
+                    batchPutUnitString);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "The \"{1}\" must be > 0: {2} (resource={0})",
+                    profile.getName(),
+                    KEY_BATCH_PUT_UNIT,
+                    batchPutUnitString));
+        }
+
         return new JdbcProfile(resourceName, classLoader, driver, url, user, password, batchPutUnit);
     }
 
@@ -154,6 +173,10 @@ public class JdbcProfile {
             if (mandatory == false) {
                 return null;
             }
+            WGLOG.error("E00001",
+                    profile.getName(),
+                    configKey,
+                    null);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),
@@ -202,6 +225,8 @@ public class JdbcProfile {
             }
             return conn;
         } catch (Exception e) {
+            WGLOG.error(e, "E00002",
+                    url);
             throw new IOException(MessageFormat.format(
                     "Failed to open connection: {0}",
                     url), e);

@@ -704,7 +704,7 @@ public class AbstractSshHadoopFsMirrorTest {
 
 
     private GateScript script(ProcessScript<?>... processes) {
-        return new GateScript(Arrays.asList(processes));
+        return new GateScript("testing", Arrays.asList(processes));
     }
 
     private ProcessScript<Text> p(String name,

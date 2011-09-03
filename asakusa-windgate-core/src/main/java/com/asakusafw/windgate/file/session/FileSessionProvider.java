@@ -42,6 +42,8 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  */
 public class FileSessionProvider extends SessionProvider {
 
+    static final FileSessionLogger WGLOG = new FileSessionLogger(FileSessionProvider.class);
+
     static final Logger LOG = LoggerFactory.getLogger(FileSessionProvider.class);
 
     private static final String VALID_STRING = "VALID";
@@ -82,6 +84,9 @@ public class FileSessionProvider extends SessionProvider {
         assert profile != null;
         String rawPath = profile.getConfiguration().get(KEY_DIRECTORY);
         if (rawPath == null || rawPath.isEmpty()) {
+            WGLOG.error("E00001",
+                    KEY_DIRECTORY,
+                    rawPath);
             throw new IOException(MessageFormat.format(
                     "The session config \"{0}\" was not defined",
                     KEY_DIRECTORY));
@@ -92,6 +97,9 @@ public class FileSessionProvider extends SessionProvider {
             ParameterList environment = new ParameterList(System.getenv());
             path = environment.replace(rawPath, true);
         } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E00001",
+                    KEY_DIRECTORY,
+                    rawPath);
             throw new IOException(MessageFormat.format(
                     "Failed to resolve the session config \"{0}\": {1}",
                     KEY_DIRECTORY,
@@ -99,6 +107,8 @@ public class FileSessionProvider extends SessionProvider {
         }
         File dir = new File(path);
         if (dir.isDirectory() == false && dir.mkdirs() == false) {
+            WGLOG.error("E00002",
+                    dir.getAbsolutePath());
             throw new IOException(MessageFormat.format(
                     "Failed to prepare session directory: {0}",
                     dir.getAbsolutePath()));
@@ -154,7 +164,7 @@ public class FileSessionProvider extends SessionProvider {
         session.abort();
     }
 
-    private SessionMirror attach(String id, boolean create, boolean ignoreBroken) throws IOException {
+    private SessionMirror attach(String id, boolean create, boolean force) throws IOException {
         assert id != null;
         boolean completed = false;
         File path = idToFile(id);
@@ -163,14 +173,14 @@ public class FileSessionProvider extends SessionProvider {
         try {
             LOG.debug("Opening session file: {}", path);
             file = new RandomAccessFile(path, "rw");
-            lock = acquireLock(id, file);
-            State state = getSessionState(id, file);
+            lock = acquireLock(id, path, file);
+            State state = getSessionState(id, path, file);
             switch (state) {
             case INIT:
                 if (create == false) {
                     throw new SessionException(id, Reason.NOT_EXIST);
                 } else {
-                    createSession(file);
+                    createSession(path, file);
                 }
                 break;
             case CREATED:
@@ -179,33 +189,49 @@ public class FileSessionProvider extends SessionProvider {
                 }
                 break;
             case INVALID:
-                if (ignoreBroken == false) {
+                if (force == false) {
+                    WGLOG.error("W01001",
+                            id,
+                            path);
                     throw new SessionException(id, Reason.BROKEN);
                 }
             }
             completed = true;
             return new FileSessionMirror(id, path, file, lock);
+        } catch (SessionException e) {
+            throw e;
+        } catch (IOException e) {
+            WGLOG.error(e, "E01001",
+                    id,
+                    path);
+            throw e;
         } finally {
             if (completed == false) {
                 if (lock != null) {
                     try {
                         lock.release();
                     } catch (IOException e) {
-                        // TODO logging WARN
+                        WGLOG.warn(e, "W02001",
+                                id,
+                                path);
                     }
                 }
                 if (file != null) {
                     try {
                         file.close();
                     } catch (IOException e) {
-                        // TODO logging WARN
+                        WGLOG.warn(e, "W02002",
+                                id,
+                                path);
                     }
                 }
             }
         }
     }
-    private FileLock acquireLock(String id, RandomAccessFile file) throws IOException {
+
+    private FileLock acquireLock(String id, File path, RandomAccessFile file) throws IOException {
         assert id != null;
+        assert path != null;
         assert file != null;
         LOG.debug("Acquiring lock: {}", id);
         try {
@@ -223,18 +249,21 @@ public class FileSessionProvider extends SessionProvider {
         throw new SessionException(id, Reason.ACQUIRED);
     }
 
-    private void createSession(RandomAccessFile file) throws IOException {
+    private void createSession(File path, RandomAccessFile file) throws IOException {
+        assert path != null;
         assert file != null;
         assert file.getFilePointer() == 0L;
-        LOG.debug("Initializing session file: {}", file);
+        LOG.debug("Initializing session file: {}", path);
         file.write(VALID);
         file.getFD().sync();
     }
 
-    private State getSessionState(String id, RandomAccessFile file) throws IOException {
+    private State getSessionState(String id, File path, RandomAccessFile file) throws IOException {
+        assert id != null;
+        assert path != null;
         assert file != null;
         file.seek(0L);
-        LOG.debug("Loading session file: {}", file);
+        LOG.debug("Loading session file: {}", path);
         byte[] buf = new byte[VALID.length];
         int length = file.read(buf);
         file.seek(file.length());
@@ -246,9 +275,10 @@ public class FileSessionProvider extends SessionProvider {
         return State.INVALID;
     }
 
-    static void invalidate(RandomAccessFile file) throws IOException {
+    static void invalidate(File path, RandomAccessFile file) throws IOException {
+        assert path != null;
         assert file != null;
-        LOG.debug("Disposing session file: {}", file);
+        LOG.debug("Disposing session file: {}", path);
         file.seek(0L);
         file.write(DISPOSED);
     }

@@ -16,7 +16,6 @@
 package com.asakusafw.windgate.bootstrap;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -35,11 +34,14 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
+import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * A WindGate abort main entry point.
  */
 public class WindGateAbort {
+
+    static final WindGateLogger WGLOG = new WindGateBootstrapLogger(WindGateAbort.class);
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateAbort.class);
 
@@ -72,7 +74,10 @@ public class WindGateAbort {
      * @param args program arguments
      */
     public static void main(String... args) {
+        WGLOG.info("I01000");
         int status = execute(args);
+        WGLOG.info("I01999",
+                status);
         System.exit(status);
     }
 
@@ -82,8 +87,7 @@ public class WindGateAbort {
             Configuration conf = parseConfiguration(args);
             task = new AbortTask(conf.profile, conf.sessionId);
         } catch (Exception e) {
-            // TODO logging ERROR
-            e.printStackTrace(System.out);
+            WGLOG.error(e, "E01001");
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -107,13 +111,8 @@ public class WindGateAbort {
         try {
             task.execute();
             return 0;
-        } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace();
-            return 1;
-        } catch (InterruptedException e) {
-            // TODO logging ERROR
-            e.printStackTrace();
+        } catch (Exception e) {
+            WGLOG.error(e, "E01002");
             return 1;
         }
     }
@@ -140,8 +139,9 @@ public class WindGateAbort {
 
         LOG.debug("Loading profile: {}", profile);
         try {
-            Properties properties = CommandLineUtil.loadProperties(new URI(profile), loader);
-            result.profile = GateProfile.loadFrom(properties, loader);
+            URI uri = new URI(profile);
+            Properties properties = CommandLineUtil.loadProperties(uri, loader);
+            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",

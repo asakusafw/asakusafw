@@ -21,13 +21,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ProcessScript;
+import com.asakusafw.windgate.core.WindGateCoreLogger;
+import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Provides {@link SourceDriver}s and {@link DrainDriver}s from {@link ResourceMirror}s.
  * @since 0.2.3
  */
 public class DriverRepository implements DriverFactory {
+
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(GateProfile.class);
 
     private final Map<String, ResourceMirror> resources;
 
@@ -55,6 +60,9 @@ public class DriverRepository implements DriverFactory {
         String name = script.getSourceScript().getResourceName();
         ResourceMirror resource = resources.get(name);
         if (resource == null) {
+            WGLOG.error("E04001",
+                    script.getName(),
+                    name);
             throw new IOException(MessageFormat.format(
                     "Resource \"{0}\" is not defined (source of \"{1}\")",
                     name,
@@ -71,6 +79,9 @@ public class DriverRepository implements DriverFactory {
         String name = script.getDrainScript().getResourceName();
         ResourceMirror resource = resources.get(name);
         if (resource == null) {
+            WGLOG.error("E04001",
+                    script.getName(),
+                    name);
             throw new IOException(MessageFormat.format(
                     "Resource \"{0}\" is not defined (drain of \"{1}\")",
                     name,

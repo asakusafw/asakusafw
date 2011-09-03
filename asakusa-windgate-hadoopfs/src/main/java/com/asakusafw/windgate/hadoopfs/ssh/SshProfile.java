@@ -24,7 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 import com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsMirror;
 
 /**
@@ -32,6 +34,8 @@ import com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsMirror;
  * @since 0.2.3
  */
 public class SshProfile {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(SshProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(SshProfile.class);
 
@@ -174,6 +178,10 @@ public class SshProfile {
         try {
             port = Integer.parseInt(portString);
         } catch (NumberFormatException e) {
+            WGLOG.error("E10001",
+                    profile.getName(),
+                    KEY_PORT,
+                    portString);
             throw new IllegalArgumentException(MessageFormat.format(
                     "The \"{1}\" must be a valid port number: {2} (resource={0})",
                     profile.getName(),
@@ -185,6 +193,10 @@ public class SshProfile {
             ParameterList environment = new ParameterList(System.getenv());
             privateKey = environment.replace(privateKey, true);
         } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E10001",
+                    profile.getName(),
+                    KEY_PRIVATE_KEY,
+                    privateKey);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to resolve the private key \"{1}\": {2} (resource={0})",
                     profile.getName(),
@@ -203,6 +215,10 @@ public class SshProfile {
                 compressionCodec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, configuration);
             }
         } catch (Exception e) {
+            WGLOG.error(e, "E10001",
+                    profile.getName(),
+                    KEY_COMPRESSION,
+                    compressionCodecString);
             throw new IllegalArgumentException(MessageFormat.format(
                     "The \"{1}\" must be a valid CompressionCodec class name: {2} (resource={0})",
                     profile.getName(),
@@ -225,6 +241,10 @@ public class SshProfile {
         assert configKey != null;
         String value = profile.getConfiguration().get(configKey);
         if (value == null) {
+            WGLOG.error("E10001",
+                    profile.getName(),
+                    configKey,
+                    value);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),

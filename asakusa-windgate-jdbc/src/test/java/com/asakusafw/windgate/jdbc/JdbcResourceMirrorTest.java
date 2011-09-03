@@ -661,7 +661,7 @@ public class JdbcResourceMirrorTest {
     }
 
     private GateScript script(ProcessScript<?>... processes) {
-        return new GateScript(Arrays.<ProcessScript<?>>asList(processes));
+        return new GateScript("testing", Arrays.<ProcessScript<?>>asList(processes));
     }
 
     private ProcessScript<Pair> process(DriverScript source, DriverScript drain) {

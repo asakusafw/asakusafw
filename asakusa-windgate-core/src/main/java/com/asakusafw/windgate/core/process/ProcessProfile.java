@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.WindGateCoreLogger;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
@@ -37,6 +39,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider> {
+
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(ProcessProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ProcessProfile.class);
 
@@ -168,6 +172,8 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         while (map.isEmpty() == false) {
             String name = map.firstKey();
             if (isValidName(name) == false) {
+                WGLOG.error("E02005",
+                        name);
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Invalid process name: \"{0}\"",
                         name));

@@ -28,6 +28,8 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
  */
 public class JdbcScript<T> {
 
+    private final String name;
+
     private final DataModelJdbcSupport<? super T> support;
 
     private final String tableName;
@@ -38,6 +40,7 @@ public class JdbcScript<T> {
 
     /**
      * Creates a new instance.
+     * @param name the name of original process
      * @param support the support object for the script
      * @param tableName the target table name
      * @param columnNames the target column names
@@ -45,10 +48,14 @@ public class JdbcScript<T> {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public JdbcScript(
+            String name,
             DataModelJdbcSupport<? super T> support,
             String tableName,
             List<String> columnNames,
             String condition) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
         if (support == null) {
             throw new IllegalArgumentException("support must not be null"); //$NON-NLS-1$
         }
@@ -61,6 +68,7 @@ public class JdbcScript<T> {
         if (condition != null && isEmpty(condition)) {
             throw new IllegalArgumentException("condition must not be null"); //$NON-NLS-1$
         }
+        this.name = name;
         this.support = support;
         this.tableName = tableName;
         for (String columnName : columnNames) {
@@ -74,6 +82,14 @@ public class JdbcScript<T> {
 
     private boolean isEmpty(String string) {
         return (string == null || string.trim().isEmpty());
+    }
+
+    /**
+     * Returns the name of original process.
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 
     /**

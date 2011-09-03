@@ -26,6 +26,7 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPreparedStatement;
 
@@ -35,6 +36,8 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPrep
  * @since 0.2.3
  */
 public class JdbcDrainDriver<T> implements DrainDriver<T> {
+
+    static final WindGateLogger WGLOG = new JdbcLogger(JdbcDrainDriver.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JdbcDrainDriver.class);
 
@@ -96,9 +99,27 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             if (truncateOnPrepare) {
                 truncate();
             }
+        } catch (SQLException e) {
+            sawError = true;
+            WGLOG.error(e, "E04001",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName());
+            throw new IOException(MessageFormat.format(
+                    "Failed to prepare JDBC drain (resource={0}, table={1}, columns={2})",
+                    profile.getResourceName(),
+                    script.getTableName(),
+                    script.getColumnNames()), e);
+        }
+        try {
             this.statement = prepareStatement();
         } catch (SQLException e) {
             sawError = true;
+            WGLOG.error(e, "E04002",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             throw new IOException(MessageFormat.format(
                     "Failed to prepare JDBC drain (resource={0}, table={1}, columns={2})",
                     profile.getResourceName(),
@@ -118,7 +139,10 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
                 script.getTableName());
         Statement truncater = connection.createStatement();
         try {
-            // TODO logging INFO, table
+            WGLOG.info("I04001",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName());
             LOG.debug("Executing SQL: {}", sql);
             truncater.execute(sql);
             LOG.debug("Executed SQL: {}", sql);
@@ -150,6 +174,11 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             statement.addBatch();
         } catch (SQLException e) {
             sawError = true;
+            WGLOG.error(e, "E04003",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             throw new IOException(MessageFormat.format(
                     "Failed to put object to JDBC drain: {2} (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -175,6 +204,11 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             putLimitRest = batchPutUnit;
         } catch (SQLException e) {
             sawError = true;
+            WGLOG.error(e, "E04004",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             throw new IOException(MessageFormat.format(
                     "Failed to flush table into JDBC drain (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -193,20 +227,25 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
                 try {
                     flush();
                 } catch (IOException e) {
-                    // TODO logging WARN
                     occurred = e;
                 }
             }
             try {
                 statement.close();
             } catch (SQLException e) {
-                // TODO logging WARN
+                WGLOG.warn(e, "W04001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            // TODO logging WARN
+            WGLOG.warn(e, "W02001",
+                    profile.getResourceName(),
+                    script.getName());
         }
         if (occurred != null) {
             throw occurred;

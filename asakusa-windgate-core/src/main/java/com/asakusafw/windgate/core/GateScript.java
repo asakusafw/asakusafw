@@ -36,22 +36,39 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  */
 public class GateScript {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(GateScript.class);
+
     static final Logger LOG = LoggerFactory.getLogger(GateScript.class);
 
     static final char QUALIFIER = '.';
+
+    private final String name;
 
     private final List<ProcessScript<?>> processes;
 
     /**
      * Creates a new instance.
+     * @param name the name of this script (for hint)
      * @param processes the member processes
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public GateScript(List<? extends ProcessScript<?>> processes) {
+    public GateScript(String name, List<? extends ProcessScript<?>> processes) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
         if (processes == null) {
             throw new IllegalArgumentException("processes must not be null"); //$NON-NLS-1$
         }
+        this.name = name;
         this.processes = Collections.unmodifiableList(new ArrayList<ProcessScript<?>>(processes));
+    }
+
+    /**
+     * Return the name of this script (for hint).
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -64,12 +81,16 @@ public class GateScript {
 
     /**
      * Loads a gate script from the properties.
+     * @param name the name of script (for hint)
      * @param properties source properties
      * @param loader class loader to load the data model classes
      * @return the loaded script
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
      */
-    public static GateScript loadFrom(Properties properties, ClassLoader loader) {
+    public static GateScript loadFrom(String name, Properties properties, ClassLoader loader) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
@@ -84,7 +105,7 @@ public class GateScript {
             ProcessScript<?> process = loadProcess(entry.getKey(), entry.getValue(), loader);
             processes.add(process);
         }
-        return new GateScript(processes);
+        return new GateScript(name, processes);
     }
 
     private static Map<String, Map<String, String>> partitioning(Properties properties) {
@@ -97,6 +118,9 @@ public class GateScript {
             String key = (String) entry.getKey();
             int index = key.indexOf(QUALIFIER);
             if (index < 0) {
+                WGLOG.error("E03001",
+                        key,
+                        entry.getValue());
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Gate script includes invalid property key: \"{0}\"",
                         key));
@@ -127,6 +151,9 @@ public class GateScript {
         try {
             dataClass = loader.loadClass(dataClassName);
         } catch (ClassNotFoundException e) {
+            WGLOG.error(e, "E03002",
+                    name,
+                    dataClassName);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to load \"{0}\" ({1}.{2})",
                     dataClassName,
@@ -149,6 +176,9 @@ public class GateScript {
         assert key != null;
         String value = proccessConf.remove(key);
         if (value == null) {
+            WGLOG.error("E03001",
+                    name + QUALIFIER + key,
+                    "(empty)");
             throw new IllegalArgumentException(MessageFormat.format(
                     "\"{0}.{1}\" is not specified",
                     name,

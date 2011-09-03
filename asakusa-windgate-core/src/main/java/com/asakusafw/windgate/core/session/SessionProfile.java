@@ -15,6 +15,7 @@
  */
 package com.asakusafw.windgate.core.session;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -24,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.WindGateCoreLogger;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
@@ -31,6 +34,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider> {
+
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(SessionProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(SessionProfile.class);
 
@@ -111,6 +116,12 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
         }
         LOG.debug("Restoring session profile");
         String className = properties.getProperty(KEY_PROVIDER);
+        if (className == null) {
+            WGLOG.error("E020006");
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Session provider is not specified: {0}",
+                    KEY_PROVIDER));
+        }
         Class<? extends SessionProvider> provider = loadProviderClass(className, loader, SessionProvider.class);
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
         return new SessionProfile(provider, loader, config);

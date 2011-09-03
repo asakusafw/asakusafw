@@ -72,7 +72,7 @@ public class WindGateIoProcessorRunTest {
         assertThat(importerScript.getProcesses().size(), is(1));
         ProcessScript<?> importer = getProcess(importerScript, "in1");
         assertThat(importer.getSourceScript().getResourceName(), is("dummy"));
-        assertThat(importer.getDrainScript().getResourceName(), is(Constants.FILE_RESOURCE_NAME));
+        assertThat(importer.getDrainScript().getResourceName(), is(Constants.HADOOP_FILE_RESOURCE_NAME));
         String importerPath = importer.getDrainScript().getConfiguration().get(FileProcess.FILE.key());
         assertThat(importerPath, is(notNullValue()));
         Location importerLocation = Location.fromPath(importerPath, '/');
@@ -81,7 +81,7 @@ public class WindGateIoProcessorRunTest {
         GateScript exporterScript = loadScript(info, "testing", false);
         assertThat(exporterScript.getProcesses().size(), is(1));
         ProcessScript<?> exporter = getProcess(exporterScript, "out1");
-        assertThat(exporter.getSourceScript().getResourceName(), is(Constants.FILE_RESOURCE_NAME));
+        assertThat(exporter.getSourceScript().getResourceName(), is(Constants.HADOOP_FILE_RESOURCE_NAME));
         assertThat(exporter.getDrainScript().getResourceName(), is("dummy"));
         String exporterPath = exporter.getSourceScript().getConfiguration().get(FileProcess.FILE.key());
         assertThat(exporterPath, is(notNullValue()));
@@ -124,7 +124,7 @@ public class WindGateIoProcessorRunTest {
             Properties p = new Properties();
             p.load(input);
             input.close();
-            return GateScript.loadFrom(p, getClass().getClassLoader());
+            return GateScript.loadFrom("dummy", p, getClass().getClassLoader());
         } finally {
             zip.close();
         }

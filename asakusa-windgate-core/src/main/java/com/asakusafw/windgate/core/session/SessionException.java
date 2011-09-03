@@ -67,7 +67,7 @@ public class SessionException extends IOException {
             throw new IllegalArgumentException("reason must not be null"); //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "{1} ({0})",
+                "{1}: Session ID={0}",
                 sessionId,
                 reason.getDescription());
     }
@@ -91,22 +91,22 @@ public class SessionException extends IOException {
         /**
          * The specified session already exists.
          */
-        ALREADY_EXIST("The specified session already exists."),
+        ALREADY_EXIST("The specified session already exists"),
 
         /**
          * The specified session does not exist yet.
          */
-        NOT_EXIST("The specified session does not exist yet."),
+        NOT_EXIST("The specified session does not exist yet"),
 
         /**
          * The specified session was already acquired yet.
          */
-        ACQUIRED("The specified session was already acquired yet."),
+        ACQUIRED("The specified session was already acquired yet"),
 
         /**
          * The specified session was broken.
          */
-        BROKEN("The specified session was broken."),
+        BROKEN("The specified session was broken"),
         ;
 
         private final String description;

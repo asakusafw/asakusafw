@@ -16,7 +16,6 @@
 package com.asakusafw.windgate.bootstrap;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -37,11 +36,14 @@ import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.GateTask;
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * A WindGate main entry point.
  */
 public class WindGate {
+
+    static final WindGateLogger WGLOG = new WindGateBootstrapLogger(WindGate.class);
 
     static final Logger LOG = LoggerFactory.getLogger(WindGate.class);
 
@@ -101,9 +103,10 @@ public class WindGate {
      * @param args program arguments
      */
     public static void main(String... args) {
-        // TODO logging INFO
+        WGLOG.info("I00000");
         int status = execute(args);
-        // TODO logging INFO
+        WGLOG.info("I00999",
+                status);
         System.exit(status);
     }
 
@@ -119,8 +122,7 @@ public class WindGate {
                     conf.mode.completesSession,
                     conf.arguments);
         } catch (Exception e) {
-            // TODO logging ERROR
-
+            WGLOG.error(e, "E00001");
             e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
@@ -143,12 +145,8 @@ public class WindGate {
         try {
             task.execute();
             return 0;
-        } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace();
-            return 1;
-        } catch (InterruptedException e) {
-            // TODO logging ERROR
+        } catch (Exception e) {
+            WGLOG.error(e, "E00002");
             e.printStackTrace();
             return 1;
         }
@@ -189,8 +187,9 @@ public class WindGate {
 
         LOG.debug("Loading profile: {}", profile);
         try {
-            Properties properties = CommandLineUtil.loadProperties(new URI(profile), loader);
-            result.profile = GateProfile.loadFrom(properties, loader);
+            URI uri = new URI(profile);
+            Properties properties = CommandLineUtil.loadProperties(uri, loader);
+            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
@@ -199,8 +198,9 @@ public class WindGate {
 
         LOG.debug("Loading script: {}", script);
         try {
-            Properties properties = CommandLineUtil.loadProperties(new URI(script), loader);
-            result.script = GateScript.loadFrom(properties, loader);
+            URI uri = new URI(script);
+            Properties properties = CommandLineUtil.loadProperties(uri, loader);
+            result.script = GateScript.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid script \"{0}\".",

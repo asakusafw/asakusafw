@@ -31,6 +31,8 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
  */
 public class CoreProfile {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(CoreProfile.class);
+
     static final Logger LOG = LoggerFactory.getLogger(CoreProfile.class);
 
     private static final char QUALIFIER = '.';
@@ -59,7 +61,7 @@ public class CoreProfile {
      */
     public CoreProfile(int maxThreads) {
         if (maxThreads < 1) {
-            throw new IllegalArgumentException("maxThreads must be a positive integer");
+            throw new IllegalArgumentException("maxThreads must be a positive integer"); //$NON-NLS-1$
         }
         this.maxThreads = maxThreads;
     }
@@ -89,6 +91,15 @@ public class CoreProfile {
         LOG.debug("Restoring core profile");
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
         int maxThreads = getInt(config, KEY_MAX_THREADS, DEFAULT_MAX_THREADS);
+        if (maxThreads <= 0) {
+            WGLOG.error("E02003",
+                    KEY_MAX_THREADS,
+                    maxThreads);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Core profile item \"{0}\" must be > 0: {1}",
+                    KEY_MAX_THREADS,
+                    String.valueOf(maxThreads)));
+        }
         return new CoreProfile(maxThreads);
     }
 
@@ -97,7 +108,7 @@ public class CoreProfile {
         assert name != null;
         String value = config.get(name);
         if (value == null) {
-            LOG.debug("Core profile \"{}\" is not defined, \"{}\" will be used.",
+            LOG.debug("Core profile \"{}\" is not defined, default value \"{}\" will be used.",
                     name,
                     defaultValue);
             return defaultValue;
@@ -105,9 +116,11 @@ public class CoreProfile {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
+            WGLOG.error("E02003",
+                    name,
+                    value);
             throw new IllegalArgumentException(MessageFormat.format(
-                    "The profile item \"{0}{1}\" must be an integer: {2}",
-                    KEY_PREFIX,
+                    "Core profile item \"{0}\" must be an integer: {1}",
                     name,
                     value));
         }

@@ -50,6 +50,8 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  */
 public class GateTask {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(GateTask.class);
+
     static final Logger LOG = LoggerFactory.getLogger(GateTask.class);
 
     private final ExecutorService executor;
@@ -59,6 +61,8 @@ public class GateTask {
     private final List<ResourceProvider> resourceProviders;
 
     private final Map<String, ProcessProvider> processProviders;
+
+    final GateProfile profile;
 
     final GateScript script;
 
@@ -100,6 +104,7 @@ public class GateTask {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
+        this.profile = profile;
         this.script = script;
         this.sessionId = sessionId;
         this.createSession = createSession;
@@ -123,11 +128,11 @@ public class GateTask {
             List<ResourceProfile> resources) throws IOException {
         assert resources != null;
         List<ResourceProvider> results = new ArrayList<ResourceProvider>();
-        for (ResourceProfile profile : resources) {
+        for (ResourceProfile resourceProfile : resources) {
             LOG.debug("Loading resource provider \"{}\": {}",
-                    profile.getName(),
-                    profile.getProviderClass().getName());
-            ResourceProvider provider = profile.createProvider();
+                    resourceProfile.getName(),
+                    resourceProfile.getProviderClass().getName());
+            ResourceProvider provider = resourceProfile.createProvider();
             results.add(provider);
         }
         return results;
@@ -137,13 +142,13 @@ public class GateTask {
             List<ProcessProfile> processes) throws IOException {
         assert processes != null;
         Map<String, ProcessProvider> results = new TreeMap<String, ProcessProvider>();
-        for (ProcessProfile profile : processes) {
+        for (ProcessProfile processProfile : processes) {
             LOG.debug("Loading process provider \"{}\": {}",
-                    profile.getName(),
-                    profile.getProviderClass().getName());
-            assert results.containsKey(profile.getName()) == false;
-            ProcessProvider provider = profile.createProvider();
-            results.put(profile.getName(), provider);
+                    processProfile.getName(),
+                    processProfile.getProviderClass().getName());
+            assert results.containsKey(processProfile.getName()) == false;
+            ProcessProvider provider = processProfile.createProvider();
+            results.put(processProfile.getName(), provider);
         }
         return results;
     }
@@ -154,27 +159,64 @@ public class GateTask {
      * @throws InterruptedException if interrupted
      */
     public void execute() throws IOException, InterruptedException {
+        WGLOG.info("I00000",
+                sessionId,
+                profile.getName(),
+                script.getName());
+        WGLOG.info("I00001",
+                sessionId,
+                profile.getName(),
+                script.getName());
         SessionMirror session = attachSession(createSession);
         try {
+            WGLOG.info("I00002",
+                    sessionId,
+                    profile.getName(),
+                    script.getName());
             List<ResourceMirror> resources = createResources();
             if (createSession) {
+                WGLOG.info("I00003",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
                 fireSessionCreated(resources);
             }
+            WGLOG.info("I00004",
+                    sessionId,
+                    profile.getName(),
+                    script.getName());
             prepareResources(resources);
+            WGLOG.info("I00005",
+                    sessionId,
+                    profile.getName(),
+                    script.getName());
             runGateProcesses(resources);
             if (completeSession) {
+                WGLOG.info("I00006",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
                 fireSessionCompleted(resources);
-
-                // TODO log INFO
+                WGLOG.info("I00007",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
                 session.complete();
             }
         } finally {
             try {
                 session.close();
             } catch (IOException e) {
-                // TODO warn
+                WGLOG.warn(e, "W00001",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
             }
         }
+        WGLOG.info("I00999",
+                sessionId,
+                profile.getName(),
+                script.getName());
     }
 
     private SessionMirror attachSession(boolean create) throws IOException {
@@ -211,8 +253,14 @@ public class GateTask {
                             sessionId);
                     resource.onSessionCreated();
                 } catch (IOException e) {
+                    WGLOG.error(e, "E00001",
+                            sessionId,
+                            profile.getName(),
+                            script.getName(),
+                            resource.getName());
                     throw new IOException(MessageFormat.format(
-                            "Failed to initialize session: {0}",
+                            "Failed to initializing resource \"{0}\" (session={1})",
+                            resource.getName(),
                             sessionId), e);
                 }
             }
@@ -226,7 +274,19 @@ public class GateTask {
                         LOG.debug("Initializing resource \"{}\" for session \"{}\"",
                                 resource.getName(),
                                 sessionId);
-                        resource.onSessionCreated();
+                        try {
+                            resource.onSessionCreated();
+                        } catch (IOException e) {
+                            WGLOG.error(e, "E00001",
+                                    sessionId,
+                                    profile.getName(),
+                                    script.getName(),
+                                    resource.getName());
+                            throw new IOException(MessageFormat.format(
+                                    "Failed to initializing resource \"{0}\" (session={1})",
+                                    resource.getName(),
+                                    sessionId), e);
+                        }
                         return null;
                     }
                 });
@@ -250,7 +310,19 @@ public class GateTask {
                 public Void call() throws IOException {
                     LOG.debug("Preparing resource \"{}\"",
                             resource.getName());
-                    resource.prepare(script);
+                    try {
+                        resource.prepare(script);
+                    } catch (IOException e) {
+                        WGLOG.error(e, "E00002",
+                                sessionId,
+                                profile.getName(),
+                                script.getName(),
+                                resource.getName());
+                        throw new IOException(MessageFormat.format(
+                                "Preparing {0} failed (session={1})",
+                                resource.getName(),
+                                sessionId), e);
+                    }
                     return null;
                 }
             });
@@ -275,7 +347,21 @@ public class GateTask {
                     LOG.debug("Starting gate process: {}",
                             process.getName(),
                             sessionId);
-                    processProvider.execute(drivers, process);
+                    try {
+                        processProvider.execute(drivers, process);
+                    } catch (IOException e) {
+                        WGLOG.error(e, "E00003",
+                                sessionId,
+                                profile.getName(),
+                                script.getName(),
+                                process.getName());
+                        throw new IOException(MessageFormat.format(
+                                "Process {0} failed: source={1} -> drain={2} (session={3})",
+                                process.getName(),
+                                process.getSourceScript().getResourceName(),
+                                process.getDrainScript().getResourceName(),
+                                sessionId), e);
+                    }
                     return null;
                 }
             });
@@ -300,7 +386,19 @@ public class GateTask {
                         LOG.debug("Finalizing resource \"{}\" for session \"{}\"",
                                 resource.getName(),
                                 sessionId);
-                        resource.onSessionCompleting();
+                        try {
+                            resource.onSessionCompleting();
+                        } catch (IOException e) {
+                            WGLOG.error(e, "E00004",
+                                    sessionId,
+                                    profile.getName(),
+                                    script.getName(),
+                                    resource.getName());
+                            throw new IOException(MessageFormat.format(
+                                    "Failed to finalizing resource \"{0}\" (session={1})",
+                                    resource.getName(),
+                                    sessionId), e);
+                        }
                         return null;
                     }
                 });
@@ -315,14 +413,20 @@ public class GateTask {
         }
         for (final ResourceMirror resource : resources) {
             if (resource.isTransactional()) {
+                LOG.debug("Finalizing transactional resource \"{}\" for session \"{}\"",
+                        resource.getName(),
+                        sessionId);
                 try {
-                    LOG.debug("Finalizing transactional resource \"{}\" for session \"{}\"",
-                            resource.getName(),
-                            sessionId);
                     resource.onSessionCompleting();
                 } catch (IOException e) {
+                    WGLOG.error(e, "E00004",
+                            sessionId,
+                            profile.getName(),
+                            script.getName(),
+                            resource.getName());
                     throw new IOException(MessageFormat.format(
-                            "Failed to complete session: {0}",
+                            "Failed to finalizing resource \"{0}\" (session={1})",
+                            resource.getName(),
                             sessionId), e);
                 }
             }
@@ -340,19 +444,28 @@ public class GateTask {
                 futures.addLast(future);
                 // continue
             } catch (InterruptedException e) {
-                // TODO logging WARN
+                WGLOG.warn(e, "W00002",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
                 futures.addLast(future);
                 cancelAll(futures);
                 // continue
-            } catch (CancellationException e) {
-                failureCount++;
-                // TODO logging INFO
-                LOG.info("fail", e);
             } catch (ExecutionException e) {
                 failureCount++;
+                WGLOG.warn(e, "W00003",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
                 cancelAll(futures);
-                // TODO logging ERROR
                 LOG.error("fail", e);
+            } catch (CancellationException e) {
+                failureCount++;
+                WGLOG.warn(e, "W00004",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
+                LOG.info("fail", e);
             }
         }
         return failureCount;

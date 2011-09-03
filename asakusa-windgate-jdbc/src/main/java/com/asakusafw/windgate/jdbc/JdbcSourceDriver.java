@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelResultSet;
 
@@ -34,6 +35,8 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelResu
  * @since 0.2.3
  */
 public class JdbcSourceDriver<T> implements SourceDriver<T> {
+
+    static final WindGateLogger WGLOG = new JdbcLogger(JdbcSourceDriver.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JdbcSourceDriver.class);
 
@@ -90,6 +93,11 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
         try {
             this.resultSet = prepareResultSet();
         } catch (SQLException e) {
+            WGLOG.error(e, "E03001",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             throw new IOException(MessageFormat.format(
                     "Failed to prepare JDBC source (resource={0}, table={1}, columns={2})",
                     profile.getResourceName(),
@@ -107,10 +115,19 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
         Statement statement = connection.createStatement();
         boolean succeed = false;
         try {
-            // TODO logging INFO, table?
+            WGLOG.info("I03001",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             LOG.debug("Executing SQL: {}", sql);
             ResultSet result = statement.executeQuery(sql);
             LOG.debug("Executed SQL: {}", sql);
+            WGLOG.info("I03002",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             succeed = true;
             return result;
         } finally {
@@ -118,7 +135,11 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    // TODO logging WARN
+                    WGLOG.warn(e, "W03001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            script.getTableName(),
+                            script.getColumnNames());
                 }
             }
         }
@@ -148,6 +169,11 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
             return sawNext;
         } catch (SQLException e) {
             sawNext = false;
+            WGLOG.error(e, "E03001",
+                    profile.getResourceName(),
+                    script.getName(),
+                    script.getTableName(),
+                    script.getColumnNames());
             throw new IOException(MessageFormat.format(
                     "Failed to fetch next object from JDBC source (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -174,27 +200,41 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
             try {
                 statement = resultSet.getStatement();
             } catch (SQLException e) {
-                // TODO logging warn
+                WGLOG.warn(e, "W03001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
             }
             try {
                 resultSet.close();
                 resultSet = null;
                 support = null;
             } catch (SQLException e) {
-                // TODO logging warn
+                WGLOG.warn(e, "W03001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
             }
             try {
                 if (statement != null) {
                     statement.close();
                 }
             } catch (SQLException e) {
-                // TODO logging warn
+                WGLOG.warn(e, "W03001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            // TODO logging warn
+            WGLOG.warn(e, "W02001",
+                    profile.getResourceName(),
+                    script.getName());
         }
     }
 }

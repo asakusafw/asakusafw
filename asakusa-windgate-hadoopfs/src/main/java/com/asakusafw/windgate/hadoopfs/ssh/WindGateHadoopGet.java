@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
@@ -30,11 +31,16 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+
 /**
  * Gets files from Hadoop File System and write them as {@link FileList} to the standard output.
  * @since 0.2.3
  */
 public class WindGateHadoopGet {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopGet.class);
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopGet.class);
 
@@ -61,16 +67,18 @@ public class WindGateHadoopGet {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
-        // TODO logging INFO
+        WGLOG.info("I20000");
         Configuration conf = new Configuration();
         int result = new WindGateHadoopGet(conf).execute(args);
-        // TODO logging INFO
+        WGLOG.info("I20999", result);
         System.exit(result);
     }
 
     int execute(String... args) {
         assert args != null;
         if (args.length == 0) {
+            WGLOG.error("E20001",
+                    Arrays.toString(args));
             System.err.printf("usage: java -classpath ... %s file1 [file2 ...]%n",
                     WindGateHadoopGet.class.getName());
             return 1;
@@ -79,23 +87,18 @@ public class WindGateHadoopGet {
         for (String arg : args) {
             paths.add(new Path(arg));
         }
-        // TODO logging INFO
-        FileList.Writer writer;
         try {
-            // TODO logging INFO
-            writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
-        } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace(System.err);
-            return 1;
-        }
-        try {
+            WGLOG.info("I20001",
+                    paths);
+            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
             doGet(paths, writer);
+            WGLOG.info("I20002",
+                    paths);
             writer.close();
             return 0;
         } catch (IOException e) {
-            // TODO logging ERROR
-            e.printStackTrace(System.err);
+            WGLOG.error(e, "E20002",
+                    paths);
             return 1;
         }
     }
@@ -107,7 +110,9 @@ public class WindGateHadoopGet {
         try {
             for (Path path : paths) {
                 boolean found = false;
-                // TODO logging INFO
+                WGLOG.info("I20003",
+                        fs.getUri(),
+                        path);
                 FileStatus[] results = fs.globStatus(path);
                 if (results != null) {
                     for (FileStatus status : results) {
@@ -131,7 +136,10 @@ public class WindGateHadoopGet {
         assert fs != null;
         assert status != null;
         assert drain != null;
-        // TODO logging INFO, with size
+        WGLOG.info("I20004",
+                fs.getUri(),
+                status.getPath());
+        long transferred = 0;
         FSDataInputStream stream = fs.open(status.getPath(), BUFFER_SIZE);
         try {
             OutputStream output = drain.openNext(status);
@@ -143,6 +151,7 @@ public class WindGateHadoopGet {
                         break;
                     }
                     output.write(buf, 0, read);
+                    transferred += read;
                 }
             } finally {
                 output.close();
@@ -150,5 +159,9 @@ public class WindGateHadoopGet {
         } finally {
             stream.close();
         }
+        WGLOG.info("I20005",
+                fs.getUri(),
+                status.getPath(),
+                transferred);
     }
 }

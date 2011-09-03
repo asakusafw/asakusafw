@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 import com.asakusafw.windgate.hadoopfs.ssh.SshConnection;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 import com.jcraft.jsch.ChannelExec;
@@ -36,6 +38,8 @@ import com.jcraft.jsch.Session;
  * @since 0.2.3
  */
 class JschConnection implements SshConnection {
+
+    static final WindGateLogger WGLOG = new HadoopFsLogger(JschConnection.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JschConnection.class);
 
@@ -69,8 +73,19 @@ class JschConnection implements SshConnection {
             session = jsch.getSession(profile.getUser(), profile.getHost(), profile.getPort());
             session.setConfig("StrictHostKeyChecking", "no");
             session.setTimeout((int) TimeUnit.SECONDS.toMillis(60));
-            // TODO logging INFO
+
+            WGLOG.info("I30001",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort());
             session.connect();
+            WGLOG.info("I30002",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort());
+
             boolean succeeded = false;
             try {
                 channel = (ChannelExec) session.openChannel("exec");
@@ -84,6 +99,11 @@ class JschConnection implements SshConnection {
                 }
             }
         } catch (JSchException e) {
+            WGLOG.error("E30001",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort());
             throw new IOException(MessageFormat.format(
                     "Failed to open ssh session: {0}@{1}:{2} - {3}",
                     profile.getUser(),
@@ -96,9 +116,26 @@ class JschConnection implements SshConnection {
     @Override
     public void connect() throws IOException {
         try {
-            // TODO logging INFO
+            WGLOG.info("I30003",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort(),
+                    command);
             channel.connect((int) TimeUnit.SECONDS.toMillis(60));
+            WGLOG.info("I30004",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort(),
+                    command);
         } catch (JSchException e) {
+            WGLOG.error("E30002",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort(),
+                    command);
             throw new IOException(MessageFormat.format(
                     "Failed to open ssh session: {0}@{1}:{2}",
                     profile.getUser(),
@@ -140,6 +177,12 @@ class JschConnection implements SshConnection {
             Thread.sleep(100);
         }
         if (channel.isClosed() == false) {
+            WGLOG.error("E30003",
+                    profile.getResourceName(),
+                    profile.getUser(),
+                    profile.getHost(),
+                    profile.getPort(),
+                    command);
             throw new IOException(MessageFormat.format(
                     "Failed to wait for exit remote command: {0}@{1}:{2} - {3}",
                     profile.getUser(),

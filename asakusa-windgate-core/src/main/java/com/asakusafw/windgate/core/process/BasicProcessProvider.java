@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.windgate.core.process.plain;
+package com.asakusafw.windgate.core.process;
 
 import java.io.IOException;
 
@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ProcessScript;
-import com.asakusafw.windgate.core.process.ProcessProfile;
-import com.asakusafw.windgate.core.process.ProcessProvider;
+import com.asakusafw.windgate.core.WindGateCoreLogger;
+import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.DriverFactory;
 import com.asakusafw.windgate.core.resource.SourceDriver;
@@ -33,9 +33,11 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  * and performs as a default gate process.
  * @since 0.2.3
  */
-public class PlainProcessProvider extends ProcessProvider {
+public class BasicProcessProvider extends ProcessProvider {
 
-    static final Logger LOG = LoggerFactory.getLogger(PlainProcessProvider.class);
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(BasicProcessProvider.class);
+
+    static final Logger LOG = LoggerFactory.getLogger(BasicProcessProvider.class);
 
     @Override
     protected void configure(ProcessProfile profile) {
@@ -44,9 +46,12 @@ public class PlainProcessProvider extends ProcessProvider {
 
     @Override
     public <T> void execute(DriverFactory drivers, ProcessScript<T> script) throws IOException {
-        LOG.debug("Start executing plain process for process \"{}\"",
-                script.getName());
+        WGLOG.info("I05000",
+                script.getName(),
+                script.getSourceScript().getResourceName(),
+                script.getDrainScript().getResourceName());
 
+        long count = 0;
         IOException exception = null;
         SourceDriver<T> source = null;
         DrainDriver<T> drain = null;
@@ -59,6 +64,7 @@ public class PlainProcessProvider extends ProcessProvider {
                     script.getDrainScript().getResourceName(),
                     script.getName());
             drain = drivers.createDrain(script);
+
             LOG.debug("Preparing source driver for resource \"{}\" in process \"{}\"",
                     script.getSourceScript().getResourceName(),
                     script.getName());
@@ -68,17 +74,23 @@ public class PlainProcessProvider extends ProcessProvider {
                     script.getName());
             drain.prepare();
 
-            long count = 0;
-            // TODO logging INFO
+            LOG.debug("Starting transfer \"{}\" -> \"{}\" in process \"{}\"", new Object[] {
+                    script.getSourceScript().getResourceName(),
+                    script.getDrainScript().getResourceName(),
+                    script.getName(),
+            });
+
             while (source.next()) {
                 T obj = source.get();
                 drain.put(obj);
                 count++;
             }
-            // TODO logging INFO, count
         } catch (IOException e) {
             exception = e;
-            // TODO logging ERROR
+            WGLOG.error(e, "E05001",
+                    script.getName(),
+                    script.getSourceScript().getResourceName(),
+                    script.getDrainScript().getResourceName());
         } finally {
             try {
                 if (source != null) {
@@ -88,7 +100,10 @@ public class PlainProcessProvider extends ProcessProvider {
                 }
             } catch (IOException e) {
                 exception = exception == null ? e : exception;
-                // TODO logging ERROR
+                WGLOG.error(e, "E05002",
+                        script.getName(),
+                        script.getSourceScript().getResourceName(),
+                        script.getDrainScript().getResourceName());
             }
             try {
                 if (drain != null) {
@@ -98,11 +113,19 @@ public class PlainProcessProvider extends ProcessProvider {
                 }
             } catch (IOException e) {
                 exception = exception == null ? e : exception;
-                // TODO logging ERROR
+                WGLOG.error(e, "E05003",
+                        script.getName(),
+                        script.getSourceScript().getResourceName(),
+                        script.getDrainScript().getResourceName());
             }
         }
         if (exception != null) {
             throw exception;
         }
+        WGLOG.info("I05999",
+                script.getName(),
+                script.getSourceScript().getResourceName(),
+                script.getDrainScript().getResourceName(),
+                count);
     }
 }

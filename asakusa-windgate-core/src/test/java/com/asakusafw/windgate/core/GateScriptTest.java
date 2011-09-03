@@ -33,7 +33,7 @@ import com.asakusafw.windgate.core.ProcessScript;
 public class GateScriptTest {
 
     /**
-     * Test method for {@link GateScript#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link GateScript#loadFrom(String, java.util.Properties, java.lang.ClassLoader)}.
      */
     @Test
     public void loadFrom() {
@@ -43,7 +43,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         assertThat(script.getProcesses().size(), is(1));
 
         ProcessScript<?> test = find(script, "test");
@@ -70,7 +70,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE, "aaa"), "bbb");
         p.setProperty(k("test", PREFIX_SOURCE, "bbb"), "ccc");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         assertThat(script.getProcesses().size(), is(1));
 
         ProcessScript<?> test = find(script, "test");
@@ -99,7 +99,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_DRAIN, "aaa"), "bbb");
         p.setProperty(k("test", PREFIX_DRAIN, "bbb"), "ccc");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         assertThat(script.getProcesses().size(), is(1));
 
         ProcessScript<?> test = find(script, "test");
@@ -135,7 +135,7 @@ public class GateScriptTest {
         p.setProperty(k("test3", PREFIX_SOURCE), "ts3");
         p.setProperty(k("test3", PREFIX_DRAIN), "td3");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         assertThat(script.getProcesses().size(), is(3));
 
         ProcessScript<?> test1 = find(script, "test1");
@@ -176,7 +176,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -189,7 +189,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -202,7 +202,7 @@ public class GateScriptTest {
         p.setProperty(k("test", KEY_PROCESS_TYPE), "plain");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -215,7 +215,7 @@ public class GateScriptTest {
         p.setProperty(k("test", KEY_PROCESS_TYPE), "plain");
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -229,7 +229,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -244,7 +244,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_DRAIN), "td");
         p.setProperty(k("test", "INVALID"), "invalid");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -259,7 +259,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_SOURCE), "ts");
         p.setProperty(k("test", PREFIX_DRAIN), "td");
 
-        GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript.loadFrom("testing", p, getClass().getClassLoader());
     }
 
     /**
@@ -275,7 +275,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_DRAIN), "td");
         p.setProperty(k("test", PREFIX_DRAIN, "bbb"), "ccc");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         Properties target = new Properties();
         script.storeTo(target);
         assertThat(target, is(p));
@@ -302,7 +302,7 @@ public class GateScriptTest {
         p.setProperty(k("test3", PREFIX_SOURCE), "ts3");
         p.setProperty(k("test3", PREFIX_DRAIN), "td3");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         Properties target = new Properties();
         script.storeTo(target);
         assertThat(target, is(p));
@@ -321,7 +321,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_DRAIN), "td");
         p.setProperty(k("test", PREFIX_DRAIN, "bbb"), "ccc");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         Properties target = new Properties();
         target.setProperty(k("test", KEY_DATA_CLASS), String.class.getName());
         script.storeTo(target);
@@ -340,7 +340,7 @@ public class GateScriptTest {
         p.setProperty(k("test", PREFIX_DRAIN), "td");
         p.setProperty(k("test", PREFIX_DRAIN, "bbb"), "ccc");
 
-        GateScript script = GateScript.loadFrom(p, getClass().getClassLoader());
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         Properties target = new Properties();
         target.setProperty(k("orthogonal", KEY_DATA_CLASS), String.class.getName());
         script.storeTo(target);

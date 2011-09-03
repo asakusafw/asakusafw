@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BaseProvider<S>> {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(BaseProfile.class);
+
     static final Logger LOG = LoggerFactory.getLogger(BaseProfile.class);
 
     /**
@@ -53,29 +55,6 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
      * @return this object
      */
     protected abstract S getThis();
-
-    /**
-     * Creates a new provider instance
-     * and attach this profile to the created instance.
-     * @return the created instance
-     * @throws IOException if failed to create an instance or attach this profile
-     */
-    public T createProvider() throws IOException {
-        LOG.debug("Creating a provider instance: {}",
-                getProviderClass().getName());
-        try {
-            T instance = getProviderClass().newInstance();
-            instance.configure(getThis());
-            return instance;
-        } catch (Exception e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            }
-            throw new IOException(MessageFormat.format(
-                    "Failed to create a provider: {0}",
-                    getProviderClass().getName()), e);
-        }
-    }
 
     /**
      * Loads the specified class from the class loader.
@@ -106,16 +85,43 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
         try {
             loaded = loader.loadClass(className);
         } catch (ClassNotFoundException e) {
+            WGLOG.error("E02001",
+                    className);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to load a provider \"{0}\"",
                     className), e);
         }
         if (providerInterface.isAssignableFrom(loaded) == false) {
+            WGLOG.error("E02001",
+                    className);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Class \"{0}\" must be subtype of \"{1}\"",
                     className,
                     providerInterface.getName()));
         }
         return loaded.asSubclass(providerInterface);
+    }
+
+    /**
+     * Creates a new provider instance
+     * and attach this profile to the created instance.
+     * @return the created instance
+     * @throws IOException if failed to create an instance or attach this profile
+     */
+    public T createProvider() throws IOException {
+        LOG.debug("Creating a provider instance: {}",
+                getProviderClass().getName());
+        T instance;
+        try {
+            instance = getProviderClass().newInstance();
+        } catch (Exception e) {
+            WGLOG.error(e, "E02002",
+                    getProviderClass().getName());
+            throw new IOException(MessageFormat.format(
+                    "Failed to create a provider: {0}",
+                    getProviderClass().getName()), e);
+        }
+        instance.configure(getThis());
+        return instance;
     }
 }

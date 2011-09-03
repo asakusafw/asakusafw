@@ -34,8 +34,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.windgate.core.process.BasicProcessProvider;
 import com.asakusafw.windgate.core.process.ProcessProfile;
-import com.asakusafw.windgate.core.process.plain.PlainProcessProvider;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.session.SessionProfile;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
@@ -181,8 +181,8 @@ public class GateTaskTest {
                         folder.newFolder("session").getAbsolutePath()));
         List<ProcessProfile> processes = Arrays.asList(new ProcessProfile(
                 "default",
-                PlainProcessProvider.class,
-                PlainProcessProvider.class.getClassLoader(),
+                BasicProcessProvider.class,
+                BasicProcessProvider.class.getClassLoader(),
                 Collections.<String, String>emptyMap()));
         List<ResourceProfile> resources = Arrays.asList(new ResourceProfile[] {
                 new ResourceProfile(
@@ -196,7 +196,7 @@ public class GateTaskTest {
                         FileResourceProvider.class.getClassLoader(),
                         Collections.<String, String>emptyMap()),
         });
-        return new GateProfile(core, session, processes, resources);
+        return new GateProfile("default", core, session, processes, resources);
     }
 
     private File put(File file, String...values) throws IOException {
@@ -234,7 +234,7 @@ public class GateTaskTest {
     }
 
     private GateScript script(ProcessScript<?>... processes) {
-        return new GateScript(Arrays.asList(processes));
+        return new GateScript("testing", Arrays.asList(processes));
     }
 
     private ProcessScript<?> p(String name, String sourceName, File sourceFile, String drainName, File drainFile) {

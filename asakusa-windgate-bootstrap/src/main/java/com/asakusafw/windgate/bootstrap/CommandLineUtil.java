@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Utilities for command line interfaces.
@@ -46,12 +47,36 @@ import com.asakusafw.windgate.core.ParameterList;
  */
 public final class CommandLineUtil {
 
+    static final WindGateLogger WGLOG = new WindGateBootstrapLogger(CommandLineUtil.class);
+
     static final Logger LOG = LoggerFactory.getLogger(CommandLineUtil.class);
 
     /**
      * The scheme name of Java class path.
      */
     public static final String SCHEME_CLASSPATH = "classpath";
+
+    /**
+     * Returns the name of URI for hint.
+     * @param uri the target URI
+     * @return the name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static String toName(URI uri) {
+        if (uri == null) {
+            throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
+        }
+        String path = uri.getSchemeSpecificPart();
+        if (path == null) {
+            return uri.toString();
+        }
+        String name = path.substring(path.lastIndexOf('/') + 1);
+        if (name.endsWith(".properties")) {
+            return name.substring(0, name.length() - ".properties".length());
+        } else {
+            return name;
+        }
+    }
 
     /**
      * Loads properties from the specified URI.
@@ -86,7 +111,7 @@ public final class CommandLineUtil {
             InputStream in = cl.getResourceAsStream(rest);
             if (in == null) {
                 throw new FileNotFoundException(MessageFormat.format(
-                        "Failed to load properties ({0})",
+                        "Failed to load properties \"{0}\"",
                         path.toString()));
             }
             return loadProperties(path, in);
@@ -150,16 +175,15 @@ public final class CommandLineUtil {
         for (File file : files) {
             try {
                 if (file.exists() == false) {
-                    throw new FileNotFoundException(file.getAbsolutePath());
+                    throw new FileNotFoundException(MessageFormat.format(
+                            "Failed to load plugin \"{0}\"",
+                            file.getAbsolutePath()));
                 }
                 URL url = file.toURI().toURL();
                 pluginLocations.add(url);
             } catch (IOException e) {
-                // TODO logging WARN
-                LOG.warn(MessageFormat.format(
-                        "Failed to load plugin \"{0}\"",
-                        file),
-                        e);
+                WGLOG.warn(e, "W99001",
+                        file.getAbsolutePath());
             }
         }
         ClassLoader serviceLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
@@ -222,10 +246,8 @@ Character:
             } else if (kv.length == 2) {
                 addArgument(results, unescape(kv[0]), unescape(kv[1]));
             } else {
-                // TODO logging WARN
-                LOG.warn("Invalid argument \"{}\", in \"{}\"",
-                        pair,
-                        results);
+                WGLOG.warn("W99002",
+                        pair);
             }
         }
         return new ParameterList(results);
@@ -236,12 +258,9 @@ Character:
         assert key != null;
         assert value != null;
         if (results.containsKey(key)) {
-            // TODO logging WARN
-            LOG.warn("The key \"{}\" is duplicated in the arguments. \"{}={}\" will be ignored", new Object[] {
+            WGLOG.warn("W99003",
                     key,
-                    key,
-                    value,
-            });
+                    value);
         } else {
             results.put(key, value);
         }

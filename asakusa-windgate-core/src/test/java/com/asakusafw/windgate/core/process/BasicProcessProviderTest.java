@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.windgate.core.process.plain;
+package com.asakusafw.windgate.core.process;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -27,27 +27,27 @@ import org.junit.Test;
 
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.ProcessScript;
-import com.asakusafw.windgate.core.process.MockDriverFactory;
+import com.asakusafw.windgate.core.process.BasicProcessProvider;
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.resource.MockDrainDriver;
 import com.asakusafw.windgate.core.resource.MockSourceDriver;
 
 /**
- * Test for {@link PlainProcessProvider}.
+ * Test for {@link BasicProcessProvider}.
  */
-public class PlainProcessProviderTest {
+public class BasicProcessProviderTest {
 
-    PlainProcessProvider provider = new PlainProcessProvider();
+    BasicProcessProvider provider = new BasicProcessProvider();
     {
         provider.configure(new ProcessProfile(
                 "plain",
-                PlainProcessProvider.class,
-                PlainProcessProvider.class.getClassLoader(),
+                BasicProcessProvider.class,
+                BasicProcessProvider.class.getClassLoader(),
                 Collections.<String, String>emptyMap()));
     }
 
     /**
-     * Test method for {@link PlainProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
+     * Test method for {@link BasicProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
      * @throws IOException if failed
      */
     @Test
@@ -66,7 +66,7 @@ public class PlainProcessProviderTest {
     }
 
     /**
-     * Test method for {@link PlainProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
+     * Test method for {@link BasicProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
      * @throws IOException expected
      */
     @Test(expected = IOException.class)
@@ -79,7 +79,7 @@ public class PlainProcessProviderTest {
     }
 
     /**
-     * Test method for {@link PlainProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
+     * Test method for {@link BasicProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
      * @throws IOException expected
      */
     @Test(expected = IOException.class)
@@ -95,7 +95,7 @@ public class PlainProcessProviderTest {
     }
 
     /**
-     * Test method for {@link PlainProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
+     * Test method for {@link BasicProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
      * @throws IOException expected
      */
     @Test(expected = IOException.class)

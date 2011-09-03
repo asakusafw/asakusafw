@@ -17,8 +17,9 @@ package com.asakusafw.windgate.core;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +38,17 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  */
 public class AbortTask {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(AbortTask.class);
+
     static final Logger LOG = LoggerFactory.getLogger(AbortTask.class);
+
+    private final GateProfile profile;
 
     private final String sessionId;
 
     private final SessionProvider sessionProvider;
 
-    private final List<ResourceProvider> resourceProviders;
+    private final Map<String, ResourceProvider> resourceProviders;
 
     /**
      * Creates a new instance.
@@ -56,6 +61,7 @@ public class AbortTask {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
+        this.profile = profile;
         this.sessionId = sessionId;
         this.sessionProvider = loadSessionProvider(profile.getSession());
         this.resourceProviders = loadResourceProviders(profile.getResources());
@@ -69,16 +75,16 @@ public class AbortTask {
         return result;
     }
 
-    private List<ResourceProvider> loadResourceProviders(
+    private Map<String, ResourceProvider> loadResourceProviders(
             List<ResourceProfile> resources) throws IOException {
         assert resources != null;
-        List<ResourceProvider> results = new ArrayList<ResourceProvider>();
-        for (ResourceProfile profile : resources) {
+        Map<String, ResourceProvider> results = new TreeMap<String, ResourceProvider>();
+        for (ResourceProfile resourceProfile : resources) {
             LOG.debug("Loading resource provider \"{}\": {}",
-                    profile.getName(),
-                    profile.getProviderClass().getName());
-            ResourceProvider provider = profile.createProvider();
-            results.add(provider);
+                    resourceProfile.getName(),
+                    resourceProfile.getProviderClass().getName());
+            ResourceProvider provider = resourceProfile.createProvider();
+            results.put(resourceProfile.getName(), provider);
         }
         return results;
     }
@@ -89,6 +95,9 @@ public class AbortTask {
      * @throws InterruptedException if interrupted
      */
     public void execute() throws IOException, InterruptedException {
+        WGLOG.info("I01000",
+                sessionId,
+                profile.getName());
         if (sessionId != null) {
             doAbortSingle(sessionId);
         } else {
@@ -98,43 +107,56 @@ public class AbortTask {
                     doAbortSingle(sid);
                 } catch (IOException e) {
                     failureCount++;
-                    // TODO warn
+                    WGLOG.warn(e, "W01001",
+                            sid,
+                            profile.getName());
                 }
             }
             if (failureCount > 0) {
                 throw new IOException("Failed to abort some sessions");
             }
         }
+        WGLOG.info("I01999",
+                sessionId,
+                profile.getName());
     }
 
     private boolean doAbortSingle(String targetSessionId) throws IOException {
         assert targetSessionId != null;
-        // TODO logging INFO session
         SessionMirror session;
         try {
-            LOG.debug("Attempting to open session {}",
-                    targetSessionId);
+            WGLOG.info("I01001",
+                    targetSessionId,
+                    profile.getName());
             session = sessionProvider.open(targetSessionId);
         } catch (SessionException e) {
             if (e.getReason() == Reason.NOT_EXIST) {
-                // it seems that the session was already completed/aborted.
-                LOG.debug("Session was already disposed: {}",
-                        targetSessionId);
+                WGLOG.info("I01002",
+                        targetSessionId,
+                        profile.getName());
                 return false;
             }
             throw e;
         }
         try {
+            WGLOG.info("I01003",
+                    targetSessionId,
+                    profile.getName());
             int failureCount = 0;
-            for (ResourceProvider provider : resourceProviders) {
+            for (Map.Entry<String, ResourceProvider> entry : resourceProviders.entrySet()) {
+                String name = entry.getKey();
+                ResourceProvider provider = entry.getValue();
                 LOG.debug("Attempting to abort resource {} (session={})",
-                        provider.getClass().getName(),
+                        name,
                         targetSessionId);
                 try {
                     provider.abort(session.getId());
                 } catch (IOException e) {
                     failureCount++;
-                    // TODO logging WARN
+                    WGLOG.warn(e, "W01002",
+                            targetSessionId,
+                            profile.getName(),
+                            name);
                 }
             }
             if (failureCount > 0) {
@@ -142,13 +164,18 @@ public class AbortTask {
                         "Failed to abort some resources for the session \"{0}\"",
                         targetSessionId));
             }
+            WGLOG.info("I01004",
+                    targetSessionId,
+                    profile.getName());
             session.abort();
             return true;
         } finally {
             try {
                 session.close();
             } catch (IOException e) {
-                // TODO logging warn
+                WGLOG.warn(e, "W01003",
+                        targetSessionId,
+                        profile.getName());
             }
         }
     }

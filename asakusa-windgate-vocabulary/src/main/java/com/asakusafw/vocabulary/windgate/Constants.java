@@ -29,12 +29,12 @@ public class Constants {
     /**
      * The abstract resource name of file systems.
      */
-    public static final String FILE_RESOURCE_NAME = "fs";
+    public static final String HADOOP_FILE_RESOURCE_NAME = "hadoop";
 
     /**
      * The default process provider name.
      */
-    public static final String DEFAULT_PROCESS_NAME = "default";
+    public static final String DEFAULT_PROCESS_NAME = "basic";
 
     private Constants() {
         return;

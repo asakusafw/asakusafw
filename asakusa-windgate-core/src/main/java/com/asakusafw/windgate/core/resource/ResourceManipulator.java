@@ -16,6 +16,7 @@
 package com.asakusafw.windgate.core.resource;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.asakusafw.windgate.core.ProcessScript;
 
@@ -57,7 +58,10 @@ public abstract class ResourceManipulator {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(MessageFormat.format(
+                "Resource {0} ({1}) can not create a source for drains",
+                getName(),
+                getClass().getName()));
     }
 
     /**
@@ -69,6 +73,9 @@ public abstract class ResourceManipulator {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(MessageFormat.format(
+                "Resource {0} ({1}) can not create a drain for sources",
+                getName(),
+                getClass().getName()));
     }
 }

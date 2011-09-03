@@ -73,7 +73,7 @@ public class FileResourceMirrorTest {
         try {
             ProcessScript<String> script = script(source, drain);
             // may do nothing
-            resource.prepare(new GateScript(Arrays.<ProcessScript<?>> asList(script)));
+            resource.prepare(gate(script));
         } finally {
             resource.close();
         }
@@ -91,7 +91,7 @@ public class FileResourceMirrorTest {
         FileResourceMirror resource = new FileResourceMirror("testing");
         try {
             ProcessScript<String> script = script(source, drain);
-            resource.prepare(new GateScript(Arrays.<ProcessScript<?>> asList(script)));
+            resource.prepare(gate(script));
             SourceDriver<String> driver = resource.createSource(script);
             try {
                 driver.prepare();
@@ -120,7 +120,7 @@ public class FileResourceMirrorTest {
         try {
             ProcessScript<String> script = script(source, drain);
             ProcessScript<String> opposite = script(drain, source);
-            resource.prepare(new GateScript(Arrays.<ProcessScript<?>> asList(script, opposite)));
+            resource.prepare(gate(script, opposite));
 
             DrainDriver<String> driver = resource.createDrain(script);
             try {
@@ -145,6 +145,10 @@ public class FileResourceMirrorTest {
         } finally {
             resource.close();
         }
+    }
+
+    private GateScript gate(ProcessScript<?>... scripts) {
+        return new GateScript("testing", Arrays.asList(scripts));
     }
 
     private ProcessScript<String> script(File source, File drain) {

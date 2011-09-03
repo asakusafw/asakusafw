@@ -35,7 +35,11 @@ import com.asakusafw.windgate.core.session.SessionProfile;
  */
 public class GateProfile {
 
+    static final WindGateLogger WGLOG = new WindGateCoreLogger(GateProfile.class);
+
     static final Logger LOG = LoggerFactory.getLogger(GateProfile.class);
+
+    private final String name;
 
     private final CoreProfile core;
 
@@ -47,6 +51,7 @@ public class GateProfile {
 
     /**
      * Creates a new instance.
+     * @param name the name (for hint)
      * @param core the core segment
      * @param session the session segment
      * @param processes the process segment
@@ -54,6 +59,7 @@ public class GateProfile {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public GateProfile(
+            String name,
             CoreProfile core,
             SessionProfile session,
             Collection<? extends ProcessProfile> processes,
@@ -70,10 +76,19 @@ public class GateProfile {
         if (resources == null) {
             throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
         }
+        this.name = name;
         this.core = core;
         this.session = session;
         this.processes = Collections.unmodifiableList(new ArrayList<ProcessProfile>(processes));
         this.resources = Collections.unmodifiableList(new ArrayList<ResourceProfile>(resources));
+    }
+
+    /**
+     * The name of this profile (for hint).
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -110,12 +125,16 @@ public class GateProfile {
 
     /**
      * Loads a total profile from the properties.
+     * @param name the profile name (for hint)
      * @param properties source properties
      * @param loader class loader to load the {@link ProcessProvider}
      * @return the loaded profile
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
      */
-    public static GateProfile loadFrom(Properties properties, ClassLoader loader) {
+    public static GateProfile loadFrom(String name, Properties properties, ClassLoader loader) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
@@ -133,8 +152,9 @@ public class GateProfile {
         Collection<? extends ResourceProfile> resources = ResourceProfile.loadFrom(copy, loader);
         ResourceProfile.removeCorrespondingKeys(copy);
         if (copy.isEmpty() == false) {
-            // TODO logging WARN
+            WGLOG.warn("W02001",
+                    copy.keySet());
         }
-        return new GateProfile(core, session, processes, resources);
+        return new GateProfile(name, core, session, processes, resources);
     }
 }

@@ -293,7 +293,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         WindGateImporterDescription desc = extract(input.getDescription());
         String location = getInputLocation(input.getDescription()).toPath('/');
         DriverScript drain = new DriverScript(
-                Constants.FILE_RESOURCE_NAME,
+                Constants.HADOOP_FILE_RESOURCE_NAME,
                 Collections.singletonMap(FileProcess.FILE.key(), location));
         return createProcessScript(
                 input.getDescription().getName(),
@@ -307,7 +307,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         WindGateExporterDescription desc = extract(output.getDescription());
         String location = getOutputLocation(output.getDescription()).toPath('/');
         DriverScript source = new DriverScript(
-                Constants.FILE_RESOURCE_NAME,
+                Constants.HADOOP_FILE_RESOURCE_NAME,
                 Collections.singletonMap(FileProcess.FILE.key(), location));
         return createProcessScript(
                 output.getDescription().getName(),
@@ -337,7 +337,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         assert processes != null;
         Map<String, GateScript> results = new TreeMap<String, GateScript>();
         for (Map.Entry<String, List<ProcessScript<?>>> entry : processes.entrySet()) {
-            results.put(entry.getKey(), new GateScript(entry.getValue()));
+            results.put(entry.getKey(), new GateScript(entry.getKey(), entry.getValue()));
         }
         return results;
     }
