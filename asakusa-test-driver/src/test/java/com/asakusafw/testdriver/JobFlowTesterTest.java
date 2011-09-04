@@ -44,4 +44,116 @@ public class JobFlowTesterTest {
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
     }
+
+    /**
+     * Attempts to prepare input with invalid name.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_input_prepare_name() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("INVALID", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to prepare input with invalid type.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_input_prepare_type() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Void.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to prepare input with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_input_prepare_data() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("INVALID");
+    }
+
+    /**
+     * Attempts to prepare output with invalid name.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_output_prepare_name() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("INVALID", Simple.class).prepare("data/simple-out.json");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to prepare output with invalid type.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_output_prepare_type() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Void.class).prepare("data/simple-out.json");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to prepare output with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_prepare_data() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("simple", Simple.class).prepare("INVALID");
+    }
+
+    /**
+     * Attempts to verify output with invalid name.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_output_verify_name() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("INVALID", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to verify output with invalid name.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_output_verify_type() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Void.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to verify output with invalid name.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_verify_data() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("simple", Simple.class).verify("INVALID", new IdentityVerifier());
+    }
+
+    /**
+     * Attempts to verify output with invalid name.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_verify_rule() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("simple", Simple.class).verify("data/simple-out.json", "INVALID");
+    }
 }
