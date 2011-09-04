@@ -30,7 +30,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**
  * An implementation of {@link ResourceMirror} using Hadoop File System via JSch connection.
- * @since 0.2.3
+ * @since 0.2.2
  * @see FileProcess
  */
 public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {

@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 /**
  * Utilities for {@link Properties}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public final class PropertiesUtil {
 

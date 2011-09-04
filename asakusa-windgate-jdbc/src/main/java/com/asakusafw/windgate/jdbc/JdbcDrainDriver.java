@@ -33,7 +33,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPrep
 /**
  * An implementation of {@link DrainDriver} using JDBC.
  * @param <T> the type of data model object
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcDrainDriver<T> implements DrainDriver<T> {
 
@@ -163,8 +163,8 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
         return MessageFormat.format(
                 "INSERT INTO {0} ({1}) VALUES ({2})",
                 script.getTableName(),
-                JdbcUtil.join(script.getColumnNames()),
-                JdbcUtil.join(Collections.nCopies(script.getColumnNames().size(), "?"))); //$NON-NLS-1$
+                JdbcResourceUtil.join(script.getColumnNames()),
+                JdbcResourceUtil.join(Collections.nCopies(script.getColumnNames().size(), "?"))); //$NON-NLS-1$
     }
 
     @Override

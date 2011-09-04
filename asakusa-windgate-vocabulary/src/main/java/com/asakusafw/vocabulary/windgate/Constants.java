@@ -17,7 +17,7 @@ package com.asakusafw.vocabulary.windgate;
 
 /**
  * The common constants of WindGate vocabularies.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class Constants {
 

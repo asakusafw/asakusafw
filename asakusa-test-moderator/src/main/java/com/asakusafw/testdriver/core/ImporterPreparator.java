@@ -16,18 +16,23 @@
 package com.asakusafw.testdriver.core;
 
 import java.io.IOException;
-
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
  * Creates test input for suitable {@link ImporterDescription}.
+ * <em>
+ * Attention:
+ * Currently this interface is not stable.
+ * Please inherit {@link AbstractImporterPreparator} or {@link BaseImporterPreparator} instead.
+ * </em>
  * <p>
  * Adding {@link ImporterDescription} test moderators, clients can implement this
  * and put the class name in
  * {@code META-INF/services/com.asakusafw.testdriver.core.ImporterPreparator}.
  * </p>
  * @param <T> type of target {@link ImporterDescription}
+ * @version 0.2.2
  * @since 0.2.0
  * @see AbstractImporterPreparator
  */
@@ -46,17 +51,24 @@ public interface ImporterPreparator<T extends ImporterDescription> {
      * this method has no effects.
      * </p>
      * @param description the description
+     * @param context the current test context
      * @throws IOException if failed to open the target
+     * @since 0.2.2
      */
-    void truncate(T description) throws IOException;
+    void truncate(T description, TestContext context) throws IOException;
 
     /**
      * Creates a {@link ModelOutput} to prepare the resource which the importer will use.
      * @param <V> type of model
      * @param definition the data model definition
      * @param description the description
+     * @param context the current test context
      * @return the created {@link ModelOutput}
      * @throws IOException if failed to open the target
+     * @since 0.2.2
      */
-    <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition, T description) throws IOException;
+    <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            T description,
+            TestContext context) throws IOException;
 }

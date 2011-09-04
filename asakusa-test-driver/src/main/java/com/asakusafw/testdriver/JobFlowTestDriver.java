@@ -132,6 +132,8 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
                 jobFlowDescriptionClass.getClassLoader(),
                 driverContext.getOptions());
 
+            driverContext.prepareCurrentJobflow(jobflowInfo);
+
             executor.runJobflow(jobflowInfo);
 
             // テスト結果検証ツールを実行し、Excel上の期待値とDB上の実際値を比較する。

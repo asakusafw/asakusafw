@@ -30,6 +30,8 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  */
 public class SpiExporterRetrieverTest extends SpiTestRoot {
 
+    private static final TestContext EMPTY = new TestContext.Empty();
+
     /**
      * Test method for {@link SpiExporterRetriever#getDescriptionClass()}.
      */
@@ -40,7 +42,8 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
     }
 
     /**
-     * Test method for {@link SpiExporterRetriever#createSource(DataModelDefinition, ExporterDescription)}.
+     * Test method for {@link SpiExporterRetriever#
+     * createSource(DataModelDefinition, ExporterDescription, TestContext)}.
      * @throws Exception if failed
      */
     @Test
@@ -49,7 +52,7 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
         ClassLoader cl = register(ExporterRetriever.class, MockExporterRetriever.class);
 
         SpiExporterRetriever target = new SpiExporterRetriever(cl);
-        DataModelSource source = target.createSource(ValueDefinition.of(String.class), desc);
+        DataModelSource source = target.createSource(ValueDefinition.of(String.class), desc, EMPTY);
         assertThat(ValueDefinition.of(String.class).toObject(source.next()), is("Hello, world!"));
     }
 
@@ -62,6 +65,6 @@ public class SpiExporterRetrieverTest extends SpiTestRoot {
         Desc desc = MockExporterRetriever.create("Hello, world!");
 
         SpiExporterRetriever target = new SpiExporterRetriever(getClass().getClassLoader());
-        target.createSource(ValueDefinition.of(String.class), desc);
+        target.createSource(ValueDefinition.of(String.class), desc, EMPTY);
     }
 }

@@ -22,7 +22,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Logger for WindGate file based sessions implementation.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileSessionLogger extends WindGateLogger {
 

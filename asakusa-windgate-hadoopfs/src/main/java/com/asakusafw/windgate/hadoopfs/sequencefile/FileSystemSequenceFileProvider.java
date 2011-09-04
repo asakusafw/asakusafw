@@ -29,7 +29,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * An implementation of {@link SequenceFileProvider} using {@link FileSystem}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileSystemSequenceFileProvider implements SequenceFileProvider {
 

@@ -36,7 +36,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * Gets files from Hadoop File System and write them as {@link FileList} to the standard output.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class WindGateHadoopGet {
 

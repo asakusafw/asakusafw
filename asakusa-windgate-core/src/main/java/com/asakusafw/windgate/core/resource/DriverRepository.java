@@ -28,7 +28,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Provides {@link SourceDriver}s and {@link DrainDriver}s from {@link ResourceMirror}s.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class DriverRepository implements DriverFactory {
 

@@ -29,7 +29,7 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
 
 /**
  * An implementation of {@link ResourceProvider} using JDBC.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcResourceProvider extends ResourceProvider {
 
@@ -59,10 +59,12 @@ public class JdbcResourceProvider extends ResourceProvider {
     }
 
     @Override
-    public ResourceManipulator createManipulator() throws IOException {
+    public ResourceManipulator createManipulator(ParameterList arguments) throws IOException {
+        if (arguments == null) {
+            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        }
         LOG.debug("Creating JDBC resource manipulator {}",
                 jdbcProfile.getResourceName());
-        // TODO JdbcResourceProvider#createManipulator
-        return null;
+        return new JdbcResourceManipulator(jdbcProfile, arguments);
     }
 }

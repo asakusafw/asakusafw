@@ -19,7 +19,7 @@ import com.asakusafw.windgate.core.DriverScript;
 
 /**
  * An abstract interface of WindGate importer/exporter process description.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface WindGateProcessDescription {
 

@@ -28,7 +28,7 @@ import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
  * A structured profile for {@link JdbcResourceMirror}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcProfile {
 

@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 
 /**
  * An exception that describes failed to attach to a session.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class SessionException extends IOException {
 
@@ -84,7 +84,7 @@ public class SessionException extends IOException {
 
     /**
      * The reason of the exception.
-     * @since 0.2.3
+     * @since 0.2.2
      */
     public enum Reason {
 

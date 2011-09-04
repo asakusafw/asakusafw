@@ -17,17 +17,22 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
+import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.testdriver.core.TestContext;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
  */
-public class TestDriverContext {
+public class TestDriverContext implements TestContext {
 
     /**
      * Environmental variable: the framework home path.
@@ -49,7 +54,11 @@ public class TestDriverContext {
     private final Map<String, String> batchArgs;
     private final FlowCompilerOptions options;
 
-    private int executionCount;
+    private volatile String currentBatchId;
+
+    private volatile String currentFlowId;
+
+    private volatile String currentExecutionId;
 
     /**
      * Creates a new instance.
@@ -168,19 +177,43 @@ public class TestDriverContext {
     }
 
     /**
+     * Changes current Jobflow.
+     * @param info target jobflow
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.2
+     */
+    public void prepareCurrentJobflow(JobflowInfo info) {
+        if (info == null) {
+            throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
+        }
+        this.currentBatchId = info.getJobflow().getBatchId();
+        this.currentFlowId = info.getJobflow().getFlowId();
+        this.currentExecutionId = MessageFormat.format(
+                "{0}.{1}.{2}",
+                getCallerClass().getSimpleName(),
+                currentBatchId,
+                currentFlowId);
+    }
+
+    /**
      * Returns the current execution ID.
      * @return current execution ID
-     * @see #changeExecutionId()
+     * @see #prepareCurrentJobflow(JobflowInfo)
      */
     public String getExecutionId() {
-        return String.format("%s_%d", getCallerClass().getSimpleName(), executionCount);
+        if (currentExecutionId == null) {
+            throw new IllegalStateException("prepareCurrentJobflow was not invoked");
+        }
+        return currentExecutionId;
     }
 
     /**
      * Change current {@link #getExecutionId() execution ID} into a unique string.
+     * @deprecated Please invoke {@link #prepareCurrentJobflow(JobflowInfo)}
      */
+    @Deprecated
     public void changeExecutionId() {
-        executionCount++;
+        // do nothing
     }
 
     /**
@@ -195,6 +228,21 @@ public class TestDriverContext {
      */
     public Map<String, String> getBatchArgs() {
         return batchArgs;
+    }
+
+    @Override
+    public Map<String, String> getArguments() {
+        Map<String, String> copy = new HashMap<String, String>(getBatchArgs());
+        if (currentBatchId != null) {
+            copy.put(AbstractStageClient.VAR_BATCH_ID, currentBatchId);
+        }
+        if (currentFlowId != null) {
+            copy.put(AbstractStageClient.VAR_FLOW_ID, currentFlowId);
+        }
+        if (currentExecutionId != null) {
+            copy.put(AbstractStageClient.VAR_EXECUTION_ID, currentExecutionId);
+        }
+        return Collections.unmodifiableMap(copy);
     }
 
     /**

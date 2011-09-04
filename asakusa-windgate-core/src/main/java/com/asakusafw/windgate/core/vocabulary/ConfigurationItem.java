@@ -17,7 +17,7 @@ package com.asakusafw.windgate.core.vocabulary;
 
 /**
  * An abstract super interface of configuration items.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface ConfigurationItem {
 

@@ -46,7 +46,7 @@ import com.asakusafw.windgate.core.session.SessionProvider;
 
 /**
  * Executes WindGate.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class GateTask {
 

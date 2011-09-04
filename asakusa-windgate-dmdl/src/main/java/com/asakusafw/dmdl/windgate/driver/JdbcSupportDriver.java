@@ -36,7 +36,7 @@ The attributed declaration must be:
 <ul>
 <li> with value=[string-literal] </li>
 </ul>
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcSupportDriver extends AttributeDriver {
 
@@ -65,7 +65,7 @@ public class JdbcSupportDriver extends AttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     declaration.getOriginalAst(),
-                    "@{0} is only suitable for properties",
+                    "@{0} is for only for properties",
                     TARGET_NAME));
             return;
         }

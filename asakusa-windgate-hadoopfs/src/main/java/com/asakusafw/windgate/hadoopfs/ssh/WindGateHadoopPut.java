@@ -32,7 +32,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * Puts files onto Hadoop File System from {@link FileList} in the standard input.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class WindGateHadoopPut {
 

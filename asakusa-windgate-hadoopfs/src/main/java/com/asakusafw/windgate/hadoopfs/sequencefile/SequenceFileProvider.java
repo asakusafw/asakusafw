@@ -22,7 +22,7 @@ import org.apache.hadoop.io.SequenceFile;
 
 /**
  * Provides sequence file list.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface SequenceFileProvider extends Closeable {
 

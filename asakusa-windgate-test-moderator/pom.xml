@@ -24,9 +24,24 @@
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dsl-vocabulary</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-test-moderator</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-vocabulary</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

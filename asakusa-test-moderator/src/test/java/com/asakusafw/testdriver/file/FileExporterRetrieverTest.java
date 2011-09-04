@@ -36,6 +36,7 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
@@ -43,6 +44,8 @@ import com.asakusafw.vocabulary.external.FileExporterDescription;
  * @since 0.2.0
  */
 public class FileExporterRetrieverTest {
+
+    private static final TestContext EMPTY = new TestContext.Empty();
 
     /**
      * This test class requires Hadoop is installed.
@@ -89,7 +92,7 @@ public class FileExporterRetrieverTest {
         putTextRaw("target/testing/hello", "Hello, world!\nThis is a test.\n".getBytes("UTF-8"));
 
         MockTextDefinition definition = new MockTextDefinition();
-        DataModelSource result = retriever.createSource(definition, exporter);
+        DataModelSource result = retriever.createSource(definition, exporter, EMPTY);
         try {
             DataModelReflection ref;
             ref = result.next();
@@ -119,7 +122,7 @@ public class FileExporterRetrieverTest {
         putTextSequenceFile("target/testing/hello", "Hello, world!", "This is a test.");
 
         MockTextDefinition definition = new MockTextDefinition();
-        DataModelSource result = retriever.createSource(definition, exporter);
+        DataModelSource result = retriever.createSource(definition, exporter, EMPTY);
         try {
             DataModelReflection ref;
             ref = result.next();

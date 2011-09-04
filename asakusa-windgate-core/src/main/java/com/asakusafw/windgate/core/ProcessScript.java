@@ -18,7 +18,7 @@ package com.asakusafw.windgate.core;
 /**
  * A script describes transfering data from source to drain.
  * @param <T> the type to be processed
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class ProcessScript<T> {
 

@@ -36,7 +36,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * A configuration for each resource.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public final class ResourceProfile extends BaseProfile<ResourceProfile, ResourceProvider> {
 

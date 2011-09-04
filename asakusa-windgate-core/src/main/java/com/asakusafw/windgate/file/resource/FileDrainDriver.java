@@ -26,7 +26,7 @@ import com.asakusafw.windgate.core.resource.DrainDriver;
 /**
  * An implementation for {@link DrainDriver} using {@link ObjectOutputStream}.
  * @param <T> the type of target data
- * @since 0.2.3
+ * @since 0.2.2
  */
 class FileDrainDriver<T> implements DrainDriver<T> {
 

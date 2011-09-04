@@ -51,7 +51,7 @@ import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
 
 /**
  * An abstract implementation of {@link ResourceMirror} using Hadoop File System via SSH connection.
- * @since 0.2.3
+ * @since 0.2.2
  * @see FileProcess
  */
 public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {

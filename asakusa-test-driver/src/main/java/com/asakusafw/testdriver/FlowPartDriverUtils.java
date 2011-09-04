@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.runtime.stage.AbstractStageClient;
 
 /**
  * フロー部品用のテストドライバを実行するためのユーティリティクラス。
@@ -24,7 +25,7 @@ import com.asakusafw.compiler.flow.Location;
  */
 class FlowPartDriverUtils {
 
-    
+
     /**
      * コンストラクタ。
      */
@@ -34,39 +35,42 @@ class FlowPartDriverUtils {
 
     /**
      * Hadoop Jobの入力データのリソース位置を生成する。
-     * 
+     *
      * @param driverContext ドライバコンテキスト。
      * @param name 入力データ名。
      * @return 入力データのリソース位置
      */
     public static Location createInputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(driverContext.getExecutionId()).append("input").append(normalize(name));
+                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append("input")
+                .append(normalize(name));
         return location;
     }
 
     /**
      * Hadoop Jobの出力データのリソース位置を生成する。
-     * 
+     *
      * @param driverContext ドライバコンテキスト。
      * @param name 出力データ名。
      * @return 出力データのリソース位置
      */
     public static Location createOutputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(driverContext.getExecutionId()).append("output").append(normalize(name)).asPrefix();
+                .append(AbstractStageClient.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
         return location;
     }
 
     /**
      * Hadoop Jobのワーキングディレクトリのリソース位置を生成する。
-     * 
+     *
      * @param driverContext ドライバコンテキスト。
      * @return ワーキングのリソース位置
      */
     public static Location createWorkingLocation(TestDriverContext driverContext) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(driverContext.getExecutionId()).append("temp");
+                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append("temp");
         return location;
     }
 

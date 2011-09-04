@@ -29,7 +29,7 @@ try {
     session.close();
 }
 </code></pre>
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class SessionMirror implements Closeable {
 

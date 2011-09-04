@@ -27,7 +27,7 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
 
 /**
  * {@link ResourceManipulator} corresponded to {@link FileResourceMirror}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileResourceManipulator extends ResourceManipulator {
 
@@ -84,5 +84,11 @@ public class FileResourceManipulator extends ResourceManipulator {
     public <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.DRAIN);
         return new FileSourceDriver<T>(script.getDataClass(), file);
+    }
+
+    @Override
+    public <T> DrainDriver<T> createDrainForDrain(ProcessScript<T> script) throws IOException {
+        File file = FileResourceMirror.getPath(script, DriverScript.Kind.DRAIN);
+        return new FileDrainDriver<T>(script.getDataClass(), file);
     }
 }

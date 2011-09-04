@@ -28,7 +28,7 @@ import com.asakusafw.windgate.core.session.SessionMirror;
 
 /**
  * An implementation of {@link SessionMirror} using file locking.
- * @since 0.2.3
+ * @since 0.2.2
  */
 class FileSessionMirror extends SessionMirror {
 

@@ -25,7 +25,7 @@ import com.asakusafw.windgate.core.resource.DriverFactory;
  * An abstract super class of process factory.
  * Clients can inherit this class to provide new data sources.
  * Each subclass must provide a public constructor with no parameters.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class ProcessProvider extends BaseProvider<ProcessProfile> {
 

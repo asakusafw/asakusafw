@@ -43,6 +43,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
@@ -50,6 +51,8 @@ import com.asakusafw.vocabulary.external.FileImporterDescription;
  * @since 0.2.0
  */
 public class FileImporterPreparatorTest {
+
+    private static final TestContext EMPTY = new TestContext.Empty();
 
     /**
      * This test class requires Hadoop is installed.
@@ -93,7 +96,8 @@ public class FileImporterPreparatorTest {
         FileImporterPreparator target = new FileImporterPreparator(factory);
         ModelOutput<Text> open = target.createOutput(
                 new MockTextDefinition(),
-                new MockFileImporter(Text.class, TextInputFormat.class, "target/testing/input"));
+                new MockFileImporter(Text.class, TextInputFormat.class, "target/testing/input"),
+                EMPTY);
         try {
             open.write(new Text("Hello, world!"));
         } finally {
@@ -116,7 +120,8 @@ public class FileImporterPreparatorTest {
         FileImporterPreparator target = new FileImporterPreparator(factory);
         ModelOutput<Text> open = target.createOutput(
                 new MockTextDefinition(),
-                new MockFileImporter(Text.class, SequenceFileInputFormat.class, "target/testing/input"));
+                new MockFileImporter(Text.class, SequenceFileInputFormat.class, "target/testing/input"),
+                EMPTY);
         try {
             open.write(new Text("Hello, world!"));
             open.write(new Text("This is a test."));

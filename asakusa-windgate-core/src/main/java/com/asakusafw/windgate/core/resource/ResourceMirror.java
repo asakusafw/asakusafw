@@ -23,7 +23,7 @@ import com.asakusafw.windgate.core.ProcessScript;
 
 /**
  * An abstract implementation of logical data store resources.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class ResourceMirror implements Closeable {
 

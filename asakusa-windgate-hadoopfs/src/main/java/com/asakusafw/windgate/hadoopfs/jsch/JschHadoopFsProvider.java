@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
-import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
@@ -31,7 +30,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**
  * Provides {@link JschHadoopFsMirror}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JschHadoopFsProvider extends ResourceProvider {
 
@@ -67,13 +66,5 @@ public class JschHadoopFsProvider extends ResourceProvider {
                 sshProfile.getResourceName(),
                 sessionId);
         return new JschHadoopFsMirror(configuration, sshProfile, arguments);
-    }
-
-    @Override
-    public ResourceManipulator createManipulator() throws IOException {
-        LOG.debug("Creating Hadoop FS via JSch resource manipulator {}",
-                sshProfile.getResourceName());
-        // TODO JschHadoopFsProvider#createManipulator
-        return null;
     }
 }

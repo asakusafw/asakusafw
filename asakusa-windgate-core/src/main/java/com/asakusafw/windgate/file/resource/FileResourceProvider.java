@@ -25,7 +25,7 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
 
 /**
  * An implementation {@link ResourceProvider} using file system.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileResourceProvider extends ResourceProvider {
 
@@ -42,7 +42,7 @@ public class FileResourceProvider extends ResourceProvider {
     }
 
     @Override
-    public ResourceManipulator createManipulator() throws IOException {
+    public ResourceManipulator createManipulator(ParameterList arguments) throws IOException {
         return new FileResourceManipulator(name);
     }
 }

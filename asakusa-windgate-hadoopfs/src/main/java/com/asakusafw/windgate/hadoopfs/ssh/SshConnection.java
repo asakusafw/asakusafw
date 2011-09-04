@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 /**
  * A remote command execution via SSH.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface SshConnection extends Closeable {
 

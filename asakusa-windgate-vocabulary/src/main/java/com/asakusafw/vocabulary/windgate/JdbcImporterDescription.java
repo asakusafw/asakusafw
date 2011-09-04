@@ -32,7 +32,7 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
  * <li> not declared type parameters </li>
  * <li> not declared any explicit constructors </li>
  * </ul>
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class JdbcImporterDescription extends WindGateImporterDescription {
 

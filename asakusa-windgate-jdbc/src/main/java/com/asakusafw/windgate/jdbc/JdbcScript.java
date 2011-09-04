@@ -24,7 +24,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 /**
  * A structured gate script fragment for JDBC.
  * @param <T> the type of target data model
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcScript<T> {
 

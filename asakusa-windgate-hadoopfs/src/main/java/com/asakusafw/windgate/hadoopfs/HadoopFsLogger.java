@@ -22,7 +22,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Logger for WindGate resource based Hadoop File System.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class HadoopFsLogger extends WindGateLogger {
 

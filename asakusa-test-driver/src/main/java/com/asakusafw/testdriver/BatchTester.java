@@ -127,10 +127,12 @@ public class BatchTester extends TestDriverBase {
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
+            driverContext.prepareCurrentJobflow(jobflowInfo);
             executor.cleanInputOutput(jobflowInfo);
         }
 
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
+            driverContext.prepareCurrentJobflow(jobflowInfo);
             String flowId = jobflowInfo.getJobflow().getFlowId();
             JobFlowTester tester = jobFlowMap.get(flowId);
             if (tester != null) {
@@ -149,8 +151,6 @@ public class BatchTester extends TestDriverBase {
                         batchDescriptionClass.getName(), flowId);
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
             }
-
-            driverContext.changeExecutionId();
         }
     }
 }

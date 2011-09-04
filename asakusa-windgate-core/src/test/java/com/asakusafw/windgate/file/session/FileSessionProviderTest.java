@@ -153,6 +153,8 @@ public class FileSessionProviderTest {
         } catch (SessionException e) {
             assertThat(e.getSessionId(), is("testing"));
             assertThat(e.getReason(), is(Reason.NOT_EXIST));
+            List<String> all = new ArrayList<String>(provider.getCreatedIds());
+            assertThat(all.isEmpty(), is(true));
         }
     }
 
@@ -216,6 +218,37 @@ public class FileSessionProviderTest {
         List<String> all = new ArrayList<String>(provider.getCreatedIds());
         assertThat(all, hasItems("testing1", "testing3"));
         assertThat(all.size(), is(2));
+    }
+
+    /**
+     * Deletes a created session.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete() throws Exception {
+        SessionMirror session = provider.create("testing");
+        session.close();
+        provider.delete("testing");
+
+        List<String> all = new ArrayList<String>(provider.getCreatedIds());
+        assertThat(all.isEmpty(), is(true));
+    }
+
+    /**
+     * Attempts to delete a missing session.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_missing() throws Exception {
+        try {
+            provider.delete("testing");
+            fail();
+        } catch (SessionException e) {
+            assertThat(e.getReason(), is(SessionException.Reason.NOT_EXIST));
+        }
+
+        List<String> all = new ArrayList<String>(provider.getCreatedIds());
+        assertThat(all.isEmpty(), is(true));
     }
 
     /**

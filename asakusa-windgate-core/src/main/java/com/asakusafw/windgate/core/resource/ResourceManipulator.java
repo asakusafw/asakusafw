@@ -16,14 +16,12 @@
 package com.asakusafw.windgate.core.resource;
 
 import java.io.IOException;
-import java.text.MessageFormat;
-
 import com.asakusafw.windgate.core.ProcessScript;
 
 /**
  * An abstract implementation of logical data store manipulator.
  * Generally this is used for testing that the application uses the corresponding {@link ResourceMirror}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class ResourceManipulator {
 
@@ -50,21 +48,6 @@ public abstract class ResourceManipulator {
     public abstract void cleanupDrain(ProcessScript<?> script) throws IOException;
 
     /**
-     * Creates a new source driver for the drain of this resource.
-     * @param <T> target data model type
-     * @param script target process
-     * @return the created driver
-     * @throws IOException if failed to open this resource
-     * @throws IllegalArgumentException if any parameter is {@code null}
-     */
-    public <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException {
-        throw new UnsupportedOperationException(MessageFormat.format(
-                "Resource {0} ({1}) can not create a source for drains",
-                getName(),
-                getClass().getName()));
-    }
-
-    /**
      * Creates a new drain driver for the source of this resource.
      * @param <T> target data model type
      * @param script target process
@@ -72,10 +55,25 @@ public abstract class ResourceManipulator {
      * @throws IOException if failed to open this resource
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
-        throw new UnsupportedOperationException(MessageFormat.format(
-                "Resource {0} ({1}) can not create a drain for sources",
-                getName(),
-                getClass().getName()));
-    }
+    public abstract <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException;
+
+    /**
+     * Creates a new source driver for the drain of this resource.
+     * @param <T> target data model type
+     * @param script target process
+     * @return the created driver
+     * @throws IOException if failed to open this resource
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     */
+    public abstract <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException;
+
+    /**
+     * Creates a new drain driver for the drain of this resource.
+     * @param <T> target data model type
+     * @param script target process
+     * @return the created driver
+     * @throws IOException if failed to open this resource
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     */
+    public abstract <T> DrainDriver<T> createDrainForDrain(ProcessScript<T> script) throws IOException;
 }

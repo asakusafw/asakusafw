@@ -27,7 +27,7 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
 /**
  * An implementation for {@link SourceDriver} using {@link ObjectInputStream}.
  * @param <T> the type of target data
- * @since 0.2.3
+ * @since 0.2.2
  */
 class FileSourceDriver<T> implements SourceDriver<T> {
 

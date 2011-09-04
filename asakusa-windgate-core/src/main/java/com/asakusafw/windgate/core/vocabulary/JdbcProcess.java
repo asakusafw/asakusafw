@@ -17,7 +17,7 @@ package com.asakusafw.windgate.core.vocabulary;
 
 /**
  * WindGate database resource configuration.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public enum JdbcProcess implements ConfigurationItem {
 
@@ -88,7 +88,7 @@ public enum JdbcProcess implements ConfigurationItem {
     /**
      * The drain operation kinds.
      * These contain optional operations.
-     * @since 0.2.3
+     * @since 0.2.2
      */
     public enum OperationKind {
 

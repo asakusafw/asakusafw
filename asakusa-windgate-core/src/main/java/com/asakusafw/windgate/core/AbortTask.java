@@ -34,7 +34,7 @@ import com.asakusafw.windgate.core.session.SessionProvider;
 
 /**
  * Aborts a session or sessions.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class AbortTask {
 

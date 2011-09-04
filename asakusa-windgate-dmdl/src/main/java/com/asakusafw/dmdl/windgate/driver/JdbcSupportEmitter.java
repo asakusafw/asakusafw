@@ -70,7 +70,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
  * Emits {@link DataModelJdbcSupport} implementations.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcSupportEmitter extends JavaDataModelDriver {
 

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The parameter list.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class ParameterList {
 

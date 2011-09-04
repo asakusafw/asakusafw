@@ -42,6 +42,7 @@ import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.testdriver.file.ConfigurationFactory;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.vocabulary.external.ExporterDescription;
@@ -92,18 +93,6 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
     public void runTest(FlowDescription flowDescription) {
 
         try {
-            JobflowExecutor executor = new JobflowExecutor(driverContext);
-
-            // クラスタワークディレクトリ初期化
-            executor.cleanWorkingDirectory();
-
-            // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
-            if (createIndividually) {
-                createSequenceFilesIndividually();
-            } else {
-                createSequenceFiles();
-            }
-
             // フローコンパイラの実行
             String batchId = "flow";
             String flowId = "part";
@@ -117,6 +106,19 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
                     FlowPartDriverUtils.createWorkingLocation(driverContext), compileWorkDir,
                     Arrays.asList(new File[] { DirectFlowCompiler.toLibraryPath(flowDescription.getClass()) }),
                     flowDescription.getClass().getClassLoader(), driverContext.getOptions());
+
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+            driverContext.prepareCurrentJobflow(jobflowInfo);
+
+            // クラスタワークディレクトリ初期化
+            executor.cleanWorkingDirectory();
+
+            // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
+            if (createIndividually) {
+                createSequenceFilesIndividually();
+            } else {
+                createSequenceFiles();
+            }
 
             executor.runJobflow(jobflowInfo);
 
@@ -459,12 +461,21 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
 
     private String createInputSequenceFilePath(FileSystem fs, String tableName) {
         Location location = FlowPartDriverUtils.createInputLocation(driverContext, tableName);
-        return new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
+        String path = new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
+        return resolvePath(path);
     }
 
     private String createOutputSequenceFilePath(FileSystem fs, String tableName) {
         Location location = FlowPartDriverUtils.createOutputLocation(driverContext, tableName);
-        return new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
+        String path = new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
+        return resolvePath(path);
     }
 
+    private String resolvePath(String path) {
+        assert path != null;
+        Map<String, String> arguments = driverContext.getArguments();
+        VariableTable variables = new VariableTable();
+        variables.defineVariables(arguments);
+        return variables.parse(path, false);
+    }
 }
