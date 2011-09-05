@@ -132,6 +132,7 @@ public class JobflowExecutor {
      * @param info target jobflow
      * @param inputs target inputs
      * @throws IOException if failed to create job processes
+     * @throws IllegalStateException if input is not defined in the jobflow
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void prepareInput(
@@ -149,6 +150,12 @@ public class JobflowExecutor {
                 String name = input.getName();
                 LOG.debug("入力{}を配置しています: {}", name, source);
                 ImporterDescription description = info.findImporter(name);
+                if (description == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "入力{0}はフロー{1}で定義されていません",
+                            name,
+                            info.getJobflow().getFlowId()));
+                }
                 preparator.prepare(input.getModelType(), description, source);
             }
         }
@@ -159,6 +166,7 @@ public class JobflowExecutor {
      * @param info target jobflow
      * @param outputs target ouputs
      * @throws IOException if failed to create job processes
+     * @throws IllegalStateException if output is not defined in the jobflow
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void prepareOutput(
@@ -174,8 +182,14 @@ public class JobflowExecutor {
             URI source = output.getSourceUri();
             if (source != null) {
                 String name = output.getName();
-                LOG.debug("入力{}を配置しています: {}", name, source);
-                ImporterDescription description = info.findImporter(name);
+                LOG.debug("出力{}を配置しています: {}", name, source);
+                ExporterDescription description = info.findExporter(name);
+                if (description == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "出力{0}はフロー{1}で定義されていません",
+                            name,
+                            info.getJobflow().getFlowId()));
+                }
                 preparator.prepare(output.getModelType(), description, source);
             }
         }
@@ -414,8 +428,9 @@ public class JobflowExecutor {
      * @param verifyContext verification context
      * @param outputs output information
      * @throws IOException if failed to verify
+     * @throws IllegalStateException if output is not defined in the jobflow
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @throws AssertionError if verification failed
+     * @throws AssertionError if actual output is different for the exected output
      */
     public void verify(
             JobflowInfo info,
@@ -436,8 +451,15 @@ public class JobflowExecutor {
         for (DriverOutputBase<?> output : outputs) {
             if (output.expectedUri != null) {
                 LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
-                ExporterDescription exporterDescription = info.findExporter(output.getName());
-                output.setExporterDescription(exporterDescription);
+                String name = output.getName();
+                ExporterDescription description = info.findExporter(name);
+                if (description == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "出力{0}はフロー{1}で定義されていません",
+                            name,
+                            info.getJobflow().getFlowId()));
+                }
+                output.setExporterDescription(description);
                 List<Difference> diffList = inspect(output, verifyContext);
                 if (diffList.isEmpty() == false) {
                     LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {

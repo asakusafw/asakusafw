@@ -86,13 +86,13 @@ public class JobFlowTester extends TestDriverBase {
     /**
      * ジョブフローのテストを実行し、テスト結果を検証します。
      * @param jobFlowDescriptionClass ジョブフロークラスのクラスオブジェクト
-     * @throws RuntimeException テストの実行に失敗した場合
+     * @throws IllegalStateException ジョブフローのコンパイル、入出力や検査ルールの用意に失敗した場合
      */
     public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) {
         try {
             runTestInternal(jobFlowDescriptionClass);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

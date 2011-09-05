@@ -16,14 +16,13 @@
 package com.asakusafw.runtime.flow;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.TaskInputOutputContext;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import com.asakusafw.runtime.core.Result;
 
@@ -35,65 +34,57 @@ public class ResultOutput<T extends Writable> implements Result<T> {
 
     static final Log LOG = LogFactory.getLog(ResultOutput.class);
 
-    private MultipleOutputs<?, ?> collector;
+    private final TaskAttemptContext context;
 
-    private String outputName;
+    private final RecordWriter<Object, Object> writer;
 
     /**
      * インスタンスを生成する。
-     * @param outputs 結果の出力先
-     * @param outputName 出力先の名前
+     * @param context 現在のコンテキスト
+     * @param writer 結果の出力先
      * @throws IOException 初期化に失敗した場合
      * @throws InterruptedException 初期化に失敗した場合
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public ResultOutput(
-            MultipleOutputs<?, ?> outputs,
-            String outputName) throws IOException, InterruptedException {
-        if (outputs == null) {
-            throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
+            TaskAttemptContext context,
+            RecordWriter writer) throws IOException, InterruptedException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        if (outputName == null) {
-            throw new IllegalArgumentException("outputName must not be null"); //$NON-NLS-1$
+        if (writer == null) {
+            throw new IllegalArgumentException("writer must not be null"); //$NON-NLS-1$
         }
-        this.outputName = outputName;
-        this.collector = outputs;
-        initialize();
-    }
-
-    private void initialize() throws IOException, InterruptedException {
-        LOG.info(MessageFormat.format("出力{0}を初期化しています", outputName));
-        try {
-            collector.write(outputName, null, null);
-        } catch (RuntimeException e) {
-            // FIXME force initializing MultipleOutputs
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Ignore RuntimeException while initializing {0}",
-                        outputName));
-            }
-        }
+        this.context = context;
+        this.writer = writer;
     }
 
     @Override
     public void add(T result) {
         try {
-            collector.write(outputName, NullWritable.get(), result);
+            writer.write(getKey(result), result);
         } catch (Exception e) {
             throw new Result.OutputException(e);
         }
     }
 
     /**
-     * {@link MultipleOutputs}を安全に生成する。
-     * @param <K> キーの型
-     * @param <V> 値の型
-     * @param context コンテキストオブジェクト
-     * @return このコンテキストで利用可能な{@link MultipleOutputs}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a key for the value.
+     * @param result target value
+     * @return a corresponded key
      */
-    public static <K, V> MultipleOutputs<K, V> createMultipleOutputs(
-            TaskInputOutputContext<?, ?, K, V> context) {
-        return new MultipleOutputs<K, V>(context);
+    protected Object getKey(T result) {
+        return NullWritable.get();
+    }
+
+    /**
+     * 現在の出力を破棄する。
+     * @throws IOException 出力のフラッシュに失敗した場合
+     * @throws InterruptedException 出力の破棄に割り込みが発行された場合
+     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     */
+    public void close() throws IOException, InterruptedException {
+        writer.close(context);
     }
 }
