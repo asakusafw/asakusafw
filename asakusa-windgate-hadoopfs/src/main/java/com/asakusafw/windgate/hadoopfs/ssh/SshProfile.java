@@ -27,10 +27,9 @@ import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
-import com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsMirror;
 
 /**
- * A structured profile for {@link JschHadoopFsMirror}.
+ * A structured profile for {@link AbstractSshHadoopFsMirror}.
  * @since 0.2.2
  */
 public class SshProfile {
@@ -225,6 +224,10 @@ public class SshProfile {
                     KEY_COMPRESSION,
                     compressionCodecString), e);
         }
+        WGLOG.info("I10001",
+                profile.getName(),
+                KEY_COMPRESSION,
+                compressionCodec == null ? null : compressionCodecString);
         return new SshProfile(
                 name,
                 target,
