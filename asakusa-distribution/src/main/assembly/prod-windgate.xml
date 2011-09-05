@@ -2,7 +2,7 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-db</id>
+	<id>prod-windgate</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
@@ -25,6 +25,9 @@
 			<includes>
 				<include>com.asakusafw:asakusa-windgate-bootstrap</include>
 				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>

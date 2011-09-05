@@ -1,8 +1,10 @@
 #!/bin/sh
 
 _WG_ROOT="$(dirname $0)/.."
-
-. "$_WG_ROOT/conf/env.sh"
+if [ -e "$_WG_ROOT/conf/env.sh" ]
+then
+    . "$_WG_ROOT/conf/env.sh"
+fi
 
 if [ "$HADOOP_HOME" = "" -o ! -d "$HADOOP_HOME" ]
 then
