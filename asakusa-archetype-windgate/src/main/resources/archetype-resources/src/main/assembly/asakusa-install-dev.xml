@@ -38,6 +38,9 @@
 			<includes>
 				<include>com.asakusafw:asakusa-windgate-bootstrap</include>
 				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
@@ -61,6 +64,9 @@
 			<includes>
 				<include>com.asakusafw:asakusa-windgate-core</include>
 				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>

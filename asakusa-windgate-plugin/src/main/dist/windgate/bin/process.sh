@@ -51,6 +51,11 @@ _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
 _WG_ROOT="$(dirname $0)/.."
+if [ -e "$_WG_ROOT/conf/env.sh" ]
+then
+    . "$_WG_ROOT/conf/env.sh"
+fi
+
 _WG_PROFILE="$_WG_ROOT/profile/${_OPT_PROFILE}.properties"
 _WG_SCRIPT="$_OPT_SCRIPT"
 
