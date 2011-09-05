@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<!--
+Default Implementations (for Development)
+-->
+	<property>
+		<name>com.asakusafw.runtime.core.Report.Delegate</name>
+		<value>com.asakusafw.runtime.core.Report$Default</value>
+	</property>
+	<property>
+		<name>com.asakusafw.runtime.tool.Numbering.Delegate</name>
+		<value>com.asakusafw.runtime.tool.Numbering$Default</value>
+	</property>
+	<property>
+		<name>com.asakusafw.runtime.tool.BatchDate.Delegate</name>
+		<value>com.asakusafw.runtime.tool.BatchDate$Default</value>
+	</property>
+
+</configuration>

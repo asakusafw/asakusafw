@@ -45,4 +45,44 @@ public class FlowPartTesterTest {
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
     }
+
+    /**
+     * Attempts to prepare input with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_input_prepare_data() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("in", Simple.class).prepare("INVALID");
+    }
+
+    /**
+     * Attempts to prepare output with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_prepare_data() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("out", Simple.class).prepare("INVALID");
+    }
+
+    /**
+     * Attempts to verify output with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_verify_data() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("out", Simple.class).verify("INVALID", new IdentityVerifier());
+    }
+
+    /**
+     * Attempts to verify output with invalid data.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void invalid_output_verify_rule() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.output("out", Simple.class).verify("data/simple-out.json", "INVALID");
+    }
 }

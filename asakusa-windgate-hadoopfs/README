@@ -1,0 +1,12 @@
+
+
+## Hadoop File System via SSH
+resource.<name>=com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider
+resource.<name>.get=/home/asakusa/asakusa/windgate-ssh/bin/get.sh
+resource.<name>.put=/home/asakusa/asakusa/windgate-ssh/bin/put.sh
+resource.<name>.delete=/home/asakusa/asakusa/windgate-ssh/bin/delete.sh
+resource.<name>.user=asakusa
+resource.<name>.host=localhost
+resource.<name>.port=22
+resource.<name>.privateKey=${HOME}/.ssh/id_rsa
+resource.<name>.passPhrase=

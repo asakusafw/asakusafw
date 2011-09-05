@@ -29,10 +29,10 @@ import org.junit.Assert;
 
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.batch.experimental.ExperimentalWorkflowProcessor;
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
+import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
@@ -55,9 +55,10 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
      */
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {
 
-        // クラスタワークディレクトリ初期化
         try {
             JobflowExecutor executor = new JobflowExecutor(driverContext);
+
+            // クラスタワークディレクトリ初期化
             executor.cleanWorkingDirectory();
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
@@ -103,10 +104,11 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
                         entry.getValue()));
             }
 
-            CommandContext context = driverContext.getCommandContext();
+            VariableTable variables = new VariableTable();
+            variables.defineVariables(driverContext.getBatchArgs());
 
             Map<String, String> environment = new TreeMap<String, String>();
-            environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, context.getVariableList());
+            environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, variables.toSerialString());
             environment.put(ExperimentalWorkflowProcessor.K_OPTS, dProps.toString());
 
             int exitCode = executor.runShell(batchRunCmd, environment);

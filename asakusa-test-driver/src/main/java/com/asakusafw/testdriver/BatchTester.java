@@ -73,13 +73,13 @@ public class BatchTester extends TestDriverBase {
     /**
      * バッチのテストを実行し、テスト結果を検証します。
      * @param batchDescriptionClass ジョブフロークラスのクラスオブジェクト
-     * @throws RuntimeException テストの実行に失敗した場合
+     * @throws IllegalStateException バッチのコンパイル、入出力や検査ルールの用意に失敗した場合
      */
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {
         try {
             runTestInternal(batchDescriptionClass);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -127,10 +127,12 @@ public class BatchTester extends TestDriverBase {
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
+            driverContext.prepareCurrentJobflow(jobflowInfo);
             executor.cleanInputOutput(jobflowInfo);
         }
 
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
+            driverContext.prepareCurrentJobflow(jobflowInfo);
             String flowId = jobflowInfo.getJobflow().getFlowId();
             JobFlowTester tester = jobFlowMap.get(flowId);
             if (tester != null) {
@@ -149,8 +151,6 @@ public class BatchTester extends TestDriverBase {
                         batchDescriptionClass.getName(), flowId);
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
             }
-
-            driverContext.changeExecutionId();
         }
     }
 }

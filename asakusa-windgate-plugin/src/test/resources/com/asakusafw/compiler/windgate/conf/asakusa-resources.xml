@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>com.asakusafw.runtime.core.Report.Delegate</name>
+		<value>com.asakusafw.runtime.core.Report$Default</value>
+	</property>
+</configuration>

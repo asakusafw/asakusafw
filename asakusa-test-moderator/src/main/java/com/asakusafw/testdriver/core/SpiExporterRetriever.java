@@ -27,6 +27,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 /**
  * Composition of registered {@link ExporterRetriever} as {@link ServiceLoader services}.
  * @since 0.2.0
+ * @version 0.2.2
  */
 public class SpiExporterRetriever implements ExporterRetriever<ExporterDescription> {
 
@@ -64,10 +65,10 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
     }
 
     @Override
-    public void truncate(ExporterDescription description) throws IOException {
+    public void truncate(ExporterDescription description, TestContext context) throws IOException {
         for (ExporterRetriever<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                truncate0(element, description);
+                truncate0(element, description, context);
                 return;
             }
         }
@@ -78,20 +79,22 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
 
     private <T extends ExporterDescription> void truncate0(
             ExporterRetriever<T> preparator,
-            ExporterDescription description) throws IOException {
+            ExporterDescription description,
+            TestContext context) throws IOException {
         assert preparator != null;
         assert description != null;
         T desc = preparator.getDescriptionClass().cast(description);
-        preparator.truncate(desc);
+        preparator.truncate(desc, context);
     }
 
     @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
-            ExporterDescription description) throws IOException {
+            ExporterDescription description,
+            TestContext context) throws IOException {
         for (ExporterRetriever<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                return createOutput0(definition, element, description);
+                return createOutput0(definition, element, description, context);
             }
         }
         throw new IOException(MessageFormat.format(
@@ -102,21 +105,23 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
     private <T extends ExporterDescription, V> ModelOutput<V> createOutput0(
             DataModelDefinition<V> definition,
             ExporterRetriever<T> retriever,
-            ExporterDescription description) throws IOException {
+            ExporterDescription description,
+            TestContext context) throws IOException {
         assert definition != null;
         assert retriever != null;
         assert description != null;
         T desc = retriever.getDescriptionClass().cast(description);
-        return retriever.createOutput(definition, desc);
+        return retriever.createOutput(definition, desc, context);
     }
 
     @Override
     public <V> DataModelSource createSource(
             DataModelDefinition<V> definition,
-            ExporterDescription description) throws IOException {
+            ExporterDescription description,
+            TestContext context) throws IOException {
         for (ExporterRetriever<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                return createSource0(definition, element, description);
+                return createSource0(definition, element, description, context);
             }
         }
         throw new IOException(MessageFormat.format(
@@ -127,10 +132,11 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
     private <T extends ExporterDescription, V> DataModelSource createSource0(
             DataModelDefinition<?> definition,
             ExporterRetriever<T> retriever,
-            ExporterDescription description) throws IOException {
+            ExporterDescription description,
+            TestContext context) throws IOException {
         assert retriever != null;
         assert description != null;
         T desc = retriever.getDescriptionClass().cast(description);
-        return retriever.createSource(definition, desc);
+        return retriever.createSource(definition, desc, context);
     }
 }

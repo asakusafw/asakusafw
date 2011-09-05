@@ -1,0 +1,24 @@
+types = {
+    @windgate.column(value = "C_INT")
+    c_int : INT;
+    @windgate.column(value = "C_TEXT")
+    c_text : TEXT;
+    @windgate.column(value = "C_BOOLEAN")
+    c_boolean : BOOLEAN;
+    @windgate.column(value = "C_BYTE")
+    c_byte : BYTE;
+    @windgate.column(value = "C_SHORT")
+    c_short : SHORT;
+    @windgate.column(value = "C_LONG")
+    c_long : LONG;
+    @windgate.column(value = "C_FLOAT")
+    c_float : FLOAT;
+    @windgate.column(value = "C_DOUBLE")
+    c_double : DOUBLE;
+    @windgate.column(value = "C_DECIMAL")
+    c_decimal : DECIMAL;
+    @windgate.column(value = "C_DATE")
+    c_date : DATE;
+    @windgate.column(value = "C_DATETIME")
+    c_datetime : DATETIME;
+};

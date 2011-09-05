@@ -15,11 +15,8 @@
  */
 package com.asakusafw.testdriver.core;
 
-import java.lang.reflect.Type;
-import java.text.MessageFormat;
-import java.util.List;
-
-import com.asakusafw.runtime.util.TypeUtil;
+import java.io.IOException;
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -28,28 +25,48 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * @since 0.2.0
  */
 public abstract class AbstractImporterPreparator<T extends ImporterDescription>
-        implements ImporterPreparator<T> {
+        extends BaseImporterPreparator<T> {
 
     /**
-     * Returns the target {@link ImporterDescription} type from the class inheritance hierarchy.
+     * Truncates all resources which the importer will use.
+     * <p>
+     * If target resources do not support truncate operations,
+     * this method has no effects.
+     * </p>
+     * @param description the description
+     * @throws IOException if failed to open the target
      */
-    @SuppressWarnings("unchecked")
+    public abstract void truncate(T description) throws IOException;
+
+    /**
+     * Redirects to {@link #truncate(ImporterDescription) this.truncate(description)}.
+     */
     @Override
-    public Class<T> getDescriptionClass() {
-        List<Type> arguments = TypeUtil.invoke(AbstractImporterPreparator.class, getClass());
-        if (arguments.size() != 1) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument from {0}",
-                    getClass().getName()));
-        }
-        Type first = arguments.get(0);
-        if ((first instanceof Class<?>) == false
-                || ImporterDescription.class.isAssignableFrom((Class<?>) first) == false) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument of {0} from {1}",
-                    ImporterDescription.class.getName(),
-                    getClass().getName()));
-        }
-        return (Class<T>) first;
+    public void truncate(T description, TestContext context) throws IOException {
+        truncate(description);
+    }
+
+    /**
+     * Creates a {@link ModelOutput} to prepare the resource which the importer will use.
+     * @param <V> type of model
+     * @param definition the data model definition
+     * @param description the description
+     * @return the created {@link ModelOutput}
+     * @throws IOException if failed to open the target
+     */
+    public abstract <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            T description) throws IOException;
+
+    /**
+     * Redirects to {@link #createOutput(DataModelDefinition, ImporterDescription)
+     * createOutput(definition, description)}.
+     */
+    @Override
+    public <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            T description,
+            TestContext context) throws IOException {
+        return createOutput(definition, description);
     }
 }

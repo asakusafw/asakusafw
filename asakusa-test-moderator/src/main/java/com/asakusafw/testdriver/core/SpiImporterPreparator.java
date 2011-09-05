@@ -27,6 +27,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 /**
  * Composition of registered {@link ImporterPreparator} as {@link ServiceLoader services}.
  * @since 0.2.0
+ * @version 0.2.2
  */
 public class SpiImporterPreparator implements ImporterPreparator<ImporterDescription> {
 
@@ -64,10 +65,10 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
     }
 
     @Override
-    public void truncate(ImporterDescription description) throws IOException {
+    public void truncate(ImporterDescription description, TestContext context) throws IOException {
         for (ImporterPreparator<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                truncate0(element, description);
+                truncate0(element, description, context);
                 return;
             }
         }
@@ -78,20 +79,22 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
 
     private <T extends ImporterDescription> void truncate0(
             ImporterPreparator<T> preparator,
-            ImporterDescription description) throws IOException {
+            ImporterDescription description,
+            TestContext context) throws IOException {
         assert preparator != null;
         assert description != null;
         T desc = preparator.getDescriptionClass().cast(description);
-        preparator.truncate(desc);
+        preparator.truncate(desc, context);
     }
 
     @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
-            ImporterDescription description) throws IOException {
+            ImporterDescription description,
+            TestContext context) throws IOException {
         for (ImporterPreparator<?> element : elements) {
             if (element.getDescriptionClass().isAssignableFrom(description.getClass())) {
-                return createOutput0(definition, element, description);
+                return createOutput0(definition, element, description, context);
             }
         }
         throw new IOException(MessageFormat.format(
@@ -102,11 +105,12 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
     private <T extends ImporterDescription, V> ModelOutput<V> createOutput0(
             DataModelDefinition<V> definition,
             ImporterPreparator<T> preparator,
-            ImporterDescription description) throws IOException {
+            ImporterDescription description,
+            TestContext context) throws IOException {
         assert definition != null;
         assert preparator != null;
         assert description != null;
         T desc = preparator.getDescriptionClass().cast(description);
-        return preparator.createOutput(definition, desc);
+        return preparator.createOutput(definition, desc, context);
     }
 }

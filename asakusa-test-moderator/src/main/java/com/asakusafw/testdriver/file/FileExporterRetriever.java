@@ -35,10 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.testdriver.core.AbstractExporterRetriever;
+import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.testdriver.core.BaseExporterRetriever;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.ExporterRetriever;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
@@ -46,7 +48,7 @@ import com.asakusafw.vocabulary.external.FileExporterDescription;
  * @since 0.2.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class FileExporterRetriever extends AbstractExporterRetriever<FileExporterDescription> {
+public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDescription> {
 
     static final Logger LOG = LoggerFactory.getLogger(FileExporterRetriever.class);
 
@@ -72,12 +74,16 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     }
 
     @Override
-    public void truncate(FileExporterDescription description) throws IOException {
+    public void truncate(
+            FileExporterDescription description,
+            TestContext context) throws IOException {
         LOG.info("エクスポート先をクリアしています: {}", description);
+        VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
         try {
-            Path path = new Path(description.getPathPrefix());
+            String resolved = variables.parse(description.getPathPrefix(), false);
+            Path path = new Path(resolved);
             Path output = path.getParent();
             Path target;
             if (output == null) {
@@ -98,28 +104,41 @@ public class FileExporterRetriever extends AbstractExporterRetriever<FileExporte
     @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
-            FileExporterDescription description) throws IOException {
+            FileExporterDescription description,
+            TestContext context) throws IOException {
         LOG.info("エクスポート先の初期値を設定します: {}", description);
         checkType(definition, description);
+        VariableTable variables = createVariables(context);
         String destination = description.getPathPrefix().replace('*', '_');
+        String resolved = variables.parse(destination, false);
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = ReflectionUtils.newInstance(description.getOutputFormat(), conf);
         FileDeployer deployer = new FileDeployer(conf);
-        return deployer.openOutput(definition, destination, output);
+        return deployer.openOutput(definition, resolved, output);
     }
 
     @Override
     public <V> DataModelSource createSource(
             DataModelDefinition<V> definition,
-            FileExporterDescription description) throws IOException {
+            FileExporterDescription description,
+            TestContext context) throws IOException {
         LOG.info("エクスポート結果を取得します: {}", description);
+        VariableTable variables = createVariables(context);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();
         Job job = new Job(conf);
-        FileInputFormat.setInputPaths(job, new Path(description.getPathPrefix()));
-        TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
+        String resolved = variables.parse(description.getPathPrefix(), false);
+        FileInputFormat.setInputPaths(job, new Path(resolved));
+        TaskAttemptContext taskContext = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
         InputFormat<?, V> format = getOpposite(conf, description.getOutputFormat());
-        InputFormatDriver<V> result = new InputFormatDriver<V>(definition, context, format);
+        InputFormatDriver<V> result = new InputFormatDriver<V>(definition, taskContext, format);
+        return result;
+    }
+
+    private VariableTable createVariables(TestContext context) {
+        assert context != null;
+        VariableTable result = new VariableTable();
+        result.defineVariables(context.getArguments());
         return result;
     }
 
