@@ -133,9 +133,7 @@ public class ExternalIoCommandProvider implements Serializable {
             this.homePathPrefix = homePathPrefix;
             this.executionId = executionId;
             VariableTable table = new VariableTable();
-            for (Map.Entry<String, String> entry : variables.entrySet()) {
-                table.defineVariable(entry.getKey(), entry.getValue());
-            }
+            table.defineVariables(variables);
             this.variableList = table.toSerialString();
         }
 

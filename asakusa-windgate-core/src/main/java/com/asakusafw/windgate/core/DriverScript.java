@@ -21,7 +21,7 @@ import java.util.TreeMap;
 
 /**
  * A script describes drivers' behaviour.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class DriverScript {
 
@@ -75,19 +75,29 @@ public class DriverScript {
 
     /**
      * Driver kind (source / drain).
-     * @since 0.2.3
+     * @since 0.2.2
      */
     public enum Kind {
 
         /**
          * Source drivers.
          */
-        SOURCE(PREFIX_SOURCE),
+        SOURCE(PREFIX_SOURCE) {
+            @Override
+            public Kind opposite() {
+                return DRAIN;
+            }
+        },
 
         /**
          * Drain drivers.
          */
-        DRAIN(PREFIX_DRAIN),
+        DRAIN(PREFIX_DRAIN) {
+            @Override
+            public Kind opposite() {
+                return SOURCE;
+            }
+        },
         ;
 
         /**
@@ -99,5 +109,11 @@ public class DriverScript {
             assert prefix != null;
             this.prefix = prefix;
         }
+
+        /**
+         * Returns the opposite kind.
+         * @return the opposite kind
+         */
+        public abstract Kind opposite();
     }
 }

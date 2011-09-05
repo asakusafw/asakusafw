@@ -21,7 +21,7 @@ import com.asakusafw.windgate.core.ProcessScript;
 
 /**
  * An interface to provide {@link SourceDriver} and {@link DrainDriver}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface DriverFactory {
 

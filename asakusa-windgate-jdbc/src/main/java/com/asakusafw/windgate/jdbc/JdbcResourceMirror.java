@@ -18,11 +18,6 @@ package com.asakusafw.windgate.jdbc;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +29,10 @@ import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
-import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
-import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
-import com.asakusafw.windgate.core.vocabulary.JdbcProcess.OperationKind;
 
 /**
  * An implementation of {@link ResourceMirror} using JDBC.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcResourceMirror extends ResourceMirror {
 
@@ -83,11 +75,11 @@ public class JdbcResourceMirror extends ResourceMirror {
                 getName());
         for (ProcessScript<?> process : script.getProcesses()) {
             if (process.getSourceScript().getResourceName().equals(getName())) {
-                convert(process, DriverScript.Kind.SOURCE);
-                newDataModel(process);
+                JdbcResourceUtil.convert(profile, process, arguments, DriverScript.Kind.SOURCE);
+                JdbcResourceUtil.newDataModel(profile, process);
             }
             if (process.getDrainScript().getResourceName().equals(getName())) {
-                convert(process, DriverScript.Kind.DRAIN);
+                JdbcResourceUtil.convert(profile, process, arguments, DriverScript.Kind.DRAIN);
             }
         }
     }
@@ -100,8 +92,8 @@ public class JdbcResourceMirror extends ResourceMirror {
         LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        JdbcScript<T> jdbcScript = convert(script, DriverScript.Kind.SOURCE);
-        T object = newDataModel(script);
+        JdbcScript<T> jdbcScript = JdbcResourceUtil.convert(profile, script, arguments, DriverScript.Kind.SOURCE);
+        T object = JdbcResourceUtil.newDataModel(profile, script);
         WGLOG.info("I02001",
                 getName(),
                 script.getName());
@@ -135,7 +127,7 @@ public class JdbcResourceMirror extends ResourceMirror {
         LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        JdbcScript<T> jdbcScript = convert(script, DriverScript.Kind.DRAIN);
+        JdbcScript<T> jdbcScript = JdbcResourceUtil.convert(profile, script, arguments, DriverScript.Kind.DRAIN);
         WGLOG.info("I02001",
                 getName(),
                 script.getName());
@@ -165,194 +157,5 @@ public class JdbcResourceMirror extends ResourceMirror {
     public void close() throws IOException {
         LOG.debug("Closing JDBC resource: {}",
                 getName());
-    }
-
-    private <T> JdbcScript<T> convert(ProcessScript<T> process, DriverScript.Kind kind) throws IOException {
-        assert process != null;
-        assert kind != null;
-        String supportClassName = extract(process, kind, JdbcProcess.JDBC_SUPPORT, true);
-        DataModelJdbcSupport<? super T> support = loadSupport(process, supportClassName);
-
-        String tableName = extract(process, kind, JdbcProcess.TABLE, true);
-        String columnNameList = extract(process, kind, JdbcProcess.COLUMNS, true);
-        List<String> columnNames = Arrays.asList(columnNameList.split("\\s*,\\s*")); //$NON-NLS-1$
-        if (support.isSupported(columnNames) == false) {
-            WGLOG.error("E01003",
-                    getName(),
-                    process.getName(),
-                    supportClassName);
-            throw new IOException(MessageFormat.format(
-                    "JDBC support class {2} does not support columns: {3} (resource={0}, process={1})",
-                    getName(),
-                    process.getName(),
-                    support.getClass().getName(),
-                    columnNames));
-        }
-        String condition = extract(process, kind, JdbcProcess.CONDITION, false);
-        if (kind == DriverScript.Kind.SOURCE) {
-            if (condition == null || condition.isEmpty()) {
-                LOG.debug("Where clause is not specified in source process \"{}\"",
-                        getName(),
-                        process.getName());
-                condition = null;
-            } else {
-                try {
-                    condition = arguments.replace(condition, true);
-                } catch (IllegalArgumentException e) {
-                    WGLOG.error("E01001",
-                            getName(),
-                            process.getName(),
-                            kind.prefix,
-                            JdbcProcess.CONDITION.key(),
-                            condition);
-                    throw new IOException(MessageFormat.format(
-                            "\"{3}\" failed to resolve parameters: \"{4}\" (resource={0}, process={1}, kind={2})",
-                            getName(),
-                            process.getName(),
-                            kind,
-                            JdbcProcess.CONDITION.key(),
-                            condition), e);
-                }
-            }
-        }
-        if (kind == DriverScript.Kind.DRAIN) {
-            condition = null;
-            String operationString = extract(process, kind, JdbcProcess.OPERATION, true);
-            JdbcProcess.OperationKind op = JdbcProcess.OperationKind.find(operationString);
-            if (op != OperationKind.INSERT_AFTER_TRUNCATE) {
-                WGLOG.error("E01001",
-                        getName(),
-                        process.getName(),
-                        kind.prefix,
-                        JdbcProcess.OPERATION.key(),
-                        operationString);
-                throw new IOException(MessageFormat.format(
-                        "Resource \"{0}\" supports only {4} in \"{3}\": \"{5}\" (process={1}, kind={2})",
-                        getName(),
-                        process.getName(),
-                        kind,
-                        JdbcProcess.OPERATION.key(),
-                        JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE,
-                        operationString));
-            }
-        }
-        return new JdbcScript<T>(process.getName(), support, tableName, columnNames, condition);
-    }
-
-    private String extract(
-            ProcessScript<?> process,
-            DriverScript.Kind kind,
-            JdbcProcess item,
-            boolean mandatory) throws IOException {
-        assert process != null;
-        assert kind != null;
-        assert item != null;
-        Map<String, String> conf = process.getDriverScript(kind).getConfiguration();
-        String value = conf.get(item.key());
-        if (mandatory && (value == null || value.isEmpty())) {
-            WGLOG.error("E01001",
-                    getName(),
-                    process.getName(),
-                    kind.prefix,
-                    item.key(),
-                    value);
-            throw new IOException(MessageFormat.format(
-                    "Resource \"{0}\" requires config \"{3}\" (process={1}, kind={2})",
-                    getName(),
-                    process.getName(),
-                    kind,
-                    item.key()));
-        }
-        return value == null ? null : value.trim();
-    }
-
-    private <T> T newDataModel(ProcessScript<T> script) throws IOException {
-        assert script != null;
-        Class<T> dataClass = script.getDataClass();
-        LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
-                dataClass.getName(),
-                getName(),
-                script.getName(),
-        });
-        try {
-            T object = dataClass.newInstance();
-            return object;
-        } catch (Exception e) {
-            WGLOG.error(e, "E01002",
-                    getName(),
-                    script.getName(),
-                    dataClass.getName());
-            throw new IOException(MessageFormat.format(
-                    "Failed to create a new instance: {2} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    dataClass.getName()), e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> DataModelJdbcSupport<? super T> loadSupport(
-            ProcessScript<T> script,
-            String supportClassName) throws IOException {
-        assert script != null;
-        assert supportClassName != null;
-        LOG.debug("Creating JDBC support object: {} (resource={}, process={})", new Object[] {
-                supportClassName,
-                getName(),
-                script.getName(),
-        });
-        Class<?> supportClass;
-        try {
-            supportClass = Class.forName(supportClassName, true, profile.getClassLoader());
-        } catch (ClassNotFoundException e) {
-            WGLOG.error(e, "E01003",
-                    getName(),
-                    script.getName(),
-                    supportClassName);
-            throw new IOException(MessageFormat.format(
-                    "Failed to load a JDBC support class: {2} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    supportClassName), e);
-        }
-        if (DataModelJdbcSupport.class.isAssignableFrom(supportClass) == false) {
-            WGLOG.error("E01003",
-                    getName(),
-                    script.getName(),
-                    supportClassName);
-            throw new IOException(MessageFormat.format(
-                    "JDBC support class must be a subtype of {3}: {2} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    supportClass.getName(),
-                    DataModelJdbcSupport.class.getName()));
-        }
-        DataModelJdbcSupport<?> obj;
-        try {
-            obj = supportClass.asSubclass(DataModelJdbcSupport.class).newInstance();
-        } catch (Exception e) {
-            WGLOG.error(e, "E01003",
-                    getName(),
-                    script.getName(),
-                    supportClassName);
-            throw new IOException(MessageFormat.format(
-                    "Failed to create a JDBC support object: {2} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    supportClass.getName()), e);
-        }
-        if (obj.getSupportedType().isAssignableFrom(script.getDataClass()) == false) {
-            WGLOG.error("E01003",
-                    getName(),
-                    script.getName(),
-                    supportClassName);
-            throw new IOException(MessageFormat.format(
-                    "JDBC support class {2} does not support data model: {3} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    supportClass.getName(),
-                    script.getDataClass().getName()));
-        }
-        return (DataModelJdbcSupport<? super T>) obj;
     }
 }

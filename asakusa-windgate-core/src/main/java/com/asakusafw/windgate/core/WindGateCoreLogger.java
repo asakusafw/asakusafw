@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 /**
  * Logger for WindGate Core.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class WindGateCoreLogger extends WindGateLogger {
 

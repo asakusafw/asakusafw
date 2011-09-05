@@ -24,7 +24,7 @@ import com.asakusafw.windgate.core.BaseProvider;
  * An abstract super class of session provider.
  * Clients can inherit this class to provide a session implementation.
  * Each subclass must provide a public constructor with no parameters.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class SessionProvider extends BaseProvider<SessionProfile> {
 

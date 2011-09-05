@@ -38,7 +38,7 @@ import com.asakusafw.windgate.core.session.SessionProvider;
 
 /**
  * An implementation of {@link SessionProvider} using the local file system and file lock.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileSessionProvider extends SessionProvider {
 
@@ -167,6 +167,7 @@ public class FileSessionProvider extends SessionProvider {
     private SessionMirror attach(String id, boolean create, boolean force) throws IOException {
         assert id != null;
         boolean completed = false;
+        boolean delete = false;
         File path = idToFile(id);
         RandomAccessFile file = null;
         FileLock lock = null;
@@ -178,6 +179,7 @@ public class FileSessionProvider extends SessionProvider {
             switch (state) {
             case INIT:
                 if (create == false) {
+                    delete = true;
                     throw new SessionException(id, Reason.NOT_EXIST);
                 } else {
                     createSession(path, file);
@@ -207,6 +209,15 @@ public class FileSessionProvider extends SessionProvider {
             throw e;
         } finally {
             if (completed == false) {
+                if (delete) {
+                    try {
+                        invalidate(path, file);
+                    } catch (IOException e) {
+                        WGLOG.warn(e, "W02002",
+                                id,
+                                path);
+                    }
+                }
                 if (lock != null) {
                     try {
                         lock.release();
@@ -221,6 +232,13 @@ public class FileSessionProvider extends SessionProvider {
                         file.close();
                     } catch (IOException e) {
                         WGLOG.warn(e, "W02002",
+                                id,
+                                path);
+                    }
+                }
+                if (delete) {
+                    if (path.delete() == false) {
+                        WGLOG.warn("W02002",
                                 id,
                                 path);
                     }

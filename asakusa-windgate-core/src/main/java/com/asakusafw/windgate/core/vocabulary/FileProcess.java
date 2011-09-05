@@ -17,7 +17,7 @@ package com.asakusafw.windgate.core.vocabulary;
 
 /**
  * WindGate file resource configuration.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public enum FileProcess implements ConfigurationItem {
 

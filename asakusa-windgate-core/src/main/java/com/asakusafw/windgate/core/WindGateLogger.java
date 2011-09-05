@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wraps logger facility.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class WindGateLogger {
 

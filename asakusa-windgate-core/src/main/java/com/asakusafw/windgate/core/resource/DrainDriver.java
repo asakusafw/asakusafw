@@ -18,19 +18,22 @@ package com.asakusafw.windgate.core.resource;
 import java.io.Closeable;
 import java.io.IOException;
 
+import com.asakusafw.windgate.file.resource.Preparable;
+
 /**
  * An abstract super interface of data drain driver.
  * @param <T> the type of source data models
- * @since 0.2.3
+ * @since 0.2.2
  */
-public interface DrainDriver<T> extends Closeable {
+public interface DrainDriver<T> extends Preparable, Closeable {
 
     /**
      * Prepares this driver to invoke {@link #put(Object)} method.
      * This method will be invoked before {@link #put(Object)} only once.
      * This operation can execute only on the same thread as created this object.
-     * @throws IOException if failed to begi
+     * @throws IOException if failed to begin
      */
+    @Override
     void prepare() throws IOException;
 
     /**

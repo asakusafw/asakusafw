@@ -35,7 +35,7 @@ import com.jcraft.jsch.Session;
 
 /**
  * A remote command execution via SSH.
- * @since 0.2.3
+ * @since 0.2.2
  */
 class JschConnection implements SshConnection {
 

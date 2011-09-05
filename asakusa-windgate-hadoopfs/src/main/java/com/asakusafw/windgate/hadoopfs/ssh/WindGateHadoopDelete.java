@@ -35,7 +35,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * Deletes files from Hadoop File System and report them as {@link FileList} to the standard output.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class WindGateHadoopDelete {
 

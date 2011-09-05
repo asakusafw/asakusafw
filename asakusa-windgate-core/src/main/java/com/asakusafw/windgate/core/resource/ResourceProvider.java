@@ -16,6 +16,7 @@
 package com.asakusafw.windgate.core.resource;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.asakusafw.windgate.core.BaseProvider;
 import com.asakusafw.windgate.core.ParameterList;
@@ -24,14 +25,14 @@ import com.asakusafw.windgate.core.ParameterList;
  * An abstract super class of resource factory.
  * Clients can inherit this class to provide new data sources.
  * Each subclass must provide a public constructor with no parameters.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class ResourceProvider extends BaseProvider<ResourceProfile> {
 
     /**
      * Provides a new {@link ResourceMirror}.
      * @param sessionId the current session ID
-     * @param arguments argument (key and value pairs)
+     * @param arguments arguments (key and value pairs)
      * @return the created {@link ResourceMirror}
      * @throws IOException if failed to create the specified {@link ResourceMirror}
      */
@@ -58,8 +59,17 @@ public abstract class ResourceProvider extends BaseProvider<ResourceProfile> {
 
     /**
      * Provides a new {@link ResourceManipulator}.
+     * @param arguments arguments (key and value pairs)
      * @return the created {@link ResourceManipulator}
-     * @throws IOException if failed to create a {@link ResourceManipulator}
+     * @throws IOException if failed to create a {@link ResourceManipulator},
+     *     or this resource does not support manipulation
      */
-    public abstract ResourceManipulator createManipulator() throws IOException;
+    public ResourceManipulator createManipulator(ParameterList arguments) throws IOException {
+        if (arguments == null) {
+            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        }
+        throw new IOException(MessageFormat.format(
+                "This resource does not support manipulation: {0}",
+                getClass().getName()));
+    }
 }

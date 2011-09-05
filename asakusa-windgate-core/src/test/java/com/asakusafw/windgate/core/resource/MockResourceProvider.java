@@ -65,9 +65,4 @@ public class MockResourceProvider extends ResourceProvider {
     public ResourceMirror create(String sessionId, ParameterList arguments) throws IOException {
         return new MockResourceMirror(configuredProfile);
     }
-
-    @Override
-    public ResourceManipulator createManipulator() throws IOException {
-        throw new UnsupportedOperationException();
-    }
 }

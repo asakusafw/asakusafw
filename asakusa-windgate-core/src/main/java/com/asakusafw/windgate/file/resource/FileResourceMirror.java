@@ -29,7 +29,7 @@ import com.asakusafw.windgate.core.vocabulary.FileProcess;
 
 /**
  * {@link ResourceMirror} using files.
- * @since 0.2.3
+ * @since 0.2.2
  * @see FileProcess
  */
 public class FileResourceMirror extends ResourceMirror {

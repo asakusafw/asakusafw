@@ -29,7 +29,7 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  * An implementation of {@link SourceDriver} using {@link SequenceFile}.
  * @param <K> the key type
  * @param <V> the value type
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class SequenceFileSourceDriver<K extends Writable, V extends Writable> implements SourceDriver<V> {
 

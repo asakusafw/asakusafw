@@ -60,7 +60,7 @@ import com.asakusafw.windgate.core.vocabulary.FileProcess;
 
 /**
  * Processes WindGate vocabularies.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 

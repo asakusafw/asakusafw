@@ -29,7 +29,7 @@ import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
 
 /**
  * An implementation of {@link SequenceFileProvider} using {@link FileList}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class FileListSequenceFileProvider implements SequenceFileProvider {
 

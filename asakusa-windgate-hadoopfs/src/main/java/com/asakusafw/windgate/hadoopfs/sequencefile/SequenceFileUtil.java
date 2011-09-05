@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Accessors for {@link SequenceFile}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public final class SequenceFileUtil {
 

@@ -126,8 +126,10 @@ public class JobFlowTester extends TestDriverBase {
                 jobFlowDescriptionClass.getClassLoader(),
                 driverContext.getOptions());
 
-        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         JobflowExecutor executor = new JobflowExecutor(driverContext);
+        driverContext.prepareCurrentJobflow(jobflowInfo);
+
+        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
 

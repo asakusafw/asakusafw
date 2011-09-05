@@ -37,7 +37,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * A file list transfer protocol.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public final class FileList {
 
@@ -98,7 +98,7 @@ public final class FileList {
 
     /**
      * A {@link FileList} read protocol.
-     * @since 0.2.3
+     * @since 0.2.2
      */
     public static class Reader implements Closeable {
 
@@ -209,7 +209,7 @@ public final class FileList {
 
     /**
      * A {@link FileList} write protocol.
-     * @since 0.2.3
+     * @since 0.2.2
      */
     public static class Writer implements Closeable {
 

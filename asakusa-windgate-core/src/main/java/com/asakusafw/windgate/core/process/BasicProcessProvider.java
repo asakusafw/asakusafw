@@ -31,7 +31,7 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  * A plain implementation of {@link ProcessProvider}.
  * This provider ignores any configurations specified in profile,
  * and performs as a default gate process.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class BasicProcessProvider extends ProcessProvider {
 

@@ -27,7 +27,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * A core profile for WindGate execution.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class CoreProfile {
 

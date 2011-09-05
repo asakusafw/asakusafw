@@ -22,7 +22,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
 /**
  * Common utilities for JDBC.
- * @since 0.2.3
+ * @since 0.2.2
  */
 final class JdbcDescriptionUtil {
 

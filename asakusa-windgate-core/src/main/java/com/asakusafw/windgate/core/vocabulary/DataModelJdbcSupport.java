@@ -24,7 +24,7 @@ import java.util.List;
  * Supports JDBC interfaces for data models.
  * This implementation class must have public constructor without any parameters.
  * @param <T> the type of target data model
- * @since 0.2.3
+ * @since 0.2.2
  */
 public interface DataModelJdbcSupport<T> {
 
@@ -71,7 +71,7 @@ public interface DataModelJdbcSupport<T> {
 
     /**
      * Supports {@link ResultSet} interface for data models.
-     * @since 0.2.3
+     * @since 0.2.2
      * @param <T> the type of target data model
      */
     public interface DataModelResultSet<T> {
@@ -93,7 +93,7 @@ public interface DataModelJdbcSupport<T> {
 
     /**
      * Supports {@link PreparedStatement} interface for data models.
-     * @since 0.2.3
+     * @since 0.2.2
      * @param <T> the type of target data model
      */
     public interface DataModelPreparedStatement<T> {

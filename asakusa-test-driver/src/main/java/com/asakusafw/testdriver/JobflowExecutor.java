@@ -83,8 +83,8 @@ public class JobflowExecutor {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         this.context = context;
-        this.preparator = new TestDataPreparator(context.getCallerClass().getClassLoader());
-        this.inspector = new TestResultInspector(context.getCallerClass().getClassLoader());
+        this.preparator = new TestDataPreparator(context, context.getCallerClass().getClassLoader());
+        this.inspector = new TestResultInspector(context, context.getCallerClass().getClassLoader());
         this.configurations = ConfigurationFactory.getDefault();
     }
 
@@ -318,10 +318,10 @@ public class JobflowExecutor {
         if (exitValue != 0) {
             // 異常終了
             throw new AssertionError(MessageFormat.format(
-                    "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command=\"{2}\")",
-                    hadoopJobInfo.getJobFlowId(),
+                    "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command={2})",
                     exitValue,
-                    shellCmd));
+                    hadoopJobInfo.getJobFlowId(),
+                    Arrays.toString(shellCmd)));
         }
     }
 

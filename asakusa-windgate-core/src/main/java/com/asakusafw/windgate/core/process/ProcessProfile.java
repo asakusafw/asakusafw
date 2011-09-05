@@ -36,7 +36,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * A configuration for each process.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider> {
 

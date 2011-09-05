@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * Abstract superclass of any providers.
  * @param <T> type of acceptable profile
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class BaseProvider<T> {
 

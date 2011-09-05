@@ -26,7 +26,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * <li> not declared type parameters </li>
  * <li> not declared any explicit constructors </li>
  * </ul>
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class WindGateExporterDescription implements ExporterDescription, WindGateProcessDescription {
 

@@ -18,12 +18,14 @@ package com.asakusafw.windgate.core.resource;
 import java.io.Closeable;
 import java.io.IOException;
 
+import com.asakusafw.windgate.file.resource.Preparable;
+
 /**
  * An abstract super interface of data source driver.
  * @param <T> the type of source data models
- * @since 0.2.3
+ * @since 0.2.2
  */
-public interface SourceDriver<T> extends Closeable {
+public interface SourceDriver<T> extends Preparable, Closeable {
 
     /**
      * Prepares this driver to invoke {@link #next()} method.
@@ -31,6 +33,7 @@ public interface SourceDriver<T> extends Closeable {
      * This operation can execute only on the same thread as created this object.
      * @throws IOException if failed to begi
      */
+    @Override
     void prepare() throws IOException;
 
     /**

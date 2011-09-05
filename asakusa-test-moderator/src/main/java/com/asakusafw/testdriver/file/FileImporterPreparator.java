@@ -31,9 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.testdriver.core.AbstractImporterPreparator;
+import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.testdriver.core.BaseImporterPreparator;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.ImporterPreparator;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
@@ -41,7 +43,7 @@ import com.asakusafw.vocabulary.external.FileImporterDescription;
  * @since 0.2.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class FileImporterPreparator extends AbstractImporterPreparator<FileImporterDescription> {
+public class FileImporterPreparator extends BaseImporterPreparator<FileImporterDescription> {
 
     static final Logger LOG = LoggerFactory.getLogger(FileImporterPreparator.class);
 
@@ -67,15 +69,17 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     }
 
     @Override
-    public void truncate(FileImporterDescription description) throws IOException {
+    public void truncate(FileImporterDescription description, TestContext context) throws IOException {
         LOG.info("インポート元をクリアしています: {}", description);
+        VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
         try {
             for (String path : description.getPaths()) {
-                LOG.debug("ファイルを削除しています: {}", path);
-                boolean succeed = fs.delete(new Path(path), true);
-                LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, path);
+                String resolved = variables.parse(path, false);
+                LOG.debug("ファイルを削除しています: {}", resolved);
+                boolean succeed = fs.delete(new Path(resolved), true);
+                LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, resolved);
             }
         } finally {
             fs.close();
@@ -86,7 +90,8 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
     @Override
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
-            FileImporterDescription description) throws IOException {
+            FileImporterDescription description,
+            TestContext context) throws IOException {
         LOG.info("インポート元の初期値を設定します: {}", description);
         checkType(definition, description);
         Set<String> path = description.getPaths();
@@ -102,11 +107,20 @@ public class FileImporterPreparator extends AbstractImporterPreparator<FileImpor
                 }
             };
         }
+        VariableTable variables = createVariables(context);
         String destination = path.iterator().next();
+        String resolved = variables.parse(destination, false);
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = getOpposite(conf, description.getInputFormat());
         FileDeployer deployer = new FileDeployer(conf);
-        return deployer.openOutput(definition, destination, output);
+        return deployer.openOutput(definition, resolved, output);
+    }
+
+    private VariableTable createVariables(TestContext context) {
+        assert context != null;
+        VariableTable result = new VariableTable();
+        result.defineVariables(context.getArguments());
+        return result;
     }
 
     private <V> void checkType(DataModelDefinition<V> definition,

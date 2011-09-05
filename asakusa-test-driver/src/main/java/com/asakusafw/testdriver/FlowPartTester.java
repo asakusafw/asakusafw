@@ -119,9 +119,11 @@ public class FlowPartTester extends TestDriverBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
+        JobflowExecutor executor = new JobflowExecutor(driverContext);
+        driverContext.prepareCurrentJobflow(jobflowInfo);
+
         // 初期化
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
-        JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
 

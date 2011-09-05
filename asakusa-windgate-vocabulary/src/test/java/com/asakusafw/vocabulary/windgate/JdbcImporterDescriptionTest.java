@@ -30,7 +30,7 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
 
 /**
  * Test for {@link JdbcImporterDescription}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcImporterDescriptionTest {
 

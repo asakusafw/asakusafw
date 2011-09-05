@@ -23,7 +23,7 @@ import java.lang.reflect.Array;
 
 /**
  * Deserializes objects using a specified {@link ClassLoader}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class LoadingObjectInputStream extends ObjectInputStream {
 

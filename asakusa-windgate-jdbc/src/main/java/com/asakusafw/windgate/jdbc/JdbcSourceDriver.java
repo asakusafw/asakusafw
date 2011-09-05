@@ -32,7 +32,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelResu
 /**
  * An implementation of {@link SourceDriver} using JDBC.
  * @param <T> the type of data model object
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
@@ -152,13 +152,13 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
             return MessageFormat.format(
                     "SELECT {1} FROM {0} WHERE {2}",
                     script.getTableName(),
-                    JdbcUtil.join(script.getColumnNames()),
+                    JdbcResourceUtil.join(script.getColumnNames()),
                     script.getCondition());
         } else {
             return MessageFormat.format(
                     "SELECT {1} FROM {0}",
                     script.getTableName(),
-                    JdbcUtil.join(script.getColumnNames()));
+                    JdbcResourceUtil.join(script.getColumnNames()));
         }
     }
 

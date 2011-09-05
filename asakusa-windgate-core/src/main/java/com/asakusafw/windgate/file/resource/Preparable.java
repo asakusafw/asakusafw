@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.windgate.jdbc;
+package com.asakusafw.windgate.file.resource;
 
-import java.util.Iterator;
+import java.io.IOException;
 
 /**
- * Common utility classes for this package.
- * @since 0.2.3
+ * An interface for {@link #prepare()} methods.
+ * @since 0.2.2
  */
-class JdbcUtil {
+public interface Preparable {
 
-    static String join(Iterable<String> list) {
-        assert list != null;
-        Iterator<String> iterator = list.iterator();
-        assert iterator.hasNext();
-        StringBuilder buf = new StringBuilder();
-        buf.append(iterator.next());
-        while (iterator.hasNext()) {
-            buf.append(", ");
-            buf.append(iterator.next());
-        }
-        return buf.toString();
-    }
+    /**
+     * Prepares this object.
+     * @throws IOException if failed to prepare
+     */
+    void prepare() throws IOException;
 }

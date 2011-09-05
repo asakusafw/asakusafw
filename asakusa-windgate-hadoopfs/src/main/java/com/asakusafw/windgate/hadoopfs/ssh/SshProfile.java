@@ -31,7 +31,7 @@ import com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsMirror;
 
 /**
  * A structured profile for {@link JschHadoopFsMirror}.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class SshProfile {
 

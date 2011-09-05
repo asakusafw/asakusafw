@@ -32,7 +32,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * A gate script.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class GateScript {
 

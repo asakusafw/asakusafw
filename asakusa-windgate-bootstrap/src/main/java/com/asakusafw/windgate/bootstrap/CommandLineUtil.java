@@ -43,7 +43,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Utilities for command line interfaces.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public final class CommandLineUtil {
 

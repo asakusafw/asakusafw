@@ -16,18 +16,23 @@
 package com.asakusafw.testdriver.core;
 
 import java.io.IOException;
-
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
  * Retrieves test results from suitable {@link ExporterDescription}.
+ * <em>
+ * Attention:
+ * Currently this interface is not stable.
+ * Please inherit {@link AbstractExporterRetriever} or {@link BaseExporterRetriever} instead.
+ * </em>
  * <p>
  * Adding {@link ExporterDescription} test moderators, clients can implement this
  * and put the class name in
  * {@code META-INF/services/com.asakusafw.testdriver.core.ExporterRetriever}.
  * </p>
  * @param <T> type of target {@link ExporterDescription}
+ * @version 0.2.2
  * @since 0.2.0
  */
 public interface ExporterRetriever<T extends ExporterDescription> {
@@ -45,29 +50,41 @@ public interface ExporterRetriever<T extends ExporterDescription> {
      * this method has no effects.
      * </p>
      * @param description the description
+     * @param context the current test context
      * @throws IOException if failed to open the target
+     * @since 0.2.2
      */
-    void truncate(T description) throws IOException;
+    void truncate(T description, TestContext context) throws IOException;
 
     /**
      * Creates a {@link ModelOutput} to prepare what the exporter will use.
      * @param <V> type of model
      * @param definition the data model definition
      * @param description the description
+     * @param context the current test context
      * @return the created {@link ModelOutput}
      * @throws IOException if failed to open the target
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.2
      */
-    <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition, T description) throws IOException;
+    <V> ModelOutput<V> createOutput(
+            DataModelDefinition<V> definition,
+            T description,
+            TestContext context) throws IOException;
 
     /**
      * Creates a {@link DataModelSource} to retrieve what the target exporter had created.
      * @param <V> type of model
      * @param definition the data model definition
      * @param description the description
+     * @param context the current test context
      * @return the created {@link DataModelSource}
      * @throws IOException if failed to open the target
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.2
      */
-    <V> DataModelSource createSource(DataModelDefinition<V> definition, T description) throws IOException;
+    <V> DataModelSource createSource(
+            DataModelDefinition<V> definition,
+            T description,
+            TestContext context) throws IOException;
 }

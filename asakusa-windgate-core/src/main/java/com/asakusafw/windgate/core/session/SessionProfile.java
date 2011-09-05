@@ -31,7 +31,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * A configuration for sessions.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider> {
 

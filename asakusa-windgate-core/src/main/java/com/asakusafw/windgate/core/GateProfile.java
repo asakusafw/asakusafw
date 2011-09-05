@@ -31,7 +31,7 @@ import com.asakusafw.windgate.core.session.SessionProfile;
 
 /**
  * A total profile for WindGate execution.
- * @since 0.2.3
+ * @since 0.2.2
  */
 public class GateProfile {
 

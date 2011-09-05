@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Abstract superclass of any profiles.
  * @param <S> this class type
  * @param <T> target provider type
- * @since 0.2.3
+ * @since 0.2.2
  */
 public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BaseProvider<S>> {
 
