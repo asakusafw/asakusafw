@@ -1082,6 +1082,26 @@ public final class MessageIdConst {
     public static final String PRF_COLLECT_COUNT = "TG-PROFILE-01004";
 
     /**
+     * [INFO] Import内容を送信しました。ターゲット名：{0} バッチID：{1} ジョブフローID：{2} ジョブフロー実行ID：{3} 転送サイズ：{4}bytes 経過時間：{5}ms .
+     */
+    public static final String PRF_IMPORT_TRANSFER = "TG-PROFILE-02001";
+
+    /**
+     * [INFO] Export内容を受信しました。ターゲット名：{0} バッチID：{1} ジョブフローID：{2} ジョブフロー実行ID：{3} 転送サイズ：{4}bytes 経過時間：{5}ms .
+     */
+    public static final String PRF_EXPORT_TRANSFER = "TG-PROFILE-02002";
+
+    /**
+     * [INFO] Importするテーブルダンプを送信しました。ターゲット名：{0} バッチID：{1} ジョブフローID：{2} ジョブフロー実行ID：{3} テーブル名：{4} ダンプファイルサイズ：{5}bytes 経過時間：{6}ms .
+     */
+    public static final String PRF_IMPORT_TRANSFER_TABLE = "TG-PROFILE-02003";
+
+    /**
+     * [INFO] Exportするテーブルダンプを受信しました。ターゲット名：{0} バッチID：{1} ジョブフローID：{2} ジョブフロー実行ID：{3} テーブル名：{4} ダンプファイルサイズ：{5}bytes 経過時間：{6}ms .
+     */
+    public static final String PRF_EXPORT_TRANSFER_TABLE = "TG-PROFILE-02004";
+
+    /**
      * インスタンス生成の禁止。
      */
     private MessageIdConst() {

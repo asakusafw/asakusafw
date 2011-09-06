@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.output.CountingOutputStream;
+
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
@@ -90,6 +92,9 @@ public class ImportFileSend {
                     variableTable);
             os = process.getOutputStream();
 
+            long totalStartTime = System.currentTimeMillis();
+            CountingOutputStream counter = new CountingOutputStream(os);
+
             // 標準入力を別スレッドで読み込んでログ出力する
             StreamRedirectThread outThread = new StreamRedirectThread(process.getInputStream(), System.out);
             outThread.start();
@@ -97,7 +102,7 @@ public class ImportFileSend {
             errThread.start();
 
             // SSHプロセスの標準出力ストリームをZipOutputStreamでラップする
-            zos = new ZipOutputStream(os);
+            zos = new ZipOutputStream(counter);
 
             // Import対象テーブル毎にファイルの読み込み・書き出しの処理を行う
             List<String> list = bean.getImportTargetTableList();
@@ -151,15 +156,18 @@ public class ImportFileSend {
                 int buffSize = Integer.parseInt(
                         ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_COMP_BUFSIZE));
 
+                long tableStartTime = System.currentTimeMillis();
+                long dumpFileSize = 0;
                 byte[] b = new byte[buffSize];
                 while (true) {
                     // ファイルを読み込む
                     int read;
                     try {
                         read = fis.read(b);
-                        if (read == -1) {
+                        if (read < 0) {
                             break;
                         }
+                        dumpFileSize += read;
                     } catch (IOException e) {
                         throw new BulkLoaderSystemException(
                                 e,
@@ -190,7 +198,31 @@ public class ImportFileSend {
                         this.getClass(),
                         MessageIdConst.IMP_FILE_SEND_END,
                         tableName, file.getAbsolutePath(), fileName, compType.getCompType());
+                Log.log(
+                        getClass(),
+                        MessageIdConst.PRF_IMPORT_TRANSFER_TABLE,
+                        bean.getTargetName(),
+                        bean.getBatchId(),
+                        bean.getJobflowId(),
+                        bean.getExecutionId(),
+                        tableName,
+                        dumpFileSize,
+                        System.currentTimeMillis() - tableStartTime);
             }
+            try {
+                zos.flush();
+            } catch (IOException e) {
+                // don't care
+            }
+            Log.log(
+                    getClass(),
+                    MessageIdConst.PRF_IMPORT_TRANSFER,
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId(),
+                    counter.getByteCount(),
+                    System.currentTimeMillis() - totalStartTime);
         } catch (BulkLoaderSystemException e) {
             Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
             return false;
