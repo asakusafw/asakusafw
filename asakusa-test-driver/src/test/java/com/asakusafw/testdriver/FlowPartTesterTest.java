@@ -15,10 +15,14 @@
  */
 package com.asakusafw.testdriver;
 
+import static org.junit.Assert.*;
+
 import org.junit.Rule;
 import org.junit.Test;
+
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.model.Simple;
+import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 
@@ -45,6 +49,21 @@ public class FlowPartTesterTest {
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
     }
+
+    /**
+     * simple testing with specified data size.
+     */
+    @Test
+    public void simpleWithDataSize() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        FlowPartDriverInput<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json").withDataSize(DataSize.TINY);
+        assertEquals(DataSize.TINY, in.getImporterDescription().getDataSize());
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+
+    }
+
 
     /**
      * Attempts to prepare input with invalid data.
