@@ -16,4 +16,4 @@
 /**
  * DMDL extensions for WindGate.
  */
-package com.asakusafw.dmdl.windgate.driver;
+package com.asakusafw.dmdl.windgate.jdbc.driver;

@@ -1,1 +1,1 @@
-com.asakusafw.dmdl.windgate.driver.JdbcSupportEmitter
+com.asakusafw.dmdl.windgate.jdbc.driver.JdbcSupportEmitter
