@@ -24,9 +24,9 @@ public enum StreamProcess implements ConfigurationItem {
     /**
      * The script key of {@link DataModelStreamSupport} class.
      */
-    FILE(
-            "file", //$NON-NLS-1$
-            "Target file path(s)"
+    STREAM_SUPPORT(
+            "support", //$NON-NLS-1$
+            "DataModelStreamSupport class name"
     ),
     ;
 
