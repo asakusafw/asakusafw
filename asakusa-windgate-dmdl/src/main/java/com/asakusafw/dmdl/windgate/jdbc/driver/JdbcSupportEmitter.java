@@ -105,32 +105,20 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
     private boolean isTarget(ModelDeclaration model) {
         assert model != null;
         boolean sawTrait = false;
-        boolean sawNoTrait = false;
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
             if (prop.getTrait(JdbcSupportTrait.class) != null) {
                 sawTrait = true;
-            } else {
-                sawNoTrait = true;
             }
         }
-        if (sawNoTrait == false && sawTrait) {
-            // exists some properties, and all properties have column names
-            return true;
-        }
-        if (sawTrait == false) {
-            // all properties do not have column names
-            return false;
-        }
-
-        LOG.warn("@{} is not declared in some properties: {}",
-                JdbcSupportDriver.TARGET_NAME,
-                model.getName().identifier);
-        return false;
+        return sawTrait;
     }
 
     private void checkColumnType(ModelDeclaration model) throws IOException {
         assert model != null;
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
+            if (model.getTrait(JdbcSupportTrait.class) == null) {
+                continue;
+            }
             Type type = prop.getType();
             if ((type instanceof BasicType) == false) {
                 throw new IOException(MessageFormat.format(
@@ -147,7 +135,9 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         Map<String, PropertyDeclaration> saw = new HashMap<String, PropertyDeclaration>();
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
             JdbcSupportTrait trait = prop.getTrait(JdbcSupportTrait.class);
-            assert trait != null;
+            if (trait == null) {
+                continue;
+            }
             String name = trait.getName();
             if (saw.containsKey(name)) {
                 PropertyDeclaration other = saw.get(name);
@@ -262,7 +252,8 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                 context.resolve(String.class),
                                 context.resolve(Integer.class)),
                         map));
-            List<PropertyDeclaration> properties = model.getDeclaredProperties();
+
+            List<PropertyDeclaration> properties = getProperties();
             for (int i = 0, n = properties.size(); i < n; i++) {
                 PropertyDeclaration property = properties.get(i);
                 JdbcSupportTrait trait = property.getTrait(JdbcSupportTrait.class);
@@ -539,7 +530,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
                         .toReturnStatement())));
-            List<PropertyDeclaration> declared = model.getDeclaredProperties();
+            List<PropertyDeclaration> declared = getProperties();
             for (int i = 0, n = declared.size(); i < n; i++) {
                 statements.add(createResultSetSupportStatement(
                         object,
@@ -580,7 +571,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
         private Set<BasicTypeKind> collectTypeKinds() {
             EnumSet<BasicTypeKind> kinds = EnumSet.noneOf(BasicTypeKind.class);
-            for (PropertyDeclaration prop : model.getDeclaredProperties()) {
+            for (PropertyDeclaration prop : getProperties()) {
                 kinds.add(toBasicKind(prop.getType()));
             }
             return kinds;
@@ -649,7 +640,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
             SimpleName object = f.newSimpleName("object");
             List<Statement> statements = new ArrayList<Statement>();
-            List<PropertyDeclaration> declared = model.getDeclaredProperties();
+            List<PropertyDeclaration> declared = getProperties();
             for (int i = 0, n = declared.size(); i < n; i++) {
                 statements.add(createPreparedStatementSupportStatement(
                         object,
@@ -1040,6 +1031,16 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     context.resolve(type),
                     name,
                     initializer);
+        }
+
+        private List<PropertyDeclaration> getProperties() {
+            List<PropertyDeclaration> results = new ArrayList<PropertyDeclaration>();
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                if (property.getTrait(JdbcSupportTrait.class) != null) {
+                    results.add(property);
+                }
+            }
+            return results;
         }
     }
 }
