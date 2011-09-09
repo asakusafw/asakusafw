@@ -115,6 +115,13 @@ then
         _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${ASAKUSA_HOME}/core/lib/$f"
     done
 fi
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/ext/lib/")
+    do
+        _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${ASAKUSA_HOME}/ext/lib/$f"
+    done
+fi
 
 _WG_CLASS="com.asakusafw.windgate.bootstrap.WindGate"
 
