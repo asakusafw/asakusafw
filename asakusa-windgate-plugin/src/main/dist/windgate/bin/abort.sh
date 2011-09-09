@@ -25,7 +25,12 @@ fi
 _OPT_PROFILE="$1"
 _OPT_EXECUTION_ID="$2"
 
-_WG_CLASSPATH_DELIMITER=':'
+if [ "$WG_CLASSPATH_DELIMITER" = "" ]
+then
+    _WG_CLASSPATH_DELIMITER=':'
+else 
+    _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
+fi
 
 _WG_ROOT="$(dirname $0)/.."
 if [ -e "$_WG_ROOT/conf/env.sh" ]

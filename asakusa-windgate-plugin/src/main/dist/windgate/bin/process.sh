@@ -50,7 +50,12 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
-_WG_CLASSPATH_DELIMITER=':'
+if [ "$WG_CLASSPATH_DELIMITER" = "" ]
+then
+    _WG_CLASSPATH_DELIMITER=':'
+else 
+    _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
+fi
 
 _WG_ROOT="$(dirname $0)/.."
 if [ -e "$_WG_ROOT/conf/env.sh" ]
