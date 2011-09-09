@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -76,6 +77,36 @@ public final class CommandLineUtil {
         } else {
             return name;
         }
+    }
+
+    /**
+     * Converts the path to the related URI.
+     * @param path target path
+     * @return the related URI
+     * @throws URISyntaxException if failed to convert the path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static URI toUri(String path) throws URISyntaxException {
+        if (path == null) {
+            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+        }
+        URI uri = new URI(path);
+        if (uri.getScheme() == null || uri.getScheme().length() != 1) {
+            return uri;
+        }
+        String os = System.getProperty("os.name", "UNKNOWN");
+        LOG.debug("Current OS name: {}",
+                os);
+        if (os.toLowerCase().startsWith("windows") == false) {
+            return uri;
+        }
+
+        File file = new File(path);
+        uri = file.toURI();
+        LOG.debug("Path \"{}\" may be an absolute path on Windows, converted into URI: {}",
+                path,
+                uri);
+        return uri;
     }
 
     /**
