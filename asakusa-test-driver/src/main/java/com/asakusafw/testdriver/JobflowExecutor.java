@@ -367,6 +367,7 @@ public class JobflowExecutor {
         ProcessBuilder builder = new ProcessBuilder(shellCmd);
         builder.redirectErrorStream(true);
         builder.environment().putAll(environmentVariables);
+        builder.directory(new File(System.getProperty("user.home", ".")));
 
         int exitCode;
         Process process = null;
