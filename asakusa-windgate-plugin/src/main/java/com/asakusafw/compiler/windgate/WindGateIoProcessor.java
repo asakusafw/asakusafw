@@ -217,6 +217,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     private String normalize(String name) {
         assert name != null;
+        assert name.trim().isEmpty() == false;
         return JavaName.of(name).toMemberName();
     }
 

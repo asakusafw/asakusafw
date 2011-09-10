@@ -20,29 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.compiler.flow.example.AbstractJobFlow;
-import com.asakusafw.compiler.flow.example.DescribeFailJobFlow;
-import com.asakusafw.compiler.flow.example.InconsistentExportOutput;
-import com.asakusafw.compiler.flow.example.InconsistentImportInput;
-import com.asakusafw.compiler.flow.example.InstantiateFailJobFlow;
-import com.asakusafw.compiler.flow.example.InvalidParameter;
-import com.asakusafw.compiler.flow.example.MultiPublicConstructor;
-import com.asakusafw.compiler.flow.example.NoExportOutput;
-import com.asakusafw.compiler.flow.example.NoImportInput;
-import com.asakusafw.compiler.flow.example.NoPublicConstructors;
-import com.asakusafw.compiler.flow.example.NotAnnotatedJobFlow;
-import com.asakusafw.compiler.flow.example.NotTypedInput;
-import com.asakusafw.compiler.flow.example.NotTypedOutput;
-import com.asakusafw.compiler.flow.example.SimpleJobFlow;
-import com.asakusafw.compiler.flow.example.TopLevelJobFlow;
-import com.asakusafw.compiler.flow.example.WithAbstractExportOutput;
-import com.asakusafw.compiler.flow.example.WithAbstractImportInput;
-import com.asakusafw.compiler.flow.example.WithExportInput;
-import com.asakusafw.compiler.flow.example.WithImportOutput;
-import com.asakusafw.compiler.flow.example.WithInvalidInputName;
-import com.asakusafw.compiler.flow.example.WithInvalidOutputName;
-import com.asakusafw.compiler.flow.example.WithMissTypedInput;
-import com.asakusafw.compiler.flow.example.WithMissTypedOutput;
+import com.asakusafw.compiler.flow.example.*;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.FlowOut;
@@ -158,6 +136,16 @@ public class JobFlowDriverTest {
     }
 
     /**
+     * Empty name for input.
+     */
+    @Test
+    public void Input_WithEmptyInputName() {
+        JobFlowDriver driver = JobFlowDriver.analyze(WithEmptyInputName.class);
+        assertThat(driver.hasError(), is(true));
+        assertThat(driver.getDiagnostics().size(), greaterThan(0));
+    }
+
+    /**
      * 入力ポート名が不正。
      */
     @Test
@@ -222,7 +210,17 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 入力ポート名が不正。
+     * Empty name for output.
+     */
+    @Test
+    public void Output_WithEmptyOutputName() {
+        JobFlowDriver driver = JobFlowDriver.analyze(WithEmptyOutputName.class);
+        assertThat(driver.hasError(), is(true));
+        assertThat(driver.getDiagnostics().size(), greaterThan(0));
+    }
+
+    /**
+     * 出力ポート名が不正。
      */
     @Test
     public void Output_WithInvalidOutputName() {
