@@ -19,6 +19,7 @@ import com.asakusafw.compiler.flow.processor.SummarizeFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
+import com.asakusafw.compiler.flow.testing.model.KeyConflict;
 import com.asakusafw.vocabulary.operator.Summarize;
 
 
@@ -42,4 +43,12 @@ public abstract class SummarizeFlow {
      */
     @Summarize
     public abstract ExSummarized2 renameKey(Ex1 model);
+
+    /**
+     * Grouping key is also used for other aggregation operations.
+     * @param model target model
+     * @return result model
+     */
+    @Summarize
+    public abstract KeyConflict keyConflict(Ex1 model);
 }

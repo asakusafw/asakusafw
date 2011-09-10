@@ -77,7 +77,9 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
 
         Map<String, String> mapping = new HashMap<String, String>();
         for (Summarized.Folding folding : summarized.term().foldings()) {
-            mapping.put(folding.source(), folding.destination());
+            if (folding.aggregator() == Aggregator.ANY) {
+                mapping.put(folding.source(), folding.destination());
+            }
         }
         List<String> remapped = new ArrayList<String>();
         for (String original : input.getShuffleKey().getGroupProperties()) {
