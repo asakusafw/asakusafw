@@ -73,7 +73,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final String CMD_PROCESS = "windgate/bin/process.sh";
 
-    private static final String CMD_ABORT = "windgate/bin/abort.sh";
+    private static final String CMD_FINALIZE = "windgate/bin/finalize.sh";
 
     private static final String OPT_IMPORT = "import";
 
@@ -502,7 +502,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             List<Command> results = new ArrayList<Command>();
             for (String profile : union) {
                 List<String> commands = new ArrayList<String>();
-                commands.add(context.getHomePathPrefix() + CMD_ABORT);
+                commands.add(context.getHomePathPrefix() + CMD_FINALIZE);
                 commands.add(profile);
                 commands.add(batchId);
                 commands.add(flowId);

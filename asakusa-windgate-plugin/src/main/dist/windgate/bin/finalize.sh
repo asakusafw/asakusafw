@@ -2,7 +2,7 @@
 
 usage() {
     cat 1>&2 <<EOF
-WindGate Cleaner
+WindGate FInalizer
 
 Usage:
     $0 profile
@@ -97,7 +97,7 @@ export WINDGATE_PROFILE="$_OPT_PROFILE"
 
 _WG_CLASS="com.asakusafw.windgate.bootstrap.WindGateAbort"
 
-echo "Cleaning WindGate Session(s)"
+echo "Finalizing WindGate Session(s)"
 echo "  -classpath $_WG_CLASSPATH"
 echo "  -profile $_WG_PROFILE"
 echo "  -session $_WG_SESSION"
