@@ -193,6 +193,7 @@
 		      failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<jvmarg value="-Dcom.asakusafw.compiler.options=${asakusa.compiler.options}" />
+			<jvmarg value="-Dcom.asakusafw.version=${asakusafw.version}" />
 			<jvmarg value="-ea" />
 			<arg value="-output" />
 			<arg value="${asakusa.batchc.dir}" />
