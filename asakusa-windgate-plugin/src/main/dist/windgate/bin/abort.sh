@@ -5,25 +5,40 @@ usage() {
 WindGate Cleaner
 
 Usage:
-    $0 profile [execuion-id]
+    $0 profile
+    or
+    $0 profile [batch-id flow-id] execuion-id
 
 Parameters:
     profile
         name of WindGate profile name
+    batch-id
+        batch ID of current execution
+    flow-id
+        flow ID of current execution
     execution-id
         execution ID of current execution
         if not specified, this cleans all sessions
 EOF
 }
 
-if [ $# -ne 1 -a $# -ne 2 ]
+if [ $# -eq 1 ]
 then
-  usage
-  exit 1
+    _OPT_PROFILE="$1"
+elif [ $# -eq 2 ]
+then
+    _OPT_PROFILE="$1"
+    _OPT_EXECUTION_ID="$2"
+elif [ $# -eq 4 ]
+then
+    _OPT_PROFILE="$1"
+    _OPT_BATCH_ID="$2"
+    _OPT_FLOW_ID="$3"
+    _OPT_EXECUTION_ID="$4"
+else
+    usage
+    exit 1
 fi
-
-_OPT_PROFILE="$1"
-_OPT_EXECUTION_ID="$2"
 
 if [ "$WG_CLASSPATH_DELIMITER" = "" ]
 then
@@ -84,6 +99,10 @@ echo "  -plugin $_WG_PLUGIN"
 if [ -d "$HADOOP_HOME" ]
 then
     export HADOOP_CLASSPATH="$_WG_CLASSPATH"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
+    export HADOOP_OPTS
     "$HADOOP_HOME/bin/hadoop" \
         "$_WG_CLASS" \
         -profile "$_WG_PROFILE" \
@@ -92,6 +111,9 @@ then
 else
     java \
         -classpath "$_WG_CLASSPATH" \
+        "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}" \
         "$_WG_CLASS" \
         -profile "$_WG_PROFILE" \
         -session "$_WG_SESSION" \

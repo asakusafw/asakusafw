@@ -103,6 +103,7 @@ public class WindGate {
      * @param args program arguments
      */
     public static void main(String... args) {
+        CommandLineUtil.prepareLogContext();
         WGLOG.info("I00000");
         int status = execute(args);
         WGLOG.info("I00999",

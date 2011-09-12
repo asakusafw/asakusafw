@@ -32,8 +32,8 @@ EOF
 }
 
 if [ $# -ne 7 ]; then
-  usage
-  exit 1
+    usage
+    exit 1
 fi
 
 if [ "$ASAKUSA_HOME" = "" ]
@@ -144,6 +144,10 @@ export WINDGATE_PROFILE="$_OPT_PROFILE"
 if [ -d "$HADOOP_HOME" ]
 then
     export HADOOP_CLASSPATH="$_WG_CLASSPATH"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
+    export HADOOP_OPTS
     "$HADOOP_HOME/bin/hadoop" \
         "$_WG_CLASS" \
         -mode "$_WG_MODE" \
@@ -155,6 +159,9 @@ then
 else
     java \
         -classpath "$_WG_CLASSPATH" \
+        "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}" \
         "$_WG_CLASS" \
         -mode "$_WG_MODE" \
         -profile "$_WG_PROFILE" \

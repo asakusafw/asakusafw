@@ -504,6 +504,8 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 List<String> commands = new ArrayList<String>();
                 commands.add(context.getHomePathPrefix() + CMD_ABORT);
                 commands.add(profile);
+                commands.add(batchId);
+                commands.add(flowId);
                 commands.add(context.getExecutionId());
                 results.add(new Command(
                         commands,

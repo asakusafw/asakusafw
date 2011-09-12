@@ -74,6 +74,7 @@ public class WindGateAbort {
      * @param args program arguments
      */
     public static void main(String... args) {
+        CommandLineUtil.prepareLogContext();
         WGLOG.info("I01000");
         int status = execute(args);
         WGLOG.info("I01999",

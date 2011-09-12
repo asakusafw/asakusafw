@@ -34,10 +34,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
@@ -53,9 +55,40 @@ public final class CommandLineUtil {
     static final Logger LOG = LoggerFactory.getLogger(CommandLineUtil.class);
 
     /**
+     * Prefix of system properties used for log context.
+     */
+    public static final String LOG_CONTEXT_PREFIX = "com.asakusafw.windgate.log.";
+
+    /**
      * The scheme name of Java class path.
      */
     public static final String SCHEME_CLASSPATH = "classpath";
+
+    /**
+     * Prepares log context.
+     * If current system properties contain keys with a special prefix
+     *  (described in {@link #LOG_CONTEXT_PREFIX}),
+     *  then this method will put each key-value pairs into log MDC.
+     */
+    public static void prepareLogContext() {
+        Map<String, String> registered = new TreeMap<String, String>();
+        Properties properties = System.getProperties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
+                continue;
+            }
+            String key = (String) entry.getKey();
+            if (key.startsWith(LOG_CONTEXT_PREFIX) == false) {
+                continue;
+            }
+            String value = (String) entry.getValue();
+            String name = key.substring(LOG_CONTEXT_PREFIX.length());
+            MDC.put(name, value);
+            registered.put(name, value);
+        }
+        LOG.debug("Log context is prepared: {}",
+                registered);
+    }
 
     /**
      * Returns the name of URI for hint.
