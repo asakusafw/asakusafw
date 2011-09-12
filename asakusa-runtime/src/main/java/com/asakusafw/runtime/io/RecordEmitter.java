@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.io;
 
 import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 
 import com.asakusafw.runtime.value.BooleanOption;
@@ -59,7 +60,7 @@ finally {
  * {@link NullPointerException}がスローされる。
  * </p>
  */
-public interface RecordEmitter extends Closeable {
+public interface RecordEmitter extends Flushable, Closeable {
 
     /**
      * 現在のレコードの出力を終了し、次のレコードの出力に備える。

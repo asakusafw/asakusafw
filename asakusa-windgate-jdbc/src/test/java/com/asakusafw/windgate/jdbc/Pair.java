@@ -24,7 +24,10 @@ public class Pair implements Comparable<Pair> {
 
     String value;
 
-    Pair() {
+    /**
+     * Creates a new instance.
+     */
+    public Pair() {
         return;
     }
 

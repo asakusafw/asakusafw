@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.windgate.driver;
+package com.asakusafw.dmdl.windgate.jdbc.driver;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -34,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
+import com.asakusafw.dmdl.windgate.jdbc.driver.JdbcSupportEmitter;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;

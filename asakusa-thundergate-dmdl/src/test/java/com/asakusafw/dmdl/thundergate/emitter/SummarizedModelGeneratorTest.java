@@ -111,6 +111,41 @@ public class SummarizedModelGeneratorTest extends GeneratorTesterRoot {
         assertThat(term.shuffle(), is(grouping("valueA")));
     }
 
+    /**
+     * Summarize with conflict grouping key and aggregation target.
+     */
+    @Test
+    public void conflict_key() {
+        TableModelDescription target = new TableModelBuilder("TARGET")
+            .add(null, "SID", PropertyTypeKind.LONG, Attribute.PRIMARY_KEY)
+            .add(null, "GROUPING", PropertyTypeKind.INT)
+            .toDescription();
+        SummarizedModelDescription summarize = new SummarizedModelBuilder("SIMPLE", target, "t")
+            .groupBy("GROUPING")
+            .add("KEY", com.asakusafw.dmdl.thundergate.model.Aggregator.IDENT, "t.GROUPING")
+            .add("COUNT", com.asakusafw.dmdl.thundergate.model.Aggregator.COUNT, "t.GROUPING")
+            .toDescription();
+
+        emitDmdl(RecordModelGenerator.generate(target));
+        emitDmdl(SummarizedModelGenerator.generate(summarize));
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_VIEW);
+
+        ModelWrapper object = loader.newModel("Simple");
+        Summarized annotation = object.unwrap().getClass().getAnnotation(Summarized.class);
+        assertThat(annotation, not(nullValue()));
+
+        loader.setNamespace(Constants.SOURCE_TABLE);
+
+        Term term = annotation.term();
+        assertThat(term.source(), eq(loader.modelType("Target")));
+        assertThat(term.foldings().length, is(2));
+        assertThat(term.foldings(), hasItemInArray(mapping(ANY, "grouping", "key")));
+        assertThat(term.foldings(), hasItemInArray(mapping(COUNT, "grouping", "count")));
+        assertThat(term.shuffle(), is(grouping("grouping")));
+    }
+
     private Matcher<Key> grouping(final String... properties) {
         return new BaseMatcher<Key>() {
             @Override

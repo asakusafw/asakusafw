@@ -226,6 +226,7 @@ public class JdbcProfile {
             return conn;
         } catch (Exception e) {
             WGLOG.error(e, "E00002",
+                    getResourceName(),
                     url);
             throw new IOException(MessageFormat.format(
                     "Failed to open connection: {0}",

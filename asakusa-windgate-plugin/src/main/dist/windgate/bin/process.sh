@@ -50,6 +50,13 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
+if [ "$WG_CLASSPATH_DELIMITER" = "" ]
+then
+    _WG_CLASSPATH_DELIMITER=':'
+else 
+    _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
+fi
+
 _WG_ROOT="$(dirname $0)/.."
 if [ -e "$_WG_ROOT/conf/env.sh" ]
 then
@@ -92,25 +99,32 @@ then
         then
             _WG_PLUGIN="$_WG_ROOT/plugin/$f"
         else
-            _WG_PLUGIN="$_WG_PLUGIN:$_WG_ROOT/plugin/$f"
+            _WG_PLUGIN="${_WG_PLUGIN}${_WG_CLASSPATH_DELIMITER}${_WG_ROOT}/plugin/$f"
         fi
     done
 fi
 
 _WG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
-_WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/conf"
+_WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${_WG_ROOT}/conf"
 if [ -d "$_WG_ROOT/lib" ]
 then
     for f in $(ls "$_WG_ROOT/lib/")
     do
-        _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
+        _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${_WG_ROOT}/lib/$f"
     done
 fi
 if [ -d "$ASAKUSA_HOME/core/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/core/lib/")
     do
-        _WG_CLASSPATH="$_WG_CLASSPATH:$ASAKUSA_HOME/core/lib/$f"
+        _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${ASAKUSA_HOME}/core/lib/$f"
+    done
+fi
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/ext/lib/")
+    do
+        _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${ASAKUSA_HOME}/ext/lib/$f"
     done
 fi
 

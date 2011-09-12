@@ -72,7 +72,7 @@ class JdbcResourceUtil {
         String columnNameList = extract(profile, process, kind, JdbcProcess.COLUMNS, true);
         List<String> columnNames = Arrays.asList(columnNameList.split("\\s*,\\s*")); //$NON-NLS-1$
         if (support.isSupported(columnNames) == false) {
-            WGLOG.error("E01003",
+            WGLOG.error("E01002",
                     profile.getResourceName(),
                     process.getName(),
                     supportClassName);
@@ -153,39 +153,13 @@ class JdbcResourceUtil {
                     item.key(),
                     value);
             throw new IOException(MessageFormat.format(
-                    "Resource \"{0}\" requires config \"{3}\" (process={1}, kind={2})",
+                    "Resource \"{0}\" requires config \"{3}\" (process={1}, direction={2})",
                     profile.getResourceName(),
                     process.getName(),
                     kind,
                     item.key()));
         }
         return value == null ? null : value.trim();
-    }
-
-    static <T> T newDataModel(
-            JdbcProfile profile,
-            ProcessScript<T> script) throws IOException {
-        assert script != null;
-        Class<T> dataClass = script.getDataClass();
-        LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
-                dataClass.getName(),
-                profile.getResourceName(),
-                script.getName(),
-        });
-        try {
-            T object = dataClass.newInstance();
-            return object;
-        } catch (Exception e) {
-            WGLOG.error(e, "E01002",
-                    profile.getResourceName(),
-                    script.getName(),
-                    dataClass.getName());
-            throw new IOException(MessageFormat.format(
-                    "Failed to create a new instance: {2} (resource={0}, process={1})",
-                    profile.getResourceName(),
-                    script.getName(),
-                    dataClass.getName()), e);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -204,7 +178,7 @@ class JdbcResourceUtil {
         try {
             supportClass = Class.forName(supportClassName, true, profile.getClassLoader());
         } catch (ClassNotFoundException e) {
-            WGLOG.error(e, "E01003",
+            WGLOG.error(e, "E01002",
                     profile.getResourceName(),
                     script.getName(),
                     supportClassName);
@@ -215,7 +189,7 @@ class JdbcResourceUtil {
                     supportClassName), e);
         }
         if (DataModelJdbcSupport.class.isAssignableFrom(supportClass) == false) {
-            WGLOG.error("E01003",
+            WGLOG.error("E01002",
                     profile.getResourceName(),
                     script.getName(),
                     supportClassName);
@@ -230,7 +204,7 @@ class JdbcResourceUtil {
         try {
             obj = supportClass.asSubclass(DataModelJdbcSupport.class).newInstance();
         } catch (Exception e) {
-            WGLOG.error(e, "E01003",
+            WGLOG.error(e, "E01002",
                     profile.getResourceName(),
                     script.getName(),
                     supportClassName);
@@ -241,7 +215,7 @@ class JdbcResourceUtil {
                     supportClass.getName()), e);
         }
         if (obj.getSupportedType().isAssignableFrom(script.getDataClass()) == false) {
-            WGLOG.error("E01003",
+            WGLOG.error("E01002",
                     profile.getResourceName(),
                     script.getName(),
                     supportClassName);

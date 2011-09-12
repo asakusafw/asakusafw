@@ -27,9 +27,14 @@ public class Constants {
     public static final String JDBC_RESOURCE_NAME = "jdbc";
 
     /**
-     * The abstract resource name of file systems.
+     * The abstract resource name of hadoop file systems.
      */
     public static final String HADOOP_FILE_RESOURCE_NAME = "hadoop";
+
+    /**
+     * The abstract resource name of local file systems.
+     */
+    public static final String LOCAL_FILE_RESOURCE_NAME = "local";
 
     /**
      * The default process provider name.

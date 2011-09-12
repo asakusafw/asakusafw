@@ -113,6 +113,9 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     @SuppressWarnings("unchecked")
     @Override
     public <T> SourceDriver<T> createSource(final ProcessScript<T> script) throws IOException {
+        if (script == null) {
+            throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
+        }
         LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
@@ -184,6 +187,9 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     @SuppressWarnings("unchecked")
     @Override
     public <T> DrainDriver<T> createDrain(final ProcessScript<T> script) throws IOException {
+        if (script == null) {
+            throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
+        }
         LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
@@ -381,7 +387,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 script.getName(),
         });
         if (Writable.class.isAssignableFrom(dataClass) == false) {
-            WGLOG.error("E11001",
+            WGLOG.error("E11002",
                     getName(),
                     script.getName(),
                     FILE.key(),
@@ -398,7 +404,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     dataClass.asSubclass(Writable.class),
                     configuration);
         } catch (Exception e) {
-            WGLOG.error("E11001",
+            WGLOG.error("E11002",
                     getName(),
                     script.getName(),
                     FILE.key(),

@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
+import com.asakusafw.compiler.flow.processor.flow.SummarizeFlowKeyConflict;
 import com.asakusafw.compiler.flow.processor.flow.SummarizeFlowRenameKey;
 import com.asakusafw.compiler.flow.processor.flow.SummarizeFlowTrivial;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
@@ -36,6 +37,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
+import com.asakusafw.compiler.flow.testing.model.KeyConflict;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.compiler.util.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.CompilerTester.TestOutput;
@@ -87,6 +89,24 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
     @Test
     public void combineRenameKey() throws Exception {
         runRenameKey(true);
+    }
+
+    /**
+     * Test for grouping key is conflict.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void conflictKey() throws Exception {
+        runKeyConflict(false);
+    }
+
+    /**
+     * Test for grouping key is conflict with combiner.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void combineConflictKey() throws Exception {
+        runKeyConflict(true);
     }
 
     private void run(boolean combine) {
@@ -183,5 +203,48 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
         assertThat(results.get(1).getKeyAsString(), is("b"));
         assertThat(results.get(1).getCount(), is(3L));
         assertThat(results.get(1).getValue(), is(120L));
+    }
+
+    private void runKeyConflict(boolean combine) throws Exception {
+        environment.getOptions().setEnableCombiner(combine);
+
+        TestInput<Ex1> in = tester.input(Ex1.class, "Ex1");
+        TestOutput<KeyConflict> summarized = tester.output(KeyConflict.class, "summarized");
+
+        Ex1 ex1 = new Ex1();
+
+        ex1.setStringAsString("a");
+        ex1.setSid(1);
+        in.add(ex1);
+
+        ex1.setSid(2);
+        in.add(ex1);
+
+        ex1.setStringAsString("b");
+        ex1.setSid(3);
+        in.add(ex1);
+
+        ex1.setSid(4);
+        in.add(ex1);
+
+        ex1.setSid(5);
+        in.add(ex1);
+
+        assertThat(tester.runFlow(new SummarizeFlowKeyConflict(
+                in.flow(), summarized.flow())), is(true));
+
+        List<KeyConflict> results = summarized.toList(new Comparator<KeyConflict>() {
+            @Override
+            public int compare(KeyConflict o1, KeyConflict o2) {
+                return o1.getKeyOption().compareTo(o2.getKeyOption());
+            }
+        });
+
+        assertThat(results.size(), is(2));
+        assertThat(results.get(0).getKeyAsString(), is("a"));
+        assertThat(results.get(0).getCount(), is(2L));
+
+        assertThat(results.get(1).getKeyAsString(), is("b"));
+        assertThat(results.get(1).getCount(), is(3L));
     }
 }

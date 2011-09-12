@@ -104,4 +104,47 @@ import javax.annotation.Generated;
     public SummarizeFlowFactory.RenameKey renameKey(Source<Ex1> model) {
         return new SummarizeFlowFactory.RenameKey(model);
     }
+    /**
+     * Grouping key is also used for other aggregation operations.
+     */
+    public static final class KeyConflict implements Operator {
+        private final FlowElementResolver $;
+        /**
+         *  result model
+         */
+        public final Source<com.asakusafw.compiler.flow.testing.model.KeyConflict> out;
+        KeyConflict(Source<Ex1> model) {
+            OperatorDescription.Builder builder1 = new OperatorDescription.Builder(Summarize.class);
+            builder1.declare(SummarizeFlow.class, SummarizeFlowImpl.class, "keyConflict");
+            builder1.declareParameter(Ex1.class);
+            builder1.addInput("model", model, new ShuffleKey(Arrays.asList(new String[]{"string"}), Arrays.asList(new 
+                    ShuffleKey.Order[]{})));
+            builder1.addOutput("out", com.asakusafw.compiler.flow.testing.model.KeyConflict.class);
+            builder1.addAttribute(FlowBoundary.SHUFFLE);
+            builder1.addAttribute(ObservationCount.DONT_CARE);
+            builder1.addAttribute(PartialAggregation.DEFAULT);
+            this.$ = builder1.toResolver();
+            this.$.resolveInput("model", model);
+            this.out = this.$.resolveOutput("out");
+        }
+        /**
+         * この演算子の名前を設定する。
+         * @param newName1 設定する名前
+         * @return この演算子オブジェクト (this)
+         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         */
+        public SummarizeFlowFactory.KeyConflict as(String newName1) {
+            this.$.setName(newName1);
+            return this;
+        }
+    }
+    /**
+     * Grouping key is also used for other aggregation operations.
+     * @param model target model
+     * @return 生成した演算子オブジェクト
+     * @see SummarizeFlow#keyConflict(Ex1)
+     */
+    public SummarizeFlowFactory.KeyConflict keyConflict(Source<Ex1> model) {
+        return new SummarizeFlowFactory.KeyConflict(model);
+    }
 }

@@ -29,6 +29,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
+import com.asakusafw.windgate.core.util.ProcessUtil;
 
 /**
  * An implementation of {@link ResourceMirror} using JDBC.
@@ -76,7 +77,7 @@ public class JdbcResourceMirror extends ResourceMirror {
         for (ProcessScript<?> process : script.getProcesses()) {
             if (process.getSourceScript().getResourceName().equals(getName())) {
                 JdbcResourceUtil.convert(profile, process, arguments, DriverScript.Kind.SOURCE);
-                JdbcResourceUtil.newDataModel(profile, process);
+                ProcessUtil.newDataModel(profile.getResourceName(), process);
             }
             if (process.getDrainScript().getResourceName().equals(getName())) {
                 JdbcResourceUtil.convert(profile, process, arguments, DriverScript.Kind.DRAIN);
@@ -93,7 +94,7 @@ public class JdbcResourceMirror extends ResourceMirror {
                 getName(),
                 script.getName());
         JdbcScript<T> jdbcScript = JdbcResourceUtil.convert(profile, script, arguments, DriverScript.Kind.SOURCE);
-        T object = JdbcResourceUtil.newDataModel(profile, script);
+        T object = ProcessUtil.newDataModel(profile.getResourceName(), script);
         WGLOG.info("I02001",
                 getName(),
                 script.getName());

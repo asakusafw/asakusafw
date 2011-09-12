@@ -42,7 +42,7 @@ Reader reader = ...;
 SomeModel model = new SomeModel();
 try {
     RecordParser parser = ...;
-    while (parser.hasNext()) {
+    while (parser.next()) {
         parser.fill(model.getHogeOption());
         parser.fill(model.getFooOption());
         parser.fill(model.getBarOption());

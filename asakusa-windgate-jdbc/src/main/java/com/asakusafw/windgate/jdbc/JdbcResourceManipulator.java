@@ -32,6 +32,7 @@ import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.SourceDriver;
+import com.asakusafw.windgate.core.util.ProcessUtil;
 import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
 
 /**
@@ -134,7 +135,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         JdbcScript<T> jdbc = createOppositeJdbcScript(script, DriverScript.Kind.DRAIN);
-        T object = JdbcResourceUtil.newDataModel(profile, script);
+        T object = ProcessUtil.newDataModel(profile.getResourceName(), script);
         boolean succeed = false;
         Connection conn = profile.openConnection();
         try {
