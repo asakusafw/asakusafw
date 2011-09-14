@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -51,6 +52,35 @@ public class FlowPartTesterTest {
     }
 
     /**
+     * path includes white spaces.
+     */
+    @Ignore("FIXME for invalid characters")
+    @Test
+    public void withSpace() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/with space-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/with space-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+    }
+
+    /**
+     * using full path.
+     */
+    @Test
+    public void fullpath() {
+        String prefix = getClass().getName();
+        prefix = prefix.substring(0, prefix.length() - getClass().getSimpleName().length()).replace('.', '/');
+        prefix = '/' + prefix;
+
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare(prefix + "data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify(prefix + "data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+    }
+
+    /**
      * simple testing with specified data size.
      */
     @Test
@@ -61,7 +91,6 @@ public class FlowPartTesterTest {
         assertEquals(DataSize.TINY, in.getImporterDescription().getDataSize());
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
-
     }
 
 
