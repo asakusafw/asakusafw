@@ -35,7 +35,7 @@ public interface ValuePredicate<T> {
      * Returns an expected value as readable text.
      * @param expected the expected value (nullable)
      * @param actual the actual value (nullable)
-     * @return readable text
+     * @return readable text, or {@code null} if is always/never expected
      */
     String describeExpected(T expected, T actual);
 }

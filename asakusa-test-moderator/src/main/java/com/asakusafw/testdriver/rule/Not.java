@@ -45,8 +45,12 @@ public class Not<T> implements ValuePredicate<T> {
 
     @Override
     public String describeExpected(T expected, T actual) {
+        String factorExpected = factor.describeExpected(expected, actual);
+        if (factorExpected == null) {
+            return null;
+        }
         return MessageFormat.format(
                 "{0}でない",
-                factor.describeExpected(expected, actual));
+                factorExpected);
     }
 }
