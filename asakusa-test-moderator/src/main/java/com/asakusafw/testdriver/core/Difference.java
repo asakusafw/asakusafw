@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,7 +82,7 @@ public class Difference {
                 getDiagnostic());
     }
 
-    private static String format(Object value) {
+    static String format(Object value) {
         if (value instanceof Calendar) {
             Calendar c = (Calendar) value;
             if (c.isSet(Calendar.HOUR_OF_DAY)) {
@@ -89,6 +90,8 @@ public class Difference {
             } else {
                 return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
             }
+        } else if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).toPlainString();
         }
         return String.valueOf(value);
     }
