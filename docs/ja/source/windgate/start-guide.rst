@@ -68,26 +68,46 @@ WindGateが処理するインポート元、及びエクスポート先のJDBC�
 
 Hadoopクライアント接続用プロファイル定義
 ----------------------------------------
-WindGateが処理するインポート先、及びエクスポート元のHadoopクライアント用ノードに対するSSH接続情報を、以下のプロパティに設定します。デフォルトではローカルに対してパスフレーズ無しでSSH接続を行うよう設定されています。
+WindGateが処理するインポート先、及びエクスポート元のHadoopクライアント用ノードに対する設定を行います。
+
+デフォルトではWindGateが動作するマシンにインストールされているHadoopに対して処理を行うよう設定されています。開発環境など、ローカルのHadoopに対して処理を行う場合は追加の設定は不要です。
+
+Hadoopクライアント用ノードがWindGateが動作するマシンのリモートに配置されている場合、WindGateがHadoopクライアントノードに対してSSH接続を行うための設定を行う必要があります。
+
+SSH接続情報は以下のプロパティに設定します。
 
 ..  code-block:: none
 
-    # 接続先のHadoopクライアント用ノードに配置するWindGate用SSH接続モジュール
-    # ※アーキタイプから生成したプロジェクトではローカルに自動的に配置されます
+    # Hadoop File System
+    # ローカルに対するHadoopの使用を無効化するため、以下の設定行をコメントアウトします。
+    #resource.hadoop=com.asakusafw.windgate.hadoopfs.HadoopFsProvider
+
+    # Hadoop File System (for Remote Hadoop Cluster via SSH)
+    # SSH経由によるHadoopのアクセスを有効化するため、以下のプロパティのコメントアウトを解除します。
+    # (resource.hadoop から resource.hadoop.passPhrase までの各行のコメントアウトを解除します)
+    resource.hadoop=com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider
+
+    # 接続先のHadoopクライアント用ノードに配置するWindGate用SSH接続モジュールの配置場所
     # ホームディレクトリが[/home/asakusa],$ASAKUSA_HOMEが[asakusa]以外の場合、
     # このプロパティを環境に合わせて変更する必要があります。
     resource.hadoop.target=/home/asakusa/asakusa/windgate-ssh
+
     # SSH接続ユーザ
-    resource.hadoop.user=asakusa
+    resource.hadoop.user=asakuse
+
     # SSH接続ホスト
     resource.hadoop.host=localhost
+
     # SSH接続ポート
     resource.hadoop.port=22
+
     # SSH接続秘密鍵ファイルパス
     resource.hadoop.privateKey=${HOME}/.ssh/id_dsa
+
     # SSH秘密鍵パスフレーズ
     resource.hadoop.passPhrase=
-    # 圧縮の有効/無効化(コメントアウト時には圧縮が無効)
+
+    # 圧縮の有効/無効化(コメントアウト時には圧縮が無効です)
     #resource.hadoop.compression=org.apache.hadoop.io.compress.DefaultCodec
 
 サンプルプログラムの実行
@@ -149,14 +169,17 @@ WindGateを使う場合、ジョブフローのインポート記述/エクス�
 データベースのテーブルからインポートする
 ----------------------------------------
 WindGateと連携してデータベースのテーブルからデータをインポートする場合、 ``JdbcImporterDescription`` [#]_ クラスのサブクラスを作成して必要な情報を記述します。
+
 このクラスでは、下記のメソッドをオーバーライドします。
 
 ``String getProfileName()``
     インポータが使用するプロファイル名を戻り値に指定します。
+
     インポータは実行時に $ASAKUSA_HOME/windgate/profile 配下に配置した[プロファイル名].properties に記述されたデータベース接続情報定義ファイルを使用してデータベースに対するアクセスを行います。
 
 ``Class<?> getModelType()``
     インポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
+
     インポータは実行時にモデルクラスを作成する元となったテーブル名に対してインポート処理を行います 。
 
 ``String getTableName()``
@@ -167,10 +190,12 @@ WindGateと連携してデータベースのテーブルからデータをイン
 
 ``Class<? extends DataModelJdbcSupport<?>> getJdbcSupport()``
     JDBC経由で入出力データとデータモデルクラスの相互変換を行うためのヘルパークラスを指定します。
+
     通常は、モデルジェネレータで生成される ``[モデルクラス名]JdbcSupport`` クラスを指定します。
 
 ``String getWhere()``
     インポータが利用する抽出条件をSQLの条件式で指定します。
+
     指定する文字列はMySQL形式の ``WHERE`` 以降の文字列である必要があります。
 
 ..  [#] ``com.asakusafw.vocabulary.windgate.JdbcImporterDescription``
@@ -210,14 +235,17 @@ WindGateと連携してデータベースのテーブルからデータをイン
 データベースのテーブルにエクスポートする
 ----------------------------------------
 WindGateと連携してジョブフローの処理結果をデータベースのテーブルに書き出すには、 ``JdbcExporterDescription`` [#]_ クラスのサブクラスを作成して必要な情報を記述します。
+
 このクラスでは、下記のメソッドをオーバーライドします。
 
 ``String getProfileName()``
     エクスポータが使用するプロファイル名を戻り値に指定します。
+
     利用方法はインポータの ``getProfileName()`` と同様です。
 
 ``Class<?> getModelType()``
     エクスポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
+
     エクスポータは実行時にモデルクラスを作成する元となったテーブル名に対してエクスポート処理を行います 。
 
 ``String getTableName()``
@@ -228,6 +256,7 @@ WindGateと連携してジョブフローの処理結果をデータベースの
 
 ``Class<? extends DataModelJdbcSupport<?>> getJdbcSupport()``
     JDBC経由で入出力データとデータモデルクラスの相互変換を行うためのヘルパークラスを指定します。
+
     利用方法はインポータの ``getJdbcSupport()`` と同様です。
 
 例：
