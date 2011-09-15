@@ -82,7 +82,13 @@ public class Difference {
                 getDiagnostic());
     }
 
-    static String format(Object value) {
+    /**
+     * return formatted value.
+     *
+     * @param value target value.
+     * @return formatted value.
+     */
+    public static String format(Object value) {
         if (value instanceof Calendar) {
             Calendar c = (Calendar) value;
             if (c.isSet(Calendar.HOUR_OF_DAY)) {

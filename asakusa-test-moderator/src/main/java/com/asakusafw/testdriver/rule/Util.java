@@ -15,13 +15,10 @@
  */
 package com.asakusafw.testdriver.rule;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.asakusafw.runtime.value.Date;
-import com.asakusafw.runtime.value.DateTime;
+import com.asakusafw.testdriver.core.Difference;
 
 /**
  * Utility functions for this package.
@@ -30,15 +27,7 @@ import com.asakusafw.runtime.value.DateTime;
 final class Util {
 
     static String format(Object value) {
-        if (value instanceof Calendar) {
-            Calendar c = (Calendar) value;
-            if (c.isSet(Calendar.HOUR_OF_DAY)) {
-                return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
-            } else {
-                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
-            }
-        }
-        return String.valueOf(value);
+        return Difference.format(value);
     }
 
     static Map<Object, String> formatMap(Map<?, ?> map) {
