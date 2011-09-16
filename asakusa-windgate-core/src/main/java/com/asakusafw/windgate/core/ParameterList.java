@@ -18,6 +18,7 @@ package com.asakusafw.windgate.core;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +56,7 @@ public class ParameterList {
         if (parameters == null) {
             throw new IllegalArgumentException("parameters must not be null"); //$NON-NLS-1$
         }
-        this.parameters = parameters;
+        this.parameters = Collections.unmodifiableMap(new TreeMap<String, String>(parameters));
     }
 
 
@@ -107,5 +108,10 @@ public class ParameterList {
         }
         buf.append(string.substring(start));
         return buf.toString();
+    }
+
+    @Override
+    public String toString() {
+        return parameters.toString();
     }
 }

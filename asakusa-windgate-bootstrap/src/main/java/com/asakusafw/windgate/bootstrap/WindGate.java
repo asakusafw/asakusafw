@@ -103,6 +103,7 @@ public class WindGate {
      * @param args program arguments
      */
     public static void main(String... args) {
+        CommandLineUtil.prepareLogContext();
         WGLOG.info("I00000");
         int status = execute(args);
         WGLOG.info("I00999",
@@ -187,7 +188,7 @@ public class WindGate {
 
         LOG.debug("Loading profile: {}", profile);
         try {
-            URI uri = new URI(profile);
+            URI uri = CommandLineUtil.toUri(profile);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
             result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {
@@ -198,7 +199,7 @@ public class WindGate {
 
         LOG.debug("Loading script: {}", script);
         try {
-            URI uri = new URI(script);
+            URI uri = CommandLineUtil.toUri(script);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
             result.script = GateScript.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {

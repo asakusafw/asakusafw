@@ -29,6 +29,7 @@ import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
 import com.asakusafw.testdriver.core.SpiSourceProvider;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -47,7 +48,7 @@ public class ExcelSheetSourceProviderTest {
     public void open_bynumber() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", ":1");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, not(nullValue()));
 
         Simple s1 = next(source);
@@ -65,7 +66,7 @@ public class ExcelSheetSourceProviderTest {
     public void open_byname() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", "c");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, not(nullValue()));
 
         Simple s1 = next(source);
@@ -83,7 +84,7 @@ public class ExcelSheetSourceProviderTest {
     public void spi() throws Exception {
         SourceProvider provider = new SpiSourceProvider(ExcelSheetSourceProvider.class.getClassLoader());
         URI uri = uri("data/workbook.xls", ":1");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, not(nullValue()));
 
         Simple s1 = next(source);
@@ -101,7 +102,7 @@ public class ExcelSheetSourceProviderTest {
     public void integration() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("it/simple.xls", "input");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, not(nullValue()));
 
         Simple s1 = next(source);
@@ -127,7 +128,7 @@ public class ExcelSheetSourceProviderTest {
     public void invalid_file() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/simple.json", ":1");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
 
@@ -139,7 +140,7 @@ public class ExcelSheetSourceProviderTest {
     public void missing_fragment() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", null);
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, not(nullValue()));
 
         // the first sheet
@@ -158,7 +159,7 @@ public class ExcelSheetSourceProviderTest {
     public void invalid_fragment() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", ":");
-        DataModelSource source = provider.open(SIMPLE, uri);
+        DataModelSource source = provider.open(SIMPLE, uri, new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
 
@@ -170,7 +171,7 @@ public class ExcelSheetSourceProviderTest {
     public void not_found() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = new URI("file:///__________no_such_file________.xls#:0");
-        provider.open(SIMPLE, uri);
+        provider.open(SIMPLE, uri, new TestContext.Empty());
     }
 
     /**
@@ -181,7 +182,7 @@ public class ExcelSheetSourceProviderTest {
     public void invalid_workbook() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/invalid_format.xls", ":0");
-        provider.open(SIMPLE, uri);
+        provider.open(SIMPLE, uri, new TestContext.Empty());
     }
 
     /**
@@ -192,7 +193,7 @@ public class ExcelSheetSourceProviderTest {
     public void invalid_sheet_bynumber() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", ":100");
-        provider.open(SIMPLE, uri);
+        provider.open(SIMPLE, uri, new TestContext.Empty());
     }
 
     /**
@@ -203,7 +204,7 @@ public class ExcelSheetSourceProviderTest {
     public void invalid_sheet_byname() throws Exception {
         ExcelSheetSourceProvider provider = new ExcelSheetSourceProvider();
         URI uri = uri("data/workbook.xls", "no such sheet");
-        provider.open(SIMPLE, uri);
+        provider.open(SIMPLE, uri, new TestContext.Empty());
     }
 
     private Simple next(DataModelSource source) throws IOException {

@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -71,7 +72,7 @@ public class TableSourceProviderTest {
         insert(simple, SIMPLE, "SIMPLE");
 
         TableSourceProvider provider = new TableSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"));
+        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"), new TestContext.Empty());
 
         try {
             assertThat(next(source), is(simple));
@@ -100,7 +101,7 @@ public class TableSourceProviderTest {
         insert(s2, SIMPLE, "SIMPLE");
 
         TableSourceProvider provider = new TableSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"));
+        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"), new TestContext.Empty());
 
         try {
             assertThat(next(source), is(s1));
@@ -120,7 +121,7 @@ public class TableSourceProviderTest {
         context.put("provider", "provider");
 
         TableSourceProvider provider = new TableSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"));
+        DataModelSource source = provider.open(SIMPLE, new URI("bulkloader:provider:SIMPLE"), new TestContext.Empty());
         try {
             assertThat(next(source), is(nullValue()));
         } finally {
@@ -137,7 +138,7 @@ public class TableSourceProviderTest {
         context.put("provider", "provider");
 
         TableSourceProvider provider = new TableSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, new URI("hoge:provider:SIMPLE"));
+        DataModelSource source = provider.open(SIMPLE, new URI("hoge:provider:SIMPLE"), new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
 

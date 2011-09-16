@@ -458,14 +458,15 @@ public class GateTask {
                         profile.getName(),
                         script.getName());
                 cancelAll(futures);
-                LOG.error("fail", e);
+                if (e.getCause() instanceof Error) {
+                    throw (Error) e.getCause();
+                }
             } catch (CancellationException e) {
                 failureCount++;
                 WGLOG.warn(e, "W00004",
                         sessionId,
                         profile.getName(),
                         script.getName());
-                LOG.info("fail", e);
             }
         }
         return failureCount;

@@ -175,6 +175,9 @@ public class DataModelClass implements DataClass {
     @Override
     public Property findProperty(String propertyName) {
         Precondition.checkMustNotBeNull(propertyName, "propertyName"); //$NON-NLS-1$
+        if (propertyName.trim().isEmpty()) {
+            return null;
+        }
         String normalName = JavaName.of(propertyName).toMemberName();
         return properties.get(normalName);
     }

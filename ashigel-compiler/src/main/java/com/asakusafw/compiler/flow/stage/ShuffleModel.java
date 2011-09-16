@@ -32,9 +32,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
  */
 public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
 
-    private StageBlock stageBlock;
+    private final StageBlock stageBlock;
 
-    private List<Segment> segments;
+    private final List<Segment> segments;
 
     /**
      * インスタンスを生成する。
@@ -94,19 +94,19 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
      */
     public static class Segment extends Compilable.Trait<CompiledShuffleFragment> {
 
-        private int elementId;
+        private final int elementId;
 
-        private int portId;
+        private final int portId;
 
-        private ShuffleDescription description;
+        private final ShuffleDescription description;
 
-        private FlowElementInput port;
+        private final FlowElementInput port;
 
-        private DataClass source;
+        private final DataClass source;
 
-        private DataClass target;
+        private final DataClass target;
 
-        private List<Term> terms;
+        private final List<Term> terms;
 
         /**
          * インスタンスを生成する。
@@ -205,6 +205,9 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
          */
         public Term findTerm(String propertyName) {
             Precondition.checkMustNotBeNull(propertyName, "propertyName"); //$NON-NLS-1$
+            if (propertyName.trim().isEmpty()) {
+                return null;
+            }
             String name = JavaName.of(propertyName).toMemberName();
             for (Term term : terms) {
                 if (term.getSource().getName().equals(name)) {
@@ -229,11 +232,11 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
      */
     public static class Term {
 
-        private int termId;
+        private final int termId;
 
-        private DataClass.Property source;
+        private final DataClass.Property source;
 
-        private Arrangement arrangement;
+        private final Arrangement arrangement;
 
         /**
          * インスタンスを生成する。

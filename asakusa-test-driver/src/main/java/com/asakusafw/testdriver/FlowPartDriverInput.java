@@ -20,13 +20,14 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 /**
  * フロー部品のテスト入力データオブジェクト。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> {
@@ -40,7 +41,7 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
 
     /**
      * コンストラクタ
-     * 
+     *
      * @param driverContext テストドライバコンテキスト。
      * @param descDriver フロー定義ドライバ。
      * @param name 入力の名前。
@@ -61,13 +62,32 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
 
     /**
      * テスト実行時に使用する入力データを指定する。
-     * 
+     *
      * @param sourcePath 入力データのパス。
      * @return this。
      */
     public FlowPartDriverInput<T> prepare(String sourcePath) {
         LOG.info("prepare - ModelType:" + getModelType() + ", SourcePath:" + sourcePath);
         setSourceUri(sourcePath);
+        return this;
+    }
+
+    /**
+     * テストデータのデータサイズを指定する。
+     *
+     * フロー部品のテスト時にAshigel Compilerに対して最適化のヒントを与えます
+     *
+     * @param dataSize データサイズ
+     * @return this。
+     * @throws UnsupportedOperationException DirectImpoterDescription以外に対する操作が行われた
+     */
+    public FlowPartDriverInput<T> withDataSize(DataSize dataSize) {
+        if (!(importerDescription instanceof DirectImporterDescription)) {
+            throw new UnsupportedOperationException("withDataSize method is only support DirectImporterDescription but was: "
+                    + importerDescription.getClass().getName());
+        } else {
+            ((DirectImporterDescription)importerDescription).setDataSize(dataSize);
+        }
         return this;
     }
 

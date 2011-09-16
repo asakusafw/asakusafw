@@ -41,9 +41,12 @@ public class SpiSourceProvider implements SourceProvider {
     }
 
     @Override
-    public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
+    public <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException {
         for (SourceProvider service : elements) {
-            DataModelSource result = service.open(definition, source);
+            DataModelSource result = service.open(definition, source, context);
             if (result != null) {
                 return result;
             }

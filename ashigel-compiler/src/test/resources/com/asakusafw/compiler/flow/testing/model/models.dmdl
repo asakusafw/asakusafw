@@ -1,3 +1,5 @@
+-- package com.asakusafw.compiler.flow
+
 @namespace(value = testing)
 part1 = {
     sid : LONG;
@@ -52,3 +54,8 @@ summarized ex_summarized2 = ex1 => {
     count sid -> count;
 } % key;
 
+@namespace(value = testing)
+summarized key_conflict = ex1 => {
+    any string -> key;
+    count string -> count;
+} % key;

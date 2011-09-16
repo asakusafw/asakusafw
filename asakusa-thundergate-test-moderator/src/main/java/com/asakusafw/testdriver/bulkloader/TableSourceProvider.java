@@ -30,10 +30,11 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.TestContext;
 
 /**
  * Provides {@link DataModelSource} from Database Table.
- * This accepts URI: bulkloader:<target_name>:<table_name>
+ * This accepts URI: {@code bulkloader:<target_name>:<table_name>}
  *
  * @since 0.2.2
  */
@@ -44,8 +45,10 @@ public class TableSourceProvider implements SourceProvider {
     private static final String SCHEME = "bulkloader";
 
     @Override
-    public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
-
+    public <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException {
         String scheme = source.getScheme();
         if (scheme == null || !scheme.equals(SCHEME)) {
             LOG.debug("Not a Bulkloader URI: {}", source);

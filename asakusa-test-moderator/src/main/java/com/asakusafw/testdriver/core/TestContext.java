@@ -25,6 +25,12 @@ import java.util.Map;
 public interface TestContext {
 
     /**
+     * Returns the class loader to load testing peripherals.
+     * @return the class loader
+     */
+    ClassLoader getClassLoader();
+
+    /**
      * Returns the user arguments.
      * @return the user arguments
      */
@@ -39,6 +45,11 @@ public interface TestContext {
         @Override
         public Map<String, String> getArguments() {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return ClassLoader.getSystemClassLoader();
         }
     }
 }

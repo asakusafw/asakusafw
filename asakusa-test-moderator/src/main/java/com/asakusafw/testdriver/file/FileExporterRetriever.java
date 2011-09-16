@@ -88,10 +88,10 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
             Path target;
             if (output == null) {
                 LOG.warn("エクスポート先のディレクトリはベースディレクトリなので削除されません: {}", path);
-                target = path;
+                target = fs.makeQualified(path);
             } else {
                 LOG.warn("エクスポート先をディレクトリごと削除します: {}", output);
-                target = output;
+                target = fs.makeQualified(output);
             }
             LOG.debug("ファイルを削除します: {}", target);
             boolean succeed = fs.delete(target, true);

@@ -269,7 +269,7 @@ public class TestResultInspector {
     private DataModelSource findSource(DataModelDefinition<?> definition, URI uri) throws IOException {
         assert definition != null;
         assert uri != null;
-        DataModelSource expected = sources.open(definition, uri);
+        DataModelSource expected = sources.open(definition, uri, context);
         if (expected == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to load an expected data set: {0}",

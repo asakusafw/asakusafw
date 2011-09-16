@@ -48,6 +48,16 @@ public abstract class ResourceManipulator {
     public abstract void cleanupDrain(ProcessScript<?> script) throws IOException;
 
     /**
+     * Creates a new source driver for the source of this resource.
+     * @param <T> target data model type
+     * @param script target process
+     * @return the created driver
+     * @throws IOException if failed to open this resource
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     */
+    public abstract <T> SourceDriver<T> createSourceForSource(ProcessScript<T> script) throws IOException;
+
+    /**
      * Creates a new drain driver for the source of this resource.
      * @param <T> target data model type
      * @param script target process

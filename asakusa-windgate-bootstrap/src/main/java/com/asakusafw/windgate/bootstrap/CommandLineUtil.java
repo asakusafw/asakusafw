@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -33,10 +34,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
@@ -52,9 +55,40 @@ public final class CommandLineUtil {
     static final Logger LOG = LoggerFactory.getLogger(CommandLineUtil.class);
 
     /**
+     * Prefix of system properties used for log context.
+     */
+    public static final String LOG_CONTEXT_PREFIX = "com.asakusafw.windgate.log.";
+
+    /**
      * The scheme name of Java class path.
      */
     public static final String SCHEME_CLASSPATH = "classpath";
+
+    /**
+     * Prepares log context.
+     * If current system properties contain keys with a special prefix
+     *  (described in {@link #LOG_CONTEXT_PREFIX}),
+     *  then this method will put each key-value pairs into log MDC.
+     */
+    public static void prepareLogContext() {
+        Map<String, String> registered = new TreeMap<String, String>();
+        Properties properties = System.getProperties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
+                continue;
+            }
+            String key = (String) entry.getKey();
+            if (key.startsWith(LOG_CONTEXT_PREFIX) == false) {
+                continue;
+            }
+            String value = (String) entry.getValue();
+            String name = key.substring(LOG_CONTEXT_PREFIX.length());
+            MDC.put(name, value);
+            registered.put(name, value);
+        }
+        LOG.debug("Log context is prepared: {}",
+                registered);
+    }
 
     /**
      * Returns the name of URI for hint.
@@ -76,6 +110,36 @@ public final class CommandLineUtil {
         } else {
             return name;
         }
+    }
+
+    /**
+     * Converts the path to the related URI.
+     * @param path target path
+     * @return the related URI
+     * @throws URISyntaxException if failed to convert the path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static URI toUri(String path) throws URISyntaxException {
+        if (path == null) {
+            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+        }
+        URI uri = new URI(path);
+        if (uri.getScheme() == null || uri.getScheme().length() != 1) {
+            return uri;
+        }
+        String os = System.getProperty("os.name", "UNKNOWN");
+        LOG.debug("Current OS name: {}",
+                os);
+        if (os.toLowerCase().startsWith("windows") == false) {
+            return uri;
+        }
+
+        File file = new File(path);
+        uri = file.toURI();
+        LOG.debug("Path \"{}\" may be an absolute path on Windows, converted into URI: {}",
+                path,
+                uri);
+        return uri;
     }
 
     /**

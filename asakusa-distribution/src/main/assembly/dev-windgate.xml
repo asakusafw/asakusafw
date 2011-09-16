@@ -81,6 +81,13 @@
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
+			<outputDirectory>windgate-ssh</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
 			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
 			<outputDirectory>experimental/bin</outputDirectory>
 			<includes>
@@ -101,13 +108,6 @@
 			<directory>../asakusa-cleaner/src/main/conf</directory>
 			<outputDirectory>cleaner/conf</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
-			<outputDirectory>experimental/bin</outputDirectory>
-			<fileMode>0744</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>

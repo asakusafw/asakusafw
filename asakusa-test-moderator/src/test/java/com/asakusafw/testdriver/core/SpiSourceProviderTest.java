@@ -29,14 +29,14 @@ import org.junit.Test;
 public class SpiSourceProviderTest extends SpiTestRoot {
 
     /**
-     * Test method for {@link SpiSourceProvider#open(DataModelDefinition, java.net.URI)}.
+     * Test method for {@link SpiSourceProvider#open(DataModelDefinition, URI, TestContext)}.
      * @throws Exception if failed
      */
     @Test
     public void open() throws Exception {
         ClassLoader cl = register(SourceProvider.class, Example.class);
         SpiSourceProvider target = new SpiSourceProvider(cl);
-        DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("testing:dummy"));
+        DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("testing:dummy"), new TestContext.Empty());
         assertThat(source, not(nullValue()));
         assertThat(ValueDefinition.of(String.class).toObject(source.next()), is("Hello, world!"));
     }
@@ -49,7 +49,7 @@ public class SpiSourceProviderTest extends SpiTestRoot {
     public void open_notfound() throws Exception {
         ClassLoader cl = register(SourceProvider.class, Example.class);
         SpiSourceProvider target = new SpiSourceProvider(cl);
-        DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("dummy:dummy"));
+        DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("dummy:dummy"), new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
 
@@ -59,7 +59,7 @@ public class SpiSourceProviderTest extends SpiTestRoot {
     public static class Example implements SourceProvider {
 
         @Override
-        public <T> DataModelSource open(DataModelDefinition<T> definition, URI source)
+        public <T> DataModelSource open(DataModelDefinition<T> definition, URI source, TestContext context)
                 throws IOException {
             if (source.getScheme().equals("testing") == false) {
                 return null;

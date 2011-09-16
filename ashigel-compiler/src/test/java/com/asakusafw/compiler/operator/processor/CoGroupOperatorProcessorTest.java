@@ -161,11 +161,29 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * voidでない。
+     * Key is not specified.
      */
     @Test
     public void noKey() {
         add("com.example.NoKey");
+        error(new CoGroupOperatorProcessor());
+    }
+
+    /**
+     * Grouping key has empty string.
+     */
+    @Test
+    public void emptyStringGroup() {
+        add("com.example.EmptyStringGroup");
+        error(new CoGroupOperatorProcessor());
+    }
+
+    /**
+     * Ordering key has empty string.
+     */
+    @Test
+    public void emptyStringOrder() {
+        add("com.example.EmptyStringOrder");
         error(new CoGroupOperatorProcessor());
     }
 

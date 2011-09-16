@@ -8,6 +8,7 @@ Asakusa Framework
     application/index
     dsl/index
     thundergate/index
+    windgate/index
     testing/index
     dmdl/index
     document/index

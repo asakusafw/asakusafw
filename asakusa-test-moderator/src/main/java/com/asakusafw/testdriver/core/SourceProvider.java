@@ -23,7 +23,7 @@ import java.net.URI;
  * <p>
  * Adding test data sources, clients can implement this
  * and put the class name in
- * {@code META-INF/services/com.asakusafw.testdriver.core.ModelSourceProvider}.
+ * {@code META-INF/services/com.asakusafw.testdriver.core.SourceProvider}.
  * </p>
  * @since 0.2.0
  */
@@ -39,10 +39,14 @@ public interface SourceProvider {
      * @param <T> type of data model
      * @param definition the data model definition
      * @param source the target identifier
+     * @param context the current testing context
      * @return the created {@link DataModelSource},
      *     or {@code null} if the specified source is not valid for this object
      * @throws IOException if failed to load a {@link DataModelSource} from the source
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException;
+    <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException;
 }

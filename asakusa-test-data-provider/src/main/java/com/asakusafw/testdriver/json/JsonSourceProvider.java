@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.TestContext;
 
 /**
  * Provides {@link DataModelSource} from JSON object enumeration.
@@ -45,8 +46,11 @@ public class JsonSourceProvider implements SourceProvider {
     private static final Charset ENCONDING = Charset.forName("UTF-8");
 
     @Override
-    public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
-        String path = source.getPath();
+    public <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException {
+        String path = source.getSchemeSpecificPart();
         if (path == null || path.endsWith(EXTENSION) == false) {
             return null;
         }

@@ -125,6 +125,10 @@ final class Util {
 
     static String normalize(String name) {
         assert name != null;
+        String trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            return trimmed;
+        }
         return JavaName.of(name).toMemberName();
     }
 

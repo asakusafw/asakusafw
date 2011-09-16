@@ -74,6 +74,7 @@ public class WindGateAbort {
      * @param args program arguments
      */
     public static void main(String... args) {
+        CommandLineUtil.prepareLogContext();
         WGLOG.info("I01000");
         int status = execute(args);
         WGLOG.info("I01999",
@@ -139,7 +140,7 @@ public class WindGateAbort {
 
         LOG.debug("Loading profile: {}", profile);
         try {
-            URI uri = new URI(profile);
+            URI uri = CommandLineUtil.toUri(profile);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
             result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
         } catch (Exception e) {
