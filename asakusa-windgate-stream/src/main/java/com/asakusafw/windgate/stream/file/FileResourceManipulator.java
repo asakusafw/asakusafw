@@ -88,6 +88,19 @@ public class FileResourceManipulator extends ResourceManipulator {
     }
 
     @Override
+    public <T> SourceDriver<T> createSourceForSource(ProcessScript<T> script) throws IOException {
+        if (script == null) {
+            throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
+        }
+        File path = FileResourceUtil.getPath(profile, script, arguments, DriverScript.Kind.SOURCE);
+        DataModelStreamSupport<? super T> support = FileResourceUtil.loadSupport(
+                profile, script, DriverScript.Kind.SOURCE);
+        T model = ProcessUtil.newDataModel(profile.getResourceName(), script);
+        FileInputStreamProvider provider = new FileInputStreamProvider(path);
+        return new StreamSourceDriver<T>(profile.getResourceName(), script.getName(), provider, support, model);
+    }
+
+    @Override
     public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$

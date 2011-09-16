@@ -88,6 +88,27 @@ public class FileResourceManipulatorTest {
     }
 
     /**
+     * Test method for {@link FileResourceManipulator#createSourceForSource(com.asakusafw.windgate.core.ProcessScript)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createSourceForSource() throws Exception {
+        File file = folder.newFile("file");
+        put(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
+
+        ProcessScript<StringBuilder> process = process("testing", driver(file), dummy());
+        FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
+
+        SourceDriver<StringBuilder> driver = manipulator.createSourceForSource(process);
+        try {
+            driver.prepare();
+            test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
+        } finally {
+            driver.close();
+        }
+    }
+
+    /**
      * Test method for {@link FileResourceManipulator#createDrainForSource(com.asakusafw.windgate.core.ProcessScript)}.
      * @throws Exception if failed
      */
