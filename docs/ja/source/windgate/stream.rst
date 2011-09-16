@@ -75,6 +75,16 @@ JDBC接続情報の削除
     # LOCAL
     resource.local=com.asakusafw.windgate.stream.file.FileResourceProvider
 
+プラグイン用jarファイルの追加
+=============================
+TSVファイル連携モジュール用のプラグイン( ``asakusa-windgate-stream`` )jarファイルをWindGateのプラグインディレクトリに配置します。
+
+以下のコマンドにて、Mavenローカルリポジトリ上の ``asakusa-windgate-stream`` のアーティファクトのjarファイルを ``$ASAKUSA_HOME/windgate/plugin`` 配下にコピーします。
+
+..  code-block:: sh
+
+    cp -p $HOME/.m2/repository/com/asakusafw/sandbox/asakusa-windgate-stream/0.1-SNAPSHOT/asakusa-windgate-stream-0.1-SNAPSHOT.jar $ASAKUSA_HOME/windgate/plugin
+
 モデルクラスの生成
 ==================
 
@@ -225,4 +235,75 @@ WindGateと連携してジョブフローの処理結果をローカルのファ
 
 ..  warning::
     エクスポート時のファイルパスにすでに同名のファイルが存在していた場合は、このファイルを上書きしてファイルを生成します。
+
+TSVファイルフォーマット仕様
+===========================
+WindGateのTSV連携機能で扱うTSVファイルのフォーマット仕様について説明します。
+
+..  warning::
+    現時点では、本項のTSVファイルフォーマットは暫定仕様です。
+
+TSVフォーマット概要
+-------------------
+* TSVファイルは、MySQLの ``SELECT ... INTO OUTFILE`` で、次の指定をした場合に生成されるファイルフォーマットと同一です（MySQL 5.1のデフォルト)
+    * ``FIELDS TERMINATED BY '\t' ENCLOSED BY '' ESCAPED BY '\\'``
+    * ``LINES TERMINATED BY '\n' STARTING BY ''``
+
+TSVフォーマット詳細
+-------------------
+* 各フィールドをDMDLスクリプトの順番に記述します。
+* フィールドの区切り文字にはタブ文字を使用します。
+* レコードの区切り文字は改行(LF)を使用します。
+    * CR+LF は使用できません。
+* エスケープ文字には「\」を使用します。
+    * エスケープ文字そのもの、改行(LF)、タブ文字をデータとして扱う場合は「/」を前に付加していエスケープします。
+* 引用文字は使用しません。
+* 最終レコードにも(LF)が必要です。
+* エンコーディングはUTF-8を使用します。
+* NULL値は「\n」で表します。
+* 空文字はフィールド区切り文字間に何も文字を入れないことで表現します。
+* 指数表記は使用しません。
+* Booleanは0/1で表します。
+    * 0:false , 1:true
+* Date, Datetimeは以下の書式で表します。
+    * Date: YYYY-MM-DD
+    * Datetime: YYYY-MM-DD HH:MM:SS
+
+TSVファイルのサンプル
+---------------------
+DMDLスクリプトに対応するTSVファイルの例を以下に示します。
+
+サンプル:DMDLスクリプト
+~~~~~~~~~~~~~~~~~~~~~~~
+..  code-block:: java
+
+    "テーブルEX1"
+    ... 
+    @windgate.stream_format(type="tsv")
+    ex1 = { 
+        "SID"
+        sid : LONG;
+        "VALUE"
+        value : INT;
+        "STRING"
+        string : TEXT;
+    };  
+
+サンプル:TSVファイル
+~~~~~~~~~~~~~~~~~~~~
+..  note::
+    以下サンプルのドキュメント上の区切り文字はスペースになっていますが、実際のファイルはタブ文字を使用してください。
+
+..  code-block:: java
+
+    1	111	hoge1
+    2	222	fuga2
+    3	333	bar3
+    4	111	hoge4
+    5	222	fuga5
+    6	333	bar6
+    7	111	hoge7
+    8	222	fuga8
+    9	444	bar9
+
 
