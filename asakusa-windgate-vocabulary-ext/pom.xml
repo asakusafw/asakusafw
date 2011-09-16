@@ -22,7 +22,7 @@
 	</licenses>
 
 	<properties>
-		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
+		<asakusafw.version>0.2.2-RC1</asakusafw.version>
 	</properties>
 
 	<packaging>jar</packaging>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-vocabulary</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>

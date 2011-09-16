@@ -22,7 +22,7 @@
 	</licenses>
 
 	<properties>
-		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
+		<asakusafw.version>0.2.2-RC1</asakusafw.version>
 	</properties>
 
 	<packaging>jar</packaging>
@@ -30,17 +30,17 @@
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-core</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-dmdl-core</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-dmdl-java</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
