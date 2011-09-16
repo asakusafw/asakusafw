@@ -46,7 +46,7 @@ public class JsonSourceProvider implements SourceProvider {
 
     @Override
     public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
-        String path = source.getPath();
+        String path = source.getSchemeSpecificPart();
         if (path == null || path.endsWith(EXTENSION) == false) {
             return null;
         }
