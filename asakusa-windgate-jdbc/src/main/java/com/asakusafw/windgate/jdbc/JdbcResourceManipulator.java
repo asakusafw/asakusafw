@@ -110,6 +110,26 @@ public class JdbcResourceManipulator extends ResourceManipulator {
     }
 
     @Override
+    public <T> SourceDriver<T> createSourceForSource(ProcessScript<T> script) throws IOException {
+        if (script == null) {
+            throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
+        }
+        JdbcScript<T> jdbc = JdbcResourceUtil.convert(profile, script, arguments, DriverScript.Kind.SOURCE);
+        T object = ProcessUtil.newDataModel(profile.getResourceName(), script);
+        boolean succeed = false;
+        Connection conn = profile.openConnection();
+        try {
+            JdbcSourceDriver<T> result = new JdbcSourceDriver<T>(profile, jdbc, conn, object);
+            succeed = true;
+            return result;
+        } finally {
+            if (succeed == false) {
+                close(conn);
+            }
+        }
+    }
+
+    @Override
     public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$

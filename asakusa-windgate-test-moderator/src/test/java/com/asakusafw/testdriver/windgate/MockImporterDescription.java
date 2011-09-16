@@ -20,7 +20,6 @@ import com.asakusafw.windgate.core.DriverScript;
 
 /**
  * Mock {@link WindGateImporterDescription}.
- * @since 0.2.2
  */
 public class MockImporterDescription extends WindGateImporterDescription {
 

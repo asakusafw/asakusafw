@@ -251,4 +251,9 @@ public class TestDriverContext implements TestContext {
     public FlowCompilerOptions getOptions() {
         return options;
     }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return callerClass.getClassLoader();
+    }
 }

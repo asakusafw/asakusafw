@@ -173,6 +173,37 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
+     * Test method for {@link JdbcResourceManipulator#createSourceForSource(com.asakusafw.windgate.core.ProcessScript)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createSourceForSource() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.CONDITION.key(), "KEY > 2"); // should be ignored
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+
+        ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
+
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (4, 'Hello4, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (5, 'Hello5, world!')");
+
+        JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
+
+        SourceDriver<Pair> driver = manipulator.createSourceForSource(process);
+        try {
+            driver.prepare();
+            test(driver, "Hello3, world!", "Hello4, world!", "Hello5, world!");
+        } finally {
+            driver.close();
+        }
+    }
+
+    /**
      * Test method for {@link JdbcResourceManipulator#createDrainForSource(com.asakusafw.windgate.core.ProcessScript)}.
      * @throws Exception if failed
      */
@@ -181,6 +212,7 @@ public class JdbcResourceManipulatorTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.CONDITION.key(), "KEY > 10"); // should be ignored
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
 
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");

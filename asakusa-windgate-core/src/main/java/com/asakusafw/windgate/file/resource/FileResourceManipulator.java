@@ -75,6 +75,12 @@ public class FileResourceManipulator extends ResourceManipulator {
     }
 
     @Override
+    public <T> SourceDriver<T> createSourceForSource(ProcessScript<T> script) throws IOException {
+        File file = FileResourceMirror.getPath(script, DriverScript.Kind.SOURCE);
+        return new FileSourceDriver<T>(script.getDataClass(), file);
+    }
+
+    @Override
     public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.SOURCE);
         return new FileDrainDriver<T>(script.getDataClass(), file);
