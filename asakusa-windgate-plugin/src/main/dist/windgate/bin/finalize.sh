@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cd
 usage() {
     cat 1>&2 <<EOF
 WindGate FInalizer
