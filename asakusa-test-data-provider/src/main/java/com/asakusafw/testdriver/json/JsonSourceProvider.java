@@ -50,7 +50,7 @@ public class JsonSourceProvider implements SourceProvider {
             DataModelDefinition<T> definition,
             URI source,
             TestContext context) throws IOException {
-        String path = source.getPath();
+        String path = source.getSchemeSpecificPart();
         if (path == null || path.endsWith(EXTENSION) == false) {
             return null;
         }
