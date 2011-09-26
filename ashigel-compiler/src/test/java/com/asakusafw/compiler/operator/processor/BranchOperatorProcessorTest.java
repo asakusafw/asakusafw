@@ -106,6 +106,18 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * Special words.
+     */
+    @Test
+    public void special_words() {
+        add("com.example.Reserved");
+        add("com.example.ReservedEnum");
+        ClassLoader loader = start(new BranchOperatorProcessor());
+
+        create(loader, "com.example.ReservedFactory");
+    }
+
+    /**
      * 空の列挙。
      */
     @Test

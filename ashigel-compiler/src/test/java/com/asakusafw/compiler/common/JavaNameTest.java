@@ -97,15 +97,19 @@ public class JavaNameTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void of_empty() {
-        JavaName.of("_");
+        JavaName.of("");
     }
 
     /**
      * {@link JavaName#of(String)}のテスト (only underscore)。
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void of_underscore() {
-        JavaName.of("_");
+        JavaName name = JavaName.of("_");
+        assertThat(name.getSegments().size(), is(0));
+        assertThat(name.toConstantName(), is("_"));
+        assertThat(name.toTypeName(), is("_"));
+        assertThat(name.toMemberName(), is("_"));
     }
 
     /**
