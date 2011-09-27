@@ -168,7 +168,7 @@ public class JavaName {
 
     private String escape(String result) {
         assert result != null;
-        return '_' + result;
+        return result + '_';
     }
 
     /**
