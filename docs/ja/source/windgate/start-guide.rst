@@ -66,6 +66,8 @@ WindGateが処理するインポート元、及びエクスポート先のJDBC�
 
 データベースにMySQL以外を使用する場合、JDBCドライバのjarファイルを ``$ASAKUSA_HOME/windgate/plugin`` 配下に配置してください。
 
+..  _profile-hadoop:
+
 Hadoopクライアント接続用プロファイル定義
 ----------------------------------------
 WindGateが処理するインポート先、及びエクスポート元のHadoopクライアント用ノードに対する設定を行います。
@@ -320,10 +322,12 @@ WindGate用デプロイアーカイブ
 ----------------------------
 WindGate用のデプロイアーカイブは以下を使用します。以下のアーカイブをそれぞれのホストの $ASAKUSA_HOME に配置して下さい。
 
-1. asakusa-distribution-${version}-prod-windgate-ssh.tar.gz
+1. asakusa-distribution-${version}-prod-windgate.tar.gz
+    * Asakusa Framework と WindGate が格納されているアーカイブ。
+2. asakusa-distribution-${version}-prod-windgate-ssh.tar.gz
     * HadoopクラスターのHadoopクライアントノードに展開するアーカイブ。
-2. asakusa-distribution-${version}-prod-windgate.tar.gz
-    * データベースノードに展開するアーカイブ。
+    * WindGateを配置するノードとHadoopクライアントとなるノードが異なるノードの場合は、このモジュールをHadoopクライアントノードに展開します。
+    * このモジュールを配置した上で、WindGateのプロファイル設定にて 「Hadoopクライアント用ノードがWindGateが動作するマシンのリモートに配置されている場合の設定」( :ref:`profile-hadoop` ) を指定します。
 
 配置後のコンフィグレーション
 ----------------------------
