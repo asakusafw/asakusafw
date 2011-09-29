@@ -17,21 +17,80 @@ package com.asakusafw.compiler.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Javaで使用する名前。
  */
 public class JavaName {
 
+    private static final Set<String> RESERVED;
+    static {
+        // see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.9
+        Set<String> set = new HashSet<String>();
+        set.add("abstract");
+        set.add("continue");
+        set.add("for");
+        set.add("new");
+        set.add("switch");
+        set.add("assert");
+        set.add("default");
+        set.add("if");
+        set.add("package");
+        set.add("synchronized");
+        set.add("boolean");
+        set.add("do");
+        set.add("goto");
+        set.add("private");
+        set.add("this");
+        set.add("break");
+        set.add("double");
+        set.add("implements");
+        set.add("protected");
+        set.add("throw");
+        set.add("byte");
+        set.add("else");
+        set.add("import");
+        set.add("public");
+        set.add("throws");
+        set.add("case");
+        set.add("enum");
+        set.add("instanceof");
+        set.add("return");
+        set.add("transient");
+        set.add("catch");
+        set.add("extends");
+        set.add("int");
+        set.add("short");
+        set.add("try");
+        set.add("char");
+        set.add("final");
+        set.add("interface");
+        set.add("static");
+        set.add("void");
+        set.add("class");
+        set.add("finally");
+        set.add("long");
+        set.add("strictfp");
+        set.add("volatile");
+        set.add("const");
+        set.add("float");
+        set.add("native");
+        set.add("super");
+        set.add("while");
+        RESERVED = Collections.unmodifiableSet(set);
+    }
+
+    private static final String EMPTY_NAME = "_";
+
     private final List<String> words;
 
     JavaName(List<? extends String> words) {
         if (words == null) {
             throw new NullPointerException("words"); //$NON-NLS-1$
-        }
-        if (words.isEmpty()) {
-            throw new IllegalArgumentException("words"); //$NON-NLS-1$
         }
         this.words = new ArrayList<String>();
         for (String word : words) {
@@ -45,8 +104,10 @@ public class JavaName {
      * @return 対応するこのクラスのオブジェクト
      */
     public static JavaName of(String nameString) {
-        if (nameString.indexOf('_') >= 0 || nameString.toUpperCase().equals(nameString)) {
-            String[] segments = nameString.split("_");
+        if (nameString.isEmpty()) {
+            throw new IllegalArgumentException("nameString must not be empty"); //$NON-NLS-1$
+        } else if (nameString.indexOf('_') >= 0 || nameString.toUpperCase().equals(nameString)) {
+            String[] segments = nameString.split(EMPTY_NAME);
             return new JavaName(normalize(Arrays.asList(segments)));
         } else {
             List<String> segments = new ArrayList<String>();
@@ -75,6 +136,9 @@ public class JavaName {
      * @return 型の名前と同様の形式
      */
     public String toTypeName() {
+        if (words.isEmpty()) {
+            return EMPTY_NAME;
+        }
         StringBuilder buf = new StringBuilder();
         for (int i = 0, n = words.size(); i < n; i++) {
             buf.append(capitalize(words.get(i)));
@@ -87,12 +151,24 @@ public class JavaName {
      * @return メンバーの名前と同様の形式
      */
     public String toMemberName() {
+        if (words.isEmpty()) {
+            return EMPTY_NAME;
+        }
         StringBuilder buf = new StringBuilder();
         buf.append(words.get(0).toLowerCase());
         for (int i = 1, n = words.size(); i < n; i++) {
             buf.append(capitalize(words.get(i)));
         }
-        return buf.toString();
+        String result = buf.toString();
+        if (RESERVED.contains(result) || Character.isJavaIdentifierStart(result.charAt(0)) == false) {
+            return escape(result);
+        }
+        return result;
+    }
+
+    private String escape(String result) {
+        assert result != null;
+        return result + '_';
     }
 
     /**
@@ -100,6 +176,9 @@ public class JavaName {
      * @return 定数の名前と同様の形式
      */
     public String toConstantName() {
+        if (words.isEmpty()) {
+            return EMPTY_NAME;
+        }
         StringBuilder buf = new StringBuilder();
         buf.append(words.get(0).toUpperCase());
         for (int i = 1, n = words.size(); i < n; i++) {
@@ -120,10 +199,10 @@ public class JavaName {
 
     /**
      * この名前の先頭のセグメントを削除する。
-     * @throws IllegalStateException この名前が単一のセグメントからなる場合
+     * @throws IllegalStateException この名前が空の場合
      */
     public void removeFirst() {
-        if (words.size() == 1) {
+        if (words.isEmpty()) {
             throw new IllegalStateException();
         }
         words.remove(0);
@@ -140,10 +219,10 @@ public class JavaName {
 
     /**
      * この名前の末尾のセグメントを削除する。
-     * @throws IllegalStateException この名前が単一のセグメントからなる場合
+     * @throws IllegalStateException この名前が空の場合
      */
     public void removeLast() {
-        if (words.size() == 1) {
+        if (words.isEmpty()) {
             throw new IllegalStateException();
         }
         words.remove(words.size() - 1);

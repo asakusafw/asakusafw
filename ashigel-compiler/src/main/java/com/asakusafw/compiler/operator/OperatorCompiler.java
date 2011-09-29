@@ -79,7 +79,7 @@ public class OperatorCompiler implements Processor {
             environment.getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
                     e.getMessage());
-            LOG.debug(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -191,6 +191,11 @@ public class OperatorCompiler implements Processor {
                     Diagnostic.Kind.ERROR,
                     e.getMessage());
             LOG.debug(e.getMessage(), e);
+        } catch (RuntimeException e) {
+            environment.getMessager().printMessage(Diagnostic.Kind.ERROR, MessageFormat.format(
+                    "演算子のコンパイルに失敗しました ({0})",
+                    e.toString()));
+            LOG.error("演算子のコンパイルに失敗しました", e);
         }
         return false;
     }
