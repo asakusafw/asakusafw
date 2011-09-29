@@ -98,6 +98,13 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
     }
 
     @Override
+    public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
+        for (JavaDataModelDriver driver : drivers) {
+            driver.generateResources(context, model);
+        }
+    }
+
+    @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException {
         List<Type> results = new ArrayList<Type>();
         for (JavaDataModelDriver driver : drivers) {

@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
@@ -33,6 +32,8 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  */
 public class SpiImporterPreparatorTest extends SpiTestRoot {
 
+    private static final TestContext EMPTY = new TestContext.Empty();
+
     /**
      * Test method for {@link SpiImporterPreparator#getDescriptionClass()}.
      */
@@ -43,7 +44,8 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
     }
 
     /**
-     * Test method for {@link SpiImporterPreparator#createOutput(DataModelDefinition, ImporterDescription)}.
+     * Test method for {@link SpiImporterPreparator#
+     * createOutput(DataModelDefinition, ImporterDescription, TestContext)}.
      * @throws IOException if failed
      */
     @Test
@@ -51,7 +53,7 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
         Desc desc = MockImporterPreparator.create();
         ClassLoader cl = register(ImporterPreparator.class, MockImporterPreparator.class);
         SpiImporterPreparator target = new SpiImporterPreparator(cl);
-        ModelOutput<String> source = target.createOutput(ValueDefinition.of(String.class), desc);
+        ModelOutput<String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
         source.write("Hello, world!");
         source.close();
 
@@ -66,6 +68,6 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
     public void open_notfound() throws IOException {
         Desc desc = MockImporterPreparator.create();
         SpiImporterPreparator target = new SpiImporterPreparator(getClass().getClassLoader());
-        target.createOutput(ValueDefinition.of(String.class), desc);
+        target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
     }
 }

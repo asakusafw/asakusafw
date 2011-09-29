@@ -40,6 +40,18 @@ import com.ashigeru.lang.java.model.syntax.Type;
 public abstract class JavaDataModelDriver {
 
     /**
+     * Generates any resources (includes source programs) for the model.
+     * This will be invoked once for each model.
+     * @param context the attached context
+     * @param model target model
+     * @throws IOException if failed to generate resources
+     * @since 0.2.2
+     */
+    public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
+        return;
+    }
+
+    /**
      * Returns the interface types to implement to the model.
      * @param context the attached context
      * @param model target model

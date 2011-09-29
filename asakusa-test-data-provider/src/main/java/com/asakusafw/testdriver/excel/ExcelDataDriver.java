@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 
 import org.apache.poi.ss.usermodel.Cell;
+
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelDefinition.Builder;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -238,7 +239,7 @@ class ExcelDataDriver {
         public void stringProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_STRING) {
                 throw new IOException(MessageFormat.format(
-                        "({0}, {1}, {2})の形式を判別できませんでした。先頭に ' を付けて文字列を表すようにしてください",
+                        "({0}, {1}, {2})の形式を判別できませんでした。先頭に '' を付けて文字列を表すようにしてください",
                         id,
                         context.getRowIndex() + 1,
                         context.getColumnIndex() + 1));

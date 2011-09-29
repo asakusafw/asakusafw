@@ -139,7 +139,8 @@ public abstract class DriverInputBase<T> {
      * @throws URISyntaxException 引数の値がURIとして不正な値であった場合
      */
     public URI toUri(String path) throws URISyntaxException {
-        URI uri = new URI(path);
+        // FIXME for invalid characters
+        URI uri = URI.create(path);
         if (uri.getScheme() != null) {
             return uri;
         }
@@ -152,9 +153,12 @@ public abstract class DriverInputBase<T> {
                     driverContext.getCallerClass().getName()));
         }
         URI resourceUri = url.toURI();
-        URI withFragmentUri = new URI(resourceUri.getScheme(), resourceUri.getUserInfo(), resourceUri.getHost(), resourceUri.getPort(),
-                resourceUri.getPath(), resourceUri.getQuery(), uri.getFragment());
-        return withFragmentUri;
+        if (uri.getFragment() == null) {
+            return resourceUri;
+        } else {
+            URI resolvedUri = URI.create(resourceUri.toString() + '#' + uri.getFragment());
+            return resolvedUri;
+        }
     }
 
 }

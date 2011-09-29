@@ -190,7 +190,7 @@ public final class JobFlowDriver {
             error(
                     null,
                     "ジョブフローのコンストラクターにはInかOutの入出力のみを指定できます ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
         }
     }
 
@@ -202,20 +202,20 @@ public final class JobFlowDriver {
             error(
                     null,
                     "ジョブフローの入力には型引数としてデータの種類を指定する必要があります ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
             return;
         }
         if (parameter.exporter != null) {
             error(
                     null,
                     "ジョブフローの入力には@Exportを指定できません ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
         }
         if (parameter.importer == null) {
             error(
                     null,
                     "ジョブフローの入力には@Importを指定する必要があります ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
             return;
         } else {
             String name = parameter.importer.name();
@@ -223,7 +223,7 @@ public final class JobFlowDriver {
                 error(
                         null,
                         "ジョブフローの入力の名前 \"{1}\" が正しくありません ({0}番目の引数)",
-                        parameter.index,
+                        parameter.getPosition(),
                         name);
                 return;
             }
@@ -236,7 +236,7 @@ public final class JobFlowDriver {
                         e,
                         "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (インスタンス化に失敗しました)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
 
@@ -245,7 +245,7 @@ public final class JobFlowDriver {
                         null,
                         "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (インポーター記述にデータの種類が指定されていません)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
             if (dataType.equals(importer.getModelType()) == false) {
@@ -253,7 +253,7 @@ public final class JobFlowDriver {
                         null,
                         "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (入力の型とインポーター記述の型が一致しません)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
             driver.createIn(name, importer);
@@ -268,20 +268,20 @@ public final class JobFlowDriver {
             error(
                     null,
                     "ジョブフローの出力には型引数としてデータの種類を指定する必要があります ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
             return;
         }
         if (parameter.importer != null) {
             error(
                     null,
                     "ジョブフローの出力には@Importを指定できません ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
         }
         if (parameter.exporter == null) {
             error(
                     null,
                     "ジョブフローの出力には@Exportを指定する必要があります ({0}番目の引数)",
-                    parameter.index);
+                    parameter.getPosition());
             return;
         } else {
             String name = parameter.exporter.name();
@@ -289,7 +289,7 @@ public final class JobFlowDriver {
                 error(
                         null,
                         "ジョブフローの出力の名前 \"{1}\" が正しくありません ({0}番目の引数)",
-                        parameter.index,
+                        parameter.getPosition(),
                         name);
                 return;
             }
@@ -303,7 +303,7 @@ public final class JobFlowDriver {
                         e,
                         "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (インスタンス化に失敗しました)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
 
@@ -312,7 +312,7 @@ public final class JobFlowDriver {
                         null,
                         "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (エクスポーター記述にデータの種類が指定されていません)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
             if (dataType.equals(exporter.getModelType()) == false) {
@@ -320,7 +320,7 @@ public final class JobFlowDriver {
                         null,
                         "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (出力の型とエクスポーター記述の型が一致しません)",
                         aClass.getName(),
-                        parameter.index);
+                        parameter.getPosition());
                 return;
             }
             driver.createOut(name, exporter);
@@ -415,6 +415,10 @@ public final class JobFlowDriver {
             this.type = type;
             this.importer = importer;
             this.exporter = exporter;
+        }
+
+        int getPosition() {
+            return index + 1;
         }
     }
 }

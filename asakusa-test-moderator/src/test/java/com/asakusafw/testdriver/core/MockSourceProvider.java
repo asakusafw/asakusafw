@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -64,7 +65,10 @@ public class MockSourceProvider implements SourceProvider {
     }
 
     @Override
-    public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) {
+    public <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException {
         return sources.get(source);
     }
 }

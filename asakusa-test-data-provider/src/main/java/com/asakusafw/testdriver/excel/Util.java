@@ -46,7 +46,7 @@ final class Util {
 
     static Sheet extract(URI source) throws IOException {
         assert source != null;
-        String path = source.getPath();
+        String path = source.getSchemeSpecificPart();
         if (path == null || path.endsWith(EXTENSION) == false) {
             LOG.debug("Not a Excel workbook: {}", source);
             return null;

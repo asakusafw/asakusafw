@@ -20,8 +20,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.input.CountingInputStream;
 
 import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
@@ -95,12 +99,18 @@ public class ExportFileReceive {
 
             // インプットストリームを生成
             is = process.getInputStream();
-            zIs = new ZipInputStream(is);
+            CountingInputStream counter = new CountingInputStream(is);
+            long totalStartTime = System.currentTimeMillis();
+
+            zIs = new ZipInputStream(counter);
 
             // ZIPファイルの終端まで繰り返す
             ZipEntry zipEntry = null;
 
             int fileSeq = 0;
+
+            // プロファイル用のテーブル
+            Map<String, TableTransferProfile> profiles = new TreeMap<String, TableTransferProfile>();
 
             while ((zipEntry = zIs.getNextEntry()) != null) {
                 // ファイル名を取得
@@ -119,6 +129,13 @@ public class ExportFileReceive {
                     return false;
                 }
 
+                // プロファイル情報の引当
+                TableTransferProfile profile = profiles.get(tableName);
+                if (profile == null) {
+                    profile = new TableTransferProfile(tableName);
+                    profiles.put(tableName, profile);
+                }
+
                 // ファイル名を作成
                 File file = FileNameUtil.createExportFilePath(
                         fileDirectry,
@@ -130,6 +147,9 @@ public class ExportFileReceive {
 
                 // ファイルを読み込んでローカルファイルに書き込む
                 Log.log(this.getClass(), MessageIdConst.EXP_FILERECEIV, tableName, file.getAbsolutePath());
+
+                long dumpStartTime = System.currentTimeMillis();
+                long dumpFileSize = 0;
 
                 FileOutputStream fos = null;
                 try {
@@ -150,9 +170,10 @@ public class ExportFileReceive {
                                     "Exportファイルの読み込みに失敗。エントリ名：" + zipEntry.getName());
                         }
                         // 入力ファイルの終端を察知する
-                        if (read == -1) {
+                        if (read < 0) {
                             break;
                         }
+                        dumpFileSize += read;
                         // ファイルを書き出す
                         try {
                             fos.write(b, 0, read);
@@ -166,6 +187,11 @@ public class ExportFileReceive {
                     }
                     // ファイル名を設定する
                     bean.getExportTargetTable(tableName).addExportFile(file);
+
+                    // プロファイル情報を加算する
+                    profile.elapsedTime += System.currentTimeMillis() - dumpStartTime;
+                    profile.fileSize += dumpFileSize;
+
                     Log.log(
                             this.getClass(),
                             MessageIdConst.EXP_FILERECEIV_SUCCESS,
@@ -182,6 +208,28 @@ public class ExportFileReceive {
                     }
                 }
             }
+
+            for (TableTransferProfile profile : profiles.values()) {
+                Log.log(
+                        getClass(),
+                        MessageIdConst.PRF_EXPORT_TRANSFER_TABLE,
+                        bean.getTargetName(),
+                        bean.getBatchId(),
+                        bean.getJobflowId(),
+                        bean.getExecutionId(),
+                        profile.tableName,
+                        profile.fileSize,
+                        profile.elapsedTime);
+            }
+            Log.log(
+                    getClass(),
+                    MessageIdConst.PRF_EXPORT_TRANSFER,
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId(),
+                    counter.getByteCount(),
+                    System.currentTimeMillis() - totalStartTime);
         } catch (BulkLoaderSystemException e) {
             Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
             return false;
@@ -310,5 +358,19 @@ public class ExportFileReceive {
                     + " 変数表：" + bulkloaderArgs);
         }
         return process;
+    }
+
+    private static final class TableTransferProfile {
+
+        TableTransferProfile(String tableName) {
+            assert tableName != null;
+            this.tableName = tableName;
+        }
+
+        String tableName;
+
+        long fileSize;
+
+        long elapsedTime;
     }
 }

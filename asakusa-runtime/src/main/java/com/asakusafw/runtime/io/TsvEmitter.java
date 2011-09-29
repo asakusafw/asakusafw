@@ -359,6 +359,12 @@ public class TsvEmitter implements RecordEmitter {
     }
 
     @Override
+    public void flush() throws IOException {
+        flushLineBuffer();
+        writer.flush();
+    }
+
+    @Override
     public void close() throws IOException {
         if (headOfLine == false) {
             endRecord();

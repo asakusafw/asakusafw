@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.TestContext;
 
 /**
  * Provides {@link DataModelSource} from Excel Sheet.
@@ -43,7 +44,10 @@ public class ExcelSheetSourceProvider implements SourceProvider {
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSourceProvider.class);
 
     @Override
-    public <T> DataModelSource open(DataModelDefinition<T> definition, URI source) throws IOException {
+    public <T> DataModelSource open(
+            DataModelDefinition<T> definition,
+            URI source,
+            TestContext context) throws IOException {
         Sheet sheet = Util.extract(source);
         if (sheet == null) {
             return null;

@@ -20,7 +20,6 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.asakusafw.testdriver.rule.VerifyRuleBuilder;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
@@ -38,19 +37,15 @@ public class TestResultInspector {
 
     private final ExporterRetriever<ExporterDescription> targets;
 
+    private final TestContext context;
+
     /**
      * Creates a new instance which uses registerd services.
      * @param serviceClassLoader class loader to load services
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TestResultInspector(ClassLoader serviceClassLoader) {
-        if (serviceClassLoader == null) {
-            throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
-        }
-        this.adapter = new SpiDataModelAdapter(serviceClassLoader);
-        this.sources = new SpiSourceProvider(serviceClassLoader);
-        this.rules = new SpiVerifyRuleProvider(serviceClassLoader);
-        this.targets = new SpiExporterRetriever(serviceClassLoader);
+        this(new TestContext.Empty(), serviceClassLoader);
     }
 
     /**
@@ -62,6 +57,46 @@ public class TestResultInspector {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TestResultInspector(
+            DataModelAdapter adapter,
+            SourceProvider sources,
+            VerifyRuleProvider rules,
+            ExporterRetriever<ExporterDescription> retrievers) {
+        this(new TestContext.Empty(), adapter, sources, rules, retrievers);
+    }
+
+    /**
+     * Creates a new instance which uses registerd services.
+     * @param context the current context
+     * @param serviceClassLoader class loader to load services
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.2
+     */
+    public TestResultInspector(TestContext context, ClassLoader serviceClassLoader) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (serviceClassLoader == null) {
+            throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
+        }
+        this.context = context;
+        this.adapter = new SpiDataModelAdapter(serviceClassLoader);
+        this.sources = new SpiSourceProvider(serviceClassLoader);
+        this.rules = new SpiVerifyRuleProvider(serviceClassLoader);
+        this.targets = new SpiExporterRetriever(serviceClassLoader);
+    }
+
+    /**
+     * Creates a new instance which uses the specified services.
+     * @param context the current context
+     * @param adapter data model driver
+     * @param sources test data provider
+     * @param rules verification rule provider
+     * @param retrievers test result retrievers
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.2
+     */
+    public TestResultInspector(
+            TestContext context,
             DataModelAdapter adapter,
             SourceProvider sources,
             VerifyRuleProvider rules,
@@ -78,6 +113,7 @@ public class TestResultInspector {
         if (retrievers == null) {
             throw new IllegalArgumentException("retrievers must not be null"); //$NON-NLS-1$
         }
+        this.context = context;
         this.adapter = adapter;
         this.sources = sources;
         this.rules = rules;
@@ -88,7 +124,7 @@ public class TestResultInspector {
      * Inspects the target exporter's output using specified expected data and rule.
      * @param modelClass class of data model
      * @param description target exporter
-     * @param context current verification context
+     * @param verifyContext current verification context
      * @param expected the expected data
      * @param rule the verification rule between expected and actual result
      * @return detected invalid differences
@@ -98,7 +134,7 @@ public class TestResultInspector {
     public List<Difference> inspect(
             Class<?> modelClass,
             ExporterDescription description,
-            VerifyContext context,
+            VerifyContext verifyContext,
             URI expected,
             URI rule) throws IOException {
         if (modelClass == null) {
@@ -107,8 +143,8 @@ public class TestResultInspector {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        if (context == null) {
-            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        if (verifyContext == null) {
+            throw new IllegalArgumentException("verifyContext must not be null"); //$NON-NLS-1$
         }
         if (expected == null) {
             throw new IllegalArgumentException("expected must not be null"); //$NON-NLS-1$
@@ -117,7 +153,7 @@ public class TestResultInspector {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<?> definition = findDefinition(modelClass);
-        VerifyRule ruleDesc = findRule(definition, context, rule);
+        VerifyRule ruleDesc = findRule(definition, verifyContext, rule);
         return inspect(modelClass, description, expected, ruleDesc);
     }
 
@@ -208,7 +244,7 @@ public class TestResultInspector {
         assert definition != null;
         assert description != null;
         assert engine != null;
-        DataModelSource target = targets.createSource(definition, description);
+        DataModelSource target = targets.createSource(definition, description, context);
         try {
             List<Difference> results = new ArrayList<Difference>();
             results.addAll(engine.inspectInput(target));
@@ -233,7 +269,7 @@ public class TestResultInspector {
     private DataModelSource findSource(DataModelDefinition<?> definition, URI uri) throws IOException {
         assert definition != null;
         assert uri != null;
-        DataModelSource expected = sources.open(definition, uri);
+        DataModelSource expected = sources.open(definition, uri, context);
         if (expected == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to load an expected data set: {0}",
@@ -243,11 +279,13 @@ public class TestResultInspector {
     }
 
     private VerifyRule findRule(
-            DataModelDefinition<?> definition, VerifyContext context, URI ruleUri) throws IOException {
+            DataModelDefinition<?> definition,
+            VerifyContext verifyContext,
+            URI ruleUri) throws IOException {
         assert definition != null;
-        assert context != null;
+        assert verifyContext != null;
         assert ruleUri != null;
-        VerifyRule rule = rules.get(definition, context, ruleUri);
+        VerifyRule rule = rules.get(definition, verifyContext, ruleUri);
         if (rule == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to load a verify rule: {0}",

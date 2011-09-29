@@ -15,7 +15,7 @@
  */
 package com.asakusafw.testdriver.rule;
 
-import java.util.Iterator;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -105,13 +105,24 @@ public class PropertyCondition<T> {
         T e = type.cast(expected);
         T a = type.cast(actual);
         StringBuilder buf = new StringBuilder();
-        Iterator<? extends ValuePredicate<? super T>> iter = predicates.iterator();
-        assert iter.hasNext();
-        buf.append(iter.next().describeExpected(e, a));
-        while (iter.hasNext()) {
-            buf.append("、または");
-            buf.append(iter.next().describeExpected(e, a));
+        boolean sawDescription = false;
+        for (ValuePredicate<? super T> pred : predicates) {
+            String description = pred.describeExpected(e, a);
+            if (description == null) {
+                continue;
+            }
+            if (sawDescription) {
+                buf.append("または");
+            }
+            sawDescription = true;
+            buf.append(MessageFormat.format(
+                    "「{0}」",
+                    description));
         }
-        return buf.toString();
+        if (sawDescription) {
+            return buf.toString();
+        } else {
+            return "(期待値とルールの組み合わせが正しくない)";
+        }
     }
 }

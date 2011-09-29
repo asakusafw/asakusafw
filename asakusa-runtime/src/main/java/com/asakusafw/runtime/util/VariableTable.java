@@ -103,6 +103,22 @@ public class VariableTable {
     }
 
     /**
+     * この変数表に新しい変数を定義する。
+     * @param variableMap 変数の一覧
+     * @throws IllegalArgumentException 変数の再定義が不可能で同名の変数が定義済みである場合、
+     *     または引数に{@code null}が指定された場合
+     * @since 0.2.2
+     */
+    public void defineVariables(Map<String, String> variableMap) {
+        if (variableMap == null) {
+            throw new IllegalArgumentException("variableMap must not be null"); //$NON-NLS-1$
+        }
+        for (Map.Entry<String, String> entry : variableMap.entrySet()) {
+            defineVariable(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
      * この変数表の内容を、{@link #defineVariables(String)}で利用可能な文字列に変換して返す。
      * @return 変数表の内容
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合

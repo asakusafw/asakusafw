@@ -56,6 +56,11 @@
 			<artifactId>commons-cli</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.ashigeru.lang.java</groupId>
+			<artifactId>jsr199-testing</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<scope>test</scope>
@@ -65,10 +70,5 @@
 			<artifactId>junit-dep</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
-			<artifactId>jsr199-testing</artifactId>
-		</dependency>
 	</dependencies>
-
 </project>

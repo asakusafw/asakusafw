@@ -19,10 +19,9 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.runtime.flow.ResultOutput;
+import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
  * スロットごとに出力を振り分ける{@link Reducer}の骨格。
@@ -41,7 +40,7 @@ public abstract class SlotSorter extends Reducer<
      */
     public static final String NAME_CREATE_SLOT_OBJECTS = "createSlotObjects";
 
-    private MultipleOutputs<Object, Object> outputs;
+    private StageOutputDriver output;
 
     private Writable[] objects;
 
@@ -67,18 +66,18 @@ public abstract class SlotSorter extends Reducer<
         if (objects.length != names.length) {
             throw new AssertionError("inconsistent slot object and output");
         }
-        this.outputs = new MultipleOutputs<Object, Object>(context);
+        this.output = new StageOutputDriver(context);
         this.results = new Result[objects.length];
         for (int i = 0; i < objects.length; i++) {
             String name = names[i];
-            results[i] = new ResultOutput<Writable>(outputs, name);
+            results[i] = output.getResultSink(name);
         }
     }
 
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
-        this.outputs.close();
-        this.outputs = null;
+        this.output.close();
+        this.output = null;
         this.objects = null;
         this.results = null;
     }

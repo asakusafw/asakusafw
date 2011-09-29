@@ -84,6 +84,7 @@ public class FlowPartTester extends TestDriverBase {
     /**
      * フロー部品のテストを実行し、テスト結果を検証する。
      * @param flowDescription フロー部品クラスのインスタンス
+     * @throws IllegalStateException 入出力や検査ルールの用意に失敗した場合
      */
     public void runTest(FlowDescription flowDescription) {
         try {
@@ -119,9 +120,11 @@ public class FlowPartTester extends TestDriverBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
+        JobflowExecutor executor = new JobflowExecutor(driverContext);
+        driverContext.prepareCurrentJobflow(jobflowInfo);
+
         // 初期化
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
-        JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
 

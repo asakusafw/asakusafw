@@ -29,6 +29,7 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.SourceProvider;
 import com.asakusafw.testdriver.core.SpiSourceProvider;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -46,7 +47,7 @@ public class JsonSourceProviderTest {
     @Test
     public void simple() throws Exception {
         JsonSourceProvider provider = new JsonSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, uri("simple.json"));
+        DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty());
         assertThat(source, not(nullValue()));
         try {
             Simple s1 = SIMPLE.toObject(source.next());
@@ -64,7 +65,7 @@ public class JsonSourceProviderTest {
     @Test
     public void spi() throws Exception {
         SourceProvider provider = new SpiSourceProvider(JsonSourceProvider.class.getClassLoader());
-        DataModelSource source = provider.open(SIMPLE, uri("simple.json"));
+        DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty());
         assertThat(source, not(nullValue()));
         try {
             Simple s1 = SIMPLE.toObject(source.next());
@@ -82,7 +83,7 @@ public class JsonSourceProviderTest {
     @Test
     public void invalid_extension() throws Exception {
         JsonSourceProvider provider = new JsonSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, uri("simple.txt"));
+        DataModelSource source = provider.open(SIMPLE, uri("simple.txt"), new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
 
@@ -101,7 +102,7 @@ public class JsonSourceProviderTest {
             throw new AssertionError(e);
         }
         JsonSourceProvider provider = new JsonSourceProvider();
-        provider.open(SIMPLE, uri);
+        provider.open(SIMPLE, uri, new TestContext.Empty());
     }
 
     private URI uri(String name) {

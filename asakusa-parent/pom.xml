@@ -17,6 +17,11 @@
 		</license>
 	</licenses>
 
+	<organization>
+		<name>Asakusa Framework Team</name>
+	</organization>
+	<inceptionYear>2011</inceptionYear>
+
 	<properties>
 		<cloudera.cdh.version>0.20.2-cdh3u0</cloudera.cdh.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
@@ -285,8 +290,6 @@ encoding/<project>=UTF-8
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
-					<footer>
-					</footer>
 				</configuration>
 				<reportSets>
 					<reportSet>

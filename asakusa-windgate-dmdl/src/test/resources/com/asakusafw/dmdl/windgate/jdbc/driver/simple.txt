@@ -1,0 +1,4 @@
+simple = {
+    @windgate.column(value = "VALUE")
+    value : TEXT;
+};

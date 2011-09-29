@@ -29,7 +29,7 @@ public class BothAreNull implements ValuePredicate<Object> {
     @Override
     public String describeExpected(Object expected, Object actual) {
         if (expected != null) {
-            return "(never)";
+            return null;
         }
         return "is null";
     }

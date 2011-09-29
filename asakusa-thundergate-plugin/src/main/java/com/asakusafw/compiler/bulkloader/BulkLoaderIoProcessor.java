@@ -280,7 +280,20 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private String normalize(String name) {
         assert name != null;
-        return JavaName.of(name).toMemberName();
+        assert name.trim().isEmpty() == false;
+        String memberName = JavaName.of(name).toMemberName();
+        StringBuilder buf = new StringBuilder();
+        for (char c : memberName.toCharArray()) {
+            if (('A' <= c && c <= 'Z')
+                    || ('a' <= c && c <= 'z')
+                    || ('0' <= c && c <= '9')) {
+                buf.append(c);
+            }
+        }
+        if (buf.length() == 0) {
+            buf.append("0");
+        }
+        return buf.toString();
     }
 
     @Override

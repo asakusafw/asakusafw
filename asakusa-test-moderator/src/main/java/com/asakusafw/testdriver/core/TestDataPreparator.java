@@ -18,7 +18,6 @@ package com.asakusafw.testdriver.core;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
-
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -37,19 +36,15 @@ public class TestDataPreparator {
 
     private final ExporterRetriever<ExporterDescription> exporters;
 
+    private final TestContext context;
+
     /**
      * Creates a new instance which uses registerd services.
      * @param serviceClassLoader class loader to load services
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TestDataPreparator(ClassLoader serviceClassLoader) {
-        if (serviceClassLoader == null) {
-            throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
-        }
-        this.adapter = new SpiDataModelAdapter(serviceClassLoader);
-        this.sources = new SpiSourceProvider(serviceClassLoader);
-        this.importers = new SpiImporterPreparator(serviceClassLoader);
-        this.exporters = new SpiExporterRetriever(serviceClassLoader);
+        this(new TestContext.Empty(), serviceClassLoader);
     }
 
     /**
@@ -65,6 +60,47 @@ public class TestDataPreparator {
             SourceProvider sources,
             ImporterPreparator<ImporterDescription> importers,
             ExporterRetriever<ExporterDescription> exporters) {
+        this(new TestContext.Empty(), adapter, sources, importers, exporters);
+    }
+
+    /**
+     * Creates a new instance which uses registerd services.
+     * @param context the current context
+     * @param serviceClassLoader class loader to load services
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public TestDataPreparator(TestContext context, ClassLoader serviceClassLoader) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (serviceClassLoader == null) {
+            throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
+        }
+        this.context = context;
+        this.adapter = new SpiDataModelAdapter(serviceClassLoader);
+        this.sources = new SpiSourceProvider(serviceClassLoader);
+        this.importers = new SpiImporterPreparator(serviceClassLoader);
+        this.exporters = new SpiExporterRetriever(serviceClassLoader);
+    }
+
+    /**
+     * Creates a new instance which uses the specified services.
+     * @param context the current context
+     * @param adapter data model adapter
+     * @param sources test data provider
+     * @param importers test data deployer for import source
+     * @param exporters test data deployer for export target
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public TestDataPreparator(
+            TestContext context,
+            DataModelAdapter adapter,
+            SourceProvider sources,
+            ImporterPreparator<ImporterDescription> importers,
+            ExporterRetriever<ExporterDescription> exporters) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
         if (adapter == null) {
             throw new IllegalArgumentException("adapter must not be null"); //$NON-NLS-1$
         }
@@ -77,6 +113,7 @@ public class TestDataPreparator {
         if (exporters == null) {
             throw new IllegalArgumentException("exporters must not be null"); //$NON-NLS-1$
         }
+        this.context = context;
         this.adapter = adapter;
         this.sources = sources;
         this.importers = importers;
@@ -103,7 +140,7 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
-        return importers.createOutput(definition, description);
+        return importers.createOutput(definition, description, context);
     }
 
     /**
@@ -126,7 +163,7 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
-        return exporters.createOutput(definition, description);
+        return exporters.createOutput(definition, description, context);
     }
 
     /**
@@ -183,7 +220,7 @@ public class TestDataPreparator {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        importers.truncate(description);
+        importers.truncate(description, context);
     }
 
     /**
@@ -196,7 +233,7 @@ public class TestDataPreparator {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        exporters.truncate(description);
+        exporters.truncate(description, context);
     }
 
     private <T> DataModelDefinition<T> findDefinition(Class<T> type) throws IOException {
@@ -217,7 +254,7 @@ public class TestDataPreparator {
         assert definition != null;
         assert desctipion != null;
         assert source != null;
-        ModelOutput<T> output = importers.createOutput(definition, desctipion);
+        ModelOutput<T> output = importers.createOutput(definition, desctipion, context);
         prepare(definition, output, source);
     }
 
@@ -228,7 +265,7 @@ public class TestDataPreparator {
         assert definition != null;
         assert desctipion != null;
         assert source != null;
-        ModelOutput<T> output = exporters.createOutput(definition, desctipion);
+        ModelOutput<T> output = exporters.createOutput(definition, desctipion, context);
         prepare(definition, output, source);
     }
 
@@ -237,7 +274,7 @@ public class TestDataPreparator {
             ModelOutput<T> output,
             URI source) throws IOException {
         try {
-            DataModelSource input = sources.open(definition, source);
+            DataModelSource input = sources.open(definition, source, context);
             if (input == null) {
                 throw new IOException(MessageFormat.format(
                         "Failed to open source: {0} (handler not found)",
