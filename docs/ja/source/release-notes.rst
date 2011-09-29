@@ -4,8 +4,41 @@
 Asakusa Framework Release Notes
 ===============================
 
+Release 0.2.2
+=============
+Sep 29, 2011
+
+Enhancements
+------------
+* [ :issue:`61` ] - ThunderGate log messages improvement
+* [ :issue:`64` ] - Enable to input expect data from database table.
+* [ :issue:`69` ] - **[EXPERIMENTAL FEATURE]** WindGate
+    * See: :doc:`windgate/index`
+* [ :issue:`74` ] - Write framework version to build.log at batch compile
+
+Bug fixes
+---------
+* [ :issue:`53` ] - Batch compile error message on importer type unmatch seems strange
+* [ :issue:`57` ] - Correct messages
+* [ :issue:`58` ] - Error message when jobflow output missing is difficult to understand
+* [ :issue:`65` ] - Redundant assert log message with date type.
+* [ :issue:`71` ] - FlowPartTester#setOptimaze seems does not work
+* [ :issue:`72` ] - Invalid summarize operation if grouping key is also used for aggregation
+* [ :issue:`73` ] - Raised internal error if grouping key is an empty string
+* [ :issue:`75` ] - It is cause error using excel file in jar as tester input
+* [ :issue:`76` ] - It is difficult to understand message \*Tester test failed
+* [ :issue:`77` ] - Exponent notation is not suitable \*Tester test message when DecimalOption assertion failed
+* [ :issue:`80` ] - Failed to compile operator by using reserved keywords in Java for Enum constant
+
+Others
+------
+* [ :issue:`54` ] - 0.2.2 Documentation
+
+----
+
 Release 0.2.1
 =============
+Jul 27, 2011
 
 Enhancements
 ------------
@@ -25,8 +58,11 @@ Others
 ------
 * [ :issue:`52` ] - 0.2.1 Documentation
 
+----
+
 Release 0.2.0
 =============
+Jun 29, 2011
 
 Enhancements
 ------------
@@ -79,3 +115,12 @@ Bug fixes
 Others
 ------
 * [ :issue:`25` ] - 0.2.0 Documentation
+
+----
+
+Release 0.1.0
+=============
+Mar 30, 2011
+
+* The first release of Asakusa Framework.
+
