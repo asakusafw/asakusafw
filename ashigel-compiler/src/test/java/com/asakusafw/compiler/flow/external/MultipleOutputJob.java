@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.flow.epilogue.parallel;
+package com.asakusafw.compiler.flow.external;
 
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
@@ -27,20 +27,20 @@ import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * 単一の出力のみを行うジョブ。
+ * Job which output multiple file sets.
  */
 @JobFlow(name = "job")
 public class MultipleOutputJob extends FlowDescription {
 
-    private In<Ex1> input;
+    private final In<Ex1> input;
 
-    private Out<Ex1> output1;
+    private final Out<Ex1> output1;
 
-    private Out<Ex1> output2;
+    private final Out<Ex1> output2;
 
-    private Out<Ex1> output3;
+    private final Out<Ex1> output3;
 
-    private Out<Ex1> output4;
+    private final Out<Ex1> output4;
 
     /**
      * インスタンスを生成する。

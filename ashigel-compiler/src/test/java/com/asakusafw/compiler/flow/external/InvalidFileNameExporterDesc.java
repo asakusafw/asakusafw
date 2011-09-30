@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.flow.epilogue.parallel;
+package com.asakusafw.compiler.flow.external;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
- * テスト用の出力定義。
+ * Exporter desc with invalid file name.
  */
-public class Out3ExporterDesc extends FileExporterDescription {
+public class InvalidFileNameExporterDesc extends FileExporterDescription {
 
     @Override
     public Class<?> getModelType() {
@@ -30,6 +30,6 @@ public class Out3ExporterDesc extends FileExporterDescription {
 
     @Override
     public String getPathPrefix() {
-        return "target/testing/exporting/out3-*";
+        return "target/testing/_INVALID-*";
     }
 }

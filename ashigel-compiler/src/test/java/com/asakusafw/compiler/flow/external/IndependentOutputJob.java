@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.flow.epilogue.parallel;
+package com.asakusafw.compiler.flow.external;
 
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
@@ -27,33 +27,43 @@ import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * 単一の出力のみを行うジョブ。
+ * Job which output nested file sets.
  */
 @JobFlow(name = "job")
-public class SingleOutputJob extends FlowDescription {
+public class IndependentOutputJob extends FlowDescription {
 
-    private In<Ex1> input;
+    private final In<Ex1> input;
 
-    private Out<Ex1> output1;
+    private final Out<Ex1> output;
+
+    private final Out<Ex1> independent;
 
     /**
-     * インスタンスを生成する。
-     * @param input 入力
-     * @param output1 出力(1)
+     * Creates a new instance.
+     * @param input input
+     * @param output output
+     * @param independent output to independent directory
      */
-    public SingleOutputJob(
+    public IndependentOutputJob(
             @Import(name = "input", description = Ex1MockImporterDescription.class)
             In<Ex1> input,
-            @Export(name = "out1", description = Out1ExporterDesc.class)
-            Out<Ex1> output1) {
+            @Export(name = "output", description = Out1ExporterDesc.class)
+            Out<Ex1> output,
+            @Export(name = "independent", description = IndependentOutExporterDesc.class)
+            Out<Ex1> independent) {
         this.input = input;
-        this.output1 = output1;
+        this.output = output;
+        this.independent = independent;
     }
 
     @Override
     protected void describe() {
         ExOperatorFactory op = new ExOperatorFactory();
-        Update result = op.update(input, 100);
-        output1.add(result.out);
+
+        Update result1 = op.update(input, 100);
+        output.add(result1.out);
+
+        Update result2 = op.update(input, 200);
+        independent.add(result2.out);
     }
 }

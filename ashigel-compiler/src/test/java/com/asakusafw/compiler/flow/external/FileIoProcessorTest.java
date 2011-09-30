@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.flow.epilogue.parallel;
+package com.asakusafw.compiler.flow.external;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -26,16 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.external.IndependentOutExporterDesc;
-import com.asakusafw.compiler.flow.external.IndependentOutputJob;
-import com.asakusafw.compiler.flow.external.MultipleOutputJob;
-import com.asakusafw.compiler.flow.external.NestedOutExporterDesc;
-import com.asakusafw.compiler.flow.external.NestedOutputJob;
-import com.asakusafw.compiler.flow.external.Out1ExporterDesc;
-import com.asakusafw.compiler.flow.external.Out2ExporterDesc;
-import com.asakusafw.compiler.flow.external.Out3ExporterDesc;
-import com.asakusafw.compiler.flow.external.Out4ExporterDesc;
-import com.asakusafw.compiler.flow.external.SingleOutputJob;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.util.CompilerTester;
@@ -44,15 +34,60 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
- * Test for {@link ParallelSortClientEmitter}.
+ * Test for {@link FileIoProcessor}.
  */
-public class ParallelSortClientEmitterTest {
+public class FileIoProcessorTest {
 
     /**
      * Test helper.
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
+
+    /**
+     * validated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void validate() throws Exception {
+        tester.compileJobflow(SingleOutputJob.class);
+    }
+
+    /**
+     * missing path.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_missing_path() throws Exception {
+        tester.compileJobflow(MissingPathOutputJob.class);
+    }
+
+    /**
+     * invalid file name.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_inavalid_file_name() throws Exception {
+        tester.compileJobflow(InvalidFileNameOutputJob.class);
+    }
+
+    /**
+     * singular path.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_singular_file() throws Exception {
+        tester.compileJobflow(SingularOutputJob.class);
+    }
+
+    /**
+     * root folder.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_root() throws Exception {
+        tester.compileJobflow(RootOutputJob.class);
+    }
 
     /**
      * Output single file set.

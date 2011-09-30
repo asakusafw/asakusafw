@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.compiler.flow.epilogue.parallel;
+package com.asakusafw.compiler.flow.external;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
@@ -21,7 +21,7 @@ import com.asakusafw.vocabulary.external.FileExporterDescription;
 /**
  * テスト用の出力定義。
  */
-public class Out1ExporterDesc extends FileExporterDescription {
+public class IndependentOutExporterDesc extends FileExporterDescription {
 
     @Override
     public Class<?> getModelType() {
@@ -30,6 +30,6 @@ public class Out1ExporterDesc extends FileExporterDescription {
 
     @Override
     public String getPathPrefix() {
-        return "target/testing/exporting/out1-*";
+        return "target/testing/independent/out-*";
     }
 }
