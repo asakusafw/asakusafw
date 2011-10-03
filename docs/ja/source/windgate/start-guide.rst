@@ -316,7 +316,7 @@ Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタ
     
 Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイ
 =======================================================
-Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイについては、基本的な流れはThunderGateの場合( :doc:`../application/maven-archetype` )と同様ですが、デプロイするAsakusa FrameworkのアーカイブはWindGate用のアーカイブを使用します。以下を使用して下さい。
+Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイについては、基本的な流れはThunderGateの場合( :doc:`../application/administrator-guide` )と同様ですが、デプロイするAsakusa FrameworkのアーカイブはWindGate用のアーカイブを使用します。以下を使用して下さい。
 
 WindGate用デプロイアーカイブ
 ----------------------------
