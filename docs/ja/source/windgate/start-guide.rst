@@ -95,7 +95,7 @@ SSH接続情報は以下のプロパティに設定します。
     resource.hadoop.target=/home/asakusa/asakusa/windgate-ssh
 
     # SSH接続ユーザ
-    resource.hadoop.user=asakuse
+    resource.hadoop.user=asakusa
 
     # SSH接続ホスト
     resource.hadoop.host=localhost
