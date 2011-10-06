@@ -18,6 +18,7 @@ package com.asakusafw.testdriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
 
 /**
@@ -83,6 +84,17 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
         LOG.info("verify - ModelType:" + modelType);
         setExpectedUri(expectedPath);
         setModelVerifier(modelVerifier);
+        return this;
+    }
+
+    /**
+     * テスト結果のデータを受け取るオブジェクトのファクトリを指定する (experimental)。
+     * @param factory テスト結果のデータを受け取るオブジェクトのファクトリ
+     * @return this
+     */
+    public JobFlowDriverOutput<T> dump(DataModelSinkFactory factory) {
+        LOG.info("dump: {}", factory);
+        setResultSink(new DataModelSinkHolder(factory));
         return this;
     }
 }

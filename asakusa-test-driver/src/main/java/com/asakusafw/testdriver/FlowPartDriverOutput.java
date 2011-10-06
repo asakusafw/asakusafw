@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
@@ -103,6 +104,17 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
         LOG.info("verify - ModelType:" + modelType);
         setExpectedUri(expectedPath);
         setModelVerifier(modelVerifier);
+        return this;
+    }
+
+    /**
+     * テスト結果のデータを受け取るオブジェクトのファクトリを指定する (experimental)。
+     * @param factory テスト結果のデータを受け取るオブジェクトのファクトリ
+     * @return this
+     */
+    public FlowPartDriverOutput<T> dump(DataModelSinkFactory factory) {
+        LOG.info("dump: {}", factory);
+        setResultSink(new DataModelSinkHolder(factory));
         return this;
     }
 

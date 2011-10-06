@@ -137,6 +137,28 @@ public class TestResultInspector {
             VerifyContext verifyContext,
             URI expected,
             URI rule) throws IOException {
+        return inspect(modelClass, description, verifyContext, expected, rule, null);
+    }
+
+    /**
+     * Inspects the target exporter's output using specified expected data and rule.
+     * @param modelClass class of data model
+     * @param description target exporter
+     * @param verifyContext current verification context
+     * @param expected the expected data
+     * @param rule the verification rule between expected and actual result
+     * @param resultDataSink the actual result sink (nullable)
+     * @return detected invalid differences
+     * @throws IOException if failed to inspect the result
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public List<Difference> inspect(
+            Class<?> modelClass,
+            ExporterDescription description,
+            VerifyContext verifyContext,
+            URI expected,
+            URI rule,
+            DataModelSinkFactory resultDataSink) throws IOException {
         if (modelClass == null) {
             throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
         }
@@ -154,7 +176,7 @@ public class TestResultInspector {
         }
         DataModelDefinition<?> definition = findDefinition(modelClass);
         VerifyRule ruleDesc = findRule(definition, verifyContext, rule);
-        return inspect(modelClass, description, expected, ruleDesc);
+        return inspect(modelClass, description, expected, ruleDesc, resultDataSink);
     }
 
     /**
@@ -207,6 +229,26 @@ public class TestResultInspector {
             ExporterDescription description,
             URI expected,
             VerifyRule rule) throws IOException {
+        return inspect(modelClass, description, expected, rule, null);
+    }
+
+    /**
+     * Inspects the target exporter's output using specified expected data and rule.
+     * @param modelClass class of data model
+     * @param description target exporter
+     * @param expected the expected data
+     * @param rule the verification rule between expected and actual result
+     * @param resultDataSink the actual result sink (nullable)
+     * @return detected invalid differences
+     * @throws IOException if failed to inspect the result
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public List<Difference> inspect(
+            Class<?> modelClass,
+            ExporterDescription description,
+            URI expected,
+            VerifyRule rule,
+            DataModelSinkFactory resultDataSink) throws IOException {
         if (modelClass == null) {
             throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
         }
@@ -222,7 +264,7 @@ public class TestResultInspector {
         DataModelDefinition<?> definition = findDefinition(modelClass);
         DataModelSource expectedDesc = findSource(definition, expected);
         VerifyEngine engine = buildVerifier(definition, rule, expectedDesc);
-        List<Difference> results = inspect(definition, description, engine);
+        List<Difference> results = inspect(definition, description, engine, resultDataSink);
         return results;
     }
 
@@ -240,12 +282,16 @@ public class TestResultInspector {
     private <T> List<Difference> inspect(
             DataModelDefinition<T> definition,
             ExporterDescription description,
-            VerifyEngine engine) throws IOException {
+            VerifyEngine engine,
+            DataModelSinkFactory sinkOrNull) throws IOException {
         assert definition != null;
         assert description != null;
         assert engine != null;
         DataModelSource target = targets.createSource(definition, description, context);
         try {
+            if (sinkOrNull != null) {
+                target = new TeeDataModelSource(target, sinkOrNull.createSink(definition, context));
+            }
             List<Difference> results = new ArrayList<Difference>();
             results.addAll(engine.inspectInput(target));
             results.addAll(engine.inspectRest());

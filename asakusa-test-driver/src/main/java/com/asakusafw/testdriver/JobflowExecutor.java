@@ -44,6 +44,7 @@ import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.testdriver.DriverOutputBase.VerifyRuleHolder;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestDataPreparator;
 import com.asakusafw.testdriver.core.TestResultInspector;
@@ -489,17 +490,26 @@ public class JobflowExecutor {
         assert output != null;
         assert verifyContext != null;
         VerifyRuleHolder<T> ruleHolder = output.getVerifyRule();
+        DataModelSinkFactory sink;
+        if (output.getResultSink() != null) {
+            assert output.getResultSink().hasFactory();
+            sink = output.getResultSink().getFactory();
+        } else {
+            sink = null;
+        }
         if (ruleHolder.hasUri()) {
             return inspector.inspect(output.getModelType(),
                     output.getExporterDescription(),
                     verifyContext,
                     output.getExpectedUri(),
-                    ruleHolder.getUri());
+                    ruleHolder.getUri(),
+                    sink);
         } else {
             return inspector.inspect(output.getModelType(),
                     output.getExporterDescription(),
                     output.getExpectedUri(),
-                    inspector.rule(output.getModelType(), ruleHolder.getVerifier()));
+                    inspector.rule(output.getModelType(), ruleHolder.getVerifier()),
+                    sink);
         }
     }
 }
