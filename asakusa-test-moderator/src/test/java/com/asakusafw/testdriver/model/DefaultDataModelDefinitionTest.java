@@ -20,7 +20,9 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -30,6 +32,7 @@ import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.PropertyName;
 import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.testing.model.Naming;
+import com.asakusafw.testdriver.testing.model.Ordered;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.testdriver.testing.model.Variety;
 
@@ -76,6 +79,21 @@ public class DefaultDataModelDefinitionTest {
         assertThat(def.getType(p("p_boolean")), is(PropertyType.BOOLEAN));
         assertThat(def.getType(p("p_date")), is(PropertyType.DATE));
         assertThat(def.getType(p("p_datetime")), is(PropertyType.DATETIME));
+    }
+
+    /**
+     * Test method for {@link DefaultDataModelDefinition#getProperties()}.
+     */
+    @Test
+    public void getProperties() {
+        DefaultDataModelDefinition<Ordered> def = new DefaultDataModelDefinition<Ordered>(Ordered.class);
+        List<PropertyName> properties = new ArrayList<PropertyName>(def.getProperties());
+
+        assertThat(properties.size(), is(4));
+        assertThat(properties.get(0), is(PropertyName.newInstance("first")));
+        assertThat(properties.get(1), is(PropertyName.newInstance("second", "property")));
+        assertThat(properties.get(2), is(PropertyName.newInstance("a")));
+        assertThat(properties.get(3), is(PropertyName.newInstance("last")));
     }
 
     /**
