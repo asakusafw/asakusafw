@@ -31,7 +31,7 @@ import com.ashigeru.lang.java.model.util.Models;
 
 /**
  * Attaches a <code>&#64;PropertyOrder</code> annotation.
- * @since 0.2.0
+ * @since 0.2.3
  */
 public class PropertyOrderDriver extends JavaDataModelDriver {
 

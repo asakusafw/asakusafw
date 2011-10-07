@@ -18,11 +18,10 @@ package com.asakusafw.testdriver.rule;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.PropertyName;
 import com.asakusafw.testdriver.core.PropertyType;
@@ -51,7 +50,7 @@ public class VerifyRuleBuilder {
         }
         this.definition = definition;
         this.dataModelConditions = new HashSet<DataModelCondition>();
-        this.propertyConditions = new TreeMap<PropertyName, VerifyRuleBuilder.Property>();
+        this.propertyConditions = new LinkedHashMap<PropertyName, VerifyRuleBuilder.Property>();
     }
 
     /**
