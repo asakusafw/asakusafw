@@ -1,0 +1,16 @@
+Asakusa Batch Runtime Library Extensions.
+
+Please deploy this library into "$ASAKUSA_HOME/ext/lib".
+
+==
+Report API via Commons Logging.
+
+<configuration>
+    <property>
+        <name>com.asakusafw.runtime.core.Report.Delegate</name>
+        <value>com.asakusafw.runtime.report.CommonsLoggingReport</value>
+    </property>
+</configuration>
+
+==
+

@@ -19,6 +19,7 @@
 
 	<modules>
 		<module>../asakusa-sandbox-parent</module>
+		<module>../asakusa-runtime-ext</module>
 		<module>../asakusa-windgate-dmdl-ext</module>
 		<module>../asakusa-windgate-stream</module>
 		<module>../asakusa-windgate-vocabulary-ext</module>
