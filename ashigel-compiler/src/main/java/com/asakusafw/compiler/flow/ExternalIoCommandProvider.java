@@ -65,7 +65,9 @@ public class ExternalIoCommandProvider implements Serializable {
      * @param context コマンドの文脈情報
      * @return 対応するコマンドの一覧
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @deprecated Please use {@link #getFinalizeCommand(CommandContext)} instead
      */
+    @Deprecated
     public List<Command> getRecoverCommand(CommandContext context) {
         return Collections.emptyList();
     }

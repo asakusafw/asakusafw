@@ -1,0 +1,6 @@
+-- package com.asakusafw.compiler.yaess
+
+@namespace(value = testing)
+dummy = {
+    value : INT;
+};

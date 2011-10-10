@@ -1,0 +1,6 @@
+Simple Parallel Job Scheduler Plug-in for YAESS.
+
+==
+scheduler = com.asakusafw.yaess.paralleljob.ParallelJobScheduler
+scheduler.parallel.default = <number of parallel execution limit>
+scheduler.parallel.<resource-name> = <number of parallel execution limit>
