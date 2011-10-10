@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
 
 /**
@@ -92,9 +93,20 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
      * @param factory テスト結果のデータを受け取るオブジェクトのファクトリ
      * @return this
      */
-    public JobFlowDriverOutput<T> dump(DataModelSinkFactory factory) {
-        LOG.info("dump: {}", factory);
-        setResultSink(new DataModelSinkHolder(factory));
+    public JobFlowDriverOutput<T> dumpActual(DataModelSinkFactory factory) {
+        LOG.info("dump actual: {}", factory);
+        setResultSink(factory);
+        return this;
+    }
+
+    /**
+     * テスト結果の差異を受け取るオブジェクトのファクトリを指定する (experimental)。
+     * @param factory テスト結果の差異を受け取るオブジェクトのファクトリ
+     * @return this
+     */
+    public JobFlowDriverOutput<T> dumpDifference(DifferenceSinkFactory factory) {
+        LOG.info("dump difference: {}", factory);
+        setDifferenceSink(factory);
         return this;
     }
 }

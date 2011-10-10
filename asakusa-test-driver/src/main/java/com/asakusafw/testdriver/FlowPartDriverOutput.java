@@ -22,6 +22,7 @@ import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
@@ -112,9 +113,20 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
      * @param factory テスト結果のデータを受け取るオブジェクトのファクトリ
      * @return this
      */
-    public FlowPartDriverOutput<T> dump(DataModelSinkFactory factory) {
-        LOG.info("dump: {}", factory);
-        setResultSink(new DataModelSinkHolder(factory));
+    public FlowPartDriverOutput<T> dumpActual(DataModelSinkFactory factory) {
+        LOG.info("dump actual: {}", factory);
+        setResultSink(factory);
+        return this;
+    }
+
+    /**
+     * テスト結果の差異を受け取るオブジェクトのファクトリを指定する (experimental)。
+     * @param factory テスト結果の差異を受け取るオブジェクトのファクトリ
+     * @return this
+     */
+    public FlowPartDriverOutput<T> dumpDifference(DifferenceSinkFactory factory) {
+        LOG.info("dump difference: {}", factory);
+        setDifferenceSink(factory);
         return this;
     }
 
@@ -122,5 +134,4 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
     public void add(Source<T> source) {
         out.add(source);
     }
-
 }

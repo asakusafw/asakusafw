@@ -1,0 +1,55 @@
+p.header-label {
+}
+
+p.footer-label {
+}
+
+div.difference {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding: 1em;
+}
+
+.diagnostic-label {
+}
+
+div.diagnostic {
+}
+
+span.diagnostic-message {
+    border: thin dashed;
+    padding: 5px;
+    font-family: monospace;
+}
+
+.compare-label {
+}
+
+div.compare {
+}
+
+table.object {
+    border: 1px solid;
+    padding: 2px;
+}
+
+table.object th {
+    border: thin dotted;
+    background-color: mintcream;
+    padding: 2px;
+}
+
+table.object td {
+    border: thin dotted;
+    padding: 2px;
+    font-family: monospace;
+}
+
+table.object td.property {
+}
+
+table.object td.expected {
+}
+
+table.object td.actual {
+}

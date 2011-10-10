@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
@@ -45,7 +46,12 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     /**
      * 結果の出力先 (nullable)。
      */
-    protected DataModelSinkHolder resultSink;
+    protected DataModelSinkFactory resultSink;
+
+    /**
+     * 差異の出力先 (nullable)。
+     */
+    protected DifferenceSinkFactory differenceSink;
 
     /**
      * @return the expectedUri
@@ -81,17 +87,34 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      * Returns the actual data sink for this output.
      * @return the actual data sink, or {@code null} if not defined
      */
-    public DataModelSinkHolder getResultSink() {
+    public DataModelSinkFactory getResultSink() {
         return resultSink;
     }
 
     /**
      * Sets the actual data sink for this output.
-     * The specified object will save the actual result of this object.
+     * The specified object will save the actual result of this.
      * @param resultSink the result sink to set, {@code null} to cleare the sink
      */
-    public void setResultSink(DataModelSinkHolder resultSink) {
+    public void setResultSink(DataModelSinkFactory resultSink) {
         this.resultSink = resultSink;
+    }
+
+    /**
+     * Returns the difference information sink for this output.
+     * @return the difference information sink, or {@code null} if not defined
+     */
+    public DifferenceSinkFactory getDifferenceSink() {
+        return differenceSink;
+    }
+
+    /**
+     * Sets the difference information sink for this output.
+     * The specified object will save the difference from expected result of this.
+     * @param differenceSink the difference sink to set, {@code null} to cleare the sink
+     */
+    public void setDifferenceSink(DifferenceSinkFactory differenceSink) {
+        this.differenceSink = differenceSink;
     }
 
     /**
@@ -147,43 +170,6 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             setVerifyRule(new VerifyRuleHolder<T>(verifyRuleUri));
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath, e);
-        }
-    }
-
-    /**
-     * Holds data model sink as {@link DataModelSinkFactory}.
-     * @since 0.2.3
-     */
-    public static class DataModelSinkHolder {
-
-        private final DataModelSinkFactory factory;
-
-        /**
-         * Creates a new instance.
-         * @param factory the factory to be held
-         * @throws IllegalArgumentException if some parameters were {@code null}
-         */
-        public DataModelSinkHolder(DataModelSinkFactory factory) {
-            if (factory == null) {
-                throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
-            }
-            this.factory = factory;
-        }
-
-        /**
-         * Returns whether this holder has {@link DataModelSinkFactory}.
-         * @return {@code true} iff this holder has {@link DataModelSinkFactory}
-         */
-        public boolean hasFactory() {
-            return factory != null;
-        }
-
-        /**
-         * Returns the defined factory.
-         * @return the factory if defined, otherwise {@code false}
-         */
-        public DataModelSinkFactory getFactory() {
-            return factory;
         }
     }
 

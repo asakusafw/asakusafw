@@ -33,10 +33,18 @@ public class DifferenceTest {
      * format for String.
      */
     @Test
-    public void format_simple() {
+    public void string() {
         String value = Difference.format("hoge");
-        assertThat(value, is("hoge"));
+        assertThat(value, is("\"hoge\""));
+    }
 
+    /**
+     * format for String with meta characters.
+     */
+    @Test
+    public void string_escape() {
+        String value = Difference.format("\t\r\n\"\\");
+        assertThat(value, is("\"\\t\\r\\n\\\"\\\\\""));
     }
 
     /**
@@ -55,7 +63,5 @@ public class DifferenceTest {
     public void bigdecimal() {
         String value = Difference.format(new BigDecimal("0.000000000000000000000001"));
         assertThat(value, is("0.000000000000000000000001"));
-
     }
-
 }
