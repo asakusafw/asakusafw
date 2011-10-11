@@ -410,6 +410,13 @@ public class TestResultInspector {
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
         private <T extends Comparable> int compareProperty(Class<T> type, Object p1, Object p2) {
+            if (p1 == null && p2 == null) {
+                return 0;
+            } else if (p1 == null) {
+                return -1;
+            } else if (p2 == null) {
+                return +1;
+            }
             T o1 = type.cast(p1);
             T o2 = type.cast(p2);
             return o1.compareTo(o2);
