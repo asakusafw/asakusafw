@@ -44,7 +44,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      */
     @Test
     public void simple() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         File shell = putScript("arguments.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -54,7 +54,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map(),
                 map());
 
-        HadoopScriptHandler handler = handler("command.0", target);
+        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map("hello", "world", "key", "value"));
         execute(context, script, handler);
@@ -74,7 +74,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      */
     @Test
     public void properties() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         File shell = putScript("arguments.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -84,7 +84,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map("hello", "world", "hoge", "foo"),
                 map());
 
-        HadoopScriptHandler handler = handler("command.0", target);
+        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         execute(context, script, handler);
@@ -113,7 +113,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      */
     @Test
     public void complex_prefix() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         File shell = putScript("arguments.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -124,15 +124,17 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map());
 
         HadoopScriptHandler handler = handler(
-                "command.0", target,
-                "command.1", "@[1]-@[2]-@[3]");
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                "command.0", "@[0]",
+                "command.1", "@[2]-@[3]-@[4]");
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map("hello", "world", "key", "value"));
         execute(context, script, handler);
 
         List<String> results = getOutput(shell);
-        assertThat(results.subList(0, 6), is(Arrays.asList(
+        assertThat(results.subList(0, 7), is(Arrays.asList(
                 "tbatch-tflow-texec",
+                shell.getAbsolutePath(),
                 "com.example.Client",
                 "tbatch",
                 "tflow",
@@ -146,7 +148,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      */
     @Test
     public void environment() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         File shell = putScript("environment.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -156,8 +158,10 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map(),
                 map("script", "SCRIPT", "override", "SCRIPT"));
 
-        HadoopScriptHandler handler = handler("command.0", target,
-                "env.handler", "HANDLER", "env.override", "HANDLER");
+        HadoopScriptHandler handler = handler(
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                "env.handler", "HANDLER",
+                "env.override", "HANDLER");
         execute(script, handler);
 
         List<String> results = getOutput(shell);
@@ -167,23 +171,12 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
     }
 
     /**
-     * Executable file is missing.
-     * @throws Exception if failed
-     */
-    @Test(expected = IOException.class)
-    public void command_missing() throws Exception {
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
-                "hadoop", BasicHadoopScriptHandler.class, map(), getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
-    }
-
-    /**
      * Exit abnormally.
      * @throws Exception if failed
      */
     @Test(expected = IOException.class)
     public void abnormal_exit() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         putScript("abnormal.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -193,7 +186,29 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map(),
                 map());
 
-        HadoopScriptHandler handler = handler("command.0", target);
+        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
+        handler.execute(ExecutionMonitor.NULL, context, script);
+    }
+
+    /**
+     * Asakusa home is missing.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void home_missing() throws Exception {
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
+        putScript("arguments.sh", new File(target));
+
+        HadoopScript script = new HadoopScript(
+                "testing",
+                set(),
+                "com.example.Client",
+                map(),
+                map());
+
+        HadoopScriptHandler handler = handler();
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         handler.execute(ExecutionMonitor.NULL, context, script);
@@ -212,7 +227,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map(),
                 map());
 
-        HadoopScriptHandler handler = handler("command.0", "__INVALID__");
+        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         handler.execute(ExecutionMonitor.NULL, context, script);
@@ -224,7 +239,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      */
     @Test(expected = IOException.class)
     public void invalid_prefix() throws Exception {
-        String target = new File(getAsakusaHome(), "bin/exec.sh").getAbsolutePath();
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         putScript("arguments.sh", new File(target));
 
         HadoopScript script = new HadoopScript(
@@ -235,8 +250,8 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map());
 
         HadoopScriptHandler handler = handler(
-                "command.0", target,
-                "command.1", "@[999]");
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                "command.0", "@[999]");
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         handler.execute(ExecutionMonitor.NULL, context, script);

@@ -34,6 +34,9 @@ command.<profile-name>.<key> = <service-specific configuration value>
 ==
 YAESS Script:
 
+batch.id = <batch ID>
+batch.version = <script version>
+
 flow.<flow-ID>.blockerIds = <blockers' flow ID>
 
 flow.<flow-ID>.<phase-name>.<token>.id = <script ID>
@@ -71,9 +74,8 @@ scheduler = com.asakusafw.yaess.basic.BasicJobScheduler
 # this will be replaced as original command tokens (0-origin position)
 hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-hadoop.command.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-command.sh
 hadoop.command.<position> = $<prefix command token>
-hadoop.cleanup.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-cleanup.sh
+hadoop.cleanup.<position> = $<prefix command token>
 hadoop.workingDirectory = target/hadoopwork/${execution_id}
 hadoop.env.<key> = $<extra environment variables>
 

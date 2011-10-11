@@ -47,8 +47,6 @@ import com.jcraft.jsch.JSchException;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * You must specify a executable file for above arguments,
- * by setting {@code hadoop.command.0 = <executable-file>} in the profile set.
  *
  * <h3> Profile format </h3>
 <pre><code>
@@ -56,9 +54,8 @@ import com.jcraft.jsch.JSchException;
 # &lt;prefix command token&gt; can contain "&#64;[position],"
 # this will be replaced as original command tokens (0-origin position)
 hadoop = &lt;this class name&gt;
-hadoop.command.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-command.sh
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-cleanup.sh
+hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
 hadoop.workingDirectory = $<cluster working directory>
 hadoop.ssh.user=asakusa
 hadoop.ssh.host=localhost
