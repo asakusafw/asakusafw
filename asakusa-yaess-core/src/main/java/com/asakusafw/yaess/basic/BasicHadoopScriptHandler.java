@@ -42,8 +42,6 @@ import com.asakusafw.yaess.core.VariableResolver;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * You must specify a executable file for above arguments,
- * by setting {@code hadoop.command.0 = <executable-file>} in the profile set.
  *
  * <h3> Profile format </h3>
 <pre><code>
@@ -52,9 +50,8 @@ import com.asakusafw.yaess.core.VariableResolver;
 # this will be replaced as original command tokens (0-origin position)
 hadoop = &lt;this class name&gt;
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-hadoop.command.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-command.sh
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-cleanup.sh
+hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
 hadoop.workingDirectory = $<cluster working directory>
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>

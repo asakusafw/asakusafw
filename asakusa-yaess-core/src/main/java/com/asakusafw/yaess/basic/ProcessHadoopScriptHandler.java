@@ -55,8 +55,6 @@ import com.asakusafw.yaess.core.VariableResolver;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * You must specify a executable file for above arguments,
- * by setting {@code hadoop.command.0 = <executable-file>} in the profile set.
  *
  * <h3> Profile format </h3>
 <pre><code>
@@ -65,9 +63,8 @@ import com.asakusafw.yaess.core.VariableResolver;
 # this will be replaced as original command tokens (0-origin position)
 hadoop = &lt;this class name&gt;
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-hadoop.command.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-command.sh
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.0 = ${ASAKUSA_HOME}/yaess-basic/bin/hadoop-cleanup.sh
+hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
 hadoop.workingDirectory = $<cluster working directory>
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>
@@ -80,7 +77,17 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     /**
      * (sub) key name of working directory.
      */
-    private static final String KEY_WORKING_DIRECTORY = "workingDirectory";
+    public static final String KEY_WORKING_DIRECTORY = "workingDirectory";
+
+    /**
+     * The path to the Hadoop execution executable file (relative path from Asakusa home).
+     */
+    public static final String PATH_EXECUTE = "yaess-hadoop/bin/hadoop-execute.sh";
+
+    /**
+     * The path to the Hadoop cleanup executable file (relative path from Asakusa home).
+     */
+    public static final String PATH_CLEANUP = "yaess-hadoop/bin/hadoop-cleanup.sh";
 
     /**
      * Variable name of batch ID.
@@ -114,16 +121,6 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         this.workingDirectory = profile.getConfiguration().get(KEY_WORKING_DIRECTORY);
         this.commandPrefix = extractCommand(profile, variables, ProcessUtil.PREFIX_COMMAND);
         this.cleanupPrefix = extractCommand(profile, variables, ProcessUtil.PREFIX_CLEANUP);
-        if (commandPrefix.size() == 0) {
-            throw new IOException(MessageFormat.format(
-                    "Executable file is not defined: {0}",
-                    profile.getPrefix() + '.' + ProcessUtil.PREFIX_COMMAND + '0'));
-        }
-        if (workingDirectory != null && cleanupPrefix.size() == 0) {
-            throw new IOException(MessageFormat.format(
-                    "Executable file is not defined: {0}",
-                    profile.getPrefix() + '.' + ProcessUtil.PREFIX_CLEANUP + '0'));
-        }
         configureExtension(profile, variables);
     }
 
@@ -276,10 +273,11 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         return env;
     }
 
-    private List<String> buildExecuteCommand(ExecutionContext context, HadoopScript script) {
+    private List<String> buildExecuteCommand(ExecutionContext context, HadoopScript script) throws IOException {
         assert context != null;
         assert script != null;
         List<String> command = new ArrayList<String>();
+        command.add(getCommand(PATH_EXECUTE, script));
         command.add(script.getClassName());
         command.add(context.getBatchId());
         command.add(context.getFlowId());
@@ -294,7 +292,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         return command;
     }
 
-    private List<String> buildCleanupCommand(ExecutionContext context) {
+    private List<String> buildCleanupCommand(ExecutionContext context) throws IOException {
         assert workingDirectory != null;
         assert context != null;
         Map<String, String> map = new HashMap<String, String>();
@@ -305,11 +303,41 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         String resolved = resolver.replace(workingDirectory, false);
 
         List<String> command = new ArrayList<String>();
+        command.add(getCommand(PATH_CLEANUP, null));
         command.add(resolved);
         command.add(context.getBatchId());
         command.add(context.getFlowId());
         command.add(context.getExecutionId());
         command.add(context.getArgumentsAsString());
         return command;
+    }
+
+    private String getCommand(String command, HadoopScript script) throws IOException {
+        assert command != null;
+        Map<String, String> variables;
+        if (script != null) {
+            variables = buildEnvironmentVariables(script);
+        } else {
+            variables = getEnvironmentVariables();
+        }
+        String home = variables.get(ExecutionScript.ENV_ASAKUSA_HOME);
+        if (home == null) {
+            throw new IOException(MessageFormat.format(
+                    "Asakusa installation path is not known: {0}",
+                    currentProfile.getPrefix() + '.' + KEY_ENV_PREFIX + ExecutionScript.ENV_ASAKUSA_HOME));
+        }
+        if (home.endsWith(getPathSegmentSeparator())) {
+            return home + command;
+        } else {
+            return home + getPathSegmentSeparator() + command;
+        }
+    }
+
+    /**
+     * Returns the path segment separator.
+     * @return the path segment separator string
+     */
+    protected String getPathSegmentSeparator() {
+        return "/";
     }
 }
