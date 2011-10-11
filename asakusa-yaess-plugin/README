@@ -1,0 +1,5 @@
+Asakusa DSL Compiler Plug-in for YAESS.
+
+(output directory)/
+    etc/
+        yaess-script.properties
