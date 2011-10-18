@@ -119,13 +119,22 @@ public class JobflowExecutor {
         if (info == null) {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
-        for (Map.Entry<String, ImporterDescription> entry : info.getImporterMap().entrySet()) {
-            LOG.debug("入力{}を初期化しています", entry.getKey());
-            preparator.truncate(entry.getValue());
+        if (!context.isSkipCleanInput()) {
+            for (Map.Entry<String, ImporterDescription> entry : info.getImporterMap().entrySet()) {
+                LOG.debug("入力{}を初期化しています", entry.getKey());
+                preparator.truncate(entry.getValue());
+            }
+        } else {
+            LOG.info("入力の初期化をスキップしました");
         }
-        for (Map.Entry<String, ExporterDescription> entry : info.getExporterMap().entrySet()) {
-            LOG.debug("出力{}を初期化しています", entry.getKey());
-            preparator.truncate(entry.getValue());
+
+        if (!context.isSkipCleanOutput()) {
+            for (Map.Entry<String, ExporterDescription> entry : info.getExporterMap().entrySet()) {
+                LOG.debug("出力{}を初期化しています", entry.getKey());
+                preparator.truncate(entry.getValue());
+            }
+        } else {
+            LOG.info("出力の初期化をスキップしました");
         }
     }
 
@@ -146,20 +155,24 @@ public class JobflowExecutor {
         if (inputs == null) {
             throw new IllegalArgumentException("inputs must not be null"); //$NON-NLS-1$
         }
-        for (DriverInputBase<?> input : inputs) {
-            URI source = input.getSourceUri();
-            if (source != null) {
-                String name = input.getName();
-                LOG.debug("入力{}を配置しています: {}", name, source);
-                ImporterDescription description = info.findImporter(name);
-                if (description == null) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            "入力{0}はフロー{1}で定義されていません",
-                            name,
-                            info.getJobflow().getFlowId()));
+        if (!context.isSkipPrepareInput()) {
+            for (DriverInputBase<?> input : inputs) {
+                URI source = input.getSourceUri();
+                if (source != null) {
+                    String name = input.getName();
+                    LOG.debug("入力{}を配置しています: {}", name, source);
+                    ImporterDescription description = info.findImporter(name);
+                    if (description == null) {
+                        throw new IllegalStateException(MessageFormat.format(
+                                "入力{0}はフロー{1}で定義されていません",
+                                name,
+                                info.getJobflow().getFlowId()));
+                    }
+                    preparator.prepare(input.getModelType(), description, source);
                 }
-                preparator.prepare(input.getModelType(), description, source);
             }
+        } else {
+            LOG.info("入力の配置をスキップしました");
         }
     }
 
@@ -180,20 +193,24 @@ public class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        for (DriverOutputBase<?> output : outputs) {
-            URI source = output.getSourceUri();
-            if (source != null) {
-                String name = output.getName();
-                LOG.debug("出力{}を配置しています: {}", name, source);
-                ExporterDescription description = info.findExporter(name);
-                if (description == null) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            "出力{0}はフロー{1}で定義されていません",
-                            name,
-                            info.getJobflow().getFlowId()));
+        if (!context.isSkipPrepareOutput()) {
+            for (DriverOutputBase<?> output : outputs) {
+                URI source = output.getSourceUri();
+                if (source != null) {
+                    String name = output.getName();
+                    LOG.debug("出力{}を配置しています: {}", name, source);
+                    ExporterDescription description = info.findExporter(name);
+                    if (description == null) {
+                        throw new IllegalStateException(MessageFormat.format(
+                                "出力{0}はフロー{1}で定義されていません",
+                                name,
+                                info.getJobflow().getFlowId()));
+                    }
+                    preparator.prepare(output.getModelType(), description, source);
                 }
-                preparator.prepare(output.getModelType(), description, source);
             }
+        } else {
+            LOG.info("出力の配置をスキップしました");
         }
     }
 
@@ -207,13 +224,17 @@ public class JobflowExecutor {
         if (info == null) {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
-        File destDir = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
-        FileUtils.copyFileToDirectory(info.getPackageFile(), destDir);
+        if (!context.isSkipRunJobflow()) {
+            File destDir = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
+            FileUtils.copyFileToDirectory(info.getPackageFile(), destDir);
 
-        CommandContext commands = context.getCommandContext();
-        Map<String, String> dPropMap = createHadoopProperties(commands);
-        TestExecutionPlan plan = createExecutionPlan(info, commands, dPropMap);
-        executePlan(plan, info.getPackageFile());
+            CommandContext commands = context.getCommandContext();
+            Map<String, String> dPropMap = createHadoopProperties(commands);
+            TestExecutionPlan plan = createExecutionPlan(info, commands, dPropMap);
+            executePlan(plan, info.getPackageFile());
+        } else {
+            LOG.info("フローの実行をスキップしました");
+        }
     }
 
     private Map<String, String> createHadoopProperties(CommandContext commands) {
@@ -448,40 +469,44 @@ public class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%n"));
-        boolean sawError = false;
-        for (DriverOutputBase<?> output : outputs) {
-            if (output.expectedUri != null) {
-                LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
-                String name = output.getName();
-                ExporterDescription description = info.findExporter(name);
-                if (description == null) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            "出力{0}はフロー{1}で定義されていません",
-                            name,
-                            info.getJobflow().getFlowId()));
-                }
-                output.setExporterDescription(description);
-                List<Difference> diffList = inspect(output, verifyContext);
-                if (diffList.isEmpty() == false) {
-                    LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {
-                            info.getJobflow().getBatchId(),
-                            info.getJobflow().getFlowId(),
-                            output.getName(),
-                            diffList.size(),
-                    });
-                }
-                for (Difference difference : diffList) {
-                    sawError = true;
-                    sb.append(String.format("%s: %s%n",
-                            output.getModelType().getSimpleName(),
-                            difference));
+        if (!context.isSkipVerify()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("%n"));
+            boolean sawError = false;
+            for (DriverOutputBase<?> output : outputs) {
+                if (output.expectedUri != null) {
+                    LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
+                    String name = output.getName();
+                    ExporterDescription description = info.findExporter(name);
+                    if (description == null) {
+                        throw new IllegalStateException(MessageFormat.format(
+                                "出力{0}はフロー{1}で定義されていません",
+                                name,
+                                info.getJobflow().getFlowId()));
+                    }
+                    output.setExporterDescription(description);
+                    List<Difference> diffList = inspect(output, verifyContext);
+                    if (diffList.isEmpty() == false) {
+                        LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {
+                                info.getJobflow().getBatchId(),
+                                info.getJobflow().getFlowId(),
+                                output.getName(),
+                                diffList.size(),
+                        });
+                    }
+                    for (Difference difference : diffList) {
+                        sawError = true;
+                        sb.append(String.format("%s: %s%n",
+                                output.getModelType().getSimpleName(),
+                                difference));
+                    }
                 }
             }
-        }
-        if (sawError) {
-            throw new AssertionError(sb);
+            if (sawError) {
+                throw new AssertionError(sb);
+            }
+        } else {
+            LOG.info("実行結果の検証をスキップしました");
         }
     }
 

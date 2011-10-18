@@ -158,4 +158,20 @@ public class FlowPartTesterTest {
         tester.setFrameworkHomePath(framework.getFrameworkHome());
         tester.output("out", Simple.class).verify("data/simple-out.json", "INVALID");
     }
+
+    @Test
+    public void skip() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.skipCleanInput(true);
+        tester.skipCleanOutput(true);
+        tester.skipPrepareInput(true);
+        tester.skipPrepareOutput(true);
+        tester.skipRunJobflow(true);
+        tester.skipVerify(true);
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+    }
+
 }

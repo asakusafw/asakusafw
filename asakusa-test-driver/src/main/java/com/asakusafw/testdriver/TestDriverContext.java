@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
+import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.testdriver.core.TestContext;
@@ -59,6 +59,13 @@ public class TestDriverContext implements TestContext {
     private volatile String currentFlowId;
 
     private volatile String currentExecutionId;
+
+    private boolean skipCleanInput;
+    private boolean skipCleanOutput;
+    private boolean skipPrepareInput;
+    private boolean skipPrepareOutput;
+    private boolean skipRunJobflow;
+    private boolean skipVerify;
 
     /**
      * Creates a new instance.
@@ -256,4 +263,182 @@ public class TestDriverContext implements TestContext {
     public ClassLoader getClassLoader() {
         return callerClass.getClassLoader();
     }
+
+
+    /**
+     * @return the currentBatchId
+     */
+    public String getCurrentBatchId() {
+        return currentBatchId;
+    }
+
+
+    /**
+     * @param currentBatchId the currentBatchId to set
+     */
+    public void setCurrentBatchId(String currentBatchId) {
+        this.currentBatchId = currentBatchId;
+    }
+
+
+    /**
+     * @return the currentFlowId
+     */
+    public String getCurrentFlowId() {
+        return currentFlowId;
+    }
+
+
+    /**
+     * @param currentFlowId the currentFlowId to set
+     */
+    public void setCurrentFlowId(String currentFlowId) {
+        this.currentFlowId = currentFlowId;
+    }
+
+
+    /**
+     * @return the currentExecutionId
+     */
+    public String getCurrentExecutionId() {
+        return currentExecutionId;
+    }
+
+
+    /**
+     * @param currentExecutionId the currentExecutionId to set
+     */
+    public void setCurrentExecutionId(String currentExecutionId) {
+        this.currentExecutionId = currentExecutionId;
+    }
+
+
+    /**
+     * @return the skipCleanInput
+     */
+    public boolean isSkipCleanInput() {
+        return skipCleanInput;
+    }
+
+
+    /**
+     * @param skipCleanInput the skipCleanInput to set
+     */
+    public void setSkipCleanInput(boolean skipCleanInput) {
+        this.skipCleanInput = skipCleanInput;
+    }
+
+
+    /**
+     * @return the skipCleanOutput
+     */
+    public boolean isSkipCleanOutput() {
+        return skipCleanOutput;
+    }
+
+
+    /**
+     * @param skipCleanOutput the skipCleanOutput to set
+     */
+    public void setSkipCleanOutput(boolean skipCleanOutput) {
+        this.skipCleanOutput = skipCleanOutput;
+    }
+
+
+    /**
+     * @return the skipPrepareInput
+     */
+    public boolean isSkipPrepareInput() {
+        return skipPrepareInput;
+    }
+
+
+    /**
+     * @param skipPrepareInput the skipPrepareInput to set
+     */
+    public void setSkipPrepareInput(boolean skipPrepareInput) {
+        this.skipPrepareInput = skipPrepareInput;
+    }
+
+
+    /**
+     * @return the skipPrepareOutput
+     */
+    public boolean isSkipPrepareOutput() {
+        return skipPrepareOutput;
+    }
+
+
+    /**
+     * @param skipPrepareOutput the skipPrepareOutput to set
+     */
+    public void setSkipPrepareOutput(boolean skipPrepareOutput) {
+        this.skipPrepareOutput = skipPrepareOutput;
+    }
+
+
+    /**
+     * @return the skipRunJobflow
+     */
+    public boolean isSkipRunJobflow() {
+        return skipRunJobflow;
+    }
+
+
+    /**
+     * @param skipRunJobflow the skipRunJobflow to set
+     */
+    public void setSkipRunJobflow(boolean skipRunJobflow) {
+        this.skipRunJobflow = skipRunJobflow;
+    }
+
+
+    /**
+     * @return the skipVerify
+     */
+    public boolean isSkipVerify() {
+        return skipVerify;
+    }
+
+
+    /**
+     * @param skipVerify the skipVerify to set
+     */
+    public void setSkipVerify(boolean skipVerify) {
+        this.skipVerify = skipVerify;
+    }
+
+
+    /**
+     * @return the envFrameworkPath
+     */
+    public static String getEnvFrameworkPath() {
+        return ENV_FRAMEWORK_PATH;
+    }
+
+
+    /**
+     * @return the submitJobScript
+     */
+    public static String getSubmitJobScript() {
+        return SUBMIT_JOB_SCRIPT;
+    }
+
+
+    /**
+     * @return the compilerworkDirDefault
+     */
+    public static String getCompilerworkDirDefault() {
+        return COMPILERWORK_DIR_DEFAULT;
+    }
+
+
+    /**
+     * @return the hadoopworkDirDefault
+     */
+    public static String getHadoopworkDirDefault() {
+        return HADOOPWORK_DIR_DEFAULT;
+    }
+
+
 }
