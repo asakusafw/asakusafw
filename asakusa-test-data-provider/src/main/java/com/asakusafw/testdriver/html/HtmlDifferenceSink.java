@@ -249,7 +249,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
             case DATETIME:
                 return datetimeFormat.format(((Calendar) value).getTime());
             case DECIMAL:
-                return ((BigDecimal) value).toPlainString();
+                return String.format("%s(scale=%d)", ((BigDecimal) value).toPlainString(), ((BigDecimal) value).scale());
             case STRING:
                 return toStringLiteral((String) value);
             default:
