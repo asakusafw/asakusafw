@@ -11,6 +11,7 @@ Asakusa Framework
     windgate/index
     testing/index
     dmdl/index
+    yaess/index
     document/index
 
 Release Notes
