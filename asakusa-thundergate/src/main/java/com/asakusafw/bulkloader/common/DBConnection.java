@@ -24,6 +24,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -176,6 +177,13 @@ public final class DBConnection {
      * @param stmt PreparedStatement
      */
     public static void closePs(PreparedStatement stmt) {
+        closeStmt(stmt);
+    }
+    /**
+     * Statementをクローズする。
+     * @param stmt Statement
+     */
+    public static void closeStmt(Statement stmt) {
         if (stmt != null) {
             try {
                 stmt.close();

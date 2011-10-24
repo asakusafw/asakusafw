@@ -80,12 +80,12 @@ public abstract class SecondaryImporterDescription extends BulkLoadImporterDescr
     /**
      * {@inheritDoc}
      * <p>
-     * この実装では常に{@code true}を返す。
+     * この実装では常に{@code false}を返す。
      * このメソッドをオーバーライドすることで、キャッシュの動作を変更できる。
      * </p>
      */
     @Override
     public boolean isCacheEnabled() {
-        return true;
+        return false;
     }
 }

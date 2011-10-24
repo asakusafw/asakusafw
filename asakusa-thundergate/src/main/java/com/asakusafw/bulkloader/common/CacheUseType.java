@@ -22,8 +22,9 @@ import java.util.Map;
 /**
  * キャッシュ利用有無を表すENUM。
  * @author yuta.shirai
- *
+ * @deprecated no longer be used in ThunderGate
  */
+@Deprecated
 public enum CacheUseType {
     /**
      * キャッシュ利用有無-利用する。

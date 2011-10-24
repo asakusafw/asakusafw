@@ -14,6 +14,7 @@
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-runtime</include>
+				<include>com.asakusafw:asakusa-thundergate-runtime</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>
@@ -81,6 +82,7 @@
 				<include>exporter.sh</include>
 				<include>finalizer.sh</include>
 				<include>recoverer.sh</include>
+				<include>release-cache-lock.sh</include>
 				<include>set-classpath-db.sh</include>
 			</includes>
 			<fileMode>0744</fileMode>

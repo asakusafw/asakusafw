@@ -527,7 +527,7 @@ public class BulkLoaderIoProcessorTest {
 
         @Override
         public boolean isCacheEnabled() {
-            return true;
+            return false;
         }
     }
 

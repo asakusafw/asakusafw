@@ -1,0 +1,349 @@
+/**
+ * Copyright 2011 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.bulkloader.cache;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.Calendar;
+import com.asakusafw.bulkloader.common.DBConnection;
+import com.asakusafw.bulkloader.common.MessageIdConst;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+
+/**
+ * Repositories in {@link LocalCacheInfo}.
+ * This class requires the following two tables.
+ * <ul>
+ * <li> __TG_CACHE_INFO
+ *   <ul>
+ *   <li> CACHE_ID [String] PRIMARY KEY</li>
+ *   <li> CACHE_TIMESTAMP [TIMESTAMP] NULL</li>
+ *   <li> BUILT_TIMESTAMP [TIMESTAMP] NOT NULL DEFAULT (the minimum value)</li>
+ *   <li> TABLE_NAME [STRING] NOT NULL </li>
+ *   <li> REMOTE_PATH [STRING] NOT NULL </li>
+ *   </ul>
+ * </li>
+ * <li> __TG_CACHE_LOCK
+ *   <ul>
+ *   <li> CACHE_ID [String] PRIMARY KEY</li>
+ *   <li> EXECUTION_ID [STRING] NOT NULL</li>
+ *   <li> ACQUIRED [TIMESTAMP] NOT NULL</li>
+ *   </ul>
+ * </li>
+ * </ul>
+ * @since 0.2.3
+ */
+public class LocalCacheInfoRepository {
+
+    private final Connection connection;
+
+    /**
+     * Creates a new instance.
+     * @param connection the JDB connection
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public LocalCacheInfoRepository(Connection connection) {
+        if (connection == null) {
+            throw new IllegalArgumentException("connection must not be null"); //$NON-NLS-1$
+        }
+        this.connection = connection;
+    }
+
+    /**
+     * Obtains a local cache information.
+     * @param cacheId target cache ID
+     * @return the related cache information, or {@code null} if not found
+     * @throws BulkLoaderSystemException if failed to obtain the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public LocalCacheInfo getCacheInfo(String cacheId) throws BulkLoaderSystemException {
+        if (cacheId == null) {
+            throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH " +
+            "FROM __TG_CACHE_INFO " +
+            "WHERE CACHE_ID = ?";
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, cacheId);
+            resultSet = statement.executeQuery();
+            if (resultSet.next() == false) {
+                return null;
+            }
+            LocalCacheInfo result = toCacheInfoObject(resultSet);
+            assert resultSet.next() == false;
+            return result;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    cacheId);
+        } finally {
+            DBConnection.closeRs(resultSet);
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Puts cache information.
+     * Note that {@link LocalCacheInfo#getLocalTimestamp()} will be ignored, and used current clock.
+     * @param current the current information
+     * @return the last local timestamp
+     * @throws BulkLoaderSystemException if failed to update the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public Calendar putCacheInfo(LocalCacheInfo current) throws BulkLoaderSystemException {
+        if (current == null) {
+            throw new IllegalArgumentException("old must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "REPLACE " +
+            "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH) " +
+            "VALUES (?, ?, ?, ?, ?)";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        Calendar last = null;
+        try {
+            last = getLastUpdated(current.getTableName());
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, current.getId());
+            statement.setTimestamp(2, toTimestamp(last));
+            statement.setTimestamp(3, toTimestamp(current.getRemoteTimestamp()));
+            statement.setString(4, current.getTableName());
+            statement.setString(5, current.getPath());
+            int rows = statement.executeUpdate();
+            if (rows == 0) {
+                // TODO error
+                throw new BulkLoaderSystemException(getClass(), MessageIdConst.IMP_CACHE_ERROR);
+            }
+            DBConnection.commit(connection);
+            succeed = true;
+            return last;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    current.getId(),
+                    toTimestamp(last),
+                    toTimestamp(current.getRemoteTimestamp()),
+                    current.getTableName(),
+                    current.getPath());
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    private Calendar getLastUpdated(String tableName) throws SQLException {
+        assert connection != null;
+        assert tableName != null;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = null;
+        try {
+            statement.execute(MessageFormat.format("LOCK TABLES {0} READ", tableName));
+            resultSet = statement.executeQuery("SELECT NOW()");
+            if (resultSet.next() == false) {
+                // TODO logging
+            }
+            Calendar calendar = Calendar.getInstance();
+            Timestamp timestamp = resultSet.getTimestamp(1, calendar);
+            calendar.setTime(timestamp);
+            resultSet.close();
+            statement.execute("UNLOCK TABLES");
+            return calendar;
+        } finally {
+            DBConnection.closeRs(resultSet);
+            DBConnection.closeStmt(statement);
+        }
+    }
+
+    /**
+     * Deletes cache information for the specified cache ID.
+     * @param cacheId target cache ID
+     * @return {@code true} if actually deleted, otherwise {@code false}
+     * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public boolean deleteCacheInfo(String cacheId) throws BulkLoaderSystemException {
+        if (cacheId == null) {
+            throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_INFO " +
+            "WHERE CACHE_ID = ?";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, cacheId);
+            int rows = statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+            return rows > 0;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    cacheId);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    private LocalCacheInfo toCacheInfoObject(ResultSet resultSet) throws SQLException {
+        assert resultSet != null;
+        String id = resultSet.getString(1);
+        Calendar localTimestamp = Calendar.getInstance();
+        Timestamp local = resultSet.getTimestamp(2, localTimestamp);
+        if (local == null || local.getTime() == 0) {
+            localTimestamp = null;
+        } else {
+            localTimestamp.setTime(local);
+        }
+        Calendar remoteTimestamp = Calendar.getInstance();
+        Timestamp remote = resultSet.getTimestamp(3, remoteTimestamp);
+        if (remote == null || remote.getTime() == 0) {
+            remoteTimestamp = null;
+        } else {
+            remoteTimestamp.setTime(remote);
+        }
+        String tableName = resultSet.getString(4);
+        String path = resultSet.getString(5);
+        return new LocalCacheInfo(id, localTimestamp, remoteTimestamp, tableName, path);
+    }
+
+    /**
+     * Tries to acquire lock for the target cache.
+     * @param executionId the current execution ID (as the lock owner)
+     * @param cacheId target cache ID
+     * @param tableName target table name
+     * @return {@code true} if successfully acquired the lock, otherwise {@code false}
+     * @throws BulkLoaderSystemException if failed to acquire the lock by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public boolean tryLock(String executionId, String cacheId, String tableName) throws BulkLoaderSystemException {
+        if (executionId == null) {
+            throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
+        }
+        if (cacheId == null) {
+            throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
+        }
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "INSERT IGNORE " +
+            "INTO __TG_CACHE_LOCK (CACHE_ID, EXECUTION_ID, ACQUIRED) " +
+            "VALUES (?, ?, NOW())";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, cacheId);
+            statement.setString(2, executionId);
+            int rows = statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+            return rows > 0;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    cacheId, executionId);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Releases the cache lock acquired by the specified owner.
+     * @param executionId the target execution ID (as the lock owner)
+     * @throws BulkLoaderSystemException if failed to acquire the lock by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void releaseLock(String executionId) throws BulkLoaderSystemException {
+        if (executionId == null) {
+            throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_LOCK " +
+            "WHERE EXECUTION_ID = ?";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, executionId);
+            int rows = statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    executionId);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Releases all cache lock in this system.
+     * @throws BulkLoaderSystemException if failed to acquire the lock by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void releaseAllLock() throws BulkLoaderSystemException {
+        final String sql = "TRUNCATE TABLE __TG_CACHE_LOCK";
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql);
+        } finally {
+            DBConnection.closePs(statement);
+        }
+    }
+
+    private Timestamp toTimestamp(Calendar calendar) {
+        if (calendar == null) {
+            return new Timestamp(0L);
+        }
+        return new Timestamp(calendar.getTimeInMillis());
+    }
+}

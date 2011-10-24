@@ -14,6 +14,7 @@
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-runtime</include>
+				<include>com.asakusafw:asakusa-thundergate-runtime</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>

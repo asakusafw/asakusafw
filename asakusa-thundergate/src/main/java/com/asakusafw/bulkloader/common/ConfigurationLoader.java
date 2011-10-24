@@ -178,6 +178,21 @@ public final class ConfigurationLoader {
                     MessageIdConst.CMN_PROP_CHECK_ERROR,
                     "HDFSのプロトコルとホスト名が設定されていない。");
         }
+
+        // configuration for cache
+        if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL))) {
+            prop.setProperty(
+                    Constants.PROP_KEY_CACHE_BUILDER_PARALLEL,
+                    Constants.PROP_DEFAULT_CACHE_BUILDER_PARALLEL);
+        }
+        if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME))) {
+            throw new BulkLoaderSystemException(
+                    CLASS,
+                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    MessageFormat.format(
+                            "キャッシュ構築用のスクリプトパスが未設定: {0}",
+                            Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME));
+        }
     }
     /**
      * DBサーバのプロパティの必須チェックとデフォルト値を設定する。
@@ -370,6 +385,16 @@ public final class ConfigurationLoader {
             throw new BulkLoaderSystemException(
                     CLASS,
                     MessageIdConst.CMN_PROP_CHECK_ERROR, "Collectorのシェル名が設定されていません");
+        }
+
+        // configuration for cache
+        if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_INFO_SHELL_NAME))) {
+            throw new BulkLoaderSystemException(
+                    CLASS,
+                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    MessageFormat.format(
+                            "キャッシュ情報取得用のスクリプトパスが未設定: {0}",
+                            Constants.PROP_KEY_CACHE_INFO_SHELL_NAME));
         }
     }
     /**

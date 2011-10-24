@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -35,8 +37,14 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.model.AstLiteral;
+import com.asakusafw.dmdl.parser.DmdlParser;
+import com.asakusafw.dmdl.parser.DmdlSyntaxException;
+
 /**
  * プログラムエントリ。
+ * @since 0.2.0
+ * @version 0.2.3
  */
 public class Main {
 
@@ -47,6 +55,10 @@ public class Main {
     private static final Option OPT_ENCODING;
     private static final Option OPT_INCLUDES;
     private static final Option OPT_EXCLUDES;
+    private static final Option OPT_SID_COLUMN;
+    private static final Option OPT_TIMESTAMP_COLUMN;
+    private static final Option OPT_DELETE_FLAG_COLUMN;
+    private static final Option OPT_DELETE_FLAG_VALUE;
 
     private static final Options OPTIONS;
     static {
@@ -70,12 +82,32 @@ public class Main {
         OPT_EXCLUDES.setArgName("exclusion-regex");
         OPT_EXCLUDES.setRequired(false);
 
+        OPT_SID_COLUMN = new Option("sid_column", true, "System IDのカラム名");
+        OPT_SID_COLUMN.setArgName("SID");
+        OPT_SID_COLUMN.setRequired(false);
+
+        OPT_TIMESTAMP_COLUMN = new Option("timestamp_column", true, "最終更新時刻のカラム名");
+        OPT_TIMESTAMP_COLUMN.setArgName("LAST_UPDATED_DATETIME");
+        OPT_TIMESTAMP_COLUMN.setRequired(false);
+
+        OPT_DELETE_FLAG_COLUMN = new Option("delete_flag_column", true, "論理削除フラグのカラム名");
+        OPT_DELETE_FLAG_COLUMN.setArgName("LOGICAL_DELETE_FLAG");
+        OPT_DELETE_FLAG_COLUMN.setRequired(false);
+
+        OPT_DELETE_FLAG_VALUE = new Option("delete_flag_value", true, "論理削除フラグが真(TRUE)となる値 (Javaの定数)");
+        OPT_DELETE_FLAG_VALUE.setArgName("1");
+        OPT_DELETE_FLAG_VALUE.setRequired(false);
+
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_OUTPUT);
         OPTIONS.addOption(OPT_JDBC_CONFIG);
         OPTIONS.addOption(OPT_ENCODING);
         OPTIONS.addOption(OPT_INCLUDES);
         OPTIONS.addOption(OPT_EXCLUDES);
+        OPTIONS.addOption(OPT_SID_COLUMN);
+        OPTIONS.addOption(OPT_TIMESTAMP_COLUMN);
+        OPTIONS.addOption(OPT_DELETE_FLAG_COLUMN);
+        OPTIONS.addOption(OPT_DELETE_FLAG_VALUE);
     }
 
     /**
@@ -183,7 +215,67 @@ public class Main {
             }
         }
 
+        checkIf(cmd, OPT_SID_COLUMN, OPT_TIMESTAMP_COLUMN);
+        checkIf(cmd, OPT_TIMESTAMP_COLUMN, OPT_SID_COLUMN);
+
+        checkIf(cmd, OPT_SID_COLUMN, OPT_DELETE_FLAG_COLUMN);
+        checkIf(cmd, OPT_SID_COLUMN, OPT_DELETE_FLAG_VALUE);
+        checkIf(cmd, OPT_DELETE_FLAG_COLUMN, OPT_DELETE_FLAG_VALUE);
+        checkIf(cmd, OPT_DELETE_FLAG_VALUE, OPT_DELETE_FLAG_COLUMN);
+
+        String sidColumn = trim(getOption(cmd, OPT_SID_COLUMN, false));
+        String timestampColumn = trim(getOption(cmd, OPT_TIMESTAMP_COLUMN, false));
+        String deleteFlagColumn = trim(getOption(cmd, OPT_DELETE_FLAG_COLUMN, false));
+        String deleteFlagValue = trim(getOption(cmd, OPT_DELETE_FLAG_VALUE, false));
+        if (deleteFlagValue != null) {
+            // FIXME get "bare" string
+            List<String> arguments = Arrays.asList(args);
+            int index = arguments.indexOf('-' + OPT_DELETE_FLAG_VALUE.getOpt());
+            assert index >= 0;
+            assert arguments.size() > index + 1;
+            deleteFlagValue = trim(arguments.get(index + 1));
+        }
+
+        result.setSidColumn(sidColumn);
+        result.setTimestampColumn(timestampColumn);
+        result.setDeleteFlagColumn(deleteFlagColumn);
+        if (deleteFlagValue != null) {
+            try {
+                DmdlParser dmdl = new DmdlParser();
+                AstLiteral literal = dmdl.parseLiteral(deleteFlagValue);
+                result.setDeleteFlagValue(literal);
+            } catch (DmdlSyntaxException e) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "論理削除フラグの値はJavaのリテラルの形式で指定してください: {0}",
+                        deleteFlagValue), e);
+            }
+        }
         return result;
+    }
+
+    private static void checkIf(CommandLine cmd, Option target, Option condition) {
+        String conditionValue = getOption(cmd, condition, false);
+        if (trim(conditionValue) == null) {
+            return;
+        }
+        String targetValue = getOption(cmd, target, false);
+        if (trim(targetValue) == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "引数 \"-{0}\" が指定されていません。 (\"-{1}\"を指定する場合は必須です)",
+                    target.getOpt(),
+                    condition.getOpt()));
+        }
+    }
+
+    private static String trim(String string) {
+        if (string == null) {
+            return null;
+        }
+        String trimmed = string.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        return trimmed;
     }
 
     private static String getOption(CommandLine cmd, Option option, boolean mandatory) {

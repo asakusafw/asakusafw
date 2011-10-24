@@ -31,9 +31,4 @@ public abstract class DefaultDbImporterDescription extends DbImporterDescription
     public LockType getLockType() {
         return LockType.TABLE;
     }
-
-    @Override
-    public boolean isCacheEnabled() {
-        return true;
-    }
 }

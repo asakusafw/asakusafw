@@ -35,7 +35,6 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.bulkloader.BulkLoaderScript.Cache;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.DuplicateRecordErrorTable;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.ExportTable;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.ImportTable;
@@ -51,6 +50,8 @@ import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
 import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.runtime.io.property.PropertyLoader;
+import com.asakusafw.thundergate.runtime.cache.CacheStorage;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription.DuplicateRecordCheck;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
@@ -58,6 +59,7 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.Mode;
 import com.asakusafw.vocabulary.bulkloader.SecondaryImporterDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
@@ -74,6 +76,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final String CMD_FINALIZER = "bulkloader/bin/finalizer.sh";
 
+    private static final String CMD_RELEASE_CACHE_LOCK = "bulkloader/bin/release-cache-lock.sh";
+
     private static final String CMD_ARG_PRIMARY = "primary";
 
     private static final String CMD_ARG_SECONDARY = "secondary";
@@ -81,6 +85,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     private static final String MODULE_NAME = "bulkloader";
 
     private static final String MODULE_NAME_PREFIX = "bulkloader.";
+
+    private static final Location CACHE_HEAD_CONTENTS = new Location(null, CacheStorage.HEAD_DIRECTORY_NAME)
+        .append("part")
+        .asPrefix();
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -105,6 +113,40 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean checkImports(List<InputDescription> inputs) {
         assert inputs != null;
         boolean valid = true;
+        for (InputDescription input : inputs) {
+            BulkLoadImporterDescription desc = extract(input);
+            boolean cacheEnabled = desc.isCacheEnabled();
+            if (cacheEnabled) {
+                if (ThunderGateCacheSupport.class.isAssignableFrom(desc.getModelType()) == false) {
+                    getEnvironment().error(
+                            "\"{0}\"のデータモデル型はキャッシュをサポートしていません: {1}",
+                            desc.getClass().getName(),
+                            desc.getModelType().getName());
+                    valid = false;
+                }
+                if (desc.getWhere() != null && desc.getWhere().trim().isEmpty() == false) {
+                    getEnvironment().error(
+                            "\"{0}\"は検索条件を指定しているためキャッシュを利用できません: {1}",
+                            desc.getClass().getName(),
+                            desc.getWhere());
+                    valid = false;
+                }
+                if (desc.getLockType() == BulkLoadImporterDescription.LockType.ROW_OR_SKIP) {
+                    getEnvironment().error(
+                            "\"{0}\"に指定されたロック方法ではキャッシュを利用できません: {1}",
+                            desc.getClass().getName(),
+                            desc.getLockType());
+                    valid = false;
+                }
+                if (desc.getDataSize() == DataSize.TINY || desc.getDataSize() == DataSize.SMALL) {
+                    getEnvironment().error(
+                            "\"{0}\"に指定されたデータサイズではキャッシュを利用できません: {1}",
+                            desc.getClass().getName(),
+                            desc.getDataSize());
+                    valid = false;
+                }
+            }
+        }
         return valid;
     }
 
@@ -261,21 +303,65 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 SequenceFileOutputFormat.class);
     }
 
-    private Location getInputLocation(InputDescription description) {
-        assert description != null;
-        String name = normalize(description.getName());
-        return getEnvironment()
-            .getPrologueLocation(MODULE_NAME)
-            .append(name);
+    private Location getImporterDestination(InputDescription input) {
+        assert input != null;
+        if (isCacheEnabled(input)) {
+            BulkLoadImporterDescription desc = extract(input);
+            return computeCacheDirectory(desc.calculateCacheId(), desc.getTargetName(), desc.getTableName());
+        } else {
+            String name = normalize(input.getName());
+            return getEnvironment()
+                .getPrologueLocation(MODULE_NAME)
+                .append(name);
+        }
     }
 
-    private Location getOutputLocation(OutputDescription description) {
-        assert description != null;
-        String name = normalize(description.getName());
+    private Location getInputLocation(InputDescription input) {
+        assert input != null;
+        if (isCacheEnabled(input)) {
+            return getImporterDestination(input).append(CACHE_HEAD_CONTENTS);
+        } else {
+            return getImporterDestination(input);
+        }
+    }
+
+    private Location getOutputLocation(OutputDescription output) {
+        assert output != null;
+        String name = normalize(output.getName());
         return getEnvironment()
             .getEpilogueLocation(MODULE_NAME)
             .append(name)
             .asPrefix();
+    }
+
+    private boolean isCacheEnabled(InputDescription description) {
+        assert description != null;
+        return extract(description).isCacheEnabled();
+    }
+
+    /**
+     * Computes and returns the default cache directory path (relative path from working directory).
+     * @param cacheId target cache ID
+     * @param targetName target profile name
+     * @param tableName target table name
+     * @return the computed path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Location computeCacheDirectory(String cacheId, String targetName, String tableName) {
+        if (cacheId == null) {
+            throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
+        }
+        if (targetName == null) {
+            throw new IllegalArgumentException("targetName must not be null"); //$NON-NLS-1$
+        }
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        return new Location(null, "thundergate")
+            .append("cache")
+            .append(targetName)
+            .append(tableName)
+            .append(cacheId);
     }
 
     private String normalize(String name) {
@@ -398,10 +484,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 desc.getTableName(),
                 desc.getColumnNames(),
                 desc.getWhere(),
-                desc.isCacheEnabled() ? Cache.ENABLED : Cache.DISABLED,
+                desc.isCacheEnabled() ? desc.calculateCacheId() : null,
                 lockType,
                 lockedOperation,
-                getInputLocation(input));
+                getImporterDestination(input));
     }
 
     private ExportTable convert(OutputDescription output) {
@@ -463,6 +549,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     public ExternalIoCommandProvider createCommandProvider(IoContext context) {
         String primary = null;
         Set<String> targets = new TreeSet<String>();
+        Set<String> cacheUsers = new TreeSet<String>();
         for (Input input : context.getInputs()) {
             BulkLoadImporterDescription desc = extract(input.getDescription());
             String target = desc.getTargetName();
@@ -471,6 +558,9 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 primary = target;
             }
             targets.add(target);
+            if (isCacheEnabled(input.getDescription())) {
+                cacheUsers.add(target);
+            }
         }
         for (Output output : context.getOutputs()) {
             BulkLoadExporterDescription desc = extract(output.getDescription());
@@ -482,12 +572,12 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         if (primary != null) {
             targets.remove(primary);
         }
-
         return new CommandProvider(
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId(),
                 primary,
-                new ArrayList<String>(targets));
+                new ArrayList<String>(targets),
+                new ArrayList<String>(cacheUsers));
     }
 
     static ExternalIoCommandProvider findRelated(List<ExternalIoCommandProvider> commands) {
@@ -519,14 +609,23 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         private final List<String> secondaries;
 
-        CommandProvider(String batchId, String flowId, String primary, List<String> secondaries) {
+        private final List<String> cacheUsers;
+
+        CommandProvider(
+                String batchId,
+                String flowId,
+                String primary,
+                List<String> secondaries,
+                List<String> cacheUsers) {
             assert batchId != null;
             assert flowId != null;
             assert secondaries != null;
+            assert cacheUsers != null;
             this.batchId = batchId;
             this.flowId = flowId;
             this.primary = primary;
             this.secondaries = new ArrayList<String>(secondaries);
+            this.cacheUsers = new ArrayList<String>(cacheUsers);
         }
 
         @Override
@@ -549,7 +648,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                                 "20380101000000",
                                 context.getVariableList(),
                         }),
-                        MODULE_NAME_PREFIX + primary ,
+                        MODULE_NAME_PREFIX + primary,
                         getProfileName(primary),
                         getEnvironment(context)));
             }
@@ -574,11 +673,9 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getExportCommand(CommandContext context) {
-            if (primary == null) {
-                return Collections.emptyList();
-            }
-            return Arrays.asList(new Command[] {
-                    new Command(
+            List<Command> results = new ArrayList<Command>();
+            if (primary != null) {
+                results.add(new Command(
                             Arrays.asList(new String[] {
                                     context.getHomePathPrefix() + CMD_EXPORTER,
                                     primary,
@@ -587,30 +684,41 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                                     context.getExecutionId(),
                                     context.getVariableList(),
                             }),
-                            MODULE_NAME_PREFIX + primary ,
+                            MODULE_NAME_PREFIX + primary,
                             getProfileName(primary),
-                            getEnvironment(context)),
-            });
+                            getEnvironment(context)));
+            }
+            return results;
         }
 
         @Override
         public List<Command> getFinalizeCommand(CommandContext context) {
-            if (primary == null) {
-                return Collections.emptyList();
+            List<Command> results = new ArrayList<Command>();
+            if (primary != null) {
+                results.add(new Command(
+                        Arrays.asList(new String[] {
+                                context.getHomePathPrefix() + CMD_FINALIZER,
+                                primary,
+                                batchId,
+                                flowId,
+                                context.getExecutionId(),
+                        }),
+                        MODULE_NAME_PREFIX + primary,
+                        getProfileName(primary),
+                        getEnvironment(context)));
             }
-            return Arrays.asList(new Command[] {
-                    new Command(
-                            Arrays.asList(new String[] {
-                                    context.getHomePathPrefix() + CMD_FINALIZER,
-                                    primary,
-                                    batchId,
-                                    flowId,
-                                    context.getExecutionId(),
-                            }),
-                            MODULE_NAME_PREFIX + primary ,
-                            getProfileName(primary),
-                            getEnvironment(context)),
-            });
+            for (String cacheUser : cacheUsers) {
+                results.add(new Command(
+                        Arrays.asList(new String[] {
+                                context.getHomePathPrefix() + CMD_RELEASE_CACHE_LOCK,
+                                cacheUser,
+                                context.getExecutionId(),
+                        }),
+                        MODULE_NAME_PREFIX + cacheUser,
+                        getProfileName(cacheUser),
+                        getEnvironment(context)));
+            }
+            return results;
         }
 
         private Map<String, String> getEnvironment(CommandContext context) {

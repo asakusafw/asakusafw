@@ -474,7 +474,7 @@ public class ImportFileCreateTest {
         Map<String, ImportTargetTableBean> targetTable = new LinkedHashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean tableBean = new ImportTargetTableBean();
         tableBean.setImportTargetColumns(Arrays.asList(new String[]{"TEXTDATA1", "INTDATA1", "DATEDATA1"}));
-        tableBean.setSearchCondition("TEXTDATA1=99");
+        tableBean.setSearchCondition("1 < 0");
         tableBean.setUseCache(false);
         tableBean.setLockType(ImportTableLockType.TABLE);
         tableBean.setLockedOperation(ImportTableLockedOperation.ERROR);
@@ -486,13 +486,7 @@ public class ImportFileCreateTest {
         String jobflowSid = "7";
 
         // テスト対象クラス実行
-        ImportFileCreate create = new ImportFileCreate(){
-            @Override
-            protected String createSQLWithCondition(String tableName, java.util.List<String> column,
-                    String serchCondition, File importFileName) {
-                return "select * from IMPORT_TARGET1";
-            }
-        };
+        ImportFileCreate create = new ImportFileCreate();
         boolean result = create.createImportFile(bean, jobflowSid);
 
         // ファイルを生成

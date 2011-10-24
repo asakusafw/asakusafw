@@ -15,20 +15,26 @@
  */
 package com.asakusafw.bulkloader.extractor;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -37,7 +43,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import test.modelgen.table.model.ImportTarget1;
 
@@ -46,9 +54,14 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
+import com.asakusafw.bulkloader.transfer.FileList;
+import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.runtime.io.ZipEntryInputStream;
+import com.asakusafw.thundergate.runtime.cache.CacheInfo;
+import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
 
 
 /**
@@ -58,10 +71,15 @@ import com.asakusafw.runtime.io.ZipEntryInputStream;
  *
  */
 public class DfsFileImportTest {
-    /** ターゲット名 */
-    private static String targetName = "target1";
+
+    /**
+     * Temporary folder for each test case.
+     */
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     /** Importerで読み込むプロパティファイル */
-    private static List<String> propertys = Arrays.asList(new String[]{"bulkloader-conf-db.properties", "bulkloader-conf-hc.properties"});
+    private static List<String> properties = Arrays.asList(new String[]{"bulkloader-conf-db.properties", "bulkloader-conf-hc.properties"});
     /** ジョブフローID */
     private static String jobflowId = "JOB_FLOW01";
     /** ジョブフロー実行ID */
@@ -71,17 +89,16 @@ public class DfsFileImportTest {
     public static void setUpBeforeClass() throws Exception {
         UnitTestUtil.setUpBeforeClass();
         UnitTestUtil.setUpEnv();
-        BulkLoaderInitializer.initDBServer(jobflowId, executionId, propertys, "target1");
-        UnitTestUtil.setUpDB();
+        BulkLoaderInitializer.initHadoopCluster(jobflowId, executionId, properties);
     }
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        UnitTestUtil.tearDownDB();
+        BulkLoaderInitializer.initHadoopCluster(jobflowId, executionId, properties);
         UnitTestUtil.tearDownAfterClass();
+        UnitTestUtil.tearDownEnv();
     }
     @Before
     public void setUp() throws Exception {
-        BulkLoaderInitializer.initDBServer(jobflowId, executionId, propertys, targetName);
         UnitTestUtil.startUp();
     }
     @After
@@ -119,13 +136,7 @@ public class DfsFileImportTest {
             int count = 0;
             @Override
             protected InputStream getInputStream() {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(new File("src/test/data/importer/SEND_OUT1.zip"));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return fis;
+                return open("src/test/data/importer/SEND_OUT1.zip");
             }
             @Override
             protected <T> long write(Class<T> targetTableModel,
@@ -205,13 +216,7 @@ public class DfsFileImportTest {
             int count = 0;
             @Override
             protected InputStream getInputStream() {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(new File("src/test/data/importer/SEND_OUT2.zip"));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return fis;
+                return open("src/test/data/importer/SEND_OUT2.zip");
             }
             @Override
             protected <T> long write(Class<T> targetTableModel,
@@ -255,8 +260,202 @@ public class DfsFileImportTest {
        assertTrue(UnitTestUtil.assertFile(new File("src/test/data/importer/IMP_IMPORT_TARGET2-1.tsv"), new File("target/asakusa-thundergate/SEND_OUT1.tsv")));
        assertTrue(UnitTestUtil.assertFile(new File("src/test/data/importer/IMP_IMPORT_TARGET2-2.tsv"), new File("target/asakusa-thundergate/SEND_OUT2.tsv")));
     }
+
     /**
-     *
+     * Creates a new cache.
+     * @throws Exception
+     */
+    @Test
+    public void create_cache() throws Exception {
+        // ImportBeanを生成
+        Map<String, ImportTargetTableBean> targetTable = new LinkedHashMap<String, ImportTargetTableBean>();
+
+        ImportTargetTableBean tableBean1 = new ImportTargetTableBean();
+        tableBean1.setDfsFilePath("/${user}/${execution_id}/import/c1");
+        tableBean1.setImportTargetType(ImportTarget1.class);
+        tableBean1.setCacheId("c1");
+        targetTable.put("IMPORT_TARGET1", tableBean1);
+
+        ImportTargetTableBean tableBean2 = new ImportTargetTableBean();
+        tableBean2.setDfsFilePath("/${user}/${execution_id}/import/c2");
+        tableBean2.setImportTargetType(ImportTarget1.class);
+        tableBean2.setCacheId("c2");
+        targetTable.put("IMPORT_TARGET2", tableBean2);
+
+        ImportBean bean = new ImportBean();
+        bean.setTargetTable(targetTable);
+        bean.setExecutionId(executionId);
+
+        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        FileList.Writer writer = FileList.createWriter(buffer, true);
+        final CacheInfo info = new CacheInfo("a", "c1", Calendar.getInstance(), "IMPORT_TARGET1", Arrays.asList("a", "b"), "X", 0);
+        writer.openNext(new FileProtocol(
+                FileProtocol.Kind.CREATE_CACHE,
+                tableBean1.getDfsFilePath(),
+                info)
+        ).close();
+        writer.openNext(new FileProtocol(
+                FileProtocol.Kind.CONTENT,
+                FileNameUtil.createSendImportFileName("IMPORT_TARGET2"),
+                null)
+        ).close();
+        writer.close();
+
+        final File output = folder.newFolder("output");
+        final List<String> files = new ArrayList<String>();
+        final List<String> builders = new ArrayList<String>();
+
+        // テスト対象クラス実行
+        DummyHdfsFileImport fileImport = new DummyHdfsFileImport(0) {
+            @Override
+            protected InputStream getInputStream() {
+                return new ByteArrayInputStream(buffer.toByteArray());
+            }
+            @Override
+            protected URI resolveLocation(ImportBean _, String user, String location) throws BulkLoaderSystemException {
+                return new File(output, location).toURI();
+            }
+            @Override
+            protected <T> long write(
+                    Class<T> targetTableModel,
+                    URI dfsFilePath,
+                    InputStream inputStream) throws BulkLoaderSystemException {
+                try {
+                    inputStream.close();
+                    files.add(new File(dfsFilePath).getPath());
+                } catch (Exception e) {
+                    throw new AssertionError(e);
+                }
+                return 1;
+            }
+            @Override
+            protected Callable<?> createCacheBuilder(
+                    String subcommand,
+                    ImportBean _,
+                    URI location,
+                    final CacheInfo target) throws IOException {
+                assertThat(subcommand, is(CacheBuildClient.SUBCOMMAND_CREATE));
+                assertThat(target, is(info));
+                return new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        builders.add(target.getId());
+                        return null;
+                    }
+                };
+            }
+        };
+        boolean result = fileImport.importFile(bean, "hadoop");
+
+        assertTrue(result);
+
+        assertThat(files.size(), is(2));
+        assertThat(files.get(0), endsWith("c1/PATCH/part-0"));
+        assertThat(files.get(1), endsWith(tableBean2.getDfsFilePath()));
+
+        Collections.sort(builders);
+        assertThat(builders.size(), is(1));
+        assertThat(builders.get(0), is("c1"));
+    }
+
+    /**
+     * Update a cache.
+     * @throws Exception
+     */
+    @Test
+    public void update_cache() throws Exception {
+        // ImportBeanを生成
+        Map<String, ImportTargetTableBean> targetTable = new LinkedHashMap<String, ImportTargetTableBean>();
+
+        ImportTargetTableBean tableBean1 = new ImportTargetTableBean();
+        tableBean1.setDfsFilePath("/${user}/${execution_id}/import/c1");
+        tableBean1.setImportTargetType(ImportTarget1.class);
+        tableBean1.setCacheId("c1");
+        targetTable.put("IMPORT_TARGET1", tableBean1);
+
+        ImportTargetTableBean tableBean2 = new ImportTargetTableBean();
+        tableBean2.setDfsFilePath("/${user}/${execution_id}/import/c2");
+        tableBean2.setImportTargetType(ImportTarget1.class);
+        tableBean2.setCacheId("c2");
+        targetTable.put("IMPORT_TARGET2", tableBean2);
+
+        ImportBean bean = new ImportBean();
+        bean.setTargetTable(targetTable);
+        bean.setExecutionId(executionId);
+
+        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        FileList.Writer writer = FileList.createWriter(buffer, true);
+        final CacheInfo info = new CacheInfo("a", "c1", Calendar.getInstance(), "IMPORT_TARGET1", Arrays.asList("a", "b"), "X", 0);
+        writer.openNext(new FileProtocol(
+                FileProtocol.Kind.UPDATE_CACHE,
+                tableBean1.getDfsFilePath(),
+                info)
+        ).close();
+        writer.openNext(new FileProtocol(
+                FileProtocol.Kind.CONTENT,
+                FileNameUtil.createSendImportFileName("IMPORT_TARGET2"),
+                null)
+        ).close();
+        writer.close();
+
+        final File output = folder.newFolder("output");
+        final List<String> files = new ArrayList<String>();
+        final List<String> builders = new ArrayList<String>();
+
+        // テスト対象クラス実行
+        DummyHdfsFileImport fileImport = new DummyHdfsFileImport(0) {
+            @Override
+            protected InputStream getInputStream() {
+                return new ByteArrayInputStream(buffer.toByteArray());
+            }
+            @Override
+            protected URI resolveLocation(ImportBean _, String user, String location) throws BulkLoaderSystemException {
+                return new File(output, location).toURI();
+            }
+            @Override
+            protected <T> long write(
+                    Class<T> targetTableModel,
+                    URI dfsFilePath,
+                    InputStream inputStream) throws BulkLoaderSystemException {
+                try {
+                    inputStream.close();
+                    files.add(new File(dfsFilePath).getPath());
+                } catch (Exception e) {
+                    throw new AssertionError(e);
+                }
+                return 1;
+            }
+            @Override
+            protected Callable<?> createCacheBuilder(
+                    String subcommand,
+                    ImportBean _,
+                    URI location,
+                    final CacheInfo target) throws IOException {
+                assertThat(subcommand, is(CacheBuildClient.SUBCOMMAND_UPDATE));
+                assertThat(target, is(info));
+                return new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        builders.add(target.getId());
+                        return null;
+                    }
+                };
+            }
+        };
+        boolean result = fileImport.importFile(bean, "hadoop");
+
+        assertTrue(result);
+
+        assertThat(files.size(), is(2));
+        assertThat(files.get(0), endsWith("c1/PATCH/part-0"));
+        assertThat(files.get(1), endsWith(tableBean2.getDfsFilePath()));
+
+        Collections.sort(builders);
+        assertThat(builders.size(), is(1));
+        assertThat(builders.get(0), is("c1"));
+    }
+
+    /**
      * <p>
      * 異常系：ZIPエントリに対応するテーブルの定義がDSL存在しないケース
      * 詳細の設定は以下の通り
@@ -285,13 +484,7 @@ public class DfsFileImportTest {
             int count = 0;
             @Override
             protected InputStream getInputStream() {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(new File("src/test/data/importer/SEND_OUT3.zip"));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return fis;
+                return open("src/test/data/importer/SEND_OUT3.zip");
             }
             @Override
             protected <T> long write(Class<T> targetTableModel,
@@ -360,13 +553,7 @@ public class DfsFileImportTest {
         DfsFileImport fileImport = new DfsFileImport() {
             @Override
             protected InputStream getInputStream() {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(new File("src/test/data/importer/SEND_OUT1.zip"));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return fis;
+                return open("src/test/data/importer/SEND_OUT1.zip");
             }
             @Override
             protected <T> long write(Class<T> targetTableModel,
@@ -390,6 +577,7 @@ public class DfsFileImportTest {
      *
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void importFileTest05() throws Exception {
         // ImportBeanを生成
@@ -415,13 +603,7 @@ public class DfsFileImportTest {
             int count = 0;
             @Override
             protected InputStream getInputStream() {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(new File("src/test/data/importer/SEND_OUT1.zip"));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return fis;
+                return open("src/test/data/importer/SEND_OUT1.zip");
             }
             @Override
             protected <T> long write(Class<T> targetTableModel,
@@ -575,6 +757,15 @@ public class DfsFileImportTest {
         CompressionType compType = fileImport.getCompType("DUMMY");
         assertEquals(CompressionType.NONE, compType);
     }
+    InputStream open(String file) {
+        try {
+            File temp = folder.newFile("testing");
+            UnitTestUtil.createFileList(new File(file), temp);
+            return new FileInputStream(temp);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 }
 
 class DummyHdfsFileImport extends DfsFileImport {
@@ -585,5 +776,12 @@ class DummyHdfsFileImport extends DfsFileImport {
     public URI[] getUri() {
         return uri;
     }
-
+    @Override
+    protected Callable<?> createCacheBuilder(
+            String subcommand,
+            ImportBean bean,
+            URI location,
+            CacheInfo info) throws IOException {
+        return null;
+    }
 }

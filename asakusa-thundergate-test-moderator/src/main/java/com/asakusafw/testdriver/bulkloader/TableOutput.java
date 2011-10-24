@@ -22,10 +22,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Set;
-
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,22 +116,36 @@ public class TableOutput<T> implements ModelOutput<T> {
             assert table != null;
             assert connection != null;
             LOG.debug("Building insert statement: {}", table);
-            Set<String> columns = table.getColumnsToProperties().keySet();
+
+            String timestamp = table.getTimestampColumn();
+            List<String> columns = new ArrayList<String>(table.getColumnsToProperties().keySet());
+            List<String> values = new ArrayList<String>();
+            if (timestamp != null) {
+                columns.remove(timestamp);
+                columns.add(timestamp);
+                values.addAll(Collections.nCopies(columns.size() - 1, "?"));
+                values.add("NOW()");
+            } else {
+                values.addAll(Collections.nCopies(columns.size(), "?"));
+            }
             return connection.prepareStatement(MessageFormat.format(
                     "INSERT INTO {0} ({1}) VALUES ({2})",
                     table.getTableName(),
                     Util.join(columns),
-                    Util.join(Collections.nCopies(columns.size(), "?"))));
+                    Util.join(values)));
         }
 
         public void insert(DataModelReflection ref) throws SQLException {
             assert ref != null;
             statement.clearParameters();
             index = 1;
+            String timestamp = table.getTimestampColumn();
             DataModelDefinition<?> def = table.getDefinition();
-            for (PropertyName name : table.getColumnsToProperties().values()) {
-                scan(def, name, ref);
-                index++;
+            for (Map.Entry<String, PropertyName> entry : table.getColumnsToProperties().entrySet()) {
+                if (entry.getKey().equals(timestamp) == false) {
+                    scan(def, entry.getValue(), ref);
+                    index++;
+                }
             }
             statement.executeUpdate();
         }
@@ -144,8 +159,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void booleanProperty(PropertyName name,
-                DataModelReflection context) throws SQLException {
+        public void booleanProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Boolean value = (Boolean) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.BOOLEAN);
@@ -155,8 +169,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void byteProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void byteProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Byte value = (Byte) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.TINYINT);
@@ -166,8 +179,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void shortProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void shortProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Short value = (Short) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.SMALLINT);
@@ -177,8 +189,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void intProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void intProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Integer value = (Integer) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.INTEGER);
@@ -188,8 +199,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void longProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void longProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Long value = (Long) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.BIGINT);
@@ -199,8 +209,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void floatProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void floatProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Float value = (Float) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.FLOAT);
@@ -210,8 +219,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void doubleProperty(PropertyName name,
-                DataModelReflection context) throws SQLException {
+        public void doubleProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Double value = (Double) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.DOUBLE);
@@ -221,8 +229,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void decimalProperty(PropertyName name,
-                DataModelReflection context) throws SQLException {
+        public void decimalProperty(PropertyName name, DataModelReflection context) throws SQLException {
             BigDecimal value = (BigDecimal) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.DECIMAL);
@@ -232,8 +239,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void stringProperty(PropertyName name,
-                DataModelReflection context) throws SQLException {
+        public void stringProperty(PropertyName name, DataModelReflection context) throws SQLException {
             String value = (String) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.VARCHAR);
@@ -243,8 +249,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void dateProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void dateProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Calendar value = (Calendar) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.DATE);
@@ -255,8 +260,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void timeProperty(PropertyName name, DataModelReflection context)
-                throws SQLException {
+        public void timeProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Calendar value = (Calendar) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.TIME);
@@ -267,8 +271,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void datetimeProperty(PropertyName name,
-                DataModelReflection context) throws SQLException {
+        public void datetimeProperty(PropertyName name,DataModelReflection context) throws SQLException {
             Calendar value = (Calendar) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.TIME);

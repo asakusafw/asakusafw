@@ -15,20 +15,27 @@
  */
 package com.asakusafw.bulkloader.testutil;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -37,6 +44,7 @@ import org.apache.commons.lang.SystemUtils;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBConnection;
+import com.asakusafw.bulkloader.transfer.FileList;
 
 
 /**
@@ -129,6 +137,71 @@ public class UnitTestUtil {
         }
         return true;
     }
+
+    /**
+     * Create file list from Zip file.
+     * @param originalZipFile source Zip file
+     * @param targetFileList target file list file
+     */
+    public static void createFileList(File originalZipFile, File targetFileList) throws IOException {
+        ZipFile zip = new ZipFile(originalZipFile);
+        try {
+            FileOutputStream output = new FileOutputStream(targetFileList);
+            try {
+                FileList.Writer writer = FileList.createWriter(output, true);
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry next = entries.nextElement();
+                    InputStream input = zip.getInputStream(next);
+                    try {
+                        OutputStream target = writer.openNext(FileList.content(next.getName().replace('\\', '/')));
+                        try {
+                            IOUtils.pipingAndClose(input, target);
+                        } finally {
+                            target.close();
+                        }
+                    } finally {
+                        input.close();
+                    }
+                }
+                writer.close();
+            } finally {
+                output.close();
+            }
+        } finally {
+            zip.close();
+        }
+    }
+
+    /**
+     * Checks whether the target file list has expected contents.
+     * @param fileList target file list file
+     * @param expected expected contents
+     * @throws IOException if failed
+     */
+    public static void assertSameFileList(File fileList, File... expected) throws IOException {
+        FileInputStream source = new FileInputStream(fileList);
+        try {
+            FileList.Reader reader = FileList.createReader(source);
+            for (File file : expected) {
+                assertThat("expected: " + file, reader.next(), is(true));
+                InputStream expectedInput = null;
+                InputStream actualInput = null;
+                try {
+                    expectedInput = new FileInputStream(file);
+                    actualInput = reader.openContent();
+                } finally {
+                    StreamCloseLogic.closeGently(expectedInput);
+                    StreamCloseLogic.closeGently(actualInput);
+                }
+            }
+            assertThat("unexpected file", reader.next(), is(false));
+            reader.close();
+        } finally {
+            source.close();
+        }
+    }
+
     public static boolean assertZipFile(File[] expectedFile, File zipFile) throws IOException {
 
         ZipInputStream zipIs = new ZipInputStream(new FileInputStream(zipFile));

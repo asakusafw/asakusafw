@@ -53,6 +53,7 @@ import com.asakusafw.dmdl.model.*;
 
 /**
  * An implementation of the DMDL Script Parser.
+ * @since 0.2.0
  */
 class JjDmdlParser {
 
@@ -77,7 +78,24 @@ class JjDmdlParser {
         LOG.debug("Parse end  : {}", source);
         return script;
     }
-    
+
+    /**
+     * Parse a DMDL literal and return a model object.
+     * @param source the source location
+     * @return the analyzed AST
+     * @throws ParseException if input text was not a valid DMDL script
+     * @since 0.2.3
+     */
+    AstLiteral parseLiteral(URI source) throws ParseException {
+        LOG.debug("Parse Literal begin: {}", source);
+        this.sourceFile = source;
+        this.frameStack = new LinkedList<ParseFrame>();
+        AstLiteral literal = StartLiteral();
+        assert frameStack.isEmpty() : frameStack;
+        LOG.debug("Parse Literal end  : {}", source);
+        return literal;
+    }
+
     ParseFrame[] getFrames() {
         if (frameStack == null) {
             return new ParseFrame[0];
@@ -381,6 +399,21 @@ private AstScript Start() :
     {
         end("start");
         return script;
+    }
+}
+
+// Goal Symbol
+private AstLiteral StartLiteral() :
+{
+    begin("start");
+    AstLiteral literal;
+}
+{
+    literal = Literal()
+    <EOF>
+    {
+        end("start");
+        return literal;
     }
 }
 

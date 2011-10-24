@@ -24,9 +24,9 @@ import com.asakusafw.bulkloader.common.MessageIdConst;
  * @author yuta.shirai
  */
 public class BulkLoaderSystemException extends Exception {
-    private Class<?> clazz;
-    private String messageId;
-    private Object[] messageArgs;
+    private final Class<?> clazz;
+    private final String messageId;
+    private final Object[] messageArgs;
 
     private static final long serialVersionUID = 1L;
 
@@ -93,6 +93,32 @@ public class BulkLoaderSystemException extends Exception {
             Class<?> clazz,
             String sql,
             String... params) {
+        String param = null;
+        if (params != null && params.length != 0) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < params.length; i++) {
+                sb.append(params[i]);
+                if (i != params.length) {
+                    sb.append(",");
+                }
+            }
+            param = sb.toString();
+        }
+        return new BulkLoaderSystemException(e, clazz, MessageIdConst.CMN_DB_SQL_EXEC_ERROR, sql, param);
+    }
+    /**
+     * SQL実行時に発生した例外をIOSystemExceptionにする。
+     * @param e SQL例外
+     * @param clazz 例外が発生したクラス
+     * @param sql 例外が発生したSQL文
+     * @param params 例外が発生したSQL文のパラメータ
+     * @return IOSystemException
+     */
+    public static BulkLoaderSystemException createInstanceCauseBySQLException(
+            SQLException e,
+            Class<?> clazz,
+            String sql,
+            Object... params) {
         String param = null;
         if (params != null && params.length != 0) {
             StringBuffer sb = new StringBuffer();

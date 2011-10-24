@@ -20,21 +20,23 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.io.input.CountingInputStream;
 
 import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.MessageIdConst;
-import com.asakusafw.bulkloader.common.StreamRedirectThread;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.bulkloader.transfer.FileList;
+import com.asakusafw.bulkloader.transfer.FileListProvider;
+import com.asakusafw.bulkloader.transfer.FileProtocol;
+import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
 
 
 /**
@@ -50,18 +52,6 @@ public class ExportFileReceive {
      * @return Exportファイル取得結果（true:成功、false:失敗）
      */
     public boolean receiveFile(ExporterBean bean) {
-        Process process = null;
-        InputStream is = null;
-        ZipInputStream zIs = null;
-        int exitCode = 0;
-
-        // SSH起動の為の情報を取得
-        String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
-        String nameNodeIp = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
-        String nameNodeUser = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
-        String collectorShellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_COL_SHELL_NAME);
-        String variableTable = Constants.createVariableTable().toSerialString();
-
         // Exportファイルを置くディレクトリ名を作成
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_DIR));
         if (!fileDirectry.exists()) {
@@ -70,55 +60,31 @@ public class ExportFileReceive {
             return false;
         }
 
+        FileListProvider provider = null;
+        FileList.Reader reader = null;
+        long totalStartTime = System.currentTimeMillis();
         try {
-            // SSHのプロセスを起動し、標準入力のストリームを取得する
-            Log.log(this.getClass(), MessageIdConst.EXP_START_SUB_PROCESS,
-                    sshPath,
-                    nameNodeIp,
-                    nameNodeUser,
-                    collectorShellName,
+            provider = openFileList(
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
                     bean.getExecutionId());
+            provider.discardWriter();
+            reader = provider.openReader();
 
-            process = createProcess(
-                    sshPath,
-                    nameNodeIp,
-                    nameNodeUser,
-                    collectorShellName,
-                    bean.getTargetName(),
-                    bean.getBatchId(),
-                    bean.getJobflowId(),
-                    bean.getExecutionId(),
-                    variableTable);
-
-            // 標準エラー入力を別スレッドで読み込んでログ出力する
-            StreamRedirectThread thread = new StreamRedirectThread(process.getErrorStream(), System.err);
-            thread.start();
-
-            // インプットストリームを生成
-            is = process.getInputStream();
-            CountingInputStream counter = new CountingInputStream(is);
-            long totalStartTime = System.currentTimeMillis();
-
-            zIs = new ZipInputStream(counter);
-
-            // ZIPファイルの終端まで繰り返す
-            ZipEntry zipEntry = null;
-
+            // FileListの終端まで繰り返す
             int fileSeq = 0;
 
             // プロファイル用のテーブル
             Map<String, TableTransferProfile> profiles = new TreeMap<String, TableTransferProfile>();
 
-            while ((zipEntry = zIs.getNextEntry()) != null) {
+            while (reader.next()) {
+                FileProtocol protocol = reader.getCurrentProtocol();
+                assert protocol.getKind() == FileProtocol.Kind.CONTENT;
+
                 // ファイル名を取得
-                String fileName = zipEntry.getName().replace(File.separatorChar, '/');
-                // ファイル名がダミーファイルの場合は無視する
-                if (Constants.EXPORT_FILE_NOT_FOUND.equals(fileName)) {
-                    continue;
-                }
+                String fileName = protocol.getLocation();
+
                 // テーブル名を取得
                 String tableName = FileNameUtil.getExportTableName(fileName);
                 if (tableName == null) {
@@ -151,23 +117,24 @@ public class ExportFileReceive {
                 long dumpStartTime = System.currentTimeMillis();
                 long dumpFileSize = 0;
 
-                FileOutputStream fos = null;
+                int byteSize = Integer.parseInt(
+                        ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_BUFSIZE));
+                byte[] b = new byte[byteSize];
+
+                InputStream content = reader.openContent();
+                OutputStream fos = null;
                 try {
                     fos = createFos(file);
                     while (true) {
-                        // ファイルを読み込む
-                        int byteSize = Integer.parseInt(
-                                ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_BUFSIZE));
-                        byte[] b = new byte[byteSize];
                         int read;
                         try {
-                            read = zIs.read(b);
+                            read = content.read(b);
                         } catch (IOException e) {
                             throw new BulkLoaderSystemException(
                                     e,
                                     this.getClass(),
                                     MessageIdConst.EXP_FILERECEIV_EXCEPTION,
-                                    "Exportファイルの読み込みに失敗。エントリ名：" + zipEntry.getName());
+                                    "Exportファイルの読み込みに失敗。エントリ名：" + protocol.getLocation());
                         }
                         // 入力ファイルの終端を察知する
                         if (read < 0) {
@@ -198,6 +165,12 @@ public class ExportFileReceive {
                             tableName, file.getAbsolutePath());
 
                 } finally {
+                    try {
+                        content.close();
+                    } catch (IOException e) {
+                        // ここで例外が発生した場合は握りつぶす
+                        e.printStackTrace();
+                    }
                     if (fos != null) {
                         try {
                             fos.close();
@@ -208,7 +181,6 @@ public class ExportFileReceive {
                     }
                 }
             }
-
             for (TableTransferProfile profile : profiles.values()) {
                 Log.log(
                         getClass(),
@@ -221,6 +193,8 @@ public class ExportFileReceive {
                         profile.fileSize,
                         profile.elapsedTime);
             }
+            reader.close();
+            provider.waitForComplete();
             Log.log(
                     getClass(),
                     MessageIdConst.PRF_EXPORT_TRANSFER,
@@ -228,12 +202,12 @@ public class ExportFileReceive {
                     bean.getBatchId(),
                     bean.getJobflowId(),
                     bean.getExecutionId(),
-                    counter.getByteCount(),
+                    reader.getByteCount(),
                     System.currentTimeMillis() - totalStartTime);
         } catch (BulkLoaderSystemException e) {
             Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
             return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.log(
                     e,
                     this.getClass(),
@@ -241,44 +215,22 @@ public class ExportFileReceive {
                     "Exportファイルの読み込みに失敗。");
             return false;
         } finally {
-            if (is != null) {
+            if (reader != null) {
                 try {
-                    is.close();
-                } catch (IOException e) {
-                    // ここで例外が発生した場合は握りつぶす
-                    e.printStackTrace();
+                    reader.close();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
                 }
             }
-            if (zIs != null) {
+            if (provider != null) {
                 try {
-                    zIs.close();
-                } catch (IOException e) {
-                    // ここで例外が発生した場合は握りつぶす
-                    e.printStackTrace();
+                    provider.close();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
                 }
-            }
-            // SSHプロセスの実行結果を取得する
-            if (process != null) {
-                try {
-                    exitCode = process.waitFor();
-                } catch (InterruptedException e) {
-                    // ここで例外が発生した場合は握りつぶす
-                    exitCode = -1;
-                    e.printStackTrace();
-                    process.destroy();
-                }
-            } else {
-                exitCode = -1;
             }
         }
-        // サブプロセスの終了コードを判定して返す
-        if (exitCode == 0) {
-            return true;
-        } else {
-            Log.log(this.getClass(), MessageIdConst.EXP_COLLECTOR_ERROR, exitCode);
-            return false;
-        }
-
+        return true;
     }
 
     /**
@@ -288,7 +240,7 @@ public class ExportFileReceive {
      * @return 指定のファイルに出力するためのストリーム
      * @throws BulkLoaderSystemException IO例外が発生した場合
      */
-    private FileOutputStream createFos(File file) throws BulkLoaderSystemException {
+    private OutputStream createFos(File file) throws BulkLoaderSystemException {
         if (file.exists()) {
             if (!file.delete()) {
                 // ファイルの削除に失敗した場合は異常終了する
@@ -312,52 +264,55 @@ public class ExportFileReceive {
     }
 
     /**
-     * サブプロセスを生成して返す。
-     * @param sshPath SSHコマンドへのパス文字列
-     * @param collectorHost Collectorを起動するノードのホスト名またはIPアドレス
-     * @param collectorUser Collectorを起動するノードの実行ユーザー名
-     * @param shellName Collectorを起動するノードで実行するシェルの名前
-     * @param targetName 処理中のターゲット名
-     * @param batchId 処理中のバッチID
-     * @param jobflowId 処理中のジョブフローID
-     * @param executionId 処理中の実行ID
-     * @param bulkloaderArgs 変数表の文字列表現
-     * @return Collectorとの通信を行うプロセス
-     * @throws BulkLoaderSystemException プロセスの生成に失敗した場合
+     * Opens a new {@link FileListProvider}.
+     * @param targetName current target name
+     * @param batchId current batch ID
+     * @param jobflowId current jobflow ID
+     * @param executionId current execution ID
+     * @return the created provider
+     * @throws IOException if failed to open the file list
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    protected Process createProcess(
-            String sshPath,
-            String collectorHost,
-            String collectorUser,
-            String shellName,
+    protected FileListProvider openFileList(
             String targetName,
             String batchId,
             String jobflowId,
-            String executionId,
-            String bulkloaderArgs) throws BulkLoaderSystemException {
-        ProcessBuilder builder = new ProcessBuilder(sshPath,
-                "-l", collectorUser, collectorHost, shellName,
-                targetName, batchId, jobflowId, executionId, bulkloaderArgs);
-        Process process = null;
-        try {
-            process = builder.start();
-        } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.EXP_FILERECEIV_EXCEPTION,
-                    // TODO MessageFormat.formatの検討
-                    "サブプロセスの開始に失敗。SSHのパス：" +  sshPath
-                    + " マスターノードのホスト名：" + collectorHost
-                    + " マスターノードのユーザー名：" + collectorUser
-                    + " Collectorのシェルスクリプトのパス：" + shellName
-                    + " ターゲット名" + targetName
-                    + " バッチID：" + batchId
-                    + " ジョブフローID：" + jobflowId
-                    + " 実行時ID：" + executionId
-                    + " 変数表：" + bulkloaderArgs);
+            String executionId) throws IOException {
+        if (targetName == null) {
+            throw new IllegalArgumentException("targetName must not be null"); //$NON-NLS-1$
         }
-        return process;
+        if (batchId == null) {
+            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
+        }
+        if (jobflowId == null) {
+            throw new IllegalArgumentException("jobflowId must not be null"); //$NON-NLS-1$
+        }
+        if (executionId == null) {
+            throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
+        }
+        String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
+        String hostName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
+        String userName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
+        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_COL_SHELL_NAME);
+        String variableTable = Constants.createVariableTable().toSerialString();
+        List<String> command = new ArrayList<String>();
+        command.add(shellName);
+        command.add(targetName);
+        command.add(batchId);
+        command.add(jobflowId);
+        command.add(executionId);
+        command.add(variableTable);
+
+        Log.log(this.getClass(), MessageIdConst.EXP_START_SUB_PROCESS,
+                sshPath,
+                hostName,
+                userName,
+                shellName,
+                targetName,
+                batchId,
+                jobflowId,
+                executionId);
+        return new OpenSshFileListProvider(sshPath, userName, hostName, command);
     }
 
     private static final class TableTransferProfile {

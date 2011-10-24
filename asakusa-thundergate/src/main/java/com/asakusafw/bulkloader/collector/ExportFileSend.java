@@ -23,9 +23,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -46,6 +44,7 @@ import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvIoFactory;
 
@@ -66,8 +65,7 @@ public class ExportFileSend {
     /**
      * Export対象ファイルをDBサーバへ送信する。
      * <p>
-     * SequenceFile形式のExport対象ファイルを読み込んでTSV形式に変換した上で、
-     * ZIP形式に圧縮してDBサーバの標準入力へ送信する。
+     * SequenceFile形式のExport対象ファイルを読み込んでTSV形式に変換した上で、DBサーバの標準入力へ送信する。
      * 送信は、Exporterの標準入力にファイルを書き込む事で行う。
      * </p>
      * @param bean パラメータを保持するBean
@@ -76,20 +74,20 @@ public class ExportFileSend {
      */
     public boolean sendExportFile(ExporterBean bean, String user) {
 
-        // ZIP圧縮に関する情報を取得
+        // 圧縮に関する情報を取得
         String strCompType = ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_TYPE);
         FileCompType compType = FileCompType.find(strCompType);
 
         OutputStream output = getOutputStream();
         try {
-            // 標準出力ストリームをZipOutputStreamでラップする
-            ZipOutputStream zos = new ZipOutputStream(output);
-            if (FileCompType.STORED.equals(compType)) {
-                zos.setLevel(0);
+            FileList.Writer writer;
+            try {
+                writer = FileList.createWriter(output, compType == FileCompType.DEFLATED);
+            } catch (IOException e) {
+                // TODO ExportFileSend#sendExportFile
+                throw new AssertionError(e);
             }
-
             List<String> l = bean.getExportTargetTableList();
-            boolean isPutEntry = false;
             for (String tableName : l) {
                 ExportTargetTableBean targetTable = bean.getExportTargetTable(tableName);
                 Class<? extends Writable> targetTableModel =
@@ -113,9 +111,8 @@ public class ExportFileSend {
                             this.getClass(),
                             MessageIdConst.COL_SEND_HDFSFILE,
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
-                    long countInFile = send(targetTableModel, filePath.get(i), zos, tableName);
+                    long countInFile = send(targetTableModel, filePath.get(i), writer, tableName);
                     if (countInFile >= 0) {
-                        isPutEntry = true;
                         recordCount += countInFile;
                     }
                     Log.log(
@@ -135,22 +132,8 @@ public class ExportFileSend {
                         recordCount);
             }
 
-            if (!isPutEntry) {
-                // ZIPにエントリが存在しない場合はダミーのエントリを追加する
-                ZipEntry ze = new ZipEntry(Constants.EXPORT_FILE_NOT_FOUND);
-                try {
-                    zos.putNextEntry(ze);
-                } catch (IOException e) {
-                    throw new BulkLoaderSystemException(
-                            e,
-                            this.getClass(),
-                            MessageIdConst.COL_SENDFILE_EXCEPTION,
-                            "ZIPファイルへのエントリの追加に失敗");
-                }
-            }
-
             try {
-                zos.close();
+                writer.close();
             } catch (IOException e) {
                 // ここで例外が発生した場合は握りつぶす
                 e.printStackTrace();
@@ -171,11 +154,11 @@ public class ExportFileSend {
         }
     }
     /**
-     * 指定されたSequenceFileを読み込んでTSV形式でZipOutputStreamに書き出す。
+     * 指定されたSequenceFileを読み込んでTSV形式で{@link FileList.Writer}に書き出す。
      * @param <T> データモデルの型
      * @param targetTableModel Exportデータに対応するModelのクラス型
      * @param filePath Exportファイル
-     * @param zos 出力先の{@link ZipOutputStream}
+     * @param writer 出力先のWriter
      * @param tableName テーブル名
      * @return 書きだしたレコード数、エントリをひとつも書き出さなかった場合は -1
      * @throws BulkLoaderSystemException 入出力に関するシステム例外が発生した場合
@@ -183,7 +166,7 @@ public class ExportFileSend {
     protected <T extends Writable> long send(
             Class<T> targetTableModel,
             String filePath,
-            ZipOutputStream zos,
+            FileList.Writer writer,
             String tableName) throws BulkLoaderSystemException {
         FileSystem fs = null;
         String fileName = null;
@@ -220,25 +203,18 @@ public class ExportFileSend {
                 }
 
                 // TODO 見通しを良くする
-                SequenceFile.Reader reader = null;
+                // SequenceFileをHDFSから読み込むオブジェクトを生成する
+                SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
                 try {
-                    // SequenceFileをHDFSから読み込むオブジェクトを生成する
-                    reader = new SequenceFile.Reader(fs, path, conf);
-
                     while (true) {
-                        // ZIPエントリを追加
-                        fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
-                        ZipEntry ze = new ZipEntry(fileName);
-                        zos.putNextEntry(ze);
+                        // エントリを追加
                         addEntry = true;
-
-                        ModelOutput<T> modelOut = null;
+                        fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
+                        OutputStream output = writer.openNext(FileList.content(fileName));
                         try {
-                            // BeanをTSVファイルに変換するオブジェクトを生成する
-                            ByteCountZipEntryOutputStream zeos = new ByteCountZipEntryOutputStream(zos);
+                            CountingOutputStream counter = new CountingOutputStream(output);
+                            ModelOutput<T> modelOut = factory.createModelOutput(counter);
                             T model = factory.createModelObject();
-                            modelOut = factory.createModelOutput(zeos);
-
                             Log.log(
                                     this.getClass(),
                                     MessageIdConst.COL_SENDFILE,
@@ -253,12 +229,12 @@ public class ExportFileSend {
                                 // 最大ファイルサイズに達したかチェックする
                                 // charからbyteに変換する部分でバッファされるため、
                                 // 必ずしも分割サイズで分割されない。(バッファ分の誤差がある)
-                                if (zeos.getSize() > maxSize) {
+                                if (counter.getByteCount() > maxSize) {
                                     nextFile = true;
                                     break;
                                 }
                             }
-
+                            modelOut.close();
                             Log.log(this.getClass(),
                                     MessageIdConst.COL_SENDFILE_SUCCESS,
                                     tableName, path.toString(), fileName);
@@ -271,15 +247,11 @@ public class ExportFileSend {
                                 break;
                             }
                         } finally {
-                            if (modelOut != null) {
-                                modelOut.close();
-                            }
+                            output.close();
                         }
                     }
                 } finally {
-                    if (reader != null) {
-                        reader.close();
-                    }
+                    reader.close();
                 }
             }
             if (addEntry) {

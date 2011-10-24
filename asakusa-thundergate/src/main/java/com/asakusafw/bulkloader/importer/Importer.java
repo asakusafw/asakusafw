@@ -153,6 +153,12 @@ public class Importer {
                             new Date(), importerType, targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 }
+
+                ImportProtocolDecide protocolDecide = createImportProtocolDecide();
+                // TODO logging
+                protocolDecide.execute(bean);
+                // TODO logging
+
                 // Import対象テーブルのロックを取得
                 TargetDataLock targetLock = createTargetDataLock();
                 List<String> list = bean.getImportTargetTableList();
@@ -210,6 +216,11 @@ public class Importer {
                             new Date(), importerType, targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_SUCCESS;
                 } else {
+                    ImportProtocolDecide protocolDecide = createImportProtocolDecide();
+                    // TODO logging
+                    protocolDecide.execute(bean);
+                    // TODO logging
+
                     // 補助インポーターではJobflow SIDを利用しない
                     jobflowSid = null;
                 }
@@ -256,13 +267,6 @@ public class Importer {
                         MessageIdConst.IMP_SENDDATA_SUCCESS,
                         importerType, targetName, batchId, jobflowId, executionId);
             }
-
-            // TODO キャッシュ取り出しの実行
-            // キャッシュ取り出しに失敗
-            // Log.log(
-            //         CLASS,
-            //         MessageIdConst.IMP_CACHE_ERROR,
-            //         new Date(), importerType, targetName, batchId, jobFlowId, executionId);
 
             // 生成したImport対象ファイルを削除
             String deleteTsv = ConfigurationLoader.getProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE);
@@ -420,5 +424,13 @@ public class Importer {
      */
     protected TargetDataLock createTargetDataLock() {
         return new TargetDataLock();
+    }
+
+    /**
+     * Returns import protocol decider.
+     * @return {@link ImportProtocolDecide}
+     */
+    protected ImportProtocolDecide createImportProtocolDecide() {
+        return new ImportProtocolDecide();
     }
 }
