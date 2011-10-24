@@ -40,8 +40,17 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
     public void truncate(BulkLoadImporterDescription description) throws IOException {
         Configuration conf = Configuration.load(description.getTargetName());
         String tableName = description.getTableName();
+
         LOG.info("インポート元のテーブル{}の内容を消去します", tableName);
         Util.truncate(conf, tableName);
+
+        String cacheId = description.calculateCacheId();
+        if (description.isCacheEnabled() && cacheId != null) {
+            LOG.info("キャッシュ{}を消去します: {}",
+                    cacheId,
+                    description.getClass().getName());
+            Util.clearCache(conf, cacheId);
+        }
     }
 
     @Override
