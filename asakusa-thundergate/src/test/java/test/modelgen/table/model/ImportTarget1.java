@@ -19,6 +19,7 @@ import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.Property;
 import com.asakusafw.vocabulary.model.TableModel;
@@ -33,35 +34,55 @@ import org.apache.hadoop.io.Writable;
  */
 @Generated("TableModelEntityEmitter:0.0.1")@DataModel@TableModel(name = "import_target1", columns = {"SID", "VERSION_NO"
             , "TEXTDATA1", "INTDATA1", "DATEDATA1", "RGST_DATE", "UPDT_DATE"}, primary = {"SID"})@SuppressWarnings(
-        "deprecation") public class ImportTarget1 implements Writable {
+        "deprecation") public class ImportTarget1 implements Writable, ThunderGateCacheSupport {
+
+    @Override
+    public long __tgc__DataModelVersion() {
+        return 1;
+    }
+
+    @Override
+    public long __tgc__SystemId() {
+        return sid.get();
+    }
+
+    @Override
+    public String __tgc__TimestampColumn() {
+        return "UPDT_DATE";
+    }
+
+    @Override
+    public boolean __tgc__Deleted() {
+        return false;
+    }
     /**
      * カラム<code>SID</code>を表すフィールド。
      */
-    @Property(name = "SID") private LongOption sid = new LongOption();
+    @Property(name = "SID") private final LongOption sid = new LongOption();
     /**
      * カラム<code>VERSION_NO</code>を表すフィールド。
      */
-    @Property(name = "VERSION_NO") private LongOption versionNo = new LongOption();
+    @Property(name = "VERSION_NO") private final LongOption versionNo = new LongOption();
     /**
      * カラム<code>TEXTDATA1</code>を表すフィールド。
      */
-    @Property(name = "TEXTDATA1") private StringOption textdata1 = new StringOption();
+    @Property(name = "TEXTDATA1") private final StringOption textdata1 = new StringOption();
     /**
      * カラム<code>INTDATA1</code>を表すフィールド。
      */
-    @Property(name = "INTDATA1") private IntOption intdata1 = new IntOption();
+    @Property(name = "INTDATA1") private final IntOption intdata1 = new IntOption();
     /**
      * カラム<code>DATEDATA1</code>を表すフィールド。
      */
-    @Property(name = "DATEDATA1") private DateTimeOption datedata1 = new DateTimeOption();
+    @Property(name = "DATEDATA1") private final DateTimeOption datedata1 = new DateTimeOption();
     /**
      * カラム<code>RGST_DATE</code>を表すフィールド。
      */
-    @Property(name = "RGST_DATE") private DateTimeOption rgstDate = new DateTimeOption();
+    @Property(name = "RGST_DATE") private final DateTimeOption rgstDate = new DateTimeOption();
     /**
      * カラム<code>UPDT_DATE</code>を表すフィールド。
      */
-    @Property(name = "UPDT_DATE") private DateTimeOption updtDate = new DateTimeOption();
+    @Property(name = "UPDT_DATE") private final DateTimeOption updtDate = new DateTimeOption();
     /**
      * カラム<code>SID</code>の値を返す。
      * @return カラム<code>SID</code>の値

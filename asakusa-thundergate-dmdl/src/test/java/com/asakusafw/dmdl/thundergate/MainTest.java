@@ -84,4 +84,56 @@ public class MainTest {
         assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
         assertThat(conf.getMatcher().acceptModel("DENIED"), is(false));
     }
+
+    /**
+     * create configuration with cache.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void with_cache() throws Exception {
+        List<String> arguments = new ArrayList<String>();
+
+        Properties jdbcProperties = new Properties();
+        jdbcProperties.setProperty(Constants.K_JDBC_DRIVER, "com.asakusafw.Driver");
+        jdbcProperties.setProperty(Constants.K_JDBC_URL, "asakusa:thundergate");
+        jdbcProperties.setProperty(Constants.K_JDBC_USER, "asakusa");
+        jdbcProperties.setProperty(Constants.K_JDBC_PASSWORD, "asakusapw");
+        jdbcProperties.setProperty(Constants.K_DATABASE_NAME, "asakusadb");
+        File jdbc = folder.newFile("jdbc.properties");
+        FileOutputStream out = new FileOutputStream(jdbc);
+        try {
+            jdbcProperties.store(out, "testing");
+        } finally {
+            out.close();
+        }
+
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+        Collections.addAll(arguments, "-encoding", "ASCII");
+        Collections.addAll(arguments, "-includes", "ACCEPT|DENIED");
+        Collections.addAll(arguments, "-excludes", "DENIED");
+        Collections.addAll(arguments, "-sid_column", "SID");
+        Collections.addAll(arguments, "-timestamp_column", "LAST_UPDT_DATETIME");
+        Collections.addAll(arguments, "-delete_flag_column", "LOGICAL_DEL_FLG");
+        Collections.addAll(arguments, "-delete_flag_value", "\"1\"");
+
+        Configuration conf = Main.loadConfigurationFromArguments(
+                arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getJdbcDriver(), is("com.asakusafw.Driver"));
+        assertThat(conf.getJdbcUrl(), is("asakusa:thundergate"));
+        assertThat(conf.getJdbcUser(), is("asakusa"));
+        assertThat(conf.getJdbcPassword(), is("asakusapw"));
+        assertThat(conf.getDatabaseName(), is("asakusadb"));
+        assertThat(conf.getEncoding(), is(Charset.forName("ASCII")));
+        assertThat(conf.getOutput(), is(output));
+        assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("DENIED"), is(false));
+        assertThat(conf.getSidColumn(), is("SID"));
+        assertThat(conf.getTimestampColumn(), is("LAST_UPDT_DATETIME"));
+        assertThat(conf.getDeleteFlagColumn(), is("LOGICAL_DEL_FLG"));
+        assertThat(conf.getDeleteFlagValue().toStringValue(), is("1"));
+    }
 }

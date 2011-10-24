@@ -20,10 +20,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -40,12 +48,17 @@ import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.MultiThreadedCopier;
 import com.asakusafw.bulkloader.common.SequenceFileModelOutput;
+import com.asakusafw.bulkloader.common.StreamRedirectThread;
 import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.bulkloader.transfer.FileList;
+import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.TsvIoFactory;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
+import com.asakusafw.thundergate.runtime.cache.CacheInfo;
+import com.asakusafw.thundergate.runtime.cache.CacheStorage;
+import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
 
 /**
  * 標準入力を読み込んでSequenceFile形式でDFSにファイルを書き出すクラス。
@@ -61,61 +74,192 @@ public class DfsFileImport {
         UrlStreamHandlerFactoryRegisterer.register();
     }
 
+    private final ExecutorService executor;
+
+    private final String cacheBuildCommand;
+
+    /**
+     * Creates a new instance.
+     */
+    public DfsFileImport() {
+        this.cacheBuildCommand = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME);
+        int parallel = Integer.parseInt(ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL));
+        this.executor = Executors.newFixedThreadPool(parallel);
+    }
+
     /**
      * 標準入力を読み込んでDFSにファイルを書き出す。
-     * ZIPで受け取ったTSV形式のファイルをModelオブジェクトに変換して、
-     * SequenceFile形式でDFSに出力する
+     * {@link FileList}形式で受け取ったTSV形式のファイルをModelオブジェクトに変換して、
+     * SequenceFile形式でDFSに出力する。
+     * 出力先はプロトコルの形式によって異なる。
+     * 利用可能なプロトコルは以下のとおり。
+     * <ul>
+     * <li> {@link FileProtocol.Kind#CONTENT} </li>
+     * <li> {@link FileProtocol.Kind#CREATE_CACHE} </li>
+     * <li> {@link FileProtocol.Kind#UPDATE_CACHE} </li>
+     * </ul>
      * @param bean パラメータを保持するBean
      * @param user OSのユーザー名
      * @return 出力結果（true：正常終了、false：異常終了）
      */
     public boolean importFile(ImportBean bean, String user) {
         // 標準入力を取得
-        ZipInputStream zipIs = new ZipInputStream(getInputStream());
+        FileList.Reader reader;
         try {
-            ZipEntry zipEntry;
-            // ZIPファイルの終端まで繰り返す
-            while ((zipEntry = zipIs.getNextEntry()) != null) {
-                if (zipEntry.isDirectory()) {
-                    // エントリがディレクトリの場合はスキップする
-                    continue;
-                }
-                String tableName = FileNameUtil.getImportTableName(
-                        zipEntry.getName().replace(File.separatorChar, '/'));
+            reader = FileList.createReader(getInputStream());
+        } catch (IOException e) {
+            Log.log(
+                    e,
+                    this.getClass(),
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "標準入力からFileListの取得に失敗");
+            return false;
+        }
+        try {
+            // FileListの終端まで繰り返す
+            List<Future<?>> running = new ArrayList<Future<?>>();
+            while (reader.next()) {
+                FileProtocol protocol = reader.getCurrentProtocol();
+                InputStream content = reader.openContent();
+                try {
+                    switch (protocol.getKind()) {
+                    case CONTENT:
+                        importContent(protocol, content, bean, user);
+                        break;
 
-                ImportTargetTableBean targetTableBean = bean.getTargetTable(tableName);
-                if (targetTableBean == null) {
-                    // ZIPエントリに対応するテーブルの定義がDSL存在しない場合異常終了する。
-                    throw new BulkLoaderSystemException(
-                            this.getClass(),
-                            MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                            // TODO MessageFormat.formatを検討
-                            "ZIPエントリに対応するテーブルの定義がDSL存在しない。テーブル名：" + tableName);
-                }
+                    case CREATE_CACHE:
+                    case UPDATE_CACHE:
+                        long recordCount = putCachePatch(protocol, content, bean, user);
+                        Callable<?> builder = createCacheBuilder(protocol, bean, user, recordCount);
+                        if (builder != null) {
+                            running.add(executor.submit(builder));
+                        }
+                        break;
 
-                URI dfsFilePath;
-                if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
-                    dfsFilePath = FileNameUtil.createDfsImportURIWithWorkingDir(
-                            targetTableBean.getDfsFilePath(), bean.getExecutionId());
-                } else {
-                    dfsFilePath = FileNameUtil.createDfsImportURI(
-                            targetTableBean.getDfsFilePath(), bean.getExecutionId(), user);
+                    default:
+                        throw new AssertionError(protocol.getKind());
+                    }
+                } finally {
+                    content.close();
                 }
+            }
+
+            waitForCompleteTasks(running);
+            // 正常終了
+            return true;
+
+        } catch (BulkLoaderSystemException e) {
+            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+        } catch (IOException e) {
+            // FileListの展開に失敗
+            Log.log(
+                    e,
+                    this.getClass(),
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "標準入力からFileListの取得に失敗");
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // ここで例外が発生した場合は握りつぶす
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private void importContent(
+            FileProtocol protocol,
+            InputStream content,
+            ImportBean bean,
+            String user) throws BulkLoaderSystemException {
+        assert protocol != null;
+        assert content != null;
+        assert bean != null;
+        assert user != null;
+        String tableName = FileNameUtil.getImportTableName(protocol.getLocation());
+
+        ImportTargetTableBean targetTableBean = bean.getTargetTable(tableName);
+        if (targetTableBean == null) {
+            // 対応するテーブルの定義がDSL存在しない場合異常終了する。
+            throw new BulkLoaderSystemException(
+                    this.getClass(),
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    MessageFormat.format(
+                            "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
+                            tableName));
+        }
+
+        URI dfsFilePath = resolveLocation(bean, user, targetTableBean.getDfsFilePath());
+        Class<?> targetTableModel = targetTableBean.getImportTargetType();
+
+        Log.log(
+                this.getClass(),
+                MessageIdConst.EXT_CREATE_HDFSFILE,
+                tableName, dfsFilePath.toString(), targetTableModel.toString());
+
+        // ファイルをSequenceFileに変換してDFSに書き出す
+        long recordCount = write(targetTableModel, dfsFilePath, content);
+
+        Log.log(
+                this.getClass(),
+                MessageIdConst.EXT_CREATE_HDFSFILE_SUCCESS,
+                tableName, dfsFilePath.toString(), targetTableModel.toString());
+        Log.log(
+                this.getClass(),
+                MessageIdConst.PRF_EXTRACT_COUNT,
+                bean.getTargetName(),
+                bean.getBatchId(),
+                bean.getJobflowId(),
+                bean.getExecutionId(),
+                tableName,
+                recordCount);
+    }
+
+    private long putCachePatch(
+            FileProtocol protocol,
+            InputStream content,
+            ImportBean bean,
+            String user) throws BulkLoaderSystemException {
+        assert protocol != null;
+        assert content != null;
+        assert bean != null;
+        assert user != null;
+        assert protocol.getKind() == FileProtocol.Kind.CREATE_CACHE
+            || protocol.getKind() == FileProtocol.Kind.UPDATE_CACHE;
+
+        CacheInfo info = protocol.getInfo();
+        assert info != null;
+
+        ImportTargetTableBean targetTableBean = bean.getTargetTable(info.getTableName());
+        if (targetTableBean == null) {
+            // 対応するテーブルの定義がDSL存在しない場合異常終了する。
+            throw new BulkLoaderSystemException(
+                    this.getClass(),
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    MessageFormat.format(
+                            "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
+                            info.getTableName()));
+        }
+
+        URI dfsFilePath = resolveLocation(bean, user, protocol.getLocation());
+
+        try {
+            CacheStorage storage = new CacheStorage(new Configuration(), dfsFilePath);
+            try {
+                storage.putPatchCacheInfo(info);
 
                 Class<?> targetTableModel = targetTableBean.getImportTargetType();
-
+                Path targetUri = storage.getPatchContents("0");
                 Log.log(
                         this.getClass(),
                         MessageIdConst.EXT_CREATE_HDFSFILE,
-                        tableName, dfsFilePath.toString(), targetTableModel.toString());
-
-                // ファイルをSequenceFileに変換してDFSに書き出す
-                long recordCount = write(targetTableModel, dfsFilePath, new ZipEntryInputStream(zipIs));
-
+                        info.getTableName(), targetUri.toString(), targetTableModel.toString());
+                long recordCount = write(targetTableModel, targetUri.toUri(), content);
                 Log.log(
                         this.getClass(),
                         MessageIdConst.EXT_CREATE_HDFSFILE_SUCCESS,
-                        tableName, dfsFilePath.toString(), targetTableModel.toString());
+                        info.getTableName(), dfsFilePath.toString(), targetTableModel.toString());
                 Log.log(
                         this.getClass(),
                         MessageIdConst.PRF_EXTRACT_COUNT,
@@ -123,39 +267,232 @@ public class DfsFileImport {
                         bean.getBatchId(),
                         bean.getJobflowId(),
                         bean.getExecutionId(),
-                        tableName,
+                        info.getTableName(),
                         recordCount);
+                return recordCount;
+            } finally {
+                storage.close();
             }
-            // 正常終了
-            return true;
-
-        } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-            return false;
         } catch (IOException e) {
-            // ZIPエントリの取得に失敗
-            Log.log(
+            throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
                     MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                    "標準入力からZIPエントリの取得に失敗");
-            return false;
+                    "Failed to create a cache patch file: " + dfsFilePath);
+        }
+    }
+
+    private Callable<?> createCacheBuilder(
+            FileProtocol protocol,
+            ImportBean bean,
+            String user,
+            long recordCount) throws BulkLoaderSystemException {
+        assert protocol != null;
+        assert bean != null;
+        assert user != null;
+        CacheInfo info = protocol.getInfo();
+        URI location = resolveLocation(bean, user, protocol.getLocation());
+        assert info != null;
+        try {
+            switch (protocol.getKind()) {
+            case CREATE_CACHE:
+                return createCacheBuilder(CacheBuildClient.SUBCOMMAND_CREATE, bean, location, info);
+            case UPDATE_CACHE:
+                if (recordCount > 0) {
+                    return createCacheBuilder(CacheBuildClient.SUBCOMMAND_UPDATE, bean, location, info);
+                } else {
+                    return null;
+                }
+            default:
+                throw new AssertionError(protocol);
+            }
+        } catch (IOException e) {
+            throw new BulkLoaderSystemException(
+                    e,
+                    DfsFileImport.class,
+                    // TODO logging
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    MessageFormat.format(
+                            "Failed to build cache (location={0}, table={1}, id={2})",
+                            protocol.getLocation(),
+                            info.getTableName(),
+                            info.getId()));
+        }
+    }
+
+    /**
+     * Creates a cache builder for the specified cache (of candidate).
+     * @param subcommand subcommand name
+     * @param bean current importer script
+     * @param location cache location
+     * @param info cache information
+     * @return the future object of the execution, or {@code null} if nothing to do
+     * @throws IOException if failed to start execution
+     */
+    protected Callable<?> createCacheBuilder(
+            String subcommand,
+            ImportBean bean,
+            final URI location,
+            final CacheInfo info) throws IOException {
+        assert subcommand != null;
+        assert bean != null;
+        assert location != null;
+        assert info != null;
+        if (cacheBuildCommand == null) {
+            throw new IOException(MessageFormat.format(
+                    "Configuration \"{0}\" was not defined",
+                    Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME));
+        }
+
+        List<String> command = new ArrayList<String>();
+        command.add(cacheBuildCommand);
+        command.add(subcommand);
+        command.add(bean.getBatchId());
+        command.add(bean.getJobflowId());
+        command.add(bean.getExecutionId());
+        command.add(location.toString());
+        command.add(info.getModelClassName());
+
+        ProcessBuilder builder = new ProcessBuilder(command);
+        builder.directory(new File(System.getProperty("user.home", ".")));
+        final Process process = builder.start();
+        boolean succeed = false;
+        try {
+            final Thread stdout = new StreamRedirectThread(process.getInputStream(), System.out);
+            stdout.setDaemon(true);
+            stdout.start();
+            final Thread stderr = new StreamRedirectThread(process.getErrorStream(), System.err);
+            stderr.setDaemon(true);
+            stderr.start();
+            Callable<?> result = new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    boolean innerSucceed = false;
+                    try {
+                        stdout.join();
+                        stderr.join();
+                        int exitCode = process.waitFor();
+                        if (exitCode != 0) {
+                            throw new IOException(MessageFormat.format(
+                                    "Cache builder returns unexpected exit code: {0}",
+                                    exitCode));
+                        }
+                        innerSucceed = true;
+                    } catch (Exception e) {
+                        throw new BulkLoaderSystemException(
+                                e,
+                                DfsFileImport.class,
+                                // TODO logging
+                                MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                                MessageFormat.format(
+                                        "Failed to build cache (location={0}, table={1}, id={2})",
+                                        location,
+                                        info.getTableName(),
+                                        info.getId()));
+                    } finally {
+                        if (innerSucceed == false) {
+                            process.destroy();
+                        }
+                    }
+                    return null;
+                }
+            };
+            succeed = true;
+            return result;
         } finally {
-            try {
-                zipIs.close();
-            } catch (IOException e) {
-                // ここで例外が発生した場合は握りつぶす
-                e.printStackTrace();
+            if (succeed == false) {
+                process.destroy();
             }
         }
     }
+
     /**
-     * ZipInputStreamからファイルを読み込んでSequenceFile型でDFSに書き出す。
-     * 「TSV→Model→SequenceFile」の変換を行う
+     * Resolves target location.
+     * @param bean importer bean
+     * @param user current user name
+     * @param location target location
+     * @return the resolved location
+     * @throws BulkLoaderSystemException if failed to resolve
+     */
+    protected URI resolveLocation(ImportBean bean, String user, String location) throws BulkLoaderSystemException {
+        URI dfsFilePath;
+        if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
+            dfsFilePath = FileNameUtil.createDfsImportURIWithWorkingDir(
+                    location,
+                    bean.getExecutionId());
+        } else {
+            dfsFilePath = FileNameUtil.createDfsImportURI(
+                    location,
+                    bean.getExecutionId(),
+                    user);
+        }
+        return dfsFilePath;
+    }
+
+    private void waitForCompleteTasks(List<Future<?>> running) throws BulkLoaderSystemException {
+        assert running != null;
+        // TODO logging
+        boolean sawError = false;
+        LinkedList<Future<?>> rest = new LinkedList<Future<?>>(running);
+        while (rest.isEmpty() == false) {
+            Future<?> future = rest.removeFirst();
+            try {
+                future.get(1, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                // continue...
+                rest.addLast(future);
+            } catch (InterruptedException e) {
+                cancel(rest);
+                throw new BulkLoaderSystemException(
+                        e,
+                        DfsFileImport.class,
+                        // TODO logging
+                        MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                        "Building cache was interruped");
+            } catch (ExecutionException e) {
+                cancel(rest);
+                Throwable cause = e.getCause();
+                if (cause instanceof RuntimeException) {
+                    throw (RuntimeException) cause;
+                } else if (cause instanceof Error) {
+                    throw (Error) cause;
+                } else if (cause instanceof BulkLoaderSystemException) {
+                    BulkLoaderSystemException b = (BulkLoaderSystemException) cause;
+                    Log.log(b.getCause(), b.getClazz(), b.getMessageId(), b.getMessageArgs());
+                    sawError = true;
+                } else {
+                    Log.log(
+                            e,
+                            getClass(),
+                            // TODO logging
+                            MessageIdConst.EXT_CREATE_HDFSFILE,
+                            "Building cache was failed by exceptional condition");
+                    sawError = true;
+                }
+            }
+        }
+        if (sawError) {
+            throw new BulkLoaderSystemException(
+                    DfsFileImport.class,
+                    // TODO logging
+                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "Building cache failed");
+        }
+    }
+
+    private void cancel(List<Future<?>> futures) {
+        assert futures != null;
+        for (Future<?> future : futures) {
+            future.cancel(true);
+        }
+    }
+
+    /**
+     * ストリームからTSVファイルを読み出し、データモデルに変換した後にSequenceFileとしてDFSに書き出す。
      * @param <T> Import対象テーブルに対応するModelのクラス型
      * @param targetTableModel Import対象テーブルに対応するModelのクラス
      * @param dfsFilePath HFSF上のファイル名
-     * @param inputStream ZipOutputStream
+     * @param inputStream FileList
      * @return 書きだした件数
      * @throws BulkLoaderSystemException 読み出しや出力に失敗した場合
      */
@@ -181,7 +518,7 @@ public class DfsFileImport {
                 working.add(factory.createModelObject());
             }
 
-            // ZIP圧縮に関する情報を取得
+            // SequenceFileの圧縮に関する情報を取得
             String strCompType = ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE);
             SequenceFile.CompressionType compType = getCompType(strCompType);
 

@@ -105,6 +105,14 @@
 			<arg value="${asakusa.modelgen.includes}" />
 			<arg value="-excludes" />
 			<arg value="${asakusa.modelgen.excludes}" />
+			<arg value="-sid_column" />
+			<arg value="${asakusa.modelgen.sid.column}" />
+			<arg value="-timestamp_column" />
+			<arg value="${asakusa.modelgen.timestamp.column}" />
+			<arg value="-delete_flag_column" />
+			<arg value="${asakusa.modelgen.delete.column}" />
+			<arg value="-delete_flag_value" />
+			<arg value="${asakusa.modelgen.delete.value}" />
 		</java>
 		<java classname="com.asakusafw.dmdl.java.Main" classpath="${compile_classpath}" fork="true" failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />

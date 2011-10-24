@@ -17,15 +17,18 @@ package com.asakusafw.bulkloader.bean;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.asakusafw.bulkloader.common.ImportTableLockType;
 import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
+import com.asakusafw.bulkloader.transfer.FileProtocol;
 
 /**
  * Import対象テーブルの設定を保持するクラス。
  * @author yuta.shirai
- *
+ * @since 0.1.0
+ * @version 0.2.3
  */
 public class ImportTargetTableBean {
     /**
@@ -53,11 +56,31 @@ public class ImportTargetTableBean {
      */
     private Class<?> importTargetType;
     /**
-     * Import対象テーブルのデータをHDFS上に書き出す際のファイルパス。
+     * The location where the imported data will be deployed.
+     * If cache feature is enabled, this represents cache directory.
+     * @version 0.2.3
      */
     private String dfsFilePath;
+
     /**
-     * Importファイル生成モジュールで生成したImport対象ファイル。
+     * Cache ID ({@code null} to disable cache feature).
+     * @since 0.2.3
+     */
+    private String cacheId;
+
+    /**
+     * The start timestamp of record ({@code null} to process whole records).
+     */
+    private Calendar startTimestamp;
+
+    /**
+     * The protocol to send import contents of this target table.
+     * @since 0.2.3
+     */
+    private FileProtocol importProtocol;
+
+    /**
+     * The content to be sent for this target table.
      */
     private File importFile;
 
@@ -121,14 +144,20 @@ public class ImportTargetTableBean {
     /**
      * キャッシュ機構を利用する場合のみ{@code true}を返す。
      * @return キャッシュ機構を利用する場合のみ{@code true}、利用しない場合は{@code false}
+     * @version 0.2.3
+     * @deprecated {@link #getCacheId()} instead
      */
+    @Deprecated
     public boolean isUseCache() {
         return useCache;
     }
     /**
      * キャッシュ機構の利用の有無を設定する。
      * @param isUseCache {@code true}ならばキャッシュ機構を利用、{@code false}ならば利用しない
+     * @version 0.2.3
+     * @deprecated {@link #setCacheId(String)} instead
      */
+    @Deprecated
     public void setUseCache(boolean isUseCache) {
         this.useCache = isUseCache;
     }
@@ -174,6 +203,63 @@ public class ImportTargetTableBean {
     public void setImportTargetType(Class<?> importTargetTableBean) {
         this.importTargetType = importTargetTableBean;
     }
+
+    /**
+     * Returns cache ID.
+     * @return the ID, or {@code null} if cache feature is disabled for this table
+     * @since 0.2.3
+     */
+    public String getCacheId() {
+        return cacheId;
+    }
+
+    /**
+     * Sets cache ID.
+     * @param cacheId the ID, or {@code null} to cleare
+     * @since 0.2.3
+     */
+    public void setCacheId(String cacheId) {
+        this.cacheId = cacheId;
+    }
+
+    /**
+     * Returns the beginning of last modified record timestamp to be processed.
+     * This property is for cache mechanism, so that enabled if cache feature is active for this table.
+     * @return the timestamp, or {@code null} if whole records should be processed
+     * @since 0.2.3
+     */
+    public Calendar getStartTimestamp() {
+        return startTimestamp == null ? null : (Calendar) startTimestamp.clone();
+    }
+
+    /**
+     * Configures the beginning of last modified record timestamp to be processed.
+     * This property is for cache mechanism, so that enabled if cache feature is active for this table.
+     * @param startTimestamp the timestamp
+     * @since 0.2.3
+     */
+    public void setStartTimestamp(Calendar startTimestamp) {
+        this.startTimestamp = startTimestamp == null ? null : (Calendar) startTimestamp.clone();
+    }
+
+    /**
+     * Returns the protocol to send import contents of this target table.
+     * @return the protocol
+     * @since 0.2.3
+     */
+    public FileProtocol getImportProtocol() {
+        return importProtocol;
+    }
+
+    /**
+     * Configures the protocol to send import contents of this target table.
+     * @param importProtocol the protocol to be set
+     * @since 0.2.3
+     */
+    public void setImportProtocol(FileProtocol importProtocol) {
+        this.importProtocol = importProtocol;
+    }
+
     /**
      * このインポート対象テーブルに関して、実際にインポートするファイルのパスを返す。
      * @return 実際にインポートするファイルのパス
@@ -181,6 +267,7 @@ public class ImportTargetTableBean {
     public File getImportFile() {
         return importFile;
     }
+
     /**
      * このインポート対象テーブルに関して、実際にインポートするファイルのパスを設定する。
      * @param importFile 設定するパス
@@ -188,5 +275,4 @@ public class ImportTargetTableBean {
     public void setImportFile(File importFile) {
         this.importFile = importFile;
     }
-
 }

@@ -48,3 +48,42 @@ src/test配下のJunit実行には、以下の設定が必要である。
 2.asakusa-test-toolsを設定
   asakusa-test-toolsのREADMEに従って環境設定を行う。
   ・接続先のJDBC/接続ユーザー名/接続パスワード/データベース名には上記1で作成したものを使用する。
+
+====
+## Launch a configured Eclipse IDE for unit testing (on Linux environment)
+
+# configure Eclipse installed location
+if [ "$ECLIPSE_HOME" = "" ]
+then
+    _ECLIPSE_HOME=~/eclipse
+else
+    _ECLIPSE_HOME="$ECLIPSE_HOME"
+fi
+
+ASAKUSA_TESTTOOLS_CONF="/tmp/$USER-testtools-conf.properties"
+export ASAKUSA_TESTTOOLS_CONF
+ASAKUSA_MODELGEN_PACKAGE=test.modelgen
+export ASAKUSA_MODELGEN_PACKAGE
+ASAKUSA_TESTTOOLS_OUTPUT="/tmp/$USER-testtools-output"
+
+sudo mysql -u __asakusa_ut_tg -p__asakusa_ut_tg << __EOF__
+DROP DATABASE IF EXISTS __asakusa_utest_thundergate;
+CREATE DATABASE __asakusa_utest_thundergate;
+GRANT ALL PRIVILEGES ON *.* TO __asakusa_ut_tg IDENTIFIED BY '__asakusa_ut_tg' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO __asakusa_ut_tg@"localhost" IDENTIFIED BY "__asakusa_ut_tg" WITH GRANT OPTION;
+__EOF__
+
+mkdir -p "$ASAKUSA_TESTTOOLS_OUTPUT"
+
+cat << __EOF__ > "$ASAKUSA_TESTTOOLS_CONF"
+jdbc.driver = com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://localhost/__asakusa_utest_thundergate
+jdbc.user = __asakusa_ut_tg
+jdbc.password = __asakusa_ut_tg
+database.name = __asakusa_utest_thundergate
+output.directory = ${ASAKUSA_TESTTOOLS_OUTPUT}
+__EOF__
+
+cd "$_ECLIPSE_HOME"
+./eclipse &
+====

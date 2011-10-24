@@ -38,13 +38,7 @@ public class OriginalNameEmitter extends JavaDataModelDriver {
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
         ModelFactory f = context.getModelFactory();
-        Expression value;
-        OriginalNameTrait trait = model.getTrait(OriginalNameTrait.class);
-        if (trait == null) {
-            value = Models.toLiteral(f, getDefaultName(model));
-        } else {
-            value = Models.toLiteral(f, trait.getName());
-        }
+        Expression value = Models.toLiteral(f, getOriginalName(model));
         return new AttributeBuilder(f)
             .annotation(context.resolve(OriginalName.class), "value", value)
             .toAnnotations();
@@ -65,18 +59,22 @@ public class OriginalNameEmitter extends JavaDataModelDriver {
     }
 
     /**
-     * Inferres the original name.
-     * <p>
-     * This just returns uppercase name of the specified declaration.
-     * </p>
+     * Returns the original name for the specified declaration.
+     * If the declaration has {@link OriginalNameTrait}, then returns the explicit name,
+     * otherwise returns the default name which will be inferred.
      * @param declaration the declaration
-     * @return the inferred name
+     * @return the original name or default name
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static String getDefaultName(Declaration declaration) {
+    public static String getOriginalName(Declaration declaration) {
         if (declaration == null) {
             throw new IllegalArgumentException("declaration must not be null"); //$NON-NLS-1$
         }
-        return declaration.getName().getSimpleName().identifier.toUpperCase();
+        OriginalNameTrait trait = declaration.getTrait(OriginalNameTrait.class);
+        if (trait == null) {
+            return declaration.getName().getSimpleName().identifier.toUpperCase();
+        } else {
+            return trait.getName();
+        }
     }
 }

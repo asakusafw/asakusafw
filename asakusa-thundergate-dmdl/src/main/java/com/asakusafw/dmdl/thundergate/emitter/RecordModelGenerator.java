@@ -17,6 +17,7 @@ package com.asakusafw.dmdl.thundergate.emitter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -32,10 +33,11 @@ import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 
 /**
  * Creates record models.
+ * @since 0.2.0
  */
 public class RecordModelGenerator {
 
-    private TableModelDescription model;
+    private final TableModelDescription model;
 
     private RecordModelGenerator(TableModelDescription model) {
         assert model != null;
@@ -52,16 +54,36 @@ public class RecordModelGenerator {
         if (model == null) {
             throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
         }
+        return generate(model, new AstAttribute[0]);
+    }
+
+    /**
+     * Returns the corresponded DMDL model definition.
+     * @param model the thundergate model
+     * @param extra extra attributes
+     * @return the converted model
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.3
+     */
+    public static AstModelDefinition<AstRecord> generate(TableModelDescription model, AstAttribute... extra) {
+        if (model == null) {
+            throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
+        }
+        if (extra == null) {
+            throw new IllegalArgumentException("extra must not be null"); //$NON-NLS-1$
+        }
+        List<AstAttribute> attrs = new ArrayList<AstAttribute>();
+        attrs.add(AstBuilder.getAutoProjection());
+        attrs.add(AstBuilder.getNamespace(AstBuilder.toDmdlName(Constants.SOURCE_TABLE)));
+        attrs.add(AstBuilder.getOriginalName(model.getReference().getSimpleName()));
+        attrs.add(AstBuilder.getPrimaryKey(model));
+        Collections.addAll(attrs, extra);
+
         return new AstModelDefinition<AstRecord>(
                 null,
                 ModelDefinitionKind.RECORD,
                 AstBuilder.getDesciption("テーブル{0}", model.getReference().getSimpleName()),
-                Arrays.asList(new AstAttribute[] {
-                        AstBuilder.getAutoProjection(),
-                        AstBuilder.getNamespace(AstBuilder.toDmdlName(Constants.SOURCE_TABLE)),
-                        AstBuilder.getOriginalName(model.getReference().getSimpleName()),
-                        AstBuilder.getPrimaryKey(model),
-                }),
+                attrs,
                 AstBuilder.toName(model.getReference()),
                 new RecordModelGenerator(model).generateExpression());
     }

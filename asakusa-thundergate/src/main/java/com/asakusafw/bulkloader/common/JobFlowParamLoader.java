@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.runtime.io.property.PropertyLoader;
 import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 
 /**
  * プロパティファイルからジョブフロー設定を読み取るクラス。
@@ -52,9 +54,10 @@ public class JobFlowParamLoader {
      */
     private static final String IMP_SEARCH_CONDITION = "search-condition";
     /**
-     * ジョブフローインポート設定のKEY キャッシュ利用有無。
+     * Cache ID for import.
+     * @since 0.2.3
      */
-    private static final String IMP_USE_CACHE = "use-cache";
+    private static final String IMP_CACHE_ID = "cache-id";
     /**
      * ジョブフローインポート設定のKEY ロック取得タイプ。
      */
@@ -226,13 +229,10 @@ public class JobFlowParamLoader {
                     bean.setImportTargetColumns(spritComma(value));
                 } else if (IMP_SEARCH_CONDITION.equals(keyMeans)) {
                     bean.setSearchCondition(value);
-                } else if (IMP_USE_CACHE.equals(keyMeans)) {
-                    // キャッシュ利用有無
-                    CacheUseType cacheType = CacheUseType.find(value);
-                    if (CacheUseType.USE.equals(cacheType)) {
-                        bean.setUseCache(true);
-                    } else {
-                        bean.setUseCache(false);
+                } else if (IMP_CACHE_ID.equals(keyMeans)) {
+                    // enables cache
+                    if (value.trim().isEmpty() == false) {
+                        bean.setCacheId(value);
                     }
                 } else if (IMP_LOCK_TYPE.equals(keyMeans)) {
                     // ロック取得タイプ
@@ -264,6 +264,39 @@ public class JobFlowParamLoader {
                             "不明な設定。 key：" + key,
                             targetName, jobflowId, propFilePath);
                     continue;
+                }
+                if (bean.getCacheId() != null) {
+                    if (ThunderGateCacheSupport.class.isAssignableFrom(bean.getImportTargetType()) == false) {
+                        Log.log(
+                                this.getClass(),
+                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
+                                MessageFormat.format(
+                                        "データモデルクラス\"{1}\"がキャッシュをサポートしていない ({0})",
+                                        ThunderGateCacheSupport.class.getName(),
+                                        bean.getImportTargetType().getName()),
+                                targetName, jobflowId, propFilePath);
+                        return false;
+                    }
+                    if (bean.getSearchCondition() != null && bean.getSearchCondition().trim().isEmpty() == false) {
+                        Log.log(
+                                this.getClass(),
+                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
+                                MessageFormat.format(
+                                        "キャッシュ利用時に条件式を指定している ({0})",
+                                        bean.getLockedOperation()),
+                                targetName, jobflowId, propFilePath);
+                        return false;
+                    }
+                    if (bean.getLockedOperation() == ImportTableLockedOperation.OFF) {
+                        Log.log(
+                                this.getClass(),
+                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
+                                MessageFormat.format(
+                                        "キャッシュ利用時にロック箇所を読み飛ばす設定がされている ({0})",
+                                        bean.getLockedOperation()),
+                                targetName, jobflowId, propFilePath);
+                        return false;
+                    }
                 }
             }
         }
@@ -705,7 +738,7 @@ public class JobFlowParamLoader {
                     variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, "dummyuser");
                     variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, "dummyid");
                     String dummyPath = variables.parse(path, false);
-                    new URI(dummyPath);
+                    new URI(dummyPath).normalize();
                 } catch (URISyntaxException e) {
                     Log.log(
                             e,
@@ -900,7 +933,7 @@ public class JobFlowParamLoader {
                             variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, "dummyuser");
                             variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, "dummyid");
                             String dummyPath = variables.parse(element, false);
-                            new URI(dummyPath);
+                            new URI(dummyPath).normalize();
                         } catch (URISyntaxException e) {
                             Log.log(
                                     e,

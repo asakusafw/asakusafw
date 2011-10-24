@@ -34,6 +34,7 @@ import com.asakusafw.dmdl.model.AstType;
 import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.PropertyMappingKind;
+import com.asakusafw.dmdl.thundergate.driver.CacheSupportDriver;
 import com.asakusafw.dmdl.thundergate.driver.PrimaryKeyDriver;
 import com.asakusafw.dmdl.thundergate.driver.OriginalNameDriver;
 import com.asakusafw.dmdl.thundergate.model.Aggregator;
@@ -47,6 +48,7 @@ import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 
 /**
  * DMDL AST building utility.
+ * @since 0.2.0
  */
 public final class AstBuilder {
 
@@ -55,12 +57,31 @@ public final class AstBuilder {
      * @param name target name
      * @return converted name
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @version 0.2.3
      */
     public static AstSimpleName toDmdlName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        return new AstSimpleName(null, name.toLowerCase());
+        boolean requestSeparated = false;
+        StringBuilder buf = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            if (Character.isJavaIdentifierPart(c)) {
+                if (requestSeparated) {
+                    buf.append('_');
+                }
+                buf.append(Character.toLowerCase(c));
+                requestSeparated = false;
+            } else {
+                requestSeparated = true;
+            }
+        }
+        if (buf.length() == 0) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Invalid name for DMDL: {0}",
+                    name));
+        }
+        return new AstSimpleName(null, buf.toString());
     }
 
     private static AstName toName(String name) {
@@ -275,6 +296,80 @@ public final class AstBuilder {
                         null,
                         toSimpleName(PrimaryKeyDriver.ELEMENT_NAME),
                         new AstAttributeValueArray(null, primaryKeys)));
+    }
+
+    /**
+     * Returns the 'cache support' attribute.
+     * @param sid system ID column
+     * @param timestamp modified timestamp column
+     * @return the attribute
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.3
+     */
+    public static AstAttribute getCacheSupport(ModelProperty sid, ModelProperty timestamp) {
+        if (sid == null) {
+            throw new IllegalArgumentException("sid must not be null"); //$NON-NLS-1$
+        }
+        if (timestamp == null) {
+            throw new IllegalArgumentException("timestamp must not be null"); //$NON-NLS-1$
+        }
+        return new AstAttribute(
+                null,
+                toName(CacheSupportDriver.TARGET_NAME),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.SID_ELEMENT_NAME),
+                        toName(sid)),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.TIMESTAMP_ELEMENT_NAME),
+                        toName(timestamp)));
+    }
+
+    /**
+     * Returns the 'cache support' attribute.
+     * @param sid system ID column
+     * @param timestamp modified timestamp column
+     * @param deleteFlag delete flag column
+     * @param deleteFlagValue delete flag value
+     * @return the attribute
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.3
+     */
+    public static AstAttribute getCacheSupport(
+            ModelProperty sid, ModelProperty timestamp,
+            ModelProperty deleteFlag, AstLiteral deleteFlagValue) {
+        if (sid == null) {
+            throw new IllegalArgumentException("sid must not be null"); //$NON-NLS-1$
+        }
+        if (timestamp == null) {
+            throw new IllegalArgumentException("timestamp must not be null"); //$NON-NLS-1$
+        }
+        if (deleteFlag == null) {
+            throw new IllegalArgumentException("deleteFlag must not be null"); //$NON-NLS-1$
+        }
+        if (deleteFlagValue == null) {
+            throw new IllegalArgumentException("deleteFlagValue must not be null"); //$NON-NLS-1$
+        }
+        return new AstAttribute(
+                null,
+                toName(CacheSupportDriver.TARGET_NAME),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.SID_ELEMENT_NAME),
+                        toName(sid)),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.TIMESTAMP_ELEMENT_NAME),
+                        toName(timestamp)),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.DELETE_FLAG_ELEMENT_NAME),
+                        toName(deleteFlag)),
+                new AstAttributeElement(
+                        null,
+                        toSimpleName(CacheSupportDriver.DELETE_FLAG_VALUE_ELEMENT_NAME),
+                        deleteFlagValue));
     }
 
     private AstBuilder() {
