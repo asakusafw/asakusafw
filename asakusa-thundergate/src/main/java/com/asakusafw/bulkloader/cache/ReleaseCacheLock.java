@@ -34,7 +34,7 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class ReleaseCacheLock {
 
-    private static final Class<?> CLASS = GetCacheInfoRemote.class;
+    private static final Class<?> CLASS = ReleaseCacheLock.class;
 
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
 

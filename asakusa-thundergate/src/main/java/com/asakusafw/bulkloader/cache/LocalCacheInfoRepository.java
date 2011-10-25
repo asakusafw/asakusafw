@@ -216,6 +216,71 @@ public class LocalCacheInfoRepository {
         }
     }
 
+    /**
+     * Deletes cache information for the specified table name.
+     * @param tableName target table name
+     * @return number of deleted entries of cache information
+     * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public int deleteTableCacheInfo(String tableName) throws BulkLoaderSystemException {
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_INFO " +
+            "WHERE TABLE_NAME = ?";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, tableName);
+            int rows = statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+            return rows;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    tableName);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Deletes all cache information in this system.
+     * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void deleteAllCacheInfo() throws BulkLoaderSystemException {
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_INFO";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
     private LocalCacheInfo toCacheInfoObject(ResultSet resultSet) throws SQLException {
         assert resultSet != null;
         String id = resultSet.getString(1);
@@ -325,17 +390,24 @@ public class LocalCacheInfoRepository {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void releaseAllLock() throws BulkLoaderSystemException {
-        final String sql = "TRUNCATE TABLE __TG_CACHE_LOCK";
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_LOCK";
+        boolean succeed = false;
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(sql);
             statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,
                     getClass(),
                     sql);
         } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
             DBConnection.closePs(statement);
         }
     }

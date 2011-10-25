@@ -319,6 +319,81 @@ public class LocalCacheInfoRepositoryTest {
     }
 
     /**
+     * Delete caches corresponded to a table.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_table() throws Exception {
+        Connection connection = DBConnection.getConnection();
+        try {
+            LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
+            repo.putCacheInfo(info("a", "__TG_TEST1"));
+            repo.putCacheInfo(info("b", "__TG_TEST1"));
+            repo.putCacheInfo(info("c", "__TG_TEST2"));
+            repo.putCacheInfo(info("d", "__TG_TEST2"));
+            assertThat(repo.deleteTableCacheInfo("__TG_TEST1"), is(2));
+
+            assertThat(repo.getCacheInfo("a"), is(nullValue()));
+            assertThat(repo.getCacheInfo("b"), is(nullValue()));
+            assertThat(repo.getCacheInfo("c"), is(notNullValue()));
+            assertThat(repo.getCacheInfo("d"), is(notNullValue()));
+        } finally {
+            connection.close();
+        }
+    }
+
+    /**
+     * Delete caches corresponded to a table but is empty.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_table_nothing() throws Exception {
+        Connection connection = DBConnection.getConnection();
+        try {
+            LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
+            repo.putCacheInfo(info("a", "__TG_TEST2"));
+            repo.putCacheInfo(info("b", "__TG_TEST2"));
+            assertThat(repo.deleteTableCacheInfo("__TG_TEST1"), is(0));
+        } finally {
+            connection.close();
+        }
+    }
+
+    /**
+     * Delete all cache.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_all() throws Exception {
+        Connection connection = DBConnection.getConnection();
+        try {
+            LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
+            repo.putCacheInfo(info("a", "__TG_TEST1"));
+            repo.putCacheInfo(info("b", "__TG_TEST1"));
+            repo.putCacheInfo(info("c", "__TG_TEST2"));
+            repo.putCacheInfo(info("d", "__TG_TEST2"));
+            repo.deleteAllCacheInfo();
+
+            assertThat(repo.getCacheInfo("a"), is(nullValue()));
+            assertThat(repo.getCacheInfo("b"), is(nullValue()));
+            assertThat(repo.getCacheInfo("c"), is(nullValue()));
+            assertThat(repo.getCacheInfo("d"), is(nullValue()));
+        } finally {
+            connection.close();
+        }
+    }
+
+    private LocalCacheInfo info(String id, String tableName) {
+        LocalCacheInfo info = new LocalCacheInfo(
+                id,
+                calendar("2010-11-12 13:14:15"),
+                calendar("2011-12-13 14:15:16"),
+                tableName,
+                "/test/path");
+        return info;
+    }
+
+    /**
      * Lock cache.
      * @throws Exception if failed
      */

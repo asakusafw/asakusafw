@@ -21,21 +21,43 @@ then
     exit 1
 fi
 
-. ~/.bulkloader_db_profile
-export BULKLOADER_HOME=$ASAKUSA_HOME/bulkloader
+_OPT_TARGET_NAME="$1"
+shift
+_OPT_EXECUTION_ID="$1"
 
-LOGFILE_BASENAME="recoverer"
+. ~/.bulkloader_db_profile
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
+fi
+
+export BULKLOADER_HOME="$ASAKUSA_HOME/bulkloader"
+
+LOGFILE_BASENAME="release-cache-lock"
 CLASS_NAME="com.asakusafw.bulkloader.cache.ReleaseCacheLock"
 
 . "$ASAKUSA_HOME"/bulkloader/bin/set-classpath-db.sh
 cd "$ASAKUSA_HOME"
+
+echo "Starting release-cache-lock:"
+echo "   Target Name: $_OPT_TARGET_NAME"
+echo "  Execution ID: $_OPT_EXECUTION_ID"
 
 "$JAVA_HOME"/bin/java \
     -Dasakusa.home="$ASAKUSA_HOME" \
     -Dlogfile.basename="$LOGFILE_BASENAME" \
     -classpath "$BULK_LOADER_CLASSPATH" \
     "$CLASS_NAME" \
+    "$_OPT_TARGET_NAME" \
     "$@"
-_RET=$?
 
-exit $_RET
+_TGC_RET=$?
+if [ $_TGC_RET -ne 0 ]
+then
+    echo "Release Cache Lock failed with exit code: $_TGC_RET" 1>&2
+    echo "   Target Name: $_OPT_TARGET_NAME" 1>&2
+    echo "  Execution ID: $_OPT_EXECUTION_ID" 1>&2
+    exit $_TGC_RET
+fi
