@@ -23,9 +23,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Calendar;
+
 import com.asakusafw.bulkloader.common.DBConnection;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.bulkloader.log.Log;
 
 /**
  * Repositories in {@link LocalCacheInfo}.
@@ -51,6 +52,8 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
  * @since 0.2.3
  */
 public class LocalCacheInfoRepository {
+
+    static final Log LOG = new Log(LocalCacheInfoRepository.class);
 
     private final Connection connection;
 
@@ -83,14 +86,17 @@ public class LocalCacheInfoRepository {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
+            LOG.debugMessage("getting cache info: {0}", cacheId);
             statement = connection.prepareStatement(sql);
             statement.setString(1, cacheId);
             resultSet = statement.executeQuery();
             if (resultSet.next() == false) {
+                LOG.debugMessage("cache info not found: {0}", cacheId);
                 return null;
             }
             LocalCacheInfo result = toCacheInfoObject(resultSet);
             assert resultSet.next() == false;
+            LOG.debugMessage("got cache info: {0}", cacheId);
             return result;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -123,7 +129,11 @@ public class LocalCacheInfoRepository {
         PreparedStatement statement = null;
         Calendar last = null;
         try {
+            LOG.debugMessage("putting cache info: {0}", current);
             last = getLastUpdated(current.getTableName());
+            if (last == null) {
+                throw new BulkLoaderSystemException(getClass(), "TG-COMMON-11001", current);
+            }
             statement = connection.prepareStatement(sql);
             statement.setString(1, current.getId());
             statement.setTimestamp(2, toTimestamp(last));
@@ -132,11 +142,11 @@ public class LocalCacheInfoRepository {
             statement.setString(5, current.getPath());
             int rows = statement.executeUpdate();
             if (rows == 0) {
-                // TODO error
-                throw new BulkLoaderSystemException(getClass(), MessageIdConst.IMP_CACHE_ERROR);
+                throw new BulkLoaderSystemException(getClass(), "TG-COMMON-11002", current);
             }
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("put cache info: {0}", toTimestamp(last));
             return last;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -162,16 +172,18 @@ public class LocalCacheInfoRepository {
         Statement statement = connection.createStatement();
         ResultSet resultSet = null;
         try {
+            LOG.debugMessage("calculating the last modified time for table: {0}", tableName);
             statement.execute(MessageFormat.format("LOCK TABLES {0} READ", tableName));
             resultSet = statement.executeQuery("SELECT NOW()");
             if (resultSet.next() == false) {
-                // TODO logging
+                return null;
             }
             Calendar calendar = Calendar.getInstance();
             Timestamp timestamp = resultSet.getTimestamp(1, calendar);
             calendar.setTime(timestamp);
             resultSet.close();
             statement.execute("UNLOCK TABLES");
+            LOG.debugMessage("calculated the last modified time for table: {0} = {1}", tableName, timestamp);
             return calendar;
         } finally {
             DBConnection.closeRs(resultSet);
@@ -196,11 +208,13 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("deleting cache info: {0}", cacheId);
             statement = connection.prepareStatement(sql);
             statement.setString(1, cacheId);
             int rows = statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("deleted cache info: {0}, count={1}", cacheId, rows);
             return rows > 0;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -233,11 +247,13 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("deleting cache info for table: {0}", tableName);
             statement = connection.prepareStatement(sql);
             statement.setString(1, tableName);
             int rows = statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("deleted cache info for table: {0}, count={1}", tableName, rows);
             return rows;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -264,10 +280,12 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("deleting all cache info");
             statement = connection.prepareStatement(sql);
             statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("deleted all cache info");
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,
@@ -328,12 +346,14 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("trying acquire cache lock: {0}, owner={1}", cacheId, executionId);
             statement = connection.prepareStatement(sql);
             statement.setString(1, cacheId);
             statement.setString(2, executionId);
             int rows = statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("tried acquire cache lock: {0}, count={1}", cacheId, rows);
             return rows > 0;
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -365,11 +385,13 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("releasing cache lock: owner={0}", executionId);
             statement = connection.prepareStatement(sql);
             statement.setString(1, executionId);
             int rows = statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("released cache lock: owner={0}, count={1}", executionId, rows);
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,
@@ -395,10 +417,12 @@ public class LocalCacheInfoRepository {
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
+            LOG.debugMessage("releasing all cache lock");
             statement = connection.prepareStatement(sql);
             statement.executeUpdate();
             DBConnection.commit(connection);
             succeed = true;
+            LOG.debugMessage("released all cache lock");
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,

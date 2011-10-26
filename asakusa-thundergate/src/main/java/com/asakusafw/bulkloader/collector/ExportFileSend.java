@@ -40,7 +40,6 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileCompType;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
@@ -57,6 +56,8 @@ public class ExportFileSend {
     static {
         UrlStreamHandlerFactoryRegisterer.register();
     }
+
+    static final Log LOG = new Log(ExportFileSend.class);
 
     /**
      * ファイル名作成の為のマップ。
@@ -84,8 +85,11 @@ public class ExportFileSend {
             try {
                 writer = FileList.createWriter(output, compType == FileCompType.DEFLATED);
             } catch (IOException e) {
-                // TODO ExportFileSend#sendExportFile
-                throw new AssertionError(e);
+                throw new BulkLoaderSystemException(
+                        e,
+                        getClass(),
+                        "TG-COLLECTOR-02001",
+                        "Exporterと接続するチャネルを開けませんでした");
             }
             List<String> l = bean.getExportTargetTableList();
             for (String tableName : l) {
@@ -107,23 +111,17 @@ public class ExportFileSend {
                 long recordCount = 0;
                 for (int i = 0; i < fileCount; i++) {
                     // Exportファイルを送信
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.COL_SEND_HDFSFILE,
+                    LOG.info("TG-COLLECTOR-02002",
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
                     long countInFile = send(targetTableModel, filePath.get(i), writer, tableName);
                     if (countInFile >= 0) {
                         recordCount += countInFile;
                     }
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.COL_SEND_HDFSFILE_SUCCESS,
+                    LOG.info("TG-COLLECTOR-02003",
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
                 }
 
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.PRF_COLLECT_COUNT,
+                LOG.info("TG-PROFILE-01004",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -142,7 +140,7 @@ public class ExportFileSend {
             // 正常終了
             return true;
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } finally {
             try {
@@ -183,15 +181,11 @@ public class ExportFileSend {
             FileStatus[] status = fs.globStatus(new Path(filePath));
             Path[] listedPaths = FileUtil.stat2Paths(status);
             if (listedPaths == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.COL_EXPORT_FILE_NOT_FOUND,
+                LOG.info("TG-COLLECTOR-02006",
                         tableName, filePath);
                 return -1;
             } else {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.COL_EXPORT_FILE_FOUND,
+                LOG.info("TG-COLLECTOR-02007",
                         listedPaths.length, tableName, filePath);
             }
             long count = 0;
@@ -215,9 +209,7 @@ public class ExportFileSend {
                             CountingOutputStream counter = new CountingOutputStream(output);
                             ModelOutput<T> modelOut = factory.createModelOutput(counter);
                             T model = factory.createModelObject();
-                            Log.log(
-                                    this.getClass(),
-                                    MessageIdConst.COL_SENDFILE,
+                            LOG.info("TG-COLLECTOR-02004",
                                     tableName, path.toString(), fileName);
 
                             // SequenceFileを読み込み、Model→TSV変換を行う
@@ -235,8 +227,7 @@ public class ExportFileSend {
                                 }
                             }
                             modelOut.close();
-                            Log.log(this.getClass(),
-                                    MessageIdConst.COL_SENDFILE_SUCCESS,
+                            LOG.info("TG-COLLECTOR-02005",
                                     tableName, path.toString(), fileName);
 
                             if (nextFile) {
@@ -264,7 +255,7 @@ public class ExportFileSend {
             throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
-                    MessageIdConst.COL_SENDFILE_EXCEPTION,
+                    "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのディレクトリ：{0} 送信ファイル名：{1}",
                             filePath,
@@ -273,7 +264,7 @@ public class ExportFileSend {
             throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
-                    MessageIdConst.COL_SENDFILE_EXCEPTION,
+                    "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのパスが不正。HDFSのディレクトリ：{0}",
                             filePath));
@@ -285,13 +276,15 @@ public class ExportFileSend {
                     throw new BulkLoaderSystemException(
                             e,
                             this.getClass(),
-                            MessageIdConst.COL_SENDFILE_EXCEPTION,
-                            // TODO MessageFormat.formatの検討
-                            "HDFSのファイルシステムのクローズに失敗。URI：" + filePath);
+                            "TG-COLLECTOR-02001",
+                            MessageFormat.format(
+                                    "HDFSのファイルシステムのクローズに失敗。URI：{0}",
+                                    filePath));
                 }
             }
         }
     }
+
     /**
      * ファイルがHadoopのシステムファイルである場合のみ{@code true}を返す。
      * @param path ファイルのパス

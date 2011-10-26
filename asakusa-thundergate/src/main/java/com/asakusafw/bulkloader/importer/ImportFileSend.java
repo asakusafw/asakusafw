@@ -28,7 +28,6 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileCompType;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -36,12 +35,13 @@ import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
 
-
 /**
  * Import対象ファイルをDBサーバからHDFSのNameノードへ送信するクラス。
  * @author yuta.shirai
  */
 public class ImportFileSend {
+
+    static final Log LOG = new Log(ImportFileSend.class);
 
     /**
      * Import対象ファイルをHDFSのNameノードへ送信する。
@@ -73,15 +73,12 @@ public class ImportFileSend {
             for (String tableName : list) {
                 long tableStartTime = System.currentTimeMillis();
                 ImportTargetTableBean targetTable = bean.getTargetTable(tableName);
-                Log.log(getClass(),
-                        MessageIdConst.IMP_FILE_SEND,
+                LOG.info("TG-IMPORTER-04004",
                         tableName,
                         targetTable.getImportFile().getAbsolutePath(),
                         compType.getCompType());
                 long dumpFileSize = sendTableFile(writer, tableName, targetTable);
-                Log.log(
-                        getClass(),
-                        MessageIdConst.PRF_IMPORT_TRANSFER_TABLE,
+                LOG.info("TG-PROFILE-02003",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -89,18 +86,14 @@ public class ImportFileSend {
                         tableName,
                         dumpFileSize,
                         System.currentTimeMillis() - tableStartTime);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.IMP_FILE_SEND_END,
+                LOG.info("TG-IMPORTER-04005",
                         tableName,
                         targetTable.getImportFile().getAbsolutePath(),
                         compType.getCompType());
             }
             writer.close();
             provider.waitForComplete();
-            Log.log(
-                    getClass(),
-                    MessageIdConst.PRF_IMPORT_TRANSFER,
+            LOG.info("TG-PROFILE-02001",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -108,11 +101,10 @@ public class ImportFileSend {
                     writer.getByteCount(),
                     System.currentTimeMillis() - totalStartTime);
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } catch (Exception e) {
-            // TODO logging
-            Log.log(e, getClass(), MessageIdConst.IMP_EXTRACTOR_ERROR);
+            LOG.error(e, "TG-IMPORTER-04002");
             return false;
         } finally {
             if (writer != null) {
@@ -169,7 +161,7 @@ public class ImportFileSend {
             throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
-                    MessageIdConst.IMP_SENDFILE_EXCEPTION,
+                    "TG-IMPORTER-04001",
                     MessageFormat.format(
                             "Importファイルの転送に失敗。テーブル名：{0}, Importファイル名： {1}",
                             tableName,
@@ -218,7 +210,7 @@ public class ImportFileSend {
         command.add(executionId);
         command.add(variableTable);
 
-        Log.log(this.getClass(), MessageIdConst.IMP_START_SUB_PROCESS,
+        LOG.info("TG-IMPORTER-04003",
                 sshPath,
                 hostName,
                 userName,

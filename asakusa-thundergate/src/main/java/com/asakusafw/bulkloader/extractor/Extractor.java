@@ -22,7 +22,6 @@ import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.log.Log;
 
 /**
@@ -30,10 +29,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class Extractor {
-    /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Extractor.class;
+
+    static final Log LOG = new Log(Extractor.class);
 
     /**
      * Extractorで読み込むプロパティファイル。
@@ -82,63 +79,46 @@ public class Extractor {
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initHadoopCluster(jobFlowId, executionId, PROPERTIES)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXT_INIT_ERROR,
+                LOG.error("TG-EXTRACTOR-01003",
                         new Date(), targetName, batchId, jobFlowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // 開始ログ出力
-            Log.log(
-                    CLASS,
-                    MessageIdConst.EXT_START,
+            LOG.info("TG-EXTRACTOR-01001",
                     new Date(), targetName, batchId, jobFlowId, executionId, user);
 
             // パラメータオブジェクトを作成
             ImportBean bean = createBean(targetName, batchId, jobFlowId, executionId);
             if (bean == null) {
                 // パラメータのチェックでエラー
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXT_PARAM_ERROR,
+                LOG.error("TG-EXTRACTOR-01006",
                         new Date(), targetName, batchId, jobFlowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // Importファイルを受取り、HDFSに書き出す
-            Log.log(
-                    CLASS,
-                    MessageIdConst.EXT_CREATEFILE,
+            LOG.info("TG-EXTRACTOR-01008",
                     targetName, batchId, jobFlowId, executionId, user);
 
             DfsFileImport fileInport = createDfsFileImport();
             if (!fileInport.importFile(bean, user)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXT_CREATEFILE_ERROR,
+                LOG.error("TG-EXTRACTOR-01004",
                         new Date(), targetName, batchId, jobFlowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXT_CREATEFILE_SUCCESS,
+                LOG.info("TG-EXTRACTOR-01009",
                         targetName, batchId, jobFlowId, executionId, user);
             }
 
             // 正常終了
-            Log.log(
-                    CLASS,
-                    MessageIdConst.EXT_EXIT,
+            LOG.info("TG-EXTRACTOR-01002",
                     new Date(), targetName, batchId, jobFlowId, executionId, user);
             return Constants.EXIT_CODE_SUCCESS;
 
         } catch (Exception e) {
             try {
-                Log.log(
-                        e,
-                        CLASS,
-                        MessageIdConst.EXT_EXCEPRION,
+                LOG.error(e, "TG-EXTRACTOR-01007",
                         new Date(), targetName, batchId, jobFlowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {

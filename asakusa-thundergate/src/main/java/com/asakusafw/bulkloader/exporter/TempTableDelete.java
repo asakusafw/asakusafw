@@ -25,7 +25,6 @@ import com.asakusafw.bulkloader.bean.ExportTempTableBean;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -34,6 +33,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class TempTableDelete {
+
+    static final Log LOG = new Log(TempTableDelete.class);
 
     /**
      * テンポラリテーブルとエクスポートテンポラリ管理テーブルのレコードを削除する。
@@ -65,7 +66,7 @@ public class TempTableDelete {
             DBConnection.commit(conn);
             return true;
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
@@ -99,9 +100,7 @@ public class TempTableDelete {
 
         PreparedStatement stmt = null;
         try {
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_TEMP_INFO_RECORD_DELETE,
+            LOG.info("TG-EXPORTER-07001",
                     sql.toString(), jobflowSid, tableName);
             stmt = conn.prepareStatement(sql.toString());
             stmt.setString(1, jobflowSid);
@@ -157,9 +156,7 @@ public class TempTableDelete {
                 if (rs.next()) {
                     ExportTempTableStatus status = ExportTempTableStatus.find(rs.getString("TEMP_TABLE_STATUS"));
                     if (!ExportTempTableStatus.COPY_EXIT.equals(status)) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.EXP_TEMP_TABLE_NOT_DROP,
+                        LOG.info("TG-EXPORTER-07003",
                                 exportTempName, status.getStatus());
                         return;
                     }
@@ -181,7 +178,7 @@ public class TempTableDelete {
         try {
             stmt = conn.prepareStatement(tempDelSql.toString());
             DBConnection.executeUpdate(stmt, tempDelSql.toString(), new String[0]);
-            Log.log(this.getClass(), MessageIdConst.EXP_TEMP_TABLE_DROP, tempDelSql);
+            LOG.info("TG-EXPORTER-07002", tempDelSql);
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,
@@ -195,9 +192,7 @@ public class TempTableDelete {
         try {
             stmt = conn.prepareStatement(dupDelSql.toString());
             DBConnection.executeUpdate(stmt, dupDelSql.toString(), new String[0]);
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_DUP_FLG_TABLE_DROP,
+            LOG.info("TG-EXPORTER-07004",
                     dupDelSql);
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(

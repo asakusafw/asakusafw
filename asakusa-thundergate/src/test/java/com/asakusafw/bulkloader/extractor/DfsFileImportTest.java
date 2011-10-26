@@ -559,7 +559,7 @@ public class DfsFileImportTest {
             protected <T> long write(Class<T> targetTableModel,
                     URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "TG-EXTRACTOR-02001");
             }
         };
         boolean result = fileImport.importFile(bean, "asakusa");

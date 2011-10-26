@@ -32,7 +32,6 @@ import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.ImportTableLockType;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
@@ -42,6 +41,8 @@ import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
  * @author yuta.shirai
  */
 public class ImportFileCreate {
+
+    static final Log LOG = new Log(ImportFileCreate.class);
 
     private static final String[] EMPTY = new String[0];
 
@@ -72,9 +73,7 @@ public class ImportFileCreate {
                 File importFile = FileNameUtil.createImportFilePath(
                         bean.getTargetName(), bean.getJobflowId(), bean.getExecutionId(), tableName);
 
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.IMP_CREATE_FILE,
+                LOG.info("TG-IMPORTER-03003",
                         tableName,
                         lockType,
                         importFile.getAbsolutePath());
@@ -85,7 +84,7 @@ public class ImportFileCreate {
                         // ファイルの削除に失敗した場合は異常終了する
                         throw new BulkLoaderSystemException(
                                 this.getClass(),
-                                MessageIdConst.IMP_EXISTSFILE_DELETE_ERROR,
+                                "TG-IMPORTER-03001",
                                 importFile.getName());
                     }
                 }
@@ -120,23 +119,19 @@ public class ImportFileCreate {
                         if (!importFile.createNewFile()) {
                             throw new BulkLoaderSystemException(
                                     this.getClass(),
-                                    MessageIdConst.IMP_CREATEFILE_EXCEPTION);
+                                    "TG-IMPORTER-03002");
                         }
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.IMP_CREATE_ZERO_FILE,
+                        LOG.info("TG-IMPORTER-03005",
                                 tableName,
                                 lockType,
                                 importFile.getAbsolutePath());
                     } catch (IOException e) {
                         throw new BulkLoaderSystemException(
                                 this.getClass(),
-                                MessageIdConst.IMP_CREATEFILE_EXCEPTION);
+                                "TG-IMPORTER-03002");
                     }
                 } else {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.IMP_CREATE_FILE_SUCCESS,
+                    LOG.info("TG-IMPORTER-03004",
                             tableName,
                             lockType,
                             importFile.getAbsolutePath());
@@ -150,7 +145,7 @@ public class ImportFileCreate {
             return true;
 
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } finally {
             DBConnection.closeConn(conn);
@@ -176,17 +171,14 @@ public class ImportFileCreate {
         PreparedStatement stmt = null;
 
         String[] parameters = EMPTY;
-        Log.log(this.getClass(), MessageIdConst.IMP_CREATE_FILE_WITH_JOBFLOWSID, sql, jobflowSid);
+        LOG.info("TG-IMPORTER-03006", sql, jobflowSid);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jobflowSid);
             if (tableInfo.getStartTimestamp() != null) {
                 Calendar beginning = tableInfo.getStartTimestamp();
-                if (beginning == null) {
-                    // FIXME error
-                    throw new IllegalStateException();
-                }
                 Timestamp timestamp = new Timestamp(beginning.getTimeInMillis());
+                LOG.info("TG-IMPORTER-13001", tableName, tableInfo.getCacheId(), timestamp);
                 stmt.setTimestamp(2, timestamp, beginning);
                 parameters = new String[] { jobflowSid, String.valueOf(timestamp) };
             } else {
@@ -251,17 +243,14 @@ public class ImportFileCreate {
         String sql = createSQLWithCondition(tableName, tableInfo, importFileName);
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.IMP_CREATE_FILE_WITH_CONDITION, sql);
+        LOG.info("TG-IMPORTER-03007", sql);
         String[] parameters = EMPTY;
         try {
             stmt = conn.prepareStatement(sql);
             if (tableInfo.getStartTimestamp() != null) {
                 Calendar beginning = tableInfo.getStartTimestamp();
-                if (beginning == null) {
-                    // FIXME error
-                    throw new IllegalStateException();
-                }
                 Timestamp timestamp = new Timestamp(beginning.getTimeInMillis());
+                LOG.info("TG-IMPORTER-13001", tableName, tableInfo.getCacheId(), timestamp);
                 stmt.setTimestamp(1, timestamp, beginning);
                 parameters = new String[] { String.valueOf(timestamp) };
             }
@@ -336,11 +325,10 @@ public class ImportFileCreate {
                 throw new BulkLoaderSystemException(
                         e,
                         getClass(),
-                        // TODO logging
-                        MessageIdConst.IMP_EXCEPRION,
-                        MessageFormat.format(
-                            "Failed to extract timestamp column name from {0}",
-                            tableInfo.getImportTargetType()));
+                        "TG-IMPORTER-13002",
+                        tableName,
+                        tableInfo.getCacheId(),
+                        tableInfo.getImportTargetType().getName());
             }
             String timestampColumn = support.__tgc__TimestampColumn();
             if (original == null) {

@@ -32,7 +32,6 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -42,6 +41,9 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class ExportFileLoad {
+
+    static final Log LOG = new Log(ExportFileLoad.class);
+
     /** テーブル名の最大長。 */
     private static final int MAX_TABLE_NAME_LENGTH = 64;
     /** テンポラリSID(BIGINT)の最大長。 */
@@ -72,11 +74,11 @@ public class ExportFileLoad {
 
             return true;
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
-                Log.log(e1.getCause(), e1.getClazz(), e1.getMessageId(), e1.getMessageArgs());
+                LOG.log(e1);
             }
             return false;
         } finally {
@@ -110,7 +112,7 @@ public class ExportFileLoad {
                             ExportTempTableStatus.LOAD_EXIT.getStatus()
                     });
             DBConnection.commit(conn);
-            Log.log(this.getClass(), MessageIdConst.EXP_BEFORE_COPY, jobflowSid);
+            LOG.info("TG-EXPORTER-03006", jobflowSid);
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e,
@@ -153,17 +155,13 @@ public class ExportFileLoad {
                         file,
                         tableBean.getExportTsvColumn(),
                         conn);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_TSV_FILE_LOAD,
+                LOG.info("TG-EXPORTER-03004",
                         bean.getJobflowSid(),
                         tableName,
                         tableBean.getExportTempTableName(),
                         file.getAbsolutePath());
             }
-            Log.log(
-                    getClass(),
-                    MessageIdConst.PRF_EXPORT_COUNT,
+            LOG.info("TG-PROFILE-01003",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -240,15 +238,13 @@ public class ExportFileLoad {
                 if (updateCount == 0) {
                     throw new BulkLoaderSystemException(
                             this.getClass(),
-                            MessageIdConst.EXP_LOADFILE_EXCEPTION,
+                            "TG-EXPORTER-03001",
                             // TODO MessageFormat.formatの検討
                             "テンポラリ管理テーブルのレコードを更新できませんでした。ジョブフローSID：" + bean.getJobflowSid(),
                             " Export対象テーブル名：" + tableName);
                 }
                 DBConnection.commit(conn);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_LOAD_EXIT,
+                LOG.info("TG-EXPORTER-03005",
                         bean.getJobflowSid(), tableName, tableBean.getExportTempTableName());
             } catch (SQLException e) {
                 throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -298,9 +294,7 @@ public class ExportFileLoad {
             try {
                 stmt = conn.prepareStatement(createSql.toString());
                 DBConnection.executeUpdate(stmt, createSql.toString(), new String[0]);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_CREATE_TEMP_TABLE,
+                LOG.info("TG-EXPORTER-03003",
                         bean.getJobflowSid(), tableName, tempTableName, createSql.toString());
             } catch (SQLException e) {
                 throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -315,9 +309,7 @@ public class ExportFileLoad {
             try {
                 stmt = conn.prepareStatement(dupSql.toString());
                 DBConnection.executeUpdate(stmt, dupSql.toString(), new String[0]);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_CREATE_DUPLCATE_TABLE,
+                LOG.info("TG-EXPORTER-03008",
                         bean.getJobflowSid(), tempTableName, duplicateTableName, dupSql.toString());
             } catch (SQLException e) {
                 throw BulkLoaderSystemException.createInstanceCauseBySQLException(
@@ -392,7 +384,7 @@ public class ExportFileLoad {
             } else {
                 throw new BulkLoaderSystemException(
                         this.getClass(),
-                        MessageIdConst.EXP_LOADFILE_EXCEPTION,
+                        "TG-EXPORTER-03001",
                         // TODO MessageFormat.formatの検討
                         "テンポラリ管理テーブルのレコードを取得できませんでした。ジョブフローSID：" + jobflowSid,
                         " Export対象テーブル名：" + tableName);
@@ -489,7 +481,7 @@ public class ExportFileLoad {
                     // カラムのソースが判明しないときにはどこからか型情報を補足する必要がある
                     throw new BulkLoaderSystemException(
                             this.getClass(),
-                            MessageIdConst.EXP_TSV_COLUMN_NOT_FOUND,
+                            "TG-EXPORTER-03007",
                             columns.get(i));
                 }
             }
@@ -613,7 +605,7 @@ public class ExportFileLoad {
             }
         }
         DBConnection.commit(conn);
-        Log.log(this.getClass(), MessageIdConst.EXP_INSERT_TEMP_INFO, bean.getJobflowSid());
+        LOG.info("TG-EXPORTER-03002", bean.getJobflowSid());
     }
     /**
      * Exportファイルのロードを実行する。

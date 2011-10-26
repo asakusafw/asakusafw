@@ -101,7 +101,7 @@ public class LocalCacheInfoRepositoryTest {
      */
     @After
     public void tearDown() throws Exception {
-        new ReleaseCacheLock().execute(null);
+        new ReleaseCacheLock().execute("target1", testExecutionId);
         UnitTestUtil.tearDown();
     }
 

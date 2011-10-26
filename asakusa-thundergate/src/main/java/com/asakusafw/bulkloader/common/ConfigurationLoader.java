@@ -140,7 +140,7 @@ public final class ConfigurationLoader {
         } else if (compType == null) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "Exportファイルの圧縮有無が不正。値：" + null);
         }
         // エクスポート処理で中間TSVファイルを生成する際にTSVファイルの分割サイズ
@@ -153,7 +153,7 @@ public final class ConfigurationLoader {
             if (!isNumber(loadMaxSize, 1)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "エクスポート処理中間TSVファイルを生成する際にTSVファイルを分割するサイズの設定が不正。設定値：" + loadMaxSize);
             }
         }
@@ -175,7 +175,7 @@ public final class ConfigurationLoader {
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "HDFSのプロトコルとホスト名が設定されていない。");
         }
 
@@ -188,7 +188,7 @@ public final class ConfigurationLoader {
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     MessageFormat.format(
                             "キャッシュ構築用のスクリプトパスが未設定: {0}",
                             Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME));
@@ -210,7 +210,7 @@ public final class ConfigurationLoader {
         } else if (compType == null) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "Importファイルの圧縮有無が不正。値：" + null);
         }
         // Importファイルの圧縮時のバッファサイズ
@@ -223,7 +223,7 @@ public final class ConfigurationLoader {
             if (!isNumber(impBufSize, 1)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Importファイルの圧縮時のバッファサイズの設定が不正。設定値：" + impBufSize);
             }
         }
@@ -237,7 +237,7 @@ public final class ConfigurationLoader {
             if (!isNumber(impRetryCount, 0)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Importerのリトライ回数の設定が不正。設定値：" + impRetryCount);
             }
         }
@@ -251,7 +251,7 @@ public final class ConfigurationLoader {
             if (!isNumber(impRetryInterval, 0)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Importerのリトライインターバルの設定が不正。設定値：" + impRetryInterval);
             }
         }
@@ -265,7 +265,7 @@ public final class ConfigurationLoader {
             if (!isNumber(expBufSize, 1)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Exportファイルの圧縮時のバッファサイズの設定が不正。設定値：" + expBufSize);
             }
         }
@@ -279,7 +279,7 @@ public final class ConfigurationLoader {
             if (!isNumber(expRetryCount, 0)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Exporterのリトライ回数の設定が不正。設定値：" + expRetryCount);
             }
         }
@@ -293,7 +293,7 @@ public final class ConfigurationLoader {
             if (!isNumber(expRetryInterval, 0)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "Exporterのリトライインターバルの設定が不正。設定値：" + expRetryInterval);
             }
         }
@@ -307,7 +307,7 @@ public final class ConfigurationLoader {
             if (!isNumber(copyMaxRecord, 1)) {
                 throw new BulkLoaderSystemException(
                         CLASS,
-                        MessageIdConst.CMN_PROP_CHECK_ERROR,
+                        "TG-COMMON-00008",
                         "エクスポート処理でExport対象テーブルにデータをコピーする時の最大レコード数の設定が不正。設定値：" + copyMaxRecord);
             }
         }
@@ -321,7 +321,7 @@ public final class ConfigurationLoader {
         } else if (delImpType == null) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR, "インポート正常終了時のTSVファイル削除有無が不正。値：" + deleteImportTsv);
+                    "TG-COMMON-00008", "インポート正常終了時のTSVファイル削除有無が不正。値：" + deleteImportTsv);
         }
         // エクスポート正常終了時のTSVファイル削除有無
         String deleteExportTsv = prop.getProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE);
@@ -333,7 +333,7 @@ public final class ConfigurationLoader {
         } else if (delExpType == null) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "エクスポート正常終了時のTSVファイル削除有無が不正。値：" + deleteExportTsv);
         }
 
@@ -342,56 +342,56 @@ public final class ConfigurationLoader {
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_SSH_PATH))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "SSHのパスが設定されていません");
         }
         // HDFSのNameノードのIPアドレス又はホスト名
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_NAMENODE_HOST))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "HDFSのNameノードのホスト名が設定されていません");
         }
         // HDFSのNameノードのユーザー名
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_NAMENODE_USER))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "SSHのパスが設定されていません");
         }
         // Importファイルを置くディレクトリのトップディレクトリ
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_IMP_FILE_DIR))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "Importファイルを置くディレクトリが設定されていません");
         }
         // Extractorのシェル名
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_EXT_SHELL_NAME))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "Extractorのシェル名が設定されていません");
         }
         // エクスポートファイルを置くディレクトリのトップディレクトリ
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_EXP_FILE_DIR))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     "エクスポートファイルを置くディレクトリが設定されていません");
         }
         // Collectorのシェル名
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_COL_SHELL_NAME))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR, "Collectorのシェル名が設定されていません");
+                    "TG-COMMON-00008", "Collectorのシェル名が設定されていません");
         }
 
         // configuration for cache
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_INFO_SHELL_NAME))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_PROP_CHECK_ERROR,
+                    "TG-COMMON-00008",
                     MessageFormat.format(
                             "キャッシュ情報取得用のスクリプトパスが未設定: {0}",
                             Constants.PROP_KEY_CACHE_INFO_SHELL_NAME));
@@ -453,7 +453,7 @@ public final class ConfigurationLoader {
             throw new BulkLoaderSystemException(
                     e,
                     CLASS,
-                    MessageIdConst.CMN_JDBCCONF_READ_ERROR,
+                    "TG-COMMON-00012",
                     propName);
         }
 
@@ -462,28 +462,28 @@ public final class ConfigurationLoader {
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_JDBC_DRIVER))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_JDBCCONF_CHECK_ERROR,
+                    "TG-COMMON-00011",
                     "JDBCドライバが設定されていません");
         }
         // DB接続URL
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_DB_URL))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_JDBCCONF_CHECK_ERROR,
+                    "TG-COMMON-00011",
                     "DB接続URLが設定されていません");
         }
         // DB接続ユーザー
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_DB_USER))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_JDBCCONF_CHECK_ERROR,
+                    "TG-COMMON-00011",
                     "DB接続ユーザーが設定されていません");
         }
         // DB接続ユーザーに対するパスワード
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_DB_PASSWORD))) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_JDBCCONF_CHECK_ERROR,
+                    "TG-COMMON-00011",
                     "DB接続ユーザーに対するパスワードが設定されていません");
         }
     }

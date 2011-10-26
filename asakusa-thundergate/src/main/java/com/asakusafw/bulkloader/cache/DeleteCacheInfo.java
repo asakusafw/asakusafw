@@ -16,15 +16,12 @@
 package com.asakusafw.bulkloader.cache;
 
 import java.sql.Connection;
-import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBConnection;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -57,7 +54,7 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class DeleteCacheInfo {
 
-    private static final Class<?> CLASS = DeleteCacheInfo.class;
+    static final Log LOG = new Log(DeleteCacheInfo.class);
 
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
 
@@ -68,41 +65,37 @@ public class DeleteCacheInfo {
      */
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.err.println(MessageFormat.format(
-                    "Invalid arguments for DeleteCacheInfo: {0}",
-                    Arrays.toString(args)));
+            LOG.error("TG-DELETECACHE-01003",
+                    "引数の数が間違っています",
+                    Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
             return;
         }
         String subCommandName = args[0];
         SubCommand subCommand = SubCommand.find(subCommandName);
         if (subCommand == null) {
-            System.err.println(MessageFormat.format(
-                    "Unknown subcommand for DeleteCacheInfo: {0}",
-                    subCommandName));
+            LOG.error("TG-DELETECACHE-01003",
+                    "サブコマンド名が間違っています",
+                    Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
             return;
         }
         String targetName = args[1];
 
-        int initExit = initialize(subCommand, targetName);
-        if (initExit != Constants.EXIT_CODE_SUCCESS) {
-            System.exit(initExit);
+        if (initialize(subCommand, targetName) == false) {
+            System.exit(Constants.EXIT_CODE_ERROR);
         }
         List<String> subArguments = Arrays.asList(args).subList(2, args.length);
         int exitCode = new DeleteCacheInfo().execute(subCommand, targetName, subArguments);
         System.exit(exitCode);
     }
 
-    private static int initialize(SubCommand subCommand, String targetName) {
+    private static boolean initialize(SubCommand subCommand, String targetName) {
         if (!BulkLoaderInitializer.initDBServer("DeleteCacheInfo", subCommand.name(), PROPERTIES, targetName)) {
-            Log.log(
-                    CLASS,
-                    MessageIdConst.RCV_INIT_ERROR,
-                    new Date(), targetName, subCommand.name());
-            return Constants.EXIT_CODE_ERROR;
+            LOG.error("TG-DELETECACHE-01003", targetName);
+            return false;
         }
-        return Constants.EXIT_CODE_SUCCESS;
+        return true;
     }
 
     /**
@@ -126,10 +119,9 @@ public class DeleteCacheInfo {
             throw new IllegalArgumentException("subArguments must not be null"); //$NON-NLS-1$
         }
         if (subCommand.arity != subArguments.size()) {
-            System.err.println(MessageFormat.format(
-                    "Invalid arguments for DeleteCacheInfo {0} ({1})",
-                    subCommand.symbol,
-                    subArguments));
+            LOG.error("TG-DELETECACHE-01003",
+                    "サブコマンドに対する引数の数が間違っています",
+                    subArguments);
             return Constants.EXIT_CODE_ERROR;
         }
         try {
@@ -138,18 +130,26 @@ public class DeleteCacheInfo {
                 LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
                 if (subCommand == SubCommand.CACHE) {
                     String cacheId = subArguments.get(0);
-                    // TODO logging
+                    LOG.info("TG-DELETECACHE-02001", targetName, cacheId);
                     boolean deleted = repo.deleteCacheInfo(cacheId);
-                    System.out.printf("Deleted cache %s: %s%n", cacheId, deleted);
+                    if (deleted) {
+                        LOG.info("TG-DELETECACHE-02002", targetName, cacheId);
+                    } else {
+                        LOG.info("TG-DELETECACHE-02003", targetName, cacheId);
+                    }
                 } else if (subCommand == SubCommand.TABLE) {
                     String tableName = subArguments.get(0);
-                    // TODO logging
+                    LOG.info("TG-DELETECACHE-02004", targetName, tableName);
                     int deleted = repo.deleteTableCacheInfo(tableName);
-                    System.out.printf("Deleted cache for table %s: %s%n", tableName, deleted);
+                    if (deleted > 0) {
+                        LOG.info("TG-DELETECACHE-02005", targetName, tableName, deleted);
+                    } else {
+                        LOG.info("TG-DELETECACHE-02006", targetName, tableName);
+                    }
                 } else if (subCommand == SubCommand.ALL) {
-                    // TODO logging
+                    LOG.info("TG-DELETECACHE-02007", targetName);
                     repo.deleteAllCacheInfo();
-                    System.out.printf("Deleted all cache%n");
+                    LOG.info("TG-DELETECACHE-02008", targetName);
                 } else {
                     // unknown subcommand
                     throw new AssertionError(subCommand);
@@ -159,8 +159,7 @@ public class DeleteCacheInfo {
             }
             return Constants.EXIT_CODE_SUCCESS;
         } catch (BulkLoaderSystemException e) {
-            // TODO logging
-            e.printStackTrace();
+            LOG.log(e);
             return Constants.EXIT_CODE_ERROR;
         }
     }

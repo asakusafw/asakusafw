@@ -34,9 +34,9 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public final class DBAccessUtil {
 
-    // TODO 各種定数の括り出し
+    static final Log LOG = new Log(DBAccessUtil.class);
 
-    private static final Class<?> CLASS = DBAccessUtil.class;
+    // TODO 各種定数の括り出し
 
     private DBAccessUtil() {
         return;
@@ -276,7 +276,7 @@ public final class DBAccessUtil {
     public static boolean getJobflowInstanceLock(String executionId, Connection conn) {
         String sql = "INSERT INTO JOBFLOW_INSTANCE_LOCK (EXECUTION_ID) VALUES(?)";
         PreparedStatement stmt = null;
-        Log.log(CLASS, MessageIdConst.CMN_EXECUTIONID_LOCK, sql, executionId);
+        LOG.info("TG-COMMON-00020", sql, executionId);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, executionId);
@@ -300,7 +300,7 @@ public final class DBAccessUtil {
      * @param conn コネクション
      */
     public static void releaseJobflowInstanceLock(Connection conn) {
-        Log.log(CLASS, MessageIdConst.CMN_EXECUTIOND_LOCK_RELEASE);
+        LOG.info("TG-COMMON-00021");
         try {
             DBConnection.rollback(conn);
         } catch (BulkLoaderSystemException e) {

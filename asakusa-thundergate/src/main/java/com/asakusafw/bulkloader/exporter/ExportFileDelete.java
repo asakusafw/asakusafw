@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.log.Log;
 
 
@@ -29,6 +28,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class ExportFileDelete {
+
+    static final Log LOG = new Log(ExportFileDelete.class);
 
     /**
      * Exportファイル及びディレクトリを削除する。
@@ -44,7 +45,7 @@ public class ExportFileDelete {
                 // ファイルが存在する場合は削除する
                 if (file != null && file.exists()) {
                     if (!file.delete()) {
-                        Log.log(this.getClass(), MessageIdConst.EXP_FILEDELETE_ERROR, file.getPath());
+                        LOG.warn("TG-EXPORTER-05001", file.getPath());
                     }
                 }
             }

@@ -29,7 +29,6 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -40,6 +39,8 @@ import com.asakusafw.bulkloader.log.Log;
  *
  */
 public class ExportDataCopy {
+
+    static final Log LOG = new Log(ExportDataCopy.class);
 
     /**
      * 更新レコードのコピーが全て終了したかを表すフラグ。
@@ -66,25 +67,19 @@ public class ExportDataCopy {
             for (String tableName : l) {
                 ExportTargetTableBean expTableBean = bean.getExportTargetTable(tableName);
 
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_COPY_START,
+                LOG.info("TG-EXPORTER-06002",
                         bean.getJobflowSid(), tableName, expTableBean.getExportTempTableName());
 
                 // TODO 外側からO(N^2)となるのでやや気になる
                 if  (isCopyEnd(tempBean, expTableBean, tableName)) {
                     // 当該テーブルのコピーが完了している場合はコピーを行わない。
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.EXP_COPY_ALREADY_ENDED,
+                    LOG.info("TG-EXPORTER-06004",
                             bean.getJobflowSid(), tableName, expTableBean.getExportTempTableName());
                     continue;
                 }
                 if (expTableBean.getExportTempTableName() == null) {
                     // エクスポートテンポラリテーブルが存在しない場合はコピーを行わない
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.EXP_TEMP_TABLE_NOT_FOUND,
+                    LOG.info("TG-EXPORTER-06005",
                             bean.getJobflowSid(), tableName, expTableBean.getExportTempTableName());
                     continue;
                 }
@@ -106,9 +101,7 @@ public class ExportDataCopy {
                 } else {
                     copyEnd = false;
                 }
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_COPY_END,
+                LOG.info("TG-EXPORTER-06003",
                         bean.getJobflowSid(), tableName, expTableBean.getExportTempTableName(), tableCopyEnd);
             }
             return true;
@@ -116,9 +109,9 @@ public class ExportDataCopy {
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
-                Log.log(e1.getCause(), e1.getClazz(), e1.getMessageId(), e1.getMessageArgs());
+                LOG.log(e);
             }
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } finally {
             DBConnection.closeConn(conn);
@@ -180,7 +173,7 @@ public class ExportDataCopy {
                     loadExitSql,
                     new String[] { ExportTempTableStatus.COPY_EXIT.getStatus(), jobflowSid, tableName });
             DBConnection.commit(conn);
-            Log.log(this.getClass(), MessageIdConst.EXP_TABLE_COPY_EXIT, jobflowSid, tableName);
+            LOG.info("TG-EXPORTER-06011", jobflowSid, tableName);
         } catch (SQLException e) {
             throw BulkLoaderSystemException.createInstanceCauseBySQLException(
                     e, this.getClass(), loadExitSql,
@@ -248,7 +241,7 @@ public class ExportDataCopy {
                 DBConnection.closePs(stmt);
             }
 
-            Log.log(this.getClass(), MessageIdConst.EXP_DUPLICATE_RECORD_COPY,
+            LOG.info("TG-EXPORTER-06008",
                     expTableBean.getErrorTableName(),
                     expTableBean.getExportTempTableName(),
                     copySql.toString(),
@@ -454,7 +447,7 @@ public class ExportDataCopy {
                     DBConnection.closePs(stmt);
                 }
             }
-            Log.log(this.getClass(), MessageIdConst.EXP_UPDATE_RECORD_COPY,
+            LOG.info("TG-EXPORTER-06009",
                     tableName,
                     tableBean.getExportTempTableName(),
                     copySql,
@@ -489,9 +482,7 @@ public class ExportDataCopy {
         }
 
         if (tempCount == 0) {
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_ALL_DATA_COPY,
+            LOG.info("TG-EXPORTER-06010",
                     tableName,
                     tableBean.getExportTempTableName());
             return true;
@@ -521,9 +512,7 @@ public class ExportDataCopy {
                 DBConnection.closeRs(rs);
                 DBConnection.closePs(stmt);
             }
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_DATA_COPY_UPDATE_ERROR,
+            LOG.info("TG-EXPORTER-06001",
                     tableName,
                     tempTableName,
                     errSid.toString());
@@ -821,7 +810,7 @@ public class ExportDataCopy {
             } finally {
                 DBConnection.closePs(stmt);
             }
-            Log.log(this.getClass(), MessageIdConst.EXP_NEW_RECORD_COPY,
+            LOG.info("TG-EXPORTER-06007",
                     tableName,
                     expTableBean.getExportTempTableName(),
                     copySql,

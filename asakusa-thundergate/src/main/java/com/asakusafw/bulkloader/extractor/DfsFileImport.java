@@ -45,7 +45,6 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.MultiThreadedCopier;
 import com.asakusafw.bulkloader.common.SequenceFileModelOutput;
 import com.asakusafw.bulkloader.common.StreamRedirectThread;
@@ -65,6 +64,8 @@ import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
  * @author yuta.shirai
  */
 public class DfsFileImport {
+
+    static final Log LOG = new Log(DfsFileImport.class);
 
     private static final int INPUT_BUFFER_BYTES = 128 * 1024;
 
@@ -108,10 +109,7 @@ public class DfsFileImport {
         try {
             reader = FileList.createReader(getInputStream());
         } catch (IOException e) {
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+            LOG.error(e, "TG-EXTRACTOR-02001",
                     "標準入力からFileListの取得に失敗");
             return false;
         }
@@ -144,18 +142,15 @@ public class DfsFileImport {
                 }
             }
 
-            waitForCompleteTasks(running);
+            waitForCompleteTasks(bean, running);
             // 正常終了
             return true;
 
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
         } catch (IOException e) {
             // FileListの展開に失敗
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+            LOG.error(e, "TG-EXTRACTOR-02001",
                     "標準入力からFileListの取得に失敗");
         } finally {
             try {
@@ -184,7 +179,7 @@ public class DfsFileImport {
             // 対応するテーブルの定義がDSL存在しない場合異常終了する。
             throw new BulkLoaderSystemException(
                     this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "TG-EXTRACTOR-02001",
                     MessageFormat.format(
                             "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
                             tableName));
@@ -193,21 +188,15 @@ public class DfsFileImport {
         URI dfsFilePath = resolveLocation(bean, user, targetTableBean.getDfsFilePath());
         Class<?> targetTableModel = targetTableBean.getImportTargetType();
 
-        Log.log(
-                this.getClass(),
-                MessageIdConst.EXT_CREATE_HDFSFILE,
+        LOG.info("TG-EXTRACTOR-02002",
                 tableName, dfsFilePath.toString(), targetTableModel.toString());
 
         // ファイルをSequenceFileに変換してDFSに書き出す
         long recordCount = write(targetTableModel, dfsFilePath, content);
 
-        Log.log(
-                this.getClass(),
-                MessageIdConst.EXT_CREATE_HDFSFILE_SUCCESS,
+        LOG.info("TG-EXTRACTOR-02003",
                 tableName, dfsFilePath.toString(), targetTableModel.toString());
-        Log.log(
-                this.getClass(),
-                MessageIdConst.PRF_EXTRACT_COUNT,
+        LOG.info("TG-PROFILE-01002",
                 bean.getTargetName(),
                 bean.getBatchId(),
                 bean.getJobflowId(),
@@ -236,33 +225,26 @@ public class DfsFileImport {
             // 対応するテーブルの定義がDSL存在しない場合異常終了する。
             throw new BulkLoaderSystemException(
                     this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "TG-EXTRACTOR-02001",
                     MessageFormat.format(
                             "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
                             info.getTableName()));
         }
 
         URI dfsFilePath = resolveLocation(bean, user, protocol.getLocation());
-
         try {
             CacheStorage storage = new CacheStorage(new Configuration(), dfsFilePath);
             try {
+                LOG.info("TG-EXTRACTOR-11001", info.getId(), info.getTableName(), storage.getPatchProperties());
                 storage.putPatchCacheInfo(info);
+                LOG.info("TG-EXTRACTOR-11002", info.getId(), info.getTableName(), storage.getPatchProperties());
 
                 Class<?> targetTableModel = targetTableBean.getImportTargetType();
                 Path targetUri = storage.getPatchContents("0");
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXT_CREATE_HDFSFILE,
-                        info.getTableName(), targetUri.toString(), targetTableModel.toString());
+                LOG.info("TG-EXTRACTOR-11003", info.getId(), info.getTableName(), targetUri);
                 long recordCount = write(targetTableModel, targetUri.toUri(), content);
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXT_CREATE_HDFSFILE_SUCCESS,
-                        info.getTableName(), dfsFilePath.toString(), targetTableModel.toString());
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.PRF_EXTRACT_COUNT,
+                LOG.info("TG-EXTRACTOR-11004", info.getId(), info.getTableName(), targetUri);
+                LOG.info("TG-PROFILE-01002",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -276,9 +258,9 @@ public class DfsFileImport {
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                    "Failed to create a cache patch file: " + dfsFilePath);
+                    getClass(),
+                    "TG-EXTRACTOR-11005",
+                    info.getId(), info.getTableName(), dfsFilePath);
         }
     }
 
@@ -309,14 +291,15 @@ public class DfsFileImport {
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    DfsFileImport.class,
-                    // TODO logging
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                    MessageFormat.format(
-                            "Failed to build cache (location={0}, table={1}, id={2})",
-                            protocol.getLocation(),
-                            info.getTableName(),
-                            info.getId()));
+                    getClass(),
+                    "TG-EXTRACTOR-12002",
+                    protocol.getKind(),
+                    info.getId(),
+                    info.getTableName(),
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId());
         }
     }
 
@@ -330,7 +313,7 @@ public class DfsFileImport {
      * @throws IOException if failed to start execution
      */
     protected Callable<?> createCacheBuilder(
-            String subcommand,
+            final String subcommand,
             ImportBean bean,
             final URI location,
             final CacheInfo info) throws IOException {
@@ -353,6 +336,16 @@ public class DfsFileImport {
         command.add(location.toString());
         command.add(info.getModelClassName());
 
+        LOG.info("TG-EXTRACTOR-12001",
+                subcommand,
+                info.getId(),
+                info.getTableName(),
+                bean.getTargetName(),
+                bean.getBatchId(),
+                bean.getJobflowId(),
+                bean.getExecutionId(),
+                command);
+
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(new File(System.getProperty("user.home", ".")));
         final Process process = builder.start();
@@ -369,6 +362,7 @@ public class DfsFileImport {
                 public Void call() throws Exception {
                     boolean innerSucceed = false;
                     try {
+                        LOG.info("TG-EXTRACTOR-12003", subcommand, info.getId(), info.getTableName());
                         stdout.join();
                         stderr.join();
                         int exitCode = process.waitFor();
@@ -378,17 +372,15 @@ public class DfsFileImport {
                                     exitCode));
                         }
                         innerSucceed = true;
+                        LOG.info("TG-EXTRACTOR-12004", subcommand, info.getId(), info.getTableName());
                     } catch (Exception e) {
                         throw new BulkLoaderSystemException(
                                 e,
                                 DfsFileImport.class,
-                                // TODO logging
-                                MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                                MessageFormat.format(
-                                        "Failed to build cache (location={0}, table={1}, id={2})",
-                                        location,
-                                        info.getTableName(),
-                                        info.getId()));
+                                "TG-EXTRACTOR-12005",
+                                subcommand,
+                                info.getId(),
+                                info.getTableName());
                     } finally {
                         if (innerSucceed == false) {
                             process.destroy();
@@ -429,9 +421,18 @@ public class DfsFileImport {
         return dfsFilePath;
     }
 
-    private void waitForCompleteTasks(List<Future<?>> running) throws BulkLoaderSystemException {
+    private void waitForCompleteTasks(ImportBean bean, List<Future<?>> running) throws BulkLoaderSystemException {
+        assert bean != null;
         assert running != null;
-        // TODO logging
+        if (running.isEmpty()) {
+            return;
+        }
+        LOG.info("TG-EXTRACTOR-12006",
+                bean.getTargetName(),
+                bean.getBatchId(),
+                bean.getJobflowId(),
+                bean.getExecutionId());
+
         boolean sawError = false;
         LinkedList<Future<?>> rest = new LinkedList<Future<?>>(running);
         while (rest.isEmpty() == false) {
@@ -445,10 +446,12 @@ public class DfsFileImport {
                 cancel(rest);
                 throw new BulkLoaderSystemException(
                         e,
-                        DfsFileImport.class,
-                        // TODO logging
-                        MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                        "Building cache was interruped");
+                        getClass(),
+                        "TG-EXTRACTOR-12007",
+                        bean.getTargetName(),
+                        bean.getBatchId(),
+                        bean.getJobflowId(),
+                        bean.getExecutionId());
             } catch (ExecutionException e) {
                 cancel(rest);
                 Throwable cause = e.getCause();
@@ -457,26 +460,32 @@ public class DfsFileImport {
                 } else if (cause instanceof Error) {
                     throw (Error) cause;
                 } else if (cause instanceof BulkLoaderSystemException) {
-                    BulkLoaderSystemException b = (BulkLoaderSystemException) cause;
-                    Log.log(b.getCause(), b.getClazz(), b.getMessageId(), b.getMessageArgs());
+                    LOG.log((BulkLoaderSystemException) cause);
                     sawError = true;
                 } else {
-                    Log.log(
-                            e,
-                            getClass(),
-                            // TODO logging
-                            MessageIdConst.EXT_CREATE_HDFSFILE,
-                            "Building cache was failed by exceptional condition");
+                    LOG.error(e, "TG-EXTRACTOR-12008",
+                            bean.getTargetName(),
+                            bean.getBatchId(),
+                            bean.getJobflowId(),
+                            bean.getExecutionId());
                     sawError = true;
                 }
             }
         }
         if (sawError) {
             throw new BulkLoaderSystemException(
-                    DfsFileImport.class,
-                    // TODO logging
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
-                    "Building cache failed");
+                    getClass(),
+                    "TG-EXTRACTOR-12008",
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId());
+        } else {
+            LOG.info("TG-EXTRACTOR-12009",
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId());
         }
     }
 
@@ -535,13 +544,13 @@ public class DfsFileImport {
             throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
         } catch (InterruptedException e) {
             throw new BulkLoaderSystemException(
                     e,
                     this.getClass(),
-                    MessageIdConst.EXT_CREATE_HDFSFILE_EXCEPTION,
+                    "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
         } finally {
             if (writer != null) {
@@ -578,7 +587,7 @@ public class DfsFileImport {
             compType = SequenceFile.CompressionType.valueOf(strCompType);
         } catch (Exception e) {
             compType = SequenceFile.CompressionType.NONE;
-            Log.log(this.getClass(), MessageIdConst.EXT_SEQ_COMP_TYPE_FAIL, strCompType);
+            LOG.error("TG-EXTRACTOR-02004", strCompType);
         }
         return compType;
     }

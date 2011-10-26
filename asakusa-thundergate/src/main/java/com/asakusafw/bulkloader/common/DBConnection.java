@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.Properties;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -40,6 +39,8 @@ import com.asakusafw.bulkloader.log.Log;
  *
  */
 public final class DBConnection {
+
+    static final Log LOG = new Log(DBConnection.class);
 
     /**
      * このクラス。
@@ -67,26 +68,26 @@ public final class DBConnection {
         } catch (NullPointerException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    DBConnection.CLASS,
-                    MessageIdConst.CMN_JDBCDRIVER_LOAD_ERROR,
+                    CLASS,
+                    "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (InstantiationException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    DBConnection.CLASS,
-                    MessageIdConst.CMN_JDBCDRIVER_LOAD_ERROR,
+                    CLASS,
+                    "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (IllegalAccessException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    DBConnection.CLASS,
-                    MessageIdConst.CMN_JDBCDRIVER_LOAD_ERROR,
+                    CLASS,
+                    "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (ClassNotFoundException e) {
             throw new BulkLoaderSystemException(
                     e,
-                    DBConnection.CLASS,
-                    MessageIdConst.CMN_JDBCDRIVER_LOAD_ERROR,
+                    CLASS,
+                    "TG-COMMON-00013",
                     jdbcDriverName);
         }
     }
@@ -103,7 +104,7 @@ public final class DBConnection {
         if (!initialized) {
             throw new BulkLoaderSystemException(
                     CLASS,
-                    MessageIdConst.CMN_DB_CONN_ERROR,
+                    "TG-COMMON-00001",
                     "初期化が行われていない");
         }
 
@@ -146,19 +147,19 @@ public final class DBConnection {
             throw new BulkLoaderSystemException(
                     e,
                     CLASS,
-                    MessageIdConst.CMN_DB_CONN_ERROR,
+                    "TG-COMMON-00001",
                     "コネクション取得中にSQL例外が発生");
         } catch (FileNotFoundException e) {
             throw new BulkLoaderSystemException(
                     e,
                     CLASS,
-                    MessageIdConst.CMN_DB_CONN_ERROR,
+                    "TG-COMMON-00001",
                     MessageFormat.format("チューニングパラメータのプロパティが見つからない。ファイル名：{0}", param));
         } catch (IOException e) {
             throw new BulkLoaderSystemException(
                     e,
                     CLASS,
-                    MessageIdConst.CMN_DB_CONN_ERROR,
+                    "TG-COMMON-00001",
                     MessageFormat.format("チューニングパラメータのプロパティの読み込みに失敗。ファイル名：{0}", param));
         } finally {
             if (fis != null) {
@@ -230,20 +231,19 @@ public final class DBConnection {
         if (conn != null) {
             try {
                 // コミット実行前ログを出力
-                Log.log(CLASS, MessageIdConst.CMN_COMMIT_EXECUTE_BEFORE);
-                Date beforeDate = new Date();
+                LOG.debugMessage("トランザクションをコミットします。");
+                long before = System.currentTimeMillis();
 
                 conn.commit();
 
                 // コミット実行後ログを出力
-                Date aferDate = new Date();
-                long time = aferDate.getTime() - beforeDate.getTime();
-                Log.log(CLASS, MessageIdConst.CMN_COMMIT_EXECUTE_AFTER, time);
+                long time = System.currentTimeMillis() - before;
+                LOG.debugMessage("トランザクションをコミットしました。コミット時間(ミリ秒)：{0}", time);
             } catch (SQLException e) {
                 throw new BulkLoaderSystemException(
                         e,
                         CLASS,
-                        MessageIdConst.CMN_DB_CONN_COMMIT_ERROR);
+                        "TG-COMMON-00015");
             }
         }
     }
@@ -256,20 +256,19 @@ public final class DBConnection {
         if (conn != null) {
             try {
                 // ロールバック実行前ログを出力
-                Log.log(CLASS, MessageIdConst.CMN_ROLLBACK_EXECUTE_BEFORE);
-                Date beforeDate = new Date();
+                LOG.debugMessage("トランザクションをロールバックします。");
+                long before = System.currentTimeMillis();
 
                 conn.rollback();
 
                 // ロールバック実行後ログを出力
-                Date aferDate = new Date();
-                long time = aferDate.getTime() - beforeDate.getTime();
-                Log.log(CLASS, MessageIdConst.CMN_ROLLBACK_EXECUTE_AFTER, time);
+                long time = System.currentTimeMillis() - before;
+                LOG.debugMessage("トランザクションをロールバックしました。コミット時間(ミリ秒)：{0}", time);
             } catch (SQLException e) {
                 throw new BulkLoaderSystemException(
                         e,
                         CLASS,
-                        MessageIdConst.CMN_DB_CONN_ROLLBACK_ERROR);
+                        "TG-COMMON-00016");
             }
         }
     }
@@ -284,16 +283,16 @@ public final class DBConnection {
     public static int executeUpdate(PreparedStatement stmt, String sql, String... param) throws SQLException {
         // SQL実行前ログを出力
         String args = arrayToString(param);
-        Log.log(CLASS, MessageIdConst.CMN_SQL_EXECUTE_BEFORE, sql, args);
-        Date beforeDate = new Date();
+        LOG.debugMessage("SQLを実行します。SQL：{0} パラメータ：{1}", sql, args);
+        long before = System.currentTimeMillis();
 
         // SQLを実行
         int result = stmt.executeUpdate();
 
         // SQL実行後ログを出力
-        Date aferDate = new Date();
-        long time = aferDate.getTime() - beforeDate.getTime();
-        Log.log(CLASS, MessageIdConst.CMN_SQL_EXECUTE_AFTER, time, result, sql, args);
+        long time = System.currentTimeMillis() - before;
+        LOG.debugMessage("SQLを実行しました。実行時間(ミリ秒)：{0} 件数：{1} SQL：{2} パラメータ：{3}",
+                time, result, sql, args);
 
         return result;
     }
@@ -311,16 +310,16 @@ public final class DBConnection {
             String... param) throws SQLException {
         // SQL実行前ログを出力
         String args = arrayToString(param);
-        Log.log(CLASS, MessageIdConst.CMN_SQL_EXECUTE_BEFORE, sql, args);
-        Date beforeDate = new Date();
+        LOG.debugMessage("SQLを実行します。SQL：{0} パラメータ：{1}", sql, args);
+        long before = System.currentTimeMillis();
 
         // SQLを実行
         ResultSet results = stmt.executeQuery();
 
         // SQL実行後ログを出力
-        Date aferDate = new Date();
-        long time = aferDate.getTime() - beforeDate.getTime();
-        Log.log(CLASS, MessageIdConst.CMN_SQL_EXECUTE_AFTER, time, "-", sql, args);
+        long time = System.currentTimeMillis() - before;
+        LOG.debugMessage("SQLを実行しました。実行時間(ミリ秒)：{0} 件数：{1} SQL：{2} パラメータ：{3}",
+                time, "-", sql, args);
 
         return results;
     }
