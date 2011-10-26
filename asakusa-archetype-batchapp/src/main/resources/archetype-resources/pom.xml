@@ -9,7 +9,7 @@
 	<properties>
 		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
 
-		<cloudera.cdh.version>0.20.2-cdh3u1</cloudera.cdh.version>
+		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
