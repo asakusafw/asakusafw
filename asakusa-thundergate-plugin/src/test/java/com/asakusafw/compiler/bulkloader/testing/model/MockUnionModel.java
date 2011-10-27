@@ -5,6 +5,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
@@ -17,8 +18,9 @@ import org.apache.hadoop.io.Writable;
  * mock_union_modelを表すデータモデルクラス。
  */
 @ColumnOrder(value = {"A", "B", "C", "D", "X"})@DataModelKind("DMDL")@ModelInputLocation(MockUnionModelInput.class)@
-        ModelOutputLocation(MockUnionModelOutput.class)@OriginalName(value = "MOCK_UNION")@PrimaryKey(value = {"a"}) 
-        public class MockUnionModel implements DataModel<MockUnionModel>, Writable {
+        ModelOutputLocation(MockUnionModelOutput.class)@OriginalName(value = "MOCK_UNION")@PrimaryKey(value = {"a"})@
+        PropertyOrder({"a", "b", "c", "d", "x"}) public class MockUnionModel implements DataModel<MockUnionModel>, 
+        Writable {
     private final IntOption a = new IntOption();
     private final IntOption b = new IntOption();
     private final IntOption c = new IntOption();

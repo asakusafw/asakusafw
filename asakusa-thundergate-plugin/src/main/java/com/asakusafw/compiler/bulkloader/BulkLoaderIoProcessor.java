@@ -131,7 +131,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                             desc.getWhere());
                     valid = false;
                 }
-                if (desc.getLockType() == BulkLoadImporterDescription.LockType.ROW_OR_SKIP) {
+                if (desc.getLockType() == BulkLoadImporterDescription.LockType.ROW
+                        || desc.getLockType() == BulkLoadImporterDescription.LockType.ROW_OR_SKIP) {
                     getEnvironment().error(
                             "\"{0}\"に指定されたロック方法ではキャッシュを利用できません: {1}",
                             desc.getClass().getName(),
