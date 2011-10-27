@@ -116,7 +116,7 @@ public class CacheBuildClient extends Configured implements Tool {
     }
 
     private void update() throws IOException, InterruptedException {
-        Job job = new Job();
+        Job job = new Job(getConf());
         StageInputDriver.add(job, storage.getHeadContents("*"), SequenceFileInputFormat.class, BaseMapper.class);
         StageInputDriver.add(job, storage.getPatchContents("*"), SequenceFileInputFormat.class, PatchMapper.class);
         job.setMapOutputKeyClass(PatchApplyKey.class);
@@ -167,7 +167,7 @@ public class CacheBuildClient extends Configured implements Tool {
     }
 
     private void create() throws InterruptedException, IOException {
-        Job job = new Job();
+        Job job = new Job(getConf());
         FileInputFormat.addInputPath(job, storage.getPatchContents("*"));
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setMapperClass(DeleteMapper.class);
