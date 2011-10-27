@@ -16,6 +16,9 @@
 package com.asakusafw.dmdl.thundergate;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 定数表。
@@ -71,6 +74,22 @@ public final class Constants {
      * The name extension of DMDL (includes dot).
      */
     public static final String DMDL_LIKE_EXTENSION = ".dmdl";
+
+    /**
+     * Name set of ThunderGate system tables.
+     */
+    public static final Set<String> SYSTEM_TABLE_NAMES;
+    static {
+        Set<String> set = new TreeSet<String>();
+        set.add("RUNNING_JOBFLOWS");
+        set.add("IMPORT_TABLE_LOCK");
+        set.add("IMPORT_RECORD_LOCK");
+        set.add("EXPORT_TEMP_TABLE");
+        set.add("JOBFLOW_INSTANCE_LOCK");
+        set.add("__TG_CACHE_INFO");
+        set.add("__TG_CACHE_LOCK");
+        SYSTEM_TABLE_NAMES = Collections.unmodifiableSet(set);
+    }
 
     private Constants() {
         return;
