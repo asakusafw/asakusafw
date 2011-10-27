@@ -25,7 +25,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Rule;
@@ -278,7 +277,7 @@ public class TableOutputTest {
         assertThat(results.size(), is(1));
         Timestamp timestamp = (Timestamp) results.get(0).get(0);
         assertThat(timestamp, is(notNullValue()));
-        assertThat(timestamp, greaterThan(new Date(86400)));
+        assertThat(timestamp.getTime(), is(0L));
     }
 
     /**

@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -119,20 +120,15 @@ public class TableOutput<T> implements ModelOutput<T> {
 
             String timestamp = table.getTimestampColumn();
             List<String> columns = new ArrayList<String>(table.getColumnsToProperties().keySet());
-            List<String> values = new ArrayList<String>();
             if (timestamp != null) {
                 columns.remove(timestamp);
                 columns.add(timestamp);
-                values.addAll(Collections.nCopies(columns.size() - 1, "?"));
-                values.add("NOW()");
-            } else {
-                values.addAll(Collections.nCopies(columns.size(), "?"));
             }
             return connection.prepareStatement(MessageFormat.format(
                     "INSERT INTO {0} ({1}) VALUES ({2})",
                     table.getTableName(),
                     Util.join(columns),
-                    Util.join(values)));
+                    Util.join(Collections.nCopies(columns.size(), "?"))));
         }
 
         public void insert(DataModelReflection ref) throws SQLException {
@@ -146,6 +142,9 @@ public class TableOutput<T> implements ModelOutput<T> {
                     scan(def, entry.getValue(), ref);
                     index++;
                 }
+            }
+            if (timestamp != null) {
+                statement.setTimestamp(index, new Timestamp(0L));
             }
             statement.executeUpdate();
         }
