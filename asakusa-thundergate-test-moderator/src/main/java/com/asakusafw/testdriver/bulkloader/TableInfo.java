@@ -60,15 +60,34 @@ public class TableInfo<T> {
 
     /**
      * Creates a new instance.
+     * If the target model supports the cache feature, this will extract timestamp column.
      * @param definition mapped model definition
      * @param tableName target table name
      * @param columnNames list of column names
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #TableInfo(DataModelDefinition, String, List, boolean)
      */
     public TableInfo(
             DataModelDefinition<T> definition,
             String tableName,
             List<String> columnNames) {
+        this(definition, tableName, columnNames, true);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param definition mapped model definition
+     * @param tableName target table name
+     * @param columnNames list of column names
+     * @param extractTimestamp {@code true} to extract timestamp column if exists, otherwise {@code false}
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #getTimestampColumn()
+     */
+    public TableInfo(
+            DataModelDefinition<T> definition,
+            String tableName,
+            List<String> columnNames,
+            boolean extractTimestamp) {
         if (definition == null) {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }
@@ -81,7 +100,11 @@ public class TableInfo<T> {
         this.definition = definition;
         this.tableName = tableName;
         this.columnsToProperties = createMappings(columnNames);
-        this.timestampColumn = extractTimestampColumn();
+        if (extractTimestamp) {
+            this.timestampColumn = extractTimestampColumn();
+        } else {
+            this.timestampColumn = null;
+        }
     }
 
     /**
