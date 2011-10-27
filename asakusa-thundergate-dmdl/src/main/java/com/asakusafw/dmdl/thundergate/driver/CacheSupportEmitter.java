@@ -139,7 +139,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         assert trait != null;
         ModelFactory f = context.getModelFactory();
         List<Statement> statements = new ArrayList<Statement>();
-        statements.add(new ExpressionBuilder(f, Models.toLiteral(f, computeModelVersion(model, trait)))
+        statements.add(new ExpressionBuilder(f, Models.toLiteral(f, computeModelVersion(context, model, trait)))
             .toReturnStatement());
         return f.newMethodDeclaration(
                 null,
@@ -153,12 +153,13 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
                 statements);
     }
 
-    private long computeModelVersion(ModelDeclaration model, CacheSupportTrait trait) {
+    private long computeModelVersion(EmitContext context, ModelDeclaration model, CacheSupportTrait trait) {
+        assert context != null;
         assert model != null;
         assert trait != null;
         long hash = 1;
         final long prime = 31;
-        hash = hash * prime + model.getName().identifier.hashCode();
+        hash = hash * prime + context.getQualifiedTypeName().toNameString().hashCode();
         hash = hash * prime + trait.getSid().getName().identifier.hashCode();
         hash = hash * prime + trait.getTimestamp().getName().identifier.hashCode();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
