@@ -570,8 +570,9 @@ public class DfsFileImport {
     /**
      * InputStreamを生成して返す。
      * @return InputStream
+     * @throws IOException if failed to open stream
      */
-    protected InputStream getInputStream() {
+    protected InputStream getInputStream() throws IOException {
         return new BufferedInputStream(System.in, INPUT_BUFFER_BYTES);
     }
 }
