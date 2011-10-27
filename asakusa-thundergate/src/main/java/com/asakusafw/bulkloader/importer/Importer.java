@@ -197,8 +197,7 @@ public class Importer {
             ImportFileCreate fileCreate = createImportFileCreate();
             if (!fileCreate.createImportFile(bean, jobflowSid)) {
                 // ファイル生成に失敗
-                LOG.error(
-                        "TG-IMPORTER-01005",
+                LOG.error("TG-IMPORTER-01005",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else {

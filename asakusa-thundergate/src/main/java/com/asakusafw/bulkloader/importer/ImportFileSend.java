@@ -158,10 +158,7 @@ public class ImportFileSend {
                 input.close();
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-IMPORTER-04001",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-04001",
                     MessageFormat.format(
                             "Importファイルの転送に失敗。テーブル名：{0}, Importファイル名： {1}",
                             tableName,

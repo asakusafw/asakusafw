@@ -177,9 +177,7 @@ public class DfsFileImport {
         ImportTargetTableBean targetTableBean = bean.getTargetTable(tableName);
         if (targetTableBean == null) {
             // 対応するテーブルの定義がDSL存在しない場合異常終了する。
-            throw new BulkLoaderSystemException(
-                    this.getClass(),
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(getClass(), "TG-EXTRACTOR-02001",
                     MessageFormat.format(
                             "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
                             tableName));
@@ -223,9 +221,7 @@ public class DfsFileImport {
         ImportTargetTableBean targetTableBean = bean.getTargetTable(info.getTableName());
         if (targetTableBean == null) {
             // 対応するテーブルの定義がDSL存在しない場合異常終了する。
-            throw new BulkLoaderSystemException(
-                    this.getClass(),
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(getClass(), "TG-EXTRACTOR-02001",
                     MessageFormat.format(
                             "エントリに対応するテーブルの定義がDSL存在しない。テーブル名：{0}",
                             info.getTableName()));
@@ -256,10 +252,7 @@ public class DfsFileImport {
                 storage.close();
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-EXTRACTOR-11005",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-11005",
                     info.getId(), info.getTableName(), dfsFilePath);
         }
     }
@@ -289,10 +282,7 @@ public class DfsFileImport {
                 throw new AssertionError(protocol);
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-EXTRACTOR-12002",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-12002",
                     protocol.getKind(),
                     info.getId(),
                     info.getTableName(),
@@ -374,10 +364,7 @@ public class DfsFileImport {
                         innerSucceed = true;
                         LOG.info("TG-EXTRACTOR-12004", subcommand, info.getId(), info.getTableName());
                     } catch (Exception e) {
-                        throw new BulkLoaderSystemException(
-                                e,
-                                DfsFileImport.class,
-                                "TG-EXTRACTOR-12005",
+                        throw new BulkLoaderSystemException(e, DfsFileImport.class, "TG-EXTRACTOR-12005",
                                 subcommand,
                                 info.getId(),
                                 info.getTableName());
@@ -444,10 +431,7 @@ public class DfsFileImport {
                 rest.addLast(future);
             } catch (InterruptedException e) {
                 cancel(rest);
-                throw new BulkLoaderSystemException(
-                        e,
-                        getClass(),
-                        "TG-EXTRACTOR-12007",
+                throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-12007",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -473,9 +457,7 @@ public class DfsFileImport {
             }
         }
         if (sawError) {
-            throw new BulkLoaderSystemException(
-                    getClass(),
-                    "TG-EXTRACTOR-12008",
+            throw new BulkLoaderSystemException(getClass(), "TG-EXTRACTOR-12008",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -541,16 +523,10 @@ public class DfsFileImport {
                     compType);
             return MultiThreadedCopier.copy(modelIn, new SequenceFileModelOutput<T>(writer), working);
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
         } catch (InterruptedException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
         } finally {
             if (writer != null) {

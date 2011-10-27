@@ -236,9 +236,7 @@ public class ExportFileLoad {
                                 tableName
                         });
                 if (updateCount == 0) {
-                    throw new BulkLoaderSystemException(
-                            this.getClass(),
-                            "TG-EXPORTER-03001",
+                    throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-03001",
                             // TODO MessageFormat.formatの検討
                             "テンポラリ管理テーブルのレコードを更新できませんでした。ジョブフローSID：" + bean.getJobflowSid(),
                             " Export対象テーブル名：" + tableName);
@@ -382,9 +380,7 @@ public class ExportFileLoad {
             if (rs.next()) {
                 seq = rs.getLong("EXPORT_TEMP_SEQ");
             } else {
-                throw new BulkLoaderSystemException(
-                        this.getClass(),
-                        "TG-EXPORTER-03001",
+                throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-03001",
                         // TODO MessageFormat.formatの検討
                         "テンポラリ管理テーブルのレコードを取得できませんでした。ジョブフローSID：" + jobflowSid,
                         " Export対象テーブル名：" + tableName);
@@ -479,9 +475,7 @@ public class ExportFileLoad {
                     columns.set(i, String.format("%s.%s AS %s", owner, columns.get(i), columns.get(i)));
                 } else {
                     // カラムのソースが判明しないときにはどこからか型情報を補足する必要がある
-                    throw new BulkLoaderSystemException(
-                            this.getClass(),
-                            "TG-EXPORTER-03007",
+                    throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-03007",
                             columns.get(i));
                 }
             }

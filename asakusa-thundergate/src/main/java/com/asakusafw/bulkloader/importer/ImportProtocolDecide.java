@@ -148,9 +148,7 @@ public class ImportProtocolDecide {
             }
             boolean locked = repository.tryLock(bean.getExecutionId(), tableInfo.getCacheId(), tableName);
             if (locked == false) {
-                throw new BulkLoaderSystemException(
-                        getClass(),
-                        "TG-IMPORTER-11005",
+                throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-11005",
                         tableName,
                         tableInfo.getCacheId());
             }
@@ -257,10 +255,7 @@ public class ImportProtocolDecide {
                 .asSubclass(ThunderGateCacheSupport.class)
                 .newInstance();
         } catch (Exception e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-IMPORTER-11011",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-11011",
                     tableName,
                     tableInfo.getCacheId(),
                     tableInfo.getImportTargetType().getName());

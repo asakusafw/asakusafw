@@ -85,10 +85,7 @@ public class ExportFileSend {
             try {
                 writer = FileList.createWriter(output, compType == FileCompType.DEFLATED);
             } catch (IOException e) {
-                throw new BulkLoaderSystemException(
-                        e,
-                        getClass(),
-                        "TG-COLLECTOR-02001",
+                throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                         "Exporterと接続するチャネルを開けませんでした");
             }
             List<String> l = bean.getExportTargetTableList();
@@ -252,19 +249,13 @@ public class ExportFileSend {
                 return -1;
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-COLLECTOR-02001",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのディレクトリ：{0} 送信ファイル名：{1}",
                             filePath,
                             fileName));
         } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-COLLECTOR-02001",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのパスが不正。HDFSのディレクトリ：{0}",
                             filePath));

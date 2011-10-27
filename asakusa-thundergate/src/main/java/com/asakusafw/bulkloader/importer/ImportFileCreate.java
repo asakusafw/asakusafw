@@ -82,9 +82,7 @@ public class ImportFileCreate {
                 if (importFile.exists()) {
                     if (!importFile.delete()) {
                         // ファイルの削除に失敗した場合は異常終了する
-                        throw new BulkLoaderSystemException(
-                                this.getClass(),
-                                "TG-IMPORTER-03001",
+                        throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03001",
                                 importFile.getName());
                     }
                 }
@@ -117,18 +115,14 @@ public class ImportFileCreate {
                 if (!importFile.exists()) {
                     try {
                         if (!importFile.createNewFile()) {
-                            throw new BulkLoaderSystemException(
-                                    this.getClass(),
-                                    "TG-IMPORTER-03002");
+                            throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03002");
                         }
                         LOG.info("TG-IMPORTER-03005",
                                 tableName,
                                 lockType,
                                 importFile.getAbsolutePath());
                     } catch (IOException e) {
-                        throw new BulkLoaderSystemException(
-                                this.getClass(),
-                                "TG-IMPORTER-03002");
+                        throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03002");
                     }
                 } else {
                     LOG.info("TG-IMPORTER-03004",
@@ -322,10 +316,7 @@ public class ImportFileCreate {
                     .asSubclass(ThunderGateCacheSupport.class)
                     .newInstance();
             } catch (Exception e) {
-                throw new BulkLoaderSystemException(
-                        e,
-                        getClass(),
-                        "TG-IMPORTER-13002",
+                throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-13002",
                         tableName,
                         tableInfo.getCacheId(),
                         tableInfo.getImportTargetType().getName());

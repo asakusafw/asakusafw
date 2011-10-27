@@ -165,10 +165,8 @@ public class GetCacheInfoRemote extends Configured implements Tool {
                 output.openNext(result).close();
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-GETCACHE-01005", targetName, batchId, flowId, executionId, userName);
+            throw new BulkLoaderSystemException(e, getClass(), "TG-GETCACHE-01005",
+                    targetName, batchId, flowId, executionId, userName);
         }
     }
 

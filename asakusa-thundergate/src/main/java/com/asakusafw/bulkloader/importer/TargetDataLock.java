@@ -103,17 +103,11 @@ public class TargetDataLock {
                             Thread.sleep(TimeUnit.SECONDS.toMillis(retryInterval));
                             continue;
                         } catch (InterruptedException e2) {
-                            throw new BulkLoaderSystemException(
-                                    e2,
-                                    this.getClass(),
-                                    "TG-IMPORTER-02002");
+                            throw new BulkLoaderSystemException(e2, getClass(), "TG-IMPORTER-02002");
                         }
                     } else {
                         // リトライ不可の場合、異常終了する。
-                        throw new BulkLoaderSystemException(
-                                e,
-                                this.getClass(),
-                                "TG-IMPORTER-02003");
+                        throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-02003");
                     }
                 }
             }
@@ -158,10 +152,7 @@ public class TargetDataLock {
             tableLock = getImportTableLock(conn, bean.getImportTargetTableList().iterator());
         } catch (BulkLoaderSystemException e) {
             // リトライする
-            throw new BulkLoaderReRunnableException(
-                    e.getCause(),
-                    this.getClass(),
-                    "TG-IMPORTER-02004",
+            throw new BulkLoaderReRunnableException(e.getCause(), getClass(), "TG-IMPORTER-02004",
                     "ロック取得処理の排他制御に失敗",
                     "IMPORT_TABLE_LOCK");
         }
@@ -195,9 +186,7 @@ public class TargetDataLock {
                 } else {
                     // ロック済みの動作が「エラーとする」の場合、リトライを行う。
                     // テーブルにロックフラグが立っている場合、リトライする
-                    throw new BulkLoaderReRunnableException(
-                            getClass(),
-                            "TG-IMPORTER-02004",
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのテーブルロックが取得されている",
                             tableName);
                 }
@@ -209,9 +198,7 @@ public class TargetDataLock {
                 // 対象テーブルのレコードにロックフラグが立っていないかチェック
                 if (!checkRecordLock(conn, tableName)) {
                     // リトライする
-                    throw new BulkLoaderReRunnableException(
-                            getClass(),
-                            "TG-IMPORTER-02004",
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのレコードロックが取得されている",
                             tableName);
                 } else {
@@ -230,9 +217,7 @@ public class TargetDataLock {
                     // エラーとする場合、対象レコードにロックフラグが立っていないかチェックする
                     if (!checkRecordLock(conn, tableName, serchCondition)) {
                         // リトライする
-                        throw new BulkLoaderReRunnableException(
-                                this.getClass(),
-                                "TG-IMPORTER-02004",
+                        throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                                 "ロック対象テーブルのレコードロックが取得されている",
                                 tableName);
                     } else {
@@ -248,9 +233,7 @@ public class TargetDataLock {
                 // 対象レコードにロックフラグが立っていないかチェックする
                 if (!checkRecordLock(conn, tableName, serchCondition)) {
                     // リトライする
-                    throw new BulkLoaderReRunnableException(
-                            this.getClass(),
-                            "TG-IMPORTER-02004",
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのレコードロックが取得されている",
                             tableName);
                 } else {

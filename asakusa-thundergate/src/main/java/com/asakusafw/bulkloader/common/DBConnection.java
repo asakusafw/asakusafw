@@ -66,28 +66,16 @@ public final class DBConnection {
             Class.forName(jdbcDriverName).newInstance();
             initialized = true;
         } catch (NullPointerException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00013",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (InstantiationException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00013",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (IllegalAccessException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00013",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00013",
                     jdbcDriverName);
         } catch (ClassNotFoundException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00013",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00013",
                     jdbcDriverName);
         }
     }
@@ -102,9 +90,7 @@ public final class DBConnection {
 
         // 初期化が行われていない場合例外をスローする。
         if (!initialized) {
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    "TG-COMMON-00001",
+            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00001",
                     "初期化が行われていない");
         }
 
@@ -144,22 +130,13 @@ public final class DBConnection {
                     e1.printStackTrace();
                 }
             }
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00001",
                     "コネクション取得中にSQL例外が発生");
         } catch (FileNotFoundException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00001",
                     MessageFormat.format("チューニングパラメータのプロパティが見つからない。ファイル名：{0}", param));
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-COMMON-00001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00001",
                     MessageFormat.format("チューニングパラメータのプロパティの読み込みに失敗。ファイル名：{0}", param));
         } finally {
             if (fis != null) {
@@ -240,10 +217,7 @@ public final class DBConnection {
                 long time = System.currentTimeMillis() - before;
                 LOG.debugMessage("トランザクションをコミットしました。コミット時間(ミリ秒)：{0}", time);
             } catch (SQLException e) {
-                throw new BulkLoaderSystemException(
-                        e,
-                        CLASS,
-                        "TG-COMMON-00015");
+                throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00015");
             }
         }
     }
@@ -265,10 +239,7 @@ public final class DBConnection {
                 long time = System.currentTimeMillis() - before;
                 LOG.debugMessage("トランザクションをロールバックしました。コミット時間(ミリ秒)：{0}", time);
             } catch (SQLException e) {
-                throw new BulkLoaderSystemException(
-                        e,
-                        CLASS,
-                        "TG-COMMON-00016");
+                throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00016");
             }
         }
     }

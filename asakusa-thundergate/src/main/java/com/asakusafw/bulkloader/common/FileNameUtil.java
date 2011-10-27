@@ -62,9 +62,7 @@ public final class FileNameUtil {
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_DIR));
         if (!fileDirectry.exists()) {
             // ディレクトリが存在しない場合は異常終了する。
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    "TG-COMMON-00017",
+            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00017",
                     fileDirectry.getAbsolutePath());
         }
 
@@ -180,10 +178,7 @@ public final class FileNameUtil {
         try {
             return new URI(resolved.substring(1)); // 先頭の[/]は除去する
         } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
                     // TODO MessageFormat.formatを検討
                     "HDFSに書き出すURIが不正。URI：" + dfsFilePath.substring(1));
         }
@@ -240,17 +235,11 @@ public final class FileNameUtil {
             fs.setWorkingDirectory(fs.getHomeDirectory());
             workingDirPath = fs.getWorkingDirectory();
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
                     "HDFSのファイルシステムの取得に失敗。URI："
                     + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
         } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    "TG-EXTRACTOR-02001",
+            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
                     "HDFSのパスが不正。URI："
                     + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
         } finally {
@@ -258,10 +247,7 @@ public final class FileNameUtil {
                 try {
                     fs.close();
                 } catch (IOException e) {
-                    throw new BulkLoaderSystemException(
-                            e,
-                            CLASS,
-                            "TG-EXTRACTOR-02001",
+                    throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
                             "HDFSのファイルシステムのクローズに失敗。URI："
                             + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
                 }
@@ -277,7 +263,6 @@ public final class FileNameUtil {
             results.add(expanded.substring(1)); // 先頭の[/]は除去する
         }
         return results;
-
     }
 
     /**

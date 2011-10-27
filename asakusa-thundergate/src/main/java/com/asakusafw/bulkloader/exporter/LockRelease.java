@@ -93,17 +93,12 @@ public class LockRelease {
                             Thread.sleep(TimeUnit.SECONDS.toMillis(retryInterval));
                             continue;
                         } catch (InterruptedException e1) {
-                            throw new BulkLoaderSystemException(
-                                    e1,
-                                    getClass(),
-                                    "TG-EXPORTER-04001",
+                            throw new BulkLoaderSystemException(e1, getClass(), "TG-EXPORTER-04001",
                                     "IMPORT_TABLE_LOCKテーブルのロック取得に失敗");
                         }
                     } else {
                         // リトライ不可の場合、異常終了する。
-                        throw new BulkLoaderSystemException(
-                                getClass(),
-                                "TG-EXPORTER-04002",
+                        throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-04002",
                                 "IMPORT_TABLE_LOCKテーブルのロック取得に失敗");
                     }
                 }

@@ -46,10 +46,6 @@ public class Recoverer {
     static final Log LOG = new Log(Recoverer.class);
 
     /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Recoverer.class;
-    /**
      * Exporterで読み込むプロパティファイル。
      */
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
@@ -328,9 +324,7 @@ public class Recoverer {
                         exporterBean.getExecutionId());
                 ExportDataCopy copy = createExportDataCopy();
                 if (!copy.copyData(exporterBean)) {
-                    throw new BulkLoaderSystemException(
-                            this.getClass(),
-                            "TG-RECOVERER-01012",
+                    throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01012",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -358,9 +352,7 @@ public class Recoverer {
             LockRelease lock = createLockRelease();
             if (!lock.releaseLock(exporterBean, updateEnd)) {
                 // ロックの解除に失敗
-                throw new BulkLoaderSystemException(
-                        CLASS,
-                        "TG-RECOVERER-01013",
+                throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01013",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -394,9 +386,7 @@ public class Recoverer {
                             exporterBean.getExecutionId(),
                             "ロールフォワード");
                 } else {
-                    throw new BulkLoaderSystemException(
-                            CLASS,
-                            "TG-RECOVERER-01015",
+                    throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01015",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -428,9 +418,7 @@ public class Recoverer {
         // ジョブフロー実行テーブルにレコードが存在しない場合はエラーとする
         List<ExporterBean> beans = selectRunningJobFlow(executionId);
         if (beans.size() == 0) {
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    "TG-RECOVERER-01009",
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01009",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),
@@ -466,16 +454,14 @@ public class Recoverer {
         JobFlowParamLoader paramLoader = createJobFlowParamLoader();
         if (!paramLoader.loadRecoveryParam(
                 exporterBean.getTargetName(), exporterBean.getBatchId(), exporterBean.getJobflowId())) {
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    "TG-RECOVERER-01007",
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01007",
                     "DSLプロパティ",
                     MessageFormat.format(
                             "ターゲット名:{0}, バッチID:{1}, ジョブフローID:{2}" ,
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
-                            exporterBean.getJobflowId())
-                    , exporterBean.getExecutionId());
+                            exporterBean.getJobflowId()),
+                    exporterBean.getExecutionId());
         }
         exporterBean.setExportTargetTable(paramLoader.getExportTargetTables());
         exporterBean.setImportTargetTable(paramLoader.getImportTargetTables());
@@ -487,7 +473,7 @@ public class Recoverer {
             exporterBean.setRetryCount(Integer.parseInt(count));
             exporterBean.setRetryInterval(Integer.parseInt(interval));
         } catch (NumberFormatException e) {
-            throw new BulkLoaderSystemException(CLASS, "TG-RECOVERER-01007",
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01007",
                     "リトライ回数,リトライインターバル",
                     count + "," + interval,
                     exporterBean.getExecutionId());
@@ -506,9 +492,7 @@ public class Recoverer {
             tempBean = getExportTempTable(exporterBean.getJobflowSid());
         } catch (BulkLoaderSystemException e) {
             LOG.log(e);
-            throw new BulkLoaderSystemException(
-                    this.getClass(),
-                    "TG-RECOVERER-01011",
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01011",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),

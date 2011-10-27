@@ -135,19 +135,13 @@ public class GetCacheInfoLocal {
                     result.size());
             return result;
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-IMPORTER-12004",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
                     bean.getExecutionId());
         } catch (InterruptedException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    "TG-IMPORTER-12004",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),

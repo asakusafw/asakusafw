@@ -131,10 +131,7 @@ public class ExportFileReceive {
                         try {
                             read = content.read(b);
                         } catch (IOException e) {
-                            throw new BulkLoaderSystemException(
-                                    e,
-                                    this.getClass(),
-                                    "TG-EXPORTER-02002",
+                            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                                     "Exportファイルの読み込みに失敗。エントリ名：" + protocol.getLocation());
                         }
                         // 入力ファイルの終端を察知する
@@ -146,10 +143,7 @@ public class ExportFileReceive {
                         try {
                             fos.write(b, 0, read);
                         } catch (IOException e) {
-                            throw new BulkLoaderSystemException(
-                                    e,
-                                    this.getClass(),
-                                    "TG-EXPORTER-02002",
+                            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                                     "Exportファイルの書き出しに失敗。ファイル名：" +  file.getName());
                         }
                     }
@@ -236,9 +230,7 @@ public class ExportFileReceive {
         if (file.exists()) {
             if (!file.delete()) {
                 // ファイルの削除に失敗した場合は異常終了する
-                throw new BulkLoaderSystemException(
-                        this.getClass(),
-                        "TG-EXPORTER-02004",
+                throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-02004",
                         file.getName());
             }
         }
@@ -246,10 +238,7 @@ public class ExportFileReceive {
         try {
             fos = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    "TG-EXPORTER-02002",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                     "Exportファイルの指定が不正。ファイル名：" +  file.getName());
         }
         return fos;
