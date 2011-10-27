@@ -129,7 +129,7 @@ public class TestUtils {
         Connection conn = null;
         try {
             conn = DbUtils.getConnection();
-            // clearCache(conn);
+            clearCache(conn);
             for (TestDataHolder dataHolder : dataHolderMap.values()) {
                 dataHolder.storeToDatabase(conn, createTable);
             }
