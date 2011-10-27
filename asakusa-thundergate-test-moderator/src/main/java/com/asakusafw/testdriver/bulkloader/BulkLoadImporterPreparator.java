@@ -86,6 +86,7 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
         return new TableInfo<V>(
                 definition,
                 description.getTableName(),
-                description.getColumnNames());
+                description.getColumnNames(),
+                description.isCacheEnabled());
     }
 }
