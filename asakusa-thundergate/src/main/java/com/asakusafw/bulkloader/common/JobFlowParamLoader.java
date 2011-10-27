@@ -259,7 +259,7 @@ public class JobFlowParamLoader {
                     // 設定が不明の場合は読み飛ばす
                     LOG.warn("TG-COMMON-00006",
                             "不明な設定。 key：" + key,
-                            targetName, jobflowId, propFilePath);
+                            targetName, jobflowId, tableName, propFilePath);
                     continue;
                 }
                 if (bean.getCacheId() != null) {
@@ -425,7 +425,7 @@ public class JobFlowParamLoader {
                     // 設定が不明の場合は読み飛ばす
                     LOG.warn("TG-COMMON-00007",
                             "不明な設定。 key：" + key,
-                            targetName, jobflowId, propFilePath);
+                            targetName, jobflowId, tableName, propFilePath);
                     continue;
                 }
             }

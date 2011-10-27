@@ -239,7 +239,7 @@ public class DfsFileImport {
                 Path targetUri = storage.getPatchContents("0");
                 LOG.info("TG-EXTRACTOR-11003", info.getId(), info.getTableName(), targetUri);
                 long recordCount = write(targetTableModel, targetUri.toUri(), content);
-                LOG.info("TG-EXTRACTOR-11004", info.getId(), info.getTableName(), targetUri);
+                LOG.info("TG-EXTRACTOR-11004", info.getId(), info.getTableName(), targetUri, recordCount);
                 LOG.info("TG-PROFILE-01002",
                         bean.getTargetName(),
                         bean.getBatchId(),
