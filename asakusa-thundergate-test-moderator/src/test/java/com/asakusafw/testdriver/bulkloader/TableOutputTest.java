@@ -21,9 +21,11 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Rule;
@@ -39,6 +41,8 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 public class TableOutputTest {
 
     static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+
+    static final DataModelDefinition<CacheSupport> CACHE = new SimpleDataModelDefinition<CacheSupport>(CacheSupport.class);
 
     /**
      * H2 database.
@@ -223,6 +227,58 @@ public class TableOutputTest {
         for (int i = 1, n = row.size(); i < n; i++) {
             assertThat(String.valueOf(i), row.get(i), is(nullValue()));
         }
+    }
+
+    /**
+     * implicit timestamp.
+     * @throws Exception if occur
+     */
+    @Test
+    public void timestamp() throws Exception {
+        TableOutput<CacheSupport> output = new TableOutput<CacheSupport>(
+                new TableInfo<CacheSupport>(CACHE, "SIMPLE", Arrays.asList("NUMBER", "TEXT")),
+                h2.open());
+        try {
+            CacheSupport simple = new CacheSupport();
+            simple.number = 100;
+            simple.text = "Hello, world!";
+            output.write(simple);
+        } finally {
+            output.close();
+        }
+
+        assertThat(h2.count("SIMPLE"), is(1));
+        List<List<Object>> results = h2.query("SELECT NUMBER, TEXT, C_DATETIME FROM SIMPLE ORDER BY NUMBER ASC");
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).get(2), is(notNullValue()));
+    }
+
+    /**
+     * overwrite timestamp.
+     * @throws Exception if occur
+     */
+    @Test
+    public void timestamp_overwrite() throws Exception {
+        TableOutput<CacheSupport> output = new TableOutput<CacheSupport>(
+                new TableInfo<CacheSupport>(CACHE, "SIMPLE", Arrays.asList("NUMBER", "TEXT", "C_DATETIME")),
+                h2.open());
+        try {
+            CacheSupport simple = new CacheSupport();
+            simple.number = 100;
+            simple.text = "Hello, world!";
+            simple.datetimeValue = Calendar.getInstance();
+            simple.datetimeValue.setTimeInMillis(0);
+            output.write(simple);
+        } finally {
+            output.close();
+        }
+
+        assertThat(h2.count("SIMPLE"), is(1));
+        List<List<Object>> results = h2.query("SELECT C_DATETIME FROM SIMPLE ORDER BY NUMBER ASC");
+        assertThat(results.size(), is(1));
+        Timestamp timestamp = (Timestamp) results.get(0).get(0);
+        assertThat(timestamp, is(notNullValue()));
+        assertThat(timestamp, greaterThan(new Date(86400)));
     }
 
     /**

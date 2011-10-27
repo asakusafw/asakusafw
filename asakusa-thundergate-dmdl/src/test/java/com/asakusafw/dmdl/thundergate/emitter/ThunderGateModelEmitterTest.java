@@ -26,11 +26,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.asakusafw.dmdl.java.emitter.CompositeDataModelDriver;
+import com.asakusafw.dmdl.model.AstLiteral;
+import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.thundergate.Configuration;
 import com.asakusafw.dmdl.thundergate.Constants;
 import com.asakusafw.dmdl.thundergate.GeneratorTesterRoot;
 import com.asakusafw.dmdl.thundergate.ModelMatcher;
 import com.asakusafw.dmdl.thundergate.model.Attribute;
+import com.asakusafw.dmdl.thundergate.model.BasicType;
 import com.asakusafw.dmdl.thundergate.model.JoinedModelDescription;
 import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
 import com.asakusafw.dmdl.thundergate.model.StringType;
@@ -40,6 +43,7 @@ import com.asakusafw.dmdl.thundergate.util.JoinedModelBuilder;
 import com.asakusafw.dmdl.thundergate.util.SummarizedModelBuilder;
 import com.asakusafw.dmdl.thundergate.util.TableModelBuilder;
 import com.asakusafw.runtime.value.Date;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 
 /**
  * Test for {@link ThunderGateModelEmitter}.
@@ -170,6 +174,218 @@ public class ThunderGateModelEmitterTest extends GeneratorTesterRoot {
         assertThat(object.get("max"), eq(new Date(2011, 12, 31)));
         object.set("min", new Date(2011, 4, 1));
         assertThat(object.get("min"), eq(new Date(2011, 4, 1)));
+    }
+
+    /**
+     * table cache.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+
+        ModelWrapper object = loader.newModel("Simple");
+        assertThat(object.unwrap(), instanceOf(ThunderGateCacheSupport.class));
+        ThunderGateCacheSupport support = (ThunderGateCacheSupport) object.unwrap();
+
+        object.set("sid", 123L);
+        assertThat(support.__tgc__SystemId(), is(123L));
+        assertThat(support.__tgc__TimestampColumn(), is("TIMESTAMP"));
+        assertThat(support.__tgc__Deleted(), is(false));
+    }
+
+    /**
+     * table cache.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_with_delete() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.BOOLEAN))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+
+        ModelWrapper object = loader.newModel("Simple");
+        assertThat(object.unwrap(), instanceOf(ThunderGateCacheSupport.class));
+        ThunderGateCacheSupport support = (ThunderGateCacheSupport) object.unwrap();
+
+        object.set("delete", true);
+        assertThat(support.__tgc__Deleted(), is(true));
+        object.set("delete", false);
+        assertThat(support.__tgc__Deleted(), is(false));
+        object.setOption("delete", null);
+        assertThat(support.__tgc__Deleted(), is(false));
+    }
+
+    /**
+     * table cache without SID.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_no_sid() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.BOOLEAN))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), not(instanceOf(ThunderGateCacheSupport.class)));
+    }
+
+    /**
+     * table cache with invalid SID.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_invalid_sid() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.INT))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.BOOLEAN))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), not(instanceOf(ThunderGateCacheSupport.class)));
+    }
+
+    /**
+     * table cache without timestamp.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_no_timestamp() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.BOOLEAN))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), not(instanceOf(ThunderGateCacheSupport.class)));
+    }
+
+    /**
+     * table cache with invalid timestamp.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_invalid_timestamp() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.LONG))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.BOOLEAN))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), not(instanceOf(ThunderGateCacheSupport.class)));
+    }
+
+    /**
+     * table cache without delete flag.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_no_delete() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), instanceOf(ThunderGateCacheSupport.class));
+    }
+
+    /**
+     * table cache without SID.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void table_cached_invalid_delete() throws Exception {
+        TableModelDescription table = new TableModelBuilder("SIMPLE")
+            .add("", "SID", new BasicType(PropertyTypeKind.LONG))
+            .add("", "TIMESTAMP", new BasicType(PropertyTypeKind.DATETIME))
+            .add("", "DELETE", new BasicType(PropertyTypeKind.LONG))
+            .toDescription();
+
+        Configuration config = config();
+        config.setSidColumn("SID");
+        config.setTimestampColumn("TIMESTAMP");
+        config.setDeleteFlagColumn("DELETE");
+        config.setDeleteFlagValue(new AstLiteral(null, "TRUE", LiteralKind.BOOLEAN));
+        ThunderGateModelEmitter emitter = new ThunderGateModelEmitter(config);
+        emitter.emit(table);
+
+        ModelLoader loader = generateJava();
+        loader.setNamespace(Constants.SOURCE_TABLE);
+        assertThat(loader.newModel("Simple").unwrap(), not(instanceOf(ThunderGateCacheSupport.class)));
     }
 
     private Matcher<Object> eq(Object object) {

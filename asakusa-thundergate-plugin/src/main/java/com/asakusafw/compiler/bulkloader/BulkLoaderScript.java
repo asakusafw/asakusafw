@@ -38,9 +38,9 @@ public class BulkLoaderScript {
         + AbstractStageClient.EXPR_USER
         + "/";
 
-    private List<ImportTable> importTargetTables;
+    private final List<ImportTable> importTargetTables;
 
-    private List<ExportTable> exportTargetTables;
+    private final List<ExportTable> exportTargetTables;
 
     /**
      * インスタンスを生成する。
@@ -216,11 +216,11 @@ public class BulkLoaderScript {
      */
     public abstract static class Table {
 
-        private Class<?> modelClass;
+        private final Class<?> modelClass;
 
-        private String name;
+        private final String name;
 
-        private List<String> targetColumns;
+        private final List<String> targetColumns;
 
         /**
          * インスタンスを生成する。
@@ -292,7 +292,7 @@ public class BulkLoaderScript {
 
         private static final String P_SEARCH_CONDITION = ".search-condition";
 
-        private static final String P_USE_CACHE = ".use-cache";
+        private static final String P_CACHE_ID = ".cache-id";
 
         private static final String P_LOCK_TYPE = ".lock-type";
 
@@ -302,15 +302,15 @@ public class BulkLoaderScript {
 
         private static final String P_DESTINATION = ".hdfs-import-file";
 
-        private String searchConditionOrNull;
+        private final String searchConditionOrNull;
 
-        private Cache useCache;
+        private final String cacheId;
 
-        private LockType lockType;
+        private final LockType lockType;
 
-        private LockedOperation lockedOperation;
+        private final LockedOperation lockedOperation;
 
-        private Location destination;
+        private final Location destination;
 
         /**
          * インスタンスを生成する。
@@ -318,7 +318,7 @@ public class BulkLoaderScript {
          * @param name 対象テーブルの名前
          * @param targetColumns 処理対象のカラム一覧
          * @param searchConditionOrNull 検索条件、利用しない場合は{@code null}
-         * @param useCache キャッシュ利用の有無
+         * @param cacheId キャッシュID (利用しない場合は{@code null})
          * @param lockType ロックの種類
          * @param lockedOperation 処理対象がロックされていた際の動作
          * @param destination 出力先の位置
@@ -329,15 +329,11 @@ public class BulkLoaderScript {
                 String name,
                 List<String> targetColumns,
                 String searchConditionOrNull,
-                Cache useCache,
+                String cacheId,
                 LockType lockType,
                 LockedOperation lockedOperation,
                 Location destination) {
             super(modelClass, name, targetColumns);
-            if (useCache == null) {
-                throw new IllegalArgumentException(
-                        "useCache must not be null"); //$NON-NLS-1$
-            }
             if (lockType == null) {
                 throw new IllegalArgumentException(
                         "lockType must not be null"); //$NON-NLS-1$
@@ -351,7 +347,7 @@ public class BulkLoaderScript {
                         "destination must not be null"); //$NON-NLS-1$
             }
             this.searchConditionOrNull = searchConditionOrNull;
-            this.useCache = useCache;
+            this.cacheId = cacheId;
             this.lockType = lockType;
             this.lockedOperation = lockedOperation;
             this.destination = destination;
@@ -383,7 +379,9 @@ public class BulkLoaderScript {
             if (searchConditionOrNull != null) {
                 p.setProperty(prefix + P_SEARCH_CONDITION, searchConditionOrNull);
             }
-            p.setProperty(prefix + P_USE_CACHE, String.valueOf(useCache.id));
+            if (cacheId != null) {
+                p.setProperty(prefix + P_CACHE_ID, String.valueOf(cacheId));
+            }
             p.setProperty(prefix + P_LOCK_TYPE, String.valueOf(lockType.id));
             p.setProperty(prefix + P_LOCKED_OPERATION, String.valueOf(lockedOperation.id));
             p.setProperty(prefix + P_BEAN_NAME, String.valueOf(getModelClass().getName()));
@@ -433,7 +431,7 @@ public class BulkLoaderScript {
             }
             List<String> targetColumns = split(get(p, name + P_TSV_COLUMNS, true));
             String searchConditionOrNull = get(p, name + P_SEARCH_CONDITION, false);
-            Cache useCache = Cache.idOf(get(p, name + P_USE_CACHE, true));
+            String cacheId = get(p, name + P_CACHE_ID, false);
             LockType lockType = LockType.idOf(get(p, name + P_LOCK_TYPE, true));
             LockedOperation lockedOperation = LockedOperation.idOf(get(p, name + P_LOCKED_OPERATION, true));
             Location destination = fromPath(get(p, name + P_DESTINATION, true));
@@ -442,7 +440,7 @@ public class BulkLoaderScript {
                     name,
                     targetColumns,
                     searchConditionOrNull,
-                    useCache,
+                    cacheId,
                     lockType,
                     lockedOperation,
                     destination);
@@ -458,10 +456,8 @@ public class BulkLoaderScript {
             result = prime * result + destination.hashCode();
             result = prime * result + lockType.hashCode();
             result = prime * result + lockedOperation.hashCode();
-            result = prime * result
-                    + ((searchConditionOrNull == null) ? 0
-                            : searchConditionOrNull.hashCode());
-            result = prime * result + useCache.hashCode();
+            result = prime * result + ((searchConditionOrNull == null) ? 0 : searchConditionOrNull.hashCode());
+            result = prime * result + ((cacheId == null) ? 0 : cacheId.hashCode());
             return result;
         }
 
@@ -502,7 +498,11 @@ public class BulkLoaderScript {
             } else if (searchConditionOrNull.equals(other.searchConditionOrNull) == false) {
                 return false;
             }
-            if (useCache != other.useCache) {
+            if (cacheId == null) {
+                if (other.cacheId != null) {
+                    return false;
+                }
+            } else if (cacheId.equals(other.cacheId) == false) {
                 return false;
             }
             return true;
@@ -524,11 +524,11 @@ public class BulkLoaderScript {
 
         private static final String P_SOURCES = ".hdfs-export-file";
 
-        private List<String> exportColumns;
+        private final List<String> exportColumns;
 
-        private List<Location> sources;
+        private final List<Location> sources;
 
-        private DuplicateRecordErrorTable duplicateRecordError;
+        private final DuplicateRecordErrorTable duplicateRecordError;
 
         /**
          * インスタンスを生成する。
@@ -706,15 +706,15 @@ public class BulkLoaderScript {
 
         private static final String P_ERROR_CODE_VALUE = ".error-code";
 
-        private List<String> targetColumns;
+        private final List<String> targetColumns;
 
-        private List<String> keyColumns;
+        private final List<String> keyColumns;
 
-        private String errorCodeColumn;
+        private final String errorCodeColumn;
 
-        private String errorCodeValue;
+        private final String errorCodeValue;
 
-        private String tableName;
+        private final String tableName;
 
         /**
          * インスタンスを生成する。
@@ -866,48 +866,6 @@ public class BulkLoaderScript {
                 return false;
             }
             return true;
-        }
-    }
-
-    /**
-     * キャッシュの利用有無。
-     */
-    public enum Cache {
-
-        /**
-         * 利用する。
-         */
-        ENABLED(1),
-
-        /**
-         * 利用しない。
-         */
-        DISABLED(2),
-        ;
-
-        /**
-         * この項目の識別子。
-         */
-        public final int id;
-
-        private Cache(int identifier) {
-            this.id = identifier;
-        }
-
-        static Cache idOf(String id) {
-            assert id != null;
-            int idNum;
-            try {
-                idNum = Integer.parseInt(id);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(id);
-            }
-            for (Cache constant : values()) {
-                if (constant.id == idNum) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException(id);
         }
     }
 

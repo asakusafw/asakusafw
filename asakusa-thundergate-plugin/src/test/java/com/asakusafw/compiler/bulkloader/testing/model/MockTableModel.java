@@ -5,6 +5,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
@@ -17,8 +18,8 @@ import org.apache.hadoop.io.Writable;
  * mock_table_modelを表すデータモデルクラス。
  */
 @ColumnOrder(value = {"A", "B", "C"})@DataModelKind("DMDL")@ModelInputLocation(MockTableModelInput.class)@
-        ModelOutputLocation(MockTableModelOutput.class)@OriginalName(value = "MOCK")@PrimaryKey(value = {"a"}) public 
-        class MockTableModel implements DataModel<MockTableModel>, Writable {
+        ModelOutputLocation(MockTableModelOutput.class)@OriginalName(value = "MOCK")@PrimaryKey(value = {"a"})@
+        PropertyOrder({"a", "b", "c"}) public class MockTableModel implements DataModel<MockTableModel>, Writable {
     private final IntOption a = new IntOption();
     private final IntOption b = new IntOption();
     private final IntOption c = new IntOption();

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.PropertyName;
 import com.asakusafw.testdriver.core.PropertyType;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 
 /**
@@ -55,6 +56,8 @@ public class TableInfo<T> {
 
     private final Map<String, PropertyName> columnsToProperties;
 
+    private final String timestampColumn;
+
     /**
      * Creates a new instance.
      * @param definition mapped model definition
@@ -78,6 +81,7 @@ public class TableInfo<T> {
         this.definition = definition;
         this.tableName = tableName;
         this.columnsToProperties = createMappings(columnNames);
+        this.timestampColumn = extractTimestampColumn();
     }
 
     /**
@@ -97,6 +101,14 @@ public class TableInfo<T> {
     }
 
     /**
+     * Returns the name of last modified timestamp column.
+     * @return column name, or {@code null} if not defined
+     */
+    public String getTimestampColumn() {
+        return timestampColumn;
+    }
+
+    /**
      * Returns relation between target tables's column names and
      * mapped model's property names.
      * <p>
@@ -107,6 +119,26 @@ public class TableInfo<T> {
      */
     public Map<String, PropertyName> getColumnsToProperties() {
         return columnsToProperties;
+    }
+
+    private String extractTimestampColumn() {
+        assert definition != null;
+        if (ThunderGateCacheSupport.class.isAssignableFrom(definition.getModelClass()) == false) {
+            return null;
+        }
+        String columnName;
+        try {
+            ThunderGateCacheSupport support = definition.getModelClass()
+                .asSubclass(ThunderGateCacheSupport.class)
+                .newInstance();
+            columnName = support.__tgc__TimestampColumn();
+        } catch (Exception e) {
+            LOG.warn(MessageFormat.format(
+                    "テーブル{0}の最終更新時刻のカラム算出に失敗しました",
+                    tableName), e);
+            return null;
+        }
+        return columnName;
     }
 
     private Map<String, PropertyName> createMappings(List<String> columnNames) {

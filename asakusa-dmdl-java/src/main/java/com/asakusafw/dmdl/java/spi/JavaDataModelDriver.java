@@ -23,6 +23,7 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.ashigeru.lang.java.model.syntax.Annotation;
+import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.Type;
 
@@ -59,6 +60,18 @@ public abstract class JavaDataModelDriver {
      * @throws IOException if failed to create other models
      */
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the field declarations to mixin to the model.
+     * @param context the attached context
+     * @param model target model
+     * @return the list of field declarations
+     * @throws IOException if failed to create other models
+     * @since 0.2.3
+     */
+    public List<FieldDeclaration> getFields(EmitContext context, ModelDeclaration model) throws IOException {
         return Collections.emptyList();
     }
 

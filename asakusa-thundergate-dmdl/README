@@ -1,19 +1,22 @@
 DMDL frontend to generate DMDL from ThunderGate DDL.
 
 usage: java -classpath ... com.asakusafw.dmdl.thundergate.Main
- -jdbc </path/to/jdbc-config.properties>   Source JDBC properties
- -output </path/to/output>                 Output directory location
- -encoding <encoding>                      Output DMDL charset encoding (default=system encoding)
- -includes <inclusion-regex>               Target name pattern of TABLE/VIEW (default=anything)
- -excludes <exclusion-regex>               Exclusion name pattern of TABLE/VIEW (default=nothing)
-
+ -jdbc </path/to/jdbc-config.properties>     Source JDBC properties
+ -output </path/to/output>                   Output directory location
+ -encoding <encoding>                        Output DMDL charset encoding (default=system encoding)
+ -includes <inclusion-regex>                 Target name pattern of TABLE/VIEW (default=anything)
+ -excludes <exclusion-regex>                 Exclusion name pattern of TABLE/VIEW (default=nothing)
+ -sid_column <SID>                           System IDのカラム名 (optional)
+ -timestamp_column <LAST_UPDATED_DATETIME>   最終更新時刻のカラム名 (optional)
+ -delete_flag_column <LOGICAL_DELETE_FLAG>   論理削除フラグのカラム名 (optional)
+ -delete_flag_value <"1">                    論理削除フラグが真(TRUE)となる値 (Javaの定数) (optional)
+ 
 JDBC properties:
     jdbc.driver = JDBC Driver class name
     jdbc.url = Target JDBC URL
     jdbc.user = Connection user name
     jdbc.password = Connection password
     database.name = Target database name
-
 
 This project consists mainly of following packages.
 

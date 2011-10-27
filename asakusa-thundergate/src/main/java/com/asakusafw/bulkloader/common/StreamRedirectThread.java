@@ -27,6 +27,8 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class StreamRedirectThread extends Thread {
 
+    static final Log LOG = new Log(StreamRedirectThread.class);
+
     private final InputStream input;
 
     private final OutputStream output;
@@ -86,18 +88,12 @@ public class StreamRedirectThread extends Thread {
                         out.write(buf, 0, read);
                     } catch (IOException e) {
                         outputFailed = true;
-                        Log.log(
-                                e,
-                                this.getClass(),
-                                MessageIdConst.CMN_LOG_REDIRECT_ERROR);
+                        LOG.warn(e, "TG-COMMON-00028");
                     }
                 }
             }
         } catch (IOException e) {
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.CMN_LOG_REDIRECT_ERROR);
+            LOG.warn(e, "TG-COMMON-00028");
         } finally {
             if (closeInput) {
                 close(input);

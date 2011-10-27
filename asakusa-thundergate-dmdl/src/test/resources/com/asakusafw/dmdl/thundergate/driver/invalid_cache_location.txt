@@ -1,0 +1,8 @@
+model = {
+    @thundergate.cache_support(sid = sid, timestamp = last_updt_datetime)
+    @thundergate.name(value = "SID")
+    sid : LONG;
+    @thundergate.cache_support(sid = sid, timestamp = last_updt_datetime)
+    @thundergate.name(value = "LAST_UPDT_DATETIME")
+    last_updt_datetime : DATETIME;
+};

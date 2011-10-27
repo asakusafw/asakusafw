@@ -26,6 +26,8 @@ import com.asakusafw.bulkloader.log.LogInitializer;
  */
 public final class BulkLoaderInitializer {
 
+    static final Log LOG = new Log(BulkLoaderInitializer.class);
+
     private BulkLoaderInitializer() {
         return;
     }
@@ -91,7 +93,7 @@ public final class BulkLoaderInitializer {
         } catch (BulkLoaderSystemException e) {
             // ログの初期化が可能な場合はログを出力する。
             if (initLog(jobflowId, executionId, targetName)) {
-                Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+                LOG.log(e);
                 return false;
             } else {
                 printPropLoadError(jobflowId, executionId, targetName, properties, e);
@@ -115,7 +117,7 @@ public final class BulkLoaderInitializer {
                 // DBConnectionを初期化
                 DBConnection.init(ConfigurationLoader.getProperty(Constants.PROP_KEY_JDBC_DRIVER));
             } catch (BulkLoaderSystemException e) {
-                Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+                LOG.log(e);
                 return false;
             }
         }

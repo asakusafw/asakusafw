@@ -5,6 +5,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
@@ -20,8 +21,8 @@ import org.apache.hadoop.io.Writable;
  * ex1を表すデータモデルクラス。
  */
 @ColumnOrder(value = {"SID", "VALUE", "STRING"})@DataModelKind("DMDL")@ModelInputLocation(Ex1Input.class)@
-        ModelOutputLocation(Ex1Output.class)@OriginalName(value = "EX1")@PrimaryKey(value = {"sid"}) public class Ex1 
-        implements DataModel<Ex1>, Writable {
+        ModelOutputLocation(Ex1Output.class)@OriginalName(value = "EX1")@PrimaryKey(value = {"sid"})@PropertyOrder({
+            "sid", "value", "string"}) public class Ex1 implements DataModel<Ex1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     private final StringOption string = new StringOption();

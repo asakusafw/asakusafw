@@ -21,6 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -32,12 +35,10 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.runtime.stage.ToolLauncher;
 
 /**
  * Deploys mock framework environment.
- * @since 0.2.0
  */
 public class FrameworkDeployer implements MethodRule {
 
@@ -72,11 +73,82 @@ public class FrameworkDeployer implements MethodRule {
 
     void deployRuntimeLibrary() throws IOException {
         LOG.debug("Deploying runtime library");
-        File runtime = DirectFlowCompiler.toLibraryPath(ToolLauncher.class);
+        File runtime = findLibraryPathFromClass(ToolLauncher.class);
         if (runtime == null) {
             throw new IOException("Failed to detect runtime library");
         }
         deployLibrary(runtime, new File(getFrameworkHome(), "core/lib/asakusa-runtime.jar"));
+    }
+
+    private File findLibraryPathFromClass(Class<?> aClass) {
+        assert aClass != null;
+        int start = aClass.getName().lastIndexOf('.') + 1;
+        String name = aClass.getName().substring(start);
+        URL resource = aClass.getResource(name + ".class");
+        if (resource == null) {
+            LOG.warn("Failed to locate the class file: {}", aClass.getName());
+            return null;
+        }
+        String protocol = resource.getProtocol();
+        if (protocol.equals("file")) {
+            File file = new File(resource.getPath());
+            return toClassPathRoot(aClass, file);
+        }
+        if (protocol.equals("jar")) {
+            String path = resource.getPath();
+            return toClassPathRoot(aClass, path);
+        } else {
+            LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
+                    resource,
+                    aClass.getName());
+            return null;
+        }
+    }
+
+    private File toClassPathRoot(Class<?> aClass, File classFile) {
+        assert aClass != null;
+        assert classFile != null;
+        assert classFile.isFile();
+        String name = aClass.getName();
+        File current = classFile.getParentFile();
+        assert current != null && current.isDirectory() : classFile;
+        for (int i = name.indexOf('.'); i >= 0; i = name.indexOf('.', i + 1)) {
+            current = current.getParentFile();
+            assert current != null && current.isDirectory() : classFile;
+        }
+        return current;
+    }
+
+    private File toClassPathRoot(Class<?> aClass, String uriQualifiedPath) {
+        assert aClass != null;
+        assert uriQualifiedPath != null;
+        int entry = uriQualifiedPath.lastIndexOf('!');
+        String qualifier;
+        if (entry >= 0) {
+            qualifier = uriQualifiedPath.substring(0, entry);
+        } else {
+            qualifier = uriQualifiedPath;
+        }
+        URI archive;
+        try {
+            archive = new URI(qualifier);
+        } catch (URISyntaxException e) {
+            LOG.warn(MessageFormat.format(
+                    "Failed to locate the JAR library file {}: {}",
+                    qualifier,
+                    aClass.getName()),
+                    e);
+            throw new UnsupportedOperationException(qualifier, e);
+        }
+        if (archive.getScheme().equals("file") == false) {
+            LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
+                    archive,
+                    aClass.getName());
+            return null;
+        }
+        File file = new File(archive);
+        assert file.isFile() : file;
+        return file;
     }
 
     private void deployLibrary(File source, File target) throws IOException {

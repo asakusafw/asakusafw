@@ -30,9 +30,9 @@ public class Location {
      */
     public static final String WILDCARD_SUFFIX = "-*";
 
-    private Location parent;
+    private final Location parent;
 
-    private String name;
+    private final String name;
 
     private boolean prefix;
 
@@ -116,6 +116,9 @@ public class Location {
         current = this;
         for (String segment : segments) {
             current = new Location(current, segment);
+        }
+        if (suffix.isPrefix()) {
+            current = current.asPrefix();
         }
         return current;
     }

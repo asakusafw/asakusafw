@@ -32,7 +32,6 @@ import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ImportTableLockType;
 import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
@@ -42,6 +41,9 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class TargetDataLock {
+
+    static final Log LOG = new Log(TargetDataLock.class);
+
     private static final String NOT_EXISTS_JOBFLOW_SID = "-1";
     /**
      * ジョブフローSID。
@@ -74,9 +76,7 @@ public class TargetDataLock {
             jobflowSid = checkExecutionId(conn, bean.getExecutionId());
 
             if (!jobflowSid.equals(NOT_EXISTS_JOBFLOW_SID)) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.IMP_EXISTS_JOBNET_INSTANCEID,
+                LOG.info("TG-IMPORTER-02001",
                         bean.getTargetName(), bean.getExecutionId(), jobflowSid);
                 return true;
             }
@@ -85,45 +85,34 @@ public class TargetDataLock {
             while (true) {
                 retry++;
                 try {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.IMP_LOCK__TRAN_START,
+                    LOG.info("TG-IMPORTER-02005",
                             bean.getTargetName(), bean.getExecutionId());
                     // ロック取得のトランザクションを実行する。
                     execTran(conn, bean);
                     // コミットして正常終了する
                     DBConnection.commit(conn);
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.IMP_LOCK__TRAN_END,
+                    LOG.info("TG-IMPORTER-02006",
                             bean.getTargetName(), bean.getExecutionId());
                     return true;
                 } catch (BulkLoaderReRunnableException e) {
+                    LOG.log(e);
                     if (retry <= retryCount) {
                         // リトライ可能な場合、ロールバックしてリトライする
                         try {
-                            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
                             DBConnection.rollback(conn);
                             Thread.sleep(TimeUnit.SECONDS.toMillis(retryInterval));
                             continue;
                         } catch (InterruptedException e2) {
-                            throw new BulkLoaderSystemException(
-                                    e2,
-                                    this.getClass(),
-                                    MessageIdConst.IMP_GET_LOCK_SLEEP_ERROR);
+                            throw new BulkLoaderSystemException(e2, getClass(), "TG-IMPORTER-02002");
                         }
                     } else {
                         // リトライ不可の場合、異常終了する。
-                        Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                        throw new BulkLoaderSystemException(
-                                e,
-                                this.getClass(),
-                                MessageIdConst.IMP_GET_LOCK_RETRY_ORVER);
+                        throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-02003");
                     }
                 }
             }
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
@@ -163,10 +152,7 @@ public class TargetDataLock {
             tableLock = getImportTableLock(conn, bean.getImportTargetTableList().iterator());
         } catch (BulkLoaderSystemException e) {
             // リトライする
-            throw new BulkLoaderReRunnableException(
-                    e.getCause(),
-                    this.getClass(),
-                    MessageIdConst.IMP_GET_LOCK_RETRY,
+            throw new BulkLoaderReRunnableException(e.getCause(), getClass(), "TG-IMPORTER-02004",
                     "ロック取得処理の排他制御に失敗",
                     "IMPORT_TABLE_LOCK");
         }
@@ -179,15 +165,13 @@ public class TargetDataLock {
             ImportTableLockedOperation operation = targetTable.getLockedOperation();
             String serchCondition = targetTable.getSearchCondition();
 
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.IMP_IMPORT_TARGET_LOCK,
+            LOG.info("TG-IMPORTER-02009",
                     tableName, lockType, operation, serchCondition);
 
             // 「ロックしない」かつ「ロック有無に関わらず処理対象とする」の場合、ロックフラグは立てずに終了する。
             if (ImportTableLockType.NONE.equals(lockType)
                     && ImportTableLockedOperation.FORCE.equals(operation)) {
-                Log.log(this.getClass(), MessageIdConst.IMP_NONE_FORCE_DONE, tableName);
+                LOG.info("TG-IMPORTER-02011", tableName);
                 continue;
             }
 
@@ -197,14 +181,12 @@ public class TargetDataLock {
                 // 「行ロック」「処理対象から外す」の場合、ロックを取得しないことで当該テーブルを処理対象としない
                 if (ImportTableLockType.RECORD.equals(lockType)
                         && ImportTableLockedOperation.OFF.equals(operation)) {
-                    Log.log(this.getClass(), MessageIdConst.IMP_TABLE_LOCKED, tableName);
+                    LOG.info("TG-IMPORTER-02012", tableName);
                     continue;
                 } else {
                     // ロック済みの動作が「エラーとする」の場合、リトライを行う。
                     // テーブルにロックフラグが立っている場合、リトライする
-                    throw new BulkLoaderReRunnableException(
-                            this.getClass(),
-                            MessageIdConst.IMP_GET_LOCK_RETRY,
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのテーブルロックが取得されている",
                             tableName);
                 }
@@ -216,9 +198,7 @@ public class TargetDataLock {
                 // 対象テーブルのレコードにロックフラグが立っていないかチェック
                 if (!checkRecordLock(conn, tableName)) {
                     // リトライする
-                    throw new BulkLoaderReRunnableException(
-                            this.getClass(),
-                            MessageIdConst.IMP_GET_LOCK_RETRY,
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのレコードロックが取得されている",
                             tableName);
                 } else {
@@ -237,9 +217,7 @@ public class TargetDataLock {
                     // エラーとする場合、対象レコードにロックフラグが立っていないかチェックする
                     if (!checkRecordLock(conn, tableName, serchCondition)) {
                         // リトライする
-                        throw new BulkLoaderReRunnableException(
-                                this.getClass(),
-                                MessageIdConst.IMP_GET_LOCK_RETRY,
+                        throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                                 "ロック対象テーブルのレコードロックが取得されている",
                                 tableName);
                     } else {
@@ -255,20 +233,16 @@ public class TargetDataLock {
                 // 対象レコードにロックフラグが立っていないかチェックする
                 if (!checkRecordLock(conn, tableName, serchCondition)) {
                     // リトライする
-                    throw new BulkLoaderReRunnableException(
-                            this.getClass(),
-                            MessageIdConst.IMP_GET_LOCK_RETRY,
+                    throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-02004",
                             "ロック対象テーブルのレコードロックが取得されている",
                             tableName);
                 } else {
                     // ロックフラグは立てずに終了する。
-                    Log.log(this.getClass(), MessageIdConst.IMP_NONE_ERROR_DONE, tableName);
+                    LOG.info("TG-IMPORTER-02013", tableName);
                     continue;
                 }
             }
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.IMP_IMPORT_TARGET_LOCK_END,
+            LOG.info("TG-IMPORTER-02010",
                     tableName, lockType, operation, serchCondition);
         }
     }
@@ -332,7 +306,7 @@ public class TargetDataLock {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        Log.log(this.getClass(), MessageIdConst.IMP_INSERT_RNNINGJOBFLOW,
+        LOG.info("TG-IMPORTER-02007",
                 insertSql,
                 batchId,
                 jobflowId,
@@ -409,7 +383,7 @@ public class TargetDataLock {
             selectSql.append(selectSql2);
 
             // トランザクションのロックを取得する
-            Log.log(this.getClass(), MessageIdConst.IMP_LOCK_EXCLUSIVE, selectSql.toString());
+            LOG.info("TG-IMPORTER-02008", selectSql.toString());
             stmt = conn.prepareStatement(selectSql.toString());
             rs = DBConnection.executeQuery(stmt, selectSql.toString(), new String[0]);
             Map<String, String> tableLockStatus = new HashMap<String, String>();
@@ -546,7 +520,7 @@ public class TargetDataLock {
             + "WHERE TABLE_NAME=? AND JOBFLOW_SID IS NULL";
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.IMP_GET_TABLE_LOCK, sql, targetJobflowSid, tableName);
+        LOG.info("TG-IMPORTER-02014", sql, targetJobflowSid, tableName);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, targetJobflowSid);
@@ -596,7 +570,7 @@ public class TargetDataLock {
         sql.append(tableName);
         sql.append(".SID)");
 
-        Log.log(this.getClass(), MessageIdConst.IMP_GET_RECORD_LOCK, sql.toString(), targetJobflowSid);
+        LOG.info("TG-IMPORTER-02015", sql.toString(), targetJobflowSid);
         PreparedStatement stmt = null;
         try {
             int count = 0;
@@ -656,7 +630,7 @@ public class TargetDataLock {
             DBConnection.commit(conn);
             return jobflowSid;
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
