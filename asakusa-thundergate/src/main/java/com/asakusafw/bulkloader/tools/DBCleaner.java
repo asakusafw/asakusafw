@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,6 +119,9 @@ public final class DBCleaner {
 
             // ジョブフロー実行テーブルとジョブフロー排他テーブルのレコードを削除
             deleteRunningJobflows(conn);
+
+            // releases cache locks
+            releaseCacheLock(conn);
 
             // 正常終了
             printLog("DBのクリーニングを正常終了します。");
@@ -416,6 +420,40 @@ public final class DBCleaner {
                     "トランザクションのコミットに失敗しました。");
         }
     }
+
+    private void releaseCacheLock(Connection conn) {
+        assert conn != null;
+        Statement stmt = null;
+        boolean committed = false;
+        try {
+            stmt = conn.createStatement();
+            int count = stmt.executeUpdate("DELETE FROM __TG_CACHE_LOCK WHERE 1 > 0");
+            conn.commit();
+            printLog(MessageFormat.format(
+                    "キャッシュロックを削除しました。件数：{0}件",
+                    count));
+            committed = false;
+        } catch (SQLException e) {
+            printLog("キャッシュロックの削除に失敗しました。スキップします。");
+            e.printStackTrace();
+        } finally {
+            if (committed == false) {
+                try {
+                    conn.rollback();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     /**
      * 引数の文字列が空かnullの場合trueを返す。
      * @param str 文字列
