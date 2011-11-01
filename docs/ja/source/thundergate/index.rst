@@ -12,3 +12,5 @@ ThunderGate
 
     start-guide
     user-guide
+    cache
+
