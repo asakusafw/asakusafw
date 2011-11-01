@@ -262,36 +262,38 @@ public class JobFlowParamLoader {
                             targetName, jobflowId, tableName, propFilePath);
                     continue;
                 }
-                if (bean.getCacheId() != null) {
-                    if (ThunderGateCacheSupport.class.isAssignableFrom(bean.getImportTargetType()) == false) {
-                        LOG.error("TG-COMMON-00002",
-                                MessageFormat.format(
-                                        "データモデルクラス\"{1}\"がキャッシュをサポートしていない ({0})",
-                                        ThunderGateCacheSupport.class.getName(),
-                                        bean.getImportTargetType().getName()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
-                    if (bean.getSearchCondition() != null && bean.getSearchCondition().trim().isEmpty() == false) {
-                        LOG.error("TG-COMMON-00002",
-                                MessageFormat.format(
-                                        "キャッシュ利用時に条件式を指定している ({0})",
-                                        bean.getLockedOperation()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
-                    if (bean.getLockedOperation() == ImportTableLockedOperation.OFF) {
-                        LOG.error("TG-COMMON-00002",
-                                MessageFormat.format(
-                                        "キャッシュ利用時にロック箇所を読み飛ばす設定がされている ({0})",
-                                        bean.getLockedOperation()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
+            }
+        }
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            ImportTargetTableBean bean = entry.getValue();
+            if (bean.getCacheId() != null) {
+                if (ThunderGateCacheSupport.class.isAssignableFrom(bean.getImportTargetType()) == false) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "データモデルクラス\"{1}\"がキャッシュをサポートしていない ({0})",
+                                    ThunderGateCacheSupport.class.getName(),
+                                    bean.getImportTargetType().getName()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
+                }
+                if (bean.getSearchCondition() != null && bean.getSearchCondition().trim().isEmpty() == false) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "キャッシュ利用時に条件式を指定している ({0})",
+                                    bean.getLockedOperation()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
+                }
+                if (bean.getLockedOperation() == ImportTableLockedOperation.OFF) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "キャッシュ利用時にロック箇所を読み飛ばす設定がされている ({0})",
+                                    bean.getLockedOperation()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
                 }
             }
         }
-
         return true;
     }
     /**
