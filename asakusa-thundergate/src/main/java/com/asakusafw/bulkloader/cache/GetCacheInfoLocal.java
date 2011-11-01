@@ -128,7 +128,6 @@ public class GetCacheInfoLocal {
             provider.waitForComplete();
             LOG.info("TG-IMPORTER-12003",
                     bean.getTargetName(),
-                    bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
                     bean.getExecutionId(),

@@ -71,13 +71,15 @@ final class Util {
                     statement.execute(MessageFormat.format(
                             "DELETE FROM __TG_CACHE_LOCK WHERE CACHE_ID = ''{0}''",
                             cacheId));
-                    conn.commit();
+                    if (conn.getAutoCommit() == false) {
+                        conn.commit();
+                    }
                     committed = true;
                 } finally {
                     statement.close();
                 }
             } finally {
-                if (committed == false) {
+                if (committed == false && conn.getAutoCommit() == false) {
                     conn.rollback();
                 }
                 conn.close();
