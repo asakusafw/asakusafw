@@ -31,15 +31,16 @@ Asakusa Frameworkが提供するモデル生成ツールやコンパイラがMav
 -----------------------------------
 Graphvizを使ってフローDSLのコンパイル結果をグラフ化する手順を説明します。
 
+マイグレーションガイド
+----------------------
+Asakusa Framework のバージョンアップ時必要となるバージョン固有の移行手順について解説します。
+
 運用環境の構築
 ==============
 
 管理者ガイド
 ------------
-Hadoopクラスタ上にAsakusa Framework、
-およびバッチアプリケーションをデプロイし、動作させるための
-手順について解説します。
-
+Hadoopクラスタ上にAsakusa Framework、およびバッチアプリケーションをデプロイし、動作させるための手順について解説します。
 
 関連するドキュメント
 ====================
@@ -51,4 +52,5 @@ Hadoopクラスタ上にAsakusa Framework、
     user-guide
     maven-archetype
     graphviz
+    migration-guide
     administrator-guide

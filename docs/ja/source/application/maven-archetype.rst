@@ -57,11 +57,11 @@ setup_batchapp_project.shは以下の引数を指定して実行します。
       - asakusa-archetype-windgate
       - 外部データ入出力にWindGateを使用するアプリケーション用のアーキタイプ
 
-例えば外部データ入出力にWindGateを使用し、Asakusa Framework のバージョン0.2.3を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。
+例えば外部データ入出力にWindGateを使用し、Asakusa Framework のバージョン0.2.2を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。
 
 ..  code-block:: sh
 
-    ./setup_batchapp_project.sh com.example batchapp-sample asakusa-archetype-windgate 0.2.3
+    ./setup_batchapp_project.sh com.example batchapp-sample asakusa-archetype-windgate 0.2.2
 
 この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
 
@@ -85,8 +85,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     Choose version: 
     1: 0.2-SNAPSHOT
     2: 0.2.2
-    3: 0.2.3
-    Choose a number: 3: ※3を入力
+    Choose a number: 2: ※3を入力
     ...
     Define value for property 'groupId': : com.example ※任意の値を入力
     Define value for property 'artifactId': : batchapp-sample ※任意の値を入力
