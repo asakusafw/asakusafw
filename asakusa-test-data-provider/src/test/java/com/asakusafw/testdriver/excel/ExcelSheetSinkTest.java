@@ -19,16 +19,21 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,6 +41,8 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSink;
+import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
@@ -234,6 +241,45 @@ public class ExcelSheetSinkTest {
     @Test
     public void decorated_blank_row() throws Exception {
         verify("decorated_blank_row.xls");
+    }
+
+    /**
+     * many columns.
+     * @throws Exception if occur
+     */
+    @Test
+    public void many_columns() throws Exception {
+        Object[] value = new Object[256];
+        Map<PropertyName, PropertyType> map = new TreeMap<PropertyName, PropertyType>();
+        for (int i = 0; i < value.length; i++) {
+            map.put(PropertyName.newInstance(String.format("p%04x", i)), PropertyType.INT);
+            value[i] = i;
+        }
+        ArrayModelDefinition def = new ArrayModelDefinition(map);
+
+        File file = folder.newFile("temp.xls");
+        ExcelSheetSinkFactory factory = new ExcelSheetSinkFactory(file);
+        DataModelSink sink = factory.createSink(def, new TestContext.Empty());
+        try {
+            sink.put(def.toReflection(value));
+        } finally {
+            sink.close();
+        }
+
+        InputStream in = new FileInputStream(file);
+        try {
+            Workbook workbook = new HSSFWorkbook(in);
+            Sheet sheet = workbook.getSheetAt(0);
+            Row title = sheet.getRow(0);
+            assertThat(title.getLastCellNum(), is((short) 255));
+
+            Row content = sheet.getRow(1);
+            for (int i = 0; i < title.getLastCellNum(); i++) {
+                assertThat(content.getCell(i).getNumericCellValue(), is((double) (Integer) value[i]));
+            }
+        } finally {
+            in.close();
+        }
     }
 
     private void verify(String file) throws IOException {
