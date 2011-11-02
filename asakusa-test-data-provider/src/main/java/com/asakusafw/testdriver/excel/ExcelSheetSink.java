@@ -25,6 +25,9 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelScanner;
@@ -36,6 +39,8 @@ import com.asakusafw.testdriver.core.PropertyName;
  * @since 0.2.3
  */
 public class ExcelSheetSink implements DataModelSink {
+
+    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSink.class);
 
     private final Sheet sheet;
 
@@ -49,9 +54,10 @@ public class ExcelSheetSink implements DataModelSink {
      * Creates a new instance.
      * @param definition the data model definition
      * @param sheet target sheet
+     * @param maxColumns the count of max columns
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ExcelSheetSink(DataModelDefinition<?> definition, Sheet sheet) {
+    public ExcelSheetSink(DataModelDefinition<?> definition, Sheet sheet, int maxColumns) {
         if (definition == null) {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }
@@ -60,7 +66,7 @@ public class ExcelSheetSink implements DataModelSink {
         }
         this.sheet = sheet;
         this.info = new WorkbookInfo(sheet.getWorkbook());
-        this.engine = new Engine(definition, info);
+        this.engine = new Engine(definition, info, maxColumns);
         engine.createHeaderRow(sheet.createRow(0));
         this.rowIndex = 1;
     }
@@ -87,12 +93,16 @@ public class ExcelSheetSink implements DataModelSink {
 
         private final List<PropertyName> properties;
 
-        Engine(DataModelDefinition<?> definition, WorkbookInfo info) {
+        Engine(DataModelDefinition<?> definition, WorkbookInfo info, int maxColumns) {
             assert definition != null;
             assert info != null;
             this.definition = definition;
             this.info = info;
-            this.properties = new ArrayList<PropertyName>(definition.getProperties());
+            List<PropertyName> props = new ArrayList<PropertyName>(definition.getProperties());
+            if (props.size() > maxColumns) {
+                props = props.subList(0, maxColumns);
+            }
+            this.properties = props;
         }
 
         void createHeaderRow(Row row) {
