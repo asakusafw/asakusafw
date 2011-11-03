@@ -15,44 +15,44 @@
  */
 package com.asakusafw.testdriver.excel;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.DataModelSourceProvider;
+import com.asakusafw.testdriver.core.DataModelSink;
+import com.asakusafw.testdriver.core.DataModelSinkProvider;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
- * Provides {@link DataModelSourceProvider} from Excel Sheet.
+ * Provides {@link DataModelSink} into Excel Sheet.
  * This accepts URI:
  * <ul>
- * <li> which is also a valid URL to obtain an Excel workbook, </li>
- * <li> whose "path" segment ends with ".xls", or </li>
- * <li>
- *     whose "fragment" is "#:" + 0-origin sheet number, "#" + sheet name,
- *     or null (which means the first sheet)
- * </li>
+ * <li> which is also a valid URL with file scheme, and </li>
+ * <li> which "path" segment ends with ".xls". </li>
  * </ul>
- * @since 0.2.0
+ * @since 0.2.3
  */
-public class ExcelSheetSourceProvider implements DataModelSourceProvider {
+public class ExcelSheetSinkProvider implements DataModelSinkProvider {
 
-    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSourceProvider.class);
+    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSinkProvider.class);
 
     @Override
-    public <T> DataModelSource open(
+    public <T> DataModelSink create(
             DataModelDefinition<T> definition,
-            URI source,
+            URI sink,
             TestContext context) throws IOException {
-        Sheet sheet = Util.extract(source);
-        if (sheet == null) {
+        String scheme = sink.getScheme();
+        if (scheme == null || scheme.endsWith("file") == false) {
             return null;
         }
-        LOG.info("Excelシートをデータソースに利用します: {}", source);
-        return new ExcelSheetDataModelSource(definition, source, sheet);
+        File file = new File(sink);
+        if (file.getName().endsWith(".xls") == false) {
+            return null;
+        }
+        LOG.info("Excelシートをデータシンクに利用します: {}", sink);
+        return new ExcelSheetSinkFactory(file).createSink(definition, context);
     }
 }

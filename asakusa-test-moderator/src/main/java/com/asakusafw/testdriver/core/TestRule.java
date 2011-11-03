@@ -17,22 +17,17 @@ package com.asakusafw.testdriver.core;
 
 /**
  * Strategy of test result verification.
- * @since 0.2.0
+ * @since 0.2.3
  */
-public interface VerifyRule extends TestRule {
+public interface TestRule {
 
     /**
-     * Returns the key of the target data model.
-     * <p>
-     * This method must return objects which have
-     * both {@link #equals(Object)} and {@link #hashCode()}.
-     * </p>
-     * @param target the target
-     * @return the key
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Verifies each model object.
+     * @param expected the expected model object,
+     *     or {@code null} if there are no corresponded to the actual model object
+     * @param actual the actual model object in test results,
+     *     or {@code null} if there are no corresponded to the expected model object
+     * @return diagnostic message, or {@code null} if successfully verified
      */
-    Object getKey(DataModelReflection target);
-
-    @Override
     Object verify(DataModelReflection expected, DataModelReflection actual);
 }

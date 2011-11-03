@@ -16,13 +16,13 @@
 package com.asakusafw.testdriver.core;
 
 /**
- * Adapters {@link ModelVerifier} to {@link VerifyRule}.
+ * Adapters {@link ModelTester} to {@link TestRule}.
  * @param <T> type of model
  * @since 0.2.0
  */
-public class ModelVerifierDriver<T> implements VerifyRule {
+public class TesterDriver<T> implements TestRule {
 
-    private final ModelVerifier<? super T> verifier;
+    private final ModelTester<? super T> verifier;
 
     private final DataModelDefinition<? extends T> definition;
 
@@ -32,8 +32,8 @@ public class ModelVerifierDriver<T> implements VerifyRule {
      * @param definition target model definition
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ModelVerifierDriver(
-            ModelVerifier<? super T> verifier,
+    public TesterDriver(
+            ModelTester<? super T> verifier,
             DataModelDefinition<? extends T> definition) {
         if (verifier == null) {
             throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
@@ -43,11 +43,6 @@ public class ModelVerifierDriver<T> implements VerifyRule {
         }
         this.verifier = verifier;
         this.definition = definition;
-    }
-
-    @Override
-    public Object getKey(DataModelReflection target) {
-        return verifier.getKey(convert(target));
     }
 
     @Override

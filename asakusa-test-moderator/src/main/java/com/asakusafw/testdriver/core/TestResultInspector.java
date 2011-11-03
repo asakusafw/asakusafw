@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,14 +30,16 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 /**
  * Inspects each test result.
  * @since 0.2.0
+ * @deprecated Use {@link TestModerator} instead
  */
+@Deprecated
 public class TestResultInspector {
 
     static final Logger LOG = LoggerFactory.getLogger(TestResultInspector.class);
 
     private final DataModelAdapter adapter;
 
-    private final SourceProvider sources;
+    private final DataModelSourceProvider sources;
 
     private final VerifyRuleProvider rules;
 
@@ -66,7 +66,7 @@ public class TestResultInspector {
      */
     public TestResultInspector(
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             VerifyRuleProvider rules,
             ExporterRetriever<ExporterDescription> retrievers) {
         this(new TestContext.Empty(), adapter, sources, rules, retrievers);
@@ -88,7 +88,7 @@ public class TestResultInspector {
         }
         this.context = context;
         this.adapter = new SpiDataModelAdapter(serviceClassLoader);
-        this.sources = new SpiSourceProvider(serviceClassLoader);
+        this.sources = new SpiDataModelSourceProvider(serviceClassLoader);
         this.rules = new SpiVerifyRuleProvider(serviceClassLoader);
         this.targets = new SpiExporterRetriever(serviceClassLoader);
     }
@@ -106,7 +106,7 @@ public class TestResultInspector {
     public TestResultInspector(
             TestContext context,
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             VerifyRuleProvider rules,
             ExporterRetriever<ExporterDescription> retrievers) {
         if (adapter == null) {
@@ -145,31 +145,6 @@ public class TestResultInspector {
             VerifyContext verifyContext,
             URI expected,
             URI rule) throws IOException {
-        return inspect(modelClass, description, verifyContext, expected, rule, null, null);
-    }
-
-    /**
-     * Inspects the target exporter's output using specified expected data and rule.
-     * @param modelClass class of data model
-     * @param description target exporter
-     * @param verifyContext current verification context
-     * @param expected the expected data
-     * @param rule the verification rule between expected and actual result
-     * @param resultDataSink the actual result sink (nullable)
-     * @param differenceSink the difference information sink (nullable)
-     * @return detected invalid differences
-     * @throws IOException if failed to inspect the result
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     * @since 0.2.3
-     */
-    public List<Difference> inspect(
-            Class<?> modelClass,
-            ExporterDescription description,
-            VerifyContext verifyContext,
-            URI expected,
-            URI rule,
-            DataModelSinkFactory resultDataSink,
-            DifferenceSinkFactory differenceSink) throws IOException {
         if (modelClass == null) {
             throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
         }
@@ -187,7 +162,7 @@ public class TestResultInspector {
         }
         DataModelDefinition<?> definition = findDefinition(modelClass);
         VerifyRule ruleDesc = findRule(definition, verifyContext, rule);
-        return inspect(modelClass, description, expected, ruleDesc, resultDataSink, differenceSink);
+        return inspect(modelClass, description, expected, ruleDesc);
     }
 
     /**
@@ -240,29 +215,6 @@ public class TestResultInspector {
             ExporterDescription description,
             URI expected,
             VerifyRule rule) throws IOException {
-        return inspect(modelClass, description, expected, rule, null, null);
-    }
-
-    /**
-     * Inspects the target exporter's output using specified expected data and rule.
-     * @param modelClass class of data model
-     * @param description target exporter
-     * @param expected the expected data
-     * @param rule the verification rule between expected and actual result
-     * @param resultDataSink the actual result sink (nullable)
-     * @param differenceSink the difference information sink (nullable)
-     * @return detected invalid differences
-     * @throws IOException if failed to inspect the result
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     * @since 0.2.3
-     */
-    public List<Difference> inspect(
-            Class<?> modelClass,
-            ExporterDescription description,
-            URI expected,
-            VerifyRule rule,
-            DataModelSinkFactory resultDataSink,
-            DifferenceSinkFactory differenceSink) throws IOException {
         if (modelClass == null) {
             throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
         }
@@ -278,7 +230,7 @@ public class TestResultInspector {
         DataModelDefinition<?> definition = findDefinition(modelClass);
         DataModelSource expectedDesc = findSource(definition, expected);
         VerifyEngine engine = buildVerifier(definition, rule, expectedDesc);
-        List<Difference> results = inspect(definition, description, engine, resultDataSink, differenceSink);
+        List<Difference> results = inspect(definition, description, engine);
         return results;
     }
 
@@ -296,35 +248,18 @@ public class TestResultInspector {
     private <T> List<Difference> inspect(
             DataModelDefinition<T> definition,
             ExporterDescription description,
-            VerifyEngine engine,
-            DataModelSinkFactory resultSinkOrNull,
-            DifferenceSinkFactory differenceSinkOrNull) throws IOException {
+            VerifyEngine engine) throws IOException {
         assert definition != null;
         assert description != null;
         assert engine != null;
         List<Difference> results = new ArrayList<Difference>();
         DataModelSource target = targets.createSource(definition, description, context);
         try {
-            if (resultSinkOrNull != null) {
-                target = new TeeDataModelSource(target, resultSinkOrNull.createSink(definition, context));
-            }
             results.addAll(engine.inspectInput(target));
         } finally {
             target.close();
         }
         results.addAll(engine.inspectRest());
-
-        if (differenceSinkOrNull != null && results.isEmpty() == false) {
-            Collections.sort(results, new DifferenceComparator(definition));
-            DifferenceSink sink = differenceSinkOrNull.createSink(definition, context);
-            try {
-                for (Difference difference : results) {
-                    sink.put(difference);
-                }
-            } finally {
-                sink.close();
-            }
-        }
         return results;
     }
 
@@ -365,74 +300,5 @@ public class TestResultInspector {
                     ruleUri));
         }
         return rule;
-    }
-
-    private static class DifferenceComparator implements Comparator<Difference> {
-
-        private final DataModelDefinition<?> definition;
-
-        DifferenceComparator(DataModelDefinition<?> definition) {
-            assert definition != null;
-            this.definition = definition;
-        }
-
-        @Override
-        public int compare(Difference o1, Difference o2) {
-            DataModelReflection r1 = key(o1);
-            DataModelReflection r2 = key(o2);
-            if (r1 == null && r2 == null) {
-                return 0;
-            } else if (r1 == null) {
-                return -1;
-            } else if (r2 == null) {
-                return +1;
-            }
-            for (PropertyName name : definition.getProperties()) {
-                Class<?> type = definition.getType(name).getRepresentation();
-                if (Comparable.class.isAssignableFrom(type) == false) {
-                    // FIXME compare other kinds
-                    continue;
-                }
-                Object p1 = r1.getValue(name);
-                Object p2 = r2.getValue(name);
-                if (p1 == null && p2 != null) {
-                    return -1;
-                } else if (p1 != null && p2 == null) {
-                    return +1;
-                }
-                int cmp = compareProperty(type.asSubclass(Comparable.class), p1, p2);
-                if (cmp != 0) {
-                    return cmp;
-                }
-            }
-            return 0;
-        }
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        private <T extends Comparable> int compareProperty(Class<T> type, Object p1, Object p2) {
-            if (p1 == null && p2 == null) {
-                return 0;
-            } else if (p1 == null) {
-                return -1;
-            } else if (p2 == null) {
-                return +1;
-            }
-            T o1 = type.cast(p1);
-            T o2 = type.cast(p2);
-            return o1.compareTo(o2);
-        }
-
-        private DataModelReflection key(Difference difference) {
-            assert difference != null;
-            DataModelReflection expected = difference.getExpected();
-            DataModelReflection actual = difference.getActual();
-            if (expected != null) {
-                return expected;
-            } else if (actual != null) {
-                return actual;
-            } else {
-                return null;
-            }
-        }
     }
 }

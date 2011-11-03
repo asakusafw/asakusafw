@@ -21,32 +21,32 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * Composition of registered {@link SourceProvider} as {@link ServiceLoader services}.
- * @since 0.2.0
+ * Composition of registered {@link DataModelSinkProvider} as {@link ServiceLoader services}.
+ * @since 0.2.3
  */
-public class SpiSourceProvider implements SourceProvider {
+public class SpiDataModelSinkProvider implements DataModelSinkProvider {
 
-    private final List<SourceProvider> elements;
+    private final List<DataModelSinkProvider> elements;
 
     /**
      * Creates a new instance.
      * @param serviceClassLoader the class loader to load the registered services
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public SpiSourceProvider(ClassLoader serviceClassLoader) {
+    public SpiDataModelSinkProvider(ClassLoader serviceClassLoader) {
         if (serviceClassLoader == null) {
             throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
         }
-        this.elements = Util.loadService(SourceProvider.class, serviceClassLoader);
+        this.elements = Util.loadService(DataModelSinkProvider.class, serviceClassLoader);
     }
 
     @Override
-    public <T> DataModelSource open(
+    public <T> DataModelSink create(
             DataModelDefinition<T> definition,
-            URI source,
+            URI sink,
             TestContext context) throws IOException {
-        for (SourceProvider service : elements) {
-            DataModelSource result = service.open(definition, source, context);
+        for (DataModelSinkProvider service : elements) {
+            DataModelSink result = service.create(definition, sink, context);
             if (result != null) {
                 return result;
             }

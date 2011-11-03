@@ -15,6 +15,11 @@
  */
 package com.asakusafw.testdriver;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+
+import java.io.File;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,7 +28,6 @@ import com.asakusafw.testdriver.testing.model.Simple;
 
 /**
  * Test for {@link JobFlowTester}.
- * @since 0.2.0
  */
 public class JobFlowTesterTest {
 
@@ -43,6 +47,123 @@ public class JobFlowTesterTest {
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * saves actual data using path string.
+     */
+    @Test
+    public void dumpActual_path() {
+        File target = new File("target/testing/dump/actual-path.xls");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/simple-out.json", new IdentityVerifier())
+            .dumpActual(target.getPath());
+        tester.runTest(SimpleJobflow.class);
+        assertThat(target.exists(), is(true));
+    }
+
+    /**
+     * saves actual data using URI.
+     */
+    @Test
+    public void dumpActual_uri() {
+        File target = new File("target/testing/dump/actual-uri.xls");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/simple-out.json", new IdentityVerifier())
+            .dumpActual(target.toURI().toString());
+        tester.runTest(SimpleJobflow.class);
+        assertThat(target.exists(), is(true));
+    }
+
+    /**
+     * saves actual data using path.
+     */
+    @Test
+    public void dumpActual_file() {
+        File target = new File("target/testing/dump/actual-file.xls");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/simple-out.json", new IdentityVerifier())
+            .dumpActual(target);
+        tester.runTest(SimpleJobflow.class);
+        assertThat(target.exists(), is(true));
+    }
+
+    /**
+     * saves difference data using path string.
+     */
+    @Test
+    public void dumpDifference_path() {
+        File target = new File("target/testing/dump/difference-path.html");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/difference-out.json", new IdentityVerifier())
+            .dumpDifference(target.getPath());
+        try {
+            tester.runTest(SimpleJobflow.class);
+            fail();
+        } catch (AssertionError e) {
+            // ok.
+        }
+        assertThat(target.exists(), is(true));
+    }
+
+    /**
+     * saves difference data using URI.
+     */
+    @Test
+    public void dumpDifference_uri() {
+        File target = new File("target/testing/dump/difference-uri.html");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/difference-out.json", new IdentityVerifier())
+            .dumpDifference(target.toURI().toString());
+        try {
+            tester.runTest(SimpleJobflow.class);
+            fail();
+        } catch (AssertionError e) {
+            // ok.
+        }
+        assertThat(target.exists(), is(true));
+    }
+
+    /**
+     * saves difference data using path.
+     */
+    @Test
+    public void dumpDifference_file() {
+        File target = new File("target/testing/dump/difference-file.html");
+        target.delete();
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class)
+            .verify("data/difference-out.json", new IdentityVerifier())
+            .dumpDifference(target);
+        try {
+            tester.runTest(SimpleJobflow.class);
+            fail();
+        } catch (AssertionError e) {
+            // ok.
+        }
+        assertThat(target.exists(), is(true));
     }
 
     /**

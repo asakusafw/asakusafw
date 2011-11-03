@@ -33,8 +33,8 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
-import com.asakusafw.testdriver.core.SpiSourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
+import com.asakusafw.testdriver.core.SpiDataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
@@ -91,7 +91,7 @@ public class WindGateSourceProviderTest {
      */
     @Test
     public void open_importer() throws Exception {
-        SourceProvider provider = new SpiSourceProvider(getClass().getClassLoader());
+        DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockImporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
         DataModelSource source = provider.open(definition, uri, EMPTY);
@@ -121,7 +121,7 @@ public class WindGateSourceProviderTest {
      */
     @Test
     public void open_exporter() throws Exception {
-        SourceProvider provider = new SpiSourceProvider(getClass().getClassLoader());
+        DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockExporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
         DataModelSource source = provider.open(definition, uri, EMPTY);
@@ -151,7 +151,7 @@ public class WindGateSourceProviderTest {
      */
     @Test
     public void invalid_scheme() throws Exception {
-        SourceProvider provider = new WindGateSourceProvider();
+        DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("INVALIDwindgate:" + MockExporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
         DataModelSource source = provider.open(definition, uri, EMPTY);
@@ -164,7 +164,7 @@ public class WindGateSourceProviderTest {
      */
     @Test(expected = IOException.class)
     public void unknown_class() throws Exception {
-        SourceProvider provider = new WindGateSourceProvider();
+        DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("windgate:__INVALID__");
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
         provider.open(definition, uri, EMPTY);
@@ -176,7 +176,7 @@ public class WindGateSourceProviderTest {
      */
     @Test(expected = IOException.class)
     public void unexpected_class() throws Exception {
-        SourceProvider provider = new WindGateSourceProvider();
+        DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("windgate:" + String.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
         provider.open(definition, uri, EMPTY);

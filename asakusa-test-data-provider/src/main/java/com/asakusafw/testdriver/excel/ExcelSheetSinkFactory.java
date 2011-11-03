@@ -38,9 +38,6 @@ import com.asakusafw.testdriver.core.TestContext;
  */
 public class ExcelSheetSinkFactory extends DataModelSinkFactory {
 
-    /**
-     *
-     */
     private static final int MAX_COLUMN_SIZE = 255;
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSinkFactory.class);

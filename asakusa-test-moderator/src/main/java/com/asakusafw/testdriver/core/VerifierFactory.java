@@ -15,24 +15,24 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.IOException;
+
 /**
- * Strategy of test result verification.
- * @since 0.2.0
+ * An abstract factory class of {@link Verifier}.
+ * @since 0.2.3
  */
-public interface VerifyRule extends TestRule {
+public abstract class VerifierFactory {
 
     /**
-     * Returns the key of the target data model.
-     * <p>
-     * This method must return objects which have
-     * both {@link #equals(Object)} and {@link #hashCode()}.
-     * </p>
-     * @param target the target
-     * @return the key
+     * Creates a new rule.
+     * @param <T> type of data model
+     * @param definition the data model definition
+     * @param context the current verification context
+     * @return the created object
+     * @throws IOException if failed to create a sink object
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    Object getKey(DataModelReflection target);
-
-    @Override
-    Object verify(DataModelReflection expected, DataModelReflection actual);
+    public abstract <T> Verifier createVerifier(
+            DataModelDefinition<T> definition,
+            VerifyContext context) throws IOException;
 }

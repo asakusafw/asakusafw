@@ -23,19 +23,19 @@ import java.net.URI;
 import org.junit.Test;
 
 /**
- * Test for {@link SpiSourceProvider}.
+ * Test for {@link SpiDataModelSourceProvider}.
  * @since 0.2.0
  */
-public class SpiSourceProviderTest extends SpiTestRoot {
+public class SpiDataModelSourceProviderTest extends SpiTestRoot {
 
     /**
-     * Test method for {@link SpiSourceProvider#open(DataModelDefinition, URI, TestContext)}.
+     * Test method for {@link SpiDataModelSourceProvider#open(DataModelDefinition, URI, TestContext)}.
      * @throws Exception if failed
      */
     @Test
     public void open() throws Exception {
-        ClassLoader cl = register(SourceProvider.class, Example.class);
-        SpiSourceProvider target = new SpiSourceProvider(cl);
+        ClassLoader cl = register(DataModelSourceProvider.class, Example.class);
+        SpiDataModelSourceProvider target = new SpiDataModelSourceProvider(cl);
         DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("testing:dummy"), new TestContext.Empty());
         assertThat(source, not(nullValue()));
         assertThat(ValueDefinition.of(String.class).toObject(source.next()), is("Hello, world!"));
@@ -47,8 +47,8 @@ public class SpiSourceProviderTest extends SpiTestRoot {
      */
     @Test
     public void open_notfound() throws Exception {
-        ClassLoader cl = register(SourceProvider.class, Example.class);
-        SpiSourceProvider target = new SpiSourceProvider(cl);
+        ClassLoader cl = register(DataModelSourceProvider.class, Example.class);
+        SpiDataModelSourceProvider target = new SpiDataModelSourceProvider(cl);
         DataModelSource source = target.open(ValueDefinition.of(String.class), new URI("dummy:dummy"), new TestContext.Empty());
         assertThat(source, is(nullValue()));
     }
@@ -56,7 +56,7 @@ public class SpiSourceProviderTest extends SpiTestRoot {
     /**
      * Example service.
      */
-    public static class Example implements SourceProvider {
+    public static class Example implements DataModelSourceProvider {
 
         @Override
         public <T> DataModelSource open(DataModelDefinition<T> definition, URI source, TestContext context)

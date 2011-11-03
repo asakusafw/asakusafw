@@ -23,7 +23,6 @@ import com.asakusafw.testdriver.testing.model.Simple;
 
 /**
  * Test for {@link BatchTester}.
- * @since 0.2.0
  */
 public class BatchTesterTest {
 

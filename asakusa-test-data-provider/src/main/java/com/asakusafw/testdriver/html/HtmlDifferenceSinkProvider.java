@@ -13,46 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.testdriver.excel;
+package com.asakusafw.testdriver.html;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import org.apache.poi.ss.usermodel.Sheet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.DataModelSourceProvider;
+import com.asakusafw.testdriver.core.DifferenceSink;
+import com.asakusafw.testdriver.core.DifferenceSinkProvider;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
- * Provides {@link DataModelSourceProvider} from Excel Sheet.
+ * Provides {@link DifferenceSink} into HTML file.
  * This accepts URI:
  * <ul>
- * <li> which is also a valid URL to obtain an Excel workbook, </li>
- * <li> whose "path" segment ends with ".xls", or </li>
- * <li>
- *     whose "fragment" is "#:" + 0-origin sheet number, "#" + sheet name,
- *     or null (which means the first sheet)
- * </li>
+ * <li> which is also a valid URL with file scheme, and </li>
+ * <li> which "path" segment ends with ".html". </li>
  * </ul>
- * @since 0.2.0
+ * @since 0.2.3
  */
-public class ExcelSheetSourceProvider implements DataModelSourceProvider {
+public class HtmlDifferenceSinkProvider implements DifferenceSinkProvider {
 
-    static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSourceProvider.class);
+    static final Logger LOG = LoggerFactory.getLogger(HtmlDifferenceSinkProvider.class);
 
     @Override
-    public <T> DataModelSource open(
+    public <T> DifferenceSink create(
             DataModelDefinition<T> definition,
-            URI source,
+            URI sink,
             TestContext context) throws IOException {
-        Sheet sheet = Util.extract(source);
-        if (sheet == null) {
+        String scheme = sink.getScheme();
+        if (scheme == null || scheme.endsWith("file") == false) {
             return null;
         }
-        LOG.info("Excelシートをデータソースに利用します: {}", source);
-        return new ExcelSheetDataModelSource(definition, source, sheet);
+        File file = new File(sink);
+        if (file.getName().endsWith(".html") == false) {
+            return null;
+        }
+        LOG.info("HTMLファイルを差分シンクに利用します: {}", sink);
+        return new HtmlDifferenceSinkFactory(file).createSink(definition, context);
     }
 }

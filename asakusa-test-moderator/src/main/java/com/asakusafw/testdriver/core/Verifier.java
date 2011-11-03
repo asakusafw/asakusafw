@@ -15,24 +15,22 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.List;
+
 /**
- * Strategy of test result verification.
- * @since 0.2.0
+ * Result verifier.
+ * @since 0.2.3
  */
-public interface VerifyRule extends TestRule {
+public interface Verifier extends Closeable {
 
     /**
-     * Returns the key of the target data model.
-     * <p>
-     * This method must return objects which have
-     * both {@link #equals(Object)} and {@link #hashCode()}.
-     * </p>
-     * @param target the target
-     * @return the key
+     * Verifies the result data.
+     * @param results result data
+     * @return the detected differences (will be trimmed)
+     * @throws IOException if failed to
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    Object getKey(DataModelReflection target);
-
-    @Override
-    Object verify(DataModelReflection expected, DataModelReflection actual);
+    List<Difference> verify(DataModelSource results) throws IOException;
 }

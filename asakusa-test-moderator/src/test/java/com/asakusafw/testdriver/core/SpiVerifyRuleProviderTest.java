@@ -35,7 +35,7 @@ public class SpiVerifyRuleProviderTest extends SpiTestRoot {
     public void open() throws Exception {
         ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyContext context = new VerifyContext();
+        VerifyContext context = new VerifyContext(new TestContext.Empty());
         context.testFinished();
         VerifyRule rule = target.get(ValueDefinition.of(String.class), context, new URI("default:rule"));
         assertThat(rule, not(nullValue()));
@@ -52,7 +52,7 @@ public class SpiVerifyRuleProviderTest extends SpiTestRoot {
     public void open_notfound() throws Exception {
         ClassLoader cl = register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         SpiVerifyRuleProvider target = new SpiVerifyRuleProvider(cl);
-        VerifyContext context = new VerifyContext();
+        VerifyContext context = new VerifyContext(new TestContext.Empty());
         context.testFinished();
         VerifyRule rule = target.get(ValueDefinition.of(String.class), context, new URI("missing:rule"));
         assertThat(rule, is(nullValue()));
