@@ -36,9 +36,10 @@ import com.asakusafw.bulkloader.log.Log;
  *   <ul>
  *   <li> CACHE_ID [String] PRIMARY KEY</li>
  *   <li> CACHE_TIMESTAMP [TIMESTAMP] NULL</li>
- *   <li> BUILT_TIMESTAMP [TIMESTAMP] NOT NULL DEFAULT (the minimum value)</li>
+ *   <li> BUILT_TIMESTAMP [TIMESTAMP] NOT NULL</li>
  *   <li> TABLE_NAME [STRING] NOT NULL </li>
  *   <li> REMOTE_PATH [STRING] NOT NULL </li>
+ *   <li> ACTIVE [BOOLEAN] NOT NULL</li>
  *   </ul>
  * </li>
  * <li> __TG_CACHE_LOCK
@@ -82,7 +83,7 @@ public class LocalCacheInfoRepository {
         }
         final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH " +
             "FROM __TG_CACHE_INFO " +
-            "WHERE CACHE_ID = ?";
+            "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -123,8 +124,8 @@ public class LocalCacheInfoRepository {
             throw new IllegalArgumentException("old must not be null"); //$NON-NLS-1$
         }
         final String sql = "REPLACE " +
-            "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH) " +
-            "VALUES (?, ?, ?, ?, ?)";
+            "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH, ACTIVE) " +
+            "VALUES (?, ?, ?, ?, ?, TRUE)";
         boolean succeed = false;
         PreparedStatement statement = null;
         Calendar last = null;
@@ -202,9 +203,9 @@ public class LocalCacheInfoRepository {
         if (cacheId == null) {
             throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
         }
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_INFO " +
-            "WHERE CACHE_ID = ?";
+        final String sql = "UPDATE __TG_CACHE_INFO " +
+            "SET ACTIVE = FALSE " +
+            "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -241,9 +242,9 @@ public class LocalCacheInfoRepository {
         if (tableName == null) {
             throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
         }
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_INFO " +
-            "WHERE TABLE_NAME = ?";
+        final String sql = "UPDATE __TG_CACHE_INFO " +
+            "SET ACTIVE = FALSE " +
+            "WHERE TABLE_NAME = ? AND ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -275,8 +276,9 @@ public class LocalCacheInfoRepository {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void deleteAllCacheInfo() throws BulkLoaderSystemException {
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_INFO";
+        final String sql = "UPDATE __TG_CACHE_INFO " +
+            "SET ACTIVE = FALSE " +
+            "WHERE ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
