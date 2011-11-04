@@ -143,7 +143,7 @@ public class BatchTester extends TestDriverBase {
 
                 LOG.info("ジョブフローを実行しています: {}#{}",
                         batchDescriptionClass.getName(), flowId);
-                VerifyContext verifyContext = new VerifyContext();
+                VerifyContext verifyContext = new VerifyContext(driverContext);
                 executor.runJobflow(jobflowInfo);
                 verifyContext.testFinished();
 

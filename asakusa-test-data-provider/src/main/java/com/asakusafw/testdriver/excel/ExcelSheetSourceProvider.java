@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
- * Provides {@link DataModelSource} from Excel Sheet.
+ * Provides {@link DataModelSourceProvider} from Excel Sheet.
  * This accepts URI:
  * <ul>
  * <li> which is also a valid URL to obtain an Excel workbook, </li>
@@ -39,7 +39,7 @@ import com.asakusafw.testdriver.core.TestContext;
  * </ul>
  * @since 0.2.0
  */
-public class ExcelSheetSourceProvider implements SourceProvider {
+public class ExcelSheetSourceProvider implements DataModelSourceProvider {
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSourceProvider.class);
 

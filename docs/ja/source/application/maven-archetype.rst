@@ -6,7 +6,7 @@ Asakusa Maven Archetype
 
 アプリケーション開発プロジェクトの作成
 ======================================
-Asakusa Frameworkが提供すMavenアーキタイプ ``asakusa-archetype-batchapp`` を使ってアプリケーション開発用プロジェクトを作成します。Asakusa Frameworkでは、アプリケーションを開発するために２つの方法を提供しています。
+Asakusa Frameworkが提供するMavenアーキタイプを使ってアプリケーション開発用プロジェクトを作成します。Asakusa Frameworkでは、アプリケーションを開発するために２つの方法を提供しています。
 
 1. Asakusa Frameworkが提供するバッチアプリケーション作成用スクリプトを使用する方法
 2. Mavenコマンドを使用して、段階的にプロジェクトを構築する方法
@@ -35,15 +35,35 @@ setup_batchapp_project.shは以下の引数を指定して実行します。
     * - 2
       - アーティファクトID (プロジェクト名)
     * - 3
-      - Asakusa Frameworkのpom.xml上のVersion [#]_ 
+      - Asakusa Frameworkのアーキタイプ
+    * - 4
+      - Asakusa FrameworkのVersion [#]_
       
-..  [#] 指定可能なVersionは次のアーキタイプカタログを参照:http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+..  [#] 指定可能なAsakusa FrameworkのアーキタイプとVersionの一覧は、アーキタイプカタログ http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml を参照して下さい。
+
+現時点でAsakusa Frameworkが提供するアーキタイプには以下のものがあります。
+
+..  list-table:: Asakusa Framework アーキタイプ一覧
+    :widths: 1 3 6
+    :header-rows: 1
     
-例えばAsakusa Framework ver.0.2.0を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
+    * - no
+      - アーキタイプ
+      - 説明
+    * - 1
+      - asakusa-archetype-batchapp
+      - 外部データ入出力にThunderGateを使用するアプリケーション用のアーキタイプ
+    * - 2
+      - asakusa-archetype-windgate
+      - 外部データ入出力にWindGateを使用するアプリケーション用のアーキタイプ
+
+例えば外部データ入出力にWindGateを使用し、Asakusa Framework のバージョン0.2.2を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。
 
 ..  code-block:: sh
 
-    ./setup_batchapp_project.sh com.example batchapp-sample 0.2.0
+    ./setup_batchapp_project.sh com.example batchapp-sample asakusa-archetype-windgate 0.2.2
+
+この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
 
 Maven:プロジェクトの作成とAsakusa Frameworkのインストール
 ---------------------------------------------------------
@@ -59,16 +79,13 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     ...
     Choose archetype:
     1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-batchapp (-)
-    Choose a number: : ※1を入力
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-windgate (-)
+    Choose a number: : ※2を入力
     ...
     Choose version: 
-    1: 0.1.0
-    2: 0.2-SNAPSHOT
-    3: 0.2.0
-    4: 0.2.1-RC1
-    5: 0.3-SNAPSHOT
-    
-    Choose a number: 5: ※3を入力
+    1: 0.2-SNAPSHOT
+    2: 0.2.2
+    Choose a number: 2: ※3を入力
     ...
     Define value for property 'groupId': : com.example ※任意の値を入力
     Define value for property 'artifactId': : batchapp-sample ※任意の値を入力
@@ -95,7 +112,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     mvn assembly:single antrun:run
 
 ..  warning::
-    ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。このディレクトリはデフォルトの設定では /tmp/asakusa となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで /tmp ディレクトリがクリアされるため、再起動後にこのディレクトリを再度作成する必要があります。
+    アーキタイプasakusa-archetype-batchappを使用している場合、 ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。このディレクトリはデフォルトの設定では /tmp/asakusa となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで /tmp ディレクトリがクリアされるため、再起動後にこのディレクトリを再度作成する必要があります。
     
     テンポラリディレクトリを変更する場合、$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
     
@@ -113,6 +130,9 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 
 プロジェクトのディレクトリ構成
 ------------------------------
+
+asakusa-archetype-batchapp
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 アーキタイプ ``asakusa-archetype-batchapp`` から生成されたAsakusaのプロジェクト構成は以下の通りです。
 
 ..  code-block:: sh
@@ -183,6 +203,9 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
                           `-- model   : ビュー情報を元に作成したデータモデルクラス
                           `-- io      : ビュー情報を元に作成したデータモデルの入出力ドライバクラス
 
+..  todo::
+    asakusa-archetype-windgateのディレクトリ構成
+
 モデルクラスの生成
 ==================
 モデルクラスを作成するには、モデルの定義情報を記述後にMavenの ``generate-sources`` フェーズを実行します。
@@ -190,7 +213,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 Asakusa Frameworkでは、モデルの定義情報の記述するために、以下２つの方法が提供されています。
 
 1. モデルの定義情報をDMDL(Data Model Definition Language)として記述する [#]_ 
-2. モデルの定義情報をSQLのDDLとして記述する [#]_ 
+2. モデルの定義情報をSQLのDDLとして記述する(asakusa-archetype-batchappのみ対応) [#]_ 
 
 ..  [#] :doc:`../dmdl/start-guide` 
 ..  [#] :doc:`../dmdl/with-thundergate` 
@@ -361,6 +384,8 @@ General Settings
     ThunderGateを使用せず、モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用しない構成で開発を行うことが可能になります。
 
   asakusa.database.target
+    *(asakusa-archetype-batchappのみ)*
+
     Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースを使用する場合に、データベース定義ファイルを特定するためのターゲット名を指定します。
     
     開発環境で使用するデータベース定義ファイルは、ローカルにインストールしたAsakusa FrameworkのThunderGate用データベース定義ファイル ( $ASAKUSA_HOME/bulkloader/conf/${asakusa.database.target}-jdbc.properties )を使用します。開発環境へのインストール時に本プロパティの設定値を使って左記ディレクトリにデータベース定義ファイルを生成します。
@@ -400,6 +425,26 @@ Model Generator Settings
   asakusa.modelgen.excludes
     ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象外とするモデル名を正規表現の書式で指定します。デフォルト値はThunderGateが使用する管理テーブルを生成対象外とするよう指定されています。特に理由が無い限り、デフォルト値で指定されている値は削除しないようにして下さい。
 
+  asakusa.modelgen.sid.column
+    *(asakusa-archetype-batchappのみ)*
+
+    ThunderGateが入出力を行う業務テーブルのシステムIDカラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-sid`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
+
+  asakusa.modelgen.timestamp.column
+    *(asakusa-archetype-batchappのみ)*
+
+    ThunderGateが入出力を行う業務テーブルの更新日時カラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-updt-date`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
+
+  asakusa.modelgen.delete.column
+    *(asakusa-archetype-batchappのみ)*
+
+    ThunderGateが入出力を行う業務テーブルの論理削除フラグカラム名を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
+
+  asakusa.modelgen.delete.value
+    *(asakusa-archetype-batchappのみ)*
+
+    ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
+
   asakusa.modelgen.output
     モデルジェネレータが生成するモデルクラス用Javaソースの出力ディレクトリを指定します。アーキタイプが提供するEclipseの設定情報と対応しているため、特に理由が無い限りはデフォルト値を変更しないようにしてください。この値を変更する場合、合わせてpom.xmlの修正も必要となります。
 
@@ -414,12 +459,18 @@ Model Generator Settings
 ThunderGate Settings
 
   asakusa.bulkloader.tables
+    *(asakusa-archetype-batchappのみ)*
+
     ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプト（後述の「asakusa.bulkloader.genddl」で指定したファイル）に含める対象テーブルを指定します。このプロパティにインポート、及びエクスポート対象テーブルのみを指定することで、余分な管理テーブルの生成を抑止することが出来ます。開発時にはデフォルト（コメントアウト）の状態で特に問題ありません。
 
   asakusa.bulkloader.genddl
+    *(asakusa-archetype-batchappのみ)*
+
     ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプトのファイルパスを指定します。
 
   asakusa.dmdl.fromddl.output
+    *(asakusa-archetype-batchappのみ)*
+
     ``generate-sources`` フェーズ実行時にモデル定義情報となるDDLスクリプトから生成するDMDLスクリプトの出力先を指定します。
 
 ---------------------
@@ -455,13 +506,19 @@ TestDriver Settings
 TestDriver Settings (for Asakusa 0.1 asakusa-test-tools)
 
   asakusa.testdatasheet.v01.generate
+    *(asakusa-archetype-batchappのみ)*
+
     ( true or **false** ) Asakusa Framework 0.1 仕様のテストデータ定義シートを出力するかを設定します（デフォルトは出力しない）。 このプロパティをtrueにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートが ``target/excel_v01`` ディレクトリ配下に出力されるようになります。
 
   asakusa.testdriver.testdata.dir
+    *(asakusa-archetype-batchappのみ)*
+
     テストドライバの実行時に、テストドライバが参照するテストデータ定義シートの配置ディレクトリを指定します。
     
     このプロパティは、テストドライバAPIのうち、Asakusa Framework 0.1 から存在する ``*TestDriver`` というクラスの実行時のみ使用されます。Asakusa Framework 0.2 から追加された ``*Tester`` 系のテストドライバAPIは、この値を使用せず、テストドライバ実行時のクラスパスからテストデータ定義シートを参照するようになっています。
 
   asakusa.excelgen.tables
+    *(asakusa-archetype-batchappのみ)*
+
     Asakusa Framework 0.1 仕様のテストデータ定義シート生成ツールをMavenコマンドから実行 ( ``mvn exec:java -Dexec.mainClass=com.asakusafw.testtools.templategen.Main`` )した場合に、テストデータシート生成ツールが生成の対象とするテーブルをスペース区切りで指定します。
     

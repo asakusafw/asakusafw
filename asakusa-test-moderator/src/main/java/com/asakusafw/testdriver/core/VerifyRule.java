@@ -19,7 +19,7 @@ package com.asakusafw.testdriver.core;
  * Strategy of test result verification.
  * @since 0.2.0
  */
-public interface VerifyRule {
+public interface VerifyRule extends TestRule {
 
     /**
      * Returns the key of the target data model.
@@ -33,13 +33,6 @@ public interface VerifyRule {
      */
     Object getKey(DataModelReflection target);
 
-    /**
-     * Verifies each model object.
-     * @param expected the expected model object,
-     *     or {@code null} if there are no corresponded to the actual model object
-     * @param actual the actual model object in test results,
-     *     or {@code null} if there are no corresponded to the expected model object
-     * @return diagnostic message, or {@code null} if successfully verified
-     */
+    @Override
     Object verify(DataModelReflection expected, DataModelReflection actual);
 }

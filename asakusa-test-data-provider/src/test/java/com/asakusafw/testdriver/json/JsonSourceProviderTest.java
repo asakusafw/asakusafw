@@ -27,8 +27,8 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
-import com.asakusafw.testdriver.core.SpiSourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
+import com.asakusafw.testdriver.core.SpiDataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
@@ -64,7 +64,7 @@ public class JsonSourceProviderTest {
      */
     @Test
     public void spi() throws Exception {
-        SourceProvider provider = new SpiSourceProvider(JsonSourceProvider.class.getClassLoader());
+        DataModelSourceProvider provider = new SpiDataModelSourceProvider(JsonSourceProvider.class.getClassLoader());
         DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty());
         assertThat(source, not(nullValue()));
         try {

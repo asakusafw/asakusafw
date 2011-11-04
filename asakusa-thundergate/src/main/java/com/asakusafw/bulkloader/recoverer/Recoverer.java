@@ -30,7 +30,6 @@ import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.exporter.ExportDataCopy;
 import com.asakusafw.bulkloader.exporter.LockRelease;
@@ -44,10 +43,8 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class Recoverer {
 
-    /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Recoverer.class;
+    static final Log LOG = new Log(Recoverer.class);
+
     /**
      * Exporterで読み込むプロパティファイル。
      */
@@ -122,17 +119,13 @@ public class Recoverer {
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initDBServer("Recoverer", executionId, PROPERTIES, targetName)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_INIT_ERROR,
+                LOG.error("TG-RECOVERER-01003",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // 開始ログ出力
-            Log.log(
-                    CLASS,
-                    MessageIdConst.RCV_START,
+            LOG.info("TG-RECOVERER-01001",
                     new Date(), targetName, executionId);
 
             // ジョブフロー実行テーブルの内容を取得する
@@ -143,10 +136,8 @@ public class Recoverer {
                     isExistJobFlowInstance = true;
                 }
             } catch (BulkLoaderSystemException e) {
-                Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_GETRUNNUNG_JOBFLOW_ERROR,
+                LOG.log(e);
+                LOG.error("TG-RECOVERER-01006",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
@@ -155,9 +146,7 @@ public class Recoverer {
             if (isExistJobFlowInstance) {
                 assert beans != null && beans.size() >= 1;
                 for (ExporterBean bean : beans) {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.RCV_INSTANCE_START,
+                    LOG.info("TG-RECOVERER-01016",
                             targetName,
                             bean.getBatchId(),
                             bean.getJobflowId(),
@@ -166,7 +155,7 @@ public class Recoverer {
                     try {
                         recovery(bean);
                     } catch (BulkLoaderSystemException e) {
-                        Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+                        LOG.log(e);
                         isExistRecoveryFail = true;
                     }
                 }
@@ -176,10 +165,7 @@ public class Recoverer {
             return judgeExitCode(targetName, executionId);
         } catch (Exception e) {
             try {
-                Log.log(
-                        e,
-                        CLASS,
-                        MessageIdConst.RCV_EXCEPRION,
+                LOG.error(e, "TG-RECOVERER-01004",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {
@@ -199,37 +185,27 @@ public class Recoverer {
         if (hasExecutionId) {
             // ジョブフロー実行ID指定有りの場合
             if (!isExistJobFlowInstance) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（指定されたジョブフローインスタンスが存在しない）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
             } else if (isExistRecoveryFail) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.error("TG-RECOVERER-01002",
                         "異常終了（指定されたジョブフローインスタンスのリカバリ処理に失敗した）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistExecOthProcess) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.error("TG-RECOVERER-01002",
                         "異常終了（指定されたジョブフローインスタンスが処理中である）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistRollBack) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（指定されたジョブフローインスタンスのロールバックを行った）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_WARNING;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（指定されたジョブフローインスタンスのロールフォワードを行った）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
@@ -237,37 +213,27 @@ public class Recoverer {
         } else {
             // ジョブフロー実行ID指定無しの場合
             if (!isExistJobFlowInstance) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（リカバリ対象のジョブフローインスタンスが存在しない）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
             } else if (isExistRecoveryFail) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.error("TG-RECOVERER-01002",
                         "異常終了（リカバリ処理に失敗したジョブフローインスタンスが存在する）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistExecOthProcess) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "異常終了（処理中のジョブフローインスタンスが存在する）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistRollBack) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（ロールバックを行ったジョブフローインスタンスが存在する）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_WARNING;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_EXIT,
+                LOG.info("TG-RECOVERER-01002",
                         "正常終了（全てのジョブフローインスタンスをロールフォワードした）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
@@ -291,9 +257,7 @@ public class Recoverer {
         Connection lockConn = null;
         try {
             // ジョブフローインスタンスIDの排他制御
-            Log.log(
-                    CLASS,
-                    MessageIdConst.RCV_INSTANCE_ID_LOCK,
+            LOG.info("TG-RECOVERER-01017",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),
@@ -302,9 +266,7 @@ public class Recoverer {
             lockConn = DBConnection.getConnection();
             if (!DBAccessUtil.getJobflowInstanceLock(executionId, lockConn)) {
                 // 他のプロセスが排他制御を行っている為、リカバリ対象外とする。
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_INSTANCE_ID_LOCK_ERROR,
+                LOG.info("TG-RECOVERER-01008",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -313,9 +275,7 @@ public class Recoverer {
                 isExistExecOthProcess = true;
                 return;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_INSTANCE_ID_LOCK_SUCCESS,
+                LOG.info("TG-RECOVERER-01018",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -335,8 +295,7 @@ public class Recoverer {
             boolean rollBack = judgeRollBack(exporterBean);
 
             if (rollBack) {
-                Log.log(CLASS,
-                        MessageIdConst.RCV_JUDGE_PROCESS,
+                LOG.info("TG-RECOVERER-01023",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -344,8 +303,7 @@ public class Recoverer {
                         exporterBean.getExecutionId(),
                         "ロールバック");
             } else {
-                Log.log(CLASS,
-                        MessageIdConst.RCV_JUDGE_PROCESS,
+                LOG.info("TG-RECOVERER-01023",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -358,9 +316,7 @@ public class Recoverer {
             boolean updateEnd = true;
             if (!rollBack) {
                 // Exportデータコピー処理を実行する
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_DATA_COPY,
+                LOG.info("TG-RECOVERER-01019",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -368,9 +324,7 @@ public class Recoverer {
                         exporterBean.getExecutionId());
                 ExportDataCopy copy = createExportDataCopy();
                 if (!copy.copyData(exporterBean)) {
-                    throw new BulkLoaderSystemException(
-                            this.getClass(),
-                            MessageIdConst.RCV_DATA_COPY_ERROR,
+                    throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01012",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -379,9 +333,7 @@ public class Recoverer {
                 } else {
                     // 更新レコードのコピーが全て終了しているかを表すフラグを取得
                     updateEnd = copy.isUpdateEnd();
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.RCV_DATA_COPY_SUCCESS,
+                    LOG.info("TG-RECOVERER-01020",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -391,9 +343,7 @@ public class Recoverer {
             }
 
             // エクスポートテンポラリテーブルの削除及びロック解除を行う
-            Log.log(
-                    CLASS,
-                    MessageIdConst.RCV_RELEASELOCK,
+            LOG.info("TG-RECOVERER-01021",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),
@@ -402,18 +352,14 @@ public class Recoverer {
             LockRelease lock = createLockRelease();
             if (!lock.releaseLock(exporterBean, updateEnd)) {
                 // ロックの解除に失敗
-                throw new BulkLoaderSystemException(
-                        CLASS,
-                        MessageIdConst.RCV_RELEASELOCK_ERROR,
+                throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01013",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
                         exporterBean.getJobflowSid(),
                         exporterBean.getExecutionId());
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_RELEASELOCK_SUCCESS,
+                LOG.info("TG-RECOVERER-01022",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -423,8 +369,7 @@ public class Recoverer {
 
             // 処理結果をログに出力
             if (rollBack) {
-                Log.log(CLASS,
-                        MessageIdConst.RCV_JOBFLOW_RECOVERY_EXIT,
+                LOG.info("TG-RECOVERER-01014",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -433,8 +378,7 @@ public class Recoverer {
                         "ロールバック");
             } else {
                 if (updateEnd) {
-                    Log.log(CLASS,
-                            MessageIdConst.RCV_JOBFLOW_RECOVERY_EXIT,
+                    LOG.info("TG-RECOVERER-01014",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -442,9 +386,7 @@ public class Recoverer {
                             exporterBean.getExecutionId(),
                             "ロールフォワード");
                 } else {
-                    throw new BulkLoaderSystemException(
-                            CLASS,
-                            MessageIdConst.RCV_COPY_NOT_EXIT,
+                    throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01015",
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
                             exporterBean.getJobflowId(),
@@ -476,9 +418,7 @@ public class Recoverer {
         // ジョブフロー実行テーブルにレコードが存在しない場合はエラーとする
         List<ExporterBean> beans = selectRunningJobFlow(executionId);
         if (beans.size() == 0) {
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    MessageIdConst.RCV_INSTANCE_ID_NOT_FOUND,
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01009",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),
@@ -491,9 +431,7 @@ public class Recoverer {
         if (!hasParam) {
             if (isRunningJobFlow(executionId)) {
                 // 実行中のため、リカバリ対象外とする。
-                Log.log(
-                        CLASS,
-                        MessageIdConst.RCV_MM_EXEC_INCTANCE,
+                LOG.info("TG-RECOVERER-01010",
                         exporterBean.getTargetName(),
                         exporterBean.getBatchId(),
                         exporterBean.getJobflowId(),
@@ -516,16 +454,14 @@ public class Recoverer {
         JobFlowParamLoader paramLoader = createJobFlowParamLoader();
         if (!paramLoader.loadRecoveryParam(
                 exporterBean.getTargetName(), exporterBean.getBatchId(), exporterBean.getJobflowId())) {
-            throw new BulkLoaderSystemException(
-                    CLASS,
-                    MessageIdConst.RCV_PARAMCHECK_ERROR,
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01007",
                     "DSLプロパティ",
                     MessageFormat.format(
                             "ターゲット名:{0}, バッチID:{1}, ジョブフローID:{2}" ,
                             exporterBean.getTargetName(),
                             exporterBean.getBatchId(),
-                            exporterBean.getJobflowId())
-                    , exporterBean.getExecutionId());
+                            exporterBean.getJobflowId()),
+                    exporterBean.getExecutionId());
         }
         exporterBean.setExportTargetTable(paramLoader.getExportTargetTables());
         exporterBean.setImportTargetTable(paramLoader.getImportTargetTables());
@@ -537,7 +473,7 @@ public class Recoverer {
             exporterBean.setRetryCount(Integer.parseInt(count));
             exporterBean.setRetryInterval(Integer.parseInt(interval));
         } catch (NumberFormatException e) {
-            throw new BulkLoaderSystemException(CLASS, MessageIdConst.RCV_PARAMCHECK_ERROR,
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01007",
                     "リトライ回数,リトライインターバル",
                     count + "," + interval,
                     exporterBean.getExecutionId());
@@ -555,10 +491,8 @@ public class Recoverer {
         try {
             tempBean = getExportTempTable(exporterBean.getJobflowSid());
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-            throw new BulkLoaderSystemException(
-                    this.getClass(),
-                    MessageIdConst.RCV_TEMP_INFO_ERROR,
+            LOG.log(e);
+            throw new BulkLoaderSystemException(getClass(), "TG-RECOVERER-01011",
                     exporterBean.getTargetName(),
                     exporterBean.getBatchId(),
                     exporterBean.getJobflowId(),

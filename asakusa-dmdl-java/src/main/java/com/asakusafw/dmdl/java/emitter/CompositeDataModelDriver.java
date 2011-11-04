@@ -30,6 +30,7 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.util.Util;
 import com.ashigeru.lang.java.model.syntax.Annotation;
+import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.Type;
 
@@ -109,6 +110,15 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
         List<Type> results = new ArrayList<Type>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getInterfaces(context, model));
+        }
+        return results;
+    }
+
+    @Override
+    public List<FieldDeclaration> getFields(EmitContext context, ModelDeclaration model) throws IOException {
+        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        for (JavaDataModelDriver driver : drivers) {
+            results.addAll(driver.getFields(context, model));
         }
         return results;
     }

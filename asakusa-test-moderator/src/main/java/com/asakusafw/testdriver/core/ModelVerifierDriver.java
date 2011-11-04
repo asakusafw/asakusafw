@@ -22,7 +22,7 @@ package com.asakusafw.testdriver.core;
  */
 public class ModelVerifierDriver<T> implements VerifyRule {
 
-    private final ModelVerifier<T> verifier;
+    private final ModelVerifier<? super T> verifier;
 
     private final DataModelDefinition<? extends T> definition;
 
@@ -33,7 +33,7 @@ public class ModelVerifierDriver<T> implements VerifyRule {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public ModelVerifierDriver(
-            ModelVerifier<T> verifier,
+            ModelVerifier<? super T> verifier,
             DataModelDefinition<? extends T> definition) {
         if (verifier == null) {
             throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$

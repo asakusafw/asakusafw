@@ -27,6 +27,7 @@ import org.junit.Test;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.SpiVerifyRuleProvider;
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRule;
 import com.asakusafw.testdriver.core.VerifyRuleProvider;
@@ -428,7 +429,7 @@ public class ExcelSheetRuleProviderTest {
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
         calendar.set(2011, 2, 31, 23, 0, 0);
-        VerifyContext result = new VerifyContext(calendar.getTime());
+        VerifyContext result = new VerifyContext(new TestContext.Empty(), calendar.getTime());
 
         calendar.add(Calendar.MINUTE, elapsedMinutes);
         result.setTestFinished(calendar.getTime());

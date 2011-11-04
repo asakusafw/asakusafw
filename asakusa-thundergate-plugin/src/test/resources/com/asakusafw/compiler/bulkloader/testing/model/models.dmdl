@@ -22,6 +22,15 @@ ex1 = system_columns + {
 ex2 = ex1;
 
 @namespace(value = testing)
+@thundergate.name(value = "CACHED")
+@thundergate.primary_key(value = { sid })
+@thundergate.cache_support(sid = sid, timestamp = timestamp)
+cached = {
+    sid : LONG;
+    timestamp : DATETIME;
+};
+
+@namespace(value = testing)
 @thundergate.name(value = "MOCK")
 @thundergate.primary_key(value = { a })
 mock_table_model = {

@@ -15,14 +15,23 @@
  */
 package com.asakusafw.testdriver;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelVerifier;
+import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.VerifierFactory;
+import com.asakusafw.testdriver.core.VerifyRule;
+import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -35,64 +44,28 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverOutputBase.class);
 
-    /** 期待値URI */
-    protected URI expectedUri;
-    /** 検証ルール */
-    protected VerifyRuleHolder<T> verifyRule;
-    /** エクスポータ記述 */
+    /**
+     * エクスポータ記述。
+     */
     protected ExporterDescription exporterDescription;
 
     /**
+     * 検証エンジン (nullable)。
+     * @since 0.2.3
+     */
+    protected VerifierFactory verifier;
+
+    /**
      * 結果の出力先 (nullable)。
+     * @since 0.2.3
      */
-    protected DataModelSinkHolder resultSink;
+    protected DataModelSinkFactory resultSink;
 
     /**
-     * @return the expectedUri
+     * 差異の出力先 (nullable)。
+     * @since 0.2.3
      */
-    protected URI getExpectedUri() {
-        return expectedUri;
-    }
-
-    /**
-     * @param expectedUri the expectedUri to set
-     */
-    protected void setExpectedUri(URI expectedUri) {
-        this.expectedUri = expectedUri;
-    }
-
-    /**
-     * Returns the verify rule for this output.
-     * @return the verify rule if exists, {@code null} otherwise
-     */
-    public VerifyRuleHolder<T> getVerifyRule() {
-        return verifyRule;
-    }
-
-    /**
-     * Sets the verify rule for this output.
-     * @param verifyRule the rule to set, {@code null} to clear verify rules
-     */
-    public void setVerifyRule(VerifyRuleHolder<T> verifyRule) {
-        this.verifyRule = verifyRule;
-    }
-
-    /**
-     * Returns the actual data sink for this output.
-     * @return the actual data sink, or {@code null} if not defined
-     */
-    public DataModelSinkHolder getResultSink() {
-        return resultSink;
-    }
-
-    /**
-     * Sets the actual data sink for this output.
-     * The specified object will save the actual result of this object.
-     * @param resultSink the result sink to set, {@code null} to cleare the sink
-     */
-    public void setResultSink(DataModelSinkHolder resultSink) {
-        this.resultSink = resultSink;
-    }
+    protected DifferenceSinkFactory differenceSink;
 
     /**
      * @return the exporterDescription
@@ -109,143 +82,196 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * set expected URI from expected path.
-     *
-     * @param expectedPath expected path.
-     */
-    protected void setExpectedUri(String expectedPath) {
-        try {
-            expectedUri = toUri(expectedPath);
-            LOG.info("Expected URI:" + expectedUri);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid expected URI. expectedPath:" + expectedPath, e);
-        }
-    }
-
-    /**
-     * Sets a {@link ModelVerifier} as verify rule for this output.
-     * @param verifier the verifier
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    protected void setModelVerifier(ModelVerifier<? super T> verifier) {
-        if (verifier == null) {
-            throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
-        }
-        this.verifyRule = new VerifyRuleHolder<T>(verifier);
-        LOG.info("Model Verifier: {}", verifier);
-    }
-
-    /**
-     * set verifyRule URI from verifyRule path.
-     *
-     * @param verifyRulePath expected path.
-     */
-    protected void setVerifyRuleUri(String verifyRulePath) {
-        try {
-            URI verifyRuleUri = toUri(verifyRulePath);
-            LOG.info("Verify Rule URI:" + verifyRuleUri);
-            setVerifyRule(new VerifyRuleHolder<T>(verifyRuleUri));
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid verifyRule URI. verifyRulePath:" + verifyRulePath, e);
-        }
-    }
-
-    /**
-     * Holds data model sink as {@link DataModelSinkFactory}.
+     * Returns the verifier.
+     * @return the verifier, or {@code null} if not defined
      * @since 0.2.3
      */
-    public static class DataModelSinkHolder {
-
-        private final DataModelSinkFactory factory;
-
-        /**
-         * Creates a new instance.
-         * @param factory the factory to be held
-         * @throws IllegalArgumentException if some parameters were {@code null}
-         */
-        public DataModelSinkHolder(DataModelSinkFactory factory) {
-            if (factory == null) {
-                throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
-            }
-            this.factory = factory;
-        }
-
-        /**
-         * Returns whether this holder has {@link DataModelSinkFactory}.
-         * @return {@code true} iff this holder has {@link DataModelSinkFactory}
-         */
-        public boolean hasFactory() {
-            return factory != null;
-        }
-
-        /**
-         * Returns the defined factory.
-         * @return the factory if defined, otherwise {@code false}
-         */
-        public DataModelSinkFactory getFactory() {
-            return factory;
-        }
+    protected VerifierFactory getVerifier() {
+        return verifier;
     }
 
     /**
-     * Holds verifier as {@link URI} or {@link ModelVerifier}.
-     * @param <T> output model object type
-     * @since 0.2.0
+     * Sets the verify rule for this output.
+     * @param verifier the verifier to set, or {@code null} to clear verifier
+     * @since 0.2.3
      */
-    public static class VerifyRuleHolder<T> {
+    protected void setVerifier(VerifierFactory verifier) {
+        this.verifier = verifier;
+    }
 
-        private final URI uri;
-
-        private final ModelVerifier<? super T> verifier;
-
-        /**
-         * Creates a new instance from {@link URI}.
-         * @param uri verifier URI
-         * @throws IllegalArgumentException if some parameters were {@code null}
-         */
-        public VerifyRuleHolder(URI uri) {
-            if (uri == null) {
-                throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
-            }
-            this.uri = uri;
-            this.verifier = null;
+    /**
+     * Sets the verifier for this output.
+     * @param expectedUri the URI which represents the expected data set
+     * @param ruleUri the URI which represents the verification rule description
+     * @param extraRules the extra verification rules
+     * @throws IOException if failed to create verifier
+     * @since 0.2.3
+     */
+    protected void setVerifier(
+            URI expectedUri,
+            URI ruleUri,
+            List<? extends ModelTester<? super T>> extraRules) throws IOException {
+        List<TestRule> ruleFragments = new ArrayList<TestRule>();
+        for (ModelTester<? super T> tester : extraRules) {
+            TestRule fragment = driverContext.getRepository().toVerifyRuleFragment(modelType, tester);
+            ruleFragments.add(fragment);
         }
+        VerifierFactory factory = driverContext.getRepository().getVerifierFactory(expectedUri, ruleUri, ruleFragments);
+        setVerifier(factory);
+    }
 
-        /**
-         * Creates a new instance from {@link ModelVerifier}.
-         * @param verifier verifier object
-         * @throws IllegalArgumentException if some parameters were {@code null}
-         */
-        public VerifyRuleHolder(ModelVerifier<? super T> verifier) {
-            if (verifier == null) {
-                throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
-            }
-            this.uri = null;
-            this.verifier = verifier;
+    /**
+     * Sets the verifier for this output.
+     * @param expectedUri the URI which represents the expected data set
+     * @param verifier the model verifier
+     * @throws IOException if failed to create verifier
+     * @since 0.2.3
+     */
+    protected void setVerifier(URI expectedUri, ModelVerifier<? super T> verifier) throws IOException {
+        LOG.info("expected: {}", expectedUri);
+        VerifyRule rule = driverContext.getRepository().toVerifyRule(modelType, verifier);
+        VerifierFactory factory = driverContext.getRepository().getVerifierFactory(expectedUri, rule);
+        setVerifier(factory);
+    }
+
+    /**
+     * Sets the verifier for this output.
+     * @param expectedPath the path which represents the expected data set
+     * @param rulePath the path which represents the verification rule description
+     * @param extraRules the extra verification rules
+     * @throws IOException if failed to create verifier
+     * @since 0.2.3
+     */
+    protected void setVerifier(
+            String expectedPath,
+            String rulePath,
+            List<? extends ModelTester<? super T>> extraRules) throws IOException {
+        URI expectedUri;
+        try {
+            expectedUri = toUri(expectedPath);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("invalid expected URI:" + expectedPath, e);
         }
-
-        /**
-         * Returns {@code true} iff this holder has a verifier as URI.
-         * @return {@code true} iff this holder has a verifier as URI
-         */
-        public boolean hasUri() {
-            return uri != null;
+        URI ruleUri;
+        try {
+            ruleUri = toUri(rulePath);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("invalid rule URI: " + rulePath, e);
         }
+        setVerifier(expectedUri, ruleUri, extraRules);
+    }
 
-        /**
-         * Returns the verifier URI.
-         * @return the verifier URI if defined, {@code null} otherwise
-         */
-        public URI getUri() {
+    /**
+     * Sets the verify rule for this output.
+     * @param expectedPath the path which represents the expected data set
+     * @param verifier the model verifier
+     * @throws IOException if failed to create verifier
+     * @since 0.2.3
+     */
+    protected void setVerifier(String expectedPath, ModelVerifier<? super T> verifier) throws IOException {
+        URI expectedUri;
+        try {
+            expectedUri = toUri(expectedPath);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("invalid expected URI:" + expectedPath, e);
+        }
+        setVerifier(expectedUri, verifier);
+    }
+
+    /**
+     * Returns the actual data sink for this output.
+     * @return the actual data sink, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public DataModelSinkFactory getResultSink() {
+        return resultSink;
+    }
+
+    /**
+     * Sets the actual data sink for this output.
+     * The specified object will save the actual result of this.
+     * @param resultSink the result sink to set, {@code null} to cleare the sink
+     * @since 0.2.3
+     */
+    public void setResultSink(DataModelSinkFactory resultSink) {
+        this.resultSink = resultSink;
+    }
+
+    /**
+     * Sets the actual data sink for this output.
+     * The specified object will save the actual result of this.
+     * @param path the output path
+     * @since 0.2.3
+     */
+    public void setResultSinkUri(String path) {
+        URI uri = toOutputUri(path);
+        setResultSinkUri(uri);
+    }
+
+    /**
+     * Sets the actual data sink for this output.
+     * The specified object will save the actual result of this.
+     * @param uri the target URI
+     * @since 0.2.3
+     */
+    public void setResultSinkUri(URI uri) {
+        LOG.info("result sink: {}", uri);
+        DataModelSinkFactory sink = driverContext.getRepository().getDataModelSinkFactory(uri);
+        setResultSink(sink);
+    }
+
+    /**
+     * Returns the difference information sink for this output.
+     * @return the difference information sink, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public DifferenceSinkFactory getDifferenceSink() {
+        return differenceSink;
+    }
+
+    /**
+     * Sets the difference information sink for this output.
+     * The specified object will save the difference from expected result of this.
+     * @param differenceSink the difference sink to set, {@code null} to cleare the sink
+     * @since 0.2.3
+     */
+    public void setDifferenceSink(DifferenceSinkFactory differenceSink) {
+        this.differenceSink = differenceSink;
+    }
+
+    /**
+     * Sets the difference information sink for this output.
+     * The specified object will save the difference from expected result of this.
+     * @param path the target path
+     * @since 0.2.3
+     */
+    protected void setDifferenceSinkUri(String path) {
+        setDifferenceSinkUri(toOutputUri(path));
+    }
+
+    /**
+     * Sets the difference information sink for this output.
+     * The specified object will save the difference from expected result of this.
+     * @param uri the target URI
+     * @since 0.2.3
+     */
+    protected void setDifferenceSinkUri(URI uri) {
+        LOG.info("difference sink: {}", uri);
+        DifferenceSinkFactory sink = driverContext.getRepository().getDifferenceSinkFactory(uri);
+        setDifferenceSink(sink);
+    }
+
+    /**
+     * Converts the path into the related URI.
+     * @param path the path
+     * @return the resulting URI
+     * @since 0.2.3
+     */
+    protected URI toOutputUri(String path) {
+        URI uri = URI.create(path);
+        if (uri.getScheme() != null) {
             return uri;
         }
-
-        /**
-         * Returns the verifier.
-         * @return the verifier if defined, {@code null} otherwise
-         */
-        public ModelVerifier<? super T> getVerifier() {
-            return verifier;
-        }
+        return new File(path).toURI();
     }
 }

@@ -40,6 +40,8 @@ public class TableInfoTest {
 
     static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
 
+    static final DataModelDefinition<CacheSupport> CACHE = new SimpleDataModelDefinition<CacheSupport>(CacheSupport.class);
+
     /**
      * simple.
      */
@@ -50,6 +52,7 @@ public class TableInfoTest {
         }));
         assertThat(info.getDefinition(), is(SIMPLE));
         assertThat(info.getTableName(), is("SMPL"));
+        assertThat(info.getTimestampColumn(), is(nullValue()));
         Map<String, PropertyName> map = info.getColumnsToProperties();
         assertThat(map.size(), is(1));
         assertThat(map.get("NUMBER"), is(name("number")));
@@ -119,6 +122,17 @@ public class TableInfoTest {
         assertThat(info.getTableName(), is("SMPL"));
         Map<String, PropertyName> map = info.getColumnsToProperties();
         assertThat(map.size(), is(0));
+    }
+
+    /**
+     * timestamp column.
+     */
+    @Test
+    public void timestamp() {
+        TableInfo<CacheSupport> info = new TableInfo<CacheSupport>(CACHE, "SMPL", Arrays.asList(new String[] {
+                "NUMBER"
+        }));
+        assertThat(info.getTimestampColumn(), is("C_DATETIME"));
     }
 
     private Matcher<PropertyName> name(final String words) {

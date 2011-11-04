@@ -39,12 +39,7 @@ public class ColumnOrderEmitter extends JavaDataModelDriver {
         ModelFactory f = context.getModelFactory();
         List<Expression> columns = new ArrayList<Expression>();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
-            OriginalNameTrait trait = property.getTrait(OriginalNameTrait.class);
-            if (trait == null) {
-                columns.add(Models.toLiteral(f, OriginalNameEmitter.getDefaultName(property)));
-            } else {
-                columns.add(Models.toLiteral(f, trait.getName()));
-            }
+            columns.add(Models.toLiteral(f, OriginalNameEmitter.getOriginalName(property)));
         }
         return new AttributeBuilder(f)
             .annotation(context.resolve(ColumnOrder.class),

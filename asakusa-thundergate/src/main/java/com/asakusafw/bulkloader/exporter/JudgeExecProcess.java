@@ -24,7 +24,6 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
@@ -60,6 +59,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class JudgeExecProcess {
+
+    static final Log LOG = new Log(JudgeExecProcess.class);
 
     // TODO 状態の見通しをよくする
 
@@ -100,9 +101,7 @@ public class JudgeExecProcess {
     public boolean judge(ExporterBean bean) {
         // ジョブフローSIDが取得できない場合は異常終了する
         if (bean.getJobflowSid() == null || bean.getJobflowSid().isEmpty()) {
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_JOBFLOW_EXIT_ERROR,
+            LOG.error("TG-EXPORTER-01011",
                     new Date(),
                     bean.getTargetName(),
                     bean.getBatchId(),
@@ -121,7 +120,7 @@ public class JudgeExecProcess {
         List<String> list = bean.getExportTargetTableList();
         if (list == null || list.size() == 0) {
             execLockRelease = true;
-            Log.log(this.getClass(), MessageIdConst.EXP_EXEC_PROCESS_JUDGE,
+            LOG.info("TG-EXPORTER-01031",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -139,10 +138,8 @@ public class JudgeExecProcess {
         try {
             exportTempTableBean = getExportTempTable(bean.getJobflowSid());
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_TEMP_INFO_ERROR,
+            LOG.log(e);
+            LOG.error("TG-EXPORTER-01012",
                     new Date(),
                     bean.getTargetName(),
                     bean.getBatchId(),
@@ -160,12 +157,10 @@ public class JudgeExecProcess {
             execLockRelease = true;
             execFileDelete = isDeleteTsv;
             if (!isDeleteTsv) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_TSV_FILE_NOT_DELETE,
+                LOG.info("TG-EXPORTER-01032",
                         bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
             }
-            Log.log(this.getClass(), MessageIdConst.EXP_EXEC_PROCESS_JUDGE,
+            LOG.info("TG-EXPORTER-01031",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -183,7 +178,7 @@ public class JudgeExecProcess {
             // テンポラリテーブルへのロードが終了している場合、Exportデータコピー、ロック解除を実行する。
             execCopy = true;
             execLockRelease = true;
-            Log.log(this.getClass(), MessageIdConst.EXP_EXEC_PROCESS_JUDGE,
+            LOG.info("TG-EXPORTER-01031",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -205,15 +200,13 @@ public class JudgeExecProcess {
             execLockRelease = true;
             execFileDelete = isDeleteTsv;
             if (!isDeleteTsv) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_TSV_FILE_NOT_DELETE,
+                LOG.info("TG-EXPORTER-01032",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
                         bean.getExecutionId());
             }
-            Log.log(this.getClass(), MessageIdConst.EXP_EXEC_PROCESS_JUDGE,
+            LOG.info("TG-EXPORTER-01031",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),

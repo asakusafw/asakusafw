@@ -21,16 +21,16 @@ import org.slf4j.LoggerFactory;
 /**
  * ジョブフローのテスト入力データオブジェクト。
  * @since 0.2.0
- * 
+ *
  * @param <T> モデルクラス
  */
 public class JobFlowDriverInput<T> extends DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverInput.class);
-    
+
     /**
      * コンストラクタ
-     * 
+     *
      * @param driverContext テストドライバコンテキスト。
      * @param name 入力の名前。
      * @param modelType モデルクラス。
@@ -40,17 +40,16 @@ public class JobFlowDriverInput<T> extends DriverInputBase<T> {
         this.name = name;
         this.modelType = modelType;
     }
-        
+
     /**
      * テスト実行時に使用する入力データを指定する。
-     * 
+     *
      * @param sourcePath 入力データのパス。
      * @return this。
      */
     public JobFlowDriverInput<T> prepare(String sourcePath) {
-
         LOG.info("prepare - ModelType:" + getModelType());
         setSourceUri(sourcePath);
         return this;
-    }    
+    }
 }

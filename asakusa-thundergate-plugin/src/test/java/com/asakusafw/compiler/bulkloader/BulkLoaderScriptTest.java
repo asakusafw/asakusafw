@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import com.asakusafw.compiler.bulkloader.BulkLoaderScript.Cache;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.DuplicateRecordErrorTable;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.ExportTable;
 import com.asakusafw.compiler.bulkloader.BulkLoaderScript.ImportTable;
@@ -53,7 +52,7 @@ public class BulkLoaderScriptTest {
                 "EX1",
                 Arrays.asList("SID", "VALUE", "STRING", "LAST_UPDATE_TIME", "JOBFLOW_SID", "CACHE_FILE_SID"),
                 "VALUE > 0",
-                Cache.ENABLED,
+                "cache-id",
                 LockType.ROW,
                 LockedOperation.ERROR,
                 Location.fromPath("ex1", '/')));
@@ -62,14 +61,13 @@ public class BulkLoaderScriptTest {
                 "EX2",
                 Arrays.asList("SID", "VALUE", "STRING", "LAST_UPDATE_TIME", "JOBFLOW_SID", "CACHE_FILE_SID"),
                 "VALUE < 0",
-                Cache.DISABLED,
+                null,
                 LockType.UNLOCKED,
                 LockedOperation.FORCE,
                 Location.fromPath("ex2", '/')));
         BulkLoaderScript script = new BulkLoaderScript(importers, exporters);
         Properties properties = script.getImporterProperties();
-        List<ImportTable> restored =
-            ImportTable.fromProperties(properties, getClass().getClassLoader());
+        List<ImportTable> restored = ImportTable.fromProperties(properties, getClass().getClassLoader());
 
         assertThat(restored, is(importers));
     }

@@ -31,6 +31,17 @@ import com.asakusafw.runtime.value.DateTime;
  */
 public class Difference {
 
+    private static final char[] ASCII_SPECIAL_ESCAPE = new char[0x80];
+    static {
+        ASCII_SPECIAL_ESCAPE['"'] = '"';
+        ASCII_SPECIAL_ESCAPE['\b'] = 'b';
+        ASCII_SPECIAL_ESCAPE['\t'] = 't';
+        ASCII_SPECIAL_ESCAPE['\n'] = 'n';
+        ASCII_SPECIAL_ESCAPE['\f'] = 'f';
+        ASCII_SPECIAL_ESCAPE['\r'] = 'r';
+        ASCII_SPECIAL_ESCAPE['\\'] = '\\';
+    }
+
     private final DataModelReflection expected;
 
     private final DataModelReflection actual;
@@ -89,7 +100,9 @@ public class Difference {
      * @return formatted value.
      */
     public static String format(Object value) {
-        if (value instanceof Calendar) {
+        if (value instanceof String) {
+            return toStringLiteral((String) value);
+        } else if (value instanceof Calendar) {
             Calendar c = (Calendar) value;
             if (c.isSet(Calendar.HOUR_OF_DAY)) {
                 return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
@@ -100,6 +113,24 @@ public class Difference {
             return ((BigDecimal) value).toPlainString();
         }
         return String.valueOf(value);
+    }
+
+    private static String toStringLiteral(String value) {
+        assert value != null;
+        StringBuilder buf = new StringBuilder();
+        buf.append('"');
+        for (char c : value.toCharArray()) {
+            if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
+                buf.append('\\');
+                buf.append(ASCII_SPECIAL_ESCAPE[c]);
+            } else if (Character.isISOControl(c) || !Character.isDefined(c)){
+                buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
+            } else {
+                buf.append(c);
+            }
+        }
+        buf.append('"');
+        return buf.toString();
     }
 
     private static Map<Object, String> formatMap(DataModelReflection reflection) {

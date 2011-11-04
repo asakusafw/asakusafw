@@ -27,6 +27,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-dsl-vocabulary</artifactId>
 			<version>${project.version}</version>
 		</dependency>

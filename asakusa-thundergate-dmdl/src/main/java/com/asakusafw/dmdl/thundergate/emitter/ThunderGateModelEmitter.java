@@ -20,21 +20,35 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asakusafw.dmdl.model.AstAttribute;
+import com.asakusafw.dmdl.model.AstLiteral;
 import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstScript;
+import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.parser.DmdlEmitter;
 import com.asakusafw.dmdl.thundergate.Configuration;
 import com.asakusafw.dmdl.thundergate.Constants;
 import com.asakusafw.dmdl.thundergate.model.JoinedModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelDescription;
+import com.asakusafw.dmdl.thundergate.model.ModelProperty;
+import com.asakusafw.dmdl.thundergate.model.PropertyType;
+import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
 import com.asakusafw.dmdl.thundergate.model.SummarizedModelDescription;
 import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 
 /**
  * Emits ThunderGate data models as DMDL.
+ * @since 0.2.0
  */
 public class ThunderGateModelEmitter {
+
+    static final Logger LOG = LoggerFactory.getLogger(ThunderGateModelEmitter.class);
 
     private final Configuration config;
 
@@ -55,6 +69,7 @@ public class ThunderGateModelEmitter {
      * @param model target model
      * @throws IOException if failed to emit DMDL script
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @version 0.2.3
      */
     public void emit(ModelDescription model) throws IOException {
         if (model == null) {
@@ -69,7 +84,13 @@ public class ThunderGateModelEmitter {
         assert model != null;
         AstModelDefinition<?> def;
         if (model instanceof TableModelDescription) {
-            def = RecordModelGenerator.generate((TableModelDescription) model);
+            TableModelDescription tableModel = (TableModelDescription) model;
+            AstAttribute cacheSupport = generateCacheSupport(tableModel);
+            if (cacheSupport == null) {
+                def = RecordModelGenerator.generate(tableModel);
+            } else {
+                def = RecordModelGenerator.generate(tableModel, cacheSupport);
+            }
         } else if (model instanceof JoinedModelDescription) {
             def = JoinedModelGenerator.generate((JoinedModelDescription) model);
         } else if (model instanceof SummarizedModelDescription) {
@@ -78,6 +99,84 @@ public class ThunderGateModelEmitter {
             throw new AssertionError(model);
         }
         return new AstScript(null, Collections.singletonList(def));
+    }
+
+    private AstAttribute generateCacheSupport(TableModelDescription model) {
+        assert model != null;
+        if (config.getSidColumn() == null) {
+            return null;
+        }
+
+        Map<String, ModelProperty> properties = new TreeMap<String, ModelProperty>(String.CASE_INSENSITIVE_ORDER);
+        for (ModelProperty property : model.getProperties()) {
+            properties.put(property.getSource().getName(), property);
+        }
+
+        ModelProperty sid = properties.get(config.getSidColumn());
+        if (sid == null) {
+            LOG.warn("テーブル{}にはカラム{}が定義されていないため、キャッシュはサポートされません",
+                    model.getReference().getSimpleName(),
+                    config.getSidColumn());
+            return null;
+        }
+        if (sid.getType().getKind() != PropertyTypeKind.LONG) {
+            LOG.warn("テーブル{}のカラム{}がBIGINTでないため、キャッシュはサポートされません",
+                    model.getReference().getSimpleName(),
+                    config.getSidColumn());
+            return null;
+        }
+
+        ModelProperty timestamp = properties.get(config.getTimestampColumn());
+        if (timestamp == null) {
+            LOG.warn("テーブル{}にはカラム{}が定義されていないため、キャッシュはサポートされません",
+                    model.getReference().getSimpleName(),
+                    config.getTimestampColumn());
+            return null;
+        }
+        if (timestamp.getType().getKind() != PropertyTypeKind.DATETIME) {
+            LOG.warn("テーブル{}のカラム{}がDATETIMEでないため、キャッシュはサポートされません",
+                    model.getReference().getSimpleName(),
+                    config.getTimestampColumn());
+            return null;
+        }
+
+        if (config.getDeleteFlagColumn() != null) {
+            ModelProperty deleteFlag = properties.get(config.getDeleteFlagColumn());
+            if (deleteFlag == null) {
+                LOG.info("テーブル{}のカラム{}が定義されていないため、このテーブルに対する論理削除機能は無効化されます",
+                        model.getReference().getSimpleName(),
+                        config.getDeleteFlagColumn());
+            } else if (acceptsLiteral(deleteFlag.getType(), config.getDeleteFlagValue()) == false) {
+                LOG.warn("テーブル{}のカラム{}は指定した論理削除の値({})を利用できないため、キャッシュはサポートされません", new Object[] {
+                        model.getReference().getSimpleName(),
+                        config.getDeleteFlagColumn(),
+                        config.getDeleteFlagValue(),
+                });
+                return null;
+            } else {
+                return AstBuilder.getCacheSupport(sid, timestamp, deleteFlag, config.getDeleteFlagValue());
+            }
+        }
+        return AstBuilder.getCacheSupport(sid, timestamp);
+    }
+
+    private boolean acceptsLiteral(PropertyType type, AstLiteral value) {
+        assert type != null;
+        assert value != null;
+        LiteralKind literalKind = value.getKind();
+        switch (type.getKind()) {
+        case BOOLEAN:
+            return literalKind == LiteralKind.BOOLEAN;
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+            return literalKind == LiteralKind.INTEGER;
+        case STRING:
+            return literalKind == LiteralKind.STRING;
+        default:
+            return false;
+        }
     }
 
     private void emit(String name, AstScript script) throws IOException {

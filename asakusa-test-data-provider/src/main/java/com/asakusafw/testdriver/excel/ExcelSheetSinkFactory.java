@@ -38,6 +38,8 @@ import com.asakusafw.testdriver.core.TestContext;
  */
 public class ExcelSheetSinkFactory extends DataModelSinkFactory {
 
+    private static final int MAX_COLUMN_SIZE = 255;
+
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSinkFactory.class);
 
     final File output;
@@ -74,6 +76,15 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        if (definition.getProperties().size() > MAX_COLUMN_SIZE) {
+            LOG.warn("The data model \"{}\" has > {} properties, so several properties will be omitted to generate {}.",
+                    new Object[] {
+                        definition.getModelClass().getName(),
+                        MAX_COLUMN_SIZE,
+                        output,
+                    }
+            );
+        }
         File parent = output.getParentFile();
         if (parent != null && parent.isDirectory() == false && parent.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
@@ -82,7 +93,7 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
         }
         final Workbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("results");
-        return new ExcelSheetSink(definition, sheet) {
+        return new ExcelSheetSink(definition, sheet, MAX_COLUMN_SIZE) {
             private boolean closed = false;
             @Override
             public void close() throws IOException {
@@ -99,5 +110,13 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                 }
             }
         };
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "{0}({1})",
+                ExcelSheetSink.class.getSimpleName(),
+                output);
     }
 }

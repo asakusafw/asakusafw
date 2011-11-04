@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 
 /**
@@ -129,4 +130,65 @@ public abstract class TestDriverBase {
     public void setFrameworkHomePath(File frameworkHomePath) {
         driverContext.setFrameworkHomePath(frameworkHomePath);
     }
+
+    /**
+     * 入力データのクリーニング(truncate)をスキップするかを設定する。
+     *
+     * @param skip
+     *            入力データのクリーニング(truncate)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipCleanInput(boolean skip) {
+        driverContext.setSkipCleanInput(skip);
+    }
+
+    /**
+     * 出力データのクリーニング(truncate)をスキップするかを設定する。
+     *
+     * @param skip
+     *            出力データのクリーニング(truncate)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipCleanOutput(boolean skip) {
+        driverContext.setSkipCleanOutput(skip);
+    }
+
+    /**
+     * 入力データのセットアップ(prepare)をスキップするかを設定する。
+     *
+     * @param skip
+     *            入力データのセットアップ(prepare)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipPrepareInput(boolean skip) {
+        driverContext.setSkipPrepareInput(skip);
+    }
+
+    /**
+     * 出力データのセットアップ(prepare)をスキップするかを設定する。
+     *
+     * @param skip
+     *            出力データのセットアップ(prepare)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipPrepareOutput(boolean skip) {
+        driverContext.setSkipPrepareOutput(skip);
+    }
+
+    /**
+     * ジョブフローの実行をスキップするかを設定する。
+     *
+     * @param skip
+     *            ジョブフローの実行をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipRunJobflow(boolean skip) {
+        driverContext.setSkipRunJobflow(skip);
+    }
+
+    /**
+     * テスト結果の検証をスキップするかを設定する。
+     *
+     * @param skip
+     *            テスト結果の検証をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     */
+    public void skipVerify(boolean skip) {
+        driverContext.setSkipVerify(skip);
+    }
+
 }
