@@ -26,7 +26,6 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -36,10 +35,7 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class Exporter {
 
-    /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Exporter.class;
+    static final Log LOG = new Log(Exporter.class);
 
     /**
      * Exporterで読み込むプロパティファイル。
@@ -85,54 +81,40 @@ public class Exporter {
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initDBServer(jobflowId, executionId, PROPERTIES, targetName)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_INIT_ERROR,
+                LOG.error("TG-EXPORTER-01003",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // 開始ログ出力
-            Log.log(
-                    CLASS,
-                    MessageIdConst.EXP_START,
+            LOG.info("TG-EXPORTER-01001",
                     new Date(), targetName, batchId, jobflowId, executionId);
 
             // パラメータオブジェクトを作成
             ExporterBean bean = createBean(targetName, batchId, jobflowId, executionId);
             if (bean == null) {
                 // パラメータのチェックでエラー
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_PARAM_ERROR,
+                LOG.error("TG-EXPORTER-01006",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // ジョブフロー実行IDの排他制御
-            Log.log(
-                    CLASS,
-                    MessageIdConst.EXP_INSTANCE_ID_LOCK,
+            LOG.info("TG-EXPORTER-01018",
                     targetName, batchId, jobflowId, executionId);
             try {
                 lockConn = DBConnection.getConnection();
                 if (!DBAccessUtil.getJobflowInstanceLock(bean.getExecutionId(), lockConn)) {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_INSTANCE_ID_LOCKED,
+                    LOG.error("TG-EXPORTER-01016",
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_INSTANCE_ID_LOCK_SUCCESS,
+                    LOG.info("TG-EXPORTER-01019",
                             targetName, batchId, jobflowId, executionId);
                 }
             } catch (BulkLoaderSystemException e) {
-                Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_INSTANCE_ID_LOCK_ERROR,
+                LOG.log(e);
+                LOG.error("TG-EXPORTER-01017",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
@@ -142,10 +124,8 @@ public class Exporter {
                 String jobflowSid = DBAccessUtil.selectJobFlowSid(bean.getExecutionId());
                 bean.setJobflowSid(jobflowSid);
             } catch (BulkLoaderSystemException e) {
-                Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.EXP_GETJOBFLOWSID_ERROR,
+                LOG.log(e);
+                LOG.error("TG-EXPORTER-01010",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
@@ -160,61 +140,45 @@ public class Exporter {
 
             // テンポラリテーブル削除処理を実行する
             if (judge.isExecTempTableDelete()) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_TEMP_DELETE,
+                LOG.info("TG-EXPORTER-01020",
                         targetName, batchId, jobflowId, executionId, bean.getJobflowSid());
                 TempTableDelete tempDelete = createTempTableDelete();
                 if (!tempDelete.delete(judge.getExportTempTableBean(), true)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.EXP_TEMP_DELETE_ERROR,
+                    LOG.error("TG-EXPORTER-01013",
                             new Date(), targetName, batchId, jobflowId, executionId, bean.getJobflowSid());
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_TEMP_DELETE_SUCCESS,
+                    LOG.info("TG-EXPORTER-01021",
                             targetName, batchId, jobflowId, executionId, bean.getJobflowSid());
                 }
             }
 
             // Exportファイル受信処理処理を実行する
             if (judge.isExecReceive()) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_FILERECEIVE, targetName, batchId, jobflowId, executionId);
+                LOG.info("TG-EXPORTER-01022", targetName, batchId, jobflowId, executionId);
                 ExportFileReceive receive = createExportFileReceive();
                 if (!receive.receiveFile(bean)) {
                     // Exportファイルの転送に失敗
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_FILERECEIVE_ERROR,
+                    LOG.error("TG-EXPORTER-01007",
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_FILERECEIVE_SUCCESS,
+                    LOG.error("TG-EXPORTER-01023",
                             targetName, batchId, jobflowId, executionId);
                 }
             }
 
             // Exportファイルロード処理を実行する
             if (judge.isExecLoad()) {
-                Log.log(CLASS, MessageIdConst.EXP_FILELOAD, targetName, batchId, jobflowId, executionId);
+                LOG.info("TG-EXPORTER-01024", targetName, batchId, jobflowId, executionId);
                 ExportFileLoad road = createExportFileLoad();
                 if (!road.loadFile(bean)) {
                     // Exportファイルのロードに失敗
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_FILELOAD_ERROR,
+                    LOG.error("TG-EXPORTER-01008",
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_FILELOAD_SUCCESS,
+                    LOG.info("TG-EXPORTER-01025",
                             targetName, batchId, jobflowId, executionId);
                 }
             }
@@ -222,54 +186,40 @@ public class Exporter {
             // Exportデータコピー処理を実行する
             boolean updateEnd = true;
             if (judge.isExecCopy()) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_DATA_COPY,
+                LOG.info("TG-EXPORTER-01026",
                         targetName, batchId, jobflowId, executionId);
                 ExportDataCopy copy = createExportDataCopy();
                 if (!copy.copyData(bean)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.EXP_DATA_COPY_ERROR,
+                    LOG.error("TG-EXPORTER-01014",
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
                     // 更新レコードのコピーが全て終了しているかを表すフラグを取得
                     updateEnd = copy.isUpdateEnd();
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_DATA_COPY_SUCCESS,
+                    LOG.info("TG-EXPORTER-01027",
                             targetName, batchId, jobflowId, executionId);
                 }
             }
 
             // ロック解除処理を実行する
             if (judge.isExecLockRelease()) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_RELEASELOCK,
+                LOG.info("TG-EXPORTER-01028",
                         targetName, batchId, jobflowId, executionId);
                 LockRelease lock = createLockRelease();
                 if (!lock.releaseLock(bean, updateEnd)) {
                     // ロックの解除に失敗
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_RELEASELOCK_ERROR,
+                    LOG.error("TG-EXPORTER-01009",
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.EXP_RELEASELOCK_SUCCESS,
+                    LOG.info("TG-EXPORTER-01029",
                             targetName, batchId, jobflowId, executionId);
                 }
             }
 
             // 中間ファイル削除処理を実行する
             if (judge.isExecFileDelete()) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_TSV_FILE_DELETE,
+                LOG.info("TG-EXPORTER-01030",
                         targetName, batchId, jobflowId, executionId);
                 ExportFileDelete delete = createExportFileDelete();
                 delete.deleteFile(bean);
@@ -277,25 +227,18 @@ public class Exporter {
 
             if (updateEnd) {
                 // 正常終了
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_EXIT,
+                LOG.info("TG-EXPORTER-01002",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
             } else {
                 // 更新レコードのコピーが不完全な状態で異常終了
-                Log.log(
-                        CLASS,
-                        MessageIdConst.EXP_DATA_UPDATE_NOT_EXIT,
+                LOG.info("TG-EXPORTER-01015",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
         } catch (Exception e) {
             try {
-                Log.log(
-                        e,
-                        CLASS,
-                        MessageIdConst.EXP_EXCEPRION,
+                LOG.error(e, "TG-EXPORTER-01004",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {

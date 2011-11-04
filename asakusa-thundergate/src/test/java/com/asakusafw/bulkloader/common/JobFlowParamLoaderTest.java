@@ -46,6 +46,7 @@ import com.asakusafw.runtime.util.VariableTable;
  * @author yuta.shirai
  *
  */
+@SuppressWarnings({ "hiding", "deprecation" })
 public class JobFlowParamLoaderTest {
     /** ターゲット名 */
     private static String targetName = "target1";
@@ -113,8 +114,6 @@ public class JobFlowParamLoaderTest {
         assertEquals("columnC", table1.getImportTargetColumns().get(2));
         // 検索条件
         assertEquals("columnA='1' and columnB='2'", table1.getSearchCondition());
-        // キャッシュ利用有無
-        assertEquals(true, table1.isUseCache());
         // ロック取得タイプ
         assertEquals(ImportTableLockType.find("1"), table1.getLockType());
         // ロック済みの場合の取り扱い
@@ -131,8 +130,6 @@ public class JobFlowParamLoaderTest {
         assertEquals("columnA", table2.getImportTargetColumns().get(0));
         // 検索条件
         assertEquals("columnA='1' or columnB=(select columnB from tableA where column='3')", table2.getSearchCondition());
-        // キャッシュ利用有無
-        assertEquals(false, table2.isUseCache());
         // ロック取得タイプ
         assertEquals(ImportTableLockType.find("2"), table2.getLockType());
         // ロック済みの場合の取り扱い
@@ -150,8 +147,6 @@ public class JobFlowParamLoaderTest {
         assertEquals("columnB", table3.getImportTargetColumns().get(1));
         // 検索条件
         assertNull(table3.getSearchCondition());
-        // キャッシュ利用有無
-        assertEquals(false, table3.isUseCache());
         // ロック取得タイプ
         assertEquals(ImportTableLockType.find("3"), table3.getLockType());
         // ロック済みの場合の取り扱い
@@ -2032,8 +2027,6 @@ public class JobFlowParamLoaderTest {
         assertEquals("columnC", impTable1.getImportTargetColumns().get(2));
         // 検索条件
         assertEquals("columnA='1' and columnB='2'", impTable1.getSearchCondition());
-        // キャッシュ利用有無
-        assertEquals(true, impTable1.isUseCache());
         // ロック取得タイプ
         assertEquals(ImportTableLockType.find("1"), impTable1.getLockType());
         // ロック済みの場合の取り扱い

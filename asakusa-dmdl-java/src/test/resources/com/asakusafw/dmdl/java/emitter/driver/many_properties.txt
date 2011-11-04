@@ -1,0 +1,6 @@
+model = {
+    first : INT;
+    second_property : INT;
+    a : TEXT;
+    last : INT;
+};

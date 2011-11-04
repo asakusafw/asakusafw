@@ -1,0 +1,18 @@
+Command Line Tools for YAESS.
+
+==
+YAESS Explain
+
+Explains Workflow Structure for the specified script.
+
+Usage:
+
+java -classpath ...
+    com.asakusafw.yaess.tools.Explain
+    -script <path/to/yaess-script.properties>
+
+or:
+
+$ASAKUSA_HOME/bin/yaess-explain.sh <path/to/yaess-script.properties>
+
+==

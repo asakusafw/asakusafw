@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
@@ -38,7 +38,7 @@ import com.asakusafw.testdriver.core.TestContext;
  *
  * @since 0.2.2
  */
-public class TableSourceProvider implements SourceProvider {
+public class TableSourceProvider implements DataModelSourceProvider {
 
     static final Logger LOG = LoggerFactory.getLogger(TableSourceProvider.class);
 

@@ -5,6 +5,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
@@ -17,8 +18,9 @@ import org.apache.hadoop.io.Writable;
  * mock_error_modelを表すデータモデルクラス。
  */
 @ColumnOrder(value = {"A", "B", "C", "D", "E"})@DataModelKind("DMDL")@ModelInputLocation(MockErrorModelInput.class)@
-        ModelOutputLocation(MockErrorModelOutput.class)@OriginalName(value = "MOCK_ERROR")@PrimaryKey(value = {"a"}) 
-        public class MockErrorModel implements DataModel<MockErrorModel>, Writable {
+        ModelOutputLocation(MockErrorModelOutput.class)@OriginalName(value = "MOCK_ERROR")@PrimaryKey(value = {"a"})@
+        PropertyOrder({"a", "b", "c", "d", "e"}) public class MockErrorModel implements DataModel<MockErrorModel>, 
+        Writable {
     private final IntOption a = new IntOption();
     private final IntOption b = new IntOption();
     private final IntOption c = new IntOption();

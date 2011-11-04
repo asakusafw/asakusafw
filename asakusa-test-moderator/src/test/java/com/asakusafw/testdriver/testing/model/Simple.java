@@ -3,6 +3,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.testdriver.testing.io.SimpleInput;
 import com.asakusafw.testdriver.testing.io.SimpleOutput;
@@ -14,8 +15,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * simpleを表すデータモデルクラス。
  */
-@DataModelKind("DMDL")@ModelInputLocation(SimpleInput.class)@ModelOutputLocation(SimpleOutput.class) public class Simple
-        implements DataModel<Simple>, Projection, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(SimpleInput.class)@ModelOutputLocation(SimpleOutput.class)@PropertyOrder({
+            "data"}) public class Simple implements DataModel<Simple>, Projection, Writable {
     private final StringOption data = new StringOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.data.setNull();

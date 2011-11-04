@@ -3,6 +3,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.testdriver.testing.io.NamingInput;
@@ -14,8 +15,8 @@ import org.apache.hadoop.io.Writable;
 /**
  * namingを表すデータモデルクラス。
  */
-@DataModelKind("DMDL")@ModelInputLocation(NamingInput.class)@ModelOutputLocation(NamingOutput.class) public class Naming 
-        implements DataModel<Naming>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(NamingInput.class)@ModelOutputLocation(NamingOutput.class)@PropertyOrder({"a", 
+            "very_very_very_long_name"}) public class Naming implements DataModel<Naming>, Writable {
     private final IntOption a = new IntOption();
     private final LongOption veryVeryVeryLongName = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {

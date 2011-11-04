@@ -35,6 +35,8 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.flow.Location;
@@ -56,6 +58,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  * フロー部品用のテストドライバクラス。
  */
 public class FlowPartTestDriver extends TestDriverTestToolsBase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FlowPartTestDriver.class);
 
     private final FlowDescriptionDriver flowDescriptionDriver = new FlowDescriptionDriver();
 

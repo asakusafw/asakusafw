@@ -114,6 +114,7 @@ public class ProjectiveModelEmitter {
 
     private List<TypeBodyDeclaration> createMembers() throws IOException {
         List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        results.addAll(driver.getFields(context, model));
         results.addAll(createPropertyAccessors());
         results.addAll(driver.getMethods(context, model));
         return results;

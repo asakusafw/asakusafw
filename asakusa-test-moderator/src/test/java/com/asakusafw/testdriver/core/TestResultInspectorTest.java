@@ -31,11 +31,12 @@ import com.asakusafw.testdriver.core.MockExporterRetriever.Desc;
  * Test for {@link TestResultInspector}.
  * @since 0.2.0
  */
+@Deprecated
 public class TestResultInspectorTest extends SpiTestRoot {
 
     private final VerifyContext context;
     {
-        context = new VerifyContext();
+        context = new VerifyContext(new TestContext.Empty());
         context.testFinished();
     }
 
@@ -70,7 +71,7 @@ public class TestResultInspectorTest extends SpiTestRoot {
     @Test
     public void spi() throws Exception {
         register(DataModelAdapter.class, MockDataModelAdapter.class);
-        register(SourceProvider.class, MockSourceProvider.class);
+        register(DataModelSourceProvider.class, MockSourceProvider.class);
         register(VerifyRuleProvider.class, MockVerifyRuleProvider.class);
         ClassLoader loader = register(ExporterRetriever.class, MockExporterRetriever.class);
         TestResultInspector inspector = new TestResultInspector(loader);

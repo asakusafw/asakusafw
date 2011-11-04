@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
@@ -37,7 +37,7 @@ import com.asakusafw.testdriver.core.TestContext;
  * This accepts URI which is compatible as a valid URL and ends with ".json".
  * @since 0.2.0
  */
-public class JsonSourceProvider implements SourceProvider {
+public class JsonSourceProvider implements DataModelSourceProvider {
 
     static final Logger LOG = LoggerFactory.getLogger(JsonSourceProvider.class);
 

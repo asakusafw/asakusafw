@@ -2,15 +2,17 @@ package com.asakusafw.testdriver.testing.model;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.testdriver.testing.io.ProjectionInput;
 import com.asakusafw.testdriver.testing.io.ProjectionOutput;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
  * projectionを表す射影モデルインターフェース。
  */
-@DataModelKind("DMDL")@ModelInputLocation(ProjectionInput.class)@ModelOutputLocation(ProjectionOutput.class) public 
-        interface Projection {
+@DataModelKind("DMDL")@ModelInputLocation(ProjectionInput.class)@ModelOutputLocation(ProjectionOutput.class)@
+        PropertyOrder({"data"}) public interface Projection extends Writable {
     /**
      * dataを返す。
      * @return data

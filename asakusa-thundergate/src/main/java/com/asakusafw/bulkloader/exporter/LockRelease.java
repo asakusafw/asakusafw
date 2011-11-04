@@ -28,7 +28,6 @@ import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
@@ -38,6 +37,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class LockRelease {
+
+    static final Log LOG = new Log(LockRelease.class);
 
     /**
      * ロックを解除する。
@@ -84,26 +85,20 @@ public class LockRelease {
                     getImportTableLock(conn, tableSet.iterator());
                     break;
                 } catch (BulkLoaderReRunnableException e) {
+                    LOG.log(e);
                     if (retry <= retryCount) {
                         // リトライ可能な場合、ロールバックしてリトライする
                         try {
-                            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
                             DBConnection.rollback(conn);
                             Thread.sleep(TimeUnit.SECONDS.toMillis(retryInterval));
                             continue;
                         } catch (InterruptedException e1) {
-                            throw new BulkLoaderSystemException(
-                                    e1,
-                                    this.getClass(),
-                                    MessageIdConst.EXP_RELEASE_LOCK_ERROR,
+                            throw new BulkLoaderSystemException(e1, getClass(), "TG-EXPORTER-04001",
                                     "IMPORT_TABLE_LOCKテーブルのロック取得に失敗");
                         }
                     } else {
                         // リトライ不可の場合、異常終了する。
-                        Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                        throw new BulkLoaderSystemException(
-                                this.getClass(),
-                                MessageIdConst.EXP_RELEASE_LOCK_RETRY_ORVER,
+                        throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-04002",
                                 "IMPORT_TABLE_LOCKテーブルのロック取得に失敗");
                     }
                 }
@@ -127,11 +122,11 @@ public class LockRelease {
             return true;
 
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             try {
                 DBConnection.rollback(conn);
             } catch (BulkLoaderSystemException e1) {
-                Log.log(e1.getCause(), e1.getClazz(), e1.getMessageId(), e1.getMessageArgs());
+                LOG.log(e1);
             }
             return false;
         } finally {
@@ -148,7 +143,7 @@ public class LockRelease {
         String sql = "DELETE FROM RUNNING_JOBFLOWS WHERE JOBFLOW_SID=?";
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.EXP_DELETE_RUNNING_JOBFLOW, sql, jobflowSid);
+        LOG.info("TG-EXPORTER-04007", sql, jobflowSid);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jobflowSid);
@@ -248,7 +243,7 @@ public class LockRelease {
             selectSql.append(selectSql2);
 
             // トランザクションのロックを取得する
-            Log.log(this.getClass(), MessageIdConst.EXP_LOCK_EXCLUSIVE, selectSql.toString());
+            LOG.info("TG-EXPORTER-04004", selectSql.toString());
             stmt = conn.prepareStatement(selectSql.toString());
             DBConnection.executeQuery(stmt, selectSql.toString(), new String[0]);
 
@@ -256,7 +251,7 @@ public class LockRelease {
             throw new BulkLoaderReRunnableException(
                     e,
                     this.getClass(),
-                    MessageIdConst.EXP_RELEASE_LOCK_RETRY,
+                    "TG-EXPORTER-04003",
                     "IMPORT_TABLE_LOCKテーブルのロック取得に失敗");
         } finally {
             DBConnection.closePs(stmt);
@@ -276,7 +271,7 @@ public class LockRelease {
             + "WHERE JOBFLOW_SID=?";
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.EXP_TABLE_LOCK_RELEASE, sql, jobFlowSid);
+        LOG.info("TG-EXPORTER-04005", sql, jobFlowSid);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jobFlowSid);
@@ -332,9 +327,7 @@ public class LockRelease {
             StringBuffer rlSql = new StringBuffer("DELETE FROM ");
             rlSql.append(rlTableName);
             rlSql.append(" WHERE JOBFLOW_SID=?");
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.EXP_RECORD_LOCK_RELEASE,
+            LOG.info("TG-EXPORTER-04006",
                     rlSql.toString(), recordLockSql, jobflowSid, tableName);
             try {
                 // ロック済みレコードのレコードを削除

@@ -18,9 +18,12 @@ package com.asakusafw.dmdl.thundergate;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import com.asakusafw.dmdl.model.AstLiteral;
+
 
 /**
  * このアプリケーションの設定情報。
+ * @since 0.2.0
  */
 public class Configuration {
 
@@ -39,6 +42,14 @@ public class Configuration {
     private ModelMatcher matcher;
 
     private Charset encoding;
+
+    private String sidColumn;
+
+    private String timestampColumn;
+
+    private String deleteFlagColumn;
+
+    private AstLiteral deleteFlagValue;
 
     /**
      * 使用するJDBC Driverを返す。
@@ -166,5 +177,77 @@ public class Configuration {
      */
     public void setEncoding(Charset encoding) {
         this.encoding = encoding;
+    }
+
+    /**
+     * Returns the column name of System ID.
+     * @return the column name of System ID, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public String getSidColumn() {
+        return sidColumn;
+    }
+
+    /**
+     * Sets the column name of System ID.
+     * @param sidColumn the column name, or {@code null} to clear
+     * @since 0.2.3
+     */
+    public void setSidColumn(String sidColumn) {
+        this.sidColumn = sidColumn;
+    }
+
+    /**
+     * Returns the column name of Modification Timestamp.
+     * @return the column name of Modification Timestamp, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public String getTimestampColumn() {
+        return timestampColumn;
+    }
+
+    /**
+     * Sets the column name of System ID.
+     * @param timestampColumn the column name, or {@code null} to clear
+     * @since 0.2.3
+     */
+    public void setTimestampColumn(String timestampColumn) {
+        this.timestampColumn = timestampColumn;
+    }
+
+    /**
+     * Returns the column name of Logical Delete Flag.
+     * @return the column name of Logical Delete Flag, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public String getDeleteFlagColumn() {
+        return deleteFlagColumn;
+    }
+
+    /**
+     * Sets the column name of Delete Flag.
+     * @param deleteFlagColumn the column name, or {@code null} to clear
+     * @since 0.2.3
+     */
+    public void setDeleteFlagColumn(String deleteFlagColumn) {
+        this.deleteFlagColumn = deleteFlagColumn;
+    }
+
+    /**
+     * Returns the column value of logical delete flag is true.
+     * @return the column value in Java literal, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    public AstLiteral getDeleteFlagValue() {
+        return deleteFlagValue;
+    }
+
+    /**
+     * Sets the column value of logical delete flag is true.
+     * @param deleteFlagValue the column value in Java literal, or {@code null} to clear
+     * @since 0.2.3
+     */
+    public void setDeleteFlagValue(AstLiteral deleteFlagValue) {
+        this.deleteFlagValue = deleteFlagValue;
     }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.log.Log;
 
 
@@ -29,6 +28,8 @@ import com.asakusafw.bulkloader.log.Log;
  * @author yuta.shirai
  */
 public class ImportFileDelete {
+
+    static final Log LOG = new Log(ImportFileDelete.class);
 
     /**
      * Importファイル及びディレクトリを削除する。
@@ -43,7 +44,7 @@ public class ImportFileDelete {
             // ファイルが存在する場合は削除する。
             if (file != null && file.exists()) {
                 if (!file.delete()) {
-                    Log.log(this.getClass(), MessageIdConst.IMP_FILEDELETE_ERROR, file.getPath());
+                    LOG.warn("TG-IMPORTER-05001", file.getPath());
                 }
             }
         }

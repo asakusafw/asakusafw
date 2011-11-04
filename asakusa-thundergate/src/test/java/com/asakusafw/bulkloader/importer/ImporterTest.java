@@ -29,6 +29,7 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.importer.ImportFileCreate;
 import com.asakusafw.bulkloader.importer.ImportFileDelete;
 import com.asakusafw.bulkloader.importer.ImportFileSend;
@@ -36,13 +37,16 @@ import com.asakusafw.bulkloader.importer.Importer;
 import com.asakusafw.bulkloader.importer.TargetDataLock;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;
+import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -52,6 +56,7 @@ import java.util.Properties;
  * @author yuta.shirai
  *
  */
+@SuppressWarnings("deprecation")
 public class ImporterTest {
     /** 読み込むプロパティファイル */
     private static List<String> propertys = Arrays.asList(new String[]{"bulkloader-conf-db.properties"});
@@ -623,6 +628,10 @@ class StubImporter extends Importer {
         return new StubTargetDataLock();
     }
     @Override
+    protected ImportProtocolDecide createImportProtocolDecide() {
+        return new StubImportProtocolDecide();
+    }
+    @Override
     protected JobFlowParamLoader createJobFlowParamLoader() {
         JobFlowParamLoader loder = new JobFlowParamLoader(){
             @Override
@@ -640,9 +649,11 @@ class StubImporter extends Importer {
 }
 class StubImportFileDelete extends ImportFileDelete {
     public StubImportFileDelete() {
+        return;
     }
     @Override
     public void deleteFile(ImportBean bean) {
+        return;
     }
 }
 class StubImportFileSend extends ImportFileSend {
@@ -651,6 +662,7 @@ class StubImportFileSend extends ImportFileSend {
         this.result = result;
     }
     public StubImportFileSend() {
+        return;
     }
     @Override
     public boolean sendImportFile(ImportBean bean) {
@@ -663,6 +675,7 @@ class StubImportFileCreate extends ImportFileCreate {
         this.result = result;
     }
     public StubImportFileCreate() {
+        return;
     }
     @Override
     public boolean createImportFile(ImportBean bean, String jobFlowSid) {
@@ -680,6 +693,7 @@ class StubTargetDataLock extends TargetDataLock {
         this.sid = sid;
     }
     public StubTargetDataLock() {
+        return;
     }
     @Override
     public boolean lock(ImportBean bean) {
@@ -688,5 +702,11 @@ class StubTargetDataLock extends TargetDataLock {
     @Override
     public String insertRunningJobFlow(String targetName, String batchId, String jobflowId, String executionId, Date jobnetEndTime) {
         return sid;
+    }
+}
+class StubImportProtocolDecide extends ImportProtocolDecide {
+    @Override
+    protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean bean) throws BulkLoaderSystemException {
+        return Collections.emptyMap();
     }
 }

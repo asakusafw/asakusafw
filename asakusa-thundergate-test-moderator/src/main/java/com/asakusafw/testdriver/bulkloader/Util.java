@@ -22,10 +22,15 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility methods for this package.
  */
 final class Util {
+
+    static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     static void truncate(Configuration config, String tableName) throws IOException {
         assert config != null;
@@ -47,7 +52,42 @@ final class Util {
         } catch (SQLException e) {
             throw new IOException(MessageFormat.format(
                     "テーブル{0}のtruncateに失敗しました",
-                    tableName));
+                    tableName), e);
+        }
+    }
+
+    static void clearCache(Configuration config, String cacheId) throws IOException {
+        assert config != null;
+        assert cacheId != null;
+        try {
+            boolean committed = false;
+            Connection conn = config.open();
+            try {
+                Statement statement = conn.createStatement();
+                try {
+                    statement.execute(MessageFormat.format(
+                            "DELETE FROM __TG_CACHE_INFO WHERE CACHE_ID = ''{0}''",
+                            cacheId));
+                    statement.execute(MessageFormat.format(
+                            "DELETE FROM __TG_CACHE_LOCK WHERE CACHE_ID = ''{0}''",
+                            cacheId));
+                    if (conn.getAutoCommit() == false) {
+                        conn.commit();
+                    }
+                    committed = true;
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                if (committed == false && conn.getAutoCommit() == false) {
+                    conn.rollback();
+                }
+                conn.close();
+            }
+        } catch (SQLException e) {
+            LOG.warn(MessageFormat.format(
+                    "キャッシュ{0}の削除に失敗しました",
+                    cacheId), e);
         }
     }
 

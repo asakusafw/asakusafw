@@ -50,7 +50,6 @@ public final class LogInitializer {
      */
     public static void execute(String logConfFilePath) throws IOException {
         loadFile(logConfFilePath);
-        LogMessageLoader.loadFile(LogMessageManager.getInstance());
         isInitialized = true;
     }
 
@@ -65,7 +64,6 @@ public final class LogInitializer {
         if (!file.exists()) {
             throw new FileNotFoundException(filePath);
         }
-
         DOMConfigurator.configure(filePath);
     }
 

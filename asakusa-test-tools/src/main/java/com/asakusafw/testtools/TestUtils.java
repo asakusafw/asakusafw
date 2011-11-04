@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,18 +44,18 @@ public class TestUtils {
     /**
      * テーブル名をキーに、テストデータを保持するマップ。
      */
-    private Map<String, TestDataHolder> dataHolderMap = new HashMap<String, TestDataHolder>();
+    private final Map<String, TestDataHolder> dataHolderMap = new HashMap<String, TestDataHolder>();
 
 
     /**
      * テーブル名をキーに、検査に使用するクラスを保持するマップ。
      */
-    private Map<String, Inspector> inspectorMap = new HashMap<String, Inspector>();
+    private final Map<String, Inspector> inspectorMap = new HashMap<String, Inspector>();
 
     /**
      * テストがNGだったとき原因。
      */
-    private List<Cause> causes = new ArrayList<Cause>();
+    private final List<Cause> causes = new ArrayList<Cause>();
 
     /**
      * オブジェクトの生成時刻。
@@ -128,6 +129,7 @@ public class TestUtils {
         Connection conn = null;
         try {
             conn = DbUtils.getConnection();
+            clearCache(conn);
             for (TestDataHolder dataHolder : dataHolderMap.values()) {
                 dataHolder.storeToDatabase(conn, createTable);
             }
@@ -135,6 +137,22 @@ public class TestUtils {
             throw new RuntimeException(e);
         } finally {
             DbUtils.closeQuietly(conn);
+        }
+    }
+
+    private void clearCache(Connection connection) {
+        assert connection != null;
+        try {
+            Statement statement = connection.createStatement();
+            try {
+                statement.execute("TRUNCATE TABLE __TG_CACHE_INFO");
+                statement.execute("TRUNCATE TABLE __TG_CACHE_LOCK");
+            } finally {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("キャッシュの削除に失敗しました");
+            e.printStackTrace();
         }
     }
 

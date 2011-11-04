@@ -25,12 +25,14 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 /**
  * Prepares each test input data.
  * @since 0.2.0
+ * @deprecated Use {@link TestModerator} instead
  */
+@Deprecated
 public class TestDataPreparator {
 
     private final DataModelAdapter adapter;
 
-    private final SourceProvider sources;
+    private final DataModelSourceProvider sources;
 
     private final ImporterPreparator<ImporterDescription> importers;
 
@@ -57,7 +59,7 @@ public class TestDataPreparator {
      */
     public TestDataPreparator(
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             ImporterPreparator<ImporterDescription> importers,
             ExporterRetriever<ExporterDescription> exporters) {
         this(new TestContext.Empty(), adapter, sources, importers, exporters);
@@ -78,7 +80,7 @@ public class TestDataPreparator {
         }
         this.context = context;
         this.adapter = new SpiDataModelAdapter(serviceClassLoader);
-        this.sources = new SpiSourceProvider(serviceClassLoader);
+        this.sources = new SpiDataModelSourceProvider(serviceClassLoader);
         this.importers = new SpiImporterPreparator(serviceClassLoader);
         this.exporters = new SpiExporterRetriever(serviceClassLoader);
     }
@@ -95,7 +97,7 @@ public class TestDataPreparator {
     public TestDataPreparator(
             TestContext context,
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             ImporterPreparator<ImporterDescription> importers,
             ExporterRetriever<ExporterDescription> exporters) {
         if (context == null) {

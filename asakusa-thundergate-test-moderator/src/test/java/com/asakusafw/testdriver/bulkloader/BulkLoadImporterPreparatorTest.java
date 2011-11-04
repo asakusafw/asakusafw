@@ -55,6 +55,33 @@ public class BulkLoadImporterPreparatorTest {
         }
     };
 
+    static final DbImporterDescription CACHED = new DbImporterDescription() {
+        @Override
+        public Class<?> getModelType() {
+            return Simple.class;
+        }
+
+        @Override
+        public String getTargetName() {
+            return "importer";
+        }
+
+        @Override
+        public LockType getLockType() {
+            return LockType.UNUSED;
+        }
+
+        @Override
+        public boolean isCacheEnabled() {
+            return true;
+        }
+
+        @Override
+        public String calculateCacheId() {
+            return "testing";
+        }
+    };
+
     static final DbImporterDescription MISSING = new DbImporterDescription() {
         @Override
         public Class<?> getModelType() {
@@ -111,6 +138,70 @@ public class BulkLoadImporterPreparatorTest {
 
         assertThat(h2.count("SIMPLE"), is(1));
         prep.truncate(NORMAL);
+
+        assertThat(h2.count("SIMPLE"), is(0));
+    }
+
+    /**
+     * truncate cache infomation.
+     * @throws Exception if occur
+     */
+    @Test
+    public void truncateWithCache() throws Exception {
+        Simple simple = new Simple();
+        simple.number = 100;
+        simple.text = "Hello, world!";
+        insert(simple);
+
+        context.put("importer", "importer");
+
+        h2.executeFile("ddl-thundergate.sql");
+        h2.execute(
+                "INSERT " +
+                "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH) " +
+                "VALUES ('testing', NOW(), NOW(), 'SIMPLE', '/remote/path')");
+        h2.execute(
+                "INSERT " +
+                "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH) " +
+                "VALUES ('other', NOW(), NOW(), 'SIMPLE', '/remote/path')");
+        h2.execute(
+                "INSERT " +
+                "INTO __TG_CACHE_LOCK (CACHE_ID, EXECUTION_ID, ACQUIRED) " +
+                "VALUES ('testing', 'running', NOW())");
+        h2.execute(
+                "INSERT " +
+                "INTO __TG_CACHE_LOCK (CACHE_ID, EXECUTION_ID, ACQUIRED) " +
+                "VALUES ('other', 'running', NOW())");
+
+        BulkLoadImporterPreparator prep = new BulkLoadImporterPreparator();
+
+        assertThat(h2.count("SIMPLE"), is(1));
+        assertThat(h2.count("__TG_CACHE_INFO"), is(2));
+        assertThat(h2.count("__TG_CACHE_LOCK"), is(2));
+        prep.truncate(CACHED);
+
+        assertThat(h2.count("SIMPLE"), is(0));
+        assertThat(h2.count("__TG_CACHE_INFO"), is(1));
+        assertThat(h2.count("__TG_CACHE_LOCK"), is(1));
+    }
+
+    /**
+     * truncate cache infomation but cache table is not found.
+     * @throws Exception if occur
+     */
+    @Test
+    public void truncateWithCache_butNoCacheFeature() throws Exception {
+        Simple simple = new Simple();
+        simple.number = 100;
+        simple.text = "Hello, world!";
+        insert(simple);
+
+        context.put("importer", "importer");
+
+        BulkLoadImporterPreparator prep = new BulkLoadImporterPreparator();
+
+        assertThat(h2.count("SIMPLE"), is(1));
+        prep.truncate(CACHED);
 
         assertThat(h2.count("SIMPLE"), is(0));
     }
