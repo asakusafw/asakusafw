@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.2.3-RC1</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
@@ -22,7 +22,7 @@
 	</licenses>
 
 	<properties>
-		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
+		<asakusafw.version>0.2.3-RC1</asakusafw.version>
 	</properties>
 
 	<packaging>jar</packaging>
