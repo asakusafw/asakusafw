@@ -339,11 +339,13 @@ Asausaの拡張ライブラリディレクトリへjarファイルを配置
 
     cp $HOME/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
 
+..  _vup-development-environment:
+
 Asakusa Frameworkのバージョンアップ
 ===================================
 開発環境のAsakusa Frameworkをバージョンする手順を示します。
 
-なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順についてはRelease Note等を参照してください。
+なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順については :doc:`migration-guide` 等を参照してください。
 
 pom.xml上のバージョンを更新
 ---------------------------
