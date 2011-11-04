@@ -54,7 +54,6 @@ public class VerifyRuleVerifier implements Verifier {
         } finally {
             expected.close();
         }
-        engine.inspectInput(results);
         List<Difference> differences = new ArrayList<Difference>();
         differences.addAll(engine.inspectInput(results));
         differences.addAll(engine.inspectRest());
