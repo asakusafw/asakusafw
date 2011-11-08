@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.asakusafw.bulkloader.bean.ImportBean;
-import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -43,16 +41,15 @@ import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
-import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 
 /**
- * Retrieves {@link CacheInfo}.
+ * Deletes cache storages.
  * @since 0.2.3
- * @see GetCacheInfoRemote
+ * @see DeleteCacheStorageRemote
  */
-public class GetCacheInfoLocal {
+public class DeleteCacheStorageLocal {
 
-    static final Log LOG = new Log(GetCacheInfoLocal.class);
+    static final Log LOG = new Log(DeleteCacheStorageLocal.class);
 
     /*
      * This field should not be static because of saving system resources on testing.
@@ -63,52 +60,54 @@ public class GetCacheInfoLocal {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
-            t.setName(String.format("get-cache-info-%d", counter.incrementAndGet()));
+            t.setName(String.format("delete-cache-storage-%d", counter.incrementAndGet()));
             return t;
         }
     });
 
     /**
-     * Retrieves {@link CacheInfo} from already deployed cache directories.
-     * This will return the pairs - {@link ImportTargetTableBean#getDfsFilePath()} and corresponded cache information.
-     * If a target table does not use cache feature or related cache did not exist, there will be not in the result.
-     * @param bean importer information
-     * @return the retrieved information
+     * Deletes storages for the related caches in the list.
+     * This will return the pairs - the cache storage path and the its result.
+     * @param list the target list
+     * @param targetName the current target name
+     * @return the deleted results
      * @throws BulkLoaderSystemException if failed to obtain cache information by system exception
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public Map<String, CacheInfo> get(ImportBean bean) throws BulkLoaderSystemException {
-        if (bean == null) {
-            throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
+    public Map<String, FileProtocol.Kind> delete(
+            List<LocalCacheInfo> list,
+            String targetName) throws BulkLoaderSystemException {
+        if (list == null) {
+            throw new IllegalArgumentException("list must not be null"); //$NON-NLS-1$
         }
-        if (hasCacheUser(bean) == false) {
+        if (targetName == null) {
+            throw new IllegalArgumentException("targetName must not be null"); //$NON-NLS-1$
+        }
+        if (list.isEmpty()) {
             return Collections.emptyMap();
         }
-        LOG.info("TG-IMPORTER-12001",
-                bean.getTargetName(),
-                bean.getBatchId(),
-                bean.getJobflowId(),
-                bean.getExecutionId());
+        LOG.info("TG-GCCACHE-02001",
+                targetName,
+                list.size());
         FileListProvider provider = null;
         try {
-            provider = openFileList(
-                    bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
-            Future<Void> upstream = submitUpstream(bean, provider);
-            Future<Map<String, CacheInfo>> downstream = submitDownstream(provider);
-            Map<String, CacheInfo> result;
+            provider = openFileList(targetName);
+            Future<Void> upstream = submitUpstream(list, provider);
+            Future<Map<String, FileProtocol.Kind>> downstream = submitDownstream(provider);
+            Map<String, FileProtocol.Kind> results;
             while (true) {
                 try {
                     if (upstream.isDone()) {
                         upstream.get();
                     }
-                    result = downstream.get(1, TimeUnit.SECONDS);
+                    results = downstream.get(1, TimeUnit.SECONDS);
                     break;
                 } catch (TimeoutException e) {
                     // will retry
                 } catch (CancellationException e) {
                     upstream.cancel(true);
                     downstream.cancel(true);
-                    throw new IOException("Collecting cache information was cancelled", e);
+                    throw new IOException("Deleting cache storages was cancelled", e);
                 } catch (ExecutionException e) {
                     upstream.cancel(true);
                     downstream.cancel(true);
@@ -125,25 +124,14 @@ public class GetCacheInfoLocal {
                 }
             }
             provider.waitForComplete();
-            LOG.info("TG-IMPORTER-12003",
-                    bean.getTargetName(),
-                    bean.getBatchId(),
-                    bean.getJobflowId(),
-                    bean.getExecutionId(),
-                    result.size());
-            return result;
+            reportResults(targetName, results);
+            return results;
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
-                    bean.getTargetName(),
-                    bean.getBatchId(),
-                    bean.getJobflowId(),
-                    bean.getExecutionId());
+            throw new BulkLoaderSystemException(e, getClass(), "TG-GCCACHE-02004",
+                    targetName);
         } catch (InterruptedException e) {
-            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
-                    bean.getTargetName(),
-                    bean.getBatchId(),
-                    bean.getJobflowId(),
-                    bean.getExecutionId());
+            throw new BulkLoaderSystemException(e, getClass(), "TG-GCCACHE-02004",
+                    targetName);
         } finally {
             if (provider != null) {
                 try {
@@ -155,34 +143,48 @@ public class GetCacheInfoLocal {
         }
     }
 
-    private boolean hasCacheUser(ImportBean bean) {
-        assert bean != null;
-        for (String tableName : bean.getImportTargetTableList()) {
-            ImportTargetTableBean table = bean.getTargetTable(tableName);
-            if (table.getCacheId() != null) {
-                return true;
+    private void reportResults(String targetName, Map<String, FileProtocol.Kind> results) {
+        assert targetName != null;
+        assert results != null;
+        int succeed = 0;
+        int missing = 0;
+        int error = 0;
+        for (Map.Entry<String, FileProtocol.Kind> entry : results.entrySet()) {
+            switch (entry.getValue()) {
+            case RESPONSE_DELETED:
+                succeed++;
+                break;
+            case RESPONSE_NOT_FOUND:
+                missing++;
+                break;
+            case RESPONSE_ERROR:
+                error++;
+                break;
+            default:
+                throw new AssertionError(entry);
             }
         }
-        return false;
+        LOG.info("TG-GCCACHE-02003",
+                targetName,
+                succeed,
+                missing,
+                error);
     }
 
-    private Future<Void> submitUpstream(final ImportBean bean, final FileListProvider provider) {
+    private Future<Void> submitUpstream(final List<LocalCacheInfo> list, final FileListProvider provider) {
+        assert list != null;
+        assert provider != null;
         return executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws IOException {
                 FileList.Writer writer = provider.openWriter(false);
                 try {
-                    for (String tableName : bean.getImportTargetTableList()) {
-                        ImportTargetTableBean table = bean.getTargetTable(tableName);
-                        if (table.getCacheId() == null || table.getDfsFilePath() == null) {
-                            continue;
-                        }
+                    for (LocalCacheInfo info : list) {
                         FileProtocol protocol = new FileProtocol(
-                                FileProtocol.Kind.GET_CACHE_INFO,
-                                table.getDfsFilePath(),
+                                FileProtocol.Kind.DELETE_CACHE,
+                                info.getPath(),
                                 null);
 
-                        // send only header
                         writer.openNext(protocol).close();
                     }
                 } finally {
@@ -193,12 +195,12 @@ public class GetCacheInfoLocal {
         });
     }
 
-    private Future<Map<String, CacheInfo>> submitDownstream(final FileListProvider provider) {
+    private Future<Map<String, FileProtocol.Kind>> submitDownstream(final FileListProvider provider) {
         assert provider != null;
-        return executor.submit(new Callable<Map<String, CacheInfo>>() {
+        return executor.submit(new Callable<Map<String, FileProtocol.Kind>>() {
             @Override
-            public Map<String, CacheInfo> call() throws IOException {
-                Map<String, CacheInfo> results = new HashMap<String, CacheInfo>();
+            public Map<String, FileProtocol.Kind> call() throws IOException {
+                Map<String, FileProtocol.Kind> results = new HashMap<String, FileProtocol.Kind>();
                 FileList.Reader reader = provider.openReader();
                 try {
                     while (reader.next()) {
@@ -207,11 +209,13 @@ public class GetCacheInfoLocal {
                         // receive only header
                         reader.openContent().close();
 
-                        if (protocol.getKind() == FileProtocol.Kind.RESPONSE_CACHE_INFO) {
-                            assert protocol.getInfo() != null;
-                            results.put(protocol.getLocation(), protocol.getInfo());
-                        } else if (protocol.getKind() != FileProtocol.Kind.RESPONSE_NOT_FOUND
-                                && protocol.getKind() != FileProtocol.Kind.RESPONSE_ERROR) {
+                        switch (protocol.getKind()) {
+                        case RESPONSE_DELETED:
+                        case RESPONSE_NOT_FOUND:
+                        case RESPONSE_ERROR:
+                            results.put(protocol.getLocation(), protocol.getKind());
+                            break;
+                        default:
                             throw new IOException(MessageFormat.format(
                                     "Unknown protocol in response: {0}",
                                     protocol));
@@ -226,52 +230,30 @@ public class GetCacheInfoLocal {
     }
 
     /**
-     * Opens a new {@link FileListProvider} for get-cache-info.
+     * Opens a new {@link FileListProvider} for delete-cache-storage.
      * @param targetName current target name
-     * @param batchId current batch ID
-     * @param jobflowId current jobflow ID
-     * @param executionId current execution ID
      * @return the created provider
      * @throws IOException if failed to open the file list
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    protected FileListProvider openFileList(
-            String targetName,
-            String batchId,
-            String jobflowId,
-            String executionId) throws IOException {
+    protected FileListProvider openFileList(String targetName) throws IOException {
         if (targetName == null) {
             throw new IllegalArgumentException("targetName must not be null"); //$NON-NLS-1$
-        }
-        if (batchId == null) {
-            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
-        }
-        if (jobflowId == null) {
-            throw new IllegalArgumentException("jobflowId must not be null"); //$NON-NLS-1$
-        }
-        if (executionId == null) {
-            throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
         }
         String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
         String hostName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
         String userName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
-        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_INFO_SHELL_NAME);
+        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_DELETE_CACHE_SHELL_NAME);
         List<String> command = new ArrayList<String>();
         command.add(shellName);
         command.add(targetName);
-        command.add(batchId);
-        command.add(jobflowId);
-        command.add(executionId);
 
-        LOG.info("TG-IMPORTER-12002",
+        LOG.info("TG-GCCACHE-02002",
                 sshPath,
                 hostName,
                 userName,
                 shellName,
-                targetName,
-                batchId,
-                jobflowId,
-                executionId);
+                targetName);
         return new OpenSshFileListProvider(sshPath, userName, hostName, command);
     }
 }

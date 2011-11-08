@@ -198,6 +198,18 @@ public class CacheStorage implements Closeable {
     }
 
     /**
+     * Deletes this storage.
+     * @return {@code true} if successfully deleted, otherwise {@code false}
+     * @throws IOException if failed to delete by I/O exception
+     */
+    public boolean deleteAll() throws IOException {
+        if (fs.exists(cacheDir) == false) {
+            return false;
+        }
+        return fs.delete(cacheDir, true);
+    }
+
+    /**
      * Returns the path to the cache temporary directory.
      * @return the path
      */

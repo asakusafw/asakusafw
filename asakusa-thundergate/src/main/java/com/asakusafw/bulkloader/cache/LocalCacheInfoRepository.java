@@ -22,7 +22,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -37,8 +39,8 @@ import com.asakusafw.bulkloader.log.Log;
  *   <li> CACHE_ID [String] PRIMARY KEY</li>
  *   <li> CACHE_TIMESTAMP [TIMESTAMP] NULL</li>
  *   <li> BUILT_TIMESTAMP [TIMESTAMP] NOT NULL</li>
- *   <li> TABLE_NAME [STRING] NOT NULL </li>
- *   <li> REMOTE_PATH [STRING] NOT NULL </li>
+ *   <li> TABLE_NAME [STRING] NOT NULL</li>
+ *   <li> REMOTE_PATH [STRING] NOT NULL</li>
  *   <li> ACTIVE [BOOLEAN] NOT NULL</li>
  *   </ul>
  * </li>
@@ -194,6 +196,7 @@ public class LocalCacheInfoRepository {
 
     /**
      * Deletes cache information for the specified cache ID.
+     * The deleted information can be checked by {@link #listDeletedCacheInfo()}.
      * @param cacheId target cache ID
      * @return {@code true} if actually deleted, otherwise {@code false}
      * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
@@ -233,6 +236,7 @@ public class LocalCacheInfoRepository {
 
     /**
      * Deletes cache information for the specified table name.
+     * The deleted information can be checked by {@link #listDeletedCacheInfo()}.
      * @param tableName target table name
      * @return number of deleted entries of cache information
      * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
@@ -272,6 +276,7 @@ public class LocalCacheInfoRepository {
 
     /**
      * Deletes all cache information in this system.
+     * The deleted information can be checked by {@link #listDeletedCacheInfo()}.
      * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
@@ -293,6 +298,80 @@ public class LocalCacheInfoRepository {
                     e,
                     getClass(),
                     sql);
+        } finally {
+            if (succeed == false) {
+                DBConnection.rollback(connection);
+            }
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Obtains a list of deleted cache information.
+     * @return a list of found caches
+     * @throws BulkLoaderSystemException if failed to obtain the cache information by storage exception
+     */
+    public List<LocalCacheInfo> listDeletedCacheInfo() throws BulkLoaderSystemException {
+        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH " +
+            "FROM __TG_CACHE_INFO " +
+            "WHERE ACTIVE = FALSE";
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            LOG.debugMessage("collecting deleted cache info");
+            statement = connection.prepareStatement(sql);
+            resultSet = statement.executeQuery();
+            List<LocalCacheInfo> results = new ArrayList<LocalCacheInfo>();
+            while (resultSet.next()) {
+                LocalCacheInfo found = toCacheInfoObject(resultSet);
+                LOG.debugMessage("found deleted cache info: {0}", found.getId());
+                results.add(found);
+            }
+            LOG.debugMessage("found deleted cache info: count={0}", results.size());
+            return results;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql);
+        } finally {
+            DBConnection.closeRs(resultSet);
+            DBConnection.closePs(statement);
+        }
+    }
+
+    /**
+     * Completely deletes cache information for the specified cache ID.
+     * @param cacheId target cache ID
+     * @return {@code true} if actually deleted, otherwise {@code false}
+     * @throws BulkLoaderSystemException if failed to delete the cache information by storage exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #deleteCacheInfo(String)
+     */
+    public boolean deleteCacheInfoCompletely(String cacheId) throws BulkLoaderSystemException {
+        if (cacheId == null) {
+            throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
+        }
+        final String sql = "DELETE " +
+            "FROM __TG_CACHE_INFO " +
+            "WHERE CACHE_ID = ? ";
+        boolean succeed = false;
+        PreparedStatement statement = null;
+        try {
+            LOG.debugMessage("completely deleting cache info: {0}", cacheId);
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, cacheId);
+            int rows = statement.executeUpdate();
+            DBConnection.commit(connection);
+            succeed = true;
+            LOG.debugMessage("completely deleted cache info: {0}, count={1}", cacheId, rows);
+            return rows > 0;
+        } catch (SQLException e) {
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
+                    e,
+                    getClass(),
+                    sql,
+                    cacheId);
         } finally {
             if (succeed == false) {
                 DBConnection.rollback(connection);
