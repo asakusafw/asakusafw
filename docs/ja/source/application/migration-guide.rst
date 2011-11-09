@@ -71,8 +71,7 @@ YAESSを使用する場合、アプリケーションプロジェクトのpom.xm
 
         <dependency>
             <groupId>com.asakusafw</groupId>
-            <artifactId>asakusa-yaess-plugin</artifactId>
-            <version>${asakusafw.version}</version>
+            <artifactId>asakusa-yaess-plugin</artifactId> <version>${asakusafw.version}</version>
         </dependency>
 
 CDHバージョンの変更
@@ -84,4 +83,51 @@ ver0.2.3ではCloudera CDH3 Update2をデフォルトの依存バージョンと
 ..  code-block:: xml
 
     <cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
+
+運用環境の構成変更
+------------------
+
+ThunderGate用設定ファイルの項目追加
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ThunderGateキャッシュ機能の追加により、ThunderGateの設定ファイルに項目が追加されました。
+
+運用環境のバージョンアップはAsakusa Frameworkを新バージョンで再インストールする必要があります。その際ThunderGateの設定ファイルを過去バージョンのファイルで上書きすることで設定を反映させる場合には、以下の説明に沿って設定ファイルに項目を追加してください。
+
+bulkloader-conf-db.properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties に対して、以下の項目を追加してください。
+
+..  code-block:: properties
+
+    # Importer setting
+    # ...
+
+    # Shell name of Get Cache Info (required)
+    import.cache-info-shell-name=asakusa/bulkloader/bin/get-cache-info.sh
+    # Shell name of Delete Cache Storage (required)
+    import.delete-cache-shell-name=asakusa/bulkloader/bin/delete-cache-storage.sh
+
+* import.cache-info-shell-name
+   * Hadoopクライアントノードに配置する、キャッシュ情報を取得するためのスクリプト名です。Hadoopクライアントノード上のホームディレクトリからの相対パスを指定するため、ASAKUSA_HOME を $HOME/asakusa 以外に設定している場合は環境に合わせたパスに修正して下さい。
+* import.cache-info-shel
+   * Hadoopクライアントノードに配置する、キャッシュファイルを削除するためのスクリプト名です。Hadoopクライアントノード上のホームディレクトリからの相対パスを指定するため、ASAKUSA_HOME を $HOME/asakusa 以外に設定している場合は環境に合わせたパスに修正してください。
+
+bulkloader-conf-hc.properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-hc.properties に対して、以下の項目を追加してください。
+
+..  code-block:: properties
+
+    # Extractor setting
+    # ...
+
+    # Shell name of Cache Builder (required)
+    import.cache-build-shell-name=asakusa/thundergate-cache/bin/build-cache.sh
+    # Maximim number of parallel cache builders (optional)
+    import.cache-build-max-parallel=1
+
+* import.cache-build-shell-name
+   * Hadoopクライアントノードに配置する、キャッシュファイルを作成するるためのスクリプト名です。Hadoopクライアントノード上のホームディレクトリからの相対パスを指定するため、ASAKUSA_HOME を $HOME/asakusa 以外に設定している場合は環境に合わせたパスに修正して下さい。
+* import.cache-build-max-parallel
+   * キャッシュ作成処理の並列実行数を指定します。スタンドアロンモードで実行する環境では、この値は必ず1を指定してください。
 
