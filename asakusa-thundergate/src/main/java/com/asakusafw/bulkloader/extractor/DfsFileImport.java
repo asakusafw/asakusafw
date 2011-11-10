@@ -85,6 +85,7 @@ public class DfsFileImport {
     public DfsFileImport() {
         this.cacheBuildCommand = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME);
         int parallel = Integer.parseInt(ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL));
+        LOG.debugMessage("Building a cache builder with {0} threads", parallel);
         this.executor = Executors.newFixedThreadPool(parallel);
     }
 
@@ -130,6 +131,9 @@ public class DfsFileImport {
                         long recordCount = putCachePatch(protocol, content, bean, user);
                         Callable<?> builder = createCacheBuilder(protocol, bean, user, recordCount);
                         if (builder != null) {
+                            LOG.debugMessage("Submitting cache builder: {0} {1}",
+                                    protocol.getKind(),
+                                    protocol.getInfo().getTableName());
                             running.add(executor.submit(builder));
                         }
                         break;
