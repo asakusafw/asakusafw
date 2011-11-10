@@ -25,12 +25,8 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -45,8 +41,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.bulkloader.bean.ImportBean;
-import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
@@ -54,15 +48,15 @@ import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileList.Reader;
 import com.asakusafw.bulkloader.transfer.FileList.Writer;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
+import com.asakusafw.bulkloader.transfer.FileProtocol.Kind;
 import com.asakusafw.bulkloader.transfer.StreamFileListProvider;
 import com.asakusafw.runtime.stage.AbstractStageClient;
-import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
- * Test for {@link GetCacheInfoLocal}.
+ * Test for {@link DeleteCacheStorageLocal}.
  */
-public class GetCacheInfoLocalTest {
+public class DeleteCacheStorageLocalTest {
 
     /**
      * Temporary folder.
@@ -70,7 +64,9 @@ public class GetCacheInfoLocalTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    final GetCacheInfoRemote remote = new GetCacheInfoRemote();
+    final DeleteCacheStorageRemote remote = new DeleteCacheStorageRemote();
+
+    LocalCacheInfo info1, info2, info3;
 
     /**
      * set up.
@@ -100,7 +96,7 @@ public class GetCacheInfoLocalTest {
     @Before
     public void setUp() throws Exception {
         UnitTestUtil.startUp();
-        remote.initialize("target", "batch", "flow", "exec", "tester");
+        remote.initialize("target", "tester");
         remote.setConf(new Configuration());
         ConfigurationLoader.getProperty().setProperty(
                 Constants.PROP_KEY_HDFS_PROTCOL_HOST,
@@ -108,165 +104,95 @@ public class GetCacheInfoLocalTest {
         ConfigurationLoader.getProperty().setProperty(
                 Constants.PROP_KEY_WORKINGDIR_USE,
                 String.valueOf(false));
+        info1 = new LocalCacheInfo(
+                "testing1",
+                null,
+                null,
+                "__TG_TEST",
+                qualify("testing1"));
+        info2 = new LocalCacheInfo(
+                "testing2",
+                null,
+                null,
+                "__TG_TEST",
+                qualify("testing2"));
+        info3 = new LocalCacheInfo(
+                "testing3",
+                null,
+                null,
+                "__TG_TEST",
+                qualify("testing3"));
     }
 
     /**
-     * no local cache information.
-     * @throws Exception if failed
-     */
-    @Test(timeout =  5000L)
-    public void withoutCache() throws Exception {
-        ImportBean bean = createBean();
-        Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
-        ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("normal"));
-        map.put("normal", table);
-        bean.setTargetTable(map);
-
-        GetCacheInfoLocal service = new Mock();
-        Map<String, CacheInfo> results = service.get(bean);
-        assertThat(results.size(), is(0));
-    }
-
-    /**
-     * no remote cache information.
+     * nothing to delete.
      * @throws Exception if failed
      */
     @Test(timeout =  5000L)
     public void nothing() throws Exception {
-        ImportBean bean = createBean();
-        Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
-        ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("nothing"));
-        table.setCacheId("nothing");
-        map.put("nothing", table);
-        bean.setTargetTable(map);
-
-        GetCacheInfoLocal service = new Mock();
-        Map<String, CacheInfo> results = service.get(bean);
+        List<LocalCacheInfo> list = new ArrayList<LocalCacheInfo>();
+        Map<String, Kind> results = new Mock().delete(list, "dummy");
         assertThat(results.size(), is(0));
     }
 
     /**
-     * cache information exists.
+     * delete an entry.
      * @throws Exception if failed
      */
     @Test(timeout =  5000L)
-    public void found() throws Exception {
-        CacheInfo info = new CacheInfo(
-                "a",
-                "id",
-                calendar("2011-12-13 14:15:16"),
-                "available",
-                Collections.singleton("COL"),
-                "com.example.Model",
-                123L);
+    public void delete() throws Exception {
+        prepare(info1);
 
-        CacheStorage storage = new CacheStorage(remote.getConf(), uri("available"));
-        try {
-            storage.putHeadCacheInfo(info);
-        } finally {
-            storage.close();
-        }
+        List<LocalCacheInfo> list = new ArrayList<LocalCacheInfo>();
+        list.add(info1);
 
-        ImportBean bean = createBean();
-        Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
-        ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("available"));
-        table.setCacheId("available");
-        map.put("available", table);
-        bean.setTargetTable(map);
-
-        GetCacheInfoLocal service = new Mock();
-        Map<String, CacheInfo> results = service.get(bean);
+        Map<String, Kind> results = new Mock().delete(list, "dummy");
         assertThat(results.size(), is(1));
-        assertThat(results.get(qualify("available")), is(info));
+        assertThat(results.get(info1.getPath()), is(Kind.RESPONSE_DELETED));
     }
 
     /**
-     * multiple requests.
+     * delete an entry but is missing.
      * @throws Exception if failed
      */
     @Test(timeout =  5000L)
-    public void mixed() throws Exception {
-        CacheInfo info = new CacheInfo(
-                "a",
-                "id",
-                calendar("2011-12-13 14:15:16"),
-                "available",
-                Collections.singleton("COL"),
-                "com.example.Model",
-                123L);
+    public void delete_missing() throws Exception {
+        List<LocalCacheInfo> list = new ArrayList<LocalCacheInfo>();
+        list.add(info1);
 
-        CacheStorage storage = new CacheStorage(remote.getConf(), uri("available"));
-        try {
-            storage.putHeadCacheInfo(info);
-        } finally {
-            storage.close();
-        }
-
-        ImportBean bean = createBean();
-        Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
-
-        ImportTargetTableBean table1 = new ImportTargetTableBean();
-        table1.setDfsFilePath(qualify("nothing1"));
-        table1.setCacheId("nothing1");
-        map.put("nothing1", table1);
-        bean.setTargetTable(map);
-
-        ImportTargetTableBean table2 = new ImportTargetTableBean();
-        table2.setDfsFilePath(qualify("available"));
-        table2.setCacheId("available");
-        map.put("available", table2);
-        bean.setTargetTable(map);
-
-
-        ImportTargetTableBean table3 = new ImportTargetTableBean();
-        table3.setDfsFilePath(qualify("nothing3"));
-        table3.setCacheId("nothing3");
-        map.put("nothing3", table3);
-        bean.setTargetTable(map);
-
-        ImportTargetTableBean table4 = new ImportTargetTableBean();
-        table4.setDfsFilePath(qualify("nocache"));
-        map.put("nocache", table4);
-        bean.setTargetTable(map);
-
-        GetCacheInfoLocal service = new Mock();
-        Map<String, CacheInfo> results = service.get(bean);
+        Map<String, Kind> results = new Mock().delete(list, "dummy");
         assertThat(results.size(), is(1));
-        assertThat(results.get(qualify("available")), is(info));
-    }
-
-    private ImportBean createBean() {
-        ImportBean bean = new ImportBean();
-        bean.setTargetName("target");
-        bean.setBatchId("batch");
-        bean.setJobflowId("flow");
-        bean.setExecutionId("exec");
-        return bean;
+        assertThat(results.get(info1.getPath()), is(Kind.RESPONSE_NOT_FOUND));
     }
 
     /**
-     * execution will be failed.
+     * delete an entry but is missing.
      * @throws Exception if failed
      */
     @Test(timeout =  5000L)
-    public void fail() throws Exception {
-        ImportBean bean = createBean();
-        Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
-        ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("nothing"));
-        table.setCacheId("nothing");
-        map.put("nothing", table);
-        bean.setTargetTable(map);
+    public void delete_multiple() throws Exception {
+        prepare(info1, info3);
 
-        GetCacheInfoLocal service = new Mock().willFail();
-        try {
-            service.get(bean);
-            fail();
-        } catch (Exception e) {
-            // ok.
+        List<LocalCacheInfo> list = new ArrayList<LocalCacheInfo>();
+        list.add(info1);
+        list.add(info2);
+        list.add(info3);
+
+        Map<String, Kind> results = new Mock().delete(list, "dummy");
+        assertThat(results.size(), is(3));
+        assertThat(results.get(info1.getPath()), is(Kind.RESPONSE_DELETED));
+        assertThat(results.get(info2.getPath()), is(Kind.RESPONSE_NOT_FOUND));
+        assertThat(results.get(info3.getPath()), is(Kind.RESPONSE_DELETED));
+    }
+
+    private void prepare(LocalCacheInfo... caches) throws IOException {
+        for (LocalCacheInfo info : caches) {
+            CacheStorage storage = new CacheStorage(remote.getConf(), uri(info.getId()));
+            try {
+                storage.getFileSystem().create(storage.getHeadContents("0")).close();
+            } finally {
+                storage.close();
+            }
         }
     }
 
@@ -279,19 +205,7 @@ public class GetCacheInfoLocalTest {
         return "/" + AbstractStageClient.EXPR_USER + "/" + location;
     }
 
-    private Calendar calendar(String string) {
-        Date date;
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(string);
-        } catch (ParseException e) {
-            throw new AssertionError(e);
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
-    }
-
-    class Mock extends GetCacheInfoLocal {
+    class Mock extends DeleteCacheStorageLocal {
 
         boolean fail = false;
 
@@ -301,11 +215,7 @@ public class GetCacheInfoLocalTest {
         }
 
         @Override
-        protected FileListProvider openFileList(
-                String targetName,
-                String batchId,
-                String jobflowId,
-                String executionId) throws IOException {
+        protected FileListProvider openFileList(String targetName) throws IOException {
             final PipedInputStream remoteStdin = new PipedInputStream();
             final PipedOutputStream remoteStdout = new PipedOutputStream();
             final PipedOutputStream upstream = new PipedOutputStream(remoteStdin);

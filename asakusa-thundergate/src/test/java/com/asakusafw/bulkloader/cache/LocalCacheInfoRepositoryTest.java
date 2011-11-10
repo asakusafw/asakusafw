@@ -383,6 +383,41 @@ public class LocalCacheInfoRepositoryTest {
         }
     }
 
+    /**
+     * list deleted.
+     * @throws Exception if failed
+     */
+    @Test
+    public void listDeleted() throws Exception {
+        LocalCacheInfo info = new LocalCacheInfo(
+                "testing",
+                calendar("2010-11-12 13:14:15"),
+                calendar("2011-12-13 14:15:16"),
+                "__TG_TEST1",
+                "/test/path");
+        Connection connection = DBConnection.getConnection();
+        try {
+            LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
+            assertThat(repo.listDeletedCacheInfo().size(), is(0));
+
+            repo.putCacheInfo(info);
+            assertThat(repo.deleteCacheInfo("testing"), is(true));
+
+            List<LocalCacheInfo> deleted = repo.listDeletedCacheInfo();
+            assertThat(deleted.size(), is(1));
+
+            LocalCacheInfo restored = deleted.get(0);
+            assertThat(restored.getId(), is(info.getId()));
+            assertThat(restored.getTableName(), is(info.getTableName()));
+            assertThat(restored.getPath(), is(info.getPath()));
+
+            assertThat(repo.deleteCacheInfoCompletely("testing"), is(true));
+            assertThat(repo.listDeletedCacheInfo().size(), is(0));
+        } finally {
+            connection.close();
+        }
+    }
+
     private LocalCacheInfo info(String id, String tableName) {
         LocalCacheInfo info = new LocalCacheInfo(
                 id,

@@ -27,6 +27,11 @@ import com.asakusafw.bulkloader.log.Log;
 
 /**
  * Releases locks for cache mechanism.
+ * This program requires following argument(s):
+ * <ol>
+ * <li> target name </li>
+ * <li> execution ID (optional) </li>
+ * </ol>
  * @since 0.2.3
  */
 public class ReleaseCacheLock {
@@ -42,7 +47,7 @@ public class ReleaseCacheLock {
      */
     public static void main(String[] args) {
         if (args.length != 1 && args.length != 2) {
-            LOG.error("TG-RELEASECACHELOCK-01001", Arrays.toString(args));
+            LOG.error("TG-RELEASECACHELOCK-01003", Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
             return;
         }

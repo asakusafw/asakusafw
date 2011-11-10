@@ -84,6 +84,7 @@
 				<include>recoverer.sh</include>
 				<include>release-cache-lock.sh</include>
 				<include>delete-cache-info.sh</include>
+				<include>gc-cache-storage.sh</include>
 				<include>set-classpath-db.sh</include>
 			</includes>
 			<fileMode>0744</fileMode>
