@@ -22,7 +22,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
@@ -69,7 +74,7 @@ public class ImportFileSend {
             writer = provider.openWriter(compType == FileCompType.DEFLATED);
 
             // Import対象テーブル毎にファイルの読み込み・書き出しの処理を行う
-            List<String> list = bean.getImportTargetTableList();
+            List<String> list = arrangeSendOrder(bean);
             for (String tableName : list) {
                 long tableStartTime = System.currentTimeMillis();
                 ImportTargetTableBean targetTable = bean.getTargetTable(tableName);
@@ -123,6 +128,45 @@ public class ImportFileSend {
             }
         }
         return true;
+    }
+
+    private List<String> arrangeSendOrder(ImportBean bean) {
+        assert bean != null;
+        final Map<String, ImportTargetTableBean> tables = new HashMap<String, ImportTargetTableBean>();
+        final Map<String, Long> sizes = new HashMap<String, Long>();
+        List<String> tableNames = new ArrayList<String>(bean.getImportTargetTableList());
+        for (String tableName : tableNames) {
+            ImportTargetTableBean tableBean = bean.getTargetTable(tableName);
+            tables.put(tableName, tableBean);
+            sizes.put(tableName, tableBean.getImportFile().length());
+        }
+        Collections.sort(tableNames, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                ImportTargetTableBean t1 = tables.get(o1);
+                ImportTargetTableBean t2 = tables.get(o2);
+
+                // put cached table on top
+                if (t1.getCacheId() != null && t2.getCacheId() == null) {
+                    return -1;
+                } else if (t1.getCacheId() == null && t2.getCacheId() != null) {
+                    return +1;
+                }
+
+                // put large file on top
+                long s1 = sizes.get(o1);
+                long s2 = sizes.get(o2);
+                if (s1 > s2) {
+                    return -1;
+                } else if (s1 < s2) {
+                    return +1;
+                }
+
+                // sort by its table name
+                return o1.compareTo(o2);
+            }
+        });
+        return tableNames;
     }
 
     private long sendTableFile(
