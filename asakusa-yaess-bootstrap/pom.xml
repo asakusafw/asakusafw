@@ -21,10 +21,6 @@
 		</license>
 	</licenses>
 
-	<properties>
-		<asakusafw.version>0.2.3-RC1</asakusafw.version>
-	</properties>
-
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
