@@ -150,6 +150,8 @@ public class WindGate {
             WGLOG.error(e, "E00002");
             e.printStackTrace();
             return 1;
+        } finally {
+            task.close();
         }
     }
 
