@@ -5,6 +5,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
@@ -16,8 +17,8 @@ import org.apache.hadoop.io.Writable;
  * system_columnsを表すデータモデルクラス。
  */
 @ColumnOrder(value = {"SID"})@DataModelKind("DMDL")@ModelInputLocation(SystemColumnsInput.class)@ModelOutputLocation(
-        SystemColumnsOutput.class)@OriginalName(value = "SYSTEM_COLUMNS") public class SystemColumns implements 
-        DataModel<SystemColumns>, Writable {
+        SystemColumnsOutput.class)@OriginalName(value = "SYSTEM_COLUMNS")@PropertyOrder({"sid"}) public class 
+        SystemColumns implements DataModel<SystemColumns>, Writable {
     private final LongOption sid = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.sid.setNull();

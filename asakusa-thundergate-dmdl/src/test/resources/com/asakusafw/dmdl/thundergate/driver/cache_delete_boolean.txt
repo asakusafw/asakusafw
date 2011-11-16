@@ -1,0 +1,14 @@
+@thundergate.cache_support(
+    sid = sid,
+     timestamp = last_updt_datetime,
+     delete_flag = logical_delete_flag,
+     delete_flag_value = TRUE,
+)
+model = {
+    @thundergate.name(value = "SID")
+    sid : LONG;
+    @thundergate.name(value = "LAST_UPDT_DATETIME")
+    last_updt_datetime : DATETIME;
+    @thundergate.name(value = "LOGICAL_DEL_FLG")
+    logical_delete_flag : BOOLEAN;
+};

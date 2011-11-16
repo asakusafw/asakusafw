@@ -31,6 +31,7 @@
 		<module>../asakusa-test-data-provider</module>
 		<module>../asakusa-test-data-generator</module>
 		<module>../asakusa-test-driver</module>
+		<module>../asakusa-thundergate-runtime</module>
 		<module>../asakusa-thundergate-vocabulary</module>
 		<module>../asakusa-thundergate-dmdl</module>
 		<module>../asakusa-thundergate-plugin</module>
@@ -44,6 +45,12 @@
 		<module>../asakusa-windgate-plugin</module>
 		<module>../asakusa-windgate-test-moderator</module>
 		<module>../asakusa-windgate-bootstrap</module>
+		<module>../asakusa-yaess-core</module>
+		<module>../asakusa-yaess-bootstrap</module>
+		<module>../asakusa-yaess-tools</module>
+		<module>../asakusa-yaess-plugin</module>
+		<module>../asakusa-yaess-jsch</module>
+		<module>../asakusa-yaess-paralleljob</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-archetype-batchapp</module>
 		<module>../asakusa-archetype-windgate</module>

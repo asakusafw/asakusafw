@@ -4,6 +4,44 @@
 Asakusa Framework Release Notes
 ===============================
 
+Release 0.2.3
+=============
+Nov 16, 2011
+
+Enhancements
+------------
+* [ :issue:`60` ] - Test driver message is not easy to understand
+* [ :issue:`81` ] - support CDH3u1 
+* [ :issue:`91` ] - Enabled to dump all actual data when running testdriver.
+    * See: :doc:`testing/user-guide`
+* [ :issue:`92` ] - Difference report on \*Tester
+    * See: :doc:`testing/user-guide`
+* [ :issue:`93` ] - YAESS - Portable Workflow Processor
+    * See: :doc:`yaess/index`
+* [ :issue:`96` ] - Skip each phase of TestDriver execution.
+    * See: :doc:`testing/user-guide`
+* [ :issue:`98` ] - Cache for ThunderGate
+    * See: :doc:`thundergate/cache`
+* [ :issue:`99` ] - support CDH3u2
+* [ :issue:`102` ] - Simplify test driver internal APIs
+
+Bug fixes
+---------
+* [ :issue:`85` ] - FileExporterDescription failed to output to multiple files
+* [ :issue:`90` ] - typo in documents
+* [ :issue:`95` ] - Extractor returns invalid return code
+* [ :issue:`100` ] - Test driver fails with IllegalArgumentException if batch argument value for Context API includes space character
+* [ :issue:`101` ] - "execution_id" is not available in BatchContext
+* [ :issue:`103` ] - WindGate stays running after OutOfMemoryError is occurred
+* [ :issue:`104` ] - dbcleaner.sh does not include in prod-db tarball.
+
+Others
+------
+* [ :issue:`89` ] - 0.2.3 Documentation
+
+----
+
+
 Release 0.2.2
 =============
 Sep 29, 2011
@@ -11,6 +49,7 @@ Sep 29, 2011
 Enhancements
 ------------
 * [ :issue:`61` ] - ThunderGate log messages improvement
+* [ :issue:`63` ] - Reduce dependency of MultipleOutputs
 * [ :issue:`64` ] - Enable to input expect data from database table.
 * [ :issue:`69` ] - **[EXPERIMENTAL FEATURE]** WindGate
     * See: :doc:`windgate/index`

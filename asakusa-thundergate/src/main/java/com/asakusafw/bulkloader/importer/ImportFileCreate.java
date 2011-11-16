@@ -20,23 +20,32 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
+import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.ImportTableLockType;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 
 /**
  * Importファイルを生成するクラス。
  * @author yuta.shirai
  */
 public class ImportFileCreate {
+
+    static final Log LOG = new Log(ImportFileCreate.class);
+
+    private static final String[] EMPTY = new String[0];
+
     /**
      * Importファイルを生成する。
      * Importファイルはテーブル毎に以下の通り出力される
@@ -64,9 +73,7 @@ public class ImportFileCreate {
                 File importFile = FileNameUtil.createImportFilePath(
                         bean.getTargetName(), bean.getJobflowId(), bean.getExecutionId(), tableName);
 
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.IMP_CREATE_FILE,
+                LOG.info("TG-IMPORTER-03003",
                         tableName,
                         lockType,
                         importFile.getAbsolutePath());
@@ -75,9 +82,7 @@ public class ImportFileCreate {
                 if (importFile.exists()) {
                     if (!importFile.delete()) {
                         // ファイルの削除に失敗した場合は異常終了する
-                        throw new BulkLoaderSystemException(
-                                this.getClass(),
-                                MessageIdConst.IMP_EXISTSFILE_DELETE_ERROR,
+                        throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03001",
                                 importFile.getName());
                     }
                 }
@@ -88,15 +93,14 @@ public class ImportFileCreate {
                     createFileWithCondition(
                             conn,
                             tableName,
-                            targetTable.getImportTargetColumns(),
-                            targetTable.getSearchCondition(),
+                            targetTable,
                             importFile);
                 } else if (ImportTableLockType.RECORD.equals(lockType)) {
                     // ロック取得有無が「行ロック」の場合、ジョブフローIDを条件にレコードを抽出する
                     createFileWithJobFlowSid(
                             conn,
                             tableName,
-                            targetTable.getImportTargetColumns(),
+                            targetTable,
                             jobflowSid,
                             importFile);
                 } else if (ImportTableLockType.NONE.equals(lockType)) {
@@ -104,33 +108,24 @@ public class ImportFileCreate {
                     createFileWithCondition(
                             conn,
                             tableName,
-                            targetTable.getImportTargetColumns(),
-                            targetTable.getSearchCondition(),
+                            targetTable,
                             importFile);
                 }
                 // ファイルが生成出来なかった場合は0byteのファイルを作成する。
                 if (!importFile.exists()) {
                     try {
                         if (!importFile.createNewFile()) {
-                            throw new BulkLoaderSystemException(
-                                    this.getClass(),
-                                    MessageIdConst.IMP_CREATEFILE_EXCEPTION);
+                            throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03002");
                         }
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.IMP_CREATE_ZERO_FILE,
+                        LOG.info("TG-IMPORTER-03005",
                                 tableName,
                                 lockType,
                                 importFile.getAbsolutePath());
                     } catch (IOException e) {
-                        throw new BulkLoaderSystemException(
-                                this.getClass(),
-                                MessageIdConst.IMP_CREATEFILE_EXCEPTION);
+                        throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-03002");
                     }
                 } else {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.IMP_CREATE_FILE_SUCCESS,
+                    LOG.info("TG-IMPORTER-03004",
                             tableName,
                             lockType,
                             importFile.getAbsolutePath());
@@ -144,7 +139,7 @@ public class ImportFileCreate {
             return true;
 
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } finally {
             DBConnection.closeConn(conn);
@@ -154,8 +149,8 @@ public class ImportFileCreate {
     /**
      * ジョブフローSIDを条件にレコードを抽出してファイルを生成する。
      * @param conn コネクション
-     * @param tableName import対象テーブル
-     * @param columns import対象カラム
+     * @param tableName target table name
+     * @param tableInfo target table information
      * @param jobflowSid ジョブフローID
      * @param importFileName importファイル
      * @throws BulkLoaderSystemException 処理に失敗した場合
@@ -163,48 +158,61 @@ public class ImportFileCreate {
     private void createFileWithJobFlowSid(
             Connection conn,
             String tableName,
-            List<String> columns,
+            ImportTargetTableBean tableInfo,
             String jobflowSid,
             File importFileName) throws BulkLoaderSystemException {
-        String sql = createSQLWithJobFlowSid(tableName, columns, importFileName);
+        String sql = createSQLWithJobFlowSid(tableName, tableInfo, importFileName);
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.IMP_CREATE_FILE_WITH_JOBFLOWSID, sql, jobflowSid);
+        String[] parameters = EMPTY;
+        LOG.info("TG-IMPORTER-03006", sql, jobflowSid);
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jobflowSid);
-            DBConnection.executeQuery(stmt, sql, new String[] { jobflowSid });
+            if (tableInfo.getStartTimestamp() != null) {
+                Calendar beginning = tableInfo.getStartTimestamp();
+                Timestamp timestamp = new Timestamp(beginning.getTimeInMillis());
+                LOG.info("TG-IMPORTER-13001", tableName, tableInfo.getCacheId(), timestamp);
+                stmt.setTimestamp(2, timestamp, beginning);
+                parameters = new String[] { jobflowSid, String.valueOf(timestamp) };
+            } else {
+                parameters = new String[] { jobflowSid };
+            }
+            DBConnection.executeQuery(stmt, sql, parameters);
         } catch (SQLException e) {
-            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
-                    e,
-                    this.getClass(),
-                    sql,
-                    new String[] { jobflowSid });
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(e, getClass(), sql, parameters);
         } finally {
             DBConnection.closePs(stmt);
         }
     }
     /**
      * ジョブフローIDを条件にレコードを抽出する場合のSQLを組み立てる。
-     * @param tableName import対象テーブル
-     * @param columns import対象カラム
+     * @param tableName target table name
+     * @param tableInfo target table information
      * @param importFileName importファイル
      * @return 生成したSQL文
+     * @throws BulkLoaderSystemException if failed to build SQL
      */
-    protected String createSQLWithJobFlowSid(String tableName, List<String> columns, File importFileName) {
+    private String createSQLWithJobFlowSid(
+            String tableName,
+            ImportTargetTableBean tableInfo,
+            File importFileName) throws BulkLoaderSystemException {
         String rlTableName = DBAccessUtil.createRecordLockTableName(tableName);
+
+        String baseSearchCondition = MessageFormat.format(
+                "WHERE EXISTS (SELECT SID FROM {1} WHERE {1}.SID = {0}.{2} AND {1}.JOBFLOW_SID = ?)",
+                tableName,
+                rlTableName,
+                Constants.getSidColumnName());
+        String searchCondition = resolveSearchCondition(tableName, tableInfo, baseSearchCondition);
+
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
-        sql.append(DBAccessUtil.joinColumnArray(columns));
+        sql.append(DBAccessUtil.joinColumnArray(tableInfo.getImportTargetColumns()));
         sql.append(" FROM ");
         sql.append(tableName);
-        sql.append(" WHERE EXISTS (SELECT SID FROM ");
-        sql.append(rlTableName);
-        sql.append(" WHERE ");
-        sql.append(rlTableName);
-        sql.append(".SID=");
-        sql.append(tableName);
-        sql.append(".SID AND JOBFLOW_SID=?)");
+        sql.append(" ");
+        sql.append(searchCondition);
         sql.append(" INTO OUTFILE ");
         sql.append("'");
         sql.append(importFileName.getAbsolutePath().replace(File.separatorChar, '/'));
@@ -216,55 +224,59 @@ public class ImportFileCreate {
     /**
      * 検索条件でレコードを抽出してファイルを生成する。
      * @param conn コネクション
-     * @param tableName import対象テーブル
-     * @param columns import対象カラム
-     * @param serchCondition 検索条件
+     * @param tableName target table name
+     * @param tableInfo target table information
      * @param importFileName importファイル
      * @throws BulkLoaderSystemException SQL例外が発生した場合
      */
     private void createFileWithCondition(
             Connection conn,
             String tableName,
-            List<String> columns,
-            String serchCondition,
+            ImportTargetTableBean tableInfo,
             File importFileName) throws BulkLoaderSystemException {
-        String sql = createSQLWithCondition(tableName, columns, serchCondition, importFileName);
+        String sql = createSQLWithCondition(tableName, tableInfo, importFileName);
         PreparedStatement stmt = null;
 
-        Log.log(this.getClass(), MessageIdConst.IMP_CREATE_FILE_WITH_CONDITION, sql);
+        LOG.info("TG-IMPORTER-03007", sql);
+        String[] parameters = EMPTY;
         try {
             stmt = conn.prepareStatement(sql);
-            DBConnection.executeQuery(stmt, sql, new String[0]);
+            if (tableInfo.getStartTimestamp() != null) {
+                Calendar beginning = tableInfo.getStartTimestamp();
+                Timestamp timestamp = new Timestamp(beginning.getTimeInMillis());
+                LOG.info("TG-IMPORTER-13001", tableName, tableInfo.getCacheId(), timestamp);
+                stmt.setTimestamp(1, timestamp, beginning);
+                parameters = new String[] { String.valueOf(timestamp) };
+            }
+            DBConnection.executeQuery(stmt, sql, parameters);
         } catch (SQLException e) {
-            throw BulkLoaderSystemException.createInstanceCauseBySQLException(
-                    e, this.getClass(), sql, new String[0]);
+            throw BulkLoaderSystemException.createInstanceCauseBySQLException(e, getClass(), sql, parameters);
         } finally {
             DBConnection.closePs(stmt);
         }
     }
     /**
      * 検索条件でレコードを抽出する場合のSQLを組み立てる。
-     * @param tableName import対象テーブル
-     * @param columns import対象カラム
-     * @param serchCondition 検索条件
+     * @param tableName target table name
+     * @param tableInfo target table information
      * @param importFileName importファイル
      * @return 生成したSQL
+     * @throws BulkLoaderSystemException if failed to build SQL
      */
-    protected String createSQLWithCondition(
+    private String createSQLWithCondition(
             String tableName,
-            List<String> columns,
-            String serchCondition,
-            File importFileName) {
+            ImportTargetTableBean tableInfo,
+            File importFileName) throws BulkLoaderSystemException {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
-        sql.append(DBAccessUtil.joinColumnArray(columns));
+        sql.append(DBAccessUtil.joinColumnArray(tableInfo.getImportTargetColumns()));
         sql.append(" FROM ");
         sql.append(tableName);
-        if (serchCondition != null && !serchCondition.isEmpty()) {
+        String searchCondition = resolveSearchCondition(tableName, tableInfo, tableInfo.getSearchCondition());
+        if (searchCondition != null && !searchCondition.isEmpty()) {
             sql.append(" WHERE ");
-            sql.append(serchCondition);
+            sql.append(searchCondition);
         }
-
         sql.append(" INTO OUTFILE ");
         sql.append("'");
         sql.append(importFileName.getAbsolutePath().replace(File.separatorChar, '/'));
@@ -272,5 +284,56 @@ public class ImportFileCreate {
         sql.append(DBAccessUtil.getTSVFileFormat());
 
         return sql.toString();
+    }
+
+    /**
+     * Creates condition expression for the target table.
+     * If {@link ImportTargetTableBean#getStartTimestamp() cache is valid},
+     * the search condition will include a placeholder ({@code ?}) in its tail.
+     * @param tableName target table name (or alias name)
+     * @param tableInfo target table information
+     * @param expression the original condition expression (nullable)
+     * @return the built string, or {@code null} if unconditioned
+     * @throws BulkLoaderSystemException if failed to resolve search condition
+     */
+    private String resolveSearchCondition(
+            String tableName,
+            ImportTargetTableBean tableInfo,
+            String expression) throws BulkLoaderSystemException {
+        assert tableName != null;
+        assert tableInfo != null;
+        String original = expression;
+        if (original == null || original.trim().isEmpty()) {
+            original = null;
+        }
+        if (tableInfo.getStartTimestamp() == null) {
+            return original;
+        } else {
+            ThunderGateCacheSupport support;
+            try {
+                support = tableInfo
+                    .getImportTargetType()
+                    .asSubclass(ThunderGateCacheSupport.class)
+                    .newInstance();
+            } catch (Exception e) {
+                throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-13002",
+                        tableName,
+                        tableInfo.getCacheId(),
+                        tableInfo.getImportTargetType().getName());
+            }
+            String timestampColumn = support.__tgc__TimestampColumn();
+            if (original == null) {
+                return MessageFormat.format(
+                        "{0}.{1} >= ?",
+                        tableName,
+                        timestampColumn);
+            } else {
+                return MessageFormat.format(
+                        "({0}) AND {1}.{2} >= ?",
+                        original,
+                        tableName,
+                        timestampColumn);
+            }
+        }
     }
 }

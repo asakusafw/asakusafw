@@ -44,6 +44,9 @@ import com.asakusafw.bulkloader.testutil.UnitTestUtil;
  *
  */
 public class ConfigurationLoaderTest {
+
+    static final Log LOG = new Log(ConfigurationLoaderTest.class);
+
     /** 読み込むプロパティファイル */
     private static List<String> propertys_db = Arrays.asList(new String[]{"bulkloader-conf-db.properties"});
     private static List<String> propertys_hc = Arrays.asList(new String[]{"bulkloader-conf-hc.properties"});
@@ -1151,8 +1154,7 @@ public class ConfigurationLoaderTest {
             ConfigurationLoader.loadJDBCProp("targetErr");
             fail();
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -1177,9 +1179,9 @@ public class ConfigurationLoaderTest {
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
+            fail();
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -1204,9 +1206,9 @@ public class ConfigurationLoaderTest {
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
+            fail();
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -1231,9 +1233,9 @@ public class ConfigurationLoaderTest {
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
+            fail();
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -1258,9 +1260,9 @@ public class ConfigurationLoaderTest {
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
+            fail();
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -1287,8 +1289,7 @@ public class ConfigurationLoaderTest {
         try {
             ConfigurationLoader.loadJDBCProp("target2");
         } catch (BulkLoaderSystemException e) {
-            assertTrue(e instanceof BulkLoaderSystemException);
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
 }

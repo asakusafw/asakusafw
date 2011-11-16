@@ -16,6 +16,8 @@
 				<include>.bulkloader_hc_profile</include>
 				<include>collector.sh</include>
 				<include>extractor.sh</include>
+				<include>get-cache-info.sh</include>
+				<include>delete-cache-storage.sh</include>
 				<include>set-classpath-hc.sh</include>
 			</includes>
 			<fileMode>0744</fileMode>
@@ -30,6 +32,13 @@
 				<include>log4j.xml</include>
 			</includes>
 			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
+			<outputDirectory>thundergate-cache</outputDirectory>
+			<fileMode>0744</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -51,6 +60,21 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
+			<outputDirectory>yaess-hadoop/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
+			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		
 		<!-- empty directory -->
 		<fileSet>
 			<directory>src/main/assembly</directory>

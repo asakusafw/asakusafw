@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.testdriver.core.SourceProvider;
+import com.asakusafw.testdriver.core.DataModelSourceProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
@@ -34,12 +34,12 @@ import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 
 /**
- * An implementation of {@link SourceProvider}
+ * An implementation of {@link DataModelSourceProvider}
  * using {@link WindGateImporterDescription} and {@link WindGateExporterDescription}.
  * This accepts URI: {@code windgate:<fully qualified class name of Importer/Exporter description>}.
  * @since 0.2.2
  */
-public class WindGateSourceProvider implements SourceProvider {
+public class WindGateSourceProvider implements DataModelSourceProvider {
 
     private static final String SCHEME = "windgate";
 

@@ -138,7 +138,7 @@ public class JobFlowTester extends TestDriverBase {
         executor.prepareOutput(jobflowInfo, outputs);
 
         LOG.info("ジョブフローを実行しています: {}", jobFlowDescriptionClass.getName());
-        VerifyContext verifyContext = new VerifyContext();
+        VerifyContext verifyContext = new VerifyContext(driverContext);
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 

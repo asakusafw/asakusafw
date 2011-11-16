@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義をデータベースに登録する。
             storeDatabase();
+            setLastModifiedTimestamp(new Timestamp(0L));
 
             // バッチコンパイラの実行
             BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);

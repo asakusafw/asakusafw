@@ -28,3 +28,11 @@ naming = {
     a : INT;
     very_very_very_long_name : LONG;
 };
+
+@namespace(value = testing)
+ordered = {
+    first : INT;
+    second_property : INT;
+    a : TEXT;
+    last : INT;
+};

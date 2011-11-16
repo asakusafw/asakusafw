@@ -3,6 +3,7 @@ import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
@@ -27,8 +28,9 @@ import org.apache.hadoop.io.Writable;
 /**
  * varietyを表すデータモデルクラス。
  */
-@DataModelKind("DMDL")@ModelInputLocation(VarietyInput.class)@ModelOutputLocation(VarietyOutput.class) public class 
-        Variety implements DataModel<Variety>, Writable {
+@DataModelKind("DMDL")@ModelInputLocation(VarietyInput.class)@ModelOutputLocation(VarietyOutput.class)@PropertyOrder({
+            "p_int", "p_long", "p_byte", "p_short", "p_decimal", "p_float", "p_double", "p_text", "p_boolean", "p_date", 
+            "p_datetime"}) public class Variety implements DataModel<Variety>, Writable {
     private final IntOption pInt = new IntOption();
     private final LongOption pLong = new LongOption();
     private final ByteOption pByte = new ByteOption();

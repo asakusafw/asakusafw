@@ -95,7 +95,7 @@ SSH接続情報は以下のプロパティに設定します。
     resource.hadoop.target=/home/asakusa/asakusa/windgate-ssh
 
     # SSH接続ユーザ
-    resource.hadoop.user=asakuse
+    resource.hadoop.user=asakusa
 
     # SSH接続ホスト
     resource.hadoop.host=localhost
@@ -316,7 +316,7 @@ Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタ
     
 Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイ
 =======================================================
-Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイについては、基本的な流れはThunderGateの場合( :doc:`../application/maven-archetype` )と同様ですが、デプロイするAsakusa FrameworkのアーカイブはWindGate用のアーカイブを使用します。以下を使用して下さい。
+Asakusa FrameworkとWindGateのHadoopクラスタへのデプロイについては、基本的な流れはThunderGateの場合( :doc:`../application/administrator-guide` )と同様ですが、デプロイするAsakusa FrameworkのアーカイブはWindGate用のアーカイブを使用します。以下を使用して下さい。
 
 WindGate用デプロイアーカイブ
 ----------------------------

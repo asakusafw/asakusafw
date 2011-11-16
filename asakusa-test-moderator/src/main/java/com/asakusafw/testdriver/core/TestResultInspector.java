@@ -20,18 +20,26 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.testdriver.rule.VerifyRuleBuilder;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
  * Inspects each test result.
  * @since 0.2.0
+ * @deprecated Use {@link TestModerator} instead
  */
+@Deprecated
 public class TestResultInspector {
+
+    static final Logger LOG = LoggerFactory.getLogger(TestResultInspector.class);
 
     private final DataModelAdapter adapter;
 
-    private final SourceProvider sources;
+    private final DataModelSourceProvider sources;
 
     private final VerifyRuleProvider rules;
 
@@ -58,7 +66,7 @@ public class TestResultInspector {
      */
     public TestResultInspector(
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             VerifyRuleProvider rules,
             ExporterRetriever<ExporterDescription> retrievers) {
         this(new TestContext.Empty(), adapter, sources, rules, retrievers);
@@ -80,7 +88,7 @@ public class TestResultInspector {
         }
         this.context = context;
         this.adapter = new SpiDataModelAdapter(serviceClassLoader);
-        this.sources = new SpiSourceProvider(serviceClassLoader);
+        this.sources = new SpiDataModelSourceProvider(serviceClassLoader);
         this.rules = new SpiVerifyRuleProvider(serviceClassLoader);
         this.targets = new SpiExporterRetriever(serviceClassLoader);
     }
@@ -98,7 +106,7 @@ public class TestResultInspector {
     public TestResultInspector(
             TestContext context,
             DataModelAdapter adapter,
-            SourceProvider sources,
+            DataModelSourceProvider sources,
             VerifyRuleProvider rules,
             ExporterRetriever<ExporterDescription> retrievers) {
         if (adapter == null) {
@@ -244,15 +252,15 @@ public class TestResultInspector {
         assert definition != null;
         assert description != null;
         assert engine != null;
+        List<Difference> results = new ArrayList<Difference>();
         DataModelSource target = targets.createSource(definition, description, context);
         try {
-            List<Difference> results = new ArrayList<Difference>();
             results.addAll(engine.inspectInput(target));
-            results.addAll(engine.inspectRest());
-            return results;
         } finally {
             target.close();
         }
+        results.addAll(engine.inspectRest());
+        return results;
     }
 
     private VerifyEngine buildVerifier(

@@ -60,6 +60,21 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
+			<outputDirectory>yaess-hadoop/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
+			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		
 		<!-- empty directory -->
 		<fileSet>
 			<directory>src/main/assembly</directory>

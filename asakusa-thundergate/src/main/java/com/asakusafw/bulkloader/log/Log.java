@@ -17,141 +17,186 @@ package com.asakusafw.bulkloader.log;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ResourceBundle;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+
 /**
- * ログを出力するユーティリティクラス。
- * @author yuta.shirai
+ * A logger wrapper for ThunderGate.
  */
-public final class Log {
-    /**
-     * ログタイムスタンプがnullの場合に表示する文字列。
-     */
-    private static final String LOG_TSTAMP_NULL_STR = "---------- --:--:--.---";
-    /**
-     * メッセージIDがnullの場合に表示する文字列。
-     */
+public class Log {
+
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.bulkloader.log.messages"); //$NON-NLS-1$
+
     private static final String LOG_MESSAGE_ID_NULL_STR = "-";
-    /**
-     * メッセージ引数がnullの場合に表示する文字列。
-     */
-    private static final String LOG_MESSAGE_ARG_NULL_STR = "(null)";
+
+    private final Logger internal;
 
     /**
-     * 本クラスはインスタンス化せず、staticメソッドを直接呼び出してください。
+     * Creates a new instance.
+     * @param base
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    private Log() {
-        return;
-    }
-
-    /**
-     * ログ出力を行います。
-     * <p>
-     * ログが初期化されていない場合は、何も処理を行いません。
-     * </p>
-     * @param clazz 発生クラス
-     * @param messageId メッセージId
-     * @param messageArgs メッセージ引数
-     * @return 出力したログメッセージ。ログが出力されていない場合は <code>null</code>
-     */
-    public static String log(Class<?> clazz, String messageId, Object... messageArgs) {
-        return Log.log(null, clazz, messageId, messageArgs);
-    }
-
-    /**
-     * スタックトレース付きで、ログ出力を行います。
-     * <p>
-     * ログが初期化されていない場合は、何も処理を行いません。
-     * </p>
-     * @param t 例外
-     * @param clazz 発生クラス
-     * @param messageId メッセージId
-     * @param messageArgs メッセージ引数
-     * @return 出力したログメッセージ。ログが出力されていない場合は <code>null</code>
-     */
-    public static String log(Throwable t, Class<?> clazz, String messageId, Object... messageArgs) {
-        if (!LogInitializer.isInitialized()) {
-            return null;
+    public Log(Class<?> base) {
+        if (base == null) {
+            throw new IllegalArgumentException("base must not be null"); //$NON-NLS-1$
         }
-
-        String message = LogMessageManager.getInstance().createLogMessage(messageId,
-                Log.changeNullToStr(messageArgs, LOG_MESSAGE_ARG_NULL_STR));
-        Level level = LogMessageManager.getInstance().getLogLevel(messageId);
-        Timestamp logTime = new Timestamp(System.currentTimeMillis());
-
-        Log.setMDC(messageId, logTime);
-        Log.writeLog(t, clazz, level, message);
-        Log.resetMDC();
-
-        return message;
+        this.internal = Logger.getLogger(base);
     }
 
     /**
-     * MDCに値を設定します。
-     *
-     * @param messageId メッセージId
-     * @param logTime ログ発生日時
+     * Log a message at DEBUG level.
+     * @param format the message format
+     * @param arguments the arguments
      */
-    private static void setMDC(String messageId, Timestamp logTime) {
+    public void debugMessage(String format, Object... arguments) {
+        if (internal.isDebugEnabled()) {
+            setMessageCode("DEBUG");
+            internal.debug(MessageFormat.format(format, arguments));
+            clearMessageCode();
+        }
+    }
+
+    /**
+     * Log a message at INFO level.
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void info(String code, Object... arguments) {
+        if (internal.isInfoEnabled()) {
+            String message = message(code, arguments);
+            setMessageCode(code);
+            internal.info(message);
+            clearMessageCode();
+        }
+    }
+
+    /**
+     * Log a message at WARN level.
+     * @param exception the context exception
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void info(Throwable exception, String code, Object... arguments) {
+        if (internal.isInfoEnabled()) {
+            String message = message(code, arguments);
+            setMessageCode(code);
+            internal.info(message, exception);
+            clearMessageCode();
+        }
+    }
+
+    /**
+     * Log a message at WARN level.
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void warn(String code, Object... arguments) {
+        String message = message(code, arguments);
+        setMessageCode(code);
+        internal.warn(message);
+        clearMessageCode();
+    }
+
+    /**
+     * Log a message at WARN level.
+     * @param exception the context exception
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void warn(Throwable exception, String code, Object... arguments) {
+        String message = message(code, arguments);
+        setMessageCode(code);
+        internal.warn(message, exception);
+        clearMessageCode();
+    }
+
+    /**
+     * Log a system exception.
+     * @param exception target exception
+     */
+    public void log(BulkLoaderReRunnableException exception) {
+        String code = exception.getMessageId();
+        String message = message(code, exception.getMessageArgs());
+        setMessageCode(code);
+        Logger.getLogger(exception.getClazz()).warn(message, exception.getCause());
+        clearMessageCode();
+    }
+
+    /**
+     * Log a system exception.
+     * @param exception target exception
+     */
+    public void log(BulkLoaderSystemException exception) {
+        String code = exception.getMessageId();
+        String message = message(code, exception.getMessageArgs());
+        try {
+            setMessageCode(code);
+            Logger.getLogger(exception.getClazz()).error(message, exception.getCause());
+            clearMessageCode();
+        } catch (RuntimeException e) {
+            System.err.printf("エラーログの出力に失敗しました: %s%n", message);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Log a message at ERROR level.
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void error(String code, Object... arguments) {
+        String message = message(code, arguments);
+        try {
+            setMessageCode(code);
+            internal.error(message);
+            clearMessageCode();
+        } catch (RuntimeException e) {
+            System.err.printf("エラーログの出力に失敗しました: %s%n", message);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Log a message at ERROR level.
+     * @param exception the context exception
+     * @param code the message code
+     * @param arguments the arguments
+     */
+    public void error(Throwable exception, String code, Object... arguments) {
+        String message = message(code, arguments);
+        try {
+            setMessageCode(code);
+            internal.error(message, exception);
+            clearMessageCode();
+        } catch (RuntimeException e) {
+            System.err.printf("エラーログの出力に失敗しました: %s%n", message);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private String message(String code, Object... arguments) {
+        String messagePattern = BUNDLE.getString(code);
+        return MessageFormat.format(messagePattern, arguments);
+    }
+
+    private void setMessageCode(String messageId) {
+        Timestamp logTime = new Timestamp(System.currentTimeMillis());
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         MDC.put("LOG_TSTAMP", dateFormat.format(logTime));
         MDC.put("MESSAGE_ID", messageId);
     }
 
-    /**
-     * MDCの値をクリアします。
-     *
-     */
-    private static void resetMDC() {
-        MDC.put("LOG_TSTAMP", LOG_TSTAMP_NULL_STR);
+    private void clearMessageCode() {
         MDC.put("MESSAGE_ID", LOG_MESSAGE_ID_NULL_STR);
-    }
-
-    /**
-     * ログをファイルに書き込みます。
-     *
-     * @param t 例外
-     * @param clazz 呼び出し元クラス
-     * @param level 重要度
-     * @param message メッセージ
-     */
-    private static void writeLog(Throwable t, Class<?> clazz, Level level, String message) {
-        Logger logger = Logger.getLogger(clazz);
-        if (logger.isEnabledFor(level)) {
-
-            if (Level.DEBUG == level) {
-                logger.debug(message, t);
-            } else if (Level.INFO == level) {
-                logger.info(message, t);
-            } else if (Level.WARN == level) {
-                logger.warn(message, t);
-            } else if (Level.ERROR == level) {
-                logger.error(message, t);
-            } else if (Level.FATAL == level) {
-                logger.fatal(message, t);
-            }
-        }
-    }
-
-    /**
-     * オブジェクト配列の要素がnullの場合、指定された文字列に変換します。
-     * @param objects 変換前オブジェクト
-     * @param str <code>null</code> を置き換える文字列
-     * @return 変換後オブジェクト
-     */
-    private static Object[] changeNullToStr(Object[] objects, String str) {
-        Object[] newObjects = new Object[objects.length];
-        for (int i = 0; i < objects.length; i++) {
-            if (objects[i] == null) {
-                newObjects[i] = str;
-            } else {
-                newObjects[i] = objects[i];
-            }
-        }
-        return newObjects;
     }
 }

@@ -15,9 +15,6 @@
  */
 package com.asakusafw.testdriver.core;
 
-import java.io.IOException;
-import java.net.URI;
-
 /**
  * Service provider interface of {@link DataModelSource} drivers.
  * <p>
@@ -26,27 +23,9 @@ import java.net.URI;
  * {@code META-INF/services/com.asakusafw.testdriver.core.SourceProvider}.
  * </p>
  * @since 0.2.0
+ * @deprecated Use {@link DataModelSourceProvider} instead
  */
-public interface SourceProvider {
-
-    /**
-     * Creates a {@link DataModelSource} object from the specified source.
-     * <p>
-     * If this object does not support the {@link URI}, or
-     * the source does not exist on the specified {@link URI},
-     * this method will return {@code null}.
-     * </p>
-     * @param <T> type of data model
-     * @param definition the data model definition
-     * @param source the target identifier
-     * @param context the current testing context
-     * @return the created {@link DataModelSource},
-     *     or {@code null} if the specified source is not valid for this object
-     * @throws IOException if failed to load a {@link DataModelSource} from the source
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    <T> DataModelSource open(
-            DataModelDefinition<T> definition,
-            URI source,
-            TestContext context) throws IOException;
+@Deprecated
+public interface SourceProvider extends DataModelSourceProvider {
+    // no special members
 }

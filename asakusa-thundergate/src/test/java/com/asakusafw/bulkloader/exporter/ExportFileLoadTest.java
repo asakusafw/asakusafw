@@ -291,7 +291,7 @@ public class ExportFileLoadTest {
             @Override
             protected long getTempSeq(String jobflowSid, String tableName,
                     Connection conn) throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-EXTRACTOR-02001");
             }
         };
 

@@ -26,6 +26,16 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.external.IndependentOutExporterDesc;
+import com.asakusafw.compiler.flow.external.IndependentOutputJob;
+import com.asakusafw.compiler.flow.external.MultipleOutputJob;
+import com.asakusafw.compiler.flow.external.NestedOutExporterDesc;
+import com.asakusafw.compiler.flow.external.NestedOutputJob;
+import com.asakusafw.compiler.flow.external.Out1ExporterDesc;
+import com.asakusafw.compiler.flow.external.Out2ExporterDesc;
+import com.asakusafw.compiler.flow.external.Out3ExporterDesc;
+import com.asakusafw.compiler.flow.external.Out4ExporterDesc;
+import com.asakusafw.compiler.flow.external.SingleOutputJob;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.util.CompilerTester;
@@ -39,14 +49,14 @@ import com.asakusafw.vocabulary.external.FileExporterDescription;
 public class ParallelSortClientEmitterTest {
 
     /**
-     * テストヘルパー。
+     * Test helper.
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単一のファイルを出力する。
-     * @throws Exception テストに失敗した場合
+     * Output single file set.
+     * @throws Exception if failed
      */
     @Test
     public void single() throws Exception {
@@ -64,8 +74,8 @@ public class ParallelSortClientEmitterTest {
     }
 
     /**
-     * 複数のファイルを出力する。
-     * @throws Exception テストに失敗した場合
+     * Output multiple file sets.
+     * @throws Exception if failed
      */
     @Test
     public void multiple() throws Exception {
@@ -92,6 +102,52 @@ public class ParallelSortClientEmitterTest {
         List<Ex1> out4 = getList(Out4ExporterDesc.class);
         checkSids(out4);
         checlValues(out4, 400);
+    }
+
+    /**
+     * Output files into nested directory.
+     * @throws Exception if failed
+     */
+    @Test
+    public void independent() throws Exception {
+        JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
+
+        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
+        writeTestData(source);
+        source.close();
+
+        assertThat(tester.run(info), is(true));
+
+        List<Ex1> out1 = getList(Out1ExporterDesc.class);
+        checkSids(out1);
+        checlValues(out1, 100);
+
+        List<Ex1> out2 = getList(IndependentOutExporterDesc.class);
+        checkSids(out2);
+        checlValues(out2, 200);
+    }
+
+    /**
+     * Output files into nested directory.
+     * @throws Exception if failed
+     */
+    @Test
+    public void nested() throws Exception {
+        JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
+
+        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
+        writeTestData(source);
+        source.close();
+
+        assertThat(tester.run(info), is(true));
+
+        List<Ex1> out1 = getList(Out1ExporterDesc.class);
+        checkSids(out1);
+        checlValues(out1, 100);
+
+        List<Ex1> out2 = getList(NestedOutExporterDesc.class);
+        checkSids(out2);
+        checlValues(out2, 200);
     }
 
     private void checkSids(List<Ex1> results) {

@@ -22,7 +22,6 @@ import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.log.Log;
 
 
@@ -32,13 +31,9 @@ import com.asakusafw.bulkloader.log.Log;
  *
  */
 public class Collector {
-    /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Collector.class;
-    /**
-     * Exporterで読み込むプロパティファイル。
-     */
+
+    static final Log LOG = new Log(Collector.class);
+
     private static final List<String> PROPERTIES = Constants.PROPERTIES_HC;
 
     /**
@@ -83,59 +78,45 @@ public class Collector {
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initHadoopCluster(jobflowId, executionId, PROPERTIES)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.COL_INIT_ERROR,
+                LOG.error(
+                        "TG-COLLECTOR-01003",
                         new Date(), targetName, batchId, jobflowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // 開始ログ出力
-            Log.log(
-                    CLASS,
-                    MessageIdConst.COL_START,
+            LOG.info("TG-COLLECTOR-01001",
                     new Date(), targetName, batchId, jobflowId, executionId, user);
 
             // パラメータオブジェクトを作成
             ExporterBean bean = createBean(targetName, batchId, jobflowId, executionId);
             if (bean == null) {
                 // パラメータのチェックでエラー
-                Log.log(
-                        CLASS,
-                        MessageIdConst.COL_PARAM_ERROR,
+                LOG.error("TG-COLLECTOR-01006",
                         new Date(), targetName, batchId, jobflowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // ExportファイルをDBサーバに送信
-            Log.log(CLASS, MessageIdConst.COL_FILESEND, targetName, batchId, jobflowId, executionId, user);
+            LOG.info("TG-COLLECTOR-01008", targetName, batchId, jobflowId, executionId, user);
             ExportFileSend fileSend = createExportFileSend();
             if (!fileSend.sendExportFile(bean, user)) {
                 // Exportファイルの送信に失敗
-                Log.log(
-                        CLASS,
-                        MessageIdConst.COL_FILESEND_ERROR,
+                LOG.error("TG-COLLECTOR-01007",
                         new Date(), targetName, batchId, jobflowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.COL_FILESEND_SUCCESS,
+                LOG.info("TG-COLLECTOR-01009",
                         targetName, batchId, jobflowId, executionId, user);
             }
 
             // 正常終了
-            Log.log(
-                    CLASS,
-                    MessageIdConst.COL_EXIT,
+            LOG.info("TG-COLLECTOR-01002",
                     new Date(), targetName, batchId, jobflowId, executionId, user);
             return Constants.EXIT_CODE_SUCCESS;
         } catch (Exception e) {
             try {
-                Log.log(
-                        e,
-                        CLASS,
-                        MessageIdConst.COL_EXCEPRION,
+                LOG.error(e, "TG-COLLECTOR-01004",
                         new Date(), targetName, batchId, jobflowId, executionId, user);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {

@@ -30,6 +30,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
  *
  */
 public final class Constants {
+
     /*
      * 環境変数名
      */
@@ -115,6 +116,14 @@ public final class Constants {
      * プロパティKEY Extractorのシェル名。
      */
     public static final String PROP_KEY_EXT_SHELL_NAME = "import.extractor-shell-name";
+    /**
+     * The property key of Cache info retriever executable file name.
+     */
+    public static final String PROP_KEY_CACHE_INFO_SHELL_NAME = "import.cache-info-shell-name";
+    /**
+     * The property key of Cache storage cleaner file name.
+     */
+    public static final String PROP_KEY_DELETE_CACHE_SHELL_NAME = "import.delete-cache-shell-name";
     /**
      * プロパティKEY Importファイルの圧縮有無。
      */
@@ -217,6 +226,16 @@ public final class Constants {
      */
     public static final String PROP_KEY_IMP_SEQ_FILE_COMP_TYPE = "import.seq-comp-type";
     /**
+     * The property key of Cache Builder executable file name.
+     * @since 0.2.3
+     */
+    public static final String PROP_KEY_CACHE_BUILDER_SHELL_NAME = "import.cache-build-shell-name";
+    /**
+     * The property key of maximim number of parallel Cache Builder.
+     * @since 0.2.3
+     */
+    public static final String PROP_KEY_CACHE_BUILDER_PARALLEL = "import.cache-build-max-parallel";
+    /**
      * プロパティKEY Exportファイルの圧縮有無。
      */
     public static final String PROP_KEY_EXP_FILE_COMP_TYPE = "export.zip-comp-type";
@@ -293,6 +312,11 @@ public final class Constants {
      * プロパティデフォルト値 SequenceFileファイルの圧縮有無。
      */
     public static final String PROP_DEFAULT_IMP_SEQ_FILE_COMP_TYPE = SequenceFile.CompressionType.NONE.name();
+    /**
+     * The default property value of maximim number of parallel Cache Builder.
+     * @since 0.2.3
+     */
+    public static final String PROP_DEFAULT_CACHE_BUILDER_PARALLEL = "1";
 
     /*
      * パス・ファイル名の固定値
@@ -341,10 +365,6 @@ public final class Constants {
      * Exportファイルの拡張子。
      */
     public static final String EXPORT_FILE_EXTENSION = ".tsv";
-    /**
-     * Exportファイルが存在しなかった事を表すダミーのファイル名。
-     */
-    public static final String EXPORT_FILE_NOT_FOUND = "EXPORTFILENOTFOUND";
     /**
      * ジョブフローパッケージのプレフィックス。
      */

@@ -1,0 +1,85 @@
+YAESS: Asakusa Portable Workflow Processor, or "Yet Another Experimental Shell Script."
+
+
+==
+YAESS profile:
+
+core = <subclass of CoreProfile>
+core.version = 0.1.0
+core.<key> = <value>
+
+monitor = <subclass of ExecutionMonitorProvider>
+monitor.<key> = <service-specific configuration value>
+
+lock = <subclass of ExecutionLockProvider>
+lock.scope = world | batch | flow | execution
+lock.<key> = <service-specific configuration value>
+
+scheduler = <subclass of JobScheduler>
+scheduler.<key> = <service-specific configuration value>
+
+hadoop = <subclass of HadoopScriptHandler>
+hadoop.env.ASAKUSA_HOME = $<Asakusa installation home>
+hadoop.resource = <this resource name>?
+hadoop.env.<key> = $<extra environment variables>
+hadoop.<key> = <service-specific configuration value>
+
+# if <profile-name> is *, it command handler behaves as default command handler.
+command.<profile-name> = <subclass of CommandScriptHandler>
+command.<profile-name>.env.ASAKUSA_HOME = $<Asakusa installation home>
+command.<profile-name>.resource = <this resource name>?
+command.<profile-name>.env.<key> = $<extra environment variables>
+command.<profile-name>.<key> = <service-specific configuration value>
+
+==
+YAESS Script:
+
+batch.id = <batch ID>
+batch.version = <script version>
+
+flow.<flow-ID>.blockerIds = <blockers' flow ID>
+
+flow.<flow-ID>.<phase-name>.<token>.id = <script ID>
+flow.<flow-ID>.<phase-name>.<token>.blockerIds = <blockers' script ID>
+flow.<flow-ID>.<phase-name>.<token>.kind = hadoop
+flow.<flow-ID>.<phase-name>.<token>.class = <target class name>
+flow.<flow-ID>.<phase-name>.<token>.prop.<name> = <extra Hadoop property>
+flow.<flow-ID>.<phase-name>.<token>.env.<name> = <extra environment variable>
+
+flow.<flow-ID>.<phase-name>.<token>.id = <script ID>
+flow.<flow-ID>.<phase-name>.<token>.blockerIds = <blockers' script ID>
+flow.<flow-ID>.<phase-name>.<token>.kind = command
+flow.<flow-ID>.<phase-name>.<token>.profile = <target profile name>
+flow.<flow-ID>.<phase-name>.<token>.module = <module name>
+flow.<flow-ID>.<phase-name>.<token>.command.<potision> = <command line token>
+flow.<flow-ID>.<phase-name>.<token>.env.<name> = <extra environment variable>
+
+==
+Basics:
+
+core = com.asakusafw.yaess.basic.BasicCoreProfile
+core.version = 0.1
+
+lock = com.asakusafw.yaess.basic.BasicLockProvider
+lock.scope = world
+lock.directory = ${ASAKUSA_HOME}/yaess/var/lock
+
+monitor = com.asakusafw.yaess.basic.BasicMonitorProvider
+monitor.stepUnit = 0.05
+
+scheduler = com.asakusafw.yaess.basic.BasicJobScheduler
+
+# <position> = 0, 1, 2, ...
+# <prefix command token> can contain "@[position],"
+# this will be replaced as original command tokens (0-origin position)
+hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
+hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
+hadoop.command.<position> = $<prefix command token>
+hadoop.cleanup.<position> = $<prefix command token>
+hadoop.workingDirectory = target/hadoopwork/${execution_id}
+hadoop.env.<key> = $<extra environment variables>
+
+command.<profile-name> = com.asakusafw.yaess.basic.BasicCommandScriptHandler
+command.<profile-name>.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
+command.<profile-name>.command.<position> = $<prefix command token>
+command.<profile-name>.env.<key> = $<extra environment variables>

@@ -23,9 +23,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -42,10 +40,10 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileCompType;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvIoFactory;
 
@@ -59,6 +57,8 @@ public class ExportFileSend {
         UrlStreamHandlerFactoryRegisterer.register();
     }
 
+    static final Log LOG = new Log(ExportFileSend.class);
+
     /**
      * ファイル名作成の為のマップ。
      */
@@ -66,8 +66,7 @@ public class ExportFileSend {
     /**
      * Export対象ファイルをDBサーバへ送信する。
      * <p>
-     * SequenceFile形式のExport対象ファイルを読み込んでTSV形式に変換した上で、
-     * ZIP形式に圧縮してDBサーバの標準入力へ送信する。
+     * SequenceFile形式のExport対象ファイルを読み込んでTSV形式に変換した上で、DBサーバの標準入力へ送信する。
      * 送信は、Exporterの標準入力にファイルを書き込む事で行う。
      * </p>
      * @param bean パラメータを保持するBean
@@ -76,20 +75,20 @@ public class ExportFileSend {
      */
     public boolean sendExportFile(ExporterBean bean, String user) {
 
-        // ZIP圧縮に関する情報を取得
+        // 圧縮に関する情報を取得
         String strCompType = ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_TYPE);
         FileCompType compType = FileCompType.find(strCompType);
 
         OutputStream output = getOutputStream();
         try {
-            // 標準出力ストリームをZipOutputStreamでラップする
-            ZipOutputStream zos = new ZipOutputStream(output);
-            if (FileCompType.STORED.equals(compType)) {
-                zos.setLevel(0);
+            FileList.Writer writer;
+            try {
+                writer = FileList.createWriter(output, compType == FileCompType.DEFLATED);
+            } catch (IOException e) {
+                throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
+                        "Exporterと接続するチャネルを開けませんでした");
             }
-
             List<String> l = bean.getExportTargetTableList();
-            boolean isPutEntry = false;
             for (String tableName : l) {
                 ExportTargetTableBean targetTable = bean.getExportTargetTable(tableName);
                 Class<? extends Writable> targetTableModel =
@@ -109,24 +108,17 @@ public class ExportFileSend {
                 long recordCount = 0;
                 for (int i = 0; i < fileCount; i++) {
                     // Exportファイルを送信
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.COL_SEND_HDFSFILE,
+                    LOG.info("TG-COLLECTOR-02002",
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
-                    long countInFile = send(targetTableModel, filePath.get(i), zos, tableName);
+                    long countInFile = send(targetTableModel, filePath.get(i), writer, tableName);
                     if (countInFile >= 0) {
-                        isPutEntry = true;
                         recordCount += countInFile;
                     }
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.COL_SEND_HDFSFILE_SUCCESS,
+                    LOG.info("TG-COLLECTOR-02003",
                             tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
                 }
 
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.PRF_COLLECT_COUNT,
+                LOG.info("TG-PROFILE-01004",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -135,22 +127,8 @@ public class ExportFileSend {
                         recordCount);
             }
 
-            if (!isPutEntry) {
-                // ZIPにエントリが存在しない場合はダミーのエントリを追加する
-                ZipEntry ze = new ZipEntry(Constants.EXPORT_FILE_NOT_FOUND);
-                try {
-                    zos.putNextEntry(ze);
-                } catch (IOException e) {
-                    throw new BulkLoaderSystemException(
-                            e,
-                            this.getClass(),
-                            MessageIdConst.COL_SENDFILE_EXCEPTION,
-                            "ZIPファイルへのエントリの追加に失敗");
-                }
-            }
-
             try {
-                zos.close();
+                writer.close();
             } catch (IOException e) {
                 // ここで例外が発生した場合は握りつぶす
                 e.printStackTrace();
@@ -159,7 +137,7 @@ public class ExportFileSend {
             // 正常終了
             return true;
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } finally {
             try {
@@ -171,11 +149,11 @@ public class ExportFileSend {
         }
     }
     /**
-     * 指定されたSequenceFileを読み込んでTSV形式でZipOutputStreamに書き出す。
+     * 指定されたSequenceFileを読み込んでTSV形式で{@link FileList.Writer}に書き出す。
      * @param <T> データモデルの型
      * @param targetTableModel Exportデータに対応するModelのクラス型
      * @param filePath Exportファイル
-     * @param zos 出力先の{@link ZipOutputStream}
+     * @param writer 出力先のWriter
      * @param tableName テーブル名
      * @return 書きだしたレコード数、エントリをひとつも書き出さなかった場合は -1
      * @throws BulkLoaderSystemException 入出力に関するシステム例外が発生した場合
@@ -183,7 +161,7 @@ public class ExportFileSend {
     protected <T extends Writable> long send(
             Class<T> targetTableModel,
             String filePath,
-            ZipOutputStream zos,
+            FileList.Writer writer,
             String tableName) throws BulkLoaderSystemException {
         FileSystem fs = null;
         String fileName = null;
@@ -200,15 +178,11 @@ public class ExportFileSend {
             FileStatus[] status = fs.globStatus(new Path(filePath));
             Path[] listedPaths = FileUtil.stat2Paths(status);
             if (listedPaths == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.COL_EXPORT_FILE_NOT_FOUND,
+                LOG.info("TG-COLLECTOR-02006",
                         tableName, filePath);
                 return -1;
             } else {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.COL_EXPORT_FILE_FOUND,
+                LOG.info("TG-COLLECTOR-02007",
                         listedPaths.length, tableName, filePath);
             }
             long count = 0;
@@ -220,28 +194,19 @@ public class ExportFileSend {
                 }
 
                 // TODO 見通しを良くする
-                SequenceFile.Reader reader = null;
+                // SequenceFileをHDFSから読み込むオブジェクトを生成する
+                SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
                 try {
-                    // SequenceFileをHDFSから読み込むオブジェクトを生成する
-                    reader = new SequenceFile.Reader(fs, path, conf);
-
                     while (true) {
-                        // ZIPエントリを追加
-                        fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
-                        ZipEntry ze = new ZipEntry(fileName);
-                        zos.putNextEntry(ze);
+                        // エントリを追加
                         addEntry = true;
-
-                        ModelOutput<T> modelOut = null;
+                        fileName = FileNameUtil.createSendExportFileName(tableName, fileNameMap);
+                        OutputStream output = writer.openNext(FileList.content(fileName));
                         try {
-                            // BeanをTSVファイルに変換するオブジェクトを生成する
-                            ByteCountZipEntryOutputStream zeos = new ByteCountZipEntryOutputStream(zos);
+                            CountingOutputStream counter = new CountingOutputStream(output);
+                            ModelOutput<T> modelOut = factory.createModelOutput(counter);
                             T model = factory.createModelObject();
-                            modelOut = factory.createModelOutput(zeos);
-
-                            Log.log(
-                                    this.getClass(),
-                                    MessageIdConst.COL_SENDFILE,
+                            LOG.info("TG-COLLECTOR-02004",
                                     tableName, path.toString(), fileName);
 
                             // SequenceFileを読み込み、Model→TSV変換を行う
@@ -253,14 +218,13 @@ public class ExportFileSend {
                                 // 最大ファイルサイズに達したかチェックする
                                 // charからbyteに変換する部分でバッファされるため、
                                 // 必ずしも分割サイズで分割されない。(バッファ分の誤差がある)
-                                if (zeos.getSize() > maxSize) {
+                                if (counter.getByteCount() > maxSize) {
                                     nextFile = true;
                                     break;
                                 }
                             }
-
-                            Log.log(this.getClass(),
-                                    MessageIdConst.COL_SENDFILE_SUCCESS,
+                            modelOut.close();
+                            LOG.info("TG-COLLECTOR-02005",
                                     tableName, path.toString(), fileName);
 
                             if (nextFile) {
@@ -271,15 +235,11 @@ public class ExportFileSend {
                                 break;
                             }
                         } finally {
-                            if (modelOut != null) {
-                                modelOut.close();
-                            }
+                            output.close();
                         }
                     }
                 } finally {
-                    if (reader != null) {
-                        reader.close();
-                    }
+                    reader.close();
                 }
             }
             if (addEntry) {
@@ -289,19 +249,13 @@ public class ExportFileSend {
                 return -1;
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.COL_SENDFILE_EXCEPTION,
+            throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのディレクトリ：{0} 送信ファイル名：{1}",
                             filePath,
                             fileName));
         } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.COL_SENDFILE_EXCEPTION,
+            throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                     MessageFormat.format(
                             "HDFSのパスが不正。HDFSのディレクトリ：{0}",
                             filePath));
@@ -313,13 +267,15 @@ public class ExportFileSend {
                     throw new BulkLoaderSystemException(
                             e,
                             this.getClass(),
-                            MessageIdConst.COL_SENDFILE_EXCEPTION,
-                            // TODO MessageFormat.formatの検討
-                            "HDFSのファイルシステムのクローズに失敗。URI：" + filePath);
+                            "TG-COLLECTOR-02001",
+                            MessageFormat.format(
+                                    "HDFSのファイルシステムのクローズに失敗。URI：{0}",
+                                    filePath));
                 }
             }
         }
     }
+
     /**
      * ファイルがHadoopのシステムファイルである場合のみ{@code true}を返す。
      * @param path ファイルのパス

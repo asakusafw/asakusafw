@@ -51,6 +51,7 @@ import com.asakusafw.testtools.inspect.Cause;
  *
  */
 public class RecovererTest {
+    static final Log LOG = new Log(RecovererTest.class);
     /** ターゲット名 */
     private static String targetName = "target1";
     /** Importerで読み込むプロパティファイル */
@@ -1707,7 +1708,7 @@ public class RecovererTest {
             @Override
             protected List<ExporterBean> selectRunningJobFlow(
                     String executionId) throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-RECOVERER-01001");
             }
 
         };
@@ -2098,7 +2099,7 @@ public class RecovererTest {
             recoverer.loadParam(bean);
             fail();
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -2135,7 +2136,7 @@ public class RecovererTest {
             recoverer.loadParam(bean);
             fail();
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
     /**
@@ -2170,17 +2171,18 @@ public class RecovererTest {
             @Override
             protected List<ExportTempTableBean> getExportTempTable(String jobflowSid)
                     throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-RECOVERER-01001");
             }
         };
         try {
             recoverer.judgeRollBack(bean);
             fail();
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.info(e.getCause(), e.getMessageId(), e.getMessageArgs());
         }
     }
 }
+
 class StubRecoverer extends Recoverer {
     /**
      * @see com.asakusafw.bulkloader.recoverer.Recoverer#createJobFlowParamLoader()

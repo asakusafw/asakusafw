@@ -23,11 +23,17 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
@@ -54,6 +60,8 @@ import com.asakusafw.testdriver.core.PropertyType;
  * @see DefaultDataModelAdapter
  */
 public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
+
+    static final Logger LOG = LoggerFactory.getLogger(DefaultDataModelDefinition.class);
 
     private static final Map<Class<?>, ValueDriver<?>> VALUE_DRIVERS;
     static {
@@ -224,7 +232,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     private Map<PropertyName, Method> extractAccessors() {
-        Map<PropertyName, Method> results = new HashMap<PropertyName, Method>();
+        Map<PropertyName, Method> results = new TreeMap<PropertyName, Method>();
         for (Method method : modelClass.getMethods()) {
             if (VALUE_DRIVERS.containsKey(method.getReturnType()) == false) {
                 continue;
@@ -235,7 +243,30 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             }
             results.put(property, method);
         }
-        return results;
+
+        PropertyOrder annotation = modelClass.getAnnotation(PropertyOrder.class);
+        if (annotation == null) {
+            LOG.info("Annotation {} is not defined in {}",
+                    PropertyOrder.class.getSimpleName(),
+                    modelClass.getName());
+            return results;
+        }
+        Map<PropertyName, Method> ordered = new LinkedHashMap<PropertyName, Method>();
+        for (String name : annotation.value()) {
+            String[] words = name.split("(_|-)+");
+            PropertyName propertyName = PropertyName.newInstance(words);
+            Method method = results.remove(propertyName);
+            if (method == null) {
+                LOG.warn("Property {} is not found in {}", name, modelClass.getName());
+            } else {
+                ordered.put(propertyName, method);
+            }
+        }
+        if (results.isEmpty() == false) {
+            LOG.warn("Property {} is not declared its order in {}", results.keySet(), modelClass.getName());
+            ordered.putAll(results);
+        }
+        return ordered;
     }
 
     private static final Pattern PROPERTY_ACCESSOR = Pattern.compile("get([A-Z]\\w*)Option"); //$NON-NLS-1$

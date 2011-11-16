@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.external;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -118,6 +119,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+        Set<String> saw = new HashSet<String>();
         List<CompiledStage> results = new ArrayList<CompiledStage>();
         for (Map.Entry<Location, List<Slot>> entry : groupByOutputLocation(context).entrySet()) {
             List<Slot> slots = entry.getValue();
@@ -126,8 +128,9 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
                 return Collections.emptyList();
             }
             ParallelSortClientEmitter emitter = new ParallelSortClientEmitter(getEnvironment());
+            String moduleId = generateModuleName(saw, entry.getKey());
             CompiledStage stage = emitter.emit(
-                    MODULE_NAME,
+                    moduleId,
                     resolved,
                     entry.getKey());
             results.add(stage);
@@ -135,24 +138,62 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         return results;
     }
 
+    private String generateModuleName(Set<String> saw, Location target) {
+        assert saw != null;
+        assert target != null;
+        String simpleSuffix = generateSuffix(target);
+        String baseModuleId = MessageFormat.format("{0}.{1}", MODULE_NAME, simpleSuffix);
+        if (saw.contains(baseModuleId) == false) {
+            saw.add(baseModuleId);
+            return baseModuleId;
+        }
+        int index = 1;
+        while (true) {
+            String moduleIdCandidate = baseModuleId + index;
+            if (saw.contains(moduleIdCandidate) == false) {
+                saw.add(moduleIdCandidate);
+                return moduleIdCandidate;
+            }
+            index++;
+        }
+    }
+
+    private String generateSuffix(Location target) {
+        assert target != null;
+        String name = target.getName();
+        if (name.isEmpty()) {
+            return "_";
+        }
+        StringBuilder buf = new StringBuilder();
+        if (Character.isJavaIdentifierStart(name.charAt(0)) == false) {
+            buf.append('_');
+        }
+        for (char c : name.toCharArray()) {
+            if (Character.isJavaIdentifierPart(c)) {
+                buf.append(c);
+            }
+        }
+        assert buf.length() >= 1;
+        return buf.toString();
+    }
+
     private Map<Location, List<Slot>> groupByOutputLocation(IoContext context) {
         assert context != null;
         Map<Location, List<Slot>> results = new TreeMap<Location, List<Slot>>(new Comparator<Location>() {
             @Override
             public int compare(Location o1, Location o2) {
-                // o1.parent が o2.parent の祖先パスである場合に、o2がo1より手前に来るように並び替える。
+                // o1.parent が o2.parent の祖先パスである場合に、o1がo2より手前に来るように並び替える。
                 // これは、Hadoopの出力先にディレクトリが既に存在する場合にエラーとするため。
                 // 逆もまた然り。
 
                 // 親パスを文字列で比較
                 // AがBの祖先パス => A.toString < B.toString
-                // と言う関係をもとに、親パスの文字列が異なればその順序の*逆*で整列
+                // と言う関係をもとに、親パスの文字列が異なればその順序で整列
                 String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/');
                 String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/');
                 int parentDiff = parentPath1.compareTo(parentPath2);
                 if (parentDiff != 0) {
-                    // Integer.MIN_VALUE の関係で単純に符号反転はできない
-                    return (parentDiff > 0) ? -1 : +1;
+                    return (parentDiff > 0) ? +1 : -1;
                 }
 
                 // 親パスまでが同じなので名前のみ比較

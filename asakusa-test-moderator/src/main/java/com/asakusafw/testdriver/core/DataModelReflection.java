@@ -18,8 +18,8 @@ package com.asakusafw.testdriver.core;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * A data-model representation in record form.
@@ -48,7 +48,7 @@ public class DataModelReflection implements Serializable {
 
     private static Map<PropertyName, ?> normalize(Map<PropertyName, ?> properties) {
         assert properties != null;
-        Map<PropertyName, Object> results = new TreeMap<PropertyName, Object>();
+        Map<PropertyName, Object> results = new LinkedHashMap<PropertyName, Object>();
         for (Map.Entry<PropertyName, ?> entry : properties.entrySet()) {
             if (entry.getKey() != null) {
                 results.put(entry.getKey(), entry.getValue());

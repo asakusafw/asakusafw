@@ -160,6 +160,29 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
     }
 
     /**
+     * summarized model.
+     */
+    @Test
+    public void summarize_whole() {
+        DmdlSemantics resolved = resolve();
+        ModelDeclaration counter = resolved.findModelDeclaration("counter");
+        assertThat(counter, not(nullValue()));
+
+        PropertyDeclaration count = counter.findPropertyDeclaration("count");
+        assertThat(count, not(nullValue()));
+        assertThat(count.getType(), is(type(BasicTypeKind.LONG)));
+
+        SummarizeTrait trait = counter.getTrait(SummarizeTrait.class);
+        assertThat(trait, not(nullValue()));
+        assertThat(trait.getTerms().size(), is(1));
+
+        ReduceTerm<AstSummarize> aTerm = trait.getTerms().get(0);
+        assertThat(aTerm.getSource(), is(model("simple")));
+        assertThat(aTerm.getGrouping().size(), is(0));
+        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.COUNT, "sid", "count")));
+    }
+
+    /**
      * model duplicated.
      */
     @Test

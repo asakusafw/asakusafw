@@ -1,0 +1,36 @@
+Bootstrap entries for YAESS.
+
+==
+Usage:
+
+java -classpath ...
+    com.asakusafw.yaess.bootstrap.Yaess
+    -profile <path/to/yaess-profile.properties>
+    -script <path/to/yaess-script.properties>
+    -batch <batch-ID>
+    [-flow <flow-ID>]
+    [-execution <execution-ID>]
+    [-phase <phase-name>]
+    [-plugin <path/to/plug-ins.jar>]
+    [-A <key>=<value>]*
+where:
+    <phase-name> is one of:
+        setup
+        initialize
+        import
+        prologue
+        main
+        epilogue
+        export
+        finalize
+        cleanup
+    <path/to/plug-ins.jar> can be multiple paths
+        separated by the system path separator character.
+exit-code:
+    0 - exit normally
+    otherwise - exit abnormally
+limitation:
+    If "-flow" is specified, you must also specify "-execution".
+    If "-flow" is not specified, you can specify neither "-execution" nor "-phase".
+
+==

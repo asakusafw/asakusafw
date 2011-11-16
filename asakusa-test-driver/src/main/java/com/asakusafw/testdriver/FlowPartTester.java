@@ -133,7 +133,7 @@ public class FlowPartTester extends TestDriverBase {
         executor.prepareOutput(jobflowInfo, outputs);
 
         LOG.info("フロー部品を実行しています: {}", flowDescription.getClass().getName());
-        VerifyContext verifyContext = new VerifyContext();
+        VerifyContext verifyContext = new VerifyContext(driverContext);
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 

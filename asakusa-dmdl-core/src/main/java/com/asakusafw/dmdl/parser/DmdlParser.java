@@ -16,17 +16,21 @@
 package com.asakusafw.dmdl.parser;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.model.AstLiteral;
 import com.asakusafw.dmdl.model.AstScript;
 
 /**
  * Parses DMDL scripts and creates AST.
+ * @since 0.2.0
  */
 public class DmdlParser {
 
@@ -59,6 +63,29 @@ public class DmdlParser {
                         e);
             }
             throw new DmdlSyntaxException(e, parser);
+        }
+    }
+
+    /**
+     * Analyze the token as a DMDL literal.
+     * @param token represents DMDL literal
+     * @return the analyzed AST
+     * @throws DmdlSyntaxException if the specified token is not a valid DMDL literal
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.3
+     */
+    public AstLiteral parseLiteral(String token) throws DmdlSyntaxException {
+        if (token == null) {
+            throw new IllegalArgumentException("token must not be null"); //$NON-NLS-1$
+        }
+        JjDmdlParser parser = new JjDmdlParser(new StringReader(token));
+        try {
+            return parser.parseLiteral(new URI("token"));
+        } catch (ParseException e) {
+            throw new DmdlSyntaxException(e, parser);
+        } catch (URISyntaxException e) {
+            // may not occur
+            throw new AssertionError(e);
         }
     }
 }
