@@ -56,7 +56,7 @@ ver0.2.3の変更箇所を以下に示します。以下の定義をアプリケ
 ~~~~~~~~~~~~~~~~~~~~~~
 *(この変更はすべてのアプリケーションプロジェクトに対して実施してください)*
 
-アプリケーションプロジェクトの以下のファイルを、ver0.2.3のThunderGate用アーキタイプ ``asakusa-archetype-batchapp`` から生成したプロジェクトに含まれるファイルで上書き更新してください。
+アプリケーションプロジェクトの以下のファイルを、ver0.2.3のアーキタイプ(asakusa-archetype-batchapp もしくは asakusa-archetype-windgate)から生成したプロジェクトに含まれるファイルで上書き更新してください。
 
 * src/main/assembly/asakusa-install-dev.xml
 * src/main/scripts/asakusa-build.xml
