@@ -22,7 +22,7 @@
 	</licenses>
 
 	<properties>
-		<asakusafw.version>0.2.2</asakusafw.version>
+		<asakusafw.version>0.2.3</asakusafw.version>
 	</properties>
 
 	<packaging>jar</packaging>
