@@ -29,6 +29,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -101,6 +102,64 @@ public class CacheStorageTest {
 
             storage.deletePatch();
             assertThat(storage.getFileSystem().exists(storage.getPatchDirectory()), is(false));
+        } finally {
+            storage.close();
+        }
+    }
+
+    /**
+     * delete all.
+     * @throws Exception if failed
+     */
+    @Test
+    public void deleteAll() throws Exception {
+        File dir = folder.newFolder("testing");
+        dir.delete();
+        CacheStorage storage = new CacheStorage(new Configuration(), dir.toURI());
+        try {
+            Path headContent = storage.getHeadContents("a");
+            FSDataOutputStream headOutput = storage.getFileSystem().create(headContent);
+            try {
+                IOUtils.copyBytes(
+                        new ByteArrayInputStream("Hello, world".getBytes()),
+                        headOutput,
+                        storage.getConfiguration());
+            } finally {
+                headOutput.close();
+            }
+            Path patchContent = storage.getPatchContents("a");
+            FSDataOutputStream patchOutput = storage.getFileSystem().create(patchContent);
+            try {
+                IOUtils.copyBytes(
+                        new ByteArrayInputStream("Hello, world".getBytes()),
+                        patchOutput,
+                        storage.getConfiguration());
+            } finally {
+                patchOutput.close();
+            }
+
+            assertThat(storage.getFileSystem().exists(storage.getHeadDirectory()), is(true));
+            assertThat(storage.getFileSystem().exists(storage.getPatchDirectory()), is(true));
+
+            assertThat(storage.deleteAll(), is(true));
+            assertThat(storage.getFileSystem().exists(storage.getHeadDirectory()), is(false));
+            assertThat(storage.getFileSystem().exists(storage.getPatchDirectory()), is(false));
+        } finally {
+            storage.close();
+        }
+    }
+
+    /**
+     * delete all but does not exist.
+     * @throws Exception if failed
+     */
+    @Test
+    public void deleteAll_missing() throws Exception {
+        File dir = folder.newFolder("testing");
+        Assume.assumeTrue(dir.delete());
+        CacheStorage storage = new CacheStorage(new Configuration(), dir.toURI());
+        try {
+            assertThat(storage.deleteAll(), is(false));
         } finally {
             storage.close();
         }

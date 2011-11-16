@@ -45,6 +45,7 @@
 				<include>collector.sh</include>
 				<include>extractor.sh</include>
 				<include>get-cache-info.sh</include>
+				<include>delete-cache-storage.sh</include>
 				<include>set-classpath-hc.sh</include>
 			</includes>
 			<fileMode>0744</fileMode>

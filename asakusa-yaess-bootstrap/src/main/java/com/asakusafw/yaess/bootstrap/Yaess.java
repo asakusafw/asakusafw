@@ -119,7 +119,9 @@ public class Yaess {
             conf = parseConfiguration(args);
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to analyze program arguments ({0})",
+                    Arrays.toString(args)), e);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -139,7 +141,9 @@ public class Yaess {
             task = ExecutionTask.load(conf.profile, conf.script, VariableResolver.system(), conf.arguments);
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to load service components ({0})",
+                    conf), e);
             return 1;
         }
         try {
@@ -159,7 +163,9 @@ public class Yaess {
             return 0;
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to execute a jobnet ({0})",
+                    conf), e);
             return 1;
         }
     }
@@ -275,6 +281,22 @@ public class Yaess {
         String executionId;
         ExecutionPhase phase;
         Map<String, String> arguments;
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Configuration [mode=");
+            builder.append(mode);
+            builder.append(", batchId=");
+            builder.append(batchId);
+            builder.append(", flowId=");
+            builder.append(flowId);
+            builder.append(", executionId=");
+            builder.append(executionId);
+            builder.append(", phase=");
+            builder.append(phase);
+            builder.append("]");
+            return builder.toString();
+        }
     }
 
     enum Mode {

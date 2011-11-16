@@ -15,6 +15,7 @@
  */
 package com.asakusafw.windgate.core;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  * Executes WindGate.
  * @since 0.2.2
  */
-public class GateTask {
+public class GateTask implements Closeable {
 
     static final WindGateLogger WGLOG = new WindGateCoreLogger(GateTask.class);
 
@@ -477,5 +478,10 @@ public class GateTask {
         for (Future<?> future : futures) {
             future.cancel(true);
         }
+    }
+
+    @Override
+    public void close() {
+        executor.shutdown();
     }
 }

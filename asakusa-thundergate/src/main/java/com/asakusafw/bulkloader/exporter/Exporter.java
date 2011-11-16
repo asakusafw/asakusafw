@@ -163,7 +163,7 @@ public class Exporter {
                             new Date(), targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 } else {
-                    LOG.error("TG-EXPORTER-01023",
+                    LOG.info("TG-EXPORTER-01023",
                             targetName, batchId, jobflowId, executionId);
                 }
             }

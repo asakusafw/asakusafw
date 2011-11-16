@@ -85,6 +85,7 @@ public class DfsFileImport {
     public DfsFileImport() {
         this.cacheBuildCommand = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME);
         int parallel = Integer.parseInt(ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL));
+        LOG.debugMessage("Building a cache builder with {0} threads", parallel);
         this.executor = Executors.newFixedThreadPool(parallel);
     }
 
@@ -130,6 +131,9 @@ public class DfsFileImport {
                         long recordCount = putCachePatch(protocol, content, bean, user);
                         Callable<?> builder = createCacheBuilder(protocol, bean, user, recordCount);
                         if (builder != null) {
+                            LOG.debugMessage("Submitting cache builder: {0} {1}",
+                                    protocol.getKind(),
+                                    protocol.getInfo().getTableName());
                             running.add(executor.submit(builder));
                         }
                         break;
@@ -336,53 +340,40 @@ public class DfsFileImport {
                 bean.getExecutionId(),
                 command);
 
-        ProcessBuilder builder = new ProcessBuilder(command);
+        final ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(new File(System.getProperty("user.home", ".")));
-        final Process process = builder.start();
-        boolean succeed = false;
-        try {
-            final Thread stdout = new StreamRedirectThread(process.getInputStream(), System.out);
-            stdout.setDaemon(true);
-            stdout.start();
-            final Thread stderr = new StreamRedirectThread(process.getErrorStream(), System.err);
-            stderr.setDaemon(true);
-            stderr.start();
-            Callable<?> result = new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    boolean innerSucceed = false;
-                    try {
-                        LOG.info("TG-EXTRACTOR-12003", subcommand, info.getId(), info.getTableName());
-                        stdout.join();
-                        stderr.join();
-                        int exitCode = process.waitFor();
-                        if (exitCode != 0) {
-                            throw new IOException(MessageFormat.format(
-                                    "Cache builder returns unexpected exit code: {0}",
-                                    exitCode));
-                        }
-                        innerSucceed = true;
-                        LOG.info("TG-EXTRACTOR-12004", subcommand, info.getId(), info.getTableName());
-                    } catch (Exception e) {
-                        throw new BulkLoaderSystemException(e, DfsFileImport.class, "TG-EXTRACTOR-12005",
-                                subcommand,
-                                info.getId(),
-                                info.getTableName());
-                    } finally {
-                        if (innerSucceed == false) {
-                            process.destroy();
-                        }
+        return new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                LOG.info("TG-EXTRACTOR-12003", subcommand, info.getId(), info.getTableName());
+                Process process = builder.start();
+                try {
+                    Thread stdout = new StreamRedirectThread(process.getInputStream(), System.out);
+                    stdout.setDaemon(true);
+                    stdout.start();
+                    Thread stderr = new StreamRedirectThread(process.getErrorStream(), System.err);
+                    stderr.setDaemon(true);
+                    stderr.start();
+                    stdout.join();
+                    stderr.join();
+                    int exitCode = process.waitFor();
+                    if (exitCode != 0) {
+                        throw new IOException(MessageFormat.format(
+                                "Cache builder returns unexpected exit code: {0}",
+                                exitCode));
                     }
-                    return null;
+                    LOG.info("TG-EXTRACTOR-12004", subcommand, info.getId(), info.getTableName());
+                } catch (Exception e) {
+                    throw new BulkLoaderSystemException(e, DfsFileImport.class, "TG-EXTRACTOR-12005",
+                            subcommand,
+                            info.getId(),
+                            info.getTableName());
+                } finally {
+                    process.destroy();
                 }
-            };
-            succeed = true;
-            return result;
-        } finally {
-            if (succeed == false) {
-                process.destroy();
+                return null;
             }
-        }
+        };
     }
 
     /**

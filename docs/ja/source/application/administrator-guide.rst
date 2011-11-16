@@ -312,6 +312,7 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
       VERSION_NO BIGINT            NULL,
       RGST_DATETIME DATETIME       NULL,
       UPDT_DATETIME DATETIME       NULL,
+      DELETE_FLAG CHAR(1)          NULL,
       PRIMARY KEY (SID) ) type=InnoDB;
     DROP TABLE IF EXISTS asakusa.EX1_RL;
     CREATE TABLE asakusa.EX1_RL (
@@ -326,24 +327,24 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
     ) type=InnoDB;
 
     TRUNCATE TABLE asakusa.EX1;
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (1,111,'hoge1',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (2,222,'fuga2',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (3,333,'bar3',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (4,111,'hoge4',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (5,222,'fuga5',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (6,333,'bar6',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (7,111,'hoge7',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (8,222,'fuga8',null,null,null);
-    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME)
-      VALUES (9,444,'bar9',null,null,null);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (1,111,'hoge1',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (2,222,'fuga2',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (3,333,'bar3',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (4,111,'hoge4',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (5,222,'fuga5',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (6,333,'bar6',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (7,111,'hoge7',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (8,222,'fuga8',null,null,null,0);
+    INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
+      VALUES (9,444,'bar9',null,null,null,0);
     -- END;
 
 4. ThnderGate用の管理テーブル作成スクリプトを実行する。

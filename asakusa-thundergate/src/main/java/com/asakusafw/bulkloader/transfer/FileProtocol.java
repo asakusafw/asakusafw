@@ -177,6 +177,12 @@ public class FileProtocol {
         GET_CACHE_INFO(false),
 
         /**
+         * Requests to delete cache data on {@link FileProtocol#getLocation()}.
+         * File content will be ignored in this protocol kind.
+         */
+        DELETE_CACHE(false),
+
+        /**
          * Returns the requested cache info on {@link FileProtocol#getLocation()}.
          * This message is a response for {@link #GET_CACHE_INFO}.
          * File content will be ignored in this protocol kind.
@@ -184,11 +190,25 @@ public class FileProtocol {
         RESPONSE_CACHE_INFO(true),
 
         /**
-         * Attempts to fetch cache info but it is not found on {@link FileProtocol#getLocation()}.
-         * This message is a response for {@link #GET_CACHE_INFO}.
+         * Returns the requested to delete cache data on {@link FileProtocol#getLocation()}.
+         * This message is a response for {@link #DELETE_CACHE}.
+         * File content will be ignored in this protocol kind.
+         */
+        RESPONSE_DELETED(false),
+
+        /**
+         * Attempts to fetch/delete cache but it is not found on {@link FileProtocol#getLocation()}.
+         * This message is a response for {@link #GET_CACHE_INFO} and {@link #DELETE_CACHE}.
          * File content will be ignored in this protocol kind.
          */
         RESPONSE_NOT_FOUND(false),
+
+        /**
+         * Attempts to fetch/delete cache but it is failed {@link FileProtocol#getLocation()}.
+         * This message is a response for {@link #GET_CACHE_INFO} and {@link #DELETE_CACHE}.
+         * File content will be ignored in this protocol kind.
+         */
+        RESPONSE_ERROR(false),
 
         /**
          * Extracts body as normal content.

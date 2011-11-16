@@ -117,9 +117,13 @@ public final class Constants {
      */
     public static final String PROP_KEY_EXT_SHELL_NAME = "import.extractor-shell-name";
     /**
-     * The property key of Cache Builder executable file name.
+     * The property key of Cache info retriever executable file name.
      */
     public static final String PROP_KEY_CACHE_INFO_SHELL_NAME = "import.cache-info-shell-name";
+    /**
+     * The property key of Cache storage cleaner file name.
+     */
+    public static final String PROP_KEY_DELETE_CACHE_SHELL_NAME = "import.delete-cache-shell-name";
     /**
      * プロパティKEY Importファイルの圧縮有無。
      */
