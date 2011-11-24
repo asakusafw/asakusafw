@@ -89,7 +89,7 @@ YAESSはプロファイルセットとよぶ実行環境の構成をもってい
 * ThunderGateやWindGateの起動方法
 
 ここでは、各種ジョブの設定を変更する方法について紹介します。
-YAESSのプロファイルセットは、 ``$ASAKUSA_HOME/conf/yaess.properties`` から編集できます。
+YAESSのプロファイルセットは、 ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` から編集できます。
 
 
 SSHを経由したHadoopの実行
@@ -98,7 +98,7 @@ SSHを経由したHadoopの実行
 YAESSの標準的な仕組みを利用すると、SSHを経由してリモートコンピューターにログインし、そこからHadoopのジョブを発行するような環境構成を作成できます。
 まず、YAESSをリモートコンピューター上にもインストールしておきます [#]_ 。また、 ``$ASAKUSA_HOME/yaess-hadoop`` ディレクトリ以下を、リモートコンピューター上にも配置してください。
 
-次に、テキストエディタでローカルのYAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) を開いてください。
+次に、テキストエディタでローカルのYAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) を開いてください。
 既定の構成では、YAESSはローカルのコンピューターにインストールされたHadoopを利用して、Hadoopのジョブを実行しています。
 
 ..  code-block:: properties
@@ -163,7 +163,7 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
 SSHを経由したThunderGate/WindGateの実行
 ---------------------------------------
 
-Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもSSHを経由して実行できます。テキストエディタでYAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) を開いてください。
+Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもSSHを経由して実行できます。テキストエディタでYAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) を開いてください。
 
 既定の構成では、YAESSはローカルのコンピューターにインストールされたコマンドを実行しています。
 
@@ -219,7 +219,7 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 YAESSでは「プロファイル」という考え方でそれぞれのコマンドを振り分けて実行できます。
 
 ThunderGateには「ターゲット名」、WindGateには「プロファイル名」という実行構成の名前がそれぞれあります。
-これらの名前別に実行構成を指定するには、YAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) 内で
+これらの名前別に実行構成を指定するには、YAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) 内で
 ``command.<構成の名前>`` から始まる設定を追加します。
 
 以下は ``asakusa`` という名前のプロファイルに対するコマンド実行方法の記述です。
