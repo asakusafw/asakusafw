@@ -31,12 +31,6 @@ if [ $# -lt 4 ]; then
     exit 1
 fi
 
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
-
 _OPT_BATCH_ID="$1"
 shift
 _OPT_FLOW_ID="$1"
@@ -50,6 +44,12 @@ _YS_ROOT="$(dirname $0)/.."
 if [ -e "$_YS_ROOT/conf/env.sh" ]
 then
     . "$_YS_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
 fi
 
 if [ "$YS_PATH_SEPARATOR" = "" ]
@@ -125,6 +125,7 @@ echo "  Main Class: $_YS_CLASS"
 echo "   Arguments: $@"
 
 java \
+    "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -profile "$_YS_PROFILE" \

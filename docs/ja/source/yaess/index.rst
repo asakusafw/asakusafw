@@ -19,3 +19,4 @@ YAESSの主な用途は下記のとおりです。
     :maxdepth: 1
 
     start-guide
+    user-guide
