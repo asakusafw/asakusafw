@@ -28,3 +28,4 @@ Linux以外のOS (Windows Server等)にデプロイして使用することを�
     :maxdepth: 1
 
     start-guide
+    user-guide

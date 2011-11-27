@@ -494,6 +494,7 @@ public abstract class AbstractStageClient extends Configured implements Tool {
             job.setReducerClass(reducer);
         } else {
             LOG.info("Reducer: N/A");
+            job.setNumReduceTasks(0);
             return;
         }
 

@@ -141,9 +141,6 @@ public final class TsvParser implements RecordParser {
     // 拡張のため、IOExceptionを残す
     @Override
     public boolean next() throws RecordFormatException, IOException {
-        if (lastSeparator != RECORD_SEPARATOR) {
-            throw new RecordFormatException("RECORD_SEPARATOR does not appeared");
-        }
         lastSeparator = CELL_SEPARATOR;
         return lookAhead != -1;
     }
@@ -667,6 +664,13 @@ public final class TsvParser implements RecordParser {
                     "Cannot recognize \"{1}\" for {0}",
                     option.getClass().getSimpleName(),
                     new StringBuilder().append(ESCAPE_CHAR).append(ESCAPE_NULL_COLUMN)));
+        }
+    }
+
+    @Override
+    public void endRecord() throws RecordFormatException, IOException {
+        if (lastSeparator != RECORD_SEPARATOR) {
+            throw new RecordFormatException("RECORD_SEPARATOR does not appeared");
         }
     }
 

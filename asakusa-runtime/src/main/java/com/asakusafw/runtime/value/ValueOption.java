@@ -24,8 +24,7 @@ import org.apache.hadoop.io.WritableComparable;
  * </p>
  * @param <V> 値の種類
  */
-public abstract class ValueOption<V extends ValueOption<V>>
-        implements WritableComparable<V>, Restorable {
+public abstract class ValueOption<V extends ValueOption<V>> implements WritableComparable<V>, Restorable {
 
     /**
      * この値が{@code null}を表す場合に{@code true}となる。

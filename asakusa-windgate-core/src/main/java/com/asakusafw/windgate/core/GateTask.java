@@ -114,7 +114,7 @@ public class GateTask implements Closeable {
         this.sessionProvider = loadSessionProvider(profile.getSession());
         this.resourceProviders = loadResourceProviders(profile.getResources());
         this.processProviders = loadProcessProviders(profile.getProcesses());
-        this.executor = Executors.newFixedThreadPool(profile.getCore().getMaxThreads());
+        this.executor = Executors.newFixedThreadPool(profile.getCore().getMaxProcesses());
     }
 
     private SessionProvider loadSessionProvider(SessionProfile session) throws IOException {

@@ -28,6 +28,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 /**
  * A core profile for WindGate execution.
  * @since 0.2.2
+ * @version 0.2.4
  */
 public class CoreProfile {
 
@@ -43,14 +44,21 @@ public class CoreProfile {
     public static final String KEY_PREFIX = "core" + QUALIFIER; // //$NON-NLS-1$
 
     /**
-     * The key name of {@link #getMaxThreads()}.
+     * The key name of {@link #getMaxProcesses()} (deprecated).
+     * @deprecated use instead {@link #KEY_MAX_PROCESSES}
      */
+    @Deprecated
     public static final String KEY_MAX_THREADS = "maxThreads";
 
     /**
-     * The default value of {@link #KEY_MAX_THREADS}.
+     * The key name of {@link #getMaxProcesses()}.
      */
-    public static final int DEFAULT_MAX_THREADS = 1;
+    public static final String KEY_MAX_PROCESSES = "maxProcesses";
+
+    /**
+     * The default value of {@link #KEY_MAX_PROCESSES}.
+     */
+    public static final int DEFAULT_MAX_PROCESSES = 1;
 
     private final int maxThreads;
 
@@ -70,7 +78,7 @@ public class CoreProfile {
      * the number of max threads in core gate processes.
      * @return the number of max threads
      */
-    public int getMaxThreads() {
+    public int getMaxProcesses() {
         return maxThreads;
     }
 
@@ -90,17 +98,30 @@ public class CoreProfile {
         }
         LOG.debug("Restoring core profile");
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
-        int maxThreads = getInt(config, KEY_MAX_THREADS, DEFAULT_MAX_THREADS);
-        if (maxThreads <= 0) {
+        int maxProcesses;
+        if (config.containsKey(KEY_MAX_PROCESSES)) {
+            maxProcesses = getMaxProcesses(config, KEY_MAX_PROCESSES);
+        } else {
+            // for legacy spec
+            maxProcesses = getMaxProcesses(config, KEY_MAX_THREADS);
+        }
+        return new CoreProfile(maxProcesses);
+    }
+
+    private static int getMaxProcesses(Map<String, String> config, String key) {
+        assert config != null;
+        assert key != null;
+        int maxProcesses = getInt(config, key, DEFAULT_MAX_PROCESSES);
+        if (maxProcesses <= 0) {
             WGLOG.error("E02003",
-                    KEY_MAX_THREADS,
-                    maxThreads);
+                    key,
+                    maxProcesses);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Core profile item \"{0}\" must be > 0: {1}",
-                    KEY_MAX_THREADS,
-                    String.valueOf(maxThreads)));
+                    key,
+                    String.valueOf(maxProcesses)));
         }
-        return new CoreProfile(maxThreads);
+        return maxProcesses;
     }
 
     private static int getInt(Map<String, String> config, String name, int defaultValue) {
@@ -139,7 +160,7 @@ public class CoreProfile {
         LOG.debug("Saving core profile");
         PropertiesUtil.checkAbsentKeyPrefix(properties, KEY_PREFIX);
 
-        properties.setProperty(KEY_PREFIX + KEY_MAX_THREADS, String.valueOf(getMaxThreads()));
+        properties.setProperty(KEY_PREFIX + KEY_MAX_PROCESSES, String.valueOf(getMaxProcesses()));
     }
 
     /**

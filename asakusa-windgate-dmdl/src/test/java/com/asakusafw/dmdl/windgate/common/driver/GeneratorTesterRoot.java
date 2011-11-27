@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.windgate.jdbc.driver;
+package com.asakusafw.dmdl.windgate.common.driver;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;

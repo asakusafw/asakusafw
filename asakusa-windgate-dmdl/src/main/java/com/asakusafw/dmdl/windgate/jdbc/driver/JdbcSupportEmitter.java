@@ -57,6 +57,7 @@ import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.ashigeru.lang.java.model.syntax.Name;
 import com.ashigeru.lang.java.model.syntax.PostfixOperator;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
@@ -86,8 +87,19 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         if (isTarget(model) == false) {
             return;
         }
+        checkColumnExists(model);
         checkColumnType(model);
         checkColumnConflict(model);
+        Name supportClassName = generateSupport(context, model);
+        if (hasTableTrait(model)) {
+            generateImporterDescription(context, model, supportClassName);
+            generateExporterDescription(context, model, supportClassName);
+        }
+    }
+
+    private Name generateSupport(EmitContext context, ModelDeclaration model) throws IOException {
+        assert context != null;
+        assert model != null;
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
@@ -96,27 +108,88 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 "{0}JdbcSupport");
         LOG.debug("Generating JDBC support for {}",
                 context.getQualifiedTypeName().toNameString());
-        Generator.emit(next, model);
+        SupportGenerator.emit(next, model);
         LOG.debug("Generated JDBC support for {}: {}",
+                context.getQualifiedTypeName().toNameString(),
+                next.getQualifiedTypeName().toNameString());
+        return next.getQualifiedTypeName();
+    }
+
+    private void generateImporterDescription(
+            EmitContext context,
+            ModelDeclaration model,
+            Name supportClassName) throws IOException {
+        assert context != null;
+        assert model != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_JDBC,
+                "Abstract{0}JdbcImporterDescription");
+        LOG.debug("Generating importer description using JDBC for {}",
+                context.getQualifiedTypeName().toNameString());
+        DescriptionGenerator.emitImporter(next, model, supportClassName);
+        LOG.debug("Generated importer description using JDBC for {}: {}",
+                context.getQualifiedTypeName().toNameString(),
+                next.getQualifiedTypeName().toNameString());
+    }
+
+    private void generateExporterDescription(
+            EmitContext context,
+            ModelDeclaration model,
+            Name supportClassName) throws IOException {
+        assert context != null;
+        assert model != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_JDBC,
+                "Abstract{0}JdbcExporterDescription");
+        LOG.debug("Generating exporter description using JDBC for {}",
+                context.getQualifiedTypeName().toNameString());
+        DescriptionGenerator.emitExporter(next, model, supportClassName);
+        LOG.debug("Generated exporter description using JDBC for {}: {}",
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
     }
 
     private boolean isTarget(ModelDeclaration model) {
         assert model != null;
+        return hasTableTrait(model) || hasColumnTrait(model);
+    }
+
+    private boolean hasTableTrait(ModelDeclaration model) {
+        assert model != null;
+        return model.getTrait(JdbcTableTrait.class) != null;
+    }
+
+    private boolean hasColumnTrait(ModelDeclaration model) {
+        assert model != null;
         boolean sawTrait = false;
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
-            if (prop.getTrait(JdbcSupportTrait.class) != null) {
+            if (prop.getTrait(JdbcColumnTrait.class) != null) {
                 sawTrait = true;
             }
         }
         return sawTrait;
     }
 
+    private void checkColumnExists(ModelDeclaration model) throws IOException {
+        assert model != null;
+        if (hasColumnTrait(model) == false) {
+            throw new IOException(MessageFormat.format(
+                    "Model \"{0}\" has no columns, please specify @{1} into properties ",
+                    model.getName().identifier,
+                    JdbcColumnDriver.TARGET_NAME));
+        }
+    }
+
     private void checkColumnType(ModelDeclaration model) throws IOException {
         assert model != null;
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
-            if (model.getTrait(JdbcSupportTrait.class) == null) {
+            if (model.getTrait(JdbcColumnTrait.class) == null) {
                 continue;
             }
             Type type = prop.getType();
@@ -124,7 +197,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 throw new IOException(MessageFormat.format(
                         "Type \"{0}\" can not map to a column: {1}.{2} ",
                         type,
-                        prop.getOwner().getName().identifier,
+                        model.getName().identifier,
                         prop.getName().identifier));
             }
         }
@@ -134,7 +207,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         assert model != null;
         Map<String, PropertyDeclaration> saw = new HashMap<String, PropertyDeclaration>();
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
-            JdbcSupportTrait trait = prop.getTrait(JdbcSupportTrait.class);
+            JdbcColumnTrait trait = prop.getTrait(JdbcColumnTrait.class);
             if (trait == null) {
                 continue;
             }
@@ -144,7 +217,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 throw new IOException(MessageFormat.format(
                         "Column name \"{0}\" is already declared in \"{3}\": {1}.{2}",
                         name,
-                        prop.getOwner().getName().identifier,
+                        model.getName().identifier,
                         prop.getName().identifier,
                         other.getName().identifier));
             }
@@ -152,7 +225,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static class Generator {
+    private static class SupportGenerator {
 
         private static final String NAME_CALENDAR = "calendar";
 
@@ -176,7 +249,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
         private final ModelFactory f;
 
-        private Generator(EmitContext context, ModelDeclaration model) {
+        private SupportGenerator(EmitContext context, ModelDeclaration model) {
             assert context != null;
             assert model != null;
             this.context = context;
@@ -187,7 +260,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         static void emit(EmitContext context, ModelDeclaration model) throws IOException {
             assert context != null;
             assert model != null;
-            Generator emitter = new Generator(context, model);
+            SupportGenerator emitter = new SupportGenerator(context, model);
             emitter.emit();
         }
 
@@ -256,7 +329,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             List<PropertyDeclaration> properties = getProperties();
             for (int i = 0, n = properties.size(); i < n; i++) {
                 PropertyDeclaration property = properties.get(i);
-                JdbcSupportTrait trait = property.getTrait(JdbcSupportTrait.class);
+                JdbcColumnTrait trait = property.getTrait(JdbcColumnTrait.class);
                 assert trait != null;
                 statements.add(new ExpressionBuilder(f, map)
                     .method("put", Models.toLiteral(f, trait.getName()), Models.toLiteral(f, i))
@@ -1036,11 +1109,163 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private List<PropertyDeclaration> getProperties() {
             List<PropertyDeclaration> results = new ArrayList<PropertyDeclaration>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                if (property.getTrait(JdbcSupportTrait.class) != null) {
+                if (property.getTrait(JdbcColumnTrait.class) != null) {
                     results.add(property);
                 }
             }
             return results;
+        }
+    }
+
+    private static class DescriptionGenerator {
+
+        // for reduce library dependencies
+        private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.JdbcImporterDescription";
+
+        // for reduce library dependencies
+        private static final String EXPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.JdbcExporterDescription";
+
+        private final EmitContext context;
+
+        private final ModelDeclaration model;
+
+        private final com.ashigeru.lang.java.model.syntax.Type supportClass;
+
+        private final ModelFactory f;
+
+        private final boolean importer;
+
+        private final JdbcTableTrait tableTrait;
+
+        private DescriptionGenerator(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName,
+                boolean importer) {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            this.context = context;
+            this.model = model;
+            this.f = context.getModelFactory();
+            this.importer = importer;
+            this.tableTrait = model.getTrait(JdbcTableTrait.class);
+            this.supportClass = context.resolve(supportClassName);
+
+            assert tableTrait != null;
+        }
+
+        static void emitImporter(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName) throws IOException {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
+            emitter.emit();
+        }
+
+        static void emitExporter(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName) throws IOException {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
+            emitter.emit();
+        }
+
+        private void emit() throws IOException {
+            ClassDeclaration decl = f.newClassDeclaration(
+                    new JavadocBuilder(f)
+                        .text("An abstract implementation of ")
+                        .linkType(context.resolve(model.getSymbol()))
+                        .text(" {0} description using WindGate JDBC",
+                                importer ? "importer" : "exporter")
+                        .text(".")
+                        .toJavadoc(),
+                    new AttributeBuilder(f)
+                        .Public()
+                        .Abstract()
+                        .toAttributes(),
+                    context.getTypeName(),
+                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
+                    Collections.<com.ashigeru.lang.java.model.syntax.Type>emptyList(),
+                    createMembers());
+            context.emit(decl);
+        }
+
+        private List<TypeBodyDeclaration> createMembers() {
+            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            results.add(createGetModelType());
+            results.add(createGetJdbcSupport());
+            results.add(createGetTableName());
+            results.add(createGetColumnNames());
+            return results;
+        }
+
+        private MethodDeclaration createGetModelType() {
+            return createGetter(
+                    new TypeBuilder(f, context.resolve(Class.class))
+                        .parameterize(context.resolve(model.getSymbol()))
+                        .toType(),
+                    "getModelType",
+                    f.newClassLiteral(context.resolve(model.getSymbol())));
+        }
+
+        private MethodDeclaration createGetJdbcSupport() {
+            return createGetter(
+                    new TypeBuilder(f, context.resolve(Class.class))
+                        .parameterize(supportClass)
+                        .toType(),
+                    "getJdbcSupport",
+                    f.newClassLiteral(supportClass));
+        }
+
+        private MethodDeclaration createGetTableName() {
+            return createGetter(
+                    context.resolve(String.class),
+                    "getTableName",
+                    Models.toLiteral(f, tableTrait.getName()));
+        }
+
+        private MethodDeclaration createGetColumnNames() {
+            List<Expression> arguments = new ArrayList<Expression>();
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                JdbcColumnTrait columnTrait = property.getTrait(JdbcColumnTrait.class);
+                if (columnTrait != null) {
+                    arguments.add(Models.toLiteral(f, columnTrait.getName()));
+                }
+            }
+            return createGetter(
+                    new TypeBuilder(f, context.resolve(List.class))
+                        .parameterize(context.resolve(String.class))
+                        .toType(),
+                    "getColumnNames",
+                    new TypeBuilder(f, context.resolve(Arrays.class))
+                        .method("asList", arguments)
+                        .toExpression());
+        }
+
+        private MethodDeclaration createGetter(
+                com.ashigeru.lang.java.model.syntax.Type type,
+                String name,
+                Expression value) {
+            assert type != null;
+            assert name != null;
+            assert value != null;
+            return f.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .annotation(context.resolve(Override.class))
+                        .Public()
+                        .toAttributes(),
+                    type,
+                    f.newSimpleName(name),
+                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }
 }

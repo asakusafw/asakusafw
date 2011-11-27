@@ -1,0 +1,6 @@
+@windgate.csv
+model = {
+    value : TEXT;
+    @windgate.csv.line_number
+    number : INT;
+};

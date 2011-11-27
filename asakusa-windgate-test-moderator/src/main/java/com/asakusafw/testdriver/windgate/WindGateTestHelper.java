@@ -20,9 +20,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 import org.apache.hadoop.conf.Configurable;
 import org.slf4j.Logger;
@@ -58,6 +64,11 @@ public final class WindGateTestHelper {
     public static final String TESTING_PROFILE_PATH = "windgate-{0}.properties";
 
     /**
+     * WindGate plugin directory path from Asakusa installation path.
+     */
+    public static final String PRODUCTION_PLUGIN_DIRECTORY = "windgate/plugin";
+
+    /**
      * For normal use, WindGate profile path pattern in form of {@link MessageFormat}.
      * <code>{0}</code> will be replaced as the its profile name.
      * This module will load these files in {@code ASAKUSA_HOME}
@@ -65,9 +76,16 @@ public final class WindGateTestHelper {
      */
     public static final String PRODUCTION_PROFILE_PATH = "windgate/profile/{0}.properties";
 
+    private static final String PLUGIN_EXTENSION = ".jar";
+
     private static final String DUMMY_RESOURCE_NAME = "__DUMMY__";
 
     private static final String DUMMY_PROCESS_NAME = "test-moderator";
+
+    private static File lastPluginDirectory;
+
+    private static final WeakHashMap<ClassLoader, ClassLoader> PLUGIN_REPOSITORY =
+        new WeakHashMap<ClassLoader, ClassLoader>();
 
     /**
      * Creates a new {@link ProcessScript} for testing.
@@ -224,18 +242,27 @@ public final class WindGateTestHelper {
 
     private static URL findResourceOnHomePath(String path) {
         assert path != null;
+        File file = findFileOnHomePath(path);
+        if (file != null && file.isFile() != false) {
+            try {
+                return file.toURI().toURL();
+            } catch (IOException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to convert a file path to URL: {0}",
+                        file), e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private static File findFileOnHomePath(String path) {
+        assert path != null;
         String home = System.getenv("ASAKUSA_HOME");
         if (home != null) {
             File file = new File(home, path);
-            if (file.isFile() != false) {
-                try {
-                    return file.toURI().toURL();
-                } catch (IOException e) {
-                    LOG.warn(MessageFormat.format(
-                            "Failed to convert a file path to URL: {0}",
-                            file), e);
-                    return null;
-                }
+            if (file.exists()) {
+                return file;
             }
         } else {
             LOG.warn("ASAKUSA_HOME is not defined");
@@ -244,6 +271,51 @@ public final class WindGateTestHelper {
     }
 
     private static ClassLoader findClassLoader() {
+        File pluginDirectory = findFileOnHomePath(PRODUCTION_PLUGIN_DIRECTORY);
+        final ClassLoader baseClassLoader = getBareClassLoader();
+        synchronized (PLUGIN_REPOSITORY) {
+            if (lastPluginDirectory != null && lastPluginDirectory.equals(pluginDirectory) == false) {
+                PLUGIN_REPOSITORY.clear();
+                lastPluginDirectory = pluginDirectory;
+            }
+            ClassLoader plugins = PLUGIN_REPOSITORY.get(baseClassLoader);
+            if (plugins != null) {
+                return plugins;
+            }
+            if (pluginDirectory == null || pluginDirectory.isDirectory() == false) {
+                return baseClassLoader;
+            }
+            final List<URL> pluginLibraries = new ArrayList<URL>();
+            for (File file : pluginDirectory.listFiles()) {
+                if (file.isFile() && file.getName().endsWith(PLUGIN_EXTENSION)) {
+                    try {
+                        URL url = file.toURI().toURL();
+                        pluginLibraries.add(url);
+                    } catch (Exception e) {
+                        LOG.warn(MessageFormat.format(
+                                "Failed to convert a file path to URL: {0}",
+                                file), e);
+                    }
+                }
+            }
+            if (pluginLibraries.isEmpty()) {
+                return baseClassLoader;
+            }
+            ClassLoader pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                @Override
+                public ClassLoader run() {
+                    URLClassLoader loader = new URLClassLoader(
+                            pluginLibraries.toArray(new URL[pluginLibraries.size()]),
+                            baseClassLoader);
+                    return loader;
+                }
+            });
+            PLUGIN_REPOSITORY.put(baseClassLoader, pluginClassLoader);
+            return pluginClassLoader;
+        }
+    }
+
+    private static ClassLoader getBareClassLoader() {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (contextClassLoader != null) {
             return contextClassLoader;

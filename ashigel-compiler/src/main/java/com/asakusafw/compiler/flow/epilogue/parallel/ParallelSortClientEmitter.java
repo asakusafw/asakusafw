@@ -59,13 +59,20 @@ import com.ashigeru.lang.java.model.util.Models;
 import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
- * parallel reduceを行うステージクライアントクラスを生成する。
+ * parallel sortを行うステージクライアントクラスを生成する。
+ * @since 0.1.0
+ * @version 0.2.4
  */
 public class ParallelSortClientEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ParallelSortClientEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    /**
+     * Whether emulates legacy mode.
+     */
+    public static final String ATTRIBUTE_LEGACY = ParallelSortClientEmitter.class.getName() + ".legacy";
+
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -75,6 +82,10 @@ public class ParallelSortClientEmitter {
     public ParallelSortClientEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         this.environment = environment;
+    }
+
+    static boolean legacy(FlowCompilingEnvironment environment) {
+        return environment.getOptions().getExtraAttribute(ParallelSortClientEmitter.ATTRIBUTE_LEGACY) != null;
     }
 
     /**
@@ -110,17 +121,17 @@ public class ParallelSortClientEmitter {
 
         private static final char PATH_SEPARATOR = '/';
 
-        private FlowCompilingEnvironment environment;
+        private final FlowCompilingEnvironment environment;
 
-        private String moduleId;
+        private final String moduleId;
 
-        private List<ResolvedSlot> slots;
+        private final List<ResolvedSlot> slots;
 
-        private Location outputDirectory;
+        private final Location outputDirectory;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -268,7 +279,6 @@ public class ParallelSortClientEmitter {
         }
 
         private List<MethodDeclaration> createShuffleMethods() throws IOException {
-            Type reducer = generateReducer();
             List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
             results.add(createClassLiteralMethod(
                     AbstractStageClient.METHOD_SHUFFLE_KEY_CLASS,
@@ -276,13 +286,28 @@ public class ParallelSortClientEmitter {
             results.add(createClassLiteralMethod(
                     AbstractStageClient.METHOD_SHUFFLE_VALUE_CLASS,
                     importer.toType(WritableSlot.class)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_PARTITIONER_CLASS,
-                    importer.toType(SortableSlot.Partitioner.class)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_REDUCER_CLASS,
-                    reducer));
+            if (doSort()) {
+                Type reducer = generateReducer();
+                results.add(createClassLiteralMethod(
+                        AbstractStageClient.METHOD_PARTITIONER_CLASS,
+                        importer.toType(SortableSlot.Partitioner.class)));
+                results.add(createClassLiteralMethod(
+                        AbstractStageClient.METHOD_REDUCER_CLASS,
+                        reducer));
+            }
             return results;
+        }
+
+        private boolean doSort() {
+            if (ParallelSortClientEmitter.legacy(environment)) {
+                return true;
+            }
+            for (ResolvedSlot slot : slots) {
+                if (slot.getSortProperties().isEmpty() == false) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private Type generateMapper(ResolvedSlot slot) throws IOException {

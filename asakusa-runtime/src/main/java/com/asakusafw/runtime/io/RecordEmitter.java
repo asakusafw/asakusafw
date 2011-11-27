@@ -50,8 +50,7 @@ try {
         emitter.endRecord();
     }
     emitter.close();
-}
-finally {
+} finally {
     writer.close();
 }
 </code></pre>

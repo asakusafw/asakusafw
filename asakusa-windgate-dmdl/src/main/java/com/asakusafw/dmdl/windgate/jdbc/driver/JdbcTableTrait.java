@@ -19,29 +19,29 @@ import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.semantics.Trait;
 
 /**
- * Trait for holding column names.
+ * Trait for holding table information.
  */
-public class JdbcSupportTrait implements Trait<JdbcSupportTrait> {
+public class JdbcTableTrait implements Trait<JdbcTableTrait> {
 
     private final AstNode originalAst;
 
-    private final String columnName;
+    private final String tableName;
 
     /**
      * Creates and returns a new instance.
      * @param originalAst the original AST, or {@code null} if this is an ad-hoc element
-     * @param columnName the column name of the target property
+     * @param tableName the table name of the target data model
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public JdbcSupportTrait(AstNode originalAst, String columnName) {
+    public JdbcTableTrait(AstNode originalAst, String tableName) {
         if (originalAst == null) {
             throw new IllegalArgumentException("originalAst must not be null"); //$NON-NLS-1$
         }
-        if (columnName == null) {
-            throw new IllegalArgumentException("columnName must not be null"); //$NON-NLS-1$
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
         }
         this.originalAst = originalAst;
-        this.columnName = columnName;
+        this.tableName = tableName;
     }
 
     @Override
@@ -50,10 +50,10 @@ public class JdbcSupportTrait implements Trait<JdbcSupportTrait> {
     }
 
     /**
-     * Returns the column name.
-     * @return the column name
+     * Returns the table name.
+     * @return the table name
      */
     public String getName() {
-        return columnName;
+        return tableName;
     }
 }

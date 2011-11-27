@@ -25,7 +25,26 @@ import java.text.MessageFormat;
  */
 public final class DateTimeOption extends ValueOption<DateTimeOption> {
 
-    private DateTime entity = new DateTime();
+    private final DateTime entity = new DateTime();
+
+    /**
+     * Creates a new instance which represents {@code null} value.
+     */
+    public DateTimeOption() {
+        super();
+    }
+
+    /**
+     * Creates a new instance which represents the specified value.
+     * @param valueOrNull the initial value
+     */
+    public DateTimeOption(DateTime valueOrNull) {
+        super();
+        if (valueOrNull != null) {
+            this.entity.setElapsedSeconds(valueOrNull.getElapsedSeconds());
+            this.nullValue = false;
+        }
+    }
 
     /**
      * このオブジェクトが表現する値を返す。
