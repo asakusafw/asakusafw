@@ -60,7 +60,7 @@ public class FileResourceManipulatorTest {
     @Test
     public void cleanupSource() throws Exception {
         File file = folder.newFile("file");
-        ProcessScript<StringBuilder> process = process("testing", driver(file), dummy());
+        ProcessScript<StringBuilder> process = process("testing", driver(file.getName()), dummy());
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         assertThat(file.exists(), is(true));
@@ -77,7 +77,7 @@ public class FileResourceManipulatorTest {
     @Test
     public void cleanupDrain() throws Exception {
         File file = folder.newFile("file");
-        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file));
+        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file.getName()));
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         assertThat(file.exists(), is(true));
@@ -96,7 +96,7 @@ public class FileResourceManipulatorTest {
         File file = folder.newFile("file");
         put(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
 
-        ProcessScript<StringBuilder> process = process("testing", driver(file), dummy());
+        ProcessScript<StringBuilder> process = process("testing", driver(file.getName()), dummy());
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         SourceDriver<StringBuilder> driver = manipulator.createSourceForSource(process);
@@ -115,7 +115,7 @@ public class FileResourceManipulatorTest {
     @Test
     public void createDrainForSource() throws Exception {
         File file = folder.newFile("file");
-        ProcessScript<StringBuilder> process = process("testing", driver(file), dummy());
+        ProcessScript<StringBuilder> process = process("testing", driver(file.getName()), dummy());
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         DrainDriver<StringBuilder> driver = manipulator.createDrainForSource(process);
@@ -140,7 +140,7 @@ public class FileResourceManipulatorTest {
         File file = folder.newFile("file");
         put(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
 
-        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file));
+        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file.getName()));
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         SourceDriver<StringBuilder> driver = manipulator.createSourceForDrain(process);
@@ -159,7 +159,7 @@ public class FileResourceManipulatorTest {
     @Test
     public void createDrainForDrain() throws Exception {
         File file = folder.newFile("file");
-        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file));
+        ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file.getName()));
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
         DrainDriver<StringBuilder> driver = manipulator.createDrainForDrain(process);
@@ -218,10 +218,6 @@ public class FileResourceManipulatorTest {
         );
     }
 
-    private DriverScript driver(File file) {
-        return driver(file.getAbsolutePath());
-    }
-
     private DriverScript driver(String file) {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(FileProcess.FILE.key(), file);
@@ -237,6 +233,6 @@ public class FileResourceManipulatorTest {
         return new FileProfile(
                 "file",
                 getClass().getClassLoader(),
-                null);
+                folder.getRoot());
     }
 }

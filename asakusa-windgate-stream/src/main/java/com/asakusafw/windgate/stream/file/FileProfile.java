@@ -47,7 +47,7 @@ public class FileProfile {
      * Creates a new instance.
      * @param resourceName the resource name
      * @param classLoader current class loader
-     * @param basePath base path (nullable)
+     * @param basePath base path
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FileProfile(String resourceName, ClassLoader classLoader, File basePath) {
@@ -56,6 +56,9 @@ public class FileProfile {
         }
         if (classLoader == null) {
             throw new IllegalArgumentException("classLoader must not be null"); //$NON-NLS-1$
+        }
+        if (basePath == null) {
+            throw new IllegalArgumentException("basePath must not be null"); //$NON-NLS-1$
         }
         this.resourceName = resourceName;
         this.classLoader = classLoader;
@@ -98,31 +101,42 @@ public class FileProfile {
         }
         String resourceName = profile.getName();
         ClassLoader classLoader = profile.getClassLoader();
-        String key = KEY_BASE_PATH;
-        String basePath = profile.getConfiguration().get(key);
-        if (basePath != null) {
-            basePath = resolve(profile, key, basePath);
-        }
+        String basePath = extract(profile, KEY_BASE_PATH, true);
         return new FileProfile(resourceName, classLoader, new File(basePath));
     }
 
-    private static String resolve(ResourceProfile profile, String key, String value) {
+    private static String extract(ResourceProfile profile, String configKey, boolean resolve) {
         assert profile != null;
-        assert key != null;
-        assert value != null;
-        ParameterList environment = new ParameterList(System.getenv());
-        try {
-            return environment.replace(value, true);
-        } catch (IllegalArgumentException e) {
-            WGLOG.error(e, "E00001",
+        assert configKey != null;
+        String value = profile.getConfiguration().get(configKey);
+        if (value == null) {
+            WGLOG.error("E00001",
                     profile.getName(),
-                    key,
+                    configKey,
                     value);
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Failed to resolve \"{1}\": {2} (resource={0})",
+                    "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),
-                    key,
-                    value), e);
+                    configKey));
+        }
+        value = value.trim();
+        if (resolve == false) {
+            return value;
+        } else {
+            ParameterList environment = new ParameterList(System.getenv());
+            try {
+                return environment.replace(value, true);
+            } catch (IllegalArgumentException e) {
+                WGLOG.error(e, "E00001",
+                        profile.getName(),
+                        configKey,
+                        value);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Failed to resolve \"{1}\": {2} (resource={0})",
+                        profile.getName(),
+                        configKey,
+                        value), e);
+            }
         }
     }
 }

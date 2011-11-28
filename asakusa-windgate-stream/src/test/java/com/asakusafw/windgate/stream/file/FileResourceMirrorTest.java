@@ -61,13 +61,10 @@ public class FileResourceMirrorTest {
      */
     @Test
     public void prepare() throws Exception {
-        File source = folder.newFile("source");
-        File drain = folder.newFile("drain");
-
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> a = process("a", driver(source), dummy());
-            ProcessScript<StringBuilder> b = process("b", dummy(), driver(drain));
+            ProcessScript<StringBuilder> a = process("a", driver("source"), dummy());
+            ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
         } finally {
@@ -81,12 +78,10 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_variable() throws Exception {
-        File drain = folder.newFile("drain");
-
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
             ProcessScript<StringBuilder> a = process("a", driver("${invalid_var}"), dummy());
-            ProcessScript<StringBuilder> b = process("b", dummy(), driver(drain));
+            ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
             fail();
@@ -101,15 +96,13 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_source() throws Exception {
-        File drain = folder.newFile("drain");
-
         Map<String, String> conf = new HashMap<String, String>();
         DriverScript driverScript = new DriverScript("file", conf);
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
             ProcessScript<StringBuilder> a = process("a", driverScript, dummy());
-            ProcessScript<StringBuilder> b = process("b", dummy(), driver(drain));
+            ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
             fail();
@@ -124,14 +117,12 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_drain() throws Exception {
-        File source = folder.newFile("source");
-
         Map<String, String> conf = new HashMap<String, String>();
         DriverScript driverScript = new DriverScript("file", conf);
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> a = process("a", driver(source), dummy());
+            ProcessScript<StringBuilder> a = process("a", driver("source"), dummy());
             ProcessScript<StringBuilder> b = process("b", dummy(), driverScript);
             GateScript gate = script(a, b);
             resource.prepare(gate);
@@ -152,7 +143,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", driver(file), dummy());
+            ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
 
             SourceDriver<StringBuilder> driver = resource.createSource(process);
@@ -178,7 +169,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(
                 profile(),
-                new ParameterList(Collections.singletonMap("var", file.getAbsolutePath())));
+                new ParameterList(Collections.singletonMap("var", file.getName())));
         try {
             ProcessScript<StringBuilder> process = process("a", driver("${var}"), dummy());
             resource.prepare(script(process));
@@ -206,7 +197,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", driver(file), dummy());
+            ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
 
             SourceDriver<StringBuilder> driver = resource.createSource(process);
@@ -232,7 +223,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", driver(file), dummy());
+            ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
 
             SourceDriver<StringBuilder> driver = resource.createSource(process);
@@ -256,7 +247,7 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file));
+            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
 
             DrainDriver<StringBuilder> driver = resource.createDrain(process);
@@ -281,7 +272,7 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         FileResourceMirror resource = new FileResourceMirror(
                 profile(),
-                new ParameterList(Collections.singletonMap("var", file.getAbsolutePath())));
+                new ParameterList(Collections.singletonMap("var", file.getName())));
         try {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver("${var}"));
             resource.prepare(script(process));
@@ -311,7 +302,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file));
+            ProcessScript<StringBuilder> process = process("a", dummy(), driver("parent/file"));
             resource.prepare(script(process));
 
             DrainDriver<StringBuilder> driver = resource.createDrain(process);
@@ -336,7 +327,7 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file));
+            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
 
             DrainDriver<StringBuilder> driver = resource.createDrain(process);
@@ -364,7 +355,7 @@ public class FileResourceMirrorTest {
 
         FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
         try {
-            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file));
+            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
 
             DrainDriver<StringBuilder> driver = resource.createDrain(process);
@@ -426,10 +417,6 @@ public class FileResourceMirrorTest {
         );
     }
 
-    private DriverScript driver(File file) {
-        return driver(file.getAbsolutePath());
-    }
-
     private DriverScript driver(String file) {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(FileProcess.FILE.key(), file);
@@ -445,6 +432,6 @@ public class FileResourceMirrorTest {
         return new FileProfile(
                 "file",
                 getClass().getClassLoader(),
-                null);
+                folder.getRoot());
     }
 }

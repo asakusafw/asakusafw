@@ -1,4 +1,4 @@
 
 ## Local File System Resource
 resource.<name>=com.asakusafw.windgate.stream.file.FileResourceProvider
-resource.<name>.basePath=$<base path>?
+resource.<name>.basePath=$<base path>

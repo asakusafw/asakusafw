@@ -125,11 +125,7 @@ final class FileResourceUtil {
                     FileProcess.FILE.key(),
                     rawPath), e);
         }
-        if (profile.getBasePath() == null) {
-            return new File(path);
-        } else {
-            return new File(profile.getBasePath(), path);
-        }
+        return new File(profile.getBasePath(), path);
     }
 
     private FileResourceUtil() {

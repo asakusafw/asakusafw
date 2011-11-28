@@ -37,7 +37,7 @@ import com.asakusafw.windgate.core.vocabulary.StreamProcess;
 public abstract class FsImporterDescription extends WindGateImporterDescription {
 
     /**
-     * Returns the path of the import target.
+     * Returns the path of the import target (relative path from {@code resource.local.basePath} in the profile).
      * This path can include variables as <code>${&lt;variable-name&gt;}</code>.
      * @return target path
      */
