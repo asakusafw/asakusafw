@@ -15,37 +15,21 @@
  */
 package ${package}.jobflow;
 
-import java.util.Arrays;
-import java.util.List;
-
-import ${package}.modelgen.table.model.Ex1;
-import ${package}.modelgen.table.jdbc.Ex1JdbcSupport;
-
-import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
+import ${package}.modelgen.dmdl.csv.AbstractEx1CsvExporterDescription;
 
 /**
- * Export EX2 from WindGate.
+ * Export EX1 to WindGate.
  */
-public class Ex1ToDb extends DefaultDbExporterDescription {
+public class Ex1ToCsv extends AbstractEx1CsvExporterDescription {
 
     @Override
-    public Class<?> getModelType() {
-        return Ex1.class;
-    }
-    
-    @Override
-    public String getTableName() {
-        return "EX2";
+    public String getProfileName() {
+        return "asakusa";
     }
 
     @Override
-    public List<String> getColumnNames() {
-        return Arrays.asList("SID", "VALUE", "STRING");
-    }
-    
-    @Override
-    public Class<? extends DataModelJdbcSupport<?>> getJdbcSupport() {
-        return Ex1JdbcSupport.class;
+    public String getPath() {
+        return "output-ex1.csv";
     }
 
 }

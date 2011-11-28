@@ -15,15 +15,16 @@
  */
 package ${package}.jobflow;
 
+import ${package}.flowpart.ExFlowPartFactory;
+import ${package}.flowpart.ExFlowPartFactory.ExFlowPart;
+import ${package}.modelgen.dmdl.model.Ex1;
+
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
-import ${package}.flowpart.ExFlowPartFactory;
-import ${package}.flowpart.ExFlowPartFactory.ExFlowPart;
-import ${package}.modelgen.table.model.Ex1;
 
 /**
  * サンプル：ジョブフロークラス
@@ -36,13 +37,13 @@ public class ExJobFlow extends FlowDescription {
 
     /**
      * コンストラクタ
-     * 
+     *
      * @param in1 ex1からの入力を示すインターフェース
      * @param out1 ex1への出力を示すインターフェース
-     */            
+     */
     public ExJobFlow(
-            @Import(name = "ex1", description = Ex1FromDb.class) In<Ex1> in1,
-            @Export(name = "ex1", description = Ex1ToDb.class) Out<Ex1> out1) {
+            @Import(name = "ex1", description = Ex1FromCsv.class) In<Ex1> in1,
+            @Export(name = "ex1", description = Ex1ToCsv.class) Out<Ex1> out1) {
         this.in1 = in1;
         this.out1 = out1;
     }

@@ -15,16 +15,21 @@
  */
 package ${package}.jobflow;
 
-import com.asakusafw.vocabulary.windgate.JdbcImporterDescription;
+import ${package}.modelgen.dmdl.csv.AbstractEx1CsvImporterDescription;
 
 /**
- * Default Importer Definition.
+ * Import EX1 from WindGate.
  */
-public abstract class DefaultDbImporterDescription extends JdbcImporterDescription {
+public class Ex1FromCsv extends AbstractEx1CsvImporterDescription {
 
     @Override
     public String getProfileName() {
         return "asakusa";
+    }
+
+    @Override
+    public String getPath() {
+        return "input-ex1.csv";
     }
 
 }
