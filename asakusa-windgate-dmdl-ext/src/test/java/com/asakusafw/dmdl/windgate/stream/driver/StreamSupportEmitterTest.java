@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,13 +65,13 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter(output);
+        DataModelWriter<Object> writer = unsafe.createWriter("example", output);
         writer.write(model.unwrap());
         writer.flush();
         output.close();
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader(new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(output.toByteArray()));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(buffer));
         assertThat(reader.readTo(buffer), is(false));
@@ -105,14 +106,14 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
         DataModelStreamSupport<Object> unsafe = unsafe(support);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter(output);
+        DataModelWriter<Object> writer = unsafe.createWriter("example", output);
         writer.write(empty.unwrap());
         writer.write(all.unwrap());
         writer.flush();
         output.close();
 
         Object buffer = loaded.newModel("Types").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader(new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(output.toByteArray()));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(empty.unwrap()));
         assertThat(reader.readTo(buffer), is(true));

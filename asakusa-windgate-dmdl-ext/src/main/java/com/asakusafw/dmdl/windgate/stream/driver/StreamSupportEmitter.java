@@ -222,6 +222,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_READER)))
                 .newObject(parser)
                 .toReturnStatement());
+            SimpleName path = f.newSimpleName("path");
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -233,9 +234,9 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                             context.resolve(DataModelReader.class),
                             context.resolve(model.getSymbol()))),
                     f.newSimpleName("createReader"),
-                    Arrays.asList(f.newFormalParameterDeclaration(
-                            context.resolve(InputStream.class),
-                            stream)),
+                    Arrays.asList(
+                            f.newFormalParameterDeclaration(context.resolve(String.class), path),
+                            f.newFormalParameterDeclaration(context.resolve(InputStream.class), stream)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(statements));
@@ -261,6 +262,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                 .newObject(emitter)
                 .toReturnStatement());
 
+            SimpleName path = f.newSimpleName("path");
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -272,9 +274,9 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                             context.resolve(DataModelWriter.class),
                             context.resolve(model.getSymbol()))),
                     f.newSimpleName("createWriter"),
-                    Arrays.asList(f.newFormalParameterDeclaration(
-                            context.resolve(OutputStream.class),
-                            stream)),
+                    Arrays.asList(
+                            f.newFormalParameterDeclaration(context.resolve(String.class), path),
+                            f.newFormalParameterDeclaration(context.resolve(OutputStream.class), stream)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(statements));
