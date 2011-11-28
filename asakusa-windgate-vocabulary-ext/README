@@ -1,9 +1,0 @@
-
-
-## JDBC Resource
-resource.<name>=com.asakusafw.windgate.jdbc.JdbcResourceProvider
-resource.<name>.driver=com.mysql.jdbc.Driver
-resource.<name>.url=jdbc:mysql://localhost/asakusa
-resource.<name>.user=asakusa
-resource.<name>.password=asakusa
-resource.<name>.batchPutUnit=10000
