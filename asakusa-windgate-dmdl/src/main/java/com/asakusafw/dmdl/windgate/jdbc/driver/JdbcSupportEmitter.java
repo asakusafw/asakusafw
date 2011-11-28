@@ -63,6 +63,7 @@ import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
 import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
+import com.ashigeru.lang.java.model.syntax.WildcardBoundKind;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.JavadocBuilder;
@@ -1209,7 +1210,9 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createGetModelType() {
             return createGetter(
                     new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(context.resolve(model.getSymbol()))
+                        .parameterize(f.newWildcard(
+                                WildcardBoundKind.UPPER_BOUNDED,
+                                context.resolve(model.getSymbol())))
                         .toType(),
                     "getModelType",
                     f.newClassLiteral(context.resolve(model.getSymbol())));

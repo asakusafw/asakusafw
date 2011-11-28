@@ -55,10 +55,12 @@ import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.ashigeru.lang.java.model.syntax.Name;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
 import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
+import com.ashigeru.lang.java.model.syntax.WildcardBoundKind;
 import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.ExpressionBuilder;
 import com.ashigeru.lang.java.model.util.JavadocBuilder;
@@ -84,6 +86,14 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             return;
         }
         checkPropertyType(model);
+        Name supportName = generateSupport(context, model);
+        generateImporter(context, model, supportName);
+        generateExporter(context, model, supportName);
+    }
+
+    private Name generateSupport(EmitContext context, ModelDeclaration model) throws IOException {
+        assert context != null;
+        assert model != null;
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
@@ -92,10 +102,49 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 "{0}CsvSupport");
         LOG.debug("Generating CSV support for {}",
                 context.getQualifiedTypeName().toNameString());
-        Generator.emit(next, model, model.getTrait(CsvSupportTrait.class).getConfiguration());
+        SupportGenerator.emit(next, model, model.getTrait(CsvSupportTrait.class).getConfiguration());
         LOG.debug("Generated CSV support for {}: {}",
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
+        return next.getQualifiedTypeName();
+    }
+
+    private Name generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+        assert context != null;
+        assert model != null;
+        assert supportName != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_STREAM,
+                "Abstract{0}CsvImporterDescription");
+        LOG.debug("Generating CSV importer description for {}",
+                context.getQualifiedTypeName().toNameString());
+        DescriptionGenerator.emitImporter(next, model, supportName);
+        LOG.debug("Generated CSV importer description for {}: {}",
+                context.getQualifiedTypeName().toNameString(),
+                next.getQualifiedTypeName().toNameString());
+        return next.getQualifiedTypeName();
+    }
+
+    private Name generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+        assert context != null;
+        assert model != null;
+        assert supportName != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_STREAM,
+                "Abstract{0}CsvExporterDescription");
+        LOG.debug("Generating CSV exporter description for {}",
+                context.getQualifiedTypeName().toNameString());
+        DescriptionGenerator.emitExporter(next, model, supportName);
+        LOG.debug("Generated CSV exporter description for {}: {}",
+                context.getQualifiedTypeName().toNameString(),
+                next.getQualifiedTypeName().toNameString());
+        return next.getQualifiedTypeName();
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -125,7 +174,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         return CsvFieldTrait.getKind(property, Kind.VALUE) == Kind.VALUE;
     }
 
-    private static class Generator {
+    private static class SupportGenerator {
 
         private static final String NAME_READER = "StreamReader";
 
@@ -145,7 +194,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private final ModelFactory f;
 
-        private Generator(EmitContext context, ModelDeclaration model, Configuration configuration) {
+        private SupportGenerator(EmitContext context, ModelDeclaration model, Configuration configuration) {
             assert context != null;
             assert model != null;
             assert configuration != null;
@@ -159,7 +208,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             assert context != null;
             assert model != null;
             assert conf != null;
-            Generator emitter = new Generator(context, model, conf);
+            SupportGenerator emitter = new SupportGenerator(context, model, conf);
             emitter.emit();
         }
 
@@ -581,6 +630,128 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     context.resolve(type),
                     name,
                     null);
+        }
+    }
+
+    private static class DescriptionGenerator {
+
+        // for reduce library dependencies
+        private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.FsImporterDescription";
+
+        // for reduce library dependencies
+        private static final String EXPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.FsExporterDescription";
+
+        private final EmitContext context;
+
+        private final ModelDeclaration model;
+
+        private final com.ashigeru.lang.java.model.syntax.Type supportClass;
+
+        private final ModelFactory f;
+
+        private final boolean importer;
+
+        private DescriptionGenerator(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName,
+                boolean importer) {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            this.context = context;
+            this.model = model;
+            this.f = context.getModelFactory();
+            this.importer = importer;
+            this.supportClass = context.resolve(supportClassName);
+        }
+
+        static void emitImporter(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName) throws IOException {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
+            emitter.emit();
+        }
+
+        static void emitExporter(
+                EmitContext context,
+                ModelDeclaration model,
+                Name supportClassName) throws IOException {
+            assert context != null;
+            assert model != null;
+            assert supportClassName != null;
+            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
+            emitter.emit();
+        }
+
+        private void emit() throws IOException {
+            ClassDeclaration decl = f.newClassDeclaration(
+                    new JavadocBuilder(f)
+                        .text("An abstract implementation of ")
+                        .linkType(context.resolve(model.getSymbol()))
+                        .text(" {0} description using WindGate CSV",
+                                importer ? "importer" : "exporter")
+                        .text(".")
+                        .toJavadoc(),
+                    new AttributeBuilder(f)
+                        .Public()
+                        .Abstract()
+                        .toAttributes(),
+                    context.getTypeName(),
+                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
+                    Collections.<com.ashigeru.lang.java.model.syntax.Type>emptyList(),
+                    createMembers());
+            context.emit(decl);
+        }
+
+        private List<TypeBodyDeclaration> createMembers() {
+            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            results.add(createGetModelType());
+            results.add(createGetStreamSupport());
+            return results;
+        }
+
+        private MethodDeclaration createGetModelType() {
+            return createGetter(
+                    new TypeBuilder(f, context.resolve(Class.class))
+                        .parameterize(f.newWildcard(
+                                WildcardBoundKind.UPPER_BOUNDED,
+                                context.resolve(model.getSymbol())))
+                        .toType(),
+                    "getModelType",
+                    f.newClassLiteral(context.resolve(model.getSymbol())));
+        }
+
+        private MethodDeclaration createGetStreamSupport() {
+            return createGetter(
+                    new TypeBuilder(f, context.resolve(Class.class))
+                        .parameterize(supportClass)
+                        .toType(),
+                    "getStreamSupport",
+                    f.newClassLiteral(supportClass));
+        }
+
+        private MethodDeclaration createGetter(
+                com.ashigeru.lang.java.model.syntax.Type type,
+                String name,
+                Expression value) {
+            assert type != null;
+            assert name != null;
+            assert value != null;
+            return f.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .annotation(context.resolve(Override.class))
+                        .Public()
+                        .toAttributes(),
+                    type,
+                    f.newSimpleName(name),
+                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }
 }
