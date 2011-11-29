@@ -105,7 +105,7 @@
 		
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -113,7 +113,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>ext/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -121,7 +121,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>

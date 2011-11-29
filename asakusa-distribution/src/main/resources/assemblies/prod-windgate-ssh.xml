@@ -2,11 +2,37 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-windgate-ssh-exclude-lib</id>
+	<id>prod-windgate-ssh</id>
 	<formats>
-		<format>jar</format>
+		<format>tar.gz</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>core/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-runtime</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+	</dependencySets>
 
 	<fileSets>
 		<fileSet>
@@ -51,7 +77,7 @@
 		
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -59,7 +85,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>ext/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -67,25 +93,8 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<!-- lib -->
-		<fileSet>
-			<directory>src/main/assembly</directory>
-			<outputDirectory>windgate-ssh/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/assembly</directory>
-			<outputDirectory>core/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>

@@ -2,7 +2,7 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-db</id>
+	<id>prod-windgate</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
@@ -14,7 +14,6 @@
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-runtime</include>
-				<include>com.asakusafw:asakusa-thundergate-runtime</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>
@@ -22,14 +21,24 @@
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
-			<outputDirectory>bulkloader/lib</outputDirectory>
+			<outputDirectory>windgate/lib</outputDirectory>
 			<includes>
-				<include>com.asakusafw:asakusa-thundergate</include>
-				<include>org.apache.hadoop:hadoop-core</include>
-				<include>commons-io:commons-io</include>
-				<include>commons-lang:commons-lang</include>
-				<include>commons-logging:commons-logging</include>
-				<include>log4j:log4j</include>
+				<include>com.asakusafw:asakusa-windgate-bootstrap</include>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate/plugin</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>com.asakusafw:asakusa-windgate-jdbc</include>
+				<include>com.asakusafw:asakusa-windgate-stream</include>
 				<include>mysql:mysql-connector-java</include>
 			</includes>
 			<fileMode>0644</fileMode>
@@ -70,44 +79,14 @@
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
+		
 	</dependencySets>
 
 	<fileSets>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/bin</directory>
-			<outputDirectory>bulkloader/bin</outputDirectory>
-			<includes>
-				<include>.bulkloader_db_profile</include>
-				<include>importer.sh</include>
-				<include>dbcleaner.sh</include>
-				<include>exporter.sh</include>
-				<include>finalizer.sh</include>
-				<include>recoverer.sh</include>
-				<include>release-cache-lock.sh</include>
-				<include>delete-cache-info.sh</include>
-				<include>gc-cache-storage.sh</include>
-				<include>set-classpath-db.sh</include>
-			</includes>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/conf</directory>
-			<outputDirectory>bulkloader/conf</outputDirectory>
-			<includes>
-				<include>[targetname]-jdbc.properties</include>
-				<include>bulkloader-conf-db.properties</include>
-				<include>log4j.xml</include>
-			</includes>
-			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/sql</directory>
-			<outputDirectory>bulkloader/sql</outputDirectory>
-			<fileMode>0644</fileMode>
+			<directory>../asakusa-windgate-plugin/src/main/dist/windgate</directory>
+			<outputDirectory>windgate</outputDirectory>
+			<fileMode>0755</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -142,10 +121,10 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
-		
+
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -153,7 +132,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>

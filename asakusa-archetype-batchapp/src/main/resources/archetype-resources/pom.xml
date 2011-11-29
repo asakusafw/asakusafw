@@ -138,6 +138,20 @@
 						<exclude>com.asakusafw:asakusa-distribution</exclude>
 						<exclude>com.asakusafw:asakusa-cleaner</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate</exclude>
+						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-core</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-hadoopfs</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-jdbc</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-plugin</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-test-moderator</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-tools</exclude>
 						<exclude>com.asakusafw:ashigel-compiler-bootstrap</exclude>
 						<exclude>org.eclipse.jdt:core</exclude>
 					</excludes>
@@ -287,6 +301,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.asakusafw</groupId>
+						<artifactId>asakusa-distribution</artifactId>
+						<version>${asakusafw.version}</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>default-cli</id>
@@ -294,9 +315,9 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/asakusa-install-dev.xml</descriptor>
-							</descriptors>
+							<descriptorRefs>
+								<descriptorRef>asakusa-install-dev</descriptorRef>
+							</descriptorRefs>
 						</configuration>
 					</execution>
 				</executions>
@@ -363,12 +384,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
 			<classifier>dev-exclude-lib</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-cleaner</artifactId>
-			<version>${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

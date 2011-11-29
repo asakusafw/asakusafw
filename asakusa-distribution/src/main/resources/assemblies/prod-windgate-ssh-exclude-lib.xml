@@ -2,7 +2,7 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-hc-exclude-lib</id>
+	<id>prod-windgate-ssh-exclude-lib</id>
 	<formats>
 		<format>jar</format>
 	</formats>
@@ -10,35 +10,9 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/bin</directory>
-			<outputDirectory>bulkloader/bin</outputDirectory>
-			<includes>
-				<include>.bulkloader_hc_profile</include>
-				<include>collector.sh</include>
-				<include>extractor.sh</include>
-				<include>get-cache-info.sh</include>
-				<include>delete-cache-storage.sh</include>
-				<include>set-classpath-hc.sh</include>
-			</includes>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/conf</directory>
-			<outputDirectory>bulkloader/conf</outputDirectory>
-			<includes>
-				<include>bulkloader-conf-hc.properties</include>
-				<include>log4j.xml</include>
-			</includes>
-			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
-			<outputDirectory>thundergate-cache</outputDirectory>
-			<fileMode>0744</fileMode>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
+			<outputDirectory>windgate-ssh</outputDirectory>
+			<fileMode>0755</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -77,7 +51,7 @@
 		
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -85,7 +59,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>ext/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -93,7 +67,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -102,15 +76,15 @@
 		</fileSet>
 		<!-- lib -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
-			<outputDirectory>bulkloader/lib</outputDirectory>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>core/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
