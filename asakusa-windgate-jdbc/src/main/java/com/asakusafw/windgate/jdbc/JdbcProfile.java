@@ -126,7 +126,7 @@ public class JdbcProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String resourceName = profile.getName();
-        ClassLoader classLoader = profile.getClassLoader();
+        ClassLoader classLoader = profile.getContext().getClassLoader();
         String driver = extract(profile, KEY_DRIVER, true);
         String url = extract(profile, KEY_URL, true);
         String user = extract(profile, KEY_USER, false);

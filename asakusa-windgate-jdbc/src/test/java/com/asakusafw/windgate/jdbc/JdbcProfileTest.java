@@ -26,6 +26,7 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
@@ -162,6 +163,10 @@ public class JdbcProfileTest {
     }
 
     private ResourceProfile toProfile(Map<String, String> map) {
-        return new ResourceProfile("jdbc", JdbcResourceProvider.class, getClass().getClassLoader(), map);
+        return new ResourceProfile(
+                "jdbc",
+                JdbcResourceProvider.class,
+                ProfileContext.system(getClass().getClassLoader()),
+                map);
     }
 }

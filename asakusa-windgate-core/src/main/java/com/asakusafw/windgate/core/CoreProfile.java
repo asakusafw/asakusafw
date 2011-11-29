@@ -22,7 +22,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.windgate.core.process.ProcessProvider;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
@@ -60,18 +59,18 @@ public class CoreProfile {
      */
     public static final int DEFAULT_MAX_PROCESSES = 1;
 
-    private final int maxThreads;
+    private final int maxProcesses;
 
     /**
      * Creates a new instance.
-     * @param maxThreads the number of max threads in core gate processes
+     * @param maxProcesses the number of max threads in core gate processes
      * @throws IllegalArgumentException if the {@code maxThreads} is less than {@code 1}
      */
-    public CoreProfile(int maxThreads) {
-        if (maxThreads < 1) {
-            throw new IllegalArgumentException("maxThreads must be a positive integer"); //$NON-NLS-1$
+    public CoreProfile(int maxProcesses) {
+        if (maxProcesses < 1) {
+            throw new IllegalArgumentException("maxProcesses must be a positive integer"); //$NON-NLS-1$
         }
-        this.maxThreads = maxThreads;
+        this.maxProcesses = maxProcesses;
     }
 
     /**
@@ -79,22 +78,42 @@ public class CoreProfile {
      * @return the number of max threads
      */
     public int getMaxProcesses() {
-        return maxThreads;
+        return maxProcesses;
     }
 
     /**
      * Loads a core profile from the properties.
      * @param properties source properties
-     * @param loader class loader to load the {@link ProcessProvider}
+     * @param loader class loader to load the provider classes
      * @return the loaded profile
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @deprecated use {@link #loadFrom(Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static CoreProfile loadFrom(Properties properties, ClassLoader loader) {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        }
+        return loadFrom(properties, ProfileContext.system(loader));
+    }
+
+    /**
+     * Loads a core profile from the properties.
+     * @param properties source properties
+     * @param context the current profile context
+     * @return the loaded profile
+     * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @since 0.2.4
+     */
+    public static CoreProfile loadFrom(Properties properties, ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Restoring core profile");
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);

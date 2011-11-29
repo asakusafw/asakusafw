@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionLockProvider;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.ExecutionLock.Scope;
 
 /**
@@ -45,17 +44,15 @@ public class BasicLockProvider extends ExecutionLockProvider {
     private volatile File directory;
 
     @Override
-    public void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    public void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         LOG.debug("Configuring file sessions: {}",
                 profile.getPrefix());
-        directory = prepareDirectory(profile, variables);
+        directory = prepareDirectory(profile);
         LOG.debug("Configured file sessions: {}",
                 directory);
     }
 
-    private File prepareDirectory(ServiceProfile<?> profile, VariableResolver variables) throws IOException {
+    private File prepareDirectory(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
         String rawPath = profile.getConfiguration().get(KEY_DIRECTORY);
         if (rawPath == null || rawPath.isEmpty()) {
@@ -67,7 +64,7 @@ public class BasicLockProvider extends ExecutionLockProvider {
         String path;
         try {
             LOG.debug("Resolving lock directory path: {}", rawPath);
-            path = variables.replace(rawPath, true);
+            path = profile.getContext().getContextParameters().replace(rawPath, true);
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to resolve the profile \"{0}.{1}\": {2}",

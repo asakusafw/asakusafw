@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
@@ -140,9 +141,10 @@ public class WindGateAbort {
 
         LOG.debug("Loading profile: {}", profile);
         try {
+            ProfileContext context = ProfileContext.system(loader);
             URI uri = CommandLineUtil.toUri(profile);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
-            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
+            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",

@@ -36,6 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.hadoopfs.jsch.JschConnection;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
@@ -78,7 +79,9 @@ public class JschConnectionTest {
 
         p.setProperty("resource.fs.target", target.getAbsolutePath());
 
-        Collection<? extends ResourceProfile> rps = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> rps = ResourceProfile.loadFrom(
+                p,
+                ProfileContext.system(getClass().getClassLoader()));
         assertThat(rps.size(), is(1));
         ResourceProfile rp = rps.iterator().next();
         this.profile = SshProfile.convert(new Configuration(), rp);

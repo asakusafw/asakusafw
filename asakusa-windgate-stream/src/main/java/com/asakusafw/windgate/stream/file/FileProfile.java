@@ -18,7 +18,6 @@ package com.asakusafw.windgate.stream.file;
 import java.io.File;
 import java.text.MessageFormat;
 
-import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.stream.WindGateStreamLogger;
@@ -100,7 +99,7 @@ public class FileProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String resourceName = profile.getName();
-        ClassLoader classLoader = profile.getClassLoader();
+        ClassLoader classLoader = profile.getContext().getClassLoader();
         String basePath = extract(profile, KEY_BASE_PATH, true);
         return new FileProfile(resourceName, classLoader, new File(basePath));
     }
@@ -123,9 +122,8 @@ public class FileProfile {
         if (resolve == false) {
             return value;
         } else {
-            ParameterList environment = new ParameterList(System.getenv());
             try {
-                return environment.replace(value, true);
+                return profile.getContext().getContextParameters().replace(value, true);
             } catch (IllegalArgumentException e) {
                 WGLOG.error(e, "E00001",
                         profile.getName(),

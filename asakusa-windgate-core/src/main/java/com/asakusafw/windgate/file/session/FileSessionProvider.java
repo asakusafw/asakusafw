@@ -29,7 +29,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.session.SessionException;
 import com.asakusafw.windgate.core.session.SessionException.Reason;
 import com.asakusafw.windgate.core.session.SessionMirror;
@@ -94,8 +93,7 @@ public class FileSessionProvider extends SessionProvider {
         String path;
         try {
             LOG.debug("Resolving session directory path: {}", rawPath);
-            ParameterList environment = new ParameterList(System.getenv());
-            path = environment.replace(rawPath, true);
+            path = profile.getContext().getContextParameters().replace(rawPath, true);
         } catch (IllegalArgumentException e) {
             WGLOG.error(e, "E00001",
                     KEY_DIRECTORY,

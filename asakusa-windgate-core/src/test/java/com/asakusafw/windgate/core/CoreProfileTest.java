@@ -34,7 +34,7 @@ public class CoreProfileTest {
     public void loadFrom() {
         Properties p = new Properties();
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profile.getMaxProcesses(), is(CoreProfile.DEFAULT_MAX_PROCESSES));
     }
 
@@ -46,7 +46,7 @@ public class CoreProfileTest {
         Properties p = new Properties();
         p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profile.getMaxProcesses(), is(10));
     }
 
@@ -58,7 +58,7 @@ public class CoreProfileTest {
         Properties p = new Properties();
         p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "0");
 
-        CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -69,7 +69,7 @@ public class CoreProfileTest {
         Properties p = new Properties();
         p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "INVALID");
 
-        CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -80,7 +80,7 @@ public class CoreProfileTest {
         Properties p = new Properties();
         p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         profile.storeTo(restored);
         assertThat(restored, is(p));
@@ -94,7 +94,7 @@ public class CoreProfileTest {
         Properties p = new Properties();
         p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(CoreProfile.KEY_PREFIX + "CONFLICT", "CONFLICT");
         profile.storeTo(restored);

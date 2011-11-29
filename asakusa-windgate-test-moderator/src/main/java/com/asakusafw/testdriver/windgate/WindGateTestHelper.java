@@ -34,6 +34,7 @@ import org.apache.hadoop.conf.Configurable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.file.ConfigurationFactory;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
@@ -42,6 +43,7 @@ import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProcessScript;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
@@ -149,6 +151,7 @@ public final class WindGateTestHelper {
 
     /**
      * Creates a {@link ResourceMirror} for the description.
+     * @param testContext current testing context
      * @param description the target description
      * @param arguments the arguments
      * @return the corresponded {@link ResourceManipulator}
@@ -156,8 +159,12 @@ public final class WindGateTestHelper {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static ResourceManipulator createResourceManipulator(
+            TestContext testContext,
             WindGateProcessDescription description,
             ParameterList arguments) throws IOException {
+        if (testContext == null) {
+            throw new IllegalArgumentException("testContext must not be null"); //$NON-NLS-1$
+        }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
@@ -165,7 +172,7 @@ public final class WindGateTestHelper {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Create resource manipulator: {}", description.getClass().getName());
-        GateProfile profile = loadProfile(description);
+        GateProfile profile = loadProfile(testContext, description);
         String resourceName = description.getDriverScript().getResourceName();
         for (ResourceProfile resource : profile.getResources()) {
             if (resource.getName().equals(resourceName)) {
@@ -196,20 +203,25 @@ public final class WindGateTestHelper {
         return manipulator;
     }
 
-    private static GateProfile loadProfile(WindGateProcessDescription description) throws IOException {
+    private static GateProfile loadProfile(
+            TestContext testContext,
+            WindGateProcessDescription description) throws IOException {
+        assert testContext != null;
         assert description != null;
         String profileName = description.getProfileName();
         LOG.debug("Searching for a WindGate profile: {}", profileName);
 
-        ClassLoader classLoader = findClassLoader();
+        ClassLoader classLoader = findClassLoader(testContext);
 
         URL url = classLoader.getResource(MessageFormat.format(
                 TESTING_PROFILE_PATH,
                 profileName));
         if (url == null) {
-            url = findResourceOnHomePath(MessageFormat.format(
-                    PRODUCTION_PROFILE_PATH,
-                    profileName));
+            url = findResourceOnHomePath(
+                    testContext,
+                    MessageFormat.format(
+                        PRODUCTION_PROFILE_PATH,
+                        profileName));
         }
         if (url == null) {
             throw new IOException(MessageFormat.format(
@@ -229,7 +241,10 @@ public final class WindGateTestHelper {
             }
 
             LOG.debug("Resolving a WindGate profile: {}", url);
-            GateProfile profile = GateProfile.loadFrom(profileName, p, classLoader);
+            GateProfile profile = GateProfile.loadFrom(
+                    profileName,
+                    p,
+                    new ProfileContext(classLoader, new ParameterList(testContext.getEnvironmentVariables())));
             return profile;
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
@@ -240,9 +255,10 @@ public final class WindGateTestHelper {
         }
     }
 
-    private static URL findResourceOnHomePath(String path) {
+    private static URL findResourceOnHomePath(TestContext testContext, String path) {
+        assert testContext != null;
         assert path != null;
-        File file = findFileOnHomePath(path);
+        File file = findFileOnHomePath(testContext, path);
         if (file != null && file.isFile() != false) {
             try {
                 return file.toURI().toURL();
@@ -256,9 +272,10 @@ public final class WindGateTestHelper {
         return null;
     }
 
-    private static File findFileOnHomePath(String path) {
+    private static File findFileOnHomePath(TestContext testContext, String path) {
+        assert testContext != null;
         assert path != null;
-        String home = System.getenv("ASAKUSA_HOME");
+        String home = testContext.getEnvironmentVariables().get("ASAKUSA_HOME");
         if (home != null) {
             File file = new File(home, path);
             if (file.exists()) {
@@ -270,8 +287,9 @@ public final class WindGateTestHelper {
         return null;
     }
 
-    private static ClassLoader findClassLoader() {
-        File pluginDirectory = findFileOnHomePath(PRODUCTION_PLUGIN_DIRECTORY);
+    private static ClassLoader findClassLoader(TestContext testContext) {
+        assert testContext != null;
+        File pluginDirectory = findFileOnHomePath(testContext, PRODUCTION_PLUGIN_DIRECTORY);
         final ClassLoader baseClassLoader = getBareClassLoader();
         synchronized (PLUGIN_REPOSITORY) {
             if (lastPluginDirectory != null && lastPluginDirectory.equals(pluginDirectory) == false) {

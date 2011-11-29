@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionPhase;
-import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.YaessProfile;
 import com.asakusafw.yaess.core.task.ExecutionTask;
 
@@ -138,7 +138,7 @@ public class Yaess {
         }
         ExecutionTask task;
         try {
-            task = ExecutionTask.load(conf.profile, conf.script, VariableResolver.system(), conf.arguments);
+            task = ExecutionTask.load(conf.profile, conf.script, conf.arguments);
         } catch (Exception e) {
             // TODO logging
             LOG.error(MessageFormat.format(
@@ -203,8 +203,9 @@ public class Yaess {
 
         LOG.debug("Loading profile: {}", profile);
         try {
+            ProfileContext context = ProfileContext.system(loader);
             Properties properties = CommandLineUtil.loadProperties(new File(profile));
-            result.profile = YaessProfile.load(properties, loader);
+            result.profile = YaessProfile.load(properties, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",

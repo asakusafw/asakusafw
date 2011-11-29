@@ -25,22 +25,17 @@ import java.util.List;
 public abstract class JobScheduler implements Service {
 
     @Override
-    public final void configure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
-        doConfigure(profile, variables);
+    public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
+        doConfigure(profile);
     }
 
     /**
      * Configures this service internally (extention point).
      * @param profile profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted this configuration
      * @throws IOException if failed to configure
      */
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         return;
     }
 

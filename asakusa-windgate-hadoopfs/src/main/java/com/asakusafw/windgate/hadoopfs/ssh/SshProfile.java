@@ -23,7 +23,6 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
@@ -189,8 +188,7 @@ public class SshProfile {
         }
         String privateKey = extract(profile, KEY_PRIVATE_KEY);
         try {
-            ParameterList environment = new ParameterList(System.getenv());
-            privateKey = environment.replace(privateKey, true);
+            privateKey = profile.getContext().getContextParameters().replace(privateKey, true);
         } catch (IllegalArgumentException e) {
             WGLOG.error(e, "E10001",
                     profile.getName(),

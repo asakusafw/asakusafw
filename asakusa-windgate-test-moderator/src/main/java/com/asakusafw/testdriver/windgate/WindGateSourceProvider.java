@@ -73,7 +73,8 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
                     definition.getModelClass(),
                     description);
             ParameterList parameterList = new ParameterList(context.getArguments());
-            ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(description, parameterList);
+            ResourceManipulator manipulator =
+                WindGateTestHelper.createResourceManipulator(context, description, parameterList);
             SourceDriver<T> driver = manipulator.createSourceForSource(process);
             return new WindGateSource<T>(WindGateTestHelper.prepare(driver), definition);
         } else if (instance instanceof WindGateExporterDescription) {
@@ -82,7 +83,8 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
                     definition.getModelClass(),
                     description);
             ParameterList parameterList = new ParameterList(context.getArguments());
-            ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(description, parameterList);
+            ResourceManipulator manipulator =
+                WindGateTestHelper.createResourceManipulator(context, description, parameterList);
             SourceDriver<T> driver = manipulator.createSourceForDrain(process);
             return new WindGateSource<T>(WindGateTestHelper.prepare(driver), definition);
         } else {

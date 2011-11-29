@@ -37,8 +37,8 @@ import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link BasicJobScheduler}.
@@ -56,9 +56,9 @@ public class BasicJobSchedulerTest {
     public void simple() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         List<Mock> jobs = new ArrayList<Mock>();
         jobs.add(new Mock("a"));
@@ -75,9 +75,9 @@ public class BasicJobSchedulerTest {
     public void multiple() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         List<Mock> jobs = new ArrayList<Mock>();
         jobs.add(new Mock("a"));
@@ -96,9 +96,9 @@ public class BasicJobSchedulerTest {
     public void dependencies() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         AtomicInteger group = new AtomicInteger();
         List<Mock> jobs = new ArrayList<Mock>();
@@ -124,9 +124,9 @@ public class BasicJobSchedulerTest {
     public void cyclic() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         AtomicInteger group = new AtomicInteger();
         List<Mock> jobs = new ArrayList<Mock>();
@@ -157,9 +157,9 @@ public class BasicJobSchedulerTest {
     public void fail_job() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         List<Mock> jobs = new ArrayList<Mock>();
         jobs.add(new Mock("a") {
@@ -186,9 +186,9 @@ public class BasicJobSchedulerTest {
     public void fail_besteffort() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         List<Mock> jobs = new ArrayList<Mock>();
         jobs.add(new Mock("a") {
@@ -217,9 +217,9 @@ public class BasicJobSchedulerTest {
     public void fail_stuck() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", BasicJobScheduler.class, conf, getClass().getClassLoader());
+                "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+        JobScheduler instance = profile.newInstance();
 
         List<Mock> jobs = new ArrayList<Mock>();
         jobs.add(new Mock("a") {

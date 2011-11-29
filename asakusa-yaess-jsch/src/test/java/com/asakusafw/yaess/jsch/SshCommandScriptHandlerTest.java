@@ -33,8 +33,8 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link SshCommandScriptHandler}.
@@ -157,8 +157,8 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         Map<String, String> conf = map();
         conf.put("command.0", target);
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "command.default", SshCommandScriptHandler.class, conf, getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
+                "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        profile.newInstance();
     }
 
     /**
@@ -175,8 +175,8 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "command.default", SshCommandScriptHandler.class, conf, getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
+                "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        profile.newInstance();
     }
 
     /**
@@ -245,9 +245,9 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "command.default", SshCommandScriptHandler.class, conf, getClass().getClassLoader());
+                "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
-            return profile.newInstance(VariableResolver.system());
+            return profile.newInstance();
         } catch (Exception e) {
             throw new AssertionError(e);
         }

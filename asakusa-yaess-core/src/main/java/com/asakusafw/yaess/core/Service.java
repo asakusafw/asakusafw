@@ -28,10 +28,9 @@ public interface Service {
      * Configures this service.
      * This method will be invoked only once when this instance is created from the profile.
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    void configure(ServiceProfile<?> profile, VariableResolver variables) throws InterruptedException, IOException;
+    void configure(ServiceProfile<?> profile) throws InterruptedException, IOException;
 }

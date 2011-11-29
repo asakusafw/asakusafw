@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Basic implementation of {@link JobScheduler}.
@@ -36,9 +35,7 @@ public class BasicJobScheduler extends AbstractJobScheduler {
     private volatile JobExecutor executor;
 
     @Override
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         this.executor = new ThreadedJobExecutor(Executors.newFixedThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {

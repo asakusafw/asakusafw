@@ -31,8 +31,8 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link SshHadoopScriptHandler}.
@@ -183,8 +183,8 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
         Map<String, String> conf = map();
         conf.put("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
-                "hadoop", SshHadoopScriptHandler.class, conf, getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
+                "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        profile.newInstance();
     }
 
     /**
@@ -202,8 +202,8 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
-                "hadoop", SshHadoopScriptHandler.class, conf, getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
+                "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        profile.newInstance();
     }
 
     /**
@@ -302,9 +302,9 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
-                "hadoop", SshHadoopScriptHandler.class, conf, getClass().getClassLoader());
+                "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
-            return profile.newInstance(VariableResolver.system());
+            return profile.newInstance();
         } catch (Exception e) {
             throw new AssertionError(e);
         }

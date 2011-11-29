@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.ProfileContext;
 
 /**
  * Mock {@link ResourceProvider}.
@@ -52,7 +53,7 @@ public class MockResourceProvider extends ResourceProvider {
         return new ResourceProfile(
                 name,
                 MockResourceProvider.class,
-                MockResourceProvider.class.getClassLoader(),
+                ProfileContext.system(MockResourceProvider.class.getClassLoader()),
                 Collections.<String, String>emptyMap());
     }
 

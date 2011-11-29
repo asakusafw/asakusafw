@@ -25,6 +25,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.junit.Test;
 
+import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
@@ -41,7 +43,7 @@ public class HadoopFsProfileTest {
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
                 HadoopFsProvider.class,
-                getClass().getClassLoader(),
+                new ProfileContext(getClass().getClassLoader(), new ParameterList()),
                 conf);
 
         HadoopFsProfile profile = HadoopFsProfile.convert(new Configuration(), resourceProfile);
@@ -59,7 +61,7 @@ public class HadoopFsProfileTest {
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
                 HadoopFsProvider.class,
-                getClass().getClassLoader(),
+                new ProfileContext(getClass().getClassLoader(), new ParameterList()),
                 conf);
 
         HadoopFsProfile profile = HadoopFsProfile.convert(new Configuration(), resourceProfile);
@@ -77,7 +79,7 @@ public class HadoopFsProfileTest {
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
                 HadoopFsProvider.class,
-                getClass().getClassLoader(),
+                new ProfileContext(getClass().getClassLoader(), new ParameterList()),
                 conf);
 
         HadoopFsProfile.convert(new Configuration(), resourceProfile);

@@ -26,7 +26,6 @@ public class MockHadoopScriptHandler extends ExecutionScriptHandlerBase implemen
     @Override
     protected void doConfigure(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         return;
     }
