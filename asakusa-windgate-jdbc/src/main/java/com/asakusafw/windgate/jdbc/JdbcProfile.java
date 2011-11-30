@@ -209,7 +209,11 @@ public class JdbcProfile {
     public Connection openConnection() throws IOException {
         LOG.debug("Opening JDBC connection: {}",
                 url);
+
+        // for DriverManager's convension
+        ClassLoader currentContextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(classLoader);
             Class.forName(driver, true, classLoader);
             Connection conn = DriverManager.getConnection(url, user, password);
             boolean succeed = false;
@@ -231,6 +235,8 @@ public class JdbcProfile {
             throw new IOException(MessageFormat.format(
                     "Failed to open connection: {0}",
                     url), e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentContextClassLoader);
         }
     }
 
