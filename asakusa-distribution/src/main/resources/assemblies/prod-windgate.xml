@@ -42,7 +42,6 @@
 				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
 				<include>com.asakusafw:asakusa-windgate-jdbc</include>
 				<include>com.asakusafw:asakusa-windgate-stream</include>
-				<include>mysql:mysql-connector-java</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
