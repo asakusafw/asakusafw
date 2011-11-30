@@ -2,21 +2,55 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-windgate</id>
+	<id>dev</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
+
 	<includeBaseDirectory>false</includeBaseDirectory>
 
 	<dependencySets>
 		<dependencySet>
 			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-distribution:jar:dev-exclude-lib:${asakusafw.version}</include>
+			</includes>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/</exclude>
+				</excludes>
+			</unpackOptions>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-runtime</include>
+				<include>com.asakusafw:asakusa-thundergate-runtime</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>bulkloader/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-thundergate</include>
+				<include>org.apache.hadoop:hadoop-core</include>
+				<include>commons-io:commons-io</include>
+				<include>commons-lang:commons-lang</include>
+				<include>commons-logging:commons-logging</include>
+				<include>log4j:log4j</include>
+				<include>mysql:mysql-connector-java</include>
+			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
@@ -42,7 +76,20 @@
 				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
 				<include>com.asakusafw:asakusa-windgate-jdbc</include>
 				<include>com.asakusafw:asakusa-windgate-stream</include>
-				<include>mysql:mysql-connector-java</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
@@ -85,65 +132,20 @@
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
-	</dependencySets>
-
-	<fileSets>
-		<fileSet>
-			<directory>../asakusa-windgate-plugin/src/main/dist/windgate</directory>
-			<outputDirectory>windgate</outputDirectory>
-			<fileMode>0755</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
-			<outputDirectory>experimental/bin</outputDirectory>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>cleaner/lib</outputDirectory>
 			<includes>
-				<include>hadoop_job_run_ssh_bridge.sh</include>
+				<include>com.asakusafw:asakusa-cleaner</include>
+				<include>org.apache.hadoop:hadoop-core</include>
+				<include>commons-io:commons-io</include>
+				<include>commons-lang:commons-lang</include>
+				<include>commons-logging:commons-logging</include>
+				<include>log4j:log4j</include>
 			</includes>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/conf</directory>
-			<outputDirectory>yaess/conf</outputDirectory>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-tools/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-
-		<!-- empty directory -->
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>batchapps</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>log</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-	</fileSets>
-
+		</dependencySet>
+	</dependencySets>
 </assembly>

@@ -316,8 +316,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						</goals>
 						<configuration>
 							<descriptorRefs>
-								<descriptorRef>asakusa-install-dev</descriptorRef>
+								<descriptorRef>dev-complement-lib</descriptorRef>
+								<descriptorRef>prod-thundergate-db-complement-lib</descriptorRef>
+								<descriptorRef>prod-thundergate-hc-complement-lib</descriptorRef>
+								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
 							</descriptorRefs>
+							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -384,6 +388,27 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
 			<classifier>dev-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-thundergate-db-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-thundergate-hc-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-cleaner-exclude-lib</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

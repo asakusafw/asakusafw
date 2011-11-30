@@ -140,7 +140,8 @@
 						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-runtime</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-test-moderator</exclude>
+						<exclude>com.asakusafw:asakusa-thundergate-test-moderator
+						</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-vocabulary</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
@@ -316,8 +317,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						</goals>
 						<configuration>
 							<descriptorRefs>
-								<descriptorRef>asakusa-install-dev</descriptorRef>
+								<descriptorRef>dev-complement-lib</descriptorRef>
+								<descriptorRef>prod-windgate-complement-lib</descriptorRef>
+								<descriptorRef>prod-windgate-ssh-complement-lib</descriptorRef>
+								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
 							</descriptorRefs>
+							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -396,6 +401,27 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
 			<classifier>dev-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-windgate-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-windgate-ssh-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-cleaner-exclude-lib</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

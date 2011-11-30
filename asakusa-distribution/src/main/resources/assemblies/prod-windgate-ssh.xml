@@ -10,6 +10,7 @@
 
 	<dependencySets>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
@@ -20,6 +21,7 @@
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>windgate-ssh/lib</outputDirectory>
 			<includes>

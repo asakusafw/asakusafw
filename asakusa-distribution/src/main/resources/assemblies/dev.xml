@@ -2,14 +2,16 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>prod-db</id>
+	<id>dev</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
+
 	<includeBaseDirectory>false</includeBaseDirectory>
 
 	<dependencySets>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>core/lib</outputDirectory>
 			<includes>
@@ -21,6 +23,7 @@
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>bulkloader/lib</outputDirectory>
 			<includes>
@@ -36,6 +39,47 @@
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-bootstrap</include>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate/plugin</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>com.asakusafw:asakusa-windgate-jdbc</include>
+				<include>com.asakusafw:asakusa-windgate-stream</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/lib</outputDirectory>
 			<includes>
@@ -50,6 +94,7 @@
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/plugin</outputDirectory>
 			<includes>
@@ -61,11 +106,27 @@
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/tools</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-yaess-tools</include>
 				<include>com.google.code.gson:gson</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>cleaner/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-cleaner</include>
+				<include>org.apache.hadoop:hadoop-core</include>
+				<include>commons-io:commons-io</include>
+				<include>commons-lang:commons-lang</include>
+				<include>commons-logging:commons-logging</include>
+				<include>log4j:log4j</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
@@ -76,18 +137,6 @@
 		<fileSet>
 			<directory>../asakusa-thundergate/src/main/bin</directory>
 			<outputDirectory>bulkloader/bin</outputDirectory>
-			<includes>
-				<include>.bulkloader_db_profile</include>
-				<include>importer.sh</include>
-				<include>dbcleaner.sh</include>
-				<include>exporter.sh</include>
-				<include>finalizer.sh</include>
-				<include>recoverer.sh</include>
-				<include>release-cache-lock.sh</include>
-				<include>delete-cache-info.sh</include>
-				<include>gc-cache-storage.sh</include>
-				<include>set-classpath-db.sh</include>
-			</includes>
 			<fileMode>0744</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
@@ -95,11 +144,6 @@
 		<fileSet>
 			<directory>../asakusa-thundergate/src/main/conf</directory>
 			<outputDirectory>bulkloader/conf</outputDirectory>
-			<includes>
-				<include>[targetname]-jdbc.properties</include>
-				<include>bulkloader-conf-db.properties</include>
-				<include>log4j.xml</include>
-			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
@@ -112,12 +156,51 @@
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
+			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
+			<outputDirectory>thundergate-cache</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-windgate-plugin/src/main/dist/windgate</directory>
+			<outputDirectory>windgate</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
+			<outputDirectory>windgate-ssh</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-cleaner/src/main/bin</directory>
+			<outputDirectory>cleaner/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-cleaner/src/main/conf</directory>
+			<outputDirectory>cleaner/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
 			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
 			<outputDirectory>experimental/bin</outputDirectory>
-			<includes>
-				<include>hadoop_job_run_ssh_bridge.sh</include>
-			</includes>
 			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-test-driver/src/main/dist/core/conf</directory>
+			<outputDirectory>core/conf</outputDirectory>
+			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -142,11 +225,33 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
-		
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
+			<outputDirectory>yaess-hadoop/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
+			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+
 		<!-- empty directory -->
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<directoryMode>0775</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>ext/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
@@ -159,6 +264,14 @@
 				<exclude>*</exclude>
 			</excludes>
 			<directoryMode>0775</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>temp</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<directoryMode>0777</directoryMode>
 		</fileSet>
 	</fileSets>
 
