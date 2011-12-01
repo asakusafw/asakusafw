@@ -115,7 +115,6 @@ public class Extractor {
             LOG.info("TG-EXTRACTOR-01002",
                     new Date(), targetName, batchId, jobFlowId, executionId, user);
             return Constants.EXIT_CODE_SUCCESS;
-
         } catch (Exception e) {
             try {
                 LOG.error(e, "TG-EXTRACTOR-01007",
