@@ -98,7 +98,8 @@ public abstract class BulkLoadImporterDescription implements ImporterDescription
      * キャッシュを利用する場合、{@link #getModelType() データモデル}は
      * {@link ThunderGateCacheSupport キャッシュをサポートする}もののみを指定できる。
      * また、{@link #getLockType() ロックの種類}に
-     * {@link BulkLoadImporterDescription.LockType#ROW_OR_SKIP スキップ}を行うものは指定できない。
+     * {@link BulkLoadImporterDescription.LockType#ROW 行ロック}や
+     * {@link BulkLoadImporterDescription.LockType#ROW_OR_SKIP 行スキップ}を行うものは指定できない。
      * </p>
      * <p>
      * ジョブフロー作成者は、このメソッドをオーバーライドすることで既定の設定を変更できる。
@@ -178,6 +179,7 @@ public abstract class BulkLoadImporterDescription implements ImporterDescription
          * インポート対象の行のみをロックし、失敗したらエラーとする。
          * <p>
          * 強い整合性が必要で、必要な行のみにロックを行いたい場合にこの設定を利用できる。
+         * ただし、キャッシュの対象とする場合にはこの設定は選択できない。
          * </p>
          */
         ROW,

@@ -24,7 +24,6 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 import com.jcraft.jsch.JSchException;
 
 /**
@@ -72,11 +71,12 @@ public class SshHadoopScriptHandler extends ProcessHadoopScriptHandler {
     private volatile JschProcessExecutor executor;
 
     @Override
-    protected void configureExtension(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void configureExtension(ServiceProfile<?> profile) throws InterruptedException, IOException {
         try {
-            this.executor = JschProcessExecutor.extract(profile.getPrefix(), profile.getConfiguration(), variables);
+            this.executor = JschProcessExecutor.extract(
+                    profile.getPrefix(),
+                    profile.getConfiguration(),
+                    profile.getContext().getContextParameters());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to configure SSH: {0}",

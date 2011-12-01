@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateCoreLogger;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
@@ -58,7 +59,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
 
     private final Class<? extends ProcessProvider> providerClass;
 
-    private final ClassLoader classLoader;
+    private final ProfileContext context;
 
     private final Map<String, String> configuration;
 
@@ -66,14 +67,14 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
      * Creates a new instance.
      * @param name the name of this process
      * @param providerClass the class which can provide this process
-     * @param classLoder the plugin class loader
+     * @param context the current profile context
      * @param configuration the extra configuration
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public ProcessProfile(
             String name,
             Class<? extends ProcessProvider> providerClass,
-            ClassLoader classLoder,
+            ProfileContext context,
             Map<String, String> configuration) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
@@ -81,8 +82,8 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         if (providerClass == null) {
             throw new IllegalArgumentException("providerClass must not be null"); //$NON-NLS-1$
         }
-        if (classLoder == null) {
-            throw new IllegalArgumentException("classLoder must not be null"); //$NON-NLS-1$
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
@@ -94,7 +95,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         }
         this.name = name;
         this.providerClass = providerClass;
-        this.classLoader = classLoder;
+        this.context = context;
         this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
     }
 
@@ -112,8 +113,8 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
     }
 
     @Override
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    public ProfileContext getContext() {
+        return context;
     }
 
     /**
@@ -135,13 +136,33 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
      * @param loader class loader to load the {@link ProcessProvider}
      * @return the loaded profiles
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @deprecated use {@link #loadFrom(Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static Collection<? extends ProcessProfile> loadFrom(Properties properties, ClassLoader loader) {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        }
+        return loadFrom(properties, ProfileContext.system(loader));
+    }
+
+    /**
+     * Loads process profiles from the properties.
+     * @param properties source properties
+     * @param context the curren profile context
+     * @return the loaded profiles
+     * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @version 0.2.4
+     */
+    public static Collection<? extends ProcessProfile> loadFrom(Properties properties, ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Restoring processes profile");
         List<ProcessProfile> results = new ArrayList<ProcessProfile>();
@@ -157,9 +178,9 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
             assert className != null;
 
             Map<String, String> conf = PropertiesUtil.createPrefixMap(partition, name + QUALIFIER);
-            Class<? extends ProcessProvider> loaded = loadProviderClass(className, loader, ProcessProvider.class);
+            Class<? extends ProcessProvider> loaded = loadProviderClass(className, context, ProcessProvider.class);
 
-            ProcessProfile profile = new ProcessProfile(name, loaded, loader, conf);
+            ProcessProfile profile = new ProcessProfile(name, loaded, context, conf);
             results.add(profile);
         }
         return results;

@@ -42,7 +42,7 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.yaess.core.CommandScript;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
-import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.YaessProfile;
 import com.asakusafw.yaess.core.task.ExecutionTracker.Record;
 
@@ -713,11 +713,10 @@ public class ExecutionTaskTest {
 
         ExecutionTask task() throws IOException, InterruptedException {
             Properties properties = loadProfile();
-            YaessProfile profile = YaessProfile.load(properties, getClass().getClassLoader());
-            VariableResolver variables = new VariableResolver(Collections.<String, String>emptyMap());
+            YaessProfile profile = YaessProfile.load(properties, ProfileContext.system(getClass().getClassLoader()));
             Map<String, String> arguments = Collections.emptyMap();
             Properties script = loadScript();
-            return ExecutionTask.load(profile, script, variables, arguments);
+            return ExecutionTask.load(profile, script, arguments);
         }
 
         Properties loadScript() throws IOException {

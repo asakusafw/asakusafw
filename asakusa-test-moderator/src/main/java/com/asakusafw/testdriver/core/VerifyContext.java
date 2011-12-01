@@ -23,27 +23,44 @@ import java.util.Date;
  */
 public class VerifyContext {
 
+    private final TestContext testContext;
+
     private final Date testStarted;
 
     private volatile Date testFinished;
 
     /**
      * Creates a new instance.
+     * @param testContext the current test context
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public VerifyContext() {
-        this(new Date());
+    public VerifyContext(TestContext testContext) {
+        this(testContext, new Date());
     }
 
     /**
      * Creates a new instance.
+     * @param testContext the current test context
      * @param testStarted when test was started
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public VerifyContext(Date testStarted) {
+    public VerifyContext(TestContext testContext, Date testStarted) {
+        if (testContext == null) {
+            throw new IllegalArgumentException("testContext must not be null"); //$NON-NLS-1$
+        }
         if (testStarted == null) {
             throw new IllegalArgumentException("testStarted must not be null"); //$NON-NLS-1$
         }
+        this.testContext = testContext;
         this.testStarted = (Date) testStarted.clone();
+    }
+
+    /**
+     * Returns the corresponded test context.
+     * @return the test context
+     */
+    public TestContext getTestContext() {
+        return testContext;
     }
 
     /**

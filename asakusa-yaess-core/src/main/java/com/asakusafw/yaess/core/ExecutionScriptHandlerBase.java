@@ -44,14 +44,12 @@ public abstract class ExecutionScriptHandlerBase implements Service {
     private volatile Map<String, String> environmentVariables;
 
     @Override
-    public final void configure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         this.prefix = profile.getPrefix();
-        configureResourceId(profile, variables);
-        Map<String, String> desiredEnvironmentVariables = getDesiredEnvironmentVariables(profile, variables);
+        configureResourceId(profile);
+        Map<String, String> desiredEnvironmentVariables = getDesiredEnvironmentVariables(profile);
         environmentVariables = Collections.unmodifiableMap(desiredEnvironmentVariables);
-        doConfigure(profile, variables, desiredEnvironmentVariables);
+        doConfigure(profile, desiredEnvironmentVariables);
     }
 
     /**
@@ -62,9 +60,8 @@ public abstract class ExecutionScriptHandlerBase implements Service {
         return prefix;
     }
 
-    private void configureResourceId(ServiceProfile<?> profile, VariableResolver variables) {
+    private void configureResourceId(ServiceProfile<?> profile) {
         assert profile != null;
-        assert variables != null;
         String override = profile.getConfiguration().get(ExecutionScriptHandler.KEY_RESOURCE);
         if (override == null) {
             LOG.debug("resourceId is not override in {}",
@@ -78,11 +75,8 @@ public abstract class ExecutionScriptHandlerBase implements Service {
         }
     }
 
-    private Map<String, String> getDesiredEnvironmentVariables(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws IOException {
+    private Map<String, String> getDesiredEnvironmentVariables(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        assert variables != null;
         NavigableMap<String, String> vars = PropertiesUtil.createPrefixMap(
                 profile.getConfiguration(),
                 ExecutionScriptHandler.KEY_ENV_PREFIX);
@@ -91,7 +85,7 @@ public abstract class ExecutionScriptHandlerBase implements Service {
             String key = entry.getKey();
             String unresolved = entry.getValue();
             try {
-                String value = variables.replace(unresolved, true);
+                String value = profile.getContext().getContextParameters().replace(unresolved, true);
                 resolved.put(key, value);
             } catch (IllegalArgumentException e) {
                 // TODO logging
@@ -112,14 +106,12 @@ public abstract class ExecutionScriptHandlerBase implements Service {
     /**
      * Configures this handler internally (extention point).
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @param desiredEnvironmentVariables the current desired environment variables (configurable)
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
     protected abstract void doConfigure(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException;
 
     /**

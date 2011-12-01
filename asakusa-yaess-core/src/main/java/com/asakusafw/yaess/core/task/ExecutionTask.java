@@ -58,7 +58,6 @@ import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.PhaseMonitor;
 import com.asakusafw.yaess.core.ServiceProfile;
 import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
-import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.YaessProfile;
 
 /**
@@ -136,7 +135,6 @@ public class ExecutionTask {
      * Loads profile and create a new {@link ExecutionTask}.
      * @param profile target profile
      * @param script target script
-     * @param variables {@link VariableResolver} for creating services
      * @param arguments execution arguments
      * @return the created task
      * @throws InterruptedException if interrupted while configuring services
@@ -146,7 +144,6 @@ public class ExecutionTask {
     public static ExecutionTask load(
             YaessProfile profile,
             Properties script,
-            VariableResolver variables,
             Map<String, String> arguments) throws InterruptedException, IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
@@ -154,29 +151,26 @@ public class ExecutionTask {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
-        if (variables == null) {
-            throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
-        }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Loading execution monitor feature");
-        ExecutionMonitorProvider monitors = profile.getMonitors().newInstance(variables);
+        ExecutionMonitorProvider monitors = profile.getMonitors().newInstance();
 
         LOG.debug("Loading execution lock feature");
-        ExecutionLockProvider locks = profile.getLocks().newInstance(variables);
+        ExecutionLockProvider locks = profile.getLocks().newInstance();
 
         LOG.debug("Loading job scheduling feature");
-        JobScheduler scheduler = profile.getScheduler().newInstance(variables);
+        JobScheduler scheduler = profile.getScheduler().newInstance();
 
         LOG.debug("Loading hadoop execution feature");
-        HadoopScriptHandler hadoopHandler = profile.getHadoopHandler().newInstance(variables);
+        HadoopScriptHandler hadoopHandler = profile.getHadoopHandler().newInstance();
 
         LOG.debug("Loading command execution features");
         Map<String, CommandScriptHandler> commandHandlers = new HashMap<String, CommandScriptHandler>();
         for (Map.Entry<String, ServiceProfile<CommandScriptHandler>> entry
                 : profile.getCommandHandlers().entrySet()) {
-            commandHandlers.put(entry.getKey(), entry.getValue().newInstance(variables));
+            commandHandlers.put(entry.getKey(), entry.getValue().newInstance());
         }
         return new ExecutionTask(monitors, locks, scheduler, hadoopHandler, commandHandlers, script, arguments);
     }

@@ -18,7 +18,6 @@ package com.asakusafw.yaess.basic;
 import java.io.IOException;
 import com.asakusafw.yaess.core.CommandScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Basic implementation of {@link CommandScriptHandler} using local processes.
@@ -37,9 +36,7 @@ command.&lt;profile-name&gt.env.&lt;key&gt; = $&lt;extra environment variables&g
 public class BasicCommandScriptHandler extends ProcessCommandScriptHandler {
 
     @Override
-    protected void configureExtension(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void configureExtension(ServiceProfile<?> profile) throws InterruptedException, IOException {
         return;
     }
 

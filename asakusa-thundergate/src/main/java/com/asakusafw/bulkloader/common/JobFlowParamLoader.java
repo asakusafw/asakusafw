@@ -41,6 +41,9 @@ import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
  * @author yuta.shirai
  */
 public class JobFlowParamLoader {
+
+    static final Log LOG = new Log(JobFlowParamLoader.class);
+
     /**
      * ジョブフローインポート設定のKEY Import対象テーブル。
      */
@@ -147,10 +150,9 @@ public class JobFlowParamLoader {
         try {
             importProp = getImportProp(propFile, targetName);
         } catch (IOException e) {
-            Log.log(
+            LOG.error(
                     e,
-                    this.getClass(),
-                    MessageIdConst.CMN_IMP_DSL_LOADERROR,
+                    "TG-COMMON-00002",
                     "ファイルの読み込みに失敗",
                     targetName,
                     jobflowId,
@@ -245,10 +247,7 @@ public class JobFlowParamLoader {
                     try {
                         bean.setImportTargetType(Class.forName(value));
                     } catch (ClassNotFoundException e) {
-                        Log.log(
-                                e,
-                                this.getClass(),
-                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
+                        LOG.error(e, "TG-COMMON-00002",
                                 "Import対象テーブルに対応するJavaBeanのクラスが存在しない",
                                 targetName, jobflowId, propFilePath);
                         return false;
@@ -258,49 +257,43 @@ public class JobFlowParamLoader {
                     bean.setDfsFilePath(value);
                 } else {
                     // 設定が不明の場合は読み飛ばす
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_IMP_DSL_CHECKWARN,
+                    LOG.warn("TG-COMMON-00006",
                             "不明な設定。 key：" + key,
-                            targetName, jobflowId, propFilePath);
+                            targetName, jobflowId, tableName, propFilePath);
                     continue;
-                }
-                if (bean.getCacheId() != null) {
-                    if (ThunderGateCacheSupport.class.isAssignableFrom(bean.getImportTargetType()) == false) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
-                                MessageFormat.format(
-                                        "データモデルクラス\"{1}\"がキャッシュをサポートしていない ({0})",
-                                        ThunderGateCacheSupport.class.getName(),
-                                        bean.getImportTargetType().getName()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
-                    if (bean.getSearchCondition() != null && bean.getSearchCondition().trim().isEmpty() == false) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
-                                MessageFormat.format(
-                                        "キャッシュ利用時に条件式を指定している ({0})",
-                                        bean.getLockedOperation()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
-                    if (bean.getLockedOperation() == ImportTableLockedOperation.OFF) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_IMP_DSL_LOADERROR,
-                                MessageFormat.format(
-                                        "キャッシュ利用時にロック箇所を読み飛ばす設定がされている ({0})",
-                                        bean.getLockedOperation()),
-                                targetName, jobflowId, propFilePath);
-                        return false;
-                    }
                 }
             }
         }
-
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            ImportTargetTableBean bean = entry.getValue();
+            if (bean.getCacheId() != null) {
+                if (ThunderGateCacheSupport.class.isAssignableFrom(bean.getImportTargetType()) == false) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "データモデルクラス\"{1}\"がキャッシュをサポートしていない ({0})",
+                                    ThunderGateCacheSupport.class.getName(),
+                                    bean.getImportTargetType().getName()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
+                }
+                if (bean.getSearchCondition() != null && bean.getSearchCondition().trim().isEmpty() == false) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "キャッシュ利用時に条件式を指定している ({0})",
+                                    bean.getLockedOperation()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
+                }
+                if (bean.getLockedOperation() == ImportTableLockedOperation.OFF) {
+                    LOG.error("TG-COMMON-00002",
+                            MessageFormat.format(
+                                    "キャッシュ利用時にロック箇所を読み飛ばす設定がされている ({0})",
+                                    bean.getLockedOperation()),
+                            targetName, jobflowId, propFilePath);
+                    return false;
+                }
+            }
+        }
         return true;
     }
     /**
@@ -320,10 +313,7 @@ public class JobFlowParamLoader {
         try {
             exportProp = getExportProp(propFile, targetName);
         } catch (IOException e) {
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.CMN_EXP_DSL_LOADERROR,
+            LOG.error(e, "TG-COMMON-00003",
                     "ファイルの読み込みに失敗",
                     targetName, jobflowId, propFile.getPath());
             return false;
@@ -423,10 +413,7 @@ public class JobFlowParamLoader {
                     try {
                         bean.setExportTargetType(Class.forName(value));
                     } catch (ClassNotFoundException e) {
-                        Log.log(
-                                e,
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_LOADERROR,
+                        LOG.error(e, "TG-COMMON-00003",
                                 "Export対象テーブルに対応するJavaBeanのクラスが存在しない",
                                 targetName, jobflowId, propFilePath);
                         return false;
@@ -438,11 +425,9 @@ public class JobFlowParamLoader {
                     bean.setDfsFilePaths(pathList);
                 } else {
                     // 設定が不明の場合は読み飛ばす
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKWARN,
+                    LOG.warn("TG-COMMON-00007",
                             "不明な設定。 key：" + key,
-                            targetName, jobflowId, propFilePath);
+                            targetName, jobflowId, tableName, propFilePath);
                     continue;
                 }
             }
@@ -473,10 +458,7 @@ public class JobFlowParamLoader {
             importProp = getImportProp(propFile, targetName);
             exportProp = getExportProp(propFile, targetName);
         } catch (IOException e) {
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.CMN_IMP_DSL_LOADERROR,
+            LOG.error(e, "TG-COMMON-00002",
                     "ファイルの読み込みに失敗",
                     targetName, jobflowId, propFile.getPath());
             return false;
@@ -512,9 +494,7 @@ public class JobFlowParamLoader {
 
             // Export中間TSVファイルに対応するカラム名のチェック
             if (isEmptyOrHasEmptyString(bean.getExportTsvColumn())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export中間TSVファイルに対応するカラム名が設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -522,17 +502,13 @@ public class JobFlowParamLoader {
 
             // Export対象テーブルのカラム名のチェック
             if (isEmptyOrHasEmptyString(bean.getExportTableColumns())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export対象テーブルのカラム名が設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
             }
             if (columnCheck(bean.getExportTableColumns(), Constants.getTemporarySidColumnName())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "テンポラリSIDと同一のカラム名がExport対象テーブルのカラム名に設定されている",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -542,9 +518,7 @@ public class JobFlowParamLoader {
             if (bean.isDuplicateCheck()) {
                 // 異常データテーブルのカラム名のチェック
                 if (isEmptyOrHasEmptyString(bean.getErrorTableColumns())) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "異常データテーブルのカラム名が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -553,27 +527,21 @@ public class JobFlowParamLoader {
                 // エラーコードを格納するカラム名のチェック
                 String errCodeColumn = bean.getErrorCodeColumn();
                 if (isEmpty(errCodeColumn)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "エラーコードを格納するカラム名が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
                 } else {
                     // エラーコードのカラムがExport対象テーブルにコピーするカラムに含まれている場合はエラーとする
                     if (findArray(errCodeColumn, bean.getExportTableColumns())) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                        LOG.error("TG-COMMON-00005",
                                 "エラーコードを格納するカラム名がExport対象テーブルにデータをコピーするカラムに含まれている",
                                 targetName, jobflowId, tableName, fileName);
                         return false;
                     }
                     // エラーコードのカラムが異常データテーブルにコピーするカラムに含まれている場合はエラーとする
                     if (findArray(errCodeColumn, bean.getErrorTableColumns())) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                        LOG.error("TG-COMMON-00005",
                                 "エラーコードを格納するカラム名が異常データテーブルにデータをコピーするカラムに含まれている",
                                 targetName, jobflowId, tableName, fileName);
                         return false;
@@ -582,9 +550,7 @@ public class JobFlowParamLoader {
 
                 // 重複チェックエラーのエラーコードの値のチェック
                 if (isEmpty(bean.getErrorCode())) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "重複チェックエラーのエラーコードの値が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -621,9 +587,7 @@ public class JobFlowParamLoader {
         try {
             return variables.parse(serchCondition, true);
         } catch (IllegalArgumentException e) {
-            Log.log(
-                    this.getClass(),
-                    MessageIdConst.CMN_IMP_DSL_LOADERROR,
+            LOG.error("TG-COMMON-00002",
                     "検索条件の置換文字に対応する変数が存在しない。検索条件:" + serchCondition,
                     targetName, jobflowId, fileName);
             return null;
@@ -650,9 +614,7 @@ public class JobFlowParamLoader {
 
             // Import対象カラムのチェック
             if (isEmptyOrHasEmptyString(bean.getImportTargetColumns())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "Import対象カラムが設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -661,17 +623,13 @@ public class JobFlowParamLoader {
             // ロック取得のタイプのチェック
             ImportTableLockType lockType = bean.getLockType();
             if (lockType == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "ロック取得タイプの設定が不正",
                         targetName, jobflowId, tableName, fileName);
                 return false;
             } else {
                 if (!isPrimary && !ImportTableLockType.NONE.equals(lockType)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00004",
                             "サブ起動のImporterに対してロック取得タイプ「3：ロックしない」以外が指定されている。",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -681,17 +639,13 @@ public class JobFlowParamLoader {
             // ロック済みの場合の取り扱いのチェック
             ImportTableLockedOperation operation = bean.getLockedOperation();
             if (operation == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "ロック済みの場合の取り扱いの設定が不正",
                         targetName, jobflowId, tableName, fileName);
                 return false;
             } else {
                 if (!isPrimary && !ImportTableLockedOperation.FORCE.equals(operation)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00004",
                             "サブ起動のImporterに対してロック済みの場合の取り扱い「2：ロックの有無にかかわらず処理対象とする」以外が指定されている。",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -703,9 +657,7 @@ public class JobFlowParamLoader {
                     || lockType.equals(ImportTableLockType.TABLE) && operation.equals(ImportTableLockedOperation.FORCE)
                     || lockType.equals(ImportTableLockType.RECORD) && operation.equals(ImportTableLockedOperation.FORCE)
                     || lockType.equals(ImportTableLockType.NONE) && operation.equals(ImportTableLockedOperation.OFF)) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "ロック取得のタイプとロック済みの場合の取り扱いの組合せが不正",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -714,9 +666,7 @@ public class JobFlowParamLoader {
             // JavaBeansのクラス名のチェック
             Class<?> beanClass = bean.getImportTargetType();
             if (beanClass == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "Import対象テーブルに対応するJavaBeanのクラスが未設定",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -725,9 +675,7 @@ public class JobFlowParamLoader {
             // HDFS上のファイルパスをチェック
             String path = bean.getDfsFilePath();
             if (isEmpty(path)) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00004",
                         "Import対象テーブルのデータをHDFS上に書き出す際のファイルパスが未設定",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -740,10 +688,7 @@ public class JobFlowParamLoader {
                     String dummyPath = variables.parse(path, false);
                     new URI(dummyPath).normalize();
                 } catch (URISyntaxException e) {
-                    Log.log(
-                            e,
-                            this.getClass(),
-                            MessageIdConst.CMN_IMP_DSL_CHECKERROR,
+                    LOG.error(e, "TG-COMMON-00004",
                             "HDFS上に書き出す際のファイルパスが有効でない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -785,9 +730,7 @@ public class JobFlowParamLoader {
 
             // Export中間TSVファイルに対応するカラム名のチェック
             if (isEmptyOrHasEmptyString(bean.getExportTsvColumn())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export中間TSVファイルに対応するカラム名が設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -795,17 +738,13 @@ public class JobFlowParamLoader {
 
             // Export対象テーブルのカラム名のチェック
             if (isEmptyOrHasEmptyString(bean.getExportTableColumns())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export対象テーブルのカラム名が設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
             }
             if (columnCheck(bean.getExportTableColumns(), Constants.getTemporarySidColumnName())) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "テンポラリSIDと同一のカラム名がExport対象テーブルのカラム名に設定されている",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -816,9 +755,7 @@ public class JobFlowParamLoader {
             List<String> allColumn = new ArrayList<String>(bean.getExportTsvColumn());
             allColumn.addAll(systemColumns);
             if (!includeColumnCheck(bean.getExportTableColumns(), allColumn)) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export対象テーブルのカラム名にExport中間TSVファイルに含まれないカラム名が存在します",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -828,9 +765,7 @@ public class JobFlowParamLoader {
             if (bean.isDuplicateCheck()) {
                 // 異常データテーブルのカラム名のチェック
                 if (isEmptyOrHasEmptyString(bean.getErrorTableColumns())) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "異常データテーブルのカラム名が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -838,9 +773,7 @@ public class JobFlowParamLoader {
 
                 // 異常データテーブルのカラムがExport中間TSVファイルに含まれる事を確認
                 if (!includeColumnCheck(bean.getErrorTableColumns(), allColumn)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "異常データテーブルのカラム名にExport中間TSVファイルに含まれないカラム名が存在します",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -848,9 +781,7 @@ public class JobFlowParamLoader {
 
                 // キー項目のカラム名のチェック
                 if (isEmptyOrHasEmptyString(bean.getKeyColumns())) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "キー項目のカラム名が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -859,27 +790,21 @@ public class JobFlowParamLoader {
                 // エラーコードを格納するカラム名のチェック
                 String errCodeColumn = bean.getErrorCodeColumn();
                 if (isEmpty(errCodeColumn)) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "エラーコードを格納するカラム名が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
                 } else {
                     // エラーコードのカラムがExport対象テーブルにコピーするカラムに含まれている場合はエラーとする
                     if (findArray(errCodeColumn, bean.getExportTableColumns())) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                        LOG.error("TG-COMMON-00005",
                                 "エラーコードを格納するカラム名がExport対象テーブルにデータをコピーするカラムに含まれている",
                                 targetName, jobflowId, tableName, fileName);
                         return false;
                     }
                     // エラーコードのカラムが異常データテーブルにコピーするカラムに含まれている場合はエラーとする
                     if (findArray(errCodeColumn, bean.getErrorTableColumns())) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                        LOG.error("TG-COMMON-00005",
                                 "エラーコードを格納するカラム名が異常データテーブルにデータをコピーするカラムに含まれている",
                                 targetName, jobflowId, tableName, fileName);
                         return false;
@@ -888,9 +813,7 @@ public class JobFlowParamLoader {
 
                 // 重複チェックエラーのエラーコードの値のチェック
                 if (isEmpty(bean.getErrorCode())) {
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                    LOG.error("TG-COMMON-00005",
                             "重複チェックエラーのエラーコードの値が設定されていない",
                             targetName, jobflowId, tableName, fileName);
                     return false;
@@ -900,9 +823,7 @@ public class JobFlowParamLoader {
             // Export対象テーブルに対応するJavaBeansのクラス名のチェック
             Class<?> beanClass = bean.getExportTargetType();
             if (beanClass == null) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export対象テーブルに対応するJavaBeanのクラスが未設定",
                         targetName, jobflowId, tableName, fileName);
                 return false;
@@ -911,18 +832,14 @@ public class JobFlowParamLoader {
             // Export対象データのHDFS上のパスのチェック
             List<String> path = bean.getDfsFilePaths();
             if (path == null || path.isEmpty()) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                LOG.error("TG-COMMON-00005",
                         "Export対象データのHDFS上のパスが設定されていない",
                         targetName, jobflowId, tableName, fileName);
                 return false;
             } else {
                 for (String element : path) {
                     if (isEmpty(element)) {
-                        Log.log(
-                                this.getClass(),
-                                MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                        LOG.error("TG-COMMON-00005",
                                 "Export対象データのHDFS上のパスの設定が不正",
                                 targetName, jobflowId, tableName, fileName);
                         return false;
@@ -935,10 +852,7 @@ public class JobFlowParamLoader {
                             String dummyPath = variables.parse(element, false);
                             new URI(dummyPath).normalize();
                         } catch (URISyntaxException e) {
-                            Log.log(
-                                    e,
-                                    this.getClass(),
-                                    MessageIdConst.CMN_EXP_DSL_CHECKERROR,
+                            LOG.error(e, "TG-COMMON-00005",
                                     "HDFS上のディレクトリが有効でない",
                                     targetName, jobflowId, tableName, fileName);
                             return false;
@@ -966,9 +880,7 @@ public class JobFlowParamLoader {
                 }
             }
             if (!search) {
-                Log.log(
-                        this.getClass(),
-                        MessageIdConst.CMN_COLUMN_INCLUDE_ERROR,
+                LOG.error("TG-COMMON-00009",
                         including);
                 result = false;
             }

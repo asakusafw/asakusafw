@@ -41,6 +41,7 @@ import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 import com.asakusafw.runtime.stage.resource.StageResourceDriver;
 import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
@@ -493,6 +494,7 @@ public abstract class AbstractStageClient extends Configured implements Tool {
             job.setReducerClass(reducer);
         } else {
             LOG.info("Reducer: N/A");
+            job.setNumReduceTasks(0);
             return;
         }
 
@@ -597,7 +599,7 @@ public abstract class AbstractStageClient extends Configured implements Tool {
 
     private VariableTable getPathParser(Configuration configuration) {
         assert configuration != null;
-        VariableTable variables = new VariableTable();
+        VariableTable variables = new VariableTable(RedefineStrategy.IGNORE);
         variables.defineVariable(VAR_USER, getUser());
         variables.defineVariable(VAR_DEFINITION_ID, getDefinitionId());
         variables.defineVariable(VAR_STAGE_ID, getStageId());
@@ -612,6 +614,9 @@ public abstract class AbstractStageClient extends Configured implements Tool {
         } else {
             variables.defineVariables(arguments);
         }
+
+        // replace variables
+        configuration.set(PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
         return variables;
     }
 }

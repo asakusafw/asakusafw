@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.compiler.bulkloader.testing.model.Cached;
 import com.asakusafw.compiler.bulkloader.testing.model.Ex1;
 import com.asakusafw.compiler.bulkloader.testing.model.MockErrorModel;
 import com.asakusafw.compiler.bulkloader.testing.model.MockTableModel;
@@ -46,6 +47,7 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.Mode;
 import com.asakusafw.vocabulary.bulkloader.DupCheckDbExporterDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
@@ -463,6 +465,164 @@ public class BulkLoaderIoProcessorTest {
         assertThat(provider.getFinalizeCommand(context).size(), is(1));
     }
 
+    /**
+     * With cache.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, null, DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, not(nullValue()));
+        List<ExternalIoCommandProvider> commands = info.getCommandProviders();
+        ExternalIoCommandProvider provider = BulkLoaderIoProcessor.findRelated(commands);
+        assertThat(provider, not(nullValue()));
+
+        CommandContext context = new CommandContext("home", "id", "");
+        assertThat(provider.getImportCommand(context).size(), is(1));
+        assertThat(provider.getExportCommand(context).size(), is(1));
+        assertThat(provider.getFinalizeCommand(context).size(), is(2));
+    }
+
+    /**
+     * With cache but search condition was set.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_conditional() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, "SID > 0", DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache but model is not supported.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_unsupported() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, null, DataSize.UNKNOWN, Ex1.class));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Ex1.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache and table lock is requested (ok).
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_tablelock() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.TABLE, null, DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, not(nullValue()));
+    }
+
+    /**
+     * With cache and row check is requested (ok).
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_rowcheck() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.CHECK, null, DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, not(nullValue()));
+    }
+
+    /**
+     * With cache but row lock is requested.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_rowlock() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.ROW, null, DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache but row skip is requested.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_rowskip() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.ROW_OR_SKIP, null, DataSize.UNKNOWN));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache whose datasize is tiny.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_tiny() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, null, DataSize.TINY));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache whose datasize is small.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_small() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, null, DataSize.SMALL));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * With cache whose datasize is large (ok).
+     * @throws Exception if failed
+     */
+    @Test
+    public void cached_large() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Cached> in = flow.createIn("in1", new ImportCached("default", LockType.UNUSED, null, DataSize.LARGE));
+        Out<Cached> out = flow.createOut("out1", new Export("default", Cached.class));
+        FlowDescription desc = new IdentityFlow<Cached>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, not(nullValue()));
+    }
+
     JobflowInfo compile(FlowDescriptionDriver flow, FlowDescription desc) {
         try {
             return DirectFlowCompiler.compile(
@@ -526,8 +686,83 @@ public class BulkLoaderIoProcessorTest {
         }
 
         @Override
+        public String getWhere() {
+            return null;
+        }
+
+        @Override
         public boolean isCacheEnabled() {
             return false;
+        }
+    }
+
+    static class ImportCached extends BulkLoadImporterDescription {
+
+        private final String target;
+
+        private final LockType lock;
+
+        private final String where;
+
+        private final DataSize size;
+
+        private final Class<?> modelType;
+
+        ImportCached(String target, LockType lock, String where, DataSize size) {
+            this(target, lock, where, size, Cached.class);
+        }
+
+        ImportCached(String target, LockType lock, String where, DataSize size, Class<?> modelType) {
+            this.target = target;
+            this.lock = lock;
+            this.where = where;
+            this.size = size;
+            this.modelType = modelType;
+        }
+
+        @Override
+        public Mode getMode() {
+            return Mode.PRIMARY;
+        }
+
+        @Override
+        public String getTargetName() {
+            return target;
+        }
+
+        @Override
+        public LockType getLockType() {
+            return lock;
+        }
+
+        @Override
+        public Class<?> getModelType() {
+            return modelType;
+        }
+
+        @Override
+        public String getTableName() {
+            return "CACHED";
+        }
+
+        @Override
+        public List<String> getColumnNames() {
+            return Arrays.asList("SID");
+        }
+
+        @Override
+        public String getWhere() {
+            return where;
+        }
+
+        @Override
+        public boolean isCacheEnabled() {
+            return true;
+        }
+
+        @Override
+        public DataSize getDataSize() {
+            return size;
         }
     }
 
@@ -535,13 +770,20 @@ public class BulkLoaderIoProcessorTest {
 
         private final String target;
 
+        private final Class<?> modelType;
+
         Export(String target) {
+            this(target, Ex1.class);
+        }
+
+        Export(String target, Class<?> modelType) {
             this.target = target;
+            this.modelType = modelType;
         }
 
         @Override
         public Class<?> getTableModelClass() {
-            return Ex1.class;
+            return getModelType();
         }
 
         @Override
@@ -551,7 +793,7 @@ public class BulkLoaderIoProcessorTest {
 
         @Override
         public Class<?> getModelType() {
-            return Ex1.class;
+            return modelType;
         }
 
         @Override

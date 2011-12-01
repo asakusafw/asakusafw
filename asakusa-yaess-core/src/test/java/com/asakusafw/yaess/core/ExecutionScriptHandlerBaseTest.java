@@ -40,8 +40,8 @@ public class ExecutionScriptHandlerBaseTest {
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
-                getClass().getClassLoader());
-        CommandScriptHandler handler = profile.newInstance(VariableResolver.system());
+                ProfileContext.system(getClass().getClassLoader()));
+        CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
         assertThat(handler.getResourceId(), is(ExecutionScriptHandler.DEFAULT_RESOURCE_ID));
@@ -61,8 +61,8 @@ public class ExecutionScriptHandlerBaseTest {
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
-                getClass().getClassLoader());
-        CommandScriptHandler handler = profile.newInstance(VariableResolver.system());
+                ProfileContext.system(getClass().getClassLoader()));
+        CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
         assertThat(handler.getEnvironmentVariables().size(), is(2));
@@ -82,8 +82,8 @@ public class ExecutionScriptHandlerBaseTest {
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
-                getClass().getClassLoader());
-        CommandScriptHandler handler = profile.newInstance(VariableResolver.system());
+                ProfileContext.system(getClass().getClassLoader()));
+        CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
         assertThat(handler.getResourceId(), is("testing"));
@@ -98,15 +98,16 @@ public class ExecutionScriptHandlerBaseTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "hoge", "${VAR}");
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "alt");
+
+        Map<String, String> entries = new HashMap<String, String>();
+        entries.put("VAR", "foo");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
-                getClass().getClassLoader());
+                new ProfileContext(getClass().getClassLoader(), new VariableResolver(entries)));
 
-        Map<String, String> entries = new HashMap<String, String>();
-        entries.put("VAR", "foo");
-        CommandScriptHandler handler = profile.newInstance(new VariableResolver(entries));
+        CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
         assertThat(handler.getResourceId(), is("alt"));
@@ -123,13 +124,13 @@ public class ExecutionScriptHandlerBaseTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "hoge", "${__INVALID__}");
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "alt");
+        Map<String, String> entries = new HashMap<String, String>();
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
-                getClass().getClassLoader());
+                new ProfileContext(getClass().getClassLoader(), new VariableResolver(entries)));
 
-        Map<String, String> entries = new HashMap<String, String>();
-        profile.newInstance(new VariableResolver(entries));
+        profile.newInstance();
     }
 }

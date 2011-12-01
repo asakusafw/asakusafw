@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,14 +40,11 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
-import com.asakusafw.testdriver.DriverOutputBase.VerifyRuleHolder;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
-import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.Difference;
-import com.asakusafw.testdriver.core.DifferenceSinkFactory;
-import com.asakusafw.testdriver.core.TestDataPreparator;
-import com.asakusafw.testdriver.core.TestResultInspector;
+import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.file.ConfigurationFactory;
 import com.asakusafw.vocabulary.external.ExporterDescription;
@@ -69,9 +65,7 @@ public class JobflowExecutor {
 
     private final TestDriverContext context;
 
-    private final TestDataPreparator preparator;
-
-    private final TestResultInspector inspector;
+    private final TestModerator moderator;
 
     private final ConfigurationFactory configurations;
 
@@ -85,8 +79,7 @@ public class JobflowExecutor {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         this.context = context;
-        this.preparator = new TestDataPreparator(context, context.getCallerClass().getClassLoader());
-        this.inspector = new TestResultInspector(context, context.getCallerClass().getClassLoader());
+        this.moderator = new TestModerator(context.getRepository(), context);
         this.configurations = ConfigurationFactory.getDefault();
     }
 
@@ -119,19 +112,19 @@ public class JobflowExecutor {
         if (info == null) {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
-        if (!context.isSkipCleanInput()) {
+        if (context.isSkipCleanInput() == false) {
             for (Map.Entry<String, ImporterDescription> entry : info.getImporterMap().entrySet()) {
                 LOG.debug("入力{}を初期化しています", entry.getKey());
-                preparator.truncate(entry.getValue());
+                moderator.truncate(entry.getValue());
             }
         } else {
             LOG.info("入力の初期化をスキップしました");
         }
 
-        if (!context.isSkipCleanOutput()) {
+        if (context.isSkipCleanOutput() == false) {
             for (Map.Entry<String, ExporterDescription> entry : info.getExporterMap().entrySet()) {
                 LOG.debug("出力{}を初期化しています", entry.getKey());
-                preparator.truncate(entry.getValue());
+                moderator.truncate(entry.getValue());
             }
         } else {
             LOG.info("出力の初期化をスキップしました");
@@ -155,9 +148,9 @@ public class JobflowExecutor {
         if (inputs == null) {
             throw new IllegalArgumentException("inputs must not be null"); //$NON-NLS-1$
         }
-        if (!context.isSkipPrepareInput()) {
+        if (context.isSkipPrepareInput() == false) {
             for (DriverInputBase<?> input : inputs) {
-                URI source = input.getSourceUri();
+                DataModelSourceFactory source = input.getSource();
                 if (source != null) {
                     String name = input.getName();
                     LOG.debug("入力{}を配置しています: {}", name, source);
@@ -168,7 +161,7 @@ public class JobflowExecutor {
                                 name,
                                 info.getJobflow().getFlowId()));
                     }
-                    preparator.prepare(input.getModelType(), description, source);
+                    moderator.prepare(input.getModelType(), description, source);
                 }
             }
         } else {
@@ -193,9 +186,9 @@ public class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        if (!context.isSkipPrepareOutput()) {
+        if (context.isSkipPrepareOutput() == false) {
             for (DriverOutputBase<?> output : outputs) {
-                URI source = output.getSourceUri();
+                DataModelSourceFactory source = output.getSource();
                 if (source != null) {
                     String name = output.getName();
                     LOG.debug("出力{}を配置しています: {}", name, source);
@@ -206,7 +199,7 @@ public class JobflowExecutor {
                                 name,
                                 info.getJobflow().getFlowId()));
                     }
-                    preparator.prepare(output.getModelType(), description, source);
+                    moderator.prepare(output.getModelType(), description, source);
                 }
             }
         } else {
@@ -224,7 +217,7 @@ public class JobflowExecutor {
         if (info == null) {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
-        if (!context.isSkipRunJobflow()) {
+        if (context.isSkipRunJobflow() == false) {
             File destDir = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
             FileUtils.copyFileToDirectory(info.getPackageFile(), destDir);
 
@@ -385,7 +378,7 @@ public class JobflowExecutor {
         if (environmentVariables == null) {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
-        LOG.info("【COMMAND】 " + toStringShellCmdArray(shellCmd));
+        LOG.info("【COMMAND】 {}", toStringShellCmdArray(shellCmd));
 
         ProcessBuilder builder = new ProcessBuilder(shellCmd);
         builder.redirectErrorStream(true);
@@ -469,36 +462,47 @@ public class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        if (!context.isSkipVerify()) {
+        if (context.isSkipVerify() == false) {
             StringBuilder sb = new StringBuilder();
             sb.append(String.format("%n"));
             boolean sawError = false;
             for (DriverOutputBase<?> output : outputs) {
-                if (output.expectedUri != null) {
-                    LOG.debug("出力{}を検証しています: {}", output.getName(), output.getExpectedUri());
-                    String name = output.getName();
-                    ExporterDescription description = info.findExporter(name);
-                    if (description == null) {
-                        throw new IllegalStateException(MessageFormat.format(
-                                "出力{0}はフロー{1}で定義されていません",
-                                name,
-                                info.getJobflow().getFlowId()));
-                    }
-                    output.setExporterDescription(description);
-                    List<Difference> diffList = inspect(output, verifyContext);
+                String name = output.getName();
+                ExporterDescription description = info.findExporter(name);
+                if (description == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "出力{0}はフロー{1}で定義されていません",
+                            name,
+                            info.getJobflow().getFlowId()));
+                }
+                if (output.getResultSink() != null) {
+                    LOG.debug("出力{}を保存しています: {}", output.getName(), output.getVerifier());
+                    moderator.save(output.getModelType(), description, output.getResultSink());
+                }
+                if (output.getVerifier() != null) {
+                    LOG.debug("出力{}を検証しています: {}", name, output.getVerifier());
+                    List<Difference> diffList = moderator.inspect(
+                            output.getModelType(),
+                            description,
+                            verifyContext,
+                            output.getVerifier());
                     if (diffList.isEmpty() == false) {
+                        sawError = true;
                         LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {
                                 info.getJobflow().getBatchId(),
                                 info.getJobflow().getFlowId(),
                                 output.getName(),
                                 diffList.size(),
                         });
-                    }
-                    for (Difference difference : diffList) {
-                        sawError = true;
-                        sb.append(String.format("%s: %s%n",
-                                output.getModelType().getSimpleName(),
-                                difference));
+                        if (output.getDifferenceSink() != null) {
+                            LOG.debug("出力{}の差異を出力しています: {}", name, output.getDifferenceSink());
+                            moderator.save(output.getModelType(), diffList, output.getDifferenceSink());
+                        }
+                        for (Difference difference : diffList) {
+                            sb.append(String.format("%s: %s%n",
+                                    output.getModelType().getSimpleName(),
+                                    difference));
+                        }
                     }
                 }
             }
@@ -507,32 +511,6 @@ public class JobflowExecutor {
             }
         } else {
             LOG.info("実行結果の検証をスキップしました");
-        }
-    }
-
-    private <T> List<Difference> inspect(
-            DriverOutputBase<T> output,
-            VerifyContext verifyContext) throws IOException {
-        assert output != null;
-        assert verifyContext != null;
-        VerifyRuleHolder<T> ruleHolder = output.getVerifyRule();
-        DataModelSinkFactory resultSink = output.getResultSink();
-        DifferenceSinkFactory differenceSink = output.getDifferenceSink();
-        if (ruleHolder.hasUri()) {
-            return inspector.inspect(output.getModelType(),
-                    output.getExporterDescription(),
-                    verifyContext,
-                    output.getExpectedUri(),
-                    ruleHolder.getUri(),
-                    resultSink,
-                    differenceSink);
-        } else {
-            return inspector.inspect(output.getModelType(),
-                    output.getExporterDescription(),
-                    output.getExpectedUri(),
-                    inspector.rule(output.getModelType(), ruleHolder.getVerifier()),
-                    resultSink,
-                    differenceSink);
         }
     }
 }

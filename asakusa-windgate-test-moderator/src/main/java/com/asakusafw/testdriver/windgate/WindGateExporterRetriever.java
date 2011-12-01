@@ -44,7 +44,8 @@ public class WindGateExporterRetriever extends BaseExporterRetriever<WindGateExp
                 description.getModelType(),
                 description);
         ParameterList parameterList = new ParameterList(context.getArguments());
-        ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(description, parameterList);
+        ResourceManipulator manipulator =
+            WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         manipulator.cleanupDrain(process);
     }
 
@@ -57,7 +58,8 @@ public class WindGateExporterRetriever extends BaseExporterRetriever<WindGateExp
                 definition.getModelClass(),
                 description);
         ParameterList parameterList = new ParameterList(context.getArguments());
-        ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(description, parameterList);
+        ResourceManipulator manipulator =
+            WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         DrainDriver<V> driver = manipulator.createDrainForDrain(process);
         return new WindGateOutput<V>(WindGateTestHelper.prepare(driver));
     }
@@ -71,7 +73,8 @@ public class WindGateExporterRetriever extends BaseExporterRetriever<WindGateExp
                 definition.getModelClass(),
                 description);
         ParameterList parameterList = new ParameterList(context.getArguments());
-        ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(description, parameterList);
+        ResourceManipulator manipulator =
+            WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         SourceDriver<V> driver = manipulator.createSourceForDrain(process);
         return new WindGateSource<V>(WindGateTestHelper.prepare(driver), definition);
     }

@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Mock {@link SourceProvider}.
+ * Mock {@link DataModelSourceProvider}.
  * @since 0.2.0
  */
-public class MockSourceProvider implements SourceProvider {
+public class MockSourceProvider implements DataModelSourceProvider {
 
     private final Map<URI, DataModelSource> sources = new HashMap<URI, DataModelSource>();
 

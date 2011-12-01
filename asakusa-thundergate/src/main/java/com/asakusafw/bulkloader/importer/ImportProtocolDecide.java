@@ -16,9 +16,13 @@
 package com.asakusafw.bulkloader.importer;
 
 import java.sql.Connection;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.TreeSet;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
@@ -27,8 +31,8 @@ import com.asakusafw.bulkloader.cache.LocalCacheInfo;
 import com.asakusafw.bulkloader.cache.LocalCacheInfoRepository;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
@@ -38,6 +42,8 @@ import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
  * @since 0.2.3
  */
 public class ImportProtocolDecide {
+
+    static final Log LOG = new Log(ImportProtocolDecide.class);
 
     /**
      * Executes this operation.
@@ -49,6 +55,8 @@ public class ImportProtocolDecide {
         if (bean == null) {
             throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
         }
+        LOG.info("TG-IMPORTER-11001",
+                bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
         boolean findCache = false;
         for (String tableName : bean.getImportTargetTableList()) {
             ImportTargetTableBean table = bean.getTargetTable(tableName);
@@ -59,11 +67,14 @@ public class ImportProtocolDecide {
             }
         }
         if (findCache == false) {
-            return;
+            LOG.info("TG-IMPORTER-11003",
+                    bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
+        } else {
+            prepareForCache(bean);
         }
-        prepareForCache(bean);
+        LOG.info("TG-IMPORTER-11002",
+                bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
     }
-
 
     private void prepareForCache(ImportBean bean) throws BulkLoaderSystemException {
         assert bean != null;
@@ -71,8 +82,12 @@ public class ImportProtocolDecide {
         Connection connection = DBConnection.getConnection();
         LocalCacheInfoRepository repository = new LocalCacheInfoRepository(connection);
         try {
+            LOG.info("TG-IMPORTER-11004",
+                    bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
             acquireCacheLock(bean, repository);
 
+            LOG.info("TG-IMPORTER-11006",
+                    bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
             Map<String, CacheInfo> map = collectRemoteCacheInfo(bean);
 
             for (String tableName : bean.getImportTargetTableList()) {
@@ -83,14 +98,9 @@ public class ImportProtocolDecide {
                     continue;
                 }
 
-                ThunderGateCacheSupport model = createDataModelObject(tableName, tableInfo);
-
                 CacheInfo currentRemoteInfo = map.get(tableInfo.getDfsFilePath());
                 Calendar startTimestamp = computeStartTimestamp(currentRemoteInfo, repository, tableName, tableInfo);
 
-                FileProtocol.Kind kind = startTimestamp == null
-                    ? FileProtocol.Kind.CREATE_CACHE
-                    : FileProtocol.Kind.UPDATE_CACHE;
                 tableInfo.setStartTimestamp(startTimestamp);
                 LocalCacheInfo nextLocalInfo = new LocalCacheInfo(
                         cacheId,
@@ -99,6 +109,7 @@ public class ImportProtocolDecide {
                         tableName,
                         tableInfo.getDfsFilePath());
 
+                ThunderGateCacheSupport model = createDataModelObject(tableName, tableInfo);
                 Calendar nextTimestamp = repository.putCacheInfo(nextLocalInfo);
                 CacheInfo nextRemoteInfo = new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -109,6 +120,9 @@ public class ImportProtocolDecide {
                         model.getClass().getName(),
                         model.__tgc__DataModelVersion());
 
+                FileProtocol.Kind kind = startTimestamp == null
+                    ? FileProtocol.Kind.CREATE_CACHE
+                    : FileProtocol.Kind.UPDATE_CACHE;
                 FileProtocol protocol = new FileProtocol(kind, tableInfo.getDfsFilePath(), nextRemoteInfo);
                 tableInfo.setImportProtocol(protocol);
             }
@@ -134,67 +148,101 @@ public class ImportProtocolDecide {
             }
             boolean locked = repository.tryLock(bean.getExecutionId(), tableInfo.getCacheId(), tableName);
             if (locked == false) {
-                throw new BulkLoaderSystemException(
-                        getClass(),
-                        // TODO logging
-                        MessageIdConst.IMP_CACHE_ERROR,
-                        bean.getJobnetEndTime(),
-                        "?",
-                        bean.getTargetName(),
-                        bean.getBatchId(),
-                        bean.getJobflowId(),
-                        bean.getExecutionId());
+                throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-11005",
+                        tableName,
+                        tableInfo.getCacheId());
             }
         }
     }
 
     private Calendar computeStartTimestamp(
-            CacheInfo info,
+            CacheInfo remoteInfo,
             LocalCacheInfoRepository repository,
             String tableName,
             ImportTargetTableBean tableInfo) throws BulkLoaderSystemException {
         assert repository != null;
         assert tableName != null;
         assert tableInfo != null;
-        if (info == null) {
+        String cacheId = tableInfo.getCacheId();
+        assert cacheId != null;
+        if (remoteInfo == null) {
+            LOG.info("TG-IMPORTER-11009", tableName, cacheId);
             return null;
         }
-        if (info.getFeatureVersion().equals(CacheInfo.FEATURE_VERSION) == false) {
+        if (remoteInfo.getFeatureVersion().equals(CacheInfo.FEATURE_VERSION) == false) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Invalid feature version: expected \"{0}\", but was \"{1}\"",
+                    CacheInfo.FEATURE_VERSION, remoteInfo.getFeatureVersion()));
             return null;
         }
-        if (info.getId().equals(tableInfo.getCacheId()) == false) {
+        if (remoteInfo.getId().equals(cacheId) == false) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent cache ID: expected {0}, but was {1}",
+                    cacheId, remoteInfo.getId()));
             return null;
         }
-        if (info.getTableName().equals(tableName) == false) {
+        if (remoteInfo.getTableName().equals(tableName) == false) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent table name: expected {0}, but was {1}",
+                    tableName, remoteInfo.getTableName()));
             return null;
         }
-        if (info.getColumnNames().equals(new HashSet<String>(tableInfo.getImportTargetColumns())) == false) {
+        if (remoteInfo.getColumnNames().equals(new HashSet<String>(tableInfo.getImportTargetColumns())) == false) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent column set: expected {0}, but was {1}",
+                    new TreeSet<String>(tableInfo.getImportTargetColumns()), remoteInfo.getColumnNames()));
             return null;
         }
 
         ThunderGateCacheSupport model = createDataModelObject(tableName, tableInfo);
-        if (info.getModelClassName().equals(model.getClass().getName()) == false) {
+        if (remoteInfo.getModelClassName().equals(model.getClass().getName()) == false) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent model class: expected {0}, but was {1}",
+                    model.getClass().getName(), remoteInfo.getModelClassName()));
             return null;
         }
-        if (info.getModelClassVersion() != model.__tgc__DataModelVersion()) {
+        if (remoteInfo.getModelClassVersion() != model.__tgc__DataModelVersion()) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent model version: expected {0}, but was {1}",
+                    model.__tgc__DataModelVersion(), remoteInfo.getModelClassVersion()));
             return null;
         }
 
-        LocalCacheInfo local = repository.getCacheInfo(info.getId());
+        LocalCacheInfo local = repository.getCacheInfo(remoteInfo.getId());
         if (local == null) {
+            LOG.info("TG-IMPORTER-11008", tableName, cacheId);
             return null;
         }
-        Calendar timestamp = info.getTimestamp();
+
+
+        Calendar timestamp = remoteInfo.getTimestamp();
         Calendar localTimestamp = local.getLocalTimestamp();
         if (localTimestamp == null || timestamp.compareTo(localTimestamp) > 0) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent timestamp: expected is <= {0}, but was {1} (local DB was restored from backup?)",
+                    format(localTimestamp), format(timestamp)));
             return null;
         }
         Calendar createdTimestamp = local.getRemoteTimestamp();
         if (createdTimestamp != null && timestamp.compareTo(createdTimestamp) < 0) {
+            LOG.warn("TG-IMPORTER-11010", tableName, cacheId, MessageFormat.format(
+                    "Inconsistent timestamp: expected is >= {0}, but was {1} (remote FS was restored from backup?)",
+                    format(createdTimestamp), format(timestamp)));
             return null;
         }
 
+        LOG.info("TG-IMPORTER-11007",
+                tableName, cacheId, format(timestamp));
         return timestamp;
+    }
+
+    private String format(Calendar calendar) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (calendar == null) {
+            return formatter.format(new Date(0L));
+        } else {
+            return formatter.format(calendar.getTime());
+        }
     }
 
     private ThunderGateCacheSupport createDataModelObject(
@@ -207,11 +255,10 @@ public class ImportProtocolDecide {
                 .asSubclass(ThunderGateCacheSupport.class)
                 .newInstance();
         } catch (Exception e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    // TODO logging
-                    MessageIdConst.IMP_EXCEPRION);
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-11011",
+                    tableName,
+                    tableInfo.getCacheId(),
+                    tableInfo.getImportTargetType().getName());
         }
     }
 

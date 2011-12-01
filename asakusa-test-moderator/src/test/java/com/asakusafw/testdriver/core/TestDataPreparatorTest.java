@@ -31,6 +31,7 @@ import com.asakusafw.testdriver.core.MockImporterPreparator.Desc;
  * Test for {@link TestDataPreparator}.
  * @since 0.2.0
  */
+@Deprecated
 public class TestDataPreparatorTest extends SpiTestRoot {
 
     /**
@@ -57,7 +58,7 @@ public class TestDataPreparatorTest extends SpiTestRoot {
     @Test
     public void spi() throws Exception {
         register(DataModelAdapter.class, MockDataModelAdapter.class);
-        register(SourceProvider.class, MockSourceProvider.class);
+        register(DataModelSourceProvider.class, MockSourceProvider.class);
         ClassLoader loader = register(ImporterPreparator.class, MockImporterPreparator.class);
 
         TestDataPreparator prep = new TestDataPreparator(loader);

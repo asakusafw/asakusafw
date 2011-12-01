@@ -15,6 +15,9 @@
  */
 package com.asakusafw.dmdl.thundergate;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -126,6 +129,31 @@ public interface ModelMatcher {
         @Override
         public boolean acceptModel(String name) {
             return pattern.matcher(name).matches();
+        }
+    }
+
+    /**
+     * Constant collection.
+     */
+    public class ConstantTable implements ModelMatcher {
+
+        private final Set<String> constants;
+
+        /**
+         * Creates a new instance.
+         * @param constants target names
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public ConstantTable(Collection<String> constants) {
+            if (constants == null) {
+                throw new IllegalArgumentException("constants must not be null"); //$NON-NLS-1$
+            }
+            this.constants = new HashSet<String>(constants);
+        }
+
+        @Override
+        public boolean acceptModel(String name) {
+            return constants.contains(name);
         }
     }
 }

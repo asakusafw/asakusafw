@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.session.SessionException;
 import com.asakusafw.windgate.core.session.SessionException.Reason;
 import com.asakusafw.windgate.core.session.SessionMirror;
@@ -58,7 +59,7 @@ public class FileSessionProviderTest {
         provider = new FileSessionProvider();
         provider.configure(new SessionProfile(
                 FileSessionProvider.class,
-                FileSessionProvider.class.getClassLoader(),
+                ProfileContext.system(FileSessionProvider.class.getClassLoader()),
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         folder.getRoot().getAbsolutePath())));
@@ -298,7 +299,7 @@ public class FileSessionProviderTest {
         provider = new FileSessionProvider();
         provider.configure(new SessionProfile(
                 FileSessionProvider.class,
-                FileSessionProvider.class.getClassLoader(),
+                ProfileContext.system(FileSessionProvider.class.getClassLoader()),
                 Collections.<String, String>emptyMap()));
     }
 
@@ -312,7 +313,7 @@ public class FileSessionProviderTest {
         provider = new FileSessionProvider();
         provider.configure(new SessionProfile(
                 FileSessionProvider.class,
-                FileSessionProvider.class.getClassLoader(),
+                ProfileContext.system(FileSessionProvider.class.getClassLoader()),
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         "${__UNKNOWN_VARIABLE}/hoge")));
@@ -328,7 +329,7 @@ public class FileSessionProviderTest {
         provider = new FileSessionProvider();
         provider.configure(new SessionProfile(
                 FileSessionProvider.class,
-                FileSessionProvider.class.getClassLoader(),
+                ProfileContext.system(FileSessionProvider.class.getClassLoader()),
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         file.getAbsolutePath())));

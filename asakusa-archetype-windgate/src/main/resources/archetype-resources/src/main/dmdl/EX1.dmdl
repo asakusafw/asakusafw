@@ -1,22 +1,17 @@
-"テーブルEX1"
-@auto_projection
-@namespace(
-    value = table
+"EX1"
+@windgate.csv(
+    has_header = TRUE
 )
 ex1 = {
     "SID"
-    @windgate.column(
-        value = "SID"
-    )
+    @windgate.csv.field(name = "SID")
     sid : LONG;
+    
     "VALUE"
-    @windgate.column(
-        value = "VALUE"
-    )
+    @windgate.csv.field(name = "VALUE")
     value : INT;
+    
     "STRING"
-    @windgate.column(
-        value = "STRING"
-    )
+    @windgate.csv.field(name = "STRING")
     string : TEXT;
 };

@@ -25,7 +25,6 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitorProvider;
 import com.asakusafw.yaess.core.PhaseMonitor;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Basic implementation of {@link ExecutionMonitorProvider}.
@@ -43,9 +42,7 @@ public class BasicMonitorProvider extends ExecutionMonitorProvider {
     public static final String KEY_STEP_UNIT = "stepUnit";
 
     @Override
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         configureStepUnit(profile);
     }
 

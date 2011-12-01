@@ -60,6 +60,7 @@ final class Util {
         assert config != null;
         assert cacheId != null;
         try {
+            boolean committed = false;
             Connection conn = config.open();
             try {
                 Statement statement = conn.createStatement();
@@ -70,10 +71,17 @@ final class Util {
                     statement.execute(MessageFormat.format(
                             "DELETE FROM __TG_CACHE_LOCK WHERE CACHE_ID = ''{0}''",
                             cacheId));
+                    if (conn.getAutoCommit() == false) {
+                        conn.commit();
+                    }
+                    committed = true;
                 } finally {
                     statement.close();
                 }
             } finally {
+                if (committed == false && conn.getAutoCommit() == false) {
+                    conn.rollback();
+                }
                 conn.close();
             }
         } catch (SQLException e) {

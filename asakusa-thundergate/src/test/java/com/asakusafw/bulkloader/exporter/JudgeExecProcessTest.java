@@ -575,7 +575,7 @@ public class JudgeExecProcessTest {
             @Override
             protected List<ExportTempTableBean> getExportTempTable(String jobflowSid)
                     throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-EXPORTER-01001");
             }
         };
         boolean result = judge.judge(bean);

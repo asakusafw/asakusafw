@@ -209,6 +209,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 results.add(createReaderStatement(property));
             }
+            results.add(createEndRecordStatement());
             results.add(f.newReturnStatement(Models.toLiteral(f, true)));
             return results;
         }
@@ -223,6 +224,12 @@ public class ModelInputDriver extends JavaDataModelDriver {
                 .method("fill", option)
                 .toStatement();
             return fill;
+        }
+
+        private Statement createEndRecordStatement() {
+            return new ExpressionBuilder(f, createParserFieldName())
+                .method("endRecord")
+                .toStatement();
         }
 
         private TypeBodyDeclaration createCloser() {

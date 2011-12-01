@@ -17,7 +17,6 @@ package com.asakusafw.bulkloader.exception;
 
 import java.sql.SQLException;
 
-import com.asakusafw.bulkloader.common.MessageIdConst;
 
 /**
  * Importer/Exporterのシステム例外。
@@ -104,7 +103,7 @@ public class BulkLoaderSystemException extends Exception {
             }
             param = sb.toString();
         }
-        return new BulkLoaderSystemException(e, clazz, MessageIdConst.CMN_DB_SQL_EXEC_ERROR, sql, param);
+        return new BulkLoaderSystemException(e, clazz, "TG-COMMON-00014", sql, param);
     }
     /**
      * SQL実行時に発生した例外をIOSystemExceptionにする。
@@ -130,6 +129,6 @@ public class BulkLoaderSystemException extends Exception {
             }
             param = sb.toString();
         }
-        return new BulkLoaderSystemException(e, clazz, MessageIdConst.CMN_DB_SQL_EXEC_ERROR, sql, param);
+        return new BulkLoaderSystemException(e, clazz, "TG-COMMON-00014", sql, param);
     }
 }

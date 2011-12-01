@@ -26,6 +26,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
@@ -50,6 +51,7 @@ public class TestDriverContext implements TestContext {
 
     private File frameworkHomePath;
     private final Class<?> callerClass;
+    private final TestToolRepository repository;
     private final Map<String, String> extraConfigurations;
     private final Map<String, String> batchArgs;
     private final FlowCompilerOptions options;
@@ -77,6 +79,7 @@ public class TestDriverContext implements TestContext {
             throw new IllegalArgumentException("contextClass must not be null"); //$NON-NLS-1$
         }
         this.callerClass = contextClass;
+        this.repository = new TestToolRepository(contextClass.getClassLoader());
         this.extraConfigurations = new TreeMap<String, String>();
         this.batchArgs = new TreeMap<String, String>();
         this.options = new FlowCompilerOptions();
@@ -184,6 +187,15 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Returns the test tool repository.
+     * @return the repository
+     * @since 0.2.3
+     */
+    public TestToolRepository getRepository() {
+        return repository;
+    }
+
+    /**
      * Changes current Jobflow.
      * @param info target jobflow
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -196,7 +208,7 @@ public class TestDriverContext implements TestContext {
         this.currentBatchId = info.getJobflow().getBatchId();
         this.currentFlowId = info.getJobflow().getFlowId();
         this.currentExecutionId = MessageFormat.format(
-                "{0}.{1}.{2}",
+                "{0}-{1}-{2}",
                 getCallerClass().getSimpleName(),
                 currentBatchId,
                 currentFlowId);
@@ -235,6 +247,11 @@ public class TestDriverContext implements TestContext {
      */
     public Map<String, String> getBatchArgs() {
         return batchArgs;
+    }
+
+    @Override
+    public Map<String, String> getEnvironmentVariables() {
+        return System.getenv();
     }
 
     @Override

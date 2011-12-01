@@ -51,8 +51,7 @@ public class TsvParserTest {
     private TsvParser parser;
 
     private void create(String fileName) throws IOException {
-        InputStream in = TsvParserTest.class.getResourceAsStream(
-                "tsv/" + fileName);
+        InputStream in = TsvParserTest.class.getResourceAsStream("tsv/" + fileName);
         assertThat(fileName, in, is(not(nullValue())));
         parser = new TsvParser(new InputStreamReader(in, "UTF-8"));
     }
@@ -82,18 +81,21 @@ public class TsvParserTest {
         assertThat(value.get(), is(true));
         parser.fill(value);
         assertThat(value.get(), is(false));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
         assertThat(value.get(), is(false));
         parser.fill(value);
         assertThat(value.get(), is(true));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
         assertThat(value.isNull(), is(true));
         parser.fill(value);
         assertThat(value.isNull(), is(false));
+        parser.endRecord();
     }
 
     /**
@@ -112,6 +114,7 @@ public class TsvParserTest {
         assertThat(value.get(), is((byte) 10));
         parser.fill(value);
         assertThat(value.get(), is((byte) -10));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -120,6 +123,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Byte.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Byte.MIN_VALUE));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -140,6 +144,7 @@ public class TsvParserTest {
         assertThat(value.get(), is((short) 10));
         parser.fill(value);
         assertThat(value.get(), is((short) -10));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -148,6 +153,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Short.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Short.MIN_VALUE));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -168,6 +174,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(10));
         parser.fill(value);
         assertThat(value.get(), is(-10));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -176,6 +183,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Integer.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Integer.MIN_VALUE));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -196,6 +204,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(10L));
         parser.fill(value);
         assertThat(value.get(), is(-10L));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -204,6 +213,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Long.MAX_VALUE));
         parser.fill(value);
         assertThat(value.get(), is(Long.MIN_VALUE));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -226,6 +236,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(+10.5f));
         parser.fill(value);
         assertThat(value.get(), is(-10.5f));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -236,6 +247,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Float.NEGATIVE_INFINITY));
         parser.fill(value);
         assertThat(value.get(), is(Float.NaN));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -258,6 +270,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(+10.5d));
         parser.fill(value);
         assertThat(value.get(), is(-10.5d));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -268,6 +281,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(Double.NEGATIVE_INFINITY));
         parser.fill(value);
         assertThat(value.get(), is(Double.NaN));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -288,6 +302,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(decimal("10")));
         parser.fill(value);
         assertThat(value.get(), is(decimal("-10")));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -296,6 +311,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(decimal("0.9999999999999999999999999999999999999999999999999")));
         parser.fill(value);
         assertThat(value.get(), is(decimal("9223372036854775809")));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -316,6 +332,7 @@ public class TsvParserTest {
         assertThat(value.getAsString(), is("Hello, world!"));
         parser.fill(value);
         assertThat(value.getAsString(), is("こんにちは、世界！"));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -324,6 +341,7 @@ public class TsvParserTest {
         assertThat(value.getAsString(), is("\n\t\\"));
         parser.fill(value);
         assertThat(value.getAsString(), is(LONG_STRING));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }
@@ -344,6 +362,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(date(2000, 3, 1)));
         parser.fill(value);
         assertThat(value.get(), is(date(100, 3, 30)));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -352,6 +371,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(date(1, 1, 1)));
         parser.fill(value);
         assertThat(value.get(), is(date(9999, 12, 31)));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -380,6 +400,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(time(2000, 3, 1, 8, 9, 10)));
         parser.fill(value);
         assertThat(value.get(), is(time(100, 3, 30, 11, 12, 0)));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -388,6 +409,7 @@ public class TsvParserTest {
         assertThat(value.get(), is(time(1, 1, 1, 0, 0, 0)));
         parser.fill(value);
         assertThat(value.get(), is(time(9999, 12, 31, 23, 59, 59)));
+        parser.endRecord();
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -396,6 +418,7 @@ public class TsvParserTest {
         assertThat(value.isNull(), is(true));
         parser.fill(value);
         assertThat(value.isNull(), is(true));
+        parser.endRecord();
 
         assertThat(parser.next(), is(false));
     }

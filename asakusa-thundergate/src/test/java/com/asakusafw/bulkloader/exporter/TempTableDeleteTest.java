@@ -190,21 +190,15 @@ public class TempTableDeleteTest {
 
         // 処理の実行
         TempTableDelete delete = new TempTableDelete() {
-            /**
-             * @see com.asakusafw.bulkloader.exporter.TempTableDelete#deleteTempInfoRecord(java.lang.String, java.lang.String, java.sql.Connection)
-             */
             @Override
             public void deleteTempInfoRecord(String jobflowSid,
                     String tableName, boolean copyNotEnd, Connection conn) throws BulkLoaderSystemException {
             }
 
-            /**
-             * @see com.asakusafw.bulkloader.exporter.TempTableDelete#deleteTempTable(java.lang.String, java.sql.Connection)
-             */
             @Override
             public void deleteTempTable(String exportTempName, String duplicateFlagTableName, boolean copyNotEnd, Connection conn)
                     throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-EXPORTER-01001");
             }
         };
         boolean resutlt =delete.delete(Arrays.asList(tempBean), true);
@@ -239,18 +233,11 @@ public class TempTableDeleteTest {
 
         // 処理の実行
         TempTableDelete delete = new TempTableDelete() {
-            /**
-             * @see com.asakusafw.bulkloader.exporter.TempTableDelete#deleteTempInfoRecord(java.lang.String, java.lang.String, java.sql.Connection)
-             */
             @Override
             public void deleteTempInfoRecord(String jobflowSid,
                     String tableName, boolean copyNotEnd, Connection conn) throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(this.getClass(), "TG-EXPORTER-01001");
             }
-
-            /**
-             * @see com.asakusafw.bulkloader.exporter.TempTableDelete#deleteTempTable(java.lang.String, java.sql.Connection)
-             */
             @Override
             public void deleteTempTable(String exportTempName, String duplicateFlagTableName, boolean copyNotEnd, Connection conn)
                     throws BulkLoaderSystemException {

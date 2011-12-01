@@ -1,0 +1,7 @@
+simple = {
+    sid : LONG;
+};
+
+summarized counter = simple => {
+    count sid -> count;
+};

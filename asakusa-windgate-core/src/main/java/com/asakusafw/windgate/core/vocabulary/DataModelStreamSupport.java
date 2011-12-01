@@ -39,23 +39,25 @@ public interface DataModelStreamSupport<T> {
 
     /**
      * Creates a new {@link DataModelReader} for the specified properties.
+     * @param path the path about the target stream
      * @param stream the target stream
      * @return the created reader
      * @throws IOException if failed to create reader
      * @throws IllegalArgumentException if this does not support target property sequence,
      *     or any parameter is {@code null}
      */
-    DataModelReader<T> createReader(InputStream stream) throws IOException;
+    DataModelReader<T> createReader(String path, InputStream stream) throws IOException;
 
     /**
      * Creates a new {@link DataModelWriter} for the specified properties.
+     * @param path the path about the target stream
      * @param stream the target stream
      * @return the created writer
      * @throws IOException if failed to create writer
      * @throws IllegalArgumentException if this does not support property sequence,
      *     or any parameter is {@code null}
      */
-    DataModelWriter<T> createWriter(OutputStream stream) throws IOException;
+    DataModelWriter<T> createWriter(String path, OutputStream stream) throws IOException;
 
     /**
      * Supports {@link InputStream} interface for data models.

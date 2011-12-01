@@ -89,6 +89,7 @@ echo "Main Class: $_YS_CLASS"
 echo " Arguments: $@"
 
 java \
+    "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -profile "$_YS_PROFILE" \

@@ -66,13 +66,13 @@ public final class AstBuilder {
         boolean requestSeparated = false;
         StringBuilder buf = new StringBuilder();
         for (char c : name.toCharArray()) {
-            if (Character.isJavaIdentifierPart(c)) {
+            if (Character.isJavaIdentifierPart(c) && c != '_') {
                 if (requestSeparated) {
                     buf.append('_');
                 }
                 buf.append(Character.toLowerCase(c));
                 requestSeparated = false;
-            } else {
+            } else if (buf.length() > 0) {
                 requestSeparated = true;
             }
         }

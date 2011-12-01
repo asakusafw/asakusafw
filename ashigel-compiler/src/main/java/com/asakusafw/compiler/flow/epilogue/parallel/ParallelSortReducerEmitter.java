@@ -33,6 +33,7 @@ import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.collector.SlotSorter;
 import com.ashigeru.lang.java.model.syntax.Comment;
 import com.ashigeru.lang.java.model.syntax.CompilationUnit;
+import com.ashigeru.lang.java.model.syntax.Expression;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -52,12 +53,14 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
  * parallel reduceを行うレデューサークラスを出力ごとに生成する。
+ * @since 0.1.0
+ * @version 0.2.4
  */
 public class ParallelSortReducerEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ParallelSortReducerEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -91,17 +94,20 @@ public class ParallelSortReducerEmitter {
 
     private static class Engine {
 
-        private List<ResolvedSlot> slots;
+        private final List<ResolvedSlot> slots;
 
-        private ModelFactory factory;
+        private final FlowCompilingEnvironment environment;
 
-        private ImportBuilder importer;
+        private final ModelFactory factory;
+
+        private final ImportBuilder importer;
 
         Engine(FlowCompilingEnvironment envinronment, String moduleId, List<ResolvedSlot> slots) {
             assert envinronment != null;
             assert moduleId != null;
             assert slots != null;
             this.slots = slots;
+            this.environment = envinronment;
             this.factory = envinronment.getModelFactory();
             this.importer = new ImportBuilder(
                     factory,
@@ -145,9 +151,15 @@ public class ParallelSortReducerEmitter {
                         importer.toType(String[].class),
                         resultName));
             for (ResolvedSlot slot : slots) {
+                Expression outputName;
+                if (slot.getSortProperties().isEmpty() && ParallelSortClientEmitter.legacy(environment) == false) {
+                    outputName = Models.toNullLiteral(factory);
+                } else {
+                    outputName = Models.toLiteral(factory, slot.getSource().getOutputName());
+                }
                 statements.add(new ExpressionBuilder(factory, resultName)
                     .array(slot.getSlotNumber())
-                    .assignFrom(Models.toLiteral(factory, slot.getSource().getOutputName()))
+                    .assignFrom(outputName)
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(factory, resultName)
@@ -174,11 +186,16 @@ public class ParallelSortReducerEmitter {
                         importer.toType(Writable[].class),
                         resultName));
             for (ResolvedSlot slot : slots) {
-                DataClass slotClass = slot.getValueClass();
+                Expression object;
+                if (slot.getSortProperties().isEmpty() && ParallelSortClientEmitter.legacy(environment) == false) {
+                    object = Models.toNullLiteral(factory);
+                } else {
+                    DataClass slotClass = slot.getValueClass();
+                    object = slotClass.createNewInstance(importer.toType(slotClass.getType()));
+                }
                 statements.add(new ExpressionBuilder(factory, resultName)
                     .array(slot.getSlotNumber())
-                    .assignFrom(slotClass.createNewInstance(
-                            importer.toType(slotClass.getType())))
+                    .assignFrom(object)
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(factory, resultName)

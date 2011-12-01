@@ -24,7 +24,6 @@ import java.io.IOException;
  */
 public interface DifferenceSink extends Closeable {
 
-
     /**
      * Puts a difference object into this channel.
      * @param difference target difference object

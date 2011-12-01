@@ -15,17 +15,15 @@
  */
 package ${package}.operator;
 
+import ${package}.modelgen.dmdl.model.Ex1;
+
 import java.util.List;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.Branch;
 import com.asakusafw.vocabulary.operator.CoGroup;
-import com.asakusafw.vocabulary.operator.Summarize;
 import com.asakusafw.vocabulary.operator.Update;
-import ${package}.modelgen.table.model.Ex1;
-import ${package}.modelgen.table.model.Ex2;
-import ${package}.modelgen.view.model.ExSummarized;
 
 /**
  * テスト用の演算子。
@@ -60,14 +58,6 @@ public abstract class ExOperator {
     }
 
     /**
-     * 指定のモデルの内容を集計する。
-     * @param model 集計するモデル
-     * @return 集計結果
-     */
-    @Summarize
-    public abstract ExSummarized summarize(Ex1 model);
-
-    /**
      * 指定のモデルをそれぞれグループ化して整列し、それぞれの先頭要素を結果に書き出す。
      * グループに値が存在しない場合はその値に関しては何も行わない。
      * @param ex1 モデル1 (VALUEでグループ化、SIDでソート)
@@ -78,9 +68,9 @@ public abstract class ExOperator {
     @CoGroup
     public void cogroup(
             @Key(group = "value", order = "sid") List<Ex1> ex1,
-            @Key(group = "value", order = "string") List<Ex2> ex2,
+            @Key(group = "value", order = "string") List<Ex1> ex2,
             Result<Ex1> r1,
-            Result<Ex2> r2) {
+            Result<Ex1> r2) {
         if (ex1.isEmpty() == false) {
             r1.add(ex1.get(0));
         }

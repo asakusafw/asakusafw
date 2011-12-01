@@ -30,6 +30,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
+import com.asakusafw.runtime.stage.collector.SlotDirectMapper;
 import com.asakusafw.runtime.stage.collector.SlotDistributor;
 import com.asakusafw.runtime.stage.collector.SortableSlot;
 import com.ashigeru.lang.java.model.syntax.Comment;
@@ -53,12 +54,14 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
 
 /**
  * parallel reduceを行うマッパークラスを出力ごとに生成する。
+ * @since 0.1.0
+ * @version 0.2.4
  */
 public class ParallelSortMapperEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ParallelSortMapperEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -81,29 +84,35 @@ public class ParallelSortMapperEmitter {
     public CompiledType emit(String moduleId, ResolvedSlot slot) throws IOException {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(slot, "slot"); //$NON-NLS-1$
-        LOG.debug("出力\"{}\"に対する\"{}\"エピローグ用のマッパーを生成します",
+        LOG.debug("Generates a mapper for the output \"{}\" in epilogue phase of \"{}\"",
                 slot.getSource().getOutputName(), moduleId);
-        Engine engine = new Engine(environment, moduleId, slot);
-        CompilationUnit source = engine.generate();
+        CompilationUnit source;
+        if (slot.getSortProperties().isEmpty() && ParallelSortClientEmitter.legacy(environment) == false) {
+            DirectEngine engine = new DirectEngine(environment, moduleId, slot);
+            source = engine.generate();
+        } else {
+            DistributeEngine engine = new DistributeEngine(environment, moduleId, slot);
+            source = engine.generate();
+        }
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("出力\"{}\"のエピローグ用マッパーには{}が利用されます",
+        LOG.debug("Mapper for output \"{}\" in epilogue phase is {}",
                 slot.getSource().getOutputName(),
                 name);
         return new CompiledType(name);
     }
 
-    private static class Engine {
+    private static class DirectEngine {
 
-        private ResolvedSlot slot;
+        private final ResolvedSlot slot;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        Engine(FlowCompilingEnvironment envinronment, String moduleId, ResolvedSlot slot) {
+        DirectEngine(FlowCompilingEnvironment envinronment, String moduleId, ResolvedSlot slot) {
             assert envinronment != null;
             assert moduleId != null;
             assert slot != null;
@@ -133,7 +142,74 @@ public class ParallelSortMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("出力\"{0}\"に対するエピローグ用のマッパー。", slot.getSource().getOutputName())
+                        .text("Mapper for output \"{0}\" in epilogue phase.", slot.getSource().getOutputName())
+                        .toJavadoc(),
+                    new AttributeBuilder(factory)
+                        .Public()
+                        .toAttributes(),
+                    name,
+                    Collections.<TypeParameterDeclaration>emptyList(),
+                    importer.toType(SlotDirectMapper.class),
+                    Collections.<Type>emptyList(),
+                    Collections.singletonList(createOutputName()));
+        }
+
+        private MethodDeclaration createOutputName() {
+            List<Statement> statements = new ArrayList<Statement>();
+            statements.add(new ExpressionBuilder(factory, Models.toLiteral(factory, slot.getSource().getOutputName()))
+                .toReturnStatement());
+            return factory.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(factory)
+                        .annotation(importer.toType(Override.class))
+                        .Public()
+                        .toAttributes(),
+                    importer.toType(String.class),
+                    factory.newSimpleName(SlotDirectMapper.NAME_GET_OUTPUT_NAME),
+                    Collections.<FormalParameterDeclaration>emptyList(),
+                    statements);
+        }
+    }
+
+    private static class DistributeEngine {
+
+        private final ResolvedSlot slot;
+
+        private final ModelFactory factory;
+
+        private final ImportBuilder importer;
+
+        DistributeEngine(FlowCompilingEnvironment envinronment, String moduleId, ResolvedSlot slot) {
+            assert envinronment != null;
+            assert moduleId != null;
+            assert slot != null;
+            this.slot = slot;
+            this.factory = envinronment.getModelFactory();
+            Name packageName = Models.append(
+                    factory,
+                    envinronment.getEpiloguePackageName(moduleId),
+                    JavaName.of(slot.getSource().getOutputName()).toMemberName());
+            this.importer = new ImportBuilder(
+                    factory,
+                    factory.newPackageDeclaration(packageName),
+                    Strategy.TOP_LEVEL);
+        }
+
+        public CompilationUnit generate() {
+            TypeDeclaration type = createType();
+            return factory.newCompilationUnit(
+                    importer.getPackageDeclaration(),
+                    importer.toImportDeclarations(),
+                    Collections.singletonList(type),
+                    Collections.<Comment>emptyList());
+        }
+
+        private TypeDeclaration createType() {
+            SimpleName name = factory.newSimpleName(Naming.getMapClass(0));
+            importer.resolvePackageMember(name);
+            return factory.newClassDeclaration(
+                    new JavadocBuilder(factory)
+                        .text("Mapper for output \"{0}\" in epilogue phase.", slot.getSource().getOutputName())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()

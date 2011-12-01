@@ -37,7 +37,6 @@ import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -52,6 +51,8 @@ import com.asakusafw.thundergate.runtime.cache.CacheInfo;
  * @see GetCacheInfoRemote
  */
 public class GetCacheInfoLocal {
+
+    static final Log LOG = new Log(GetCacheInfoLocal.class);
 
     /*
      * This field should not be static because of saving system resources on testing.
@@ -83,6 +84,11 @@ public class GetCacheInfoLocal {
         if (hasCacheUser(bean) == false) {
             return Collections.emptyMap();
         }
+        LOG.info("TG-IMPORTER-12001",
+                bean.getTargetName(),
+                bean.getBatchId(),
+                bean.getJobflowId(),
+                bean.getExecutionId());
         FileListProvider provider = null;
         try {
             provider = openFileList(
@@ -106,32 +112,34 @@ public class GetCacheInfoLocal {
                 } catch (ExecutionException e) {
                     upstream.cancel(true);
                     downstream.cancel(true);
-                    // FIXME error
-                    throw new AssertionError(e);
+                    Throwable cause = e.getCause();
+                    if (cause instanceof Error) {
+                        throw (Error) cause;
+                    } else if (cause instanceof RuntimeException) {
+                        throw (RuntimeException) cause;
+                    } else if (cause instanceof IOException) {
+                        throw (IOException) cause;
+                    } else {
+                        throw new AssertionError(cause);
+                    }
                 }
             }
             provider.waitForComplete();
+            LOG.info("TG-IMPORTER-12003",
+                    bean.getTargetName(),
+                    bean.getBatchId(),
+                    bean.getJobflowId(),
+                    bean.getExecutionId(),
+                    result.size());
             return result;
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    // TODO logging
-                    MessageIdConst.IMP_CACHE_ERROR,
-                    bean.getJobnetEndTime(),
-                    "?",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
                     bean.getExecutionId());
         } catch (InterruptedException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    getClass(),
-                    // TODO logging
-                    MessageIdConst.IMP_CACHE_ERROR,
-                    bean.getJobnetEndTime(),
-                    "?",
+            throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-12004",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -202,7 +210,8 @@ public class GetCacheInfoLocal {
                         if (protocol.getKind() == FileProtocol.Kind.RESPONSE_CACHE_INFO) {
                             assert protocol.getInfo() != null;
                             results.put(protocol.getLocation(), protocol.getInfo());
-                        } else if (protocol.getKind() != FileProtocol.Kind.RESPONSE_NOT_FOUND) {
+                        } else if (protocol.getKind() != FileProtocol.Kind.RESPONSE_NOT_FOUND
+                                && protocol.getKind() != FileProtocol.Kind.RESPONSE_ERROR) {
                             throw new IOException(MessageFormat.format(
                                     "Unknown protocol in response: {0}",
                                     protocol));
@@ -254,7 +263,7 @@ public class GetCacheInfoLocal {
         command.add(jobflowId);
         command.add(executionId);
 
-        Log.log(this.getClass(), MessageIdConst.IMP_START_SUB_PROCESS,
+        LOG.info("TG-IMPORTER-12002",
                 sshPath,
                 hostName,
                 userName,

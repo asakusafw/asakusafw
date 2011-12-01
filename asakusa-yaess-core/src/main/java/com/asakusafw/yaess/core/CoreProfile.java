@@ -32,11 +32,9 @@ public abstract class CoreProfile implements Service {
     private volatile String version;
 
     @Override
-    public final void configure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         configureVersion(profile);
-        doConfigure(profile, variables);
+        doConfigure(profile);
     }
 
     private void configureVersion(ServiceProfile<?> profile) throws IOException {
@@ -54,13 +52,10 @@ public abstract class CoreProfile implements Service {
     /**
      * Configures this service internally (extention point).
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         return;
     }
     /**

@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testtools.TestUtils;
+import com.asakusafw.testtools.db.DbUtils;
+import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 
 /**
  * asakusa-test-toolsが提供するAPIを使って実装されたテストドライバの基底クラス。
@@ -19,7 +26,7 @@ import com.asakusafw.testtools.TestUtils;
  */
 public class TestDriverTestToolsBase extends TestDriverBase {
 
-    static final Logger LOG = LoggerFactory.getLogger(TestDriverTestToolsBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestDriverTestToolsBase.class);
 
     private static final String BUILD_PROPERTIES_FILE = "build.properties";
 
@@ -119,4 +126,62 @@ public class TestDriverTestToolsBase extends TestDriverBase {
         }
     }
 
+    /**
+     * Sets timestamp value to the last modified timestamp columns if they are known.
+     * @param timestamp target timestamp
+     */
+    protected void setLastModifiedTimestamp(Timestamp timestamp) {
+        for (String tableName : testUtils.getTablenames()) {
+            String timestampColumn = findTimestampColumn(tableName);
+            if (timestampColumn != null) {
+                updateTimestamp(tableName, timestampColumn, timestamp);
+            }
+        }
+    }
+
+    private String findTimestampColumn(String tableName) {
+        Class<?> tableClass = testUtils.getClassByTablename(tableName);
+        if (tableClass == null) {
+            return null;
+        }
+        if (ThunderGateCacheSupport.class.isAssignableFrom(tableClass)) {
+            try {
+                ThunderGateCacheSupport instance = tableClass
+                    .asSubclass(ThunderGateCacheSupport.class)
+                    .newInstance();
+                return instance.__tgc__TimestampColumn();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private void updateTimestamp(String tableName, String timestampColumn, Timestamp timestamp) {
+        LOG.info("テーブル{}のカラム{}を初期化しています", tableName, timestampColumn);
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DbUtils.getConnection();
+            stmt = conn.prepareStatement(MessageFormat.format(
+                    "UPDATE {0} SET {1} = ? WHERE {1} IS NULL",
+                    tableName,
+                    timestampColumn));
+            stmt.setTimestamp(1, timestamp);
+            int rows = stmt.executeUpdate();
+            LOG.info("テーブル{}のカラム{}を初期化しました: {}件", new Object[] {
+                tableName,
+                timestampColumn,
+                rows
+            });
+            if (conn.getAutoCommit() == false) {
+                conn.commit();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(stmt);
+            DbUtils.closeQuietly(conn);
+        }
+    }
 }

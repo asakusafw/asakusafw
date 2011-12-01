@@ -3,6 +3,7 @@
 usage() {
     cat <<EOF
 Collects cache information.
+*** This program is for only ThundeGate internal use. ***
 
 Usage:
     $0 target-name batch-id flow-id execution-id

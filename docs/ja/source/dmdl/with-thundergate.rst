@@ -213,6 +213,49 @@ Asakusa Frameworkの ``asakusa-thundergate-dmdl-*.jar`` の
     jdbc.password = <接続パスワード>
     database.name = <接続先データベース名>
 
+キャッシュのサポート
+~~~~~~~~~~~~~~~~~~~~
+ThunderGateのキャッシュ機能をサポートするデータモデルを生成するには、コマンドライン引数に次の内容を追加します。
+
+..  code-block:: none
+
+    -sid_column        System IDのカラム名
+    -timestamp_column  最終更新時刻のカラム名
+
+初期設定では、ThunderGateはSystem IDのカラム名に ``SID`` 、最終更新時刻のカラム名に ``UPDT_DATETIME`` を利用しています。
+そのため、ここでの引数は ``-sid_column SID -timestamp_column UPDT_DATETIME`` となります。
+
+削除フラグのサポート
+~~~~~~~~~~~~~~~~~~~~
+テーブルに定義された削除フラグカラムをキャッシュに利用する場合、コマンドラインの引数に次の内容を追加します。
+
+..  code-block:: none
+
+    -delete_flag_column  論理削除フラグのカラム名
+    -delete_flag_value   論理削除フラグが真(TRUE)となる値
+
+削除フラグのカラムに利用できる型は以下に限られています。
+それぞれの値は、整数、ダブルクウォートした文字列、または大文字の論理値で指定します。
+
+..  list-table:: 利用できる型と値
+    :widths: 4 4
+    :header-rows: 1
+
+    * - 型
+      - 値の例
+    * - CHAR, VARCHAR
+      - ``"1"``, ``"T"``, ``"D"``, など
+    * - TINYINT
+      - ``1``, ``0``, など
+    * - BOOLEAN
+      - ``TRUE``, ``FALSE``
+
+上記の情報は、データベースに対して1組のみ指定できます。
+テーブルに削除フラグのカラムが定義されていない場合には、それに対応するデータモデルが削除をサポートしません。
+
+..  attention::
+    文字列型の値には、かならず文字列をダブルクウォートで括ってやる必要があります。
+    コマンドラインシェルから文字列型の値を指定する際には ``'"1"'`` のようにさらにシングルクウォートで括るなどしてください。
 
 生成されるデータモデルの属性
 ----------------------------
@@ -225,21 +268,36 @@ DMDLスクリプトの例です。
 
 .. code-block:: none
 
-    "テーブルex1"
+    "テーブルTGCACHE_SOURCE"
     @auto_projection
     @namespace(value = table)
-    @thundergate.name(value = "ex1")
-    @thundergate.primary_key(value = {sid})
-    ex1 = {
+    @thundergate.name(value = "TGCACHE_SOURCE")
+    @thundergate.primary_key(value = { sid })
+    @thundergate.cache_support(
+        sid = sid,
+        timestamp = updt_datetime,
+        delete_flag = delete_flag,
+        delete_flag_value = "1"
+    )
+    tgcache_source = {
         "SID"
         @thundergate.name(value = "SID")
         sid : LONG;
-        "VALUE"
-        @thundergate.name(value = "VALUE")
-        value : INT;
-        "STRING"
-        @thundergate.name(value = "STRING")
-        string : TEXT;
+        "VERSION_NO"
+        @thundergate.name(value = "VERSION_NO")
+        version_no : LONG;
+        "RGST_DATETIME"
+        @thundergate.name(value = "RGST_DATETIME")
+        rgst_datetime : DATETIME;
+        "UPDT_DATETIME"
+        @thundergate.name(value = "UPDT_DATETIME")
+        updt_datetime : DATETIME;
+        "CATEGORY"
+        @thundergate.name(value = "CATEGORY")
+        category : INT;
+        "DELETE_FLAG"
+        @thundergate.name(value = "DELETE_FLAG")
+        delete_flag : TEXT;
     };
 
 ``@thundergate.`` から始まる属性は、DMDLジェネレータが独自に拡張している属性です。
@@ -276,3 +334,31 @@ DMDLジェネレータが生成するデータモデルには、
 射影モデルを自動的に登録させられます。
 
 自動射影や射影モデルについては、 :doc:`user-guide` も参考にしてください。
+
+キャッシュサポート
+~~~~~~~~~~~~~~~~~~
+
+``@thundergate.cache_support(...)`` を指定すると、対象のデータモデルはThunderGateのキャッシュ機能をサポートします。
+これには以下のような項目を指定できます。
+
+..  list-table:: キャッシュサポートの項目
+    :widths: 6 2 10
+    :header-rows: 1
+
+    * - 項目
+      - 必須
+      - 内容
+    * - ``sid``
+      - ○
+      - System IDに対応するプロパティ名
+    * - ``timestamp``
+      - ○
+      - 最終更新時刻に対応するプロパティ名
+    * - ``delete_flag``
+      - ×
+      - 削除フラグに対応するプロパティ名
+    * - ``delete_flag_value``
+      - ×
+      - 削除フラグが成立する値
+
+

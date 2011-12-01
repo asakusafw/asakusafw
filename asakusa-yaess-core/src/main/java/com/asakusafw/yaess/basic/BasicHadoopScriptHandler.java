@@ -20,7 +20,6 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Basic implementation of {@link HadoopScriptHandler} using local processes.
@@ -60,9 +59,7 @@ hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 public class BasicHadoopScriptHandler extends ProcessHadoopScriptHandler {
 
     @Override
-    protected void configureExtension(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void configureExtension(ServiceProfile<?> profile) throws InterruptedException, IOException {
         return;
     }
 

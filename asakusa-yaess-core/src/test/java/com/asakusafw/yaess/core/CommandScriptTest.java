@@ -102,9 +102,9 @@ public class CommandScriptTest {
     private CommandScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "command.testing", MockCommandScriptHandler.class, conf, getClass().getClassLoader());
+                "command.testing", MockCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
-            return profile.newInstance(VariableResolver.system());
+            return profile.newInstance();
         } catch (Exception e) {
             throw new AssertionError(e);
         }

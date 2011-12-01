@@ -123,7 +123,7 @@ public class GetCacheInfoLocalTest {
         map.put("normal", table);
         bean.setTargetTable(map);
 
-        GetCacheInfoLocal service = new Mock(bean);
+        GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(0));
     }
@@ -142,7 +142,7 @@ public class GetCacheInfoLocalTest {
         map.put("nothing", table);
         bean.setTargetTable(map);
 
-        GetCacheInfoLocal service = new Mock(bean);
+        GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(0));
     }
@@ -177,7 +177,7 @@ public class GetCacheInfoLocalTest {
         map.put("available", table);
         bean.setTargetTable(map);
 
-        GetCacheInfoLocal service = new Mock(bean);
+        GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(1));
         assertThat(results.get(qualify("available")), is(info));
@@ -232,7 +232,7 @@ public class GetCacheInfoLocalTest {
         map.put("nocache", table4);
         bean.setTargetTable(map);
 
-        GetCacheInfoLocal service = new Mock(bean);
+        GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(1));
         assertThat(results.get(qualify("available")), is(info));
@@ -261,7 +261,7 @@ public class GetCacheInfoLocalTest {
         map.put("nothing", table);
         bean.setTargetTable(map);
 
-        GetCacheInfoLocal service = new Mock(bean).willFail();
+        GetCacheInfoLocal service = new Mock().willFail();
         try {
             service.get(bean);
             fail();
@@ -294,13 +294,6 @@ public class GetCacheInfoLocalTest {
     class Mock extends GetCacheInfoLocal {
 
         boolean fail = false;
-
-        final ImportBean bean;
-
-        Mock(ImportBean bean) {
-            assert bean != null;
-            this.bean = bean;
-        }
 
         Mock willFail() {
             fail = true;

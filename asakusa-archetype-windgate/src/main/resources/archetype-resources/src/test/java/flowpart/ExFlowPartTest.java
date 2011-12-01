@@ -15,7 +15,7 @@
  */
 package ${package}.flowpart;
 
-import ${package}.modelgen.table.model.Ex1;
+import ${package}.modelgen.dmdl.model.Ex1;
 
 import org.junit.Test;
 
@@ -31,11 +31,9 @@ public class ExFlowPartTest {
 
     /**
      * サンプル：フロー部品の実行
-     * 
-     * @throws Throwable 
      */
     @Test
-    public void testExample() throws Throwable {
+    public void testExample() {
 
         String testDataSheet = "EX1.xls";
 

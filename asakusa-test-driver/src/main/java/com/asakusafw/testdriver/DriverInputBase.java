@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -37,13 +38,16 @@ public abstract class DriverInputBase<T> {
 
     /** データ名 */
     protected String name;
+
     /** モデル型 */
     protected Class<T> modelType;
+
     /** テストドライバコンテキスト */
     protected TestDriverContext driverContext;
 
-    /** ソースURI */
-    protected URI sourceUri;
+    /** ソース */
+    protected DataModelSourceFactory source;
+
     /** インポータ記述 */
     protected ImporterDescription importerDescription;
 
@@ -90,20 +94,6 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * @return the sourceUri
-     */
-    protected URI getSourceUri() {
-        return sourceUri;
-    }
-
-    /**
-     * @param sourceUri the sourceUri to set
-     */
-    protected void setSourceUri(URI sourceUri) {
-        this.sourceUri = sourceUri;
-    }
-
-    /**
      * @return the importerDescription
      */
     protected ImporterDescription getImporterDescription() {
@@ -118,17 +108,34 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * set source URI from source path.
-     *
-     * @param sourcePath source path.
+     * Returns the source for jobflow input.
+     * @return the source, or {@code null} if not defined
+     * @since 0.2.3
+     */
+    protected DataModelSourceFactory getSource() {
+        return source;
+    }
+
+    /**
+     * set source for jobflow input.
+     * @param sourcePath source path
      */
     protected void setSourceUri(String sourcePath) {
         try {
-            sourceUri = toUri(sourcePath);
-            LOG.info("Source URI:" + sourceUri);
+            URI sourceUri = toUri(sourcePath);
+            setSourceUri(sourceUri);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid source URI:" + sourcePath, e);
         }
+    }
+
+    /**
+     * Sets the source for jobflow input
+     * @param sourceUri the source uri
+     */
+    protected void setSourceUri(URI sourceUri) {
+        LOG.info("Source URI:" + sourceUri);
+        this.source = driverContext.getRepository().getDataModelSourceFactory(sourceUri);
     }
 
     /**

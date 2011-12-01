@@ -1,5 +1,7 @@
 #!/bin/sh
 
+_YS_GENERATE_EXECUTION_ID="<generate>"
+
 usage() {
     cat 1>&2 <<EOF
 YAESS - A portable Asakusa workflow processor
@@ -18,6 +20,7 @@ Parameters:
             epilogue export finalize cleanup
     execution-id
         Unique ID of jobflow execution
+        If "$_YS_GENERATE_EXECUTION_ID" is specified, the execution ID is generated automatically
     -A <key>=<value>
         argument for this execution
 EOF
@@ -25,12 +28,6 @@ EOF
 
 if [ $# -lt 4 ]; then
     usage
-    exit 1
-fi
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
     exit 1
 fi
 
@@ -49,11 +46,33 @@ then
     . "$_YS_ROOT/conf/env.sh"
 fi
 
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
+fi
+
 if [ "$YS_PATH_SEPARATOR" = "" ]
 then
     _YS_PATH_SEPARATOR=':'
 else 
     _YS_PATH_SEPARATOR="$YS_PATH_SEPARATOR"
+fi
+
+if [ "$_OPT_EXECUTION_ID" = "$_YS_GENERATE_EXECUTION_ID" ]
+then
+    _OPT_EXECUTION_ID=$("$_YS_ROOT/bin/yaess-execution-id.sh" "$_OPT_BATCH_ID" "$_OPT_FLOW_ID" "$@")
+    _YS_GEN_RET=$?
+    if [ $_YS_GEN_RET -ne 0 ]
+    then
+        echo "YAESS Failed (to generate execution ID) with exit code: $_YS_GEN_RET" 1>&2
+        echo "    Batch ID: $_OPT_BATCH_ID" 1>&2
+        echo "     Flow ID: $_OPT_FLOW_ID" 1>&2
+        echo "    Plug-ins: $_YS_PLUGIN" 1>&2
+        echo "   Arguments: $@" 1>&2
+        echo "Finished: FAILURE"
+        exit $_YS_GEN_RET
+    fi
 fi
 
 _YS_PROFILE="$_YS_ROOT/conf/yaess.properties"
@@ -106,6 +125,7 @@ echo "  Main Class: $_YS_CLASS"
 echo "   Arguments: $@"
 
 java \
+    "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -profile "$_YS_PROFILE" \

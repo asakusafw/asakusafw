@@ -55,7 +55,7 @@ slot.addWritable(value.getSecondaryKey());
     protected abstract void setSlotSpec(T value, SortableSlot slot) throws IOException;
 
     @Override
-    protected void map(Object key, T value, Context context) throws java.io.IOException, InterruptedException {
+    protected void map(Object key, T value, Context context) throws IOException, InterruptedException {
         valueOut.store(value);
         setSlotSpec(value, keyOut);
         context.write(keyOut, valueOut);

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -30,7 +29,6 @@ import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -55,7 +53,7 @@ import com.asakusafw.thundergate.runtime.cache.CacheStorage;
  */
 public class GetCacheInfoRemote extends Configured implements Tool {
 
-    private static final Class<?> CLASS = GetCacheInfoRemote.class;
+    static final Log LOG = new Log(GetCacheInfoRemote.class);
 
     private static final List<String> PROPERTIES = Constants.PROPERTIES_HC;
 
@@ -84,6 +82,7 @@ public class GetCacheInfoRemote extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         initialize(args);
+        LOG.info("TG-GETCACHE-01001", targetName, batchId, flowId, executionId, userName);
         FileList.Reader in = null;
         FileList.Writer out = null;
         try {
@@ -92,13 +91,13 @@ public class GetCacheInfoRemote extends Configured implements Tool {
             execute(in, out);
             out.close();
         } catch (BulkLoaderSystemException e) {
-            // TODO logging
-            e.printStackTrace();
+            LOG.log(e);
             return Constants.EXIT_CODE_ERROR;
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
         }
+        LOG.info("TG-GETCACHE-01002", targetName, batchId, flowId, executionId, userName);
         return Constants.EXIT_CODE_SUCCESS;
     }
 
@@ -110,6 +109,7 @@ public class GetCacheInfoRemote extends Configured implements Tool {
     void initialize(String... args) {
         assert args != null;
         if (args.length != 5) {
+            LOG.error("TG-GETCACHE-01003", Arrays.toString(args));
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid arguments: {0}",
                     Arrays.toString(args)));
@@ -120,11 +120,7 @@ public class GetCacheInfoRemote extends Configured implements Tool {
         this.executionId = args[3];
         this.userName = args[4];
         if (BulkLoaderInitializer.initHadoopCluster(flowId, executionId, PROPERTIES) == false) {
-            Log.log(
-                    CLASS,
-                    // TODO
-                    MessageIdConst.EXT_INIT_ERROR,
-                    new Date(), targetName, batchId, flowId, executionId, userName);
+            LOG.error("TG-GETCACHE-01004", targetName, batchId, flowId, executionId, userName);
             throw new IllegalStateException(MessageFormat.format(
                     "Failed to initialize GetCacheInfo: {0}",
                     Arrays.toString(args)));
@@ -152,21 +148,25 @@ public class GetCacheInfoRemote extends Configured implements Tool {
                             protocol.getKind(),
                             protocol.getLocation()));
                 }
+                LOG.info("TG-GETCACHE-01006", protocol.getLocation());
                 CacheInfo info = getCacheInfo(protocol.getLocation());
                 FileProtocol result;
                 if (info == null) {
                     result = new FileProtocol(FileProtocol.Kind.RESPONSE_NOT_FOUND, protocol.getLocation(), null);
+                    LOG.info("TG-GETCACHE-01008", protocol.getLocation());
                 } else {
                     result = new FileProtocol(FileProtocol.Kind.RESPONSE_CACHE_INFO, protocol.getLocation(), info);
+                    LOG.info("TG-GETCACHE-01007",
+                            protocol.getLocation(),
+                            info.getId(),
+                            info.getTableName(),
+                            info.getTimestamp().getTime());
                 }
                 output.openNext(result).close();
             }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    CLASS,
-                    // TODO change
-                    MessageIdConst.IMP_CACHE_ERROR);
+            throw new BulkLoaderSystemException(e, getClass(), "TG-GETCACHE-01005",
+                    targetName, batchId, flowId, executionId, userName);
         }
     }
 
@@ -181,13 +181,13 @@ public class GetCacheInfoRemote extends Configured implements Tool {
         try {
             CacheStorage storage = new CacheStorage(getConf(), cacheBaseUri);
             try {
-                return storage.getHeadCacheInfo();
+                CacheInfo info = storage.getHeadCacheInfo();
+                return info;
             } finally {
                 IOUtils.closeQuietly(storage);
             }
         } catch (IOException e) {
-            // TODO logging warn
-            e.printStackTrace();
+            LOG.warn(e, "TG-GETCACHE-01009", location);
             return null;
         }
     }

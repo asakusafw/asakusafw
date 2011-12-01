@@ -31,6 +31,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionLockProvider;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
 import com.asakusafw.yaess.core.VariableResolver;
 
@@ -58,8 +59,8 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance = profile.newInstance();
         ExecutionLock lock = instance.newInstance("batch");
         try {
             lock.beginFlow("flow", "exec");
@@ -84,8 +85,8 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${LOCATION}");
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance = profile.newInstance(var);
+                "testing", BasicLockProvider.class, conf, new ProfileContext(getClass().getClassLoader(), var));
+        ExecutionLockProvider instance = profile.newInstance();
         ExecutionLock lock = instance.newInstance("batch");
         try {
             lock.beginFlow("flow", "exec");
@@ -109,8 +110,8 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${__INVALID__}");
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        profile.newInstance(var);
+                "testing", BasicLockProvider.class, conf, new ProfileContext(getClass().getClassLoader(), var));
+        profile.newInstance();
     }
 
     /**
@@ -124,9 +125,9 @@ public class BasicLockProviderTest {
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.WORLD.getSymbol());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance1 = profile.newInstance(VariableResolver.system());
-        ExecutionLockProvider instance2 = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance1 = profile.newInstance();
+        ExecutionLockProvider instance2 = profile.newInstance();
 
         ExecutionLock lock = instance1.newInstance("batch1");
         try {
@@ -167,9 +168,9 @@ public class BasicLockProviderTest {
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.BATCH.getSymbol());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance1 = profile.newInstance(VariableResolver.system());
-        ExecutionLockProvider instance2 = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance1 = profile.newInstance();
+        ExecutionLockProvider instance2 = profile.newInstance();
 
         ExecutionLock lock = instance1.newInstance("batch1");
         try {
@@ -208,9 +209,9 @@ public class BasicLockProviderTest {
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.FLOW.getSymbol());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance1 = profile.newInstance(VariableResolver.system());
-        ExecutionLockProvider instance2 = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance1 = profile.newInstance();
+        ExecutionLockProvider instance2 = profile.newInstance();
 
         ExecutionLock lock = instance1.newInstance("batch1");
         try {
@@ -256,9 +257,9 @@ public class BasicLockProviderTest {
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.EXECUTION.getSymbol());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance1 = profile.newInstance(VariableResolver.system());
-        ExecutionLockProvider instance2 = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance1 = profile.newInstance();
+        ExecutionLockProvider instance2 = profile.newInstance();
 
         ExecutionLock lock = instance1.newInstance("batch1");
         try {
@@ -310,8 +311,8 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance = profile.newInstance();
         ExecutionLock lock = instance.newInstance("batch");
         try {
             lock.beginFlow("a", "b");
@@ -329,8 +330,8 @@ public class BasicLockProviderTest {
     public void missing_directory_config() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance = profile.newInstance();
         instance.newInstance("batch");
     }
 
@@ -346,8 +347,8 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
-                "testing", BasicLockProvider.class, conf, getClass().getClassLoader());
-        ExecutionLockProvider instance = profile.newInstance(VariableResolver.system());
+                "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        ExecutionLockProvider instance = profile.newInstance();
         instance.newInstance("batch");
     }
 }

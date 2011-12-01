@@ -17,8 +17,10 @@ package com.asakusafw.windgate.jdbc;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.text.MessageFormat;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +128,7 @@ public class JdbcProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String resourceName = profile.getName();
-        ClassLoader classLoader = profile.getClassLoader();
+        ClassLoader classLoader = profile.getContext().getClassLoader();
         String driver = extract(profile, KEY_DRIVER, true);
         String url = extract(profile, KEY_URL, true);
         String user = extract(profile, KEY_USER, false);
@@ -209,9 +211,17 @@ public class JdbcProfile {
     public Connection openConnection() throws IOException {
         LOG.debug("Opening JDBC connection: {}",
                 url);
+
         try {
-            Class.forName(driver, true, classLoader);
-            Connection conn = DriverManager.getConnection(url, user, password);
+            Class<? extends Driver> driverClass = Class.forName(driver, true, classLoader).asSubclass(Driver.class);
+            Properties properties = new Properties();
+            if (user != null) {
+                properties.put("user", user);
+            }
+            if (password != null) {
+                properties.put("password", password);
+            }
+            Connection conn = openConnection(driverClass, properties);
             boolean succeed = false;
             try {
                 conn.setAutoCommit(false);
@@ -231,6 +241,25 @@ public class JdbcProfile {
             throw new IOException(MessageFormat.format(
                     "Failed to open connection: {0}",
                     url), e);
+        }
+    }
+
+    private Connection openConnection(Class<? extends Driver> driverClass, Properties properties) throws Exception {
+        assert properties != null;
+        try {
+            return DriverManager.getConnection(url, properties);
+        } catch (Exception e) {
+            // if the current class loader can not access the driver class, create driver class directly
+            try {
+                Driver driverObject = driverClass.newInstance();
+                return driverObject.connect(url, properties);
+            } catch (Exception inner) {
+                LOG.debug(MessageFormat.format(
+                        "Failed to resolve driver class: {0} (on {1})",
+                        driverClass.getName(),
+                        driverClass.getClassLoader()), e);
+            }
+            throw e;
         }
     }
 

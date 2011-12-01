@@ -32,8 +32,8 @@ import com.asakusafw.yaess.core.CommandScriptHandler;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link BasicCommandScriptHandler}.
@@ -207,9 +207,9 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
     private CommandScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "hadoop", BasicCommandScriptHandler.class, conf, getClass().getClassLoader());
+                "hadoop", BasicCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
-            return profile.newInstance(VariableResolver.system());
+            return profile.newInstance();
         } catch (Exception e) {
             throw new AssertionError(e);
         }

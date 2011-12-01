@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -456,6 +457,47 @@ public class DfsFileImportTest {
     }
 
     /**
+     * Abnormal case: content from importer was broken. Extractor should raise error.
+     * @throws Exception if failed
+     */
+    @Test
+    public void extract_broken() throws Exception {
+        // ImportBeanを生成
+        Map<String, ImportTargetTableBean> targetTable = new LinkedHashMap<String, ImportTargetTableBean>();
+        ImportTargetTableBean tableBean1 = new ImportTargetTableBean();
+        tableBean1.setDfsFilePath("/${user}/${execution_id}/import/XXX");
+        tableBean1.setImportTargetType(ImportTarget1.class);
+        targetTable.put("IMPORT_TARGET1", tableBean1);
+        ImportBean bean = new ImportBean();
+        bean.setTargetTable(targetTable);
+        bean.setExecutionId(executionId);
+
+        final File target = folder.newFile("dummy");
+
+        // テスト対象クラス実行
+        DfsFileImport fileImport = new DfsFileImport() {
+            @Override
+            protected InputStream getInputStream() throws IOException {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                FileList.Writer writer = FileList.createWriter(output, false);
+                String name = FileNameUtil.createSendImportFileName("IMPORT_TARGET1");
+                OutputStream content = writer.openNext(FileList.content(name));
+                content.close();
+                output.close(); // FileList will be broken
+                return new ByteArrayInputStream(output.toByteArray());
+            }
+            @Override
+            protected URI resolveLocation(ImportBean _, String user, String location) {
+                return target.toURI();
+            }
+        };
+        boolean result = fileImport.importFile(bean, "hadoop");
+
+        // 戻り値を検証
+        assertThat(result, is(false));
+    }
+
+    /**
      * <p>
      * 異常系：ZIPエントリに対応するテーブルの定義がDSL存在しないケース
      * 詳細の設定は以下の通り
@@ -559,7 +601,7 @@ public class DfsFileImportTest {
             protected <T> long write(Class<T> targetTableModel,
                     URI hdfsFilePath, InputStream zipEntryInputStream)
                     throws BulkLoaderSystemException {
-                throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "dummy");
+                throw new BulkLoaderSystemException(new NullPointerException(), this.getClass(), "TG-EXTRACTOR-02001");
             }
         };
         boolean result = fileImport.importFile(bean, "asakusa");

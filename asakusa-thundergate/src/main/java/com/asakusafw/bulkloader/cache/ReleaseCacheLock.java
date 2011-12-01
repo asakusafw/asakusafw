@@ -16,25 +16,27 @@
 package com.asakusafw.bulkloader.cache;
 
 import java.sql.Connection;
-import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBConnection;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
 /**
  * Releases locks for cache mechanism.
+ * This program requires following argument(s):
+ * <ol>
+ * <li> target name </li>
+ * <li> execution ID (optional) </li>
+ * </ol>
  * @since 0.2.3
  */
 public class ReleaseCacheLock {
 
-    private static final Class<?> CLASS = GetCacheInfoRemote.class;
+    static final Log LOG = new Log(ReleaseCacheLock.class);
 
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
 
@@ -45,9 +47,7 @@ public class ReleaseCacheLock {
      */
     public static void main(String[] args) {
         if (args.length != 1 && args.length != 2) {
-            System.err.println(MessageFormat.format(
-                    "Invalid arguments for ReleaseCacheLock: {0}",
-                    Arrays.toString(args)));
+            LOG.error("TG-RELEASECACHELOCK-01003", Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
             return;
         }
@@ -57,16 +57,16 @@ public class ReleaseCacheLock {
         if (initExit != Constants.EXIT_CODE_SUCCESS) {
             System.exit(initExit);
         }
-        int exitCode = new ReleaseCacheLock().execute(executionId);
+
+        LOG.info("TG-RELEASECACHELOCK-01001", targetName, executionId);
+        int exitCode = new ReleaseCacheLock().execute(targetName, executionId);
+        LOG.info("TG-RELEASECACHELOCK-01002", targetName, executionId);
         System.exit(exitCode);
     }
 
     private static int initialize(String targetName, String executionId) {
         if (!BulkLoaderInitializer.initDBServer("ReleaseCacheLock", executionId, PROPERTIES, targetName)) {
-            Log.log(
-                    CLASS,
-                    MessageIdConst.RCV_INIT_ERROR,
-                    new Date(), targetName, executionId);
+            LOG.error("TG-RELEASECACHELOCK-01004", targetName, executionId);
             return Constants.EXIT_CODE_ERROR;
         }
         return Constants.EXIT_CODE_SUCCESS;
@@ -74,22 +74,23 @@ public class ReleaseCacheLock {
 
     /**
      * Releases cache lock.
+     * @param targetName target name
      * @param executionId target execution ID, or {@code null} to release all lock
      * @return exit code
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @see Constants#EXIT_CODE_SUCCESS
      * @see Constants#EXIT_CODE_ERROR
      */
-    public int execute(String executionId) {
+    public int execute(String targetName, String executionId) {
         try {
             Connection connection = DBConnection.getConnection();
             try {
                 LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
                 if (executionId != null) {
-                    // TODO logging
+                    LOG.info("TG-RELEASECACHELOCK-01005", targetName, executionId);
                     repo.releaseLock(executionId);
                 } else {
-                    // TODO logging
+                    LOG.info("TG-RELEASECACHELOCK-01006", targetName);
                     repo.releaseAllLock();
                 }
             } finally {
@@ -97,7 +98,7 @@ public class ReleaseCacheLock {
             }
             return Constants.EXIT_CODE_SUCCESS;
         } catch (BulkLoaderSystemException e) {
-            // TODO logging
+            LOG.log(e);
             return Constants.EXIT_CODE_ERROR;
         }
     }

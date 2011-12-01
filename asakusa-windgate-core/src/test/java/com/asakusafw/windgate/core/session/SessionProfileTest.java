@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.file.session.FileSessionProvider;
 
 /**
@@ -47,7 +48,7 @@ public class SessionProfileTest {
         Properties p = new Properties();
         p.setProperty(SessionProfile.KEY_PROVIDER, FileSessionProvider.class.getName());
 
-        SessionProfile profile = SessionProfile.loadFrom(p, getClass().getClassLoader());
+        SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profile.getProviderClass(), is((Object) FileSessionProvider.class));
         assertThat(profile.getConfiguration().size(), is(0));
     }
@@ -63,7 +64,7 @@ public class SessionProfileTest {
         p.setProperty(SessionProfile.KEY_PROVIDER, FileSessionProvider.class.getName());
         p.setProperty(SessionProfile.KEY_PREFIX + FileSessionProvider.KEY_DIRECTORY, path);
 
-        SessionProfile profile = SessionProfile.loadFrom(p, getClass().getClassLoader());
+        SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profile.getProviderClass(), is((Object) FileSessionProvider.class));
         assertThat(profile.getConfiguration().size(), is(1));
         assertThat(profile.getConfiguration().get(FileSessionProvider.KEY_DIRECTORY), is(path));
@@ -80,7 +81,7 @@ public class SessionProfileTest {
         p.setProperty(SessionProfile.KEY_PROVIDER, FileSessionProvider.class.getName());
         p.setProperty(SessionProfile.KEY_PREFIX + FileSessionProvider.KEY_DIRECTORY, path);
 
-        SessionProfile profile = SessionProfile.loadFrom(p, getClass().getClassLoader());
+        SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         profile.storeTo(restored);
         assertThat(restored, is(p));
@@ -94,7 +95,7 @@ public class SessionProfileTest {
         Properties p = new Properties();
         p.setProperty(SessionProfile.KEY_PROVIDER, FileSessionProvider.class.getName());
 
-        SessionProfile profile = SessionProfile.loadFrom(p, getClass().getClassLoader());
+        SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         profile.storeTo(restored);
         assertThat(restored, is(p));
@@ -130,7 +131,7 @@ public class SessionProfileTest {
         p.setProperty(SessionProfile.KEY_PROVIDER, FileSessionProvider.class.getName());
         p.setProperty(SessionProfile.KEY_PREFIX + FileSessionProvider.KEY_DIRECTORY, path.getPath());
 
-        SessionProfile profile = SessionProfile.loadFrom(p, getClass().getClassLoader());
+        SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         SessionProvider provider = profile.createProvider();
         SessionMirror session = provider.create("hello");
         session.close();

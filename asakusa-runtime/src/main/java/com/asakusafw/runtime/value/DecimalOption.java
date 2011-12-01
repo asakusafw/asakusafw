@@ -32,6 +32,25 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     private BigDecimal entity = BigDecimal.ZERO;
 
     /**
+     * Creates a new instance which represents {@code null} value.
+     */
+    public DecimalOption() {
+        super();
+    }
+
+    /**
+     * Creates a new instance which represents the specified value.
+     * @param valueOrNull the initial value
+     */
+    public DecimalOption(BigDecimal valueOrNull) {
+        super();
+        if (valueOrNull != null) {
+            this.entity = valueOrNull;
+            this.nullValue = false;
+        }
+    }
+
+    /**
      * このオブジェクトが表現する値を返す。
      * @return このオブジェクトが表現する値
      * @throws NullPointerException この値が{@code null}を表現する場合

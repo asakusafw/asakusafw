@@ -50,7 +50,7 @@ public final class StringOption extends ValueOption<StringOption> {
         }
     };
 
-    private Text entity = new Text();
+    private final Text entity = new Text();
 
     /**
      * インスタンスを生成する。

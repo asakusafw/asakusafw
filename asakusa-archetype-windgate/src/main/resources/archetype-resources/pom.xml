@@ -9,8 +9,7 @@
 	<properties>
 		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
 
-		<cloudera.cdh.version>0.20.2-cdh3u1</cloudera.cdh.version>
-		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
+		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 		<commons.io.version>2.0.1</commons.io.version>
@@ -380,6 +379,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<version>${asakusafw.version}</version>
 			<classifier>dev-windgate-exclude-lib</classifier>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.asakusafw</groupId>
+					<artifactId>asakusa-thundergate</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
@@ -404,13 +409,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-yaess-plugin</artifactId>
 			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.jdbc.version}</version>
-			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

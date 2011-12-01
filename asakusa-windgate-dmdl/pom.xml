@@ -48,6 +48,12 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-vocabulary</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.ashigeru.lang.java</groupId>
 			<artifactId>jsr199-testing</artifactId>
 			<scope>test</scope>

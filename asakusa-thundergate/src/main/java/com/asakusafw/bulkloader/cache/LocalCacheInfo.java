@@ -15,6 +15,7 @@
  */
 package com.asakusafw.bulkloader.cache;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -107,5 +108,23 @@ public class LocalCacheInfo {
         Calendar copy = (Calendar) timestamp.clone();
         copy.set(Calendar.MILLISECOND, 0);
         return copy;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        StringBuilder builder = new StringBuilder();
+        builder.append("LocalCacheInfo [id=");
+        builder.append(id);
+        builder.append(", localTimestamp=");
+        builder.append(localTimestamp == null ? null : formatter.format(localTimestamp.getTime()));
+        builder.append(", remoteTimestamp=");
+        builder.append(remoteTimestamp == null ? null : formatter.format(remoteTimestamp.getTime()));
+        builder.append(", tableName=");
+        builder.append(tableName);
+        builder.append(", path=");
+        builder.append(path);
+        builder.append("]");
+        return builder.toString();
     }
 }

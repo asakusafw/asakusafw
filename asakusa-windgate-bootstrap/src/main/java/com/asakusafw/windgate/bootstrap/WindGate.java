@@ -36,6 +36,7 @@ import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.GateTask;
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
@@ -150,6 +151,8 @@ public class WindGate {
             WGLOG.error(e, "E00002");
             e.printStackTrace();
             return 1;
+        } finally {
+            task.close();
         }
     }
 
@@ -188,9 +191,10 @@ public class WindGate {
 
         LOG.debug("Loading profile: {}", profile);
         try {
+            ProfileContext context = ProfileContext.system(loader);
             URI uri = CommandLineUtil.toUri(profile);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
-            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
+            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",

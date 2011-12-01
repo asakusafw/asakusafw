@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionPhase;
-import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.YaessProfile;
 import com.asakusafw.yaess.core.task.ExecutionTask;
 
@@ -119,7 +119,9 @@ public class Yaess {
             conf = parseConfiguration(args);
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to analyze program arguments ({0})",
+                    Arrays.toString(args)), e);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -136,10 +138,12 @@ public class Yaess {
         }
         ExecutionTask task;
         try {
-            task = ExecutionTask.load(conf.profile, conf.script, VariableResolver.system(), conf.arguments);
+            task = ExecutionTask.load(conf.profile, conf.script, conf.arguments);
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to load service components ({0})",
+                    conf), e);
             return 1;
         }
         try {
@@ -159,7 +163,9 @@ public class Yaess {
             return 0;
         } catch (Exception e) {
             // TODO logging
-            LOG.error(null, e);
+            LOG.error(MessageFormat.format(
+                    "Failed to execute a jobnet ({0})",
+                    conf), e);
             return 1;
         }
     }
@@ -197,8 +203,9 @@ public class Yaess {
 
         LOG.debug("Loading profile: {}", profile);
         try {
+            ProfileContext context = ProfileContext.system(loader);
             Properties properties = CommandLineUtil.loadProperties(new File(profile));
-            result.profile = YaessProfile.load(properties, loader);
+            result.profile = YaessProfile.load(properties, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
@@ -275,6 +282,22 @@ public class Yaess {
         String executionId;
         ExecutionPhase phase;
         Map<String, String> arguments;
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Configuration [mode=");
+            builder.append(mode);
+            builder.append(", batchId=");
+            builder.append(batchId);
+            builder.append(", flowId=");
+            builder.append(flowId);
+            builder.append(", executionId=");
+            builder.append(executionId);
+            builder.append(", phase=");
+            builder.append(phase);
+            builder.append("]");
+            return builder.toString();
+        }
     }
 
     enum Mode {

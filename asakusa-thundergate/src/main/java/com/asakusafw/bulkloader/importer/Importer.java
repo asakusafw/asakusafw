@@ -29,7 +29,6 @@ import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ImportType;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
@@ -41,10 +40,7 @@ import com.asakusafw.bulkloader.log.Log;
  */
 public class Importer {
 
-    /**
-     * このクラス。
-     */
-    private static final Class<?> CLASS = Importer.class;
+    static final Log LOG = new Log(Importer.class);
 
     /**
      * Importerで読み込むプロパティファイル。
@@ -99,26 +95,20 @@ public class Importer {
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initDBServer(jobflowId, executionId, PROPERTIES, targetName)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_INIT_ERROR,
+                LOG.error("TG-IMPORTER-01003",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
 
             // 開始ログ出力
-            Log.log(
-                    CLASS,
-                    MessageIdConst.IMP_START,
+            LOG.info("TG-IMPORTER-01001",
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
 
             // パラメータオブジェクトを作成
             bean = createBean(importerType, targetName, batchId, jobflowId, executionId, endDate, recoveryTable);
             if (bean == null) {
                 // パラメータのチェックでエラー
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_PARAM_ERROR,
+                LOG.error("TG-IMPORTER-01009",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
@@ -126,66 +116,47 @@ public class Importer {
             String jobflowSid;
             if (bean.isPrimary()) {
                 // ジョブフロー実行IDの排他制御
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_INSTANCE_ID_LOCK,
+                LOG.info("TG-IMPORTER-01015",
                         importerType, targetName, batchId, jobflowId, executionId);
                 try {
                     lockConn = DBConnection.getConnection();
                     if (!DBAccessUtil.getJobflowInstanceLock(bean.getExecutionId(), lockConn)) {
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_INSTANCE_ID_LOCKED,
+                        LOG.error("TG-IMPORTER-01013",
                                 new Date(), importerType, targetName, batchId, jobflowId, executionId);
                         return Constants.EXIT_CODE_ERROR;
                     } else {
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_INSTANCE_ID_LOCK_SUCCESS,
+                        LOG.info("TG-IMPORTER-01016",
                                 importerType, targetName, batchId, jobflowId, executionId);
                     }
                 } catch (BulkLoaderSystemException e) {
-                    Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
-                    Log.log(
-                            e,
-                            CLASS,
-                            MessageIdConst.IMP_INSTANCE_ID_LOCK_ERROR,
+                    LOG.log(e);
+                    LOG.error(e, "TG-IMPORTER-01014",
                             new Date(), importerType, targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_ERROR;
                 }
 
                 ImportProtocolDecide protocolDecide = createImportProtocolDecide();
-                // TODO logging
                 protocolDecide.execute(bean);
-                // TODO logging
 
                 // Import対象テーブルのロックを取得
                 TargetDataLock targetLock = createTargetDataLock();
                 List<String> list = bean.getImportTargetTableList();
                 if (list != null && list.size() > 0) {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.IMP_LOCK,
+                    LOG.info("TG-IMPORTER-01017",
                             importerType, targetName, batchId, jobflowId, executionId);
                     if (!targetLock.lock(bean)) {
                         // ロック取得に失敗
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_LOCK_ERROR,
+                        LOG.error("TG-IMPORTER-01004",
                                 new Date(), importerType, targetName, batchId, jobflowId, executionId);
                         return Constants.EXIT_CODE_ERROR;
                     } else {
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_LOCK_SUCCESS,
+                        LOG.info("TG-IMPORTER-01018",
                                 importerType, targetName, batchId, jobflowId, executionId);
                         jobflowSid = targetLock.getJobFlowSid();
                     }
                 } else {
                     // Import対象テーブルが1件もない場合はRUNNING_JOBFLOWSテーブルにレコードをInsertして終了する
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.IMP_TARGET_NO_EXIST,
+                    LOG.info("TG-IMPORTER-01019",
                             importerType, targetName, batchId, jobflowId, executionId);
                     jobflowSid = targetLock.insertRunningJobFlow(
                             bean.getTargetName(),
@@ -193,15 +164,11 @@ public class Importer {
                             bean.getJobflowId(),
                             bean.getExecutionId(), bean.getJobnetEndTime());
                     if (jobflowSid != null) {
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_TARGET_NO_EXIST_SUCCESS,
+                        LOG.info("TG-IMPORTER-01011",
                                 new Date(), importerType, targetName, batchId, jobflowId, executionId);
                         return Constants.EXIT_CODE_SUCCESS;
                     } else {
-                        Log.log(
-                                CLASS,
-                                MessageIdConst.IMP_INSERT_RNNINGJOBFLOW_ERROR,
+                        LOG.error("TG-IMPORTER-01012",
                                 new Date(), importerType, targetName, batchId, jobflowId, executionId);
                         return Constants.EXIT_CODE_ERROR;
                     }
@@ -210,16 +177,12 @@ public class Importer {
                 // secondary importer
                 List<String> list = bean.getImportTargetTableList();
                 if (list == null || list.size() == 0) {
-                    Log.log(
-                            CLASS,
-                            MessageIdConst.IMP_TARGET_NO_EXIST_SECONDARY,
+                    LOG.info("TG-IMPORTER-01020",
                             new Date(), importerType, targetName, batchId, jobflowId, executionId);
                     return Constants.EXIT_CODE_SUCCESS;
                 } else {
                     ImportProtocolDecide protocolDecide = createImportProtocolDecide();
-                    // TODO logging
                     protocolDecide.execute(bean);
-                    // TODO logging
 
                     // 補助インポーターではJobflow SIDを利用しない
                     jobflowSid = null;
@@ -229,42 +192,30 @@ public class Importer {
             // TODO ファイル生成とファイル転送をマルチスレッドで起動処理する
 
             // Import対象ファイルを生成
-            Log.log(
-                    CLASS,
-                    MessageIdConst.IMP_CREATEFILE,
+            LOG.info("TG-IMPORTER-01021",
                     importerType, targetName, batchId, jobflowId, executionId);
             ImportFileCreate fileCreate = createImportFileCreate();
             if (!fileCreate.createImportFile(bean, jobflowSid)) {
                 // ファイル生成に失敗
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_CREATEFILE_ERROR,
+                LOG.error("TG-IMPORTER-01005",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_CREATEFILE_SUCCESS,
+                LOG.info("TG-IMPORTER-01022",
                         importerType, targetName, batchId, jobflowId, executionId);
             }
 
             // Import対象ファイルを転送
-            Log.log(
-                    CLASS,
-                    MessageIdConst.IMP_SENDDATA,
+            LOG.info("TG-IMPORTER-01023",
                     importerType, targetName, batchId, jobflowId, executionId);
             ImportFileSend fileSend = createImportFileSend();
             if (!fileSend.sendImportFile(bean)) {
                 // ファイル転送に失敗
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_SENDDATA_ERROR,
+                LOG.error("TG-IMPORTER-01006",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_SENDDATA_SUCCESS,
+                LOG.info("TG-IMPORTER-01024",
                         importerType, targetName, batchId, jobflowId, executionId);
             }
 
@@ -272,32 +223,23 @@ public class Importer {
             String deleteTsv = ConfigurationLoader.getProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE);
             TsvDeleteType delType = TsvDeleteType.find(deleteTsv);
             if (TsvDeleteType.TRUE.equals(delType)) {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_TSV_FILE_DELETE,
+                LOG.info("TG-IMPORTER-01025",
                         importerType, targetName, batchId, jobflowId, executionId);
                 ImportFileDelete fileDelete = createImportFileDelete();
                 fileDelete.deleteFile(bean);
             } else {
-                Log.log(
-                        CLASS,
-                        MessageIdConst.IMP_TSV_FILE_NOT_DELETE,
+                LOG.info("TG-IMPORTER-01026",
                         importerType, targetName, batchId, jobflowId, executionId);
             }
 
             // 正常終了
-            Log.log(
-                    CLASS,
-                    MessageIdConst.IMP_EXIT,
+            LOG.info("TG-IMPORTER-01002",
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
             return Constants.EXIT_CODE_SUCCESS;
 
         } catch (Exception e) {
             try {
-                Log.log(
-                        e,
-                        CLASS,
-                        MessageIdConst.IMP_EXCEPRION,
+                LOG.error(e, "TG-IMPORTER-01010",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {
@@ -341,7 +283,7 @@ public class Importer {
         } else if (ImportType.SECONDARY.equals(importType)) {
             bean.setPrimary(false);
         } else {
-            Log.log(CLASS, MessageIdConst.IMP_PARAMCHECK_ERROR, "Import処理区分", importerType);
+            LOG.error("TG-IMPORTER-01008", "Import処理区分", importerType);
             return null;
         }
         // ターゲット名
@@ -354,7 +296,7 @@ public class Importer {
         bean.setExecutionId(executionId);
         // ジョブネットの終了予定時刻
         if (strEndDate.length() != 14) {
-            Log.log(CLASS, MessageIdConst.IMP_PARAMCHECK_ERROR, "ジョブネットの終了予定時刻", strEndDate);
+            LOG.error("TG-IMPORTER-01008", "ジョブネットの終了予定時刻", strEndDate);
             return null;
         }
 
@@ -364,11 +306,11 @@ public class Importer {
             Long.parseLong(strEndDate);
             endDate = sdf.parse(strEndDate);
         } catch (NumberFormatException e) {
-            Log.log(CLASS, MessageIdConst.IMP_PARAMCHECK_ERROR, "ジョブネットの終了予定時刻", strEndDate);
+            LOG.error(e, "TG-IMPORTER-01008", "ジョブネットの終了予定時刻", strEndDate);
             return null;
         } catch (ParseException e) {
             Integer.parseInt(strEndDate);
-            Log.log(CLASS, MessageIdConst.IMP_PARAMCHECK_ERROR, "ジョブネットの終了予定時刻", strEndDate);
+            LOG.error(e, "TG-IMPORTER-01008", "ジョブネットの終了予定時刻", strEndDate);
             return null;
         }
         bean.setJobnetEndTime(endDate);

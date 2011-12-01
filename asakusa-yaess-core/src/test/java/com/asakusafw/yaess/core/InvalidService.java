@@ -23,7 +23,7 @@ import java.io.IOException;
 public class InvalidService implements Service {
 
     @Override
-    public void configure(ServiceProfile<?> profile, VariableResolver variables) throws IOException {
+    public void configure(ServiceProfile<?> profile) throws IOException {
         throw new IOException();
     }
 }

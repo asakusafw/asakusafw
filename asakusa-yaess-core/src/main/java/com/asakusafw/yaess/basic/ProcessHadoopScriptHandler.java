@@ -115,21 +115,20 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     @Override
     protected final void doConfigure(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         this.currentProfile = profile;
         this.workingDirectory = profile.getConfiguration().get(KEY_WORKING_DIRECTORY);
-        this.commandPrefix = extractCommand(profile, variables, ProcessUtil.PREFIX_COMMAND);
-        this.cleanupPrefix = extractCommand(profile, variables, ProcessUtil.PREFIX_CLEANUP);
-        configureExtension(profile, variables);
+        this.commandPrefix = extractCommand(profile, ProcessUtil.PREFIX_COMMAND);
+        this.cleanupPrefix = extractCommand(profile, ProcessUtil.PREFIX_CLEANUP);
+        configureExtension(profile);
     }
 
-    private List<String> extractCommand(
-            ServiceProfile<?> profile,
-            VariableResolver variables,
-            String prefix) throws IOException {
+    private List<String> extractCommand(ServiceProfile<?> profile, String prefix) throws IOException {
         try {
-            return ProcessUtil.extractCommandLineTokens(prefix, profile.getConfiguration(), variables);
+            return ProcessUtil.extractCommandLineTokens(
+                    prefix,
+                    profile.getConfiguration(),
+                    profile.getContext().getContextParameters());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to resolve command line tokens ({0})",
@@ -140,13 +139,10 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     /**
      * Configures this handler internally (extension point).
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
-    protected abstract void configureExtension(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException;
+    protected abstract void configureExtension(ServiceProfile<?> profile) throws InterruptedException, IOException;
 
     /**
      * Returns command executor for this handler (extension point).

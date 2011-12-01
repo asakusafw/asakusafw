@@ -15,7 +15,7 @@
  */
 package ${package}.batch;
 
-import ${package}.modelgen.table.model.Ex1;
+import ${package}.modelgen.dmdl.model.Ex1;
 
 import org.junit.Test;
 

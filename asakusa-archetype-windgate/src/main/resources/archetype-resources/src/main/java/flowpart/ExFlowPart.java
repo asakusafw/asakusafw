@@ -15,13 +15,13 @@
  */
 package ${package}.flowpart;
 
-import ${package}.modelgen.table.model.Ex1;
-import ${package}.modelgen.table.model.Ex2;
+import ${package}.modelgen.dmdl.model.Ex1;
 import ${package}.operator.ExOperatorFactory;
 import ${package}.operator.ExOperatorFactory.Cogroup;
 import ${package}.operator.ExOperatorFactory.Update;
-import com.asakusafw.vocabulary.flow.FlowPart;
+
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.FlowPart;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
@@ -54,7 +54,7 @@ public class ExFlowPart extends FlowDescription {
         ExOperatorFactory f = new ExOperatorFactory();
         CoreOperatorFactory core = new CoreOperatorFactory();
         Update update = f.update(in1, 10);
-        Cogroup cog = f.cogroup(update.out, core.empty(Ex2.class));
+        Cogroup cog = f.cogroup(update.out, core.empty(Ex1.class));
         out1.add(cog.r1);
         core.stop(cog.r2);
     }

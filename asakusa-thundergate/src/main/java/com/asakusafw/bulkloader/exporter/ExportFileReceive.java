@@ -30,7 +30,6 @@ import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.MessageIdConst;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -46,6 +45,8 @@ import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
  */
 public class ExportFileReceive {
 
+    static final Log LOG = new Log(ExportFileReceive.class);
+
     /**
      * HDFSのNameノードのCollectorを呼出し、Exportファイルを受信してローカルにファイルを書き出す。
      * @param bean パラメータを保持するBean
@@ -56,7 +57,7 @@ public class ExportFileReceive {
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_DIR));
         if (!fileDirectry.exists()) {
             // ディレクトリが存在しない場合は異常終了する。
-            Log.log(this.getClass(), MessageIdConst.EXP_DIR_NOT_EXISTS_ERROR, fileDirectry.getAbsolutePath());
+            LOG.error("TG-EXPORTER-02001", fileDirectry.getAbsolutePath());
             return false;
         }
 
@@ -88,10 +89,10 @@ public class ExportFileReceive {
                 // テーブル名を取得
                 String tableName = FileNameUtil.getExportTableName(fileName);
                 if (tableName == null) {
-                    Log.log(this.getClass(), MessageIdConst.EXP_DSL_NOTFOUND, fileName, "(Unknown)");
+                    LOG.error("TG-EXPORTER-02003", fileName, "(Unknown)");
                     return false;
                 } else if (bean.getExportTargetTable(tableName) == null) {
-                    Log.log(this.getClass(), MessageIdConst.EXP_DSL_NOTFOUND, fileName, tableName);
+                    LOG.error("TG-EXPORTER-02003", fileName, tableName);
                     return false;
                 }
 
@@ -112,7 +113,7 @@ public class ExportFileReceive {
                         fileSeq++);
 
                 // ファイルを読み込んでローカルファイルに書き込む
-                Log.log(this.getClass(), MessageIdConst.EXP_FILERECEIV, tableName, file.getAbsolutePath());
+                LOG.info("TG-EXPORTER-02008", tableName, file.getAbsolutePath());
 
                 long dumpStartTime = System.currentTimeMillis();
                 long dumpFileSize = 0;
@@ -130,10 +131,7 @@ public class ExportFileReceive {
                         try {
                             read = content.read(b);
                         } catch (IOException e) {
-                            throw new BulkLoaderSystemException(
-                                    e,
-                                    this.getClass(),
-                                    MessageIdConst.EXP_FILERECEIV_EXCEPTION,
+                            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                                     "Exportファイルの読み込みに失敗。エントリ名：" + protocol.getLocation());
                         }
                         // 入力ファイルの終端を察知する
@@ -145,10 +143,7 @@ public class ExportFileReceive {
                         try {
                             fos.write(b, 0, read);
                         } catch (IOException e) {
-                            throw new BulkLoaderSystemException(
-                                    e,
-                                    this.getClass(),
-                                    MessageIdConst.EXP_FILERECEIV_EXCEPTION,
+                            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                                     "Exportファイルの書き出しに失敗。ファイル名：" +  file.getName());
                         }
                     }
@@ -159,9 +154,7 @@ public class ExportFileReceive {
                     profile.elapsedTime += System.currentTimeMillis() - dumpStartTime;
                     profile.fileSize += dumpFileSize;
 
-                    Log.log(
-                            this.getClass(),
-                            MessageIdConst.EXP_FILERECEIV_SUCCESS,
+                    LOG.info("TG-EXPORTER-02009",
                             tableName, file.getAbsolutePath());
 
                 } finally {
@@ -182,9 +175,7 @@ public class ExportFileReceive {
                 }
             }
             for (TableTransferProfile profile : profiles.values()) {
-                Log.log(
-                        getClass(),
-                        MessageIdConst.PRF_EXPORT_TRANSFER_TABLE,
+                LOG.info("TG-PROFILE-02004",
                         bean.getTargetName(),
                         bean.getBatchId(),
                         bean.getJobflowId(),
@@ -195,9 +186,7 @@ public class ExportFileReceive {
             }
             reader.close();
             provider.waitForComplete();
-            Log.log(
-                    getClass(),
-                    MessageIdConst.PRF_EXPORT_TRANSFER,
+            LOG.info("TG-PROFILE-02002",
                     bean.getTargetName(),
                     bean.getBatchId(),
                     bean.getJobflowId(),
@@ -205,13 +194,10 @@ public class ExportFileReceive {
                     reader.getByteCount(),
                     System.currentTimeMillis() - totalStartTime);
         } catch (BulkLoaderSystemException e) {
-            Log.log(e.getCause(), e.getClazz(), e.getMessageId(), e.getMessageArgs());
+            LOG.log(e);
             return false;
         } catch (Exception e) {
-            Log.log(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.EXP_FILERECEIV_EXCEPTION,
+            LOG.error(e, "TG-EXPORTER-02002",
                     "Exportファイルの読み込みに失敗。");
             return false;
         } finally {
@@ -244,9 +230,7 @@ public class ExportFileReceive {
         if (file.exists()) {
             if (!file.delete()) {
                 // ファイルの削除に失敗した場合は異常終了する
-                throw new BulkLoaderSystemException(
-                        this.getClass(),
-                        MessageIdConst.EXP_DELETEFILE_FAILED,
+                throw new BulkLoaderSystemException(getClass(), "TG-EXPORTER-02004",
                         file.getName());
             }
         }
@@ -254,10 +238,7 @@ public class ExportFileReceive {
         try {
             fos = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
-            throw new BulkLoaderSystemException(
-                    e,
-                    this.getClass(),
-                    MessageIdConst.EXP_FILERECEIV_EXCEPTION,
+            throw new BulkLoaderSystemException(e, getClass(), "TG-EXPORTER-02002",
                     "Exportファイルの指定が不正。ファイル名：" +  file.getName());
         }
         return fos;
@@ -303,7 +284,7 @@ public class ExportFileReceive {
         command.add(executionId);
         command.add(variableTable);
 
-        Log.log(this.getClass(), MessageIdConst.EXP_START_SUB_PROCESS,
+        LOG.info("TG-EXPORTER-02007",
                 sshPath,
                 hostName,
                 userName,

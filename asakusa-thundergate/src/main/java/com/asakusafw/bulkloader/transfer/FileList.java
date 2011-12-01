@@ -28,11 +28,9 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.InputBuffer;
 import org.apache.hadoop.io.OutputBuffer;
-
+import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.runtime.io.ZipEntryInputStream;
 import com.asakusafw.runtime.io.ZipEntryOutputStream;
 
@@ -42,7 +40,7 @@ import com.asakusafw.runtime.io.ZipEntryOutputStream;
  */
 public final class FileList {
 
-    static final Log LOG = LogFactory.getLog(FileList.class);
+    static final Log LOG = new Log(FileList.class);
 
     static final String FIRST_ENTRY_NAME = ".__FIRST_ENTRY__"; //$NON-NLS-1$
 
@@ -72,7 +70,7 @@ public final class FileList {
         if (input == null) {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Creating a new file list reader");
+        LOG.debugMessage("Creating a new file list reader");
         return new Reader(input);
     }
 
@@ -88,7 +86,7 @@ public final class FileList {
         if (output == null) {
             throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Creating a new file list writer");
+        LOG.debugMessage("Creating a new file list writer");
         return new Writer(output, compress);
     }
 
@@ -136,9 +134,7 @@ public final class FileList {
                 if (entry == null) {
                     throw new IOException("Found unexpected end of file in file list");
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format("Opening the next entry in file list: {0}", entry.getName()));
-                }
+                LOG.debugMessage("Opening the next entry in file list: {0}", entry.getName());
                 if (entry.getName().equals(LAST_ENTRY_NAME)) {
                     sawEof = true;
                     sawNext = false;
@@ -148,25 +144,21 @@ public final class FileList {
                     // may not come here
                     continue;
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format("opening {0}", entry.getName()));
-                }
-                if (restoreExtra(entry) == false) {
-                    throw new IOException(MessageFormat.format(
-                            "Invalid file list format: {0}",
-                            entry.getName()));
-                }
+                LOG.debugMessage("opening {0}", entry.getName());
+                restoreExtra(entry);
                 sawNext = true;
                 return true;
             }
             return false;
         }
 
-        private boolean restoreExtra(ZipEntry entry) {
+        private void restoreExtra(ZipEntry entry) throws IOException {
             assert entry != null;
             byte[] extra = entry.getExtra();
             if (extra == null) {
-                return false;
+                throw new IOException(MessageFormat.format(
+                        "Failed to restore protocol header for {0} (not set)",
+                        entry.getName()));
             }
             buffer.reset(extra, extra.length);
             try {
@@ -174,11 +166,10 @@ public final class FileList {
                 properties.load(buffer);
                 current = FileProtocol.loadFrom(properties);
             } catch (Exception e) {
-                // TODO logging
-                LOG.warn("Failed to restore protocol information", e);
-                return false;
+                throw new IOException(MessageFormat.format(
+                        "Failed to restore protocol header for {0}",
+                        entry.getName()), e);
             }
-            return true;
         }
 
         /**
@@ -218,7 +209,7 @@ public final class FileList {
 
         @Override
         public void close() throws IOException {
-            LOG.debug("Closing file list reader");
+            LOG.debugMessage("Closing file list reader");
             sawNext = false;
             input.close();
         }
@@ -264,9 +255,7 @@ public final class FileList {
                 throw new IllegalArgumentException("protocol must not be null"); //$NON-NLS-1$
             }
             ZipEntry entry = createEntryFromProtocol(protocol);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Putting next entry: {0}", entry.getName()));
-            }
+            LOG.debugMessage("Putting next entry: {0}", entry.getName());
             output.putNextEntry(entry);
             return new ZipEntryOutputStream(output);
         }
@@ -293,7 +282,7 @@ public final class FileList {
         @Override
         public void close() throws IOException {
             if (closed == false) {
-                LOG.debug("Closing file list writer");
+                LOG.debugMessage("Closing file list writer");
                 output.putNextEntry(new ZipEntry(LAST_ENTRY_NAME));
                 output.closeEntry();
                 output.close();

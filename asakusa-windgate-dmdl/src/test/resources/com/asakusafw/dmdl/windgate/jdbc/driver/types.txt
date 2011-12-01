@@ -1,24 +1,25 @@
+@windgate.jdbc.table(name = "TYPES")
 types = {
-    @windgate.column(value = "C_INT")
+    @windgate.jdbc.column(name = "C_INT")
     c_int : INT;
-    @windgate.column(value = "C_TEXT")
+    @windgate.jdbc.column(name = "C_TEXT")
     c_text : TEXT;
-    @windgate.column(value = "C_BOOLEAN")
+    @windgate.jdbc.column(name = "C_BOOLEAN")
     c_boolean : BOOLEAN;
-    @windgate.column(value = "C_BYTE")
+    @windgate.jdbc.column(name = "C_BYTE")
     c_byte : BYTE;
-    @windgate.column(value = "C_SHORT")
+    @windgate.jdbc.column(name = "C_SHORT")
     c_short : SHORT;
-    @windgate.column(value = "C_LONG")
+    @windgate.jdbc.column(name = "C_LONG")
     c_long : LONG;
-    @windgate.column(value = "C_FLOAT")
+    @windgate.jdbc.column(name = "C_FLOAT")
     c_float : FLOAT;
-    @windgate.column(value = "C_DOUBLE")
+    @windgate.jdbc.column(name = "C_DOUBLE")
     c_double : DOUBLE;
-    @windgate.column(value = "C_DECIMAL")
+    @windgate.jdbc.column(name = "C_DECIMAL")
     c_decimal : DECIMAL;
-    @windgate.column(value = "C_DATE")
+    @windgate.jdbc.column(name = "C_DATE")
     c_date : DATE;
-    @windgate.column(value = "C_DATETIME")
+    @windgate.jdbc.column(name = "C_DATETIME")
     c_datetime : DATETIME;
 };

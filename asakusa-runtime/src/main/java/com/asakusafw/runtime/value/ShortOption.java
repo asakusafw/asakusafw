@@ -28,6 +28,23 @@ public final class ShortOption extends ValueOption<ShortOption> {
     private short value;
 
     /**
+     * Creates a new instance which represents {@code null} value.
+     */
+    public ShortOption() {
+        super();
+    }
+
+    /**
+     * Creates a new instance which represents the specified value.
+     * @param value the initial value
+     */
+    public ShortOption(short value) {
+        super();
+        this.value = value;
+        this.nullValue = false;
+    }
+
+    /**
      * このオブジェクトが表現する値を返す。
      * @return このオブジェクトが表現する値
      * @throws NullPointerException この値が{@code null}を表現する場合

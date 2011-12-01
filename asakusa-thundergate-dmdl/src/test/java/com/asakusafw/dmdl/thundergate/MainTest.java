@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,21 +49,7 @@ public class MainTest {
     @Test
     public void simple() throws Exception {
         List<String> arguments = new ArrayList<String>();
-
-        Properties jdbcProperties = new Properties();
-        jdbcProperties.setProperty(Constants.K_JDBC_DRIVER, "com.asakusafw.Driver");
-        jdbcProperties.setProperty(Constants.K_JDBC_URL, "asakusa:thundergate");
-        jdbcProperties.setProperty(Constants.K_JDBC_USER, "asakusa");
-        jdbcProperties.setProperty(Constants.K_JDBC_PASSWORD, "asakusapw");
-        jdbcProperties.setProperty(Constants.K_DATABASE_NAME, "asakusadb");
-        File jdbc = folder.newFile("jdbc.properties");
-        FileOutputStream out = new FileOutputStream(jdbc);
-        try {
-            jdbcProperties.store(out, "testing");
-        } finally {
-            out.close();
-        }
-
+        File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
 
         Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
@@ -82,7 +69,76 @@ public class MainTest {
         assertThat(conf.getEncoding(), is(Charset.forName("ASCII")));
         assertThat(conf.getOutput(), is(output));
         assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("NOT_ACCEPT"), is(false));
         assertThat(conf.getMatcher().acceptModel("DENIED"), is(false));
+        assertThat(conf.getMatcher().acceptModel("__TG_CACHE_INFO"), is(false));
+    }
+
+    /**
+     * configuration with empty includes/excludes.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void matcher_empty() throws Exception {
+        List<String> arguments = new ArrayList<String>();
+
+        File jdbc = jdbc();
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+        Collections.addAll(arguments, "-encoding", "ASCII");
+        Configuration conf = Main.loadConfigurationFromArguments(arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("NOT_ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("__TG_CACHE_INFO"), is(false));
+    }
+
+    /**
+     * configuration with empty includes/excludes.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void matcher_only_includes() throws Exception {
+        List<String> arguments = new ArrayList<String>();
+
+        File jdbc = jdbc();
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+        Collections.addAll(arguments, "-encoding", "ASCII");
+        Collections.addAll(arguments, "-includes", "ACCEPT|DENIED");
+        Configuration conf = Main.loadConfigurationFromArguments(arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("NOT_ACCEPT"), is(false));
+        assertThat(conf.getMatcher().acceptModel("DENIED"), is(true));
+        assertThat(conf.getMatcher().acceptModel("__TG_CACHE_INFO"), is(false));
+    }
+
+    /**
+     * configuration with empty includes/excludes.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void matcher_only_excludes() throws Exception {
+        List<String> arguments = new ArrayList<String>();
+
+        File jdbc = jdbc();
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+        Collections.addAll(arguments, "-encoding", "ASCII");
+        Collections.addAll(arguments, "-excludes", "DENIED");
+        Configuration conf = Main.loadConfigurationFromArguments(arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getMatcher().acceptModel("ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("NOT_ACCEPT"), is(true));
+        assertThat(conf.getMatcher().acceptModel("DENIED"), is(false));
+        assertThat(conf.getMatcher().acceptModel("__TG_CACHE_INFO"), is(false));
     }
 
     /**
@@ -93,20 +149,7 @@ public class MainTest {
     public void with_cache() throws Exception {
         List<String> arguments = new ArrayList<String>();
 
-        Properties jdbcProperties = new Properties();
-        jdbcProperties.setProperty(Constants.K_JDBC_DRIVER, "com.asakusafw.Driver");
-        jdbcProperties.setProperty(Constants.K_JDBC_URL, "asakusa:thundergate");
-        jdbcProperties.setProperty(Constants.K_JDBC_USER, "asakusa");
-        jdbcProperties.setProperty(Constants.K_JDBC_PASSWORD, "asakusapw");
-        jdbcProperties.setProperty(Constants.K_DATABASE_NAME, "asakusadb");
-        File jdbc = folder.newFile("jdbc.properties");
-        FileOutputStream out = new FileOutputStream(jdbc);
-        try {
-            jdbcProperties.store(out, "testing");
-        } finally {
-            out.close();
-        }
-
+        File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
 
         Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
@@ -135,5 +178,27 @@ public class MainTest {
         assertThat(conf.getTimestampColumn(), is("LAST_UPDT_DATETIME"));
         assertThat(conf.getDeleteFlagColumn(), is("LOGICAL_DEL_FLG"));
         assertThat(conf.getDeleteFlagValue().toStringValue(), is("1"));
+    }
+
+    private File jdbc() throws IOException {
+        Properties jdbcProperties = new Properties();
+        jdbcProperties.setProperty(Constants.K_JDBC_DRIVER, "com.asakusafw.Driver");
+        jdbcProperties.setProperty(Constants.K_JDBC_URL, "asakusa:thundergate");
+        jdbcProperties.setProperty(Constants.K_JDBC_USER, "asakusa");
+        jdbcProperties.setProperty(Constants.K_JDBC_PASSWORD, "asakusapw");
+        jdbcProperties.setProperty(Constants.K_DATABASE_NAME, "asakusadb");
+        File jdbc = jdbc(jdbcProperties);
+        return jdbc;
+    }
+
+    private File jdbc(Properties jdbcProperties) throws IOException {
+        File jdbc = folder.newFile("jdbc.properties");
+        FileOutputStream out = new FileOutputStream(jdbc);
+        try {
+            jdbcProperties.store(out, "testing");
+        } finally {
+            out.close();
+        }
+        return jdbc;
     }
 }

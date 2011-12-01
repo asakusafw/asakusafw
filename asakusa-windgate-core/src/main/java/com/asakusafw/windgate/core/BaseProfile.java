@@ -45,10 +45,21 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
     public abstract Class<? extends T> getProviderClass();
 
     /**
+     * Returns the current profile context.
+     * @return the current profile context
+     * @since 0.2.4
+     */
+    public abstract ProfileContext getContext();
+
+    /**
      * Returns the plugin class loader.
      * @return the class loader
+     * @deprecated use {@link #getContext()} instead
      */
-    public abstract ClassLoader getClassLoader();
+    @Deprecated
+    public ClassLoader getClassLoader() {
+        return getContext().getClassLoader();
+    }
 
     /**
      * Returns this object.
@@ -61,20 +72,20 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
      * The target class must be a subclass of the specified provider.
      * @param <T> provider interface type
      * @param className target class name
-     * @param loader target class loader
+     * @param context the current profile context
      * @param providerInterface provider interface
      * @return the loaded class
      * @throws IllegalArgumentException if failed to load the specified class, or any parameter is {@code null}
      */
     protected static <T extends BaseProvider<?>> Class<? extends T> loadProviderClass(
             String className,
-            ClassLoader loader,
+            ProfileContext context,
             Class<T> providerInterface) {
         if (className == null) {
             throw new IllegalArgumentException("className must not be null"); //$NON-NLS-1$
         }
-        if (loader == null) {
-            throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         if (providerInterface == null) {
             throw new IllegalArgumentException("providerInterface must not be null"); //$NON-NLS-1$
@@ -83,7 +94,7 @@ public abstract class BaseProfile<S extends BaseProfile<S, T>, T extends BasePro
                 className);
         Class<?> loaded;
         try {
-            loaded = loader.loadClass(className);
+            loaded = context.getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
             WGLOG.error("E02001",
                     className);

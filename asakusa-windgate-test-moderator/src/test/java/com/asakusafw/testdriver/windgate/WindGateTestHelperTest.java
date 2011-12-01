@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateProcessDescription;
@@ -94,7 +95,7 @@ public class WindGateTestHelperTest {
     }
 
     /**
-     * Test method for {@link WindGateTestHelper#createResourceManipulator(WindGateProcessDescription, ParameterList)}.
+     * Test method for {@link WindGateTestHelper#createResourceManipulator(TestContext, WindGateProcessDescription, ParameterList)}.
      * @throws Exception if failed
      */
     @Test
@@ -113,6 +114,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(
+                new TestContext.Empty(),
                 description,
                 new ParameterList());
         assertThat(file.exists(), is(true));
@@ -138,7 +140,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.
@@ -165,7 +167,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.
@@ -192,7 +194,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.

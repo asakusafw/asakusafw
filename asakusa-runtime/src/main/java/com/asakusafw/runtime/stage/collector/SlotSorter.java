@@ -70,7 +70,9 @@ public abstract class SlotSorter extends Reducer<
         this.results = new Result[objects.length];
         for (int i = 0; i < objects.length; i++) {
             String name = names[i];
-            results[i] = output.getResultSink(name);
+            if (name != null) {
+                results[i] = output.getResultSink(name);
+            }
         }
     }
 

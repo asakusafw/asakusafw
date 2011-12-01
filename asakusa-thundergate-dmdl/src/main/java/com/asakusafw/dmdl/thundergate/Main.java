@@ -194,6 +194,7 @@ public class Main {
                 Pattern pattern = Pattern.compile(excludes, Pattern.CASE_INSENSITIVE);
                 result.setMatcher(new ModelMatcher.And(
                         result.getMatcher(),
+                        new ModelMatcher.Not(new ModelMatcher.ConstantTable(Constants.SYSTEM_TABLE_NAMES)),
                         new ModelMatcher.Not(new ModelMatcher.Regex(pattern))));
                 LOG.info("Exclusion: {}", pattern);
             } catch (PatternSyntaxException e) {
@@ -202,6 +203,10 @@ public class Main {
                         excludes),
                         e);
             }
+        } else {
+            result.setMatcher(new ModelMatcher.And(
+                    result.getMatcher(),
+                    new ModelMatcher.Not(new ModelMatcher.ConstantTable(Constants.SYSTEM_TABLE_NAMES))));
         }
 
         String encoding = getOption(cmd, OPT_ENCODING, false);

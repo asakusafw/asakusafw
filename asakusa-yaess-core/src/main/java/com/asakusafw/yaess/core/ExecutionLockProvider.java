@@ -41,11 +41,9 @@ public abstract class ExecutionLockProvider implements Service {
     private volatile ExecutionLock.Scope scope;
 
     @Override
-    public final void configure(
-            ServiceProfile<?> profile,
-            VariableResolver resolver) throws InterruptedException, IOException {
+    public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         configureScope(profile);
-        doConfigure(profile, resolver);
+        doConfigure(profile);
     }
 
     private void configureScope(ServiceProfile<?> profile) throws IOException {
@@ -70,13 +68,10 @@ public abstract class ExecutionLockProvider implements Service {
     /**
      * Configures this provider internally (extention point).
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
-    protected abstract void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException;
+    protected abstract void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException;
 
     private ExecutionLock.Scope getScope() {
         if (scope == null) {

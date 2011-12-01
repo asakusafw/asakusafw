@@ -368,12 +368,61 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 ..  [#] 注釈 ``@JobFlow`` の ``name`` に指定した文字列を利用して下さい
 
 
+出力結果を保存する
+------------------
+テスト時の出力結果を保存するには、対象の出力に対して ``.dumpActual("<出力先>")`` を指定します。
+
+..  code-block:: java
+
+    Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
+        .dumpActual("target/dump/actual.xls")
+        .verify("shipment.xls#output", "shipment.xls#rule");
+
+出力先には、ファイルパスや ``File`` [#]_ オブジェクトを指定できます。
+ファイルパスで相対パスを指定した場合、テストを実行したワーキングディレクトリからの相対パス上に結果が出力されます。
+
+..  hint::
+    EclipseなどのIDEを利用している場合、ファイルが出力された後にワークスペースの表示更新やリフレッシュなどを行うまで、出力されたファイルが見えない場合があります。
+
+また、出力先に指定したファイル名の拡張子に応じた形式で出力が行われます。
+標準ではExcelシートを出力する ``.xls`` を指定できます。
+
+この操作は、 ``verify()`` と組み合わせて利用することもできます。
+
+..  code-block:: java
+
+    Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
+        .dumpActual("target/dump/actual.xls")
+        .verify("shipment.xls#output", "shipment.xls#rule");
+
+..  [#] ``java.io.File``
+
+比較結果を保存する
+------------------
+出力されたデータの比較結果を保存するには、対象の出力に対して ``.dumpDifference(<出力先>)`` を指定します。
+
+..  code-block:: java
+
+    Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
+        .verify("shipment.xls#output", "shipment.xls#rule")
+        .dumpActual("target/dump/difference.html");
+
+「 `出力結果を保存する`_ 」と同様に、出力先にはファイルパスや ``File`` オブジェクトを指定できます。
+ファイルパスで相対パスを指定した場合、テストを実行したワーキングディレクトリからの相対パス上に結果が出力されます。
+
+また、出力先に指定したファイル名の拡張子に応じた形式で出力が行われます。
+標準ではHTMLファイルを出力する ``.html`` を指定できます。
+
+..  warning::
+    この操作は、 ``verify()`` と組み合わせて指定してください。 ``verify()`` の指定がない場合、比較結果の保存は行われません。
+    また、比較結果に差異がない場合には比較結果は保存されません。
+
 テスト条件をJavaで記述する
 --------------------------
 テスト条件は期待データと実際の結果を突き合わせるための
 ルールを示したもので、Javaで直接記述することも可能です。
 
-テスト条件をJavaで記述するには、 ``ModelVerifier`` インターフェースを
+テスト条件をJavaで記述するには、 ``ModelVerifier`` [#]_ インターフェースを
 実装したクラスを作成します。
 このインターフェースには、2つのインターフェースメソッドが定義されています。
 
@@ -443,6 +492,90 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
 ..  [#] ``com.asakusafw.testdriver.core.ModelVerifier``
 
+テスト条件をJavaで拡張する
+--------------------------
+「 `テスト条件をJavaで記述する`_ 」という他に、Excelなどで記述したテスト条件をJavaで拡張することもできます。
+
+テスト条件をJavaで拡張するには、 ``ModelTester`` [#]_ インターフェースを実装したクラスを作成します。
+このインターフェースは先述の ``ModelVerifier`` の親インターフェースとして宣言されており、以下のインターフェースメソッドが定義されています。
+
+``Object verify(T expected, T actual)``
+    突き合わせた2つのオブジェクトを比較し、比較に失敗した場合には
+    その旨のメッセージを返す。成功した場合には ``null`` を返す。
+
+
+``ModelTester`` インターフェースを利用したテストでは、次のように期待データと結果の比較を行います。
+
+#. Excel等で記述したテスト条件で期待データと結果データの突き合わせと比較を行う
+#. 上記で突き合わせに成功したら、 ``ModelTester.verify(<期待データ>, <結果データ>)`` で比較を行う
+#. 両者の比較のうちいずれかに失敗したらテストは失敗となる
+
+以下は ``ModelTester`` インターフェースの実装例です。
+
+..  code-block:: java
+
+    class ExampleTester implements ModelTester<Hoge> {
+
+        @Override
+        public Object verify(Hoge expected, Hoge actual) {
+            if (expected == null || actual == null) {
+                return "invalid record";
+            }
+            if (expected.getValue() != actual.getValue()) {
+                return "invalid value";
+            }
+            return null;
+        }
+    }
+
+``ModelTester`` を実装したクラスを作成したら、
+各 ``Tester`` クラスの ``verify`` メソッドの第三引数にインスタンスを指定します [#]_ 。
+
+..  code-block:: java
+
+    @Test
+    public void testExample() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.input("shipment", Shipment.class)
+            .prepare("shipment.xls#input");
+        tester.output("hoge", Hoge.class)
+            .verify("hoge.json", "hoge.xls#rule", new ExampleTester());
+        ...
+    }
+
+テスト条件の拡張は、主にExcelなどで表現しきれない比較を行いたい場合に利用できます。
+比較方法をすべてJavaで記述する場合には「 `テスト条件をJavaで記述する`_ 」の方法を参照してください。
+
+..  [#] ``com.asakusafw.testdriver.core.ModelTester``
+
+..  [#] 第三引数を指定できるのは、テスト条件をパスで指定した場合のみです。
+        ``ModelVerifier`` を利用する場合には指定できません。
+
+テストドライバの各実行ステップをスキップする
+--------------------------------------------
+テストドライバは、各ステップをスキップするためのメソッドが提供されています。
+これを使用することで、例えば入力データのクリーニングをスキップして既存データに対するテストを行う
+といったことや、出力データの検証をスキップしてテストドライバAPIの外側でテストを行う
+といったことができるようになります。
+
+``void skipCleanInput(boolean skip)``
+    入力データのクリーニング(truncate)をスキップするかを設定します。
+
+``void skipCleanOutput(boolean skip)``
+    出力データのクリーニング(truncate)をスキップするかを設定します。
+
+``void skipPrepareInput(boolean skip)``
+    入力データのセットアップ(prepare)をスキップするかを設定します。    
+
+``void skipPrepareOutput(boolean skip)``
+    出力データのセットアップ(prepare)をスキップするかを設定します。    
+
+``void skipRunJobFlow(boolean skip)``
+    ジョブフローの実行をスキップするかを設定します。    
+
+``void skipVerify(boolean skip)``
+    テスト結果の検証をスキップするかを設定します。
+
 コンテキストAPIを利用する演算子のテスト
 ---------------------------------------
 テスト対象のデータフローでコンテキストAPIを利用している場合、
@@ -495,3 +628,6 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 ..  note::
     データフローのテストでは、演算子の際のような
     ``reload`` は不要です。
+
+..  [#] :doc:`../application/administrator-guide` を参照
+
