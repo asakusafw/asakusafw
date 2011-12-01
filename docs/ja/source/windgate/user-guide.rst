@@ -293,7 +293,8 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
 ..  attention::
     この構成では、データの取得時にアプリケーション側でのページネーション等を行いません。
     そのため、MySQLなどのカーソル機能が十分でないデータベースでは、巨大なデータを取得する際に十分なパフォーマンスが得られません。
-    特に、MySQLの場合にはドライバの指定時に ``?useCursorFetch=true&defaultFetchSize=1024`` などカーソルを利用する設定が必要になります。
+    特に、MySQLの場合には設定に ``resource.jdbc.batchGetUnit=1000`` , ``resource.jdbc.properties.useCursorFetch=true`` 等を指定し、
+    カーソルを利用するようにしてください。
 
 構成ファイル内の ``resource.jdbc`` セクション内に以下の設定を記述します。
 
@@ -313,11 +314,23 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
       - データベースのユーザ名
     * - ``resource.jdbc.password``
       - データベースのパスワード
+    * - ``resource.jdbc.batchGetUnit``
+      - 一度に取得するデータの件数 (読み出し時) [#]_
     * - ``resource.jdbc.batchPutUnit``
-      - 一度のバッチで挿入するデータの件数 (書き込み時) [#]_
+      - 一度に挿入するデータの件数 (書き込み時) [#]_
+    * - ``resource.jdbc.connect.retryCount``
+      - 接続時のリトライ回数 (省略時にはリトライなし)
+    * - ``resource.jdbc.connect.retryInterval``
+      - 接続リトライまでの間隔 (秒、省略時には10秒)
+    * - ``resource.jdbc.properties.<キー名>``
+      - コネクションプロパティの値
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../application/administrator-guide` を参照してください。
+
+..  [#] この値は ``Statement.setFetchSize()`` に設定します。
+    PostgreSQL等ではこの設定によってカーソルを利用するモードになります。
+    この値が未設定の場合や ``0`` を設定した場合、 ``Statement.getFetchSize()`` は既定値が利用されます。
 
 ..  [#] 大きすぎる値を指定するとメモリ不足で正しく動作しません。
     1000から10000程度での動作を確認しています。
