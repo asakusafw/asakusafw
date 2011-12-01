@@ -139,8 +139,20 @@
 						<exclude>com.asakusafw:asakusa-thundergate</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-test-moderator</exclude>
+						<exclude>com.asakusafw:asakusa-thundergate-runtime</exclude>
+						<exclude>com.asakusafw:asakusa-thundergate-test-moderator
+						</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-vocabulary</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-hadoopfs</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-jdbc</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-tools</exclude>
+						<exclude>mysql:mysql-connector-java</exclude>
 						<exclude>com.asakusafw:ashigel-compiler-bootstrap</exclude>
 						<exclude>org.eclipse.jdt:core</exclude>
 					</excludes>
@@ -290,6 +302,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.asakusafw</groupId>
+						<artifactId>asakusa-distribution</artifactId>
+						<version>${asakusafw.version}</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>default-cli</id>
@@ -297,9 +316,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/asakusa-install-dev.xml</descriptor>
-							</descriptors>
+							<descriptorRefs>
+								<descriptorRef>dev-complement-lib</descriptorRef>
+								<descriptorRef>prod-windgate-complement-lib</descriptorRef>
+								<descriptorRef>prod-windgate-ssh-complement-lib</descriptorRef>
+								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
+							</descriptorRefs>
+							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -377,19 +400,28 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
-			<classifier>dev-windgate-exclude-lib</classifier>
+			<classifier>dev-exclude-lib</classifier>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.asakusafw</groupId>
-					<artifactId>asakusa-thundergate</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-cleaner</artifactId>
+			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
+			<classifier>prod-windgate-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-windgate-ssh-exclude-lib</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>prod-cleaner-exclude-lib</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

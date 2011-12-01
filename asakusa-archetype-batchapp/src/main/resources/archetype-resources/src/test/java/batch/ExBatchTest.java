@@ -29,10 +29,9 @@ public class ExBatchTest {
 
     /**
      * サンプル：バッチの実行
-     * @throws Throwable テストに失敗した場合
      */
     @Test
-    public void testExample() throws Throwable {
+    public void testExample() {
 
         BatchTester batchDriver = new BatchTester(this.getClass());
         String testDataSheet = "EX1.xls";

@@ -26,7 +26,7 @@
 
 		<!-- lib -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>cleaner/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>

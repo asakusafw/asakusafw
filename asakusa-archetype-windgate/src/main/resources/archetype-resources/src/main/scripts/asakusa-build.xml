@@ -110,10 +110,9 @@
 
 		<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
 			<fileset dir="${project.build.directory}">
-				<include name="${project.artifactId}-${project.version}-asakusa-install-dev.tar.gz" />
+				<include name="asakusafw-${asakusafw.version}-dev.tar.gz" />
 			</fileset>
 		</untar>
-		<delete dir="${env.ASAKUSA_HOME}/META-INF" />
 
 		<chmod perm="755">
 			<fileset dir="${env.ASAKUSA_HOME}">

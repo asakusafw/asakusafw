@@ -19,10 +19,14 @@
 		<fileSet>
 			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
 			<outputDirectory>experimental/bin</outputDirectory>
-			<includes>
-				<include>hadoop_job_run_ssh_bridge.sh</include>
-			</includes>
 			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-test-driver/src/main/dist/core/conf</directory>
+			<outputDirectory>core/conf</outputDirectory>
+			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -47,10 +51,24 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
-		
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
+			<outputDirectory>yaess-hadoop/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
+			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -58,7 +76,15 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>ext/lib</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<directoryMode>0775</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -67,7 +93,7 @@
 		</fileSet>
 		<!-- lib -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>windgate/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -75,7 +101,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>core/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -83,7 +109,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -91,7 +117,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/plugin</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -99,7 +125,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/tools</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>

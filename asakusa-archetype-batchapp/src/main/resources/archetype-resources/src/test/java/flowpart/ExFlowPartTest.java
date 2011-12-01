@@ -31,11 +31,9 @@ public class ExFlowPartTest {
 
     /**
      * サンプル：フロー部品の実行
-     * 
-     * @throws Throwable 
      */
     @Test
-    public void testExample() throws Throwable {
+    public void testExample() {
 
         String testDataSheet = "EX1.xls";
 

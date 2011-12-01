@@ -2,13 +2,41 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>dev-windgate-exclude-lib</id>
+	<id>dev-exclude-lib</id>
 	<formats>
 		<format>jar</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	
 	<fileSets>
+		<fileSet>
+			<directory>../asakusa-thundergate/src/main/bin</directory>
+			<outputDirectory>bulkloader/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-thundergate/src/main/conf</directory>
+			<outputDirectory>bulkloader/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-thundergate/src/main/sql</directory>
+			<outputDirectory>bulkloader/sql</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
+			<outputDirectory>thundergate-cache</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
 		<fileSet>
 			<directory>../asakusa-windgate-plugin/src/main/dist/windgate</directory>
 			<outputDirectory>windgate</outputDirectory>
@@ -89,7 +117,7 @@
 
 		<!-- empty directory -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>batchapps</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -97,7 +125,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>ext/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -105,7 +133,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -113,7 +141,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>temp</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -123,7 +151,15 @@
 
 		<!-- lib -->
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>bulkloader/lib</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<directoryMode>0775</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>windgate/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -131,7 +167,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>windgate-ssh/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -139,7 +175,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>core/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -147,7 +183,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>cleaner/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -155,7 +191,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -163,7 +199,7 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/plugin</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
@@ -171,14 +207,13 @@
 			<directoryMode>0775</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly</directory>
+			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>yaess/tools</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
 			<directoryMode>0775</directoryMode>
 		</fileSet>
-
 	</fileSets>
 
 </assembly>
