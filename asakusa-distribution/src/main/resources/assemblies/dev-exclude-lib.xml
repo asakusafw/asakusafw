@@ -10,6 +10,13 @@
 	
 	<fileSets>
 		<fileSet>
+			<directory>src/main/resources/scripts</directory>
+			<outputDirectory>scripts</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
 			<directory>../asakusa-thundergate/src/main/bin</directory>
 			<outputDirectory>bulkloader/bin</outputDirectory>
 			<fileMode>0744</fileMode>
