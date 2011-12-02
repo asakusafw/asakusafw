@@ -21,6 +21,7 @@
 		<hamcrest.version>1.1</hamcrest.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<asakusa.build.antfile>${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
 	</properties>
 
 	<profiles>
@@ -244,8 +245,8 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
-								<ant antfile="${basedir}/src/main/scripts/asakusa-build.xml">
-									<target name="modelgen" />
+								<ant antfile="${asakusa.build.antfile}">
+									<target name="generate-model" />
 								</ant>
 							</target>
 						</configuration>
@@ -259,8 +260,8 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
-								<ant antfile="${basedir}/src/main/scripts/asakusa-build.xml">
-									<target name="batch:compile:all" />
+								<ant antfile="${asakusa.build.antfile}">
+									<target name="compile-batchapp" />
 								</ant>
 							</target>
 						</configuration>
@@ -273,8 +274,22 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
-								<ant antfile="${basedir}/src/main/scripts/asakusa-build.xml"
-									target="install:dev" />
+								<tstamp>
+									<format property="now.time" pattern="yyyyMMddHHmmss" />
+								</tstamp>
+								<move file="${env.ASAKUSA_HOME}" todir="${env.ASAKUSA_HOME}_${now.time}"
+									failonerror="false" />
+								<mkdir dir="${env.ASAKUSA_HOME}" />
+								<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
+									<fileset dir="${project.build.directory}">
+										<include name="asakusafw-${asakusafw.version}-dev.tar.gz" />
+									</fileset>
+								</untar>
+								<chmod perm="755">
+									<fileset dir="${env.ASAKUSA_HOME}">
+										<include name="**/*.sh" />
+									</fileset>
+								</chmod>
 							</target>
 						</configuration>
 					</execution>
