@@ -86,6 +86,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final String MODULE_NAME_PREFIX = "bulkloader.";
 
+    private static final String CACHE_FEATURE_PREFIX = "bulkloader-cache.";
+
     private static final Location CACHE_HEAD_CONTENTS = new Location(null, CacheStorage.HEAD_DIRECTORY_NAME)
         .append("part")
         .asPrefix();
@@ -715,7 +717,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                                 cacheUser,
                                 context.getExecutionId(),
                         }),
-                        MODULE_NAME_PREFIX + cacheUser,
+                        CACHE_FEATURE_PREFIX + cacheUser,
                         getProfileName(cacheUser),
                         getEnvironment(context)));
             }

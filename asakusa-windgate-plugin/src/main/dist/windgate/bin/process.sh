@@ -139,12 +139,14 @@ echo "  -script $_WG_SCRIPT"
 echo "  -session $_WG_SESSION"
 echo "  -plugin $_WG_PLUGIN"
 echo "  -arguments $_WG_ARGUMENTS"
+echo "  WINDGATE_OPTS=\"$WINDGATE_OPTS\""
 
 export WINDGATE_PROFILE="$_OPT_PROFILE"
 
 if [ -d "$HADOOP_HOME" ]
 then
     export HADOOP_CLASSPATH="$_WG_CLASSPATH"
+    HADOOP_OPTS="$HADOOP_OPTS $WINDGATE_OPTS"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
@@ -159,6 +161,7 @@ then
         -arguments "$_WG_ARGUMENTS"
 else
     java \
+        $WINDGATE_OPTS \
         -classpath "$_WG_CLASSPATH" \
         "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
         "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
@@ -175,14 +178,15 @@ fi
 _WG_RET=$?
 if [ $_WG_RET -ne 0 ]
 then
-	echo "WindGate failed with exit code: $_WG_RET" 1>&2
-	echo "  -classpath $_WG_CLASSPATH" 1>&2
-	echo "  -mode $_WG_MODE" 1>&2
-	echo "  -profile $_WG_PROFILE" 1>&2
-	echo "  -script $_WG_SCRIPT" 1>&2
-	echo "  -session $_WG_SESSION" 1>&2
-	echo "  -plugin $_WG_PLUGIN" 1>&2
-	echo "  -arguments $_WG_ARGUMENTS" 1>&2
-	exit $_WG_RET
+    echo "WindGate failed with exit code: $_WG_RET" 1>&2
+    echo "  -classpath $_WG_CLASSPATH" 1>&2
+    echo "  -mode $_WG_MODE" 1>&2
+    echo "  -profile $_WG_PROFILE" 1>&2
+    echo "  -script $_WG_SCRIPT" 1>&2
+    echo "  -session $_WG_SESSION" 1>&2
+    echo "  -plugin $_WG_PLUGIN" 1>&2
+    echo "  -arguments $_WG_ARGUMENTS" 1>&2
+    echo "  WINDGATE_OPTS=\"$WINDGATE_OPTS\"" 1>&2
+    exit $_WG_RET
 fi
 
