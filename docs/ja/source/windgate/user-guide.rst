@@ -346,7 +346,7 @@ WindGateの実行に特別な環境変数を利用する場合、 ``$ASAKUSA_HOM
 
 WindGateをAsakusa Frameworkのバッチから利用する場合、通常は以下の環境変数が必要です。
 
-..  list-table:: WindGateが利用する環境変数
+..  list-table:: WindGateの実行に必要な環境変数
     :widths: 10 60
     :header-rows: 1
 
@@ -358,6 +358,17 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、通常は以�
       - Hadoopのインストール先パス。未指定の場合はHadoopに関するクラスパスを通さない。
     * - ``HADOOP_USER_CLASSPATH_FIRST``
       - `WindGateのログ設定`_ 時にHadoopのログ機構を利用しないための設定。 ``true`` を指定する。
+
+その他、以下の環境変数を利用可能です。
+
+..  list-table:: WindGateで利用可能な環境変数
+    :widths: 10 60
+    :header-rows: 1
+
+    * - 名前
+      - 備考
+    * - ``WINDGATE_OPTS``
+      - WindGateを実行するJava VMの追加オプション。
 
 WindGateのログ設定
 ~~~~~~~~~~~~~~~~~~
