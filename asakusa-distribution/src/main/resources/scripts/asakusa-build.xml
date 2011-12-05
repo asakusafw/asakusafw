@@ -22,7 +22,7 @@
 		<delete>
 			<fileset dir="${asakusa.testdatasheet.output}" includes="**/*.xls" />
 		</delete>
-		
+
 		<java classname="com.asakusafw.dmdl.java.Main" classpath="${compile_classpath}" fork="true" failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 			<arg value="-output" />
@@ -36,18 +36,27 @@
 			<arg value="-targetencoding" />
 			<arg value="${project.build.sourceEncoding}" />
 		</java>
-		<antcall target="generate-testbook">
-			<param name="asakusa.generate.testbook.dmdl.dir" value="${asakusa.dmdl.dir}" />
-		</antcall>
+		<antcall target="generate-testbook" />
 	</target>
 
 	<target name="generate-thundergate-model"
-	        description="Genrate dmdl for ThunderGate from Information Schema of MySQL."
+	        description="Dispatch task for ThunderGate modelgen."
+	        depends="modelgen-with-thundergate-dmdl, modelgen-without-thundergate-dmdl">
+	</target>
+
+	<target name="modelgen-without-thundergate-dmdl"
+	        description="Generate data model classes form DMDL scripts (not execute from dmdl to ddl)."
+	        unless="asakusa.build.database.enabled">
+		<antcall target="generate-model" />
+	</target>
+
+	<target name="modelgen-with-thundergate-dmdl"
+	        description="Genrate dmdl for ThunderGate from Information Schema of MySQL and Generate and generate data model classes form DMDL scripts."
 	        if="asakusa.build.database.enabled">
 		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
-        <mkdir dir="${asakusa.dmdl.fromddl.output}" />
+		<mkdir dir="${asakusa.dmdl.fromddl.output}" />
 
 		<sql driver="${jdbc.driver}"
 		     url="${jdbc.url}"
