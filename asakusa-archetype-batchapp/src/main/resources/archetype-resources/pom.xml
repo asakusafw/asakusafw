@@ -320,13 +320,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
-				<dependencies>
-					<dependency>
-						<groupId>com.asakusafw</groupId>
-						<artifactId>asakusa-distribution</artifactId>
-						<version>${asakusafw.version}</version>
-					</dependency>
-				</dependencies>
 				<executions>
 					<execution>
 						<id>default-cli</id>
@@ -334,12 +327,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptorRefs>
-								<descriptorRef>dev-complement-lib</descriptorRef>
-								<descriptorRef>prod-thundergate-db-complement-lib</descriptorRef>
-								<descriptorRef>prod-thundergate-hc-complement-lib</descriptorRef>
-								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
-							</descriptorRefs>
+							<descriptors>
+								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
+								<descriptor>src/main/assembly/prod-thundergate-db-complement-lib.xml</descriptor>
+								<descriptor>src/main/assembly/prod-thundergate-hc-complement-lib.xml</descriptor>
+								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
+							</descriptors>
 							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
