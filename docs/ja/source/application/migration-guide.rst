@@ -6,6 +6,38 @@
 
 なお、Asakusa Framework の開発環境における標準的なバージョンアップ手順については、 :ref:`vup-development-environment` を参照してください。
 
+ver0.2.4へのマイグレーション
+============================
+
+pom.xmlの仕様変更
+-----------------
+ver0.2.4ではアーキタイプから生成されるアプリケーションプロジェクトに含まれるpom.xmlに数カ所変更が行われています。過去バージョンで作成したアプリケーションプロジェクトについては、以下のパッチファイルを適用してpom.xmlを0.2.4向けに変更してください。
+
+* アーキタイプ:asaksua-archetype-batchapp (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-batchapp-024pom.patch <migration/asakusa-archetype-batchapp-024pom.patch>`
+* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-windgate-024pom.patch <migration/asakusa-archetype-windgate-024pom.patch>`
+
+上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルの適用例です。
+
+..  code-block:: sh
+
+    cd app-project
+    patch < asakusa-archetype-windgate-024pom.patch
+
+pom.xmlをアプリケーション側で大きく変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合はパッチファイルの内容を確認して変更を取り込むか、ver0.2.4のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlをベースにアプリケーション側で変更した内容を反映させたものを使用してください。
+
+WindGateの仕様変更
+------------------
+WindGateは本バージョンからCSV連携モジュールが追加となり、またWindGateのデフォルトコンフィグレーションはDBMS連携用の設定からCSV連携用の設定に変更されました。また、プロファイル定義ファイルに設定可能ないくつかの項目が追加されました。そのほか、WindGate用のアーキタイプから生成されるサンプルプログラムは、CSV連携用のアプリケーションに変更されています。
+
+過去バージョンで作成したDBMS連携向けアプリケーションはそのまま動作しますが、ver0.2.4で追加された機能を使用する場合は、 WindGateのドキュメント :doc:`../windgate/start-guide` / :doc:`../windgate/user-guide` を参照して下さい。
+
+
+
+----
+
+
 ver0.2.3へのマイグレーション
 ============================
 ver0.2.3ではThunderGateのキャッシュ機能、及びYAESSが追加されたため、必要に応じて DSLの仕様変更、及び開発環境の構成変更に対応する必要があります。
