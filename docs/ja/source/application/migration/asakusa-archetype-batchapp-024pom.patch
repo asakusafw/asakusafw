@@ -1,5 +1,5 @@
 diff --git pom.xml pom.xml
-index 89f828a..2bd7802 100644
+index 89f828a..9d5633d 100644
 --- pom.xml
 +++ pom.xml
 @@ -22,6 +22,7 @@
@@ -82,38 +82,21 @@ index 89f828a..2bd7802 100644
  							</target>
  						</configuration>
  					</execution>
-@@ -287,6 +320,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
- 				<groupId>org.apache.maven.plugins</groupId>
- 				<artifactId>maven-assembly-plugin</artifactId>
- 				<version>2.2.1</version>
-+				<dependencies>
-+					<dependency>
-+						<groupId>com.asakusafw</groupId>
-+						<artifactId>asakusa-distribution</artifactId>
-+						<version>${asakusafw.version}</version>
-+					</dependency>
-+				</dependencies>
- 				<executions>
- 					<execution>
- 						<id>default-cli</id>
-@@ -294,9 +334,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
- 							<goal>single</goal>
+@@ -295,8 +328,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  						</goals>
  						<configuration>
--							<descriptors>
+ 							<descriptors>
 -								<descriptor>src/main/assembly/asakusa-install-dev.xml</descriptor>
--							</descriptors>
-+							<descriptorRefs>
-+								<descriptorRef>dev-complement-lib</descriptorRef>
-+								<descriptorRef>prod-thundergate-db-complement-lib</descriptorRef>
-+								<descriptorRef>prod-thundergate-hc-complement-lib</descriptorRef>
-+								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
-+							</descriptorRefs>
++								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-thundergate-db-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-thundergate-hc-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
+ 							</descriptors>
 +							<finalName>asakusafw-${asakusafw.version}</finalName>
  						</configuration>
  					</execution>
  				</executions>
-@@ -367,8 +411,23 @@ org.eclipse.jdt.apt.reconcileEnabled=true
+@@ -367,8 +404,23 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  		</dependency>
  		<dependency>
  			<groupId>com.asakusafw</groupId>

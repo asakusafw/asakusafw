@@ -1,5 +1,5 @@
 diff --git pom.xml pom.xml
-index f718b58..74d21cb 100644
+index f718b58..4e30260 100644
 --- pom.xml
 +++ pom.xml
 @@ -10,7 +10,6 @@
@@ -87,38 +87,21 @@ index f718b58..74d21cb 100644
  							</target>
  						</configuration>
  					</execution>
-@@ -291,6 +317,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
- 				<groupId>org.apache.maven.plugins</groupId>
- 				<artifactId>maven-assembly-plugin</artifactId>
- 				<version>2.2.1</version>
-+				<dependencies>
-+					<dependency>
-+						<groupId>com.asakusafw</groupId>
-+						<artifactId>asakusa-distribution</artifactId>
-+						<version>${asakusafw.version}</version>
-+					</dependency>
-+				</dependencies>
- 				<executions>
- 					<execution>
- 						<id>default-cli</id>
-@@ -298,9 +331,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
- 							<goal>single</goal>
+@@ -299,8 +325,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  						</goals>
  						<configuration>
--							<descriptors>
+ 							<descriptors>
 -								<descriptor>src/main/assembly/asakusa-install-dev.xml</descriptor>
--							</descriptors>
-+							<descriptorRefs>
-+								<descriptorRef>dev-complement-lib</descriptorRef>
-+								<descriptorRef>prod-windgate-complement-lib</descriptorRef>
-+								<descriptorRef>prod-windgate-ssh-complement-lib</descriptorRef>
-+								<descriptorRef>prod-cleaner-complement-lib</descriptorRef>
-+							</descriptorRefs>
++								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-windgate-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-windgate-ssh-complement-lib.xml</descriptor>
++								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
+ 							</descriptors>
 +							<finalName>asakusafw-${asakusafw.version}</finalName>
  						</configuration>
  					</execution>
  				</executions>
-@@ -378,41 +415,49 @@ org.eclipse.jdt.apt.reconcileEnabled=true
+@@ -378,41 +408,49 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  			<groupId>com.asakusafw</groupId>
  			<artifactId>asakusa-distribution</artifactId>
  			<version>${asakusafw.version}</version>
