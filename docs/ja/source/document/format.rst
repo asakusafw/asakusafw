@@ -61,22 +61,37 @@
       - 内容
     * - ./
       - フレームワーク
-      - 思想の話やインデックス
+      - インデックスやリリースノート、サイトマップ等
+    * - intruduction/
+      - フレームワークの紹介
+      - フレームワークの概要説明、入門ドキュメント、開発の流れ
     * - application/
-      - アプリケーション開発
-      - バッチアプリケーションのビルド手順等
+      - アプリケーション開発環境の整備
+      - 開発環境構築手順やバッチアプリケーションのビルド手順等
+    * - dmdl/
+      - Asakusa Data Model
+      - DMDLおよびDMDLコンパイラ
     * - dsl/
       - Asakusa DSL
       - 各種DSLおよびコンパイラ
+    * - testing/
+      - TestDriver
+      - テストドライバ
+    * - windgate/
+      - WindGate
+      - WindGate
     * - thundergate/
       - ThunderGate
       - ThunderGate
-    * - testing/
-      - Test Driver
-      - テストドライバ
-    * - dmdl/
-      - DMDL
-      - DMDLおよびDMDLコンパイラ
+    * - yaess/
+      - YAESS
+      - YAESS
+    * - administration/
+      - 運用環境の整備
+      - 運用環境へのデプロイメント手順等
+    * - product/
+      - プロダクトについて
+      - ライセンス条項やFAQ、対応プラットフォーム等
     * - documentation/
       - Documentation
       - ドキュメントの書き方等 (内部向け)
