@@ -4,20 +4,19 @@ Asakusa Framework
 Asakusa Frameworkは分散処理技術を活かしたバッチアプリケーションを開発するためのフレームワークです。
 主に、業務システムなどの分野での利用を想定し、テスト機構、外部システム連携、運用システム連携などの機能を提供しています。
 
-* :doc:`introduction/overview`
-
 このサイトについて
 ==================
 このサイトでは、Asakusa Frameworkの開発運用時の利用方法や、フレームワーク内部の技術的な情報を提供します。
-
-* :doc:`site-map`
 
 Asakusa Frameworkの適用事例などについてはコミュニティサイト (http://asakusafw.com) も参考にしてください。
 
 Asakusa Framework入門
 =====================
-* :doc:`introduction/start-guide`
-* :doc:`introduction/next-step`
+
+..  toctree::
+    :maxdepth: 2
+
+    introduction/index
 
 ドキュメント
 ============
@@ -26,7 +25,6 @@ Asakusa Framework入門
     :maxdepth: 1
 
     application/index
-    design/index
     dmdl/index
     dsl/index
     testing/index
@@ -34,6 +32,8 @@ Asakusa Framework入門
     thundergate/index
     yaess/index
     administration/index
+
+* アプリケーションの設計
 
 プロダクトについて
 ==================
@@ -51,6 +51,7 @@ Asakusa Framework入門
 * 課題管理 (https://github.com/asakusafw/asakusafw/issues)
 * ビルドサーバ(Jenkins) (http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/)
 * :doc:`document/index`
+* :doc:`site-map`
 
 コミュニティ
 ============
