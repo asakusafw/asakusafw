@@ -44,8 +44,124 @@ Ubuntu Desktop 日本語 Remix CDのダウンロードサイト [#]_ からiso�
 
 Ubuntu Desktopが起動したら、同梱のブラウザなどを使用してUbuntuからインターネットにできることを確認してください。以後の手順ではインターネットに接続できることを前提とします。
 
-また必須の手順ではないですが、ここでVMWare Toolsをインストールしておくとよいでしょう。
+また、以降の手順で使用するホームフォルダ直下のダウンロードディレクトリを日本語名から英語に変更するため、ターミナルを開いて以下のコマンドを実行します。
 
-Java(SDK)のインストール
+..  code-block:: sh
+
+    LANG=C xdg-user-dirs-gtk-update
+
+ダイアログが開いたら「次回からチェックしない」にチェックを入れ、「Update Names」を選択します。
+
+そのほか、必須の手順ではないですがここでVMWare Toolsをインストールしておくとよいでしょう。
+
+Java(JDK)のインストール
 -----------------------
+Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
+
+Javaのダウンロードサイト [#]_ から、Java SE 6 の JDK をダウンロードします [#]_ 。
+
+ダウンロードが完了したら、以下の例を参考にしてJavaをインストールします。
+
+..  code-block:: sh
+
+    cd ~/Downloads
+    chmod +x jdk*
+    ./jdk*
+    
+    sudo mkdir /usr/lib/jvm
+    sudo mv jdk1.6.0_* /usr/lib/jvm
+
+    cd /usr/lib/jvm
+    sudo ln -s jdk1.6.0_* jdk-6
+
+..  [#] http://www.oracle.com/technetwork/java/javase/downloads/index.html
+..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-ia64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
+
+このほかに環境変数の設定が必要ですが、本手順では後ほどまとめて設定するため、このまま次に進みます。
+
+Mavenのインストール
+-------------------
+Asakusa Frameworkの開発環境に必要なビルドツールであるMavenをインストールします。
+
+Mavenのダウンロードサイト [#]_ から Maven3 のtarball [#]_ をダウンロードします。
+
+ダウンロードが完了したら、以下の例を参考にしてMavenをインストールします。
+
+..  code-block:: sh
+
+    cd ~/Downloads
+    tar xf apache-maven-*-bin.tar.gz
+    sudo mv apache-maven-* /usr/local/lib
+    ln -s /usr/local/lib/apache-maven-*/bin/mvn /usr/local/bin/mvn
+
+..  [#] http://maven.apache.org/download.html
+..  [#] apache-maven-3.X.X-bin.tar.gz
+
+..  todo:: プロキシ環境の設定について
+
+Hadoopのインストール
+--------------------
+Clouderaから提供されているHadoopのディストリビューションである Cloudera Hadoop Distribution of Hadoop version 3(CDH3)をインストールします。
+
+CDH3のインストール方法はOS毎に提供されているインストールパッケージを使う方法と、tarballを展開する方法がありますが、ここではtarballを展開する方法でインストールします。
+
+CDH3のダウンロードサイト [#]_ から CDH3 のtarball [#]_ をダウンロードします。コンポーネントはHadoopのみをダウンロードします。
+
+..  [#] https://ccp.cloudera.com/display/SUPPORT/CDH3+Downloadable+Tarballs
+..  [#] hadoop-0.20.2-cdh3uX.tar.gz
+
+ダウンロードが完了したら、以下の例を参考にしてCDH3をインストールします。
+
+..  code-block:: sh
+
+    cd ~/Downloads
+    tar xf hadoop-0.20.2-*.tar.gz
+    mv hadoop-0.20.2-*.tar.gz /tmp
+    sudo mv hadoop-0.20.2-* /usr/lib
+    sudo ln -s /usr/lib/hadoop-0.20.2-* /usr/lib/hadoop
+
+環境変数の設定
+--------------
+Asakusa Frameworkの利用に必要となる環境変数を設定します。
+
+$HOME/.profile の最下行に以下の定義を追加します。
+
+..  code-block:: sh
+
+    export JAVA_HOME=/usr/lib/jvm/jdk-6
+    export HADOOP_HOME=/usr/lib/hadoop
+    export ASAKUSA_HOME=$HOME/asakusa
+    export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATH
+
+環境変数をデスクトップ環境に反映させるため、一度デスクトップ環境からログアウトし、再ログインします。
+
+Eclipseのインストール
+---------------------
+アプリケーションの実装・テストに使用する統合開発環境(IDE)として、Eclipseをインストールします。
+
+Eclipseのダウンロードサイト [#]_ から Eclipse IDE for Java Developers (Linux 32 Bit) [#]_ をダウンロードします。
+
+ダウンロードが完了したら、以下の例を参考にしてEclipseをインストールします。
+
+..  code-block:: sh
+
+    cd ~/Downloads
+    tar xf eclipse-java-*-linux-gtk.tar.gz
+    sudo mv eclipse /usr/local/lib
+
+次に、Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ここでは、ワークスペースディレクトリに$HOME/workspace を指定します。
+
+..  code-block:: sh
+
+    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
+
+Eclipseを起動するには、ファイラーから /usr/local/lib/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
+
+..  [#] http://www.eclipse.org/downloads/
+..  [#] eclipse-java-XX-linux-gtk.tar.gz
+
+Asakusa Frameworkのインストールとサンプルアプリケーションの実行
+==============================================================
+
+
 
