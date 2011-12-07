@@ -2,9 +2,9 @@
 Asakusa DSLスタートガイド
 =========================
 
-この文書では、asakusa-archetype-batchappを利用したプロジェクト構成で、Asakusa DSLを使ってバッチアプリケーションを記述する方法について簡単に紹介します。
+この文書では :doc:`../introduction/start-guide` の構成で、Asakusa DSLを使ってバッチアプリケーションを記述する方法について簡単に紹介します。
 
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。また、Asakusa DSLのより詳しい情報は :doc:`user-guide` を参照して下さい。
+Asakusa DSLのより詳しい情報は :doc:`user-guide` を参照して下さい。
 
 データモデルクラスを作成する
 ============================
@@ -276,7 +276,8 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 
 演算子のビルド
 --------------
-asakusa-archetype-batchappから生成したEclipseプロジェクト上では、通常のJavaを使った開発と同様、ソースを記述するとインクリメンタルビルドによって演算子のコンパイルが自動的に行われるほか、注釈プロセッサによって演算子用のJavaソースが以下のディレクトリに自動生成されます。
+:doc:`../introduction/start-guide` の流れで作成したEclipseプロジェクト上では、通常のJavaを使った開発と同様、
+ソースを記述するとインクリメンタルビルドによって演算子のコンパイルが自動的に行われるほか、注釈プロセッサによって演算子用のJavaソースが以下のディレクトリに自動生成されます。
 
 * ``<プロジェクトのルート>/target/generated-sources/annotations``
 
@@ -307,52 +308,126 @@ Asakusa DSLでは、外部入力をソースにデータを処理して外部出
 ジョブフローが利用する外部入出力を定義するには、
 それぞれ「インポーター」と「エクスポーター」の処理内容を記述します。
 
-現在のところ、Asakusa Frameworkでは2種類の外部入出力を提供しています。
+現在のところ、Asakusa Frameworkでは3種類の外部入出力を提供しています。
 
-* Hadoopファイルシステム上のファイル入出力に利用する
+* WindGateと連携してローカルファイルシステムやリレーショナルデータベースのテーブル情報を入出力に利用する
 * ThunderGateと連携してリレーショナルデータベースのテーブル情報を入出力に利用する
+* Hadoopファイルシステム上のファイル入出力に利用する
 
-Hadoopファイルシステムからインポートする
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hadoopファイルシステム上のファイルをインポートする場合、
-``com.asakusafw.vocabulary.external.FileImporterDescription`` クラスのサブクラスを作成して必要な情報を記述します。
-このクラスでは、下記のメソッドをオーバーライドします。
+以降では、サンプルとしてWindGateを利用して、
+ローカルファイルシステム上のCSVファイルを外部入出力に利用します。
 
-``Class<?> getModelType()``
-    処理対象とするモデルオブジェクトの型を表すクラスを指定します。
-    ここに指定した型がジョブフローの入力として利用されます。
+..  caution::
+    「Hadoopファイルシステム上のファイル入出力に利用する」はバックエンドに利用している
+    Hadoopのディストリビューションやバージョンによっては正しく動かない場合があるため、
+    将来Asakusa Frameworkから利用できなくなる可能性があります。
 
-``Set<String> getPaths()``
-    処理対象とするファイルシステム上のパス一覧を指定します。
+CSVフォーマットを定義する
+~~~~~~~~~~~~~~~~~~~~~~~~~
+WindGateがローカルファイルシステム上のCSVファイルを読み書きできるように、それぞれのデータモデルに対するCSVフォーマットを定義します。
 
-``Class<? extends FileInputFormat> getInputFormat()``
-    処理対象とするファイルの形式を表すクラス [#]_ を指定します。
-    このとき、キーは ``NullWritable`` で値は ``getModelType()`` に指定した型である必要があります。
+「 `データモデルクラスを作成する`_ 」で作成したデータモデルの手前に、次のように ``@windgate.csv`` という属性をつけてください。
+この作業により、対象のデータモデルと同じ形式のCSVファイルをWindGateが入出力に利用できるようになります。
+
+..  code-block:: none
+
+    @windgate.csv
+    example_model = {
+        ...
+    };
+
+この属性をつけるのは、CSVの入出力に利用するデータモデルのみで十分です。
+この属性をつけた状態でデータモデルを再作成すると、元のデータモデルクラスのほかに以下の3つのクラスが作成されます。
+
+#. ``<パッケージ名>.csv.<データモデル名>CsvSupport``
+#. ``<パッケージ名>.csv.Abstract<データモデル名>ImporterDescription``
+#. ``<パッケージ名>.csv.Abstract<データモデル名>ExporterDescription``
+
+CSVフォーマットについては、 :doc:`../windgate/user-guide` も参考にしてください。
+
+WindGateからインポートする
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+WindGateからデータをインポートしてジョブフローで処理するには、 ``FsImporterDescription`` [#]_ や ``JdbcImporterDescription`` [#]_ など、
+``WindGateImporterDescription`` [#]_ のサブクラスを継承したクラスを作成し、必要なメソッドを実装します。
+
+「 `CSVフォーマットを定義する`_ 」で生成された ``Abstract<データモデル名>ImporterDescription`` はそれらの骨格実装を行ったクラスで、
+このクラスを継承して以下のメソッドをオーバーライドするだけでインポート処理を記述できます。
+
+``String getProfileName()``
+    インポータが使用するプロファイル名を戻り値に指定します。
+
+    インポータは実行時に ``$ASAKUSA_HOME/windgate/profile`` 以下の ``<プロファイル名>.properties`` に記述された設定を元に動作します。
+    今回はデフォルトの ``"asakusa"`` という文字列を ``return`` 文に指定してください。
+
+``String getPath()``
+    インポートするCSVファイルのパスを指定します。
 
 ``DataSize getDataSize()``
     このインポータが取り込むデータサイズの分類を指定します。
 
-..  [#] ``org.apache.hadoop.mapreduce.FileInputFormat`` のサブクラス
+以下は ``Document`` というデータモデルを宣言した場合の実装例です。
 
-Hadoopファイルシステムへエクスポートする
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ジョブフローの処理結果をHadoopファイルシステムに書き出すには、
-``com.asakusafw.vocabulary.external.FileExporterDescription`` クラスのサブクラスを作成して必要な情報を記述します。
-このクラスでは、下記のメソッドをオーバーライドします。
+..  code-block:: java
 
-``Class<?> getModelType()``
-    処理対象とするモデルオブジェクトの型を表すクラスを指定します。
-    ここに指定した型がジョブフローの出力として利用されます。
+    public class DocumentFromCsv extends AbstractDocumentCsvImporterDescription {
 
-``String getPathPrefix()``
-    エクスポート先のファイルシステム上のパスを指定します。
-    このパスは ``<directory>/<prefix>-*`` の形式である必要があります。
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
 
-``Class<? extends FileOutputFormat> getOutputFormat()``
-    エクスポータの出力ファイルの形式を表すクラス [#]_ を指定します。
-    このとき、キーは ``NullWritable`` で値は ``getModelType()`` に指定した型である必要があります。
+        @Override
+        public String getPath() {
+            return "input.csv";
+        }
+    }
 
-..  [#] ``org.apache.hadoop.mapreduce.FileOutputFormat`` のサブクラス
+..  [#] ``com.asakusafw.windgate.vocabulary.FsImporterDescription``
+..  [#] ``com.asakusafw.windgate.vocabulary.JdbcImporterDescription``
+..  [#] ``com.asakusafw.windgate.vocabulary.WindGateImporterDescription``
+
+WindGateにエクスポートする
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+ジョブフローの処理結果をHadoopファイルシステムに書き出すには、 ``FsExporterDescription`` [#]_ や ``JdbcExporterDescription`` [#]_ など、
+``WindGateExporterDescription`` [#]_ のサブクラスを継承したクラスを作成し、必要なメソッドを実装します。
+
+「 `CSVフォーマットを定義する`_ 」で生成された ``Abstract<データモデル名>ExporterDescription`` はそれらの骨格実装を行ったクラスで、
+このクラスを継承して以下のメソッドをオーバーライドするだけでインポート処理を記述できます。
+
+``String getProfileName()``
+    エクスポータが使用するプロファイル名を戻り値に指定します。
+
+    インポータと同様に ``"asakusa"`` という文字列を ``return`` 文に指定してください。
+
+``String getPath()``
+    エクスポートするCSVファイルのパスを指定します。
+
+
+以下は ``Document`` というデータモデルを宣言した場合の実装例です。
+
+..  code-block:: java
+
+    public class DocumentToCsv extends AbstractDocumentCsvExporterDescription {
+
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "output.csv";
+        }
+    }
+
+..  [#] ``com.asakusafw.windgate.vocabulary.FsImporterDescription``
+..  [#] ``com.asakusafw.windgate.vocabulary.JdbcImporterDescription``
+..  [#] ``com.asakusafw.windgate.vocabulary.WindGateImporterDescription``
+
+WindGateと連携する
+~~~~~~~~~~~~~~~~~~
+WindGateはCSVのほか、さまざまな形式のファイルやデータベースと連携できます。
+詳しくは :doc:`../windgate/user-guide` を参照してください。
 
 ThunderGateと連携する
 ~~~~~~~~~~~~~~~~~~~~~
@@ -412,9 +487,9 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
         In<Hoge> in;
         Out<Hoge> out;
         public ExampleFlowPart(
-                @Import(name = "hoge", description = HogeFromDb.class)
+                @Import(name = "hoge", description = HogeFromCsv.class)
                 In<Hoge> in,
-                @Export(name = "hoge", description = HogeIntoDb.class)
+                @Export(name = "hoge", description = HogeIntoCsv.class)
                 Out<Hoge> out) {
             this.in = in;
             this.out = out;
@@ -524,6 +599,9 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 ジョブフローの実装例
 --------------------
 ジョブフローの単純な例を示します。ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-business`` [#]_ にあります。
+
+..  todo::
+    書き下ろす
 
 まず、 ``STOCK`` テーブルに含まれる行のうち、 ``QUANTITY`` が1以上のもののみを読み出す例です。
 また、読み出し時にテーブル全体をロックします。

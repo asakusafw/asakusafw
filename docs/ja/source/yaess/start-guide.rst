@@ -2,11 +2,8 @@
 YAESSスタートガイド
 ===================
 
-この文書では、Asakusa FrameworkのMavenアーキタイプを利用したプロジェクト構成で、YAESSの使い方について簡単に紹介します。
-
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。
-また、Mavenアーキタイプ以外のプロジェクト構成でYAESSを利用する場合には、 :doc:`user-guide` を参照してください。
-
+この文書では、 :doc:`../introduction/start-guide` の構成で、YAESSの使い方について簡単に紹介します。
+その他のプロジェクト構成でYAESSを利用する場合には、 :doc:`user-guide` を参照してください。
 
 開発環境でのYAESSの実行
 =======================

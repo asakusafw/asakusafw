@@ -462,8 +462,8 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 インポータ記述はジョブフローの入力もととなるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -483,8 +483,8 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
 エクスポータ記述はジョブフローの結果を出力する先となるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。

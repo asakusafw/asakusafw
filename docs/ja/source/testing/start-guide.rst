@@ -2,11 +2,8 @@
 アプリケーションテストスタートガイド
 ====================================
 
-この文書では、asakusa-archetype-batchappを利用したプロジェクト構成で、
-Asakusa Frameworkを使ったバッチアプリケーションをテストする方法について簡単に紹介します。
-
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。
-また、テストのより詳しい情報は :doc:`user-guide` を参照して下さい。
+この文書では :doc:`../introduction/start-guide` の構成で、バッチアプリケーションをテストする方法について簡単に紹介します。
+テストのより詳しい情報は :doc:`user-guide` を参照して下さい。
 
 演算子のテスト
 ==============
@@ -151,8 +148,10 @@ Asakusa Frameworkはこの一連の処理を自動的に行う
 
 なお、このテンプレートはDMDLで記述されたデータモデルを元に作成しています。
 DMDLに利用方法は `../dmdl/start-guide` を参照してください。
-また、ThunderGate向けのデータモデルを生成する方法は、
-`../dmdl/with-thundergate` を参照してください。
+
+..  note::
+    ThunderGateを利用する場合、DMDLの記述自体をデータベースのテーブル情報から生成できます。
+    詳しくは `../dmdl/with-thundergate` を参照してください。
 
 入力、期待データの作成
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -195,8 +194,7 @@ Excelファイルのテストデータテンプレートを利用する場合、
 テストデータの配置
 ~~~~~~~~~~~~~~~~~~
 作成したテストデータは、単体テストと同じパッケージ上に配置します。
-asakusa-archetype-batchappを利用したプロジェクトでは、
-``src/test/resources/<パッケージ>`` 以下に配置してください。
+:doc:`../introduction/start-guide` の構成では、 ``src/test/resources/<パッケージ>`` 以下に配置してください。
 
 また、複数のパッケージから利用されるテストデータなどは、
 ``src/test/resources/`` 以下の好きな場所に配置して下さい。
