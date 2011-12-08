@@ -2,51 +2,9 @@
 WindGateスタートガイド
 ======================
 
-..  todo::
-    introduction/start-guide にとばす
+この文書では :doc:`../introduction/start-guide` の構成で、WindGateを利用する方法について簡単に紹介します。
 
-この文書では、ローカルファイルシステム上のCSVファイルを利用してバッチアプリケーションを実行する例を元に、WindGateの使い方を概説します。
-
-WindGate用アプリケーション開発プロジェクトの作成
-================================================
-WindGateを使ったバッチアプリケーションを開発するには、Mavenアーキタイプ ``asakusa-archetype-windgate`` を使ってアプリケーション開発用プロジェクトを作成します。
-
-..  code-block:: sh
-
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
-    ...
-    Choose archetype:
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-batchapp (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-windgate (-)
-    Choose a number: : ※asakusa-archetype-windgateの方を指定
-    ...
-    Choose version: 
-    1: 0.2-SNAPSHOT
-    2: 0.2....
-    Choose a number: : ※ 0.2.4以降のバージョンを指定
-    ...
-    Define value for property 'groupId': : com.example ※任意の値を入力
-    Define value for property 'artifactId': : batchapp-sample ※任意の値を入力
-    Define value for property 'version':  1.0-SNAPSHOT ※任意の値を入力
-    Define value for property 'package':  com.example ※任意の値を入力
-    ...
-    Y: : Yを入力
-
-Asakusa Frameworkの開発環境用インストール
-=========================================
-Asakusa Frameworkを開発環境へインストールするには、ThunderGateを使ったセットアップ手順と同様に、Mavenの ``assembly:single`` と ``antrun:run`` ゴールを実行します。
-
-..  code-block:: sh
-
-    cd batchapp-sample
-    mvn assembly:single antrun:run
-
-プロジェクトのディレクトリ構成
-------------------------------
-作成されたプロジェクトのディレクトリ構成はThunderGateを使った開発と同様です。
-
-詳しくは、 :doc:`../application/maven-archetype` を参照してください。
-
+WindGateのより詳しい情報は :doc:`user-guide` を参照して下さい。
 
 プロファイルの設定
 ==================
