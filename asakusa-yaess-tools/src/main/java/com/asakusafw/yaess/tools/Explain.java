@@ -81,7 +81,6 @@ public class Explain {
         try {
             conf = parseConfiguration(args);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -90,6 +89,7 @@ public class Explain {
                             Explain.class.getName()),
                     OPTIONS,
                     true);
+            e.printStackTrace(System.out);
             return 1;
         }
         try {

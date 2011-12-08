@@ -124,8 +124,6 @@ public class WindGate {
                     conf.mode.completesSession,
                     conf.arguments);
         } catch (Exception e) {
-            WGLOG.error(e, "E00001");
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -142,6 +140,7 @@ public class WindGate {
             System.out.println("      Absolute path on class path (includes plugin libraries)");
             System.out.println("    other schemes (e.g. http://...)-");
             System.out.println("      Processed as a URL");
+            WGLOG.error(e, "E00001");
             return 1;
         }
         try {
@@ -149,7 +148,6 @@ public class WindGate {
             return 0;
         } catch (Exception e) {
             WGLOG.error(e, "E00002");
-            e.printStackTrace();
             return 1;
         } finally {
             task.close();

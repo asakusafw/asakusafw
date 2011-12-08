@@ -118,10 +118,6 @@ public class Yaess {
         try {
             conf = parseConfiguration(args);
         } catch (Exception e) {
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Failed to analyze program arguments ({0})",
-                    Arrays.toString(args)), e);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -134,6 +130,10 @@ public class Yaess {
             for (ExecutionPhase phase : ExecutionPhase.values()) {
                 System.out.printf("    %s%n", phase.getSymbol());
             }
+            // TODO logging
+            LOG.error(MessageFormat.format(
+                    "Failed to analyze program arguments ({0})",
+                    Arrays.toString(args)), e);
             return 1;
         }
         ExecutionTask task;
