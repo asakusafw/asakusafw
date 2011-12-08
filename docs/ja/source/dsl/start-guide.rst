@@ -598,115 +598,254 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 ジョブフローの実装例
 --------------------
-ジョブフローの単純な例を示します。ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-business`` [#]_ にあります。
+ジョブフローの実装例を示します。
 
-..  todo::
-    書き下ろす
+この実装例では、これまでの説明と同様にWindGateを利用してCSVデータを読み書きします。
+ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ を参照してください。
 
-まず、 ``STOCK`` テーブルに含まれる行のうち、 ``QUANTITY`` が1以上のもののみを読み出す例です。
-また、読み出し時にテーブル全体をロックします。
+..  [#] https://github.com/asakusafw/asakusafw-examples
 
-..  code-block:: java
+インポート処理の実装例
+~~~~~~~~~~~~~~~~~~~~~~
+``example-csv`` のバッチ処理では、以下の3種類のデータをインポートしています。
 
-    package com.example.business.jobflow;
+* 店舗情報マスタ ( ``StoreInfoFromCsv`` )
+* 商品情報マスタ ( ``ItemInfoFromCsv`` )
+* 売上明細データ ( ``SalesDetailFromCsv`` )
 
-    import com.example.business.model.table.model.Stock;
-    import com.asakusafw.vocabulary.bulkloader.DbImporterDescription;
-
-    public class StockFromDb extends DbImporterDescription {
-        @Override
-        public Class<?> getModelType() {
-            return Stock.class;
-        }
-        @Override
-        public String getWhere() {
-            // 在庫が1個以上ないと計算しても無駄
-            return "QUANTITY > 0";
-        }
-        @Override
-        public LockType getLockType() {
-            // テーブル全体をロックしておく
-            return LockType.TABLE;
-        }
-    }
-
-次に、Hadoopでの処理内容を ``STOCK`` テーブルに書き戻す例です。
-テーブルモデルクラスである ``Stock`` を指定すると、その他の情報はクラスの情報を元に自動的に計算します。
+まず、店舗情報のマスタデータである ``<ベースディレクトリ>/master/store_info.csv`` にあるCSVファイルを読み出す例  ( ``StoreInfoFromCsv`` ) です。
+この ``<ベースディレクトリ>`` の部分はWindGateの設定で、既定では ``/tmp/windgate-<ログインユーザ名>`` を利用します。
 
 ..  code-block:: java
 
-    package com.example.business.jobflow;
+    package com.asakusafw.example.csv.jobflow;
 
-    import com.example.business.model.table.model.Stock;
-    import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
+    import com.asakusafw.example.csv.modelgen.dmdl.csv.AbstractStoreInfoCsvImporterDescription;
 
-    public class StockToDb extends DbExporterDescription {
+    public class StoreInfoFromCsv extends AbstractStoreInfoCsvImporterDescription {
+
         @Override
-        public Class<?> getModelType() {
-            return Stock.class;
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "master/store_info.csv";
+        }
+
+        @Override
+        public DataSize getDataSize() {
+            return DataSize.TINY;
         }
     }
+
+`WindGateからインポートする`_ 際の手順に従い、自動生成されたクラスを継承して必要なメソッドを実装しています。
+
+このとき、 ``getDataSize()`` メソッドは ``DataSize.TINY`` という値を返しています。
+``.../store_info.csv`` は店舗情報のマスタデータを表すもので、それほど大きくないという前提です。
+
+..  note::
+    データサイズに ``DataSize.TINY`` を指定することで、いくつかの最適化が有効になります。
+    詳しくは :doc:`user-guide` を参照してください。
+
+次に、商品情報のマスタデータとして ``<ベースディレクトリ>/master/item_info.csv`` にあるCSVファイルを読み出す例  ( ``ItemInfoFromCsv`` ) です。
+
+..  code-block:: java
+
+    package com.asakusafw.example.csv.jobflow;
+
+    import com.asakusafw.example.csv.modelgen.dmdl.csv.AbstractItemInfoCsvImporterDescription;
+
+    public class ItemInfoFromCsv extends AbstractItemInfoCsvImporterDescription {
+
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "master/item_info.csv";
+        }
+
+        @Override
+        public DataSize getDataSize() {
+            return DataSize.LARGE;
+        }
+    }
+
+先ほどの例と異なり、 ``getDataSize()`` メソッドは ``DataSize.LARGE`` という値を返しています。
+
+さらに、売上明細データとして ``<ベースディレクトリ>/sales/<日付>.csv`` にあるCSVファイルを読み出す例  ( ``SalesDetailFromCsv`` ) です。
+``<日付>`` の部分はバッチ処理を開始する際に ``date`` という名前の引数で指定できるようにしています。
+
+..  code-block:: java
+
+    package com.asakusafw.example.csv.jobflow;
+
+    import com.asakusafw.example.csv.modelgen.dmdl.csv.AbstractSalesDetailCsvImporterDescription;
+
+    public class SalesDetailFromCsv extends AbstractSalesDetailCsvImporterDescription {
+
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "sales/${date}.csv";
+        }
+
+        @Override
+        public DataSize getDataSize() {
+            return DataSize.LARGE;
+        }
+    }
+
+エクスポート処理の実装例
+~~~~~~~~~~~~~~~~~~~~~~~~
+`インポート処理の実装例`_ と同様に、エクスポート処理の部分の実装例を紹介します。
+
+``example-csv`` のバッチ処理では、以下の2種類のデータをエクスポートしています。
+
+* カテゴリ別売上集計 ( ``CategorySummaryToCsv`` )
+* エラー情報 ( ``ErrorRecordToCsv`` )
+
+
+カテゴリ別売上集計を ``<ベースディレクトリ>/result/category-<日付>.csv`` にCSV形式で書き出す例 ( ``CategorySummaryToCsv`` ) です。
+``<日付>`` の部分は売上明細データをインポートする際と同様に、バッチ処理を開始する際の ``date`` で指定された文字列を利用します。
+
+..  code-block:: java
+
+    package com.asakusafw.example.csv.jobflow;
+
+    import com.asakusafw.example.csv.modelgen.dmdl.csv.AbstractCategorySummaryCsvExporterDescription;
+
+    public class CategorySummaryToCsv extends AbstractCategorySummaryCsvExporterDescription {
+
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "result/category-${date}.csv";
+        }
+    }
+
+上記は、 `WindGateにエクスポートする`_ 際の手順に従い、自動生成されたクラスを継承して必要なメソッドを実装しています。
+
+エラー情報もカテゴリ別売上集計と同様の形で ``<ベースディレクトリ>/result/error-<日付>.csv`` にCSV形式で書き出します ( ``ErrorRecordToCsv`` )。
+
+..  code-block:: java
+
+    package com.asakusafw.example.csv.jobflow;
+
+    import com.asakusafw.example.csv.modelgen.dmdl.csv.AbstractErrorRecordCsvExporterDescription;
+
+    public class ErrorRecordToCsv extends AbstractErrorRecordCsvExporterDescription {
+
+        @Override
+        public String getProfileName() {
+            return "asakusa";
+        }
+
+        @Override
+        public String getPath() {
+            return "result/error-${date}.csv";
+        }
+    }
+
+ジョブフロー本体の実装例
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 最後にジョブフローの例を示します。
 
 ..  code-block:: java
 
-    package com.example.business.jobflow;
+    package com.asakusafw.example.csv.jobflow;
 
-    import com.example.business.model.table.model.*;
-    import com.example.business.operator.StockOpFactory;
-    import com.example.business.operator.StockOpFactory.*;
+    import com.asakusafw.example.csv.modelgen.dmdl.model.*;
+    import com.asakusafw.example.csv.operator.CategorySummaryOperatorFactory;
+    import com.asakusafw.example.csv.operator.CategorySummaryOperatorFactory.*;
     import com.asakusafw.vocabulary.flow.*;
-    import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
+    import com.asakusafw.vocabulary.flow.util.*;
 
-    @JobFlow(name = "stock")
-    public class StockJob extends FlowDescription {
-        private In<Shipment> shipmentIn;
-        private In<Stock> stockIn;
-        private Out<Shipment> shipmentOut;
-        private Out<Stock> stockOut;
+    /**
+     * カテゴリ別に売上の集計を計算する。
+     */
+    @JobFlow(name = "byCategory")
+    public class CategorySummaryJob extends FlowDescription {
+
+        final In<SalesDetail> salesDetail;
+
+        final In<StoreInfo> storeInfo;
+
+        final In<ItemInfo> itemInfo;
+
+        final Out<CategorySummary> categorySummary;
+
+        final Out<ErrorRecord> errorRecord;
+
         /**
-         * コンストラクタ。
-         * @param shipmentIn 処理対象の注文情報
-         * @param stockIn 処理対象の在庫情報
-         * @param shipmentOut 処理結果の注文情報
-         * @param stockOut 処理結果の在庫情報
+         * ジョブフローインスタンスを生成する。
+         * @param salesDetail 売上明細
+         * @param storeInfo 店舗マスタ
+         * @param itemInfo 商品マスタ
+         * @param categorySummary カテゴリ別集計結果
+         * @param errorRecord エラーレコード
          */
-        public StockJob(
-                @Import(name = "shipment", description = ShipmentFromDb.class)
-                In<Shipment> shipmentIn,
-                @Import(name = "stock", description = StockFromDb.class)
-                In<Stock> stockIn,
-                @Export(name = "shipment", description = ShipmentToDb.class)
-                Out<Shipment> shipmentOut,
-                @Export(name = "stock", description = StockToDb.class)
-                Out<Stock> stockOut) {
-            this.shipmentIn = shipmentIn;
-            this.stockIn = stockIn;
-            this.shipmentOut = shipmentOut;
-            this.stockOut = stockOut;
+        public CategorySummaryJob(
+                @Import(name = "salesDetail", description = SalesDetailFromCsv.class)
+                In<SalesDetail> salesDetail,
+                @Import(name = "storeInfo", description = StoreInfoFromCsv.class)
+                In<StoreInfo> storeInfo,
+                @Import(name = "itemInfo", description = ItemInfoFromCsv.class)
+                In<ItemInfo> itemInfo,
+                @Export(name = "categorySummary", description = CategorySummaryToCsv.class)
+                Out<CategorySummary> categorySummary,
+                @Export(name = "errorRecord", description = ErrorRecordToCsv.class)
+                Out<ErrorRecord> errorRecord) {
+            this.salesDetail = salesDetail;
+            this.storeInfo = storeInfo;
+            this.itemInfo = itemInfo;
+            this.categorySummary = categorySummary;
+            this.errorRecord = errorRecord;
         }
 
         @Override
         protected void describe() {
             CoreOperatorFactory core = new CoreOperatorFactory();
-            StockOpFactory op = new StockOpFactory();
-            
-            // 処理できない注文をあらかじめフィルタリング
-            CheckShipment check = op.checkShipment(shipmentIn);
-            core.stop(check.notShipmentped);
-            core.stop(check.completed);
-            
-            // 在庫引当を行う
-            Cutoff cutoff = op.cutoff(stockIn, check.costUnknown);
-            
-            // 結果を書き出す
-            shipmentOut.add(cutoff.newShipments);
-            stockOut.add(cutoff.newStocks);
+            CategorySummaryOperatorFactory operators = new CategorySummaryOperatorFactory();
+
+            // 店舗コードが妥当かどうか調べる
+            CheckStore checkStore = operators.checkStore(storeInfo, salesDetail);
+
+            // 売上に商品情報を載せる
+            JoinItemInfo joinItemInfo = operators.joinItemInfo(itemInfo, checkStore.found);
+
+            // 売上をカテゴリ別に集計
+            SummarizeByCategory summarize = operators.summarizeByCategory(joinItemInfo.joined);
+
+            // 集計結果を出力
+            categorySummary.add(summarize.out);
+
+            // 存在しない店舗コードでの売上はエラー
+            SetErrorMessage unknownStore = operators.setErrorMessage(
+                    core.restructure(checkStore.missed, ErrorRecord.class),
+                    "店舗不明");
+            errorRecord.add(unknownStore.out);
+
+            // 商品情報が存在しない売上はエラー
+            SetErrorMessage unknownItem = operators.setErrorMessage(
+                    core.restructure(joinItemInfo.missed, ErrorRecord.class),
+                    "商品不明");
+            errorRecord.add(unknownItem.out);
         }
     }
-
-..  [#] https://github.com/asakusafw/asakusafw-examples
 
 
 ジョブフローのテスト
@@ -772,27 +911,28 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 バッチの実装例
 --------------
 バッチの単純な例を示します。
-ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-tutorial`` [#]_ にあります。
+ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ にあります。
 以下の例は非常に簡単なバッチで、 ``TutorialJob`` というジョブフローを実行するのみです。
-また、バッチの名前には ``tutorial`` を指定しています。
+また、バッチの名前には ``example.summarizeSales`` を指定しています。
 
 ..  code-block:: java
 
-    package com.example.tutorial.batch;
+    package com.asakusafw.example.csv.batch;
 
-    import com.asakusafw.vocabulary.batch.*;
-    import com.example.tutorial.jobflow.*;
+    import com.asakusafw.example.csv.jobflow.CategorySummaryJob;
+    import com.asakusafw.vocabulary.batch.Batch;
+    import com.asakusafw.vocabulary.batch.BatchDescription;
 
-    @Batch(name = "tutorial")
-    public class TutorialBatch extends BatchDescription {
+    @Batch(name = "example.summarizeSales")
+    public class SummarizeBatch extends BatchDescription {
 
         @Override
         protected void describe() {
-            run(TutorialJob.class).soon();
+            run(CategorySummaryJob.class).soon();
         }
     }
 
-..  [#] https://github.com/asakusafw/asakusafw
+..  [#] https://github.com/asakusafw/asakusafw-examples
 
 バッチアプリケーションを生成する
 ================================
@@ -806,6 +946,10 @@ Asakusa DSLからバッチアプリケーションを生成するには、mvnコ
 
 その他、 ``mvn install`` などでも自動的にコンパイラが起動します。
 
-
 ..  [#] クリーンビルドを行う際に、演算子の依存関係の問題で一時的にJavaのコンパイルエラーのメッセージが表示される場合があります。
         Javaコンパイルのフェーズを正常終了できた場合、これらのメッセージが出ても特に問題はありません。
+
+バッチアプリケーションを実行する
+================================
+
+作成したバッチアプリケーションの実行方法は、 :doc:`../yaess/start-guide` などを参照してください。
