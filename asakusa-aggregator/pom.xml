@@ -53,7 +53,7 @@
 		<module>../asakusa-yaess-jsch</module>
 		<module>../asakusa-yaess-paralleljob</module>
 		<module>../asakusa-cleaner</module>
-		<module>../asakusa-archetype-batchapp</module>
+		<module>../asakusa-archetype-thundergate</module>
 		<module>../asakusa-archetype-windgate</module>
 		<module>../asakusa-distribution</module>
 	</modules>
