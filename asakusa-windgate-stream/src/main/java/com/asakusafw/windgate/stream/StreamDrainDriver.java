@@ -91,7 +91,7 @@ public class StreamDrainDriver<T> implements DrainDriver<T> {
 
     @Override
     public void prepare() throws IOException {
-        return;
+        prepareNextStream();
     }
 
     @Override

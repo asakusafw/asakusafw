@@ -89,7 +89,6 @@ public class WindGateAbort {
             Configuration conf = parseConfiguration(args);
             task = new AbortTask(conf.profile, conf.sessionId);
         } catch (Exception e) {
-            WGLOG.error(e, "E01001");
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -108,6 +107,7 @@ public class WindGateAbort {
             System.out.println("      Absolute path on class path (includes plugin libraries)");
             System.out.println("    other schemes (e.g. http://...)-");
             System.out.println("      Processed as a URL");
+            WGLOG.error(e, "E01001");
             return 1;
         }
         try {
