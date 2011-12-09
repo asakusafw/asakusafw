@@ -10,4 +10,5 @@ resource.<name>.batchGetUnit=10000
 resource.<name>.batchPutUnit=10000
 resource.<name>.connect.retryCcount=3
 resource.<name>.connect.retryInterval=10
+resource.<name>.statement.truncate=TRUNCATE TABLE {0}
 resource.<name>.properties.<key>=<value>
