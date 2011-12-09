@@ -76,7 +76,7 @@ YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以�
 
 ..  code-block:: sh
 
-    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A date=2011-03-31 -A wether=fine
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A date=2011-03-31 -A code=123
 
 
 実行環境構成の変更

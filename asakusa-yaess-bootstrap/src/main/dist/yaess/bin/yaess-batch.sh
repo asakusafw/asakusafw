@@ -17,8 +17,8 @@ Examples:
     # run a batch "example.batch"
     yaess-batch.sh example.batch
     
-    # run a batch "example.params" with {date="2011-03-31", wether="fine"}
-    yaess-batch.sh example.params -A date=2011-03-31 -A wether=fine
+    # run a batch "example.params" with {date="2011-03-31", code="123"}
+    yaess-batch.sh example.params -A date=2011-03-31 -A code=123
 EOF
 }
 
