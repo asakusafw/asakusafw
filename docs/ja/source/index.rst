@@ -45,8 +45,8 @@ Asakusa Framework入門
 
 リソース
 ========
-* ソースリポジトリ (http://github.com/asakusafw)
-* サンプルプログラム集 (http://github.com/asakusafw-examples)
+* ソースリポジトリ (http://github.com/asakusafw/asakusafw)
+* サンプルプログラム集 (http://github.com/asakusafw/asakusafw-examples)
 * APIリファレンス (http://asakusafw.s3.amazonaws.com/documents/0.2/release/api/index.html)
 * 課題管理 (https://github.com/asakusafw/asakusafw/issues)
 * ビルドサーバ(Jenkins) (http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/)
