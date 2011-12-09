@@ -5,13 +5,20 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    $0 batch-id [-A <key>=<value>]*
+    yaess-batch.sh batch-id [-A <key>=<value> [-A <key>=<value>  [...]]]
 
 Parameters:
     batch-id
         batch ID of current execution
     -A <key>=<value>
         argument for this execution
+
+Examples:
+    # run a batch "example.batch"
+    yaess-batch.sh example.batch
+    
+    # run a batch "example.params" with {date="2011-03-31", wether="fine"}
+    yaess-batch.sh example.params -A date=2011-03-31 -A wether=fine
 EOF
 }
 
