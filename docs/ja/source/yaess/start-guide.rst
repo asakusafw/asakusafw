@@ -72,6 +72,12 @@ YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以�
 また、バッチに起動引数を指定する場合、コマンドラインの末尾に ``-A <変数名>=<値>`` のように記述します。
 複数の起動引数を指定する場合には、スペース区切りで繰り返します。
 
+たとえば、次のようにコマンドを記述します。
+
+..  code-block:: sh
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A date=2011-03-31 -A code=123
+
 
 実行環境構成の変更
 ==================
@@ -200,13 +206,13 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 ..  code-block:: properties
 
     command.* = com.asakusafw.yaess.jsch.SshCommandScriptHandler
-    command.*.ssh.user = thundergate
-    command.*.ssh.host = thundergate.example.com
+    command.*.ssh.user = windgate
+    command.*.ssh.host = windgate.example.com
     command.*.ssh.port = 22
     command.*.ssh.privateKey = ${HOME}/.ssh/id_dsa
     command.*.ssh.passPhrase =
     command.*.resource = asakusa
-    command.*.env.ASAKUSA_HOME = /home/thundergate/asakusa
+    command.*.env.ASAKUSA_HOME = /home/windgate/asakusa
 
 
 コマンド実行方法の振り分け

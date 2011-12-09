@@ -7,7 +7,7 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    $0 batch-id flow-id phase-name execution-id [-A <key>=<value>]*
+    yaess-phase.sh batch-id flow-id phase-name execution-id [-A <key>=<value> [-A <key>=<value>  [...]]]
 
 Parameters:
     batch-id
@@ -20,7 +20,8 @@ Parameters:
             epilogue export finalize cleanup
     execution-id
         Unique ID of jobflow execution
-        If "$_YS_GENERATE_EXECUTION_ID" is specified, the execution ID is generated automatically
+        If "$_YS_GENERATE_EXECUTION_ID" is specified, the execution ID is 
+        generated automatically (experimental feature)
     -A <key>=<value>
         argument for this execution
 EOF
