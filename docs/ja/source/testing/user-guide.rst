@@ -163,7 +163,7 @@
     プラグインの設定を完了したら、演算子メソッドを起動する前に
     ``OperatorTestEnvironment`` クラスの ``reload`` メソッドを実行して下さい。
 
-..  [#] :doc:`../application/administrator-guide` を参照
+..  [#] :doc:`../administration/deployment-with-windgate` を参照
 
 
 データフローのテスト
@@ -629,5 +629,5 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
     データフローのテストでは、演算子の際のような
     ``reload`` は不要です。
 
-..  [#] :doc:`../application/administrator-guide` を参照
+..  [#] :doc:`../administration/deployment-with-windgate` を参照
 

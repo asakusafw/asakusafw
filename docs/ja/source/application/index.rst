@@ -35,13 +35,6 @@ Graphvizを使ってフローDSLのコンパイル結果をグラフ化する手
 ----------------------
 Asakusa Framework のバージョンアップ時必要となるバージョン固有の移行手順について解説します。
 
-運用環境の構築
-==============
-
-管理者ガイド
-------------
-Hadoopクラスタ上にAsakusa Framework、およびバッチアプリケーションをデプロイし、動作させるための手順について解説します。
-
 関連するドキュメント
 ====================
 
@@ -53,4 +46,3 @@ Hadoopクラスタ上にAsakusa Framework、およびバッチアプリケーシ
     maven-archetype
     graphviz
     migration-guide
-    administrator-guide

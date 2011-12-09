@@ -3,7 +3,7 @@ WindGateユーザーガイド
 ======================
 
 この文書では、WindGateの利用方法について紹介します。
-WindGateの導入方法については :doc:`../application/administrator-guide` のWindGateに関する項目を参照してください。
+WindGateの導入方法については :doc:`../administration/deployment-with-windgate` のWindGateに関する項目を参照してください。
 
 WindGateプロファイル
 ====================
@@ -177,7 +177,7 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../application/administrator-guide` を参照してください。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 ..  attention::
     このリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
@@ -223,7 +223,7 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` と JSch [#]_ の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../application/administrator-guide` を参照してください。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.44-1以上)
 
@@ -268,7 +268,7 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
 また、 ``resource.local.basePath`` には ``${環境変数名}`` の形式で環境変数を指定できます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-stream`` の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../application/administrator-guide` を参照してください。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 ..  warning::
     開発環境では、ベースパスに壊れてもよいディレクトリを指定してください。
@@ -328,7 +328,7 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
       - コネクションプロパティの値
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../application/administrator-guide` を参照してください。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 ..  [#] この値は ``Statement.setFetchSize()`` に設定します。
     PostgreSQL等ではこの設定によってカーソルを利用するモードになります。
