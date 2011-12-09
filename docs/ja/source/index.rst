@@ -24,13 +24,13 @@ Asakusa Framework入門
 ..  toctree::
     :maxdepth: 1
 
-    application/index
     dmdl/index
     dsl/index
     testing/index
     windgate/index
     thundergate/index
     yaess/index
+    application/index
     administration/index
 
 * アプリケーションの設計
@@ -47,7 +47,7 @@ Asakusa Framework入門
 ========
 * ソースリポジトリ (http://github.com/asakusafw)
 * サンプルプログラム集 (http://github.com/asakusafw-examples)
-* APIリファレンス (http://asakusafw.s3.amazonaws.com/documents/0.2/release/ja/html/index.html)
+* APIリファレンス (http://asakusafw.s3.amazonaws.com/documents/0.2/release/api/index.html)
 * 課題管理 (https://github.com/asakusafw/asakusafw/issues)
 * ビルドサーバ(Jenkins) (http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/)
 * :doc:`document/index`
