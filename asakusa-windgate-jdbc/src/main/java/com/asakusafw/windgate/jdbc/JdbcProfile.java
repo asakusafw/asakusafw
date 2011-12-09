@@ -69,25 +69,63 @@ public class JdbcProfile {
 
     /**
      * The profile key of {@link #getBatchGetUnit()}.
+     * @since 0.2.4
      */
     public static final String KEY_BATCH_GET_UNIT = "batchGetUnit";
 
     /**
      * The profile key of {@link #getConnectRetryCount()}.
+     * @since 0.2.4
      */
     public static final String KEY_CONNECT_RETRY_COUNT = "connect.retryCount";
 
     /**
      * The profile key of {@link #getConnectRetryInterval()}.
+     * @since 0.2.4
      */
     public static final String KEY_CONNECT_RETRY_INTERVAL = "connect.retryInterval";
 
-
+    /**
+     * The profile key of {@link #getTruncateStatement(String)}.
+     * @since 0.2.4
+     */
+    public static final String KEY_TRUNCATE_STATEMENT = "statement.truncate";
 
     /**
      * The profile key of {@link #getConnectionProperties()}.
+     * @since 0.2.4
      */
     public static final String KEY_PREFIX_PROPERTIES = "properties.";
+
+    /**
+     * The default value of {@link #KEY_BATCH_GET_UNIT}.
+     * @since 0.2.4
+     */
+    public static final int DEFAULT_BATCH_GET_UNIT = 0;
+
+    /**
+     * The default value of {@link #KEY_BATCH_PUT_UNIT}.
+     * @since 0.2.4
+     */
+    public static final long DEFAULT_BATCH_PUT_UNIT = Long.MAX_VALUE;
+
+    /**
+     * The default value of {@link #KEY_CONNECT_RETRY_COUNT}.
+     * @since 0.2.4
+     */
+    public static final int DEFAULT_CONNECT_RETRY_COUNT = 0;
+
+    /**
+     * The default value of {@link #KEY_CONNECT_RETRY_INTERVAL}.
+     * @since 0.2.4
+     */
+    public static final int DEFAULT_CONNECT_RETRY_INTERVAL = 10;
+
+    /**
+     * The default value of {@link #KEY_TRUNCATE_STATEMENT}.
+     * @since 0.2.4
+     */
+    public static final String DEFAULT_TRUNCATE_STATEMENT = "TRUNCATE TABLE {0}";
 
     private final String resourceName;
 
@@ -101,15 +139,17 @@ public class JdbcProfile {
 
     private final String password;
 
-    private final int batchGetUnit;
-
-    private final long batchPutUnit;
-
-    private final int connectRetryCount;
-
-    private final int connectRetryInterval;
-
     private final Map<String, String> connectionProperties;
+
+    private volatile int batchGetUnit = DEFAULT_BATCH_GET_UNIT;
+
+    private volatile long batchPutUnit = DEFAULT_BATCH_PUT_UNIT;
+
+    private volatile int connectRetryCount = DEFAULT_CONNECT_RETRY_COUNT;
+
+    private volatile int connectRetryInterval = DEFAULT_CONNECT_RETRY_INTERVAL;
+
+    private volatile String truncateStatement = DEFAULT_TRUNCATE_STATEMENT;
 
     /**
      * Creates a new instance.
@@ -130,10 +170,8 @@ public class JdbcProfile {
             String user,
             String password,
             long batchPutUnit) {
-        this(resourceName, classLoader, driver, url, user, password,
-                0, Long.MAX_VALUE,
-                0, 1,
-                Collections.<String, String>emptyMap());
+        this(resourceName, classLoader, driver, url, user, password, Collections.<String, String>emptyMap());
+        setBatchPutUnit0(batchPutUnit);
     }
 
     /**
@@ -144,10 +182,6 @@ public class JdbcProfile {
      * @param url database URL
      * @param user database connection user (nullable)
      * @param password database connection password (nullable)
-     * @param batchGetUnit the number of rows on each batch fetching
-     * @param batchPutUnit the number of rows on each batch insertion
-     * @param connectRetryCount retry count to create connection
-     * @param connectRetryInterval interval of create connection
      * @param connectionProperties extra connection properties
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.4
@@ -159,10 +193,6 @@ public class JdbcProfile {
             String url,
             String user,
             String password,
-            int batchGetUnit,
-            long batchPutUnit,
-            int connectRetryCount,
-            int connectRetryInterval,
             Map<String, String> connectionProperties) {
         if (resourceName == null) {
             throw new IllegalArgumentException("resourceName must not be null"); //$NON-NLS-1$
@@ -173,18 +203,6 @@ public class JdbcProfile {
         if (url == null) {
             throw new IllegalArgumentException("url must not be null"); //$NON-NLS-1$
         }
-        if (batchGetUnit < 0L) {
-            throw new IllegalArgumentException("batchGetUnit must be >= 0"); //$NON-NLS-1$
-        }
-        if (batchPutUnit <= 0L) {
-            throw new IllegalArgumentException("batchPutUnit must be > 0"); //$NON-NLS-1$
-        }
-        if (connectRetryCount < 0) {
-            throw new IllegalArgumentException("connectionRetryCount must be >= 0"); //$NON-NLS-1$
-        }
-        if (connectRetryInterval <= 0) {
-            throw new IllegalArgumentException("connectRetryInterval must be > 0"); //$NON-NLS-1$
-        }
         if (connectionProperties == null) {
             throw new IllegalArgumentException("connectProperties must not be null"); //$NON-NLS-1$
         }
@@ -194,10 +212,6 @@ public class JdbcProfile {
         this.url = url;
         this.user = user;
         this.password = password;
-        this.batchGetUnit = batchGetUnit;
-        this.batchPutUnit = batchPutUnit;
-        this.connectRetryCount = connectRetryCount;
-        this.connectRetryInterval = connectRetryInterval;
         this.connectionProperties = Collections.unmodifiableMap(connectionProperties);
     }
 
@@ -213,28 +227,48 @@ public class JdbcProfile {
         }
         String resourceName = profile.getName();
         ClassLoader classLoader = profile.getContext().getClassLoader();
-        String driver = extract(profile, KEY_DRIVER, true);
-        String url = extract(profile, KEY_URL, true);
-        String user = extract(profile, KEY_USER, false);
-        String password = extract(profile, KEY_PASSWORD, false);
-        int batchGetUnit = extractInt(profile, KEY_BATCH_GET_UNIT, 0, 0);
-        long batchPutUnit = extractLong(profile, KEY_BATCH_PUT_UNIT, 1, Long.MAX_VALUE);
-        int connectRetryCount = extractInt(profile, KEY_CONNECT_RETRY_COUNT, 0, 0);
-        int connectRetryInterval = extractInt(profile, KEY_CONNECT_RETRY_INTERVAL, 1, 10);
+        String driver = extract(profile, KEY_DRIVER);
+        String url = extract(profile, KEY_URL);
+        String user = extract(profile, KEY_USER, null);
+        String password = extract(profile, KEY_PASSWORD, null);
         Map<String, String> connectionProperties = PropertiesUtil.createPrefixMap(
                 profile.getConfiguration(),
                 KEY_PREFIX_PROPERTIES);
 
-        return new JdbcProfile(resourceName, classLoader, driver, url, user, password,
-                batchGetUnit, batchPutUnit,
-                connectRetryCount, connectRetryInterval,
-                connectionProperties);
+        JdbcProfile result = new JdbcProfile(
+                resourceName, classLoader, driver, url, user, password, connectionProperties);
+
+        int batchGetUnit = extractInt(profile, KEY_BATCH_GET_UNIT, 0, DEFAULT_BATCH_GET_UNIT);
+        long batchPutUnit = extractLong(profile, KEY_BATCH_PUT_UNIT, 1, DEFAULT_BATCH_PUT_UNIT);
+        int connectRetryCount = extractInt(profile, KEY_CONNECT_RETRY_COUNT, 0, DEFAULT_CONNECT_RETRY_COUNT);
+        int connectRetryInterval = extractInt(profile, KEY_CONNECT_RETRY_INTERVAL, 1, DEFAULT_CONNECT_RETRY_INTERVAL);
+        String truncateStatement = extract(profile, KEY_TRUNCATE_STATEMENT, DEFAULT_TRUNCATE_STATEMENT);
+        try {
+            MessageFormat.format(truncateStatement, "dummy");
+        } catch (IllegalArgumentException e) {
+            WGLOG.error("E00001",
+                    profile.getName(),
+                    KEY_TRUNCATE_STATEMENT,
+                    truncateStatement);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "The \"{1}\" must be a valid MessageFormat: {2} (resource={0})",
+                    profile.getName(),
+                    KEY_TRUNCATE_STATEMENT,
+                    truncateStatement), e);
+        }
+
+        result.setBatchGetUnit(batchGetUnit);
+        result.setBatchPutUnit(batchPutUnit);
+        result.setConnectRetryCount(connectRetryCount);
+        result.setConnectRetryInterval(connectRetryInterval);
+        result.setTruncateStatement(truncateStatement);
+        return result;
     }
 
     private static int extractInt(ResourceProfile profile, String key, int minimumValue, int defaultValue) {
         assert profile != null;
         assert key != null;
-        String valueString = extract(profile, key, false);
+        String valueString = extract(profile, key, null);
         int value;
         try {
             if (valueString == null || valueString.trim().isEmpty()) {
@@ -270,10 +304,10 @@ public class JdbcProfile {
     private static long extractLong(ResourceProfile profile, String key, long minimumValue, long defaultValue) {
         assert profile != null;
         assert key != null;
-        String valueString = extract(profile, key, false);
+        String valueString = extract(profile, key, null);
         long value;
         try {
-            if (valueString == null || valueString.trim().isEmpty()) {
+            if (valueString == null || valueString.isEmpty()) {
                 value = defaultValue;
             } else {
                 value = Integer.parseInt(valueString);
@@ -303,14 +337,11 @@ public class JdbcProfile {
         return value;
     }
 
-    private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
+    private static String extract(ResourceProfile profile, String configKey) {
         assert profile != null;
         assert configKey != null;
-        String value = profile.getConfiguration().get(configKey);
+        String value = extract(profile, configKey, null);
         if (value == null) {
-            if (mandatory == false) {
-                return null;
-            }
             WGLOG.error("E00001",
                     profile.getName(),
                     configKey,
@@ -319,6 +350,16 @@ public class JdbcProfile {
                     "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),
                     configKey));
+        }
+        return value.trim();
+    }
+
+    private static String extract(ResourceProfile profile, String configKey, String defaultValue) {
+        assert profile != null;
+        assert configKey != null;
+        String value = profile.getConfiguration().get(configKey);
+        if (value == null) {
+            return defaultValue;
         }
         return value.trim();
     }
@@ -430,11 +471,34 @@ public class JdbcProfile {
     }
 
     /**
+     * Return extra configuration properties.
+     * If there is no extra configuration, this returns empty map.
+     * @return extra configuration properties
+     * @since 0.2.4
+     */
+    public Map<String, String> getConnectionProperties() {
+        return connectionProperties;
+    }
+
+    /**
      * Return the number of rows on each fetch ({@code fetch-size}).
      * @return the number of rows on each fetch
+     * @since 0.2.4
      */
     public int getBatchGetUnit() {
         return batchGetUnit;
+    }
+
+    /**
+     * Configures {@link #KEY_BATCH_GET_UNIT}.
+     * @param value to set
+     * @throws IllegalArgumentException if {@code < 0}
+     */
+    public void setBatchGetUnit(int value) {
+        if (value < 0L) {
+            throw new IllegalArgumentException("batchGetUnit must be >= 0"); //$NON-NLS-1$
+        }
+        this.batchGetUnit = value;
     }
 
     /**
@@ -446,28 +510,84 @@ public class JdbcProfile {
     }
 
     /**
+     * Configures {@link #KEY_BATCH_PUT_UNIT}.
+     * @param value to set
+     * @throws IllegalArgumentException if {@code <= 0}
+     */
+    public void setBatchPutUnit(long value) {
+        setBatchPutUnit0(value);
+    }
+
+    private void setBatchPutUnit0(long value) {
+        if (value <= 0L) {
+            throw new IllegalArgumentException("batchPutUnit must be > 0"); //$NON-NLS-1$
+        }
+        this.batchPutUnit = value;
+    }
+
+    /**
      * Returns the retry count on create connection.
      * @return the retry count, or {@code 0} for no retry
+     * @since 0.2.4
      */
     public int getConnectRetryCount() {
         return connectRetryCount;
     }
 
     /**
+     * Configures {@link #KEY_CONNECT_RETRY_COUNT}.
+     * @param value to set
+     * @throws IllegalArgumentException if {@code < 0}
+     */
+    public void setConnectRetryCount(int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("connectionRetryCount must be >= 0"); //$NON-NLS-1$
+        }
+        this.connectRetryCount = value;
+    }
+
+    /**
      * Returns the retry interval (in second).
      * @return the connectionRetryInterval
      * @see #getConnectRetryCount()
+     * @since 0.2.4
      */
     public int getConnectRetryInterval() {
         return connectRetryInterval;
     }
 
     /**
-     * Return extra configuration properties.
-     * If there is no extra configuration, this returns empty map.
-     * @return extra configuration properties
+     * Configures {@link #KEY_CONNECT_RETRY_INTERVAL}.
+     * @param value to set
+     * @throws IllegalArgumentException if {@code < 0}
      */
-    public Map<String, String> getConnectionProperties() {
-        return connectionProperties;
+    public void setConnectRetryInterval(int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("connectRetryInterval must be > 0"); //$NON-NLS-1$
+        }
+        this.connectRetryInterval = value;
+    }
+
+    /**
+     * Returns the truncate statement.
+     * @param tableName target table name
+     * @return the truncate statement
+     * @since 0.2.4
+     */
+    public String getTruncateStatement(String tableName) {
+        return MessageFormat.format(truncateStatement, tableName);
+    }
+
+    /**
+     * Configures {@link #KEY_TRUNCATE_STATEMENT}.
+     * @param pattern to set
+     * @throws IllegalArgumentException if the pattern is not in form of message format
+     */
+    public void setTruncateStatement(String pattern) {
+        if (pattern == null) {
+            throw new IllegalArgumentException("pattern must not be null"); //$NON-NLS-1$
+        }
+        MessageFormat.format(pattern, "example");
+        this.truncateStatement = pattern;
     }
 }

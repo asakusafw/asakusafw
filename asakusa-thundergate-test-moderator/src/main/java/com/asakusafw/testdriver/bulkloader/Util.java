@@ -50,7 +50,7 @@ final class Util {
                 conn.close();
             }
         } catch (SQLException e) {
-            throw new IOException(MessageFormat.format(
+            LOG.warn(MessageFormat.format(
                     "テーブル{0}のtruncateに失敗しました",
                     tableName), e);
         }
