@@ -45,16 +45,24 @@ Asakusa Framework入門
 
 リソース
 ========
-* ソースリポジトリ (http://github.com/asakusafw/asakusafw)
-* サンプルプログラム集 (http://github.com/asakusafw/asakusafw-examples)
-* APIリファレンス (http://asakusafw.s3.amazonaws.com/documents/0.2/release/api/index.html)
-* 課題管理 (https://github.com/asakusafw/asakusafw/issues)
-* ビルドサーバ(Jenkins) (http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/)
+* `ソースリポジトリ (GitHub)`_
+* `サンプルプログラム集 (GitHub)`_
+* `課題管理 (GitHub)`_
+* `ビルドサーバ(Jenkins)`_
+* `APIリファレンス`_
 * :doc:`document/index`
 * :doc:`site-map`
 
+..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
+..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
+..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
+..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
+..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.2/release/api/index.html
+
 コミュニティ
 ============
-* コミュニティサイト (http://asakusafw.com)
-* メーリングリスト (http://groups.google.com/a/asakusafw.com/group/users)
+* `コミュニティサイト`_
+* `メーリングリスト (Google Groups)`_
 
+..  _`コミュニティサイト`: http://asakusafw.com
+..  _`メーリングリスト (Google Groups)`: http://groups.google.com/a/asakusafw.com/group/users
