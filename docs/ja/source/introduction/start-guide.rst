@@ -16,19 +16,15 @@ VMWare Playerのインストール
 ---------------------------
 VMWare Playerをダウンロードし、インストールを行います。
 
-VMWare Playerのダウンロードサイト [#]_ からVMWare Player (Windows用) をダウンロードします。
+VMWare Playerのダウンロードサイト (http://www.vmware.com/go/get-player-jp) からVMWare Player (Windows用) をダウンロードします。
 
 ダウンロードしたインストーラを実行し、インストール画面の指示に従ってVMWare Playerをインストールします。
-
-..  [#] http://www.vmware.com/go/get-player-jp
 
 Ubuntu Desktop のインストール
 -----------------------------
 Ubuntu Desktopをダウンロードし、インストールを行います。
 
-Ubuntu Desktop 日本語 Remix CDのダウンロードサイト [#]_ からisoファイル(CDイメージ)をダウンロードします。
-
-..  [#] http://www.ubuntulinux.jp/products/JA-Localized/download 
+Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/products/JA-Localized/download) からisoファイル(CDイメージ)をダウンロードします。
 
 ダウンロードが完了したらVMWare Playerを起動し、以下の手順に従ってUbuntu Desktopをインストールします。
 
@@ -40,11 +36,9 @@ Ubuntu Desktop 日本語 Remix CDのダウンロードサイト [#]_ からiso�
 6. 仮想マシン作成準備画面で「ハードウェアをカスタマイズ」を選択します。デバイス一覧から「新規 CD/DVD(IDE)」を選択後、画面右側の「ISOイメージファイルを使用する」を選択し、参照ボタンを押下してダウンロードしたUbuntu Desktopのisoファイルを選択します。その他の設定は環境に合わせて設定してください。設定が完了したら画面下の閉じるボタンを押します。
 7. 完了ボタンを押して仮想マシンを作成後、仮想マシンを起動すると、Ubuntu Desktopのインストールが開始します。インストール画面の指示に従ってUbuntu Desktopをインストールします。
 
-..  [#] ここで「インストーラ ディスク イメージ ファイル」を選択し、isoファイルを選択するとOSの「簡易インストール」が行われますが、簡易インストールでは日本語環境がインストールされないほか、いくつかの設定が適切に行われないため、簡易インストールの使用は推奨しません。
-
 Ubuntu Desktopが起動したら、同梱のブラウザなどを使用してUbuntuからインターネットにできることを確認してください。以後の手順ではインターネットに接続できることを前提とします。
 
-また、以降の手順で使用するホームフォルダ直下のダウンロードディレクトリを日本語名から英語に変更するため、ターミナルを開いて以下のコマンドを実行します。
+また、以降の手順で使用するホームフォルダ直下のダウンロードディレクトリを日本語名から英語に変更するため、ターミナルを開いて [#]_ 以下のコマンドを実行します。
 
 ..  code-block:: sh
 
@@ -54,11 +48,15 @@ Ubuntu Desktopが起動したら、同梱のブラウザなどを使用してUbu
 
 そのほか、必須の手順ではないですがここでVMWare Toolsをインストールしておくとよいでしょう。
 
+..  [#] ここで「インストーラ ディスク イメージ ファイル」を選択し、isoファイルを選択するとOSの「簡易インストール」が行われますが、簡易インストールでは日本語環境がインストールされないほか、いくつかの設定が適切に行われないため、簡易インストールの使用は推奨しません。
+..  [#] [ctrl] + [alt] + [t] キーでターミナルが起動します。
+
+
 Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-Javaのダウンロードサイト [#]_ から、Java SE 6 の JDK をダウンロードします [#]_ 。
+Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、Java SE 6 の JDK をダウンロードします [#]_ 。
 
 ダウンロードが完了したら、以下の例を参考にしてJavaをインストールします。
 
@@ -67,6 +65,9 @@ Javaのダウンロードサイト [#]_ から、Java SE 6 の JDK をダウン�
     cd ~/Downloads
     chmod +x jdk*
     ./jdk*
+
+    ...
+    ※ライセンス条項が表示されるため確認し、同意します。　　
     
     sudo mkdir /usr/lib/jvm
     sudo mv jdk1.6.0_* /usr/lib/jvm
@@ -74,7 +75,6 @@ Javaのダウンロードサイト [#]_ から、Java SE 6 の JDK をダウン�
     cd /usr/lib/jvm
     sudo ln -s jdk1.6.0_* jdk-6
 
-..  [#] http://www.oracle.com/technetwork/java/javase/downloads/index.html
 ..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-ia64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
 
 このほかに環境変数の設定が必要ですが、本手順では後ほどまとめて設定するため、このまま次に進みます。
@@ -83,7 +83,7 @@ Mavenのインストール
 -------------------
 Asakusa Frameworkの開発環境に必要なビルドツールであるMavenをインストールします。
 
-Mavenのダウンロードサイト [#]_ から Maven3 のtarball [#]_ をダウンロードします。
+Mavenのダウンロードサイト (http://maven.apache.org/download.html) から Maven3 のtarball (apache-maven-3.X.X-bin.tar.gz) をダウンロードします。
 
 ダウンロードが完了したら、以下の例を参考にしてMavenをインストールします。
 
@@ -91,11 +91,9 @@ Mavenのダウンロードサイト [#]_ から Maven3 のtarball [#]_ をダウ
 
     cd ~/Downloads
     tar xf apache-maven-*-bin.tar.gz
+    sudo chown -R root:root apache-maven-*
     sudo mv apache-maven-* /usr/local/lib
-    ln -s /usr/local/lib/apache-maven-*/bin/mvn /usr/local/bin/mvn
-
-..  [#] http://maven.apache.org/download.html
-..  [#] apache-maven-3.X.X-bin.tar.gz
+    sudo ln -s /usr/local/lib/apache-maven-*/bin/mvn /usr/local/bin/mvn
 
 ..  note:: 
     インターネットへの接続にプロキシサーバを経由する必要がある環境については、Mavenに対してプロキシの設定を行う必要があります。設定についてはMavenの次のサイト等を確認してください
@@ -104,14 +102,11 @@ Mavenのダウンロードサイト [#]_ から Maven3 のtarball [#]_ をダウ
 
 Hadoopのインストール
 --------------------
-Clouderaから提供されているHadoopのディストリビューションである Cloudera Hadoop Distribution of Hadoop version 3(CDH3)をインストールします。
+Clouderaから提供されているHadoopのディストリビューションである Cloudera's Distribution including Apache Hadoop Version 3 (CDH3) をインストールします。
 
 CDH3のインストール方法はOS毎に提供されているインストールパッケージを使う方法と、tarballを展開する方法がありますが、ここではtarballを展開する方法でインストールします。
 
-CDH3のダウンロードサイト [#]_ から CDH3 のtarball [#]_ をダウンロードします。コンポーネントはHadoopのみをダウンロードします。
-
-..  [#] https://ccp.cloudera.com/display/SUPPORT/CDH3+Downloadable+Tarballs
-..  [#] hadoop-0.20.2-cdh3uX.tar.gz
+CDH3のtarballのダウンロードサイト (https://ccp.cloudera.com/display/SUPPORT/CDH3+Downloadable+Tarballs) から CDH3 のHadoopのコンポーネント(Hadoop 0.20.2+XXX) (hadoop-0.20.2-cdh3uX.tar.gz) をダウンロードします。
 
 ダウンロードが完了したら、以下の例を参考にしてCDH3をインストールします。
 
@@ -119,7 +114,7 @@ CDH3のダウンロードサイト [#]_ から CDH3 のtarball [#]_ をダウン
 
     cd ~/Downloads
     tar xf hadoop-0.20.2-*.tar.gz
-    mv hadoop-0.20.2-*.tar.gz /tmp
+    sudo chown -R root:root hadoop-0.20.2-*/
     sudo mv hadoop-0.20.2-* /usr/lib
     sudo ln -s /usr/lib/hadoop-0.20.2-* /usr/lib/hadoop
 
@@ -138,13 +133,31 @@ $HOME/.profile の最下行に以下の定義を追加します。
 
 環境変数をデスクトップ環境に反映させるため、一度デスクトップ環境からログアウトし、再ログインします。
 
+インストールソフトウェアの動作確認
+----------------------------------
+これまでの手順でインストールしたソフトウェアの動作確認を行います。
+
+以下の例を参考にして、ターミナルからコマンドを実行し、例の通りの出力が行われることを確認してください。
+
+Javaの動作確認
+~~~~~~~~~~~~~~
+
+..  code-block:: sh
+
+    java -version
+
+    java version "1.6.0_29"
+    Java(TM) SE Runtime Environment (build 1.6.0_29-b11)
+    Java HotSpot(TM) Client VM (build 20.4-b02, mixed mode, sharing)
+
+
 Eclipseのインストール
 ---------------------
 アプリケーションの実装・テストに使用する統合開発環境(IDE)として、Eclipseをインストールします。
 
 ..  note:: Asakusa Frameworkを使う上でEclipseの使用は必須ではありません。サンプルアプリケーションのソースを確認する場合などでEclipseがあると便利であると思われるため、ここでEclipseのインストールを説明していますが、スタートガイドの手順のみを実行するのであれば、Eclipseのインストールは不要です。
 
-Eclipseのダウンロードサイト [#]_ から Eclipse IDE for Java Developers (Linux 32 Bit) [#]_ をダウンロードします。
+Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から Eclipse IDE for Java Developers (Linux 32 Bit) (eclipse-java-XX-linux-gtk.tar.gz) をダウンロードします。
 
 ダウンロードが完了したら、以下の例を参考にしてEclipseをインストールします。
 
@@ -152,7 +165,7 @@ Eclipseのダウンロードサイト [#]_ から Eclipse IDE for Java Developer
 
     cd ~/Downloads
     tar xf eclipse-java-*-linux-gtk.tar.gz
-    sudo mv eclipse /usr/local/lib
+    sudo mv eclipse $HOME
 
 次に、Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ここでは、ワークスペースディレクトリに$HOME/workspace を指定します。
 
@@ -160,16 +173,7 @@ Eclipseのダウンロードサイト [#]_ から Eclipse IDE for Java Developer
 
     mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
 
-Eclipseを起動するには、ファイラーから /usr/local/lib/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
-
-Eclipseの起動が完了したら、以降の手順を実行するために、ターミナルのカレントディレクトリをワークスペースのディレクトリに移動しておきましょう。
-
-..  code-block:: sh
-
-    cd $HOME/workspace
-
-..  [#] http://www.eclipse.org/downloads/
-..  [#] eclipse-java-XX-linux-gtk.tar.gz
+Eclipseを起動するには、ファイラーから $HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
 
 Asakusa Frameworkのインストールとサンプルアプリケーションの実行
 ===============================================================
@@ -181,10 +185,12 @@ Asakusa Frameworkのインストールとサンプルアプリケーションの
 
 Asakusa Frameworkでは、プロジェクトのテンプレートを提供しており、このテンプレートにサンプルアプリケーションも含まれています。また、このテンプレートに含まれるスクリプトを使ってAsakusa Frameworkを開発環境にインストールすることができます。
 
-プロジェクトのテンプレートはMavenのアーキタイプという仕組みで提供されています。Mavenのアーキタイプからプロジェクトを作成するには、以下のコマンドを実行します。
+プロジェクトのテンプレートはMavenのアーキタイプという仕組みで提供されています。Mavenのアーキタイプからプロジェクトを作成するには、以下のコマンドを実行します（Mavenがライブラリをダウンロードするため、実行に時間がかかります)。
 
 ..  code-block:: sh
 
+    mkdir -p ~/workspace
+    cd ~/workspace
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、3 (asakusa-archetype-windgate) のWindGateと連携するアプリケーション用のテンプレートを選択します。
@@ -207,18 +213,18 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     4: 0.2.4
     Choose a number: 4: 4 (<-4を入力)
 
-この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、アプリケーションプロジェクト名として「sample-app」を指定します。最後に確認をうながされるので、そのままEnterキーを入力します。
+この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 
 ..  code-block:: sh
 
-    Define value for property 'groupId': : com.example [<-アプリケーションのグループ名]
-    Define value for property 'artifactId': : sample-app [<-アプリケーションのプロジェクト名]
-    Define value for property 'version':  1.0-SNAPSHOT [<-アプリケーションのバージョン]
-    Define value for property 'package':  com.example [<-アプリケーションの基底パッケージ名]
+    Define value for property 'groupId': : com.example [<-アプリケーションのグループ名を入力。]
+    Define value for property 'artifactId': : example-app [<-アプリケーションのプロジェクト名を入力。]
+    Define value for property 'version':  1.0-SNAPSHOT [<-バージョンを入力。ここではそのままEnterキーを入力。]
+    Define value for property 'package':  com.example [<-パッケージ名を入力。ここではそのままEnterキーを入力。]
 
     Confirm properties configuration:
     groupId: com.example
-    artifactId: sample-app
+    artifactId: example-app
     version: 1.0-SNAPSHOT
     package: com.example
     Y: : [<-そのままEnterキーを入力]
@@ -237,20 +243,17 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 ..  note::
     以降の手順についても、Mavenのコマンド実行後に処理が成功したかを確認するには「BUILD SUCCESS」が表示されていることを確認してください。
 
-これでアプリケーションプロジェクトが作成されました。以降の手順を実行するため、作成されたプロジェクトに移動しておきましょう。
-
-..  code-block:: sh
-
-    cd sample-app
+これでアプリケーションプロジェクトが作成されました。
 
 Asakusa Frameworkのインストール
 -------------------------------
 Asakusa Frameworkを開発環境にインストールします。
 
-先ほど作成したアプリケーションプロジェクトから、Mavenの以下のコマンドを使ってAsakusa Frameworkをローカルにインストールすることができます。
+先ほど作成したアプリケーションプロジェクトから、Mavenの以下のコマンドを使ってAsakusa Frameworkをローカルにインストールすることができます（Mavenがライブラリをダウンロードするため、実行に時間がかかります)。
 
 ..  code-block:: sh
 
+    cd example-app
     mvn assembly:single antrun:run
 
 成功すると、$ASAKUSA_HOME (このスタートガイドでは $HOME/asakusa) にAsakusa Frameworkがインストールされます。
@@ -259,7 +262,7 @@ Asakusa Frameworkを開発環境にインストールします。
 --------------------------------
 アプリケーションのテンプレートには、あらかじめサンプルアプリケーション（カテゴリー別売上金額集計バッチ) のソースファイルが含まれています。このサンプルアプリケーションのソースファイルをAsakusa Framework上で実行可能な形式にビルドします。
 
-アプリケーションのビルドを実行するには、Mavenの以下のコマンドを実行します。
+アプリケーションのビルドを実行するには、Mavenの以下のコマンドを実行します（初回の実行時のみ、Mavenがライブラリをダウンロードするため、実行に時間がかかります）。
 
 ..  code-block:: sh
 
@@ -272,7 +275,7 @@ Asakusa Frameworkを開発環境にインストールします。
 3. 実行可能なプログラム群に対するテストを実行
 4. サンプルアプリケーションを運用環境に配置するためのアーカイブファイルを生成
 
-ビルドが成功すると、プロジェクトのtargetディレクトリ配下にいくつかのファイルが作成されますが、この中の 「sample-app-batchapps-1.0-SNAPSHOT.jar」 というファイルがサンプルアプリケーションが含まれるアーカイブファイルです。
+ビルドが成功すると、プロジェクトのtargetディレクトリ配下にいくつかのファイルが作成されますが、この中の 「example-app-batchapps-1.0-SNAPSHOT.jar」 というファイルがサンプルアプリケーションが含まれるアーカイブファイルです。
 
 ..  note::
     このアーカイブファイルの名前は、実際には ${artifactId}-batchapp-${version}.jar という命名ルールに従って作成されます。プロジェクト作成時に本ドキュメントの例以外のプロジェクト名やバージョンを指定した場合は、それに合わせて読み替えてください。
@@ -302,7 +305,7 @@ Asakusa Frameworkを開発環境にインストールします。
 
 ..  code-block:: sh
 
-   cd $HOME/workspace/sample-app
+   cd $HOME/workspace/example-app
    cp -r src/test/example-dataset/* /tmp/windgate-$USER
 
 サンプルアプリケーションの実行
@@ -338,7 +341,7 @@ Eclipseへアプリケーションプロジェクトをインポート
 
 ..  code-block:: sh
 
-    cd $HOME/workspace/sample-app
+    cd $HOME/workspace/example-app
     mvn eclipse:eclipse
 
 これでEclipseからプロジェクトをImport出来る状態になりました。Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。

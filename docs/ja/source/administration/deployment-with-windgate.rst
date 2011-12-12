@@ -156,9 +156,9 @@ Asakusa Framework実行時プラグインの設定
 
 ..  code-block:: sh
 
-    cp sample-app-batchapps-*.jar $ASAKUSA_HOME/batchapps
+    cp example-app-batchapps-*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
-    jar -xf sample-app--batchapps-*.jar
+    jar -xf example-app--batchapps-*.jar
     find . -name "*.sh" | xargs chmod u+x
     rm -f batchapp-batchapps-*.jar
     rm -fr META-INF
