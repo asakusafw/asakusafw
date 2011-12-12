@@ -24,7 +24,6 @@ RDBMSと連携する汎用的なツールは、 :doc:`../windgate/index` も参�
 ..  toctree::
     :maxdepth: 1
 
-    start-guide
     user-guide
     cache
 
