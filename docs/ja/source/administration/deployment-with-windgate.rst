@@ -30,7 +30,7 @@ WindGate/CSVによるシンプルな構成例
 ----------------------------------
 WindGateをローカルのCSVファイルと連携する構成における、シンプルな構成例を以下に示します。
 
-..  todo:: 図 
+..  figure:: deployment-with-windgate-structure1.png
 
 この構成では、HadoopクライアントとAsakusa Framework実行ノードを同じマシン上に構成しています。HadoopクライアントとAsakusa Framework実行ノードが同一マシンの場合、WindGateに対してHadoopへのアクセスに関する設定は特に行う必要がありません。
 
@@ -40,7 +40,7 @@ WinddGate/DBMSによるHadoopブリッジを使った構成例
 ------------------------------------------------
 WindGateをDBMSと連携し、かつHadoopクライアントノードとはHadoopブリッジを使って連携する場合の構成例を以下に示します。
 
-..  todo:: 図 
+..  figure:: deployment-with-windgate-structure2.png
 
 Asakusa Frameworkノードからデータベースノードに対しては、JDBCによる接続が行える必要があります。ここで、ネットワーク構成の検討において、Hadoopクライアントノードから直接データベースノードに対してはJDBCによる接続が行えない構成であったとします。
 
