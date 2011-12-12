@@ -1665,7 +1665,7 @@ Flow DSLからは次のように利用します。
 これを回避するには、演算子注釈の要素 ``inputBuffer`` に ``InputBuffer.ESCAPE`` [#]_ を指定します。
 何も指定しない場合は、ヒープ上に全てのデータを保持する ``InputBuffer.EXPAND`` が利用されます。
 
-``InputBuffer.SWAP`` を指定した場合、巨大な入力データを取り扱えるようになる代わりに、
+``InputBuffer.ESCAPE`` を指定した場合、巨大な入力データを取り扱えるようになる代わりに、
 演算子メソッドの引数に指定したListに多大な制約がかかります。
 
 * それぞれのListからはひとつずつしかオブジェクトを取り出せなくなる。
@@ -1725,7 +1725,7 @@ Flow DSLからは次のように利用します。
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.graph.InputBuffer.ESCAPE``
+..  [#] ``com.asakusafw.vocabulary.flow.processor.InputBuffer.ESCAPE``
 
 分割演算子
 ----------
