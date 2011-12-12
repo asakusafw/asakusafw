@@ -1,0 +1,36 @@
+@import url('sphinxdoc.css');
+
+.section h1 {
+}
+
+.section h2 {
+  margin-top: 1.0em;
+  padding-top: 0.2em;
+  padding-bottom: 0.3em;
+  padding-left: 0.3em;
+  border-bottom: thin solid gray;
+  border-left: thick solid gray;
+}
+
+.section h3 {
+  margin-top: 1.0em;
+  padding-bottom: 0.2em;
+  border-bottom: thin solid gray;
+}
+
+.section h4 {
+  margin-top: 1.0em;
+  padding-bottom: 0.1em;
+  border-bottom: thin dotted gray;
+}
+
+.section h5 {
+  margin-top: 1.0em;
+  padding-bottom: 0.1em;
+  border-bottom: thin dotted lightgrey;
+}
+
+.section caption {
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+}
