@@ -1,8 +1,7 @@
 ====================================
 デプロイメントガイド for ThunderGate
 ====================================
-
-この文書では、Asakusa FrameworkとバッチアプリケーションをHadoopクラスター上にデプロイする手順について解説します。
+この文書では、外部システムとの連携にThunderGateを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
 
 HadoopクラスターとDBサーバの準備
 ================================
@@ -10,9 +9,7 @@ Asakusa Framework本体とバッチアプリケーションをデプロイする
 
 Hadoopクラスターのいずれかのサーバ（通常マスターノード）に、ThunderGateのコンポーネントのうち「Extractor」「Collector」と呼ばれる、DFS(HDFS)に対する入出力処理を行うコンポーネントをインストールします。「Extractor」「Collector」をインストールするサーバを本ドキュメントでは「Hadoopクライアントノード」とよびます。
 
-Asakusa Frameworkのデプロイを行う前に、Hadoopクラスターとデータベースノードに対して次の環境構築が行われていることを確認してください。なお、各ソフトウェアの対応バージョンについては、GitHubのWikiに公開されているドキュメント「Target Platform ja」 [#]_ を参照してください。
-
-..  [#] https://github.com/asakusafw/asakusafw/wiki/Target-Platform-ja
+Asakusa Frameworkのデプロイを行う前に、Hadoopクラスターとデータベースノードに対して次の環境構築が行われていることを確認してください。
 
 Hadoopクラスターの環境構築
 --------------------------
@@ -33,67 +30,27 @@ Hadoopクラスターに対して以下の環境構築を実施し、動作確�
 ..  warning::
     HadoopクラスターとデータベースノードのASAKUSA_USERは必ず同一ユーザ名で作成してください。
 
-デプロイに使用するファイル
-==========================
-Asakusa Framework本体とバッチアプリケーションのデプロイ作業を行うにあたって、以下のファイルを用意します。
+Asakusa Frameworkのインストールアーカイブの準備
+-----------------------------------------------
+Asakusa Frameworkのインストールアーカイブを用意します。
 
-Asakusa Framworkのデプロイに必要なファイル
-------------------------------------------
-Asakusa Frameworkのデプロイ対象ファイル一式はGitHub上のソースから作成する必要があります。
-
-以下の作業はAsakusa Frameworkの開発環境と同じバージョンのMavenが必要です。開発環境上にて作業することを推奨します。
-
-Asakusa Frameworkのソースアーカイブを取得
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Asakusa FrameworkのGitHubリポジトリ [#]_ から、Asakusa Frameworkのソースアーカイブを取得します。
-
-..  [#] https://github.com/asakusafw/asakusafw
-
-以下はwgetを使ってAsakusa Framework ver0.2.0を取得する例です。
+Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します
+。
 
 ..  code-block:: sh
 
-    wget http://github.com/asakusafw/asakusafw/zipball/0.2.0
+    mvn assembly:single
 
-Asakusa Frameworkのビルド
-~~~~~~~~~~~~~~~~~~~~~~~~~
-アーカイブを展開し、アーカイブに含まれるプロジェクト「asakusa-aggregator」のpom.xmlに対してinstallフェーズを実行し、Asakusa Frameworkの全モジュールをビルドします。
+このコマンドを実行すると、プロジェクトの target ディレクトリ配下にいくつかのファイルが生成されます。このうち以下のファイルがAsakusa FrameworkとWindGateをインストールするためのアーカイブです。
 
-以下の例に沿ってビルドを実施して下さい。「BUILD SUCCESS」が出力されることを確認してください。
+  asakusafw-${asakusafw-version}-prod-hc.tar.gz
+    HadoopクラスターのHadoopクライアントノードに展開するアーカイブ。
+  asakusafw-${asakusafw-version}-prod-db.tar.gz
+    データベースノードに展開するアーカイブ。
+  asakusafw-${asakusafw-version}-prod-cleaner.tar.gz
+    Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
 
-..  code-block:: sh
-
-    unzip asakusafw-asakusafw-*.zip
-    cd asakusafw-asakusafw-*/asakusa-aggregator
-    mvn clean install -Dmaven.test.skip=true
-
-Asakusa Frameworkのデプロイアーカイブ生成
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-アーカイブに含まれるプロジェクト「asakusa-distribution」のpom.xmlに対してassebmbly:singleゴールを実行し、Hadoopクラスターにデプロイするアーカイブファイルを作成します。
-
-以下の例に沿ってビルドを実施して下さい。「BUILD SUCCESS」が出力されることを確認してください。
-
-..  code-block:: sh
-
-    cd ../asakusa-distribution
-    mvn clean assembly:single
-
-デプロイアーカイブの確認
-~~~~~~~~~~~~~~~~~~~~~~~~
-「asakusa-distribution」のtagetディレクトリ配下に、以下のファイルが作成されていることを確認します。
-
-1. asakusa-distribution-${version}-prod-hc.tar.gz
-    * HadoopクラスターのHadoopクライアントノードに展開するアーカイブ。
-2. asakusa-distribution-${version}-prod-db.tar.gz
-    * データベースノードに展開するアーカイブ。
-3. asakusa-distribution-${version}-prod-cleaner.tar.gz
-    * Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
-
-また、targetディレクトリには以下のファイルも作成されますが、
-このファイルは開発環境で使用するアーカイブのため本ドキュメントによる手順では使用しません。
-
-4. asakusa-distribution-${version}-dev.tar.gz
-    * Asakusa Frameworkの開発環境のインストールに使用するアーカイブ
+${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion 0.2.4 を使っている場合は、 asakusafw-0.2.4-prod-hc.tar.gz などとなります。 
 
 バッチアプリケーションのデプロイに必要なファイル
 ------------------------------------------------
@@ -132,14 +89,14 @@ Hadoopのクライアントノード上にAsakusa Frameworkをデプロイしま
 
     $ source ~/.bash_profile
 
-3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusa-distribution-${version}-prod-hc.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
+3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusafw-${asakusafw-version}-prod-hc.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
 
 ..  code-block:: sh
 
     mkdir $ASAKUSA_HOME
-    mv asakusa-distribution-*-prod-hc.tar.gz $ASAKUSA_HOME
+    mv asakusafw-*-prod-hc.tar.gz $ASAKUSA_HOME
     cd $ASAKUSA_HOME
-    tar -xzf asakusa-distribution-*-prod-hc.tar.gz
+    tar -xzf asakusadw-*-prod-hc.tar.gz
     find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
 
 4. $ASAKUSA_HOME/bulkloader/bin/bulkloader_hc_profile を$HOMEに移動します。
@@ -183,14 +140,14 @@ Hadoopのクライアントノード上にAsakusa Frameworkをデプロイしま
 
     $ source ~/.bash_profile
 
-3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にデータベースノード用アーカイブ「asakusa-distribution-${version}-prod-db.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
+3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にデータベースノード用アーカイブ「asakusafw-${asakusafw-version}-prod-db.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
 
 ..  code-block:: sh
 
     mkdir $ASAKUSA_HOME
-    mv asakusa-distribution-*-prod-db.tar.gz $ASAKUSA_HOME
+    mv asakusafw-*-prod-db.tar.gz $ASAKUSA_HOME
     cd $ASAKUSA_HOME
-    tar -xzf asakusa-distribution-*-prod-db.tar.gz
+    tar -xzf asakusafw-*-prod-db.tar.gz
     find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
 
 4. $ASAKUSA_HOME/bulkloader/bin/.bulkloader_db_profile を$HOMEに移動します。
@@ -524,27 +481,7 @@ Hadoopクライアントノードへバッチアプリケーションをデプ�
 ----------------------
 Asakusa Frameworkを拡張したアプリケーション固有の実行時プラグインを動作させる必要がある場合は、実行時プラグインの設定を行います。
 
-実行時プラグインの設定は、$ASAKUSA_HOME/core/conf/asakusa-resources.xml を編集します。以下のように、１つの設定項目に対して <property>エレメントを作成し、設定名を<name>要素に、設定値を<value>要素にそれぞれ設定します。
-
-..  code-block:: sh
-
-    <configuration>
-    <!--
-    Default Implementations (for Development)
-    -->
-        <property>
-            <name>com.asakusafw.runtime.core.Report.Delegate</name>
-            <value>com.asakusafw.runtime.core.Report$Default</value>
-        </property>
-        <property>
-            <name>com.asakusafw.runtime.tool.Numbering.Delegate</name>
-            <value>com.asakusafw.runtime.tool.Numbering$Default</value>
-        </property>
-        <property>
-            <name>com.asakusafw.runtime.tool.BatchDate.Delegate</name>
-            <value>com.asakusafw.runtime.tool.BatchDate$Default</value>
-        </property>
-    </configuration>
+実行時プラグインの設定については、 :doc:`deployment-runtime-plugins` を参照してください。
 
 バッチアプリケーションの実行
 ----------------------------
@@ -567,77 +504,5 @@ Asakusa Frameworkを拡張したアプリケーション固有の実行時プラ
 
 クリーニングツールのデプロイ
 ============================
-Asakusa Frameworkにはローカルファイル、及び分散ファイルシステム上のファイルをクリーニングするためのツールが付属しています。
+クリーニングツールのデプロイについては、 :doc:`deployment-cleaner` を参照してください。
 
-クリーニングツールの使用は任意ですが、特に分散ファイルシステムについては、Asakusa Frameworkのデフォルトの動作では
-アプリケーションを実行した際に処理したファイルが分散ファイルシステム上に残り続けるため、
-クリーニングツールを使用して定期的にクリーニングを行うことを推奨致します。
-
-本ドキュメントではクリーニングツールのデプロイ方法を説明します。クリーニングツールの設定等の詳細については「Asakusa Cleaner User Guide」 [#]_ を参照して下さい
-
-..  [#] https://asakusafw.s3.amazonaws.com/documents/AsakusaCleaner_UserGuide.pdf
-
-各ノードへのクリーニングツールのデプロイ
-----------------------------------------
-クリーニングツールはデータベースノードとHadoopクラスタの各ノードへデプロイします。全ノードでデプロイ手順は共通です。
-
-1. ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusa-distribution-${version}-prod-cleaner.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
-
-..  code-block:: sh
-
-    mv asakusa-distribution-*-prod-hc.tar.gz $ASAKUSA_HOME
-    cd $ASAKUSA_HOME
-    tar -xzf asakusa-distribution-*-prod-cleaner.tar.gz
-    find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
-
-2. クリーニング用ログ設定ファイルを編集します。$ASAKUSA_HOME/cleaner/conf/log4j.xmlを編集し、任意のログディレクトリを指定します。
-    * ログファイル名は「${logfile.basename}.log」のままとしてください。
-    * 指定したログディレクトリが存在しない場合はディレクトリを作成しておいてください。ログディレクトリはASAKUSA_USERが書き込み可能である必要があります。
-
-..  note::
-    以下手順3～手順4はHDFSクリーニングツールを使う場合に実施します。
-
-3. $ASAKUSA_HOME/cleaner/conf/.clean_hdfs_profileを編集し、以下の変数を環境に合わせて設定します。
-
-..  code-block:: sh
-
-    export JAVA_HOME=/usr/java/default
-    export HADOOP_HOME=/usr/lib/hadoop
-
-4. $ASAKUSA_HOME/cleaner/conf/clean-hdfs-conf.properties を編集し、クリーニングの設定を行います。
-    * 「hdfs-protocol-host」は$HADOOP_HOME/conf/core-site.xml の fs.default.name と同じ値に変更します。
-
-..  code-block:: properties
-
-    # File path of log4j.xml (optional)
-    log.conf-path=/home/asakusa/asakusa/cleaner/conf/log4j.xml
-    # Protocol and host name with HDFS (required)
-    hdfs-protocol-host=hdfs://(MASTERNODE_HOSTNAME):8020
-    # Directory for cleaning (required)
-    clean.hdfs-dir.0=/${user}/target/hadoopwork
-    # Cleaning Pattern (required)
-    clean.hdfs-pattern.0=.*
-    # Preservation period date of file (optional)
-    clean.hdfs-keep-date=10
-
-..  note::
-    以下手順5～手順6はローカルファイルクリーニングツールを使う場合に実施します。
-
-5. $ASAKUSA_HOME/cleaner/conf/.clean_local_profileを編集し、以下の変数を環境に合わせて設定します。
-
-..  code-block:: sh
-
-    export JAVA_HOME=/usr/java/default
-
-6. $ASAKUSA_HOME/cleaner/conf/clean-localfs-conf.properties を編集し、クリーニングの設定を行います。
-
-..  code-block:: properties
-
-    # File path of log4j.xml (optional)
-    log.conf-path=/home/asakusa/asakusa/cleaner/conf/log4j.xml
-    # Directory for cleaning (required)
-    clean.local-dir.0=/home/asakusa/asakusa/log
-    # Cleaning Pattern (required)
-    clean.local-pattern.0=.*\.log\.*
-    # Preservation period date of file (optional)
-    clean.local-keep-date=10

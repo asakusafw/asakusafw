@@ -339,37 +339,6 @@ Asausaの拡張ライブラリディレクトリへjarファイルを配置
 
     cp $HOME/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
 
-..  _vup-development-environment:
-
-Asakusa Frameworkのバージョンアップ
-===================================
-開発環境のAsakusa Frameworkをバージョンする手順を示します。
-
-なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順については :doc:`migration-guide` 等を参照してください。
-
-pom.xml上のバージョンを更新
----------------------------
-pom.xmlの10行目にある「<asakusafw.version」の値を
-更新したいバージョンに書き換えます。
-
-..  code-block:: sh
-
-    <asakusafw.version>0.2.1-RC1</asakusafw.version>
-
-Asakusa Frameworkの再セットアップ
----------------------------------
-Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフェーズ（ゴール）を実行します。
-
-..  code-block:: sh
-
-    mvn assembly:single antrun:run compile
-
-Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
-
-..  code-block:: sh
-
-    mvn eclipse:eclipse
-
 ``build.properties`` ビルド定義ファイル
 =======================================
 アーキタイプから作成したプロジェクトの ``build.properties`` はプロジェクトのビルドや各種ツールの動作を設定します。設定項目について以下に説明します。
