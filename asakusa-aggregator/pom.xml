@@ -17,6 +17,12 @@
 		</license>
 	</licenses>
 
+	<inceptionYear>2011</inceptionYear>
+	<organization>
+		<name>Asakusa Framework Team</name>
+		<url>http://asakusafw.com</url>
+	</organization>
+
 	<modules>
 		<module>../asakusa-parent</module>
 		<module>../asakusa-dsl-vocabulary</module>
@@ -67,6 +73,33 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<charset>UTF-8</charset>
+					<docencoding>UTF-8</docencoding>
+					<locale>en</locale>
+					<doctitle>Asakusa Framework API References (Version ${version})</doctitle>
+					<windowtitle>Asakusa Framework API References (Version ${version})</windowtitle>
+				</configuration>
+				<executions>
+					<execution>
+						<id>non-aggregate</id>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
