@@ -43,14 +43,14 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 
 このコマンドを実行すると、プロジェクトの target ディレクトリ配下にいくつかのファイルが生成されます。このうち以下のファイルがAsakusa FrameworkとWindGateをインストールするためのアーカイブです。
 
-  asakusafw-${asakusafw-version}-prod-hc.tar.gz
+  asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz
     HadoopクラスターのHadoopクライアントノードに展開するアーカイブ。
-  asakusafw-${asakusafw-version}-prod-db.tar.gz
+  asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz
     データベースノードに展開するアーカイブ。
   asakusafw-${asakusafw-version}-prod-cleaner.tar.gz
     Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
 
-${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion 0.2.4 を使っている場合は、 asakusafw-0.2.4-prod-hc.tar.gz などとなります。 
+${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion 0.2.4 を使っている場合は、 asakusafw-0.2.4-prod-thundergate-hc.tar.gz などとなります。 
 
 バッチアプリケーションのデプロイに必要なファイル
 ------------------------------------------------
@@ -89,14 +89,14 @@ Hadoopのクライアントノード上にAsakusa Frameworkをデプロイしま
 
     $ source ~/.bash_profile
 
-3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusafw-${asakusafw-version}-prod-hc.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
+3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にHadoopクライアントノード用アーカイブ「asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
 
 ..  code-block:: sh
 
     mkdir $ASAKUSA_HOME
-    mv asakusafw-*-prod-hc.tar.gz $ASAKUSA_HOME
+    mv asakusafw-*-prod-thundergate-hc.tar.gz $ASAKUSA_HOME
     cd $ASAKUSA_HOME
-    tar -xzf asakusadw-*-prod-hc.tar.gz
+    tar -xzf asakusadw-*-prod-thundergate-hc.tar.gz
     find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
 
 4. $ASAKUSA_HOME/bulkloader/bin/bulkloader_hc_profile を$HOMEに移動します。
@@ -140,14 +140,14 @@ Hadoopのクライアントノード上にAsakusa Frameworkをデプロイしま
 
     $ source ~/.bash_profile
 
-3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にデータベースノード用アーカイブ「asakusafw-${asakusafw-version}-prod-db.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
+3. ASAKUSA_HOMEディレクトリを作成し、ASAKUSA_HOME配下にデータベースノード用アーカイブ「asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz」を展開します。展開後、ASAKUSA_HOME配下の*.shに実行権限を追加します。
 
 ..  code-block:: sh
 
     mkdir $ASAKUSA_HOME
-    mv asakusafw-*-prod-db.tar.gz $ASAKUSA_HOME
+    mv asakusafw-*-prod-thundergate-db.tar.gz $ASAKUSA_HOME
     cd $ASAKUSA_HOME
-    tar -xzf asakusafw-*-prod-db.tar.gz
+    tar -xzf asakusafw-*-prod-thundergate-db.tar.gz
     find $ASAKUSA_HOME -name "*.sh" | xargs chmod u+x
 
 4. $ASAKUSA_HOME/bulkloader/bin/.bulkloader_db_profile を$HOMEに移動します。

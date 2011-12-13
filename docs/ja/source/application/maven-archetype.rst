@@ -108,10 +108,10 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - asakusafw-${asakusafw-version}-dev.tar.gz
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の antrun:run ゴールを実行することによって開発環境にインストールする。
     * - 2
-      - asakusafw-${asakusafw-version}-prod-hc.tar.gz
+      - asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz
       - Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
     * - 3
-      - asakusafw-${asakusafw-version}-prod-db.tar.gz
+      - asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz
       - Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
     * - 4
       - asakusafw-${asakusafw.version}-prod-cleaner.tar.gz

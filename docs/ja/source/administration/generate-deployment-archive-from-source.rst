@@ -48,9 +48,9 @@ Asakusa Frameworkのデプロイアーカイブ生成
     Asakusa Frameworkを開発環境に展開するためのアーカイブ。
   asakusafw-${asakusafw-version}-windgate.tar.gz
     Asakusa FrameworkをWindGateと使用する場合における、Asakusa Frameworkを運用環境に展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-prod-hc.tar.gz
+  asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz
     Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-prod-db.tar.gz
+  asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz
     Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
   asakusafw-${asakusafw.version}-prod-cleaner.tar.gz
     Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ

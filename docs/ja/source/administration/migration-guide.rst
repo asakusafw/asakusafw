@@ -5,6 +5,19 @@
 
 運用環境のバージョンアップはAsakusa Frameworkを新バージョンで再インストールする必要があります。その際、設定ファイルなどを過去バージョンのファイルで上書きして設定を反映させる場合などは、必ず本マイグレーションガイドを参照して、バージョン間の変更を反映させてください。
 
+ver0.2.4へのマイグレーション
+============================
+
+Asakusa Frameworkインストールアーカイブの名称変更と統廃合
+---------------------------------------------------------
+Asakusa Frameworkインストールアーカイブが以下の通り変更されました。
+
+* asakusa-distribution-${version}-prod-hc.tar.gz -> asakusafw-${asakusafw.version}-prod-thundergate-hc.tar.gz
+* asakusa-distribution-${version}-prod-db.tar.gz -> asakusafw-${asakusafw.version}-prod-thundergate-db.tar.gz
+* asakusa-distribution-${version}-prod-cleaner.tar.gz -> asakusafw-${asakusafw.version}-prod-cleaner.tar.gz
+* asakusa-distribution-${version}-prod-windgate.tar.gz -> asakusafw-${asakusafw.version}-prod-windgate.tar.gz
+* asakusa-distribution-${version}-prod-windgate-ssh.tar.gz -> 廃止(prod-windgateを使用して下さい)
+
 ver0.2.3へのマイグレーション
 ============================
 
