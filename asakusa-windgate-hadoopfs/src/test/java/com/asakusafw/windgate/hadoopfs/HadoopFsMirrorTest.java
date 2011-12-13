@@ -218,6 +218,8 @@ public class HadoopFsMirrorTest {
             resource.prepare(script(process));
 
             SourceDriver<Text> driver = resource.createSource(process);
+            driver.prepare();
+            driver.get();
             driver.close();
             fail();
         } catch (IOException e) {
