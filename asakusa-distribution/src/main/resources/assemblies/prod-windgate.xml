@@ -50,6 +50,20 @@
 		<dependencySet>
 			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-windgate-core</include>
+				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
+				<include>ch.qos.logback:logback-classic</include>
+				<include>ch.qos.logback:logback-core</include>
+				<include>org.slf4j:slf4j-api</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0775</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-yaess-bootstrap</include>
@@ -94,6 +108,19 @@
 			<fileMode>0755</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
+			<excludes>
+				<exclude>.gitignore</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
+			<outputDirectory>windgate-ssh</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+			<excludes>
+				<exclude>.gitignore</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
 			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>

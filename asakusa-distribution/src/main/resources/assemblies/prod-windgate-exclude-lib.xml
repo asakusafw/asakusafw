@@ -15,6 +15,19 @@
 			<fileMode>0755</fileMode>
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
+			<excludes>
+				<exclude>**/.gitignore</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
+			<outputDirectory>windgate-ssh</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+			<excludes>
+				<exclude>**/.gitignore</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
 			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
@@ -95,6 +108,14 @@
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
 			<outputDirectory>windgate/lib</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<directoryMode>0775</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/assemblies</directory>
+			<outputDirectory>windgate-ssh/lib</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>

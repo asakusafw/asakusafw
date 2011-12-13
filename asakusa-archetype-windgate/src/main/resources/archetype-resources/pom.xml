@@ -327,7 +327,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<descriptors>
 								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
 								<descriptor>src/main/assembly/prod-windgate-complement-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-ssh-complement-lib.xml</descriptor>
 								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
 							</descriptors>
 							<finalName>asakusafw-${asakusafw.version}</finalName>
@@ -416,13 +415,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<artifactId>asakusa-distribution</artifactId>
 			<version>${asakusafw.version}</version>
 			<classifier>prod-windgate-exclude-lib</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-distribution</artifactId>
-			<version>${asakusafw.version}</version>
-			<classifier>prod-windgate-ssh-exclude-lib</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
