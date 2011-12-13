@@ -1,5 +1,5 @@
 diff --git pom.xml pom.xml
-index f718b58..4e30260 100644
+index f718b58..3ff6dbc 100644
 --- pom.xml
 +++ pom.xml
 @@ -10,7 +10,6 @@
@@ -87,21 +87,20 @@ index f718b58..4e30260 100644
  							</target>
  						</configuration>
  					</execution>
-@@ -299,8 +325,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
+@@ -299,8 +325,11 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  						</goals>
  						<configuration>
  							<descriptors>
 -								<descriptor>src/main/assembly/asakusa-install-dev.xml</descriptor>
 +								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
 +								<descriptor>src/main/assembly/prod-windgate-complement-lib.xml</descriptor>
-+								<descriptor>src/main/assembly/prod-windgate-ssh-complement-lib.xml</descriptor>
 +								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
  							</descriptors>
 +							<finalName>asakusafw-${asakusafw.version}</finalName>
  						</configuration>
  					</execution>
  				</executions>
-@@ -378,41 +408,49 @@ org.eclipse.jdt.apt.reconcileEnabled=true
+@@ -378,13 +407,21 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  			<groupId>com.asakusafw</groupId>
  			<artifactId>asakusa-distribution</artifactId>
  			<version>${asakusafw.version}</version>
@@ -115,48 +114,27 @@ index f718b58..4e30260 100644
 +			<artifactId>asakusa-distribution</artifactId>
  			<version>${asakusafw.version}</version>
 +			<classifier>prod-windgate-exclude-lib</classifier>
- 			<scope>test</scope>
- 		</dependency>
- 		<dependency>
- 			<groupId>com.asakusafw</groupId>
--			<artifactId>asakusa-windgate-test-moderator</artifactId>
++			<scope>test</scope>
++		</dependency>
++		<dependency>
++			<groupId>com.asakusafw</groupId>
 +			<artifactId>asakusa-distribution</artifactId>
- 			<version>${asakusafw.version}</version>
-+			<classifier>prod-windgate-ssh-exclude-lib</classifier>
- 			<scope>test</scope>
- 		</dependency>
- 		<dependency>
- 			<groupId>com.asakusafw</groupId>
--			<artifactId>asakusa-test-data-generator</artifactId>
-+			<artifactId>asakusa-distribution</artifactId>
- 			<version>${asakusafw.version}</version>
++			<version>${asakusafw.version}</version>
 +			<classifier>prod-cleaner-exclude-lib</classifier>
  			<scope>test</scope>
--			<optional>true</optional>
  		</dependency>
  		<dependency>
- 			<groupId>com.asakusafw</groupId>
--			<artifactId>asakusa-yaess-plugin</artifactId>
-+			<artifactId>asakusa-windgate-test-moderator</artifactId>
+@@ -406,13 +443,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
  			<version>${asakusafw.version}</version>
-+			<scope>test</scope>
  		</dependency>
  		<dependency>
 -			<groupId>mysql</groupId>
 -			<artifactId>mysql-connector-java</artifactId>
 -			<version>${mysql.jdbc.version}</version>
-+			<groupId>com.asakusafw</groupId>
-+			<artifactId>asakusa-test-data-generator</artifactId>
-+			<version>${asakusafw.version}</version>
- 			<scope>test</scope>
- 			<optional>true</optional>
- 		</dependency>
- 		<dependency>
-+			<groupId>com.asakusafw</groupId>
-+			<artifactId>asakusa-yaess-plugin</artifactId>
-+			<version>${asakusafw.version}</version>
-+		</dependency>
-+		<dependency>
+-			<scope>test</scope>
+-			<optional>true</optional>
+-		</dependency>
+-		<dependency>
  			<groupId>ch.qos.logback</groupId>
  			<artifactId>logback-classic</artifactId>
  			<version>${logback.version}</version>
