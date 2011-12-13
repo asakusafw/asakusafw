@@ -91,7 +91,7 @@ ${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに�
     # Directory for cleaning (required)
     clean.local-dir.0=/home/asakusa/asakusa/log
     # Cleaning Pattern (required)
-    clean.local-pattern.0=.*\.log\.*
+    clean.local-pattern.0=.*\.log\..*
     # Preservation period date of file (optional)
     clean.local-keep-date=10
 
