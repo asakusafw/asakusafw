@@ -18,13 +18,21 @@ package com.asakusafw.windgate.hadoopfs.ssh;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -33,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
 
 /**
  * Gets files from Hadoop File System and write them as {@link FileList} to the standard output.
@@ -44,9 +53,9 @@ public class WindGateHadoopGet {
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateHadoopGet.class);
 
-    private static final int BUFFER_SIZE = 1024 * 1024;
+    static final int BUFFER_SIZE = 1024 * 1024;
 
-    private final Configuration conf;
+    final Configuration conf;
 
     /**
      * Creates a new instance.
@@ -100,53 +109,123 @@ public class WindGateHadoopGet {
             WGLOG.error(e, "E20002",
                     paths);
             return 1;
+        } catch (InterruptedException e) {
+            WGLOG.error(e, "E20003",
+                    paths);
+            return 1;
         }
     }
 
-    void doGet(List<Path> paths, FileList.Writer drain) throws IOException {
+    void doGet(final List<Path> paths, FileList.Writer drain) throws IOException, InterruptedException {
         assert paths != null;
         assert drain != null;
-        FileSystem fs = FileSystem.get(conf);
+        final BlockingQueue<Pair> queue = new SynchronousQueue<Pair>();
+        final FileSystem fs = FileSystem.get(conf);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
-            for (Path path : paths) {
-                boolean found = false;
-                WGLOG.info("I20003",
-                        fs.getUri(),
-                        path);
-                FileStatus[] results = fs.globStatus(path);
-                if (results != null) {
-                    for (FileStatus status : results) {
-                        if (status.isDir()) {
-                            continue;
-                        }
-                        found = true;
-                        doGet(fs, status, drain);
-                    }
+            Future<Void> fetcher = executor.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    fetch(fs, paths, queue);
+                    queue.put(Pair.eof());
+                    return null;
                 }
-                if (found == false) {
-                    throw new FileNotFoundException(paths.toString());
+            });
+            while (true) {
+                Pair next = queue.poll(1, TimeUnit.SECONDS);
+                if (next != null) {
+                    if (next.isEof()) {
+                        break;
+                    } else {
+                        transfer(fs, next.status, next.input, drain);
+                    }
+                } else if (fetcher.isDone()) {
+                    break;
                 }
             }
+            try {
+                fetcher.get();
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof Error) {
+                    throw (Error) cause;
+                } else if (cause instanceof RuntimeException) {
+                    throw (RuntimeException) cause;
+                } else if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                } else if (cause instanceof InterruptedException) {
+                    throw (InterruptedException) cause;
+                }
+                throw new AssertionError(e);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
         } finally {
+            executor.shutdownNow();
             fs.close();
+            while (true) {
+                Pair next = queue.poll();
+                if (next == null) {
+                    break;
+                }
+                try {
+                    next.input.close();
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
         }
     }
 
-    private void doGet(FileSystem fs, FileStatus status, FileList.Writer drain) throws IOException {
+    void fetch(FileSystem fs, List<Path> paths, BlockingQueue<Pair> queue) throws IOException, InterruptedException {
+        assert fs != null;
+        assert paths != null;
+        assert queue != null;
+        for (Path path : paths) {
+            boolean found = false;
+            WGLOG.info("I20003",
+                    fs.getUri(),
+                    path);
+            FileStatus[] results = fs.globStatus(path);
+            if (results != null) {
+                for (FileStatus status : results) {
+                    if (status.isDir()) {
+                        continue;
+                    }
+                    found = true;
+                    InputStream in = fs.open(status.getPath(), BUFFER_SIZE);
+                    boolean succeed = false;
+                    try {
+                        queue.put(new Pair(in, status));
+                        succeed = true;
+                    } finally {
+                        if (succeed == false) {
+                            in.close();
+                        }
+                    }
+                }
+            }
+            if (found == false) {
+                throw new FileNotFoundException(paths.toString());
+            }
+        }
+    }
+
+    private void transfer(FileSystem fs, FileStatus status, InputStream input, Writer drain) throws IOException {
         assert fs != null;
         assert status != null;
+        assert input != null;
         assert drain != null;
         WGLOG.info("I20004",
                 fs.getUri(),
                 status.getPath());
         long transferred = 0;
-        FSDataInputStream stream = fs.open(status.getPath(), BUFFER_SIZE);
         try {
             OutputStream output = drain.openNext(status);
             try {
-                byte[] buf = new byte[256];
+                byte[] buf = new byte[1024];
                 while (true) {
-                    int read = stream.read(buf);
+                    int read = input.read(buf);
                     if (read < 0) {
                         break;
                     }
@@ -157,11 +236,31 @@ public class WindGateHadoopGet {
                 output.close();
             }
         } finally {
-            stream.close();
+            input.close();
         }
         WGLOG.info("I20005",
                 fs.getUri(),
                 status.getPath(),
                 transferred);
+    }
+
+    private static class Pair {
+
+        final InputStream input;
+
+        final FileStatus status;
+
+        Pair(InputStream input, FileStatus status) {
+            this.input = input;
+            this.status = status;
+        }
+
+        static Pair eof() {
+            return new Pair(null, null);
+        }
+
+        boolean isEof() {
+            return input == null && status == null;
+        }
     }
 }
