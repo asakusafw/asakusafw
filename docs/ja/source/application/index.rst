@@ -6,23 +6,17 @@ Asakusa Frameworkによる開発を行うための開発環境の構築につい
 環境環境の構築
 ==============
 
-スタートガイド
---------------
-Clouderaから提供されているCloudera's Hadoop Demo VM上に
-Asakusa Frameworkを導入します。
+Mavenアーキタイプ管理ガイド
+---------------------------
+Asakusa Frameworkが提供するバッチアプリケーション開発用のMavenアーキタイプについて説明します。
 
-Cloudera's Hadoop Demo VMはHadoopがインストール済であり、
-またAsakusa FrameworkがこのVM用にインストーラを提供しているため、
-この手順はAsakusa Frameworkをすぐに試すには最適です。
+開発環境構築ユーザガイド
+------------------------
+ThunderGateを使う場合の開発環境の注意点や、Linuxディストリビューション固有に必要となる環境構築手順を説明します。
 
-ユーザガイド
-------------
-Linux OS上にAsakusa Frameworkの開発環境を構築する手順を解説します。
-
-Maven Archetype
----------------
-Asakusa Frameworkが提供するバッチアプリケーション開発用のMaven Archetypeを使うことで、
-Asakusa Frameworkが提供するモデル生成ツールやコンパイラがMavenのゴール実行と統合されます。
+ClouderaVM上に開発環境を構築する
+--------------------------------
+Clouderaから提供されているCloudera's Hadoop Demo VM上にAsakusa Frameworkを導入します。
 
 開発環境 マイグレーションガイド
 -------------------------------
@@ -41,8 +35,9 @@ Graphvizを使ってフローDSLのコンパイル結果をグラフ化する手
 ..  toctree::
     :maxdepth: 1
 
-    start-guide
-    user-guide
     maven-archetype
+    user-guide
+    with-cloudera-vm
     migration-guide
     graphviz
+

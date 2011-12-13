@@ -15,7 +15,7 @@ Asakusa FrameworkのGitHubリポジトリ [#]_ から、Asakusa Frameworkのソ�
 
 ..  code-block:: sh
 
-    wget http://github.com/asakusafw/asakusafw/zipball/0.2.4
+    wget https://github.com/asakusafw/asakusafw/zipball/0.2.4
 
 Asakusa Frameworkのビルド
 -------------------------
@@ -47,13 +47,11 @@ Asakusa Frameworkのデプロイアーカイブ生成
   asakusafw-${asakusafw-version}-dev.tar.gz
     Asakusa Frameworkを開発環境に展開するためのアーカイブ。
   asakusafw-${asakusafw-version}-windgate.tar.gz
-    Asakusa FrameworkをWindGateと使用する場合における、Asakusa Frameworkノードに展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-windgate-ssh.tar.gz
-    Asakusa FrameworkをWindGateと使用する場合における、Hadoopクライアントノードに展開するためのHadoopブリッジ用アーカイブ
+    Asakusa FrameworkをWindGateと使用する場合における、Asakusa Frameworkを運用環境に展開するためのアーカイブ。
   asakusafw-${asakusafw-version}-prod-hc.tar.gz
     Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
   asakusafw-${asakusafw-version}-prod-db.tar.gz
     Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
-  asakusa-distribution-${version}-prod-cleaner.tar.gz
-     sakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
+  asakusafw-${asakusafw.version}-prod-cleaner.tar.gz
+    Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
 
