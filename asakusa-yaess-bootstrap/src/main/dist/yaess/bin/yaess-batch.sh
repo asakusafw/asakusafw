@@ -27,12 +27,6 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
-
 _OPT_BATCH_ID="$1"
 shift
 
@@ -40,6 +34,12 @@ _YS_ROOT="$(dirname $0)/.."
 if [ -e "$_YS_ROOT/conf/env.sh" ]
 then
     . "$_YS_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
 fi
 
 if [ "$YS_PATH_SEPARATOR" = "" ]

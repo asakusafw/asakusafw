@@ -37,12 +37,6 @@ if [ $# -ne 7 ]; then
     exit 1
 fi
 
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
-
 _OPT_PROFILE="$1"
 _OPT_SESSION_KIND="$2"
 _OPT_SCRIPT="$3"
@@ -51,17 +45,23 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
+_WG_ROOT="$(dirname $0)/.."
+if [ -e "$_WG_ROOT/conf/env.sh" ]
+then
+    . "$_WG_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
+fi
+
 if [ "$WG_CLASSPATH_DELIMITER" = "" ]
 then
     _WG_CLASSPATH_DELIMITER=':'
 else 
     _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
-fi
-
-_WG_ROOT="$(dirname $0)/.."
-if [ -e "$_WG_ROOT/conf/env.sh" ]
-then
-    . "$_WG_ROOT/conf/env.sh"
 fi
 
 _WG_PROFILE="$_WG_ROOT/profile/${_OPT_PROFILE}.properties"

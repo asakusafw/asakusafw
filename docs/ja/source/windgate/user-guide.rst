@@ -349,7 +349,7 @@ WindGateの環境変数設定
 ~~~~~~~~~~~~~~~~~~~~~~
 WindGateの実行に特別な環境変数を利用する場合、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内でエクスポートして定義できます。
 
-WindGateをAsakusa Frameworkのバッチから利用する場合、通常は以下の環境変数が必要です。
+WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環境変数が必要です。
 
 ..  list-table:: WindGateの実行に必要な環境変数
     :widths: 10 60
@@ -360,9 +360,12 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、通常は以�
     * - ``ASAKUSA_HOME``
       - Asakusaのインストール先パス。
     * - ``HADOOP_HOME``
-      - Hadoopのインストール先パス。未指定の場合はHadoopに関するクラスパスを通さない。
+      - Hadoopのインストール先パス [#]_ 。
     * - ``HADOOP_USER_CLASSPATH_FIRST``
       - `WindGateのログ設定`_ 時にHadoopのログ機構を利用しないための設定。 ``true`` を指定する。
+
+特別な理由がない限り、 ``ASAKUSA_HOME`` はWindGateを実行する前 [#]_ にあらかじめ定義しておいてください。
+``$ASAKUSA_HOME/windgate/conf/env.sh`` では、その他必要な環境変数を定義するようにしてください。
 
 その他、以下の環境変数を利用可能です。
 
@@ -374,6 +377,18 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、通常は以�
       - 備考
     * - ``WINDGATE_OPTS``
       - WindGateを実行するJava VMの追加オプション。
+
+..  [#] 環境変数 ``$HADOOP_HOME`` が設定されている場合、WindGateは ``$HADOOP_HOME/bin/hadoop`` コマンドを利用してアプリケーションを起動します。
+    逆に ``$HADOOP_HOME`` が設定されていない場合、 ``java`` コマンドを利用してアプリケーションを起動します。
+    前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は ``$ASAKUSA_HOME/windgate/lib`` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
+
+    特別な理由がない限り、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内で ``HADOOP_HOME`` を設定しておくのがよいでしょう。
+    または、 :doc:`YAESS <../yaess/index>` を利用して外部から ``HADOOP_HOME`` を設定することも可能です。
+
+
+..  [#] :doc:`YAESS <../yaess/index>` を経由してWindGateを実行する場合、WindGateで利用する環境変数 ``ASAKUSA_HOME`` はYAESS側の設定で行えます。
+    詳しくは :doc:`../yaess/user-guide` を参照してください。
+
 
 WindGateのログ設定
 ~~~~~~~~~~~~~~~~~~

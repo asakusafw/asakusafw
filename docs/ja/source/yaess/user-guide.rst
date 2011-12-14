@@ -77,9 +77,12 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
     * - ``hadoop.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
-上記のうち、 ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+上記のうち、 ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式 [#]_ で、YAESSを起動した環境の環境変数を含められます。
 ここでは同一環境上のHadoopを利用する設定ですので、 ``hadoop.env.HADOOP_HOME`` には ``${HADOOP_HOME}`` を、
 ``hadoop.env.ASAKUSA_HOME`` には ``${ASAKUSA_HOME}`` をそれぞれ指定すれば、現在の環境変数をそのまま利用できます。
+
+..  [#] 現在の仕様では、 ``$ASAKUSA_HOME`` のように ``{`` と ``}`` に囲まれていない形式は利用できません。
+
 
 SSHを経由してHadoopジョブを実行する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -134,6 +137,9 @@ Hadoopを利用する際に特別な環境変数が必要な場合、以下の�
 ..  note::
     ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.ASAKUSA_HOME`` は上記の一部です。
     ただし、これらの環境変数はHadoopの実行に必要であるため、常に指定するようにしてください。
+
+..  note::
+    ``hadoop.env.<環境変数名>=${<環境変数名>}`` のように書くと、現在の環境変数を対象の環境にそのまま受け渡せます。
 
 
 Hadoopブリッジの設定
@@ -609,7 +615,19 @@ YAESSの環境変数設定
 ~~~~~~~~~~~~~~~~~~~
 YAESSの実行に特別な環境変数を利用する場合、 ``$ASAKUSA_HOME/yaess/conf/env.sh`` 内でエクスポートして定義できます。
 
-通常の場合、YAESSの実行には ``ASAKUSA_HOME`` という名前の環境変数のみが必要です。
+YAESSを利用する場合、以下の環境変数が必要です。
+
+..  list-table:: WindGateの実行に必要な環境変数
+    :widths: 10 60
+    :header-rows: 1
+
+    * - 名前
+      - 備考
+    * - ``ASAKUSA_HOME``
+      - Asakusaのインストール先パス。
+
+特別な理由がない限り、 ``ASAKUSA_HOME`` はYAESSを実行する前にあらかじめ定義しておいてください。
+``$ASAKUSA_HOME/yaess/conf/env.sh`` では、その他必要な環境変数を定義するようにしてください。
 
 
 YAESSのログ設定
