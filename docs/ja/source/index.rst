@@ -33,8 +33,6 @@ Asakusa Framework入門
     application/index
     administration/index
 
-* アプリケーションの設計
-
 プロダクトについて
 ==================
 * :doc:`release-notes`
