@@ -39,7 +39,6 @@ Asakusa Framework入門
 * :doc:`product/target-platform`
 * :doc:`product/road-map`
 * :doc:`product/license`
-* :doc:`product/faq`
 
 リソース
 ========

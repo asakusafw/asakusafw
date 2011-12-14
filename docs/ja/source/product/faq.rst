@@ -1,6 +1,0 @@
-===
-FAQ
-===
-
-..  todo:: Product > FAQ
-

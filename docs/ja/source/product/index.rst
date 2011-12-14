@@ -10,5 +10,4 @@ Asakusa Frameworkのプロダクトとしての情報についてのページで
     target-platform
     road-map
     license
-    faq
 
