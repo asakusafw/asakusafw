@@ -25,28 +25,41 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 現時点でAsakusa Frameworkが提供するアーキタイプには以下のものがあります。
 
 ..  list-table:: Asakusa Framework アーキタイプ一覧
-    :widths: 1 3 6
+    :widths: 3 1 6
     :header-rows: 1
     
-    * - no
-      - アーキタイプ
+    * - アーキタイプ
+      - 導入バージョン
       - 説明
-    * - 1
-      - asakusa-archetype-batchapp
-      - (Asakusa Framework ver.0.2.3以前) 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。ver.0.2.4以降は使用できません。
-    * - 2
-      - asakusa-archetype-thundergate
-      - (Asakusa Framework ver.0.2.4以降) 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。ver.0.2.3以前は使用できません。
-    * - 3
-      - asakusa-archetype-windgate
+    * - ``asakusa-archetype-batchapp``
+      - 0.1.0
+      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ [#]_ 。
+    * - ``asakusa-archetype-thundergate``
+      - 0.2.4
+      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
+    * - ``asakusa-archetype-windgate``
+      - 0.2.2
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
-``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml」を指定して実行します。
-作成するプロジェクトに関するパラメータを対話式に入力していきます。
+..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
+
+``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
 
 ..  code-block:: sh
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+
+
+起動後、作成するプロジェクトに関するパラメータを対話式に入力していきます。
+
+..  code-block:: sh
+
+    $ mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    [INFO] Scanning for projects...
+    [INFO]                                                                         
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Building Maven Stub Project (No POM) 1
+    [INFO] ------------------------------------------------------------------------
     ...
     Choose archetype:
     1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-) 
@@ -85,42 +98,33 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
 
 ..  list-table:: アーキタイプ [asakusa-atchetype-windgate] が作成するインストールアーカイブ一覧
-    :widths: 1 3 6
+    :widths: 3 7
     :header-rows: 1
     
-    * - no
-      - ファイル名
+    * - ファイル名
       - 説明
-    * - 1
-      - ``asakusafw-${asakusafw-version}-dev.tar.gz``
+    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
-    * - 2
-      - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
+    * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
       - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
-    * - 3
-      - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
-      - クリーニングツールを運用環境に展開するためのアーカイブ
+    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
+      - クリーニングツールを運用環境に展開するためのアーカイブ。
 
 
 ..  list-table:: アーキタイプ [asakusa-atchetype-thundergate] が作成するインストールアーカイブ一覧
-    :widths: 1 3 6
+    :widths: 4 6
     :header-rows: 1
     
-    * - no
-      - ファイル名
+    * - ファイル名
       - 説明
-    * - 1
-      - ``asakusafw-${asakusafw-version}-dev.tar.gz``
-      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の antrun:run ゴールを実行することによって開発環境にインストールする。
-    * - 2
-      - ``asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz``
+    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
+      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
+    * - ``asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz``
       - Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
-    * - 3
-      - ``asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz``
+    * - ``asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz``
       - Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
-    * - 4
-      - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
-      - クリーニングツールを運用環境に展開するためのアーカイブ
+    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
+      - クリーニングツールを運用環境に展開するためのアーカイブ。
 
 
 ``antrun:run`` 開発環境用のAsakusa Frameworkをインストール
@@ -141,8 +145,8 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 
     * ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の変更
     
-        * import.tsv-create-dir=/var/tmp/asakusa/importer
-        * export.tsv-create-dir=/var/tmp/asakusa/exporter
+        * ``import.tsv-create-dir=/var/tmp/asakusa/importer``
+        * ``export.tsv-create-dir=/var/tmp/asakusa/exporter``
     
     * テンポラリディレクトリの作成
     
@@ -240,7 +244,7 @@ Asakusa Frameworkでは、モデルの定義情報の記述するために、以
 モデルの定義情報をDMDLとして記述する場合
 ----------------------------------------
 モデルの定義情報をDMDLとして記述する場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。
-また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
+また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて、UTF-8エンコーディングで保存してください。
 
 DMDLファイルは複数配置することが出来ます。上記ディレクトリ配下にサブディレクトリを作成し、そこにDMDLファイルを配置することも可能です。
 
@@ -292,9 +296,6 @@ DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を
 
     mvn package
 
-..  note::
-    Asakusa DSLのコンパイル時に以下例のように演算子ファクトリクラスのシンボルが見つからない旨のワーニングメッセージが出力されることがありますが、このメッセージが出力されても正常にコンパイルが行われているため、この警告メッセージは無視してください。
-
 ..  code-block:: sh
 
     [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
@@ -310,7 +311,7 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
     これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
 
 ..  attention::
-    バッチコンパイルの最中にJavaのコンパイルに関する警告が表示されることがあります。
+    バッチコンパイルの最中にJavaのソースファイルのコンパイルに関する警告が表示されることがあります。
     これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
     最終的にコンパイルが成功していれば問題ありません。
 
@@ -318,8 +319,8 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 バッチコンパイルオプションの指定
 --------------------------------
 バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。
-設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「+」や「-」を指定します。
-また、複数のオプションを指定するには「,」(カンマ)でそれぞれを区切ります。
+設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「 ``+`` 」や「 ``-`` 」を指定します。
+また、複数のオプションを指定するには「 ``,`` 」(カンマ)でそれぞれを区切ります。
 
 指定できるバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
 
@@ -371,7 +372,7 @@ pom.xmlの編集
 
 pom.xmlの ``<dependencies>`` 内に依存定義を追加します。
 
-..  code-block:: sh
+..  code-block:: xml
 
     <dependency>
         <groupId>commons-lang</groupId>
