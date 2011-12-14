@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  * Copyright 2011 Asakusa Framework Team.
  *
@@ -13,20 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.batch;
+package ${package}.jobflow;
 
-import ${package}.jobflow.ExJobFlow;
-import com.asakusafw.vocabulary.batch.Batch;
-import com.asakusafw.vocabulary.batch.BatchDescription;
+import ${package}.modelgen.dmdl.csv.AbstractErrorRecordCsvExporterDescription;
 
 /**
- * サンプル：バッチクラス。
+ * エラー情報をWindGate/CSVでエクスポートする。
+ * エクスポート対象ファイルは {@code result/category-<date:日付>.csv}。
  */
-@Batch(name = "ex")
-public class ExBatch extends BatchDescription {
+public class ErrorRecordToCsv extends AbstractErrorRecordCsvExporterDescription {
 
     @Override
-    protected void describe() {
-        run(ExJobFlow.class).soon();
+    public String getProfileName() {
+        return "asakusa";
+    }
+
+    @Override
+    public String getPath() {
+        return "result/error-${symbol_dollar}{date}.csv";
     }
 }

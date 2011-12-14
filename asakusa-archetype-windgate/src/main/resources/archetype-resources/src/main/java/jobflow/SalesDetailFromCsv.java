@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  * Copyright 2011 Asakusa Framework Team.
  *
@@ -15,12 +18,13 @@
  */
 package ${package}.jobflow;
 
-import ${package}.modelgen.dmdl.csv.AbstractEx1CsvExporterDescription;
+import ${package}.modelgen.dmdl.csv.AbstractSalesDetailCsvImporterDescription;
 
 /**
- * Export EX1 to WindGate.
+ * 売上明細をWindGate/CSVからインポートする。
+ * インポート対象ファイルは {@code sales/<date:日付>.csv}。
  */
-public class Ex1ToCsv extends AbstractEx1CsvExporterDescription {
+public class SalesDetailFromCsv extends AbstractSalesDetailCsvImporterDescription {
 
     @Override
     public String getProfileName() {
@@ -29,7 +33,11 @@ public class Ex1ToCsv extends AbstractEx1CsvExporterDescription {
 
     @Override
     public String getPath() {
-        return "output-ex1.csv";
+        return "sales/${symbol_dollar}{date}.csv";
     }
 
+    @Override
+    public DataSize getDataSize() {
+        return DataSize.LARGE;
+    }
 }

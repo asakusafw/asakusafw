@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  * Copyright 2011 Asakusa Framework Team.
  *
@@ -15,31 +18,26 @@
  */
 package ${package}.jobflow;
 
-import ${package}.modelgen.dmdl.model.Ex1;
-
-import org.junit.Test;
-
-import com.asakusafw.testdriver.JobFlowTester;
+import ${package}.modelgen.dmdl.csv.AbstractItemInfoCsvImporterDescription;
 
 /**
- * サンプル：ジョブフローのテストクラス
+ * 商品マスタをWindGate/CSVからインポートする。
+ * インポート対象ファイルは {@code master/item_info.csv}。
  */
-public class ExJobFlowTest {
+public class ItemInfoFromCsv extends AbstractItemInfoCsvImporterDescription {
 
-    /**
-     * サンプル：ジョブフローの実行
-     */
-    @Test
-    public void testExample() {
-
-        String testDataSheet = "EX1.xls";
-
-        JobFlowTester driver = new JobFlowTester(this.getClass());
-
-        driver.input("ex1", Ex1.class).prepare(testDataSheet);
-        driver.output("ex1", Ex1.class).verify(testDataSheet + "#:1", testDataSheet + "#:2");
-
-        driver.runTest(ExJobFlow.class);
+    @Override
+    public String getProfileName() {
+        return "asakusa";
     }
 
+    @Override
+    public String getPath() {
+        return "master/item_info.csv";
+    }
+
+    @Override
+    public DataSize getDataSize() {
+        return DataSize.LARGE;
+    }
 }

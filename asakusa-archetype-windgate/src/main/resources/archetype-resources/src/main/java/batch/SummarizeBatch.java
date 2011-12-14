@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  * Copyright 2011 Asakusa Framework Team.
  *
@@ -13,23 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.jobflow;
+package ${package}.batch;
 
-import ${package}.modelgen.dmdl.csv.AbstractEx1CsvImporterDescription;
+import ${package}.jobflow.CategorySummaryJob;
+import com.asakusafw.vocabulary.batch.Batch;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * Import EX1 from WindGate.
+ * 売上の集計を計算する。
  */
-public class Ex1FromCsv extends AbstractEx1CsvImporterDescription {
+@Batch(name = "example.summarizeSales")
+public class SummarizeBatch extends BatchDescription {
 
     @Override
-    public String getProfileName() {
-        return "asakusa";
+    protected void describe() {
+        run(CategorySummaryJob.class).soon();
     }
-
-    @Override
-    public String getPath() {
-        return "input-ex1.csv";
-    }
-
 }

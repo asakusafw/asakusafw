@@ -1,0 +1,125 @@
+-- 入力CSVファイル形式
+
+"売上明細"
+@windgate.csv(
+    has_header = TRUE,
+    datetime = "yyyy-MM-dd HH:mm:ss"
+)
+sales_detail = {
+
+    "売上日時"
+    @windgate.csv.field(name = "日時")
+    sales_date_time : DATETIME;
+
+    "店舗コード"
+    @windgate.csv.field(name = "店舗コード")
+    store_code : TEXT;
+
+    "商品コード"
+    @windgate.csv.field(name = "商品コード")
+    item_code : TEXT;
+
+    "ファイル名"
+    @windgate.csv.file_name
+    file_name : TEXT;
+
+    "行番号"
+    @windgate.csv.line_number
+    line_number : INT;
+};
+
+"店舗マスタ"
+@windgate.csv(has_header = TRUE)
+store_info = {
+
+    "店舗コード"
+    @windgate.csv.field(name = "店舗コード")
+    store_code : TEXT;
+
+    "店舗名称"
+    @windgate.csv.field(name = "名称")
+    store_name : TEXT;
+};
+
+"商品マスタ"
+@windgate.csv(
+    has_header = TRUE,
+    datetime = "yyyy-MM-dd HH:mm:ss"
+)
+item_info = {
+
+    "商品コード"
+    @windgate.csv.field(name = "商品コード")
+    item_code : TEXT;
+
+    "商品名"
+    @windgate.csv.field(name = "商品名")
+    item_name : TEXT;
+
+    "商品カテゴリ名"
+    @windgate.csv.field(name = "カテゴリ名")
+    category_name : TEXT;
+
+    "商品売価"
+    @windgate.csv.field(name = "売価")
+    selling_price : INT;
+
+    "マスタ適用開始日時 (inclusive)"
+    @windgate.csv.field(name = "適用開始日時")
+    begin_date_time : DATETIME;
+
+    "マスタ適用終了日時 (exclusive)"
+    @windgate.csv.field(name = "適用終了日時")
+    end_date_time : DATETIME;
+};
+
+-- 中間データ形式
+
+"売上明細+商品マスタ"
+joined joined_sales_info
+= sales_detail -> {
+    item_code -> item_code;
+} % item_code
++ item_info -> {
+    item_code -> item_code;
+    category_name -> category_name;
+    selling_price -> selling_price;
+} % item_code;
+
+
+-- 出力CSV形式
+
+"カテゴリ別売上集計"
+@windgate.csv(
+    has_header = TRUE
+)
+summarized category_summary = joined_sales_info => {
+
+    @windgate.csv.field(name = "カテゴリ名")
+    any category_name -> category_name;
+
+    @windgate.csv.field(name = "総商品数")
+    count category_name -> item_count;
+
+    @windgate.csv.field(name = "売価合計")
+    sum selling_price -> selling_price_total;
+} % category_name;
+
+"エラー情報"
+@windgate.csv(
+    has_header = TRUE
+)
+error_record = {
+
+    "ファイル名"
+    @windgate.csv.field(name = "ファイル名")
+    file_name : TEXT;
+
+    "行番号"
+    @windgate.csv.field(name = "行番号")
+    line_number : INT;
+
+    "エラーメッセージ"
+    @windgate.csv.field(name = "メッセージ")
+    message : TEXT;
+};
