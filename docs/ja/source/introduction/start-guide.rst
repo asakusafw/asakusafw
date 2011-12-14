@@ -373,7 +373,7 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 
 ..  code-block:: sh
 
-    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-01-01
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
 
 バッチの実行が成功すると、コマンドの標準出力の最終行に「Finished: SUCCESS」と出力されます。
 
@@ -389,7 +389,7 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 
 ..  code-block:: sh
 
-    cat /tmp/windgate-$USER/result/category-2011-01-01.csv
+    cat /tmp/windgate-$USER/result/category-2011-04-01.csv
 
     カテゴリ名,総商品数,売価合計
     アイスクリーム,9,900

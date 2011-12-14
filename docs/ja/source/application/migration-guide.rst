@@ -9,7 +9,7 @@
 
 pom.xml上のバージョンを更新
 ---------------------------
-pom.xmlの10行目にある「<asakusafw.version」の値を更新したいバージョンに書き換えます。
+pom.xmlの10行目にある「<asakusafw.version>」の値を更新したいバージョンに書き換えます。
 
 ..  code-block:: sh
 
@@ -23,7 +23,7 @@ Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフ�
 
     mvn assembly:single antrun:run compile
 
-Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpathなど)を更新します。
 
 ..  code-block:: sh
 
