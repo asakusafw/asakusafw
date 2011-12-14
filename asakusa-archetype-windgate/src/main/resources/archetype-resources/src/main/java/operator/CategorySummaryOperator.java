@@ -26,6 +26,9 @@ import ${package}.modelgen.dmdl.model.ItemInfo;
 import ${package}.modelgen.dmdl.model.JoinedSalesInfo;
 import ${package}.modelgen.dmdl.model.SalesDetail;
 import ${package}.modelgen.dmdl.model.StoreInfo;
+import com.asakusafw.runtime.value.Date;
+import com.asakusafw.runtime.value.DateTime;
+import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 import com.asakusafw.vocabulary.operator.MasterJoin;
@@ -61,6 +64,11 @@ public abstract class CategorySummaryOperator {
     public abstract JoinedSalesInfo joinItemInfo(ItemInfo info, SalesDetail sales);
 
     /**
+     * {@link ${symbol_pound}selectAvailableItem(List, SalesDetail)}で利用するバッファ。
+     */
+    private final Date dateBuffer = new Date();
+
+    /**
      * 商品マスタの一覧から売上明細に適用可能なものを探す。
      * @param candidates 商品マスタの一覧
      * @param sales 売上明細
@@ -68,9 +76,12 @@ public abstract class CategorySummaryOperator {
      */
     @MasterSelection
     public ItemInfo selectAvailableItem(List<ItemInfo> candidates, SalesDetail sales) {
+        DateTime dateTime = sales.getSalesDateTime();
+        dateBuffer.setElapsedDays(DateUtil.getDayFromDate(
+                dateTime.getYear(), dateTime.getMonth(), dateTime.getDay()));
         for (ItemInfo item : candidates) {
-            if (item.getBeginDateTime().compareTo(sales.getSalesDateTime()) <= 0
-                    && sales.getSalesDateTime().compareTo(item.getEndDateTime()) < 0) {
+            if (item.getBeginDate().compareTo(dateBuffer) <= 0
+                    && dateBuffer.compareTo(item.getEndDate()) <= 0) {
                 return item;
             }
         }

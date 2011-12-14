@@ -19,6 +19,18 @@ sales_detail = {
     @windgate.csv.field(name = "商品コード")
     item_code : TEXT;
 
+    "数量"
+    @windgate.csv.field(name = "数量")
+    amount : INT;
+
+    "販売単価"
+    @windgate.csv.field(name = "販売単価")
+    unit_selling_price : INT;
+
+    "販売金額"
+    @windgate.csv.field(name = "販売金額")
+    selling_price : INT;
+
     "ファイル名"
     @windgate.csv.file_name
     file_name : TEXT;
@@ -44,7 +56,7 @@ store_info = {
 "商品マスタ"
 @windgate.csv(
     has_header = TRUE,
-    datetime = "yyyy-MM-dd HH:mm:ss"
+    date = "yyyy-MM-dd"
 )
 item_info = {
 
@@ -56,21 +68,37 @@ item_info = {
     @windgate.csv.field(name = "商品名")
     item_name : TEXT;
 
+    "商品部門コード"
+    @windgate.csv.field(name = "部門コード")
+    department_code : TEXT;
+
+    "商品部門名"
+    @windgate.csv.field(name = "部門名")
+    department_name : TEXT;
+
+    "商品カテゴリコード"
+    @windgate.csv.field(name = "カテゴリコード")
+    category_code : TEXT;
+
     "商品カテゴリ名"
     @windgate.csv.field(name = "カテゴリ名")
     category_name : TEXT;
 
-    "商品売価"
-    @windgate.csv.field(name = "売価")
-    selling_price : INT;
+    "商品単価"
+    @windgate.csv.field(name = "単価")
+    unit_selling_price : INT;
 
-    "マスタ適用開始日時 (inclusive)"
-    @windgate.csv.field(name = "適用開始日時")
-    begin_date_time : DATETIME;
+    "マスタ登録日"
+    @windgate.csv.field(name = "登録日")
+    registered_date : DATE;
 
-    "マスタ適用終了日時 (exclusive)"
-    @windgate.csv.field(name = "適用終了日時")
-    end_date_time : DATETIME;
+    "マスタ適用開始日"
+    @windgate.csv.field(name = "適用開始日")
+    begin_date : DATE;
+
+    "マスタ適用終了日"
+    @windgate.csv.field(name = "適用終了日")
+    end_date : DATE;
 };
 
 -- 中間データ形式
@@ -79,11 +107,12 @@ item_info = {
 joined joined_sales_info
 = sales_detail -> {
     item_code -> item_code;
+    amount -> amount;
+    selling_price -> selling_price;
 } % item_code
 + item_info -> {
     item_code -> item_code;
-    category_name -> category_name;
-    selling_price -> selling_price;
+    category_code -> category_code;
 } % item_code;
 
 
@@ -95,15 +124,15 @@ joined joined_sales_info
 )
 summarized category_summary = joined_sales_info => {
 
-    @windgate.csv.field(name = "カテゴリ名")
-    any category_name -> category_name;
+    @windgate.csv.field(name = "カテゴリコード")
+    any category_code -> category_code;
 
-    @windgate.csv.field(name = "総商品数")
-    count category_name -> item_count;
+    @windgate.csv.field(name = "販売数量")
+    sum amount -> amount_total;
 
-    @windgate.csv.field(name = "売価合計")
+    @windgate.csv.field(name = "売上合計")
     sum selling_price -> selling_price_total;
-} % category_name;
+} % category_code;
 
 "エラー情報"
 @windgate.csv(
