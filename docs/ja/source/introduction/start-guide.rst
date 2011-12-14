@@ -1,16 +1,16 @@
 ================================
 Asakusa Framework スタートガイド
 ================================
-この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、サンプルアプリケーションを動かすまでの手順を説明します。
+この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
 
 開発環境の構築
 ==============
-Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。WindowsPC上でAsakusa Frameworkを使った開発を行う場合、Windows上でLinuxの仮想マシンを実行し、ここで開発を行うと便利です。
+Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。WindowsPC上で開発を行う場合、Windows上でLinuxの仮想マシンを実行し、ここで開発を行うと便利です。
 
-このスタートガイドでは仮想マシンの実行ソフトウェアとして VMWare Player 、仮想マシンに使用するOSとして Ubuntu 11.10 Desktop (日本語 Remix CD x86用) を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
+このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 11.10 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
 
-..  note::
-    2011年12月時点では、公式にWindows対応されているHadoopディストリビューションは存在しないため、Asakusa FrameworkもWindows上での開発をサポートしていません。将来HadoopがWindowsをサポートした場合、Asakusa FrameworkもWindows上での開発に対応する可能性があります。
+..  _`VMWare Player`: http://www.vmware.com/jp/products/desktop_virtualization/player/overview 
+..  _`Ubuntu 11.10 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/News/ubuntu1110-desktop-ja-remix
 
 VMWare Playerのインストール
 ---------------------------
@@ -99,13 +99,13 @@ Mavenのダウンロードサイト (http://maven.apache.org/download.html) か�
     sudo ln -s /usr/local/lib/apache-maven-*/bin/mvn /usr/local/bin/mvn
 
 ..  note:: 
-    インターネットへの接続にプロキシサーバを経由する必要がある環境については、Mavenに対してプロキシの設定を行う必要があります。設定についてはMavenの次のサイト等を確認してください
+    インターネットへの接続にプロキシサーバを経由する必要がある環境については、Mavenに対してプロキシの設定を行う必要があります。Mavenのプロキシ設定については、Mavenの次のサイト等を確認してください。
 
     http://maven.apache.org/guides/mini/guide-proxies.html
 
 Hadoopのインストール
 --------------------
-Clouderaから提供されているHadoopのディストリビューションである Cloudera's Distribution including Apache Hadoop Version 3 (CDH3) をインストールします。
+Clouderaから提供されているHadoopのディストリビューションである `Cloudera's Distribution including Apache Hadoop Version 3 (CDH3)`_ をインストールします。
 
 CDH3のインストール方法はOS毎に提供されているインストールパッケージを使う方法と、tarballを展開する方法がありますが、ここではtarballを展開する方法でインストールします。
 
@@ -121,6 +121,8 @@ CDH3のtarballのダウンロードサイト (https://ccp.cloudera.com/display/S
     sudo chown -R root:root hadoop-0.20.2-*/
     sudo mv hadoop-0.20.2-*/ /usr/lib
     sudo ln -s /usr/lib/hadoop-0.20.2-* /usr/lib/hadoop
+
+..  _`Cloudera's Distribution including Apache Hadoop Version 3 (CDH3)`: https://ccp.cloudera.com/display/CDHDOC/CDH3+Documentation
 
 環境変数の設定
 --------------
