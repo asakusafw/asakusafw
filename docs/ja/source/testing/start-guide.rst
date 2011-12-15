@@ -147,11 +147,11 @@ Asakusa Frameworkはこの一連の処理を自動的に行う
 このファイルには、上記の3種類のシートが含められます。
 
 なお、このテンプレートはDMDLで記述されたデータモデルを元に作成しています。
-DMDLに利用方法は `../dmdl/start-guide` を参照してください。
+DMDLに利用方法は :doc:`../dmdl/start-guide` を参照してください。
 
 ..  note::
     ThunderGateを利用する場合、DMDLの記述自体をデータベースのテーブル情報から生成できます。
-    詳しくは `../dmdl/with-thundergate` を参照してください。
+    詳しくは :doc:`../dmdl/with-thundergate` を参照してください。
 
 入力、期待データの作成
 ~~~~~~~~~~~~~~~~~~~~~~

@@ -332,7 +332,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 
     union_model = normal_table + error_table;
 
-上記の記述によって、 ``UnionModel`` という名前の
+上記の記述によって、 ``UnionModel`` という名前のユニオンモデルを作成できます。
 
 また、ジョブフローやフロー部品では、ユニオンテーブルのテーブルモデルを使って処理を行います。
 ユニオンテーブルのテーブルモデルをエクスポートする際に、先ほどと同様に ``DupCheckDbExporterDescription`` を指定して、次のように書きます。
