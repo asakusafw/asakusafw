@@ -15,6 +15,6 @@
  */
 
 /**
- * Runtime classes for ThunderGate Cache Extensions。
+ * MapReduce Applications for ThunderGate Cache Extensions.
  */
 package com.asakusafw.thundergate.runtime.cache.mapreduce;

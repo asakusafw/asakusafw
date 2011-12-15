@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * WindGate resources using Hadoop FileSystem via SSH connection.
+ * WindGate resources using Hadoop FileSystem via SSH connection using <a href="http://www.jcraft.com/jsch/">JSch</a>.
  */
 package com.asakusafw.windgate.hadoopfs.jsch;

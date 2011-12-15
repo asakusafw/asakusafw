@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.thundergate.view.model;
 import java.text.MessageFormat;
 
 /**
- * {@code FROM ...}.
+ * {@code FROM ~}.
  */
 public class From {
 

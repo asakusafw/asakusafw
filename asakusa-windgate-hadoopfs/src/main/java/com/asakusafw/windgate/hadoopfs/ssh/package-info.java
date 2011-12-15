@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ThunderGateとの通信に関するクラスを提供する。
+ * WindGate resources using Hadoop FileSystem via SSH connection.
  */
-package com.asakusafw.vocabulary.bulkloader;
+package com.asakusafw.windgate.hadoopfs.ssh;

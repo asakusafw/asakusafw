@@ -49,6 +49,7 @@ import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 /**
  * DMDL AST building utility.
  * @since 0.2.0
+ * @version 0.2.3
  */
 public final class AstBuilder {
 
@@ -57,7 +58,6 @@ public final class AstBuilder {
      * @param name target name
      * @return converted name
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @version 0.2.3
      */
     public static AstSimpleName toDmdlName(String name) {
         if (name == null) {

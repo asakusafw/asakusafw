@@ -38,6 +38,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 /**
  * A configuration for each process.
  * @since 0.2.2
+ * @version 0.2.4
  */
 public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider> {
 
@@ -155,7 +156,6 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
      * @param context the curren profile context
      * @return the loaded profiles
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
-     * @version 0.2.4
      */
     public static Collection<? extends ProcessProfile> loadFrom(Properties properties, ProfileContext context) {
         if (properties == null) {
