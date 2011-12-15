@@ -85,7 +85,7 @@
 					<locale>en</locale>
 					<doctitle>Asakusa Framework API References (Version ${project.version})</doctitle>
 					<windowtitle>Asakusa Framework API References (Version ${project.version})</windowtitle>
-					<excludePackageNames>com.asakusafw.modelgen.*:com.asakusafw.testtools.*</excludePackageNames>
+					<excludePackageNames>com.asakusafw.modelgen:com.asakusafw.testtools</excludePackageNames>
 				</configuration>
 				<executions>
 					<execution>
