@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * {@code JOIN ... ON ...}.
+ * {@code JOIN ~ ON ~}.
  */
 public class Join {
 

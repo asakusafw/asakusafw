@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ThunderGateとの通信に関するクラスを提供する。
+ * WindGate resource skeletons using Input/Output streams.
  */
-package com.asakusafw.vocabulary.bulkloader;
+package com.asakusafw.windgate.stream;

@@ -30,7 +30,7 @@ import com.asakusafw.bulkloader.log.Log;
 
 /**
  * Exporterが実行する処理を判断するクラス。
- *
+ *<pre>
  * ・Export対象テーブルが存在しない場合、以下の処理を行う。
  * 　- ロック解除
  *
@@ -55,7 +55,7 @@ import com.asakusafw.bulkloader.log.Log;
  * 　ロードが終了している場合、以下の処理を行う。
  * 　- Exportデータコピー
  * 　- ロック解除
- *
+ *</pre>
  * @author yuta.shirai
  */
 public class JudgeExecProcess {
