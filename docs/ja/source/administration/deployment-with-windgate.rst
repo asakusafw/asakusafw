@@ -290,7 +290,6 @@ WindGateのデータベース(JDBC)連携を使用する場合は、使用する
     * ``asakusa-windgate-stream`` : ローカルのファイルシステムと連携するためのプラグイン
     * ``asakusa-windgate-jdbc`` : JDBC経由でDBMSと連携するためのプラグイン
     * ``asakusa-windgate-hadoopfs`` : Hadoopと連携するためのプラグイン
-    * ``jsch`` : ``asakusa-windgate-hadoopfs`` が依存するSSH接続用ライブラリ
 
 WindGateのプラグインライブラリについては、 :doc:`../windgate/user-guide` も参考にしてください。
 

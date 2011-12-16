@@ -222,10 +222,11 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 `同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
-なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` と JSch [#]_ の追加が必要です。
+なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` 、
+および ``windgate/lib`` ディレクトリに JSch [#]_ の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
-..  [#] http://www.jcraft.com/jsch/ (Version 0.1.44-1以上)
+..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 
 Hadoopブリッジ
 ^^^^^^^^^^^^^^
