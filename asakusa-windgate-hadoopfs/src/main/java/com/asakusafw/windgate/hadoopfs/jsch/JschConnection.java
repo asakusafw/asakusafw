@@ -171,12 +171,12 @@ class JschConnection implements SshConnection {
                 command);
         long until = System.currentTimeMillis() + timeout;
         while (until > System.currentTimeMillis()) {
-            if (isClosed()) {
+            if (channel.isClosed()) {
                 break;
             }
             Thread.sleep(100);
         }
-        if (isClosed() == false) {
+        if (channel.isClosed() == false) {
             WGLOG.error("E30003",
                     profile.getResourceName(),
                     profile.getUser(),
@@ -190,17 +190,7 @@ class JschConnection implements SshConnection {
                     String.valueOf(profile.getPort()),
                     command));
         }
-        int exitStatus;
-        synchronized (channel) {
-            exitStatus = channel.getExitStatus();
-        }
-        return exitStatus;
-    }
-
-    private boolean isClosed() {
-        synchronized (channel) {
-            return channel.isConnected() == false && channel.isClosed();
-        }
+        return channel.getExitStatus();
     }
 
     @Override
