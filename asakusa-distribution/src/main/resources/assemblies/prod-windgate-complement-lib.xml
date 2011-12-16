@@ -46,6 +46,7 @@
 				<include>ch.qos.logback:logback-classic</include>
 				<include>ch.qos.logback:logback-core</include>
 				<include>org.slf4j:slf4j-api</include>
+				<include>com.jcraft:jsch</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
@@ -58,7 +59,6 @@
 				<include>com.asakusafw:asakusa-windgate-hadoopfs</include>
 				<include>com.asakusafw:asakusa-windgate-jdbc</include>
 				<include>com.asakusafw:asakusa-windgate-stream</include>
-				<include>com.jcraft:jsch</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
