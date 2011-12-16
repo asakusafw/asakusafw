@@ -194,11 +194,11 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             command = ProcessUtil.buildCommand(commandPrefix, original, Collections.<String>emptyList());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to build command: {6} (batch={0}, flow={1}, phase={3}, stage={4}, execution={2})",
+                    "Failed to build command: {6} (batch={0}, flow={1}, phase={2}, stage={4}, execution={3})",
                     context.getBatchId(),
                     context.getFlowId(),
-                    context.getExecutionId(),
                     context.getPhase(),
+                    context.getExecutionId(),
                     script.getId(),
                     currentProfile.getPrefix(),
                     original), e);
@@ -212,11 +212,11 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             return;
         }
         throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop job: code={5} (batch={0}, flow={1}, phase={3}, stage={4}, exection={2})",
+                "Failed to execute Hadoop job: code={5} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 script.getId(),
                 String.valueOf(exit)));
     }
@@ -236,11 +236,11 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             command = ProcessUtil.buildCommand(cleanupPrefix, original, Collections.<String>emptyList());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to build cleanUp command: {5} (batch={0}, flow={1}, phase={3}, execution={2})",
+                    "Failed to build cleanUp command: {5} (batch={0}, flow={1}, phase={2}, execution={3})",
                     context.getBatchId(),
                     context.getFlowId(),
-                    context.getExecutionId(),
                     context.getPhase(),
+                    context.getExecutionId(),
                     currentProfile.getPrefix(),
                     original), e);
         }
@@ -253,11 +253,11 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             return;
         }
         throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop Cleanup job: code={4} (batch={0}, flow={1}, phase={3}, exection={2})",
+                "Failed to execute Hadoop Cleanup job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 String.valueOf(exit)));
     }
 

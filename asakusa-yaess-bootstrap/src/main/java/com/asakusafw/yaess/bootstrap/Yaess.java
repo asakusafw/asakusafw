@@ -289,12 +289,18 @@ public class Yaess {
             builder.append(mode);
             builder.append(", batchId=");
             builder.append(batchId);
-            builder.append(", flowId=");
-            builder.append(flowId);
-            builder.append(", executionId=");
-            builder.append(executionId);
-            builder.append(", phase=");
-            builder.append(phase);
+            if (flowId != null) {
+                builder.append(", flowId=");
+                builder.append(flowId);
+            }
+            if (executionId != null) {
+                builder.append(", executionId=");
+                builder.append(executionId);
+            }
+            if (phase != null) {
+                builder.append(", phase=");
+                builder.append(phase);
+            }
             builder.append("]");
             return builder.toString();
         }

@@ -160,8 +160,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                     "Failed to build command: {6} (batch={0}, flow={1}, phase={3}, stage={4}, execution={2})",
                     context.getBatchId(),
                     context.getFlowId(),
-                    context.getExecutionId(),
                     context.getPhase(),
+                    context.getExecutionId(),
                     script.getId(),
                     currentProfile.getPrefix(),
                     original), e);
@@ -178,8 +178,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                 "Failed to execute Command job: code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 script.getId(),
                 String.valueOf(exit)));
     }
@@ -204,8 +204,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                 "Failed to execute Hadoop job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 String.valueOf(exit)));
     }
 

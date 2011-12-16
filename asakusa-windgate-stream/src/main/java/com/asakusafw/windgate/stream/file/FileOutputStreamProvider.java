@@ -76,14 +76,20 @@ public class FileOutputStreamProvider extends OutputStreamProvider {
                 current);
         boolean succeed = false;
         File parent = current.getParentFile();
-        if (parent != null && parent.exists() == false) {
+        for (int i = 0; i < 10; i++) {
+            if (parent == null || parent.exists()) {
+                break;
+            }
             LOG.debug("Parent directory does not exist, will be created: {}",
                     current);
-            if (parent.mkdirs() == false && parent.isDirectory() == false) {
-                throw new IOException(MessageFormat.format(
-                        "Failed to create parent directory: {0}",
-                        parent.getAbsolutePath()));
+            if (parent.mkdirs()) {
+                break;
             }
+        }
+        if (parent != null && parent.isDirectory() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to create parent directory: {0}",
+                    parent.getAbsolutePath()));
         }
         FileOutputStream stream = new FileOutputStream(current);
         try {
