@@ -44,6 +44,7 @@
 		<module>../asakusa-thundergate-test-moderator</module>
 		<module>../asakusa-thundergate</module>
 		<module>../asakusa-windgate-core</module>
+		<module>../asakusa-windgate-retryable</module>
 		<module>../asakusa-windgate-stream</module>
 		<module>../asakusa-windgate-jdbc</module>
 		<module>../asakusa-windgate-hadoopfs</module>
