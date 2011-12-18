@@ -37,12 +37,6 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.0.4</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>log4j</groupId>
