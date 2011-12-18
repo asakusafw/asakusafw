@@ -6,7 +6,7 @@ Asakusa Framework リリースノート
 
 Release 0.2.4
 =============
-Dec 16, 2011
+Dec 19, 2011
 
 Enhancements
 ------------
@@ -14,12 +14,14 @@ Enhancements
 * [ :issue:`59` ] - Assembly support for batch project
 * [ :issue:`82` ] - WindGate Documentaion
 * [ :issue:`83` ] - WindGate performance improvement (still working)
+* [ :issue:`87` ] - Difficult to distinguish <h2> and <h3> in documents
 * [ :issue:`111` ] - WindGate for CSV files in local file system
 * [ :issue:`112` ] - JdbcImporter/ExporterDescription should be auto generated
 * [ :issue:`113` ] - Test driver should refer WindGate plug-ins
 * [ :issue:`117` ] - JDBC Connection Properties should be configurable on WindGate
 * [ :issue:`120` ] - WindGate should accept Java VM options
 * [ :issue:`121` ] - The script files for build should externalize from application project
+* [ :issue:`128` ] - Retryable Processes for WindGate (still working - Retryable Processes is still an experimental feature in this version) .
 
 ..  attention::
     WindGate is now generally available.
@@ -38,6 +40,7 @@ Bug fixes
 * [ :issue:`119` ] - ThunderGate recoverer and release cache lock have same job ID
 * [ :issue:`124` ] - asakusa-resources.xml has incorrect default configuration.
 * [ :issue:`125` ] - Show DMDL compiler usage when model generator failed.
+* [ :issue:`127` ] - WindGate HadoopFS/SSH sometimes does not return exit status
 
 Others
 ------
@@ -53,7 +56,9 @@ Nov 16, 2011
 Enhancements
 ------------
 * [ :issue:`60` ] - Test driver message is not easy to understand
+* [ :issue:`67` ] - Support fine grain verification on TestDriver
 * [ :issue:`81` ] - support CDH3u1 
+* [ :issue:`86` ] - Pluggable compare for \*Tester
 * [ :issue:`91` ] - Enabled to dump all actual data when running testdriver.
     * See: :doc:`testing/user-guide`
 * [ :issue:`92` ] - Difference report on \*Tester
