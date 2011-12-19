@@ -38,7 +38,7 @@ import com.ashigeru.lang.java.model.util.AttributeBuilder;
 import com.ashigeru.lang.java.model.util.JavadocBuilder;
 
 /**
- * Abstract super class which emits a record/joined/summarized model
+ * Abstract super class which emits a projective model
  * as a Java model class.
  */
 public class ProjectiveModelEmitter {

@@ -101,7 +101,6 @@ public class Main {
             ClassLoader classLoader = getClassLoader(cmd);
             task = new GenerateTask(generator, repository, classLoader);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -116,6 +115,7 @@ public class Main {
             System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, "input/output data sheet");
             System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, "expected data and its rule sheets");
             System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, "input/output data and rule sheets");
+            e.printStackTrace(System.out);
             return 1;
         }
         try {

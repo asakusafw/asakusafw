@@ -72,6 +72,7 @@ class JschConnection implements SshConnection {
             jsch.addIdentity(profile.getPrivateKey(), profile.getPassPhrase());
             session = jsch.getSession(profile.getUser(), profile.getHost(), profile.getPort());
             session.setConfig("StrictHostKeyChecking", "no");
+            session.setServerAliveInterval((int) TimeUnit.SECONDS.toMillis(10));
             session.setTimeout((int) TimeUnit.SECONDS.toMillis(60));
 
             WGLOG.info("I30001",

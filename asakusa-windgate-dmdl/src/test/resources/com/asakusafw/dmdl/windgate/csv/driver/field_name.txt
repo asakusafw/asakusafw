@@ -1,0 +1,7 @@
+@windgate.csv(
+    has_header = TRUE
+)
+model = {
+    @windgate.csv.field(name = "title")
+    value : TEXT;
+};

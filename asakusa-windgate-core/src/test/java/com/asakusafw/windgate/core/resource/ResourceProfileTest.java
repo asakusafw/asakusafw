@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.junit.Test;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.session.SessionProfile;
 
 /**
@@ -40,7 +41,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ResourceProfile r1 = find(profiles, "testing");
 
@@ -59,7 +60,7 @@ public class ResourceProfileTest {
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "aaa", "aaa");
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "bbb", "bbb");
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ResourceProfile r1 = find(profiles, "testing");
 
@@ -83,7 +84,7 @@ public class ResourceProfileTest {
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing3", MockResourceProvider.class.getName());
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing3" + BaseProfile.QUALIFIER + "conf", "p3");
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(3));
 
         ResourceProfile r1 = find(profiles, "testing1");
@@ -112,7 +113,7 @@ public class ResourceProfileTest {
     public void loadFrom_invalid_name() {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "@INVALIDNAME", MockResourceProvider.class.getName());
-        ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -122,7 +123,7 @@ public class ResourceProfileTest {
     public void loadFrom_invalid_provider() {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "invalid", "INVALID-CLASS-NAME");
-        ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -133,7 +134,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "aaa", "aaa");
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "bbb", "bbb");
-        ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -144,7 +145,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ResourceProfile profile : profiles) {
             profile.storeTo(restored);
@@ -162,7 +163,7 @@ public class ResourceProfileTest {
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "aaa", "aaa");
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "bbb", "bbb");
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ResourceProfile profile : profiles) {
             profile.storeTo(restored);
@@ -183,7 +184,7 @@ public class ResourceProfileTest {
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing3", MockResourceProvider.class.getName());
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing3" + BaseProfile.QUALIFIER + "conf", "p3");
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ResourceProfile profile : profiles) {
             profile.storeTo(restored);
@@ -199,7 +200,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ResourceProfile.KEY_PREFIX + "testing", "conflict");
         for (ResourceProfile profile : profiles) {
@@ -215,7 +216,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conflict", "conflict");
         for (ResourceProfile profile : profiles) {
@@ -231,7 +232,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ResourceProfile.KEY_PREFIX + "orthogonal" + BaseProfile.QUALIFIER + "conf", "conf");
         for (ResourceProfile profile : profiles) {
@@ -266,7 +267,7 @@ public class ResourceProfileTest {
         Properties p = new Properties();
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ResourceProfile r1 = find(profiles, "testing");
 
@@ -287,7 +288,7 @@ public class ResourceProfileTest {
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing", MockResourceProvider.class.getName());
         p.setProperty(ResourceProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "aaa", "aaa");
 
-        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ResourceProfile> profiles = ResourceProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ResourceProfile r1 = find(profiles, "testing");
 

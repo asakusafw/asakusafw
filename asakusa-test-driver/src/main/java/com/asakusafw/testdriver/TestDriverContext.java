@@ -250,6 +250,11 @@ public class TestDriverContext implements TestContext {
     }
 
     @Override
+    public Map<String, String> getEnvironmentVariables() {
+        return System.getenv();
+    }
+
+    @Override
     public Map<String, String> getArguments() {
         Map<String, String> copy = new HashMap<String, String>(getBatchArgs());
         if (currentBatchId != null) {

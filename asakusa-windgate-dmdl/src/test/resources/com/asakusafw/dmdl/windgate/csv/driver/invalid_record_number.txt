@@ -1,0 +1,6 @@
+@windgate.csv
+model = {
+    value : TEXT;
+    @windgate.csv.record_number
+    number : TEXT;
+};

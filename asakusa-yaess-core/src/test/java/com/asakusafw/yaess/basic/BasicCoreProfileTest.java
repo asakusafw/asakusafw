@@ -24,8 +24,8 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.asakusafw.yaess.core.CoreProfile;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link BasicCoreProfile}.
@@ -42,8 +42,8 @@ public class BasicCoreProfileTest {
         conf.put(CoreProfile.KEY_VERSION, "TESTING");
 
         ServiceProfile<CoreProfile> profile = new ServiceProfile<CoreProfile>(
-                "testing", BasicCoreProfile.class, conf, getClass().getClassLoader());
-        CoreProfile instance = profile.newInstance(VariableResolver.system());
+                "testing", BasicCoreProfile.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        CoreProfile instance = profile.newInstance();
 
         assertThat(instance.getVersion(), is("TESTING"));
     }
@@ -56,7 +56,7 @@ public class BasicCoreProfileTest {
     public void version_missing() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<CoreProfile> profile = new ServiceProfile<CoreProfile>(
-                "testing", BasicCoreProfile.class, conf, getClass().getClassLoader());
-        profile.newInstance(VariableResolver.system());
+                "testing", BasicCoreProfile.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        profile.newInstance();
     }
 }

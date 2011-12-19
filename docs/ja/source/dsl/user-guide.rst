@@ -332,7 +332,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 ..  note::
     連携するワークフローエンジンによっては、
     このAPIで通知したレポートを何らかの形で拾い上げて利用者に通知してくれるかもしれません。
-    標準的な実装である「Experimental Shell Script」では特に何も行いません。
+    標準的な実装である :doc:`YAESS <../yaess/index>` では特に何も行っていません。
 
 Operator DSLコンパイラ
 ----------------------
@@ -462,12 +462,16 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 インポータ記述はジョブフローの入力もととなるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
+
+..  hint::
+    インポータ記述の多くは ``getDataSize()`` というメソッドを共通して持っています。
+    このメソッドを上書きし、適切なデータサイズを指定することで、コンパイラはそれをヒントに最適化を行います。
 
 ..  note::
     インポータ記述はいずれも ``ImporterDescription`` [#]_ インターフェースの
@@ -483,8 +487,8 @@ Asakusa Frameworkは標準でThunderGateというデータソースを提供し�
 エクスポータ記述はジョブフローの結果を出力する先となるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でThunderGateというデータソースを提供しています。
-詳しくは :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -1035,6 +1039,6 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 これはワークフローエンジンごとに生成される記述で、
 対応するコンパイラプラグインをコンパイル時に指定します。
 
-標準では、Experimental Shell Scriptという、各ジョブを直列化して
-順に実行するだけのbashのスクリプトを生成しています。
-Experimental Shell Scriptについては、 :doc:`../application/start-guide` などを参照してください。
+標準では、YAESSというジョブ実行ツールのためのワークフロー情報を生成しています。
+YAESSについては :doc:`../yaess/index` を参照してください。
+

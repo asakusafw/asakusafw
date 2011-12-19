@@ -60,6 +60,20 @@ public class ParallelSortClientEmitterTest {
      */
     @Test
     public void single() throws Exception {
+        single0();
+    }
+
+    /**
+     * Output single file set.
+     * @throws Exception if failed
+     */
+    @Test
+    public void single_legacy() throws Exception {
+        tester.options().putExtraAttribute(ParallelSortClientEmitter.ATTRIBUTE_LEGACY, "true");
+        single0();
+    }
+
+    private void single0() throws IOException {
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -79,6 +93,20 @@ public class ParallelSortClientEmitterTest {
      */
     @Test
     public void multiple() throws Exception {
+        multiple0();
+    }
+
+    /**
+     * Output multiple file sets.
+     * @throws Exception if failed
+     */
+    @Test
+    public void multiple_legacy() throws Exception {
+        tester.options().putExtraAttribute(ParallelSortClientEmitter.ATTRIBUTE_LEGACY, "true");
+        multiple0();
+    }
+
+    private void multiple0() throws IOException {
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -110,6 +138,20 @@ public class ParallelSortClientEmitterTest {
      */
     @Test
     public void independent() throws Exception {
+        independent0();
+    }
+
+    /**
+     * Output files into nested directory.
+     * @throws Exception if failed
+     */
+    @Test
+    public void independent_legacy() throws Exception {
+        tester.options().putExtraAttribute(ParallelSortClientEmitter.ATTRIBUTE_LEGACY, "true");
+        independent0();
+    }
+
+    private void independent0() throws IOException {
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -133,6 +175,20 @@ public class ParallelSortClientEmitterTest {
      */
     @Test
     public void nested() throws Exception {
+        nested0();
+    }
+
+    /**
+     * Output files into nested directory.
+     * @throws Exception if failed
+     */
+    @Test
+    public void nested_legacy() throws Exception {
+        tester.options().putExtraAttribute(ParallelSortClientEmitter.ATTRIBUTE_LEGACY, "true");
+        nested0();
+    }
+
+    private void nested0() throws IOException {
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));

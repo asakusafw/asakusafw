@@ -138,6 +138,7 @@ public final class FileList {
                 if (entry.getName().equals(LAST_ENTRY_NAME)) {
                     sawEof = true;
                     sawNext = false;
+                    consume();
                     return false;
                 }
                 if (entry.isDirectory()) {
@@ -150,6 +151,19 @@ public final class FileList {
                 return true;
             }
             return false;
+        }
+
+        private void consume() throws IOException {
+            byte[] buf = new byte[1024];
+            int rest = 0;
+            while (true) {
+                int read = counter.read(buf);
+                if (read < 0) {
+                    break;
+                }
+                rest += read;
+            }
+            LOG.debugMessage("Consumed tail of file list: {0}bytes", rest);
         }
 
         private void restoreExtra(ZipEntry entry) throws IOException {

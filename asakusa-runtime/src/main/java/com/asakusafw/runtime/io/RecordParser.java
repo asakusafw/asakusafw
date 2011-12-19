@@ -46,11 +46,11 @@ try {
         parser.fill(model.getHogeOption());
         parser.fill(model.getFooOption());
         parser.fill(model.getBarOption());
+        parser.endRecord();
         // 任意の処理
         performModelAction(model);
     }
-}
-finally {
+} finally {
     reader.close();
 }
 </code></pre>
@@ -58,6 +58,8 @@ finally {
  * 特に指定がない限り、このインターフェースのメソッドの引数に{@code null}を指定した場合には
  * {@link NullPointerException}がスローされる。
  * </p>
+ * @since 0.1.0
+ * @version 0.2.4
  */
 public interface RecordParser extends Closeable {
 
@@ -168,5 +170,12 @@ public interface RecordParser extends Closeable {
      * @throws IOException レコードの読み出しに失敗した場合
      */
     void fill(DateTimeOption option) throws RecordFormatException, IOException;
+
+    /**
+     * Finalizes current record.
+     * @throws RecordFormatException if current record is wrong
+     * @throws IOException if failed to finalize this record
+     */
+    void endRecord() throws RecordFormatException, IOException;
 
 }

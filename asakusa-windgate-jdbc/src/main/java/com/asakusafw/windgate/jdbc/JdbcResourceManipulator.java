@@ -95,12 +95,10 @@ public class JdbcResourceManipulator extends ResourceManipulator {
                     jdbc.getTableName(),
                     jdbc.getName());
             Statement statement = conn.createStatement();
-            statement.execute(MessageFormat.format(
-                    "TRUNCATE TABLE {0}",
-                    jdbc.getTableName()));
+            statement.execute(profile.getTruncateStatement(jdbc.getTableName()));
             conn.commit();
         } catch (SQLException e) {
-            throw new IOException(MessageFormat.format(
+            LOG.warn(MessageFormat.format(
                     "Failed to truncate table: {1} (process={0})",
                     jdbc.getName(),
                     jdbc.getTableName()), e);

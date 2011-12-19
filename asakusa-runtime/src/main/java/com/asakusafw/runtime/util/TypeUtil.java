@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 
 /**
  * 型に関するユーティリティ。
- * TODO ちゃんと作ってあるライブラリに置換
  */
 public final class TypeUtil {
 

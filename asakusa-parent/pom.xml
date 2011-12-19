@@ -17,10 +17,11 @@
 		</license>
 	</licenses>
 
+	<inceptionYear>2011</inceptionYear>
 	<organization>
 		<name>Asakusa Framework Team</name>
+		<url>http://asakusafw.com</url>
 	</organization>
-	<inceptionYear>2011</inceptionYear>
 
 	<properties>
 		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
@@ -38,6 +39,7 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<log4j.version>1.2.15</log4j.version>
 		<poi.version>3.6</poi.version>
+		<jsch.version>0.1.45</jsch.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -290,6 +292,7 @@ encoding/<project>=UTF-8
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
+					<locale>en</locale>
 				</configuration>
 				<reportSets>
 					<reportSet>
@@ -469,6 +472,11 @@ encoding/<project>=UTF-8
 						<artifactId>jmxri</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>${jsch.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -27,7 +27,6 @@ import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * {@link HadoopScriptHandler} for execution tracking.
@@ -42,7 +41,6 @@ public class TrackingHadoopScriptHandler extends ExecutionScriptHandlerBase impl
     @Override
     protected void doConfigure(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         Map<String, String> conf = profile.getConfiguration();
         String trackerClassName = conf.get(ExecutionTracker.KEY_CLASS);
@@ -52,7 +50,7 @@ public class TrackingHadoopScriptHandler extends ExecutionScriptHandlerBase impl
         assertThat(trackingId, is(notNullValue()));
 
         try {
-            Class<?> trackerClass = profile.getClassLoader().loadClass(trackerClassName);
+            Class<?> trackerClass = profile.getContext().getClassLoader().loadClass(trackerClassName);
             this.tracker = trackerClass.asSubclass(ExecutionTracker.class).newInstance();
             this.id = ExecutionTracker.Id.get(trackingId);
         } catch (Exception e) {

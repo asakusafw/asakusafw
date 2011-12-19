@@ -26,14 +26,13 @@ import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
-import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
-import com.asakusafw.dmdl.spi.AttributeDriver;
+import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
@@ -48,7 +47,7 @@ The attributed declaration must be:
 <li> {@code delete_flag_value = <logical delete flag value (optional, must be compatible with delete_flag type)>} </li>
 </ul>
  */
-public class CacheSupportDriver extends AttributeDriver {
+public class CacheSupportDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
@@ -83,19 +82,9 @@ public class CacheSupportDriver extends AttributeDriver {
     @Override
     public void process(
             DmdlSemantics environment,
-            Declaration declaration,
+            ModelDeclaration declaration,
             AstAttribute attribute) {
-        assert attribute.name.toString().equals(TARGET_NAME);
-        if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
-                    Level.ERROR,
-                    declaration.getOriginalAst(),
-                    "@{0} is not suitable for properties",
-                    TARGET_NAME));
-            return;
-        }
-        ModelDeclaration model = (ModelDeclaration) declaration;
-        if (model.getOriginalAst().kind != ModelDefinitionKind.RECORD) {
+        if (declaration.getOriginalAst().kind != ModelDefinitionKind.RECORD) {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     declaration.getOriginalAst(),
@@ -104,7 +93,7 @@ public class CacheSupportDriver extends AttributeDriver {
             return;
         }
 
-        Holder holder = new Holder(environment, model, attribute);
+        Holder holder = new Holder(environment, declaration, attribute);
 
         PropertySymbol sid = holder.takeProperty(SID_ELEMENT_NAME);
         PropertySymbol timestamp = holder.takeProperty(TIMESTAMP_ELEMENT_NAME);

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateCoreLogger;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
@@ -58,7 +59,7 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
 
     private final Class<? extends ResourceProvider> providerClass;
 
-    private final ClassLoader classLoader;
+    private final ProfileContext context;
 
     private final Map<String, String> configuration;
 
@@ -66,20 +67,23 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
      * Creates a new instance.
      * @param name the name of this resource
      * @param providerClass the class which can provide this resource
-     * @param classLoder the plugin class loader
+     * @param context the current profile context
      * @param configuration the extra configuration
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public ResourceProfile(
             String name,
             Class<? extends ResourceProvider> providerClass,
-            ClassLoader classLoder,
+            ProfileContext context,
             Map<String, String> configuration) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (providerClass == null) {
             throw new IllegalArgumentException("providerClass must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
@@ -91,7 +95,7 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
         }
         this.name = name;
         this.providerClass = providerClass;
-        this.classLoader = classLoder;
+        this.context = context;
         this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
     }
 
@@ -109,8 +113,8 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
     }
 
     @Override
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    public ProfileContext getContext() {
+        return context;
     }
 
     /**
@@ -132,13 +136,33 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
      * @param loader class loader to load the {@link ResourceProvider}
      * @return the loaded profiles
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @deprecated use {@link #loadFrom(Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static Collection<? extends ResourceProfile> loadFrom(Properties properties, ClassLoader loader) {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        }
+        return loadFrom(properties, ProfileContext.system(loader));
+    }
+
+    /**
+     * Loads resource profiles from the properties.
+     * @param properties source properties
+     * @param context the current context
+     * @return the loaded profiles
+     * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @since 0.2.4
+     */
+    public static Collection<? extends ResourceProfile> loadFrom(Properties properties, ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Restoring resources profile");
         List<ResourceProfile> results = new ArrayList<ResourceProfile>();
@@ -154,9 +178,9 @@ public final class ResourceProfile extends BaseProfile<ResourceProfile, Resource
             assert className != null;
 
             Map<String, String> conf = PropertiesUtil.createPrefixMap(partition, name + QUALIFIER);
-            Class<? extends ResourceProvider> loaded = loadProviderClass(className, loader, ResourceProvider.class);
+            Class<? extends ResourceProvider> loaded = loadProviderClass(className, context, ResourceProvider.class);
 
-            ResourceProfile profile = new ResourceProfile(name, loaded, loader, conf);
+            ResourceProfile profile = new ResourceProfile(name, loaded, context, conf);
             results.add(profile);
         }
         return results;

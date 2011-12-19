@@ -21,8 +21,6 @@
 		</license>
 	</licenses>
 
-	<packaging>pom</packaging>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -37,20 +35,11 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>src/main/assembly/dev-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/dev-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/dev-windgate-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/dev-windgate-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/prod-db-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-db-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/prod-hc-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-hc-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/prod-cleaner-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-cleaner-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-exclude-lib-sources.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-ssh-exclude-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-ssh-exclude-lib-sources.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/dev-exclude-lib.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate-db-exclude-lib.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate-hc-exclude-lib.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-windgate-exclude-lib.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-cleaner-exclude-lib.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -61,14 +50,13 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>src/main/assembly/dev.xml</descriptor>
-								<descriptor>src/main/assembly/prod-db.xml</descriptor>
-								<descriptor>src/main/assembly/prod-hc.xml</descriptor>
-								<descriptor>src/main/assembly/prod-cleaner.xml</descriptor>
-								<descriptor>src/main/assembly/dev-windgate.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-ssh.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/dev.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate-db.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate-hc.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-cleaner.xml</descriptor>
 							</descriptors>
+							<finalName>asakusafw-${project.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -89,6 +77,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-cleaner</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -105,6 +98,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-stream</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -137,15 +135,30 @@
 			<artifactId>asakusa-yaess-tools</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.jdbc.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

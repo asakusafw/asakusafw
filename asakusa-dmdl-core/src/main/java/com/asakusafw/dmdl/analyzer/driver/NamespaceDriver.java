@@ -22,11 +22,10 @@ import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstName;
-import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.trait.NamespaceTrait;
-import com.asakusafw.dmdl.spi.AttributeDriver;
+import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
@@ -37,7 +36,7 @@ The attributed declaration must be:
 <li> a model attribute </li>
 </ul>
  */
-public class NamespaceDriver extends AttributeDriver {
+public class NamespaceDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
@@ -57,17 +56,8 @@ public class NamespaceDriver extends AttributeDriver {
     @Override
     public void process(
             DmdlSemantics environment,
-            Declaration declaration,
+            ModelDeclaration declaration,
             AstAttribute attribute) {
-        assert attribute.name.toString().equals(TARGET_NAME);
-        if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
-                    Level.ERROR,
-                    declaration.getOriginalAst(),
-                    "@{0} is not suitable for properties",
-                    TARGET_NAME));
-            return;
-        }
         AstName name = getName(environment, attribute);
         if (name != null) {
             declaration.putTrait(

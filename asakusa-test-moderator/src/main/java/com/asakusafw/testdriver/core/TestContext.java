@@ -31,6 +31,13 @@ public interface TestContext {
     ClassLoader getClassLoader();
 
     /**
+     * Returns the environment variables.
+     * @return the environment variables
+     * @since 0.2.4
+     */
+    Map<String, String> getEnvironmentVariables();
+
+    /**
      * Returns the user arguments.
      * @return the user arguments
      */
@@ -45,6 +52,11 @@ public interface TestContext {
         @Override
         public Map<String, String> getArguments() {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public Map<String, String> getEnvironmentVariables() {
+            return System.getenv();
         }
 
         @Override

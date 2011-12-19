@@ -29,7 +29,6 @@ import com.ashigeru.util.collection.Tuples;
 
 /**
  * 列挙を取り扱うためのユーティリティ。
- * TODO testing
  */
 public final class EnumUtil {
 

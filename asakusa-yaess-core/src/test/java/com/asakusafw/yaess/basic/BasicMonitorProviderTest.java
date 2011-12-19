@@ -26,8 +26,8 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionMonitorProvider;
 import com.asakusafw.yaess.core.ExecutionPhase;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link BasicMonitorProvider}.
@@ -46,9 +46,9 @@ public class BasicMonitorProviderTest {
     public void simple() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
-                "testing", BasicMonitorProvider.class, conf, getClass().getClassLoader());
+                "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        ExecutionMonitorProvider instance = profile.newInstance(VariableResolver.system());
+        ExecutionMonitorProvider instance = profile.newInstance();
         ExecutionMonitor monitor = instance.newInstance(CONTEXT);
         monitor.open(3);
         try {
@@ -69,9 +69,9 @@ public class BasicMonitorProviderTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.1");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
-                "testing", BasicMonitorProvider.class, conf, getClass().getClassLoader());
+                "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        ExecutionMonitorProvider instance = profile.newInstance(VariableResolver.system());
+        ExecutionMonitorProvider instance = profile.newInstance();
         ExecutionMonitor monitor = instance.newInstance(CONTEXT);
         monitor.open(100);
         try {
@@ -92,9 +92,9 @@ public class BasicMonitorProviderTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.5");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
-                "testing", BasicMonitorProvider.class, conf, getClass().getClassLoader());
+                "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        ExecutionMonitorProvider instance = profile.newInstance(VariableResolver.system());
+        ExecutionMonitorProvider instance = profile.newInstance();
         ExecutionMonitor monitor = instance.newInstance(CONTEXT);
         monitor.open(100);
         try {
@@ -115,8 +115,8 @@ public class BasicMonitorProviderTest {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "INVALID");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
-                "testing", BasicMonitorProvider.class, conf, getClass().getClassLoader());
+                "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
-        profile.newInstance(VariableResolver.system());
+        profile.newInstance();
     }
 }

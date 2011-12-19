@@ -2,12 +2,8 @@
 YAESSスタートガイド
 ===================
 
-この文書では、Asakusa FrameworkのMavenアーキタイプを利用したプロジェクト構成で、YAESSの使い方について簡単に紹介します。
-
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。
-
-.. また、Mavenアーキタイプ以外のプロジェクト構成でYAESSを利用する場合には、 :doc:`user-guide` を参照してください。
-
+この文書では、 :doc:`../introduction/start-guide` の構成で、YAESSの使い方について簡単に紹介します。
+その他のプロジェクト構成でYAESSを利用する場合には、 :doc:`user-guide` を参照してください。
 
 開発環境でのYAESSの実行
 =======================
@@ -16,23 +12,6 @@ Mavenアーキタイプを利用したプロジェクトでは、バッチアプ
 YAESSを開発環境に導入するには、プロジェクトディレクトリ上で ``mvn assembly:single antrun:run`` コマンドを実行します。
 
 導入に成功した場合、 ``$ASAKUSA_HOME/yaess`` と ``$ASAKUSA_HOME/yaess-hadoop`` にそれぞれディレクトリが作成されます。
-
-
-Hadoopの設定
-------------
-
-Asakusa FrameworkはHadoopと連携してバッチ処理を行います。
-バッチ処理内で利用するHadoopを指定する場合、 ``$ASAKUSA_HOME/yaess-hadoop/conf/env.sh`` を開いて以下のように書き換えてください。
-
-..  code-block:: sh
-
-    #!/bin/sh
-    
-    export HADOOP_HOME=[Hadoopのインストール先 (絶対パス)]
-    export YS_HADOOP_PROPERTIES=[Hadoopのオプション引数]
-
-このファイルでは、YAESSの実行時に利用する環境変数を設定できます。
-``JAVA_HOME`` など、その他必要な環境変数があればここで設定してください。
 
 バッチの作成
 ------------
@@ -93,34 +72,11 @@ YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以�
 また、バッチに起動引数を指定する場合、コマンドラインの末尾に ``-A <変数名>=<値>`` のように記述します。
 複数の起動引数を指定する場合には、スペース区切りで繰り返します。
 
+たとえば、次のようにコマンドを記述します。
 
-バッチの部分的な実行
---------------------
+..  code-block:: sh
 
-バッチを部分的に実行するには、コマンドラインから ``$ASAKUSA_HOME/yaess/bin/yaess-phase.sh <バッチID> <フローID> <フェーズ名> <実行ID>`` と入力します。
-それぞれの値は次のような意味を持ちます。
-
-バッチID
-    バッチのID。
-    Asakusa DSL内で ``@Batch(name = "...")`` [#]_ として指定した名前を利用する。
-フローID
-    ジョブフローのID。
-    Asakusa DSL内で ``@JobFlow(name = "...")`` [#]_ として指定した名前を利用する。
-フェーズ名
-    ジョブフロー内のフェーズ名。
-    ``setup``, ``initialize``, ``import``, ``prologue``, ``main``, ``epilogue``, ``export``, ``finalize``, ``cleanup`` のどれか。
-    バッチ全体を実行する場合には上記をジョブフローごとに順番に実行する。
-    ジョブフローの途中で処理が失敗した場合には、 ``finalize`` を実行してから終了する。
-実行ID
-    ジョブフローの実行ごとのID。
-    ワーキングディレクトリの特定や、ロングランニングトランザクションのIDとして利用する。
-    同じジョブフローのそれぞれのフェーズで同じものを利用する必要があるが、
-    同じジョブフローでも実行のたびに異なるものを指定する必要がある。
-
-上記のうち実行IDを除いては、コマンド ``yaess-explain.sh`` で確認できます。
-
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A date=2011-03-31 -A code=123
 
 
 実行環境構成の変更
@@ -136,16 +92,16 @@ YAESSはプロファイルセットとよぶ実行環境の構成をもってい
 * ThunderGateやWindGateの起動方法
 
 ここでは、各種ジョブの設定を変更する方法について紹介します。
-YAESSのプロファイルセットは、 ``$ASAKUSA_HOME/conf/yaess.properties`` から編集できます。
+YAESSのプロファイルセットは、 ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` から編集できます。
 
 
 SSHを経由したHadoopの実行
 -------------------------
 
 YAESSの標準的な仕組みを利用すると、SSHを経由してリモートコンピューターにログインし、そこからHadoopのジョブを発行するような環境構成を作成できます。
-まず、YAESSをリモートコンピューター上にもインストールしておきます [#]_ 。また、環境に合わせて `Hadoopの設定`_ をリモートコンピューター上でも行なってください。
+まず、YAESSをリモートコンピューター上にもインストールしておきます [#]_ 。
 
-次に、テキストエディタでローカルのYAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) を開いてください。
+次に、テキストエディタでローカルのYAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) を開いてください。
 既定の構成では、YAESSはローカルのコンピューターにインストールされたHadoopを利用して、Hadoopのジョブを実行しています。
 
 ..  code-block:: properties
@@ -153,6 +109,7 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
     hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.workingDirectory = target/hadoopwork/${execution_id}
     hadoop.resource = hadoop-master
+    hadoop.env.HADOOP_HOME = ${HADOOP_HOME}
     hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
 この行を削除するか行頭に ``#`` を追加してコメントアウトします。
@@ -178,6 +135,8 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
       - ローカルの秘密鍵の位置
     * - ``hadoop.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
+    * - ``hadoop.env.HADOOP_HOME``
+      - リモートのHadoopのインストール先
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
@@ -193,10 +152,12 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
     hadoop.ssh.privateKey = ${HOME}/.ssh/id_dsa
     hadoop.ssh.passPhrase = 
     hadoop.resource = hadoop-master
+    hadoop.env.HADOOP_HOME = /usr/lib/hadoop
     hadoop.env.ASAKUSA_HOME = /opt/hadoop/asakusa
 
 ..  [#] 実際には ``$ASAKUSA_HOME/yaess-hadoop`` 以下のみが必要です。
-        また、ローカルコンピューターには同ディレクトリは不要になります。
+        これは「Hadoopブリッジ」というツールで、YAESSからHadoopジョブを起動する際に利用されます。
+        詳しくは :doc:`user-guide` を参照してください。
 
 ..  [#] ここには、プロジェクトディレクトリの ``build.properties`` で設定した ``asakusa.hadoopwork.dir`` の値を指定します。
         ここで指定されたパスは、ジョブフローの実行が成功した際にクリーニングされます。
@@ -206,7 +167,7 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
 SSHを経由したThunderGate/WindGateの実行
 ---------------------------------------
 
-Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもSSHを経由して実行できます。テキストエディタでYAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) を開いてください。
+Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもSSHを経由して実行できます。テキストエディタでYAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) を開いてください。
 
 既定の構成では、YAESSはローカルのコンピューターにインストールされたコマンドを実行しています。
 
@@ -246,13 +207,13 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 ..  code-block:: properties
 
     command.* = com.asakusafw.yaess.jsch.SshCommandScriptHandler
-    command.*.ssh.user = thundergate
-    command.*.ssh.host = thundergate.example.com
+    command.*.ssh.user = windgate
+    command.*.ssh.host = windgate.example.com
     command.*.ssh.port = 22
     command.*.ssh.privateKey = ${HOME}/.ssh/id_dsa
     command.*.ssh.passPhrase =
     command.*.resource = asakusa
-    command.*.env.ASAKUSA_HOME = /home/thundergate/asakusa
+    command.*.env.ASAKUSA_HOME = /home/windgate/asakusa
 
 
 コマンド実行方法の振り分け
@@ -262,7 +223,7 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 YAESSでは「プロファイル」という考え方でそれぞれのコマンドを振り分けて実行できます。
 
 ThunderGateには「ターゲット名」、WindGateには「プロファイル名」という実行構成の名前がそれぞれあります。
-これらの名前別に実行構成を指定するには、YAESSのプロファイルセット ( ``$ASAKUSA_HOME/conf/yaess.properties`` ) 内で
+これらの名前別に実行構成を指定するには、YAESSのプロファイルセット ( ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` ) 内で
 ``command.<構成の名前>`` から始まる設定を追加します。
 
 以下は ``asakusa`` という名前のプロファイルに対するコマンド実行方法の記述です。

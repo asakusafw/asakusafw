@@ -1,8 +1,53 @@
 :orphan:
 
-===============================
-Asakusa Framework Release Notes
-===============================
+================================
+Asakusa Framework リリースノート
+================================
+
+Release 0.2.4
+=============
+Dec 19, 2011
+
+Enhancements
+------------
+
+* [ :issue:`59` ] - Assembly support for batch project
+* [ :issue:`82` ] - WindGate Documentaion
+* [ :issue:`83` ] - WindGate performance improvement (still working)
+* [ :issue:`87` ] - Difficult to distinguish <h2> and <h3> in documents
+* [ :issue:`111` ] - WindGate for CSV files in local file system
+* [ :issue:`112` ] - JdbcImporter/ExporterDescription should be auto generated
+* [ :issue:`113` ] - Test driver should refer WindGate plug-ins
+* [ :issue:`117` ] - JDBC Connection Properties should be configurable on WindGate
+* [ :issue:`120` ] - WindGate should accept Java VM options
+* [ :issue:`121` ] - The script files for build should externalize from application project
+* [ :issue:`128` ] - Retryable Processes for WindGate (still working - Retryable Processes is still an experimental feature in this version) .
+
+..  attention::
+    WindGate is now generally available.
+
+Revisions
+---------
+* [ :issue:`105` ] - Shoud there be existed a copy constructor at DecimalOption
+* [ :issue:`114` ] - Change default configuration of archetype for WindGate for using local file (CSV) .
+* [ :issue:`116` ] - Deployment archive for WindGate should be included files for running Hadoop on local.
+* [ :issue:`123` ] - Archetype for ThunderGate should rename archetype ID.
+* [ :issue:`126` ] - Deployment archive for WindGate should be included jsch for WindGate plugin
+
+Bug fixes
+---------
+* [ :issue:`118` ] - ThunderGate raises unknown error if cache lock was conflicted
+* [ :issue:`119` ] - ThunderGate recoverer and release cache lock have same job ID
+* [ :issue:`124` ] - asakusa-resources.xml has incorrect default configuration.
+* [ :issue:`125` ] - Show DMDL compiler usage when model generator failed.
+* [ :issue:`127` ] - WindGate HadoopFS/SSH sometimes does not return exit status
+
+Others
+------
+* [ :issue:`106` ] - 0.2.4 Documentation
+
+----
+
 
 Release 0.2.3
 =============
@@ -11,7 +56,9 @@ Nov 16, 2011
 Enhancements
 ------------
 * [ :issue:`60` ] - Test driver message is not easy to understand
+* [ :issue:`67` ] - Support fine grain verification on TestDriver
 * [ :issue:`81` ] - support CDH3u1 
+* [ :issue:`86` ] - Pluggable compare for \*Tester
 * [ :issue:`91` ] - Enabled to dump all actual data when running testdriver.
     * See: :doc:`testing/user-guide`
 * [ :issue:`92` ] - Difference report on \*Tester
@@ -51,9 +98,12 @@ Enhancements
 * [ :issue:`61` ] - ThunderGate log messages improvement
 * [ :issue:`63` ] - Reduce dependency of MultipleOutputs
 * [ :issue:`64` ] - Enable to input expect data from database table.
-* [ :issue:`69` ] - **[EXPERIMENTAL FEATURE]** WindGate
+* [ :issue:`69` ] - WindGate
     * See: :doc:`windgate/index`
 * [ :issue:`74` ] - Write framework version to build.log at batch compile
+
+..  attention::
+    WindGate is still an experimental feature.
 
 Bug fixes
 ---------

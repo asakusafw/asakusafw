@@ -113,14 +113,13 @@ public class Main {
     /**
      * このプログラムを実行する。
      * @param args 一つでも指定した場合、利用方法について表示する
-     * @throws Exception if some errors were occurred
      */
-    public static void main(String... args) throws Exception {
+    public static void main(String... args) {
+        GenerateTask task;
         try {
             Configuration conf = loadConfigurationFromArguments(args);
-            new GenerateTask(conf).call();
+            task = new GenerateTask(conf);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -129,7 +128,16 @@ public class Main {
                             Main.class.getName()),
                     OPTIONS,
                     true);
+            e.printStackTrace(System.out);
             System.exit(1);
+            return;
+        }
+        try {
+            task.call();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+            System.exit(1);
+            return;
         }
     }
 

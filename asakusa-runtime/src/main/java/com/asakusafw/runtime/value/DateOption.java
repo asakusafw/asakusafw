@@ -25,7 +25,26 @@ import java.text.MessageFormat;
  */
 public final class DateOption extends ValueOption<DateOption> {
 
-    private Date entity = new Date();
+    private final Date entity = new Date();
+
+    /**
+     * Creates a new instance which represents {@code null} value.
+     */
+    public DateOption() {
+        super();
+    }
+
+    /**
+     * Creates a new instance which represents the specified value.
+     * @param valueOrNull the initial value
+     */
+    public DateOption(Date valueOrNull) {
+        super();
+        if (valueOrNull != null) {
+            this.entity.setElapsedDays(valueOrNull.getElapsedDays());
+            this.nullValue = false;
+        }
+    }
 
     /**
      * このオブジェクトが表現する値を返す。

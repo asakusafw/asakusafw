@@ -34,8 +34,8 @@ public class CoreProfileTest {
     public void loadFrom() {
         Properties p = new Properties();
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
-        assertThat(profile.getMaxThreads(), is(CoreProfile.DEFAULT_MAX_THREADS));
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
+        assertThat(profile.getMaxProcesses(), is(CoreProfile.DEFAULT_MAX_PROCESSES));
     }
 
     /**
@@ -44,10 +44,10 @@ public class CoreProfileTest {
     @Test
     public void loadFrom_configured() {
         Properties p = new Properties();
-        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_THREADS, "10");
+        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
-        assertThat(profile.getMaxThreads(), is(10));
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
+        assertThat(profile.getMaxProcesses(), is(10));
     }
 
     /**
@@ -56,9 +56,9 @@ public class CoreProfileTest {
     @Test(expected = IllegalArgumentException.class)
     public void loadFrom_invalid_maxThreads() {
         Properties p = new Properties();
-        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_THREADS, "0");
+        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "0");
 
-        CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -67,9 +67,9 @@ public class CoreProfileTest {
     @Test(expected = IllegalArgumentException.class)
     public void loadFrom_invalid_token() {
         Properties p = new Properties();
-        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_THREADS, "INVALID");
+        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "INVALID");
 
-        CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -78,9 +78,9 @@ public class CoreProfileTest {
     @Test
     public void storeTo() {
         Properties p = new Properties();
-        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_THREADS, "10");
+        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         profile.storeTo(restored);
         assertThat(restored, is(p));
@@ -92,9 +92,9 @@ public class CoreProfileTest {
     @Test(expected = IllegalArgumentException.class)
     public void storeTo_conflict() {
         Properties p = new Properties();
-        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_THREADS, "10");
+        p.setProperty(CoreProfile.KEY_PREFIX + CoreProfile.KEY_MAX_PROCESSES, "10");
 
-        CoreProfile profile = CoreProfile.loadFrom(p, getClass().getClassLoader());
+        CoreProfile profile = CoreProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(CoreProfile.KEY_PREFIX + "CONFLICT", "CONFLICT");
         profile.storeTo(restored);

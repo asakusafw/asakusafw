@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateCoreLogger;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.util.PropertiesUtil;
@@ -51,20 +52,20 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
 
     private final Class<? extends SessionProvider> providerClass;
 
-    private final ClassLoader classLoader;
+    private final ProfileContext context;
 
     private final Map<String, String> configuration;
 
     /**
      * Creates a new instance.
      * @param providerClass the class which can provide the session
-     * @param classLoader the plugin class loader
+     * @param context the current profile context
      * @param configuration the extra configuration
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public SessionProfile(
             Class<? extends SessionProvider> providerClass,
-            ClassLoader classLoader,
+            ProfileContext context,
             Map<String, String> configuration) {
         if (providerClass == null) {
             throw new IllegalArgumentException("providerClass must not be null"); //$NON-NLS-1$
@@ -73,7 +74,7 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
         this.providerClass = providerClass;
-        this.classLoader = classLoader;
+        this.context = context;
         this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
     }
 
@@ -83,8 +84,8 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
     }
 
     @Override
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    public ProfileContext getContext() {
+        return context;
     }
 
     /**
@@ -106,13 +107,33 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
      * @param loader class loader to load the {@link SessionProvider}
      * @return the loaded profile
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @deprecated use {@link #loadFrom(Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static SessionProfile loadFrom(Properties properties, ClassLoader loader) {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        }
+        return loadFrom(properties, ProfileContext.system(loader));
+    }
+
+    /**
+     * Loads a session profile from the properties.
+     * @param properties source properties
+     * @param context the current profile context
+     * @return the loaded profile
+     * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @since 0.2.4
+     */
+    public static SessionProfile loadFrom(Properties properties, ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Restoring session profile");
         String className = properties.getProperty(KEY_PROVIDER);
@@ -122,9 +143,9 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
                     "Session provider is not specified: {0}",
                     KEY_PROVIDER));
         }
-        Class<? extends SessionProvider> provider = loadProviderClass(className, loader, SessionProvider.class);
+        Class<? extends SessionProvider> provider = loadProviderClass(className, context, SessionProvider.class);
         Map<String, String> config = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
-        return new SessionProfile(provider, loader, config);
+        return new SessionProfile(provider, context, config);
     }
 
     /**

@@ -106,7 +106,6 @@ public abstract class BulkLoadImporterDescription implements ImporterDescription
      * </p>
      * @return インポーターがキャッシュを利用する場合にのみ{@code true}
      * @since 0.1.0
-     * @version 0.2.3
      */
     public abstract boolean isCacheEnabled();
 

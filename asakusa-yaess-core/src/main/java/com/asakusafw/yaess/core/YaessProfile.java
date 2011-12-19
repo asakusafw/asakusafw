@@ -174,7 +174,9 @@ public class YaessProfile {
      * @param classLoader the class loader to load the service class
      * @return the loaded profile
      * @throws IllegalArgumentException if the target profile is invalid, or parameters contain {@code null}
+     * @deprecated use {@link #load(Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static YaessProfile load(Properties properties, ClassLoader classLoader) {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
@@ -182,21 +184,39 @@ public class YaessProfile {
         if (classLoader == null) {
             throw new IllegalArgumentException("classLoader must not be null"); //$NON-NLS-1$
         }
+        return load(properties, ProfileContext.system(classLoader));
+    }
+
+    /**
+     * Loads a YAESS profile from the specified properties.
+     * @param properties source properties
+     * @param context the current profile context
+     * @return the loaded profile
+     * @throws IllegalArgumentException if the target profile is invalid, or parameters contain {@code null}
+     * @since 0.2.4
+     */
+    public static YaessProfile load(Properties properties, ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
         ServiceProfile<CoreProfile> core =
-            ServiceProfile.load(properties, PREFIX_CORE, CoreProfile.class, classLoader);
+            ServiceProfile.load(properties, PREFIX_CORE, CoreProfile.class, context);
         ServiceProfile<ExecutionMonitorProvider> monitors =
-            ServiceProfile.load(properties, PREFIX_MONITOR, ExecutionMonitorProvider.class, classLoader);
+            ServiceProfile.load(properties, PREFIX_MONITOR, ExecutionMonitorProvider.class, context);
         ServiceProfile<ExecutionLockProvider> locks =
-            ServiceProfile.load(properties, PREFIX_LOCK, ExecutionLockProvider.class, classLoader);
+            ServiceProfile.load(properties, PREFIX_LOCK, ExecutionLockProvider.class, context);
         ServiceProfile<JobScheduler> scheduler =
-            ServiceProfile.load(properties, PREFIX_SCHEDULER, JobScheduler.class, classLoader);
+            ServiceProfile.load(properties, PREFIX_SCHEDULER, JobScheduler.class, context);
         ServiceProfile<HadoopScriptHandler> hadoopHandler =
-            ServiceProfile.load(properties, PREFIX_HADOOP, HadoopScriptHandler.class, classLoader);
+            ServiceProfile.load(properties, PREFIX_HADOOP, HadoopScriptHandler.class, context);
         List<ServiceProfile<CommandScriptHandler>> commandHandlers =
             new ArrayList<ServiceProfile<CommandScriptHandler>>();
         for (String commandHandlerPrefix : PropertiesUtil.getChildKeys(properties, GROUP_PREFIX_COMMAND, ".")) {
             ServiceProfile<CommandScriptHandler> profile =
-                ServiceProfile.load(properties, commandHandlerPrefix, CommandScriptHandler.class, classLoader);
+                ServiceProfile.load(properties, commandHandlerPrefix, CommandScriptHandler.class, context);
             commandHandlers.add(profile);
         }
         return new YaessProfile(core, monitors, locks, scheduler, hadoopHandler, commandHandlers);

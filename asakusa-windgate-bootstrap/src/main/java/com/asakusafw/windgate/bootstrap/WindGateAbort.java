@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
@@ -88,7 +89,6 @@ public class WindGateAbort {
             Configuration conf = parseConfiguration(args);
             task = new AbortTask(conf.profile, conf.sessionId);
         } catch (Exception e) {
-            WGLOG.error(e, "E01001");
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -107,6 +107,7 @@ public class WindGateAbort {
             System.out.println("      Absolute path on class path (includes plugin libraries)");
             System.out.println("    other schemes (e.g. http://...)-");
             System.out.println("      Processed as a URL");
+            WGLOG.error(e, "E01001");
             return 1;
         }
         try {
@@ -140,9 +141,10 @@ public class WindGateAbort {
 
         LOG.debug("Loading profile: {}", profile);
         try {
+            ProfileContext context = ProfileContext.system(loader);
             URI uri = CommandLineUtil.toUri(profile);
             Properties properties = CommandLineUtil.loadProperties(uri, loader);
-            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, loader);
+            result.profile = GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",

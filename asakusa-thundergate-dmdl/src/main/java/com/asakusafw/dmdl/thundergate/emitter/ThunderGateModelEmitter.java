@@ -45,6 +45,7 @@ import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 /**
  * Emits ThunderGate data models as DMDL.
  * @since 0.2.0
+ * @version 0.2.3
  */
 public class ThunderGateModelEmitter {
 
@@ -69,7 +70,6 @@ public class ThunderGateModelEmitter {
      * @param model target model
      * @throws IOException if failed to emit DMDL script
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @version 0.2.3
      */
     public void emit(ModelDescription model) throws IOException {
         if (model == null) {

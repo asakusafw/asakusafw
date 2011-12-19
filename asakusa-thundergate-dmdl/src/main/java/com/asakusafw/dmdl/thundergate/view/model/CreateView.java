@@ -25,7 +25,7 @@ import java.util.Set;
 import com.asakusafw.dmdl.thundergate.model.Aggregator;
 
 /**
- * {@code CREATE VIEW ...}.
+ * {@code CREATE VIEW ~}.
  */
 public class CreateView {
 

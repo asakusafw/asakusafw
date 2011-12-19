@@ -175,25 +175,25 @@ public class GateTaskTest {
         CoreProfile core = new CoreProfile(2);
         SessionProfile session = new SessionProfile(
                 FileSessionProvider.class,
-                FileSessionProvider.class.getClassLoader(),
+                ProfileContext.system(FileSessionProvider.class.getClassLoader()),
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         folder.newFolder("session").getAbsolutePath()));
         List<ProcessProfile> processes = Arrays.asList(new ProcessProfile(
                 "default",
                 BasicProcessProvider.class,
-                BasicProcessProvider.class.getClassLoader(),
+                ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
                 Collections.<String, String>emptyMap()));
         List<ResourceProfile> resources = Arrays.asList(new ResourceProfile[] {
                 new ResourceProfile(
                         "fs1",
                         FileResourceProvider.class,
-                        FileResourceProvider.class.getClassLoader(),
+                        ProfileContext.system(FileResourceProvider.class.getClassLoader()),
                         Collections.<String, String>emptyMap()),
                 new ResourceProfile(
                         "fs2",
                         FileResourceProvider.class,
-                        FileResourceProvider.class.getClassLoader(),
+                        ProfileContext.system(FileResourceProvider.class.getClassLoader()),
                         Collections.<String, String>emptyMap()),
         });
         return new GateProfile("default", core, session, processes, resources);

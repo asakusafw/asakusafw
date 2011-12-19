@@ -2,18 +2,20 @@
 DMDLスタートガイド
 ==================
 
-この文書では、asakusa-archetype-batchappを利用したプロジェクト構成で、DMDLを使ってJavaのデータモデルクラスを生成する方法について簡単に紹介します。
+この文書では :doc:`../introduction/start-guide` の構成で、DMDLを使ってJavaのデータモデルクラスを生成する方法について簡単に紹介します。
 
-asakusa-archetype-batchappの利用方法については :doc:`../application/maven-archetype` を参照してください。また、コマンドライン等からDMDLを利用する場合には、 :doc:`user-guide` を参照してください。
+DMDLの詳しい記述方法を知りたい場合や、コマンドライン等からDMDLを利用したい場合には、 :doc:`user-guide` を参照してください。
 
 DMDLを記述する
 ==============
 
-Data Model Definition Language (DMDL)はAsakusa Frameworkで利用可能なデータモデルを定義するためのDSLです。DMDLスクリプトというファイルにデータモデルの名前や構造を定義し、DMDLコンパイラを実行することで、定義したデータモデルに対応するJavaのプログラムを自動的に生成します。
+Data Model Definition Language (DMDL)はAsakusa Frameworkで利用可能なデータモデルを定義するためのDSLです。
+DMDLスクリプトというファイルにデータモデルの名前や構造を定義し、DMDLコンパイラを実行することで、定義したデータモデルに対応するJavaのプログラムを自動的に生成します。
 
 DMDLスクリプトを作成する
 ------------------------
-asakusa-archetype-batchappを利用してプロジェクトを作成した場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
+:doc:`../introduction/start-guide` の流れに従ってプロジェクトを作成した場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。
+また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
 
 データモデルを定義する
 ----------------------
@@ -184,10 +186,15 @@ DMDLスクリプトに記述したデータモデルからJavaのデータモデ
 
 その他、 ``mvn package`` や ``mvn install`` などでも自動的にDMDLコンパイラが起動します。
 
+WindGateとの連携
+----------------
+:doc:`../introduction/start-guide` の構成では、WindGateと連携したバッチアプリケーションを作成できます。
+詳しい情報は :doc:`../windgate/index` を参照してください。
+
 ThunderGateとの連携
 -------------------
-
-asakusa-archetype-batchapを利用している場合、DMDLコンパイラの実行前にThunderGateが利用するデータベースの情報を分析して、データベース内に定義されたテーブルやビューの情報を元に、対応するデータモデルの定義を記述するDMDLを自動的に生成します。
+ThunderGateを利用するプロジェクト構成の場合、DMDLコンパイラの実行前にThunderGateが利用するデータベースの情報を分析して、
+データベース内に定義されたテーブルやビューの情報を元に、対応するデータモデルの定義を記述するDMDLを自動的に生成します。
 
 ThunderGateとの連携について、詳しくは :doc:`with-thundergate` を参照してください。
 
