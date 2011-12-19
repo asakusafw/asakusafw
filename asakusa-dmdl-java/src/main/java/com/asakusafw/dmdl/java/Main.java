@@ -92,12 +92,11 @@ public class Main {
      * @param args program arguments
      */
     public static void main(String... args) {
+        GenerateTask task;
         try {
             Configuration conf = configure(args);
-            GenerateTask task = new GenerateTask(conf);
-            task.process();
+            task = new GenerateTask(conf);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -106,7 +105,16 @@ public class Main {
                             Main.class.getName()),
                     OPTIONS,
                     true);
+            e.printStackTrace(System.out);
             System.exit(1);
+            return;
+        }
+        try {
+            task.process();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+            System.exit(1);
+            return;
         }
     }
 

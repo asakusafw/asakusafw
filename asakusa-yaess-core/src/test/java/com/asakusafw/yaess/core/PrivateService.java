@@ -25,7 +25,7 @@ public class PrivateService implements Service {
     }
 
     @Override
-    public void configure(ServiceProfile<?> profile, VariableResolver variables) {
+    public void configure(ServiceProfile<?> profile) {
         return;
     }
 }

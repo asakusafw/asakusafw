@@ -134,9 +134,7 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
     }
 
     private void truncate() throws SQLException {
-        String sql = String.format(
-                "TRUNCATE TABLE %s",
-                script.getTableName());
+        String sql = profile.getTruncateStatement(script.getTableName());
         Statement truncater = connection.createStatement();
         try {
             WGLOG.info("I04001",

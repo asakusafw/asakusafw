@@ -120,6 +120,9 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                     script.getName(),
                     script.getTableName(),
                     script.getColumnNames());
+            if (profile.getBatchGetUnit() != 0) {
+                statement.setFetchSize(profile.getBatchGetUnit());
+            }
             LOG.debug("Executing SQL: {}", sql);
             ResultSet result = statement.executeQuery(sql);
             LOG.debug("Executed SQL: {}", sql);

@@ -30,19 +30,20 @@ public final class FloatOption extends ValueOption<FloatOption> {
     private float value;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance which represents {@code null} value.
      */
     public FloatOption() {
-        this.nullValue = true;
+        super();
     }
 
     /**
-     * インスタンスを生成する。
-     * @param value 初期値
+     * Creates a new instance which represents the specified value.
+     * @param value the initial value
      */
     public FloatOption(float value) {
-        this.nullValue = false;
+        super();
         this.value = value;
+        this.nullValue = false;
     }
 
     /**

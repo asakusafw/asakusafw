@@ -24,7 +24,6 @@ import com.asakusafw.yaess.basic.AbstractJobScheduler;
 import com.asakusafw.yaess.basic.JobExecutor;
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Basic implementation of {@link JobScheduler}.
@@ -37,11 +36,12 @@ public class ParallelJobScheduler extends AbstractJobScheduler {
     private volatile JobExecutor executor;
 
     @Override
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException {
+    protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         try {
-            this.executor = ParallelJobExecutor.extract(profile.getPrefix(), profile.getConfiguration(), variables);
+            this.executor = ParallelJobExecutor.extract(
+                    profile.getPrefix(),
+                    profile.getConfiguration(),
+                    profile.getContext().getContextParameters());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to configure job scheduler: {0}",

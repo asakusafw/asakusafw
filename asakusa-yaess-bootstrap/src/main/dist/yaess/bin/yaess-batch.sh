@@ -5,24 +5,25 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    $0 batch-id [-A <key>=<value>]*
+    yaess-batch.sh batch-id [-A <key>=<value> [-A <key>=<value>  [...]]]
 
 Parameters:
     batch-id
         batch ID of current execution
     -A <key>=<value>
         argument for this execution
+
+Examples:
+    # run a batch "example.batch"
+    yaess-batch.sh example.batch
+    
+    # run a batch "example.params" with {date="2011-03-31", code="123"}
+    yaess-batch.sh example.params -A date=2011-03-31 -A code=123
 EOF
 }
 
 if [ $# -lt 1 ]; then
     usage
-    exit 1
-fi
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
     exit 1
 fi
 
@@ -33,6 +34,12 @@ _YS_ROOT="$(dirname $0)/.."
 if [ -e "$_YS_ROOT/conf/env.sh" ]
 then
     . "$_YS_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
 fi
 
 if [ "$YS_PATH_SEPARATOR" = "" ]
@@ -89,6 +96,7 @@ echo "Main Class: $_YS_CLASS"
 echo " Arguments: $@"
 
 java \
+    "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -profile "$_YS_PROFILE" \

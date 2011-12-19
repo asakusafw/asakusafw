@@ -102,6 +102,8 @@ public final class FileList {
      */
     public static class Reader implements Closeable {
 
+        private final InputStream original;
+
         private final ZipInputStream input;
 
         private final FileStatus current = new FileStatus();
@@ -114,6 +116,7 @@ public final class FileList {
 
         Reader(InputStream input) throws IOException {
             assert input != null;
+            this.original = input;
             this.input = new ZipInputStream(input);
             ZipEntry first = this.input.getNextEntry();
             if (first == null || first.getName().equals(FIRST_ENTRY_NAME) == false) {
@@ -137,6 +140,7 @@ public final class FileList {
                 if (entry.getName().equals(LAST_ENTRY_NAME)) {
                     sawEof = true;
                     sawNext = false;
+                    consume();
                     return false;
                 }
                 if (entry.isDirectory()) {
@@ -153,6 +157,19 @@ public final class FileList {
                 return true;
             }
             return false;
+        }
+
+        private void consume() throws IOException {
+            byte[] buf = new byte[1024];
+            int rest = 0;
+            while (true) {
+                int read = original.read(buf);
+                if (read < 0) {
+                    break;
+                }
+                rest += read;
+            }
+            LOG.debug("Consumed tail of file list: {}bytes", rest);
         }
 
         private boolean restoreExtra(ZipEntry entry) {
@@ -266,6 +283,7 @@ public final class FileList {
                 output.putNextEntry(new ZipEntry(LAST_ENTRY_NAME));
                 output.closeEntry();
                 output.close();
+                LOG.debug("Closed file list writer");
             }
             closed = true;
         }

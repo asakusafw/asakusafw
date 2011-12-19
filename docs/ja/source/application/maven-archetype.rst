@@ -1,139 +1,162 @@
-=======================
-Asakusa Maven Archetype
-=======================
+===========================
+Mavenアーキタイプ利用ガイド
+===========================
 
-この文書では、Asakusa Frameworkが提供しているMavenアーキタイプを使ってバッチアプリケーション開発用プロジェクトを作成する手順を説明します。また作成したプロジェクト上でAsakusa Frameworkが提供するモデル生成ツールやバッチコンパイラを使用する方法、およびこれらのツールの設定方法について解説します。
+この文書では、Asakusa Frameworkが提供しているMavenアーキタイプを使って、アプリケーション開発用のテンプレートからプロジェクトを作成し、アプリケーション開発環境を準備する手順を説明します。
+
+また、作成したプロジェクト上でAsakusa Frameworkが提供するモデル生成ツールやバッチコンパイラを使用する方法、およびこれらのツールに関する設定方法を説明します。
 
 アプリケーション開発プロジェクトの作成
 ======================================
-Asakusa Frameworkが提供するMavenアーキタイプを使ってアプリケーション開発用プロジェクトを作成します。Asakusa Frameworkでは、アプリケーションを開発するために２つの方法を提供しています。
+Asakusa Frameworkが提供するMavenアーキタイプ [#]_ を使ってアプリケーション開発用プロジェクトを作成します。
 
-1. Asakusa Frameworkが提供するバッチアプリケーション作成用スクリプトを使用する方法
-2. Mavenコマンドを使用して、段階的にプロジェクトを構築する方法
+ここで作成するプロジェクトは、次のような特徴があります。
 
-バッチアプリケーション作成用スクリプト
---------------------------------------
-バッチアプリケーション作成用スクリプトはアプリケーション開発環境構築用のMavenコマンドのラップスクリプトで、本スクリプトを使用すると１回のコマンド実行でアプリケーション開発用プロジェクトの作成とAsakusa Frameworkのインストールが行われるため便利です。このコマンドは ``$HOME/worspace`` 配下にプロジェクトディレクトリを作成します。
+* Mavenを利用してバッチアプリケーションをビルドするための必要な設定がなされている
+* ThunderGateやWindGateなど、利用したいコンポーネントを選択できる
+* 選択したコンポーネントに応じたAsakusa Frameworkのインストーラーが同梱されている
 
-バッチアプリケーション作成用スクリプト ``setup_batchapp_project.sh`` はGitHub上のasakusa-contribリポジトリに置かれています。以下の手順でスクリプトを取得します。
+..  [#] http://maven.apache.org/guides/introduction/introduction-to-archetypes.html
 
-..  code-block:: sh
-
-    wget http://raw.github.com/asakusafw/asakusafw-contrib/master/development-utilities/scripts/setup_batchapp_project.sh
-    chmod +x setup_batchapp_project.sh
-
-setup_batchapp_project.shは以下の引数を指定して実行します。
-
-..  list-table:: バッチアプリケーション作成用スクリプトの引数
-    :widths: 1 9
-    :header-rows: 1
-    
-    * - no
-      - 説明
-    * - 1
-      - グループID (パッケージ名)
-    * - 2
-      - アーティファクトID (プロジェクト名)
-    * - 3
-      - Asakusa Frameworkのアーキタイプ
-    * - 4
-      - Asakusa FrameworkのVersion [#]_
-      
-..  [#] 指定可能なAsakusa FrameworkのアーキタイプとVersionの一覧は、アーキタイプカタログ http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml を参照して下さい。
+``archetype:generate`` アプリケーション開発用プロジェクトを生成
+---------------------------------------------------------------
+Asakusa Frameworkが公開しているMavenアーキタイプカタログを指定してアプリケーション開発用プロジェクトを作成します。
 
 現時点でAsakusa Frameworkが提供するアーキタイプには以下のものがあります。
 
 ..  list-table:: Asakusa Framework アーキタイプ一覧
-    :widths: 1 3 6
+    :widths: 3 1 6
     :header-rows: 1
     
-    * - no
-      - アーキタイプ
+    * - アーキタイプ
+      - 導入バージョン
       - 説明
-    * - 1
-      - asakusa-archetype-batchapp
-      - 外部データ入出力にThunderGateを使用するアプリケーション用のアーキタイプ
-    * - 2
-      - asakusa-archetype-windgate
-      - 外部データ入出力にWindGateを使用するアプリケーション用のアーキタイプ
+    * - ``asakusa-archetype-batchapp``
+      - 0.1.0
+      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ [#]_ 。
+    * - ``asakusa-archetype-thundergate``
+      - 0.2.4
+      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
+    * - ``asakusa-archetype-windgate``
+      - 0.2.2
+      - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
-例えば外部データ入出力にWindGateを使用し、Asakusa Framework のバージョン0.2.2を使ったアプリケーションプロジェクトを作成する場合は以下のように実行します。
+..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
 
-..  code-block:: sh
-
-    ./setup_batchapp_project.sh com.example batchapp-sample asakusa-archetype-windgate 0.2.2
-
-この例では ``$HOME/workspace`` 配下にプロジェクト ``batchapp-sample`` ディレクトリが作成されます。
-
-Maven:プロジェクトの作成とAsakusa Frameworkのインストール
----------------------------------------------------------
-バッチアプリケーション作成用スクリプトを使わず、Mavenコマンドを使用して段階的にプロジェクトを構築する場合は以下の手順で実行します。
-
-``archetype:generate`` アーキタイプからプロジェクトを生成
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Asakusa Frameworkが公開しているMavenアーキタイプカタログを指定してアプリケーション開発用プロジェクトを作成します。
+``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
 
 ..  code-block:: sh
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
-    ...
-    Choose archetype:
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-batchapp (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> asakusa-archetype-windgate (-)
-    Choose a number: : ※2を入力
-    ...
-    Choose version: 
-    1: 0.2-SNAPSHOT
-    2: 0.2.2
-    Choose a number: 2: ※3を入力
-    ...
-    Define value for property 'groupId': : com.example ※任意の値を入力
-    Define value for property 'artifactId': : batchapp-sample ※任意の値を入力
-    Define value for property 'version':  1.0-SNAPSHOT ※任意の値を入力
-    Define value for property 'package':  com.example ※任意の値を入力
-    ...
-    Y: : Yを入力
 
-``assembly:single`` Asakusa Frameworkインストールアーカイブ(開発環境用)を生成
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-アーキタイプから作成したプロジェクトのpom.xmlに対して ``assembly:single`` ゴールを実行すると、Asakusa Framework本体のインストール用アーカイブが ``target`` 配下に ``${artifactid}-${version}-asakusa-install-dev.tar.gz`` というファイル名（ ``${artifactid}`` と ``${version}`` は上記 ``archetype:generate`` の実行時に指定したアーティファクトID、バージョンがそれぞれ使われる）で作成されます。 
 
-このアーカイブファイルは、後述する ``antrun:run`` ゴールと組み合わせてAsakusa Frameworkをローカル環境にインストールするために使用します。
-
-``antrun:run`` Asakusa Frameworkの開発環境用インストール(開発環境用)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-``assembly:single`` ゴールで作成したAsakusa Framework本体のインストール用アーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkをインストールします。
-
-``assembly:single`` と ``antrun:run`` を組み合わせて、以下のようにAsakusa Frameworkをローカル環境にインストールします。
+起動後、作成するプロジェクトに関するパラメータを対話式に入力していきます。
 
 ..  code-block:: sh
 
-    cd batchapp-sample
-    mvn assembly:single antrun:run
+    $ mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    [INFO] Scanning for projects...
+    [INFO]                                                                         
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Building Maven Stub Project (No POM) 1
+    [INFO] ------------------------------------------------------------------------
+    ...
+    Choose archetype:
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-) 
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-) 
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-) 
+    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 [<-使用するアーキタイプを選択]
+
+    ...
+    Choose com.asakusafw:asakusa-archetype-windgate version: 
+    1: 0.2-SNAPSHOT
+    2: 0.2.2
+    3: 0.2.3
+    4: 0.2.4
+    Choose a number: 4: 4 [使用するAsakusa Frameworkのバージョンを選択]
+
+    ...
+    Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
+    Define value for property 'artifactId': : [<-アプリケーションのプロジェクト名を入力] 
+    Define value for property 'version':      [<-アプリケーションの初期バージョンを入力]
+    Define value for property 'package':      [<-アプリケーションの基底パッケージ名を入力]
+    ...
+    Y: : Y
+
+``assembly:single`` Asakusa Frameworkのインストールアーカイブを生成
+-------------------------------------------------------------------
+アーキタイプから作成したプロジェクトのpom.xmlに対して ``assembly:single`` ゴールを実行すると、
+Asakusa Framework本体のインストール用アーカイブがプロジェクトの ``target`` ディレクトリ直下に作成されます。
+これらのファイルを使用して開発環境、および運用環境にAsakusa Frameworkをインストールします。
+以下は アプリケーションプロジェクト名を example-app と指定した場合の実行例を以下に示します。
+
+..  code-block:: sh
+
+    cd example-app
+    mvn assembly:single
+
+作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
+
+..  list-table:: アーキタイプ [asakusa-atchetype-windgate] が作成するインストールアーカイブ一覧
+    :widths: 3 7
+    :header-rows: 1
+    
+    * - ファイル名
+      - 説明
+    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
+      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
+    * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
+    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
+      - クリーニングツールを運用環境に展開するためのアーカイブ。
+
+
+..  list-table:: アーキタイプ [asakusa-atchetype-thundergate] が作成するインストールアーカイブ一覧
+    :widths: 4 6
+    :header-rows: 1
+    
+    * - ファイル名
+      - 説明
+    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
+      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
+    * - ``asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz``
+      - Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
+    * - ``asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz``
+      - Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
+    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
+      - クリーニングツールを運用環境に展開するためのアーカイブ。
+
+
+``antrun:run`` 開発環境用のAsakusa Frameworkをインストール
+----------------------------------------------------------
+``antrun:run`` ゴールは、 ``assembly:single`` ゴールで作成した開発環境用のAsakusa Frameworkのインストールアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkをインストールします。
+
+..  code-block:: sh
+
+    mvn antrun:run
 
 ..  warning::
-    アーキタイプasakusa-archetype-batchappを使用している場合、 ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。このディレクトリはデフォルトの設定では /tmp/asakusa となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで /tmp ディレクトリがクリアされるため、再起動後にこのディレクトリを再度作成する必要があります。
+    アーキタイプ ``asakusa-archetype-thundergate`` を使用している場合、 ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。
+    このディレクトリはデフォルトの設定では ``/tmp/asakusa`` となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで ``/tmp`` ディレクトリがの内容が消去されるため、再起動後にこのディレクトリを再度作成する必要があります。
     
-    テンポラリディレクトリを変更する場合、$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
+    テンポラリディレクトリを変更する場合、 ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
     
-    例えばテンポラリディレクトリを /var/tmp/asakusa に変更する場合は以下のようにします。
+    例えばテンポラリディレクトリを ``/var/tmp/asakusa`` に変更する場合は以下のようにします。
 
-    * $ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.propertiesの変更
+    * ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の変更
     
-        * import.tsv-create-dir=/var/tmp/asakusa/importer
-        * export.tsv-create-dir=/var/tmp/asakusa/exporter
+        * ``import.tsv-create-dir=/var/tmp/asakusa/importer``
+        * ``export.tsv-create-dir=/var/tmp/asakusa/exporter``
     
     * テンポラリディレクトリの作成
     
         * mkdir -p -m 777 /var/tmp/asakusa/importer
         * mkdir -p -m 777 /var/tmp/asakusa/exporter
 
-プロジェクトのディレクトリ構成
-------------------------------
 
-asakusa-archetype-batchapp
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-アーキタイプ ``asakusa-archetype-batchapp`` から生成されたAsakusaのプロジェクト構成は以下の通りです。
+プロジェクトのディレクトリ構成
+==============================
+アーキタイプから生成されたプロジェクト構成は以下の通りです [#]_ 。
 
 ..  code-block:: sh
 
@@ -151,8 +174,8 @@ asakusa-archetype-batchapp
     |   |   |
     |   |   `-- assembly           : ローカル環境へAsakusa Frameworkをインストールするためのスクリプト。
     |   |   `-- dmdl               : モデルクラス生成用のDMDLスクリプト。
-    |   |   `-- scripts            : Asakusa Frameworkが提供する自動生成ツールやコンパイラの制御スクリプト
-    |   |   `-- sql                : モデルクラス生成用のDDL記述SQLファイル。
+    |   |   `-- sql                 
+    |   |       `-- modelgen       : モデルクラス生成用のDDL記述SQLファイル(thundergateのみ)。
     |   |   
     |   `-- test
     |       `-- java
@@ -160,11 +183,11 @@ asakusa-archetype-batchapp
     |       |       `-- batch      : バッチDSLテストクラス
     |       |       `-- flowpart   : フローDSL(フロー部品)テストクラス
     |       |       `-- jobflow    : フローDSL(ジョブフロー)テストクラス
-    |       |       `-- operator   : 演算子テストクラス (プロジェクト生成時は存在しません)
+    |       |       `-- operator   : 演算子テストクラス
     |       |
     |       `-- resources
-    |           `-- asakusa-jdbc.properties    : Asakusa FrameworkのDB設定ファイル
-    |           `-- asakusa-resources.xml      : Asakusa Framework Core Runtime用の定義ファイル
+    |           `-- asakusa-jdbc.properties    : Asakusa FrameworkのDB設定ファイル(thundergateのみ)
+    |           `-- asakusa-resources.xml      : Asakusa Framework Core 用の定義ファイル
     |           `-- logback-test.xml           : 開発環境上のテスト時に使用されるログ設定ファイル
     |           |
     |           `-- ${package}
@@ -172,22 +195,16 @@ asakusa-archetype-batchapp
     |               `-- flowpart   : フローDSL(フロー部品)テストデータ
     |               `-- jobflow    : フローDSL(ジョブフロー)テストデータ
     |
-    `-- target ※Mavenが標準でtarget配下に出力するファイルの説明は省略
-       |-- ${artifactid}-batchapps-${version}.jar 
-       |      : Ashigel Compilerによりバッチコンパイルされたバッチアプリケーションのアーカイブ。
-       |        Mavenのpacageフェーズの実行により生成される。
-       |
-       |-- ${artifactid}-${version}.jar         : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
-       |-- ${artifactid}-${version}-sources.jar : Mavenにより生成されるjarファイルですが、Asakusa Frameworkでは使用しません。
-       |
-       |-- batchc       : Ashigel Compilerによるバッチコンパイル結果の出力ディレクトリ。Mavenのpacageフェーズの実行により生成される。
-       |-- batchcwork   : Ashigel Compilerによるバッチコンパイルのワークディレクトリ。
-       |-- dmdl         : モデルクラス生成用のDDL記述SQLファイルから生成されるDMDLスクリプト。
-       |-- excel        : テストデータ定義シート生成用のディレクトリ。Mavenのgenerate-sourcesフェーズの実行により生成される。
+    `-- target (Mavenが標準でtarget配下に出力するファイルの説明は省略)
+       |-- ${artifactid}-${version}.jar         : packageフェーズの実行によりjarファイル。Asakusa Frameworkでは使用しません。
+       |-- ${artifactid}-${version}-sources.jar : packageフェーズの実行によりjarファイル。Asakusa Frameworkでは使用しません。
+       |-- batchc       : DSLコンパイラによるバッチコンパイル結果の出力ディレクトリ。packageフェーズの実行により生成される。
+       |-- batchcwork   : DSLコンパイラによるバッチコンパイルのワークディレクトリ。packageフェーズの実行により生成される。
+       |-- dmdl         : モデルクラス生成用のDDL記述SQLファイルから生成されるDMDLスクリプト(thundergateのみ)。
+       |-- excel        : テストデータ定義シート生成用のディレクトリ。generate-sourcesフェーズの実行により生成される。
        |-- excel_v01    : Asakusa0.1形式のテストデータ定義シート生成用のディレクトリ。デフォルトの設定では出力されない。
-       |-- sql          : Thndergate用のDDL作成用ディレクトリ。Mavenのgenerate-sourcesフェーズの実行により生成される。
+       |-- sql          : Thndergate用のDDL作成用ディレクトリ。generate-sourcesフェーズの実行により生成される(thundergateのみ)。
        |-- testdriver   : Asakusa Frameworkのテストドライバが使用するワークディレクトリ。
-       |
        |-- generated-sources
            `-- annotations
            |    `-- ${package}
@@ -196,24 +213,26 @@ asakusa-archetype-batchapp
            `-- modelgen
                 `-- ${package}
                     `-- modelgen
-                       `-- table
-                       |  `-- model   : テーブル構造を元に作成したデータモデルクラス
-                       |  `-- io      : テーブル構造を元に作成したデータモデルの入出力ドライバクラス
-                       `-- view
-                          `-- model   : ビュー情報を元に作成したデータモデルクラス
-                          `-- io      : ビュー情報を元に作成したデータモデルの入出力ドライバクラス
+                       `-- dmdl
+                       |  `-- csv   : WindGate/CSVを使用する場合に生成されるジョブフロークラス (windgateのみ)
+                       |  `-- jdbc  : WindGate/JDBCを使用する場合に生成されるジョブフロークラス (windgateのみ)
+                       |  `-- io    : DMDLを元に作成されるデータモデルの入出力ドライバクラス
+                       |  `-- model : DMDLを元に作成されるデータモデルクラス
+                       `-- table (thundergateのみ)
+                       |  `-- model   : テーブル構造を元に作成されるデータモデルクラス
+                       |  `-- io      : テーブル構造を元に作成されるデータモデルの入出力ドライバクラス
+                       `-- view (thudergateのみ)
+                          `-- model   : ビュー情報を元に作成されるデータモデルクラス
+                          `-- io      : ビュー情報を元に作成されるデータモデルの入出力ドライバクラス
 
-..  todo::
-    asakusa-archetype-windgateのディレクトリ構成
+..  [#] 一部のパッケージやファイルは、アーキタイプの種類やバージョンによっては作成されません。
 
-モデルクラスの生成
-==================
-モデルクラスを作成するには、モデルの定義情報を記述後にMavenの ``generate-sources`` フェーズを実行します。
-
+データモデルクラスの生成
+========================
 Asakusa Frameworkでは、モデルの定義情報の記述するために、以下２つの方法が提供されています。
 
 1. モデルの定義情報をDMDL(Data Model Definition Language)として記述する [#]_ 
-2. モデルの定義情報をSQLのDDLとして記述する(asakusa-archetype-batchappのみ対応) [#]_ 
+2. モデルの定義情報をSQLのDDLとして記述する( ``asakusa-archetype-thundergate`` のみ) [#]_ 
 
 ..  [#] :doc:`../dmdl/start-guide` 
 ..  [#] :doc:`../dmdl/with-thundergate` 
@@ -224,24 +243,28 @@ Asakusa Frameworkでは、モデルの定義情報の記述するために、以
 
 モデルの定義情報をDMDLとして記述する場合
 ----------------------------------------
-モデルの定義情報をDMDLとして記述する場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて保存してください。
+モデルの定義情報をDMDLとして記述する場合、DMDLスクリプトはプロジェクトの ``src/main/dmdl`` ディレクトリ以下に配置してください。
+また、スクリプトのファイル名には ``.dmdl`` の拡張子を付けて、UTF-8エンコーディングで保存してください。
 
-DMDLファイルは複数配置することが出来ます。上記ディレクトリ配下にサブディレクトリを作成し、そこにSQLファイルを配置することも可能です。
+DMDLファイルは複数配置することが出来ます。上記ディレクトリ配下にサブディレクトリを作成し、そこにDMDLファイルを配置することも可能です。
 
 モデルの定義情報をSQLのDDLとして記述する場合
 --------------------------------------------
+
+..  attention::
+    この機能は ``asakusa-archetype-thundergate`` のみで提供されています。
+    ``asakusa-archetype-windgate`` では利用できません。
+
 モデルクラスをSQLのDDLとして記述する場合、SQLファイルはプロジェクトの ``src/main/sql/modelgen`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.sql`` の拡張子を付けて保存してください。
 
 SQLファイルは複数配置することが出来ます。上記ディレクトリ配下にサブディレクトリを作成し、そこにSQLファイルを配置することも可能です。SQLファイルを複数配置した場合、ディレクトリ名・ファイル名の昇順にSQLが実行されます。
 
 なお、Asakusa Framework 0.2からは、SQLファイルは一旦DMDLに変換され、このDMDLからモデルクラスが生成されるようになりました。この時SQLファイルから生成されるDMDLファイルは ``target/dmdl`` ディレクトリに生成されます。
 
-Maven:モデルの生成とテストデータ定義シートの生成
-------------------------------------------------
-
 ``generate-sources`` モデルクラスの生成とテストデータ定義シートの生成
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-アーキタイプから作成したプロジェクトのpom.xmlに対して ``generate-sources`` フェーズを実行するとモデルジェネレータによるモデル生成処理が実行され  ``target/generated-sources/modelgen`` ディレクトリにモデルクラス用のJavaソースファイルが生成されます。
+---------------------------------------------------------------------
+アーキタイプから作成したプロジェクトのpom.xmlに対して ``generate-sources`` フェーズを実行するとDMDLコンパイラが起動し、
+``target/generated-sources/modelgen`` ディレクトリ以下にデータモデルに関するJavaソースファイルが生成されます。
 
 ..  code-block:: sh
 
@@ -249,29 +272,29 @@ Maven:モデルの生成とテストデータ定義シートの生成
 
 モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述するビルド定義ファイルにて変更することが出来ます。
 
-また、generate-sources フェーズを実行すると、以下のファイルも合わせて生成されます。
+また、 ``generate-sources`` フェーズを実行すると、以下のファイルも合わせて生成されます。
 
 * テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel` を参照して下さい。
-* ThunderGateが使用する管理テーブル用DDLスクリプトが ``target/sql`` 配下に生成され、開発環境用のデータベースに対してこのSQLが実行されます。ThunderGateが要求するテーブルが自動的に作成されるため、テストドライバを使ったテストがすぐに行える状態になります。
+* (thundergateのみ)ThunderGateが使用する管理テーブル用DDLスクリプトが ``target/sql`` 配下に生成され、開発環境用のデータベースに対してこのSQLが実行されます。ThunderGateが要求するテーブルが自動的に作成されるため、テストドライバを使ったテストがすぐに行える状態になります。
+
 
 .. _maven-archetype-batch-compile:
 
-Asakusa DSLのバッチコンパイルとアプリケーションアーカイブの生成
-===============================================================
-Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタにデプロイするためには、Ashigelコンパイラのバッチコンパイルを実行し、バッチアプリケーション用のアーカイブファイルを作成します。
 
-Maven:バッチコンパイル
-----------------------
+バッチコンパイルとバッチアプリケーションアーカイブの生成
+========================================================
+Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタにデプロイするためには、Asakusa DSLコンパイラを実行してバッチアプリケーション用のアーカイブファイルを作成します。
+
+DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を参照してください。
+
 
 ``package`` バッチコンパイルの実行
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-アーキタイプから作成したプロジェクトのpom.xmlに対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
+----------------------------------
+アーキタイプから作成したプロジェクトの ``pom.xml`` に対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
 
 ..  code-block:: sh
 
     mvn package
-
-なお、Asakusa DSLのコンパイル時に以下例のように演算子ファクトリクラスのシンボルが見つからない旨のワーニングメッセージが出力されることがありますが、このメッセージが出力されても正常にコンパイルが行われているため、この警告メッセージは無視してください。
 
 ..  code-block:: sh
 
@@ -280,95 +303,105 @@ Maven:バッチコンパイル
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
-``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`administrator-guide` を参照して下さい。
+``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`../administration/deployment-with-windgate` や :doc:`../administration/deployment-with-thundergate` を参照して下さい。
 
-..  note::
-    バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。これらのファイルはMavenの標準の ``package`` フェーズの処理により作成されるjarファイルですが、Asakusa Frameworkではこれらのファイルは使用しません。これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
+..  warning::
+    バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。
+    これらのファイルはMavenの標準の ``package`` フェーズの処理により作成されるjarファイルですが、Asakusa Frameworkではこれらのファイルは使用しません。
+    これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
+
+..  attention::
+    バッチコンパイルの最中にJavaのソースファイルのコンパイルに関する警告が表示されることがあります。
+    これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
+    最終的にコンパイルが成功していれば問題ありません。
+
 
 バッチコンパイルオプションの指定
 --------------------------------
+バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。
+設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「 ``+`` 」や「 ``-`` 」を指定します。
+また、複数のオプションを指定するには「 ``,`` 」(カンマ)でそれぞれを区切ります。
 
-バッチのビルドオプションを指定するには、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。設定できる値は「+<有効にするオプション名>」や「-<無効にするオプション名>」のように、オプション名の先頭に「+」や「-」を指定します。また、複数のオプションを指定するには「,」(カンマ)でそれぞれを区切ります。
+指定できるバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
 
-指定出来るバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+.. _eclipse-configuration:
 
 Eclipseを使ったアプリケーションの開発
 =====================================
-Eclipseを使ってアプリケーションを開発する場合、アーキタイプから作成したプロジェクトのpom.xmlに対して ``eclipse:eclipse`` ゴールを実行します。また、Eclipseに対してMavenリポジトリのロケーションを指定するために ``eclipse:add-maven-repo`` ゴールを実行します。
+統合開発環境(IDE)にEclipseを使用する場合、開発環境にEclipseをインストールした上で、以下の設定を行います。
 
-詳しくは、 :doc:`user-guide` の :ref:`user-guide-eclipse` を参照して下さい。
+``eclipse:add-maven-repo`` クラスパス変数M2_REPOを設定
+------------------------------------------------------
+Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。
+
+ワークスペースをデフォルト値( ``$HOME/workspce`` )に指定して起動した場合は、以下のコマンドを実行します。
+
+..  code-block:: sh
+
+    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
+
+``eclipse:eclipse`` プロジェクトにEclipse用定義ファイルを追加
+-------------------------------------------------------------
+アプリケーション用プロジェクトにEclipseプロジェクト用の定義ファイルを追加します。このコマンドを実行することによってEclipseからプロジェクトをインポートすることが可能になります。
+
+例えば、バッチアプリケーション用プロジェクト「example-app」のEclipse定義ファイルを作成するには、プロジェクトのディレクトリに移動し、以下のコマンドを実行します。
+
+..  code-block:: sh
+
+    cd example-app
+    mvn eclipse:eclipse
+
+EclipseからプロジェクトをImportするには、Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定します。
+
+なお、 ``eclipse:ecipse`` を実行する前にはMavenの ``compile`` フェーズを実行し、targetディレクトリ配下にAsakusa Frameworkが自動生成するソースディレクトリを生成しておく必要があります。 targetディレクトリは Mavenの ``clean`` フェーズを実行すると削除されるため、 ``clean`` を実行した後、 ``eclipse:eclipse`` を実行する場合は必ず以下のように ``compile`` フェーズを合わせて実行してください。
+
+..  code-block:: sh
+
+    mvn clean compile eclipse:eclipse
+
 
 アプリケーション用依存ライブラリの追加
 ======================================
-バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義(<dependency>)を追加します。これに加えて依存するjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置する必要があります。以下はApache Commons Langを配置する例です。
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
+これに加えて、依存するjarファイルを ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
+
+以下はApache Commons Lang 2.6を配置する例です。
 
 pom.xmlの編集
 -------------
 
-pom.xmlの<dependencies>配下に依存定義を追加します。
+pom.xmlの ``<dependencies>`` 内に依存定義を追加します。
 
-..  code-block:: sh
+..  code-block:: xml
 
     <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>${commons.lang.version}</version>
+        <version>2.6</version>
     </dependency>
 
-Mavenリポジトリからjarファイルを取得
-------------------------------------
+依存ライブラリのコピー
+----------------------
 
-Mavenでコンパイルを実行します。依存するjarファイルがローカルリポジトリに配置されます。
-
-..  code-block:: sh
-
-    mvn compile
-
-Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
+MavenのDependencyプラグイン [#]_ を利用して依存ライブラリを取得します。
 
 ..  code-block:: sh
 
-    mvn eclipse:eclipse
+    mvn dependency:copy-dependencies
+
+上記のコマンドを実行すると、依存ライブラリがプロジェクト下の ``target/dependency`` 以下にコピーされます。
+
+..  [#] http://maven.apache.org/plugins/maven-dependency-plugin/
 
 Asausaの拡張ライブラリディレクトリへjarファイルを配置
 -----------------------------------------------------
 
-ローカルリポジトリに配置されたjarファイルを $ASAKUSA_HOME/ext/lib ディレクトリに配置します。
+``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
 ..  code-block:: sh
 
-    cp $HOME/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+    cp target/dependency/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
 
-..  _vup-development-environment:
-
-Asakusa Frameworkのバージョンアップ
-===================================
-開発環境のAsakusa Frameworkをバージョンする手順を示します。
-
-なお、バージョンアップ内容によっては以下の他に追加の手順が必要となります。バージョン毎の固有の手順については :doc:`migration-guide` 等を参照してください。
-
-pom.xml上のバージョンを更新
----------------------------
-pom.xmlの10行目にある「<asakusafw.version」の値を
-更新したいバージョンに書き換えます。
-
-..  code-block:: sh
-
-    <asakusafw.version>0.2.1-RC1</asakusafw.version>
-
-Asakusa Frameworkの再セットアップ
----------------------------------
-Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフェーズ（ゴール）を実行します。
-
-..  code-block:: sh
-
-    mvn assembly:single antrun:run compile
-
-Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpath)を更新します。
-
-..  code-block:: sh
-
-    mvn eclipse:eclipse
 
 ``build.properties`` ビルド定義ファイル
 =======================================
@@ -380,13 +413,15 @@ Eclipseを使って開発している場合は、Eclipse用クラスパス定義
 
 General Settings
 
-  asakusa.database.enabled 
+  asakusa.database.enabled
+    *(asakusa-archetype-thundergateのみ)*
+
     ( **true** or false ) このプロパティをfalseにすると、Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
     
-    ThunderGateを使用せず、モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用しない構成で開発を行うことが可能になります。
+    モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用せずにモデル生成を行うことが可能になります。
 
   asakusa.database.target
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースを使用する場合に、データベース定義ファイルを特定するためのターゲット名を指定します。
     
@@ -428,22 +463,22 @@ Model Generator Settings
     ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象外とするモデル名を正規表現の書式で指定します。デフォルト値はThunderGateが使用する管理テーブルを生成対象外とするよう指定されています。特に理由が無い限り、デフォルト値で指定されている値は削除しないようにして下さい。
 
   asakusa.modelgen.sid.column
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルのシステムIDカラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-sid`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
   asakusa.modelgen.timestamp.column
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの更新日時カラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-updt-date`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
   asakusa.modelgen.delete.column
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの論理削除フラグカラム名を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
   asakusa.modelgen.delete.value
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
@@ -461,17 +496,17 @@ Model Generator Settings
 ThunderGate Settings
 
   asakusa.bulkloader.tables
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプト（後述の「asakusa.bulkloader.genddl」で指定したファイル）に含める対象テーブルを指定します。このプロパティにインポート、及びエクスポート対象テーブルのみを指定することで、余分な管理テーブルの生成を抑止することが出来ます。開発時にはデフォルト（コメントアウト）の状態で特に問題ありません。
 
   asakusa.bulkloader.genddl
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプトのファイルパスを指定します。
 
   asakusa.dmdl.fromddl.output
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ``generate-sources`` フェーズ実行時にモデル定義情報となるDDLスクリプトから生成するDMDLスクリプトの出力先を指定します。
 
@@ -508,19 +543,19 @@ TestDriver Settings
 TestDriver Settings (for Asakusa 0.1 asakusa-test-tools)
 
   asakusa.testdatasheet.v01.generate
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     ( true or **false** ) Asakusa Framework 0.1 仕様のテストデータ定義シートを出力するかを設定します（デフォルトは出力しない）。 このプロパティをtrueにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートが ``target/excel_v01`` ディレクトリ配下に出力されるようになります。
 
   asakusa.testdriver.testdata.dir
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     テストドライバの実行時に、テストドライバが参照するテストデータ定義シートの配置ディレクトリを指定します。
     
     このプロパティは、テストドライバAPIのうち、Asakusa Framework 0.1 から存在する ``*TestDriver`` というクラスの実行時のみ使用されます。Asakusa Framework 0.2 から追加された ``*Tester`` 系のテストドライバAPIは、この値を使用せず、テストドライバ実行時のクラスパスからテストデータ定義シートを参照するようになっています。
 
   asakusa.excelgen.tables
-    *(asakusa-archetype-batchappのみ)*
+    *(asakusa-archetype-thundergateのみ)*
 
     Asakusa Framework 0.1 仕様のテストデータ定義シート生成ツールをMavenコマンドから実行 ( ``mvn exec:java -Dexec.mainClass=com.asakusafw.testtools.templategen.Main`` )した場合に、テストデータシート生成ツールが生成の対象とするテーブルをスペース区切りで指定します。
     

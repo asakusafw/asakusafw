@@ -32,7 +32,6 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionScript;
 import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * An abstract implementation of process-based {@link CommandScriptHandler}.
@@ -63,21 +62,22 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
     @Override
     protected final void doConfigure(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         this.currentProfile = profile;
-        this.commandPrefix = extractCommand(profile, variables, ProcessUtil.PREFIX_COMMAND);
-        this.setupCommand = extractCommand(profile, variables, ProcessUtil.PREFIX_SETUP);
-        this.cleanupCommand = extractCommand(profile, variables, ProcessUtil.PREFIX_CLEANUP);
-        configureExtension(profile, variables);
+        this.commandPrefix = extractCommand(profile, ProcessUtil.PREFIX_COMMAND);
+        this.setupCommand = extractCommand(profile, ProcessUtil.PREFIX_SETUP);
+        this.cleanupCommand = extractCommand(profile, ProcessUtil.PREFIX_CLEANUP);
+        configureExtension(profile);
     }
 
     private List<String> extractCommand(
             ServiceProfile<?> profile,
-            VariableResolver variables,
             String prefix) throws IOException {
         try {
-            return ProcessUtil.extractCommandLineTokens(prefix, profile.getConfiguration(), variables);
+            return ProcessUtil.extractCommandLineTokens(
+                    prefix,
+                    profile.getConfiguration(),
+                    profile.getContext().getContextParameters());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to resolve command line tokens ({0})",
@@ -88,13 +88,10 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
     /**
      * Configures this handler internally (extension point).
      * @param profile the profile of this service
-     * @param variables variable resolver
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
-    protected abstract void configureExtension(
-            ServiceProfile<?> profile,
-            VariableResolver variables) throws InterruptedException, IOException;
+    protected abstract void configureExtension(ServiceProfile<?> profile) throws InterruptedException, IOException;
 
     /**
      * Returns command executor for this handler (extension point).
@@ -163,8 +160,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                     "Failed to build command: {6} (batch={0}, flow={1}, phase={3}, stage={4}, execution={2})",
                     context.getBatchId(),
                     context.getFlowId(),
-                    context.getExecutionId(),
                     context.getPhase(),
+                    context.getExecutionId(),
                     script.getId(),
                     currentProfile.getPrefix(),
                     original), e);
@@ -181,8 +178,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                 "Failed to execute Command job: code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 script.getId(),
                 String.valueOf(exit)));
     }
@@ -207,8 +204,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                 "Failed to execute Hadoop job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
-                context.getExecutionId(),
                 context.getPhase(),
+                context.getExecutionId(),
                 String.valueOf(exit)));
     }
 

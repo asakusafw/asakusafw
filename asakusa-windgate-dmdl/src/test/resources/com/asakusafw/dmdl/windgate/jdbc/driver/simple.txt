@@ -1,4 +1,4 @@
 simple = {
-    @windgate.column(value = "VALUE")
+    @windgate.jdbc.column(name = "VALUE")
     value : TEXT;
 };

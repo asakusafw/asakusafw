@@ -103,6 +103,32 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
+     * Cleanups source using modified truncate statement.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanupSource_modified() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+
+        ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
+
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
+
+        JdbcProfile profile = profile();
+        profile.setTruncateStatement("DELETE FROM {0} WHERE KEY = 1");
+        JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile, new ParameterList());
+
+        assertThat(h2.count("PAIR"), is(3));
+        manipulator.cleanupSource(process);
+        assertThat(h2.count("PAIR"), is(2));
+    }
+
+    /**
      * Attempts to cleanup source but the table is missing.
      * @throws Exception if failed
      */
@@ -116,12 +142,8 @@ public class JdbcResourceManipulatorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
 
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
-        try {
-            manipulator.cleanupSource(process);
-            fail();
-        } catch (IOException e) {
-            // ok.
-        }
+        manipulator.cleanupSource(process);
+        // green
     }
 
     /**
@@ -150,6 +172,33 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
+     * Cleanups drain using modified truncate statement.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanupDrain_modified() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+        conf.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
+
+        ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
+
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
+
+        JdbcProfile profile = profile();
+        profile.setTruncateStatement("DELETE FROM {0} WHERE KEY IN (1, 2)");
+        JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile, new ParameterList());
+
+        assertThat(h2.count("PAIR"), is(3));
+        manipulator.cleanupDrain(process);
+        assertThat(h2.count("PAIR"), is(1));
+    }
+
+    /**
      * Attempts to cleanup drain but the table is missing.
      * @throws Exception if failed
      */
@@ -164,12 +213,8 @@ public class JdbcResourceManipulatorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
 
-        try {
-            manipulator.cleanupDrain(process);
-            fail();
-        } catch (IOException e) {
-            // ok.
-        }
+        manipulator.cleanupDrain(process);
+        // green
     }
 
     /**

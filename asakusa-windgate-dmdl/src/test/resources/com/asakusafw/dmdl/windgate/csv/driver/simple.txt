@@ -1,0 +1,4 @@
+@windgate.csv()
+simple = {
+    value : TEXT;
+};

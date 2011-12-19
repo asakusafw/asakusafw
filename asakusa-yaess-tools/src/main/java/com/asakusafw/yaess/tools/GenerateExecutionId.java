@@ -76,7 +76,6 @@ public class GenerateExecutionId {
         try {
             conf = parseConfiguration(args);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -85,6 +84,7 @@ public class GenerateExecutionId {
                             GenerateExecutionId.class.getName()),
                     OPTIONS,
                     true);
+            e.printStackTrace(System.out);
             return 1;
         }
         try {

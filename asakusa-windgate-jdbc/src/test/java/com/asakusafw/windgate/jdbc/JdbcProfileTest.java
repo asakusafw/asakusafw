@@ -26,6 +26,7 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
 /**
@@ -81,10 +82,27 @@ public class JdbcProfileTest {
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         map.put(JdbcProfile.KEY_USER, "");
         map.put(JdbcProfile.KEY_PASSWORD, "");
+        map.put(JdbcProfile.KEY_BATCH_GET_UNIT, "5000");
         map.put(JdbcProfile.KEY_BATCH_PUT_UNIT, "10000");
+        map.put(JdbcProfile.KEY_CONNECT_RETRY_COUNT, "3");
+        map.put(JdbcProfile.KEY_CONNECT_RETRY_INTERVAL, "10");
+        map.put(JdbcProfile.KEY_TRUNCATE_STATEMENT, "DELETE FROM {0}");
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello1", "world1");
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2", "world2");
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3", "world3");
 
         JdbcProfile profile = JdbcProfile.convert(toProfile(map));
+        assertThat(profile.getBatchGetUnit(), is(5000));
         assertThat(profile.getBatchPutUnit(), is(10000L));
+
+        Map<String, String> extra = new HashMap<String, String>();
+        extra.put("hello1", "world1");
+        extra.put("hello2", "world2");
+        extra.put("hello3", "world3");
+        assertThat(profile.getConnectionProperties(), is(extra));
+
+        assertThat(profile.getTruncateStatement("HELLO").trim(), startsWith("DELETE"));
+
         Connection conn = profile.openConnection();
         try {
             Statement stmt = conn.createStatement();
@@ -162,6 +180,10 @@ public class JdbcProfileTest {
     }
 
     private ResourceProfile toProfile(Map<String, String> map) {
-        return new ResourceProfile("jdbc", JdbcResourceProvider.class, getClass().getClassLoader(), map);
+        return new ResourceProfile(
+                "jdbc",
+                JdbcResourceProvider.class,
+                ProfileContext.system(getClass().getClassLoader()),
+                map);
     }
 }

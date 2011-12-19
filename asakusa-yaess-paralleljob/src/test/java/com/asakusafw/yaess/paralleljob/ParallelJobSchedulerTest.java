@@ -40,8 +40,8 @@ import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link ParallelJobScheduler}.
@@ -294,8 +294,8 @@ public class ParallelJobSchedulerTest {
         assert keyValuePairs != null;
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
-                "testing", ParallelJobScheduler.class, conf, getClass().getClassLoader());
-        JobScheduler instance = profile.newInstance(VariableResolver.system());
+                "testing", ParallelJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+        JobScheduler instance = profile.newInstance();
         return instance;
     }
 

@@ -25,7 +25,7 @@ public class MockService implements Service {
     ServiceProfile<?> serviceProfile;
 
     @Override
-    public void configure(ServiceProfile<?> profile, VariableResolver variables)
+    public void configure(ServiceProfile<?> profile)
             throws InterruptedException, IOException {
         this.serviceProfile = profile;
     }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * バルクローダーとの通信に関するクラスを提供する。
+ * ThunderGateとの通信に関するクラスを提供する。
  */
 package com.asakusafw.vocabulary.bulkloader;

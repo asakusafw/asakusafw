@@ -7,7 +7,7 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    $0 batch-id flow-id phase-name execution-id [-A <key>=<value>]*
+    yaess-phase.sh batch-id flow-id phase-name execution-id [-A <key>=<value> [-A <key>=<value>  [...]]]
 
 Parameters:
     batch-id
@@ -20,7 +20,8 @@ Parameters:
             epilogue export finalize cleanup
     execution-id
         Unique ID of jobflow execution
-        If "$_YS_GENERATE_EXECUTION_ID" is specified, the execution ID is generated automatically
+        If "$_YS_GENERATE_EXECUTION_ID" is specified, the execution ID is 
+        generated automatically (experimental feature)
     -A <key>=<value>
         argument for this execution
 EOF
@@ -28,12 +29,6 @@ EOF
 
 if [ $# -lt 4 ]; then
     usage
-    exit 1
-fi
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
     exit 1
 fi
 
@@ -50,6 +45,12 @@ _YS_ROOT="$(dirname $0)/.."
 if [ -e "$_YS_ROOT/conf/env.sh" ]
 then
     . "$_YS_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
 fi
 
 if [ "$YS_PATH_SEPARATOR" = "" ]
@@ -125,6 +126,7 @@ echo "  Main Class: $_YS_CLASS"
 echo "   Arguments: $@"
 
 java \
+    "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -profile "$_YS_PROFILE" \

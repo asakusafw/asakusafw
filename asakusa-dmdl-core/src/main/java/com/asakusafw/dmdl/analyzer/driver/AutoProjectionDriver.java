@@ -22,18 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.asakusafw.dmdl.Diagnostic;
-import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
-import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
-import com.asakusafw.dmdl.spi.AttributeDriver;
+import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
@@ -45,7 +42,7 @@ The attributed declaration must be:
 <li> with no attribute elements </li>
 </ul>
  */
-public class AutoProjectionDriver extends AttributeDriver {
+public class AutoProjectionDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
@@ -60,31 +57,21 @@ public class AutoProjectionDriver extends AttributeDriver {
     @Override
     public void process(
             DmdlSemantics environment,
-            Declaration declaration,
+            ModelDeclaration declaration,
             AstAttribute attribute) {
-        assert attribute.name.toString().equals(TARGET_NAME);
-        if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
-                    Level.ERROR,
-                    declaration.getOriginalAst(),
-                    "@{0} is not suitable for properties",
-                    TARGET_NAME));
-            return;
-        }
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, attribute.elements));
-        ModelDeclaration model = (ModelDeclaration) declaration;
-        List<ModelSymbol> autoProjectios = collectProjections(environment, model);
+        List<ModelSymbol> autoProjectios = collectProjections(environment, declaration);
 
-        ProjectionsTrait projections = model.getTrait(ProjectionsTrait.class);
+        ProjectionsTrait projections = declaration.getTrait(ProjectionsTrait.class);
         if (projections == null) {
-            projections = new ProjectionsTrait(model.getOriginalAst().expression, autoProjectios);
+            projections = new ProjectionsTrait(declaration.getOriginalAst().expression, autoProjectios);
         } else {
             List<ModelSymbol> composite = new ArrayList<ModelSymbol>();
             composite.addAll(projections.getProjections());
             composite.addAll(autoProjectios);
-            projections = new ProjectionsTrait(model.getOriginalAst().expression, composite);
+            projections = new ProjectionsTrait(declaration.getOriginalAst().expression, composite);
         }
-        model.putTrait(ProjectionsTrait.class, projections);
+        declaration.putTrait(ProjectionsTrait.class, projections);
     }
 
     private List<ModelSymbol> collectProjections(DmdlSemantics environment, ModelDeclaration model) {

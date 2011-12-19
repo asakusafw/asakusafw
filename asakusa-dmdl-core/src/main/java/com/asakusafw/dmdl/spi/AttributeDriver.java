@@ -46,4 +46,9 @@ public abstract class AttributeDriver {
             DmdlSemantics environment,
             Declaration declaration,
             AstAttribute attribute);
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

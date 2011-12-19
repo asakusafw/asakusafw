@@ -30,8 +30,8 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
+import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link BasicHadoopScriptHandler}.
@@ -260,9 +260,9 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
     private HadoopScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
-                "hadoop", BasicHadoopScriptHandler.class, conf, getClass().getClassLoader());
+                "hadoop", BasicHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
-            return profile.newInstance(VariableResolver.system());
+            return profile.newInstance();
         } catch (Exception e) {
             throw new AssertionError(e);
         }

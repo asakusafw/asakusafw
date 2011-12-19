@@ -48,21 +48,21 @@ public class ServiceProfile<T extends Service> {
 
     private final Map<String, String> configuration;
 
-    private final ClassLoader classLoader;
+    private final ProfileContext context;
 
     /**
      * Creates a new instance.
      * @param prefix the key prefix of this profile
      * @param serviceClass the service class
      * @param configuration configuration for service class
-     * @param classLoader the class loader which loaded the service class
+     * @param context the current profile context
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public ServiceProfile(
             String prefix,
             Class<? extends T> serviceClass,
             Map<String, String> configuration,
-            ClassLoader classLoader) {
+            ProfileContext context) {
         if (prefix == null) {
             throw new IllegalArgumentException("prefix must not be null"); //$NON-NLS-1$
         }
@@ -72,13 +72,13 @@ public class ServiceProfile<T extends Service> {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
-        if (classLoader == null) {
-            throw new IllegalArgumentException("classLoader must not be null"); //$NON-NLS-1$
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         this.prefix = prefix;
         this.serviceClass = serviceClass;
         this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
-        this.classLoader = classLoader;
+        this.context = context;
     }
 
     /**
@@ -106,26 +106,33 @@ public class ServiceProfile<T extends Service> {
     }
 
     /**
-     * Returns the class loader which loaded this service class.
-     * @return the class loader
+     * Returns the current profile context.
+     * @return the current profile context
      */
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    public ProfileContext getContext() {
+        return context;
     }
 
     /**
-     * Creates a new instance.
-     * The created service will automatically {@link Service#configure(ServiceProfile, VariableResolver) configured}
+     * Returns the class loader which loaded this service class.
+     * @return the class loader
+     * @deprecated use {@link #getContext()} instead
+     */
+    @Deprecated
+    public ClassLoader getClassLoader() {
+        return getContext().getClassLoader();
+    }
+
+    /**
+     * Creates a new instance using context parameters.
+     * The created service will automatically {@link Service#configure(ServiceProfile) configured}
      * by using this profile.
-     * @param variables the variable resolver
      * @return the created instance.
      * @throws InterruptedException if interrupted in configuring the target service
      * @throws IOException if failed to create or configure the service
+     * @since 0.2.4
      */
-    public T newInstance(VariableResolver variables) throws InterruptedException, IOException {
-        if (variables == null) {
-            throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
-        }
+    public T newInstance() throws InterruptedException, IOException {
         LOG.debug("Creating new instance for {}: {}", prefix, serviceClass.getName());
         T instance;
         try {
@@ -136,8 +143,26 @@ public class ServiceProfile<T extends Service> {
                     getPrefix(),
                     getServiceClass().getName()), e);
         }
-        instance.configure(this, variables);
+        instance.configure(this);
         return instance;
+    }
+
+    /**
+     * Creates a new instance.
+     * The created service will automatically {@link Service#configure(ServiceProfile) configured}
+     * by using this profile.
+     * @param variables the variable resolver
+     * @return the created instance.
+     * @throws InterruptedException if interrupted in configuring the target service
+     * @throws IOException if failed to create or configure the service
+     * @deprecated use {@link #newInstance()} instead
+     */
+    @Deprecated
+    public T newInstance(VariableResolver variables) throws InterruptedException, IOException {
+        if (variables == null) {
+            throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
+        }
+        return newInstance();
     }
 
     /**
@@ -149,7 +174,9 @@ public class ServiceProfile<T extends Service> {
      * @param classLoader the class loader to load the service class
      * @return the loaded profile
      * @throws IllegalArgumentException if the target profile is invalid, or parameters contain {@code null}
+     * @deprecated use {@link #load(Properties, String, Class, ProfileContext)} instead
      */
+    @Deprecated
     public static <T extends Service> ServiceProfile<T> load(
             Properties properties,
             String prefix,
@@ -167,6 +194,37 @@ public class ServiceProfile<T extends Service> {
         if (classLoader == null) {
             throw new IllegalArgumentException("classLoader must not be null"); //$NON-NLS-1$
         }
+        return load(properties, prefix, serviceBaseClass, ProfileContext.system(classLoader));
+    }
+
+    /**
+     * Loads a service profile with the specified key prefix.
+     * @param <T> the base class of target class
+     * @param properties source properties
+     * @param prefix the key prefix
+     * @param serviceBaseClass the base class of service class
+     * @param context the current profile context
+     * @return the loaded profile
+     * @throws IllegalArgumentException if the target profile is invalid, or parameters contain {@code null}
+     * @since 0.2.4
+     */
+    public static <T extends Service> ServiceProfile<T> load(
+            Properties properties,
+            String prefix,
+            Class<T> serviceBaseClass,
+            ProfileContext context) {
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (prefix == null) {
+            throw new IllegalArgumentException("prefix must not be null"); //$NON-NLS-1$
+        }
+        if (serviceBaseClass == null) {
+            throw new IllegalArgumentException("serviceBaseClass must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
         String targetClassName = properties.getProperty(prefix);
         if (targetClassName == null) {
             throw new IllegalArgumentException(MessageFormat.format(
@@ -175,7 +233,7 @@ public class ServiceProfile<T extends Service> {
         }
         Class<?> loaded;
         try {
-            loaded = classLoader.loadClass(targetClassName);
+            loaded = context.getClassLoader().loadClass(targetClassName);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Faild load a service class defined in \"{0}\": {1}",
@@ -191,7 +249,7 @@ public class ServiceProfile<T extends Service> {
         }
         Class<? extends T> targetClass = loaded.asSubclass(serviceBaseClass);
         Map<String, String> conf = PropertiesUtil.createPrefixMap(properties, prefix + '.');
-        return new ServiceProfile<T>(prefix, targetClass, conf, classLoader);
+        return new ServiceProfile<T>(prefix, targetClass, conf, context);
     }
 
     /**

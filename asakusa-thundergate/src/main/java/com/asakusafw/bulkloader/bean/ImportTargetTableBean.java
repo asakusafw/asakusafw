@@ -58,7 +58,6 @@ public class ImportTargetTableBean {
     /**
      * The location where the imported data will be deployed.
      * If cache feature is enabled, this represents cache directory.
-     * @version 0.2.3
      */
     private String dfsFilePath;
 
@@ -144,7 +143,6 @@ public class ImportTargetTableBean {
     /**
      * キャッシュ機構を利用する場合のみ{@code true}を返す。
      * @return キャッシュ機構を利用する場合のみ{@code true}、利用しない場合は{@code false}
-     * @version 0.2.3
      * @deprecated {@link #getCacheId()} instead
      */
     @Deprecated
@@ -154,7 +152,6 @@ public class ImportTargetTableBean {
     /**
      * キャッシュ機構の利用の有無を設定する。
      * @param isUseCache {@code true}ならばキャッシュ機構を利用、{@code false}ならば利用しない
-     * @version 0.2.3
      * @deprecated {@link #setCacheId(String)} instead
      */
     @Deprecated

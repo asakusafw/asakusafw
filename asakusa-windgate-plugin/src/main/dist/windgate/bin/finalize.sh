@@ -41,17 +41,23 @@ else
     exit 1
 fi
 
+_WG_ROOT="$(dirname $0)/.."
+if [ -e "$_WG_ROOT/conf/env.sh" ]
+then
+    . "$_WG_ROOT/conf/env.sh"
+fi
+
+if [ "$ASAKUSA_HOME" = "" ]
+then
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
+fi
+
 if [ "$WG_CLASSPATH_DELIMITER" = "" ]
 then
     _WG_CLASSPATH_DELIMITER=':'
 else 
     _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
-fi
-
-_WG_ROOT="$(dirname $0)/.."
-if [ -e "$_WG_ROOT/conf/env.sh" ]
-then
-    . "$_WG_ROOT/conf/env.sh"
 fi
 
 _WG_PROFILE="$_WG_ROOT/profile/${_OPT_PROFILE}.properties"
@@ -103,10 +109,12 @@ echo "  -classpath $_WG_CLASSPATH"
 echo "  -profile $_WG_PROFILE"
 echo "  -session $_WG_SESSION"
 echo "  -plugin $_WG_PLUGIN"
+echo "  WINDGATE_OPTS=\"$WINDGATE_OPTS\""
 
 if [ -d "$HADOOP_HOME" ]
 then
     export HADOOP_CLASSPATH="$_WG_CLASSPATH"
+    HADOOP_OPTS="$HADOOP_OPTS $WINDGATE_OPTS"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
@@ -118,6 +126,7 @@ then
         -plugin "$_WG_PLUGIN"
 else
     java \
+        $WINDGATE_OPTS \
         -classpath "$_WG_CLASSPATH" \
         "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
         "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
@@ -136,5 +145,6 @@ then
     echo "  -profile $_WG_PROFILE" 1>&2
     echo "  -session $_WG_SESSION" 1>&2
     echo "  -plugin $_WG_PLUGIN" 1>&2
+    echo "  WINDGATE_OPTS=\"$WINDGATE_OPTS\"" 1>&2
     exit $_WG_RET
 fi

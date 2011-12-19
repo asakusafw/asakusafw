@@ -26,11 +26,10 @@ import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstAttributeValue;
 import com.asakusafw.dmdl.model.AstAttributeValueArray;
 import com.asakusafw.dmdl.model.AstSimpleName;
-import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
-import com.asakusafw.dmdl.spi.AttributeDriver;
+import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
@@ -42,7 +41,7 @@ The attributed declaration must be:
 <li> value=[array of property symbols] </li>
 </ul>
  */
-public class PrimaryKeyDriver extends AttributeDriver {
+public class PrimaryKeyDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
@@ -62,22 +61,9 @@ public class PrimaryKeyDriver extends AttributeDriver {
     @Override
     public void process(
             DmdlSemantics environment,
-            Declaration declaration,
+            ModelDeclaration declaration,
             AstAttribute attribute) {
-        assert attribute.name.toString().equals(TARGET_NAME);
-        if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
-                    Level.ERROR,
-                    declaration.getOriginalAst(),
-                    "@{0} is not suitable for properties",
-                    TARGET_NAME));
-            return;
-        }
-        List<PropertySymbol> properties = getProperties(
-                environment,
-                (ModelDeclaration) declaration,
-                attribute);
-
+        List<PropertySymbol> properties = getProperties(environment, declaration, attribute);
         declaration.putTrait(
                 PrimaryKeyTrait.class,
                 new PrimaryKeyTrait(attribute, properties));

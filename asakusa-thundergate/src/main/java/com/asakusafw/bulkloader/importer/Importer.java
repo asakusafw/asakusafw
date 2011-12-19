@@ -236,7 +236,9 @@ public class Importer {
             LOG.info("TG-IMPORTER-01002",
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
             return Constants.EXIT_CODE_SUCCESS;
-
+        } catch (BulkLoaderSystemException e) {
+            LOG.log(e);
+            return Constants.EXIT_CODE_ERROR;
         } catch (Exception e) {
             try {
                 LOG.error(e, "TG-IMPORTER-01010",

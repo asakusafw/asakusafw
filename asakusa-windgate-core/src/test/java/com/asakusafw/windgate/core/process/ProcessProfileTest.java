@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.junit.Test;
 
 import com.asakusafw.windgate.core.BaseProfile;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.session.SessionProfile;
 
 /**
@@ -39,7 +40,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ProcessProfile p1 = find(profiles, "testing");
         assertThat(p1.getName(), is("testing"));
@@ -57,7 +58,7 @@ public class ProcessProfileTest {
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf1", "aaa");
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf2", "bbb");
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ProcessProfile p1 = find(profiles, "testing");
         assertThat(p1.getName(), is("testing"));
@@ -80,7 +81,7 @@ public class ProcessProfileTest {
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing3", BasicProcessProvider.class.getName());
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing3" + BaseProfile.QUALIFIER + "conf", "ccc");
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(3));
 
         ProcessProfile p1 = find(profiles, "testing1");
@@ -110,7 +111,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "@INVALID", BasicProcessProvider.class.getName());
 
-        ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -122,7 +123,7 @@ public class ProcessProfileTest {
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", String.class.getName());
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf", "aaa");
 
-        ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -133,7 +134,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf", "aaa");
 
-        ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -144,7 +145,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ProcessProfile profile : profiles) {
             profile.storeTo(restored);
@@ -162,7 +163,7 @@ public class ProcessProfileTest {
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf1", "aaa");
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conf2", "bbb");
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ProcessProfile profile : profiles) {
             profile.storeTo(restored);
@@ -183,7 +184,7 @@ public class ProcessProfileTest {
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing3", BasicProcessProvider.class.getName());
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing3" + BaseProfile.QUALIFIER + "conf", "ccc");
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         for (ProcessProfile profile : profiles) {
             profile.storeTo(restored);
@@ -199,7 +200,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ProcessProfile.KEY_PREFIX + "testing", "conflict");
         for (ProcessProfile profile : profiles) {
@@ -215,7 +216,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ProcessProfile.KEY_PREFIX + "testing" + BaseProfile.QUALIFIER + "conflict", "conflict");
         for (ProcessProfile profile : profiles) {
@@ -231,7 +232,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         Properties restored = new Properties();
         restored.setProperty(ProcessProfile.KEY_PREFIX + "orthogonal" + BaseProfile.QUALIFIER + "conf", "conf");
         for (ProcessProfile profile : profiles) {
@@ -266,7 +267,7 @@ public class ProcessProfileTest {
         Properties p = new Properties();
         p.setProperty(ProcessProfile.KEY_PREFIX + "testing", BasicProcessProvider.class.getName());
 
-        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, getClass().getClassLoader());
+        Collection<? extends ProcessProfile> profiles = ProcessProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         assertThat(profiles.size(), is(1));
         ProcessProfile r1 = find(profiles, "testing");
 

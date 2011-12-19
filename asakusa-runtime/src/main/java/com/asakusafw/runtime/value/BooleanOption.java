@@ -32,6 +32,23 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
     private boolean value;
 
     /**
+     * Creates a new instance which represents {@code null} value.
+     */
+    public BooleanOption() {
+        super();
+    }
+
+    /**
+     * Creates a new instance which represents the specified value.
+     * @param value the initial value
+     */
+    public BooleanOption(boolean value) {
+        super();
+        this.value = value;
+        this.nullValue = false;
+    }
+
+    /**
      * このオブジェクトが表現する値を返す。
      * @return このオブジェクトが表現する値
      * @throws NullPointerException この値が{@code null}を表現する場合

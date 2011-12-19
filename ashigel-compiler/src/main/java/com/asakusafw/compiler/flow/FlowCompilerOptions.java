@@ -15,8 +15,10 @@
  */
 package com.asakusafw.compiler.flow;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -144,6 +146,8 @@ public class FlowCompilerOptions {
     private volatile boolean hashJoinForSmall;
 
     private volatile boolean enableDebugLogging;
+
+    private final Map<String, String> extraAttributes = new ConcurrentHashMap<String, String>();
 
     /**
      * デフォルトの設定でインスタンスを生成する。
@@ -303,5 +307,31 @@ OptionName:
      */
     public void setEnableDebugLogging(boolean enable) {
         this.enableDebugLogging = enable;
+    }
+
+    /**
+     * Returns the extra attribute.
+     * @param name attribute name
+     * @return related value, or {@code null} if not configured
+     */
+    public String getExtraAttribute(String name) {
+        return this.extraAttributes.get(name);
+    }
+
+    /**
+     * Configures the extra attribute.
+     * @param name attribute name
+     * @param value attribute value (nullable)
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void putExtraAttribute(String name, String value) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (value == null) {
+            this.extraAttributes.remove(name);
+        } else {
+            this.extraAttributes.put(name, value);
+        }
     }
 }

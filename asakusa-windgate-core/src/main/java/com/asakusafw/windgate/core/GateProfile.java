@@ -130,7 +130,9 @@ public class GateProfile {
      * @param loader class loader to load the {@link ProcessProvider}
      * @return the loaded profile
      * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @deprecated use {@link #loadFrom(String, Properties, ProfileContext)} instead
      */
+    @Deprecated
     public static GateProfile loadFrom(String name, Properties properties, ClassLoader loader) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
@@ -141,15 +143,37 @@ public class GateProfile {
         if (loader == null) {
             throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
         }
+        return loadFrom(name, properties, ProfileContext.system(loader));
+    }
+
+    /**
+     * Loads a total profile from the properties.
+     * @param name the profile name (for hint)
+     * @param properties source properties
+     * @param context the current profile context
+     * @return the loaded profile
+     * @throws IllegalArgumentException if properties are invalid, or if any parameter is {@code null}
+     * @since 0.2.4
+     */
+    public static GateProfile loadFrom(String name, Properties properties, ProfileContext context) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (properties == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
         LOG.debug("Restoring WindGate profile");
         Properties copy = (Properties) properties.clone();
-        CoreProfile core = CoreProfile.loadFrom(copy, loader);
+        CoreProfile core = CoreProfile.loadFrom(copy, context);
         CoreProfile.removeCorrespondingKeys(copy);
-        SessionProfile session = SessionProfile.loadFrom(copy, loader);
+        SessionProfile session = SessionProfile.loadFrom(copy, context);
         SessionProfile.removeCorrespondingKeys(copy);
-        Collection<? extends ProcessProfile> processes = ProcessProfile.loadFrom(copy, loader);
+        Collection<? extends ProcessProfile> processes = ProcessProfile.loadFrom(copy, context);
         ProcessProfile.removeCorrespondingKeys(copy);
-        Collection<? extends ResourceProfile> resources = ResourceProfile.loadFrom(copy, loader);
+        Collection<? extends ResourceProfile> resources = ResourceProfile.loadFrom(copy, context);
         ResourceProfile.removeCorrespondingKeys(copy);
         if (copy.isEmpty() == false) {
             WGLOG.warn("W02001",

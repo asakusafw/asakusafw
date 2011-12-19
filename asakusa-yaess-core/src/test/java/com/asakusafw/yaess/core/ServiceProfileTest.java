@@ -37,11 +37,11 @@ public class ServiceProfileTest {
         prop.setProperty("mock1", MockService.class.getName());
         prop.setProperty("mock2", "");
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
         assertThat(service.getPrefix(), is("mock1"));
         assertThat(service.getServiceClass(), is((Object) MockService.class));
         assertThat(service.getConfiguration().size(), is(0));
-        assertThat(service.getClassLoader(), is(cl));
+        assertThat(service.getContext().getClassLoader(), is(cl));
     }
 
     /**
@@ -56,7 +56,7 @@ public class ServiceProfileTest {
         prop.setProperty("mock2.hoge", "hoge");
         prop.setProperty("mock3.bar", "bar");
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
         assertThat(service.getPrefix(), is("mock1"));
         assertThat(service.getConfiguration().size(), is(2));
         assertThat(service.getConfiguration().get("hoge"), is("foo"));
@@ -69,7 +69,7 @@ public class ServiceProfileTest {
     @Test(expected = IllegalArgumentException.class)
     public void load_invalid_empty() {
         Properties prop = new Properties();
-        ServiceProfile.load(prop, "mock1", Service.class, getClass().getClassLoader());
+        ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -79,7 +79,7 @@ public class ServiceProfileTest {
     public void load_invalid_class() {
         Properties prop = new Properties();
         prop.setProperty("mock1", "__UNKNOWN__");
-        ServiceProfile.load(prop, "mock1", Service.class, getClass().getClassLoader());
+        ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -89,7 +89,7 @@ public class ServiceProfileTest {
     public void load_invalid_service() {
         Properties prop = new Properties();
         prop.setProperty("mock1", String.class.getName());
-        ServiceProfile.load(prop, "mock1", Service.class, getClass().getClassLoader());
+        ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -99,7 +99,7 @@ public class ServiceProfileTest {
     public void load_invalid_base() {
         Properties prop = new Properties();
         prop.setProperty("mock1", MockService.class.getName());
-        ServiceProfile.load(prop, "mock1", CoreProfile.class, getClass().getClassLoader());
+        ServiceProfile.load(prop, "mock1", CoreProfile.class, ProfileContext.system(getClass().getClassLoader()));
     }
 
     /**
@@ -113,8 +113,8 @@ public class ServiceProfileTest {
         prop.setProperty("mock1.hoge", "foo");
         prop.setProperty("mock1.bar.1", "moga");
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
-        Service instance = service.newInstance(VariableResolver.system());
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
+        Service instance = service.newInstance();
         assertThat(instance, is(MockService.class));
 
         MockService mock = (MockService) instance;
@@ -133,8 +133,8 @@ public class ServiceProfileTest {
         Properties prop = new Properties();
         prop.setProperty("mock1", PrivateService.class.getName());
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
-        service.newInstance(VariableResolver.system());
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
+        service.newInstance();
     }
 
     /**
@@ -146,8 +146,8 @@ public class ServiceProfileTest {
         Properties prop = new Properties();
         prop.setProperty("mock1", InvalidService.class.getName());
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
-        service.newInstance(VariableResolver.system());
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
+        service.newInstance();
     }
 
     /**
@@ -158,7 +158,7 @@ public class ServiceProfileTest {
         Properties prop = new Properties();
         prop.setProperty("mock1", MockService.class.getName());
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
 
         Properties target = new Properties();
         service.storeTo(target);
@@ -175,7 +175,7 @@ public class ServiceProfileTest {
         prop.setProperty("mock1.hoge", "foo");
         prop.setProperty("mock1.bar.1", "moga");
         ClassLoader cl = getClass().getClassLoader();
-        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, cl);
+        ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
 
         Properties target = new Properties();
         service.storeTo(target);
