@@ -149,7 +149,7 @@ public class BatchScript {
         String batchId = properties.getProperty(KEY_ID);
         Set<String> flowIds = FlowScript.extractFlowIds(properties);
         List<FlowScript> flowScripts = new ArrayList<FlowScript>();
-        for (String flowId: flowIds) {
+        for (String flowId : flowIds) {
             FlowScript flowScript = FlowScript.load(properties, flowId);
             flowScripts.add(flowScript);
         }

@@ -86,7 +86,7 @@ public abstract class AbstractExporterRetriever<T extends ExporterDescription>
 
     /**
      * Redirects to {@link #createSource(DataModelDefinition, ExporterDescription)
-     * createSource(definition, description)}
+     * createSource(definition, description)}.
      */
     @Override
     public <V> DataModelSource createSource(

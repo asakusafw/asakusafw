@@ -496,7 +496,7 @@ public class ExecutionTask {
         private boolean submit() {
             LOG.debug("Submitting waiting jobflows: {}", batchId);
             boolean submitted = false;
-            for (Iterator<FlowScript> iter = flows.iterator(); iter.hasNext(); ) {
+            for (Iterator<FlowScript> iter = flows.iterator(); iter.hasNext();) {
                 FlowScript flow = iter.next();
                 boolean blocked = false;
                 for (String blockerId : flow.getBlockerIds()) {
