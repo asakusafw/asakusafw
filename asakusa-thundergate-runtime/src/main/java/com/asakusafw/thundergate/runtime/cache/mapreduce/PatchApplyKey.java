@@ -18,8 +18,6 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serializable;
-
 import org.apache.hadoop.io.VIntWritable;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
@@ -133,9 +131,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * Total comparator for {@link PatchApplyKey}.
      * @since 0.2.3
      */
-    public static final class SortComparator extends WritableComparator implements Serializable {
-
-        private static final long serialVersionUID = 0L;
+    public static final class SortComparator extends WritableComparator {
 
         /**
          * Creates a new instance.
@@ -180,9 +176,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * @since 0.2.3
      */
     @SuppressWarnings("rawtypes")
-    public static final class GroupComparator extends WritableComparator implements Serializable {
-
-        private static final long serialVersionUID = 0L;
+    public static final class GroupComparator extends WritableComparator {
 
         /**
          * Creates a new instance.

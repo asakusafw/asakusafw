@@ -279,6 +279,18 @@ encoding/<project>=UTF-8
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.3</version>
+					<configuration>
+						<xmlOutput>true</xmlOutput>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<excludeFilterFile>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFilterFile>
+						<sourceEncoding>UTF-8</sourceEncoding>
+						<outputEncoding>UTF-8</outputEncoding>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -320,10 +332,11 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>2.3.3</version>
 				<configuration>
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
+					<excludeFileFilter>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFileFilter>
 					<sourceEncoding>UTF-8</sourceEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
