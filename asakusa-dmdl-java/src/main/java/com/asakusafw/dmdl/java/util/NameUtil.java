@@ -22,7 +22,7 @@ import com.asakusafw.dmdl.model.AstName;
 /**
  * Naming utilities for Java and DMDL.
  */
-public class NameUtil {
+public final class NameUtil {
 
     /**
      * Convert the DMDL name into Java package-like name.

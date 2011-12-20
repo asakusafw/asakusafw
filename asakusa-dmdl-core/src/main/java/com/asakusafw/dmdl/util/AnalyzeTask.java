@@ -92,6 +92,9 @@ public class AnalyzeTask {
                 case ERROR:
                     LOG.error("{} ({})", diagnostic.message, diagnostic.region);
                     break;
+                default:
+                    LOG.warn("[INTERNAL ERROR] Unknown Diagnostic Kind: {}", diagnostic);
+                    break;
                 }
             }
             throw new IOException(MessageFormat.format(

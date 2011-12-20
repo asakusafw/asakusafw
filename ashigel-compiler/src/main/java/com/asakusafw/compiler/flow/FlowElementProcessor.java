@@ -332,8 +332,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
                 return ArrayListBuffer.class;
             case ESCAPE:
                 return FileMapListBuffer.class;
+            default:
+                throw new AssertionError(kind);
             }
-            throw new AssertionError(kind);
         }
 
         /**

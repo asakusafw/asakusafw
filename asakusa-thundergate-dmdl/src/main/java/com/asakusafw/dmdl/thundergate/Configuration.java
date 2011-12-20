@@ -172,7 +172,7 @@ public class Configuration {
     }
 
     /**
-     * Sets the output DMDL encoding
+     * Sets the output DMDL encoding.
      * @param encoding the encoding to set
      */
     public void setEncoding(Charset encoding) {

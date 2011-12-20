@@ -42,7 +42,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 /**
  * A WindGate main entry point.
  */
-public class WindGate {
+public final class WindGate {
 
     static final WindGateLogger WGLOG = new WindGateBootstrapLogger(WindGate.class);
 
@@ -97,6 +97,10 @@ public class WindGate {
         OPTIONS.addOption(OPT_SESSION_ID);
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_ARGUMENTS);
+    }
+
+    private WindGate() {
+        return;
     }
 
     /**

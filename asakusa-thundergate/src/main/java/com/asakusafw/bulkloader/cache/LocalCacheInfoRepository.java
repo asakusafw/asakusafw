@@ -83,9 +83,9 @@ public class LocalCacheInfoRepository {
         if (cacheId == null) {
             throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
         }
-        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH " +
-            "FROM __TG_CACHE_INFO " +
-            "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
+        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH "
+            + "FROM __TG_CACHE_INFO "
+            + "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -125,9 +125,9 @@ public class LocalCacheInfoRepository {
         if (current == null) {
             throw new IllegalArgumentException("old must not be null"); //$NON-NLS-1$
         }
-        final String sql = "REPLACE " +
-            "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH, ACTIVE) " +
-            "VALUES (?, ?, ?, ?, ?, TRUE)";
+        final String sql = "REPLACE "
+            + "INTO __TG_CACHE_INFO (CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH, ACTIVE) "
+            + "VALUES (?, ?, ?, ?, ?, TRUE)";
         boolean succeed = false;
         PreparedStatement statement = null;
         Calendar last = null;
@@ -206,9 +206,9 @@ public class LocalCacheInfoRepository {
         if (cacheId == null) {
             throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
         }
-        final String sql = "UPDATE __TG_CACHE_INFO " +
-            "SET ACTIVE = FALSE " +
-            "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
+        final String sql = "UPDATE __TG_CACHE_INFO "
+            + "SET ACTIVE = FALSE "
+            + "WHERE CACHE_ID = ? AND ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -246,9 +246,9 @@ public class LocalCacheInfoRepository {
         if (tableName == null) {
             throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
         }
-        final String sql = "UPDATE __TG_CACHE_INFO " +
-            "SET ACTIVE = FALSE " +
-            "WHERE TABLE_NAME = ? AND ACTIVE = TRUE";
+        final String sql = "UPDATE __TG_CACHE_INFO "
+            + "SET ACTIVE = FALSE "
+            + "WHERE TABLE_NAME = ? AND ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -281,9 +281,9 @@ public class LocalCacheInfoRepository {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void deleteAllCacheInfo() throws BulkLoaderSystemException {
-        final String sql = "UPDATE __TG_CACHE_INFO " +
-            "SET ACTIVE = FALSE " +
-            "WHERE ACTIVE = TRUE";
+        final String sql = "UPDATE __TG_CACHE_INFO "
+            + "SET ACTIVE = FALSE "
+            + "WHERE ACTIVE = TRUE";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -312,9 +312,9 @@ public class LocalCacheInfoRepository {
      * @throws BulkLoaderSystemException if failed to obtain the cache information by storage exception
      */
     public List<LocalCacheInfo> listDeletedCacheInfo() throws BulkLoaderSystemException {
-        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH " +
-            "FROM __TG_CACHE_INFO " +
-            "WHERE ACTIVE = FALSE";
+        final String sql = "SELECT CACHE_ID, CACHE_TIMESTAMP, BUILT_TIMESTAMP, TABLE_NAME, REMOTE_PATH "
+            + "FROM __TG_CACHE_INFO "
+            + "WHERE ACTIVE = FALSE";
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -352,9 +352,9 @@ public class LocalCacheInfoRepository {
         if (cacheId == null) {
             throw new IllegalArgumentException("cacheId must not be null"); //$NON-NLS-1$
         }
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_INFO " +
-            "WHERE CACHE_ID = ? ";
+        final String sql = "DELETE "
+            + "FROM __TG_CACHE_INFO "
+            + "WHERE CACHE_ID = ? ";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -421,9 +421,9 @@ public class LocalCacheInfoRepository {
         if (tableName == null) {
             throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
         }
-        final String sql = "INSERT IGNORE " +
-            "INTO __TG_CACHE_LOCK (CACHE_ID, EXECUTION_ID, ACQUIRED) " +
-            "VALUES (?, ?, NOW())";
+        final String sql = "INSERT IGNORE "
+            + "INTO __TG_CACHE_LOCK (CACHE_ID, EXECUTION_ID, ACQUIRED) "
+            + "VALUES (?, ?, NOW())";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -460,9 +460,9 @@ public class LocalCacheInfoRepository {
         if (executionId == null) {
             throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
         }
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_LOCK " +
-            "WHERE EXECUTION_ID = ?";
+        final String sql = "DELETE "
+            + "FROM __TG_CACHE_LOCK "
+            + "WHERE EXECUTION_ID = ?";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {
@@ -493,8 +493,8 @@ public class LocalCacheInfoRepository {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void releaseAllLock() throws BulkLoaderSystemException {
-        final String sql = "DELETE " +
-            "FROM __TG_CACHE_LOCK";
+        final String sql = "DELETE "
+            + "FROM __TG_CACHE_LOCK";
         boolean succeed = false;
         PreparedStatement statement = null;
         try {

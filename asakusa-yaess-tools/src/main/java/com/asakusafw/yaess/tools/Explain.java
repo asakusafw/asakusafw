@@ -50,7 +50,7 @@ import com.google.gson.JsonPrimitive;
  * A YAESS Explain program main entry point.
  * @since 0.2.3
  */
-public class Explain {
+public final class Explain {
 
     static final Logger LOG = LoggerFactory.getLogger(Explain.class);
 
@@ -64,6 +64,10 @@ public class Explain {
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_SCRIPT);
+    }
+
+    private Explain() {
+        return;
     }
 
     /**

@@ -55,9 +55,9 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  */
 public class CommonEmitter {
 
-    private ModelFactory f;
+    private final ModelFactory f;
 
-    private Name baseNamespace;
+    private final Name baseNamespace;
 
     /**
      * インスタンスを生成する。

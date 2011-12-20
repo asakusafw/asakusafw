@@ -152,8 +152,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return ValueConditionKind.CONTAIN;
         case TODAY:
             return ValueConditionKind.TODAY;
+        default:
+            throw new AssertionError(condition);
         }
-        throw new AssertionError(condition);
     }
 
     private boolean isKeyProperty(Row row) throws FormatException {
@@ -189,8 +190,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return NullityConditionKind.DENY_ABSENT;
         case NULL_IS_OK:
             return NullityConditionKind.ACCEPT_ABSENT;
+        default:
+            throw new AssertionError(condition);
         }
-        throw new AssertionError(condition);
     }
 
     private String getStringCell(Row row, ConditionSheetItem item) throws FormatException {

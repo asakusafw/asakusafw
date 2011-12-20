@@ -56,6 +56,7 @@ public abstract class SessionMirror implements Closeable {
     /**
      * Closes this session.
      * If the session was already closed, this has no effects.
+     * @throws IOException if failed to close this session
      */
     @Override
     public abstract void close() throws IOException;

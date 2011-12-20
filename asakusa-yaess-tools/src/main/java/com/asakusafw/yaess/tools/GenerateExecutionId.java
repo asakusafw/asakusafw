@@ -33,7 +33,7 @@ import org.apache.commons.cli.ParseException;
  * Generates an execution ID.
  * @since 0.2.3
  */
-public class GenerateExecutionId {
+public final class GenerateExecutionId {
 
     static final Option OPT_BATCH_ID;
     static final Option OPT_FLOW_ID;
@@ -59,6 +59,10 @@ public class GenerateExecutionId {
         OPTIONS.addOption(OPT_BATCH_ID);
         OPTIONS.addOption(OPT_FLOW_ID);
         OPTIONS.addOption(OPT_ARGUMENT);
+    }
+
+    private GenerateExecutionId() {
+        return;
     }
 
     /**

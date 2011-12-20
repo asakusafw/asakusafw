@@ -80,6 +80,6 @@ class FileDrainDriver<T> implements DrainDriver<T> {
         if (output != null) {
             output.close();
         }
-        this.output =null;
+        this.output = null;
     }
 }

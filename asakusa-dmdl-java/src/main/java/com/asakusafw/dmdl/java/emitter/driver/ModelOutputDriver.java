@@ -71,7 +71,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         return context.resolve(next.getQualifiedTypeName());
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private final EmitContext context;
 

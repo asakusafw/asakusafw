@@ -106,7 +106,7 @@ public class BatchScript {
         List<FlowScript> results = new ArrayList<FlowScript>();
         while (work.isEmpty() == false) {
             boolean worked = false;
-            for (Iterator<FlowScript> iter = work.iterator(); iter.hasNext(); ) {
+            for (Iterator<FlowScript> iter = work.iterator(); iter.hasNext();) {
                 FlowScript script = iter.next();
                 boolean blocked = false;
                 for (String blockerId : script.getBlockerIds()) {

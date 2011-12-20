@@ -39,7 +39,7 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverOutput.class);
 
     /**
-     * コンストラクタ
+     * コンストラクタ。
      *
      * @param driverContext テストドライバコンテキスト。
      * @param name 入力の名前。

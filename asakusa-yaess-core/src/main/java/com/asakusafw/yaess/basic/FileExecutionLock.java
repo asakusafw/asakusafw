@@ -165,7 +165,7 @@ class FileExecutionLock extends ExecutionLock {
         case FLOW:
             return new LockObject(
                     MessageFormat.format("flow lock - {0}/{1}", batchId, flowId),
-                    new File(directory, MessageFormat.format(NAME_FLOW,batchId, flowId, executionId)));
+                    new File(directory, MessageFormat.format(NAME_FLOW, batchId, flowId, executionId)));
         case EXECUTION:
             return new LockObject(
                     MessageFormat.format("execution lock - {2} ({0}/{1})", batchId, flowId, executionId),

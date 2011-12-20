@@ -93,7 +93,7 @@ public class Configuration {
     public static final String K_URL = "url";
 
     /**
-     * Property suffix: database connection user name,
+     * Property suffix: database connection user name.
      */
     public static final String K_USER = "user";
 

@@ -188,5 +188,20 @@ public class VerifyRuleBuilder {
             this.predicates.add(predicate);
             return this;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Property [name=");
+            builder.append(name);
+            builder.append(", type=");
+            builder.append(type);
+            builder.append(", key=");
+            builder.append(key);
+            builder.append(", predicates=");
+            builder.append(predicates);
+            builder.append("]");
+            return builder.toString();
+        }
     }
 }

@@ -27,7 +27,7 @@ import com.asakusafw.dmdl.thundergate.view.model.CreateView;
 public final class ViewParser {
 
     /**
-     * Parses VIEW structure and returns its
+     * Parses VIEW structure and returns its abstract syntax tree.
      * @param definition target view definition
      * @return parsing results
      * @throws IOException if failed to parse the view

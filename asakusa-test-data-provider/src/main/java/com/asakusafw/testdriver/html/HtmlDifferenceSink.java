@@ -249,7 +249,10 @@ public class HtmlDifferenceSink implements DifferenceSink {
             case DATETIME:
                 return datetimeFormat.format(((Calendar) value).getTime());
             case DECIMAL:
-                return String.format("%s(scale=%d)", ((BigDecimal) value).toPlainString(), ((BigDecimal) value).scale());
+                return String.format(
+                        "%s(scale=%d)",
+                        ((BigDecimal) value).toPlainString(),
+                        ((BigDecimal) value).scale());
             case STRING:
                 return toStringLiteral((String) value);
             default:
@@ -265,7 +268,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
                     buf.append('\\');
                     buf.append(ASCII_SPECIAL_ESCAPE[c]);
-                } else if (Character.isISOControl(c) || !Character.isDefined(c)){
+                } else if (Character.isISOControl(c) || !Character.isDefined(c)) {
                     buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
                 } else {
                     buf.append(c);

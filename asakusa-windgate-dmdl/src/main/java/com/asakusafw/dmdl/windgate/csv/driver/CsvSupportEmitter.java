@@ -174,7 +174,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         return CsvFieldTrait.getKind(property, Kind.VALUE) == Kind.VALUE;
     }
 
-    private static class SupportGenerator {
+    private static final class SupportGenerator {
 
         private static final String NAME_READER = "StreamReader";
 
@@ -633,7 +633,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static class DescriptionGenerator {
+    private static final class DescriptionGenerator {
 
         // for reduce library dependencies
         private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.FsImporterDescription";

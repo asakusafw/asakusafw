@@ -207,8 +207,7 @@ public class ModelDeclaration implements Declaration {
         }
         if (trait == null) {
             traits.remove(kind);
-        }
-        else {
+        } else {
             traits.put(kind, trait);
         }
     }

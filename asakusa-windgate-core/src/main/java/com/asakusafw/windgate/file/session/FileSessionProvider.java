@@ -195,6 +195,13 @@ public class FileSessionProvider extends SessionProvider {
                             path);
                     throw new SessionException(id, Reason.BROKEN);
                 }
+                break;
+            default:
+                throw new AssertionError(MessageFormat.format(
+                        "Invalid state: {2} (id={0}, path={1})",
+                        id,
+                        path,
+                        state));
             }
             completed = true;
             return new FileSessionMirror(id, path, file, lock);

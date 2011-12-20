@@ -25,7 +25,7 @@ import java.util.List;
  * The normal-form of property names.
  * @since 0.2.0
  */
-public class PropertyName implements Comparable<PropertyName> {
+public final class PropertyName implements Comparable<PropertyName> {
 
     private final List<String> originalWords;
 

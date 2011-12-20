@@ -19,7 +19,7 @@ package com.asakusafw.testdata.generator.excel;
  * Generating format of each Excel sheet.
  * @since 0.2.0
  */
-public class SheetFormat {
+public final class SheetFormat {
 
     private final Kind kind;
 
@@ -72,6 +72,17 @@ public class SheetFormat {
      */
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SheetFormat [kind=");
+        builder.append(kind);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

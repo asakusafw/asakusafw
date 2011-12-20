@@ -77,7 +77,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         return Collections.emptyList();
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private final EmitContext context;
 

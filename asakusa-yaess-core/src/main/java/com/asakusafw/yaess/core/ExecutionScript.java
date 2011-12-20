@@ -37,22 +37,22 @@ public interface ExecutionScript {
     /**
      * A environment variable name of Asakusa installation home.
      */
-    public static final String ENV_ASAKUSA_HOME = "ASAKUSA_HOME";
+    String ENV_ASAKUSA_HOME = "ASAKUSA_HOME";
 
     /**
      * A placeholder name of the Asakusa installed location.
      */
-    public static final String PLACEHOLDER_HOME = "{{{PLACEHOLDER/ASAKUSA_HOME}}}";
+    String PLACEHOLDER_HOME = "{{{PLACEHOLDER/ASAKUSA_HOME}}}";
 
     /**
      * A placeholder name of the execution ID.
      */
-    public static final String PLACEHOLDER_EXECUTION_ID = "{{{PLACEHOLDER/EXECUTION_ID}}}";
+    String PLACEHOLDER_EXECUTION_ID = "{{{PLACEHOLDER/EXECUTION_ID}}}";
 
     /**
      * A placeholder name of the execution arguments.
      */
-    public static final String PLACEHOLDER_ARGUMENTS = "{{{PLACEHOLDER/ARGUMENTS}}}";
+    String PLACEHOLDER_ARGUMENTS = "{{{PLACEHOLDER/ARGUMENTS}}}";
 
     /**
      * Returns the kind of this script.

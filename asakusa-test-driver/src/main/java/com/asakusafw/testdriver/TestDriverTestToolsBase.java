@@ -24,13 +24,14 @@ import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
  * asakusa-test-toolsが提供するAPIを使って実装されたテストドライバの基底クラス。
  *
  */
+@SuppressWarnings("deprecation")
 public class TestDriverTestToolsBase extends TestDriverBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestDriverTestToolsBase.class);
 
     private static final String BUILD_PROPERTIES_FILE = "build.properties";
 
-    /** テストデータ格納先のデフォルト値 */
+    /** テストデータ格納先のデフォルト値。 */
     protected static final String TESTDATA_DIR_DEFAULT = "src/test/data/excel";
 
     /** テストデータ生成・検証ツールオブジェクト。 */
@@ -40,7 +41,7 @@ public class TestDriverTestToolsBase extends TestDriverBase {
     /** TestUtils生成時に指定するテストデータ定義シートのディレクトリ（testDataFileListと排他)。 */
     protected File testDataDir;
 
-    /** build.properties */
+    /** {@code build.properties}. */
     protected Properties buildProperties;
 
     /**
@@ -93,8 +94,12 @@ public class TestDriverTestToolsBase extends TestDriverBase {
                     fis = new FileInputStream(buildPropertiesFile);
                     buildProperties = new Properties();
                     buildProperties.load(fis);
-                    System.setProperty("ASAKUSA_MODELGEN_PACKAGE", buildProperties.getProperty("asakusa.modelgen.package"));
-                    System.setProperty("ASAKUSA_MODELGEN_OUTPUT", buildProperties.getProperty("asakusa.modelgen.output"));
+                    System.setProperty(
+                            "ASAKUSA_MODELGEN_PACKAGE",
+                            buildProperties.getProperty("asakusa.modelgen.package"));
+                    System.setProperty(
+                            "ASAKUSA_MODELGEN_OUTPUT",
+                            buildProperties.getProperty("asakusa.modelgen.output"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
@@ -103,9 +108,14 @@ public class TestDriverTestToolsBase extends TestDriverBase {
             } else {
                 LOG.info("ビルド設定情報が存在しないため、スキップします: {}", BUILD_PROPERTIES_FILE);
             }
-            System.setProperty("ASAKUSA_TESTTOOLS_CONF", System.getenv("ASAKUSA_HOME") + "/bulkloader/conf/" +
-                    buildProperties.getProperty("asakusa.database.target") + "-jdbc.properties");
-            System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", buildProperties.getProperty("asakusa.testdatasheet.output"));
+            System.setProperty("ASAKUSA_TESTTOOLS_CONF",
+                    String.format(
+                            "%s/bulkloader/conf/%s-jdbc.properties",
+                            System.getenv("ASAKUSA_HOME"),
+                            buildProperties.getProperty("asakusa.database.target")));
+            System.setProperty(
+                    "ASAKUSA_TEMPLATEGEN_OUTPUT_DIR",
+                    buildProperties.getProperty("asakusa.testdatasheet.output"));
             String testDataDirPath = buildProperties.getProperty("asakusa.testdriver.testdata.dir");
             if (testDataDirPath == null) {
                 testDataDirPath = TESTDATA_DIR_DEFAULT;

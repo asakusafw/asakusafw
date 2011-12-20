@@ -37,7 +37,7 @@ public interface JobExecutor {
      * @param monitor an execution monitor
      * @param context current context
      * @param job target job
-     * @param doneQueue
+     * @param doneQueue the queue where the done tasks are put
      * @return an execution object related to the target job
      * @throws InterruptedException if submittion is interrupted
      * @throws IOException if failed to submit the target job

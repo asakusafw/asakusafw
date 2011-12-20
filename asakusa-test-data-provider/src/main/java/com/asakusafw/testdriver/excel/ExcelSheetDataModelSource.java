@@ -82,7 +82,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         }
         nextRowNumber = 1;
         Map<PropertyName, Integer> results = new LinkedHashMap<PropertyName, Integer>();
-        for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext(); ) {
+        for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext();) {
             Cell cell = iter.next();
             int type = cell.getCellType();
             if (type == Cell.CELL_TYPE_BLANK) {

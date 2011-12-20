@@ -67,7 +67,7 @@ public class MappingFactor implements Element {
     }
 
     /**
-     * Returns the kind of mapping function
+     * Returns the kind of mapping function.
      * @return the kind of mapping function
      */
     public PropertyMappingKind getKind() {

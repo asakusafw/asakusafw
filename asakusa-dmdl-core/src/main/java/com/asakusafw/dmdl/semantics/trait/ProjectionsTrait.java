@@ -50,7 +50,7 @@ public class ProjectionsTrait implements Trait<ProjectionsTrait> {
     }
 
     /**
-     * Returns
+     * Returns owned projective models.
      * @return the projectives
      */
     public List<ModelSymbol> getProjections() {

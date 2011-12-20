@@ -64,5 +64,5 @@ public abstract class SessionProvider extends BaseProvider<SessionProfile> {
      * @throws IOException if failed to delete the session
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public abstract void delete(String id) throws IOException;
+    public abstract void delete(String id) throws SessionException, IOException;
 }

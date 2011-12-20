@@ -24,7 +24,8 @@ import java.util.ResourceBundle;
  */
 public class WindGateCoreLogger extends WindGateLogger {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.windgate.core.log"); //$NON-NLS-1$
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.asakusafw.windgate.core.log"); //$NON-NLS-1$
 
     /**
      * Creates a new instance.

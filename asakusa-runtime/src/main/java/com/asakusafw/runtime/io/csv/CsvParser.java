@@ -345,7 +345,8 @@ public class CsvParser implements RecordParser {
             newBuf.clear();
             buf.flip();
             newBuf.put(buf);
-            lineBuffer = buf = newBuf;
+            buf = newBuf;
+            lineBuffer = newBuf;
         }
         buf.put((char) c);
     }
@@ -357,7 +358,8 @@ public class CsvParser implements RecordParser {
             newBuf.clear();
             buf.flip();
             newBuf.put(buf);
-            cellBeginPositions = buf = newBuf;
+            buf = newBuf;
+            cellBeginPositions = newBuf;
         }
         buf.put(lineBuffer.position());
     }

@@ -56,8 +56,7 @@ public class LoadingObjectInputStream extends ObjectInputStream {
         try {
             Class<?> loaded = loader.loadClass(name);
             return loaded;
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             // may be primitive classes
             return super.resolveClass(desc);
         }
@@ -71,8 +70,7 @@ public class LoadingObjectInputStream extends ObjectInputStream {
         for (int i = 0, n = name.length(); i < n; i++) {
             if (name.charAt(i) == '[') {
                 dimensions++;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -81,8 +79,8 @@ public class LoadingObjectInputStream extends ObjectInputStream {
             return super.resolveClass(desc);
         }
         // not "L...;"
-        if (name.charAt(dimensions) != 'L' ||
-                name.charAt(name.length() - 1) != ';') {
+        if (name.charAt(dimensions) != 'L'
+            || name.charAt(name.length() - 1) != ';') {
             return super.resolveClass(desc);
         }
 

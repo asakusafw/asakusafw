@@ -194,7 +194,7 @@ public class GateScript {
         String resourceName = consume(conf, name, kind.prefix);
         Map<String, String> driverConf = new HashMap<String, String>();
         String prefix = kind.prefix + QUALIFIER;
-        for (Iterator<Map.Entry<String, String>> iter = conf.entrySet().iterator(); iter.hasNext(); ) {
+        for (Iterator<Map.Entry<String, String>> iter = conf.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> entry = iter.next();
             String key = entry.getKey();
             if (key.startsWith(prefix)) {

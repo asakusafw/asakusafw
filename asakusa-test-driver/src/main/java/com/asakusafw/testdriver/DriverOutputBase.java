@@ -123,13 +123,13 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     /**
      * Sets the verifier for this output.
      * @param expectedUri the URI which represents the expected data set
-     * @param verifier the model verifier
+     * @param modelVerifier the model verifier
      * @throws IOException if failed to create verifier
      * @since 0.2.3
      */
-    protected void setVerifier(URI expectedUri, ModelVerifier<? super T> verifier) throws IOException {
+    protected void setVerifier(URI expectedUri, ModelVerifier<? super T> modelVerifier) throws IOException {
         LOG.info("expected: {}", expectedUri);
-        VerifyRule rule = driverContext.getRepository().toVerifyRule(modelType, verifier);
+        VerifyRule rule = driverContext.getRepository().toVerifyRule(modelType, modelVerifier);
         VerifierFactory factory = driverContext.getRepository().getVerifierFactory(expectedUri, rule);
         setVerifier(factory);
     }
@@ -164,18 +164,18 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     /**
      * Sets the verify rule for this output.
      * @param expectedPath the path which represents the expected data set
-     * @param verifier the model verifier
+     * @param modelVerifier the model verifier
      * @throws IOException if failed to create verifier
      * @since 0.2.3
      */
-    protected void setVerifier(String expectedPath, ModelVerifier<? super T> verifier) throws IOException {
+    protected void setVerifier(String expectedPath, ModelVerifier<? super T> modelVerifier) throws IOException {
         URI expectedUri;
         try {
             expectedUri = toUri(expectedPath);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid expected URI:" + expectedPath, e);
         }
-        setVerifier(expectedUri, verifier);
+        setVerifier(expectedUri, modelVerifier);
     }
 
     /**

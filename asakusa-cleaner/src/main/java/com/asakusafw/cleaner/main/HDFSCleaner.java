@@ -137,12 +137,14 @@ public class HDFSCleaner {
                         Configuration conf = new Configuration();
                         fs = cleanDir.getFileSystem(conf);
                         if (fs == null) {
-                            Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "Path.getFileSystemの戻り値がnull", cleanDir.toString());
+                            Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR,
+                                    "Path.getFileSystemの戻り値がnull", cleanDir.toString());
                             cleanResult = false;
                             continue;
                         }
                     } catch (IOException e) {
-                        Log.log(e, CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR, "HDFSのファイルシステムの取得に失敗", cleanDir.toString());
+                        Log.log(e, CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR,
+                                "HDFSのファイルシステムの取得に失敗", cleanDir.toString());
                         cleanResult = false;
                         continue;
                     }

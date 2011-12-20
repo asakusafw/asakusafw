@@ -39,7 +39,7 @@ import com.asakusafw.testdata.generator.TemplateGenerator;
 /**
  * Excel test template generator Command Line Interface.
  */
-public class Main {
+public final class Main {
 
     static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
@@ -80,6 +80,10 @@ public class Main {
         OPTIONS.addOption(OPT_ENCODING);
         OPTIONS.addOption(OPT_SOURCE_PATH);
         OPTIONS.addOption(OPT_PLUGIN);
+    }
+
+    private Main() {
+        return;
     }
 
     /**

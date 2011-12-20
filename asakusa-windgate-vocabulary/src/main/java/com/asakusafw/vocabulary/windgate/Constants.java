@@ -19,7 +19,7 @@ package com.asakusafw.vocabulary.windgate;
  * The common constants of WindGate vocabularies.
  * @since 0.2.2
  */
-public class Constants {
+public final class Constants {
 
     /**
      * The abstract resource name of JDBC.

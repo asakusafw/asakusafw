@@ -29,7 +29,7 @@ public class JobFlowDriverInput<T> extends DriverInputBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverInput.class);
 
     /**
-     * コンストラクタ
+     * コンストラクタ。
      *
      * @param driverContext テストドライバコンテキスト。
      * @param name 入力の名前。

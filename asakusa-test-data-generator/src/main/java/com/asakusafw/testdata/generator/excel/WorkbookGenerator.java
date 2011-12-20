@@ -85,6 +85,10 @@ public class WorkbookGenerator implements TemplateGenerator {
                 LOG.debug("Building rule sheet: {}.{}", model.getName(), sheet.getName());
                 builder.addRule(sheet.getName());
                 break;
+            default:
+                throw new AssertionError(MessageFormat.format(
+                        "Unknown sheet format: {0}",
+                        sheet));
             }
         }
 

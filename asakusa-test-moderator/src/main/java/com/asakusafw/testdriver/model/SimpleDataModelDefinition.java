@@ -204,8 +204,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
                 Object value = reflection.getValue(name);
                 try {
                     field.set(instance, value);
-                }
-                catch (IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     throw new AssertionError(e);
                 }
             }

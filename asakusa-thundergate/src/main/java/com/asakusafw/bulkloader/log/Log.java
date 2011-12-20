@@ -32,7 +32,8 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
  */
 public class Log {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.bulkloader.log.messages"); //$NON-NLS-1$
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.asakusafw.bulkloader.log.messages"); //$NON-NLS-1$
 
     private static final String LOG_MESSAGE_ID_NULL_STR = "-";
 
@@ -40,7 +41,7 @@ public class Log {
 
     /**
      * Creates a new instance.
-     * @param base
+     * @param base the base class
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public Log(Class<?> base) {

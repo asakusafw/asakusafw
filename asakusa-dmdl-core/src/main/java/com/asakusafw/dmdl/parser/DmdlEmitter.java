@@ -50,7 +50,7 @@ import com.asakusafw.dmdl.model.AstUnionExpression;
 /**
  * Emits {@link AstNode} as DMDL syntax.
  */
-public class DmdlEmitter {
+public final class DmdlEmitter {
 
     /**
      * Emits the node as DMDL.

@@ -36,19 +36,19 @@ public abstract class DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverInputBase.class);
 
-    /** データ名 */
+    /** データ名。 */
     protected String name;
 
-    /** モデル型 */
+    /** モデル型。 */
     protected Class<T> modelType;
 
-    /** テストドライバコンテキスト */
+    /** テストドライバコンテキスト。 */
     protected TestDriverContext driverContext;
 
-    /** ソース */
+    /** ソース。 */
     protected DataModelSourceFactory source;
 
-    /** インポータ記述 */
+    /** インポータ記述。 */
     protected ImporterDescription importerDescription;
 
     /**
@@ -130,7 +130,7 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * Sets the source for jobflow input
+     * Sets the source for jobflow input.
      * @param sourceUri the source uri
      */
     protected void setSourceUri(URI sourceUri) {

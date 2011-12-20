@@ -94,8 +94,7 @@ public class DmdlSourceResource implements DmdlSourceRepository {
             }
             try {
                 return current.toURI();
-            }
-            catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 throw new IOException(e);
             }
         }

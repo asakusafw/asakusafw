@@ -23,7 +23,7 @@ import com.asakusafw.runtime.stage.AbstractStageClient;
  * フロー部品用のテストドライバを実行するためのユーティリティクラス。
  * @since 0.2.0
  */
-class FlowPartDriverUtils {
+final class FlowPartDriverUtils {
 
 
     /**

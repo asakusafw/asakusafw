@@ -34,7 +34,7 @@ import com.google.gson.JsonObject;
  * Converts JSON object into {@link DataModelReflection}.
  * @since 0.2.0
  */
-public class JsonObjectDriver extends DataModelScanner<JsonObject, IOException> {
+public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOException> {
 
     private final Builder<?> builder;
 

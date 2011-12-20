@@ -40,7 +40,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 /**
  * A WindGate abort main entry point.
  */
-public class WindGateAbort {
+public final class WindGateAbort {
 
     static final WindGateLogger WGLOG = new WindGateBootstrapLogger(WindGateAbort.class);
 
@@ -68,6 +68,10 @@ public class WindGateAbort {
         OPTIONS.addOption(OPT_PROFILE);
         OPTIONS.addOption(OPT_SESSION_ID);
         OPTIONS.addOption(OPT_PLUGIN);
+    }
+
+    private WindGateAbort() {
+        return;
     }
 
     /**

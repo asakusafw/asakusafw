@@ -85,11 +85,9 @@ public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
             if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
                 buf.append('\\');
                 buf.append(ASCII_SPECIAL_ESCAPE[c]);
-            }
-            else if (Character.isISOControl(c) || Character.isDefined(c) == false){
+            } else if (Character.isISOControl(c) || Character.isDefined(c) == false) {
                 buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
-            }
-            else {
+            } else {
                 buf.append(c);
             }
         }

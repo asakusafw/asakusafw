@@ -23,9 +23,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import com.asakusafw.testdriver.excel.ExcelRuleExtractor;
-import com.asakusafw.testdriver.excel.NullityConditionKind;
-import com.asakusafw.testdriver.excel.ValueConditionKind;
 import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**

@@ -46,7 +46,7 @@ import com.asakusafw.dmdl.parser.DmdlSyntaxException;
  * @since 0.2.0
  * @version 0.2.3
  */
-public class Main {
+public final class Main {
 
     static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
@@ -108,6 +108,10 @@ public class Main {
         OPTIONS.addOption(OPT_TIMESTAMP_COLUMN);
         OPTIONS.addOption(OPT_DELETE_FLAG_COLUMN);
         OPTIONS.addOption(OPT_DELETE_FLAG_VALUE);
+    }
+
+    private Main() {
+        return;
     }
 
     /**

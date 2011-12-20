@@ -139,7 +139,8 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         if (type != description.getModelType()) {
-            throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
         return importers.createOutput(definition, description, context);
@@ -162,7 +163,8 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         if (type != description.getModelType()) {
-            throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
         return exporters.createOutput(definition, description, context);

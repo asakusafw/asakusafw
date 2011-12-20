@@ -143,7 +143,7 @@ public class JschProcessExecutor implements ProcessExecutor {
     }
 
     /**
-     * Returns the remote port number,
+     * Returns the remote port number.
      * @return the port number, or {@code null} if is not specified
      */
     public Integer getPort() {

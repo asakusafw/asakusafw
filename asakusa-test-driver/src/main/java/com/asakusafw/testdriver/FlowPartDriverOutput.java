@@ -43,13 +43,13 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverOutput.class);
 
-    /** フロー記述ドライバ */
+    /** フロー記述ドライバ 。*/
     protected FlowDescriptionDriver descDriver;
 
     private final Out<T> out;
 
     /**
-     * コンストラクタ
+     * コンストラクタ。
      *
      * @param driverContext テストドライバコンテキスト。
      * @param descDriver フロー定義ドライバ。

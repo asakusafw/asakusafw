@@ -276,7 +276,7 @@ public class ImportProtocolDecide {
      * If a target table does not use cache feature or related cache did not exist, there will be not in the result.
      * @param bean importer information
      * @return the collected pairs
-     * @throws BulkLoaderSystemException
+     * @throws BulkLoaderSystemException if failed to obtain remote cache info
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean bean) throws BulkLoaderSystemException {

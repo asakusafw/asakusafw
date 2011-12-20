@@ -375,7 +375,6 @@ public class TestDataHolder {
      * @throws InvocationTargetException モデルオブジェクトのメソッド実行に失敗した場合
      * @throws SQLException ResultSetから値を取得できなかった場合
      */
-    @SuppressWarnings("deprecation")
     private Writable getModelFromResultSet(ResultSet rs)
             throws InstantiationException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, SQLException {

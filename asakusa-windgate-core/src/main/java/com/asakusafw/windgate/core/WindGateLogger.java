@@ -34,7 +34,7 @@ public abstract class WindGateLogger {
     /**
      * Creates a new instance.
      * @param target target classes
-     * @param componentName
+     * @param componentName the target component name
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public WindGateLogger(Class<?> target, String componentName) {

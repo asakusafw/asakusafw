@@ -270,7 +270,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void datetimeProperty(PropertyName name,DataModelReflection context) throws SQLException {
+        public void datetimeProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Calendar value = (Calendar) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.TIME);

@@ -57,6 +57,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * フロー部品用のテストドライバクラス。
  */
+@SuppressWarnings("deprecation")
 public class FlowPartTestDriver extends TestDriverTestToolsBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartTestDriver.class);

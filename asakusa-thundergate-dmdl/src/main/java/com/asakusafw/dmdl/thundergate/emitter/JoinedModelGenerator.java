@@ -41,7 +41,7 @@ import com.asakusafw.dmdl.thundergate.model.Source;
 /**
  * Creates joined models.
  */
-public class JoinedModelGenerator {
+public final class JoinedModelGenerator {
 
     private final JoinedModelDescription model;
 

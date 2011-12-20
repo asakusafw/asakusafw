@@ -539,7 +539,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private ByteOption getByteOption(HSSFCell cell) {
         Long l = getLong(cell);
         ByteOption op = new ByteOption();
@@ -560,7 +559,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private ShortOption getShortOption(HSSFCell cell) {
         Long l = getLong(cell);
         ShortOption op = new ShortOption();
@@ -581,7 +579,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private IntOption getIntOption(HSSFCell cell) {
         Long l = getLong(cell);
         IntOption op = new IntOption();
@@ -602,7 +599,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private LongOption getLongOption(HSSFCell cell) {
         Long l = getLong(cell);
         LongOption op = new LongOption();
@@ -620,7 +616,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private DateOption getDateOption(HSSFCell cell) {
         Date date = getDate(cell);
         DateOption op = new DateOption();
@@ -650,7 +645,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private DateTimeOption getDateTimeOption(HSSFCell cell) {
         Date date = getDate(cell);
         DateTimeOption op = new DateTimeOption();
@@ -679,7 +673,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private StringOption getStringOption(HSSFCell cell) {
         String str;
         switch(cell.getCellType()) {
@@ -723,7 +716,6 @@ public class ExcelUtils {
      * @param cell 対象のセル
      * @return 対応する値
      */
-    @SuppressWarnings("deprecation")
     private DecimalOption getDecimalOption(HSSFCell cell) {
         BigDecimal bigDecimal;
         switch(cell.getCellType()) {

@@ -22,17 +22,17 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.LocalFileSystem;
 
 /**
- * Creates FileSystem For Local Test With TestDriver
- * 
+ * Creates FileSystem For Local Test With TestDriver.
+ *
  * @since 0.2.0
  */
 public class AsakusaTestLocalFileSystem extends LocalFileSystem {
 
     /**
-     * set Working Directory to Home
-     * 
+     * Sets Working Directory as Home.
      * @param name URI.
      * @param conf Configuration,
+     * @throws IOException if failed to initialize this object
      * @see org.apache.hadoop.fs.FilterFileSystem#initialize(java.net.URI,
      *      org.apache.hadoop.conf.Configuration)
      */

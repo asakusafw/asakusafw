@@ -26,7 +26,8 @@ import com.asakusafw.windgate.core.WindGateLogger;
  */
 public class WindGateBootstrapLogger extends WindGateLogger {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.windgate.bootstrap.log"); //$NON-NLS-1$
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.asakusafw.windgate.bootstrap.log"); //$NON-NLS-1$
 
     /**
      * Creates a new instance.

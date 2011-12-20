@@ -31,6 +31,7 @@ public abstract class BaseExporterRetriever<T extends ExporterDescription>
 
     /**
      * Returns the target {@link ExporterDescription} type from the class inheritance hierarchy.
+     * @return the suitable type
      */
     @SuppressWarnings("unchecked")
     @Override

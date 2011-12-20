@@ -195,6 +195,11 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             // must be denied if value was checked
             property.accept(isNull());
             return false;
+        default:
+            throw new AssertionError(MessageFormat.format(
+                    "Unknown nullity constraint \"{1}\": {0}",
+                    property,
+                    nullity));
         }
         return true;
     }
@@ -238,6 +243,11 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
                 throw typeError(property, ValueConditionKind.NOW);
             }
             break;
+        default:
+            throw new AssertionError(MessageFormat.format(
+                    "Unknown value constraint \"{1}\": {0}",
+                    property,
+                    value));
         }
     }
 

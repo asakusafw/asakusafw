@@ -413,7 +413,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
         }
     }
 
-    static abstract class ValueDriver<T> {
+    abstract static class ValueDriver<T> {
 
         final PropertyType valueType;
 

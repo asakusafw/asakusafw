@@ -42,7 +42,7 @@ import com.asakusafw.yaess.core.task.ExecutionTask;
  * A YAESS program main entry point.
  * @since 0.2.3
  */
-public class Yaess {
+public final class Yaess {
 
     static final Logger LOG = LoggerFactory.getLogger(Yaess.class);
 
@@ -100,6 +100,10 @@ public class Yaess {
         OPTIONS.addOption(OPT_PHASE_NAME);
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_ARGUMENT);
+    }
+
+    private Yaess() {
+        return;
     }
 
     /**

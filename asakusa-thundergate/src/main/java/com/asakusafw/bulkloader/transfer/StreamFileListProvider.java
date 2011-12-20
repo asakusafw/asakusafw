@@ -76,7 +76,7 @@ public abstract class StreamFileListProvider implements FileListProvider {
     @Override
     public final void waitForComplete() throws IOException, InterruptedException {
         synchronized (running) {
-            for (Iterator<Thread> iter = running.iterator(); iter.hasNext(); ) {
+            for (Iterator<Thread> iter = running.iterator(); iter.hasNext();) {
                 Thread next = iter.next();
                 if (next.isAlive()) {
                     next.join();

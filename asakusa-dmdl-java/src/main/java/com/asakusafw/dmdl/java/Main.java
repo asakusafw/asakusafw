@@ -40,7 +40,7 @@ import com.ashigeru.lang.java.model.util.Models;
 /**
  * Asakusa DMDL Compiler Command Line Interface.
  */
-public class Main {
+public final class Main {
 
     static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
@@ -85,6 +85,10 @@ public class Main {
         OPTIONS.addOption(OPT_TARGET_ENCODING);
         OPTIONS.addOption(OPT_SOURCE_PATH);
         OPTIONS.addOption(OPT_PLUGIN);
+    }
+
+    private Main() {
+        return;
     }
 
     /**

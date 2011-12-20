@@ -34,6 +34,7 @@ public class WindGateSource<T> implements DataModelSource {
     private final DataModelDefinition<T> definition;
 
     /**
+     * Creates a new instance.
      * @param driver the drain driver, this must be prepared
      * @param definition target data model definition
      * @throws IllegalArgumentException if some parameters were {@code null}

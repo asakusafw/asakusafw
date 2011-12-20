@@ -154,8 +154,8 @@ public final class FloatOption extends ValueOption<FloatOption> {
         if (nullValue != other.nullValue) {
             return false;
         }
-        if (nullValue == false &&
-                Float.floatToIntBits(value) != Float.floatToIntBits(other.value)) {
+        if (nullValue == false
+                && Float.floatToIntBits(value) != Float.floatToIntBits(other.value)) {
             return false;
         }
         return true;

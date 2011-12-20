@@ -31,6 +31,7 @@ public abstract class BaseImporterPreparator<T extends ImporterDescription>
 
     /**
      * Returns the target {@link ImporterDescription} type from the class inheritance hierarchy.
+     * @return the suitable type
      */
     @SuppressWarnings("unchecked")
     @Override

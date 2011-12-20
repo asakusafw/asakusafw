@@ -419,6 +419,10 @@ public class ExecutionTask {
                 results.add(new ScriptJob<HadoopScript>(exec.resolve(context, hadoopHandler), hadoopHandler));
                 break;
             }
+            default:
+                throw new AssertionError(MessageFormat.format(
+                        "Unknown execution script: {0}",
+                        execution));
             }
         }
         return results;

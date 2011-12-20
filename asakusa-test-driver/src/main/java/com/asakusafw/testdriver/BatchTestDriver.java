@@ -39,6 +39,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 /**
  * バッチ用のテストドライバクラス。
  */
+@SuppressWarnings("deprecation")
 public class BatchTestDriver extends TestDriverTestToolsBase {
 
     /**

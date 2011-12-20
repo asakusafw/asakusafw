@@ -21,7 +21,7 @@ import javax.lang.model.type.TypeMirror;
  * Represents the data type of each port.
  * @since 0.2.0
  */
-public class PortTypeDescription {
+public final class PortTypeDescription {
 
     private final Kind kind;
 

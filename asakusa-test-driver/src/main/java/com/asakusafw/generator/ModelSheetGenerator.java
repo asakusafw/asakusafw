@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 各種自動生成ツールをキックするランチャー。
  */
+@SuppressWarnings("deprecation")
 public final class ModelSheetGenerator {
 
     static final Logger LOG = LoggerFactory.getLogger(ModelSheetGenerator.class);

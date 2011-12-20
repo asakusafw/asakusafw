@@ -35,6 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * ジョブフロー用のテストドライバクラス。
  */
+@SuppressWarnings("deprecation")
 public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /** バッチID。 */

@@ -80,8 +80,7 @@ public class NamespaceDriver extends ModelAttributeDriver {
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;
-        }
-        else if ((nameElement.value instanceof AstName) == false) {
+        } else if ((nameElement.value instanceof AstName) == false) {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     nameElement,
@@ -89,8 +88,7 @@ public class NamespaceDriver extends ModelAttributeDriver {
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;
-        }
-        else {
+        } else {
             return (AstName) nameElement.value;
         }
     }

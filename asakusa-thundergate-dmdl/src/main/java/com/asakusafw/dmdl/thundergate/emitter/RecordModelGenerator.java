@@ -35,7 +35,7 @@ import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
  * Creates record models.
  * @since 0.2.0
  */
-public class RecordModelGenerator {
+public final class RecordModelGenerator {
 
     private final TableModelDescription model;
 

@@ -76,10 +76,10 @@ public abstract class JobScheduler implements Service {
 
     /**
      * Handles errors during
-     * {@link JobScheduler#execute(PhaseMonitor, ExecutionContext, List, ErrorHandler) each job execution}
+     * {@link JobScheduler#execute(PhaseMonitor, ExecutionContext, List, ErrorHandler) each job execution}.
      * @since 0.2.3
      */
-    public static abstract class ErrorHandler {
+    public abstract static class ErrorHandler {
 
         /**
          * Invoked when failed to execute the job in

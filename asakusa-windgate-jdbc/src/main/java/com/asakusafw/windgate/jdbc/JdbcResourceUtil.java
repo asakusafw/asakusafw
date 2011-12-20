@@ -37,11 +37,15 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess.OperationKind;
  * Common utility classes for this package.
  * @since 0.2.2
  */
-class JdbcResourceUtil {
+final class JdbcResourceUtil {
 
     static final WindGateLogger WGLOG = new JdbcLogger(JdbcResourceUtil.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JdbcResourceUtil.class);
+
+    private JdbcResourceUtil() {
+        return;
+    }
 
     static String join(Iterable<String> list) {
         assert list != null;

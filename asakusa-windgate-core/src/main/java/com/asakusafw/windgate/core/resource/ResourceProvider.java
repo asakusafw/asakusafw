@@ -51,7 +51,7 @@ public abstract class ResourceProvider extends BaseProvider<ResourceProfile> {
     /**
      * Aborts all sessions corresponding to this resouce.
      * The default implementation does nothing.
-     * @throws IOException
+     * @throws IOException if failed to abort the resource
      */
     public void abortAll() throws IOException {
         return;

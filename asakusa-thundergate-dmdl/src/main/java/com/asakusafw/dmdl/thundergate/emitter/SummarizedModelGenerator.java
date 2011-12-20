@@ -39,7 +39,7 @@ import com.asakusafw.dmdl.thundergate.model.SummarizedModelDescription;
 /**
  * Creates summarized models.
  */
-public class SummarizedModelGenerator {
+public final class SummarizedModelGenerator {
 
     private final SummarizedModelDescription model;
 

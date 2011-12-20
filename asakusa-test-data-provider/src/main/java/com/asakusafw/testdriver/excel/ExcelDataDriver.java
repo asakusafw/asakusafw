@@ -78,7 +78,7 @@ class ExcelDataDriver {
         return engine.builder.build();
     }
 
-    private static class Engine extends DataModelScanner<Cell, IOException>{
+    private static class Engine extends DataModelScanner<Cell, IOException> {
 
         final DataModelDefinition<?> definition;
 
