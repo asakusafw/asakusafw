@@ -1,0 +1,6 @@
+<FindBugsFilter>
+  <Match classregex=".*\.EscapeDecoder" />
+  <Match classregex=".*\.ParseException" />
+  <Match classregex=".*Test(Root|Utils?)?([\.\$].*)?" />
+  <Match classregex=".*\.(Mock|Dummy|Stub).*" />
+</FindBugsFilter>

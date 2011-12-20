@@ -59,7 +59,7 @@ public class HadoopDriver implements Closeable {
      */
     public static final String RUNTIME_WORK_ROOT = "target/testing";
 
-    private File home;
+    private final File home;
 
     private HadoopDriver(File home) {
         assert home != null;
@@ -135,7 +135,9 @@ public class HadoopDriver implements Closeable {
             throw new IllegalArgumentException("location must not be null"); //$NON-NLS-1$
         }
         final File temp = createTempFile(modelType);
-        temp.delete();
+        if (temp.delete() == false) {
+            LOG.debug("Failed to delete a placeholder file: {}", temp);
+        }
         if (temp.mkdirs() == false) {
             throw new IOException(temp.getAbsolutePath());
         }

@@ -18,10 +18,15 @@ package com.asakusafw.generator;
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 各種自動生成ツールをキックするランチャー。
  */
 public final class ModelSheetGenerator {
+
+    static final Logger LOG = LoggerFactory.getLogger(ModelSheetGenerator.class);
 
     /**
      * 各種自動生成ツールを実行します。
@@ -57,7 +62,12 @@ public final class ModelSheetGenerator {
         System.setProperty("ASAKUSA_TESTTOOLS_CONF", System.getProperty("ASAKUSA_MODELGEN_JDBC"));
         if ("true".equals(System.getProperty("ASAKUSA_V01_TEMPLATEGEN_RUN"))) {
             String outputDir = System.getProperty("ASAKUSA_TESTDATASHEET_OUTPUT") + "_v01_format";
-            new File(outputDir).mkdir();
+            File dir = new File(outputDir);
+            if (dir.isDirectory() == false && dir.mkdirs() == false) {
+                if (dir.isDirectory()) {
+                    LOG.warn("Failed to delete output directory: {}", dir);
+                }
+            }
             System.setProperty("ASAKUSA_TEMPLATEGEN_OUTPUT_DIR", outputDir);
             com.asakusafw.testtools.templategen.Main.main(tablesArray);
         }

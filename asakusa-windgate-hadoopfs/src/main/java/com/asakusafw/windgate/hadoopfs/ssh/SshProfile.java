@@ -245,7 +245,7 @@ public class SshProfile {
             WGLOG.error("E10001",
                     profile.getName(),
                     configKey,
-                    value);
+                    null);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),

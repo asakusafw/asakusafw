@@ -162,10 +162,10 @@ public class LocalCacheInfoRepository {
                     current.getTableName(),
                     current.getPath());
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -227,10 +227,10 @@ public class LocalCacheInfoRepository {
                     sql,
                     cacheId);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -267,10 +267,10 @@ public class LocalCacheInfoRepository {
                     sql,
                     tableName);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -299,10 +299,10 @@ public class LocalCacheInfoRepository {
                     getClass(),
                     sql);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -373,10 +373,10 @@ public class LocalCacheInfoRepository {
                     sql,
                     cacheId);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -443,10 +443,10 @@ public class LocalCacheInfoRepository {
                     sql,
                     cacheId, executionId);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -480,10 +480,10 @@ public class LocalCacheInfoRepository {
                     sql,
                     executionId);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 
@@ -510,10 +510,10 @@ public class LocalCacheInfoRepository {
                     getClass(),
                     sql);
         } finally {
+            DBConnection.closePs(statement);
             if (succeed == false) {
                 DBConnection.rollback(connection);
             }
-            DBConnection.closePs(statement);
         }
     }
 

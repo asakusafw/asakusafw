@@ -29,11 +29,15 @@ import java.util.zip.ZipInputStream;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * テスト開始時にテンポラリフォルダを作成し、終了時に削除する。
  */
 public class TemporaryFolder implements MethodRule {
+
+    static final Logger LOG = LoggerFactory.getLogger(TemporaryFolder.class);
 
     volatile File folder;
 
@@ -168,7 +172,9 @@ public class TemporaryFolder implements MethodRule {
                         method.getMethod().getDeclaringClass().getSimpleName(),
                         method.getMethod().getName()),
                 ".tmp");
-        folder.delete();
+        if (folder.delete() == false) {
+            LOG.debug("Failed to delete a placeholder: {}", folder);
+        }
         assertThat(folder.getAbsolutePath(), folder.mkdirs(), is(true));
     }
 

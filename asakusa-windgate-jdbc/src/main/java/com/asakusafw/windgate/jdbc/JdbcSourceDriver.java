@@ -48,6 +48,8 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
     private final T object;
 
+    private Statement statement;
+
     private ResultSet resultSet;
 
     private DataModelResultSet<? super T> support;
@@ -112,7 +114,7 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
     private ResultSet prepareResultSet() throws SQLException {
         String sql = createSql();
-        Statement statement = connection.createStatement();
+        statement = connection.createStatement();
         boolean succeed = false;
         try {
             WGLOG.info("I03001",
@@ -199,16 +201,6 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 script.getTableName());
         sawNext = false;
         if (resultSet != null) {
-            Statement statement = null;
-            try {
-                statement = resultSet.getStatement();
-            } catch (SQLException e) {
-                WGLOG.warn(e, "W03001",
-                        profile.getResourceName(),
-                        script.getName(),
-                        script.getTableName(),
-                        script.getColumnNames());
-            }
             try {
                 resultSet.close();
                 resultSet = null;

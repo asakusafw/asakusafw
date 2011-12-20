@@ -94,7 +94,9 @@ public final class CommandLineUtil {
         FileInputStream in = new FileInputStream(path);
         try {
             Properties properties = new Properties();
-            properties.load(new BufferedInputStream(in));
+            BufferedInputStream bin = new BufferedInputStream(in);
+            properties.load(bin);
+            bin.close();
             return properties;
         } finally {
             in.close();

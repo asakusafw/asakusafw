@@ -112,7 +112,7 @@ public class FileProfile {
             WGLOG.error("E00001",
                     profile.getName(),
                     configKey,
-                    value);
+                    null);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Resource \"{0}\" must declare \"{1}\"",
                     profile.getName(),

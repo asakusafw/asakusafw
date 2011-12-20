@@ -123,7 +123,7 @@ public class RetryableProcessProfile {
             WGLOG.error("E00001",
                     profile.getName(),
                     configKey,
-                    value);
+                    null);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Process \"{0}\" must declare \"{1}\"",
                     profile.getName(),

@@ -232,7 +232,7 @@ public class HadoopFsMirror extends ResourceMirror {
                     proc.getName(),
                     kind.prefix,
                     FILE.key(),
-                    pathString);
+                    null);
             throw new IOException(MessageFormat.format(
                     "Process \"{1}\" must declare \"{3}\": (resource={0}, kind={2})",
                     getName(),

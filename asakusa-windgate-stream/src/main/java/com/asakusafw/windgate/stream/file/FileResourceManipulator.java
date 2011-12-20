@@ -71,9 +71,7 @@ public class FileResourceManipulator extends ResourceManipulator {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         File path = FileResourceUtil.getPath(profile, script, arguments, DriverScript.Kind.SOURCE);
-        LOG.info("Deleting file: {}",
-                path.getAbsolutePath());
-        path.delete();
+        delete(path);
     }
 
     @Override
@@ -82,9 +80,20 @@ public class FileResourceManipulator extends ResourceManipulator {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         File path = FileResourceUtil.getPath(profile, script, arguments, DriverScript.Kind.DRAIN);
+        delete(path);
+    }
+
+    private void delete(File path) {
+        assert path != null;
         LOG.info("Deleting file: {}",
                 path.getAbsolutePath());
-        path.delete();
+        if (path.delete()) {
+            LOG.info("Deleted file: {}",
+                    path.getAbsolutePath());
+        } else {
+            LOG.info("Failed to delete file: {}",
+                    path.getAbsolutePath());
+        }
     }
 
     @Override
