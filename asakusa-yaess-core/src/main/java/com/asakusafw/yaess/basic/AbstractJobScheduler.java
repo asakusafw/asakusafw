@@ -151,7 +151,7 @@ public abstract class AbstractJobScheduler extends JobScheduler {
             }
             if (sawError) {
                 throw new IOException(MessageFormat.format(
-                        "Jobnet execution was failed by preceding errors (batch={0}, flow={1}, phase={2}, execution={3})",
+                        "Jobnet was failed by preceding errors (batch={0}, flow={1}, phase={2}, execution={3})",
                         context.getBatchId(),
                         context.getFlowId(),
                         context.getPhase(),

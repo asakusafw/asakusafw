@@ -273,17 +273,4 @@ public abstract class DataModelScanner<C, E extends Throwable> {
     public void anyProperty(PropertyName name, C context) throws E {
         return;
     }
-
-    /**
-     * Dummy throwable class without checked.
-     * @since 0.2.0
-     */
-    public static final class _ extends Error {
-
-        private static final long serialVersionUID = 1L;
-
-        private _() {
-            return;
-        }
-    }
 }

@@ -52,6 +52,7 @@ public abstract class DriverInputBase<T> {
     protected ImporterDescription importerDescription;
 
     /**
+     * Returns the name of this port.
      * @return the name
      */
     protected String getName() {
@@ -59,49 +60,56 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * @param name the name to set
+     * Sets the name of this port.
+     * @param name the name
      */
     protected void setName(String name) {
         this.name = name;
     }
 
     /**
-     * @return the modelType
+     * Returns the data type of this port.
+     * @return the data type
      */
     protected Class<T> getModelType() {
         return modelType;
     }
 
     /**
-     * @param modelType the modelType to set
+     * Sets the data type of this port.
+     * @param modelType the data type
      */
     protected void setModelType(Class<T> modelType) {
         this.modelType = modelType;
     }
 
     /**
-     * @return the driverContext
+     * Returns the current context.
+     * @return the context
      */
     protected TestDriverContext getDriverContext() {
         return driverContext;
     }
 
     /**
-     * @param driverContext the driverContext to set
+     * Sets the current context.
+     * @param driverContext the context
      */
     protected void setDriverContext(TestDriverContext driverContext) {
         this.driverContext = driverContext;
     }
 
     /**
-     * @return the importerDescription
+     * Returns the importer description for this input.
+     * @return the description, or {@code null} if not set
      */
     protected ImporterDescription getImporterDescription() {
         return importerDescription;
     }
 
     /**
-     * @param importerDescription the importerDescription to set
+     * Sets the importer description for this input.
+     * @param importerDescription the description
      */
     protected void setImporterDescription(ImporterDescription importerDescription) {
         this.importerDescription = importerDescription;

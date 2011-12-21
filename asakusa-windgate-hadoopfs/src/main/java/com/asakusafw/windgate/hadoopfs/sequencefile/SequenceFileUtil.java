@@ -178,7 +178,7 @@ public final class SequenceFileUtil {
                 throw new UnsupportedOperationException();
             }
             while (pos > current) {
-                skip(pos - current);
+                skip0(pos - current);
             }
         }
 
@@ -221,6 +221,10 @@ public final class SequenceFileUtil {
 
         @Override
         public long skip(long n) throws IOException {
+            return skip0(n);
+        }
+
+        private long skip0(long n) throws IOException {
             long result = input.skip(n);
             if (result >= 0) {
                 current += result;

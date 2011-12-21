@@ -68,14 +68,16 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected DifferenceSinkFactory differenceSink;
 
     /**
-     * @return the exporterDescription
+     * Returns the exporter description for this output.
+     * @return the description
      */
     protected ExporterDescription getExporterDescription() {
         return exporterDescription;
     }
 
     /**
-     * @param exporterDescription the exporterDescription to set
+     * Sets the exporter description for this output.
+     * @param exporterDescription the description
      */
     protected void setExporterDescription(ExporterDescription exporterDescription) {
         this.exporterDescription = exporterDescription;

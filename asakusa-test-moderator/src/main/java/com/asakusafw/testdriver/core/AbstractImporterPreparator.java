@@ -40,6 +40,9 @@ public abstract class AbstractImporterPreparator<T extends ImporterDescription>
 
     /**
      * Redirects to {@link #truncate(ImporterDescription) this.truncate(description)}.
+     * @param description the description
+     * @param context the current test context
+     * @throws IOException if failed to open the target
      */
     @Override
     public void truncate(T description, TestContext context) throws IOException {
@@ -61,6 +64,12 @@ public abstract class AbstractImporterPreparator<T extends ImporterDescription>
     /**
      * Redirects to {@link #createOutput(DataModelDefinition, ImporterDescription)
      * createOutput(definition, description)}.
+     * @param <V> type of model
+     * @param definition the data model definition
+     * @param description the description
+     * @param context the current test context
+     * @return the created {@link ModelOutput}
+     * @throws IOException if failed to open the target
      */
     @Override
     public <V> ModelOutput<V> createOutput(

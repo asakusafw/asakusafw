@@ -3,4 +3,7 @@
   <Match classregex=".*\.ParseException" />
   <Match classregex=".*Test(Root|Utils?)?([\.\$].*)?" />
   <Match classregex=".*\.(Mock|Dummy|Stub).*" />
+  <Match>
+    <Bug pattern="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" />
+  </Match>
 </FindBugsFilter>
