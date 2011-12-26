@@ -34,8 +34,8 @@ import org.junit.Test;
 
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
-import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
+import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;

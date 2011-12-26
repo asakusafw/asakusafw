@@ -15,12 +15,13 @@
  */
 package test.modelgen.table.io;
 import java.io.IOException;
+
 import javax.annotation.Generated;
+
+import test.modelgen.table.model.ExportTempImportTarget13;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-
-import test.modelgen.table.model.ExportTempImportTarget13;
 /**
  * {@link ExportTempImportTarget13}をTSV形式で書きだす
  */

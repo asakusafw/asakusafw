@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +42,16 @@ import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.epilogue.parallel.ParallelSortClientEmitter;
-import com.asakusafw.compiler.flow.epilogue.parallel.ResolvedSlot;
-import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
-import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
-import com.asakusafw.runtime.io.property.PropertyLoader;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
+import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription.DuplicateRecordCheck;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
@@ -89,7 +89,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     private static final String CACHE_FEATURE_PREFIX = "bulkloader-cache.";
 
     private static final Location CACHE_HEAD_CONTENTS = new Location(null, CacheStorage.HEAD_DIRECTORY_NAME)
-        .append("part")
+        .append(TemporaryOutputFormat.DEFAULT_FILE_NAME)
         .asPrefix();
 
     @Override
@@ -255,7 +255,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     @SuppressWarnings("rawtypes")
     @Override
     public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return SequenceFileInputFormat.class;
+        return TemporaryInputFormat.class;
     }
 
     @Override
@@ -303,7 +303,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 output.getDescription().getDataType(),
                 desc.getPrimaryKeyNames(),
                 inputs,
-                SequenceFileOutputFormat.class);
+                TemporaryOutputFormat.class);
     }
 
     private Location getImporterDestination(InputDescription input) {

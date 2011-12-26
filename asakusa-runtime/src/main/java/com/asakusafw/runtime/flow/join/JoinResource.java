@@ -24,12 +24,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.flow.FlowResource;
+import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.stage.resource.StageResourceDriver;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
  * 結合を行うためのリソース。
@@ -51,20 +51,20 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
                 getCacheName()));
         StageResourceDriver driver = new StageResourceDriver(configuration);
         try {
-            Path path = driver.findCache(getCacheName());
-            if (path == null) {
+            List<Path> paths = driver.findCache(getCacheName());
+            if (paths.isEmpty()) {
                 throw new FileNotFoundException(MessageFormat.format(
                         "分散キャッシュ\"{0}\"が見つかりません",
                         getCacheName()));
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "{0}の結合表は{1}から構築します",
+                        "Building join table {0} using {1}",
                         getCacheName(),
-                        path));
+                        paths));
             }
             try {
-                table = createTable(driver, path);
+                table = createTable(driver, paths);
             } catch (IOException e) {
                 throw new IOException(MessageFormat.format(
                         "分散キャッシュ\"{0}\"からハッシュ表を作成できませんでした",
@@ -72,7 +72,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "{0}の結合表を作成しました",
+                        "Built jon table {0}",
                         getCacheName()));
             }
         } finally {
@@ -81,25 +81,33 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     }
     private LookUpTable<L> createTable(
             StageResourceDriver driver,
-            Path resourcePath) throws IOException {
+            List<Path> paths) throws IOException {
         assert driver != null;
-        assert resourcePath != null;
+        assert paths != null;
         LookUpTable.Builder<L> builder = createLookUpTable();
-        SequenceFile.Reader reader = new SequenceFile.Reader(
-                driver.getResourceFileSystem(),
-                resourcePath,
-                driver.getConfiguration());
-        try {
-            Writable key = createLeftKeyObject();
-            L value = createLeftValueObject();
-            while (reader.next(key, value)) {
-                lookupKeyBuffer.reset();
-                LookUpKey k = buildLeftKey(value, lookupKeyBuffer);
-                builder.add(k, value);
-                value = createLeftValueObject();
+        L value = createValueObject();
+        for (Path path : paths) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Reading local cache fragment \"{1}\" for join table {0}",
+                        getCacheName(),
+                        path));
             }
-        } finally {
-            reader.close();
+            @SuppressWarnings("unchecked")
+            ModelInput<L> input = (ModelInput<L>) TemporaryStorage.openInput(
+                    driver.getConfiguration(),
+                    value.getClass(),
+                    path);
+            try {
+                while (input.readTo(value)) {
+                    lookupKeyBuffer.reset();
+                    LookUpKey k = buildLeftKey(value, lookupKeyBuffer);
+                    builder.add(k, value);
+                    value = createValueObject();
+                }
+            } finally {
+                input.close();
+            }
         }
         return builder.build();
     }
@@ -124,18 +132,10 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     protected abstract String getCacheName();
 
     /**
-     * 結合先のキーオブジェクトを返す。
-     * @return 結合先のキーオブジェクト
-     */
-    protected Writable createLeftKeyObject() {
-        return NullWritable.get();
-    }
-
-    /**
      * 結合先の値オブジェクトを返す。
      * @return 結合先の値オブジェクト
      */
-    protected abstract L createLeftValueObject();
+    protected abstract L createValueObject();
 
     /**
      * 結合先の値から検索キーを作成する。

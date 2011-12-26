@@ -16,14 +16,16 @@
 package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -36,6 +38,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 
 /**
  * ステージ出力を設定するためのドライバ。
@@ -44,6 +47,8 @@ import com.asakusafw.runtime.flow.ResultOutput;
  * </p>
  */
 public class StageOutputDriver {
+
+    static final Log LOG = LogFactory.getLog(StageOutputDriver.class);
 
     private static final String K_NAMES = "com.asakusafw.stage.output.names";
 
@@ -88,7 +93,6 @@ public class StageOutputDriver {
         assert context != null;
         assert name != null;
         Configuration conf = context.getConfiguration();
-        Job job = new Job(conf);
         @SuppressWarnings("rawtypes")
         Class<? extends OutputFormat> formatClass = conf.getClass(
                 getPropertyName(K_FORMAT_PREFIX, name),
@@ -113,19 +117,68 @@ public class StageOutputDriver {
                     name));
         }
 
+        if (TemporaryOutputFormat.class.isAssignableFrom(formatClass)) {
+            return buildTemporarySink(context, name, valueClass);
+        } else {
+            return buildNormalSink(context, name, formatClass, keyClass, valueClass);
+        }
+    }
+
+    private ResultOutput<?> buildTemporarySink(
+            TaskAttemptContext context,
+            String name,
+            Class<?> valueClass) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert valueClass != null;
+        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
+        RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
+        return new ResultOutput<Writable>(context, writer);
+    }
+
+    private ResultOutput<?> buildNormalSink(
+            TaskAttemptContext context,
+            String name,
+            @SuppressWarnings("rawtypes") Class<? extends OutputFormat> formatClass,
+            Class<?> keyClass,
+            Class<?> valueClass) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert formatClass != null;
+        assert keyClass != null;
+        assert valueClass != null;
+        Job job = new Job(context.getConfiguration());
         job.setOutputFormatClass(formatClass);
         job.setOutputKeyClass(keyClass);
         job.setOutputValueClass(valueClass);
         TaskAttemptContext localContext = new TaskAttemptContext(
                 job.getConfiguration(),
                 context.getTaskAttemptID());
-        BackDoor.setOutputFilePrefix(localContext, name);
-
+        if (FileOutputFormat.class.isAssignableFrom(formatClass)) {
+            setOutputFilePrefix(localContext, name);
+        }
         OutputFormat<?, ?> format = ReflectionUtils.newInstance(
                 formatClass,
                 localContext.getConfiguration());
         RecordWriter<?, ?> writer = format.getRecordWriter(localContext);
         return new ResultOutput<Writable>(localContext, writer);
+    }
+
+    private static final String METHOD_SET_OUTPUT_NAME = "setOutputName";
+
+    private void setOutputFilePrefix(JobContext localContext, String name) throws IOException {
+        assert localContext != null;
+        assert name != null;
+        try {
+            Method method = FileOutputFormat.class.getDeclaredMethod(
+                    METHOD_SET_OUTPUT_NAME, JobContext.class, String.class);
+            method.setAccessible(true);
+            method.invoke(null, localContext, name);
+        } catch (Exception e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure output name of \"{0}\" ([MAPREDUCE-370] may be not applied)",
+                    name), e);
+        }
     }
 
     /**
@@ -169,22 +222,6 @@ public class StageOutputDriver {
     }
 
     /**
-     * 指定のジョブの出力先ディレクトリを指定する。
-     * @param job 対象のジョブ
-     * @param path 出力先ディレクトリ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     */
-    public static void setPath(Job job, Path path) {
-        if (job == null) {
-            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
-        }
-        if (path == null) {
-            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
-        }
-        FileOutputFormat.setOutputPath(job, path);
-    }
-
-    /**
      * 指定のジョブに出力の情報を追加する。
      * @param job 対象のジョブ
      * @param name 出力ファイルの接頭辞
@@ -215,6 +252,31 @@ public class StageOutputDriver {
         if (valueClass == null) {
             throw new IllegalArgumentException("valueClass must not be null"); //$NON-NLS-1$
         }
+        if (BridgeOutputFormat.class.isAssignableFrom(formatClass)) {
+            addBridge(job, name, valueClass);
+        } else {
+            addOutput(job, name, formatClass, keyClass, valueClass);
+        }
+    }
+
+    private static void addBridge(Job job, String name, Class<?> valueClass) {
+        assert job != null;
+        assert name != null;
+        assert valueClass != null;
+        // FIXME bridge
+    }
+
+    private static void addOutput(
+            Job job,
+            String name,
+            Class<?> formatClass,
+            Class<?> keyClass,
+            Class<?> valueClass) {
+        assert job != null;
+        assert name != null;
+        assert formatClass != null;
+        assert keyClass != null;
+        assert valueClass != null;
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Output name \"{0}\" is not valid",
@@ -252,14 +314,5 @@ public class StageOutputDriver {
 
     private static boolean isValidNameChar(char c) {
         return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
-    }
-
-    private abstract static class BackDoor extends FileOutputFormat<Object, Object> {
-
-        static void setOutputFilePrefix(JobContext context, String name) {
-            assert context != null;
-            assert name != null;
-            FileOutputFormat.setOutputName(context, name);
-        }
     }
 }

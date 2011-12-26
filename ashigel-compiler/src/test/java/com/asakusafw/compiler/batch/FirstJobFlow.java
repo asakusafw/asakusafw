@@ -19,7 +19,7 @@ import com.asakusafw.compiler.flow.processor.operator.UpdateFlowFactory;
 import com.asakusafw.compiler.flow.processor.operator.UpdateFlowFactory.WithParameter;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
@@ -34,9 +34,9 @@ import com.asakusafw.vocabulary.flow.Out;
 @JobFlow(name = "first")
 public class FirstJobFlow extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out;
+    private final Out<Ex1> out;
 
     /**
      * インスタンスを生成する。
@@ -63,7 +63,7 @@ public class FirstJobFlow extends FlowDescription {
     /**
      * エクスポーター。
      */
-    public static class Exporter extends FileExporterDescription {
+    public static class Exporter extends TemporaryOutputDescription {
 
         @Override
         public Class<?> getModelType() {

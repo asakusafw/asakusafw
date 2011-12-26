@@ -44,11 +44,11 @@ import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
  * Test for {@link FileImporterPreparator}.
- * @since 0.2.0
  */
 public class FileImporterPreparatorTest {
 
@@ -83,7 +83,6 @@ public class FileImporterPreparatorTest {
     public void tearDown() throws Exception {
         if (fileSystem != null) {
             fileSystem.delete(new Path("target/testing"), true);
-            fileSystem.close();
         }
     }
 

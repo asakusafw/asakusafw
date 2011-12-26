@@ -35,15 +35,15 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -51,9 +51,6 @@ import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
-import com.asakusafw.windgate.hadoopfs.ssh.FileList;
-import com.asakusafw.windgate.hadoopfs.ssh.SshConnection;
-import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**
  * Test for {@link AbstractSshHadoopFsMirror}.
@@ -616,38 +613,29 @@ public class AbstractSshHadoopFsMirrorTest {
         Configuration conf = new Configuration();
         File temp = folder.newFile(path);
         FileSystem fs = FileSystem.getLocal(conf);
+        ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, new Path(temp.toURI()));
         try {
-            SequenceFile.Writer sf = SequenceFile.createWriter(
-                    fs,
-                    conf,
-                    new Path(temp.toURI()),
-                    NullWritable.class,
-                    Text.class);
-            try {
-                for (String content : contents) {
-                    sf.append(NullWritable.get(), new Text(content));
-                }
-            } finally {
-                sf.close();
-            }
-            FileStatus status = fs.getFileStatus(new Path(temp.toURI()));
-            FSDataInputStream src = fs.open(status.getPath());
-            try {
-                OutputStream dst = writer.openNext(status);
-                byte[] buf = new byte[256];
-                while (true) {
-                    int read = src.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    dst.write(buf, 0, read);
-                }
-                dst.close();
-            } finally {
-                src.close();
+            for (String content : contents) {
+                output.write(new Text(content));
             }
         } finally {
-            fs.close();
+            output.close();
+        }
+        FileStatus status = fs.getFileStatus(new Path(temp.toURI()));
+        FSDataInputStream src = fs.open(status.getPath());
+        try {
+            OutputStream dst = writer.openNext(status);
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = src.read(buf);
+                if (read < 0) {
+                    break;
+                }
+                dst.write(buf, 0, read);
+            }
+            dst.close();
+        } finally {
+            src.close();
         }
     }
 
@@ -680,26 +668,21 @@ public class AbstractSshHadoopFsMirrorTest {
         }
 
         Configuration conf = new Configuration();
-        LocalFileSystem fs = FileSystem.getLocal(conf);
-        try {
-            Map<String, List<String>> results = new HashMap<String, List<String>>();
-            Text text = new Text();
-            for (File entry : files) {
-                List<String> lines = new ArrayList<String>();
-                results.put(entry.getName(), lines);
-                SequenceFile.Reader sf = new SequenceFile.Reader(fs, new Path(entry.toURI()), conf);
-                try {
-                    while (sf.next(NullWritable.get(), text)) {
-                        lines.add(text.toString());
-                    }
-                } finally {
-                    sf.close();
+        Map<String, List<String>> results = new HashMap<String, List<String>>();
+        Text text = new Text();
+        for (File entry : files) {
+            List<String> lines = new ArrayList<String>();
+            results.put(entry.getName(), lines);
+            ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, new Path(entry.toURI()));
+            try {
+                while (input.readTo(text)) {
+                    lines.add(text.toString());
                 }
+            } finally {
+                input.close();
             }
-            return results;
-        } finally {
-            fs.close();
         }
+        return results;
     }
 
 

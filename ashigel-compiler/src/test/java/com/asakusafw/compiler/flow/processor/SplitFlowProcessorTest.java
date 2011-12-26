@@ -15,16 +15,14 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.List;
-
 
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
-import com.asakusafw.compiler.flow.processor.SplitFlowProcessor;
 import com.asakusafw.compiler.flow.processor.flow.SplitFlowTrivial;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;

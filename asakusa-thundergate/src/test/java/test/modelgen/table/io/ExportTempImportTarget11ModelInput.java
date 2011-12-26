@@ -15,12 +15,13 @@
  */
 package test.modelgen.table.io;
 import java.io.IOException;
+
 import javax.annotation.Generated;
+
+import test.modelgen.table.model.ExportTempImportTarget11;
 
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-
-import test.modelgen.table.model.ExportTempImportTarget11;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link ExportTempImportTarget11}を読み出す。
  */

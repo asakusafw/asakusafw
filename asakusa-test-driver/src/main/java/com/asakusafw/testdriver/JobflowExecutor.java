@@ -39,14 +39,14 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifyContext;
-import com.asakusafw.testdriver.file.ConfigurationFactory;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
@@ -89,17 +89,10 @@ public class JobflowExecutor {
      */
     public void cleanWorkingDirectory() throws IOException {
         Configuration conf = configurations.newInstance();
-        FileSystem fs = null;
-        try {
-            fs = FileSystem.get(conf);
-            Path path = new Path(fs.getHomeDirectory(), context.getClusterWorkDir());
-            LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
-            fs.delete(path, true);
-        } finally {
-            if (fs != null) {
-                fs.close();
-            }
-        }
+        FileSystem fs = FileSystem.get(conf);
+        Path path = new Path(fs.getHomeDirectory(), context.getClusterWorkDir());
+        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
+        fs.delete(path, true);
     }
 
     /**
@@ -233,9 +226,9 @@ public class JobflowExecutor {
     private Map<String, String> createHadoopProperties(CommandContext commands) {
         assert commands != null;
         Map<String, String> dPropMap = new HashMap<String, String>();
-        dPropMap.put(AbstractStageClient.PROP_USER, context.getOsUser());
-        dPropMap.put(AbstractStageClient.PROP_EXECUTION_ID, commands.getExecutionId());
-        dPropMap.put(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
+        dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
+        dPropMap.put(StageConstants.PROP_EXECUTION_ID, commands.getExecutionId());
+        dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
         dPropMap.putAll(context.getExtraConfigurations());
         return dPropMap;
     }

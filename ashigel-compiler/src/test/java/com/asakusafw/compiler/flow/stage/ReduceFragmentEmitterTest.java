@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-
 import org.apache.hadoop.io.Writable;
 import org.junit.Test;
 
@@ -30,11 +29,6 @@ import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.example.SimpleShuffleStage;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
-import com.asakusafw.compiler.flow.stage.CompiledType;
-import com.asakusafw.compiler.flow.stage.ReduceFragmentEmitter;
-import com.asakusafw.compiler.flow.stage.ShuffleModel;
-import com.asakusafw.compiler.flow.stage.StageAnalyzer;
-import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.testing.model.Ex1;

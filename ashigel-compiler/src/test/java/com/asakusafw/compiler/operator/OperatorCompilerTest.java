@@ -23,10 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.operator.OperatorCompiler;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;

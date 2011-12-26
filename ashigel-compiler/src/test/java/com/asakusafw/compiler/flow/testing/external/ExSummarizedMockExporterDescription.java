@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 
 /**
  * {@link ExSummarized}のモックエクスポーター記述。
  */
-public class ExSummarizedMockExporterDescription extends FileExporterDescription {
+public class ExSummarizedMockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

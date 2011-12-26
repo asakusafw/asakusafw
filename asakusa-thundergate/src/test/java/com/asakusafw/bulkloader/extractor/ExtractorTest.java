@@ -17,6 +17,11 @@ package com.asakusafw.bulkloader.extractor;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,14 +30,7 @@ import org.junit.Test;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
-import com.asakusafw.bulkloader.extractor.Extractor;
-import com.asakusafw.bulkloader.extractor.DfsFileImport;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 
 /**

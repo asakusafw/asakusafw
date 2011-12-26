@@ -15,19 +15,16 @@
  */
 package com.asakusafw.testtools.inspect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import test.modelgen.model.AllTypesWNoerr;
 
 import com.asakusafw.modelgen.source.MySqlDataType;
 import com.asakusafw.testtools.ColumnInfo;
 import com.asakusafw.testtools.NullValueCondition;
-import com.asakusafw.testtools.inspect.Cause;
 import com.asakusafw.testtools.inspect.Cause.Type;
-
-import test.modelgen.model.AllTypesWNoerr;
 
 public class CauseTest {
     // テストに使用するCauseクラスのオブジェクトを各コンストラクタごとに１つづつ作成

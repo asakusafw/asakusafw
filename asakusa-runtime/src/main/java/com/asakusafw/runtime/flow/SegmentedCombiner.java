@@ -56,7 +56,6 @@ public abstract class SegmentedCombiner<
         Rendezvous<VALUE> group = getRendezvous(key);
         if (group == null) {
             while (iter.hasNext()) {
-                // TODO is ok?
                 VALUE row = iter.next();
                 KEY current = context.getCurrentKey();
                 context.write(current, row);

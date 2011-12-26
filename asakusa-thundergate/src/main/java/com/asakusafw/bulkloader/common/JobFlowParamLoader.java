@@ -32,9 +32,9 @@ import java.util.TreeMap;
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.log.Log;
-import com.asakusafw.runtime.io.property.PropertyLoader;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
+import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 
 /**
  * プロパティファイルからジョブフロー設定を読み取るクラス。

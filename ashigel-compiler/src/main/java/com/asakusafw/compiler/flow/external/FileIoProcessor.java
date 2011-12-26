@@ -31,11 +31,15 @@ import org.apache.hadoop.mapreduce.InputFormat;
 
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.epilogue.parallel.ParallelSortClientEmitter;
-import com.asakusafw.compiler.flow.epilogue.parallel.ResolvedSlot;
-import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
-import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
@@ -45,6 +49,8 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
  * ファイルの入出力を処理する。
+ * @since 0.1.0
+ * @version 0.2.5
  */
 public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
@@ -104,17 +110,89 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
     @SuppressWarnings("rawtypes")
     @Override
     public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return extract(description).getInputFormat();
+        FileImporterDescription desc = extract(description);
+        if (isCacheTarget(desc)) {
+            return TemporaryInputFormat.class;
+        } else {
+            return desc.getInputFormat();
+        }
     }
 
     @Override
     public Set<Location> getInputLocations(InputDescription description) {
         FileImporterDescription desc = extract(description);
+        if (isCacheTarget(desc)) {
+            String outputName = getProcessedInputName(description);
+            Location location = getEnvironment().getPrologueLocation(MODULE_NAME).append(outputName).asPrefix();
+            return Collections.singleton(location);
+        } else {
+            return getRawInputLocations(desc);
+        }
+    }
+
+    private boolean isCacheTarget(FileImporterDescription desc) {
+        assert desc != null;
+        switch (desc.getDataSize()) {
+        case TINY:
+            return getEnvironment().getOptions().isHashJoinForTiny();
+        case SMALL:
+            return getEnvironment().getOptions().isHashJoinForSmall();
+        default:
+            return false;
+        }
+    }
+
+    private String getProcessedInputName(InputDescription description) {
+        assert description != null;
+        StringBuilder buf = new StringBuilder();
+        for (char c : description.getName().toCharArray()) {
+            // 0 as escape character
+            if ('1' <= c && c <= '9' || 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z') {
+                buf.append(c);
+            } else if (c <= 0xff) {
+                buf.append('0');
+                buf.append(String.format("%02x", (int) c));
+            } else {
+                buf.append("0u");
+                buf.append(String.format("%04x", (int) c));
+            }
+        }
+        return buf.toString();
+    }
+
+    private Set<Location> getRawInputLocations(FileImporterDescription desc) {
+        assert desc != null;
         Set<Location> results = new HashSet<Location>();
         for (String path : desc.getPaths()) {
             results.add(Location.fromPath(path, '/'));
         }
         return results;
+    }
+
+    @Override
+    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+        List<CopyDescription> targets = new ArrayList<CopyDescription>();
+        for (Input input : context.getInputs()) {
+            InputDescription description = input.getDescription();
+            FileImporterDescription desc = extract(description);
+            if (isCacheTarget(desc)) {
+                targets.add(new CopyDescription(
+                        getProcessedInputName(description),
+                        getRawInputLocations(desc),
+                        getEnvironment().getDataClasses().load(description.getDataType()),
+                        desc.getInputFormat(),
+                        TemporaryOutputFormat.class));
+            }
+        }
+        if (targets.isEmpty()) {
+            return Collections.emptyList();
+        }
+        CopierClientEmitter emitter = new CopierClientEmitter(getEnvironment());
+        CompiledStage stage = emitter.emitPrologue(
+                MODULE_NAME,
+                targets,
+                getEnvironment().getPrologueLocation(MODULE_NAME));
+        return Collections.singletonList(stage);
     }
 
     @Override
@@ -129,10 +207,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
             }
             ParallelSortClientEmitter emitter = new ParallelSortClientEmitter(getEnvironment());
             String moduleId = generateModuleName(saw, entry.getKey());
-            CompiledStage stage = emitter.emit(
-                    moduleId,
-                    resolved,
-                    entry.getKey());
+            CompiledStage stage = emitter.emit(moduleId, resolved, entry.getKey());
             results.add(stage);
         }
         return results;

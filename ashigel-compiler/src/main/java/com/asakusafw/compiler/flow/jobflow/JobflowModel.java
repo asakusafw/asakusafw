@@ -26,8 +26,6 @@ import java.util.Set;
 
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.OutputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.Compilable;
@@ -35,6 +33,8 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
@@ -47,17 +47,17 @@ import com.ashigeru.util.graph.Graphs;
  */
 public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
 
-    private StageGraph stageGraph;
+    private final StageGraph stageGraph;
 
-    private String batchId;
+    private final String batchId;
 
-    private String flowId;
+    private final String flowId;
 
-    private List<Import> imports;
+    private final List<Import> imports;
 
-    private List<Export> exports;
+    private final List<Export> exports;
 
-    private List<Stage> stages;
+    private final List<Stage> stages;
 
     /**
      * インスタンスを生成する。
@@ -171,15 +171,15 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Stage extends Compilable.Trait<CompiledStage> {
 
-        private int number;
+        private final int number;
 
-        private List<Process> processes;
+        private final List<Process> processes;
 
-        private List<Delivery> deliveries;
+        private final List<Delivery> deliveries;
 
-        private Reduce reduceOrNull;
+        private final Reduce reduceOrNull;
 
-        private Set<SideData> sideData;
+        private final Set<SideData> sideData;
 
         /**
          * インスタンスを生成する。
@@ -260,19 +260,19 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Reduce {
 
-        private Name reducerTypeName;
+        private final Name reducerTypeName;
 
-        private Name combinerTypeNameOrNull;
+        private final Name combinerTypeNameOrNull;
 
-        private Name keyTypeName;
+        private final Name keyTypeName;
 
-        private Name valueTypeName;
+        private final Name valueTypeName;
 
-        private Name groupingComparatorTypeName;
+        private final Name groupingComparatorTypeName;
 
-        private Name sortComparatorTypeName;
+        private final Name sortComparatorTypeName;
 
-        private Name partitionerTypeName;
+        private final Name partitionerTypeName;
 
         /**
          * インスタンスを生成する。
@@ -370,7 +370,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public abstract static class Source {
 
-        private Set<FlowBlock.Output> outputs;
+        private final Set<FlowBlock.Output> outputs;
 
         /**
          * インスタンスを生成する。
@@ -409,7 +409,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public abstract static class Target {
 
-        private List<FlowBlock.Input> inputs;
+        private final List<FlowBlock.Input> inputs;
 
         private Set<Source> sources;
 
@@ -500,7 +500,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Process extends Target {
 
-        private Name mapperTypeName;
+        private final Name mapperTypeName;
 
         /**
          * インスタンスを生成する。
@@ -536,7 +536,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Delivery extends Source {
 
-        private Set<Location> locations;
+        private final Set<Location> locations;
 
         /**
          * インスタンスを生成する。
@@ -563,7 +563,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         @SuppressWarnings("rawtypes")
         public Class<? extends InputFormat> getInputFormatType() {
-            return SequenceFileInputFormat.class;
+            return TemporaryInputFormat.class;
         }
 
         /**
@@ -572,7 +572,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          */
         @SuppressWarnings("rawtypes")
         public Class<? extends OutputFormat> getOutputFormatType() {
-            return SequenceFileOutputFormat.class;
+            return TemporaryOutputFormat.class;
         }
 
         @Override
@@ -594,9 +594,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Import extends Source implements Processible {
 
-        private InputDescription description;
+        private final InputDescription description;
 
-        private ExternalIoDescriptionProcessor processor;
+        private final ExternalIoDescriptionProcessor processor;
 
         /**
          * インスタンスを生成する。
@@ -652,7 +652,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          */
         @SuppressWarnings("rawtypes")
         public Class<? extends OutputFormat> getOutputFormatType() {
-            return SequenceFileOutputFormat.class;
+            return TemporaryOutputFormat.class;
         }
 
         @Override
@@ -688,9 +688,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Export extends Target implements Processible {
 
-        private OutputDescription description;
+        private final OutputDescription description;
 
-        private ExternalIoDescriptionProcessor processor;
+        private final ExternalIoDescriptionProcessor processor;
 
         /**
          * インスタンスを生成する。
@@ -745,20 +745,20 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class SideData {
 
-        private Location clusterPath;
+        private final Set<Location> clusterPaths;
 
-        private String localName;
+        private final String localName;
 
         /**
          * インスタンスを生成する。
-         * @param clusterPath サイドデータのクラスター上のパス
+         * @param clusterPaths サイドデータのクラスター上のパス
          * @param localName ローカル上での名前
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
-        public SideData(Location clusterPath, String localName) {
-            Precondition.checkMustNotBeNull(clusterPath, "clusterPath"); //$NON-NLS-1$
+        public SideData(Set<Location> clusterPaths, String localName) {
+            Precondition.checkMustNotBeNull(clusterPaths, "clusterPath"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(localName, "localName"); //$NON-NLS-1$
-            this.clusterPath = clusterPath;
+            this.clusterPaths = clusterPaths;
             this.localName = localName;
         }
 
@@ -766,8 +766,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          * サイドデータのクラスター上のパスを返す。
          * @return サイドデータのクラスター上のパス
          */
-        public Location getClusterPath() {
-            return clusterPath;
+        public Set<Location> getClusterPaths() {
+            return clusterPaths;
         }
 
         /**
@@ -782,7 +782,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         public String toString() {
             return MessageFormat.format(
                     "SideData(path={0}, name={1})",
-                    getClusterPath(),
+                    getClusterPaths(),
                     getLocalName());
         }
     }

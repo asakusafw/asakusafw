@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 package test.modelgen.table.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.Property;
 import com.asakusafw.vocabulary.model.TableModel;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import javax.annotation.Generated;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * テーブル<code>import_record_lock</code>を表すモデルクラス。
  */

@@ -18,6 +18,7 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,13 +27,12 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 import com.asakusafw.runtime.stage.input.StageInputDriver;
+import com.asakusafw.runtime.stage.output.OldNullOutputCommitter;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
@@ -118,8 +118,8 @@ public class CacheBuildClient extends Configured implements Tool {
     private void update() throws IOException, InterruptedException {
         Job job = new Job(getConf());
 
-        StageInputDriver.add(job, storage.getHeadContents("*"), SequenceFileInputFormat.class, BaseMapper.class);
-        StageInputDriver.add(job, storage.getPatchContents("*"), SequenceFileInputFormat.class, PatchMapper.class);
+        StageInputDriver.add(job, storage.getHeadContents("*"), TemporaryInputFormat.class, BaseMapper.class);
+        StageInputDriver.add(job, storage.getPatchContents("*"), TemporaryInputFormat.class, PatchMapper.class);
         job.setMapOutputKeyClass(PatchApplyKey.class);
         job.setMapOutputValueClass(modelClass);
 
@@ -132,8 +132,12 @@ public class CacheBuildClient extends Configured implements Tool {
         job.setSortComparatorClass(PatchApplyKey.SortComparator.class);
         job.setGroupingComparatorClass(PatchApplyKey.GroupComparator.class);
 
-        FileOutputFormat.setOutputPath(job, getNextDirectory());
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+        TemporaryOutputFormat.setOutputPath(job, getNextDirectory());
+        job.setOutputFormatClass(TemporaryOutputFormat.class);
+        job.getConfiguration().setClass(
+                "mapred.output.committer.class",
+                OldNullOutputCommitter.class,
+                org.apache.hadoop.mapred.OutputCommitter.class);
 
         LOG.info(MessageFormat.format("Applying patch: {0} / {1} -> {2}",
                 storage.getPatchContents("*"),
@@ -170,16 +174,20 @@ public class CacheBuildClient extends Configured implements Tool {
 
     private void create() throws InterruptedException, IOException {
         Job job = new Job(getConf());
-        FileInputFormat.addInputPath(job, storage.getPatchContents("*"));
-        job.setInputFormatClass(SequenceFileInputFormat.class);
+        TemporaryInputFormat.setInputPaths(job, Collections.singletonList(storage.getPatchContents("*")));
+        job.setInputFormatClass(TemporaryInputFormat.class);
         job.setMapperClass(DeleteMapper.class);
         job.setMapOutputKeyClass(NullWritable.class);
         job.setMapOutputValueClass(modelClass);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(modelClass);
 
-        FileOutputFormat.setOutputPath(job, getNextDirectory());
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+        TemporaryOutputFormat.setOutputPath(job, getNextDirectory());
+        job.setOutputFormatClass(TemporaryOutputFormat.class);
+        job.getConfiguration().setClass(
+                "mapred.output.committer.class",
+                OldNullOutputCommitter.class,
+                org.apache.hadoop.mapred.OutputCommitter.class);
 
         job.setNumReduceTasks(0);
 

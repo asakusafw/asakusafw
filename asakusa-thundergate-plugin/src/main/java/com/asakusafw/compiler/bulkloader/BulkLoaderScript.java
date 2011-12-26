@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 
 
 /**
@@ -35,7 +35,7 @@ public class BulkLoaderScript {
      * 共通のパス接頭辞。
      */
     public static final String COMMON_PATH_PREFIX = "/"
-        + AbstractStageClient.EXPR_USER
+        + StageConstants.EXPR_USER
         + "/";
 
     private final List<ImportTable> importTargetTables;

@@ -26,28 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+
 import com.asakusafw.dmdl.DmdlTesterRoot;
-import com.asakusafw.dmdl.model.AstAttribute;
-import com.asakusafw.dmdl.model.AstAttributeElement;
-import com.asakusafw.dmdl.model.AstAttributeValue;
-import com.asakusafw.dmdl.model.AstAttributeValueArray;
-import com.asakusafw.dmdl.model.AstBasicType;
-import com.asakusafw.dmdl.model.AstExpression;
-import com.asakusafw.dmdl.model.AstJoin;
-import com.asakusafw.dmdl.model.AstLiteral;
-import com.asakusafw.dmdl.model.AstModelDefinition;
-import com.asakusafw.dmdl.model.AstModelReference;
-import com.asakusafw.dmdl.model.AstPropertyDefinition;
-import com.asakusafw.dmdl.model.AstQualifiedName;
-import com.asakusafw.dmdl.model.AstRecord;
-import com.asakusafw.dmdl.model.AstRecordDefinition;
-import com.asakusafw.dmdl.model.AstScript;
-import com.asakusafw.dmdl.model.AstSummarize;
-import com.asakusafw.dmdl.model.AstTerm;
-import com.asakusafw.dmdl.model.AstType;
-import com.asakusafw.dmdl.model.AstUnionExpression;
-import com.asakusafw.dmdl.model.BasicTypeKind;
-import com.asakusafw.dmdl.model.LiteralKind;
+import com.asakusafw.dmdl.model.*;
 
 /**
  * Test for {@link DmdlParser}.

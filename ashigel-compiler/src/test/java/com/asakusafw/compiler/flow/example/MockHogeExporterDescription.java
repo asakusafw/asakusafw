@@ -16,14 +16,14 @@
 package com.asakusafw.compiler.flow.example;
 
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 
 /**
  * Mock {@link ExporterDescription} for {@link MockHoge}.
  */
-public class MockHogeExporterDescription extends FileExporterDescription {
+public class MockHogeExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

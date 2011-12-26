@@ -23,9 +23,10 @@ import org.junit.rules.ExternalResource;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 
 /**
  * 演算子のテスト時に各種プラグインを利用可能にするためのリソース。
@@ -68,11 +69,11 @@ public class OperatorTestEnvironment extends ExternalResource {
 
     private RuntimeResourceManager manager;
 
-    private String configurationPath;
+    private final String configurationPath;
 
-    private Map<String, String> batchArguments;
+    private final Map<String, String> batchArguments;
 
-    private Map<String, String> extraConfigurations;
+    private final Map<String, String> extraConfigurations;
 
     private boolean dirty;
 
@@ -109,7 +110,7 @@ public class OperatorTestEnvironment extends ExternalResource {
             for (Map.Entry<String, String> entry : batchArguments.entrySet()) {
                 variables.defineVariable(entry.getKey(), entry.getValue());
             }
-            conf.set(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
+            conf.set(StageConstants.PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
         }
 
         manager = new RuntimeResourceManager(conf);
@@ -186,7 +187,7 @@ public class OperatorTestEnvironment extends ExternalResource {
      * @return {@link RuntimeResourceManager}が利用する設定情報
      */
     protected Configuration createConfig() {
-        Configuration conf = new Configuration(false);
+        Configuration conf = ConfigurationFactory.getDefault().newInstance();
         conf.addResource(configurationPath);
         return conf;
     }

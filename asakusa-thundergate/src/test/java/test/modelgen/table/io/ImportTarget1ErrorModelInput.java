@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package test.modelgen.table.io;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import test.modelgen.table.model.ImportTarget1Error;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
-import javax.annotation.Generated;
-import test.modelgen.table.model.ImportTarget1Error;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link ImportTarget1Error}を読み出す。
  */

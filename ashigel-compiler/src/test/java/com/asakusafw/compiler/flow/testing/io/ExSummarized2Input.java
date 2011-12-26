@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.flow.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>ex_summarized2</code>を読み出す
  */

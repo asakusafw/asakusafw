@@ -24,9 +24,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import com.asakusafw.windgate.core.GateScript;
-import com.asakusafw.windgate.core.ProcessScript;
-
 /**
  * Test for {@link GateScript}.
  */

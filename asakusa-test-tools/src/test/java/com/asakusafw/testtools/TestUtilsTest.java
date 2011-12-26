@@ -23,10 +23,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.asakusafw.testtools.TestUtils;
-import com.asakusafw.testtools.inspect.Cause;
-
 import test.inspector.SuccessInspector;
+
+import com.asakusafw.testtools.inspect.Cause;
 
 
 public class TestUtilsTest {

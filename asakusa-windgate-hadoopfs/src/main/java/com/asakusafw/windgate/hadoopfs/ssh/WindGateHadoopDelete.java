@@ -108,21 +108,17 @@ public class WindGateHadoopDelete {
         assert paths != null;
         assert drain != null;
         FileSystem fs = FileSystem.get(conf);
-        try {
-            for (Path path : paths) {
-                WGLOG.info("I22003",
-                        fs.getUri(),
-                        path);
-                FileStatus[] results = fs.globStatus(path);
-                if (results == null) {
-                    continue;
-                }
-                for (FileStatus status : results) {
-                    doDelete(fs, status, drain);
-                }
+        for (Path path : paths) {
+            WGLOG.info("I22003",
+                    fs.getUri(),
+                    path);
+            FileStatus[] results = fs.globStatus(path);
+            if (results == null) {
+                continue;
             }
-        } finally {
-            fs.close();
+            for (FileStatus status : results) {
+                doDelete(fs, status, drain);
+            }
         }
     }
 

@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
-import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelVerifier;
+import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyRule;
-import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**

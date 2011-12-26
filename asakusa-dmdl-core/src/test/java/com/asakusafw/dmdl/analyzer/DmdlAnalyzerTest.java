@@ -19,10 +19,12 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.text.MessageFormat;
+
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+
 import com.asakusafw.dmdl.DmdlTesterRoot;
 import com.asakusafw.dmdl.model.AstJoin;
 import com.asakusafw.dmdl.model.AstSummarize;

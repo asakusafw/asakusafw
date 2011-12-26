@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 
 /**
  * {@link Ex1}のモックインポーター記述。
  */
-public class Ex1MockImporterDescription extends FileImporterDescription {
+public class Ex1MockImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

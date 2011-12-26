@@ -27,6 +27,8 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
+
 /**
  * An abstraction of ThunderGate Cache Storage.
  * @since 0.2.3
@@ -56,7 +58,7 @@ public class CacheStorage implements Closeable {
     /**
      * The file name prefix of cache contents.
      */
-    public static final String CONTENT_FILE_PREFIX = "part-";
+    public static final String CONTENT_FILE_PREFIX = TemporaryOutputFormat.DEFAULT_FILE_NAME + "-";
 
     /**
      * The file glob of cache contents.
@@ -81,8 +83,8 @@ public class CacheStorage implements Closeable {
         if (cacheDir == null) {
             throw new IllegalArgumentException("cacheDir must not be null"); //$NON-NLS-1$
         }
-        this.fs = FileSystem.get(cacheDir, configuration);
         this.cacheDir = new Path(cacheDir);
+        this.fs = this.cacheDir.getFileSystem(configuration);
     }
 
     /**
@@ -272,6 +274,6 @@ public class CacheStorage implements Closeable {
 
     @Override
     public void close() throws IOException {
-        fs.close();
+        return;
     }
 }

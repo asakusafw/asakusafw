@@ -15,17 +15,14 @@
  */
 package com.asakusafw.windgate.core.util;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Test;
-
-import com.asakusafw.windgate.core.util.PropertiesUtil;
 
 /**
  * Test for {@link PropertiesUtil}.

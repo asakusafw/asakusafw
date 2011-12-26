@@ -22,13 +22,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
-import com.asakusafw.compiler.flow.plan.FlowBlock;
-import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
-import com.asakusafw.compiler.flow.plan.FlowPath;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;

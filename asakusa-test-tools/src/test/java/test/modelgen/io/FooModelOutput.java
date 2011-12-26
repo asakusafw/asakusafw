@@ -16,10 +16,10 @@
 package test.modelgen.io;
 import java.io.IOException;
 
+import test.modelgen.model.Foo;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-
-import test.modelgen.model.Foo;
 /**
  * {@link Foo}をTSV形式で書きだす
  */

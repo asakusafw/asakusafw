@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.operator.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.operator.model.MockKeyValue2;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>mock_key_value2</code>をTSVなどのレコード形式で出力する。
  */

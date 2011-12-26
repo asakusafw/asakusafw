@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Skips tests if Hadoop is not installed.
  */
-public class HadoopEnvironmentChecker extends TestWatchman {
+class HadoopEnvironmentChecker extends TestWatchman {
 
     static Logger LOG = LoggerFactory.getLogger(HadoopEnvironmentChecker.class);
 

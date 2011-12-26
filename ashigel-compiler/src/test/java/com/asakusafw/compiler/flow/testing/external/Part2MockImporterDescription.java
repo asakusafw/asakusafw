@@ -19,12 +19,12 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.flow.testing.model.Part2;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 /**
  * {@link Part2}のモックインポーター記述。
  */
-public class Part2MockImporterDescription extends FileImporterDescription {
+public class Part2MockImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

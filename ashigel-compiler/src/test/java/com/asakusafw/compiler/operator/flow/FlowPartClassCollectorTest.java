@@ -15,9 +15,8 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.List;

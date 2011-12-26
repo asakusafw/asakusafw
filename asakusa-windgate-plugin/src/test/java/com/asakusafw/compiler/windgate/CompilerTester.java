@@ -49,7 +49,7 @@ import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -266,7 +266,7 @@ public class CompilerTester implements MethodRule {
 
     private List<File> buildClassPath(Class<?>... libraryClasses) {
         List<File> classPath = new ArrayList<File>();
-        classPath.add(findClassPathFromClass(AbstractStageClient.class));
+        classPath.add(findClassPathFromClass(StageConstants.class));
         for (Class<?> libraryClass : libraryClasses) {
             classPath.add(findClassPathFromClass(libraryClass));
         }

@@ -35,7 +35,6 @@ import org.junit.Test;
 
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.dmdl.windgate.common.driver.GeneratorTesterRoot;
-import com.asakusafw.dmdl.windgate.jdbc.driver.JdbcSupportEmitter;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package test.modelgen.table.io;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import test.modelgen.table.model.JobflowInstanceLock;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
-import javax.annotation.Generated;
-import test.modelgen.table.model.JobflowInstanceLock;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link JobflowInstanceLock}を読み出す。
  */

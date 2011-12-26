@@ -67,9 +67,7 @@ public class ShuffleFragmentEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ShuffleFragmentEmitter.class);
 
-    private FlowCompilingEnvironment environment;
-
-    // TODO refactoring
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。

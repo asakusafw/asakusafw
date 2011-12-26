@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionLock;
+import com.asakusafw.yaess.core.ExecutionLock.Scope;
 import com.asakusafw.yaess.core.ExecutionLockProvider;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.ExecutionLock.Scope;
 
 /**
  * Basic implementation of {@link ExecutionLockProvider} using file system.

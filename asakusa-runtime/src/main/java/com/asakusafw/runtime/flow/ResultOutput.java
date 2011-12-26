@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
@@ -30,7 +29,7 @@ import com.asakusafw.runtime.core.Result;
  * 結果を出力する。
  * @param <T> 結果の型
  */
-public class ResultOutput<T extends Writable> implements Result<T> {
+public class ResultOutput<T> implements Result<T> {
 
     static final Log LOG = LogFactory.getLog(ResultOutput.class);
 

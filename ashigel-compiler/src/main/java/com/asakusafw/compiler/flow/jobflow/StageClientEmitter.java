@@ -68,7 +68,7 @@ public class StageClientEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(StageClientEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -106,13 +106,13 @@ public class StageClientEmitter {
 
         private static final char PATH_SEPARATOR = '/';
 
-        private FlowCompilingEnvironment environment;
+        private final FlowCompilingEnvironment environment;
 
-        private Stage stage;
+        private final Stage stage;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
         Engine(FlowCompilingEnvironment environment, Stage stage) {
             assert environment != null;
@@ -270,13 +270,15 @@ public class StageClientEmitter {
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageResource.class)), list));
             for (SideData sideData : stage.getSideData()) {
-                statements.add(new ExpressionBuilder(factory, list)
-                    .method("add", new TypeBuilder(factory, t(StageResource.class))
-                        .newObject(
-                                Models.toLiteral(factory, sideData.getClusterPath().toPath('/')),
-                                Models.toLiteral(factory, sideData.getLocalName()))
-                        .toExpression())
-                    .toStatement());
+                for (Location location : sideData.getClusterPaths()) {
+                    statements.add(new ExpressionBuilder(factory, list)
+                        .method("add", new TypeBuilder(factory, t(StageResource.class))
+                            .newObject(
+                                    Models.toLiteral(factory, location.toPath('/')),
+                                    Models.toLiteral(factory, sideData.getLocalName()))
+                            .toExpression())
+                        .toStatement());
+                }
             }
             statements.add(new ExpressionBuilder(factory, list)
                 .toReturnStatement());

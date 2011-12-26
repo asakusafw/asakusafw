@@ -16,17 +16,15 @@
 package com.asakusafw.testtools.db;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.testtools.ColumnInfo;
-import com.asakusafw.testtools.db.DbUtils;
 import com.asakusafw.testtools.excel.ExcelUtils;
 
 public class DbUtilTest {

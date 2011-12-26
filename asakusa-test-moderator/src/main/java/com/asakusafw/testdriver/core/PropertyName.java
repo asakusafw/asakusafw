@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +26,9 @@ import java.util.List;
  * The normal-form of property names.
  * @since 0.2.0
  */
-public final class PropertyName implements Comparable<PropertyName> {
+public final class PropertyName implements Comparable<PropertyName>, Serializable {
+
+    private static final long serialVersionUID = -362878710044414915L;
 
     private final List<String> originalWords;
 

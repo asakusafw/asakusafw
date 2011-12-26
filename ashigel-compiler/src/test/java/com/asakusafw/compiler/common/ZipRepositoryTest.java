@@ -29,12 +29,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
-import com.asakusafw.compiler.common.ZipRepository;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.util.TemporaryFolder;
 

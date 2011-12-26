@@ -25,9 +25,9 @@ import java.util.TreeMap;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.testing.JobflowInfo;
-import com.asakusafw.runtime.stage.AbstractStageClient;
-import com.asakusafw.testdriver.core.TestToolRepository;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.core.TestToolRepository;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
@@ -280,13 +280,13 @@ public class TestDriverContext implements TestContext {
     public Map<String, String> getArguments() {
         Map<String, String> copy = new HashMap<String, String>(getBatchArgs());
         if (currentBatchId != null) {
-            copy.put(AbstractStageClient.VAR_BATCH_ID, currentBatchId);
+            copy.put(StageConstants.VAR_BATCH_ID, currentBatchId);
         }
         if (currentFlowId != null) {
-            copy.put(AbstractStageClient.VAR_FLOW_ID, currentFlowId);
+            copy.put(StageConstants.VAR_FLOW_ID, currentFlowId);
         }
         if (currentExecutionId != null) {
-            copy.put(AbstractStageClient.VAR_EXECUTION_ID, currentExecutionId);
+            copy.put(StageConstants.VAR_EXECUTION_ID, currentExecutionId);
         }
         return Collections.unmodifiableMap(copy);
     }

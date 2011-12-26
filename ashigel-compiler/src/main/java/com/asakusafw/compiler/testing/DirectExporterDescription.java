@@ -17,22 +17,16 @@ package com.asakusafw.compiler.testing;
 
 import java.text.MessageFormat;
 
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
- * {@link FileExporterDescription}のパラメーターを直接指定して生成する。
+ * Direct access API for {@link TemporaryOutputDescription}.
+ * @since 0.2.5
  */
-public class DirectExporterDescription extends FileExporterDescription {
+public class DirectExporterDescription extends TemporaryOutputDescription {
 
     private final Class<?> modelType;
-
-    @SuppressWarnings("rawtypes")
-    private final Class<? extends FileOutputFormat> format;
 
     private final String pathPrefix;
 
@@ -44,21 +38,6 @@ public class DirectExporterDescription extends FileExporterDescription {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public DirectExporterDescription(Class<?> modelType, String pathPrefix) {
-        this(modelType, SequenceFileOutputFormat.class, pathPrefix);
-    }
-
-    /**
-     * インスタンスを生成する。
-     * @param modelType エクスポートするモデルのデータ型
-     * @param format 出力フォーマットの形式
-     * @param pathPrefix エクスポート先のシーケンスファイルへの相対パス(接頭辞)、
-     *     パスは必ず{@code -*}で終わる必要がある
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
-    public DirectExporterDescription(
-            Class<?> modelType,
-            @SuppressWarnings("rawtypes") Class<? extends FileOutputFormat> format,
-            String pathPrefix) {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(pathPrefix, "pathPrefix"); //$NON-NLS-1$
         if (Location.fromPath(pathPrefix, '/').isPrefix() == false) {
@@ -68,7 +47,6 @@ public class DirectExporterDescription extends FileExporterDescription {
                     Location.WILDCARD_SUFFIX));
         }
         this.modelType = modelType;
-        this.format = format;
         this.pathPrefix = pathPrefix;
     }
 
@@ -80,11 +58,5 @@ public class DirectExporterDescription extends FileExporterDescription {
     @Override
     public String getPathPrefix() {
         return pathPrefix;
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class<? extends FileOutputFormat> getOutputFormat() {
-        return format;
     }
 }

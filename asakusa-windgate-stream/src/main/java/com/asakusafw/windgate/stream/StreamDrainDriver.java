@@ -18,6 +18,7 @@ package com.asakusafw.windgate.stream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.SourceDriver;

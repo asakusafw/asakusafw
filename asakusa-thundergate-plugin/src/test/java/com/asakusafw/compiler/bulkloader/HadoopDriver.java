@@ -19,9 +19,12 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,40 +33,79 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.MultipleModelInput;
-import com.asakusafw.compiler.testing.SequenceFileModelInput;
-import com.asakusafw.compiler.testing.SequenceFileModelOutput;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.ToolLauncher;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
- * Hadoopに処理を移譲するためのドライバ。
+ * A driver for control Hadoop jobs for testing.
  */
 public class HadoopDriver implements Closeable {
 
     static final Logger LOG = LoggerFactory.getLogger(HadoopDriver.class);
 
     /**
-     * クラスタ上の作業ディレクトリのルート。
+     * Cluster working directory.
      */
     public static final String RUNTIME_WORK_ROOT = "target/testing";
 
-    private File home;
+    private final File home;
+
+    private final Configuration configuration;
 
     private HadoopDriver(File home) {
         assert home != null;
         this.home = home;
+        this.configuration = createConfiguration();
+    }
+
+    private ClassLoader createLoader() throws MalformedURLException {
+        File conf = new File(home, "conf");
+        URL url = conf.toURI().toURL();
+        final URL defaultConfigPath = url;
+        final ClassLoader current = Thread.currentThread().getContextClassLoader();
+        if (defaultConfigPath != null) {
+            ClassLoader ehnahced = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                @Override
+                public ClassLoader run() {
+                    return new URLClassLoader(new URL[] { defaultConfigPath }, current);
+                }
+            });
+            if (ehnahced != null) {
+                return ehnahced;
+            }
+        }
+        return current;
+    }
+
+    private Configuration createConfiguration() {
+        ClassLoader context = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(createLoader());
+            Configuration conf = new Configuration(true);
+            return conf;
+        } catch (MalformedURLException e) {
+            return new Configuration();
+        } finally {
+            Thread.currentThread().setContextClassLoader(context);
+        }
+    }
+
+    /**
+     * Returns the current configuration.
+     * @return the configuration
+     */
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -135,34 +177,26 @@ public class HadoopDriver implements Closeable {
             throw new IllegalArgumentException("location must not be null"); //$NON-NLS-1$
         }
         final File temp = createTempFile(modelType);
-        temp.delete();
+        if (temp.delete() == false) {
+            LOG.debug("Failed to delete a placeholder file: {}", temp);
+        }
         if (temp.mkdirs() == false) {
             throw new IOException(temp.getAbsolutePath());
         }
         copyFromHadoop(location.toPath('/'), temp);
 
-        Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(temp.toURI(), conf);
         List<ModelInput<T>> sources = new ArrayList<ModelInput<T>>();
         if (location.isPrefix()) {
             for (File file : temp.listFiles()) {
-                if (file.isFile() && file.getName().equals("_SUCCESS") == false) {
-                    SequenceFile.Reader reader = new SequenceFile.Reader(
-                            fs,
-                            new Path(file.toURI().getPath()),
-                            conf);
-                    sources.add(new SequenceFileModelInput<T>(reader));
+                if (file.isFile() && file.getName().startsWith("_") == false) {
+                    sources.add(TemporaryStorage.openInput(configuration, modelType, new Path(file.toURI())));
                 }
             }
         } else {
             for (File folder : temp.listFiles()) {
                 for (File file : folder.listFiles()) {
-                    if (file.isFile() && file.getName().equals("_SUCCESS") == false) {
-                        SequenceFile.Reader reader = new SequenceFile.Reader(
-                                fs,
-                                new Path(file.toURI().getPath()),
-                                conf);
-                        sources.add(new SequenceFileModelInput<T>(reader));
+                    if (file.isFile() && file.getName().startsWith("_") == false) {
+                        sources.add(TemporaryStorage.openInput(configuration, modelType, new Path(file.toURI())));
                     }
                 }
             }
@@ -192,27 +226,10 @@ public class HadoopDriver implements Closeable {
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> modelType,
             final Location path) throws IOException {
-        final File temp = createTempFile(modelType);
-        URI uri = temp.toURI();
-        Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(uri, conf);
-        SequenceFile.Writer writer = SequenceFile.createWriter(
-                fs,
-                conf,
-                new Path(uri.getPath()),
-                NullWritable.class,
-                modelType);
-        return new SequenceFileModelOutput<T>(writer) {
-            final AtomicBoolean closed = new AtomicBoolean();
-            @Override
-            public void close() throws IOException {
-                if (closed.compareAndSet(false, true) == false) {
-                    return;
-                }
-                super.close();
-                onOutputCompleted(temp, path);
-            }
-        };
+        return TemporaryStorage.openOutput(
+                configuration,
+                modelType,
+                new Path(path.toPath('/')));
     }
 
     private <T> File createTempFile(Class<T> modelType) throws IOException {
@@ -226,16 +243,6 @@ public class HadoopDriver implements Closeable {
         assert temp != null;
         assert path != null;
         LOG.debug("Input completed: {} -> {}", path, temp);
-        if (delete(temp) == false) {
-            LOG.warn("Failed to delete temporary file: {}", temp);
-        }
-    }
-
-    void onOutputCompleted(File temp, Location path) throws IOException {
-        assert temp != null;
-        assert path != null;
-        LOG.debug("Output completed: {} -> {}", temp, path);
-        copyToHadoop(temp, path);
         if (delete(temp) == false) {
             LOG.warn("Failed to delete temporary file: {}", temp);
         }
@@ -277,9 +284,11 @@ public class HadoopDriver implements Closeable {
         arguments.add("-conf");
         arguments.add(getPluginConfigurations());
         arguments.add("-D");
-        arguments.add(AbstractStageClient.PROP_USER + "=" + System.getProperty("user.name"));
+        arguments.add(StageConstants.PROP_USER + "=" + System.getProperty("user.name"));
         arguments.add("-D");
-        arguments.add(AbstractStageClient.PROP_EXECUTION_ID + "=" + "testing");
+        arguments.add(StageConstants.PROP_EXECUTION_ID + "=" + "testing");
+        arguments.add("-D");
+        arguments.add(StageConstants.PROP_ASAKUSA_BATCH_ARGS + "=");
 
         int ret = invoke(arguments.toArray(new String[arguments.size()]));
         if (ret != 0) {
@@ -304,24 +313,6 @@ public class HadoopDriver implements Closeable {
                     String.valueOf(ret),
                     source,
                     destination.getAbsolutePath()));
-        }
-    }
-
-    private void copyToHadoop(File source, Location destination) throws IOException {
-        if (source == null) {
-            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
-        }
-        if (destination == null) {
-            throw new IllegalArgumentException("destination must not be null"); //$NON-NLS-1$
-        }
-        LOG.info("copy {} to {}", source, destination);
-        int ret = invoke("fs", "-put", source.getAbsolutePath(), destination.toPath('/'));
-        if (ret != 0) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to fs -put: result={0}, source={1}, destination={2}",
-                    String.valueOf(ret),
-                    source.getAbsolutePath(),
-                    destination));
         }
     }
 

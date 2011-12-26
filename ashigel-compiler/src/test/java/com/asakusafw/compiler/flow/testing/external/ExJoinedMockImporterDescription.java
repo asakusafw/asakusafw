@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 
 /**
  * {@link ExJoined}のモックインポーター記述。
  */
-public class ExJoinedMockImporterDescription extends FileImporterDescription {
+public class ExJoinedMockImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

@@ -1,4 +1,8 @@
 package com.asakusafw.compiler.flow.processor.operator;
+import java.util.Arrays;
+
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
@@ -9,8 +13,6 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Fold;
-import java.util.Arrays;
-import javax.annotation.Generated;
 /**
  * {@link FoldFlow}に関する演算子ファクトリークラス。
  * @see FoldFlow

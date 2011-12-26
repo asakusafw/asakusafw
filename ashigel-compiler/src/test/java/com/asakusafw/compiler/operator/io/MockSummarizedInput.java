@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.operator.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.operator.model.MockSummarized;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>mock_summarized</code>を読み出す
  */

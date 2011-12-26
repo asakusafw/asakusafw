@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.windgate.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.windgate.testing.model.Simple;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>simple</code>を読み出す
  */

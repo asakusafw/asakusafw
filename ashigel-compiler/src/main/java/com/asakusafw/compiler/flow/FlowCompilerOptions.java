@@ -158,7 +158,9 @@ public class FlowCompilerOptions {
         }
     }
 
-    private static final Pattern OPTION = Pattern.compile("(\\+|-)([0-9A-Za-z_\\-]+)");
+    private static final Pattern OPTION = Pattern.compile("\\s*(\\+|-)\\s*([0-9A-Za-z_\\-]+)\\s*");
+
+    private static final Pattern EXTRA_OPTION = Pattern.compile("\\s*X([0-9A-Za-z_\\-]+)\\s*=([^,]*)");
 
     /**
      * デフォルトの設定をプロパティからロードする。
@@ -173,8 +175,9 @@ OptionList:
     (Empty)
 
 OptionItem:
-    "+" OptionName ; OptionNameの項目をtrueに設定する
-    "-" OptionName ; OptionNameの項目をfalseに設定する
+    "+" OptionName           ; OptionNameの項目をtrueに設定する
+    "-" OptionName           ; OptionNameの項目をfalseに設定する
+    "X" OptionName "=" Value ; Name, Valueのペアを extra attributes に設定する
 
 OptionName:
     (項目名)
@@ -182,6 +185,8 @@ OptionName:
      * <p>
      * また、利用可能なオプション名は{@link FlowCompilerOptions.Item}
      * に定義される列挙定数の名前に等しい。
+     * また、{@code D<key>=<value>}から始まる項目名は{@code X}を取り除いた上で
+     *
      * </p>
      * @param properties プロパティ一覧
      * @return オプション設定
@@ -195,19 +200,25 @@ OptionName:
             if (option.isEmpty()) {
                 continue;
             }
-            Matcher matcher = OPTION.matcher(option);
-            if (matcher.matches() == false) {
-                LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
-                continue;
-            }
-            boolean value = matcher.group(1).equals("+");
-            String name = matcher.group(2);
-            try {
-                Item item = Item.valueOf(name);
-                item.setTo(results, value);
-            } catch (NoSuchElementException e) {
-                LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
-                continue;
+            Matcher optionMatcher = OPTION.matcher(option);
+            if (optionMatcher.matches()) {
+                boolean value = optionMatcher.group(1).equals("+");
+                String name = optionMatcher.group(2);
+                try {
+                    Item item = Item.valueOf(name);
+                    item.setTo(results, value);
+                } catch (NoSuchElementException e) {
+                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                }
+            } else {
+                Matcher extraMatcher = EXTRA_OPTION.matcher(option);
+                if (extraMatcher.matches()) {
+                    String key = extraMatcher.group(1).trim();
+                    String value = extraMatcher.group(2).trim();
+                    results.extraAttributes.put(key, value);
+                } else {
+                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                }
             }
         }
         return results;

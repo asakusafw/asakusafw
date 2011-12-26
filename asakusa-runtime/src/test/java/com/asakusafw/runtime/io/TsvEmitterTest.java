@@ -613,7 +613,6 @@ public class TsvEmitterTest {
         return date;
     }
 
-    // TODO BigDecimal
     private BigDecimal decimal(String representation) {
         return new BigDecimal(representation);
     }

@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.operator.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.operator.io.MockJoinedInput;
 import com.asakusafw.compiler.operator.io.MockJoinedOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -8,10 +14,6 @@ import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Key;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * mock_joinedを表すデータモデルクラス。
  */

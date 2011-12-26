@@ -24,7 +24,6 @@ import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
@@ -41,6 +40,7 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.ExporterRetriever;
 import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
@@ -80,25 +80,21 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
         LOG.info("エクスポート先をクリアしています: {}", description);
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
-        FileSystem fs = FileSystem.get(config);
-        try {
-            String resolved = variables.parse(description.getPathPrefix(), false);
-            Path path = new Path(resolved);
-            Path output = path.getParent();
-            Path target;
-            if (output == null) {
-                LOG.warn("エクスポート先のディレクトリはベースディレクトリなので削除されません: {}", path);
-                target = fs.makeQualified(path);
-            } else {
-                LOG.warn("エクスポート先をディレクトリごと削除します: {}", output);
-                target = fs.makeQualified(output);
-            }
-            LOG.debug("ファイルを削除します: {}", target);
-            boolean succeed = fs.delete(target, true);
-            LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
-        } finally {
-            fs.close();
+        String resolved = variables.parse(description.getPathPrefix(), false);
+        Path path = new Path(resolved);
+        FileSystem fs = path.getFileSystem(config);
+        Path output = path.getParent();
+        Path target;
+        if (output == null) {
+            LOG.warn("エクスポート先のディレクトリはベースディレクトリなので削除されません: {}", path);
+            target = fs.makeQualified(path);
+        } else {
+            LOG.warn("エクスポート先をディレクトリごと削除します: {}", output);
+            target = fs.makeQualified(output);
         }
+        LOG.debug("ファイルを削除します: {}", target);
+        boolean succeed = fs.delete(target, true);
+        LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
     }
 
     @Override
@@ -130,8 +126,8 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
         String resolved = variables.parse(description.getPathPrefix(), false);
         FileInputFormat.setInputPaths(job, new Path(resolved));
         TaskAttemptContext taskContext = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
-        InputFormat<?, V> format = getOpposite(conf, description.getOutputFormat());
-        InputFormatDriver<V> result = new InputFormatDriver<V>(definition, taskContext, format);
+        FileInputFormat<?, V> format = getOpposite(conf, description.getOutputFormat());
+        FileInputFormatDriver<V> result = new FileInputFormatDriver<V>(definition, taskContext, format);
         return result;
     }
 

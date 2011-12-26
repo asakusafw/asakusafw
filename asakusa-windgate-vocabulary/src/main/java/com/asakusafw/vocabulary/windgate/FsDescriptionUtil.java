@@ -16,6 +16,7 @@
 package com.asakusafw.vocabulary.windgate;
 
 import java.text.MessageFormat;
+
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 
 /**

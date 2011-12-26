@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.yaess.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.yaess.testing.model.Dummy;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>dummy</code>をTSVなどのレコード形式で出力する。
  */

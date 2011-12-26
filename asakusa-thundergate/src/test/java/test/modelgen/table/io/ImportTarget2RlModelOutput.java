@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package test.modelgen.table.io;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import test.modelgen.table.model.ImportTarget2Rl;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
-import javax.annotation.Generated;
-import test.modelgen.table.model.ImportTarget2Rl;
 /**
  * {@link ImportTarget2Rl}をTSVなどのレコード形式で出力する。
  */

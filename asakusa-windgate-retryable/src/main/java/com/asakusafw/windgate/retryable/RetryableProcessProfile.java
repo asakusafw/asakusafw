@@ -18,6 +18,7 @@ package com.asakusafw.windgate.retryable;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
+
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;

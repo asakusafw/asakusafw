@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
 
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
@@ -222,7 +222,7 @@ public final class Constants {
      * bulkloader-conf-hc.properties
      */
     /**
-     * プロパティKEY SequenceFileファイルの圧縮有無。
+     * プロパティKEY 出力ファイルの圧縮有無。
      */
     public static final String PROP_KEY_IMP_SEQ_FILE_COMP_TYPE = "import.seq-comp-type";
     /**
@@ -309,9 +309,9 @@ public final class Constants {
      */
     public static final String PROP_DEFAULT_EXPORT_TSV_DELETE = TsvDeleteType.TRUE.getDeleteType();
     /**
-     * プロパティデフォルト値 SequenceFileファイルの圧縮有無。
+     * プロパティデフォルト値 出力ファイルの圧縮有無。
      */
-    public static final String PROP_DEFAULT_IMP_SEQ_FILE_COMP_TYPE = SequenceFile.CompressionType.NONE.name();
+    public static final String PROP_DEFAULT_IMP_SEQ_FILE_COMP_TYPE = CompressionType.NONE.name();
     /**
      * The default property value of maximim number of parallel Cache Builder.
      * @since 0.2.3

@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.common.Naming;
@@ -28,9 +27,6 @@ import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.example.CoGroupStage;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
-import com.asakusafw.compiler.flow.stage.ShuffleAnalyzer;
-import com.asakusafw.compiler.flow.stage.ShuffleKeyEmitter;
-import com.asakusafw.compiler.flow.stage.ShuffleModel;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
 import com.asakusafw.compiler.flow.testing.model.Ex1;

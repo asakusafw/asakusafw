@@ -41,7 +41,7 @@ public class FlowCompilingEnvironment {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowCompilingEnvironment.class);
 
-    private FlowCompilerConfiguration config;
+    private final FlowCompilerConfiguration config;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -239,7 +239,7 @@ public class FlowCompilingEnvironment {
         return Models.append(
                 config.getFactory(),
                 getTargetPackageName(),
-                String.format("prologue_%s", memberName(moduleId)));
+                MessageFormat.format("{0}.prologue", memberName(moduleId)));
     }
 
     /**

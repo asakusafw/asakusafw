@@ -24,8 +24,6 @@ import java.util.Map;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.yaess.core.VariableResolver;
-
 /**
  * Test for {@link VariableResolver}.
  */

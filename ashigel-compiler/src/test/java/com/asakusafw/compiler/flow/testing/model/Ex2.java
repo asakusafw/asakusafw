@@ -1,4 +1,11 @@
 package com.asakusafw.compiler.flow.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.flow.testing.io.Ex2Input;
 import com.asakusafw.compiler.flow.testing.io.Ex2Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -8,11 +15,6 @@ import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * ex2を表すデータモデルクラス。
  */

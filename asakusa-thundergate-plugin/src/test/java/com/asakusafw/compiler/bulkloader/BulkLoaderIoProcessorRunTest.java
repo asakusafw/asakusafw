@@ -32,7 +32,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.io.property.PropertyLoader;
+import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
 import com.asakusafw.vocabulary.bulkloader.DbImporterDescription;
 import com.asakusafw.vocabulary.flow.In;

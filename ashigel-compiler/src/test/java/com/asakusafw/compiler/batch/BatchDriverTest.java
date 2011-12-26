@@ -20,11 +20,8 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.batch.BatchClass;
-import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.batch.batch.Abstract;
 import com.asakusafw.compiler.batch.batch.DescribeFailBatch;
 import com.asakusafw.compiler.batch.batch.InstantiateFailBatch;

@@ -19,14 +19,14 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 
 /**
  * Mock {@link ImporterDescription} for {@link MockHoge}.
  */
-public class MockHogeImporterDescription extends FileImporterDescription {
+public class MockHogeImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

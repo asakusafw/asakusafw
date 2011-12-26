@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.operator.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.operator.io.MockSummarizedInput;
 import com.asakusafw.compiler.operator.io.MockSummarizedOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -9,10 +15,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * mock_summarizedを表すデータモデルクラス。
  */

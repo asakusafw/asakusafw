@@ -15,14 +15,14 @@
  */
 package com.asakusafw.testdriver.testing.jobflow;
 
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.testdriver.testing.model.Simple;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
  * An exporter description for {@link Simple} model.
  * @since 0.2.0
  */
-public class SimpleExporter extends FileExporterDescription {
+public class SimpleExporter extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

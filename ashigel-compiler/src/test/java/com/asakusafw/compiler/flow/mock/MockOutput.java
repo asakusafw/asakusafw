@@ -17,7 +17,6 @@ package com.asakusafw.compiler.flow.mock;
 
 import java.io.IOException;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
@@ -32,9 +31,9 @@ import com.asakusafw.runtime.core.Result;
 public class MockOutput<KEYOUT, VALUEOUT> extends
         TaskInputOutputContext<Object, Object, KEYOUT, VALUEOUT> {
 
-    private Result<? super KEYOUT> keyOut;
+    private final Result<? super KEYOUT> keyOut;
 
-    private Result<? super VALUEOUT> valueOut;
+    private final Result<? super VALUEOUT> valueOut;
 
     /**
      * インスタンスを生成する。
@@ -57,7 +56,7 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
      */
     public MockOutput(Result<? super KEYOUT> keyOut, Result<? super VALUEOUT> valueOut) {
         super(
-                new Configuration(),
+                new Configuration(false),
                 new TaskAttemptID(),
                 null,
                 null,

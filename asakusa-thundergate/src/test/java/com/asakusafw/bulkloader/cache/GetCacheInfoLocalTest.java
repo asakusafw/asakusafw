@@ -55,7 +55,7 @@ import com.asakusafw.bulkloader.transfer.FileList.Reader;
 import com.asakusafw.bulkloader.transfer.FileList.Writer;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.StreamFileListProvider;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
@@ -271,12 +271,12 @@ public class GetCacheInfoLocalTest {
     }
 
     private URI uri(String string) {
-        // FIXME
+        // FIXME for testing
         return new File(folder.getRoot(), "user/tester/" + string).toURI();
     }
 
     private String qualify(String location) {
-        return "/" + AbstractStageClient.EXPR_USER + "/" + location;
+        return "/" + StageConstants.EXPR_USER + "/" + location;
     }
 
     private Calendar calendar(String string) {

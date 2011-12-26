@@ -15,10 +15,14 @@
  */
 package com.asakusafw.testtools;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -32,12 +36,12 @@ import com.asakusafw.runtime.value.ValueOption;
  */
 public class ModelComparator<T extends Writable> implements Comparator<T>, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * モデルオブジェクトからキー項目を取得するgetterのリスト。
      */
-    private List<Method> getters;
+    private transient List<Method> getters;
 
     /**
      * コンストラクタ。
@@ -84,5 +88,31 @@ public class ModelComparator<T extends Writable> implements Comparator<T>, Seria
             }
         }
         return 0;
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        Method[] methods = new Method[stream.readInt()];
+        for (int i = 0; i < methods.length; i++) {
+            Class<?> aClass = (Class<?>) stream.readObject();
+            String methodName = stream.readUTF();
+            try {
+                methods[i] = aClass.getDeclaredMethod(methodName);
+            } catch (SecurityException e) {
+                throw new IOException(e);
+            } catch (NoSuchMethodException e) {
+                throw new IOException(e);
+            }
+        }
+        this.getters = Arrays.asList(methods);
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeInt(getters.size());
+        for (Method method : getters) {
+            stream.writeObject(method.getDeclaringClass());
+            stream.writeUTF(method.getName());
+        }
     }
 }

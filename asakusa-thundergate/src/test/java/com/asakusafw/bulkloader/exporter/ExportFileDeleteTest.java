@@ -17,6 +17,12 @@ package com.asakusafw.bulkloader.exporter;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,14 +32,7 @@ import org.junit.Test;
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
-import com.asakusafw.bulkloader.exporter.ExportFileDelete;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**

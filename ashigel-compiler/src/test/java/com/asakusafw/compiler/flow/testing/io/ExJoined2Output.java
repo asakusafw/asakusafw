@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.flow.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.flow.testing.model.ExJoined2;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>ex_joined2</code>をTSVなどのレコード形式で出力する。
  */

@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
  * Test for {@link AbstractExporterRetriever}.
@@ -37,24 +36,24 @@ public class AbstractExporterRetrieverTest {
      */
     @Test
     public void getDescriptionClass() {
-        class Target extends AbstractExporterRetriever<FileExporterDescription> {
+        class Target extends AbstractExporterRetriever<DummyExporterDescription> {
             @Override
-            public void truncate(FileExporterDescription description) throws IOException {
+            public void truncate(DummyExporterDescription description) throws IOException {
                 return;
             }
             @Override
             public <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition,
-                    FileExporterDescription description) throws IOException {
+                    DummyExporterDescription description) throws IOException {
                 return null;
             }
             @Override
             public <V> DataModelSource createSource(DataModelDefinition<V> definition,
-                    FileExporterDescription description) throws IOException {
+                    DummyExporterDescription description) throws IOException {
                 return null;
             }
         }
         Target obj = new Target();
-        assertThat(obj.getDescriptionClass(), is((Object) FileExporterDescription.class));
+        assertThat(obj.getDescriptionClass(), is((Object) DummyExporterDescription.class));
     }
 
     /**
@@ -81,5 +80,9 @@ public class AbstractExporterRetrieverTest {
         }
         Target obj = new Target();
         obj.getDescriptionClass();
+    }
+
+    static abstract class DummyExporterDescription implements ExporterDescription {
+        // no special members
     }
 }

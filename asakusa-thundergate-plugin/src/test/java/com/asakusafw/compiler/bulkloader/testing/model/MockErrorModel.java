@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.bulkloader.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.bulkloader.testing.io.MockErrorModelInput;
 import com.asakusafw.compiler.bulkloader.testing.io.MockErrorModelOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -10,10 +16,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * mock_error_modelを表すデータモデルクラス。
  */

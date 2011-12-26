@@ -22,8 +22,8 @@ import java.util.Set;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionScript;
-import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
+import com.asakusafw.yaess.core.Job;
 
 /**
  * Job to execute a script.

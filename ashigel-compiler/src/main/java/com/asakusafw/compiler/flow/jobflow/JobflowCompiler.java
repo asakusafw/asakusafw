@@ -57,11 +57,11 @@ public class JobflowCompiler {
     static final Logger LOG = LoggerFactory.getLogger(JobflowCompiler.class);
 
     @SuppressWarnings("unused")
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
-    private JobflowAnalyzer analyzer;
+    private final JobflowAnalyzer analyzer;
 
-    private StageClientEmitter stageClientEmitter;
+    private final StageClientEmitter stageClientEmitter;
 
     /**
      * インスタンスを生成する。
@@ -215,7 +215,7 @@ public class JobflowCompiler {
                     LOG.debug("Reducer: {}", reducer.getReducerTypeName().toNameString());
                 }
                 for (SideData data : stage.getSideData()) {
-                    LOG.debug("SideData: {} ({})", data.getLocalName(), data.getClusterPath());
+                    LOG.debug("SideData: {} ({})", data.getLocalName(), data.getClusterPaths());
                 }
                 LOG.debug("Upstreams: {}", getStageIds(graph.getConnected(stage)));
                 LOG.debug("Downstreams: {}", getStageIds(tgraph.getConnected(stage)));

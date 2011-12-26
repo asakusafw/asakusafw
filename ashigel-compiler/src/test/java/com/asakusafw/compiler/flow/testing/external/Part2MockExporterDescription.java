@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.Part2;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 
 /**
  * {@link Part2}のモックエクスポーター記述。
  */
-public class Part2MockExporterDescription extends FileExporterDescription {
+public class Part2MockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

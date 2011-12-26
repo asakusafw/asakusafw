@@ -28,7 +28,6 @@ import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Mock data model definition for {@link Text} type.
- * @since 0.2.0
  */
 public class MockTextDefinition implements DataModelDefinition<Text> {
 

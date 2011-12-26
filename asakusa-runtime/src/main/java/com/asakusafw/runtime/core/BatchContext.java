@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 
 /**
@@ -74,7 +74,7 @@ public class BatchContext {
 
         @Override
         public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            String arguments = configuration.get(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS, "");
+            String arguments = configuration.get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
             VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
             variables.defineVariables(arguments);
             BatchContext context = new BatchContext(variables.getVariables());

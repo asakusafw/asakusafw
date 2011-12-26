@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Test;
 
 import com.asakusafw.yaess.basic.ProcessHadoopScriptHandler;

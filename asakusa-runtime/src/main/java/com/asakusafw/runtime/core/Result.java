@@ -32,8 +32,6 @@ public interface Result<T> {
      */
     void add(T result);
 
-    // TODO flush(); の追加
-
     /**
      * 演算子がデータの出力に失敗したことを表す例外。
      */

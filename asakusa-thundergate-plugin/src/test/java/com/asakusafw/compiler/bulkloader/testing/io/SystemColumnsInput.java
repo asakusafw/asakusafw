@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.bulkloader.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.bulkloader.testing.model.SystemColumns;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>system_columns</code>を読み出す
  */

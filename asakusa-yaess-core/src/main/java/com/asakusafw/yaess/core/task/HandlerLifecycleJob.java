@@ -18,8 +18,8 @@ package com.asakusafw.yaess.core.task;
 import java.util.Collections;
 import java.util.Set;
 
-import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
+import com.asakusafw.yaess.core.Job;
 
 /**
  * An abstract super class of {@link Job} implementation for each handler's lifecycle event.

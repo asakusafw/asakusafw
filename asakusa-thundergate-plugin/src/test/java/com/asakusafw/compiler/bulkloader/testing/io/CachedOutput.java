@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.bulkloader.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.bulkloader.testing.model.Cached;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>cached</code>をTSVなどのレコード形式で出力する。
  */

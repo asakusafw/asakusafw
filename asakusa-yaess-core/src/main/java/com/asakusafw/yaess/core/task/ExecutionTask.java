@@ -38,6 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +56,9 @@ import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
+import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
 import com.asakusafw.yaess.core.PhaseMonitor;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
 import com.asakusafw.yaess.core.YaessProfile;
 
 /**

@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.stage;
 
+import static com.asakusafw.runtime.stage.StageConstants.*;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -34,12 +36,15 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 import com.asakusafw.runtime.stage.input.StageInputDriver;
+import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
+import com.asakusafw.runtime.stage.output.OldNullOutputCommitter;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 import com.asakusafw.runtime.stage.resource.StageResourceDriver;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
@@ -47,71 +52,6 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
  * ステージごとの処理を起動するクライアントの基底クラス。
  */
 public abstract class AbstractStageClient extends Configured implements Tool {
-
-    /**
-     * 実行ユーザー名のプロパティキー。
-     */
-    public static final String PROP_USER = "com.asakusafw.user";
-
-    /**
-     * 実行IDのプロパティキー。
-     */
-    public static final String PROP_EXECUTION_ID = "com.asakusafw.executionId";
-
-    /**
-     * 環境変数表のプロパティキー。
-     */
-    public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs";
-
-    /**
-     * 実行ユーザー名の変数名。
-     */
-    public static final String VAR_USER = "user";
-
-    /**
-     * 実行IDの変数名。
-     */
-    public static final String VAR_EXECUTION_ID = "execution_id";
-
-    /**
-     * バッチIDの変数名。
-     */
-    public static final String VAR_BATCH_ID = "batch_id";
-
-    /**
-     * フローIDの変数名。
-     */
-    public static final String VAR_FLOW_ID = "flow_id";
-
-    /**
-     * 定義IDの変数名。
-     */
-    public static final String VAR_DEFINITION_ID = "jobflow_name";
-
-    /**
-     * ステージ名の変数名。
-     */
-    public static final String VAR_STAGE_ID = "stage_name";
-
-    /**
-     * 実行ユーザー名の変数表記。
-     */
-    public static final String EXPR_USER = VariableTable.toVariable(VAR_USER);
-
-    /**
-     * 実行IDの変数表記。
-     */
-    public static final String EXPR_EXECUTION_ID = VariableTable.toVariable(VAR_EXECUTION_ID);
-
-    /**
-     * 定義IDの変数表記。
-     */
-    public static final String EXPR_DEFINITION_ID = VariableTable.toVariable(VAR_DEFINITION_ID);
-
-    /**
-     * ステージ名の変数表記。
-     */
-    public static final String EXPR_STAGE_ID = VariableTable.toVariable(VAR_STAGE_ID);
 
     /**
      * {@link #getBatchId()}のメソッド名。
@@ -183,21 +123,6 @@ public abstract class AbstractStageClient extends Configured implements Tool {
      */
     public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull";
 
-    /**
-     * {@link #getOutputKeyClassOrNull()}のメソッド名。
-     */
-    public static final String METHOD_OUTPUT_KEY_CLASS = "getOutputKeyClassOrNull";
-
-    /**
-     * {@link #getOutputValueClassOrNull()}のメソッド名。
-     */
-    public static final String METHOD_OUTPUT_VALUE_CLASS = "getOutputValueClassOrNull";
-
-    /**
-     * {@link #getOutputFormatClassOrNull()}のメソッド名。
-     */
-    public static final String METHOD_OUTPUT_FORMAT_CLASS = "getOutputFormatClassOrNull";
-
     static final Log LOG = LogFactory.getLog(AbstractStageClient.class);
 
     /**
@@ -263,28 +188,7 @@ public abstract class AbstractStageClient extends Configured implements Tool {
         String batchId = getBatchId();
         String flowId = getFlowId();
         String stageId = getStageId();
-        return getDefinitionId(batchId, flowId, stageId);
-    }
-
-    /**
-     * 指定のIDの組から、対象ジョブの定義IDを算出して返す。
-     * @param batchId バッチID
-     * @param flowId フローID
-     * @param stageId ステージID
-     * @return ジョブの定義ID
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
-    public static String getDefinitionId(String batchId, String flowId, String stageId) {
-        if (batchId == null) {
-            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
-        }
-        if (flowId == null) {
-            throw new IllegalArgumentException("flowId must not be null"); //$NON-NLS-1$
-        }
-        if (stageId == null) {
-            throw new IllegalArgumentException("stageId must not be null"); //$NON-NLS-1$
-        }
-        return MessageFormat.format("{0}.{1}.{2}", batchId, flowId, stageId);
+        return StageConstants.getDefinitionId(batchId, flowId, stageId);
     }
 
     /**
@@ -376,31 +280,6 @@ public abstract class AbstractStageClient extends Configured implements Tool {
         return null;
     }
 
-    /**
-     * このステージの最終結果で利用するキークラスを返す。
-     * @return 最終結果で利用するキークラス、利用しない場合は{@code null}
-     */
-    protected Class<? extends Writable> getOutputKeyClassOrNull() {
-        return null;
-    }
-
-    /**
-     * このステージの最終結果で利用する値クラスを返す。
-     * @return 最終結果で利用する値クラス、利用しない場合は{@code null}
-     */
-    protected Class<? extends Writable> getOutputValueClassOrNull() {
-        return null;
-    }
-
-    /**
-     * このステージの最終結果で利用する出力フォーマットを返す。
-     * @return 最終結果で利用する出力フォーマット、利用しない場合は{@code null}
-     */
-    @SuppressWarnings("rawtypes")
-    protected Class<? extends OutputFormat> getOutputFormatClassOrNull() {
-        return null;
-    }
-
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
@@ -454,9 +333,6 @@ public abstract class AbstractStageClient extends Configured implements Tool {
     }
 
     private void configureJobInfo(Job job, VariableTable variables) {
-        // TODO 定義IDでは重複実行を許さないのでは
-        // おそらくユーザー名などの情報も必要
-
         Class<?> clientClass = getClass();
         String definitionId = getDefinitionId();
 
@@ -540,19 +416,19 @@ public abstract class AbstractStageClient extends Configured implements Tool {
         }
     }
 
-    private void configureStageResource(Job job, VariableTable variables) {
+    private void configureStageResource(Job job, VariableTable variables) throws IOException {
         List<StageResource> resources = getStageResources();
         for (StageResource cache : resources) {
             String resolved = variables.parse(cache.getLocation());
             LOG.info(MessageFormat.format("Distributed Cache: {0} @ {1}", cache.getName(), resolved));
-            StageResourceDriver.add(job, new Path(resolved), cache.getName());
+            StageResourceDriver.add(job, resolved, cache.getName());
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void configureStageOutput(Job job, VariableTable variables) {
         String outputPath = variables.parse(getStageOutputPath());
-        StageOutputDriver.setPath(job, new Path(outputPath));
+        boolean sawFileOutput = false;
+        boolean sawTemporaryOutput = false;
         for (StageOutput output : getStageOutputs()) {
             String name = output.getName();
             Class<?> keyClass = output.getKeyClass();
@@ -571,22 +447,23 @@ public abstract class AbstractStageClient extends Configured implements Tool {
                     formatClass,
                     keyClass,
                     valueClass);
+            sawFileOutput |= FileOutputFormat.class.isAssignableFrom(formatClass);
+            sawTemporaryOutput |= TemporaryOutputFormat.class.isAssignableFrom(formatClass);
         }
 
-        Class<? extends Writable> outputKeyClass = or(getOutputKeyClassOrNull(), NullWritable.class);
-        Class<? extends Writable> outputValueClass = or(getOutputValueClassOrNull(), NullWritable.class);
-        Class<? extends OutputFormat> outputFormatClass =
-            or(getOutputFormatClassOrNull(), SequenceFileOutputFormat.class);
-        LOG.info(MessageFormat.format(
-                "Output: path={0}/{1}-*, format={2}, key={3}, value={4}",
-                outputPath,
-                "part",
-                outputFormatClass.getName(),
-                outputKeyClass.getName(),
-                outputValueClass.getName()));
-        job.setOutputKeyClass(outputKeyClass);
-        job.setOutputValueClass(outputValueClass);
-        job.setOutputFormatClass(outputFormatClass);
+        if (sawFileOutput) {
+            FileOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
+        if (sawTemporaryOutput) {
+            TemporaryOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(NullWritable.class);
+        job.setOutputFormatClass(BridgeOutputFormat.class);
+        job.getConfiguration().setClass(
+                "mapred.output.committer.class",
+                OldNullOutputCommitter.class,
+                org.apache.hadoop.mapred.OutputCommitter.class);
     }
 
     private <T> T or(T a, T b) {

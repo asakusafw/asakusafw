@@ -1,11 +1,12 @@
 package com.asakusafw.compiler.operator.model;
+import org.apache.hadoop.io.Text;
+
 import com.asakusafw.compiler.operator.io.MockKeyInput;
 import com.asakusafw.compiler.operator.io.MockKeyOutput;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.StringOption;
-import org.apache.hadoop.io.Text;
 /**
  * mock_keyを表す射影モデルインターフェース。
  */

@@ -31,8 +31,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -45,7 +43,7 @@ import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.util.VariableTable;
-import com.asakusafw.testdriver.file.ConfigurationFactory;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -120,18 +118,18 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
 
             // テストデータ生成ツールを実行し、Excel上のテストデータ定義からシーケンスファイルを生成し、HDFS上に配置する。
             if (createIndividually) {
-                createSequenceFilesIndividually();
+                prepareIndividually();
             } else {
-                createSequenceFiles();
+                createAllInput();
             }
 
             executor.runJobflow(jobflowInfo);
 
             // テスト結果検証ツールを実行し、Excel上の期待値とシーケンスファイル上の実際値を比較する。
             if (loadIndividually) {
-                loadAndInspectSequenceFilesIndividually();
+                loadAndInspectResultsIndividually();
             } else {
-                loadAndInspectSequenceFiles();
+                loadAndInspectResults();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -320,14 +318,13 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
         fileListPerTable.add(fileName);
     }
 
-    private void createSequenceFiles() {
+    private void createAllInput() {
         for (String table : testUtils.getTablenames()) {
-            createSequenceFile(table, table);
+            createInput(table, table);
         }
     }
 
-    private void createSequenceFilesIndividually() {
-
+    private void prepareIndividually() {
         for (Map.Entry<String, List<String>> entry : createInMap.entrySet()) {
             String tablename = entry.getKey();
             List<String> fileList = entry.getValue();
@@ -348,56 +345,36 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                createSequenceFile(tablename, excelFileName);
+                createInput(tablename, excelFileName);
             }
         }
     }
 
-    private void createSequenceFile(String tablename, String excelFileName) {
-
+    private void createInput(String tablename, String excelFileName) {
         FileSystem fs = null;
-        SequenceFile.Writer writer = null;
-
         try {
             Configuration conf = ConfigurationFactory.getDefault().newInstance();
             fs = FileSystem.get(conf);
-
-            URI seqFilePath = new URI(createInputSequenceFilePath(fs, excelFileName));
-            LOG.info("SequenceFileを作成します:Path=" + seqFilePath);
-
-            writer = SequenceFile.createWriter(fs, conf, new Path(seqFilePath.getPath()), NullWritable.class,
-                    testUtils.getClassByTablename(tablename));
-
-            testUtils.storeToSequenceFile(tablename, writer);
+            URI inputPath = new URI(computeInputPath(fs, excelFileName));
+            LOG.info("テストデータを配置します:Path=" + inputPath);
+            testUtils.storeToTemporary(tablename, conf, new Path(inputPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (IOException e) {
-                //nop
-            }
         }
     }
 
-    private void loadAndInspectSequenceFiles() throws IOException {
+    private void loadAndInspectResults() throws IOException {
         for (String table : testUtils.getTablenames()) {
-            loadSequenceFile(table, table);
+            loadResult(table, table);
         }
         if (!testUtils.inspect()) {
             Assert.fail(testUtils.getCauseMessage());
         }
     }
 
-    private void loadAndInspectSequenceFilesIndividually() throws IOException {
-
+    private void loadAndInspectResultsIndividually() throws IOException {
         for (Map.Entry<String, List<String>> entry : createOutMap.entrySet()) {
             String tablename = entry.getKey();
             List<String> fileList = entry.getValue();
@@ -418,7 +395,7 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                loadSequenceFile(tablename, excelFileName);
+                loadResult(tablename, excelFileName);
                 if (!testUtils.inspect()) {
                     Assert.fail(testUtils.getCauseMessage());
                     return;
@@ -427,34 +404,17 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
         }
     }
 
-    private void loadSequenceFile(String tablename, String excelFileName) throws IOException {
-
-        Configuration conf = new Configuration();
-        FileSystem fs = null;
-
-        fs = FileSystem.get(conf);
-        fs.setWorkingDirectory(fs.getHomeDirectory());
-        try {
-            FileStatus[] status = fs.globStatus(new Path(createOutputSequenceFilePath(fs, excelFileName)));
-            Path[] listedPaths = FileUtil.stat2Paths(status);
-            for (Path path : listedPaths) {
-                if (isSystemFile(path)) {
-                    continue;
-                }
-                SequenceFile.Reader reader = null;
-                try {
-                    LOG.info("SequenceFileをロードします:Path=" + path);
-                    reader = new SequenceFile.Reader(fs, path, conf);
-
-                    testUtils.loadFromSequenceFile(tablename, reader);
-                } finally {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                }
+    private void loadResult(String tablename, String excelFileName) throws IOException {
+        Configuration conf = ConfigurationFactory.getDefault().newInstance();
+        FileSystem fs = FileSystem.get(conf);
+        FileStatus[] status = fs.globStatus(new Path(computeOutputPath(fs, excelFileName)));
+        Path[] listedPaths = FileUtil.stat2Paths(status);
+        for (Path path : listedPaths) {
+            if (isSystemFile(path)) {
+                continue;
             }
-        } finally {
-            fs.close();
+            LOG.info("出力結果をロードします:Path=" + path);
+            testUtils.loadFromTemporary(tablename, conf, path);
         }
     }
 
@@ -464,13 +424,13 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
         return name.equals(FileOutputCommitter.SUCCEEDED_FILE_NAME) || name.equals("_logs");
     }
 
-    private String createInputSequenceFilePath(FileSystem fs, String tableName) {
+    private String computeInputPath(FileSystem fs, String tableName) {
         Location location = FlowPartDriverUtils.createInputLocation(driverContext, tableName);
         String path = new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
         return resolvePath(path);
     }
 
-    private String createOutputSequenceFilePath(FileSystem fs, String tableName) {
+    private String computeOutputPath(FileSystem fs, String tableName) {
         Location location = FlowPartDriverUtils.createOutputLocation(driverContext, tableName);
         String path = new Path(fs.getWorkingDirectory(), location.toPath('/')).toString();
         return resolvePath(path);

@@ -181,7 +181,6 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         scripts.put(ExecutionPhase.EPILOGUE, processEpilogues(model, context));
         scripts.put(ExecutionPhase.EXPORT, processExporters(model, context));
         scripts.put(ExecutionPhase.FINALIZE, processFinalizers(model, context));
-        // FIXME add jobflow output location
         return new FlowScript(model.getFlowId(), toUnitNames(blockers), scripts);
     }
 

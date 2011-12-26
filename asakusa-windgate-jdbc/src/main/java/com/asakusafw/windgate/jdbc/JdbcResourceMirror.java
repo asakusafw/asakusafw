@@ -18,6 +18,7 @@ package com.asakusafw.windgate.jdbc;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

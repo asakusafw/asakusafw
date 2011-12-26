@@ -18,8 +18,8 @@ package com.asakusafw.bulkloader.cache;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,15 +33,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.bulkloader.common.SequenceFileModelOutput;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
+import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
@@ -66,10 +65,13 @@ public class CacheBuildTest {
     public final FrameworkEmulator emulator = new FrameworkEmulator();
 
     /**
-     * Temporary folder.
+     * Initializes the test.
+     * @throws Exception if some errors were occurred
      */
-    @Rule
-    public final TemporaryFolder folder = new TemporaryFolder();
+    @Before
+    public void setUp() throws Exception {
+        FileSystem.get(getConfiguration()).delete(new Path(getTargetUri()), true);
+    }
 
     /**
      * Creates a new cache.
@@ -86,8 +88,7 @@ public class CacheBuildTest {
                 "com.example.Model",
                 123L);
         emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
-        File cacheFolder = folder.newFolder("cache");
-        CacheStorage storage = new CacheStorage(new Configuration(), cacheFolder.toURI());
+        CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
             ModelOutput<TestDataModel> output = create(storage, storage.getPatchContents("0"));
@@ -101,7 +102,7 @@ public class CacheBuildTest {
                 output.close();
             }
 
-            execute(cacheFolder, CacheBuildClient.SUBCOMMAND_CREATE);
+            execute(CacheBuildClient.SUBCOMMAND_CREATE);
             assertThat(storage.getHeadCacheInfo(), is(info));
 
             List<TestDataModel> results = collect(storage, storage.getHeadContents("*"));
@@ -110,24 +111,6 @@ public class CacheBuildTest {
             assertThat(results.get(0).value.toString(), is("Hello, world!"));
         } finally {
             storage.close();
-        }
-    }
-
-    private void execute(File cacheFolder, String subcommand) throws IOException, InterruptedException {
-        FileListProvider provider = emulator.execute(
-                COMMAND_PATH,
-                subcommand,
-                "tbatch",
-                "tflow",
-                "testing",
-                cacheFolder.toURI().toString(),
-                TestDataModel.class.getName());
-        try {
-            provider.discardReader();
-            provider.discardWriter();
-            provider.waitForComplete();
-        } finally {
-            provider.close();
         }
     }
 
@@ -146,8 +129,7 @@ public class CacheBuildTest {
                 "com.example.Model",
                 123L);
         emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
-        File cacheFolder = folder.newFolder("cache");
-        CacheStorage storage = new CacheStorage(new Configuration(), cacheFolder.toURI());
+        CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
             ModelOutput<TestDataModel> output = create(storage, storage.getPatchContents("0"));
@@ -162,7 +144,7 @@ public class CacheBuildTest {
                 output.close();
             }
 
-            execute(cacheFolder, CacheBuildClient.SUBCOMMAND_CREATE);
+            execute(CacheBuildClient.SUBCOMMAND_CREATE);
             assertThat(storage.getHeadCacheInfo(), is(info));
 
             List<TestDataModel> results = collect(storage, storage.getHeadContents("*"));
@@ -190,8 +172,7 @@ public class CacheBuildTest {
                 "com.example.Model",
                 123L);
         emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
-        File cacheFolder = folder.newFolder("cache");
-        CacheStorage storage = new CacheStorage(new Configuration(), cacheFolder.toURI());
+        CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
             ModelOutput<TestDataModel> head = create(storage, storage.getHeadContents("0"));
@@ -225,7 +206,7 @@ public class CacheBuildTest {
                 patch.close();
             }
 
-            execute(cacheFolder, CacheBuildClient.SUBCOMMAND_UPDATE);
+            execute(CacheBuildClient.SUBCOMMAND_UPDATE);
             assertThat(storage.getHeadCacheInfo(), is(info));
 
             List<TestDataModel> results = collect(storage, storage.getHeadContents("*"));
@@ -256,8 +237,7 @@ public class CacheBuildTest {
                 "com.example.Model",
                 123L);
         emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
-        File cacheFolder = folder.newFolder("cache");
-        CacheStorage storage = new CacheStorage(new Configuration(), cacheFolder.toURI());
+        CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
             ModelOutput<TestDataModel> head = create(storage, storage.getHeadContents("0"));
@@ -285,7 +265,7 @@ public class CacheBuildTest {
                 patch.close();
             }
 
-            execute(cacheFolder, CacheBuildClient.SUBCOMMAND_UPDATE);
+            execute(CacheBuildClient.SUBCOMMAND_UPDATE);
             assertThat(storage.getHeadCacheInfo(), is(info));
 
             List<TestDataModel> results = collect(storage, storage.getHeadContents("*"));
@@ -309,6 +289,33 @@ public class CacheBuildTest {
         }
     }
 
+    private void execute(String subcommand) throws IOException, InterruptedException {
+        FileListProvider provider = emulator.execute(
+                COMMAND_PATH,
+                subcommand,
+                "tbatch",
+                "tflow",
+                "testing",
+                getTargetUri().toString(),
+                TestDataModel.class.getName());
+        try {
+            provider.discardReader();
+            provider.discardWriter();
+            provider.waitForComplete();
+        } finally {
+            provider.close();
+        }
+    }
+
+    private URI getTargetUri() throws IOException {
+        Path path = new Path("target/testing/" + getClass().getSimpleName());
+        return FileSystem.get(getConfiguration()).makeQualified(path).toUri();
+    }
+
+    private Configuration getConfiguration() {
+        return ConfigurationFactory.getDefault().newInstance();
+    }
+
     private List<TestDataModel> collect(CacheStorage storage, Path contents) throws IOException {
         List<TestDataModel> results = new ArrayList<TestDataModel>();
         FileSystem fs = storage.getFileSystem();
@@ -321,26 +328,21 @@ public class CacheBuildTest {
 
     private Collection<TestDataModel> collectContent(FileSystem fs, FileStatus status) throws IOException {
         Collection<TestDataModel> results = new ArrayList<TestDataModel>();
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, status.getPath(), fs.getConf());
+        ModelInput<TestDataModel> input = TemporaryStorage.openInput(
+                fs.getConf(), TestDataModel.class, status.getPath());
         try {
             TestDataModel model = new TestDataModel();
-            while (reader.next(NullWritable.get(), model)) {
+            while (input.readTo(model)) {
                 results.add(model.copy());
             }
         } finally {
-            reader.close();
+            input.close();
         }
         return results;
     }
 
     private ModelOutput<TestDataModel> create(CacheStorage storage, Path path) throws IOException {
-        SequenceFile.Writer writer = SequenceFile.createWriter(
-                storage.getFileSystem(),
-                storage.getConfiguration(),
-                path,
-                NullWritable.class,
-                TestDataModel.class);
-        return new SequenceFileModelOutput<TestDataModel>(writer);
+        return TemporaryStorage.openOutput(storage.getFileSystem().getConf(), TestDataModel.class, path);
     }
 
     private Calendar calendar(String string) {

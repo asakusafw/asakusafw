@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 
 /**
  * {@link ExJoined}のモックエクスポーター記述。
  */
-public class ExJoinedMockExporterDescription extends FileExporterDescription {
+public class ExJoinedMockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

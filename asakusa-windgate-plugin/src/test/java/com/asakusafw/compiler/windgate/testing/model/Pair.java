@@ -1,4 +1,11 @@
 package com.asakusafw.compiler.windgate.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.windgate.testing.io.PairInput;
 import com.asakusafw.compiler.windgate.testing.io.PairOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -7,11 +14,6 @@ import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * pairを表すデータモデルクラス。
  */

@@ -20,11 +20,9 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
-import com.asakusafw.compiler.flow.processor.UpdateFlowProcessor;
 import com.asakusafw.compiler.flow.processor.flow.UpdateFlowSimple;
 import com.asakusafw.compiler.flow.processor.flow.UpdateFlowWithParameter;
 import com.asakusafw.compiler.flow.stage.StageModel;

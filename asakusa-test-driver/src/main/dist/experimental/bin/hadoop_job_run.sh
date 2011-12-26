@@ -42,14 +42,19 @@ PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 LIBJAR=$FLOW_JARNAME
 
 for i in $ASAKUSA_HOME/core/lib/*.jar; do
-  LIBJAR="$LIBJAR","$i"
+    LIBJAR="$LIBJAR","$i"
 done
 
-EXTLIBCNT=`ls -1 $ASAKUSA_HOME/ext/lib | wc -l`
-if [ $EXTLIBCNT != "0" ]; then
-  for i in $ASAKUSA_HOME/ext/lib/*.jar; do
-    LIBJAR="$LIBJAR","$i"
-  done
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    EXTLIBCNT=$(ls -1 "$ASAKUSA_HOME/ext/lib" | wc -l)
+    if [ $EXTLIBCNT != "0" ]
+    then
+      for i in "$ASAKUSA_HOME/ext/lib/*.jar"
+      do
+        LIBJAR="$LIBJAR","$i"
+      done
+    fi
 fi
 
 cd $HOME

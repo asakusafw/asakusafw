@@ -17,7 +17,7 @@ package com.asakusafw.testdriver;
 
 
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 
 /**
  * フロー部品用のテストドライバを実行するためのユーティリティクラス。
@@ -42,7 +42,7 @@ final class FlowPartDriverUtils {
      */
     public static Location createInputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append(StageConstants.EXPR_EXECUTION_ID)
                 .append("input")
                 .append(normalize(name));
         return location;
@@ -57,7 +57,7 @@ final class FlowPartDriverUtils {
      */
     public static Location createOutputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
+                .append(StageConstants.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
         return location;
     }
 
@@ -69,7 +69,7 @@ final class FlowPartDriverUtils {
      */
     public static Location createWorkingLocation(TestDriverContext driverContext) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append(StageConstants.EXPR_EXECUTION_ID)
                 .append("temp");
         return location;
     }

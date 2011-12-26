@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,13 +32,12 @@ import org.junit.Test;
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExportTempTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
+import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
-import com.asakusafw.bulkloader.exporter.JudgeExecProcess;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 
 /**

@@ -17,23 +17,19 @@ package com.asakusafw.bulkloader.common;
 
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Properties;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.asakusafw.bulkloader.common.ConfigurationLoader;
-import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.DBConnection;
-import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Properties;
 
 
 /**

@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.yaess.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.yaess.testing.model.Dummy;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>dummy</code>を読み出す
  */

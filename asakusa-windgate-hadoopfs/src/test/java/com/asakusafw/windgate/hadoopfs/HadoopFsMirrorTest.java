@@ -27,13 +27,13 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -61,17 +61,6 @@ public class HadoopFsMirrorTest {
     public void setUp() throws Exception {
         fs = FileSystem.get(conf);
         fs.delete(PREFIX, true);
-    }
-
-    /**
-     * Cleans up the test.
-     * @throws Exception if some errors were occurred
-     */
-    @After
-    public void tearDown() throws Exception {
-        if (fs != null) {
-            fs.close();
-        }
     }
 
     /**
@@ -468,27 +457,27 @@ public class HadoopFsMirrorTest {
     private void test(String path, String... expects) throws IOException {
         List<String> results = new ArrayList<String>();
         Path resolved = new Path(PREFIX, path);
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, resolved, conf);
+        ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, resolved);
         try {
             Text text = new Text();
-            while (reader.next(NullWritable.get(), text)) {
+            while (input.readTo(text)) {
                 results.add(text.toString());
             }
         } finally {
-            reader.close();
+            input.close();
         }
         assertThat(results, is(Arrays.asList(expects)));
     }
 
     private void set(String path, String... values) throws IOException {
         Path resolved = new Path(PREFIX, path);
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, resolved, NullWritable.class, Text.class);
+        ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, resolved);
         try {
             for (String string : values) {
-                writer.append(NullWritable.get(), new Text(string));
+                output.write(new Text(string));
             }
         } finally {
-            writer.close();
+            output.close();
         }
     }
 }

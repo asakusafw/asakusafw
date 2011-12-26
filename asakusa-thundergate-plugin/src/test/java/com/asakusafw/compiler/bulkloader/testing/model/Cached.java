@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.bulkloader.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.bulkloader.testing.io.CachedInput;
 import com.asakusafw.compiler.bulkloader.testing.io.CachedOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -13,10 +19,6 @@ import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
 import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * cachedを表すデータモデルクラス。
  */

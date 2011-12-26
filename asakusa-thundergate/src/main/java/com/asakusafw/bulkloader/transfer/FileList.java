@@ -30,6 +30,7 @@ import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hadoop.io.InputBuffer;
 import org.apache.hadoop.io.OutputBuffer;
+
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.runtime.io.ZipEntryInputStream;
 import com.asakusafw.runtime.io.ZipEntryOutputStream;

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package test.modelgen.table.io;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import test.modelgen.table.model.PurchaseTranError2;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
-import javax.annotation.Generated;
-import test.modelgen.table.model.PurchaseTranError2;
 /**
  * {@link PurchaseTranError2}をTSVなどのレコード形式で出力する。
  */

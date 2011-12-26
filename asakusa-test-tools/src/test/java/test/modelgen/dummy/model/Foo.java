@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 
 import javax.annotation.Generated;
 
-
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 

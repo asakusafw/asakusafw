@@ -1,4 +1,8 @@
 package com.asakusafw.compiler.flow.processor.operator;
+import java.util.Arrays;
+
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
@@ -11,8 +15,6 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Summarize;
-import java.util.Arrays;
-import javax.annotation.Generated;
 /**
  * {@link SummarizeFlow}に関する演算子ファクトリークラス。
  * @see SummarizeFlow

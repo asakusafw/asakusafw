@@ -27,7 +27,7 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 
 /**
  * {@link BatchCompilingEnvironment}をテスト向けに提供する。
@@ -58,7 +58,7 @@ public class BatchCompilerEnvironmentProvider implements MethodRule {
                             method.getMethod().getName())),
                     Arrays.asList(new File[] {
                            DirectFlowCompiler.toLibraryPath(getClass()),
-                           DirectFlowCompiler.toLibraryPath(AbstractStageClient.class),
+                           DirectFlowCompiler.toLibraryPath(StageConstants.class),
                     }),
                     target.getClass().getClassLoader(),
                     FlowCompilerOptions.load(System.getProperties()));

@@ -1,7 +1,8 @@
 package com.asakusafw.compiler.flow.testing.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
-import javax.annotation.Generated;
 /**
  * {@link ExOperator}に関する演算子実装クラス。
  */

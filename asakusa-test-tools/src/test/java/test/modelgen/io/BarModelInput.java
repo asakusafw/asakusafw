@@ -16,10 +16,10 @@
 package test.modelgen.io;
 import java.io.IOException;
 
+import test.modelgen.model.Bar;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-
-import test.modelgen.model.Bar;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link Bar}を読み出す。
  */

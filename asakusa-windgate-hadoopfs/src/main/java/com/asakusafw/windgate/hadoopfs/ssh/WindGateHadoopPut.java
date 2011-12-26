@@ -98,18 +98,14 @@ public class WindGateHadoopPut {
     void doPut(FileList.Reader source) throws IOException {
         assert source != null;
         FileSystem fs = FileSystem.get(conf);
-        try {
-            while (source.next()) {
-                FileStatus status = source.getCurrentFile();
-                InputStream input = source.openContent();
-                try {
-                    doPut(fs, status, input);
-                } finally {
-                    input.close();
-                }
+        while (source.next()) {
+            FileStatus status = source.getCurrentFile();
+            InputStream input = source.openContent();
+            try {
+                doPut(fs, status, input);
+            } finally {
+                input.close();
             }
-        } finally {
-            fs.close();
         }
     }
 

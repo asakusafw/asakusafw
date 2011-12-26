@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package test.modelgen.table.io;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import test.modelgen.table.model.CacheFiles;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
-import javax.annotation.Generated;
-import test.modelgen.table.model.CacheFiles;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link CacheFiles}を読み出す。
  */

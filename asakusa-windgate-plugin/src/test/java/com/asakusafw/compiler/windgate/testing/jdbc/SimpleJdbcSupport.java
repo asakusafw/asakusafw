@@ -1,6 +1,4 @@
 package com.asakusafw.compiler.windgate.testing.jdbc;
-import com.asakusafw.compiler.windgate.testing.model.Simple;
-import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +6,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.apache.hadoop.io.Text;
+
+import com.asakusafw.compiler.windgate.testing.model.Simple;
+import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 /**
  * Supports JDBC interfaces for {@link Simple}.
  */

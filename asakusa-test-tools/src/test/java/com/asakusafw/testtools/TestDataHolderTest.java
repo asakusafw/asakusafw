@@ -16,7 +16,7 @@
 package com.asakusafw.testtools;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -24,9 +24,10 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 
-
 import org.apache.hadoop.io.Writable;
 import org.junit.Test;
+
+import test.modelgen.model.AllTypesWNoerr;
 
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
@@ -38,11 +39,8 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.testtools.TestDataHolder;
 import com.asakusafw.testtools.db.DbUtils;
 import com.asakusafw.testtools.excel.ExcelUtils;
-
-import test.modelgen.model.AllTypesWNoerr;
 
 /**
  * @author shinichi.umegane
@@ -80,26 +78,6 @@ public class TestDataHolderTest {
         } finally {
             DbUtils.closeQuietly(conn);
         }
-
-        // TODO HDFSへのI/Oのテストを追加する
-
-        // シーケンスファイルへの書き込みとシーケンスファイルからのロード
-//        File tmpFile = File.createTempFile(this.toString(), "tmp");
-//        System.out.println(tmpFile);
-//        FSDataOutputStream out = new FSDataOutputStream(new FileOutputStream(tmpFile), null);
-//        Configuration conf = new Configuration();
-//        Class<?> keyClass = NullWritable.class;
-//        Class<?> valClass = dataHolder.getModelClass();
-//        SequenceFile.CompressionType compressionType = CompressionType.BLOCK;
-//        CompressionCodec codec = new BZip2Codec();
-//        Writer writer = SequenceFile.createWriter(conf, out, keyClass, valClass, compressionType, codec);
-//        dataHolder.store(writer);
-//        writer.close();
-
-//        FileSystem fs = new LocalFileSystem();
-//        Reader reader = new Reader(fs, new Path(tmpFile.getAbsolutePath()), conf);
-//        dataHolder.load(reader);
-//        reader.close();
     }
 
 
@@ -553,12 +531,12 @@ public class TestDataHolderTest {
         /**
          * コメント
          */
-        private String comment;
+        private final String comment;
 
         /**
          * EXCELシートの行位置
          */
-        private int rownum;
+        private final int rownum;
 
         private DATA(String comment, int rownum) {
             this.comment = comment;

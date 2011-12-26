@@ -28,8 +28,6 @@ import org.junit.Test;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.ProfileContext;
-import com.asakusafw.windgate.core.process.BasicProcessProvider;
-import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.resource.MockDrainDriver;
 import com.asakusafw.windgate.core.resource.MockSourceDriver;
 

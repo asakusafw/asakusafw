@@ -59,7 +59,7 @@ public class JobflowAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(JobflowAnalyzer.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     private boolean sawError;
 
@@ -272,10 +272,7 @@ public class JobflowAnalyzer {
                 continue;
             }
             Set<Location> locations = proc.getInputLocations(input);
-            assert locations.size() == 1 : "sidedata must be singular: " + input;
-            Location source = locations.iterator().next();
-            assert source.isPrefix() == false : "sidedata must not have wildcard: " + input;
-            results.add(new SideData(source, input.getName()));
+            results.add(new SideData(locations, input.getName()));
         }
         return results;
     }

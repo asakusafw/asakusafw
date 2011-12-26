@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.bulkloader.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.bulkloader.testing.io.SystemColumnsInput;
 import com.asakusafw.compiler.bulkloader.testing.io.SystemColumnsOutput;
 import com.asakusafw.runtime.model.DataModel;
@@ -9,10 +15,6 @@ import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 import com.asakusafw.vocabulary.bulkloader.OriginalName;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * system_columnsを表すデータモデルクラス。
  */

@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,12 +32,16 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+
 /**
  * ステージリソースを利用するためのドライバ。
  */
 public class StageResourceDriver implements Closeable {
 
     static final Log LOG = LogFactory.getLog(StageResourceDriver.class);
+
+    private static final String PREFIX_LOCAL_CACHE_NAME = "com.asakusafw.cache.";
 
     private final Configuration configuration;
 
@@ -76,18 +83,38 @@ public class StageResourceDriver implements Closeable {
      * このパスは、{@link #getResourceFileSystem()}によって得られるファイルシステム上のパスを表す。
      * </p>
      * @param resourceName リソースの名前
-     * @return 対応するリソースへのパス、存在しない場合は{@code null}
+     * @return 対応するリソースへのパス一覧
      * @throws IOException リソースの検索に失敗した場合
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
-    public Path findCache(String resourceName) throws IOException {
+    public List<Path> findCache(String resourceName) throws IOException {
         if (resourceName == null) {
             throw new IllegalArgumentException("cacheName must not be null"); //$NON-NLS-1$
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("finding cache: " + resourceName);
         }
-        Path cache = new Path(resourceName);
+        String[] localNames = getConfiguration().getStrings(getLocalCacheNameKey(resourceName));
+        List<Path> results = new ArrayList<Path>();
+        for (String localName : localNames) {
+            Path resolvedPath = findLocalCache(resourceName, localName);
+            if (resolvedPath == null) {
+                return Collections.emptyList();
+            }
+            results.add(fileSystem.makeQualified(resolvedPath));
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Cache file resolved: resource={0}, paths={1}",
+                    resourceName,
+                    results));
+        }
+        return results;
+    }
+
+    private Path findLocalCache(String resouceName, String localName) throws IOException {
+        assert localName != null;
+        Path cache = new Path(localName);
         if (fileSystem.exists(cache)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("symlink found: " + cache);
@@ -95,22 +122,24 @@ public class StageResourceDriver implements Closeable {
             return cache;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("symlink not found: " + resourceName);
+            LOG.debug("symlink not found: " + localName);
         }
-        Path directPath = findCacheForLocalMode(resourceName);
+        Path directPath = findCacheForLocalMode(resouceName, localName);
         if (directPath == null || fileSystem.exists(directPath) == false) {
             LOG.warn(MessageFormat.format(
-                    "Failed to resolve stage resource \"{0}\"",
-                    resourceName));
+                    "Failed to resolve stage resource \"{1}\" (resource={0})",
+                    resouceName,
+                    localName));
         }
         return directPath;
     }
 
-    private Path findCacheForLocalMode(String resourceName) throws IOException {
+    private Path findCacheForLocalMode(String resourceName, String localName) throws IOException {
         assert resourceName != null;
+        assert localName != null;
         String remoteName = null;
         for (URI uri : DistributedCache.getCacheFiles(configuration)) {
-            if (resourceName.equals(uri.getFragment())) {
+            if (localName.equals(uri.getFragment())) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("fragment matched: " + uri);
                 }
@@ -126,8 +155,8 @@ public class StageResourceDriver implements Closeable {
             return null;
         }
         for (Path path : DistributedCache.getLocalCacheFiles(configuration)) {
-            String localName = path.getName();
-            if (remoteName.equals(localName)) {
+            String localFileName = path.getName();
+            if (remoteName.equals(localFileName)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("local path matched: " + path);
                 }
@@ -139,27 +168,63 @@ public class StageResourceDriver implements Closeable {
 
     @Override
     public void close() throws IOException {
-        this.fileSystem.close();
+        // do not close local file system
+        return;
     }
 
     /**
      * 指定のジョブにリソースの情報を追加する。
      * @param job 対象の情報
-     * @param resourcePath リソースへのパス
+     * @param resourcePath リソースへのパス (for temporary storage)
      * @param resourceName リソースの名前
+     * @throws IOException リソースの情報が不明であった場合
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
-    public static void add(Job job, Path resourcePath, String resourceName) {
-        StringBuilder buf = new StringBuilder();
-        buf.append(resourcePath.toString());
-        buf.append('#');
-        buf.append(resourceName);
-        try {
-            URI uri = new URI(buf.toString());
-            DistributedCache.addCacheFile(uri, job.getConfiguration());
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
+    public static void add(Job job, String resourcePath, String resourceName) throws IOException {
+        if (job == null) {
+            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
         }
+        if (resourcePath == null) {
+            throw new IllegalArgumentException("resourcePath must not be null"); //$NON-NLS-1$
+        }
+        if (resourceName == null) {
+            throw new IllegalArgumentException("resourceName must not be null"); //$NON-NLS-1$
+        }
+        List<Path> list = TemporaryStorage.list(job.getConfiguration(), new Path(resourcePath));
+        if (list.isEmpty()) {
+            throw new IOException(MessageFormat.format(
+                    "Resource not found: {0}",
+                    resourcePath));
+        }
+        String[] added = job.getConfiguration().getStrings(getLocalCacheNameKey(resourceName));
+        List<String> localNames = new ArrayList<String>();
+        if (added != null && added.length >= 1) {
+            Collections.addAll(localNames, added);
+        }
+        int index = localNames.size();
+        for (Path path : list) {
+            String name = String.format("%s-%04d", resourceName, index++);
+            StringBuilder buf = new StringBuilder();
+            buf.append(path.toString());
+            buf.append('#');
+            buf.append(name);
+
+            localNames.add(name);
+            try {
+                URI uri = new URI(buf.toString());
+                DistributedCache.addCacheFile(uri, job.getConfiguration());
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        job.getConfiguration().setStrings(
+                getLocalCacheNameKey(resourceName),
+                localNames.toArray(new String[localNames.size()]));
         DistributedCache.createSymlink(job.getConfiguration());
+    }
+
+    private static String getLocalCacheNameKey(String resourceName) {
+        assert resourceName != null;
+        return PREFIX_LOCAL_CACHE_NAME + resourceName;
     }
 }

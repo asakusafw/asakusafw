@@ -17,6 +17,11 @@ package com.asakusafw.bulkloader.collector;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,15 +29,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.asakusafw.bulkloader.bean.ExporterBean;
-import com.asakusafw.bulkloader.collector.Collector;
-import com.asakusafw.bulkloader.collector.ExportFileSend;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 
 /**

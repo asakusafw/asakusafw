@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.bulkloader.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.bulkloader.testing.model.Ex1;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>ex1</code>をTSVなどのレコード形式で出力する。
  */

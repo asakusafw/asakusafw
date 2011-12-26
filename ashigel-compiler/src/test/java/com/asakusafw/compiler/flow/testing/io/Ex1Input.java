@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.flow.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>ex1</code>を読み出す
  */

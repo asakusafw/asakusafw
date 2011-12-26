@@ -1,1 +1,2 @@
 com.asakusafw.compiler.flow.external.FileIoProcessor
+com.asakusafw.compiler.testing.TemporaryIoProcessor

@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;

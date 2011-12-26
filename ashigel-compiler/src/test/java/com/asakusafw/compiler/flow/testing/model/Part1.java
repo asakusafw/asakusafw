@@ -1,4 +1,10 @@
 package com.asakusafw.compiler.flow.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.flow.testing.io.Part1Input;
 import com.asakusafw.compiler.flow.testing.io.Part1Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -7,10 +13,6 @@ import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * part1を表すデータモデルクラス。
  */

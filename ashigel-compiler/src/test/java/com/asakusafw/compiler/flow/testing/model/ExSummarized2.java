@@ -1,4 +1,11 @@
 package com.asakusafw.compiler.flow.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.flow.testing.io.ExSummarized2Input;
 import com.asakusafw.compiler.flow.testing.io.ExSummarized2Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -9,11 +16,6 @@ import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * ex_summarized2を表すデータモデルクラス。
  */

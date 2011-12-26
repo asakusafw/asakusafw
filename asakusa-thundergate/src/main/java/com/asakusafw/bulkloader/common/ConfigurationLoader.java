@@ -160,7 +160,7 @@ public final class ConfigurationLoader {
                     Constants.PROP_KEY_WORKINGDIR_USE,
                     Constants.PROP_DEFAULT_WORKINGDIR_USE);
         }
-        // SequenceFileファイルの圧縮有無
+        // 出力ファイルの圧縮有無
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE))) {
             prop.setProperty(
                     Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE,

@@ -32,8 +32,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +39,13 @@ import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.epilogue.parallel.ParallelSortClientEmitter;
-import com.asakusafw.compiler.flow.epilogue.parallel.ResolvedSlot;
-import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
-import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -145,7 +145,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     @SuppressWarnings("rawtypes")
     @Override
     public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return SequenceFileInputFormat.class;
+        return TemporaryInputFormat.class;
     }
 
     @Override
@@ -195,7 +195,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 output.getDescription().getDataType(),
                 Collections.<String>emptyList(),
                 inputs,
-                SequenceFileOutputFormat.class);
+                TemporaryOutputFormat.class);
     }
 
     private Location getInputLocation(InputDescription description) {

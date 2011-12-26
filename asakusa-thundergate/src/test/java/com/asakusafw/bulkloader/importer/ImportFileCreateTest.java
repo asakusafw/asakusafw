@@ -17,24 +17,6 @@ package com.asakusafw.bulkloader.importer;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.asakusafw.bulkloader.bean.ImportBean;
-import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
-import com.asakusafw.bulkloader.common.ConfigurationLoader;
-import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
-import com.asakusafw.bulkloader.common.ImportTableLockType;
-import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
-import com.asakusafw.bulkloader.importer.ImportFileCreate;
-import com.asakusafw.bulkloader.importer.ImportFileDelete;
-import com.asakusafw.bulkloader.testutil.UnitTestUtil;
-import com.asakusafw.testtools.TestUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,6 +26,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.asakusafw.bulkloader.bean.ImportBean;
+import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
+import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
+import com.asakusafw.bulkloader.common.ConfigurationLoader;
+import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.ImportTableLockType;
+import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
+import com.asakusafw.bulkloader.testutil.UnitTestUtil;
+import com.asakusafw.testtools.TestUtils;
 
 
 /**

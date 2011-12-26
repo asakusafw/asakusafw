@@ -19,15 +19,15 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.operator.model.MockFoo;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 
 
 /**
  * Mock {@link ImporterDescription} for {@link MockFoo}.
  */
-public class MockFooImporterDescription extends FileImporterDescription {
+public class MockFooImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

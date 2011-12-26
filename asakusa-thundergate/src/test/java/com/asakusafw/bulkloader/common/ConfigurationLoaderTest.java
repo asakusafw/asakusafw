@@ -25,15 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.asakusafw.bulkloader.common.ConfigurationLoader;
-import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
@@ -385,7 +382,7 @@ public class ConfigurationLoaderTest {
     /**
      * <p>
      * checkAndSetParamHCのテストケース
-     * 正常系：SequenceFileファイルの圧縮有無が設定されていないケース(デフォルト値が設定される)
+     * 正常系：出力ファイルの圧縮有無が設定されていないケース(デフォルト値が設定される)
      * </p>
      *
      * @throws Exception

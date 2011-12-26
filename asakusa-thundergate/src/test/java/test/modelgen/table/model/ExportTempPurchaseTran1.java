@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 package test.modelgen.table.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
@@ -23,12 +32,6 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.Property;
 import com.asakusafw.vocabulary.model.TableModel;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import javax.annotation.Generated;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * テーブル<code>export_temp_purchase_tran_1</code>を表すモデルクラス。
  */

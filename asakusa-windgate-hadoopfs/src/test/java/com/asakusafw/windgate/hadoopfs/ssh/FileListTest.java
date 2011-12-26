@@ -31,8 +31,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.windgate.hadoopfs.ssh.FileList;
-
 /**
  * Test for {@link FileList}.
  */

@@ -162,7 +162,6 @@ public class WindGateHadoopGet {
             }
         } finally {
             executor.shutdownNow();
-            fs.close();
             while (true) {
                 Pair next = queue.poll();
                 if (next == null) {

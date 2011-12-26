@@ -1,4 +1,9 @@
 package com.asakusafw.compiler.flow.testing.operator;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
@@ -15,9 +20,6 @@ import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.CoGroup;
 import com.asakusafw.vocabulary.operator.Fold;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Generated;
 /**
  * {@link ExOperator}に関する演算子ファクトリークラス。
  * @see ExOperator

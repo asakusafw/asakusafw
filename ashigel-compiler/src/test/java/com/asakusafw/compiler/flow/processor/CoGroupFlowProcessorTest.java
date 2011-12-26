@@ -25,14 +25,13 @@ import org.junit.Assume;
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
-import com.asakusafw.compiler.flow.processor.CoGroupFlowProcessor;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp1;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp2;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowOp3;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowSwap;
 import com.asakusafw.compiler.flow.processor.flow.CoGroupFlowWithParameter;
-import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
+import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.testing.model.Ex1;

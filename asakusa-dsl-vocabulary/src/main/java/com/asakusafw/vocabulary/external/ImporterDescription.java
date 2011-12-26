@@ -41,8 +41,6 @@ public interface ImporterDescription {
      */
     DataSize getDataSize();
 
-    // FIXME can be sidedata?
-
     /**
      * インポートするおおよそのデータサイズ。
      */

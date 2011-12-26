@@ -35,9 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.asakusafw.windgate.hadoopfs.ssh.FileList;
-import com.asakusafw.windgate.hadoopfs.ssh.WindGateHadoopPut;
-
 /**
  * Test for {@link WindGateHadoopPut}.
  */
@@ -71,9 +68,6 @@ public class WindGateHadoopPutTest {
     public void tearDown() throws Exception {
         if (stdin != null) {
             System.setIn(stdin);
-        }
-        if (fs != null) {
-            fs.close();
         }
         clear();
     }

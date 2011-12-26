@@ -1,8 +1,9 @@
 package com.asakusafw.compiler.windgate.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.windgate.testing.model.Simple;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>simple</code>をTSVなどのレコード形式で出力する。
  */

@@ -38,7 +38,6 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
-import com.asakusafw.windgate.hadoopfs.jsch.JschConnection;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**

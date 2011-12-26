@@ -16,12 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.KeyConflict;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
  * Mock {@link FileExporterDescription} for {@link KeyConflict}.
  */
-public class KeyConflictMockExporterDescription extends FileExporterDescription {
+public class KeyConflictMockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

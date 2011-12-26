@@ -16,6 +16,7 @@
 package com.asakusafw.windgate.core.resource;
 
 import java.io.IOException;
+
 import com.asakusafw.windgate.core.ProcessScript;
 
 /**

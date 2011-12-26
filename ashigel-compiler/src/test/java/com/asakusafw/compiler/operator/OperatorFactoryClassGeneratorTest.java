@@ -23,14 +23,8 @@ import java.util.List;
 
 import javax.lang.model.element.PackageElement;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.operator.OperatorClass;
-import com.asakusafw.compiler.operator.OperatorClassCollector;
-import com.asakusafw.compiler.operator.OperatorClassGenerator;
-import com.asakusafw.compiler.operator.OperatorFactoryClassGenerator;
-import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
 import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;

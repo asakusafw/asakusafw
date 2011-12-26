@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +39,7 @@ import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoin;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoinUpdate;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
+import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -64,6 +64,8 @@ import com.ashigeru.lang.java.model.syntax.Name;
 
 /**
  * フローグラフを書き換えてJoinを最適化する。
+ * @since 0.1.0
+ * @version 0.2.5
  */
 public class JoinRewriter extends FlowCompilingEnvironment.Initialized implements FlowGraphRewriter {
 
@@ -102,7 +104,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         if (isSupportedSize(desc) == false) {
             return false;
         }
-        if (isSequenceFormat(desc) == false) {
+        if (isSupportedFormat(desc) == false) {
             return false;
         }
         return true;
@@ -125,15 +127,16 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         }
     }
 
-    private boolean isSequenceFormat(InputDescription desc) {
+    private boolean isSupportedFormat(InputDescription desc) {
         assert desc != null;
         assert desc.getImporterDescription() != null;
         ExternalIoDescriptionProcessor proc = getEnvironment().getExternals().findProcessor(desc);
         if (proc == null) {
             return false;
         }
-        // FIXME currently side data join is only supported for SequenceFileInputFormat.
-        return (Class<?>) proc.getInputFormatType(desc) == SequenceFileInputFormat.class;
+        // FIXME currently side data join is only supported for TemporaryInputFormat.
+        Class<?> formatType = proc.getInputFormatType(desc);
+        return formatType == TemporaryInputFormat.class;
     }
 
     private boolean rewriteSuccessors(InputDescription source, FlowIn<?> input) {
