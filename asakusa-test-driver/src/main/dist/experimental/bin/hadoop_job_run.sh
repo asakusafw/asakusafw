@@ -41,7 +41,8 @@ PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 
 LIBJAR=$FLOW_JARNAME
 
-for i in $ASAKUSA_HOME/core/lib/*.jar; do
+for i in "$ASAKUSA_HOME/core/lib/"*.jar
+do
     LIBJAR="$LIBJAR","$i"
 done
 
@@ -50,7 +51,7 @@ then
     EXTLIBCNT=$(ls -1 "$ASAKUSA_HOME/ext/lib" | wc -l)
     if [ $EXTLIBCNT != "0" ]
     then
-      for i in "$ASAKUSA_HOME/ext/lib/*.jar"
+      for i in "$ASAKUSA_HOME/ext/lib/"*.jar
       do
         LIBJAR="$LIBJAR","$i"
       done
@@ -61,6 +62,6 @@ cd $HOME
 
 RUNCMD="$HADOOP_HOME/bin/hadoop jar $BATCH_RUNTIME_JAR $TOOL_LAUNCHER_CLASSNAME $STAGE_CLIENT_CLASSNAME -conf $PLUGIN_CONF -libjars $LIBJAR" 
 
-echo "【COMMAND】$RUNCMD" "$@" $DPROP
+echo "[COMMAND] $RUNCMD" "$@" $DPROP
 $RUNCMD "$@" $DPROP
 exit $?
