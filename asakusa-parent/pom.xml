@@ -24,7 +24,7 @@
 	</organization>
 
 	<properties>
-		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
+		<hadoop.version>0.20.2-cdh3u2</hadoop.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
@@ -393,12 +393,12 @@ encoding/<project>=UTF-8
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-core</artifactId>
-				<version>${cloudera.cdh.version}</version>
+				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-tools</artifactId>
-				<version>${cloudera.cdh.version}</version>
+				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>
