@@ -9,7 +9,7 @@
 	<properties>
 		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
 
-		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
+		<hadoop.version>0.20.2-cdh3u2</hadoop.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 		<commons.io.version>2.0.1</commons.io.version>
@@ -341,7 +341,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
-			<version>${cloudera.cdh.version}</version>
+			<version>${hadoop.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

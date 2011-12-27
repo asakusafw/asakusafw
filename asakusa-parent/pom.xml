@@ -24,22 +24,22 @@
 	</organization>
 
 	<properties>
-		<cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
+		<hadoop.version>0.20.2-cdh3u2</hadoop.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
+		<commons.cli.version>1.2</commons.cli.version>
+		<commons.configuration.version>1.6</commons.configuration.version>
 		<commons.io.version>2.0.1</commons.io.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.logging.version>1.0.4</commons.logging.version>
 		<logback.version>0.9.28</logback.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<junit.version>4.8.2</junit.version>
-		<hamcrest.version>1.1</hamcrest.version>
-
-		<commons.cli.version>1.2</commons.cli.version>
 		<log4j.version>1.2.15</log4j.version>
 		<poi.version>3.6</poi.version>
 		<jsch.version>0.1.45</jsch.version>
+		<junit.version>4.8.2</junit.version>
+		<hamcrest.version>1.1</hamcrest.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -393,12 +393,12 @@ encoding/<project>=UTF-8
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-core</artifactId>
-				<version>${cloudera.cdh.version}</version>
+				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-tools</artifactId>
-				<version>${cloudera.cdh.version}</version>
+				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>
