@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.external.flow.IndependentOutExporterDesc;
 import com.asakusafw.compiler.flow.external.flow.IndependentOutputJob;
 import com.asakusafw.compiler.flow.external.flow.InvalidFileNameOutputJob;
@@ -147,7 +148,7 @@ public class FileIoProcessorTest {
     public void validate() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(SingleOutputJob.class);
     }
 
@@ -171,7 +172,7 @@ public class FileIoProcessorTest {
     public void validate_missing_path() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(MissingPathOutputJob.class);
     }
 
@@ -183,7 +184,7 @@ public class FileIoProcessorTest {
     public void validate_inavalid_file_name() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(InvalidFileNameOutputJob.class);
     }
 
@@ -195,7 +196,7 @@ public class FileIoProcessorTest {
     public void validate_singular_file() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(SingularOutputJob.class);
     }
 
@@ -207,7 +208,7 @@ public class FileIoProcessorTest {
     public void validate_root() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(RootOutputJob.class);
     }
 
@@ -335,7 +336,7 @@ public class FileIoProcessorTest {
     public void mapreduce_370() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_DISABLED);
+                GenericOptionValue.DISABLED.getSymbol());
         tester.compileJobflow(SingleOutputJob.class);
     }
 
@@ -347,7 +348,7 @@ public class FileIoProcessorTest {
     public void output_single() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -369,7 +370,7 @@ public class FileIoProcessorTest {
     public void output_multiple() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -403,7 +404,7 @@ public class FileIoProcessorTest {
     public void output_independent() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -429,7 +430,7 @@ public class FileIoProcessorTest {
     public void output_nested() throws Exception {
         tester.options().putExtraAttribute(
                 FileIoProcessor.OPTION_EXPORTER_ENABLED,
-                FileIoProcessor.OPTION_VALUE_ENABLED);
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));

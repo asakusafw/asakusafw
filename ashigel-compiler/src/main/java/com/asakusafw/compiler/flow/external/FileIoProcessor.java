@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.apache.hadoop.mapreduce.InputFormat;
 
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
@@ -63,17 +64,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
      */
     public static final String OPTION_EXPORTER_ENABLED = "MAPREDUCE-370";
 
-    /**
-     * The option value that means {@code "enabled"}.
-     */
-    public static final String OPTION_VALUE_ENABLED = "enabled";
-
-    /**
-     * The option value that means {@code "disabled"}.
-     */
-    public static final String OPTION_VALUE_DISABLED = "disabled";
-
-    private static final String DEFAULT_EXPORTER_ENABLED = OPTION_VALUE_DISABLED;
+    private static final GenericOptionValue DEFAULT_EXPORTER_ENABLED = GenericOptionValue.DISABLED;
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -87,21 +78,36 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
+        boolean valid = validateOutputs(outputs);
+        return valid;
+    }
+
+    private boolean validateOutputs(List<OutputDescription> outputs) {
+        assert outputs != null;
         boolean valid = true;
-        String exporterEnabled = getExporterEnabled();
+        GenericOptionValue exporterEnabled = getExporterEnabled();
         if (exporterEnabled == null) {
             valid = false;
-            exporterEnabled = OPTION_VALUE_ENABLED;
+            exporterEnabled = DEFAULT_EXPORTER_ENABLED;
         }
+        boolean mr370applied = checkClassExists("org.apache.hadoop.mapreduce.lib.output.MultipleOutputs");
         for (OutputDescription output : outputs) {
             FileExporterDescription desc = extract(output);
-            if (exporterEnabled.equals(OPTION_VALUE_DISABLED)) {
+            if (exporterEnabled == GenericOptionValue.DISABLED) {
                 valid = false;
                 getEnvironment().error(
                         "出力{0}を利用するにはコンパイルオプション\"{1}={2}\"の指定が必要です",
                         desc.getClass().getName(),
                         getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
-                        OPTION_VALUE_ENABLED);
+                        GenericOptionValue.ENABLED.getSymbol());
+            } else if (mr370applied == false && exporterEnabled == GenericOptionValue.AUTO) {
+                valid = false;
+                getEnvironment().error(
+                        "現在のディストリビューションは{1}に対応していません。" +
+                        "別のディストリビューションを利用するか、{2}に置き換えてください (出力{0})。",
+                        desc.getClass().getName(),
+                        FileExporterDescription.class.getSimpleName(),
+                        "TODO"); // FIXME DirectInputDescription
             }
             String pathPrefix = desc.getPathPrefix();
             if (pathPrefix == null) {
@@ -136,21 +142,32 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         }
         return valid;
     }
+    private boolean checkClassExists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
-    private String getExporterEnabled() {
+
+    private GenericOptionValue getExporterEnabled() {
         String attribute = getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED);
         if (attribute == null) {
-            attribute = DEFAULT_EXPORTER_ENABLED;
+            attribute = DEFAULT_EXPORTER_ENABLED.getSymbol();
         }
-        if (attribute.equals(OPTION_VALUE_ENABLED) == false && attribute.equals(OPTION_VALUE_DISABLED) == false) {
+        GenericOptionValue value = GenericOptionValue.fromSymbol(attribute);
+        if (value == null) {
             getEnvironment().error(
                     "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
                     getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
                     attribute,
-                    OPTION_VALUE_ENABLED + "|" + OPTION_VALUE_DISABLED);
-            attribute = DEFAULT_EXPORTER_ENABLED;
+                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
+            return null;
+        } else {
+            return value;
         }
-        return attribute;
     }
 
     @SuppressWarnings("rawtypes")

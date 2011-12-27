@@ -15,9 +15,12 @@
  */
 package com.asakusafw.compiler.flow;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,6 +141,69 @@ public class FlowCompilerOptions {
          * @throws IllegalArgumentException if any parameter is {@code null}
          */
         public abstract void setTo(FlowCompilerOptions options, boolean value);
+    }
+
+    /**
+     * A common value for extra options.
+     * @since 0.2.5
+     */
+    public enum GenericOptionValue {
+
+        /**
+         * The option is enabled.
+         */
+        ENABLED("enabled", "enable", "t", "true", "y", "yes", "on"),
+
+        /**
+         * The option is disabled.
+         */
+        DISABLED("disabled", "disable", "f", "false", "n", "no", "off"),
+
+        /**
+         * The option should be auto detected.
+         */
+        AUTO("auto"),
+
+        ;
+
+        private final String primary;
+
+        private final Set<String> symbols;
+
+        private GenericOptionValue(String primary, String... symbols) {
+            assert primary != null;
+            assert symbols != null;
+            this.primary = primary;
+            this.symbols = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+            Collections.addAll(this.symbols, primary);
+            Collections.addAll(this.symbols, symbols);
+        }
+
+        /**
+         * Returns the symbol of the value.
+         * @return the symbol
+         */
+        public String getSymbol() {
+            return primary;
+        }
+
+        /**
+         * Returns a value corresponding to the symbol.
+         * @param symbol target symbol
+         * @return corresnponded value, or {@code null} if does not exist
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public static GenericOptionValue fromSymbol(String symbol) {
+            if (symbol == null) {
+                throw new IllegalArgumentException("symbol must not be null"); //$NON-NLS-1$
+            }
+            for (GenericOptionValue value : values()) {
+                if (value.symbols.contains(symbol)) {
+                    return value;
+                }
+            }
+            return null;
+        }
     }
 
     private volatile boolean enableCombiner;

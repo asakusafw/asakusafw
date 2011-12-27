@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.external.FileIoProcessor;
 import com.asakusafw.compiler.testing.JobflowInfo;
@@ -105,26 +106,10 @@ public class TestDriverContext implements TestContext {
 
     private void configureOptions() {
         LOG.debug("Auto detecting current execution environment");
-        configureMapReduce370();
-    }
-
-    private void configureMapReduce370() {
-        boolean exists = checkClassExists("org.apache.hadoop.mapreduce.lib.output.MultipleOutputs");
-        LOG.debug("MAPREDUCE-370 is available: {}", exists);
-        if (exists) {
-            options.putExtraAttribute(FileIoProcessor.OPTION_EXPORTER_ENABLED, FileIoProcessor.OPTION_VALUE_ENABLED);
-        } else {
-            options.putExtraAttribute(FileIoProcessor.OPTION_EXPORTER_ENABLED, FileIoProcessor.OPTION_VALUE_DISABLED);
-        }
-    }
-
-    private boolean checkClassExists(String className) {
-        try {
-            Class.forName(className, false, callerClass.getClassLoader());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        // FIXME Make it pluggable
+        this.options.putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.AUTO.getSymbol());
     }
 
     /**
