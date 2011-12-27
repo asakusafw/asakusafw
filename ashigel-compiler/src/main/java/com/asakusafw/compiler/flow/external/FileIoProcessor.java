@@ -58,6 +58,23 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final String MODULE_NAME = "fileio";
 
+    /**
+     * The option name for {@link FileExporterDescription} is enabled.
+     */
+    public static final String OPTION_EXPORTER_ENABLED = "MAPREDUCE-370";
+
+    /**
+     * The option value that means {@code "enabled"}.
+     */
+    public static final String OPTION_VALUE_ENABLED = "enabled";
+
+    /**
+     * The option value that means {@code "disabled"}.
+     */
+    public static final String OPTION_VALUE_DISABLED = "disabled";
+
+    private static final String DEFAULT_EXPORTER_ENABLED = OPTION_VALUE_DISABLED;
+
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
         return FileImporterDescription.class;
@@ -71,8 +88,21 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
         boolean valid = true;
+        String exporterEnabled = getExporterEnabled();
+        if (exporterEnabled == null) {
+            valid = false;
+            exporterEnabled = OPTION_VALUE_ENABLED;
+        }
         for (OutputDescription output : outputs) {
             FileExporterDescription desc = extract(output);
+            if (exporterEnabled.equals(OPTION_VALUE_DISABLED)) {
+                valid = false;
+                getEnvironment().error(
+                        "出力{0}を利用するにはコンパイルオプション\"{1}={2}\"の指定が必要です",
+                        desc.getClass().getName(),
+                        getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
+                        OPTION_VALUE_ENABLED);
+            }
             String pathPrefix = desc.getPathPrefix();
             if (pathPrefix == null) {
                 valid = false;
@@ -105,6 +135,22 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
             }
         }
         return valid;
+    }
+
+    private String getExporterEnabled() {
+        String attribute = getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED);
+        if (attribute == null) {
+            attribute = DEFAULT_EXPORTER_ENABLED;
+        }
+        if (attribute.equals(OPTION_VALUE_ENABLED) == false && attribute.equals(OPTION_VALUE_DISABLED) == false) {
+            getEnvironment().error(
+                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
+                    getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
+                    attribute,
+                    OPTION_VALUE_ENABLED + "|" + OPTION_VALUE_DISABLED);
+            attribute = DEFAULT_EXPORTER_ENABLED;
+        }
+        return attribute;
     }
 
     @SuppressWarnings("rawtypes")

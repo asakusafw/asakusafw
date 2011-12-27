@@ -145,6 +145,21 @@ public class FileIoProcessorTest {
      */
     @Test
     public void validate() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
+        tester.compileJobflow(SingleOutputJob.class);
+    }
+
+    /**
+     * missing path.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_invalid_compiler_option() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                "__INVALID__");
         tester.compileJobflow(SingleOutputJob.class);
     }
 
@@ -154,6 +169,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_missing_path() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         tester.compileJobflow(MissingPathOutputJob.class);
     }
 
@@ -163,6 +181,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_inavalid_file_name() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         tester.compileJobflow(InvalidFileNameOutputJob.class);
     }
 
@@ -172,6 +193,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_singular_file() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         tester.compileJobflow(SingularOutputJob.class);
     }
 
@@ -181,6 +205,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_root() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         tester.compileJobflow(RootOutputJob.class);
     }
 
@@ -301,11 +328,26 @@ public class FileIoProcessorTest {
     }
 
     /**
+     * Fail for MAPREDUCE-370.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void mapreduce_370() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_DISABLED);
+        tester.compileJobflow(SingleOutputJob.class);
+    }
+
+    /**
      * Output single file set.
      * @throws Exception if failed
      */
     @Test
     public void output_single() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -325,6 +367,9 @@ public class FileIoProcessorTest {
      */
     @Test
     public void output_multiple() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -356,6 +401,9 @@ public class FileIoProcessorTest {
      */
     @Test
     public void output_independent() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -379,6 +427,9 @@ public class FileIoProcessorTest {
      */
     @Test
     public void output_nested() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                FileIoProcessor.OPTION_VALUE_ENABLED);
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));

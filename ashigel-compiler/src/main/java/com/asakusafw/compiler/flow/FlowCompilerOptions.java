@@ -40,6 +40,11 @@ public class FlowCompilerOptions {
     public static final String K_OPTIONS = "com.asakusafw.compiler.options";
 
     /**
+     * The key prefix for extra options.
+     */
+    public static final String PREFIX_EXTRA_OPTION = "X";
+
+    /**
      * オプションの項目一覧。
      */
     public enum Item {
@@ -318,6 +323,19 @@ OptionName:
      */
     public void setEnableDebugLogging(boolean enable) {
         this.enableDebugLogging = enable;
+    }
+
+    /**
+     * Returns the extra option key name for the option name.
+     * @param optionName the original option name
+     * @return the key name for the option
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public String getExtraAttributeKeyName(String optionName) {
+        if (optionName == null) {
+            throw new IllegalArgumentException("optionName must not be null"); //$NON-NLS-1$
+        }
+        return PREFIX_EXTRA_OPTION + optionName;
     }
 
     /**
