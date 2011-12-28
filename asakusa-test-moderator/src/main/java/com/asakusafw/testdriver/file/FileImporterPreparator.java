@@ -105,7 +105,7 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
             };
         }
         VariableTable variables = createVariables(context);
-        String destination = path.iterator().next();
+        String destination = path.iterator().next().replace('*', '_');
         String resolved = variables.parse(destination, false);
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = getOpposite(conf, description.getInputFormat());
