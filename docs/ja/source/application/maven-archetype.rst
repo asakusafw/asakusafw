@@ -332,6 +332,9 @@ Eclipseを使ったアプリケーションの開発
 
 ``eclipse:add-maven-repo`` クラスパス変数M2_REPOを設定
 ------------------------------------------------------
+..  attention::
+    この手順( ``eclipse:add-maven-repo`` の実行)はEclipseにm2eプラグインが入っている場合は不要です。例えば Eclipse 3.7(Indigo) 以降のEclipse IDE for Java Developers にはm2eがあらかじめインストールされているため、この手順は不要となります。
+
 Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。
 
 ワークスペースをデフォルト値( ``$HOME/workspce`` )に指定して起動した場合は、以下のコマンドを実行します。
@@ -359,6 +362,29 @@ EclipseからプロジェクトをImportするには、Eclipseのメニューか
 
     mvn clean compile eclipse:eclipse
 
+Mavenプロジェクトへの変換(m2eプラグインの利用)
+----------------------------------------------
+m2eプラグインを使ってアプリケーション用プロジェクトをMavenプロジェクトに変換すると、Eclipse上からMavenを実行することが可能になるなど、いくつか便利な機能を使用できます。
+
+Mavenプロジェクトへの変換は任意です。変換を行う場合は以下の手順に従ってください。
+
+m2e buildhelper connector のインストール
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+m2eの拡張機能であるm2e buildhelper connectorをインストールします。
+
+1. Eclipseのメニューから [Window] -> [Preferences] -> [Maven] -> [Discovery] を選択し、ダイアログに表示される [Open Dialog] ボタンを押下します。
+2. install n2e connectors ダイアログが表示されるので、このなかから「buildhelper」のチェックをONにして [Finish] ボタンを押下します。
+3. ウィザードに従ってconnectorをインストールします。
+    1. Install Details ダイアログでは そのまま [Next>] ボタンを押下します。
+    2. Review Licenses ダイアログでは [I accept...] を選択して [Finish] ボタンを押下します。
+    3. Security Warinig ダイアログが表示された場合、そのまま [OK] ボタンを押下します。
+    4. Software Updates ダイアログではEclipseの再起動を促されるので、 [Yes] ボタンを押下してEclipseを再起動します。
+
+Mavenプロジェクトへの変換
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Eclipseのパッケージエクスプローラーからアプリケーション用プロジェクトを右クリックして [Configure] -> [Convert to Maven Project] を選択します。
+
+これでMavenプロジェクトへの変換が行われました。アプリケーション用プロジェクトに対してMavenを実行する場合は、アプリケーション用プロジェクトを右クリックして [Run As] を選択するとサブメニューに [Maven build...] など、いくつかのMaven実行用メニューが表示されるのでこれを選択してください。
 
 アプリケーション用依存ライブラリの追加
 ======================================

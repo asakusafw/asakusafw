@@ -211,13 +211,10 @@ Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から
     tar xf eclipse-java-*-linux-gtk.tar.gz
     mv eclipse ~/eclipse
 
-次に、Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ここでは、ワークスペースディレクトリに$HOME/workspace を指定します。
-
-..  code-block:: sh
-
-    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
-
 Eclipseを起動するには、ファイラーから $HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
+
+..  attention::
+    Eclipse 3.6以前のEclipse IDE for Java Developersを使用している場合は、Eclipseを起動する前にクラスパス変数M2_REPOを設定する必要があります。詳しくは :doc:`../application/maven-archetype` の :ref:`eclipse-configuration` を参照して下さい。
 
 Asakusa Frameworkのインストールとサンプルアプリケーションの実行
 ===============================================================
