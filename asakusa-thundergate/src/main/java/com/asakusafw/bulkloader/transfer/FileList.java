@@ -32,8 +32,8 @@ import org.apache.hadoop.io.InputBuffer;
 import org.apache.hadoop.io.OutputBuffer;
 
 import com.asakusafw.bulkloader.log.Log;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
-import com.asakusafw.runtime.io.ZipEntryOutputStream;
+import com.asakusafw.runtime.io.util.ZipEntryInputStream;
+import com.asakusafw.runtime.io.util.ZipEntryOutputStream;
 
 /**
  * A cache list transfer protocol.

@@ -19,14 +19,15 @@ import static com.asakusafw.runtime.stage.StageConstants.*;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Writable;
@@ -36,15 +37,15 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 import com.asakusafw.runtime.stage.input.StageInputDriver;
-import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
-import com.asakusafw.runtime.stage.output.OldNullOutputCommitter;
+import com.asakusafw.runtime.stage.input.StageInputFormat;
+import com.asakusafw.runtime.stage.input.StageInputMapper;
+import com.asakusafw.runtime.stage.output.StageOutputFormat;
+import com.asakusafw.runtime.stage.output.LegacyBridgeOutputCommitter;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 import com.asakusafw.runtime.stage.resource.StageResourceDriver;
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
@@ -344,22 +345,24 @@ public abstract class AbstractStageClient extends Configured implements Tool {
     }
 
     private void configureStageInput(Job job, VariableTable variables) {
+        List<StageInput> inputList = new ArrayList<StageInput>();
         for (StageInput input : getStageInputs()) {
             Class<? extends Mapper<?, ?, ?, ?>> mapperClass = input.getMapperClass();
             String pathString = input.getPathString();
             Class<? extends InputFormat<?, ?>> formatClass = input.getFormatClass();
             String expanded = variables.parse(pathString);
+            Map<String, String> attributes = input.getAttributes();
             LOG.info(MessageFormat.format(
-                    "Input: path={0}, format={1}, mapper={2}",
+                    "Input: path={0}, format={1}, mapper={2}, attributes={3}",
                     expanded,
                     formatClass.getName(),
-                    mapperClass.getName()));
-            StageInputDriver.add(
-                    job,
-                    new Path(expanded),
-                    formatClass,
-                    mapperClass);
+                    mapperClass.getName(),
+                    attributes));
+            inputList.add(new StageInput(expanded, formatClass, mapperClass, attributes));
         }
+        StageInputDriver.set(job, inputList);
+        job.setInputFormatClass(StageInputFormat.class);
+        job.setMapperClass(StageInputMapper.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -427,42 +430,31 @@ public abstract class AbstractStageClient extends Configured implements Tool {
 
     private void configureStageOutput(Job job, VariableTable variables) {
         String outputPath = variables.parse(getStageOutputPath());
-        boolean sawFileOutput = false;
-        boolean sawTemporaryOutput = false;
+        List<StageOutput> outputList = new ArrayList<StageOutput>();
         for (StageOutput output : getStageOutputs()) {
             String name = output.getName();
             Class<?> keyClass = output.getKeyClass();
             Class<?> valueClass = output.getValueClass();
             Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
+            Map<String, String> attributes = output.getAttributes();
             LOG.info(MessageFormat.format(
-                    "Output: path={0}/{1}-*, format={2}, key={3}, value={4}",
+                    "Output: path={0}/{1}-*, format={2}, key={3}, value={4}, attributes={5}",
                     outputPath,
                     name,
                     formatClass.getName(),
                     keyClass.getName(),
-                    valueClass.getName()));
-            StageOutputDriver.add(
-                    job,
-                    name,
-                    formatClass,
-                    keyClass,
-                    valueClass);
-            sawFileOutput |= FileOutputFormat.class.isAssignableFrom(formatClass);
-            sawTemporaryOutput |= TemporaryOutputFormat.class.isAssignableFrom(formatClass);
+                    valueClass.getName(),
+                    attributes));
+            outputList.add(new StageOutput(name, keyClass, valueClass, formatClass, attributes));
         }
+        StageOutputDriver.set(job, outputPath, outputList);
 
-        if (sawFileOutput) {
-            FileOutputFormat.setOutputPath(job, new Path(outputPath));
-        }
-        if (sawTemporaryOutput) {
-            TemporaryOutputFormat.setOutputPath(job, new Path(outputPath));
-        }
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(NullWritable.class);
-        job.setOutputFormatClass(BridgeOutputFormat.class);
+        job.setOutputFormatClass(StageOutputFormat.class);
         job.getConfiguration().setClass(
                 "mapred.output.committer.class",
-                OldNullOutputCommitter.class,
+                LegacyBridgeOutputCommitter.class,
                 org.apache.hadoop.mapred.OutputCommitter.class);
     }
 

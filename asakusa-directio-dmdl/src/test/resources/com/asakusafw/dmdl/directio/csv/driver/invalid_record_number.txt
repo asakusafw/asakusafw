@@ -1,0 +1,6 @@
+@directio.csv
+model = {
+    value : TEXT;
+    @directio.csv.record_number
+    number : TEXT;
+};

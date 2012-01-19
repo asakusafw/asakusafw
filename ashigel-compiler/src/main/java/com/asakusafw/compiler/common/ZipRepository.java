@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
+import com.asakusafw.runtime.io.util.ZipEntryInputStream;
 
 /**
  * ファイルシステム上のZIPアーカイブをリソースのリポジトリとする。

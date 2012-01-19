@@ -24,6 +24,8 @@ import java.text.MessageFormat;
 import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
 
+import com.asakusafw.runtime.io.util.WritableRawComparable;
+
 /**
  * {@code null}値を許容する10進数。
  */
@@ -181,15 +183,16 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     }
 
     @Override
-    public int compareTo(DecimalOption o) {
+    public int compareTo(WritableRawComparable o) {
+        DecimalOption other = (DecimalOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        return entity.compareTo(o.entity);
+        return entity.compareTo(other.entity);
     }
 
     @Override
@@ -255,6 +258,16 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
         }
     }
 
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
+    }
+
     /**
      * このクラスの直列化された形式から、占有しているバイト長を返す。
      * @param bytes 対象のバイト配列
@@ -284,10 +297,21 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     public static int compareBytes(
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
+        int len1 = (int) ByteArrayUtil.readVLong(b1, s1 + 1);
+        int len2 = (int) ByteArrayUtil.readVLong(b2, s2 + 1);
+        if (len1 == -1) {
+            if (len2 == -1) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (len2 == -1) {
+            return +1;
+        }
         int n1 = WritableUtils.decodeVIntSize(b1[s1]);
         int n2 = WritableUtils.decodeVIntSize(b2[s2]);
         return WritableComparator.compareBytes(
-                b1, s1 + n1, l1 - n1,
-                b2, s2 + n2, l2 - n2);
+                b1, s1 + n1, len1,
+                b2, s2 + n2, len2);
     }
 }

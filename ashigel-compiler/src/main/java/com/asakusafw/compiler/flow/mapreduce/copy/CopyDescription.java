@@ -15,16 +15,11 @@
  */
 package com.asakusafw.compiler.flow.mapreduce.copy;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.OutputFormat;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
-import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 
 /**
  * Describes each input to be copied.
@@ -34,12 +29,9 @@ public class CopyDescription {
 
     private final String name;
 
-    private final List<Location> inputPaths;
-
     private final DataClass dataModel;
 
-    @SuppressWarnings("rawtypes")
-    private final Class<? extends InputFormat> inputFormatType;
+    private final SourceInfo input;
 
     @SuppressWarnings("rawtypes")
     private final Class<? extends OutputFormat> outputFormatType;
@@ -47,28 +39,24 @@ public class CopyDescription {
     /**
      * Creates a new instance.
      * @param name slot name; this is also used as output name
-     * @param inputPaths input paths
      * @param dataModel target data model type
-     * @param inputFormatType input format type
+     * @param input input information
      * @param outputFormatType output format type
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     @SuppressWarnings("rawtypes")
     public CopyDescription(
             String name,
-            Collection<Location> inputPaths,
             DataClass dataModel,
-            Class<? extends InputFormat> inputFormatType,
+            SourceInfo input,
             Class<? extends OutputFormat> outputFormatType) {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
-        Precondition.checkMustNotBeNull(inputPaths, "inputPaths"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(dataModel, "dataModel"); //$NON-NLS-1$
-        Precondition.checkMustNotBeNull(inputFormatType, "inputFormatType"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputFormatType, "outputFormatType"); //$NON-NLS-1$
         this.name = name;
-        this.inputPaths = new ArrayList<Location>(inputPaths);
         this.dataModel = dataModel;
-        this.inputFormatType = inputFormatType;
+        this.input = input;
         this.outputFormatType = outputFormatType;
     }
 
@@ -81,11 +69,11 @@ public class CopyDescription {
     }
 
     /**
-     * Returns the input locations.
-     * @return input locations
+     * Returns input information.
+     * @return input information
      */
-    public List<Location> getInputPaths() {
-        return inputPaths;
+    public SourceInfo getInput() {
+        return input;
     }
 
     /**
@@ -94,15 +82,6 @@ public class CopyDescription {
      */
     public DataClass getDataModel() {
         return dataModel;
-    }
-
-    /**
-     * Returns the input format type.
-     * @return the input format type
-     */
-    @SuppressWarnings("rawtypes")
-    public Class<? extends InputFormat> getInputFormatType() {
-        return inputFormatType;
     }
 
     /**

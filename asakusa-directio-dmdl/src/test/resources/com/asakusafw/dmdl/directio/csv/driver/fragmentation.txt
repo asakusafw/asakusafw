@@ -1,0 +1,9 @@
+@directio.csv(
+    has_header = FALSE,
+    allow_linefeed = FALSE
+)
+tuple = {
+    f1 : TEXT;
+    f2 : TEXT;
+    f3 : TEXT;
+};

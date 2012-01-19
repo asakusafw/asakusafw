@@ -33,7 +33,7 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.Input;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.IoContext;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.Output;
-import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.OutputSource;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Delivery;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
@@ -160,11 +160,9 @@ public class JobflowCompiler {
         }
         List<Output> outputs = new ArrayList<Output>();
         for (Export model : exportGroup) {
-            List<OutputSource> sources = new ArrayList<OutputSource>();
+            List<SourceInfo> sources = new ArrayList<SourceInfo>();
             for (Source source : model.getResolvedSources()) {
-                sources.add(new OutputSource(
-                        source.getLocations(),
-                        source.getInputFormatType()));
+                sources.add(source.getInputInfo());
             }
             outputs.add(new Output(model.getDescription(), sources));
         }
@@ -183,8 +181,8 @@ public class JobflowCompiler {
                 LOG.debug("====");
                 LOG.debug("Import: {}", stage.getId());
                 LOG.debug("Description: {}", stage.getDescription().getImporterDescription().getClass().getName());
-                LOG.debug("Target: {}", stage.getLocations());
-                LOG.debug("Format: {}", stage.getInputFormatType().getName());
+                LOG.debug("Target: {}", stage.getInputInfo().getLocations());
+                LOG.debug("Format: {}", stage.getInputInfo().getFormat().getName());
             }
             for (CompiledStage stage : jobflow.getCompiled().getPrologueStages()) {
                 LOG.debug("====");
@@ -201,7 +199,7 @@ public class JobflowCompiler {
                     LOG.debug("Input: {} ({})", unit.getResolvedLocations(), unit.getDataType());
                 }
                 for (Delivery unit : stage.getDeliveries()) {
-                    LOG.debug("Output: {} ({})", unit.getLocations(), unit.getDataType());
+                    LOG.debug("Output: {} ({})", unit.getInputInfo().getLocations(), unit.getDataType());
                 }
                 Reduce reducer = stage.getReduceOrNull();
                 if (reducer != null) {

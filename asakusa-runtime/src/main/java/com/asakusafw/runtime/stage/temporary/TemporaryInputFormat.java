@@ -32,7 +32,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 
-import com.asakusafw.runtime.stage.input.StageInputDriver;
+import com.asakusafw.runtime.stage.StageInput;
 
 /**
  * A temporary input format.
@@ -61,7 +61,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
      */
     public List<InputSplit> getSplits(
             JobContext context,
-            List<StageInputDriver.Input> inputList) throws IOException, InterruptedException {
+            List<StageInput> inputList) throws IOException, InterruptedException {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
@@ -69,8 +69,8 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
             throw new IllegalArgumentException("inputList must not be null"); //$NON-NLS-1$
         }
         List<Path> paths = new ArrayList<Path>();
-        for (StageInputDriver.Input input : inputList) {
-            paths.add(input.getPath());
+        for (StageInput input : inputList) {
+            paths.add(new Path(input.getPathString()));
         }
         Job job = new Job(context.getConfiguration());
         setInputPaths(job, paths);

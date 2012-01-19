@@ -17,8 +17,10 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,8 +31,11 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
-import com.asakusafw.runtime.stage.output.OldNullOutputCommitter;
+import com.asakusafw.runtime.stage.input.StageInputFormat;
+import com.asakusafw.runtime.stage.input.StageInputMapper;
+import com.asakusafw.runtime.stage.output.LegacyBridgeOutputCommitter;
 import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
@@ -118,13 +123,22 @@ public class CacheBuildClient extends Configured implements Tool {
     private void update() throws IOException, InterruptedException {
         Job job = new Job(getConf());
 
-        StageInputDriver.add(job, storage.getHeadContents("*"), TemporaryInputFormat.class, BaseMapper.class);
-        StageInputDriver.add(job, storage.getPatchContents("*"), TemporaryInputFormat.class, PatchMapper.class);
+        List<StageInput> inputList = new ArrayList<StageInput>();
+        inputList.add(new StageInput(
+                storage.getHeadContents("*").toString(),
+                TemporaryInputFormat.class,
+                BaseMapper.class));
+        inputList.add(new StageInput(
+                storage.getPatchContents("*").toString(),
+                TemporaryInputFormat.class,
+                PatchMapper.class));
+        StageInputDriver.set(job, inputList);
+        job.setInputFormatClass(StageInputFormat.class);
+        job.setMapperClass(StageInputMapper.class);
         job.setMapOutputKeyClass(PatchApplyKey.class);
         job.setMapOutputValueClass(modelClass);
 
         // combiner may have no effect in normal cases
-        // job.setCombinerClass(PatchApplyCombiner.class);
         job.setReducerClass(PatchApplyReducer.class);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(modelClass);
@@ -136,7 +150,7 @@ public class CacheBuildClient extends Configured implements Tool {
         job.setOutputFormatClass(TemporaryOutputFormat.class);
         job.getConfiguration().setClass(
                 "mapred.output.committer.class",
-                OldNullOutputCommitter.class,
+                LegacyBridgeOutputCommitter.class,
                 org.apache.hadoop.mapred.OutputCommitter.class);
 
         LOG.info(MessageFormat.format("Applying patch: {0} / {1} -> {2}",
@@ -186,7 +200,7 @@ public class CacheBuildClient extends Configured implements Tool {
         job.setOutputFormatClass(TemporaryOutputFormat.class);
         job.getConfiguration().setClass(
                 "mapred.output.committer.class",
-                OldNullOutputCommitter.class,
+                LegacyBridgeOutputCommitter.class,
                 org.apache.hadoop.mapred.OutputCommitter.class);
 
         job.setNumReduceTasks(0);

@@ -102,20 +102,14 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
         return valid;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return TemporaryInputFormat.class;
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
+    public SourceInfo getInputInfo(InputDescription description) {
         TemporaryInputDescription desc = extract(description);
-        Set<Location> results = new HashSet<Location>();
+        Set<Location> locations = new HashSet<Location>();
         for (String path : desc.getPaths()) {
-            results.add(Location.fromPath(path, '/'));
+            locations.add(Location.fromPath(path, '/'));
         }
-        return results;
+        return new SourceInfo(locations, TemporaryInputFormat.class);
     }
 
     @Override
@@ -219,7 +213,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
         assert output != null;
         assert name != null;
         List<Slot.Input> inputs = new ArrayList<Slot.Input>();
-        for (OutputSource source : output.getSources()) {
+        for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
                 inputs.add(new Slot.Input(location, format));

@@ -16,6 +16,8 @@
 package com.asakusafw.runtime.io.csv;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.CharBuffer;
@@ -81,6 +83,8 @@ public class CsvParser implements RecordParser {
 
     private final String path;
 
+    private final char separator;
+
     private final String trueFormat;
 
     private final SimpleDateFormat dateFormat;
@@ -88,6 +92,8 @@ public class CsvParser implements RecordParser {
     private final SimpleDateFormat dateTimeFormat;
 
     private final List<String> headerCellsFormat;
+
+    private final boolean allowLineBreakInValue;
 
     private boolean firstLine = true;
 
@@ -113,24 +119,26 @@ public class CsvParser implements RecordParser {
 
     /**
      * Creates a new instance.
-     * @param reader the source stream
+     * @param stream the source stream
      * @param path the source path
      * @param config current configuration
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public CsvParser(Reader reader, String path, CsvConfiguration config) {
-        if (reader == null) {
-            throw new IllegalArgumentException("reader must not be null"); //$NON-NLS-1$
+    public CsvParser(InputStream stream, String path, CsvConfiguration config) {
+        if (stream == null) {
+            throw new IllegalArgumentException("stream must not be null"); //$NON-NLS-1$
         }
         if (config == null) {
             throw new IllegalArgumentException("config must not be null"); //$NON-NLS-1$
         }
-        this.reader = reader;
+        this.reader = new InputStreamReader(stream, config.getCharset());
         this.path = path;
+        this.separator = config.getSeparatorChar();
         this.trueFormat = config.getTrueFormat();
         this.dateFormat = new SimpleDateFormat(config.getDateFormat());
         this.dateTimeFormat = new SimpleDateFormat(config.getDateTimeFormat());
         this.headerCellsFormat = config.getHeaderCells();
+        this.allowLineBreakInValue = config.isLineBreakInValue();
 
         readerBuffer.clear();
         readerBuffer.flip();
@@ -151,10 +159,6 @@ public class CsvParser implements RecordParser {
                 case '"':
                     state = STATE_QUOTED;
                     break;
-                case ',':
-                    state = STATE_CELL_HEAD;
-                    addSeparator();
-                    break;
                 case '\r':
                     state = STATE_SAW_CR;
                     break;
@@ -170,8 +174,14 @@ public class CsvParser implements RecordParser {
                     state = STATE_FINAL;
                     break;
                 default:
-                    state = STATE_CELL_BODY;
-                    emit(c);
+                    if (c == separator) {
+                        state = STATE_CELL_HEAD;
+                        addSeparator();
+                    } else {
+                        state = STATE_CELL_BODY;
+                        emit(c);
+                    }
+                    break;
                 }
                 break;
             case STATE_CELL_BODY:
@@ -179,10 +189,6 @@ public class CsvParser implements RecordParser {
                 case '"': // illegal character
                     // state = STATE_CELL_BODY;
                     emit(c);
-                    break;
-                case ',':
-                    state = STATE_CELL_HEAD;
-                    addSeparator();
                     break;
                 case '\r':
                     state = STATE_SAW_CR;
@@ -197,8 +203,14 @@ public class CsvParser implements RecordParser {
                     addSeparator();
                     break;
                 default:
-                    state = STATE_CELL_BODY;
-                    emit(c);
+                    if (c == separator) {
+                        state = STATE_CELL_HEAD;
+                        addSeparator();
+                    } else {
+                        state = STATE_CELL_BODY;
+                        emit(c);
+                    }
+                    break;
                 }
                 break;
             case STATE_QUOTED:
@@ -212,6 +224,9 @@ public class CsvParser implements RecordParser {
                     break;
                 case '\n':
                     // state = STATE_QUOTED;
+                    if (allowLineBreakInValue == false) {
+                        exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+                    }
                     currentPhysicalLine++;
                     emit(c);
                     break;
@@ -220,7 +235,6 @@ public class CsvParser implements RecordParser {
                     addSeparator();
                     exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
                     break;
-                case ',':
                 default:
                     // state = STATE_QUOTED;
                     emit(c);
@@ -231,10 +245,6 @@ public class CsvParser implements RecordParser {
                 case '"':
                     state = STATE_QUOTED;
                     emit(c);
-                    break;
-                case ',':
-                    state = STATE_CELL_HEAD;
-                    addSeparator();
                     break;
                 case '\r':
                     state = STATE_SAW_CR;
@@ -249,9 +259,15 @@ public class CsvParser implements RecordParser {
                     addSeparator();
                     break;
                 default:
-                    state = STATE_CELL_BODY;
-                    warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, "cell separator", String.valueOf(c)));
-                    emit(c);
+                    if (c == separator) {
+                        state = STATE_CELL_HEAD;
+                        addSeparator();
+                    } else {
+                        state = STATE_CELL_BODY;
+                        warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, "cell separator", String.valueOf(c)));
+                        emit(c);
+                    }
+                    break;
                 }
                 break;
             case STATE_SAW_CR:
@@ -283,6 +299,9 @@ public class CsvParser implements RecordParser {
                     break;
                 case '\n':
                     state = STATE_QUOTED;
+                    if (allowLineBreakInValue == false) {
+                        exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+                    }
                     emit(c);
                     break;
                 case EOF: // invalid state
@@ -290,7 +309,6 @@ public class CsvParser implements RecordParser {
                     addSeparator();
                     exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
                     break;
-                case ',':
                 default:
                     state = STATE_QUOTED;
                     emit(c);

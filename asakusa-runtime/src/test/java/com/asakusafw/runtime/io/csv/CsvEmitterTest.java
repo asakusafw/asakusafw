@@ -18,8 +18,8 @@ package com.asakusafw.runtime.io.csv;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +54,7 @@ public class CsvEmitterTest {
     @Rule
     public final TestName testName = new TestName();
 
-    private final StringWriter writer = new StringWriter();
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
     private List<String> headers = CsvConfiguration.DEFAULT_HEADER_CELLS;
 
@@ -68,39 +68,43 @@ public class CsvEmitterTest {
 
     private CsvEmitter createEmitter() {
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 headers,
                 trueFormat,
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        return new CsvEmitter(writer, testName.getMethodName(), conf);
+        return new CsvEmitter(output, testName.getMethodName(), conf);
     }
 
     private CsvParser createParser() {
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 headers,
                 trueFormat,
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        return new CsvParser(new StringReader(writer.toString()), testName.getMethodName(), conf);
+        return new CsvParser(new ByteArrayInputStream(output.toByteArray()), testName.getMethodName(), conf);
     }
 
     private void assertRestorable(ValueOption<?> option) {
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 headers,
                 trueFormat,
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        StringWriter buffer = new StringWriter();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         CsvEmitter emitter = new CsvEmitter(buffer, testName.getMethodName(), conf);
         try {
             emit(emitter, option);
             emitter.endRecord();
             emitter.close();
 
-            CsvParser parser = new CsvParser(new StringReader(buffer.toString()), testName.getMethodName(), conf);
+            CsvParser parser = new CsvParser(
+                    new ByteArrayInputStream(buffer.toByteArray()), testName.getMethodName(), conf);
             assertThat(parser.next(), is(true));
             ValueOption<?> copy = option.getClass().newInstance();
             fill(parser, copy);

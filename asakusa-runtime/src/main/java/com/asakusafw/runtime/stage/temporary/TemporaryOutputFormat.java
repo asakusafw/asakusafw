@@ -147,8 +147,7 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
     }
 
     @Override
-    public synchronized FileOutputCommitter getOutputCommitter(TaskAttemptContext context)
-            throws IOException {
+    public synchronized FileOutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException {
         if (committerCache == null) {
             committerCache = createOutputCommitter(context);
         }

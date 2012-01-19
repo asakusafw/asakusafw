@@ -17,11 +17,7 @@ package com.asakusafw.dmdl.windgate.csv.driver;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -180,8 +176,6 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private static final String NAME_WRITER = "StreamWriter";
 
-        private static final String METHOD_CHARSET = "getCharset";
-
         private static final String METHOD_CONFIG = "getConfiguration";
 
         private static final String FIELD_PATH_NAME = "pathText";
@@ -235,7 +229,6 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private List<TypeBodyDeclaration> createMembers() {
             List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
-            results.add(createGetCharset());
             results.add(createGetConfiguration());
             results.add(createGetSupportedType());
             results.add(createCreateReader());
@@ -245,27 +238,12 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             return results;
         }
 
-        private MethodDeclaration createGetCharset() {
-            return f.newMethodDeclaration(
-                    new JavadocBuilder(f)
-                        .text("Returns this CSV format configuration.")
-                        .returns()
-                            .text("CSV format configuration")
-                        .toJavadoc(),
-                    new AttributeBuilder(f)
-                        .Protected()
-                        .toAttributes(),
-                    context.resolve(Charset.class),
-                    f.newSimpleName(METHOD_CHARSET),
-                    Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(new TypeBuilder(f, context.resolve(Charset.class))
-                        .method("forName", Models.toLiteral(f, conf.getCharsetName()))
-                        .toReturnStatement()));
-        }
-
         private MethodDeclaration createGetConfiguration() {
             List<Statement> statements = new ArrayList<Statement>();
             List<Expression> arguments = new ArrayList<Expression>();
+            arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
+                .method("forName", Models.toLiteral(f, conf.getCharsetName()))
+                .toExpression());
             if (conf.isEnableHeader()) {
                 SimpleName headers = f.newSimpleName("headers");
                 statements.add(new TypeBuilder(f, context.resolve(ArrayList.class))
@@ -339,16 +317,9 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
-            SimpleName reader = f.newSimpleName("reader");
-            statements.add(new TypeBuilder(f, context.resolve(InputStreamReader.class))
-                .newObject(stream, new ExpressionBuilder(f, f.newThis())
-                    .method(METHOD_CHARSET)
-                    .toExpression())
-                .toLocalVariableDeclaration(context.resolve(Reader.class), reader));
-
             SimpleName parser = f.newSimpleName("parser");
             statements.add(new TypeBuilder(f, context.resolve(CsvParser.class))
-                .newObject(reader, path, new ExpressionBuilder(f, f.newThis())
+                .newObject(stream, path, new ExpressionBuilder(f, f.newThis())
                     .method(METHOD_CONFIG)
                     .toExpression())
                 .toLocalVariableDeclaration(context.resolve(CsvParser.class), parser));
@@ -383,16 +354,9 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
-            SimpleName writer = f.newSimpleName("writer");
-            statements.add(new TypeBuilder(f, context.resolve(OutputStreamWriter.class))
-                .newObject(stream, new ExpressionBuilder(f, f.newThis())
-                    .method(METHOD_CHARSET)
-                    .toExpression())
-                .toLocalVariableDeclaration(context.resolve(Writer.class), writer));
-
             SimpleName emitter = f.newSimpleName("emitter");
             statements.add(new TypeBuilder(f, context.resolve(CsvEmitter.class))
-                .newObject(writer, path, new ExpressionBuilder(f, f.newThis())
+                .newObject(stream, path, new ExpressionBuilder(f, f.newThis())
                     .method(METHOD_CONFIG)
                     .toExpression())
                 .toLocalVariableDeclaration(context.resolve(CsvEmitter.class), emitter));

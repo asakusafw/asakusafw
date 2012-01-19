@@ -15,13 +15,13 @@
  */
 package com.asakusafw.runtime.io.sequencefile;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 
 import com.asakusafw.runtime.io.ModelOutput;
-
 
 /**
  * {@link SequenceFile}にモデルオブジェクトを書き出す{@link ModelOutput}の実装。
@@ -31,16 +31,32 @@ public class SequenceFileModelOutput<T> implements ModelOutput<T> {
 
     private final SequenceFile.Writer writer;
 
+    private Closeable closeable;
+
     /**
      * インスタンスを生成する。
      * @param writer 出力先
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public SequenceFileModelOutput(SequenceFile.Writer writer) {
+        this(writer, writer);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param writer target writer
+     * @param closeable close target when {@link #close()} is invoked
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public SequenceFileModelOutput(SequenceFile.Writer writer, Closeable closeable) {
         if (writer == null) {
             throw new IllegalArgumentException("writer must not be null"); //$NON-NLS-1$
         }
+        if (closeable == null) {
+            throw new IllegalArgumentException("closeable must not be null"); //$NON-NLS-1$
+        }
         this.writer = writer;
+        this.closeable = closeable;
     }
 
     @Override
@@ -51,5 +67,6 @@ public class SequenceFileModelOutput<T> implements ModelOutput<T> {
     @Override
     public void close() throws IOException {
         writer.close();
+        closeable.close();
     }
 }

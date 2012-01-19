@@ -28,7 +28,6 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 /**
  * {@link DataModelDefinition} which only holds single value.
  * @param <T> type of holding value
- * @since 0.2.0
  */
 public class ValueDefinition<T> implements DataModelDefinition<T> {
 

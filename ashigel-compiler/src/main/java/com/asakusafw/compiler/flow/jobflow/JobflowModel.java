@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.OutputFormat;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.Compilable;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
@@ -383,17 +383,10 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このソースが提供する出力のパス一覧を返す。
-         * @return 出力のパス一覧
+         * Returns input information.
+         * @return input information
          */
-        public abstract Set<Location> getLocations();
-
-        /**
-         * このソースの内容を読み出すための{@link InputFormat}クラスを返す。
-         * @return このソースの内容を読み出すための{@link InputFormat}クラス
-         */
-        @SuppressWarnings("rawtypes")
-        public abstract Class<? extends InputFormat> getInputFormatType();
+        public abstract SourceInfo getInputInfo();
 
         /**
          * このソースに関連する出力ポートを返す。
@@ -458,7 +451,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         public Set<Location> getResolvedLocations() {
             Set<Location> results = new HashSet<Location>();
             for (Source source : getResolvedSources()) {
-                results.addAll(source.getLocations());
+                results.addAll(source.getInputInfo().getLocations());
             }
             return results;
         }
@@ -561,9 +554,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         @Override
-        @SuppressWarnings("rawtypes")
-        public Class<? extends InputFormat> getInputFormatType() {
-            return TemporaryInputFormat.class;
+        public SourceInfo getInputInfo() {
+            return new SourceInfo(locations, TemporaryInputFormat.class);
         }
 
         /**
@@ -576,16 +568,11 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         @Override
-        public Set<Location> getLocations() {
-            return locations;
-        }
-
-        @Override
         public String toString() {
             return MessageFormat.format(
                     "Delivery(output={0}, locations={1})",
                     getOutputs(),
-                    getLocations());
+                    getInputInfo().getLocations());
         }
     }
 
@@ -641,9 +628,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         @Override
-        @SuppressWarnings("rawtypes")
-        public Class<? extends InputFormat> getInputFormatType() {
-            return processor.getInputFormatType(description);
+        public SourceInfo getInputInfo() {
+            return processor.getInputInfo(description);
         }
 
         /**
@@ -653,11 +639,6 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @SuppressWarnings("rawtypes")
         public Class<? extends OutputFormat> getOutputFormatType() {
             return TemporaryOutputFormat.class;
-        }
-
-        @Override
-        public Set<Location> getLocations() {
-            return processor.getInputLocations(description);
         }
 
         /**
@@ -678,7 +659,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
             return MessageFormat.format(
                     "Import(output={0}, locations={1}, description={2})",
                     getOutputs(),
-                    getLocations(),
+                    getInputInfo().getLocations(),
                     getDescription());
         }
     }

@@ -53,7 +53,7 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
         Desc desc = MockImporterPreparator.create();
         ClassLoader cl = register(ImporterPreparator.class, MockImporterPreparator.class);
         SpiImporterPreparator target = new SpiImporterPreparator(cl);
-        ModelOutput<String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
+        ModelOutput<? super String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
         source.write("Hello, world!");
         source.close();
 

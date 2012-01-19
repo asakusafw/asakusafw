@@ -379,7 +379,7 @@ public class CompilerTester implements MethodRule {
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> type,
             Import importer) throws IOException {
-        Iterator<Location> iter = importer.getLocations().iterator();
+        Iterator<Location> iter = importer.getInputInfo().getLocations().iterator();
         assert iter.hasNext();
         Location location = iter.next();
         return hadoop.openOutput(type, location);
@@ -500,13 +500,13 @@ public class CompilerTester implements MethodRule {
      */
     public class TestInput<T extends Writable> implements Closeable {
 
-        private Class<T> type;
+        private final Class<T> type;
 
-        private ModelOutput<T> output;
+        private final ModelOutput<T> output;
 
-        private String name;
+        private final String name;
 
-        private Location path;
+        private final Location path;
 
         TestInput(Class<T> type, String name, Location path) throws IOException {
             assert type != null;
@@ -550,11 +550,11 @@ public class CompilerTester implements MethodRule {
      */
     public class TestOutput<T extends Writable> {
 
-        private Class<T> type;
+        private final Class<T> type;
 
-        private String name;
+        private final String name;
 
-        private Location pathPrefix;
+        private final Location pathPrefix;
 
         TestOutput(Class<T> type, String name, Location pathPrefix) {
             assert type != null;

@@ -60,7 +60,7 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
+import com.asakusafw.runtime.io.util.ZipEntryInputStream;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
 

@@ -20,10 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.apache.hadoop.mapreduce.InputFormat;
-
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
@@ -56,17 +52,11 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
         return true;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return TemporaryInputFormat.class;
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
+    public SourceInfo getInputInfo(InputDescription description) {
         HashSet<Location> locations = new HashSet<Location>();
         locations.add(getEnvironment().getTargetLocation().append(description.getName()));
-        return locations;
+        return new SourceInfo(locations, TemporaryInputFormat.class);
     }
 
     @Override

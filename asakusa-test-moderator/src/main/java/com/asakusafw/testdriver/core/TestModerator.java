@@ -249,7 +249,7 @@ public class TestModerator {
         assert definition != null;
         assert description != null;
         assert source != null;
-        ModelOutput<T> output = getDriver(description).createOutput(definition, description, context);
+        ModelOutput< T> output = getDriver(description).createOutput(definition, description, context);
         prepare(definition, output, source);
     }
 

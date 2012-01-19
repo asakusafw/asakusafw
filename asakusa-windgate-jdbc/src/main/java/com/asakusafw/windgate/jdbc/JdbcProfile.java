@@ -451,7 +451,7 @@ public class JdbcProfile {
         } catch (Exception e) {
             // if the current class loader can not access the driver class, create driver class directly
             try {
-                Driver driverObject = driverClass.newInstance();
+                Driver driverObject = driverClass.getConstructor().newInstance();
                 Connection connection = driverObject.connect(url, properties);
                 if (connection == null) {
                     throw new IllegalStateException(MessageFormat.format(
@@ -460,6 +460,11 @@ public class JdbcProfile {
                             url));
                 }
                 return connection;
+            } catch (RuntimeException inner) {
+                LOG.debug(MessageFormat.format(
+                        "Failed to resolve driver class (internal error): {0} (on {1})",
+                        driverClass.getName(),
+                        driverClass.getClassLoader()), e);
             } catch (Exception inner) {
                 LOG.debug(MessageFormat.format(
                         "Failed to resolve driver class: {0} (on {1})",

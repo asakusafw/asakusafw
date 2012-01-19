@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +112,9 @@ public class StageCompiler {
             results.add(model);
         }
         if (environment.hasError()) {
-            throw new IOException("ここまでのエラーによりコンパイルは中断されました");
+            throw new IOException(MessageFormat.format(
+                    "エラーによりコンパイルは中断されました ({0})",
+                    environment.getErrorMessage()));
         }
         return results;
     }

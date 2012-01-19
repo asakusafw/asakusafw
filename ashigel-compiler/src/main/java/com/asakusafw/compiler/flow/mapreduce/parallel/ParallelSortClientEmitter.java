@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
 import org.slf4j.Logger;
@@ -211,19 +213,37 @@ public class ParallelSortClientEmitter {
 
         private MethodDeclaration createStageInputsMethod() throws IOException {
             SimpleName list = factory.newSimpleName("results");
+            SimpleName attributes = factory.newSimpleName("attributes");
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageInput.class)), list));
+            statements.add(new ExpressionBuilder(factory, Models.toNullLiteral(factory))
+                .toLocalVariableDeclaration(t(Map.class, t(String.class), t(String.class)), attributes));
+
             for (ResolvedSlot slot : slots) {
                 Type mapperType = generateMapper(slot);
+                statements.add(new ExpressionBuilder(factory, attributes)
+                    .assignFrom(new TypeBuilder(factory, t(HashMap.class, t(String.class), t(String.class)))
+                        .newObject()
+                        .toExpression())
+                    .toStatement());
+                // TODO add attributes
+                for (Map.Entry<String, String> entry : Collections.<String, String>emptyMap().entrySet()) {
+                    statements.add(new ExpressionBuilder(factory, attributes)
+                        .method("put",
+                                Models.toLiteral(factory, entry.getKey()),
+                                Models.toLiteral(factory, entry.getValue()))
+                        .toStatement());
+                }
                 for (Slot.Input input : slot.getSource().getInputs()) {
                     statements.add(new ExpressionBuilder(factory, list)
                         .method("add", new TypeBuilder(factory, t(StageInput.class))
                             .newObject(
                                     Models.toLiteral(factory, input.getLocation().toPath(PATH_SEPARATOR)),
                                     factory.newClassLiteral(t(input.getFormatType())),
-                                    factory.newClassLiteral(mapperType))
+                                    factory.newClassLiteral(mapperType),
+                                    attributes)
                             .toExpression())
                         .toStatement());
                 }

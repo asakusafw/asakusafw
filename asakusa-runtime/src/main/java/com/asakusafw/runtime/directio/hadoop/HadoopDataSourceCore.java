@@ -1,0 +1,378 @@
+/**
+ * Copyright 2012 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.runtime.directio.hadoop;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.BlockLocation;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DirectDataSource;
+import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.OutputTransactionContext;
+import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.util.CountInputStream;
+import com.asakusafw.runtime.directio.util.CountOutputStream;
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+
+/**
+ * An implementation of {@link DirectDataSource} using {@link FileSystem}.
+ * @since 0.2.5
+ */
+class HadoopDataSourceCore implements DirectDataSource {
+
+    static final Log LOG = LogFactory.getLog(HadoopDataSourceCore.class);
+
+    private static final String ATTEMPT_AREA = "attempts";
+
+    private static final String STAGING_AREA = "staging";
+
+    private final HadoopDataSourceProfile profile;
+
+    HadoopDataSourceCore(HadoopDataSourceProfile profile) {
+        if (profile == null) {
+            throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
+        }
+        this.profile = profile;
+    }
+
+    @Override
+    public <T> List<DirectInputFragment> findInputFragments(
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            String basePath,
+            SearchPattern resourcePattern) throws IOException, InterruptedException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start finding input (directio={0}, idbase={1}, resource={2})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern));
+        }
+        BinaryStreamFormat<T> sformat = validate(format);
+        HadoopDataSourceProfile p = profile;
+        FileSystem fs = p.getFileSystem();
+        Path root = p.getFileSystemPath();
+        Path base = append(root, basePath);
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, resourcePattern);
+        stats = filesOnly(stats);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Process finding input (directio={0}, base={1}, resource={2}, files={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    stats.size()));
+        }
+        long minSize = p.getMinimumFragmentSize(sformat);
+        long prefSize = p.getPreferredFragmentSize(sformat);
+        Path temporary = p.getTemporaryFileSystemPath();
+        FragmentComputer optimizer = new FragmentComputer(minSize, prefSize);
+        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
+        for (FileStatus stat : stats) {
+            if (isIn(stat, temporary)) {
+                continue;
+            }
+            String path = stat.getPath().toString();
+            long fileSize = stat.getLen();
+            List<BlockInfo> blocks = toBlocks(stat);
+            results.addAll(optimizer.computeFragments(path, fileSize, blocks));
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finished finding input (directio={0}, base={1}, resource={2}, fragments={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    results.size()));
+        }
+        return results;
+    }
+
+    private boolean isIn(FileStatus stat, Path temporary) {
+        assert stat != null;
+        assert temporary != null;
+        Path path = stat.getPath();
+        if (path.equals(temporary) || HadoopDataSourceUtil.contains(temporary, path)) {
+            return true;
+        }
+        return false;
+    }
+
+    private List<BlockInfo> toBlocks(FileStatus stat) throws IOException {
+        BlockLocation[] locations = profile.getFileSystem().getFileBlockLocations(stat, 0, stat.getLen());
+        List<BlockInfo> results = new ArrayList<BlockInfo>();
+        for (BlockLocation location : locations) {
+            long length = location.getLength();
+            long start = location.getOffset();
+            results.add(new BlockInfo(start, start + length, location.getHosts()));
+        }
+        return results;
+    }
+
+    private List<FileStatus> filesOnly(List<FileStatus> stats) {
+        List<FileStatus> results = new ArrayList<FileStatus>();
+        for (FileStatus stat : stats) {
+            if (stat.isDir() == false) {
+                results.add(stat);
+            }
+        }
+        return results;
+    }
+
+    @Override
+    public <T> ModelInput<T> openInput(
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            DirectInputFragment fragment,
+            Counter counter) throws IOException, InterruptedException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start opening input (directio={0}, path={1}, offset={2})",
+                    profile.getId(),
+                    fragment.getPath(),
+                    fragment.getOffset()));
+        }
+        BinaryStreamFormat<T> sformat = validate(format);
+        FileSystem fs = profile.getFileSystem();
+        FSDataInputStream stream = fs.open(new Path(fragment.getPath()));
+        boolean succeed = false;
+        try {
+            long offset = fragment.getOffset();
+            stream.seek(offset);
+            CountInputStream cstream = new CountInputStream(stream, counter);
+            ModelInput<T> input =
+                sformat.createInput(dataType, fragment.getPath(), cstream, offset, fragment.getSize());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finished opening input (directio={0}, path={1}, offset={2})",
+                        profile.getId(),
+                        fragment.getPath(),
+                        fragment.getOffset()));
+            }
+            succeed = true;
+            return input;
+        } finally {
+            if (succeed == false) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOG.warn(MessageFormat.format(
+                            "Failed to close input (path={0}, offset={1})",
+                            fragment.getPath(),
+                            fragment.getOffset()), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public <T> ModelOutput<T> openOutput(
+            OutputAttemptContext context,
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            String basePath,
+            String resourcePath,
+            Counter counter) throws IOException, InterruptedException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start opening output (directio={0}, base={1}, resource={2})",
+                    profile.getId(),
+                    basePath,
+                    resourcePath));
+        }
+        BinaryStreamFormat<T> sformat = validate(format);
+        FileSystem fs = profile.getFileSystem();
+        Path attempt = getAttemptOutput(context);
+        Path file = append(append(attempt, basePath), resourcePath);
+
+        FSDataOutputStream stream = fs.create(file);
+        boolean succeed = false;
+        try {
+            CountOutputStream cstream = new CountOutputStream(stream, counter);
+            ModelOutput<T> output = sformat.createOutput(dataType, attempt.toString(), cstream);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finished opening output (directio={0}, base={1}, resource={2}, file={3})",
+                        profile.getId(),
+                        basePath,
+                        resourcePath,
+                        file));
+            }
+            succeed = true;
+            return output;
+        } finally {
+            if (succeed == false) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOG.warn(MessageFormat.format(
+                            "Failed to close output (path={0})",
+                            attempt), e);
+                }
+            }
+        }
+    }
+
+    private <T> BinaryStreamFormat<T> validate(DataFormat<T> format) throws IOException {
+        assert format != null;
+        if ((format instanceof BinaryStreamFormat<?>) == false) {
+            throw new IOException(MessageFormat.format(
+                    "{2} must be a subtype of {1} (path={0})",
+                    profile.getContextPath(),
+                    BinaryStreamFormat.class.getName(),
+                    format.getClass().getName()));
+        }
+        return (BinaryStreamFormat<T>) format;
+    }
+
+    @Override
+    public boolean delete(
+            String basePath,
+            SearchPattern resourcePattern) throws IOException, InterruptedException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start deleting files (directio={0}, base={1}, resource={2})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern));
+        }
+        HadoopDataSourceProfile p = profile;
+        FileSystem fs = p.getFileSystem();
+        Path root = p.getFileSystemPath();
+        Path base = append(root, basePath);
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, resourcePattern);
+        List<FileStatus> targets = HadoopDataSourceUtil.onlyMinimalCovered(stats);
+        Path temporary = p.getTemporaryFileSystemPath();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Process deleting files (directio={0}, base={1}, resource={2}, files={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    stats.size()));
+        }
+        boolean succeed = true;
+        for (FileStatus stat : targets) {
+            if (isIn(stat, temporary)) {
+                continue;
+            }
+            succeed &= fs.delete(stat.getPath(), true);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finished deleting files (directio={0}, base={1}, resource={2}, files={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    stats.size()));
+        }
+        return succeed;
+    }
+
+    private Path append(Path parent, String child) {
+        assert parent != null;
+        assert child != null;
+        return child.isEmpty() ? parent : new Path(parent, child);
+    }
+
+    @Override
+    public void setupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path attempt = getAttemptOutput(context);
+        fs.mkdirs(attempt);
+    }
+
+    @Override
+    public void commitAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path attempt = getAttemptOutput(context);
+        Path staging = getStagingOutput(context.getTransactionContext());
+        HadoopDataSourceUtil.move(fs, attempt, staging);
+    }
+
+    @Override
+    public void cleanupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path attempt = getAttemptOutput(context);
+        fs.delete(attempt, true);
+    }
+
+    @Override
+    public void setupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path staging = getStagingOutput(context);
+        fs.mkdirs(staging);
+    }
+
+    @Override
+    public void commitTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path staging = getStagingOutput(context);
+        Path target = profile.getFileSystemPath();
+        HadoopDataSourceUtil.move(fs, staging, target);
+    }
+
+    @Override
+    public void cleanupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
+        FileSystem fs = profile.getFileSystem();
+        Path path = getTemporaryOutput(context);
+        fs.delete(path, true);
+    }
+
+    private Path getTemporaryOutput(OutputTransactionContext context) {
+        assert context != null;
+        Path tempRoot = profile.getTemporaryFileSystemPath();
+        String suffix = String.format("%s-%s",
+                context.getTransactionId(),
+                context.getOutputId());
+        return append(tempRoot, suffix);
+    }
+
+    Path getStagingOutput(OutputTransactionContext context) {
+        assert context != null;
+        Path tempPath = getTemporaryOutput(context);
+        String suffix = STAGING_AREA;
+        return append(tempPath, suffix);
+    }
+
+    Path getAttemptOutput(OutputAttemptContext context) {
+        assert context != null;
+        Path tempPath = getTemporaryOutput(context.getTransactionContext());
+        String suffix = String.format("%s/%s",
+                ATTEMPT_AREA,
+                context.getAttemptId());
+        return append(tempPath, suffix);
+    }
+}

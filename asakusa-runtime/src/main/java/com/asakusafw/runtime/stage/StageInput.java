@@ -15,32 +15,58 @@
  */
 package com.asakusafw.runtime.stage;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  * ステージへの入力。
+ * @since 0.1.0
+ * @version 0.2.5
  */
 public class StageInput {
 
-    private Class<? extends Mapper<?, ?, ?, ?>> mapperClass;
+    private final String pathString;
 
-    private String pathString;
+    private final Class<? extends InputFormat<?, ?>> formatClass;
 
-    private Class<? extends InputFormat<?, ?>> formatClass;
+    private final Class<? extends Mapper<?, ?, ?, ?>> mapperClass;
+
+    private final Map<String, String> attributes;
 
     /**
-     * インスタンスを生成する。
-     * @param pathString 入力のパス文字列 (変数を含む)
-     * @param formatClass 入力をキーと値の列に変換するフォーマットクラス
-     * @param mapperClass 入力を処理するマッパークラス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance without any attributes.
+     * @param pathString path to the input (may includes variables)
+     * @param formatClass input format class
+     * @param mapperClass mapper class to process input data
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public StageInput(
+            String pathString,
+            Class<? extends InputFormat> formatClass,
+            Class<? extends Mapper> mapperClass) {
+        this(pathString, formatClass, mapperClass, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param pathString path to the input (may includes variables)
+     * @param formatClass input format class
+     * @param mapperClass mapper class to process input data
+     * @param attributes input attributes
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public StageInput(
             String pathString,
             Class<? extends InputFormat> formatClass,
-            Class<? extends Mapper> mapperClass) {
+            Class<? extends Mapper> mapperClass,
+            Map<String, String> attributes) {
         if (pathString == null) {
             throw new IllegalArgumentException("pathString must not be null"); //$NON-NLS-1$
         }
@@ -50,9 +76,13 @@ public class StageInput {
         if (mapperClass == null) {
             throw new IllegalArgumentException("mapperClass must not be null"); //$NON-NLS-1$
         }
+        if (attributes == null) {
+            throw new IllegalArgumentException("attributes must not be null"); //$NON-NLS-1$
+        }
         this.pathString = pathString;
         this.formatClass = (Class<? extends InputFormat<?, ?>>) formatClass;
         this.mapperClass = (Class<? extends Mapper<?, ?, ?, ?>>) mapperClass;
+        this.attributes = Collections.unmodifiableMap(new TreeMap<String, String>(attributes));
     }
 
     /**
@@ -77,5 +107,13 @@ public class StageInput {
      */
     public Class<? extends Mapper<?, ?, ?, ?>> getMapperClass() {
         return mapperClass;
+    }
+
+    /**
+     * Returns the input attributes.
+     * @return the attributes
+     */
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
 }

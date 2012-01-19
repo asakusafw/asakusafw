@@ -18,7 +18,10 @@ package com.asakusafw.runtime.stage.output;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,6 +29,7 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -38,6 +42,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
+import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 
 /**
@@ -185,7 +190,7 @@ public class StageOutputDriver {
      * 指定の名前を持つ出力のシンクオブジェクトを返す。
      * <p>
      * ここに指定する名前は、ジョブの起動時にあらかじめ
-     * {@link #add(Job, String, Class, Class, Class)}で登録しておく必要がある。
+     * {@link #set(Job, String, Collection)}で登録しておく必要がある。
      * </p>
      * @param <T> 出力の型
      * @param name 出力の名前
@@ -222,48 +227,53 @@ public class StageOutputDriver {
     }
 
     /**
-     * 指定のジョブに出力の情報を追加する。
-     * @param job 対象のジョブ
-     * @param name 出力ファイルの接頭辞
-     * @param formatClass 入力フォーマットクラス
-     * @param keyClass 出力するキーの型
-     * @param valueClass 出力する値の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Sets the output specification for this job.
+     * @param job current job
+     * @param outputPath base output path
+     * @param outputList each output information
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
      */
-    @SuppressWarnings("rawtypes")
-    public static void add(
-            Job job,
-            String name,
-            Class<? extends OutputFormat> formatClass,
-            Class<?> keyClass,
-            Class<?> valueClass) {
+    public static void set(Job job, String outputPath, Collection<StageOutput> outputList) {
         if (job == null) {
             throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
         }
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        if (outputPath == null) {
+            throw new IllegalArgumentException("outputPath must not be null"); //$NON-NLS-1$
         }
-        if (formatClass == null) {
-            throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
+        if (outputList == null) {
+            throw new IllegalArgumentException("outputList must not be null"); //$NON-NLS-1$
         }
-        if (keyClass == null) {
-            throw new IllegalArgumentException("keyClass must not be null"); //$NON-NLS-1$
+        List<StageOutput> brigeOutputs = new ArrayList<StageOutput>();
+        List<StageOutput> normalOutputs = new ArrayList<StageOutput>();
+        boolean sawFileOutput = false;
+        boolean sawTemporaryOutput = false;
+        for (StageOutput output : outputList) {
+            Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
+            if (BridgeOutputFormat.class.isAssignableFrom(formatClass)) {
+                brigeOutputs.add(output);
+            } else {
+                normalOutputs.add(output);
+            }
         }
-        if (valueClass == null) {
-            throw new IllegalArgumentException("valueClass must not be null"); //$NON-NLS-1$
+        if (brigeOutputs.isEmpty() == false) {
+            BridgeOutputFormat.set(job, brigeOutputs);
         }
-        if (BridgeOutputFormat.class.isAssignableFrom(formatClass)) {
-            addBridge(job, name, valueClass);
-        } else {
+        for (StageOutput output : normalOutputs) {
+            String name = output.getName();
+            Class<?> keyClass = output.getKeyClass();
+            Class<?> valueClass = output.getValueClass();
+            Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
+            sawFileOutput |= FileOutputFormat.class.isAssignableFrom(formatClass);
+            sawTemporaryOutput |= TemporaryOutputFormat.class.isAssignableFrom(formatClass);
             addOutput(job, name, formatClass, keyClass, valueClass);
         }
-    }
-
-    private static void addBridge(Job job, String name, Class<?> valueClass) {
-        assert job != null;
-        assert name != null;
-        assert valueClass != null;
-        // FIXME bridge
+        if (sawFileOutput) {
+            FileOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
+        if (sawTemporaryOutput) {
+            TemporaryOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
     }
 
     private static void addOutput(

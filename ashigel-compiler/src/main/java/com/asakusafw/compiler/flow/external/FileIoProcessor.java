@@ -107,7 +107,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
                         "別のディストリビューションを利用するか、{2}に置き換えてください (出力{0})。",
                         desc.getClass().getName(),
                         FileExporterDescription.class.getSimpleName(),
-                        "TODO"); // FIXME DirectInputDescription
+                        "DirectFileOutputDescription (directio)");
             }
             String pathPrefix = desc.getPathPrefix();
             if (pathPrefix == null) {
@@ -151,7 +151,6 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         }
     }
 
-
     private GenericOptionValue getExporterEnabled() {
         String attribute = getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED);
         if (attribute == null) {
@@ -170,30 +169,28 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        FileImporterDescription desc = extract(description);
-        if (isCacheTarget(desc)) {
-            return TemporaryInputFormat.class;
-        } else {
-            return desc.getInputFormat();
-        }
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
+    public SourceInfo getInputInfo(InputDescription description) {
         FileImporterDescription desc = extract(description);
         if (isCacheTarget(desc)) {
             String outputName = getProcessedInputName(description);
             Location location = getEnvironment().getPrologueLocation(MODULE_NAME).append(outputName).asPrefix();
-            return Collections.singleton(location);
+            return new SourceInfo(Collections.singleton(location), TemporaryInputFormat.class);
         } else {
-            return getRawInputLocations(desc);
+            return getOrifinalInputInfo(desc);
         }
     }
 
-    private boolean isCacheTarget(FileImporterDescription desc) {
+    private SourceInfo getOrifinalInputInfo(FileImporterDescription desc) {
+        assert desc != null;
+        Set<Location> locations = new HashSet<Location>();
+        for (String path : desc.getPaths()) {
+            locations.add(Location.fromPath(path, '/'));
+        }
+        return new SourceInfo(locations, desc.getInputFormat());
+    }
+
+    private boolean isCacheTarget(ImporterDescription desc) {
         assert desc != null;
         switch (desc.getDataSize()) {
         case TINY:
@@ -223,15 +220,6 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         return buf.toString();
     }
 
-    private Set<Location> getRawInputLocations(FileImporterDescription desc) {
-        assert desc != null;
-        Set<Location> results = new HashSet<Location>();
-        for (String path : desc.getPaths()) {
-            results.add(Location.fromPath(path, '/'));
-        }
-        return results;
-    }
-
     @Override
     public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
         List<CopyDescription> targets = new ArrayList<CopyDescription>();
@@ -241,9 +229,8 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
             if (isCacheTarget(desc)) {
                 targets.add(new CopyDescription(
                         getProcessedInputName(description),
-                        getRawInputLocations(desc),
                         getEnvironment().getDataClasses().load(description.getDataType()),
-                        desc.getInputFormat(),
+                        getOrifinalInputInfo(desc),
                         TemporaryOutputFormat.class));
             }
         }
@@ -356,7 +343,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         assert output != null;
         assert name != null;
         List<Slot.Input> inputs = new ArrayList<Slot.Input>();
-        for (OutputSource source : output.getSources()) {
+        for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
                 inputs.add(new Slot.Input(location, format));

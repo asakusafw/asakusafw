@@ -16,6 +16,8 @@
 package com.asakusafw.runtime.io.csv;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -52,13 +54,11 @@ public class CsvEmitter implements RecordEmitter {
 
     private static final String LINE_DELIMITER = "\r\n";
 
-    private static final char CELL_DELIMITER = ',';
-
     private static final char ESCAPE = '"';
 
-    private static final Pattern ESCAPE_PATTERN = Pattern.compile("[" + ESCAPE + CELL_DELIMITER + LINE_DELIMITER + "]");
-
     private final Writer writer;
+
+    private final char separator;
 
     private final String trueFormat;
 
@@ -84,21 +84,25 @@ public class CsvEmitter implements RecordEmitter {
 
     private final Calendar calendarBuffer = Calendar.getInstance();
 
+    private final Pattern escapePattern;
+
     /**
      * Creates a new instance.
-     * @param writer the target stream
+     * @param stream the target stream
      * @param path the destination path
      * @param config current configuration
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public CsvEmitter(Writer writer, String path, CsvConfiguration config) {
-        if (writer == null) {
-            throw new IllegalArgumentException("writer must not be null"); //$NON-NLS-1$
+    public CsvEmitter(OutputStream stream, String path, CsvConfiguration config) {
+        if (stream == null) {
+            throw new IllegalArgumentException("stream must not be null"); //$NON-NLS-1$
         }
         if (config == null) {
             throw new IllegalArgumentException("config must not be null"); //$NON-NLS-1$
         }
-        this.writer = writer;
+        this.writer = new OutputStreamWriter(stream, config.getCharset());
+        this.separator = config.getSeparatorChar();
+        this.escapePattern = Pattern.compile("[" + ESCAPE + separator + LINE_DELIMITER + "]");
         this.trueFormat = escape(config.getTrueFormat());
         this.falseFormat = escape(config.getFalseFormat());
         this.dateFormat = new SimpleDateFormat(config.getDateFormat());
@@ -120,7 +124,7 @@ public class CsvEmitter implements RecordEmitter {
 
     private boolean hasMetaCharacter(SimpleDateFormat format) {
         assert format != null;
-        return ESCAPE_PATTERN.matcher(format.toPattern()).find();
+        return escapePattern.matcher(format.toPattern()).find();
     }
 
     @Override
@@ -207,7 +211,7 @@ public class CsvEmitter implements RecordEmitter {
     private boolean hasEscapeTarget(String string) {
         for (int i = 0, n = string.length(); i < n; i++) {
             char c = string.charAt(i);
-            if (c == CELL_DELIMITER || c == ESCAPE || c == '\r' || c == '\n') {
+            if (c == separator || c == ESCAPE || c == '\r' || c == '\n') {
                 return true;
             }
         }
@@ -258,7 +262,7 @@ public class CsvEmitter implements RecordEmitter {
         if (firstCell) {
             firstCell = false;
         } else {
-            lineBuffer.append(CELL_DELIMITER);
+            lineBuffer.append(separator);
         }
     }
 
@@ -283,7 +287,7 @@ public class CsvEmitter implements RecordEmitter {
             if (iter.hasNext()) {
                 writer.append(escape(iter.next()));
                 while (iter.hasNext()) {
-                    writer.append(CELL_DELIMITER);
+                    writer.append(separator);
                     writer.append(escape(iter.next()));
                 }
                 writer.append(LINE_DELIMITER);

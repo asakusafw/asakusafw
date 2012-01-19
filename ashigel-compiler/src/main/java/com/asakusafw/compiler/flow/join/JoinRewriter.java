@@ -134,8 +134,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         if (proc == null) {
             return false;
         }
-        // FIXME currently side data join is only supported for TemporaryInputFormat.
-        Class<?> formatType = proc.getInputFormatType(desc);
+        Class<?> formatType = proc.getInputInfo(desc).getFormat();
         return formatType == TemporaryInputFormat.class;
     }
 

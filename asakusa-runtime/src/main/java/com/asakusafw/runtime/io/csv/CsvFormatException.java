@@ -63,6 +63,11 @@ public class CsvFormatException extends RecordFormatException {
     public enum Reason {
 
         /**
+         * Unexpected line break is appearred in value (only if restricted).
+         */
+        UNEXPECTED_LINE_BREAK,
+
+        /**
          * Unexpected EOF is appearred (may be in double-quote).
          */
         UNEXPECTED_EOF,

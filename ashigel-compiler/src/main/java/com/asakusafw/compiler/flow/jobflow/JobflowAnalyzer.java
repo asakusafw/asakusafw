@@ -271,7 +271,7 @@ public class JobflowAnalyzer {
                 error("{0}は不明なインポーターを利用しています", input);
                 continue;
             }
-            Set<Location> locations = proc.getInputLocations(input);
+            Set<Location> locations = proc.getInputInfo(input).getLocations();
             results.add(new SideData(locations, input.getName()));
         }
         return results;

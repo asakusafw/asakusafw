@@ -1,0 +1,195 @@
+/**
+ * Copyright 2012 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.runtime.directio;
+
+import java.io.IOException;
+import java.util.List;
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+
+/**
+ * API of direct accessor to data sources.
+ * Clients should not implement this interface directly.
+ *
+ * <h3 id="output-staging">Output Staging</h3>
+ * Using this interface, output to resources is performed in the following sequence:
+ * <ol>
+ * <li>
+ *     Prepare the staging output area in
+ *     {@link #setupTransactionOutput(OutputTransactionContext)}.
+ * </li>
+ * <li>
+ *     Prepare temporary output area for each attempt in
+ *     {@link #setupAttemptOutput(OutputAttemptContext)}.
+ * </li>
+ * <li>
+ *     Create output contents onto temporary output area in
+ *     {@link #openOutput(OutputAttemptContext, Class, DataFormat, String, String, Counter)}.
+ * </li>
+ * <li>
+ *     Move output contents from temporary area to staging area in
+ *     {@link #commitAttemptOutput(OutputAttemptContext)}.
+ * </li>
+ * <li>
+ *     Cleanup output contents on temporary area in
+ *     {@link #cleanupAttemptOutput(OutputAttemptContext)}.
+ * </li>
+ * <li>
+ *     Move output contents from staging area to final area in
+ *     {@link #commitTransactionOutput(OutputTransactionContext)}.
+ * </li>
+ * <li>
+ *     Cleanup output contents on staging area in
+ *     {@link #cleanupTransactionOutput(OutputTransactionContext)}.
+ * </li>
+ * </ol>
+ * @since 0.2.5
+ * @see AbstractDirectDataSource
+ */
+public interface DirectDataSource {
+
+    /**
+     * Collects input fragments about target resources.
+     * @param <T> target data type
+     * @param dataType target data type
+     * @param format format of target resource
+     * @param basePath base path of target resources
+     * @param resourcePattern search pattern of target resources from {@code basePath}
+     * @return the found fragments of resources
+     * @throws IOException if failed to find resources by I/O error
+     * @throws InterruptedException if interrupted while finding fragments
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <T> List<DirectInputFragment> findInputFragments(
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            String basePath,
+            SearchPattern resourcePattern) throws IOException, InterruptedException;
+
+    /**
+     * Opens a fragment for input.
+     * @param <T> target data type
+     * @param dataType target data type
+     * @param format format of target fragment
+     * @param fragment target fragment
+     * @param counter counter object
+     * @return {@link ModelInput} to obtain contents in the fragment
+     * @throws IOException if failed to open the fragment by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    <T> ModelInput<T> openInput(
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            DirectInputFragment fragment,
+            Counter counter) throws IOException, InterruptedException;
+
+    /**
+     * Opens a resource for output.
+     * @param <T> target data type
+     * @param context current output attempt context
+     * @param dataType target data type
+     * @param format format of target resource
+     * @param basePath base path of target resource
+     * @param resourcePath target resource path from {@code basePath}
+     * @param counter counter object
+     * @return {@link ModelOutput} to put contents to the resource
+     * @throws IOException if failed to open the resource by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    <T> ModelOutput<T> openOutput(
+            OutputAttemptContext context,
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            String basePath,
+            String resourcePath,
+            Counter counter) throws IOException, InterruptedException;
+
+    /**
+     * Deletes resources.
+     * @param basePath base path of target resources
+     * @param resourcePattern search pattern of target resources from {@code basePath}
+     * @return {@code true} if successfully deleted, otherwise {@code false}
+     * @throws IOException if failed to delete resources by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    boolean delete(
+            String basePath,
+            SearchPattern resourcePattern) throws IOException, InterruptedException;
+
+    /**
+     * Prepares output area for the attempt.
+     * @param context current attempt context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void setupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException;
+
+    /**
+     * Commits output on the attempt.
+     * @param context current attempt context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void commitAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException;
+
+    /**
+     * Cleanup output on the attempt.
+     * @param context current attempt context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void cleanupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException;
+
+    /**
+     * Prepares output area for the transaction.
+     * @param context current transaction context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void setupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException;
+
+    /**
+     * Commits output on the transaction.
+     * @param context current transaction context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void commitTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException;
+
+    /**
+     * Cleanup output on the transaction.
+     * @param context current transaction context
+     * @throws IOException if failed by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see <a href="#output-staging">Output Staging</a>
+     */
+    void cleanupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException;
+}

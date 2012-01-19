@@ -47,7 +47,7 @@ public class FlowCompilingEnvironment {
 
     private final AtomicInteger counter = new AtomicInteger();
 
-    private boolean sawError;
+    private String firstError;
 
     /**
      * インスタンスを生成する。
@@ -57,7 +57,7 @@ public class FlowCompilingEnvironment {
     public FlowCompilingEnvironment(FlowCompilerConfiguration config) {
         Precondition.checkMustNotBeNull(config, "config"); //$NON-NLS-1$
         this.config = config;
-        this.sawError = false;
+        clearError();
     }
 
     /**
@@ -73,24 +73,32 @@ public class FlowCompilingEnvironment {
         config.getPackager().initialize(this);
         config.getProcessors().initialize(this);
         config.getGraphRewriters().initialize(this);
-        sawError = false;
+        clearError();
         return this;
+    }
+
+    /**
+     * Returns a previous error message.
+     * @return a previous error message, or {@code null} if not error
+     */
+    public String getErrorMessage() {
+        return firstError;
     }
 
     /**
      * ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}を返す。
      * @return ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}
      */
-    public boolean hasError() {
-        return sawError;
+    public final boolean hasError() {
+        return firstError != null;
     }
 
     /**
      * 現在までに発生したエラーの情報をクリアする。
      * @see #hasError()
      */
-    public void clearError() {
-        sawError = false;
+    public final void clearError() {
+        firstError = null;
     }
 
     /**
@@ -363,7 +371,9 @@ public class FlowCompilingEnvironment {
         Precondition.checkMustNotBeNull(args, "args"); //$NON-NLS-1$
         String text = format(format, args);
         LOG.error(text);
-        this.sawError = true;
+        if (firstError == null) {
+            firstError = text;
+        }
     }
 
     private String format(String format, Object[] args) {

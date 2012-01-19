@@ -37,6 +37,10 @@
 		<module>../asakusa-test-data-provider</module>
 		<module>../asakusa-test-data-generator</module>
 		<module>../asakusa-test-driver</module>
+		<module>../asakusa-directio-vocabulary</module>
+		<module>../asakusa-directio-dmdl</module>
+		<module>../asakusa-directio-plugin</module>
+		<module>../asakusa-directio-test-moderator</module>
 		<module>../asakusa-thundergate-runtime</module>
 		<module>../asakusa-thundergate-vocabulary</module>
 		<module>../asakusa-thundergate-dmdl</module>

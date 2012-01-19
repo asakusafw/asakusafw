@@ -1,0 +1,15 @@
+-- package com.asakusafw.compiler.directio
+
+@namespace(value = testing)
+projective line = {
+    value : TEXT;
+    first : TEXT;
+    position : LONG;
+    length : INT;
+};
+
+@namespace(value = testing)
+line1 = line;
+
+@namespace(value = testing)
+line2 = line;

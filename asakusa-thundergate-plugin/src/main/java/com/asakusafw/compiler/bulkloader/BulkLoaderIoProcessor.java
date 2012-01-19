@@ -252,15 +252,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         return true;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return TemporaryInputFormat.class;
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
-        return Collections.singleton(getInputLocation(description));
+    public SourceInfo getInputInfo(InputDescription description) {
+        Set<Location> locations = Collections.singleton(getInputLocation(description));
+        return new SourceInfo(locations, TemporaryInputFormat.class);
     }
 
     @Override
@@ -291,7 +286,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     private Slot toSlot(Output output) {
         BulkLoadExporterDescription desc = extract(output.getDescription());
         List<Slot.Input> inputs = new ArrayList<Slot.Input>();
-        for (OutputSource source : output.getSources()) {
+        for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
                 inputs.add(new Slot.Input(location, format));

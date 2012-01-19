@@ -42,7 +42,13 @@ public class RuntimeResourceManager {
      */
     public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml";
 
-    private ResourceConfiguration configuration;
+    /**
+     * The path to configuration file (relative from $ASAKUSA_HOME).
+     * @since 0.2.5
+     */
+    public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME;
+
+    private final ResourceConfiguration configuration;
 
     private List<RuntimeResource> resources;
 

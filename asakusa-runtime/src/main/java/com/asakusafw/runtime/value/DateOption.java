@@ -20,6 +20,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import com.asakusafw.runtime.io.util.WritableRawComparable;
+
 /**
  * {@code null}値を許容する日付。
  */
@@ -175,15 +177,16 @@ public final class DateOption extends ValueOption<DateOption> {
     }
 
     @Override
-    public int compareTo(DateOption o) {
+    public int compareTo(WritableRawComparable o) {
+        DateOption other = (DateOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        return entity.compareTo(o.entity);
+        return entity.compareTo(other.entity);
     }
 
     @Override
@@ -234,6 +237,16 @@ public final class DateOption extends ValueOption<DateOption> {
                     "Cannot restore a Date field ({0})",
                     "invalid length"));
         }
+    }
+
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
     }
 
     /**
