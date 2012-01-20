@@ -596,10 +596,11 @@ public final class HadoopDataSourceUtil {
                         targetFile,
                         list.size()));
             }
+            fs.mkdirs(targetFile.getParent());
             boolean succeed = fs.rename(sourceFile, targetFile);
             if (succeed == false) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to move file (from{0}, to={1})",
+                        "Failed to move file (from={0}, to={1})",
                         sourceFile,
                         targetFile));
             }
@@ -646,7 +647,7 @@ public final class HadoopDataSourceUtil {
             if (relative.equals(uri) == false) {
                 results.add(new Path(relative));
             } else {
-                LOG.warn(MessageFormat.format(
+                throw new IOException(MessageFormat.format(
                         "Failed to compute relative path: base={0}, target={1}",
                         baseUri,
                         uri));
