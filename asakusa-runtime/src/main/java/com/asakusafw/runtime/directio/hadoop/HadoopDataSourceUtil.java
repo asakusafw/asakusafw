@@ -589,7 +589,20 @@ public final class HadoopDataSourceUtil {
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
             Path targetFile = new Path(target, path);
-            fs.rename(sourceFile, targetFile);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(MessageFormat.format(
+                        "Moving file (from={0}, to={1}, count={2})",
+                        sourceFile,
+                        targetFile,
+                        list.size()));
+            }
+            boolean succeed = fs.rename(sourceFile, targetFile);
+            if (succeed == false) {
+                throw new IOException(MessageFormat.format(
+                        "Failed to move file (from{0}, to={1})",
+                        sourceFile,
+                        targetFile));
+            }
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -610,17 +623,34 @@ public final class HadoopDataSourceUtil {
         try {
             root = fs.getFileStatus(source);
         } catch (FileNotFoundException e) {
+            LOG.warn(MessageFormat.format(
+                    "Source path is not found: {0}",
+                    baseUri));
             return Collections.emptyList();
         }
         List<FileStatus> all = recursiveStep(fs, Collections.singletonList(root));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Source path contains {1} files/directories: {0}",
+                    baseUri,
+                    all.size()));
+        }
         List<Path> results = new ArrayList<Path>();
         for (FileStatus stat : all) {
             if (stat.isDir()) {
                 continue;
             }
             Path path = stat.getPath();
-            URI relative = baseUri.relativize(path.toUri());
-            results.add(new Path(relative));
+            URI uri = path.toUri();
+            URI relative = baseUri.relativize(uri);
+            if (relative.equals(uri) == false) {
+                results.add(new Path(relative));
+            } else {
+                LOG.warn(MessageFormat.format(
+                        "Failed to compute relative path: base={0}, target={1}",
+                        baseUri,
+                        uri));
+            }
         }
         Collections.sort(results);
         return results;

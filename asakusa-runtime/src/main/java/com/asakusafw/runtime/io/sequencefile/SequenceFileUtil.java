@@ -77,6 +77,37 @@ public final class SequenceFileUtil {
     }
 
     /**
+     * Creates a new reader.
+     * @param in the source
+     * @param length the stream length
+     * @param conf current configuration
+     * @return the created sequence file reader
+     * @throws IOException if failed to open the sequence file
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static SequenceFile.Reader openReader(
+            InputStream in,
+            long length,
+            Configuration conf) throws IOException {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        FileStatus status = new FileStatus(length, false, 0, length, 0, new Path("dummy:///"));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Creating sequence file reader for {0}",
+                    status.getPath()));
+        }
+        return new SequenceFile.Reader(
+                new InputStreamFileSystem(status, in),
+                status.getPath(),
+                conf);
+    }
+
+    /**
      * Creates a new writer.
      * @param out the drain
      * @param conf current configuration

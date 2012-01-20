@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.sequencefile;
+package com.asakusafw.runtime.io.sequencefile;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -106,6 +106,41 @@ public class SequenceFileUtilTest {
         InputStream in = new FileInputStream(fs.pathToFile(path));
         try {
             SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status, conf);
+            assertThat(reader.next(key, value), is(true));
+            assertThat(key.toString(), is("Hello"));
+            assertThat(value.toString(), is("World"));
+            assertThat(reader.next(key, value), is(false));
+            reader.close();
+        } finally {
+            in.close();
+        }
+    }
+
+    /**
+     * Reads a sequence file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void read_new() throws Exception {
+        Path path = new Path("testing");
+
+        Text key = new Text();
+        Text value = new Text();
+        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass());
+        try {
+            key.set("Hello");
+            value.set("World");
+            writer.append(key, value);
+        } finally {
+            writer.close();
+        }
+        key.clear();
+        value.clear();
+
+        FileStatus status = fs.getFileStatus(path);
+        InputStream in = new FileInputStream(fs.pathToFile(path));
+        try {
+            SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status.getLen(), conf);
             assertThat(reader.next(key, value), is(true));
             assertThat(key.toString(), is("Hello"));
             assertThat(value.toString(), is("World"));
