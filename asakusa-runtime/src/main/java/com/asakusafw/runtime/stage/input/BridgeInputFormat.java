@@ -88,7 +88,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             DataFormat<?> format = ReflectionUtils.newInstance(group.formatClass, context.getConfiguration());
             DirectDataSource dataSource = repo.getRelatedDataSource(group.containerPath);
             for (InputPath path : paths) {
-                List<DirectInputFragment> fragments = getFragments(group, path, format, dataSource);
+                List<DirectInputFragment> fragments = getFragments(repo, group, path, format, dataSource);
                 for (DirectInputFragment fragment : fragments) {
                     results.add(new BridgeInputSplit(group, fragment));
                 }
@@ -98,6 +98,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
     }
 
     private <T> List<DirectInputFragment> getFragments(
+            DirectDataSourceRepository repo,
             DirectInputGroup group,
             InputPath path,
             DataFormat<T> format,
@@ -107,7 +108,17 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         assert format != null;
         assert dataSource != null;
         Class<? extends T> dataType = group.dataType.asSubclass(format.getSupportedType());
-        return dataSource.findInputFragments(dataType, format, path.basePath, path.pattern);
+        List<DirectInputFragment> fragments =
+            dataSource.findInputFragments(dataType, format, path.componentPath, path.pattern);
+        if (fragments.isEmpty()) {
+            String id = repo.getRelatedId(group.containerPath);
+            throw new IOException(MessageFormat.format(
+                    "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\")",
+                    id,
+                    path.originalBasePath,
+                    path.pattern));
+        }
+        return fragments;
     }
 
     private Map<DirectInputGroup, List<InputPath>> extractInputList(
@@ -134,7 +145,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                 paths = new ArrayList<InputPath>();
                 results.put(group, paths);
             }
-            paths.add(new InputPath(basePath, pattern));
+            paths.add(new InputPath(fullBasePath, basePath, pattern));
         }
         return results;
     }
@@ -263,7 +274,10 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         final Class<? extends DataFormat<?>> formatClass;
 
-        DirectInputGroup(String containerPath, Class<?> dataType, Class<? extends DataFormat<?>> formatClass) {
+        DirectInputGroup(
+                String containerPath,
+                Class<?> dataType,
+                Class<? extends DataFormat<?>> formatClass) {
             assert containerPath != null;
             assert dataType != null;
             assert formatClass != null;
@@ -309,14 +323,18 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
     private static class InputPath {
 
-        final String basePath;
+        final String originalBasePath;
+
+        final String componentPath;
 
         final SearchPattern pattern;
 
-        InputPath(String basePath, SearchPattern pattern) {
-            assert basePath != null;
+        InputPath(String originalBasePath, String componentPath, SearchPattern pattern) {
+            assert originalBasePath != null;
+            assert componentPath != null;
             assert pattern != null;
-            this.basePath = basePath;
+            this.originalBasePath = originalBasePath;
+            this.componentPath = componentPath;
             this.pattern = pattern;
         }
     }

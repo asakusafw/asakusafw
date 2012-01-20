@@ -189,6 +189,17 @@ public class DirectFileIoProcessorRunTest {
         assertThat(get("output-2/output.txt"), is(list("Hello2")));
     }
 
+    /**
+     * input is missing.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_missing() throws Exception {
+        In<Line1> in = tester.input("in1", new Input("input", "*"));
+        Out<Line1> out = tester.output("out1", new Output("output", "output.txt"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(false));
+    }
+
     private List<String> list(String... values) {
         return Arrays.asList(values);
     }
