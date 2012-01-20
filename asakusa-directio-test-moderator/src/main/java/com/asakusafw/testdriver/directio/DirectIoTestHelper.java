@@ -38,6 +38,7 @@ import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.SearchPattern;
 import com.asakusafw.runtime.directio.SearchPattern.PatternElement;
 import com.asakusafw.runtime.directio.SearchPattern.Segment;
+import com.asakusafw.runtime.directio.SearchPattern.Selection;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.io.ModelInput;
@@ -68,6 +69,8 @@ public final class DirectIoTestHelper {
 
     final DirectDataSource dataSource;
 
+    final String id;
+
     final String basePath;
 
     /**
@@ -84,11 +87,14 @@ public final class DirectIoTestHelper {
         if (rootPath == null) {
             throw new IllegalArgumentException("rootPath must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Creating test helper for directio: {}", rootPath);
         this.variables = new VariableTable(RedefineStrategy.ERROR);
         variables.defineVariables(context.getArguments());
         String resolvedRootPath = resolve(rootPath);
+        LOG.debug("Resolved base path: {} -> {}", rootPath, resolvedRootPath);
         DirectDataSourceRepository repo = getRepository(context);
         try {
+            this.id = repo.getRelatedId(resolvedRootPath);
             this.dataSource = repo.getRelatedDataSource(resolvedRootPath);
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
@@ -99,6 +105,7 @@ public final class DirectIoTestHelper {
             throw (IOException) new InterruptedIOException("interrupted").initCause(e);
         }
         this.basePath = repo.getComponentPath(resolvedRootPath);
+        LOG.debug("Direct IO Mapping: {} -> {}", resolvedRootPath, id);
     }
 
     private synchronized DirectDataSourceRepository getRepository(TestContext context) throws IOException {
@@ -160,6 +167,7 @@ public final class DirectIoTestHelper {
      * @throws IOException if failed to perform by I/O error
      */
     public void truncate() throws IOException {
+        LOG.info("Truncating : {}:{}", id, basePath);
         try {
             dataSource.delete(basePath, ALL);
         } catch (InterruptedException e) {
@@ -188,6 +196,11 @@ public final class DirectIoTestHelper {
         final OutputAttemptContext context = createContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
+        LOG.info("Opening direct output: {}:{}/{}", new Object[] {
+                id,
+                basePath,
+                outputPath,
+        });
         try {
             dataSource.setupTransactionOutput(context.getTransactionContext());
             dataSource.setupAttemptOutput(context);
@@ -237,6 +250,11 @@ public final class DirectIoTestHelper {
         final Counter counter = new Counter();
         try {
             SearchPattern pattern = toInputPattern(description.getResourcePattern());
+            LOG.info("Opening direct input: {}:{}/{}", new Object[] {
+                    id,
+                    basePath,
+                    pattern
+            });
             final List<DirectInputFragment> fragments =
                 dataSource.findInputFragments(dataType, format, basePath, pattern);
             return new ModelInput<T>() {
@@ -302,6 +320,9 @@ public final class DirectIoTestHelper {
                 switch (element.getKind()) {
                 case TOKEN:
                     buf.append(element.getToken());
+                    break;
+                case SELECTION:
+                    buf.append(((Selection) element).getContents().get(0));
                     break;
                 default:
                     buf.append(WILDCARD_REPLACEMENT);

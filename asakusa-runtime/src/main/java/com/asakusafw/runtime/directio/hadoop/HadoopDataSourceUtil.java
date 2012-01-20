@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -53,6 +55,7 @@ import com.asakusafw.runtime.directio.SearchPattern;
 import com.asakusafw.runtime.directio.SearchPattern.PatternElement;
 import com.asakusafw.runtime.directio.SearchPattern.PatternElementKind;
 import com.asakusafw.runtime.directio.SearchPattern.Segment;
+import com.asakusafw.runtime.directio.SearchPattern.Selection;
 import com.asakusafw.runtime.stage.StageConstants;
 
 /**
@@ -310,7 +313,7 @@ public final class HadoopDataSourceUtil {
                 segments.removeFirst();
                 current = recursiveStep(fs, current);
             } else {
-                Path step = consumeStep(segments);
+                List<Path> step = consumeStep(segments);
                 current = globStep(fs, current, step);
             }
             steps++;
@@ -326,21 +329,49 @@ public final class HadoopDataSourceUtil {
         return current;
     }
 
-    private static Path consumeStep(LinkedList<Segment> segments) {
+    private static List<Path> consumeStep(LinkedList<Segment> segments) {
         assert segments != null;
         assert segments.isEmpty() == false;
         assert segments.getFirst().isTraverse() == false;
-        Path path = null;
-        Segment segment;
-        do {
-            segment = segments.removeFirst();
-            String resolved = resolve(segment);
-            path = (path == null) ? new Path(resolved) : new Path(path, resolved);
-        } while (isLiteral(segment) && segments.isEmpty() == false && segments.getFirst().isTraverse() == false);
-        return path;
+        List<Path> results = new ArrayList<Path>();
+
+        Segment current = segments.removeFirst();
+        for (String segment : resolve(current)) {
+            results.add(new Path(segment));
+        }
+        while (isGlobRequired(current) && segments.isEmpty() == false && segments.getFirst().isTraverse() == false) {
+            current = segments.removeFirst();
+            Set<String> suffixCandidates = resolve(current);
+            if (suffixCandidates.size() == 1) {
+                String suffix = suffixCandidates.iterator().next();
+                for (ListIterator<Path> i = results.listIterator(); i.hasNext();) {
+                    Path parent = i.next();
+                    i.set(new Path(parent, suffix));
+                }
+            } else {
+                List<Path> nextResults = new ArrayList<Path>();
+                for (Path parent : results) {
+                    for (String suffix : suffixCandidates) {
+                        nextResults.add(new Path(parent, suffix));
+                    }
+                }
+                results = nextResults;
+            }
+        }
+
+        Set<Path> saw = new HashSet<Path>();
+        for (Iterator<Path> iter = results.iterator(); iter.hasNext(); ) {
+            Path path = iter.next();
+            if (saw.contains(path)) {
+                iter.remove();
+            } else {
+                saw.add(path);
+            }
+        }
+        return results;
     }
 
-    private static boolean isLiteral(Segment segment) {
+    private static boolean isGlobRequired(Segment segment) {
         assert segment != null;
         assert segment.isTraverse() == false;
         for (PatternElement element : segment.getElements()) {
@@ -351,24 +382,55 @@ public final class HadoopDataSourceUtil {
         return true;
     }
 
-    private static String resolve(Segment segment) {
+    private static Set<String> resolve(Segment segment) {
         assert segment != null;
         assert segment.isTraverse() == false;
-        StringBuilder buf = new StringBuilder();
+        List<Set<String>> candidates = new ArrayList<Set<String>>();
         for (PatternElement element : segment.getElements()) {
             switch (element.getKind()) {
             case TOKEN:
-                buf.append(element.getToken());
+                candidates.add(Collections.singleton(element.getToken()));
                 break;
             case WILDCARD:
-                buf.append("*");
+                candidates.add(Collections.singleton("*"));
+                break;
+            case SELECTION:
+                candidates.add(new TreeSet<String>(((Selection) element).getContents()));
                 break;
             default:
-                // TODO other kind
                 throw new AssertionError();
             }
         }
-        return buf.toString();
+        List<String> results = stringCrossJoin(candidates);
+        return new TreeSet<String>(results);
+    }
+
+    private static List<String> stringCrossJoin(List<Set<String>> candidates) {
+        assert candidates != null;
+        assert candidates.isEmpty() == false;
+        List<String> results = new ArrayList<String>();
+        Iterator<Set<String>> iter = candidates.iterator();
+        assert iter.hasNext();
+        results.addAll(iter.next());
+        while (iter.hasNext()) {
+            Set<String> next = iter.next();
+            if (next.size() == 1) {
+                String suffix = next.iterator().next();
+                for (ListIterator<String> i = results.listIterator(); i.hasNext();) {
+                    String vaule = i.next();
+                    i.set(vaule + suffix);
+                }
+            } else {
+                List<String> nextResults = new ArrayList<String>();
+                for (String value : results) {
+                    for (String suffix : next) {
+                        nextResults.add(value + suffix);
+                    }
+                }
+                results = nextResults;
+            }
+        }
+        return results;
     }
 
     private static List<FileStatus> recursiveStep(FileSystem fs, List<FileStatus> current) throws IOException {
@@ -395,21 +457,26 @@ public final class HadoopDataSourceUtil {
     private static List<FileStatus> globStep(
             FileSystem fs,
             List<FileStatus> current,
-            Path expression) throws IOException {
+            List<Path> expressions) throws IOException {
         assert fs != null;
         assert current != null;
-        assert expression != null;
+        assert expressions != null;
         Set<Path> paths = new HashSet<Path>();
         List<FileStatus> results = new ArrayList<FileStatus>();
         for (FileStatus status : current) {
-            if (status.isDir()) {
+            if (status.isDir() == false) {
+                continue;
+            }
+            for (Path expression : expressions) {
                 Path path = new Path(status.getPath(), expression);
                 FileStatus[] expanded = fs.globStatus(path);
-                for (FileStatus s : expanded) {
-                    Path p = s.getPath();
-                    if (paths.contains(p) == false) {
-                        paths.add(p);
-                        results.add(s);
+                if (expanded != null) {
+                    for (FileStatus s : expanded) {
+                        Path p = s.getPath();
+                        if (paths.contains(p) == false) {
+                            paths.add(p);
+                            results.add(s);
+                        }
                     }
                 }
             }

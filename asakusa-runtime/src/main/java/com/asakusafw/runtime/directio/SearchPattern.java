@@ -251,6 +251,9 @@ public class SearchPattern {
                 cursor.skip();
                 results.add(SingletonPatternElement.WILDCARD);
                 break;
+            case CHAR_OPEN_BRACE:
+                results.add(new Selection(cursor.consumeSelection()));
+                break;
             case CHAR_DOLLER:
                 results.add(new Variable(cursor.consumeVariable()));
                 break;
@@ -362,6 +365,49 @@ public class SearchPattern {
             skip();
             return name;
         }
+
+        public List<String> consumeSelection() {
+            assert get(0) == CHAR_OPEN_BRACE;
+            int start = cursor;
+            skip();
+            List<String> contents = new ArrayList<String>();
+            boolean head = true;
+            while (true) {
+                int first = get(0);
+                if (first == CHAR_EOF) {
+                    cursor = start;
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Selection is not closed (cursor=\"{0}\", offset={1})",
+                            this,
+                            cursor));
+                } else if (head || first == CHAR_BAR) {
+                    if (head == false) {
+                        assert get(0) == CHAR_BAR;
+                        skip();
+                    }
+                    int alterStart = cursor;
+                    while (true) {
+                        skipWhile(CHAR_ALPHABET);
+                        if (get(0) == CHAR_SEPARATOR) {
+                            skip();
+                        } else {
+                            break;
+                        }
+                    }
+                    contents.add(String.valueOf(cbuf, alterStart, cursor - alterStart));
+                } else if (first == CHAR_CLOSE_BRACE) {
+                    skip();
+                    break;
+                } else {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Invalid character in selection (cursor=\"{0}\", offset={1})",
+                            this,
+                            cursor));
+                }
+                head = false;
+            }
+            return contents;
+        }
     }
 
     /**
@@ -419,6 +465,12 @@ public class SearchPattern {
          * If element is this kind, the element must be type of {@link Variable}.
          */
         VARIABLE,
+
+        /**
+         * Selection.
+         * If element is this kind, the element must be type of {@link Selection}.
+         */
+        SELECTION,
 
         /**
          * Any string.
@@ -523,6 +575,55 @@ public class SearchPattern {
         @Override
         public String getToken() {
             return String.format("${%s}", getName());
+        }
+
+        @Override
+        public String toString() {
+            return getToken();
+        }
+    }
+
+    /**
+     * Represents a selecion.
+     * @since 0.2.5
+     * @see PatternElementKind#SELECTION
+     */
+    public static class Selection implements PatternElement {
+
+        private final List<String> contents;
+
+        Selection(List<String> contents) {
+            assert contents != null;
+            assert contents.isEmpty() == false;
+            this.contents = Collections.unmodifiableList(contents);
+        }
+
+        /**
+         * Returns contents in this selection.
+         * @return the contents
+         */
+        public List<String> getContents() {
+            return contents;
+        }
+
+        @Override
+        public PatternElementKind getKind() {
+            return PatternElementKind.SELECTION;
+        }
+
+        @Override
+        public String getToken() {
+            StringBuilder buf = new StringBuilder();
+            buf.append((char) CHAR_OPEN_BRACE);
+            if (contents.isEmpty() == false) {
+                buf.append(contents.get(0));
+                for (int i = 1, n = contents.size(); i < n; i++) {
+                    buf.append((char) CHAR_BAR);
+                    buf.append(contents.get(i));
+                }
+            }
+            buf.append((char) CHAR_CLOSE_BRACE);
+            return buf.toString();
         }
 
         @Override

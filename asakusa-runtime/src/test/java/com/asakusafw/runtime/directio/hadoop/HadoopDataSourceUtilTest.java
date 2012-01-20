@@ -247,6 +247,58 @@ public class HadoopDataSourceUtilTest {
     }
 
     /**
+     * search using selection.
+     * @throws Exception if failed
+     */
+    @Test
+    public void search_selection() throws Exception {
+        touch("a.csv");
+        touch("b.csv");
+        touch("c.csv");
+        FileSystem fs = getTempFileSystem();
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("{a|b}.csv"));
+        assertThat(normalize(results), is(path("a.csv", "b.csv")));
+    }
+
+    /**
+     * search using multiple selection.
+     * @throws Exception if failed
+     */
+    @Test
+    public void search_selection_multiple() throws Exception {
+        touch("a/a.csv");
+        touch("a/b.csv");
+        touch("a/c.csv");
+        touch("b/a.csv");
+        touch("b/b.csv");
+        touch("b/c.csv");
+        touch("c/a.csv");
+        touch("c/b.csv");
+        touch("c/c.csv");
+        FileSystem fs = getTempFileSystem();
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(),
+                SearchPattern.compile("{a|b}/{b|c}.csv"));
+        assertThat(normalize(results), is(path("a/b.csv", "a/c.csv", "b/b.csv", "b/c.csv")));
+    }
+
+    /**
+     * search using complex selection.
+     * @throws Exception if failed
+     */
+    @Test
+    public void search_selection_complex() throws Exception {
+        for (int year = 2001; year <= 2010; year++) {
+            for (int month = 1; month <= 12; month++) {
+                touch(String.format("data/%04d/%02d%s", year, month, ".csv"));
+            }
+        }
+        FileSystem fs = getTempFileSystem();
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(),
+                SearchPattern.compile("data/{2005/12|2003/11}.csv"));
+        assertThat(normalize(results), is(path("data/2005/12.csv", "data/2003/11.csv")));
+    }
+
+    /**
      * search by traverse.
      * @throws Exception if failed
      */

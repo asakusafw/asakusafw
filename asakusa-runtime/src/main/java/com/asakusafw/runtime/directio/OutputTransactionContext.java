@@ -57,4 +57,15 @@ public final class OutputTransactionContext {
     public String getOutputId() {
         return outputId;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("OutputTransactionContext [transactionId=");
+        builder.append(transactionId);
+        builder.append(", outputId=");
+        builder.append(outputId);
+        builder.append("]");
+        return builder.toString();
+    }
 }

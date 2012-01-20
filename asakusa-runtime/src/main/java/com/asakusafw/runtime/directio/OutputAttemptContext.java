@@ -80,4 +80,17 @@ public final class OutputAttemptContext {
     public String getOutputId() {
         return outputId;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("OutputAttemptContext [transactionId=");
+        builder.append(transactionId);
+        builder.append(", attemptId=");
+        builder.append(attemptId);
+        builder.append(", outputId=");
+        builder.append(outputId);
+        builder.append("]");
+        return builder.toString();
+    }
 }

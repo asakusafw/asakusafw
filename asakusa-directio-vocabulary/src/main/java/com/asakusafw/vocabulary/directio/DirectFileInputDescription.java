@@ -51,6 +51,12 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      *   <li> excepts <code>"\", "*", "$", "?", "#", "|", "{", "}", "[", "]"</code> </li>
      *   </ul>
      * </li>
+     * <li> <code>{alter1|alter2|alter3}</code> (selection)
+     *   <ul>
+     *   <li> represents selection </li>
+     *   <li> each alternative must be consist of normal characters (NO wildcards, variables) </li>
+     *   </ul>
+     * </li>
      * <li> <code>${variable-name}</code> (variables)
      *   <ul>
      *   <li> replaced in runtime with barch arguments </li>
@@ -81,20 +87,24 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      *   <td> just {@code a/b/c.csv} </td>
      * </tr>
      * <tr>
+     *   <td> <code>{2011/12|2012/01|2012/02}/*.csv</code> </td>
+     *   <td> any CSV files in "2011/12", "2012/01", or "2012/02" </td>
+     * </tr>
+     * <tr>
      *   <td> <code>&#42;</code> </td>
-     *   <td> all files in target directory </td>
+     *   <td> any files in target directory </td>
      * </tr>
      * <tr>
      *   <td> <code>&#42;&#42;</code> </td>
-     *   <td> all files in target directory (recursive) </td>
+     *   <td> any files in target directory (recursive) </td>
      * </tr>
      * <tr>
      *   <td> <code>&#42;.csv</code> </td>
-     *   <td> all CSV files in target directory</td>
+     *   <td> any CSV files in target directory</td>
      * </tr>
      * <tr>
      *   <td> <code>&#42;&#42;/&#42;.csv</code> </td>
-     *   <td> all CSV files in target directory (recursive) </td>
+     *   <td> any CSV files in target directory (recursive) </td>
      * </tr>
      * </table>
      * @return the resource path pattern

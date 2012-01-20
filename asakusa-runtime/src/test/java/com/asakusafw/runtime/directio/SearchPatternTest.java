@@ -111,6 +111,21 @@ public class SearchPatternTest {
     }
 
     /**
+     * A selection pattern.
+     */
+    @Test
+    public void selection() {
+        SearchPattern compiled = SearchPattern.compile("{alpha|beta|gamma}");
+        assertThat(compiled.containsVariables(), is(false));
+        List<Segment> segments = compiled.getSegments();
+        assertThat(segments.size(), is(1));
+
+        assertThat(segments.get(0).isTraverse(), is(false));
+        assertThat(segments.get(0).getElements(), is(kind(SELECTION)));
+        assertThat(segments.get(0).getElements(), is(token("{alpha|beta|gamma}")));
+    }
+
+    /**
      * A contains wildcard pattern.
      */
     @Test
@@ -122,6 +137,36 @@ public class SearchPatternTest {
         assertThat(segments.get(0).isTraverse(), is(false));
         assertThat(segments.get(0).getElements(), is(kind(TOKEN, WILDCARD, TOKEN)));
         assertThat(segments.get(0).getElements(), is(token("data-", "*", ".csv")));
+    }
+
+    /**
+     * A selection pattern.
+     */
+    @Test
+    public void selection_containsEmpty() {
+        SearchPattern compiled = SearchPattern.compile("{alpha||gamma}");
+        assertThat(compiled.containsVariables(), is(false));
+        List<Segment> segments = compiled.getSegments();
+        assertThat(segments.size(), is(1));
+
+        assertThat(segments.get(0).isTraverse(), is(false));
+        assertThat(segments.get(0).getElements(), is(kind(SELECTION)));
+        assertThat(segments.get(0).getElements(), is(token("{alpha||gamma}")));
+    }
+
+    /**
+     * A selection pattern.
+     */
+    @Test
+    public void selection_empty() {
+        SearchPattern compiled = SearchPattern.compile("{}");
+        assertThat(compiled.containsVariables(), is(false));
+        List<Segment> segments = compiled.getSegments();
+        assertThat(segments.size(), is(1));
+
+        assertThat(segments.get(0).isTraverse(), is(false));
+        assertThat(segments.get(0).getElements(), is(kind(SELECTION)));
+        assertThat(segments.get(0).getElements(), is(token("{}")));
     }
 
     /**
@@ -167,7 +212,7 @@ public class SearchPatternTest {
      */
     @Test
     public void complex() {
-        SearchPattern compiled = SearchPattern.compile("alpha/**/gamma/${date}-*.csv");
+        SearchPattern compiled = SearchPattern.compile("alpha/**/{beta|gamma}/${date}-*.csv");
         assertThat(compiled.containsVariables(), is(true));
 
         List<Segment> segments = compiled.getSegments();
@@ -180,8 +225,8 @@ public class SearchPatternTest {
         assertThat(segments.get(1).isTraverse(), is(true));
 
         assertThat(segments.get(2).isTraverse(), is(false));
-        assertThat(segments.get(2).getElements(), is(kind(TOKEN)));
-        assertThat(segments.get(2).getElements(), is(token("gamma")));
+        assertThat(segments.get(2).getElements(), is(kind(SELECTION)));
+        assertThat(segments.get(2).getElements(), is(token("{beta|gamma}")));
 
         assertThat(segments.get(3).isTraverse(), is(false));
         assertThat(segments.get(3).getElements(), is(kind(VARIABLE, TOKEN, WILDCARD, TOKEN)));
@@ -213,11 +258,27 @@ public class SearchPatternTest {
     }
 
     /**
+     * An unclosed selection.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void selection_unclosed() {
+        SearchPattern.compile("{data");
+    }
+
+    /**
+     * An invalid character in selection.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void selection_invalid_character() {
+        SearchPattern.compile("{*}");
+    }
+
+    /**
      * An invalid character.
      */
     @Test(expected = IllegalArgumentException.class)
     public void invalid_character() {
-        SearchPattern.compile("{data,info}.csv");
+        SearchPattern.compile("\\data.csv");
     }
 
     private Matcher<List<PatternElement>> kind(final PatternElementKind... kinds) {

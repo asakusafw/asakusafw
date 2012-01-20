@@ -193,6 +193,27 @@ public class DirectFileInputPreparatorTest {
      * @throws Exception if failed
      */
     @Test
+    public void createInput_placeholders() throws Exception {
+        profile.add("root", HadoopDataSource.class, "/");
+        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.put();
+
+        DirectFileInputPreparator testee = new DirectFileInputPreparator();
+        ModelOutput<Text> output = testee.createOutput(
+                new MockTextDefinition(),
+                new MockInputDescription("base", "{alpha|beta|gamma/data}/{a/x|b|c}-*.csv"),
+                profile.getTextContext());
+        put(output, "Hello, world!");
+        List<File> files = find("base");
+        assertThat(files.toString(), files.size(), is(1));
+        assertThat(get(files.get(0)), is(Arrays.asList("Hello, world!")));
+    }
+
+    /**
+     * output with placeholders.
+     * @throws Exception if failed
+     */
+    @Test
     public void createOutput_placeholders() throws Exception {
         profile.add("root", HadoopDataSource.class, "/");
         profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
