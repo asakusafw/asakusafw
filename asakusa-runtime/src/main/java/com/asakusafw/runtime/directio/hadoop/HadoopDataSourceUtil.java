@@ -586,6 +586,7 @@ public final class HadoopDataSourceUtil {
                     to,
                     list.size()));
         }
+        Set<Path> directoryCreated = new HashSet<Path>();
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
             Path targetFile = new Path(target, path);
@@ -596,7 +597,30 @@ public final class HadoopDataSourceUtil {
                         targetFile,
                         list.size()));
             }
-            fs.mkdirs(targetFile.getParent());
+            try {
+                FileStatus stat = fs.getFileStatus(targetFile);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Deleting file: {0}",
+                            targetFile));
+                }
+                if (stat.isDir()) {
+                    fs.delete(targetFile, true);
+                } else {
+                    fs.delete(targetFile, false);
+                }
+            } catch (FileNotFoundException e) {
+                Path parent = targetFile.getParent();
+                if (directoryCreated.contains(parent) == false) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Creating directory: {0}",
+                                parent));
+                    }
+                    fs.mkdirs(parent);
+                    directoryCreated.add(parent);
+                }
+            }
             boolean succeed = fs.rename(sourceFile, targetFile);
             if (succeed == false) {
                 throw new IOException(MessageFormat.format(
