@@ -16,8 +16,11 @@
 package com.asakusafw.runtime.directio.hadoop;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -38,6 +41,8 @@ import com.asakusafw.runtime.io.ModelOutput;
  */
 public class HadoopDataSource extends AbstractDirectDataSource implements Configurable {
 
+    static final Log LOG = LogFactory.getLog(HadoopDataSource.class);
+
     private volatile HadoopDataSourceCore core;
 
     private volatile Configuration conf;
@@ -57,8 +62,19 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
         if (conf == null) {
             throw new IllegalStateException();
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start configuring Hadoop data source (id={0}, path={1})",
+                    profile.getId(),
+                    profile.getPath()));
+        }
         HadoopDataSourceProfile hProfile = HadoopDataSourceProfile.convert(profile, conf);
         this.core = new HadoopDataSourceCore(hProfile);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finish configuring Hadoop data source: {0}",
+                    hProfile));
+        }
     }
 
     @Override

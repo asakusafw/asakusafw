@@ -295,7 +295,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start searching files (base={0}, pattern={1})",
+                    "Start searching files (path={0}, resourcePattern={1})",
                     base,
                     pattern));
         }
@@ -320,7 +320,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish searching files (base={0}, pattern={1}, results={2}, steps={3})",
+                    "Finish searching files (path={0}, resourcePattern={1}, results={2}, steps={3})",
                     base,
                     pattern,
                     current.size(),
@@ -360,7 +360,7 @@ public final class HadoopDataSourceUtil {
         }
 
         Set<Path> saw = new HashSet<Path>();
-        for (Iterator<Path> iter = results.iterator(); iter.hasNext(); ) {
+        for (Iterator<Path> iter = results.iterator(); iter.hasNext();) {
             Path path = iter.next();
             if (saw.contains(path)) {
                 iter.remove();
@@ -592,10 +592,9 @@ public final class HadoopDataSourceUtil {
             Path targetFile = new Path(target, path);
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Moving file (from={0}, to={1}, count={2})",
+                        "Moving file (from={0}, to={1})",
                         sourceFile,
-                        targetFile,
-                        list.size()));
+                        targetFile));
             }
             try {
                 FileStatus stat = fs.getFileStatus(targetFile);
@@ -631,7 +630,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finished moving files (from={0}, to={1}, count={2})",
+                    "Finish moving files (from={0}, to={1}, count={2})",
                     from,
                     to,
                     list.size()));

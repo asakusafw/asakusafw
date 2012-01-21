@@ -28,8 +28,8 @@ import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 
 /**
  * Test for {@link SlotResolver}.

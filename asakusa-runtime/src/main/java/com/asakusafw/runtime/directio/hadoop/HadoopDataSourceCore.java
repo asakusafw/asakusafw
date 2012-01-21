@@ -70,7 +70,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             SearchPattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start finding input (directio={0}, idbase={1}, resource={2})",
+                    "Start finding input (id={0}, path={1}, resourcePattern={2})",
                     profile.getId(),
                     basePath,
                     resourcePattern));
@@ -85,11 +85,19 @@ class HadoopDataSourceCore implements DirectDataSource {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process finding input (directio={0}, base={1}, resource={2}, files={3})",
+                    "Process finding input (id={0}, path={1}, resource={2}, files={3})",
                     profile.getId(),
                     basePath,
                     resourcePattern,
                     stats.size()));
+        }
+        if (LOG.isTraceEnabled()) {
+            for (FileStatus stat : stats) {
+                LOG.trace(MessageFormat.format(
+                        "Input found (path={0}, length={1})",
+                        stat.getPath(),
+                        stat.getLen()));
+            }
         }
         long minSize = p.getMinimumFragmentSize(sformat);
         long prefSize = p.getPreferredFragmentSize(sformat);
@@ -103,12 +111,23 @@ class HadoopDataSourceCore implements DirectDataSource {
             String path = stat.getPath().toString();
             long fileSize = stat.getLen();
             List<BlockInfo> blocks = toBlocks(stat);
-            results.addAll(optimizer.computeFragments(path, fileSize, blocks));
+            List<DirectInputFragment> fragments = optimizer.computeFragments(path, fileSize, blocks);
+            if (LOG.isTraceEnabled()) {
+                for (DirectInputFragment fragment : fragments) {
+                    LOG.trace(MessageFormat.format(
+                            "Fragment found (path={0}, offset={1}, size={2}, owners={3})",
+                            fragment.getPath(),
+                            fragment.getOffset(),
+                            fragment.getSize(),
+                            fragment.getOwnerNodeNames()));
+                }
+            }
+            results.addAll(fragments);
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finished finding input (directio={0}, base={1}, resource={2}, fragments={3})",
+                    "Finish finding input (id={0}, path={1}, resource={2}, fragments={3})",
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -156,10 +175,11 @@ class HadoopDataSourceCore implements DirectDataSource {
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start opening input (directio={0}, path={1}, offset={2})",
+                    "Start opening input (id={0}, path={1}, offset={2}, size={3})",
                     profile.getId(),
                     fragment.getPath(),
-                    fragment.getOffset()));
+                    fragment.getOffset(),
+                    fragment.getSize()));
         }
         BinaryStreamFormat<T> sformat = validate(format);
         FileSystem fs = profile.getFileSystem();
@@ -173,10 +193,11 @@ class HadoopDataSourceCore implements DirectDataSource {
                 sformat.createInput(dataType, fragment.getPath(), cstream, offset, fragment.getSize());
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Finished opening input (directio={0}, path={1}, offset={2})",
+                        "Finish opening input (id={0}, path={1}, offset={2}, size={3})",
                         profile.getId(),
                         fragment.getPath(),
-                        fragment.getOffset()));
+                        fragment.getOffset(),
+                        fragment.getSize()));
             }
             succeed = true;
             return input;
@@ -186,9 +207,10 @@ class HadoopDataSourceCore implements DirectDataSource {
                     stream.close();
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
-                            "Failed to close input (path={0}, offset={1})",
+                            "Failed to close input (path={1}, offset={2}, size={3})",
                             fragment.getPath(),
-                            fragment.getOffset()), e);
+                            fragment.getOffset(),
+                            fragment.getSize()), e);
                 }
             }
         }
@@ -204,7 +226,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start opening output (directio={0}, base={1}, resource={2})",
+                    "Start opening output (id={0}, path={1}, resource={2})",
                     profile.getId(),
                     basePath,
                     resourcePath));
@@ -222,7 +244,7 @@ class HadoopDataSourceCore implements DirectDataSource {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Finished opening output (directio={0}, base={1}, resource={2}, file={3})",
+                        "Finish opening output (id={0}, path={1}, resource={2}, file={3})",
                         profile.getId(),
                         basePath,
                         resourcePath,
@@ -261,7 +283,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             SearchPattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start deleting files (directio={0}, base={1}, resource={2})",
+                    "Start deleting files (id={0}, path={1}, resource={2})",
                     profile.getId(),
                     basePath,
                     resourcePattern));
@@ -276,7 +298,7 @@ class HadoopDataSourceCore implements DirectDataSource {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process deleting files (directio={0}, base={1}, resource={2}, files={3})",
+                    "Process deleting files (id={0}, path={1}, resource={2}, files={3})",
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -287,12 +309,18 @@ class HadoopDataSourceCore implements DirectDataSource {
             if (isIn(stat, temporary)) {
                 continue;
             }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(MessageFormat.format(
+                        "Deleting file (id={0}, path={1})",
+                        profile.getId(),
+                        stat.getPath()));
+            }
             succeed &= fs.delete(stat.getPath(), true);
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finished deleting files (directio={0}, base={1}, resource={2}, files={3})",
+                    "Finish deleting files (id={0}, path={1}, resource={2}, files={3})",
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -311,6 +339,12 @@ class HadoopDataSourceCore implements DirectDataSource {
     public void setupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
         FileSystem fs = profile.getFileSystem();
         Path attempt = getAttemptOutput(context);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Create attempt area (id={0}, path={1})",
+                    profile.getId(),
+                    attempt));
+        }
         fs.mkdirs(attempt);
     }
 
@@ -319,6 +353,12 @@ class HadoopDataSourceCore implements DirectDataSource {
         FileSystem fs = profile.getFileSystem();
         Path attempt = getAttemptOutput(context);
         Path staging = getStagingOutput(context.getTransactionContext());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Commit attempt area (id={0}, path={1})",
+                    profile.getId(),
+                    attempt));
+        }
         HadoopDataSourceUtil.move(fs, attempt, staging);
     }
 
@@ -326,6 +366,12 @@ class HadoopDataSourceCore implements DirectDataSource {
     public void cleanupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
         FileSystem fs = profile.getFileSystem();
         Path attempt = getAttemptOutput(context);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Delete attempt area (id={0}, path={1})",
+                    profile.getId(),
+                    attempt));
+        }
         fs.delete(attempt, true);
     }
 
@@ -333,6 +379,12 @@ class HadoopDataSourceCore implements DirectDataSource {
     public void setupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
         FileSystem fs = profile.getFileSystem();
         Path staging = getStagingOutput(context);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Create staging area (id={0}, path={1})",
+                    profile.getId(),
+                    staging));
+        }
         fs.mkdirs(staging);
     }
 
@@ -341,6 +393,12 @@ class HadoopDataSourceCore implements DirectDataSource {
         FileSystem fs = profile.getFileSystem();
         Path staging = getStagingOutput(context);
         Path target = profile.getFileSystemPath();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Commit staging area (id={0}, path={1})",
+                    profile.getId(),
+                    staging));
+        }
         HadoopDataSourceUtil.move(fs, staging, target);
     }
 
@@ -348,6 +406,12 @@ class HadoopDataSourceCore implements DirectDataSource {
     public void cleanupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
         FileSystem fs = profile.getFileSystem();
         Path path = getTemporaryOutput(context);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Delete temporary area (id={0}, path={1})",
+                    profile.getId(),
+                    path));
+        }
         fs.delete(path, true);
     }
 

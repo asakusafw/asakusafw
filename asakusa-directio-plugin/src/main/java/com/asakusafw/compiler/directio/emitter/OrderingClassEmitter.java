@@ -103,6 +103,11 @@ public class OrderingClassEmitter {
         if (orderingInfo == null) {
             throw new IllegalArgumentException("orderingInfo must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Start preparing output file orderer: batch={}, flow={}, output={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                outputName,
+        });
         Engine engine = new Engine(environment, moduleId, outputName, index, dataType, orderingInfo);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -111,9 +116,12 @@ public class OrderingClassEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("\"{}.{}\" will use {}", new Object[] { moduleId, outputName, name });
-        }
+        LOG.debug("Finish preparing output file orderer: batch={}, flow={}, output={}, class={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                outputName,
+                name.toNameString(),
+        });
         return name;
     }
 

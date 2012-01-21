@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.Task;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputFormat;
@@ -43,7 +46,6 @@ import org.apache.hadoop.util.ReflectionUtils;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.runtime.stage.StageOutput;
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 
 /**
  * ステージ出力を設定するためのドライバ。
@@ -62,6 +64,8 @@ public class StageOutputDriver {
     private static final String K_KEY_PREFIX = "com.asakusafw.stage.output.key.";
 
     private static final String K_VALUE_PREFIX = "com.asakusafw.stage.output.value.";
+
+    private static final String COUNTER_GROUP = "com.asakusafw.stage.output.RecordCounters";
 
     private final Map<String, ResultOutput<?>> resultSinks;
 
@@ -122,23 +126,44 @@ public class StageOutputDriver {
                     name));
         }
 
+        List<Counter> counters = getCounters(context, name);
         if (TemporaryOutputFormat.class.isAssignableFrom(formatClass)) {
-            return buildTemporarySink(context, name, valueClass);
+            return buildTemporarySink(context, name, valueClass, counters);
         } else {
-            return buildNormalSink(context, name, formatClass, keyClass, valueClass);
+            return buildNormalSink(context, name, formatClass, keyClass, valueClass, counters);
+        }
+    }
+
+    private List<Counter> getCounters(TaskInputOutputContext<?, ?, ?, ?> context, String name) {
+        assert context != null;
+        assert name != null;
+        try {
+            List<Counter> results = new ArrayList<Counter>();
+            if (context.getTaskAttemptID().isMap()) {
+                results.add(context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS));
+            } else {
+                results.add(context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS));
+            }
+            results.add(context.getCounter(COUNTER_GROUP, name));
+            return results;
+        } catch (RuntimeException e) {
+            LOG.warn("Failed to create counters", e);
+            return Collections.emptyList();
         }
     }
 
     private ResultOutput<?> buildTemporarySink(
             TaskAttemptContext context,
             String name,
-            Class<?> valueClass) throws IOException, InterruptedException {
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
         assert context != null;
         assert name != null;
         assert valueClass != null;
+        assert counters != null;
         TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
         RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
-        return new ResultOutput<Writable>(context, writer);
+        return new ResultOutput<Writable>(context, writer, counters);
     }
 
     private ResultOutput<?> buildNormalSink(
@@ -146,12 +171,14 @@ public class StageOutputDriver {
             String name,
             @SuppressWarnings("rawtypes") Class<? extends OutputFormat> formatClass,
             Class<?> keyClass,
-            Class<?> valueClass) throws IOException, InterruptedException {
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
         assert context != null;
         assert name != null;
         assert formatClass != null;
         assert keyClass != null;
         assert valueClass != null;
+        assert counters != null;
         Job job = new Job(context.getConfiguration());
         job.setOutputFormatClass(formatClass);
         job.setOutputKeyClass(keyClass);

@@ -107,12 +107,33 @@ public class StageEmitter {
     public CompiledStage emit(List<Slot> slots, Location outputLocation) throws IOException {
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputLocation, "outputLocation"); //$NON-NLS-1$
+        LOG.debug("Start preparing output stage for Direct I/O epilogue: batch={}, flow={}",
+                environment.getBatchId(),
+                environment.getFlowId());
+
+        LOG.debug("Emitting shuffle key for Direct I/O epilogue");
         Name key = emitKey(slots);
+
+        LOG.debug("Emitting shuffle value for Direct I/O epilogue");
         Name value = emitValue(slots);
+
+        LOG.debug("Emitting grouping comparator for Direct I/O epilogue");
         Name grouping = emitGrouping(key);
+
+        LOG.debug("Emitting sort comparator for Direct I/O epilogue");
         Name ordering = emitOrdering(key);
+
+        LOG.debug("Emitting mappers for Direct I/O epilogue");
         List<CompiledSlot> compiledSlots = emitMappers(slots, key, value);
+
+        LOG.debug("Emitting stage client for Direct I/O epilogue");
         Name client = emitClient(compiledSlots, key, value, grouping, ordering, outputLocation);
+
+        LOG.debug("Finish preparing output stage for Direct I/O epilogue: batch={}, flow={}, class={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                client.toNameString(),
+        });
         return new CompiledStage(client, Naming.getEpilogueName(moduleId));
     }
 
@@ -272,7 +293,7 @@ public class StageEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("\"{}\" will use {}", moduleId, name);
+        LOG.debug("epilogue of \"{}\" will use {}", moduleId, name);
         return name;
     }
 

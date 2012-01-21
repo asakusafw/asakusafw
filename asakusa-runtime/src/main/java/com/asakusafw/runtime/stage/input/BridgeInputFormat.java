@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
@@ -55,6 +57,8 @@ import com.asakusafw.runtime.util.VariableTable;
  */
 public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
+    static final Log LOG = LogFactory.getLog(BridgeInputFormat.class);
+
     @Override
     @Deprecated
     public List<InputSplit> getSplits(JobContext context) throws IOException, InterruptedException {
@@ -79,9 +83,15 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (inputList == null) {
             throw new IllegalArgumentException("inputList must not be null"); //$NON-NLS-1$
         }
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Start computing splits for Direct I/O: input={0}",
+                    inputList.size()));
+        }
         DirectDataSourceRepository repo = getDataSourceRepository(context);
         List<InputSplit> results = new ArrayList<InputSplit>();
         Map<DirectInputGroup, List<InputPath>> patternGroups = extractInputList(context, repo, inputList);
+        long totalSize = 0;
         for (Map.Entry<DirectInputGroup, List<InputPath>> entry : patternGroups.entrySet()) {
             DirectInputGroup group = entry.getKey();
             List<InputPath> paths = entry.getValue();
@@ -90,9 +100,17 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             for (InputPath path : paths) {
                 List<DirectInputFragment> fragments = getFragments(repo, group, path, format, dataSource);
                 for (DirectInputFragment fragment : fragments) {
+                    totalSize += fragment.getSize();
                     results.add(new BridgeInputSplit(group, fragment));
                 }
             }
+        }
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Finish computing splits for Direct I/O: input={0}, fragments={1}, size={2}",
+                    inputList.size(),
+                    results.size(),
+                    totalSize));
         }
         return results;
     }
@@ -223,7 +241,6 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             TaskAttemptContext context) throws IOException, InterruptedException {
         assert split instanceof BridgeInputSplit;
         BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
-        assert bridgeInfo != null;
         DataFormat<?> format = ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
         return createRecordReader(format, bridgeInfo, context);
     }
@@ -428,7 +445,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
      * @param <T> input type
      * @since 0.2.5
      */
-    private static class BridgeRecordReader<T> extends RecordReader<NullWritable, Object> {
+    private static final class BridgeRecordReader<T> extends RecordReader<NullWritable, Object> {
 
         private static final NullWritable KEY = NullWritable.get();
 
@@ -436,17 +453,21 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         private final T buffer;
 
-        private final Counter counter;
+        private final Counter sizeCounter;
 
         private final double fragmentSize;
 
         private boolean closed = false;
 
-        public BridgeRecordReader(ModelInput<T> input, T buffer, Counter counter, long fragmentSize) {
-            assert counter != null;
+        public BridgeRecordReader(
+                ModelInput<T> input,
+                T buffer,
+                Counter sizeCounter,
+                long fragmentSize) {
             assert input != null;
             assert buffer != null;
-            this.counter = counter;
+            assert sizeCounter != null;
+            this.sizeCounter = sizeCounter;
             this.input = input;
             this.buffer = buffer;
             if (fragmentSize < 0) {
@@ -457,7 +478,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         }
 
         @Override
-        public final void initialize(
+        public void initialize(
                 InputSplit split,
                 TaskAttemptContext context) throws IOException, InterruptedException {
             assert split instanceof BridgeInputSplit;
@@ -468,7 +489,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             if (closed) {
                 return false;
             }
-            return input.readTo(buffer);
+            boolean exists = input.readTo(buffer);
+            if (exists == false) {
+                return false;
+            }
+            return exists;
         }
 
         @Override
@@ -486,7 +511,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             if (closed) {
                 return 1.0f;
             }
-            float progress = (float) (counter.get() / fragmentSize);
+            float progress = (float) (sizeCounter.get() / fragmentSize);
             return Math.min(progress, 0.99f);
         }
 

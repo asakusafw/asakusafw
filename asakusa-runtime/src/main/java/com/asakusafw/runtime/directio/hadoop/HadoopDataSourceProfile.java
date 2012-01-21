@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -34,7 +36,11 @@ import com.asakusafw.runtime.directio.DirectDataSourceProfile;
  */
 public class HadoopDataSourceProfile {
 
+    static final Log LOG = LogFactory.getLog(HadoopDataSourceProfile.class);
+
     // fs.staging
+
+    private static final String ROOT_REPRESENTATION = "/";
 
     /**
      * The property key name for {@link #getFileSystemPath()}.
@@ -63,6 +69,8 @@ public class HadoopDataSourceProfile {
 
     private static final long DEFAULT_PREF_FRAGMENT = 64 * 1024 * 1024;
 
+    private final String id;
+
     private final String contextPath;
 
     private final FileSystem fileSystem;
@@ -74,8 +82,6 @@ public class HadoopDataSourceProfile {
     private long minimumFragmentSize = DEFAULT_MIN_FRAGMENT;
 
     private long preferredFragmentSize = DEFAULT_PREF_FRAGMENT;
-
-    private final String id;
 
     /**
      * Creates a new instance.
@@ -201,6 +207,27 @@ public class HadoopDataSourceProfile {
         this.preferredFragmentSize = Math.max(size, 1);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("HadoopDataSourceProfile [id=");
+        builder.append(id);
+        builder.append(", contextPath=");
+        builder.append(contextPath.isEmpty() ? ROOT_REPRESENTATION : contextPath);
+        builder.append(", fileSystem=");
+        builder.append(fileSystem);
+        builder.append(", fileSystemPath=");
+        builder.append(fileSystemPath);
+        builder.append(", temporaryPath=");
+        builder.append(temporaryPath);
+        builder.append(", minimumFragmentSize=");
+        builder.append(minimumFragmentSize);
+        builder.append(", preferredFragmentSize=");
+        builder.append(preferredFragmentSize);
+        builder.append("]");
+        return builder.toString();
+    }
+
     /**
      * Converts the {@link DirectDataSourceProfile} into this profile.
      * @param profile target profile
@@ -219,15 +246,15 @@ public class HadoopDataSourceProfile {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
         Map<String, String> attributes = new HashMap<String, String>(profile.getAttributes());
-        Path fsPath = takeFsPath(attributes, conf);
+        Path fsPath = takeFsPath(profile, attributes, conf);
         if (fsPath == null) {
             throw new IOException(MessageFormat.format(
                     "The directio configuration \"{0} ({1})\" does not have \"{2}\"",
                     profile.getId(),
-                    profile.getPath(),
+                    profile.getPath().isEmpty() ? ROOT_REPRESENTATION : profile.getPath(),
                     fqn(profile, KEY_PATH)));
         }
-        Path tempPath = takeTempPath(attributes, conf, fsPath);
+        Path tempPath = takeTempPath(profile, attributes, conf, fsPath);
         FileSystem fileSystem = fsPath.getFileSystem(conf);
         FileSystem tempFs = tempPath.getFileSystem(conf);
         if (fileSystem.getCanonicalServiceName().equals(tempFs.getCanonicalServiceName()) == false) {
@@ -265,7 +292,8 @@ public class HadoopDataSourceProfile {
                 key);
     }
 
-    private static Path takeFsPath(Map<String, String> attributes, Configuration conf) {
+    private static Path takeFsPath(
+            DirectDataSourceProfile profile, Map<String, String> attributes, Configuration conf) {
         assert conf != null;
         assert attributes != null;
         String fsPathString = attributes.remove(KEY_PATH);
@@ -275,7 +303,8 @@ public class HadoopDataSourceProfile {
         return null;
     }
 
-    private static Path takeTempPath(Map<String, String> attributes, Configuration conf, Path fsPath) {
+    private static Path takeTempPath(
+            DirectDataSourceProfile profile, Map<String, String> attributes, Configuration conf, Path fsPath) {
         assert attributes != null;
         assert conf != null;
         assert fsPath != null;

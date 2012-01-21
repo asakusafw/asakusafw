@@ -26,7 +26,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import com.asakusafw.runtime.io.ModelInput;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;

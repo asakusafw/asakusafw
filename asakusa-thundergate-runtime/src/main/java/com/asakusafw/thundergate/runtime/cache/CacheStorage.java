@@ -27,7 +27,7 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 
 /**
  * An abstraction of ThunderGate Cache Storage.

@@ -39,7 +39,7 @@ import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoin;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoinUpdate;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;

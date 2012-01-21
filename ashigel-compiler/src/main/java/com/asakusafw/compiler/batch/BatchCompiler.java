@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.batch;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ import com.ashigeru.util.graph.Graphs;
  */
 public class BatchCompiler {
 
-    private BatchCompilingEnvironment environment;
+    private final BatchCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -58,11 +59,15 @@ public class BatchCompiler {
         Workflow workflow = createWorkflow(description);
         processUnits(workflow.getGraph().getNodeSet());
         if (environment.hasError()) {
-            throw new IOException("ワークフローの解析に失敗したため、処理を中断します");
+            throw new IOException(MessageFormat.format(
+                    "ワークフローの解析に失敗したため、処理を中断します: {0}",
+                    environment.getErrorMessage()));
         }
         processWorkflow(workflow);
         if (environment.hasError()) {
-            throw new IOException("ワークフローの出力に失敗したため、処理を中断します");
+            throw new IOException(MessageFormat.format(
+                    "ワークフローの出力に失敗したため、処理を中断します: {0}",
+                    environment.getErrorMessage()));
         }
         return workflow;
     }

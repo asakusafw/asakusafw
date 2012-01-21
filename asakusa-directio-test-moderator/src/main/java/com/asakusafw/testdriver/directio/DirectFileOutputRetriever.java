@@ -18,6 +18,9 @@ package com.asakusafw.testdriver.directio;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.BaseExporterRetriever;
@@ -34,9 +37,12 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
  */
 public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileOutputDescription> {
 
+    static final Logger LOG = LoggerFactory.getLogger(DirectFileOutputRetriever.class);
+
     @Override
     public void truncate(DirectFileOutputDescription description, TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
+        LOG.info("Truncating output: {}", description.getClass().getName());
         helper.truncate();
     }
 
@@ -56,6 +62,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
             DirectFileOutputDescription description,
             TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
+        LOG.info("Retrieving output: {}", description.getClass().getName());
         final V object = definition.toObject(definition.newReflection().build());
         final ModelInput<? super V> input = helper.openInput(definition.getModelClass(), description);
         return new DataModelSource() {

@@ -18,6 +18,8 @@ package com.asakusafw.compiler.flow.mock;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
 
@@ -60,7 +62,7 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
                 new TaskAttemptID(),
                 null,
                 null,
-                null);
+                new MockStatusReporter());
         this.keyOut = keyOut;
         this.valueOut = valueOut;
     }
@@ -84,5 +86,34 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
     @Override
     public Object getCurrentValue() throws IOException, InterruptedException {
         throw new UnsupportedOperationException();
+    }
+
+    private static final class MockStatusReporter extends StatusReporter {
+
+        MockStatusReporter() {
+            return;
+        }
+
+        @Override
+        public Counter getCounter(Enum<?> name) {
+            return getCounter(name.getDeclaringClass().getName(), name.name());
+        }
+
+        @Override
+        public Counter getCounter(String group, String name) {
+            return new Counter() {
+                // empty
+            };
+        }
+
+        @Override
+        public void progress() {
+            return;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            return;
+        }
     }
 }

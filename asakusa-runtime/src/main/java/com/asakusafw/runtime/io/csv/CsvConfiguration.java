@@ -209,7 +209,7 @@ public class CsvConfiguration {
     }
 
     /**
-     * Sets the field separator character
+     * Sets the field separator character.
      * @param separatorChar the separator
      */
     public void setSeparatorChar(char separatorChar) {

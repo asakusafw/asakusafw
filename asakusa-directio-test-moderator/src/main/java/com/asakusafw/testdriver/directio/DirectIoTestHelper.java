@@ -58,6 +58,8 @@ public final class DirectIoTestHelper {
 
     private static final SearchPattern ALL = SearchPattern.compile("**");
 
+    private static final String ATTEMPT_ID = "testing";
+
     private static final String WILDCARD_REPLACEMENT = "__testing__";
 
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
@@ -70,6 +72,10 @@ public final class DirectIoTestHelper {
     final DirectDataSource dataSource;
 
     final String id;
+
+    final String fullPath;
+
+    final String containerPath;
 
     final String basePath;
 
@@ -87,7 +93,7 @@ public final class DirectIoTestHelper {
         if (rootPath == null) {
             throw new IllegalArgumentException("rootPath must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Creating test helper for directio: {}", rootPath);
+        LOG.debug("Creating test helper for Direct I/O (basePath={})", rootPath);
         this.variables = new VariableTable(RedefineStrategy.ERROR);
         variables.defineVariables(context.getArguments());
         String resolvedRootPath = resolve(rootPath);
@@ -104,8 +110,10 @@ public final class DirectIoTestHelper {
         } catch (InterruptedException e) {
             throw (IOException) new InterruptedIOException("interrupted").initCause(e);
         }
+        this.fullPath = resolvedRootPath;
+        this.containerPath = repo.getContainerPath(resolvedRootPath);
         this.basePath = repo.getComponentPath(resolvedRootPath);
-        LOG.debug("Direct IO Mapping: {} -> {}", resolvedRootPath, id);
+        LOG.debug("Direct I/O Mapping: {} -> id={}", resolvedRootPath, id);
     }
 
     private synchronized DirectDataSourceRepository getRepository(TestContext context) throws IOException {
@@ -167,7 +175,10 @@ public final class DirectIoTestHelper {
      * @throws IOException if failed to perform by I/O error
      */
     public void truncate() throws IOException {
-        LOG.info("Truncating : {}:{}", id, basePath);
+        LOG.info("Truncating {} (id={})", new Object[] {
+                fullPath,
+                id,
+        });
         try {
             dataSource.delete(basePath, ALL);
         } catch (InterruptedException e) {
@@ -196,10 +207,11 @@ public final class DirectIoTestHelper {
         final OutputAttemptContext context = createContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
-        LOG.info("Opening direct output: {}:{}/{}", new Object[] {
-                id,
-                basePath,
+        LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
+                fullPath,
                 outputPath,
+                id,
+                description.getClass().getName(),
         });
         try {
             dataSource.setupTransactionOutput(context.getTransactionContext());
@@ -217,7 +229,9 @@ public final class DirectIoTestHelper {
                     output.close();
                     try {
                         dataSource.commitAttemptOutput(context);
+                        dataSource.cleanupAttemptOutput(context);
                         dataSource.commitTransactionOutput(context.getTransactionContext());
+                        dataSource.cleanupTransactionOutput(context.getTransactionContext());
                     } catch (InterruptedException e) {
                         throw (IOException) new InterruptedIOException("interrupted").initCause(e);
                     }
@@ -250,10 +264,11 @@ public final class DirectIoTestHelper {
         final Counter counter = new Counter();
         try {
             SearchPattern pattern = toInputPattern(description.getResourcePattern());
-            LOG.info("Opening direct input: {}:{}/{}", new Object[] {
+            LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
+                    fullPath,
+                    pattern,
                     id,
-                    basePath,
-                    pattern
+                    description.getClass().getName(),
             });
             final List<DirectInputFragment> fragments =
                 dataSource.findInputFragments(dataType, format, basePath, pattern);
@@ -346,7 +361,7 @@ public final class DirectIoTestHelper {
 
     private OutputAttemptContext createContext() {
         String uuid = UUID.randomUUID().toString();
-        return new OutputAttemptContext(uuid, uuid, uuid);
+        return new OutputAttemptContext(uuid, ATTEMPT_ID, id);
     }
 
     @SuppressWarnings("unchecked")

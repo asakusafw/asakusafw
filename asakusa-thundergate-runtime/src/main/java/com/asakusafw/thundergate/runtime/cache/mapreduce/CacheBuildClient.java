@@ -35,9 +35,9 @@ import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
 import com.asakusafw.runtime.stage.input.StageInputMapper;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.LegacyBridgeOutputCommitter;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**

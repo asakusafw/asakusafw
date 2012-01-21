@@ -33,7 +33,6 @@ import org.apache.hadoop.mapreduce.JobStatus.State;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
 
 /**
  * A bridge implementation for Hadoop {@link OutputFormat}.

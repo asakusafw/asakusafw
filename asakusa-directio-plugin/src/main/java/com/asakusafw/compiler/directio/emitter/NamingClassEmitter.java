@@ -103,6 +103,12 @@ public class NamingClassEmitter {
         if (namingInfo == null) {
             throw new IllegalArgumentException("namingInfo must not be null"); //$NON-NLS-1$
         }
+        LOG.debug("Start preparing output file name template: batch={}, flow={}, output={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                outputName,
+        });
+
         Engine engine = new Engine(environment, moduleId, outputName, index, dataType, namingInfo);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -111,9 +117,12 @@ public class NamingClassEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("\"{}.{}\" will use {}", new Object[] { moduleId, outputName, name });
-        }
+        LOG.debug("Finish preparing output file name template: batch={}, flow={}, output={}, class={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                outputName,
+                name.toNameString(),
+        });
         return name;
     }
 

@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.hadoop.mapreduce.InputFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.directio.OutputPattern.CompiledOrder;
 import com.asakusafw.compiler.directio.OutputPattern.CompiledResourcePattern;
@@ -42,8 +44,8 @@ import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.SearchPattern;
 import com.asakusafw.runtime.stage.input.BridgeInputFormat;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
-import com.asakusafw.runtime.stage.temporary.TemporaryOutputFormat;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
@@ -59,6 +61,8 @@ import com.ashigeru.lang.java.model.util.Models;
  * @since 0.2.5
  */
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
+
+    static final Logger LOG = LoggerFactory.getLogger(DirectFileIoProcessor.class);
 
     private static final String MODULE_NAME = "directio";
 
@@ -76,13 +80,21 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
+        LOG.debug("Checking Direct I/O vocabularies: batch={}, flow={}",
+                getEnvironment().getBatchId(),
+                getEnvironment().getFlowId());
         boolean valid = true;
         for (InputDescription input : inputs) {
+            LOG.debug("Checking Direct I/O input: {}",
+                    input.getName());
             valid &= validateInput(input);
         }
         for (OutputDescription output : outputs) {
+            LOG.debug("Checking Direct I/O output: {}",
+                    output.getName());
             valid &= validateOutput(output);
         }
+        LOG.debug("Checking Direct I/O paths");
         valid &= validatePaths(inputs, outputs);
         return valid;
     }
@@ -287,6 +299,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             InputDescription description = input.getDescription();
             DirectFileInputDescription desc = extract(description);
             if (isCacheTarget(desc)) {
+                LOG.debug("Input will be copied in prologue: {}", description.getName());
                 targets.add(new CopyDescription(
                         getProcessedInputName(description),
                         getEnvironment().getDataClasses().load(description.getDataType()),

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage.temporary;
+package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -38,7 +38,6 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.security.TokenCache;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import com.asakusafw.runtime.stage.output.EmptyFileOutputFormat;
 
 /**
  * A temporary output format.

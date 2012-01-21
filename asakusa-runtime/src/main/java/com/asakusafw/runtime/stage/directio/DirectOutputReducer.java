@@ -37,7 +37,9 @@ public final class DirectOutputReducer extends Reducer<
         AbstractDirectOutputKey, AbstractDirectOutputValue,
         Object, Object> {
 
-    private Counter counter;
+    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics";
+
+    private org.apache.hadoop.mapreduce.Counter recordCounter;
 
     private DirectDataSourceRepository repository;
 
@@ -45,7 +47,7 @@ public final class DirectOutputReducer extends Reducer<
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        this.counter = new Counter();
+        this.recordCounter = context.getCounter(org.apache.hadoop.mapred.Task.Counter.REDUCE_OUTPUT_RECORDS);
         this.repository = HadoopDataSourceUtil.loadRepository(context.getConfiguration());
         String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
         this.variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
@@ -67,14 +69,23 @@ public final class DirectOutputReducer extends Reducer<
         String basePath = repository.getComponentPath(path);
         String resourcePath = variables.parse(group.getResourcePath());
         Class dataType = group.getDataType();
+
+        Counter counter = new Counter();
         ModelOutput output = datasource.openOutput(outputContext, dataType, format, basePath, resourcePath, counter);
+
+        long records = 0;
         try {
             for (Union union : values) {
                 Object object = union.getObject();
                 output.write(object);
+                records++;
             }
         } finally {
             output.close();
         }
+        recordCounter.increment(records);
+        context.getCounter(COUNTER_GROUP, id + ".files").increment(1);
+        context.getCounter(COUNTER_GROUP, id + ".records").increment(records);
+        context.getCounter(COUNTER_GROUP, id + ".size").increment(counter.get());
     }
 }

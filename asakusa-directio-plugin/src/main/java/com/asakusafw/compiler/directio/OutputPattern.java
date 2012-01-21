@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
  * Processes patterns in {@link DirectFileOutputDescription}.
  * @since 0.2.5
  */
-public class OutputPattern {
+public final class OutputPattern {
 
     static final int CHAR_BLOCK_OPEN = '{';
 
@@ -74,6 +74,10 @@ public class OutputPattern {
 
     private static final boolean[] ASC_MAP = { true, true, false, true, false };
 
+    private OutputPattern() {
+        return;
+    }
+
     /**
      * Compiles the resource pattern for the output.
      * @param pattern the pattern string
@@ -107,7 +111,7 @@ public class OutputPattern {
                 }
                 String argument = ph[1];
                 Format format = findFormat(property, argument);
-                if (format== null) {
+                if (format == null) {
                     cursor.rewind();
                     throw new IllegalArgumentException(MessageFormat.format(
                             "Invalid format \"{1}\": {0}",
@@ -375,9 +379,9 @@ public class OutputPattern {
 
         /**
          * Creates a new instance.
-         * @param target target
-         * @param format
-         * @param argument
+         * @param target target property
+         * @param format format kind
+         * @param argument format argument (nullable)
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         public CompiledResourcePattern(DataClass.Property target, Format format, String argument) {

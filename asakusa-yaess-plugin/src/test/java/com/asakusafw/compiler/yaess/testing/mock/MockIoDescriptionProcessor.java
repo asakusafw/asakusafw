@@ -24,7 +24,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;

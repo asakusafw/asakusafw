@@ -38,7 +38,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.stage.StageInput;
-import com.asakusafw.runtime.stage.temporary.TemporaryInputFormat;
 
 /**
  * ステージへの複数の入力を処理する{@link InputFormat}。
