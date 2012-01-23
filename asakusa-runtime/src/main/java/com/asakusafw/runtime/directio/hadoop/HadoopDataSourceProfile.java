@@ -257,7 +257,7 @@ public class HadoopDataSourceProfile {
         Path tempPath = takeTempPath(profile, attributes, conf, fsPath);
         FileSystem fileSystem = fsPath.getFileSystem(conf);
         FileSystem tempFs = tempPath.getFileSystem(conf);
-        if (fileSystem.getCanonicalServiceName().equals(tempFs.getCanonicalServiceName()) == false) {
+        if (getFsIdentity(fileSystem).equals(getFsIdentity(tempFs)) == false) {
             throw new IOException(MessageFormat.format(
                     "The directio target and temporary path must be on same file system ({0}={1} <=> {2}={3})",
                     fqn(profile, KEY_PATH),
@@ -281,6 +281,21 @@ public class HadoopDataSourceProfile {
                     new TreeSet<String>(attributes.keySet())));
         }
         return result;
+    }
+
+    static String getFsIdentity(FileSystem fileSystem) {
+        assert fileSystem != null;
+        try {
+            String name = fileSystem.getCanonicalServiceName();
+            return name;
+        } catch (RuntimeException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Failed to obtain canonical service name for {0}",
+                        fileSystem.getUri()));
+            }
+            return fileSystem.getUri().toString();
+        }
     }
 
     private static Object fqn(DirectDataSourceProfile profile, String key) {

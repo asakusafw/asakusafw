@@ -274,7 +274,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException {
-            return true;
+            return outputMap.isEmpty() == false;
         }
 
         @Override
@@ -393,8 +393,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         }
 
         private void setCommitted(JobContext jobContext, boolean value) throws IOException {
-            FileSystem fs = FileSystem.get(jobContext.getConfiguration());
             Path commitMark = getCommitMarkPath(jobContext);
+            FileSystem fs = commitMark.getFileSystem(jobContext.getConfiguration());
             if (value) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info(MessageFormat.format(
@@ -415,8 +415,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         }
 
         private boolean isCommitted(JobContext jobContext) throws IOException {
-            FileSystem fs = FileSystem.get(jobContext.getConfiguration());
             Path commitMark = getCommitMarkPath(jobContext);
+            FileSystem fs = commitMark.getFileSystem(jobContext.getConfiguration());
             return fs.exists(commitMark);
         }
 
