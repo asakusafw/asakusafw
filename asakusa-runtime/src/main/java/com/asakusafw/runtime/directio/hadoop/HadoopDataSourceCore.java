@@ -186,8 +186,26 @@ class HadoopDataSourceCore implements DirectDataSource {
         FSDataInputStream stream = fs.open(new Path(fragment.getPath()));
         boolean succeed = false;
         try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Process opening input [stream opened] (id={0}, path={1}, offset={2}, size={3})",
+                        profile.getId(),
+                        fragment.getPath(),
+                        fragment.getOffset(),
+                        fragment.getSize()));
+            }
             long offset = fragment.getOffset();
-            stream.seek(offset);
+            if (offset != 0) {
+                stream.seek(offset);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Process opening input [sought to offset] (id={0}, path={1}, offset={2}, size={3})",
+                            profile.getId(),
+                            fragment.getPath(),
+                            fragment.getOffset(),
+                            fragment.getSize()));
+                }
+            }
             CountInputStream cstream = new CountInputStream(stream, counter);
             ModelInput<T> input =
                 sformat.createInput(dataType, fragment.getPath(), cstream, offset, fragment.getSize());
@@ -241,7 +259,6 @@ class HadoopDataSourceCore implements DirectDataSource {
         try {
             CountOutputStream cstream = new CountOutputStream(stream, counter);
             ModelOutput<T> output = sformat.createOutput(dataType, attempt.toString(), cstream);
-
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
                         "Finish opening output (id={0}, path={1}, resource={2}, file={3})",

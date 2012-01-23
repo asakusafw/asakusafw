@@ -591,10 +591,12 @@ public final class HadoopDataSourceUtil {
             Path sourceFile = new Path(source, path);
             Path targetFile = new Path(target, path);
             if (LOG.isTraceEnabled()) {
+                FileStatus stat = fs.getFileStatus(sourceFile);
                 LOG.trace(MessageFormat.format(
-                        "Moving file (from={0}, to={1})",
+                        "Moving file (from={0}, to={1}, size={2})",
                         sourceFile,
-                        targetFile));
+                        targetFile,
+                        stat.getLen()));
             }
             try {
                 FileStatus stat = fs.getFileStatus(targetFile);

@@ -114,13 +114,7 @@ class DirectOutputGroup implements WritableRawComparable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + path.hashCode();
-        result = prime * result + dataType.hashCode();
-        result = prime * result + format.hashCode();
-        result = prime * result + nameGenerator.hashCode();
-        return result;
+        return nameGenerator.hashCode();
     }
 
     @Override
@@ -135,15 +129,6 @@ class DirectOutputGroup implements WritableRawComparable {
             return false;
         }
         DirectOutputGroup other = (DirectOutputGroup) obj;
-        if (!path.equals(other.path)) {
-            return false;
-        }
-        if (!dataType.equals(other.dataType)) {
-            return false;
-        }
-        if (!format.equals(other.format)) {
-            return false;
-        }
         if (!nameGenerator.equals(other.nameGenerator)) {
             return false;
         }
