@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -189,6 +188,38 @@ public class HadoopDataSourceUtilTest {
         MockHadoopDataSource mock = (MockHadoopDataSource) ds;
         assertThat(mock.conf, is(notNullValue()));
         assertThat(mock.profile.getPath(), is("testing"));
+    }
+
+    /**
+     * Test for commit mark.
+     * @throws Exception if failed
+     */
+    @Test
+    public void commitMark() throws Exception {
+        Configuration conf = new Configuration();
+        conf.set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, folder.getRoot().getAbsoluteFile().toURI().toString());
+
+        assertThat("empty system dir", folder.getRoot().listFiles(), is(new File[0]));
+        assertThat(HadoopDataSourceUtil.findAllCommitMarkFiles(conf).size(), is(0));
+
+        Path c1 = HadoopDataSourceUtil.getCommitMarkPath(conf, "ex1");
+        assertThat(HadoopDataSourceUtil.getCommitMarkExecutionId(c1), is("ex1"));
+        c1.getFileSystem(conf).create(c1).close();
+
+        assertThat(folder.getRoot().listFiles().length, is(greaterThan(0)));
+
+        Path c2 = HadoopDataSourceUtil.getCommitMarkPath(conf, "ex2");
+        assertThat(c2, is(not(c1)));
+        assertThat(HadoopDataSourceUtil.getCommitMarkExecutionId(c2), is("ex2"));
+        c2.getFileSystem(conf).create(c2).close();
+
+        List<Path> paths = new ArrayList<Path>();
+        for (FileStatus stat : HadoopDataSourceUtil.findAllCommitMarkFiles(conf)) {
+            paths.add(stat.getPath());
+        }
+        assertThat(paths.size(), is(2));
+        assertThat(paths, hasItem(c1));
+        assertThat(paths, hasItem(c2));
     }
 
     /**

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -172,9 +173,31 @@ public class DirectDataSourceRepository {
         return nodePath.subPath(depth, nodePath.size()).getPathString();
     }
 
+    /**
+     * Returns all {@link DirectDataSource}s registered in this repository.
+     * @return all {@link DirectDataSource}s
+     * @throws IOException if failed to initialize data sources
+     * @throws InterruptedException if interrupted
+     */
+    public Collection<String> getContainerPaths() throws IOException, InterruptedException {
+        Collection<String> results = new ArrayList<String>();
+        LinkedList<Node> work = new LinkedList<Node>();
+        work.add(root);
+        while (work.isEmpty() == false) {
+            Node node = work.removeFirst();
+            if (node.hasContent()) {
+                results.add(node.path.getPathString());
+            }
+            work.addAll(node.children.values());
+        }
+        return results;
+    }
+
     private final class Node {
 
         final Node parent;
+
+        final NodePath path;
 
         final Map<String, Node> children = new HashMap<String, Node>();
 
@@ -184,12 +207,14 @@ public class DirectDataSourceRepository {
 
         Node() {
             this.parent = null;
+            this.path = NodePath.ROOT;
         }
 
         Node(Node parent, String name) {
             assert parent != null;
             assert name != null;
             this.parent = parent;
+            this.path = parent.path.append(name);
         }
 
         String getId() {
@@ -237,13 +262,21 @@ public class DirectDataSourceRepository {
 
     private static final class NodePath implements Comparable<NodePath>, Iterable<String> {
 
-        private static final NodePath ROOT = new NodePath(new ArrayList<String>(0));
+        static final NodePath ROOT = new NodePath(new ArrayList<String>(0));
 
         private final ArrayList<String> segments;
 
         private NodePath(ArrayList<String> segments) {
             assert segments != null;
             this.segments = segments;
+        }
+
+        public NodePath append(String name) {
+            assert name != null;
+            ArrayList<String> newSegments = new ArrayList<String>(segments.size() + 1);
+            newSegments.addAll(segments);
+            newSegments.add(name);
+            return new NodePath(newSegments);
         }
 
         public static NodePath of(String pathString) {
