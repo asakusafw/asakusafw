@@ -15,9 +15,11 @@
  */
 package com.asakusafw.runtime.directio.hadoop;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -101,8 +103,10 @@ class HadoopDataSourceCore implements DirectDataSource {
         }
         long minSize = p.getMinimumFragmentSize(sformat);
         long prefSize = p.getPreferredFragmentSize(sformat);
+        boolean combineBlocks = p.isCombineBlocks();
+        boolean splitBlocks = p.isSplitBlocks();
         Path temporary = p.getTemporaryFileSystemPath();
-        FragmentComputer optimizer = new FragmentComputer(minSize, prefSize);
+        FragmentComputer optimizer = new FragmentComputer(minSize, prefSize, combineBlocks, splitBlocks);
         List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
         for (FileStatus stat : stats) {
             if (isIn(stat, temporary)) {
@@ -111,6 +115,16 @@ class HadoopDataSourceCore implements DirectDataSource {
             String path = stat.getPath().toString();
             long fileSize = stat.getLen();
             List<BlockInfo> blocks = toBlocks(stat);
+            if (LOG.isTraceEnabled()) {
+                for (BlockInfo block : blocks) {
+                    LOG.trace(MessageFormat.format(
+                            "Original BlockInfo (path={0}, start={1}, end={2}, hosts={3})",
+                            path,
+                            block.start,
+                            block.end,
+                            block.hosts == null ? null : Arrays.toString(block.hosts)));
+                }
+            }
             List<DirectInputFragment> fragments = optimizer.computeFragments(path, fileSize, blocks);
             if (LOG.isTraceEnabled()) {
                 for (DirectInputFragment fragment : fragments) {
@@ -206,7 +220,31 @@ class HadoopDataSourceCore implements DirectDataSource {
                             fragment.getSize()));
                 }
             }
-            CountInputStream cstream = new CountInputStream(stream, counter);
+            CountInputStream cstream;
+            if (LOG.isDebugEnabled()) {
+                final HadoopDataSourceProfile p = profile;
+                final DirectInputFragment f = fragment;
+                cstream = new CountInputStream(stream, counter) {
+                    @Override
+                    public void close() throws IOException {
+                        LOG.debug(MessageFormat.format(
+                                "Start closing input (id={0}, path={1}, offset={2}, size={3})",
+                                p.getId(),
+                                f.getPath(),
+                                f.getOffset(),
+                                f.getSize()));
+                        super.close();
+                        LOG.debug(MessageFormat.format(
+                                "Finish closing input (id={0}, path={1}, offset={2}, size={3})",
+                                p.getId(),
+                                f.getPath(),
+                                f.getOffset(),
+                                f.getSize()));
+                    }
+                };
+            } else {
+                cstream = new CountInputStream(stream, counter);
+            }
             ModelInput<T> input =
                 sformat.createInput(dataType, fragment.getPath(), cstream, offset, fragment.getSize());
             if (LOG.isDebugEnabled()) {
@@ -258,6 +296,26 @@ class HadoopDataSourceCore implements DirectDataSource {
         boolean succeed = false;
         try {
             CountOutputStream cstream = new CountOutputStream(stream, counter);
+            if (LOG.isDebugEnabled()) {
+                final HadoopDataSourceProfile p = profile;
+                final Path f = file;
+                cstream = new CountOutputStream(stream, counter) {
+                    @Override
+                    public void close() throws IOException {
+                        LOG.debug(MessageFormat.format(
+                                "Start closing output (id={0}, file={1})",
+                                p.getId(),
+                                f));
+                        super.close();
+                        LOG.debug(MessageFormat.format(
+                                "Finish closing output (id={0}, file={1})",
+                                p.getId(),
+                                f));
+                    }
+                };
+            } else {
+                cstream = new CountOutputStream(stream, counter);
+            }
             ModelOutput<T> output = sformat.createOutput(dataType, attempt.toString(), cstream);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
@@ -367,21 +425,26 @@ class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public void commitAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
-        FileSystem fs = profile.getFileSystem();
         Path attempt = getAttemptOutput(context);
-        Path staging = getStagingOutput(context.getTransactionContext());
+        Path target;
+        if (profile.isStagingRequired()) {
+            target = getStagingOutput(context.getTransactionContext());
+        } else {
+            target = profile.getFileSystemPath();
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Commit attempt area (id={0}, path={1})",
+                    "Commit attempt area (id={0}, path={1}, staging={2})",
                     profile.getId(),
-                    attempt));
+                    attempt,
+                    profile.isStagingRequired()));
         }
-        HadoopDataSourceUtil.move(fs, attempt, staging);
+        FileSystem fs = profile.getFileSystem();
+        HadoopDataSourceUtil.move(fs, attempt, target);
     }
 
     @Override
     public void cleanupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
-        FileSystem fs = profile.getFileSystem();
         Path attempt = getAttemptOutput(context);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -389,34 +452,39 @@ class HadoopDataSourceCore implements DirectDataSource {
                     profile.getId(),
                     attempt));
         }
+        FileSystem fs = profile.getFileSystem();
         fs.delete(attempt, true);
     }
 
     @Override
     public void setupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
-        FileSystem fs = profile.getFileSystem();
-        Path staging = getStagingOutput(context);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Create staging area (id={0}, path={1})",
-                    profile.getId(),
-                    staging));
+        if (profile.isStagingRequired()) {
+            FileSystem fs = profile.getFileSystem();
+            Path staging = getStagingOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Create staging area (id={0}, path={1})",
+                        profile.getId(),
+                        staging));
+            }
+            fs.mkdirs(staging);
         }
-        fs.mkdirs(staging);
     }
 
     @Override
     public void commitTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
-        FileSystem fs = profile.getFileSystem();
-        Path staging = getStagingOutput(context);
-        Path target = profile.getFileSystemPath();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Commit staging area (id={0}, path={1})",
-                    profile.getId(),
-                    staging));
+        if (profile.isStagingRequired()) {
+            FileSystem fs = profile.getFileSystem();
+            Path staging = getStagingOutput(context);
+            Path target = profile.getFileSystemPath();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Commit staging area (id={0}, path={1})",
+                        profile.getId(),
+                        staging));
+            }
+            HadoopDataSourceUtil.move(fs, staging, target);
         }
-        HadoopDataSourceUtil.move(fs, staging, target);
     }
 
     @Override
@@ -429,7 +497,15 @@ class HadoopDataSourceCore implements DirectDataSource {
                     profile.getId(),
                     path));
         }
-        fs.delete(path, true);
+        try {
+            fs.delete(path, true);
+        } catch (FileNotFoundException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Temporary area is not found (may be not used): {0}",
+                        path));
+            }
+        }
     }
 
     private Path getTemporaryOutput(OutputTransactionContext context) {

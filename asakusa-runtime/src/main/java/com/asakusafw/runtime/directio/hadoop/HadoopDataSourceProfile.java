@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 
@@ -54,6 +53,11 @@ public class HadoopDataSourceProfile {
     public static final String KEY_TEMP = "fs.tempdir";
 
     /**
+     * The property key name for {@link #isStagingRequired()}.
+     */
+    public static final String KEY_STAGING_REQUIRED = "transaction.staging";
+
+    /**
      * The property key name for {@link #getMinimumFragmentSize(BinaryStreamFormat)}.
      */
     public static final String KEY_MIN_FRAGMENT = "fragment.min";
@@ -63,46 +67,69 @@ public class HadoopDataSourceProfile {
      */
     public static final String KEY_PREF_FRAGMENT = "fragment.pref";
 
+    /**
+     * The property key name for {@link #isSplitBlocks()}.
+     */
+    public static final String KEY_SPLIT_BLOCKS = "block.split";
+
+    /**
+     * The property key name for {@link #isCombineBlocks()}.
+     */
+    public static final String KEY_COMBINE_BLOCKS = "block.combine";
+
     private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp";
+
+    private static final boolean DEFAULT_STAGING_REQUIRED = true;
 
     private static final long DEFAULT_MIN_FRAGMENT = 16 * 1024 * 1024;
 
     private static final long DEFAULT_PREF_FRAGMENT = 64 * 1024 * 1024;
 
+    private static final boolean DEFAULT_SPLIT_BLOCKS = true;
+
+    private static final boolean DEFAULT_COMBINE_BLOCKS = true;
+
     private final String id;
 
     private final String contextPath;
-
-    private final FileSystem fileSystem;
 
     private final Path fileSystemPath;
 
     private final Path temporaryPath;
 
+    private boolean stagingRequired = DEFAULT_STAGING_REQUIRED;
+
     private long minimumFragmentSize = DEFAULT_MIN_FRAGMENT;
 
     private long preferredFragmentSize = DEFAULT_PREF_FRAGMENT;
 
+    private boolean splitBlocks = DEFAULT_SPLIT_BLOCKS;
+
+    private boolean combineBlocks = DEFAULT_COMBINE_BLOCKS;
+
+    private final FileSystem fileSystem;
+
     /**
      * Creates a new instance.
+     * @param conf the current configuration
      * @param id the ID of this datasource
      * @param contextPath the logical context path
-     * @param fileSystem the file system object
      * @param fileSystemPath the mapping target path
      * @param temporaryPath the temporary root path
+     * @throws IOException if failed to create profile
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public HadoopDataSourceProfile(
+            Configuration conf,
             String id,
             String contextPath,
-            FileSystem fileSystem,
             Path fileSystemPath,
-            Path temporaryPath) {
+            Path temporaryPath) throws IOException {
         this.id = id;
         this.contextPath = contextPath;
-        this.fileSystem = fileSystem;
         this.fileSystemPath = fileSystemPath;
         this.temporaryPath = temporaryPath;
+        this.fileSystem = fileSystemPath.getFileSystem(conf);
     }
 
     /**
@@ -207,23 +234,77 @@ public class HadoopDataSourceProfile {
         this.preferredFragmentSize = Math.max(size, 1);
     }
 
+    /**
+     * Returns whether splits blocks for optimization.
+     * @return the {@code true} to split, otherwise {@code false}
+     */
+    public boolean isSplitBlocks() {
+        return splitBlocks;
+    }
+
+    /**
+     * Sets whether splits blocks for optimization.
+     * @param split {@code true} to split, otherwise {@code false}
+     */
+    public void setSplitBlocks(boolean split) {
+        this.splitBlocks = split;
+    }
+
+    /**
+     * Returns whether combines blocks for optimization.
+     * @return the {@code true} to combine, otherwise {@code false}
+     */
+    public boolean isCombineBlocks() {
+        return combineBlocks;
+    }
+
+    /**
+     * Sets whether combines blocks for optimization.
+     * @param combine {@code true} to combine, otherwise {@code false}
+     */
+    public void setCombineBlocks(boolean combine) {
+        this.combineBlocks = combine;
+    }
+
+    /**
+     * Returns whether staging is required.
+     * @return {@code true} to required, otherwise {@code false}.
+     */
+    public boolean isStagingRequired() {
+        return stagingRequired;
+    }
+
+    /**
+     * Sets whether staging is required.
+     * @param required {@code true} to required, otherwise {@code false}
+     */
+    public void setStagingRequired(boolean required) {
+        this.stagingRequired = required;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("HadoopDataSourceProfile [id=");
         builder.append(id);
         builder.append(", contextPath=");
-        builder.append(contextPath.isEmpty() ? ROOT_REPRESENTATION : contextPath);
+        builder.append(contextPath);
         builder.append(", fileSystem=");
         builder.append(fileSystem);
         builder.append(", fileSystemPath=");
         builder.append(fileSystemPath);
         builder.append(", temporaryPath=");
         builder.append(temporaryPath);
+        builder.append(", stagingRequired=");
+        builder.append(stagingRequired);
         builder.append(", minimumFragmentSize=");
         builder.append(minimumFragmentSize);
         builder.append(", preferredFragmentSize=");
         builder.append(preferredFragmentSize);
+        builder.append(", splitBlocks=");
+        builder.append(splitBlocks);
+        builder.append(", combineBlocks=");
+        builder.append(combineBlocks);
         builder.append("]");
         return builder.toString();
     }
@@ -267,12 +348,17 @@ public class HadoopDataSourceProfile {
         }
         fsPath = fsPath.makeQualified(fileSystem);
         tempPath = tempPath.makeQualified(fileSystem);
-        HadoopDataSourceProfile result =
-            new HadoopDataSourceProfile(profile.getId(), profile.getPath(), fileSystem, fsPath, tempPath);
+        HadoopDataSourceProfile result = new HadoopDataSourceProfile(
+                conf,
+                profile.getId(), profile.getPath(),
+                fsPath, tempPath);
         long minFragment = takeMinFragment(profile, attributes, conf);
         result.setMinimumFragmentSize(minFragment);
         long prefFragment = takePrefFragment(profile, attributes, conf);
         result.setPreferredFragmentSize(prefFragment);
+        result.setStagingRequired(takeBoolean(profile, attributes, KEY_STAGING_REQUIRED, DEFAULT_STAGING_REQUIRED));
+        result.setSplitBlocks(takeBoolean(profile, attributes, KEY_SPLIT_BLOCKS, DEFAULT_SPLIT_BLOCKS));
+        result.setCombineBlocks(takeBoolean(profile, attributes, KEY_COMBINE_BLOCKS, DEFAULT_COMBINE_BLOCKS));
 
         if (attributes.isEmpty() == false) {
             throw new IOException(MessageFormat.format(
@@ -349,13 +435,13 @@ public class HadoopDataSourceProfile {
             if (value == 0) {
                 throw new IOException(MessageFormat.format(
                         "Minimum fragment size must not be zero: {0}",
-                        fqn(profile, string)));
+                        fqn(profile, KEY_MIN_FRAGMENT)));
             }
             return value;
         } catch (NumberFormatException e) {
             throw new IOException(MessageFormat.format(
                     "Minimum fragment size must be integer: {0}={1}",
-                    fqn(profile, string),
+                    fqn(profile, KEY_MIN_FRAGMENT),
                     string));
         }
     }
@@ -376,14 +462,38 @@ public class HadoopDataSourceProfile {
             if (value <= 0) {
                 throw new IOException(MessageFormat.format(
                         "Preferred fragment size must be > 0: {0}={1}",
-                        fqn(profile, string),
+                        fqn(profile, KEY_PREF_FRAGMENT),
                         string));
             }
             return value;
         } catch (NumberFormatException e) {
             throw new IOException(MessageFormat.format(
                     "Preferred fragment size must be integer: {0}={1}",
-                    fqn(profile, string),
+                    fqn(profile, KEY_PREF_FRAGMENT),
+                    string));
+        }
+    }
+
+    private static boolean takeBoolean(
+            DirectDataSourceProfile profile,
+            Map<String, String> attributes,
+            String key,
+            boolean defaultValue) throws IOException {
+        assert profile != null;
+        assert attributes != null;
+        assert key != null;
+        String string = attributes.remove(key);
+        if (string == null) {
+            return defaultValue;
+        }
+        if (string.equalsIgnoreCase("true")) {
+            return true;
+        } else if (string.equalsIgnoreCase("false")) {
+            return false;
+        } else {
+            throw new IOException(MessageFormat.format(
+                    "\"{0}\" must be boolean: {1}",
+                    fqn(profile, key),
                     string));
         }
     }

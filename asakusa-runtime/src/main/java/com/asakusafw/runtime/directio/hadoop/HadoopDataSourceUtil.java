@@ -586,6 +586,7 @@ public final class HadoopDataSourceUtil {
                     to,
                     list.size()));
         }
+        boolean fromLocal = isLocalPath(from);
         Set<Path> directoryCreated = new HashSet<Path>();
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
@@ -622,12 +623,16 @@ public final class HadoopDataSourceUtil {
                     directoryCreated.add(parent);
                 }
             }
-            boolean succeed = fs.rename(sourceFile, targetFile);
-            if (succeed == false) {
-                throw new IOException(MessageFormat.format(
-                        "Failed to move file (from={0}, to={1})",
-                        sourceFile,
-                        targetFile));
+            if (fromLocal) {
+                fs.moveFromLocalFile(sourceFile, targetFile);
+            } else {
+                boolean succeed = fs.rename(sourceFile, targetFile);
+                if (succeed == false) {
+                    throw new IOException(MessageFormat.format(
+                            "Failed to move file (from={0}, to={1})",
+                            sourceFile,
+                            targetFile));
+                }
             }
         }
         if (LOG.isDebugEnabled()) {
@@ -637,6 +642,12 @@ public final class HadoopDataSourceUtil {
                     to,
                     list.size()));
         }
+    }
+
+    private static boolean isLocalPath(Path path) {
+        assert path != null;
+        String scheme = path.toUri().getScheme();
+        return scheme != null && scheme.equals("file");
     }
 
     @SuppressWarnings("unchecked")

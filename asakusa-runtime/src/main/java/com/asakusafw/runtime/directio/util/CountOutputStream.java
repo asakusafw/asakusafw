@@ -24,7 +24,7 @@ import com.asakusafw.runtime.directio.Counter;
  * {@link OutputStream} with counting bytes to be written.
  * @since 0.2.5
  */
-public final class CountOutputStream extends OutputStream {
+public class CountOutputStream extends OutputStream {
 
     private final OutputStream stream;
 

@@ -24,7 +24,7 @@ import com.asakusafw.runtime.directio.Counter;
  * {@link InputStream} with counting bytes to be read.
  * @since 0.2.5
  */
-public final class CountInputStream extends InputStream {
+public class CountInputStream extends InputStream {
 
     private final InputStream target;
 

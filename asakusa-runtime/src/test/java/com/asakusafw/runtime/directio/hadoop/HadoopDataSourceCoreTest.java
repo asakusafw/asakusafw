@@ -26,14 +26,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
 import org.junit.Rule;
@@ -65,8 +63,6 @@ public class HadoopDataSourceCoreTest {
 
     private File temporary;
 
-    private FileSystem fs;
-
     private HadoopDataSourceProfile profile;
 
     private OutputAttemptContext context;
@@ -82,11 +78,10 @@ public class HadoopDataSourceCoreTest {
         conf = new Configuration(true);
         mapping = new File(temp.getRoot(), "mapping").getCanonicalFile();
         temporary = new File(temp.getRoot(), "temporary").getCanonicalFile();
-        fs = FileSystem.get(URI.create("file:///"), conf);
         profile = new HadoopDataSourceProfile(
+                conf,
                 "testing",
                 "testing",
-                fs,
                 new Path(mapping.toURI()),
                 new Path(temporary.toURI()));
         context = new OutputAttemptContext("tx", "atmpt", profile.getId());
@@ -220,6 +215,41 @@ public class HadoopDataSourceCoreTest {
         assertThat(target.exists(), is(false));
         commitTransaction(core);
 
+        assertThat(target.exists(), is(true));
+
+        assertThat(get(target), is(Arrays.asList("Hello, world!")));
+    }
+
+    /**
+     * output without staging.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_nostaging() throws Exception {
+        profile.setStagingRequired(false);
+        HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
+        setup(core);
+        ModelOutput<StringBuilder> output = core.openOutput(
+                context,
+                StringBuilder.class,
+                new MockFormat(),
+                "output",
+                "file.txt",
+                counter);
+        try {
+            output.write(new StringBuilder("Hello, world!"));
+        } finally {
+            output.close();
+        }
+        assertThat(counter.get(), is(greaterThan(0L)));
+
+        File target = new File(mapping, "output/file.txt");
+        assertThat(target.exists(), is(false));
+
+        commitAttempt(core);
+        assertThat(target.exists(), is(true));
+
+        commitTransaction(core);
         assertThat(target.exists(), is(true));
 
         assertThat(get(target), is(Arrays.asList("Hello, world!")));
@@ -365,9 +395,9 @@ public class HadoopDataSourceCoreTest {
     @Test
     public void delete_sharetemp() throws Exception {
         HadoopDataSourceProfile shareTempProfile = new HadoopDataSourceProfile(
+                conf,
                 profile.getId(),
                 profile.getContextPath(),
-                profile.getFileSystem(),
                 profile.getFileSystemPath(),
                 new Path(profile.getFileSystemPath(), "_TEMP"));
         HadoopDataSourceCore core = new HadoopDataSourceCore(shareTempProfile);

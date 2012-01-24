@@ -43,14 +43,22 @@ class FragmentComputer {
 
     private final long prefSize;
 
+    private final boolean combineBlocks;
+
+    private final boolean splitBlocks;
+
     /**
      * Creates a new instance.
      * @param minSize minimum fragment size, or {@code < 0} for restrict fragmentation
      * @param prefSize preferred fragment size
+     * @param combineBlocks whether combines blocks
+     * @param splitBlocks whether split blocks
      */
-    public FragmentComputer(long minSize, long prefSize) {
+    public FragmentComputer(long minSize, long prefSize, boolean combineBlocks, boolean splitBlocks) {
         this.minSize = Math.min(minSize, MAX_MIN_SIZE);
         this.prefSize = Math.max(minSize, prefSize);
+        this.combineBlocks = combineBlocks;
+        this.splitBlocks = splitBlocks;
     }
 
     /**
@@ -115,10 +123,13 @@ class FragmentComputer {
         if (results.isEmpty()) {
             results.add(new BlockInfo(0, fileSize, null));
         }
-        return new BlockMap(path, compaction(results));
+        if (combineBlocks) {
+            results = combine(results);
+        }
+        return new BlockMap(path, results.toArray(new BlockInfo[results.size()]));
     }
 
-    private BlockInfo[] compaction(List<BlockInfo> blocks) {
+    private List<BlockInfo> combine(List<BlockInfo> blocks) {
         assert blocks != null;
         List<BlockInfo> results = new ArrayList<BlockInfo>(blocks.size());
         Iterator<BlockInfo> iter = blocks.iterator();
@@ -134,7 +145,7 @@ class FragmentComputer {
             }
         }
         results.add(last);
-        return results.toArray(new BlockInfo[results.size()]);
+        return results;
     }
 
     private List<DirectInputFragment> computeFragments(BlockMap map) {
@@ -164,17 +175,21 @@ class FragmentComputer {
             processed.set(index, lastIndex);
             long start = startBlock.start;
             long end = blocks[lastIndex - 1].end;
-            long groupSize = end - start;
-            int fragmentCount = Math.max((int) (groupSize / prefSize), 1);
-            long eachFragmentSize = (groupSize + fragmentCount - 1) / fragmentCount;
-            long offset = start;
-            while (offset != end) {
-                long fragmentSize = Math.min(end - offset, eachFragmentSize);
-                results.add(map.get(offset, offset + fragmentSize));
-                offset += fragmentSize;
-                assert offset <= end : offset + " > " + end;
+            if (splitBlocks) {
+                long groupSize = end - start;
+                int fragmentCount = Math.max((int) (groupSize / prefSize), 1);
+                long eachFragmentSize = (groupSize + fragmentCount - 1) / fragmentCount;
+                long offset = start;
+                while (offset != end) {
+                    long fragmentSize = Math.min(end - offset, eachFragmentSize);
+                    results.add(map.get(offset, offset + fragmentSize));
+                    offset += fragmentSize;
+                    assert offset <= end : offset + " > " + end;
+                }
+                assert offset == end;
+            } else {
+                results.add(map.get(start, end));
             }
-            assert offset == end;
         }
         assert validFragments(map, results);
         return results;

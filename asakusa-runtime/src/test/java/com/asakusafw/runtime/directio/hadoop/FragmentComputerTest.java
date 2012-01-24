@@ -39,7 +39,7 @@ public class FragmentComputerTest {
     public void simple() {
         BlockBuilder builder = new BlockBuilder();
         builder.add(100, "a");
-        List<DirectInputFragment> results = builder.compute(50, 100);
+        List<DirectInputFragment> results = builder.compute(50, 100, true, true);
         assertThat(results.size(), is(1));
         assertThat(find(results, 0).getOwnerNodeNames(), hasItem("a"));
     }
@@ -50,7 +50,7 @@ public class FragmentComputerTest {
     @Test
     public void empty() {
         BlockBuilder builder = new BlockBuilder();
-        List<DirectInputFragment> results = builder.compute(50, 100);
+        List<DirectInputFragment> results = builder.compute(50, 100, true, true);
         assertThat(results.size(), is(1));
     }
 
@@ -61,7 +61,7 @@ public class FragmentComputerTest {
     public void no_info() {
         BlockBuilder builder = new BlockBuilder();
         builder.seek(1000);
-        List<DirectInputFragment> results = builder.compute(50, 100);
+        List<DirectInputFragment> results = builder.compute(50, 100, true, true);
         assertThat(results.size(), is(10));
     }
 
@@ -82,7 +82,7 @@ public class FragmentComputerTest {
         builder.seek(5);
         builder.add(10, "a");
         builder.seek(5);
-        List<DirectInputFragment> results = builder.compute(50, 100);
+        List<DirectInputFragment> results = builder.compute(50, 100, true, true);
         assertThat(results.size(), is(1));
         assertThat(find(results, 0).getOwnerNodeNames(), hasItem("a"));
     }
@@ -96,7 +96,7 @@ public class FragmentComputerTest {
         builder.add(10, "a");
         builder.add(10, "b");
         builder.add(10, "c");
-        List<DirectInputFragment> results = builder.compute(-1, 100);
+        List<DirectInputFragment> results = builder.compute(-1, 100, true, true);
         assertThat(results.size(), is(1));
     }
 
@@ -109,7 +109,7 @@ public class FragmentComputerTest {
         builder.add(10, "a");
         builder.add(10, "b");
         builder.add(10, "c");
-        List<DirectInputFragment> results = builder.compute(100, 200);
+        List<DirectInputFragment> results = builder.compute(100, 200, true, true);
         assertThat(results.size(), is(1));
     }
 
@@ -123,7 +123,7 @@ public class FragmentComputerTest {
         builder.add(10, "c");
         builder.add(10, "d");
         builder.add(100, "a");
-        List<DirectInputFragment> results = builder.compute(50, 200);
+        List<DirectInputFragment> results = builder.compute(50, 200, true, true);
         assertThat(results.size(), is(1));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
     }
@@ -138,7 +138,7 @@ public class FragmentComputerTest {
         builder.add(10, "b");
         builder.add(10, "c");
         builder.add(10, "d");
-        List<DirectInputFragment> results = builder.compute(50, 200);
+        List<DirectInputFragment> results = builder.compute(50, 200, true, true);
         assertThat(results.size(), is(1));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
     }
@@ -154,7 +154,7 @@ public class FragmentComputerTest {
         builder.add(400, "a");
         builder.add(10, "b");
         builder.add(10, "c");
-        List<DirectInputFragment> results = builder.compute(50, 200);
+        List<DirectInputFragment> results = builder.compute(50, 200, true, true);
         assertThat(results.size(), is(2));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
         assertThat(results.get(1).getOwnerNodeNames(), hasItem("a"));
@@ -167,7 +167,7 @@ public class FragmentComputerTest {
     public void pref_size() {
         BlockBuilder builder = new BlockBuilder();
         builder.add(400, "a");
-        List<DirectInputFragment> results = builder.compute(10, 80);
+        List<DirectInputFragment> results = builder.compute(10, 80, true, true);
         assertThat(results.size(), is(5));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
         assertThat(results.get(1).getOwnerNodeNames(), hasItem("a"));
@@ -186,7 +186,7 @@ public class FragmentComputerTest {
         builder.add(100, "a");
         builder.add(100, "a");
         builder.add(100, "a");
-        List<DirectInputFragment> results = builder.compute(10, 80);
+        List<DirectInputFragment> results = builder.compute(10, 80, true, true);
         assertThat(results.size(), is(5));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
         assertThat(results.get(1).getOwnerNodeNames(), hasItem("a"));
@@ -205,7 +205,7 @@ public class FragmentComputerTest {
         builder.add(100, "b");
         builder.add(100, "c");
         builder.add(100, "d");
-        List<DirectInputFragment> results = builder.compute(10, 80);
+        List<DirectInputFragment> results = builder.compute(10, 80, true, true);
         assertThat(results.size(), is(4));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
         assertThat(results.get(0).getSize(), is(100L));
@@ -225,7 +225,7 @@ public class FragmentComputerTest {
         BlockBuilder builder = new BlockBuilder();
         builder.add(100, "a");
         builder.add(1, "b", "c", "d");
-        List<DirectInputFragment> results = builder.compute(50, 200);
+        List<DirectInputFragment> results = builder.compute(50, 200, true, true);
         assertThat(results.size(), is(1));
         assertThat(results.get(0).getOwnerNodeNames(), hasItem("a"));
         assertThat(results.get(0).getOwnerNodeNames(), not(hasItem("b")));
@@ -261,8 +261,8 @@ public class FragmentComputerTest {
             offset += delta;
         }
 
-        List<DirectInputFragment> compute(long min, long pref) {
-            FragmentComputer computer = new FragmentComputer(min, pref);
+        List<DirectInputFragment> compute(long min, long pref, boolean combine, boolean split) {
+            FragmentComputer computer = new FragmentComputer(min, pref, combine, split);
             List<DirectInputFragment> results = computer.computeFragments("path", offset, blocks);
             return validate(results);
         }
