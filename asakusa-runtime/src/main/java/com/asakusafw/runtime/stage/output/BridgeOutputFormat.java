@@ -279,6 +279,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void setupTask(TaskAttemptContext taskContext) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio task setup: job={0}, task={1}",
@@ -304,6 +307,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void commitTask(TaskAttemptContext taskContext) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio task commit: job={0}, task={1}",
@@ -330,6 +336,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void abortTask(TaskAttemptContext taskContext) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio task abort: job={0}, task={1}",
@@ -360,6 +369,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void setupJob(JobContext jobContext) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio job setup: job={0}",
@@ -383,6 +395,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void commitJob(JobContext jobContext) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio job commit: job={0}",
@@ -422,6 +437,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         @Override
         public void abortJob(JobContext jobContext, State state) throws IOException {
+            if (outputMap.isEmpty()) {
+                return;
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         "Start directio job abort: job={0}, state={1}",

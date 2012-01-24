@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
@@ -53,9 +54,14 @@ public class HadoopDataSourceProfile {
     public static final String KEY_TEMP = "fs.tempdir";
 
     /**
-     * The property key name for {@link #isStagingRequired()}.
+     * The property key name for {@link #isOutputStaging()}.
      */
-    public static final String KEY_STAGING_REQUIRED = "transaction.staging";
+    public static final String KEY_OUTPUT_STAGING = "output.staging";
+
+    /**
+     * The property key name for {@link #isOutputStreaming()}.
+     */
+    public static final String KEY_OUTPUT_STREAMING = "output.streaming";
 
     /**
      * The property key name for {@link #getMinimumFragmentSize(BinaryStreamFormat)}.
@@ -79,7 +85,9 @@ public class HadoopDataSourceProfile {
 
     private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp";
 
-    private static final boolean DEFAULT_STAGING_REQUIRED = true;
+    private static final boolean DEFAULT_OUTPUT_STAGING = true;
+
+    private static final boolean DEFAULT_OUTPUT_STREAMING = true;
 
     private static final long DEFAULT_MIN_FRAGMENT = 16 * 1024 * 1024;
 
@@ -97,7 +105,9 @@ public class HadoopDataSourceProfile {
 
     private final Path temporaryPath;
 
-    private boolean stagingRequired = DEFAULT_STAGING_REQUIRED;
+    private boolean outputStaging = DEFAULT_OUTPUT_STAGING;
+
+    private boolean outputStreaming = DEFAULT_OUTPUT_STREAMING;
 
     private long minimumFragmentSize = DEFAULT_MIN_FRAGMENT;
 
@@ -108,6 +118,8 @@ public class HadoopDataSourceProfile {
     private boolean combineBlocks = DEFAULT_COMBINE_BLOCKS;
 
     private final FileSystem fileSystem;
+
+    private final LocalFileSystem localFileSystem;
 
     /**
      * Creates a new instance.
@@ -130,6 +142,7 @@ public class HadoopDataSourceProfile {
         this.fileSystemPath = fileSystemPath;
         this.temporaryPath = temporaryPath;
         this.fileSystem = fileSystemPath.getFileSystem(conf);
+        this.localFileSystem = FileSystem.getLocal(conf);
     }
 
     /**
@@ -170,6 +183,14 @@ public class HadoopDataSourceProfile {
      */
     public FileSystem getFileSystem() {
         return fileSystem;
+    }
+
+    /**
+     * Returns the local file system for the this datastore.
+     * @return the local file system object
+     */
+    public LocalFileSystem getLocalFileSystem() {
+        return localFileSystem;
     }
 
     /**
@@ -267,19 +288,35 @@ public class HadoopDataSourceProfile {
     }
 
     /**
-     * Returns whether staging is required.
+     * Returns whether output staging is required.
      * @return {@code true} to required, otherwise {@code false}.
      */
-    public boolean isStagingRequired() {
-        return stagingRequired;
+    public boolean isOutputStaging() {
+        return outputStaging;
     }
 
     /**
-     * Sets whether staging is required.
+     * Sets whether output staging is required.
      * @param required {@code true} to required, otherwise {@code false}
      */
-    public void setStagingRequired(boolean required) {
-        this.stagingRequired = required;
+    public void setOutputStaging(boolean required) {
+        this.outputStaging = required;
+    }
+
+    /**
+     * Returns whether output streaming is required.
+     * @return {@code true} to required, otherwise {@code false}.
+     */
+    public boolean isOutputStreaming() {
+        return outputStreaming;
+    }
+
+    /**
+     * Sets whether output streaming is required.
+     * @param required {@code true} to required, otherwise {@code false}
+     */
+    public void setOutputStreaming(boolean required) {
+        this.outputStreaming = required;
     }
 
     @Override
@@ -289,14 +326,14 @@ public class HadoopDataSourceProfile {
         builder.append(id);
         builder.append(", contextPath=");
         builder.append(contextPath);
-        builder.append(", fileSystem=");
-        builder.append(fileSystem);
         builder.append(", fileSystemPath=");
         builder.append(fileSystemPath);
         builder.append(", temporaryPath=");
         builder.append(temporaryPath);
-        builder.append(", stagingRequired=");
-        builder.append(stagingRequired);
+        builder.append(", outputStaging=");
+        builder.append(outputStaging);
+        builder.append(", outputStreaming=");
+        builder.append(outputStreaming);
         builder.append(", minimumFragmentSize=");
         builder.append(minimumFragmentSize);
         builder.append(", preferredFragmentSize=");
@@ -305,6 +342,10 @@ public class HadoopDataSourceProfile {
         builder.append(splitBlocks);
         builder.append(", combineBlocks=");
         builder.append(combineBlocks);
+        builder.append(", fileSystem=");
+        builder.append(fileSystem);
+        builder.append(", localFileSystem=");
+        builder.append(localFileSystem);
         builder.append("]");
         return builder.toString();
     }
@@ -356,7 +397,8 @@ public class HadoopDataSourceProfile {
         result.setMinimumFragmentSize(minFragment);
         long prefFragment = takePrefFragment(profile, attributes, conf);
         result.setPreferredFragmentSize(prefFragment);
-        result.setStagingRequired(takeBoolean(profile, attributes, KEY_STAGING_REQUIRED, DEFAULT_STAGING_REQUIRED));
+        result.setOutputStaging(takeBoolean(profile, attributes, KEY_OUTPUT_STAGING, DEFAULT_OUTPUT_STAGING));
+        result.setOutputStreaming(takeBoolean(profile, attributes, KEY_OUTPUT_STREAMING, DEFAULT_OUTPUT_STREAMING));
         result.setSplitBlocks(takeBoolean(profile, attributes, KEY_SPLIT_BLOCKS, DEFAULT_SPLIT_BLOCKS));
         result.setCombineBlocks(takeBoolean(profile, attributes, KEY_COMBINE_BLOCKS, DEFAULT_COMBINE_BLOCKS));
 

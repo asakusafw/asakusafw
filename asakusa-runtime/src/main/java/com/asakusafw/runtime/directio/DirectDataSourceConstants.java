@@ -22,19 +22,24 @@ package com.asakusafw.runtime.directio;
 public final class DirectDataSourceConstants {
 
     /**
-     * The property key name of resource path/pattern.
+     * The attribute key name of resource path/pattern.
      */
     public static final String KEY_RESOURCE_PATH = "resourcePath";
 
     /**
-     * The property key name of data class.
+     * The attribute key name of data class.
      */
     public static final String KEY_DATA_CLASS = "dataClass";
 
     /**
-     * The property key name of format class.
+     * The attribute key name of format class.
      */
     public static final String KEY_FORMAT_CLASS = "formatClass";
+
+    /**
+     * The attribute key name of local tempdir.
+     */
+    public static final String KEY_LOCAL_TEMPDIR = "com.asakusafw.output.local.tempdir";
 
     private DirectDataSourceConstants() {
         return;

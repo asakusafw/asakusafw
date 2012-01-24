@@ -73,7 +73,8 @@ public class HadoopDataSourceProfileTest {
         assertThat(new File(result.getFileSystemPath().toUri()), is(folder.getRoot()));
         assertThat(new File(result.getTemporaryFileSystemPath().getParent().toUri()), is(folder.getRoot()));
 
-        assertThat(result.isStagingRequired(), is(true));
+        assertThat(result.isOutputStaging(), is(true));
+        assertThat(result.isOutputStreaming(), is(true));
         assertThat(result.isCombineBlocks(), is(true));
         assertThat(result.isSplitBlocks(), is(true));
     }
@@ -129,7 +130,8 @@ public class HadoopDataSourceProfileTest {
         attributes.put(KEY_TEMP, temp.getCanonicalFile().toURI().toString());
         attributes.put(KEY_MIN_FRAGMENT, "123");
         attributes.put(KEY_PREF_FRAGMENT, "1234");
-        attributes.put(KEY_STAGING_REQUIRED, "false");
+        attributes.put(KEY_OUTPUT_STAGING, "false");
+        attributes.put(KEY_OUTPUT_STREAMING, "false");
         attributes.put(KEY_SPLIT_BLOCKS, "false");
         attributes.put(KEY_COMBINE_BLOCKS, "false");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
@@ -154,7 +156,8 @@ public class HadoopDataSourceProfileTest {
         assertThat(result.getPreferredFragmentSize(new MockFormat(9999, 234)), is(234L));
         assertThat(result.getPreferredFragmentSize(new MockFormat(-1, -1)), is(lessThan(0L)));
 
-        assertThat(result.isStagingRequired(), is(false));
+        assertThat(result.isOutputStaging(), is(false));
+        assertThat(result.isOutputStreaming(), is(false));
         assertThat(result.isCombineBlocks(), is(false));
         assertThat(result.isSplitBlocks(), is(false));
     }
