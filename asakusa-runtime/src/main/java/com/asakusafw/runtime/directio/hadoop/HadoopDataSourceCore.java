@@ -34,6 +34,7 @@ import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
+import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
@@ -280,18 +281,33 @@ class HadoopDataSourceCore implements DirectDataSource {
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Start opening output (id={0}, path={1}, resource={2})",
-                    profile.getId(),
-                    basePath,
-                    resourcePath));
+        FileSystem fs;
+        Path attempt;
+        if (isLocalAttemptOutput()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})",
+                        profile.getId(),
+                        basePath,
+                        resourcePath,
+                        true));
+            }
+            fs = profile.getLocalFileSystem();
+            attempt = getLocalAttemptOutput(context);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})",
+                        profile.getId(),
+                        basePath,
+                        resourcePath,
+                        false));
+            }
+            fs = profile.getFileSystem();
+            attempt = getAttemptOutput(context);
         }
         BinaryStreamFormat<T> sformat = validate(format);
-        FileSystem fs = profile.getFileSystem();
-        Path attempt = getAttemptOutput(context);
         Path file = append(append(attempt, basePath), resourcePath);
-
         FSDataOutputStream stream = fs.create(file);
         boolean succeed = false;
         try {
@@ -316,7 +332,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             } else {
                 cstream = new CountOutputStream(stream, counter);
             }
-            ModelOutput<T> output = sformat.createOutput(dataType, attempt.toString(), cstream);
+            ModelOutput<T> output = sformat.createOutput(dataType, file.toString(), cstream);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
                         "Finish opening output (id={0}, path={1}, resource={2}, file={3})",
@@ -334,10 +350,15 @@ class HadoopDataSourceCore implements DirectDataSource {
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
                             "Failed to close output (path={0})",
-                            attempt), e);
+                            file), e);
                 }
             }
         }
+    }
+
+    boolean isLocalAttemptOutput() {
+        return profile.isOutputStreaming() == false
+                && HadoopDataSourceUtil.isLocalAttemptOutputDefined(profile.getLocalFileSystem());
     }
 
     private <T> BinaryStreamFormat<T> validate(DataFormat<T> format) throws IOException {
@@ -412,53 +433,94 @@ class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public void setupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
-        FileSystem fs = profile.getFileSystem();
-        Path attempt = getAttemptOutput(context);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Create attempt area (id={0}, path={1})",
+        if (profile.isOutputStreaming() == false && isLocalAttemptOutput() == false) {
+            LOG.warn(MessageFormat.format(
+                    "Streaming output is disabled but the local temporary directory ({1}) is not defined (id={0})",
                     profile.getId(),
-                    attempt));
+                    DirectDataSourceConstants.KEY_LOCAL_TEMPDIR));
         }
-        fs.mkdirs(attempt);
+        if (isLocalAttemptOutput()) {
+            FileSystem fs = profile.getLocalFileSystem();
+            Path attempt = getLocalAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Create local attempt area (id={0}, path={1})",
+                        profile.getId(),
+                        attempt));
+            }
+            fs.mkdirs(attempt);
+        } else {
+            FileSystem fs = profile.getFileSystem();
+            Path attempt = getAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Create attempt area (id={0}, path={1})",
+                        profile.getId(),
+                        attempt));
+            }
+            fs.mkdirs(attempt);
+        }
     }
 
     @Override
     public void commitAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
-        Path attempt = getAttemptOutput(context);
         Path target;
-        if (profile.isStagingRequired()) {
+        if (profile.isOutputStaging()) {
             target = getStagingOutput(context.getTransactionContext());
         } else {
             target = profile.getFileSystemPath();
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Commit attempt area (id={0}, path={1}, staging={2})",
-                    profile.getId(),
-                    attempt,
-                    profile.isStagingRequired()));
+        if (isLocalAttemptOutput()) {
+            Path attempt = getLocalAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Commit local attempt area (id={0}, path={1}, staging={2})",
+                        profile.getId(),
+                        attempt,
+                        profile.isOutputStaging()));
+            }
+            HadoopDataSourceUtil.moveFromLocal(profile.getLocalFileSystem(), profile.getFileSystem(), attempt, target);
+        } else {
+            Path attempt = getAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Commit attempt area (id={0}, path={1}, staging={2})",
+                        profile.getId(),
+                        attempt,
+                        profile.isOutputStaging()));
+            }
+            HadoopDataSourceUtil.move(profile.getFileSystem(), attempt, target);
         }
-        FileSystem fs = profile.getFileSystem();
-        HadoopDataSourceUtil.move(fs, attempt, target);
     }
 
     @Override
     public void cleanupAttemptOutput(OutputAttemptContext context) throws IOException, InterruptedException {
-        Path attempt = getAttemptOutput(context);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Delete attempt area (id={0}, path={1})",
-                    profile.getId(),
-                    attempt));
+        if (isLocalAttemptOutput()) {
+            Path attempt = getLocalAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Delete local attempt area (id={0}, path={1})",
+                        profile.getId(),
+                        attempt));
+            }
+            FileSystem fs = profile.getLocalFileSystem();
+            fs.delete(attempt, true);
+        } else {
+            Path attempt = getAttemptOutput(context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Delete attempt area (id={0}, path={1})",
+                        profile.getId(),
+                        attempt));
+            }
+            FileSystem fs = profile.getFileSystem();
+            fs.delete(attempt, true);
         }
-        FileSystem fs = profile.getFileSystem();
-        fs.delete(attempt, true);
     }
 
     @Override
     public void setupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
-        if (profile.isStagingRequired()) {
+        if (profile.isOutputStaging()) {
             FileSystem fs = profile.getFileSystem();
             Path staging = getStagingOutput(context);
             if (LOG.isDebugEnabled()) {
@@ -473,7 +535,7 @@ class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public void commitTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
-        if (profile.isStagingRequired()) {
+        if (profile.isOutputStaging()) {
             FileSystem fs = profile.getFileSystem();
             Path staging = getStagingOutput(context);
             Path target = profile.getFileSystemPath();
@@ -530,6 +592,15 @@ class HadoopDataSourceCore implements DirectDataSource {
         String suffix = String.format("%s/%s",
                 ATTEMPT_AREA,
                 context.getAttemptId());
+        return append(tempPath, suffix);
+    }
+
+    Path getLocalAttemptOutput(OutputAttemptContext context) throws IOException {
+        assert context != null;
+        Path tempPath = HadoopDataSourceUtil.getLocalTemporaryDirectory(profile.getLocalFileSystem());
+        String suffix = String.format("%s-%s",
+                context.getAttemptId(),
+                context.getOutputId());
         return append(tempPath, suffix);
     }
 }

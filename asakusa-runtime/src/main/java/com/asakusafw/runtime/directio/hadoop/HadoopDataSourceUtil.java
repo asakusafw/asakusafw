@@ -40,12 +40,14 @@ import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSource;
+import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
@@ -213,6 +215,44 @@ public final class HadoopDataSourceUtil {
             providers.add(createProvider(conf, profile));
         }
         return new DirectDataSourceRepository(providers);
+    }
+
+    /**
+     * Returns whether the local attempt output directory is defined.
+     * @param localFileSystem current local file system
+     * @return {@code true} to defined, otherwise {@code false}
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static boolean isLocalAttemptOutputDefined(LocalFileSystem localFileSystem) {
+        try {
+            return getLocalTemporaryDirectory(localFileSystem) != null;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the local temporary directory.
+     * @param localFileSystem the local file system
+     * @return the output path (must be on local fs), or {@code null} if not defined
+     * @throws IOException if failed to compute the path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Path getLocalTemporaryDirectory(LocalFileSystem localFileSystem) throws IOException {
+        if (localFileSystem == null) {
+            throw new IllegalArgumentException("localFileSystem must not be null"); //$NON-NLS-1$
+        }
+        Configuration conf = localFileSystem.getConf();
+        if (conf == null) {
+            return null;
+        }
+        String path = conf.get(DirectDataSourceConstants.KEY_LOCAL_TEMPDIR);
+        if (path == null) {
+            return null;
+        }
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path result = fs.makeQualified(new Path(path));
+        return result;
     }
 
     /**
@@ -561,14 +601,40 @@ public final class HadoopDataSourceUtil {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void move(FileSystem fs, Path from, Path to) throws IOException {
-        if (fs == null) {
-            throw new IllegalArgumentException("fs must not be null"); //$NON-NLS-1$
+        move(fs, from, fs, to, false);
+    }
+
+    /**
+     * Moves all files in source directory into target directory.
+     * @param localFs the local file system
+     * @param fs the target file system
+     * @param from path to source directory (must be on local file system)
+     * @param to path to target directory
+     * @throws IOException if failed to move files
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static void moveFromLocal(LocalFileSystem localFs, FileSystem fs, Path from, Path to) throws IOException {
+        move(localFs, from, fs, to, true);
+    }
+
+    private static void move(
+            FileSystem fromFs, Path from,
+            FileSystem toFs, Path to,
+            boolean fromLocal) throws IOException {
+        if (fromFs == null) {
+            throw new IllegalArgumentException("fromFs must not be null"); //$NON-NLS-1$
         }
         if (from == null) {
             throw new IllegalArgumentException("from must not be null"); //$NON-NLS-1$
         }
+        if (toFs == null) {
+            throw new IllegalArgumentException("toFs must not be null"); //$NON-NLS-1$
+        }
         if (to == null) {
             throw new IllegalArgumentException("to must not be null"); //$NON-NLS-1$
+        }
+        if (fromLocal && isLocalPath(from) == false) {
+            throw new IllegalArgumentException("from must be on local file system"); //$NON-NLS-1$
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -576,9 +642,9 @@ public final class HadoopDataSourceUtil {
                     from,
                     to));
         }
-        Path source = fs.makeQualified(from);
-        Path target = fs.makeQualified(to);
-        List<Path> list = createFileListRelative(fs, source);
+        Path source = fromFs.makeQualified(from);
+        Path target = toFs.makeQualified(to);
+        List<Path> list = createFileListRelative(fromFs, source);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Process moving files (from={0}, to={1}, count={2})",
@@ -586,13 +652,12 @@ public final class HadoopDataSourceUtil {
                     to,
                     list.size()));
         }
-        boolean fromLocal = isLocalPath(from);
         Set<Path> directoryCreated = new HashSet<Path>();
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
             Path targetFile = new Path(target, path);
             if (LOG.isTraceEnabled()) {
-                FileStatus stat = fs.getFileStatus(sourceFile);
+                FileStatus stat = fromFs.getFileStatus(sourceFile);
                 LOG.trace(MessageFormat.format(
                         "Moving file (from={0}, to={1}, size={2})",
                         sourceFile,
@@ -600,33 +665,33 @@ public final class HadoopDataSourceUtil {
                         stat.getLen()));
             }
             try {
-                FileStatus stat = fs.getFileStatus(targetFile);
+                FileStatus stat = toFs.getFileStatus(targetFile);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
                             "Deleting file: {0}",
                             targetFile));
                 }
                 if (stat.isDir()) {
-                    fs.delete(targetFile, true);
+                    toFs.delete(targetFile, true);
                 } else {
-                    fs.delete(targetFile, false);
+                    toFs.delete(targetFile, false);
                 }
             } catch (FileNotFoundException e) {
-                Path parent = targetFile.getParent();
-                if (directoryCreated.contains(parent) == false) {
+                Path targetParent = targetFile.getParent();
+                if (directoryCreated.contains(targetParent) == false) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
                                 "Creating directory: {0}",
-                                parent));
+                                targetParent));
                     }
-                    fs.mkdirs(parent);
-                    directoryCreated.add(parent);
+                    toFs.mkdirs(targetParent);
+                    directoryCreated.add(targetParent);
                 }
             }
             if (fromLocal) {
-                fs.moveFromLocalFile(sourceFile, targetFile);
+                toFs.moveFromLocalFile(sourceFile, targetFile);
             } else {
-                boolean succeed = fs.rename(sourceFile, targetFile);
+                boolean succeed = toFs.rename(sourceFile, targetFile);
                 if (succeed == false) {
                     throw new IOException(MessageFormat.format(
                             "Failed to move file (from={0}, to={1})",

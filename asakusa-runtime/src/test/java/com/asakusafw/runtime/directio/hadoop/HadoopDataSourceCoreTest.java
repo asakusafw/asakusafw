@@ -40,6 +40,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.SearchPattern;
@@ -63,6 +64,8 @@ public class HadoopDataSourceCoreTest {
 
     private File temporary;
 
+    private File localtemp;
+
     private HadoopDataSourceProfile profile;
 
     private OutputAttemptContext context;
@@ -78,6 +81,7 @@ public class HadoopDataSourceCoreTest {
         conf = new Configuration(true);
         mapping = new File(temp.getRoot(), "mapping").getCanonicalFile();
         temporary = new File(temp.getRoot(), "temporary").getCanonicalFile();
+        localtemp = new File(temp.getRoot(), "localtemp").getCanonicalFile();
         profile = new HadoopDataSourceProfile(
                 conf,
                 "testing",
@@ -226,7 +230,84 @@ public class HadoopDataSourceCoreTest {
      */
     @Test
     public void output_nostaging() throws Exception {
-        profile.setStagingRequired(false);
+        profile.setOutputStaging(false);
+        HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
+        setup(core);
+        ModelOutput<StringBuilder> output = core.openOutput(
+                context,
+                StringBuilder.class,
+                new MockFormat(),
+                "output",
+                "file.txt",
+                counter);
+        try {
+            output.write(new StringBuilder("Hello, world!"));
+        } finally {
+            output.close();
+        }
+        assertThat(counter.get(), is(greaterThan(0L)));
+
+        File target = new File(mapping, "output/file.txt");
+        assertThat(target.exists(), is(false));
+
+        commitAttempt(core);
+        assertThat(target.exists(), is(true));
+
+        commitTransaction(core);
+        assertThat(target.exists(), is(true));
+
+        assertThat(get(target), is(Arrays.asList("Hello, world!")));
+    }
+
+    /**
+     * output without streaming.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_nostreaming() throws Exception {
+        profile.setOutputStreaming(false);
+        profile.getLocalFileSystem().getConf().set(
+                DirectDataSourceConstants.KEY_LOCAL_TEMPDIR,
+                localtemp.getPath());
+        HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
+        setup(core);
+        ModelOutput<StringBuilder> output = core.openOutput(
+                context,
+                StringBuilder.class,
+                new MockFormat(),
+                "output",
+                "file.txt",
+                counter);
+        try {
+            output.write(new StringBuilder("Hello, world!"));
+        } finally {
+            output.close();
+        }
+        assertThat(counter.get(), is(greaterThan(0L)));
+
+        File target = new File(mapping, "output/file.txt");
+        assertThat(target.exists(), is(false));
+
+        commitAttempt(core);
+        assertThat(target.exists(), is(false));
+
+        commitTransaction(core);
+        assertThat(target.exists(), is(true));
+
+        assertThat(get(target), is(Arrays.asList("Hello, world!")));
+    }
+
+    /**
+     * output without streaming nor staging.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_nomove() throws Exception {
+        profile.setOutputStaging(false);
+        profile.setOutputStreaming(false);
+        profile.getLocalFileSystem().getConf().set(
+                DirectDataSourceConstants.KEY_LOCAL_TEMPDIR,
+                localtemp.getPath());
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(

@@ -58,8 +58,6 @@ public final class DirectIoTestHelper {
 
     private static final SearchPattern ALL = SearchPattern.compile("**");
 
-    private static final String ATTEMPT_ID = "testing";
-
     private static final String WILDCARD_REPLACEMENT = "__testing__";
 
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
@@ -360,8 +358,9 @@ public final class DirectIoTestHelper {
     }
 
     private OutputAttemptContext createContext() {
-        String uuid = UUID.randomUUID().toString();
-        return new OutputAttemptContext(uuid, ATTEMPT_ID, id);
+        String tx = UUID.randomUUID().toString();
+        String attempt = UUID.randomUUID().toString();
+        return new OutputAttemptContext(tx, attempt, id);
     }
 
     @SuppressWarnings("unchecked")
