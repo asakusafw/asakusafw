@@ -64,7 +64,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
      */
     public static final String OPTION_EXPORTER_ENABLED = "MAPREDUCE-370";
 
-    private static final GenericOptionValue DEFAULT_EXPORTER_ENABLED = GenericOptionValue.DISABLED;
+    private static final GenericOptionValue DEFAULT_EXPORTER_ENABLED = GenericOptionValue.AUTO;
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
