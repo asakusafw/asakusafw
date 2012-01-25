@@ -428,6 +428,32 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-vocabulary</artifactId>
+			<version>${asakusafw.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-dmdl</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-plugin</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-test-moderator</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-vocabulary</artifactId>
 			<version>${asakusafw.version}</version>
 			<optional>true</optional>
