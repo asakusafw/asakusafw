@@ -68,15 +68,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     private static final String KEY = "com.asakusafw.output.bridge";
 
-    /**
-     * The key name of system directory for this format.
-     */
-    public static final String KEY_SYSTEM_DIR = "com.asakusafw.output.system.dir";
-
-    static final String DEFAULT_SYSTEM_DIR = "_directio";
-
-    static final String COMMIT_MARK_DIR = "commits";
-
     private OutputCommitter outputCommitter;
 
     /**
@@ -162,21 +153,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
     private static DirectDataSourceRepository getDataSourceRepository(JobContext context) {
         assert context != null;
         return HadoopDataSourceUtil.loadRepository(context.getConfiguration());
-    }
-
-    /**
-     * Returns the commit mark directory.
-     * @param conf the current configuration
-     * @return target path
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public static Path getCommitMarkDirectory(Configuration conf) {
-        if (conf == null) {
-            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
-        }
-        String working = conf.get(KEY_SYSTEM_DIR, DEFAULT_SYSTEM_DIR);
-        String path = String.format("%s/%s", working, COMMIT_MARK_DIR);
-        return new Path(path);
     }
 
     @Override
@@ -494,12 +470,11 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
         }
 
-        private static Path getCommitMarkPath(JobContext context) {
+        private static Path getCommitMarkPath(JobContext context) throws IOException {
             assert context != null;
-            String executionId = context.getConfiguration().get(StageConstants.PROP_EXECUTION_ID);
-            return new Path(
-                    getCommitMarkDirectory(context.getConfiguration()),
-                    String.format("commit-%s", executionId));
+            Configuration conf = context.getConfiguration();
+            String executionId = conf.get(StageConstants.PROP_EXECUTION_ID);
+            return HadoopDataSourceUtil.getCommitMarkPath(conf, executionId);
         }
     }
 }

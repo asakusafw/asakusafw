@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -79,6 +81,15 @@ public final class HadoopDataSourceUtil {
     public static final String KEY_PATH = "path";
 
     private static final Pattern PREFIX_PATTERN = Pattern.compile('^' + Pattern.quote(PREFIX));
+
+    /**
+     * The key name of system directory for this format.
+     */
+    public static final String KEY_SYSTEM_DIR = "com.asakusafw.output.system.dir";
+
+    static final String DEFAULT_SYSTEM_DIR = "_directio";
+
+    static final String COMMIT_MARK_DIR = "commits";
 
     /**
      * Loads a profile list from the configuration.
@@ -205,7 +216,7 @@ public final class HadoopDataSourceUtil {
         return createRepository(conf, profiles);
     }
 
-    private static DirectDataSourceRepository createRepository(
+    static DirectDataSourceRepository createRepository(
             Configuration conf,
             List<DirectDataSourceProfile> profiles) {
         assert conf != null;
@@ -215,6 +226,12 @@ public final class HadoopDataSourceUtil {
             providers.add(createProvider(conf, profile));
         }
         return new DirectDataSourceRepository(providers);
+    }
+
+    private static DirectDataSourceProvider createProvider(Configuration conf, DirectDataSourceProfile profile) {
+        assert conf != null;
+        assert profile != null;
+        return new HadoopDataSourceProvider(conf, profile);
     }
 
     /**
@@ -274,6 +291,24 @@ public final class HadoopDataSourceUtil {
     }
 
     /**
+     * Creates output context from execution ID and datasource ID.
+     * @param executionId current execution ID
+     * @param datasourceId target datasource ID
+     * @return output context
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static OutputTransactionContext createContext(String executionId, String datasourceId) {
+        if (executionId == null) {
+            throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
+        }
+        if (datasourceId == null) {
+            throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
+        }
+        String transactionId = getTransactionId(executionId);
+        return new OutputTransactionContext(transactionId, datasourceId);
+    }
+
+    /**
      * Creates output context from Hadoop context.
      * @param context current context in Hadoop
      * @param datasourceId datasource ID
@@ -299,6 +334,10 @@ public final class HadoopDataSourceUtil {
         if (executionId == null) {
             executionId = jobContext.getJobID().toString();
         }
+        return getTransactionId(executionId);
+    }
+
+    private static String getTransactionId(String executionId) {
         return executionId;
     }
 
@@ -308,10 +347,78 @@ public final class HadoopDataSourceUtil {
         return taskContext.getTaskAttemptID().toString();
     }
 
-    private static DirectDataSourceProvider createProvider(Configuration conf, DirectDataSourceProfile profile) {
-        assert conf != null;
-        assert profile != null;
-        return new HadoopDataSourceProvider(conf, profile);
+    /**
+     * Extracts an execution ID from the commit mark path.
+     * @param commitMarkPath target path
+     * @return execution ID, or {@code null} if is not a valid commit mark
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #getCommitMarkPath(Configuration, String)
+     */
+    public static String getCommitMarkExecutionId(Path commitMarkPath) {
+        if (commitMarkPath == null) {
+            throw new IllegalArgumentException("commitMarkPath must not be null"); //$NON-NLS-1$
+        }
+        String name = commitMarkPath.getName();
+        Matcher matcher = Pattern.compile("commit-(.+)").matcher(name);
+        if (matcher.matches() == false) {
+            return null;
+        }
+        return matcher.group(1);
+    }
+
+    /**
+     * Returns the commit mark path.
+     * @param conf the current configuration
+     * @param executionId target transaction ID
+     * @return target path
+     * @throws IOException if failed to compute the path by I/O exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Path getCommitMarkPath(Configuration conf, String executionId) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (executionId == null) {
+            throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
+        }
+        return new Path(
+                getCommitMarkDir(conf),
+                String.format("commit-%s", executionId));
+    }
+
+    /**
+     * Returns the all commit mark files.
+     * @param conf the current configuration
+     * @return target path
+     * @throws IOException if failed to find files by I/O error
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Collection<FileStatus> findAllCommitMarkFiles(Configuration conf) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        Path dir = getCommitMarkDir(conf);
+        FileSystem fs = dir.getFileSystem(conf);
+        FileStatus[] statusArray = fs.listStatus(dir);
+        if (statusArray == null) {
+            return Collections.emptyList();
+        }
+        Collection<FileStatus> results = new ArrayList<FileStatus>();
+        for (FileStatus stat : statusArray) {
+            if (getCommitMarkExecutionId(stat.getPath()) != null) {
+                results.add(stat);
+            }
+        }
+        return results;
+    }
+
+    private static Path getCommitMarkDir(Configuration conf) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        String working = conf.get(KEY_SYSTEM_DIR, DEFAULT_SYSTEM_DIR);
+        Path path = new Path(working, COMMIT_MARK_DIR);
+        return path.makeQualified(path.getFileSystem(conf));
     }
 
     /**
@@ -335,7 +442,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start searching files (path={0}, resourcePattern={1})",
+                    "Start searching for files (path={0}, resourcePattern={1})",
                     base,
                     pattern));
         }
@@ -360,7 +467,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish searching files (path={0}, resourcePattern={1}, results={2}, steps={3})",
+                    "Finish searching for files (path={0}, resourcePattern={1}, results={2}, steps={3})",
                     base,
                     pattern,
                     current.size(),
@@ -645,6 +752,9 @@ public final class HadoopDataSourceUtil {
         Path source = fromFs.makeQualified(from);
         Path target = toFs.makeQualified(to);
         List<Path> list = createFileListRelative(fromFs, source);
+        if (list.isEmpty()) {
+            return;
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Process moving files (from={0}, to={1}, count={2})",
@@ -726,7 +836,7 @@ public final class HadoopDataSourceUtil {
             root = fs.getFileStatus(source);
         } catch (FileNotFoundException e) {
             LOG.warn(MessageFormat.format(
-                    "Source path is not found: {0}",
+                    "Source path is not found: {0} (May be already moved)",
                     baseUri));
             return Collections.emptyList();
         }
