@@ -18,7 +18,6 @@ package com.asakusafw.runtime.directio.hadoop;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,7 +165,7 @@ public final class DirectIoTransactionEditor extends Configured implements Tool 
         try {
             FSDataInputStream input = path.getFileSystem(getConf()).open(path);
             try {
-                Scanner scanner = new Scanner(new InputStreamReader(input, Charset.forName("UTF-8")));
+                Scanner scanner = new Scanner(new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
                 while (scanner.hasNextLine()) {
                     comment.add(scanner.nextLine());
                 }

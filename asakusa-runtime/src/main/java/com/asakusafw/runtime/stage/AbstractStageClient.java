@@ -284,6 +284,8 @@ public abstract class AbstractStageClient extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
+        conf.set(StageConstants.PROP_BATCH_ID, getBatchId());
+        conf.set(StageConstants.PROP_FLOW_ID, getFlowId());
         Job job = createJob(conf);
         return submit(job);
     }

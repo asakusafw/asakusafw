@@ -17,7 +17,10 @@ package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapred.JobContext;
 import org.apache.hadoop.mapred.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.JobStatus;
@@ -25,6 +28,7 @@ import org.apache.hadoop.mapreduce.JobStatus.State;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskID;
+import org.apache.hadoop.util.Progressable;
 
 /**
  * Bridge implementation between
@@ -33,6 +37,8 @@ import org.apache.hadoop.mapreduce.TaskID;
  * @since 0.2.5
  */
 public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.OutputCommitter {
+
+    final Log LOG = LogFactory.getLog(LegacyBridgeOutputCommitter.class);
 
     private final StageOutputFormat format = new StageOutputFormat();
 
@@ -101,8 +107,28 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
 
     private org.apache.hadoop.mapreduce.TaskAttemptContext toTaskAttemptContext(JobContext jobContext) {
         assert jobContext != null;
+        final Progressable progressable = jobContext.getProgressible();
+        if (progressable == null) {
+            LOG.warn(MessageFormat.format(
+                    "JobContext has no progressable object: {0}",
+                    jobContext.getClass().getName()));
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Progressable object is found (jobId={0}, object={1})",
+                    jobContext.getJobID(),
+                    progressable));
+        }
         return new org.apache.hadoop.mapreduce.TaskAttemptContext(
                 jobContext.getConfiguration(),
-                new TaskAttemptID(new TaskID(jobContext.getJobID(), true, 0), 0));
+                new TaskAttemptID(new TaskID(jobContext.getJobID(), true, 0), 0)) {
+            @Override
+            public void progress() {
+                if (progressable != null) {
+                    progressable.progress();
+                }
+                super.progress();
+            }
+        };
     }
 }

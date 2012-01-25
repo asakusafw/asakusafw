@@ -40,6 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
@@ -433,7 +434,7 @@ public class HadoopDataSourceUtilTest {
     public void move_simple() throws Exception {
         touch("src/a.csv");
         FileSystem fs = getTempFileSystem();
-        HadoopDataSourceUtil.move(fs, getPath("src"), getPath("dst"));
+        HadoopDataSourceUtil.move(new Counter(), fs, getPath("src"), getPath("dst"));
         assertThat(collect(), is(path("dst/a.csv")));
     }
 
@@ -447,7 +448,7 @@ public class HadoopDataSourceUtilTest {
         touch("src/b.csv");
         touch("src/c.csv");
         FileSystem fs = getTempFileSystem();
-        HadoopDataSourceUtil.move(fs, getPath("src"), getPath("dst"));
+        HadoopDataSourceUtil.move(new Counter(), fs, getPath("src"), getPath("dst"));
         assertThat(collect(), is(path("dst/a.csv", "dst/b.csv", "dst/c.csv")));
     }
 
@@ -461,7 +462,7 @@ public class HadoopDataSourceUtilTest {
         touch("src/a/b.csv");
         touch("src/a/b/c.csv");
         FileSystem fs = getTempFileSystem();
-        HadoopDataSourceUtil.move(fs, getPath("src"), getPath("dst"));
+        HadoopDataSourceUtil.move(new Counter(), fs, getPath("src"), getPath("dst"));
         assertThat(collect(), is(path("dst/a.csv", "dst/a/b.csv", "dst/a/b/c.csv")));
     }
 
@@ -475,7 +476,7 @@ public class HadoopDataSourceUtilTest {
         touch("src/b.csv");
         touch("dst/c.csv");
         FileSystem fs = getTempFileSystem();
-        HadoopDataSourceUtil.move(fs, getPath("src"), getPath("dst"));
+        HadoopDataSourceUtil.move(new Counter(), fs, getPath("src"), getPath("dst"));
         assertThat(collect(), is(path("dst/a.csv", "dst/b.csv", "dst/c.csv")));
     }
 

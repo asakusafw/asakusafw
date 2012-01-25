@@ -479,7 +479,8 @@ class HadoopDataSourceCore implements DirectDataSource {
                         attempt,
                         profile.isOutputStaging()));
             }
-            HadoopDataSourceUtil.moveFromLocal(profile.getLocalFileSystem(), profile.getFileSystem(), attempt, target);
+            HadoopDataSourceUtil.moveFromLocal(
+                    context.getCounter(), profile.getLocalFileSystem(), profile.getFileSystem(), attempt, target);
         } else {
             Path attempt = getAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
@@ -489,7 +490,7 @@ class HadoopDataSourceCore implements DirectDataSource {
                         attempt,
                         profile.isOutputStaging()));
             }
-            HadoopDataSourceUtil.move(profile.getFileSystem(), attempt, target);
+            HadoopDataSourceUtil.move(context.getCounter(), profile.getFileSystem(), attempt, target);
         }
     }
 
@@ -545,7 +546,7 @@ class HadoopDataSourceCore implements DirectDataSource {
                         profile.getId(),
                         staging));
             }
-            HadoopDataSourceUtil.move(fs, staging, target);
+            HadoopDataSourceUtil.move(context.getCounter(), fs, staging, target);
         }
     }
 

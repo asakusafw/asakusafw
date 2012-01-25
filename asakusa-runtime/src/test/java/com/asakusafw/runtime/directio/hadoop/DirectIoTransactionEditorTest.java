@@ -313,7 +313,8 @@ public class DirectIoTransactionEditorTest {
             OutputAttemptContext aContext = new OutputAttemptContext(
                     txContext.getTransactionId(),
                     String.valueOf(index),
-                    txContext.getOutputId());
+                    txContext.getOutputId(),
+                    new Counter());
 
             ds.setupTransactionOutput(txContext);
             ds.setupAttemptOutput(aContext);

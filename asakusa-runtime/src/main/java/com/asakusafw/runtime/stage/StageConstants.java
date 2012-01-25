@@ -35,6 +35,16 @@ public final class StageConstants {
     public static final String PROP_EXECUTION_ID = "com.asakusafw.executionId";
 
     /**
+     * The property key name of batch ID.
+     */
+    public static final String PROP_BATCH_ID = "com.asakusafw.batchId";
+
+    /**
+     * The property key name of flow ID.
+     */
+    public static final String PROP_FLOW_ID = "com.asakusafw.flowId";
+
+    /**
      * 環境変数表のプロパティキー。
      */
     public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs";
