@@ -171,6 +171,14 @@
 			<directoryMode>0775</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
+		<fileSet>
+			<directory>../asakusa-directio-plugin/src/main/dist/directio/bin</directory>
+			<outputDirectory>directio/bin</outputDirectory>
+			<fileMode>0744</fileMode>
+			<directoryMode>0775</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		
 
 		<!-- empty directory -->
 		<fileSet>
