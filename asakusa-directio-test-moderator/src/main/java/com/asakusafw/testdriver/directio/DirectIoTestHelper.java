@@ -360,7 +360,7 @@ public final class DirectIoTestHelper {
     private OutputAttemptContext createContext() {
         String tx = UUID.randomUUID().toString();
         String attempt = UUID.randomUUID().toString();
-        return new OutputAttemptContext(tx, attempt, id);
+        return new OutputAttemptContext(tx, attempt, id, new Counter());
     }
 
     @SuppressWarnings("unchecked")

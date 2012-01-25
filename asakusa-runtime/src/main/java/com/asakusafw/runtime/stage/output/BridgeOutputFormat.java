@@ -20,13 +20,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -36,6 +40,8 @@ import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.WritableUtils;
@@ -278,6 +284,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getAttemptId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
         }
 
@@ -306,6 +313,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getAttemptId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
             doCleanupTask(taskContext);
         }
@@ -340,6 +348,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getAttemptId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
         }
 
@@ -366,6 +375,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getTransactionId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
         }
 
@@ -384,8 +394,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         }
 
         private void setCommitted(JobContext jobContext, boolean value) throws IOException {
+            Configuration conf = jobContext.getConfiguration();
             Path commitMark = getCommitMarkPath(jobContext);
-            FileSystem fs = commitMark.getFileSystem(jobContext.getConfiguration());
+            FileSystem fs = commitMark.getFileSystem(conf);
             if (value) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info(MessageFormat.format(
@@ -393,7 +404,41 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobID(),
                             fs.makeQualified(commitMark)));
                 }
-                fs.create(commitMark, false).close();
+                FSDataOutputStream output = fs.create(commitMark, false);
+                try {
+                    PrintWriter writer = new PrintWriter(
+                            new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET));
+                    writer.printf("      User Name: %s%n", conf.getRaw(StageConstants.PROP_USER));
+                    writer.printf("       Batch ID: %s%n", conf.getRaw(StageConstants.PROP_BATCH_ID));
+                    writer.printf("        Flow ID: %s%n", conf.getRaw(StageConstants.PROP_FLOW_ID));
+                    writer.printf("   Execution ID: %s%n", conf.getRaw(StageConstants.PROP_EXECUTION_ID));
+                    writer.printf("Batch Arguments: %s%n", conf.getRaw(StageConstants.PROP_ASAKUSA_BATCH_ARGS));
+                    writer.printf("  Hadoop Job ID: %s%n", jobContext.getJobID());
+                    writer.printf("Hadoop Job Name: %s%n", jobContext.getJobName());
+                    writer.close();
+                } finally {
+                    output.close();
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Finish creating commit mark: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(commitMark)));
+                }
+                if (LOG.isTraceEnabled()) {
+                    FSDataInputStream input = fs.open(commitMark);
+                    try {
+                        Scanner scanner = new Scanner(
+                                new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
+                        while (scanner.hasNextLine()) {
+                            String line = scanner.nextLine();
+                            LOG.trace(">> " + line);
+                        }
+                        scanner.close();
+                    } finally {
+                        input.close();
+                    }
+                }
             } else {
                 if (LOG.isInfoEnabled()) {
                     LOG.info(MessageFormat.format(
@@ -402,6 +447,12 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             fs.makeQualified(commitMark)));
                 }
                 fs.delete(commitMark, false);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Finish deleting commit mark: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(commitMark)));
+                }
             }
         }
 
@@ -449,6 +500,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getTransactionId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
             setCommitted(jobContext, false);
         }
@@ -467,6 +519,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             context.getTransactionId(),
                             containerPath)).initCause(e);
                 }
+                context.getCounter().add(1);
             }
         }
 

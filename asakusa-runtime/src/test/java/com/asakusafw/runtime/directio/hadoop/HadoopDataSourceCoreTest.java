@@ -88,7 +88,7 @@ public class HadoopDataSourceCoreTest {
                 "testing",
                 new Path(mapping.toURI()),
                 new Path(temporary.toURI()));
-        context = new OutputAttemptContext("tx", "atmpt", profile.getId());
+        context = new OutputAttemptContext("tx", "atmpt", profile.getId(), new Counter());
     }
 
     /**

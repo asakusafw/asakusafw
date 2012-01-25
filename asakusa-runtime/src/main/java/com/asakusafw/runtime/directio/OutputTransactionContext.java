@@ -25,21 +25,28 @@ public final class OutputTransactionContext {
 
     private final String outputId;
 
+    private final Counter counter;
+
     /**
      * Creates a new instance.
      * @param transactionId current transaction ID
      * @param outputId current output ID
+     * @param counter operation counter for this context
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public OutputTransactionContext(String transactionId, String outputId) {
+    public OutputTransactionContext(String transactionId, String outputId, Counter counter) {
         if (transactionId == null) {
             throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
         }
         if (outputId == null) {
             throw new IllegalArgumentException("outputId must not be null"); //$NON-NLS-1$
         }
+        if (counter == null) {
+            throw new IllegalArgumentException("counter must not be null"); //$NON-NLS-1$
+        }
         this.transactionId = transactionId;
         this.outputId = outputId;
+        this.counter = counter;
     }
 
     /**
@@ -56,6 +63,14 @@ public final class OutputTransactionContext {
      */
     public String getOutputId() {
         return outputId;
+    }
+
+    /**
+     * Returns the operation counter.
+     * @return the counter
+     */
+    public Counter getCounter() {
+        return counter;
     }
 
     @Override

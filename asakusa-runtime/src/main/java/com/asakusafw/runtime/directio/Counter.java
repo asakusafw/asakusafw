@@ -36,6 +36,14 @@ public class Counter {
      */
     public void add(long delta) {
         entity.addAndGet(delta);
+        onChanged();
+    }
+
+    /**
+     * Invoked when counter was changed.
+     */
+    protected void onChanged() {
+        return;
     }
 
     /**

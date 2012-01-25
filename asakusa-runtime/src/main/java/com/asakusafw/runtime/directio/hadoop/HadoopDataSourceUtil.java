@@ -18,6 +18,7 @@ package com.asakusafw.runtime.directio.hadoop;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,8 +47,10 @@ import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.util.Progressable;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
+import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
@@ -90,6 +93,11 @@ public final class HadoopDataSourceUtil {
     static final String DEFAULT_SYSTEM_DIR = "_directio";
 
     static final String COMMIT_MARK_DIR = "commits";
+
+    /**
+     * Charset for commit mark file comments.
+     */
+    public static final Charset COMMENT_CHARSET = Charset.forName("UTF-8");
 
     /**
      * Loads a profile list from the configuration.
@@ -287,7 +295,7 @@ public final class HadoopDataSourceUtil {
             throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
         }
         String transactionId = getTransactionId(context, datasourceId);
-        return new OutputTransactionContext(transactionId, datasourceId);
+        return new OutputTransactionContext(transactionId, datasourceId, createCounter(context));
     }
 
     /**
@@ -305,7 +313,7 @@ public final class HadoopDataSourceUtil {
             throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
         }
         String transactionId = getTransactionId(executionId);
-        return new OutputTransactionContext(transactionId, datasourceId);
+        return new OutputTransactionContext(transactionId, datasourceId, new Counter());
     }
 
     /**
@@ -324,7 +332,7 @@ public final class HadoopDataSourceUtil {
         }
         String transactionId = getTransactionId(context, datasourceId);
         String attemptId = getAttemptId(context, datasourceId);
-        return new OutputAttemptContext(transactionId, attemptId, datasourceId);
+        return new OutputAttemptContext(transactionId, attemptId, datasourceId, createCounter(context));
     }
 
     private static String getTransactionId(JobContext jobContext, String datasourceId) {
@@ -345,6 +353,17 @@ public final class HadoopDataSourceUtil {
         assert taskContext != null;
         assert datasourceId != null;
         return taskContext.getTaskAttemptID().toString();
+    }
+
+    private static Counter createCounter(JobContext context) {
+        assert context != null;
+        if (context instanceof Progressable) {
+            return new ProgressableCounter((Progressable) context);
+        } else if (context instanceof org.apache.hadoop.mapred.JobContext) {
+            return new ProgressableCounter(((org.apache.hadoop.mapred.JobContext) context).getProgressible());
+        } else {
+            return new Counter();
+        }
     }
 
     /**
@@ -701,18 +720,24 @@ public final class HadoopDataSourceUtil {
 
     /**
      * Moves all files in source directory into target directory.
+     * @param counter counter which accepts operations count
      * @param fs file system
      * @param from path to source directory
      * @param to path to target directory
      * @throws IOException if failed to move files
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static void move(FileSystem fs, Path from, Path to) throws IOException {
-        move(fs, from, fs, to, false);
+    public static void move(
+            Counter counter,
+            FileSystem fs,
+            Path from,
+            Path to) throws IOException {
+        move(counter, fs, from, fs, to, false);
     }
 
     /**
      * Moves all files in source directory into target directory.
+     * @param counter counter which accepts operations count
      * @param localFs the local file system
      * @param fs the target file system
      * @param from path to source directory (must be on local file system)
@@ -720,14 +745,23 @@ public final class HadoopDataSourceUtil {
      * @throws IOException if failed to move files
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static void moveFromLocal(LocalFileSystem localFs, FileSystem fs, Path from, Path to) throws IOException {
-        move(localFs, from, fs, to, true);
+    public static void moveFromLocal(
+            Counter counter,
+            LocalFileSystem localFs,
+            FileSystem fs,
+            Path from,
+            Path to) throws IOException {
+        move(counter, localFs, from, fs, to, true);
     }
 
     private static void move(
+            Counter counter,
             FileSystem fromFs, Path from,
             FileSystem toFs, Path to,
             boolean fromLocal) throws IOException {
+        if (counter == null) {
+            throw new IllegalArgumentException("counter must not be null"); //$NON-NLS-1$
+        }
         if (fromFs == null) {
             throw new IllegalArgumentException("fromFs must not be null"); //$NON-NLS-1$
         }
@@ -751,7 +785,7 @@ public final class HadoopDataSourceUtil {
         }
         Path source = fromFs.makeQualified(from);
         Path target = toFs.makeQualified(to);
-        List<Path> list = createFileListRelative(fromFs, source);
+        List<Path> list = createFileListRelative(counter, fromFs, source);
         if (list.isEmpty()) {
             return;
         }
@@ -798,6 +832,7 @@ public final class HadoopDataSourceUtil {
                     directoryCreated.add(targetParent);
                 }
             }
+            counter.add(1);
             if (fromLocal) {
                 toFs.moveFromLocalFile(sourceFile, targetFile);
             } else {
@@ -809,6 +844,7 @@ public final class HadoopDataSourceUtil {
                             targetFile));
                 }
             }
+            counter.add(1);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -826,7 +862,8 @@ public final class HadoopDataSourceUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static List<Path> createFileListRelative(FileSystem fs, Path source) throws IOException {
+    private static List<Path> createFileListRelative(Counter counter, FileSystem fs, Path source) throws IOException {
+        assert counter != null;
         assert fs != null;
         assert source != null;
         assert source.isAbsolute();
@@ -840,6 +877,7 @@ public final class HadoopDataSourceUtil {
                     baseUri));
             return Collections.emptyList();
         }
+        counter.add(1);
         List<FileStatus> all = recursiveStep(fs, Collections.singletonList(root));
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -863,6 +901,7 @@ public final class HadoopDataSourceUtil {
                         baseUri,
                         uri));
             }
+            counter.add(1);
         }
         Collections.sort(results);
         return results;
