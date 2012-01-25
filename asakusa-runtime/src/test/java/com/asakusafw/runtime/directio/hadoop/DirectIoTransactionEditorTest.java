@@ -25,10 +25,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -43,13 +47,14 @@ import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
+import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.Commit;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
- * Test for {@link DirectIoFinalizer}.
+ * Test for {@link DirectIoTransactionEditor}.
  */
-public class DirectIoFinalizerTest {
+public class DirectIoTransactionEditorTest {
 
     /**
      * A temporary folder.
@@ -57,7 +62,9 @@ public class DirectIoFinalizerTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private DirectIoFinalizer testee;
+    private Configuration conf;
+
+    private DirectIoTransactionEditor testee;
 
     private DirectDataSourceRepository repo;
 
@@ -80,7 +87,7 @@ public class DirectIoFinalizerTest {
             // ok.
         }
 
-        Configuration conf = new Configuration();
+        this.conf = new Configuration();
         conf.set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, folder.newFolder("system").getAbsoluteFile().toURI().toString());
         production1 = folder.newFolder("p1").getCanonicalFile();
         production2 = folder.newFolder("p2").getCanonicalFile();
@@ -97,7 +104,7 @@ public class DirectIoFinalizerTest {
                 new MockProvider(profile1),
                 new MockProvider(profile2)));
 
-        testee = new DirectIoFinalizer(repo);
+        testee = new DirectIoTransactionEditor(repo);
         testee.setConf(conf);
     }
 
@@ -116,39 +123,39 @@ public class DirectIoFinalizerTest {
     }
 
     /**
-     * Finalizes single.
+     * Apply.
      * @throws Exception if failed
      */
     @Test
-    public void finalizeSingle() throws Exception {
+    public void apply() throws Exception {
         indoubt("ex1");
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        assertThat(testee.finalizeSingle("__UNKNOWN__"), is(false));
+        assertThat(testee.apply("__UNKNOWN__"), is(false));
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        assertThat(testee.finalizeSingle("ex1"), is(true));
+        assertThat(testee.apply("ex1"), is(true));
         assertThat(count(production1), is(1));
         assertThat(count(production2), is(1));
 
-        assertThat(testee.finalizeSingle("ex1"), is(false));
+        assertThat(testee.apply("ex1"), is(false));
     }
 
     /**
-     * Finalizes single partial applied.
+     * Apply partial.
      * @throws Exception if failed
      */
     @Test
-    public void finalizeSingle_partial() throws Exception {
+    public void apply_partial() throws Exception {
         indoubt("ex1");
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
         production1.setWritable(false);
         try {
-            testee.finalizeSingle("ex1");
+            testee.apply("ex1");
         } catch (IOException e) {
             // ok.
         }
@@ -156,120 +163,79 @@ public class DirectIoFinalizerTest {
         assertThat(count(production2), is(1));
 
         production1.setWritable(true);
-        assertThat(testee.finalizeSingle("ex1"), is(true));
+        assertThat(testee.apply("ex1"), is(true));
         assertThat(count(production1), is(1));
         assertThat(count(production2), is(1));
 
-        assertThat(testee.finalizeSingle("ex1"), is(false));
+        assertThat(testee.apply("ex1"), is(false));
     }
 
     /**
-     * Finalizes all.
+     * List.
      * @throws Exception if failed
      */
     @Test
-    public void finalizeAll() throws Exception {
+    public void list() throws Exception {
         indoubt("ex1");
         indoubt("ex2");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
+        indoubt("ex3");
 
-        assertThat(testee.finalizeAll(), is(2));
-        assertThat(count(production1), is(2));
-        assertThat(count(production2), is(2));
+        List<Commit> c1 = testee.list();
+        assertThat(c1.size(), is(3));
+        get(c1, "ex1");
+        get(c1, "ex2");
+        get(c1, "ex3");
 
-        assertThat(testee.finalizeAll(), is(0));
+        testee.apply("ex2");
+        List<Commit> c2 = testee.list();
+        assertThat(c2.size(), is(2));
+        get(c1, "ex1");
+        get(c1, "ex3");
+
+        testee.apply("ex1");
+        List<Commit> c3 = testee.list();
+        assertThat(c3.size(), is(1));
+        get(c1, "ex3");
+
+        testee.apply("ex3");
+        List<Commit> c4 = testee.list();
+        assertThat(c4.size(), is(0));
     }
 
     /**
-     * Finalizes all partial applied.
+     * applies via program entry.
      * @throws Exception if failed
      */
     @Test
-    public void finalizeAll_partial() throws Exception {
-        indoubt("ex1");
-        indoubt("ex2");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
+    public void runApply() throws Exception {
+        Tool exec = new DirectIoApplyTransaction(repo);
 
-        production1.setWritable(false);
-        try {
-            testee.finalizeAll();
-        } catch (IOException e) {
-            // ok.
-        }
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(1));
-
-        production1.setWritable(true);
-        assertThat(testee.finalizeAll(), is(2));
-        assertThat(count(production1), is(2));
-        assertThat(count(production2), is(2));
-
-        assertThat(testee.finalizeAll(), is(0));
-    }
-
-    /**
-     * Finalizes single via program entry.
-     * @throws Exception if failed
-     */
-    @Test
-    public void runSingle() throws Exception {
         indoubt("ex1");
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        assertThat(testee.run(new String[] {"__UNKNOWN__"}), is(0));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"__UNKNOWN__"}), is(0));
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        assertThat(testee.run(new String[] {"ex1"}), is(0));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(0));
         assertThat(count(production1), is(1));
         assertThat(count(production2), is(1));
 
-        assertThat(testee.run(new String[] {"ex1"}), is(0));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(0));
     }
 
     /**
-     * Finalizes single via program entry but failed.
+     * applies via program entry but failed.
      * @throws Exception if failed
      */
     @Test
-    public void runSingle_failure() throws Exception {
+    public void runApply_failure() throws Exception {
+        Tool exec = new DirectIoApplyTransaction(repo);
         indoubt("ex1");
 
         production1.setWritable(false);
-        assertThat(testee.run(new String[] {"ex1"}), is(not(0)));
-    }
-
-    /**
-     * Finalizes all via program entry.
-     * @throws Exception if failed
-     */
-    @Test
-    public void runAll() throws Exception {
-        indoubt("ex1");
-        indoubt("ex2");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.run(new String[] {}), is(0));
-        assertThat(count(production1), is(2));
-        assertThat(count(production2), is(2));
-
-        assertThat(testee.run(new String[] {}), is(0));
-    }
-
-    /**
-     * Finalizes single via program entry but failed.
-     * @throws Exception if failed
-     */
-    @Test
-    public void runAll_failure() throws Exception {
-        indoubt("ex1");
-
-        production1.setWritable(false);
-        assertThat(testee.run(new String[] {}), is(not(0)));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(not(0)));
     }
 
     /**
@@ -277,8 +243,43 @@ public class DirectIoFinalizerTest {
      * @throws Exception if failed
      */
     @Test
-    public void runInvalid() throws Exception {
-        assertThat(testee.run(new String[] {"1", "2"}), is(not(0)));
+    public void runApply_invalid() throws Exception {
+        Tool exec = new DirectIoApplyTransaction(repo);
+        assertThat(ToolRunner.run(conf, exec, new String[] { }), is(not(0)));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"1", "2"}), is(not(0)));
+    }
+
+    /**
+     * list via program entry.
+     * @throws Exception if failed
+     */
+    @Test
+    public void runList() throws Exception {
+        Tool exec = new DirectIoListTransaction(repo);
+        indoubt("ex1");
+        indoubt("ex2");
+        indoubt("ex3");
+
+        assertThat(ToolRunner.run(conf, exec, new String[0]), is(0));
+
+        testee.apply("ex2");
+        assertThat(ToolRunner.run(conf, exec, new String[0]), is(0));
+
+        testee.apply("ex1");
+        assertThat(ToolRunner.run(conf, exec, new String[0]), is(0));
+
+        testee.apply("ex3");
+        assertThat(ToolRunner.run(conf, exec, new String[0]), is(0));
+    }
+
+    /**
+     * Invalid arguments for program entry.
+     * @throws Exception if failed
+     */
+    @Test
+    public void runList_invalid() throws Exception {
+        Tool exec = new DirectIoListTransaction(repo);
+        assertThat(ToolRunner.run(conf, exec, new String[] { "1" }), is(not(0)));
     }
 
     private int count(File dir) {
@@ -291,10 +292,19 @@ public class DirectIoFinalizerTest {
         return count;
     }
 
+    private Commit get(List<Commit> list, String executionId) {
+        for (Commit commit : list) {
+            if (commit.getExecutionId().equals(executionId)) {
+                return commit;
+            }
+        }
+        throw new AssertionError(executionId);
+    }
+
     private void indoubt(String executionId) throws IOException, InterruptedException {
-        Configuration conf = testee.getConf();
         Path cmPath = HadoopDataSourceUtil.getCommitMarkPath(conf, executionId);
-        cmPath.getFileSystem(conf).create(cmPath).close();
+        FileSystem fs = cmPath.getFileSystem(conf);
+        fs.create(cmPath).close();
         int index = 0;
         for (String path : repo.getContainerPaths()) {
             String id = repo.getRelatedId(path);

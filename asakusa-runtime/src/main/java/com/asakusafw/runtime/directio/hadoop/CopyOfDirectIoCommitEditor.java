@@ -40,16 +40,16 @@ import com.asakusafw.runtime.directio.OutputTransactionContext;
  * Finalizes Direct I/O staging area.
  * @since 0.2.5
  */
-public final class DirectIoFinalizer extends Configured implements Tool {
+public final class CopyOfDirectIoCommitEditor extends Configured implements Tool {
 
-    static final Log LOG = LogFactory.getLog(DirectIoFinalizer.class);
+    static final Log LOG = LogFactory.getLog(CopyOfDirectIoCommitEditor.class);
 
     private DirectDataSourceRepository repository;
 
     /**
      * Creates a new instance.
      */
-    public DirectIoFinalizer() {
+    public CopyOfDirectIoCommitEditor() {
         return;
     }
 
@@ -57,7 +57,7 @@ public final class DirectIoFinalizer extends Configured implements Tool {
      * Creates a new instance for testing.
      * @param repository repository
      */
-    DirectIoFinalizer(DirectDataSourceRepository repository) {
+    CopyOfDirectIoCommitEditor(DirectDataSourceRepository repository) {
         this.repository = repository;
     }
 
@@ -74,7 +74,7 @@ public final class DirectIoFinalizer extends Configured implements Tool {
         } else if (args.length == 1) {
             String executionId = args[0];
             try {
-                finalizeSingle(executionId);
+                apply(executionId);
                 return 0;
             } catch (Exception e) {
                 LOG.error(MessageFormat.format(
@@ -108,7 +108,7 @@ public final class DirectIoFinalizer extends Configured implements Tool {
                 executionIds.size()));
         int count = 0;
         for (String executionId : executionIds) {
-            boolean finalized = finalizeSingle(executionId);
+            boolean finalized = apply(executionId);
             if (finalized) {
                 count++;
             }
@@ -127,14 +127,14 @@ public final class DirectIoFinalizer extends Configured implements Tool {
      * @throws InterruptedException if interrupted
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public boolean finalizeSingle(String executionId) throws IOException, InterruptedException {
+    public boolean apply(String executionId) throws IOException, InterruptedException {
         if (executionId == null) {
             throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
         }
         LOG.info(MessageFormat.format(
                 "Start finalizing Direct I/O transaction (executionId={0})",
                 executionId));
-        boolean finalized = doFinalize(executionId);
+        boolean finalized = doApply(executionId);
         if (finalized) {
             LOG.info(MessageFormat.format(
                     "Finish finalizing Direct I/O transaction (executionId={0})",
@@ -173,7 +173,7 @@ public final class DirectIoFinalizer extends Configured implements Tool {
         return results;
     }
 
-    private boolean doFinalize(String executionId) throws IOException, InterruptedException {
+    private boolean doApply(String executionId) throws IOException, InterruptedException {
         assert executionId != null;
         Path commitMark = HadoopDataSourceUtil.getCommitMarkPath(getConf(), executionId);
         FileSystem fs = commitMark.getFileSystem(getConf());
