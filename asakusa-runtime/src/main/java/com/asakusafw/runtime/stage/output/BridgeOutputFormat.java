@@ -118,7 +118,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)));
             WritableUtils.writeVLong(output, SERIAL_VERSION);
             WritableUtils.writeVInt(output, specs.size());
-            for (OutputSpec spec: specs) {
+            for (OutputSpec spec : specs) {
                 WritableUtils.writeString(output, spec.basePath);
             }
             output.close();

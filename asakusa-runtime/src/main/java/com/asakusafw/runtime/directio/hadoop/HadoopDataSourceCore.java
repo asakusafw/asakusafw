@@ -311,7 +311,7 @@ class HadoopDataSourceCore implements DirectDataSource {
         FSDataOutputStream stream = fs.create(file);
         boolean succeed = false;
         try {
-            CountOutputStream cstream = new CountOutputStream(stream, counter);
+            CountOutputStream cstream;
             if (LOG.isDebugEnabled()) {
                 final HadoopDataSourceProfile p = profile;
                 final Path f = file;

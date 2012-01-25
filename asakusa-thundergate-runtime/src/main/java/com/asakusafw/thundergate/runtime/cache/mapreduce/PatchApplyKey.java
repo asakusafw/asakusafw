@@ -17,7 +17,10 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.apache.hadoop.io.VIntWritable;
 import org.apache.hadoop.io.VLongWritable;
@@ -132,7 +135,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * Total comparator for {@link PatchApplyKey}.
      * @since 0.2.3
      */
-    public static final class SortComparator extends WritableComparator {
+    public static final class SortComparator extends WritableComparator implements Externalizable {
 
         /**
          * Creates a new instance.
@@ -170,6 +173,20 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
                 throw new IllegalStateException(e);
             }
         }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            return;
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            return;
+        }
+
+        private Object readResolve() {
+            return new SortComparator();
+        }
     }
 
     /**
@@ -177,7 +194,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * @since 0.2.3
      */
     @SuppressWarnings("rawtypes")
-    public static final class GroupComparator extends WritableComparator {
+    public static final class GroupComparator extends WritableComparator implements Externalizable {
 
         /**
          * Creates a new instance.
@@ -210,6 +227,20 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            return;
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            return;
+        }
+
+        private Object readResolve() {
+            return new GroupComparator();
         }
     }
 
