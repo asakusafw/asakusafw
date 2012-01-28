@@ -629,5 +629,5 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
     データフローのテストでは、演算子の際のような
     ``reload`` は不要です。
 
-..  [#] :doc:`../administration/deployment-with-windgate` を参照
+..  [#] :doc:`../administration/deployment-runtime-plugins` を参照
 

@@ -44,7 +44,7 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 
 /**
@@ -192,35 +192,39 @@ public class HadoopDataSourceUtilTest {
     }
 
     /**
-     * Test for commit mark.
+     * Test for transaction info.
      * @throws Exception if failed
      */
     @Test
-    public void commitMark() throws Exception {
+    public void transactionInfo() throws Exception {
         Configuration conf = new Configuration();
         conf.set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, folder.getRoot().getAbsoluteFile().toURI().toString());
 
         assertThat("empty system dir", folder.getRoot().listFiles(), is(new File[0]));
-        assertThat(HadoopDataSourceUtil.findAllCommitMarkFiles(conf).size(), is(0));
+        assertThat(HadoopDataSourceUtil.findAllTransactionInfoFiles(conf).size(), is(0));
 
-        Path c1 = HadoopDataSourceUtil.getCommitMarkPath(conf, "ex1");
-        assertThat(HadoopDataSourceUtil.getCommitMarkExecutionId(c1), is("ex1"));
-        c1.getFileSystem(conf).create(c1).close();
+        Path t1 = HadoopDataSourceUtil.getTransactionInfoPath(conf, "ex1");
+        assertThat(HadoopDataSourceUtil.getTransactionInfoExecutionId(t1), is("ex1"));
+        t1.getFileSystem(conf).create(t1).close();
 
         assertThat(folder.getRoot().listFiles().length, is(greaterThan(0)));
 
+        Path t2 = HadoopDataSourceUtil.getTransactionInfoPath(conf, "ex2");
+        assertThat(t2, is(not(t1)));
+        assertThat(HadoopDataSourceUtil.getTransactionInfoExecutionId(t2), is("ex2"));
+        t2.getFileSystem(conf).create(t2).close();
+
         Path c2 = HadoopDataSourceUtil.getCommitMarkPath(conf, "ex2");
-        assertThat(c2, is(not(c1)));
-        assertThat(HadoopDataSourceUtil.getCommitMarkExecutionId(c2), is("ex2"));
+        assertThat(c2, is(not(t2)));
         c2.getFileSystem(conf).create(c2).close();
 
         List<Path> paths = new ArrayList<Path>();
-        for (FileStatus stat : HadoopDataSourceUtil.findAllCommitMarkFiles(conf)) {
+        for (FileStatus stat : HadoopDataSourceUtil.findAllTransactionInfoFiles(conf)) {
             paths.add(stat.getPath());
         }
         assertThat(paths.size(), is(2));
-        assertThat(paths, hasItem(c1));
-        assertThat(paths, hasItem(c2));
+        assertThat(paths, hasItem(t1));
+        assertThat(paths, hasItem(t2));
     }
 
     /**
@@ -231,7 +235,7 @@ public class HadoopDataSourceUtilTest {
     public void search_direct() throws Exception {
         touch("a.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("a.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("a.csv"));
         assertThat(normalize(results), is(path("a.csv")));
     }
 
@@ -246,7 +250,7 @@ public class HadoopDataSourceUtilTest {
         touch("a/a/a.csv");
         touch("a/a/a/a.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("a/a/a.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("a/a/a.csv"));
         assertThat(normalize(results), is(path("a/a/a.csv")));
     }
 
@@ -260,7 +264,7 @@ public class HadoopDataSourceUtilTest {
         touch("b.tsv");
         touch("c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("*.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("*.csv"));
         assertThat(normalize(results), is(path("a.csv", "c.csv")));
     }
 
@@ -274,7 +278,7 @@ public class HadoopDataSourceUtilTest {
         touch("b/b/b.csv");
         touch("c/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("*/*.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("*/*.csv"));
         assertThat(normalize(results), is(path("a/a.csv", "c/c.csv")));
     }
 
@@ -288,7 +292,7 @@ public class HadoopDataSourceUtilTest {
         touch("b.csv");
         touch("c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("{a|b}.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("{a|b}.csv"));
         assertThat(normalize(results), is(path("a.csv", "b.csv")));
     }
 
@@ -309,7 +313,7 @@ public class HadoopDataSourceUtilTest {
         touch("c/c.csv");
         FileSystem fs = getTempFileSystem();
         List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(),
-                SearchPattern.compile("{a|b}/{b|c}.csv"));
+                FilePattern.compile("{a|b}/{b|c}.csv"));
         assertThat(normalize(results), is(path("a/b.csv", "a/c.csv", "b/b.csv", "b/c.csv")));
     }
 
@@ -326,7 +330,7 @@ public class HadoopDataSourceUtilTest {
         }
         FileSystem fs = getTempFileSystem();
         List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(),
-                SearchPattern.compile("data/{2005/12|2003/11}.csv"));
+                FilePattern.compile("data/{2005/12|2003/11}.csv"));
         assertThat(normalize(results), is(path("data/2005/12.csv", "data/2003/11.csv")));
     }
 
@@ -340,7 +344,7 @@ public class HadoopDataSourceUtilTest {
         touch("b/b.csv");
         touch("c/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("**"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("**"));
         assertThat(normalize(results), is(path("", "a", "b", "c", "a/a.csv", "b/b.csv", "c/c.csv")));
     }
 
@@ -354,7 +358,7 @@ public class HadoopDataSourceUtilTest {
         touch("b/b.csv");
         touch("c/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("**/*.csv"));
+        List<FileStatus> results = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("**/*.csv"));
         assertThat(normalize(results), is(path("a/a.csv", "b/b.csv", "c/c.csv")));
     }
 
@@ -366,7 +370,7 @@ public class HadoopDataSourceUtilTest {
     public void minimalCovered_trivial() throws Exception {
         touch("a.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("**/*.csv"));
+        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("**/*.csv"));
         assertThat(raw.size(), is(1));
         List<FileStatus> results = HadoopDataSourceUtil.onlyMinimalCovered(raw);
         assertThat(normalize(results), is(path("a.csv")));
@@ -382,7 +386,7 @@ public class HadoopDataSourceUtilTest {
         touch("dir/b.csv");
         touch("dir/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("**/*.csv"));
+        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("**/*.csv"));
         assertThat(raw.size(), is(3));
         List<FileStatus> results = HadoopDataSourceUtil.onlyMinimalCovered(raw);
         assertThat(normalize(results), is(path("dir/a.csv", "dir/b.csv", "dir/c.csv")));
@@ -398,7 +402,7 @@ public class HadoopDataSourceUtilTest {
         touch("dir/b.csv");
         touch("dir/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("*/**"));
+        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("*/**"));
         assertThat(raw.size(), is(4));
         List<FileStatus> results = HadoopDataSourceUtil.onlyMinimalCovered(raw);
         assertThat(normalize(results), is(path("dir")));
@@ -414,7 +418,7 @@ public class HadoopDataSourceUtilTest {
         touch("dir/a/b.csv");
         touch("dir/a/b/c.csv");
         FileSystem fs = getTempFileSystem();
-        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), SearchPattern.compile("dir/**"));
+        List<FileStatus> raw = HadoopDataSourceUtil.search(fs, getBase(), FilePattern.compile("dir/**"));
         for (Iterator<FileStatus> iterator = raw.iterator(); iterator.hasNext();) {
             FileStatus fileStatus = iterator.next();
             if (fileStatus.getPath().getName().equals("dir")) {
@@ -481,7 +485,7 @@ public class HadoopDataSourceUtilTest {
     }
 
     private List<String> collect() throws IOException {
-        List<FileStatus> all = HadoopDataSourceUtil.search(getTempFileSystem(), getBase(), SearchPattern.compile("**"));
+        List<FileStatus> all = HadoopDataSourceUtil.search(getTempFileSystem(), getBase(), FilePattern.compile("**"));
         List<FileStatus> files = new ArrayList<FileStatus>();
         for (FileStatus stat : all) {
             if (stat.isDir() == false) {

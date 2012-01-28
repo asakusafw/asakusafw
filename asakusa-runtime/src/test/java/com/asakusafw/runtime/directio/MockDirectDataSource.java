@@ -26,7 +26,6 @@ import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.SearchPattern;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -50,7 +49,7 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
             Class<? extends T> dataType,
             DataFormat<T> format,
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern) throws IOException, InterruptedException {
         return Collections.emptyList();
     }
 
@@ -95,7 +94,7 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
     @Override
     public boolean delete(
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern) throws IOException, InterruptedException {
         return false;
     }
 

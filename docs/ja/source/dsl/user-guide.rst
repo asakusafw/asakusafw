@@ -28,12 +28,10 @@ Asakusa DSLは、データフロー形式でのバッチ処理設計から
 そのため、設計の段階からデータフローや処理の単位を意識することで、
 その設計内容をインプットとしてAsakusa DSLを用いた実装をスムーズに行うことができるようになります。
 
-Asakusa Frameworkを利用したバッチ処理の設計については、
-`ITpro: Hadoop向け基幹バッチ分散処理ソフト「Asakusa」の全貌`_ などを参照してください。
+Asakusa Frameworkを利用したバッチ処理の設計については、 `Asakusa Frameworkコミュニティサイト`_ の `バッチ設計と実装ガイド`_ を参照してください。
 
-.. _`ITpro: Hadoop向け基幹バッチ分散処理ソフト「Asakusa」の全貌` : http://itpro.nikkeibp.co.jp/article/COLUMN/20110322/358560/
-
-..  todo:: バッチ処理の設計について書きおろす
+.. _`Asakusa Frameworkコミュニティサイト` : http://www.asakusafw.com/
+.. _`バッチ設計と実装ガイド` : http://www.asakusafw.com/techinfo/methodology.html
 
 
 DSLコンパイラ
@@ -462,8 +460,8 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 インポータ記述はジョブフローの入力もととなるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -487,8 +485,8 @@ Asakusa Frameworkは標準でWindGateやThunderGateというデータソース�
 エクスポータ記述はジョブフローの結果を出力する先となるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でWindGateやThunderGateというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` や :doc:`with-thundergate` を参照してください。
+Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
+詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。

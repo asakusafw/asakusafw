@@ -77,7 +77,7 @@ public interface DirectDataSource {
             Class<? extends T> dataType,
             DataFormat<T> format,
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException;
+            ResourcePattern resourcePattern) throws IOException, InterruptedException;
 
     /**
      * Opens a fragment for input.
@@ -131,7 +131,7 @@ public interface DirectDataSource {
      */
     boolean delete(
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException;
+            ResourcePattern resourcePattern) throws IOException, InterruptedException;
 
     /**
      * Prepares output area for the attempt.

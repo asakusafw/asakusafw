@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.asakusafw.yaess.core.ExecutionContext;
+
 /**
  * Executes programs.
  * @since 0.2.3
@@ -27,6 +29,7 @@ public interface ProcessExecutor {
 
     /**
      * Executes a process.
+     * @param context current execution context
      * @param commandLineTokens target command
      * @param environmentVariables environment variables
      * @return exit code
@@ -35,6 +38,7 @@ public interface ProcessExecutor {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     int execute(
+            ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables) throws InterruptedException, IOException;
 }

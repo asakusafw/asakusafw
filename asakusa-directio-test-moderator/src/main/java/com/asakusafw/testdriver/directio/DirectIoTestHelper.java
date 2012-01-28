@@ -35,10 +35,10 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
-import com.asakusafw.runtime.directio.SearchPattern;
-import com.asakusafw.runtime.directio.SearchPattern.PatternElement;
-import com.asakusafw.runtime.directio.SearchPattern.Segment;
-import com.asakusafw.runtime.directio.SearchPattern.Selection;
+import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilePattern.PatternElement;
+import com.asakusafw.runtime.directio.FilePattern.Segment;
+import com.asakusafw.runtime.directio.FilePattern.Selection;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.io.ModelInput;
@@ -56,7 +56,7 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
  */
 public final class DirectIoTestHelper {
 
-    private static final SearchPattern ALL = SearchPattern.compile("**");
+    private static final FilePattern ALL = FilePattern.compile("**");
 
     private static final String WILDCARD_REPLACEMENT = "__testing__";
 
@@ -261,7 +261,7 @@ public final class DirectIoTestHelper {
         final DataFormat<T> format = createFormat(dataType, description.getFormat());
         final Counter counter = new Counter();
         try {
-            SearchPattern pattern = toInputPattern(description.getResourcePattern());
+            FilePattern pattern = toInputPattern(description.getResourcePattern());
             LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
                     fullPath,
                     pattern,
@@ -314,7 +314,7 @@ public final class DirectIoTestHelper {
     private String toOutputName(String inputResourcePattern) throws IOException {
         assert inputResourcePattern != null;
         String patternString = resolve(inputResourcePattern);
-        SearchPattern pattern = SearchPattern.compile(patternString);
+        FilePattern pattern = FilePattern.compile(patternString);
         if (pattern.containsVariables()) {
             throw new IOException(MessageFormat.format(
                     "Input resource pattern contains variables (original=[{0}], expanded=[{1}])",
@@ -346,7 +346,7 @@ public final class DirectIoTestHelper {
         return buf.toString();
     }
 
-    private SearchPattern toInputPattern(String outputResourcePattern) {
+    private FilePattern toInputPattern(String outputResourcePattern) {
         assert outputResourcePattern != null;
         // FIXME more specific
         return ALL;

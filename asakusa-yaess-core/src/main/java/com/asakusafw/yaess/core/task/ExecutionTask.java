@@ -64,6 +64,7 @@ import com.asakusafw.yaess.core.YaessProfile;
 /**
  * Task to execute target batch, flow, or phase.
  * @since 0.2.3
+ * @version 0.2.5
  */
 public class ExecutionTask {
 
@@ -275,12 +276,27 @@ public class ExecutionTask {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
         ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, arguments);
-        Set<ExecutionScript> executions = FlowScript.load(script, flowId, phase);
-        ExecutionLock lock = locks.newInstance(batchId);
+        executePhase(context);
+    }
+
+    /**
+     * Executes a target phase.
+     * @param context the current context
+     * @throws InterruptedException if interrupted during this execution
+     * @throws IOException if failed to execute target phase
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    public void executePhase(ExecutionContext context) throws InterruptedException, IOException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        Set<ExecutionScript> executions = FlowScript.load(script, context.getFlowId(), context.getPhase());
+        ExecutionLock lock = locks.newInstance(context.getBatchId());
         try {
-            lock.beginFlow(flowId, executionId);
+            lock.beginFlow(context.getFlowId(), context.getExecutionId());
             executePhase(context, executions);
-            lock.endFlow(flowId, executionId);
+            lock.endFlow(context.getFlowId(), context.getExecutionId());
         } finally {
             lock.close();
         }

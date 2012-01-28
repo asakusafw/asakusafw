@@ -198,3 +198,8 @@ ThunderGateを利用するプロジェクト構成の場合、DMDLコンパイ�
 
 ThunderGateとの連携について、詳しくは :doc:`with-thundergate` を参照してください。
 
+Direct I/Oとの連携
+------------------
+Direct I/Oを利用するプロジェクト構成の場合、Direct I/Oに関するデータ変換を行うプログラムをDMDLから自動生成できます。
+詳しい情報は :doc:`../directio/index` を参照してください。
+

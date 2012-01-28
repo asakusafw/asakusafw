@@ -16,27 +16,10 @@
 package com.asakusafw.runtime.directio;
 
 /**
- * Constants for {@link DirectDataSource} facility.
+ * A pattern describes resource location.
  * @since 0.2.5
  */
-public final class DirectDataSourceConstants {
+public interface ResourcePattern {
 
-    /**
-     * The attribute key name of resource path/pattern.
-     */
-    public static final String KEY_RESOURCE_PATH = "resourcePath";
-
-    /**
-     * The attribute key name of data class.
-     */
-    public static final String KEY_DATA_CLASS = "dataClass";
-
-    /**
-     * The attribute key name of format class.
-     */
-    public static final String KEY_FORMAT_CLASS = "formatClass";
-
-    private DirectDataSourceConstants() {
-        return;
-    }
+    // no special methods
 }
