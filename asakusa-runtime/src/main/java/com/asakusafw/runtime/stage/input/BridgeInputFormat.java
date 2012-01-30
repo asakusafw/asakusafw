@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.DirectInputFragment;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.stage.StageConstants;
@@ -154,7 +155,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         for (StageInput input : inputList) {
             String fullBasePath = input.getPathString();
             String basePath = variables.parse(repo.getComponentPath(fullBasePath));
-            SearchPattern pattern = extractSearchPattern(context, variables, input);
+            FilePattern pattern = extractSearchPattern(context, variables, input);
             Class<?> dataClass = extractDataClass(context, input);
             Class<? extends DataFormat<?>> formatClass = extractFormatClass(context, input);
             DirectInputGroup group = new DirectInputGroup(fullBasePath, dataClass, formatClass);
@@ -168,7 +169,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         return results;
     }
 
-    private SearchPattern extractSearchPattern(
+    private FilePattern extractSearchPattern(
             JobContext context,
             VariableTable variables,
             StageInput input) throws IOException {
@@ -177,7 +178,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         String value = extract(input, DirectDataSourceConstants.KEY_RESOURCE_PATH);
         value = variables.parse(value);
         try {
-            SearchPattern compiled = SearchPattern.compile(value);
+            FilePattern compiled = FilePattern.compile(value);
             if (compiled.containsVariables()) {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Search pattern contains variables: {0}",
@@ -344,9 +345,9 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         final String componentPath;
 
-        final SearchPattern pattern;
+        final FilePattern pattern;
 
-        InputPath(String originalBasePath, String componentPath, SearchPattern pattern) {
+        InputPath(String originalBasePath, String componentPath, FilePattern pattern) {
             assert originalBasePath != null;
             assert componentPath != null;
             assert pattern != null;
@@ -414,6 +415,12 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             WritableUtils.writeVLong(out, fragmentCopy.getSize());
             List<String> ownerNodeNames = fragmentCopy.getOwnerNodeNames();
             WritableUtils.writeStringArray(out, ownerNodeNames.toArray(new String[ownerNodeNames.size()]));
+            Map<String, String> attributes = fragmentCopy.getAttributes();
+            WritableUtils.writeVInt(out, attributes.size());
+            for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                WritableUtils.writeString(out, entry.getKey());
+                WritableUtils.writeString(out, entry.getValue());
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -426,7 +433,19 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             long offset = WritableUtils.readVLong(in);
             long length = WritableUtils.readVLong(in);
             String[] locations = WritableUtils.readStringArray(in);
-            this.fragment = new DirectInputFragment(path, offset, length, Arrays.asList(locations));
+            Map<String, String> attributes;
+            int attributeCount = WritableUtils.readVInt(in);
+            if (attributeCount == 0) {
+                attributes = Collections.emptyMap();
+            } else {
+                attributes = new HashMap<String, String>();
+                for (int i = 0; i < attributeCount; i++) {
+                    String key = WritableUtils.readString(in);
+                    String value = WritableUtils.readString(in);
+                    attributes.put(key, value);
+                }
+            }
+            this.fragment = new DirectInputFragment(path, offset, length, Arrays.asList(locations), attributes);
 
             try {
                 Class<? extends DataFormat<?>> formatClass = (Class<? extends DataFormat<?>>) conf

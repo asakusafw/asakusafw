@@ -38,7 +38,7 @@ import org.apache.hadoop.util.Progressable;
  */
 public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.OutputCommitter {
 
-    final Log LOG = LogFactory.getLog(LegacyBridgeOutputCommitter.class);
+    static final Log LOG = LogFactory.getLog(LegacyBridgeOutputCommitter.class);
 
     private final StageOutputFormat format = new StageOutputFormat();
 

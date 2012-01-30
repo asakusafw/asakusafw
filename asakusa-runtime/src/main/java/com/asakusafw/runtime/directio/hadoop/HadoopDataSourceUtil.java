@@ -52,17 +52,16 @@ import org.apache.hadoop.util.Progressable;
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
-import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.SearchPattern;
-import com.asakusafw.runtime.directio.SearchPattern.PatternElement;
-import com.asakusafw.runtime.directio.SearchPattern.PatternElementKind;
-import com.asakusafw.runtime.directio.SearchPattern.Segment;
-import com.asakusafw.runtime.directio.SearchPattern.Selection;
+import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilePattern.PatternElement;
+import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
+import com.asakusafw.runtime.directio.FilePattern.Segment;
+import com.asakusafw.runtime.directio.FilePattern.Selection;
 import com.asakusafw.runtime.stage.StageConstants;
 
 /**
@@ -90,9 +89,14 @@ public final class HadoopDataSourceUtil {
      */
     public static final String KEY_SYSTEM_DIR = "com.asakusafw.output.system.dir";
 
+    /**
+     * The attribute key name of local tempdir.
+     */
+    public static final String KEY_LOCAL_TEMPDIR = "com.asakusafw.output.local.tempdir";
+
     static final String DEFAULT_SYSTEM_DIR = "_directio";
 
-    static final String COMMIT_MARK_DIR = "commits";
+    static final String TRANSACTION_INFO_DIR = "transactions";
 
     /**
      * Charset for commit mark file comments.
@@ -271,7 +275,7 @@ public final class HadoopDataSourceUtil {
         if (conf == null) {
             return null;
         }
-        String path = conf.get(DirectDataSourceConstants.KEY_LOCAL_TEMPDIR);
+        String path = conf.get(KEY_LOCAL_TEMPDIR);
         if (path == null) {
             return null;
         }
@@ -367,22 +371,48 @@ public final class HadoopDataSourceUtil {
     }
 
     /**
-     * Extracts an execution ID from the commit mark path.
-     * @param commitMarkPath target path
-     * @return execution ID, or {@code null} if is not a valid commit mark
+     * Extracts an execution ID from the transaction info.
+     * @param transactionInfoPath target path
+     * @return execution ID, or {@code null} if is not a valid transaction info
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @see #getCommitMarkPath(Configuration, String)
      */
-    public static String getCommitMarkExecutionId(Path commitMarkPath) {
-        if (commitMarkPath == null) {
-            throw new IllegalArgumentException("commitMarkPath must not be null"); //$NON-NLS-1$
+    public static String getTransactionInfoExecutionId(Path transactionInfoPath) {
+        if (transactionInfoPath == null) {
+            throw new IllegalArgumentException("transactionInfoPath must not be null"); //$NON-NLS-1$
         }
-        String name = commitMarkPath.getName();
-        Matcher matcher = Pattern.compile("commit-(.+)").matcher(name);
+        return getMarkPath(transactionInfoPath, Pattern.compile("tx-(.+)"));
+    }
+
+    private static String getMarkPath(Path path, Pattern pattern) {
+        assert path != null;
+        assert pattern != null;
+        String name = path.getName();
+        Matcher matcher = pattern.matcher(name);
         if (matcher.matches() == false) {
             return null;
         }
         return matcher.group(1);
+    }
+
+    /**
+     * Returns the transaction info path.
+     * @param conf the current configuration
+     * @param executionId target transaction ID
+     * @return target path
+     * @throws IOException if failed to compute the path by I/O exception
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Path getTransactionInfoPath(Configuration conf, String executionId) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (executionId == null) {
+            throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
+        }
+        return new Path(
+                getTransactionInfoDir(conf),
+                String.format("tx-%s", executionId));
     }
 
     /**
@@ -401,42 +431,42 @@ public final class HadoopDataSourceUtil {
             throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
         }
         return new Path(
-                getCommitMarkDir(conf),
+                getTransactionInfoDir(conf),
                 String.format("commit-%s", executionId));
     }
 
     /**
-     * Returns the all commit mark files.
+     * Returns the all transaction info files.
      * @param conf the current configuration
      * @return target path
      * @throws IOException if failed to find files by I/O error
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static Collection<FileStatus> findAllCommitMarkFiles(Configuration conf) throws IOException {
+    public static Collection<FileStatus> findAllTransactionInfoFiles(Configuration conf) throws IOException {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        Path dir = getCommitMarkDir(conf);
+        Path dir = getTransactionInfoDir(conf);
         FileSystem fs = dir.getFileSystem(conf);
         FileStatus[] statusArray = fs.listStatus(dir);
-        if (statusArray == null) {
+        if (statusArray == null || statusArray.length == 0) {
             return Collections.emptyList();
         }
         Collection<FileStatus> results = new ArrayList<FileStatus>();
         for (FileStatus stat : statusArray) {
-            if (getCommitMarkExecutionId(stat.getPath()) != null) {
+            if (getTransactionInfoExecutionId(stat.getPath()) != null) {
                 results.add(stat);
             }
         }
         return results;
     }
 
-    private static Path getCommitMarkDir(Configuration conf) throws IOException {
+    private static Path getTransactionInfoDir(Configuration conf) throws IOException {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
         String working = conf.get(KEY_SYSTEM_DIR, DEFAULT_SYSTEM_DIR);
-        Path path = new Path(working, COMMIT_MARK_DIR);
+        Path path = new Path(working, TRANSACTION_INFO_DIR);
         return path.makeQualified(path.getFileSystem(conf));
     }
 
@@ -449,7 +479,7 @@ public final class HadoopDataSourceUtil {
      * @throws IOException if failed to search by I/O error
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static List<FileStatus> search(FileSystem fs, Path base, SearchPattern pattern) throws IOException {
+    public static List<FileStatus> search(FileSystem fs, Path base, FilePattern pattern) throws IOException {
         if (fs == null) {
             throw new IllegalArgumentException("fs must not be null"); //$NON-NLS-1$
         }

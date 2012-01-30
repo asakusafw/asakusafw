@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A pattern describes resource location.
+ * A pattern describes file location.
  * <h3 id="pattern-expression">Pattern Expression</h3>
 <pre><code>
 expression:
@@ -88,7 +88,7 @@ character:
  * </table>
  * @since 0.2.5
  */
-public class SearchPattern {
+public class FilePattern implements ResourcePattern {
 
     private static final int CHAR_ESCAPE = '\\';
 
@@ -138,7 +138,7 @@ public class SearchPattern {
 
     private final String patternString;
 
-    SearchPattern(List<Segment> segments, String patternString) {
+    FilePattern(List<Segment> segments, String patternString) {
         assert segments != null;
         assert patternString != null;
         assert segments.isEmpty() == false;
@@ -189,7 +189,7 @@ public class SearchPattern {
      * @throws IllegalArgumentException if pattern is not valid
      * @see <a href="#pattern-expression">Pattern Expression</a>
      */
-    public static SearchPattern compile(String patternString) {
+    public static FilePattern compile(String patternString) {
         if (patternString == null) {
             throw new IllegalArgumentException("patternString must not be null"); //$NON-NLS-1$
         }
@@ -197,7 +197,7 @@ public class SearchPattern {
             throw new IllegalArgumentException("patternString must not be empty"); //$NON-NLS-1$
         }
         List<Segment> segments = compileSegments(patternString);
-        return new SearchPattern(segments, patternString);
+        return new FilePattern(segments, patternString);
     }
 
     private static List<Segment> compileSegments(String patternString) {
@@ -411,7 +411,7 @@ public class SearchPattern {
     }
 
     /**
-     * Each segment in {@link SearchPattern}.
+     * Each segment in {@link FilePattern}.
      * This means a file/directory name pattern, or a any directories ({@code "**"}).
      * @since 0.2.5
      */

@@ -42,7 +42,7 @@ import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.stage.input.BridgeInputFormat;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
@@ -104,7 +104,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         DirectFileInputDescription desc = extract(input);
         String pattern = desc.getResourcePattern();
         try {
-            SearchPattern.compile(pattern);
+            FilePattern.compile(pattern);
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
                     "入力リソース名のパターンが不正です ({1}): {0}",

@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.basic.ProcessExecutor;
+import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -242,10 +243,11 @@ public class JschProcessExecutor implements ProcessExecutor {
 
     @Override
     public int execute(
+            ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables) throws InterruptedException, IOException {
         try {
-            return execute0(commandLineTokens, environmentVariables);
+            return execute0(context, commandLineTokens, environmentVariables);
         } catch (JSchException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to execute command via SSH ({0}@{1}:{2})",
@@ -256,8 +258,10 @@ public class JschProcessExecutor implements ProcessExecutor {
     }
 
     private int execute0(
+            ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables) throws JSchException, InterruptedException {
+        assert context != null;
         assert commandLineTokens != null;
         assert environmentVariables != null;
         Session session = jsch.getSession(user, host);
@@ -273,8 +277,8 @@ public class JschProcessExecutor implements ProcessExecutor {
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
             channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
-            channel.setOutputStream(System.out, true);
-            channel.setErrStream(System.err, true);
+            channel.setOutputStream(context.getOutput(), true);
+            channel.setErrStream(context.getOutput(), true);
             channel.connect((int) TimeUnit.SECONDS.toMillis(60));
             try {
                 while (true) {

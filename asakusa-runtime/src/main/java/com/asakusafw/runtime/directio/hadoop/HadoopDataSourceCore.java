@@ -34,11 +34,11 @@ import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
-import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.ResourcePattern;
 import com.asakusafw.runtime.directio.util.CountInputStream;
 import com.asakusafw.runtime.directio.util.CountOutputStream;
 import com.asakusafw.runtime.io.ModelInput;
@@ -70,7 +70,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             Class<? extends T> dataType,
             DataFormat<T> format,
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Start finding input (id={0}, path={1}, resourcePattern={2})",
@@ -78,12 +78,13 @@ class HadoopDataSourceCore implements DirectDataSource {
                     basePath,
                     resourcePattern));
         }
+        FilePattern pattern = validate(resourcePattern);
         BinaryStreamFormat<T> sformat = validate(format);
         HadoopDataSourceProfile p = profile;
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
         Path base = append(root, basePath);
-        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, resourcePattern);
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
         stats = filesOnly(stats);
 
         if (LOG.isDebugEnabled()) {
@@ -311,7 +312,7 @@ class HadoopDataSourceCore implements DirectDataSource {
         FSDataOutputStream stream = fs.create(file);
         boolean succeed = false;
         try {
-            CountOutputStream cstream = new CountOutputStream(stream, counter);
+            CountOutputStream cstream;
             if (LOG.isDebugEnabled()) {
                 final HadoopDataSourceProfile p = profile;
                 final Path f = file;
@@ -361,6 +362,18 @@ class HadoopDataSourceCore implements DirectDataSource {
                 && HadoopDataSourceUtil.isLocalAttemptOutputDefined(profile.getLocalFileSystem());
     }
 
+    private FilePattern validate(ResourcePattern pattern) throws IOException {
+        assert pattern != null;
+        if ((pattern instanceof FilePattern) == false) {
+            throw new IOException(MessageFormat.format(
+                    "{2} must be a subtype of {1} (path={0})",
+                    profile.getContextPath(),
+                    FilePattern.class.getName(),
+                    pattern.getClass().getName()));
+        }
+        return (FilePattern) pattern;
+    }
+
     private <T> BinaryStreamFormat<T> validate(DataFormat<T> format) throws IOException {
         assert format != null;
         if ((format instanceof BinaryStreamFormat<?>) == false) {
@@ -376,7 +389,7 @@ class HadoopDataSourceCore implements DirectDataSource {
     @Override
     public boolean delete(
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Start deleting files (id={0}, path={1}, resource={2})",
@@ -384,11 +397,12 @@ class HadoopDataSourceCore implements DirectDataSource {
                     basePath,
                     resourcePattern));
         }
+        FilePattern pattern = validate(resourcePattern);
         HadoopDataSourceProfile p = profile;
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
         Path base = append(root, basePath);
-        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, resourcePattern);
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
         List<FileStatus> targets = HadoopDataSourceUtil.onlyMinimalCovered(stats);
         Path temporary = p.getTemporaryFileSystemPath();
 
@@ -437,7 +451,7 @@ class HadoopDataSourceCore implements DirectDataSource {
             LOG.warn(MessageFormat.format(
                     "Streaming output is disabled but the local temporary directory ({1}) is not defined (id={0})",
                     profile.getId(),
-                    DirectDataSourceConstants.KEY_LOCAL_TEMPDIR));
+                    HadoopDataSourceUtil.KEY_LOCAL_TEMPDIR));
         }
         if (isLocalAttemptOutput()) {
             FileSystem fs = profile.getLocalFileSystem();
@@ -561,7 +575,12 @@ class HadoopDataSourceCore implements DirectDataSource {
                     path));
         }
         try {
-            fs.delete(path, true);
+            if (fs.delete(path, true) == false) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to delete temporary area (id={0}, path={0})",
+                        profile.getId(),
+                        path));
+            }
         } catch (FileNotFoundException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(

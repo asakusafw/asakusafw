@@ -170,7 +170,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(command, env);
+        int exit = executor.execute(context, command, env);
         if (exit == 0) {
             return;
         }
@@ -196,7 +196,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         LOG.debug("Command: {}", command);
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(command, getEnvironmentVariables());
+        int exit = executor.execute(context, command, getEnvironmentVariables());
         if (exit == 0) {
             return;
         }

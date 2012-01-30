@@ -16,7 +16,7 @@
 package com.asakusafw.vocabulary.directio;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -108,7 +108,7 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      * </tr>
      * </table>
      * @return the resource path pattern
-     * @see SearchPattern
+     * @see FilePattern
      */
     public abstract String getResourcePattern();
 

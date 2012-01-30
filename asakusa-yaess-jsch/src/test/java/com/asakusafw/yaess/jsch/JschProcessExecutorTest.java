@@ -32,6 +32,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.yaess.core.ExecutionContext;
+import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.jcraft.jsch.JSchException;
 
@@ -276,6 +278,7 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
                     Arrays.asList("touch", file.getAbsolutePath()),
                     Collections.<String, String>emptyMap());
             assertThat(exit, is(0));
@@ -320,6 +323,7 @@ public class JschProcessExecutorTest {
             env.put("file1", file1.getAbsolutePath());
             env.put("file2", file2.getAbsolutePath());
             int exit = extracted.execute(
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
                     Arrays.asList(script.getAbsolutePath()),
                     env);
             assertThat(exit, is(0));
@@ -348,6 +352,7 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
                     Arrays.asList(".__INVALID__"),
                     Collections.<String, String>emptyMap());
             assertThat(exit, is(not(0)));
@@ -376,6 +381,7 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
                     Arrays.asList("touch", file.getAbsolutePath()),
                     Collections.<String, String>emptyMap());
             assertThat(exit, is(0));
@@ -416,6 +422,7 @@ public class JschProcessExecutorTest {
             Map<String, String> env = new HashMap<String, String>();
             env.put("file", file.getAbsolutePath());
             int exit = extracted.execute(
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
                     Arrays.asList(script.getAbsolutePath()),
                     env);
             assertThat(exit, is(0));

@@ -118,7 +118,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)));
             WritableUtils.writeVLong(output, SERIAL_VERSION);
             WritableUtils.writeVInt(output, specs.size());
-            for (OutputSpec spec: specs) {
+            for (OutputSpec spec : specs) {
                 WritableUtils.writeString(output, spec.basePath);
             }
             output.close();
@@ -362,6 +362,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         "Start directio job setup: job={0}",
                         jobContext.getJobID()));
             }
+            setTransactionInfo(jobContext, true);
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
@@ -393,18 +394,18 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             doCleanupJob(jobContext);
         }
 
-        private void setCommitted(JobContext jobContext, boolean value) throws IOException {
+        private void setTransactionInfo(JobContext jobContext, boolean value) throws IOException {
             Configuration conf = jobContext.getConfiguration();
-            Path commitMark = getCommitMarkPath(jobContext);
-            FileSystem fs = commitMark.getFileSystem(conf);
+            Path transactionInfo = getTransactionInfoPath(jobContext);
+            FileSystem fs = transactionInfo.getFileSystem(conf);
             if (value) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info(MessageFormat.format(
-                            "Creating commit mark: job={0}, path={1}",
+                            "Creating transaction info: job={0}, path={1}",
                             jobContext.getJobID(),
-                            fs.makeQualified(commitMark)));
+                            fs.makeQualified(transactionInfo)));
                 }
-                FSDataOutputStream output = fs.create(commitMark, false);
+                FSDataOutputStream output = fs.create(transactionInfo, false);
                 try {
                     PrintWriter writer = new PrintWriter(
                             new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET));
@@ -421,12 +422,12 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finish creating commit mark: job={0}, path={1}",
+                            "Finish creating transaction info: job={0}, path={1}",
                             jobContext.getJobID(),
-                            fs.makeQualified(commitMark)));
+                            fs.makeQualified(transactionInfo)));
                 }
                 if (LOG.isTraceEnabled()) {
-                    FSDataInputStream input = fs.open(commitMark);
+                    FSDataInputStream input = fs.open(transactionInfo);
                     try {
                         Scanner scanner = new Scanner(
                                 new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
@@ -438,6 +439,41 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     } finally {
                         input.close();
                     }
+                }
+            } else {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(MessageFormat.format(
+                            "Deleting transaction info: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(transactionInfo)));
+                }
+                fs.delete(transactionInfo, false);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Finish deleting transaction info: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(transactionInfo)));
+                }
+            }
+        }
+
+        private void setCommitted(JobContext jobContext, boolean value) throws IOException {
+            Configuration conf = jobContext.getConfiguration();
+            Path commitMark = getCommitMarkPath(jobContext);
+            FileSystem fs = commitMark.getFileSystem(conf);
+            if (value) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(MessageFormat.format(
+                            "Creating commit mark: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(commitMark)));
+                }
+                fs.create(commitMark, false).close();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Finish creating commit mark: job={0}, path={1}",
+                            jobContext.getJobID(),
+                            fs.makeQualified(commitMark)));
                 }
             } else {
                 if (LOG.isInfoEnabled()) {
@@ -483,6 +519,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 rollforward(jobContext);
             }
             cleanup(jobContext);
+            setCommitted(jobContext, false);
+            setTransactionInfo(jobContext, false);
         }
 
         private void rollforward(JobContext jobContext) throws IOException {
@@ -502,7 +540,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 }
                 context.getCounter().add(1);
             }
-            setCommitted(jobContext, false);
         }
 
         private void cleanup(JobContext jobContext) throws IOException {
@@ -521,6 +558,13 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 }
                 context.getCounter().add(1);
             }
+        }
+
+        private static Path getTransactionInfoPath(JobContext context) throws IOException {
+            assert context != null;
+            Configuration conf = context.getConfiguration();
+            String executionId = conf.get(StageConstants.PROP_EXECUTION_ID);
+            return HadoopDataSourceUtil.getTransactionInfoPath(conf, executionId);
         }
 
         private static Path getCommitMarkPath(JobContext context) throws IOException {

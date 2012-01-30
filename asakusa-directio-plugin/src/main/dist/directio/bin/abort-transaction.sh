@@ -3,7 +3,7 @@
 cd
 usage() {
     cat 1>&2 <<EOF
-Applies Direct I/O Transaction
+Aborts Direct I/O Transaction
 
 Usage:
     $0 execuion-id
@@ -39,7 +39,7 @@ _DIO_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
 _DIO_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
 _DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _DIO_RUNTIME_LIB="$_DIO_CORE_LIB_DIR/asakusa-runtime.jar"
-_DIO_CLASS_NAME="com.asakusafw.runtime.directio.hadoop.DirectIoApplyTransaction"
+_DIO_CLASS_NAME="com.asakusafw.runtime.directio.hadoop.DirectIoAbortTransaction"
 
 if [ -d "$_DIO_CORE_LIB_DIR" ]
 then
@@ -67,7 +67,7 @@ then
     done
 fi
 
-echo "Starting Apply Direct I/O Transaction:"
+echo "Starting Abort Direct I/O Transaction:"
 echo "   App Library: $_DIO_APP_LIB"
 echo "         Class: $_DIO_CLASS_NAME"
 echo "  Execution ID: $_OPT_EXECUTION_ID"
@@ -83,7 +83,7 @@ echo "  Execution ID: $_OPT_EXECUTION_ID"
 _DIO_RET=$?
 if [ $_DIO_RET -ne 0 ]
 then
-    echo "Apply Direct I/O Transaction failed with exit code: $_DIO_RET" 1>&2
+    echo "Abort Direct I/O Transaction failed with exit code: $_DIO_RET" 1>&2
     echo " Execution ID: $_OPT_EXECUTION_ID"  1>&2
     echo "  Runtime Lib: $_DIO_RUNTIME_LIB"  1>&2
     echo "     Launcher: $_DIO_TOOL_LAUNCHER"  1>&2

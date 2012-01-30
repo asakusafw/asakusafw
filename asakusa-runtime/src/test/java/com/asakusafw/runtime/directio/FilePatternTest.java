@@ -15,7 +15,7 @@
  */
 package com.asakusafw.runtime.directio;
 
-import static com.asakusafw.runtime.directio.SearchPattern.PatternElementKind.*;
+import static com.asakusafw.runtime.directio.FilePattern.PatternElementKind.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -28,22 +28,22 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.runtime.directio.SearchPattern;
-import com.asakusafw.runtime.directio.SearchPattern.PatternElement;
-import com.asakusafw.runtime.directio.SearchPattern.PatternElementKind;
-import com.asakusafw.runtime.directio.SearchPattern.Segment;
+import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilePattern.PatternElement;
+import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
+import com.asakusafw.runtime.directio.FilePattern.Segment;
 
 /**
- * Test for {@link SearchPattern}.
+ * Test for {@link FilePattern}.
  */
-public class SearchPatternTest {
+public class FilePatternTest {
 
     /**
      * A traverse pattern.
      */
     @Test
     public void traverse() {
-        SearchPattern compiled = SearchPattern.compile("**");
+        FilePattern compiled = FilePattern.compile("**");
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
 
@@ -56,7 +56,7 @@ public class SearchPatternTest {
      */
     @Test
     public void token() {
-        SearchPattern compiled = SearchPattern.compile("a");
+        FilePattern compiled = FilePattern.compile("a");
         assertThat(compiled.containsVariables(), is(false));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -71,7 +71,7 @@ public class SearchPatternTest {
      */
     @Test
     public void wildcard() {
-        SearchPattern compiled = SearchPattern.compile("*");
+        FilePattern compiled = FilePattern.compile("*");
         assertThat(compiled.containsVariables(), is(false));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -86,7 +86,7 @@ public class SearchPatternTest {
      */
     @Test
     public void variable() {
-        SearchPattern compiled = SearchPattern.compile("${v}");
+        FilePattern compiled = FilePattern.compile("${v}");
         assertThat(compiled.containsVariables(), is(true));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -101,7 +101,7 @@ public class SearchPatternTest {
      */
     @Test
     public void variable_empty() {
-        SearchPattern compiled = SearchPattern.compile("${}");
+        FilePattern compiled = FilePattern.compile("${}");
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
 
@@ -115,7 +115,7 @@ public class SearchPatternTest {
      */
     @Test
     public void selection() {
-        SearchPattern compiled = SearchPattern.compile("{alpha|beta|gamma}");
+        FilePattern compiled = FilePattern.compile("{alpha|beta|gamma}");
         assertThat(compiled.containsVariables(), is(false));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -130,7 +130,7 @@ public class SearchPatternTest {
      */
     @Test
     public void containsWildcard() {
-        SearchPattern compiled = SearchPattern.compile("data-*.csv");
+        FilePattern compiled = FilePattern.compile("data-*.csv");
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
 
@@ -144,7 +144,7 @@ public class SearchPatternTest {
      */
     @Test
     public void selection_containsEmpty() {
-        SearchPattern compiled = SearchPattern.compile("{alpha||gamma}");
+        FilePattern compiled = FilePattern.compile("{alpha||gamma}");
         assertThat(compiled.containsVariables(), is(false));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -159,7 +159,7 @@ public class SearchPatternTest {
      */
     @Test
     public void selection_empty() {
-        SearchPattern compiled = SearchPattern.compile("{}");
+        FilePattern compiled = FilePattern.compile("{}");
         assertThat(compiled.containsVariables(), is(false));
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(1));
@@ -174,7 +174,7 @@ public class SearchPatternTest {
      */
     @Test
     public void segments() {
-        SearchPattern compiled = SearchPattern.compile("alpha/beta/gamma");
+        FilePattern compiled = FilePattern.compile("alpha/beta/gamma");
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(3));
 
@@ -196,7 +196,7 @@ public class SearchPatternTest {
      */
     @Test
     public void all_csv() {
-        SearchPattern compiled = SearchPattern.compile("**/*.csv");
+        FilePattern compiled = FilePattern.compile("**/*.csv");
         List<Segment> segments = compiled.getSegments();
         assertThat(segments.size(), is(2));
 
@@ -212,7 +212,7 @@ public class SearchPatternTest {
      */
     @Test
     public void complex() {
-        SearchPattern compiled = SearchPattern.compile("alpha/**/{beta|gamma}/${date}-*.csv");
+        FilePattern compiled = FilePattern.compile("alpha/**/{beta|gamma}/${date}-*.csv");
         assertThat(compiled.containsVariables(), is(true));
 
         List<Segment> segments = compiled.getSegments();
@@ -238,7 +238,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void consecutive_wildcard() {
-        SearchPattern.compile("**.csv");
+        FilePattern.compile("**.csv");
     }
 
     /**
@@ -246,7 +246,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void doller() {
-        SearchPattern.compile("$.csv");
+        FilePattern.compile("$.csv");
     }
 
     /**
@@ -254,7 +254,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void variable_unclosed() {
-        SearchPattern.compile("${csv");
+        FilePattern.compile("${csv");
     }
 
     /**
@@ -262,7 +262,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void selection_unclosed() {
-        SearchPattern.compile("{data");
+        FilePattern.compile("{data");
     }
 
     /**
@@ -270,7 +270,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void selection_invalid_character() {
-        SearchPattern.compile("{*}");
+        FilePattern.compile("{*}");
     }
 
     /**
@@ -278,7 +278,7 @@ public class SearchPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void invalid_character() {
-        SearchPattern.compile("\\data.csv");
+        FilePattern.compile("\\data.csv");
     }
 
     private Matcher<List<PatternElement>> kind(final PatternElementKind... kinds) {

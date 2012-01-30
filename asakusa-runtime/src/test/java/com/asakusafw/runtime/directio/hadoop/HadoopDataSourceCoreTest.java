@@ -40,10 +40,9 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -105,7 +104,7 @@ public class HadoopDataSourceCoreTest {
                 StringBuilder.class,
                 new MockFormat(),
                 "input",
-                SearchPattern.compile("**"));
+                FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
 
         List<String> results = consume(core, fragments);
@@ -128,7 +127,7 @@ public class HadoopDataSourceCoreTest {
                 StringBuilder.class,
                 new MockFormat(),
                 "input",
-                SearchPattern.compile("**"));
+                FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
 
         List<String> results = consume(core, fragments);
@@ -155,7 +154,7 @@ public class HadoopDataSourceCoreTest {
                 StringBuilder.class,
                 new MockFormat(),
                 "input",
-                SearchPattern.compile("**"));
+                FilePattern.compile("**"));
         assertThat(fragments.size(), is(greaterThanOrEqualTo(fragmentCount / 2)));
         for (DirectInputFragment fragment : fragments) {
             assertThat(fragment.getSize(), is(greaterThanOrEqualTo(fragmentSize / 2)));
@@ -179,7 +178,7 @@ public class HadoopDataSourceCoreTest {
                 StringBuilder.class,
                 new MockFormat(),
                 "input",
-                SearchPattern.compile("**"));
+                FilePattern.compile("**"));
         assertThat(fragments.size(), is(3));
 
         List<String> results = consume(core, fragments);
@@ -267,7 +266,7 @@ public class HadoopDataSourceCoreTest {
     public void output_nostreaming() throws Exception {
         profile.setOutputStreaming(false);
         profile.getLocalFileSystem().getConf().set(
-                DirectDataSourceConstants.KEY_LOCAL_TEMPDIR,
+                HadoopDataSourceUtil.KEY_LOCAL_TEMPDIR,
                 localtemp.getPath());
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
@@ -306,7 +305,7 @@ public class HadoopDataSourceCoreTest {
         profile.setOutputStaging(false);
         profile.setOutputStreaming(false);
         profile.getLocalFileSystem().getConf().set(
-                DirectDataSourceConstants.KEY_LOCAL_TEMPDIR,
+                HadoopDataSourceUtil.KEY_LOCAL_TEMPDIR,
                 localtemp.getPath());
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
@@ -435,7 +434,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
 
         assertThat(file.exists(), is(true));
-        boolean result = core.delete("delete", SearchPattern.compile("**/*"));
+        boolean result = core.delete("delete", FilePattern.compile("**/*"));
 
         assertThat(result, is(true));
         assertThat(file.exists(), is(false));
@@ -461,7 +460,7 @@ public class HadoopDataSourceCoreTest {
         for (File file : files) {
             assertThat(file.exists(), is(true));
         }
-        boolean result = core.delete("delete", SearchPattern.compile("**/*"));
+        boolean result = core.delete("delete", FilePattern.compile("**/*"));
 
         assertThat(result, is(true));
         for (File file : files) {
@@ -491,7 +490,7 @@ public class HadoopDataSourceCoreTest {
         assertThat(onProd.exists(), is(true));
         assertThat(onTemp.exists(), is(true));
 
-        boolean result = core.delete("", SearchPattern.compile("**/*"));
+        boolean result = core.delete("", FilePattern.compile("**/*"));
         assertThat(result, is(true));
         assertThat(onProd.exists(), is(false));
         assertThat(onTemp.exists(), is(true));

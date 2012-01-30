@@ -47,7 +47,7 @@ import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.Commit;
+import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.TransactionInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -72,6 +72,8 @@ public class DirectIoTransactionEditorTest {
 
     private File production2;
 
+    private File temporary;
+
     /**
      * Initializes the test.
      * @throws Exception if some errors were occurred
@@ -79,7 +81,7 @@ public class DirectIoTransactionEditorTest {
     @Before
     public void setUp() throws Exception {
         File writeTest = folder.newFolder("write-test");
-        Assume.assumeTrue(writeTest.setWritable(false));
+        Assume.assumeTrue(writable(writeTest, false));
         try {
             new File(writeTest, "example").createNewFile();
             Assume.assumeTrue(false);
@@ -89,17 +91,18 @@ public class DirectIoTransactionEditorTest {
 
         this.conf = new Configuration();
         conf.set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, folder.newFolder("system").getAbsoluteFile().toURI().toString());
+        temporary = folder.newFolder("temp").getCanonicalFile();
         production1 = folder.newFolder("p1").getCanonicalFile();
         production2 = folder.newFolder("p2").getCanonicalFile();
 
         HadoopDataSourceProfile profile1 = new HadoopDataSourceProfile(
                 conf, "t1", "c1",
                 new Path(production1.toURI()),
-                new Path(new File(folder.getRoot(), "t1").getCanonicalFile().toURI()));
+                new Path(new File(temporary, "t1").toURI()));
         HadoopDataSourceProfile profile2 = new HadoopDataSourceProfile(
                 conf, "t2", "c2",
                 new Path(production2.toURI()),
-                new Path(new File(folder.getRoot(), "t2").getCanonicalFile().toURI()));
+                new Path(new File(temporary, "t2").toURI()));
         repo = new DirectDataSourceRepository(Arrays.asList(
                 new MockProvider(profile1),
                 new MockProvider(profile2)));
@@ -115,10 +118,13 @@ public class DirectIoTransactionEditorTest {
     @After
     public void tearDown() throws Exception {
         if (production1 != null) {
-            production1.setWritable(true);
+            writable(production1, true);
         }
         if (production2 != null) {
-            production2.setWritable(true);
+            writable(production2, true);
+        }
+        if (temporary != null) {
+            writable(temporary, true);
         }
     }
 
@@ -153,7 +159,7 @@ public class DirectIoTransactionEditorTest {
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        production1.setWritable(false);
+        writable(production1, false);
         try {
             testee.apply("ex1");
         } catch (IOException e) {
@@ -162,12 +168,60 @@ public class DirectIoTransactionEditorTest {
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(1));
 
-        production1.setWritable(true);
+        writable(production1, true);
         assertThat(testee.apply("ex1"), is(true));
         assertThat(count(production1), is(1));
         assertThat(count(production2), is(1));
 
         assertThat(testee.apply("ex1"), is(false));
+    }
+
+    /**
+     * Abort.
+     * @throws Exception if failed
+     */
+    @Test
+    public void abort() throws Exception {
+        indoubt("ex1");
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(testee.abort("__UNKNOWN__"), is(false));
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(testee.abort("ex1"), is(true));
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(testee.abort("ex1"), is(false));
+    }
+
+    /**
+     * Abort partial.
+     * @throws Exception if failed
+     */
+    @Test
+    public void abort_partial() throws Exception {
+        indoubt("ex1");
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        writable(production1, false);
+        try {
+            testee.apply("ex1");
+        } catch (IOException e) {
+            // ok.
+        }
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(1));
+
+        writable(production1, true);
+        assertThat(testee.abort("ex1"), is(true));
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(1));
+
+        assertThat(testee.abort("ex1"), is(false));
     }
 
     /**
@@ -180,25 +234,25 @@ public class DirectIoTransactionEditorTest {
         indoubt("ex2");
         indoubt("ex3");
 
-        List<Commit> c1 = testee.list();
+        List<TransactionInfo> c1 = testee.list();
         assertThat(c1.size(), is(3));
         get(c1, "ex1");
         get(c1, "ex2");
         get(c1, "ex3");
 
         testee.apply("ex2");
-        List<Commit> c2 = testee.list();
+        List<TransactionInfo> c2 = testee.list();
         assertThat(c2.size(), is(2));
         get(c1, "ex1");
         get(c1, "ex3");
 
         testee.apply("ex1");
-        List<Commit> c3 = testee.list();
+        List<TransactionInfo> c3 = testee.list();
         assertThat(c3.size(), is(1));
         get(c1, "ex3");
 
         testee.apply("ex3");
-        List<Commit> c4 = testee.list();
+        List<TransactionInfo> c4 = testee.list();
         assertThat(c4.size(), is(0));
     }
 
@@ -234,7 +288,7 @@ public class DirectIoTransactionEditorTest {
         Tool exec = new DirectIoApplyTransaction(repo);
         indoubt("ex1");
 
-        production1.setWritable(false);
+        writable(production1, false);
         assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(not(0)));
     }
 
@@ -245,6 +299,40 @@ public class DirectIoTransactionEditorTest {
     @Test
     public void runApply_invalid() throws Exception {
         Tool exec = new DirectIoApplyTransaction(repo);
+        assertThat(ToolRunner.run(conf, exec, new String[] { }), is(not(0)));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"1", "2"}), is(not(0)));
+    }
+
+    /**
+     * aborts via program entry.
+     * @throws Exception if failed
+     */
+    @Test
+    public void runAbort() throws Exception {
+        Tool exec = new DirectIoAbortTransaction(repo);
+
+        indoubt("ex1");
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(ToolRunner.run(conf, exec, new String[] {"__UNKNOWN__"}), is(0));
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(0));
+        assertThat(count(production1), is(0));
+        assertThat(count(production2), is(0));
+
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(0));
+    }
+
+    /**
+     * Invalid arguments for program entry.
+     * @throws Exception if failed
+     */
+    @Test
+    public void runAbort_invalid() throws Exception {
+        Tool exec = new DirectIoAbortTransaction(repo);
         assertThat(ToolRunner.run(conf, exec, new String[] { }), is(not(0)));
         assertThat(ToolRunner.run(conf, exec, new String[] {"1", "2"}), is(not(0)));
     }
@@ -282,6 +370,19 @@ public class DirectIoTransactionEditorTest {
         assertThat(ToolRunner.run(conf, exec, new String[] { "1" }), is(not(0)));
     }
 
+    private boolean writable(File target, boolean lock) {
+        if (target.exists() == false) {
+            return false;
+        }
+        boolean succeed = true;
+        if (target.isDirectory()) {
+            for (File child : target.listFiles()) {
+                succeed &= writable(child, lock);
+            }
+        }
+        return succeed && target.setWritable(lock);
+    }
+
     private int count(File dir) {
         int count = 0;
         for (File file : dir.listFiles()) {
@@ -292,8 +393,8 @@ public class DirectIoTransactionEditorTest {
         return count;
     }
 
-    private Commit get(List<Commit> list, String executionId) {
-        for (Commit commit : list) {
+    private TransactionInfo get(List<TransactionInfo> list, String executionId) {
+        for (TransactionInfo commit : list) {
             if (commit.getExecutionId().equals(executionId)) {
                 return commit;
             }
@@ -302,8 +403,10 @@ public class DirectIoTransactionEditorTest {
     }
 
     private void indoubt(String executionId) throws IOException, InterruptedException {
+        Path txPath = HadoopDataSourceUtil.getTransactionInfoPath(conf, executionId);
         Path cmPath = HadoopDataSourceUtil.getCommitMarkPath(conf, executionId);
-        FileSystem fs = cmPath.getFileSystem(conf);
+        FileSystem fs = txPath.getFileSystem(conf);
+        fs.create(txPath).close();
         fs.create(cmPath).close();
         int index = 0;
         for (String path : repo.getContainerPaths()) {

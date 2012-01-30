@@ -15,7 +15,9 @@
  */
 package com.asakusafw.runtime.directio;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The fragment of each input dataset.
@@ -31,8 +33,10 @@ public final class DirectInputFragment {
 
     private final List<String> ownerNodeNames;
 
+    private final Map<String, String> attributes;
+
     /**
-     * Creates a new instance.
+     * Creates a new instance with no attributes.
      * @param path the path
      * @param offset the byte offset
      * @param length the byte length
@@ -40,16 +44,38 @@ public final class DirectInputFragment {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public DirectInputFragment(String path, long offset, long length, List<String> ownerNodeNames) {
+        this(path, offset, length, ownerNodeNames, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param path the path
+     * @param offset the byte offset
+     * @param length the byte length
+     * @param ownerNodeNames the owner host names
+     * @param attributes the attributes for each fragments
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public DirectInputFragment(
+            String path,
+            long offset,
+            long length,
+            List<String> ownerNodeNames,
+            Map<String, String> attributes) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }
         if (ownerNodeNames == null) {
             throw new IllegalArgumentException("ownerNodeNames must not be null"); //$NON-NLS-1$
         }
+        if (attributes == null) {
+            throw new IllegalArgumentException("attributes must not be null"); //$NON-NLS-1$
+        }
         this.path = path;
         this.offset = offset;
         this.length = length;
         this.ownerNodeNames = ownerNodeNames;
+        this.attributes = attributes;
     }
 
     /**
@@ -85,6 +111,14 @@ public final class DirectInputFragment {
         return ownerNodeNames;
     }
 
+    /**
+     * Returns the extra attributes.
+     * @return the attributes
+     */
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -96,6 +130,8 @@ public final class DirectInputFragment {
         builder.append(length);
         builder.append(", ownerNodeNames=");
         builder.append(ownerNodeNames);
+        builder.append(", attributes=");
+        builder.append(attributes);
         builder.append("]");
         return builder.toString();
     }

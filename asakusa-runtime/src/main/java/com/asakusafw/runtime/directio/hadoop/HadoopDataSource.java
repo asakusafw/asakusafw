@@ -31,7 +31,7 @@ import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.SearchPattern;
+import com.asakusafw.runtime.directio.ResourcePattern;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -82,7 +82,7 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
             Class<? extends T> dataType,
             DataFormat<T> format,
             String basePath,
-            SearchPattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern) throws IOException, InterruptedException {
         return core.findInputFragments(dataType, format, basePath, resourcePattern);
     }
 
@@ -107,7 +107,7 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
     }
 
     @Override
-    public boolean delete(String basePath, SearchPattern resourcePattern) throws IOException, InterruptedException {
+    public boolean delete(String basePath, ResourcePattern resourcePattern) throws IOException, InterruptedException {
         return core.delete(basePath, resourcePattern);
     }
 

@@ -32,7 +32,7 @@ Asakusa Frameworkでは、このバッチの実行単位毎にAsakusa DSLの最�
 
 以下はRDBMSとの連携を行う際に、ThunderGateとWindGateの特性を比較したものです。
 
-..  list-table:: 外部システム連携ツールの比較 (RDBMS)
+..  list-table:: 外部システム連携の比較 (RDBMS)
     :widths: 10 50 50
     :header-rows: 1
 
@@ -59,7 +59,32 @@ Asakusa Frameworkでは、このバッチの実行単位毎にAsakusa DSLの最�
       - * ThunderGateに性能面で劣る
         * バッチ実行中の排他制御やロングランニングトランザクションなどのサポートがない
 
-これらの外部システム連携モジュールをバッチ処理のデータ入出力に利用する構成を検討します。
+また、Asakusa Frameworkの外部でHadoopとデータのやり取りを行ったうえで、バッチからは :doc:`Direct I/O <../directio/index>` という直接のデータ入出力を行う機能を利用することもできます。
+Direct I/Oは余計なツールを経由しないため高速に動作するというメリットがある反面、データの投入や保全などの運用面を個別に考える必要があります。
+
+以下はフラットファイルをデータの入出力に利用する際に、Direct I/OとWindGateの特性を比較したものです。
+
+..  list-table:: 外部システム連携の比較 (フラットファイル)
+    :widths: 10 50 50
+    :header-rows: 1
+
+    * - 特徴
+      - Direct I/O
+      - WindGate
+
+    * - メリット
+
+      - * Hadoopの性能を生かして高速に動作する
+
+      - * ファイルストレージとHadoopを柔軟な構成で配置して利用できる
+
+    * - デメリット
+
+      - * ファイルをHadoopから直接参照できる場所に配置する必要がある
+
+      - * Direct I/Oに性能面で劣る
+
+以上を考慮して、バッチ処理のデータ入出力に利用する構成を検討します。
 
 また、バッチ処理が失敗したときのロールバック、リカバリーの単位などを考慮しながら、外部システムと連携して一連の処理を行う単位と、この単位で入力および出力を行うデータを決定します。Asakusa Frameworkではこの処理単位を「ジョブフロー」として定義します。
 
@@ -121,7 +146,7 @@ Asakusa DSLのうジョブフローについては、外部システムとの連
 
 :doc:`../windgate/start-guide` には、WindGateを使ったデフォルトの構成（ローカルファイルのCSVに対してデータ入出力を行う構成）でAsakusa Frameworkを使用した場合の説明が記載されています。
 
-WindGateをDBMSと連携して使用する場合は、 :doc:`../windgate/user-guide` を参照してください。また、ThunderGateを使用する場合は、 :doc:`../thundergate/user-guide` を参照してください。
+WindGateをDBMSと連携して使用する場合は、 :doc:`../windgate/user-guide` を参照してください。また、ThunderGateを使用する場合は、 :doc:`../thundergate/user-guide` を、Direct I/Oを利用する場合は、 :doc:`../directio/user-guide` をそれぞれ参照してください。
 
 運用環境の構築とアプリケーションの実行
 ======================================
@@ -131,7 +156,8 @@ WindGateをDBMSと連携して使用する場合は、 :doc:`../windgate/user-gu
 
 :doc:`../administration/deployment-with-thundergate` には、Asakusa FrameworkとThunderGateの運用環境構築手順が説明されています。
 
+:doc:`../administration/deployment-with-directio` には、Asakusa FrameworkとDirect I/Oの運用環境構築手順が説明されています。
+
 運用環境の構築が完了したら、バッチアプリケーションを実行してみましょう。
 
 :doc:`../yaess/start-guide` には、Asakusa Frameworkが提供するバッチ実行ツールの基本的な説明が記載されています。
-
