@@ -1,8 +1,5 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,13 +55,13 @@ public abstract class CategorySummaryOperator {
      * @param info 商品マスタ
      * @param sales 売上明細
      * @return 結合結果
-     * @see ${symbol_pound}selectAvailableItem(List, SalesDetail)
+     * @see #selectAvailableItem(List, SalesDetail)
      */
     @MasterJoin(selection = "selectAvailableItem")
     public abstract JoinedSalesInfo joinItemInfo(ItemInfo info, SalesDetail sales);
 
     /**
-     * {@link ${symbol_pound}selectAvailableItem(List, SalesDetail)}で利用するバッファ。
+     * {@link #selectAvailableItem(List, SalesDetail)}で利用するバッファ。
      */
     private final Date dateBuffer = new Date();
 

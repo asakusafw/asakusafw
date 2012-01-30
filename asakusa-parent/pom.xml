@@ -275,8 +275,15 @@ encoding/<project>=UTF-8
 						<header>../asakusa-parent/src/main/conf/source-header.txt</header>
 						<includes>
 							<include>src/**/*.java</include>
+							<include>src/**/*.flex</include>
+							<include>src/**/*.jj</include>
+							<include>src/**/*.sh</include>
 						</includes>
 						<encoding>UTF-8</encoding>
+						<mapping>
+							<flex>JAVADOC_STYLE</flex>
+							<jj>JAVADOC_STYLE</jj>
+						</mapping>
 					</configuration>
 				</plugin>
 				<plugin>

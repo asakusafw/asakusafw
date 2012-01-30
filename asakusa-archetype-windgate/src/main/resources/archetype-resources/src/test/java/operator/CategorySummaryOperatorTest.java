@@ -1,8 +1,5 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +34,7 @@ import com.asakusafw.runtime.value.DateTime;
 public class CategorySummaryOperatorTest {
 
     /**
-     * {@link CategorySummaryOperator${symbol_pound}selectAvailableItem(List, SalesDetail)}のテスト。
+     * {@link CategorySummaryOperator#selectAvailableItem(List, SalesDetail)}のテスト。
      */
     @Test
     public void selectAvailableItem() {

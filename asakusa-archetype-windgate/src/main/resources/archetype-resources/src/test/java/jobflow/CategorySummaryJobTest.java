@@ -1,8 +1,5 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,14 +68,14 @@ public class CategorySummaryJobTest {
         tester.setBatchArg("date", "testing");
 
         tester.input("storeInfo", StoreInfo.class)
-            .prepare("masters.xls${symbol_pound}store_info");
+            .prepare("masters.xls#store_info");
         tester.input("itemInfo", ItemInfo.class)
-            .prepare("masters.xls${symbol_pound}item_info");
+            .prepare("masters.xls#item_info");
 
         tester.input("salesDetail", SalesDetail.class)
-            .prepare(dataSet + "${symbol_pound}sales_detail");
+            .prepare(dataSet + "#sales_detail");
         tester.output("categorySummary", CategorySummary.class)
-            .verify(dataSet + "${symbol_pound}result", dataSet + "${symbol_pound}result_rule");
+            .verify(dataSet + "#result", dataSet + "#result_rule");
         tester.output("errorRecord", ErrorRecord.class)
             .verify(CountVerifier.factory(errors));
 

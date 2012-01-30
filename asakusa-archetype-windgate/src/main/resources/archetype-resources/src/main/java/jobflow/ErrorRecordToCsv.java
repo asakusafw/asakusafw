@@ -1,8 +1,5 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +30,6 @@ public class ErrorRecordToCsv extends AbstractErrorRecordCsvExporterDescription 
 
     @Override
     public String getPath() {
-        return "result/error-${symbol_dollar}{date}.csv";
+        return "result/error-${date}.csv";
     }
 }
