@@ -78,7 +78,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     2: 0.2.2
     3: 0.2.3
     4: 0.2.4
-    Choose a number: 4: 4 [使用するAsakusa Frameworkのバージョンを選択]
+    5: 0.2.5
+    Choose a number: 5: 5 [使用するAsakusa Frameworkのバージョンを選択]
 
     ...
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
