@@ -13,7 +13,7 @@ pom.xmlの10行目にある「<asakusafw.version>」の値を更新したいバ�
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.2.4</asakusafw.version>
+    <asakusafw.version>0.2.5</asakusafw.version>
 
 Asakusa Frameworkの再セットアップ
 ---------------------------------
@@ -30,6 +30,35 @@ Eclipseを使って開発している場合は、Eclipse用クラスパス定義
     mvn eclipse:eclipse
 
 ----
+
+ver0.2.5へのマイグレーション
+============================
+
+アセンブリディスクリプタの変更
+------------------------------
+ver0.2.5ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が追加/変更になったため、これらのファイルをver0.2.5が提供するファイルに変更してください。変更手順は以下の通りです。
+
+1. ver0.2.5のアーキタイプからダミーのプロジェクトを任意のディレクトリに作成する。
+2. 作成したプロジェクトの ``src/main/assembly`` に含まれるすべてのファイルを既存のアプリケーションプロジェクトの `src/main/assembly` 配下にコピーする。
+3. 1で作成したダミーのプロジェクトを削除する。
+
+pom.xmlの変更
+-------------
+ver0.2.5ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.5向けに変更してください。
+
+* アーキタイプ:asaksua-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-thundergate-025pom.patch <migration/asakusa-archetype-thundergate-025pom.patch>`
+* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-windgate-025pom.patch <migration/asakusa-archetype-windgate-025pom.patch>`
+
+上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+
+..  code-block:: sh
+
+    cd app-project
+    patch < /tmp/asakusa-archetype-windgate-025pom.patch
+
+pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、ver0.2.5のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
 
 ver0.2.4へのマイグレーション
 ============================
