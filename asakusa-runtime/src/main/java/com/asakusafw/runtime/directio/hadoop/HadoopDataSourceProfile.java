@@ -413,17 +413,8 @@ public class HadoopDataSourceProfile {
 
     static String getFsIdentity(FileSystem fileSystem) {
         assert fileSystem != null;
-        try {
-            String name = fileSystem.getCanonicalServiceName();
-            return name;
-        } catch (RuntimeException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Failed to obtain canonical service name for {0}",
-                        fileSystem.getUri()));
-            }
-            return fileSystem.getUri().toString();
-        }
+        // TODO user getCanonicalUri() on 1.0.0
+        return fileSystem.getUri().toString();
     }
 
     private static Object fqn(DirectDataSourceProfile profile, String key) {
