@@ -70,6 +70,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-) 
     2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-) 
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-) 
+    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 [<-使用するアーキタイプを選択]
 
     ...
@@ -88,8 +89,6 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     Define value for property 'package':      [<-アプリケーションの基底パッケージ名を入力]
     ...
     Y: : Y
-
-..  todo:: WindGateの番号のチェック
 
 ``assembly:single`` Asakusa Frameworkのインストールアーカイブを生成
 -------------------------------------------------------------------
