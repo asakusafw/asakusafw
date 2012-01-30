@@ -933,6 +933,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 Direct I/Oを利用したジョブフローやバッチのテストは、Asakusa Frameworkの通常のテスト方法で行えます。
 通常のテストについては :doc:`../testing/index` を参照してください。
 
+なおテスト実行時には、Direct I/Oの設定は開発環境にインストールしたAsakusa Frameworkの設定ファイル ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` が使用されるため、必要に応じてこのファイルを編集し、適切な設定を行ってください。
+
 ..  attention::
     現在、ジョブフローの出力に対する初期データの作成 ( ``.prepare()`` ) はサポートしていません。
 
