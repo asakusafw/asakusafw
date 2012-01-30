@@ -46,7 +46,7 @@
 
 ..  [#] Hadoopの動作上、Hadoopのジョブを起動するノードからもデータストアへのアクセスが行われます。
     共有ディスクなどを利用する場合は、このHadoopクライアントモジュールを配置したマシンについても
-    Hadoopスレーブノードと同様の方法で参照できる必要があります。
+    Hadoopスレーブノードと同様の方法で対象のデータストアを参照できる必要があります。
 
 
 コンポーネント
@@ -82,7 +82,7 @@ Direct I/Oを利用したシンプルな構成例を以下に示します。
 ..  figure:: deployment-with-directio-simple.png
 
 上記の構成では、Hadoopクライアントモジュールとバッチ起動モジュールをそれぞれ同じマシン（Hadoopクライアントマシン）上に配置しています。
-各モジュール間の通信はマシン内で行われ、HadoopクライアントモジュールはHadoop APIを介してHadoopクラスター上のサービスにアクセスします。
+各モジュール間の通信は単一のマシン内で行われ、HadoopクライアントモジュールはHadoop APIを介してHadoopクラスター上のサービスにアクセスします。
 
 下図は、この構成でHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
@@ -153,7 +153,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
 例えばversion 0.2.5 を使っている場合、ファイル名は ``asakusafw-0.2.5-prod-directio.tar.gz`` になります。
 
-..  [#] このアーカイブにはAsakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
+..  [#] このアーカイブには (Direct I/Oを含む) Asakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
 
 
 Asakusa Frameworkのデプロイ
