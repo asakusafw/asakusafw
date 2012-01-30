@@ -457,7 +457,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<version>${asakusafw.version}</version>
 			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-thundergate-plugin</artifactId>
