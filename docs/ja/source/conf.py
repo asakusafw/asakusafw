@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Asakusa Framework'
-copyright = u'2011, Asakusa Framework Team'
+copyright = u'2011-2012, Asakusa Framework Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -229,7 +229,7 @@ man_pages = [
 epub_title = u'Asakusa Framework'
 epub_author = u'Asakusa Framework Team'
 epub_publisher = u'Asakusa Framework Team'
-epub_copyright = u'2011, Asakusa Framework Team'
+epub_copyright = copyright
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
