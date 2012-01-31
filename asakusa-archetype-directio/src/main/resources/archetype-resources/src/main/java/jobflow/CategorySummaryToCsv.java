@@ -21,8 +21,8 @@ import java.util.List;
 import ${package}.modelgen.dmdl.csv.AbstractCategorySummaryCsvOutputDescription;
 
 /**
- * カテゴリ別集計結果をWindGate/CSVでエクスポートする。
- * エクスポート対象ファイルは {@code result/error-<date:日付>.csv}。
+ * カテゴリ別集計結果をDirect I/Oで出力する。
+ * 出力ファイルは {@code result/category} 上の {@code result.csv}。
  */
 public class CategorySummaryToCsv extends AbstractCategorySummaryCsvOutputDescription {
 

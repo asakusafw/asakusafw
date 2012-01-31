@@ -18,8 +18,8 @@ package ${package}.jobflow;
 import ${package}.modelgen.dmdl.csv.AbstractSalesDetailCsvInputDescription;
 
 /**
- * 売上明細をWindGate/CSVからインポートする。
- * インポート対象ファイルは {@code sales/<date:日付>.csv}。
+ * 売上明細をDirect I/Oで入力する。
+ * 入力ファイルは {@code sales} 上のすべてのCSVファイル。
  */
 public class SalesDetailFromCsv extends AbstractSalesDetailCsvInputDescription {
 

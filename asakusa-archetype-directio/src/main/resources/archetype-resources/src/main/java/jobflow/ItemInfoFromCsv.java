@@ -18,8 +18,8 @@ package ${package}.jobflow;
 import ${package}.modelgen.dmdl.csv.AbstractItemInfoCsvInputDescription;
 
 /**
- * 商品マスタをWindGate/CSVからインポートする。
- * インポート対象ファイルは {@code master/item_info.csv}。
+ * 商品マスタをDirect I/Oで入力する。
+ * 入力ファイルは {@code master} 上の {@code item_info.csv}。
  */
 public class ItemInfoFromCsv extends AbstractItemInfoCsvInputDescription {
 

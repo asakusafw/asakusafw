@@ -19,7 +19,7 @@ import ${package}.modelgen.dmdl.csv.AbstractErrorRecordCsvExporterDescription;
 
 /**
  * エラー情報をWindGate/CSVでエクスポートする。
- * エクスポート対象ファイルは {@code result/category-<date:日付>.csv}。
+ * エクスポート対象ファイルは {@code result/error-<date:日付>.csv}。
  */
 public class ErrorRecordToCsv extends AbstractErrorRecordCsvExporterDescription {
 

@@ -21,8 +21,8 @@ import java.util.List;
 import ${package}.modelgen.dmdl.csv.AbstractErrorRecordCsvOutputDescription;
 
 /**
- * エラー情報をWindGate/CSVでエクスポートする。
- * エクスポート対象ファイルは {@code result/error/<date:日付>.csv}。
+ * エラー情報ををDirect I/Oで出力する。
+ * 出力ファイルは {@code result/error} 上の {@code <date:日付>.csv}。
  */
 public class ErrorRecordToCsv extends AbstractErrorRecordCsvOutputDescription {
 
