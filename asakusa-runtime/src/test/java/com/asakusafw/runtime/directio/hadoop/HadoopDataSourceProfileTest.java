@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import static org.hamcrest.Matchers.*;
@@ -280,8 +281,8 @@ public class HadoopDataSourceProfileTest {
         }
 
         @Override
-        public String getCanonicalServiceName() {
-            return "mock";
+        public URI getUri() {
+            return URI.create("mock://localhost");
         }
     }
 
