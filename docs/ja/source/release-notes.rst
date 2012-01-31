@@ -4,6 +4,32 @@
 Asakusa Framework リリースノート
 ================================
 
+Release 0.2.5
+=============
+Jan 31, 2012
+
+Enhancements
+------------
+* [ :issue:`131` ] - Direct I/O - direct data access facility from Hadoop cluster
+    * See: :doc:`directio/index`
+* [ :issue:`134` ] - Original Apache Hadoop Support
+    * See: :doc:`product/target-platform`
+* [ :issue:`135` ] - Add pom.xml default settings of archetype for using Eclipse m2e plugin.
+
+..  attention::
+    Direct I/O is still an experimental feature.
+
+Bug fixes
+---------
+* [ :issue:`137` ] - "Reduce output records" counter is wrong
+
+Others
+------
+* [ :issue:`129` ] - 0.2.5 Documentation
+* [ :issue:`130` ] - Refoctoring for release 0.2.5
+
+----
+
 Release 0.2.4
 =============
 Dec 19, 2011
