@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,22 +36,23 @@ public abstract class DriverInputBase<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverInputBase.class);
 
-    /** データ名 */
+    /** データ名。 */
     protected String name;
 
-    /** モデル型 */
+    /** モデル型。 */
     protected Class<T> modelType;
 
-    /** テストドライバコンテキスト */
+    /** テストドライバコンテキスト。 */
     protected TestDriverContext driverContext;
 
-    /** ソース */
+    /** ソース。 */
     protected DataModelSourceFactory source;
 
-    /** インポータ記述 */
+    /** インポータ記述。 */
     protected ImporterDescription importerDescription;
 
     /**
+     * Returns the name of this port.
      * @return the name
      */
     protected String getName() {
@@ -59,49 +60,56 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * @param name the name to set
+     * Sets the name of this port.
+     * @param name the name
      */
     protected void setName(String name) {
         this.name = name;
     }
 
     /**
-     * @return the modelType
+     * Returns the data type of this port.
+     * @return the data type
      */
     protected Class<T> getModelType() {
         return modelType;
     }
 
     /**
-     * @param modelType the modelType to set
+     * Sets the data type of this port.
+     * @param modelType the data type
      */
     protected void setModelType(Class<T> modelType) {
         this.modelType = modelType;
     }
 
     /**
-     * @return the driverContext
+     * Returns the current context.
+     * @return the context
      */
     protected TestDriverContext getDriverContext() {
         return driverContext;
     }
 
     /**
-     * @param driverContext the driverContext to set
+     * Sets the current context.
+     * @param driverContext the context
      */
     protected void setDriverContext(TestDriverContext driverContext) {
         this.driverContext = driverContext;
     }
 
     /**
-     * @return the importerDescription
+     * Returns the importer description for this input.
+     * @return the description, or {@code null} if not set
      */
     protected ImporterDescription getImporterDescription() {
         return importerDescription;
     }
 
     /**
-     * @param importerDescription the importerDescription to set
+     * Sets the importer description for this input.
+     * @param importerDescription the description
      */
     protected void setImporterDescription(ImporterDescription importerDescription) {
         this.importerDescription = importerDescription;
@@ -130,7 +138,7 @@ public abstract class DriverInputBase<T> {
     }
 
     /**
-     * Sets the source for jobflow input
+     * Sets the source for jobflow input.
      * @param sourceUri the source uri
      */
     protected void setSourceUri(URI sourceUri) {

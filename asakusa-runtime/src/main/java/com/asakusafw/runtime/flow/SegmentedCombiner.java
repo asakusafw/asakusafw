@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ public abstract class SegmentedCombiner<
         Rendezvous<VALUE> group = getRendezvous(key);
         if (group == null) {
             while (iter.hasNext()) {
-                // TODO is ok?
                 VALUE row = iter.next();
                 KEY current = context.getCurrentKey();
                 context.write(current, row);

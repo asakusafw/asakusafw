@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.junit.Test;
 
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.dmdl.windgate.common.driver.GeneratorTesterRoot;
-import com.asakusafw.dmdl.windgate.jdbc.driver.JdbcSupportEmitter;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;

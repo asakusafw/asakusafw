@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,9 @@ public final class CommandLineUtil {
         FileInputStream in = new FileInputStream(path);
         try {
             Properties properties = new Properties();
-            properties.load(new BufferedInputStream(in));
+            BufferedInputStream bin = new BufferedInputStream(in);
+            properties.load(bin);
+            bin.close();
             return properties;
         } finally {
             in.close();

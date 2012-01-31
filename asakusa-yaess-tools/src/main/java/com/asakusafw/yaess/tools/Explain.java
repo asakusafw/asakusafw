@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ import com.google.gson.JsonPrimitive;
  * A YAESS Explain program main entry point.
  * @since 0.2.3
  */
-public class Explain {
+public final class Explain {
 
     static final Logger LOG = LoggerFactory.getLogger(Explain.class);
 
@@ -64,6 +64,10 @@ public class Explain {
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_SCRIPT);
+    }
+
+    private Explain() {
+        return;
     }
 
     /**

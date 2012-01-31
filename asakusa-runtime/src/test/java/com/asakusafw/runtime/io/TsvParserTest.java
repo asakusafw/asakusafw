@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -438,7 +438,6 @@ public class TsvParserTest {
         return date;
     }
 
-    // TODO BigDecimal
     private BigDecimal decimal(String representation) {
         return new BigDecimal(representation);
     }

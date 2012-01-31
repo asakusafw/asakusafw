@@ -1,0 +1,8 @@
+@directio.csv(
+    allow_linefeed = TRUE
+)
+model = {
+    value : TEXT;
+    @directio.csv.line_number
+    number : INT;
+};

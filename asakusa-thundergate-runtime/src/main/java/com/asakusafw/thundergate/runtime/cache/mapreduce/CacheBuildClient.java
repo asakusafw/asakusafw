@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,13 +29,15 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
+import com.asakusafw.runtime.stage.input.StageInputFormat;
+import com.asakusafw.runtime.stage.input.StageInputMapper;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.output.LegacyBridgeOutputCommitter;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
@@ -118,13 +123,22 @@ public class CacheBuildClient extends Configured implements Tool {
     private void update() throws IOException, InterruptedException {
         Job job = new Job(getConf());
 
-        StageInputDriver.add(job, storage.getHeadContents("*"), SequenceFileInputFormat.class, BaseMapper.class);
-        StageInputDriver.add(job, storage.getPatchContents("*"), SequenceFileInputFormat.class, PatchMapper.class);
+        List<StageInput> inputList = new ArrayList<StageInput>();
+        inputList.add(new StageInput(
+                storage.getHeadContents("*").toString(),
+                TemporaryInputFormat.class,
+                BaseMapper.class));
+        inputList.add(new StageInput(
+                storage.getPatchContents("*").toString(),
+                TemporaryInputFormat.class,
+                PatchMapper.class));
+        StageInputDriver.set(job, inputList);
+        job.setInputFormatClass(StageInputFormat.class);
+        job.setMapperClass(StageInputMapper.class);
         job.setMapOutputKeyClass(PatchApplyKey.class);
         job.setMapOutputValueClass(modelClass);
 
         // combiner may have no effect in normal cases
-        // job.setCombinerClass(PatchApplyCombiner.class);
         job.setReducerClass(PatchApplyReducer.class);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(modelClass);
@@ -132,8 +146,12 @@ public class CacheBuildClient extends Configured implements Tool {
         job.setSortComparatorClass(PatchApplyKey.SortComparator.class);
         job.setGroupingComparatorClass(PatchApplyKey.GroupComparator.class);
 
-        FileOutputFormat.setOutputPath(job, getNextDirectory());
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+        TemporaryOutputFormat.setOutputPath(job, getNextDirectory());
+        job.setOutputFormatClass(TemporaryOutputFormat.class);
+        job.getConfiguration().setClass(
+                "mapred.output.committer.class",
+                LegacyBridgeOutputCommitter.class,
+                org.apache.hadoop.mapred.OutputCommitter.class);
 
         LOG.info(MessageFormat.format("Applying patch: {0} / {1} -> {2}",
                 storage.getPatchContents("*"),
@@ -170,16 +188,20 @@ public class CacheBuildClient extends Configured implements Tool {
 
     private void create() throws InterruptedException, IOException {
         Job job = new Job(getConf());
-        FileInputFormat.addInputPath(job, storage.getPatchContents("*"));
-        job.setInputFormatClass(SequenceFileInputFormat.class);
+        TemporaryInputFormat.setInputPaths(job, Collections.singletonList(storage.getPatchContents("*")));
+        job.setInputFormatClass(TemporaryInputFormat.class);
         job.setMapperClass(DeleteMapper.class);
         job.setMapOutputKeyClass(NullWritable.class);
         job.setMapOutputValueClass(modelClass);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(modelClass);
 
-        FileOutputFormat.setOutputPath(job, getNextDirectory());
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+        TemporaryOutputFormat.setOutputPath(job, getNextDirectory());
+        job.setOutputFormatClass(TemporaryOutputFormat.class);
+        job.getConfiguration().setClass(
+                "mapred.output.committer.class",
+                LegacyBridgeOutputCommitter.class,
+                org.apache.hadoop.mapred.OutputCommitter.class);
 
         job.setNumReduceTasks(0);
 

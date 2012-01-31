@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,14 +40,10 @@ import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.batch.MockEmitter;
-import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.compiler.flow.Packager;
 import com.ashigeru.lang.java.jsr199.testing.VolatileClassFile;
 import com.ashigeru.lang.java.jsr199.testing.VolatileClassOutputManager;
 import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;

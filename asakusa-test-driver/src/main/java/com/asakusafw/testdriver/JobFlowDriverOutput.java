@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
-import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.VerifierFactory;
 
 /**
@@ -39,7 +39,7 @@ public class JobFlowDriverOutput<T> extends DriverOutputBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverOutput.class);
 
     /**
-     * コンストラクタ
+     * コンストラクタ。
      *
      * @param driverContext テストドライバコンテキスト。
      * @param name 入力の名前。

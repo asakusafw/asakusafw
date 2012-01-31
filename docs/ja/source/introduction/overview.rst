@@ -88,7 +88,7 @@ Asakusa DSLについての詳しい情報は、 :doc:`../dsl/index` を参照し
 
 外部システム連携
 ----------------
-外部システム連携は基幹システムでのバッチアプリケーションの肝ともなる部分で、Asakusa Frameworkでは以下のツールを提供しています。
+外部システム連携は基幹システムでのバッチアプリケーションの肝ともなる部分で、Asakusa Frameworkでは以下のツールや機能を提供しています。
 
 WindGate
     ローカルファイルシステム上のフラットファイルや、JDBC経由でのデータベースアクセスなど、
@@ -102,9 +102,15 @@ ThunderGate
 
     詳しくは :doc:`../thundergate/index` を参照してください。
 
+Direct I/O
+    Asakusa Frameworkの外でHadoopやその周辺に取り込んだデータを直接読み書きする機能 [#]_ 。
+
+    詳しくは :doc:`../directio/index` を参照してください。
+
 なお、これらのツールとの連携は `Asakusa DSL`_ から記述できます。
 
 ..  [#] http://www.mysql.com/
+..  [#] Direct I/OはAsakusa Frameworkのバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
 
 自動テストサポート
 ------------------

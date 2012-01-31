@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -56,17 +52,11 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
         return true;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return SequenceFileInputFormat.class;
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
+    public SourceInfo getInputInfo(InputDescription description) {
         HashSet<Location> locations = new HashSet<Location>();
         locations.add(getEnvironment().getTargetLocation().append(description.getName()));
-        return locations;
+        return new SourceInfo(locations, TemporaryInputFormat.class);
     }
 
     @Override

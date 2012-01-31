@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 package test.modelgen.table.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
@@ -23,12 +32,6 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.Property;
 import com.asakusafw.vocabulary.model.TableModel;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import javax.annotation.Generated;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * テーブル<code>purchase_tran_error</code>を表すモデルクラス。
  */

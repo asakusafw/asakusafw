@@ -1,0 +1,4 @@
+@directio.csv()
+simple = {
+    value : TEXT;
+};

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,14 @@ package com.asakusafw.bulkloader.importer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,18 +36,9 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ImportTableLockType;
 import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
-import com.asakusafw.bulkloader.importer.TargetDataLock;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.testtools.inspect.Cause;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**

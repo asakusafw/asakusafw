@@ -1,8 +1,5 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +19,7 @@ import ${package}.modelgen.dmdl.csv.AbstractCategorySummaryCsvExporterDescriptio
 
 /**
  * カテゴリ別集計結果をWindGate/CSVでエクスポートする。
- * エクスポート対象ファイルは {@code result/error-<date:日付>.csv}。
+ * エクスポート対象ファイルは {@code result/category-<date:日付>.csv}。
  */
 public class CategorySummaryToCsv extends AbstractCategorySummaryCsvExporterDescription {
 
@@ -33,6 +30,6 @@ public class CategorySummaryToCsv extends AbstractCategorySummaryCsvExporterDesc
 
     @Override
     public String getPath() {
-        return "result/category-${symbol_dollar}{date}.csv";
+        return "result/category-${date}.csv";
     }
 }

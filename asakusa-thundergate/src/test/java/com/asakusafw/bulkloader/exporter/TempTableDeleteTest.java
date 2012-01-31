@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
 
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,11 +30,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.asakusafw.bulkloader.bean.ExportTempTableBean;
-import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
+import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ExportTempTableStatus;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
-import com.asakusafw.bulkloader.exporter.TempTableDelete;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.testtools.inspect.Cause;

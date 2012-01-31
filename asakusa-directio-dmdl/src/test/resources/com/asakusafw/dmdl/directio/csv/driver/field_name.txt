@@ -1,0 +1,7 @@
+@directio.csv(
+    has_header = TRUE
+)
+model = {
+    @directio.csv.field(name = "title")
+    value : TEXT;
+};

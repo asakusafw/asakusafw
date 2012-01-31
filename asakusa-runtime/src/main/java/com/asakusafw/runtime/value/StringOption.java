@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import java.text.MessageFormat;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
+
+import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する文字列。
@@ -249,15 +251,16 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     @Override
-    public int compareTo(StringOption o) {
+    public int compareTo(WritableRawComparable o) {
+        StringOption other = (StringOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        return entity.compareTo(o.entity);
+        return entity.compareTo(other.entity);
     }
 
     @Override
@@ -320,6 +323,16 @@ public final class StringOption extends ValueOption<StringOption> {
         }
     }
 
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
+    }
+
     /**
      * このクラスの直列化された形式から、占有しているバイト長を返す。
      * @param bytes 対象のバイト配列
@@ -354,8 +367,10 @@ public final class StringOption extends ValueOption<StringOption> {
         }
         int n1 = WritableUtils.decodeVIntSize(b1[s1 + 1]);
         int n2 = WritableUtils.decodeVIntSize(b2[s2 + 1]);
+        int len1 = (int) ByteArrayUtil.readVLong(b1, s1 + 1);
+        int len2 = (int) ByteArrayUtil.readVLong(b2, s2 + 1);
         return WritableComparator.compareBytes(
-                b1, s1 + 1 + n1, l1 - 1 - n1,
-                b2, s2 + 1 + n2, l2 - 1 - n2);
+                b1, s1 + 1 + n1, len1,
+                b2, s2 + 1 + n2, len2);
     }
 }

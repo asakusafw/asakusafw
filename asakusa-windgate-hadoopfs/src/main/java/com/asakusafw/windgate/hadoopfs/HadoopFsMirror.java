@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,13 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableFactories;
 import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -43,10 +41,10 @@ import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
-import com.asakusafw.windgate.hadoopfs.sequencefile.FileSystemSequenceFileProvider;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileDrainDriver;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileProvider;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileSourceDriver;
+import com.asakusafw.windgate.hadoopfs.temporary.FileSystemModelInputProvider;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelInputProvider;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelInputSourceDriver;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelOutputDrainDriver;
 
 /**
  * An abstract implementation of {@link ResourceMirror} directly using Hadoop File System.
@@ -121,17 +119,14 @@ public class HadoopFsMirror extends ResourceMirror {
                 getName(),
                 script.getName());
         List<Path> pathList = getPath(script, DriverScript.Kind.SOURCE);
-        NullWritable key = NullWritable.get();
-        Writable value = newDataModel(script);
 
-        FileSystem fs = null;
-        SequenceFileProvider provider = null;
+        T value = newDataModel(script);
+        ModelInputProvider<T> provider = null;
         boolean succeeded = false;
         try {
-            fs = FileSystem.get(configuration);
-            provider = new FileSystemSequenceFileProvider(configuration, fs, pathList);
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            SourceDriver<T> result = new SequenceFileSourceDriver(provider, key, value);
+            FileSystem fs = FileSystem.get(configuration);
+            provider = new FileSystemModelInputProvider<T>(configuration, fs, pathList, script.getDataClass());
+            SourceDriver<T> result = new ModelInputSourceDriver<T>(provider, value);
             succeeded = true;
             return result;
         } finally {
@@ -139,16 +134,6 @@ public class HadoopFsMirror extends ResourceMirror {
                 if (provider != null) {
                     try {
                         provider.close();
-                    } catch (IOException e) {
-                        WGLOG.warn(e, "W03001",
-                                profile.getResourceName(),
-                                script.getName(),
-                                pathList);
-                    }
-                }
-                if (fs != null) {
-                    try {
-                        fs.close();
                     } catch (IOException e) {
                         WGLOG.warn(e, "W03001",
                                 profile.getResourceName(),
@@ -172,39 +157,19 @@ public class HadoopFsMirror extends ResourceMirror {
         assert pathList.size() == 1;
         Path path = pathList.get(0);
 
-        FileSystem fs = null;
-        SequenceFile.Writer writer = null;
+        ModelOutput<T> output = null;
         boolean succeeded = false;
         try {
-            fs = FileSystem.get(configuration);
             CompressionCodec codec = profile.getCompressionCodec();
-            writer = SequenceFile.createWriter(
-                    fs,
-                    configuration,
-                    path,
-                    NullWritable.class,
-                    script.getDataClass(),
-                    codec == null ? CompressionType.NONE : CompressionType.BLOCK,
-                    codec);
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            DrainDriver<T> result = new SequenceFileDrainDriver(writer, NullWritable.get());
+            output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path, codec);
+            DrainDriver<T> result = new ModelOutputDrainDriver<T>(output);
             succeeded = true;
             return result;
         } finally {
             if (succeeded == false) {
-                if (writer != null) {
+                if (output != null) {
                     try {
-                        writer.close();
-                    } catch (IOException e) {
-                        WGLOG.warn(e, "W04001",
-                                profile.getResourceName(),
-                                script.getName(),
-                                pathList);
-                    }
-                }
-                if (fs != null) {
-                    try {
-                        fs.close();
+                        output.close();
                     } catch (IOException e) {
                         WGLOG.warn(e, "W04001",
                                 profile.getResourceName(),
@@ -232,7 +197,7 @@ public class HadoopFsMirror extends ResourceMirror {
                     proc.getName(),
                     kind.prefix,
                     FILE.key(),
-                    pathString);
+                    null);
             throw new IOException(MessageFormat.format(
                     "Process \"{1}\" must declare \"{3}\": (resource={0}, kind={2})",
                     getName(),
@@ -293,31 +258,16 @@ public class HadoopFsMirror extends ResourceMirror {
         return results;
     }
 
-    private Writable newDataModel(ProcessScript<?> script) throws IOException {
+    private <T> T newDataModel(ProcessScript<T> script) throws IOException {
         assert script != null;
-        Class<?> dataClass = script.getDataClass();
+        Class<T> dataClass = script.getDataClass();
         LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
                 dataClass.getName(),
                 getName(),
                 script.getName(),
         });
-        if (Writable.class.isAssignableFrom(dataClass) == false) {
-            WGLOG.error("E01002",
-                    getName(),
-                    script.getName(),
-                    FILE.key(),
-                    dataClass.getName());
-            throw new IOException(MessageFormat.format(
-                    "Data model class {2} must be a subtype of {3} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    dataClass.getName(),
-                    Writable.class.getName()));
-        }
         try {
-            return WritableFactories.newInstance(
-                    dataClass.asSubclass(Writable.class),
-                    configuration);
+            return ReflectionUtils.newInstance(dataClass, configuration);
         } catch (Exception e) {
             WGLOG.error("E01002",
                     getName(),

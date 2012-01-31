@@ -596,6 +596,12 @@ ThunderGateが利用するデータベースの情報から、DMDLスクリプ�
 
 詳しくは :doc:`with-thundergate` を参照してください。
 
+Direct I/Oとの連携
+------------------
+Direct I/Oと連携したバッチアプリケーションでは、Direct I/Oが提供する特別な `データモデルの属性`_ を利用可能です。
+
+詳しくは :doc:`../directio/index` を参照してください。
+
 DMDLコンパイラプラグインの開発
 ------------------------------
 詳しくは :doc:`developer-guide` を参照して下さい。

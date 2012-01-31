@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public abstract class SessionMirror implements Closeable {
     /**
      * Closes this session.
      * If the session was already closed, this has no effects.
+     * @throws IOException if failed to close this session
      */
     @Override
     public abstract void close() throws IOException;

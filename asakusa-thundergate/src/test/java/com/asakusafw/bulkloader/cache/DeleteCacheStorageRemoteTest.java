@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
@@ -194,7 +194,7 @@ public class DeleteCacheStorageRemoteTest {
     }
 
     private URI uri(String string) {
-        // FIXME
+        // FIXME for testing
         return new File(folder.getRoot(), "user/tester/" + string).toURI();
     }
 
@@ -209,7 +209,7 @@ public class DeleteCacheStorageRemoteTest {
     }
 
     private String qualify(String location) {
-        return "/" + AbstractStageClient.EXPR_USER + "/" + location;
+        return "/" + StageConstants.EXPR_USER + "/" + location;
     }
 
     private List<FileProtocol> collect(byte[] byteArray) throws IOException {

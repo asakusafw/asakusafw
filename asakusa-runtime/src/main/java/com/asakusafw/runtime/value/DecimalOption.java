@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,14 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.util.Arrays;
 
 import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
+
+import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する10進数。
@@ -181,15 +185,16 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     }
 
     @Override
-    public int compareTo(DecimalOption o) {
+    public int compareTo(WritableRawComparable o) {
+        DecimalOption other = (DecimalOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        return entity.compareTo(o.entity);
+        return entity.compareTo(other.entity);
     }
 
     @Override
@@ -203,12 +208,15 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
 
     @Override
     public void write(DataOutput out) throws IOException {
-        // FIXME 効率よくする
         if (nullValue) {
             WritableUtils.writeVLong(out, -1);
         } else {
-            byte[] bytes = entity.toString().getBytes("UTF-8");
-            WritableUtils.writeVLong(out, bytes.length);
+            BigDecimal decimal = entity;
+            WritableUtils.writeVInt(out, decimal.precision());
+            WritableUtils.writeVInt(out, decimal.scale());
+            BigInteger unscaled = decimal.unscaledValue();
+            byte[] bytes = unscaled.toByteArray();
+            WritableUtils.writeVInt(out, bytes.length);
             out.write(bytes);
         }
     }
@@ -216,43 +224,49 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     @SuppressWarnings("deprecation")
     @Override
     public void readFields(DataInput in) throws IOException {
-        // FIXME 効率よくする
-        int length = (int) WritableUtils.readVLong(in);
-        if (length == -1) {
+        int precision = WritableUtils.readVInt(in);
+        if (precision == -1) {
             setNull();
         } else {
-            byte[] bytes = new byte[length];
+            int scale = WritableUtils.readVInt(in);
+            int byteCount = WritableUtils.readVInt(in);
+            byte[] bytes = new byte[byteCount];
             in.readFully(bytes);
-            modify(new BigDecimal(new String(bytes, "UTF-8")));
+            modify(new BigDecimal(new BigInteger(bytes), scale, new MathContext(precision)));
         }
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int restore(byte[] bytes, int offset, int limit) throws IOException {
-        if (limit - offset == 0) {
-            throw new IOException(MessageFormat.format(
-                    "Cannot restore a Decimal field ({0})",
-                    "invalid length"));
-        }
-        int size = WritableUtils.decodeVIntSize(bytes[offset]);
-        if (limit - offset < size) {
-            throw new IOException(MessageFormat.format(
-                    "Cannot restore a Decimal field ({0})",
-                    "invalid length"));
-        }
-        int length = (int) ByteArrayUtil.readVLong(bytes, offset);
-        if (length == -1) {
+        int cursor = offset;
+        int precision = WritableComparator.readVInt(bytes, cursor);
+        cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+        if (precision < 0) {
             setNull();
-            return size;
-        } else if (limit - offset >= size + length) {
-            modify(new BigDecimal(new String(bytes, offset + size, length, "UTF-8")));
-            return size + length;
         } else {
-            throw new IOException(MessageFormat.format(
-                    "Cannot restore a Decimal field ({0})",
-                    "invalid length"));
+            int scale = WritableComparator.readVInt(bytes, cursor);
+            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+
+            int bytesCount = WritableComparator.readVInt(bytes, cursor);
+            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+
+            byte[] unscaled = Arrays.copyOfRange(bytes, cursor, cursor + bytesCount);
+            cursor += bytesCount;
+
+            modify(new BigDecimal(new BigInteger(unscaled), scale, new MathContext(precision)));
         }
+        return cursor - offset;
+    }
+
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
     }
 
     /**
@@ -263,12 +277,21 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * @return 比較結果
      */
     public static int getBytesLength(byte[] bytes, int offset, int length) {
-        int size = WritableUtils.decodeVIntSize(bytes[offset]);
-        int textLength = (int) ByteArrayUtil.readVLong(bytes, offset);
-        if (textLength == -1) {
-            return size;
+        try {
+            int cursor = offset;
+            int precSize = WritableUtils.decodeVIntSize(bytes[cursor]);
+            if (WritableComparator.readVInt(bytes, offset) < 0) {
+                return precSize;
+            }
+            cursor += precSize;
+            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+            int bytesCount = WritableComparator.readVInt(bytes, cursor);
+            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+            cursor += bytesCount;
+            return cursor - offset;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
-        return size + textLength;
     }
 
     /**
@@ -284,10 +307,53 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     public static int compareBytes(
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
-        int n1 = WritableUtils.decodeVIntSize(b1[s1]);
-        int n2 = WritableUtils.decodeVIntSize(b2[s2]);
-        return WritableComparator.compareBytes(
-                b1, s1 + n1, l1 - n1,
-                b2, s2 + n2, l2 - n2);
+        try {
+            // precision
+            int cursor1 = s1;
+            int cursor2 = s2;
+            int prec1 = WritableComparator.readVInt(b1, cursor1);
+            int prec2 = WritableComparator.readVInt(b2, cursor2);
+            if (prec1 < 0) {
+                if (prec2 < 0) {
+                    return 0;
+                }
+                return -1;
+            } else if (prec2 < 0) {
+                return +1;
+            }
+            cursor1 += WritableUtils.decodeVIntSize(b1[cursor1]);
+            cursor2 += WritableUtils.decodeVIntSize(b2[cursor2]);
+
+            // scale
+            int scale1 = WritableComparator.readVInt(b1, cursor1);
+            int scale2 = WritableComparator.readVInt(b2, cursor2);
+            cursor1 += WritableUtils.decodeVIntSize(b1[cursor1]);
+            cursor2 += WritableUtils.decodeVIntSize(b2[cursor2]);
+
+            // bytesCount
+            int bytesCount1 = WritableComparator.readVInt(b1, cursor1);
+            int bytesCount2 = WritableComparator.readVInt(b2, cursor2);
+            cursor1 += WritableUtils.decodeVIntSize(b1[cursor1]);
+            cursor2 += WritableUtils.decodeVIntSize(b2[cursor2]);
+
+            // check sig
+            if (b1[cursor1] < 0 && b2[cursor2] >= 0) {
+                return -1;
+            } else if (b1[cursor1] >= 0 && b2[cursor2] < 0) {
+                return +1;
+            }
+
+            // bytes
+            BigInteger unscale1 = new BigInteger(Arrays.copyOfRange(b1, cursor1, cursor1 + bytesCount1));
+            BigInteger unscale2 = new BigInteger(Arrays.copyOfRange(b2, cursor2, cursor2 + bytesCount2));
+            if (scale1 > scale2) {
+                unscale2 = unscale2.multiply(BigInteger.TEN.pow(scale1 - scale2));
+            } else if (scale1 < scale2) {
+                unscale1 = unscale1.multiply(BigInteger.TEN.pow(scale2 - scale1));
+            }
+            return unscale1.compareTo(unscale2);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

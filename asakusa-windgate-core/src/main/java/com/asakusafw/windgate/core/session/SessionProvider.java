@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,5 +64,5 @@ public abstract class SessionProvider extends BaseProvider<SessionProfile> {
      * @throws IOException if failed to delete the session
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public abstract void delete(String id) throws IOException;
+    public abstract void delete(String id) throws SessionException, IOException;
 }

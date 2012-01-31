@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 

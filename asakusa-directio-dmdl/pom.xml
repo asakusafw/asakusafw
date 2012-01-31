@@ -1,0 +1,78 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>DMDL Plug-ins for Direct I/O</name>
+	<groupId>com.asakusafw</groupId>
+	<artifactId>asakusa-directio-dmdl</artifactId>
+	<parent>
+		<artifactId>asakusa-parent</artifactId>
+		<groupId>com.asakusafw</groupId>
+		<version>0.3-SNAPSHOT</version>
+		<relativePath>../asakusa-parent</relativePath>
+	</parent>
+
+	<description>Data Model Definition Language Extensions for Direct I/O</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
+
+	<packaging>jar</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-dmdl-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-dmdl-java</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-vocabulary</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.ashigeru.lang.java</groupId>
+			<artifactId>jsr199-testing</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.154</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

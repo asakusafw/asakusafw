@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Delivery;
@@ -68,7 +71,7 @@ public class StageClientEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(StageClientEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -106,13 +109,13 @@ public class StageClientEmitter {
 
         private static final char PATH_SEPARATOR = '/';
 
-        private FlowCompilingEnvironment environment;
+        private final FlowCompilingEnvironment environment;
 
-        private Stage stage;
+        private final Stage stage;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
         Engine(FlowCompilingEnvironment environment, Stage stage) {
             assert environment != null;
@@ -191,22 +194,40 @@ public class StageClientEmitter {
 
         private MethodDeclaration createStageInputsMethod() {
             SimpleName list = factory.newSimpleName("results");
+            SimpleName attributes = factory.newSimpleName("attributes");
 
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageInput.class)), list));
+            statements.add(new ExpressionBuilder(factory, Models.toNullLiteral(factory))
+                .toLocalVariableDeclaration(t(Map.class, t(String.class), t(String.class)), attributes));
+
             for (Process process : stage.getProcesses()) {
                 Expression mapperType = dotClass(process.getMapperTypeName());
                 for (Source source : process.getResolvedSources()) {
-                    Class<?> inputFormatType = source.getInputFormatType();
-                    for (Location location : source.getLocations()) {
+                    SourceInfo info = source.getInputInfo();
+                    Class<?> inputFormatType = info.getFormat();
+                    statements.add(new ExpressionBuilder(factory, attributes)
+                        .assignFrom(new TypeBuilder(factory, t(HashMap.class, t(String.class), t(String.class)))
+                            .newObject()
+                            .toExpression())
+                        .toStatement());
+                    for (Map.Entry<String, String> entry : info.getAttributes().entrySet()) {
+                        statements.add(new ExpressionBuilder(factory, attributes)
+                            .method("put",
+                                    Models.toLiteral(factory, entry.getKey()),
+                                    Models.toLiteral(factory, entry.getValue()))
+                            .toStatement());
+                    }
+                    for (Location location : info.getLocations()) {
                         statements.add(new ExpressionBuilder(factory, list)
                             .method("add", new TypeBuilder(factory, t(StageInput.class))
                                 .newObject(
                                         Models.toLiteral(factory, location.toPath('/')),
                                         factory.newClassLiteral(t(inputFormatType)),
-                                        mapperType)
+                                        mapperType,
+                                        attributes)
                                 .toExpression())
                             .toStatement());
                     }
@@ -236,7 +257,7 @@ public class StageClientEmitter {
             for (Delivery process : stage.getDeliveries()) {
                 Expression valueType = factory.newClassLiteral(t(process.getDataType()));
                 Class<?> outputFormatType = process.getOutputFormatType();
-                for (Location location : process.getLocations()) {
+                for (Location location : process.getInputInfo().getLocations()) {
                     statements.add(new ExpressionBuilder(factory, list)
                         .method("add", new TypeBuilder(factory, t(StageOutput.class))
                             .newObject(
@@ -270,13 +291,15 @@ public class StageClientEmitter {
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageResource.class)), list));
             for (SideData sideData : stage.getSideData()) {
-                statements.add(new ExpressionBuilder(factory, list)
-                    .method("add", new TypeBuilder(factory, t(StageResource.class))
-                        .newObject(
-                                Models.toLiteral(factory, sideData.getClusterPath().toPath('/')),
-                                Models.toLiteral(factory, sideData.getLocalName()))
-                        .toExpression())
-                    .toStatement());
+                for (Location location : sideData.getClusterPaths()) {
+                    statements.add(new ExpressionBuilder(factory, list)
+                        .method("add", new TypeBuilder(factory, t(StageResource.class))
+                            .newObject(
+                                    Models.toLiteral(factory, location.toPath('/')),
+                                    Models.toLiteral(factory, sideData.getLocalName()))
+                            .toExpression())
+                        .toStatement());
+                }
             }
             statements.add(new ExpressionBuilder(factory, list)
                 .toReturnStatement());

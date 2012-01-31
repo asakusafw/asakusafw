@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
@@ -46,7 +43,6 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.MultiThreadedCopier;
-import com.asakusafw.bulkloader.common.SequenceFileModelOutput;
 import com.asakusafw.bulkloader.common.StreamRedirectThread;
 import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -54,13 +50,15 @@ import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvIoFactory;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
 
 /**
- * 標準入力を読み込んでSequenceFile形式でDFSにファイルを書き出すクラス。
+ * 標準入力を読み込んで入力のためのデータを書き出すクラス。
  * @author yuta.shirai
  */
 public class DfsFileImport {
@@ -91,8 +89,7 @@ public class DfsFileImport {
 
     /**
      * 標準入力を読み込んでDFSにファイルを書き出す。
-     * {@link FileList}形式で受け取ったTSV形式のファイルをModelオブジェクトに変換して、
-     * SequenceFile形式でDFSに出力する。
+     * {@link FileList}形式で受け取ったTSV形式のファイルをModelオブジェクトに変換して、テンポラリ入力データとして配置する。
      * 出力先はプロトコルの形式によって異なる。
      * 利用可能なプロトコルは以下のとおり。
      * <ul>
@@ -193,7 +190,7 @@ public class DfsFileImport {
         LOG.info("TG-EXTRACTOR-02002",
                 tableName, dfsFilePath.toString(), targetTableModel.toString());
 
-        // ファイルをSequenceFileに変換してDFSに書き出す
+        // ファイルをジョブ入力データ領域に書き出す
         long recordCount = write(targetTableModel, dfsFilePath, content);
 
         LOG.info("TG-EXTRACTOR-02003",
@@ -470,7 +467,7 @@ public class DfsFileImport {
     }
 
     /**
-     * ストリームからTSVファイルを読み出し、データモデルに変換した後にSequenceFileとしてDFSに書き出す。
+     * ストリームからTSVファイルを読み出し、ジョブの入力データとして書き出す。
      * @param <T> Import対象テーブルに対応するModelのクラス型
      * @param targetTableModel Import対象テーブルに対応するModelのクラス
      * @param dfsFilePath HFSF上のファイル名
@@ -482,17 +479,15 @@ public class DfsFileImport {
             Class<T> targetTableModel,
             URI dfsFilePath,
             InputStream inputStream) throws BulkLoaderSystemException {
-        ModelInput<T> modelIn = null;
-        FileSystem fs = null;
-        SequenceFile.Writer writer = null;
+        ModelInput<T> input = null;
+        ModelOutput<T> output = null;
         try {
             // TSVファイルをBeanに変換するオブジェクトを生成する
             TsvIoFactory<T> factory = new TsvIoFactory<T>(targetTableModel);
-            modelIn = factory.createModelInput(inputStream);
+            input = factory.createModelInput(inputStream);
 
-            // SequenceFileをDFSに出力するオブジェクトを生成する
+            // ジョブ入力テンポラリ領域に出力するオブジェクトを生成する
             Configuration conf = new Configuration();
-            fs = FileSystem.get(dfsFilePath, conf);
 
             // コピー用のバッファを作成する
             Collection<T> working = new ArrayList<T>(COPY_BUFFER_RECORDS);
@@ -500,19 +495,17 @@ public class DfsFileImport {
                 working.add(factory.createModelObject());
             }
 
-            // SequenceFileの圧縮に関する情報を取得
+            // 圧縮に関する情報を取得
             String strCompType = ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE);
-            SequenceFile.CompressionType compType = getCompType(strCompType);
+            CompressionType compType = getCompType(strCompType);
 
             // Writerを経由して別スレッドで書き出す
-            writer = SequenceFile.createWriter(
-                    fs,
-                    conf,
-                    new Path(dfsFilePath.getPath()),
-                    NullWritable.class,
-                    targetTableModel,
-                    compType);
-            return MultiThreadedCopier.copy(modelIn, new SequenceFileModelOutput<T>(writer), working);
+            if (compType == CompressionType.NONE) {
+                output = TemporaryStorage.openOutput(conf, targetTableModel, new Path(dfsFilePath), null);
+            } else {
+                output = TemporaryStorage.openOutput(conf, targetTableModel, new Path(dfsFilePath));
+            }
+            return MultiThreadedCopier.copy(input, output, working);
         } catch (IOException e) {
             throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
@@ -520,23 +513,16 @@ public class DfsFileImport {
             throw new BulkLoaderSystemException(e, getClass(), "TG-EXTRACTOR-02001",
                     "DFSにファイルを書き出す処理に失敗。URI：" + dfsFilePath);
         } finally {
-            if (writer != null) {
+            if (output != null) {
                 try {
-                    writer.close();
+                    output.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (fs != null) {
+            if (input != null) {
                 try {
-                    fs.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (modelIn != null) {
-                try {
-                    modelIn.close();
+                    input.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -544,16 +530,16 @@ public class DfsFileImport {
         }
     }
     /**
-     * SequenceFileのCompressionTypeを取得する。
+     * 圧縮の種類を取得する。
      * @param strCompType CompressionTypeの文字列
      * @return CompressionType
      */
     protected CompressionType getCompType(String strCompType) {
         CompressionType compType = null;
         try {
-            compType = SequenceFile.CompressionType.valueOf(strCompType);
+            compType = CompressionType.valueOf(strCompType);
         } catch (Exception e) {
-            compType = SequenceFile.CompressionType.NONE;
+            compType = CompressionType.NONE;
             LOG.error("TG-EXTRACTOR-02004", strCompType);
         }
         return compType;

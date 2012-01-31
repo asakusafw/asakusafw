@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,8 +116,6 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         writeClassByName(out, splitClass);
         writeClassByName(out, formatClass);
         writeClassByName(out, mapperClass);
-
-        // FIXME InputSplit must be a subtype of Writable
         ((Writable) original).write(out);
     }
 
@@ -127,8 +125,6 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         Class<? extends InputSplit> splitClass = readClassByName(InputSplit.class, in);
         this.formatClass = (Class<? extends InputFormat<?, ?>>) readClassByName(InputFormat.class, in);
         this.mapperClass = (Class<? extends Mapper<?, ?, ?, ?>>) readClassByName(Mapper.class, in);
-
-        // FIXME InputSplit must be a subtype of Writable
         this.original = ReflectionUtils.newInstance(splitClass, configuration);
         ((Writable) original).readFields(in);
     }

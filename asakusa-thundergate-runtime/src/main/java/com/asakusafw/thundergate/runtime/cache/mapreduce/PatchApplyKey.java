@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package com.asakusafw.thundergate.runtime.cache.mapreduce;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.apache.hadoop.io.VIntWritable;
 import org.apache.hadoop.io.VLongWritable;
@@ -88,6 +91,36 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + position.hashCode();
+        result = prime * result + systemId.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PatchApplyKey other = (PatchApplyKey) obj;
+        if (!position.equals(other.position)) {
+            return false;
+        }
+        if (!systemId.equals(other.systemId)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("PatchApplyKey [systemId=");
@@ -102,7 +135,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * Total comparator for {@link PatchApplyKey}.
      * @since 0.2.3
      */
-    public static final class SortComparator extends WritableComparator {
+    public static final class SortComparator extends WritableComparator implements Externalizable {
 
         /**
          * Creates a new instance.
@@ -140,6 +173,20 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
                 throw new IllegalStateException(e);
             }
         }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            return;
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            return;
+        }
+
+        private Object readResolve() {
+            return new SortComparator();
+        }
     }
 
     /**
@@ -147,7 +194,7 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
      * @since 0.2.3
      */
     @SuppressWarnings("rawtypes")
-    public static final class GroupComparator extends WritableComparator {
+    public static final class GroupComparator extends WritableComparator implements Externalizable {
 
         /**
          * Creates a new instance.
@@ -180,6 +227,20 @@ public class PatchApplyKey implements WritableComparable<PatchApplyKey> {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            return;
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            return;
+        }
+
+        private Object readResolve() {
+            return new GroupComparator();
         }
     }
 

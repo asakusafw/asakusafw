@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 
 /**
  * {@link Ex2}のモックインポーター記述。
  */
-public class Ex2MockImporterDescription extends FileImporterDescription {
+public class Ex2MockImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

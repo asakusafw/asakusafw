@@ -77,6 +77,9 @@
     * - testing/
       - TestDriver
       - テストドライバ
+    * - directio/
+      - Direct I/O
+      - Direct I/O
     * - windgate/
       - WindGate
       - WindGate

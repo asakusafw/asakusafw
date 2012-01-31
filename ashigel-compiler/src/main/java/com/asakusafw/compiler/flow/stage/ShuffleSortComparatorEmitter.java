@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import com.ashigeru.lang.java.model.syntax.ModelFactory;
 import com.ashigeru.lang.java.model.syntax.Name;
 import com.ashigeru.lang.java.model.syntax.SimpleName;
 import com.ashigeru.lang.java.model.syntax.Statement;
+import com.ashigeru.lang.java.model.syntax.ThrowStatement;
 import com.ashigeru.lang.java.model.syntax.Type;
 import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
 import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
@@ -64,7 +65,7 @@ public class ShuffleSortComparatorEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ShuffleSortComparatorEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -104,13 +105,13 @@ public class ShuffleSortComparatorEmitter {
 
     private static class Engine {
 
-        private ShuffleModel model;
+        private final ShuffleModel model;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private Type keyType;
+        private final Type keyType;
 
         public Engine(
                 FlowCompilingEnvironment environment,
@@ -197,14 +198,10 @@ public class ShuffleSortComparatorEmitter {
             SimpleName o2 = factory.newSimpleName("o2");
             SimpleName lim1 = factory.newSimpleName("lim1");
             SimpleName lim2 = factory.newSimpleName("lim2");
-            statements.add(new ExpressionBuilder(factory, v(4))
-                .toLocalVariableDeclaration(t(int.class), o1));
-            statements.add(new ExpressionBuilder(factory, v(4))
-                .toLocalVariableDeclaration(t(int.class), o2));
-            statements.add(new ExpressionBuilder(factory, v(-1))
-                .toLocalVariableDeclaration(t(int.class), lim1));
-            statements.add(new ExpressionBuilder(factory, v(-1))
-                .toLocalVariableDeclaration(t(int.class), lim2));
+            statements.add(new ExpressionBuilder(factory, v(4)).toLocalVariableDeclaration(t(int.class), o1));
+            statements.add(new ExpressionBuilder(factory, v(4)).toLocalVariableDeclaration(t(int.class), o2));
+            statements.add(new ExpressionBuilder(factory, v(-1)).toLocalVariableDeclaration(t(int.class), lim1));
+            statements.add(new ExpressionBuilder(factory, v(-1)).toLocalVariableDeclaration(t(int.class), lim2));
 
             List<Statement> cases = new ArrayList<Statement>();
             for (List<Segment> segments : ShuffleEmiterUtil.groupByElement(model)) {
@@ -230,12 +227,8 @@ public class ShuffleSortComparatorEmitter {
                     cases.add(new ExpressionBuilder(factory, diff)
                         .assignFrom(
                                 term.getSource().createBytesDiff(
-                                        b1,
-                                        factory.newInfixExpression(s1, InfixOperator.PLUS, o1),
-                                        lim1,
-                                        b2,
-                                        factory.newInfixExpression(s2, InfixOperator.PLUS, o2),
-                                        lim2))
+                                        b1, factory.newInfixExpression(s1, InfixOperator.PLUS, o1), lim1,
+                                        b2, factory.newInfixExpression(s2, InfixOperator.PLUS, o2), lim2))
                         .toStatement());
                     cases.add(createDiff(diff));
                     cases.add(new ExpressionBuilder(factory, o1)
@@ -248,21 +241,15 @@ public class ShuffleSortComparatorEmitter {
                 cases.add(factory.newBreakStatement());
             }
             cases.add(factory.newSwitchDefaultLabel());
-            cases.add(new TypeBuilder(factory, t(AssertionError.class))
-                .newObject()
-                .toThrowStatement());
+            cases.add(createAssertionError());
 
             statements.add(factory.newSwitchStatement(segmentId1, cases));
-
             statements.add(new ExpressionBuilder(factory, diff)
                 .assignFrom(new ExpressionBuilder(factory, factory.newThis())
-                    .method(ShuffleEmiterUtil.COMPARE_INT,
-                            segmentId1,
-                            segmentId2)
+                    .method(ShuffleEmiterUtil.COMPARE_INT, segmentId1, segmentId2)
                     .toExpression())
                 .toStatement());
             statements.add(createDiff(diff));
-
             cases = new ArrayList<Statement>();
             for (Segment segment : model.getSegments()) {
                 cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -285,12 +272,8 @@ public class ShuffleSortComparatorEmitter {
                     cases.add(new ExpressionBuilder(factory, diff)
                         .assignFrom(
                                 term.getSource().createBytesDiff(
-                                        b1,
-                                        factory.newInfixExpression(s1, InfixOperator.PLUS, o1),
-                                        lim1,
-                                        b2,
-                                        factory.newInfixExpression(s2, InfixOperator.PLUS, o2),
-                                        lim2))
+                                        b1, factory.newInfixExpression(s1, InfixOperator.PLUS, o1), lim1,
+                                        b2, factory.newInfixExpression(s2, InfixOperator.PLUS, o2), lim2))
                         .toStatement());
                     cases.add(createDiff(diff, term.getArrangement() == Arrangement.DESCENDING));
                     cases.add(new ExpressionBuilder(factory, o1)
@@ -303,9 +286,7 @@ public class ShuffleSortComparatorEmitter {
                 cases.add(factory.newBreakStatement());
             }
             cases.add(factory.newSwitchDefaultLabel());
-            cases.add(new TypeBuilder(factory, t(AssertionError.class))
-                .newObject()
-                .toThrowStatement());
+            cases.add(createAssertionError());
             statements.add(factory.newSwitchStatement(segmentId1, cases));
 
             statements.add(new ExpressionBuilder(factory, v(0))
@@ -328,6 +309,10 @@ public class ShuffleSortComparatorEmitter {
                             factory.newFormalParameterDeclaration(t(int.class), l2),
                     }),
                     statements);
+        }
+
+        private ThrowStatement createAssertionError() {
+            return new TypeBuilder(factory, t(AssertionError.class)).newObject().toThrowStatement();
         }
 
         private IfStatement createDiff(Expression diff) {
@@ -403,9 +388,7 @@ public class ShuffleSortComparatorEmitter {
                 cases.add(factory.newBreakStatement());
             }
             cases.add(factory.newSwitchDefaultLabel());
-            cases.add(new TypeBuilder(factory, t(AssertionError.class))
-                .newObject()
-                .toThrowStatement());
+            cases.add(createAssertionError());
 
             statements.add(factory.newSwitchStatement(segmentId1, cases));
 
@@ -441,9 +424,7 @@ public class ShuffleSortComparatorEmitter {
                 cases.add(factory.newBreakStatement());
             }
             cases.add(factory.newSwitchDefaultLabel());
-            cases.add(new TypeBuilder(factory, t(AssertionError.class))
-                .newObject()
-                .toThrowStatement());
+            cases.add(createAssertionError());
 
             statements.add(factory.newSwitchStatement(segmentId1, cases));
             statements.add(new ExpressionBuilder(factory, v(0))

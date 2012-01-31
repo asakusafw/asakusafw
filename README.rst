@@ -9,5 +9,6 @@ Asakusa consists of the following components: (1) MapReduce DSL compiler (Ashige
 Resources
 =========
 * `Asakusa Framework 0.2 Documentaion (Ja) <http://asakusafw.s3.amazonaws.com/documents/0.2/release/ja/html/index.html>`_
+* `Asakusa Framework Community Site (Ja) <http://asakusafw.com>`_
 * `asakusafw Wiki <https://github.com/asakusafw/asakusafw/wiki>`_
 

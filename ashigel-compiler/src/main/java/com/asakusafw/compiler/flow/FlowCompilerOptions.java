@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package com.asakusafw.compiler.flow;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +41,11 @@ public class FlowCompilerOptions {
      * プロパティに指定する際の設定名。
      */
     public static final String K_OPTIONS = "com.asakusafw.compiler.options";
+
+    /**
+     * The key prefix for extra options.
+     */
+    public static final String PREFIX_EXTRA_OPTION = "X";
 
     /**
      * オプションの項目一覧。
@@ -135,6 +143,69 @@ public class FlowCompilerOptions {
         public abstract void setTo(FlowCompilerOptions options, boolean value);
     }
 
+    /**
+     * A common value for extra options.
+     * @since 0.2.5
+     */
+    public enum GenericOptionValue {
+
+        /**
+         * The option is enabled.
+         */
+        ENABLED("enabled", "enable", "t", "true", "y", "yes", "on"),
+
+        /**
+         * The option is disabled.
+         */
+        DISABLED("disabled", "disable", "f", "false", "n", "no", "off"),
+
+        /**
+         * The option should be auto detected.
+         */
+        AUTO("auto"),
+
+        ;
+
+        private final String primary;
+
+        private final Set<String> symbols;
+
+        private GenericOptionValue(String primary, String... symbols) {
+            assert primary != null;
+            assert symbols != null;
+            this.primary = primary;
+            this.symbols = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+            Collections.addAll(this.symbols, primary);
+            Collections.addAll(this.symbols, symbols);
+        }
+
+        /**
+         * Returns the symbol of the value.
+         * @return the symbol
+         */
+        public String getSymbol() {
+            return primary;
+        }
+
+        /**
+         * Returns a value corresponding to the symbol.
+         * @param symbol target symbol
+         * @return corresnponded value, or {@code null} if does not exist
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public static GenericOptionValue fromSymbol(String symbol) {
+            if (symbol == null) {
+                throw new IllegalArgumentException("symbol must not be null"); //$NON-NLS-1$
+            }
+            for (GenericOptionValue value : values()) {
+                if (value.symbols.contains(symbol)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
     private volatile boolean enableCombiner;
 
     private volatile boolean compressFlowPart;
@@ -158,7 +229,9 @@ public class FlowCompilerOptions {
         }
     }
 
-    private static final Pattern OPTION = Pattern.compile("(\\+|-)([0-9A-Za-z_\\-]+)");
+    private static final Pattern OPTION = Pattern.compile("\\s*(\\+|-)\\s*([0-9A-Za-z_\\-]+)\\s*");
+
+    private static final Pattern EXTRA_OPTION = Pattern.compile("\\s*X([0-9A-Za-z_\\-]+)\\s*=([^,]*)");
 
     /**
      * デフォルトの設定をプロパティからロードする。
@@ -173,8 +246,9 @@ OptionList:
     (Empty)
 
 OptionItem:
-    "+" OptionName ; OptionNameの項目をtrueに設定する
-    "-" OptionName ; OptionNameの項目をfalseに設定する
+    "+" OptionName           ; OptionNameの項目をtrueに設定する
+    "-" OptionName           ; OptionNameの項目をfalseに設定する
+    "X" OptionName "=" Value ; Name, Valueのペアを extra attributes に設定する
 
 OptionName:
     (項目名)
@@ -182,6 +256,8 @@ OptionName:
      * <p>
      * また、利用可能なオプション名は{@link FlowCompilerOptions.Item}
      * に定義される列挙定数の名前に等しい。
+     * また、{@code D<key>=<value>}から始まる項目名は{@code X}を取り除いた上で
+     *
      * </p>
      * @param properties プロパティ一覧
      * @return オプション設定
@@ -195,19 +271,25 @@ OptionName:
             if (option.isEmpty()) {
                 continue;
             }
-            Matcher matcher = OPTION.matcher(option);
-            if (matcher.matches() == false) {
-                LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
-                continue;
-            }
-            boolean value = matcher.group(1).equals("+");
-            String name = matcher.group(2);
-            try {
-                Item item = Item.valueOf(name);
-                item.setTo(results, value);
-            } catch (NoSuchElementException e) {
-                LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
-                continue;
+            Matcher optionMatcher = OPTION.matcher(option);
+            if (optionMatcher.matches()) {
+                boolean value = optionMatcher.group(1).equals("+");
+                String name = optionMatcher.group(2);
+                try {
+                    Item item = Item.valueOf(name);
+                    item.setTo(results, value);
+                } catch (NoSuchElementException e) {
+                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                }
+            } else {
+                Matcher extraMatcher = EXTRA_OPTION.matcher(option);
+                if (extraMatcher.matches()) {
+                    String key = extraMatcher.group(1).trim();
+                    String value = extraMatcher.group(2).trim();
+                    results.extraAttributes.put(key, value);
+                } else {
+                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                }
             }
         }
         return results;
@@ -307,6 +389,19 @@ OptionName:
      */
     public void setEnableDebugLogging(boolean enable) {
         this.enableDebugLogging = enable;
+    }
+
+    /**
+     * Returns the extra option key name for the option name.
+     * @param optionName the original option name
+     * @return the key name for the option
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public String getExtraAttributeKeyName(String optionName) {
+        if (optionName == null) {
+            throw new IllegalArgumentException("optionName must not be null"); //$NON-NLS-1$
+        }
+        return PREFIX_EXTRA_OPTION + optionName;
     }
 
     /**

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,8 @@ import java.util.List;
 
 import javax.lang.model.element.PackageElement;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.operator.OperatorClass;
-import com.asakusafw.compiler.operator.OperatorClassCollector;
-import com.asakusafw.compiler.operator.OperatorClassGenerator;
-import com.asakusafw.compiler.operator.OperatorImplementationClassGenerator;
-import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
 import com.ashigeru.lang.java.model.syntax.ClassDeclaration;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;

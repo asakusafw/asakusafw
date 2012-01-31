@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,10 @@ import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hadoop.io.InputBuffer;
 import org.apache.hadoop.io.OutputBuffer;
+
 import com.asakusafw.bulkloader.log.Log;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
-import com.asakusafw.runtime.io.ZipEntryOutputStream;
+import com.asakusafw.runtime.io.util.ZipEntryInputStream;
+import com.asakusafw.runtime.io.util.ZipEntryOutputStream;
 
 /**
  * A cache list transfer protocol.

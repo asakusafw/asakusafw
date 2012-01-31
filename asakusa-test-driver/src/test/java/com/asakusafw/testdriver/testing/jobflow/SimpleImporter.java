@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ package com.asakusafw.testdriver.testing.jobflow;
 import java.util.Collections;
 import java.util.Set;
 
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 import com.asakusafw.testdriver.testing.model.Simple;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
  * An importer description for {@link Simple} model.
  * @since 0.2.0
  */
-public class SimpleImporter extends FileImporterDescription {
+public class SimpleImporter extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

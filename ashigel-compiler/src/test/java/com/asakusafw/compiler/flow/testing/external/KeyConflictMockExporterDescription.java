@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.KeyConflict;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
  * Mock {@link FileExporterDescription} for {@link KeyConflict}.
  */
-public class KeyConflictMockExporterDescription extends FileExporterDescription {
+public class KeyConflictMockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

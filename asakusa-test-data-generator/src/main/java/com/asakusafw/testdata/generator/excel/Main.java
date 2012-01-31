@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import com.asakusafw.testdata.generator.TemplateGenerator;
 /**
  * Excel test template generator Command Line Interface.
  */
-public class Main {
+public final class Main {
 
     static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
@@ -80,6 +80,10 @@ public class Main {
         OPTIONS.addOption(OPT_ENCODING);
         OPTIONS.addOption(OPT_SOURCE_PATH);
         OPTIONS.addOption(OPT_PLUGIN);
+    }
+
+    private Main() {
+        return;
     }
 
     /**

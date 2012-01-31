@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.text.MessageFormat;
+
+import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する{@code byte}値。
@@ -132,18 +134,19 @@ public final class ByteOption extends ValueOption<ByteOption> {
     }
 
     @Override
-    public int compareTo(ByteOption o) {
+    public int compareTo(WritableRawComparable o) {
+        ByteOption other = (ByteOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        if (value == o.value) {
+        if (value == other.value) {
             return 0;
         }
-        if (value < o.value) {
+        if (value < other.value) {
             return -1;
         }
         return +1;
@@ -209,6 +212,16 @@ public final class ByteOption extends ValueOption<ByteOption> {
                     "Cannot restore a byte field ({0})",
                     "invalid length"));
         }
+    }
+
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
     }
 
     /**

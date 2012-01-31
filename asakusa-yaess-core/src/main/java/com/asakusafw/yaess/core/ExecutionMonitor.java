@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public interface ExecutionMonitor extends Closeable {
     /**
      * An empty implementation.
      */
-    public static final ExecutionMonitor NULL = new ExecutionMonitor() {
+    ExecutionMonitor NULL = new ExecutionMonitor() {
 
         @Override
         public void progressed(double deltaSize) {
@@ -78,7 +78,7 @@ public interface ExecutionMonitor extends Closeable {
      * @throws IOException if failed to notify this event
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public abstract void progressed(double deltaSize) throws IOException;
+    void progressed(double deltaSize) throws IOException;
 
     /**
      * Sets the progress of current task and notify this event to the corresponding receiver.
@@ -86,12 +86,12 @@ public interface ExecutionMonitor extends Closeable {
      * @throws IOException if failed to notify this event
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public abstract void setProgress(double workedSize) throws IOException;
+    void setProgress(double workedSize) throws IOException;
 
     /**
      * Ends the current task and notify this event to the corresponding receiver.
      * @throws IOException if failed to notify this event
      */
     @Override
-    public abstract void close() throws IOException;
+    void close() throws IOException;
 }

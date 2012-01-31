@@ -36,6 +36,7 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/main/resources/assemblies/dev-exclude-lib.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-directio-exclude-lib.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate-db-exclude-lib.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate-hc-exclude-lib.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate-exclude-lib.xml</descriptor>
@@ -51,6 +52,7 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/main/resources/assemblies/dev.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-directio.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate-db.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate-hc.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
@@ -153,6 +155,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.jdbc.version}</version>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>${commons.configuration.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>

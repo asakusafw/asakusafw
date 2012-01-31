@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,7 +207,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(command, env);
+        int exit = executor.execute(context, command, env);
         if (exit == 0) {
             return;
         }
@@ -248,7 +248,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(command, env);
+        int exit = executor.execute(context, command, env);
         if (exit == 0) {
             return;
         }

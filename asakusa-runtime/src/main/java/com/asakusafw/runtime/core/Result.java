@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ public interface Result<T> {
      * @throws Result.OutputException 追加に失敗した場合
      */
     void add(T result);
-
-    // TODO flush(); の追加
 
     /**
      * 演算子がデータの出力に失敗したことを表す例外。

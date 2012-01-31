@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
-import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
@@ -43,13 +43,13 @@ public class FlowPartDriverOutput<T> extends DriverOutputBase<T> implements Out<
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverOutput.class);
 
-    /** フロー記述ドライバ */
+    /** フロー記述ドライバ 。*/
     protected FlowDescriptionDriver descDriver;
 
     private final Out<T> out;
 
     /**
-     * コンストラクタ
+     * コンストラクタ。
      *
      * @param driverContext テストドライバコンテキスト。
      * @param descDriver フロー定義ドライバ。

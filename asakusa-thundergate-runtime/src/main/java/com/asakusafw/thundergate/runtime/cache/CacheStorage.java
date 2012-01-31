@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 
 /**
  * An abstraction of ThunderGate Cache Storage.
@@ -56,7 +58,7 @@ public class CacheStorage implements Closeable {
     /**
      * The file name prefix of cache contents.
      */
-    public static final String CONTENT_FILE_PREFIX = "part-";
+    public static final String CONTENT_FILE_PREFIX = TemporaryOutputFormat.DEFAULT_FILE_NAME + "-";
 
     /**
      * The file glob of cache contents.
@@ -81,8 +83,8 @@ public class CacheStorage implements Closeable {
         if (cacheDir == null) {
             throw new IllegalArgumentException("cacheDir must not be null"); //$NON-NLS-1$
         }
-        this.fs = FileSystem.get(cacheDir, configuration);
         this.cacheDir = new Path(cacheDir);
+        this.fs = this.cacheDir.getFileSystem(configuration);
     }
 
     /**
@@ -272,6 +274,6 @@ public class CacheStorage implements Closeable {
 
     @Override
     public void close() throws IOException {
-        fs.close();
+        return;
     }
 }

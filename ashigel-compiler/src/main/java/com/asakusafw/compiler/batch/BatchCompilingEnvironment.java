@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ public class BatchCompilingEnvironment {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchCompilingEnvironment.class);
 
-    private BatchCompilerConfiguration configuration;
+    private final BatchCompilerConfiguration configuration;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private boolean sawError;
+    private String firstError;
 
     /**
      * インスタンスを生成する。
@@ -59,8 +59,16 @@ public class BatchCompilingEnvironment {
             return this;
         }
         configuration.getWorkflows().initialize(this);
-        sawError = false;
+        clearError();
         return this;
+    }
+
+    /**
+     * Returns a previous error message.
+     * @return a previous error message, or {@code null} if not error
+     */
+    public String getErrorMessage() {
+        return firstError;
     }
 
     /**
@@ -68,7 +76,7 @@ public class BatchCompilingEnvironment {
      * @return ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}
      */
     public boolean hasError() {
-        return sawError;
+        return firstError != null;
     }
 
     /**
@@ -76,7 +84,7 @@ public class BatchCompilingEnvironment {
      * @see #hasError()
      */
     public void clearError() {
-        sawError = false;
+        firstError = null;
     }
 
     /**
@@ -132,7 +140,9 @@ public class BatchCompilingEnvironment {
             text = MessageFormat.format(format, arguments);
         }
         LOG.error(text);
-        sawError = true;
+        if (firstError == null) {
+            firstError = text;
+        }
     }
 
     /**

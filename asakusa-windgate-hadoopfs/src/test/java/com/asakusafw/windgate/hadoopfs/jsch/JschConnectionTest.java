@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
-import com.asakusafw.windgate.hadoopfs.jsch.JschConnection;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**

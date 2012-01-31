@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
         Desc desc = MockImporterPreparator.create();
         ClassLoader cl = register(ImporterPreparator.class, MockImporterPreparator.class);
         SpiImporterPreparator target = new SpiImporterPreparator(cl);
-        ModelOutput<String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
+        ModelOutput<? super String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
         source.write("Hello, world!");
         source.close();
 

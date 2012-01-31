@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,7 @@ public class Configuration {
     }
 
     /**
-     * Sets the output DMDL encoding
+     * Sets the output DMDL encoding.
      * @param encoding the encoding to set
      */
     public void setEncoding(Charset encoding) {

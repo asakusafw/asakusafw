@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.hadoop.io.SequenceFile.Reader;
-import org.apache.hadoop.io.SequenceFile.Writer;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.SequenceFile;
 
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.testtools.db.DbUtils;
 import com.asakusafw.testtools.excel.ExcelUtils;
 import com.asakusafw.testtools.inspect.Cause;
@@ -177,8 +181,10 @@ public class TestUtils {
      * テストデータをシーケンスファイルに書き込みます。
      * @param tablename 対象テストデータのテーブル名
      * @param writer 書き込み先
+     * @deprecated Use {@link #storeToTemporary(String, Configuration, Path)} instead
      */
-    public void storeToSequenceFile(String tablename, Writer writer) {
+    @Deprecated
+    public void storeToSequenceFile(String tablename, SequenceFile.Writer writer) {
         TestDataHolder dataHolder = dataHolderMap.get(tablename);
         try {
             dataHolder.store(writer);
@@ -191,13 +197,75 @@ public class TestUtils {
      * 実行結果をシーケンスファイルから取り込みます。
      * @param tablename 対象実行データのテーブル名
      * @param reader 取り込み元
+     * @deprecated Use {@link #loadFromTemporary(String, Configuration, Path)} instead
      */
-    public void loadFromSequenceFile(String tablename, Reader reader) {
+    @Deprecated
+    public void loadFromSequenceFile(String tablename, SequenceFile.Reader reader) {
         TestDataHolder dataHolder = dataHolderMap.get(tablename);
         try {
             dataHolder.load(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Loads dataset from the temporary area.
+     * @param tableName corresponded table name
+     * @param conf current configuration
+     * @param path source path
+     * @throws IOException if failed to load dataset
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    public void loadFromTemporary(String tableName, Configuration conf, Path path) throws IOException {
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+        }
+        TestDataHolder dataHolder = dataHolderMap.get(tableName);
+        ModelInput<?> input = TemporaryStorage.openInput(conf, dataHolder.getModelClass(), path);
+        try {
+            dataHolder.load(input);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            input.close();
+        }
+    }
+
+    /**
+     * Stores dataset into the temporary area.
+     * @param tableName corresponded table name
+     * @param conf current configuration
+     * @param path source path
+     * @throws IOException if failed to store dataset
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    public void storeToTemporary(String tableName, Configuration conf, Path path) throws IOException {
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+        }
+        TestDataHolder dataHolder = dataHolderMap.get(tableName);
+        ModelOutput<?> output = TemporaryStorage.openOutput(conf, dataHolder.getModelClass(), path);
+        try {
+            dataHolder.store(output);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            output.close();
         }
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +39,13 @@ import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.epilogue.parallel.ParallelSortClientEmitter;
-import com.asakusafw.compiler.flow.epilogue.parallel.ResolvedSlot;
-import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
-import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -142,15 +142,10 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         return valid;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return SequenceFileInputFormat.class;
-    }
-
-    @Override
-    public Set<Location> getInputLocations(InputDescription description) {
-        return Collections.singleton(getInputLocation(description));
+    public SourceInfo getInputInfo(InputDescription description) {
+        Set<Location> locations = Collections.singleton(getInputLocation(description));
+        return new SourceInfo(locations, TemporaryInputFormat.class);
     }
 
     @Override
@@ -183,7 +178,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Slot toSlot(Output output) {
         List<Slot.Input> inputs = new ArrayList<Slot.Input>();
-        for (OutputSource source : output.getSources()) {
+        for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
                 inputs.add(new Slot.Input(location, format));
@@ -195,7 +190,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 output.getDescription().getDataType(),
                 Collections.<String>emptyList(),
                 inputs,
-                SequenceFileOutputFormat.class);
+                TemporaryOutputFormat.class);
     }
 
     private Location getInputLocation(InputDescription description) {

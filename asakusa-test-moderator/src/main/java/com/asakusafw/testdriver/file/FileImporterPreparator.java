@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import com.asakusafw.testdriver.core.BaseImporterPreparator;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.ImporterPreparator;
 import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
@@ -74,18 +75,13 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
-        try {
-            for (String path : description.getPaths()) {
-                String resolved = variables.parse(path, false);
-                Path target = fs.makeQualified(new Path(resolved));
-                LOG.debug("ファイルを削除しています: {}", target);
-                boolean succeed = fs.delete(target, true);
-                LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
-            }
-        } finally {
-            fs.close();
+        for (String path : description.getPaths()) {
+            String resolved = variables.parse(path, false);
+            Path target = fs.makeQualified(new Path(resolved));
+            LOG.debug("ファイルを削除しています: {}", target);
+            boolean succeed = fs.delete(target, true);
+            LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
         }
-        return;
     }
 
     @Override
@@ -109,7 +105,7 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
             };
         }
         VariableTable variables = createVariables(context);
-        String destination = path.iterator().next();
+        String destination = path.iterator().next().replace('*', '_');
         String resolved = variables.parse(destination, false);
         Configuration conf = configurations.newInstance();
         FileOutputFormat output = getOpposite(conf, description.getInputFormat());
@@ -128,7 +124,7 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
             FileImporterDescription description) throws IOException {
         if (definition.getModelClass() != description.getModelType()) {
             throw new IOException(MessageFormat.format(
-                    "型が一致しません: モデルの型={0}, エクスポータの型={1} ({2})",
+                    "型が一致しません: モデルの型={0}, インポータの型={1} ({2})",
                     definition.getModelClass().getName(),
                     description.getModelType().getName(),
                     description));

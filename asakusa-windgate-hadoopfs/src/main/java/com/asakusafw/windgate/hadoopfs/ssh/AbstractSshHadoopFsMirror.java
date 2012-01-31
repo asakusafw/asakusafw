@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableFactories;
+import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -44,10 +43,9 @@ import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileDrainDriver;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileProvider;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileSourceDriver;
-import com.asakusafw.windgate.hadoopfs.sequencefile.SequenceFileUtil;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelInputProvider;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelInputSourceDriver;
+import com.asakusafw.windgate.hadoopfs.temporary.ModelOutputDrainDriver;
 
 /**
  * An abstract implementation of {@link ResourceMirror} using Hadoop File System via SSH connection.
@@ -110,7 +108,6 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> SourceDriver<T> createSource(final ProcessScript<T> script) throws IOException {
         if (script == null) {
@@ -120,17 +117,16 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 getName(),
                 script.getName());
         final List<String> path = getPath(script, DriverScript.Kind.SOURCE);
-        NullWritable key = NullWritable.get();
-        Writable value = newDataModel(script);
+        T value = newDataModel(script);
         final SshConnection connection = openGet(path);
         boolean succeeded = false;
         try {
             InputStream output = connection.openStandardOutput();
             connection.connect();
             FileList.Reader fileList = FileList.createReader(output);
-            SequenceFileProvider provider = new FileListSequenceFileProvider(configuration, fileList);
-            SequenceFileSourceDriver<Writable, Writable> result =
-                new SequenceFileSourceDriver<Writable, Writable>(provider, key, value) {
+            ModelInputProvider<T> provider = new FileListModelInputProvider<T>(
+                    configuration, fileList, script.getDataClass());
+            ModelInputSourceDriver<T> result = new ModelInputSourceDriver<T>(provider, value) {
                 @Override
                 public void close() throws IOException {
                     try {
@@ -169,7 +165,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 }
             };
             succeeded = true;
-            return (SourceDriver<T>) result;
+            return result;
         } finally {
             if (succeeded == false) {
                 try {
@@ -184,7 +180,6 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> DrainDriver<T> createDrain(final ProcessScript<T> script) throws IOException {
         if (script == null) {
@@ -200,14 +195,12 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             OutputStream input = connection.openStandardInput();
             connection.connect();
             final FileList.Writer fileList = FileList.createWriter(input);
-            SequenceFile.Writer writer = SequenceFileUtil.openWriter(
-                    fileList.openNext(FileList.createFileStatus(new Path(path.get(0)))),
+            ModelOutput<T> output = TemporaryStorage.openOutput(
                     configuration,
-                    NullWritable.class,
                     script.getDataClass(),
+                    fileList.openNext(FileList.createFileStatus(new Path(path.get(0)))),
                     profile.getCompressionCodec());
-            SequenceFileDrainDriver<Writable, Writable> result =
-                new SequenceFileDrainDriver<Writable, Writable>(writer, NullWritable.get()) {
+            ModelOutputDrainDriver<T> result = new ModelOutputDrainDriver<T>(output) {
                 @Override
                 public void close() throws IOException {
                     try {
@@ -247,7 +240,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                 }
             };
             succeeded = true;
-            return (DrainDriver<T>) result;
+            return result;
         } finally {
             if (succeeded == false) {
                 try {
@@ -317,7 +310,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     proc.getName(),
                     kind.prefix,
                     FILE.key(),
-                    pathString);
+                    null);
             throw new IOException(MessageFormat.format(
                     "Process \"{1}\" must declare \"{3}\": (resource={0}, kind={2})",
                     getName(),
@@ -378,31 +371,16 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
         return results;
     }
 
-    private Writable newDataModel(ProcessScript<?> script) throws IOException {
+    private <T> T newDataModel(ProcessScript<T> script) throws IOException {
         assert script != null;
-        Class<?> dataClass = script.getDataClass();
+        Class<T> dataClass = script.getDataClass();
         LOG.debug("Creating data model object: {} (resource={}, process={})", new Object[] {
                 dataClass.getName(),
                 getName(),
                 script.getName(),
         });
-        if (Writable.class.isAssignableFrom(dataClass) == false) {
-            WGLOG.error("E11002",
-                    getName(),
-                    script.getName(),
-                    FILE.key(),
-                    dataClass.getName());
-            throw new IOException(MessageFormat.format(
-                    "Data model class {2} must be a subtype of {3} (resource={0}, process={1})",
-                    getName(),
-                    script.getName(),
-                    dataClass.getName(),
-                    Writable.class.getName()));
-        }
         try {
-            return WritableFactories.newInstance(
-                    dataClass.asSubclass(Writable.class),
-                    configuration);
+            return ReflectionUtils.newInstance(dataClass, configuration);
         } catch (Exception e) {
             WGLOG.error("E11002",
                     getName(),

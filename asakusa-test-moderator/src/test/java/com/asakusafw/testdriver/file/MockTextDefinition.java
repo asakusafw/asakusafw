@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import com.asakusafw.testdriver.core.PropertyType;
 
 /**
  * Mock data model definition for {@link Text} type.
- * @since 0.2.0
  */
 public class MockTextDefinition implements DataModelDefinition<Text> {
 

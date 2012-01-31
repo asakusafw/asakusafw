@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.io.WritableComparator;
+
+import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する{@code int}値。
@@ -172,18 +174,19 @@ public final class IntOption extends ValueOption<IntOption> {
     }
 
     @Override
-    public int compareTo(IntOption o) {
+    public int compareTo(WritableRawComparable o) {
+        IntOption other = (IntOption) o;
         // nullは他のどのような値よりも小さい
-        if (nullValue | o.nullValue) {
-            if (nullValue & o.nullValue) {
+        if (nullValue | other.nullValue) {
+            if (nullValue & other.nullValue) {
                 return 0;
             }
             return nullValue ? -1 : +1;
         }
-        if (value == o.value) {
+        if (value == other.value) {
             return 0;
         }
-        if (value < o.value) {
+        if (value < other.value) {
             return -1;
         }
         return +1;
@@ -239,6 +242,16 @@ public final class IntOption extends ValueOption<IntOption> {
         }
     }
 
+    @Override
+    public int getSizeInBytes(byte[] buf, int offset) throws IOException {
+        return getBytesLength(buf, offset, buf.length - offset);
+    }
+
+    @Override
+    public int compareInBytes(byte[] b1, int o1, byte[] b2, int o2) throws IOException {
+        return compareBytes(b1, o1, b1.length - o1, b2, o2, b2.length - o2);
+    }
+
     /**
      * このクラスの直列化された形式から、占有しているバイト長を返す。
      * @param bytes 対象のバイト配列
@@ -263,6 +276,8 @@ public final class IntOption extends ValueOption<IntOption> {
     public static int compareBytes(
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
-        return WritableComparator.compareBytes(b1, s1, l1, b2, s2, l2);
+        int len1 = getBytesLength(b1, s1, l1);
+        int len2 = getBytesLength(b2, s2, l2);
+        return WritableComparator.compareBytes(b1, s1, len1, b2, s2, len2);
     }
 }

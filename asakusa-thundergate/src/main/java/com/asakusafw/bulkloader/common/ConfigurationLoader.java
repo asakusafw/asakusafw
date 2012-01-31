@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ public final class ConfigurationLoader {
                     Constants.PROP_KEY_WORKINGDIR_USE,
                     Constants.PROP_DEFAULT_WORKINGDIR_USE);
         }
-        // SequenceFileファイルの圧縮有無
+        // 出力ファイルの圧縮有無
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE))) {
             prop.setProperty(
                     Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE,

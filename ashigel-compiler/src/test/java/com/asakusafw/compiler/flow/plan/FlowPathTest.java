@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
-import com.asakusafw.compiler.flow.plan.FlowBlock;
-import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
-import com.asakusafw.compiler.flow.plan.FlowPath;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;

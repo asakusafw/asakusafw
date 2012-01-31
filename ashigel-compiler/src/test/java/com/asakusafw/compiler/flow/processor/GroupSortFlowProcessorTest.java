@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-
 import org.apache.hadoop.io.Writable;
 import org.junit.Assume;
 import org.junit.Test;
@@ -29,8 +28,8 @@ import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.processor.flow.GroupSortFlowMax;
 import com.asakusafw.compiler.flow.processor.flow.GroupSortFlowMin;
 import com.asakusafw.compiler.flow.processor.flow.GroupSortFlowWithParameter;
-import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
+import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.testing.model.Ex1;

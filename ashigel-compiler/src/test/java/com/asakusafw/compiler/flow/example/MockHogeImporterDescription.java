@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 
 /**
  * Mock {@link ImporterDescription} for {@link MockHoge}.
  */
-public class MockHogeImporterDescription extends FileImporterDescription {
+public class MockHogeImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

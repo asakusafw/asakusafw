@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -37,7 +38,6 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
 
 /**
  * Open output and finally deployes result data.
- * @since 0.2.0
  */
 final class FileDeployer {
 
@@ -57,6 +57,16 @@ final class FileDeployer {
         this.configuration = configuration;
     }
 
+    /**
+     * Opens output for the specified {@link OutputFormat}.
+     * @param <V> value type
+     * @param definition target model definition
+     * @param destination output location
+     * @param output format
+     * @return the opened {@link ModelOutput}
+     * @throws IOException if failed to open the target output
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
     public <V> ModelOutput<V> openOutput(
             DataModelDefinition<V> definition,
             final String destination,
@@ -75,7 +85,7 @@ final class FileDeployer {
         URI uri = temporaryDir.toURI();
         FileOutputFormat.setOutputPath(job, new Path(uri));
         TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
-        OutputFormatDriver<V> result = new OutputFormatDriver<V>(context, output, NullWritable.get()) {
+        FileOutputFormatDriver<V> result = new FileOutputFormatDriver<V>(context, output, NullWritable.get()) {
             @Override
             public void close() throws IOException {
                 super.close();
@@ -110,13 +120,9 @@ final class FileDeployer {
     private void copy(File result, String destination) throws IOException {
         assert result != null;
         assert destination != null;
-        FileSystem fs = FileSystem.get(configuration);
-        try {
-            Path target = new Path(destination);
-            fs.copyFromLocalFile(new Path(result.toURI()), target);
-        } finally {
-            fs.close();
-        }
+        Path target = new Path(destination);
+        FileSystem fs = target.getFileSystem(configuration);
+        fs.copyFromLocalFile(new Path(result.toURI()), target);
     }
 
     private void delete(File target) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,10 @@ public class WorkbookGenerator implements TemplateGenerator {
                 LOG.debug("Building rule sheet: {}.{}", model.getName(), sheet.getName());
                 builder.addRule(sheet.getName());
                 break;
+            default:
+                throw new AssertionError(MessageFormat.format(
+                        "Unknown sheet format: {0}",
+                        sheet));
             }
         }
 

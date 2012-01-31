@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.io.ZipEntryInputStream;
+import com.asakusafw.runtime.io.util.ZipEntryInputStream;
 
 /**
  * ファイルシステム上のZIPアーカイブをリソースのリポジトリとする。

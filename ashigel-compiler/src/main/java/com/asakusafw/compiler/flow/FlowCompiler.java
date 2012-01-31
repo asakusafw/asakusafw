@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class FlowCompiler {
 
-    private FlowCompilerConfiguration configuration;
+    private final FlowCompilerConfiguration configuration;
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -158,7 +158,9 @@ public class FlowCompiler {
         assert graph != null;
         ExternalIoAnalyzer analyzer = new ExternalIoAnalyzer(environment);
         if (analyzer.validate(graph) == false) {
-            throw new IOException("フローの入出力が正しくないため、コンパイルを中止します");
+            throw new IOException(MessageFormat.format(
+                    "フローの入出力が正しくないため、コンパイルを中止します ({0})",
+                    environment.getErrorMessage()));
         }
     }
 

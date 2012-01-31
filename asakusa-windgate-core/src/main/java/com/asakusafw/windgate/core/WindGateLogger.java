@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.asakusafw.windgate.core;
 
 import java.text.MessageFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public abstract class WindGateLogger {
     /**
      * Creates a new instance.
      * @param target target classes
-     * @param componentName
+     * @param componentName the target component name
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public WindGateLogger(Class<?> target, String componentName) {

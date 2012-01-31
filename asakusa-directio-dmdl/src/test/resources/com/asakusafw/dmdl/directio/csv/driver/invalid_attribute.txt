@@ -1,0 +1,4 @@
+@directio.csv(unknown = "")
+invalid_attribute = {
+    value : TEXT;
+};

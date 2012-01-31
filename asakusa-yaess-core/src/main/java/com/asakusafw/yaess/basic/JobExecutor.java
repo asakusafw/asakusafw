@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public interface JobExecutor {
      * @param monitor an execution monitor
      * @param context current context
      * @param job target job
-     * @param doneQueue
+     * @param doneQueue the queue where the done tasks are put
      * @return an execution object related to the target job
      * @throws InterruptedException if submittion is interrupted
      * @throws IOException if failed to submit the target job

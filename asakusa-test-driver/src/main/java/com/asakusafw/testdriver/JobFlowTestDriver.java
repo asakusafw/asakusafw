@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+
 import com.asakusafw.compiler.flow.JobFlowClass;
 import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.compiler.flow.Location;
@@ -35,6 +37,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * ジョブフロー用のテストドライバクラス。
  */
+@SuppressWarnings("deprecation")
 public class JobFlowTestDriver extends TestDriverTestToolsBase {
 
     /** バッチID。 */

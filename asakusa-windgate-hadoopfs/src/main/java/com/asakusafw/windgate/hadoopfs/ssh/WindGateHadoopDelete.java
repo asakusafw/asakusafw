@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,21 +108,17 @@ public class WindGateHadoopDelete {
         assert paths != null;
         assert drain != null;
         FileSystem fs = FileSystem.get(conf);
-        try {
-            for (Path path : paths) {
-                WGLOG.info("I22003",
-                        fs.getUri(),
-                        path);
-                FileStatus[] results = fs.globStatus(path);
-                if (results == null) {
-                    continue;
-                }
-                for (FileStatus status : results) {
-                    doDelete(fs, status, drain);
-                }
+        for (Path path : paths) {
+            WGLOG.info("I22003",
+                    fs.getUri(),
+                    path);
+            FileStatus[] results = fs.globStatus(path);
+            if (results == null) {
+                continue;
             }
-        } finally {
-            fs.close();
+            for (FileStatus status : results) {
+                doDelete(fs, status, drain);
+            }
         }
     }
 

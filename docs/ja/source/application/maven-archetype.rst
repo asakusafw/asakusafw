@@ -34,6 +34,9 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     * - ``asakusa-archetype-batchapp``
       - 0.1.0
       - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ [#]_ 。
+    * - ``asakusa-archetype-directio``
+      - 0.2.5
+      - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ [#]_ 。
     * - ``asakusa-archetype-thundergate``
       - 0.2.4
       - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
@@ -42,6 +45,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
 ..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
+..  [#] Direct I/O はバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
+
 
 ``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
 
@@ -65,6 +70,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-) 
     2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-) 
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-) 
+    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 [<-使用するアーキタイプを選択]
 
     ...
@@ -73,7 +79,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     2: 0.2.2
     3: 0.2.3
     4: 0.2.4
-    Choose a number: 4: 4 [使用するAsakusa Frameworkのバージョンを選択]
+    5: 0.2.5
+    Choose a number: 5: 5 [使用するAsakusa Frameworkのバージョンを選択]
 
     ...
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
@@ -126,6 +133,19 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
       - クリーニングツールを運用環境に展開するためのアーカイブ。
 
+
+..  list-table:: アーキタイプ [asakusa-atchetype-directio] が作成するインストールアーカイブ一覧
+    :widths: 3 7
+    :header-rows: 1
+    
+    * - ファイル名
+      - 説明
+    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
+      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
+    * - ``asakusafw-${asakusafw-version}-directio.tar.gz``
+      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。
+    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
+      - クリーニングツールを運用環境に展開するためのアーカイブ。
 
 ``antrun:run`` 開発環境用のAsakusa Frameworkをインストール
 ----------------------------------------------------------
@@ -214,7 +234,7 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
                 `-- ${package}
                     `-- modelgen
                        `-- dmdl
-                       |  `-- csv   : WindGate/CSVを使用する場合に生成されるジョブフロークラス (windgateのみ)
+                       |  `-- csv   : CSV形式を使用する場合に生成されるジョブフロークラス (directio/windgateのみ)
                        |  `-- jdbc  : WindGate/JDBCを使用する場合に生成されるジョブフロークラス (windgateのみ)
                        |  `-- io    : DMDLを元に作成されるデータモデルの入出力ドライバクラス
                        |  `-- model : DMDLを元に作成されるデータモデルクラス
@@ -303,7 +323,10 @@ DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
-``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては  :doc:`../administration/deployment-with-windgate` や :doc:`../administration/deployment-with-thundergate` を参照して下さい。
+``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
+* :doc:`../administration/deployment-with-windgate`
+* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-with-directio`
 
 ..  warning::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。
@@ -332,6 +355,9 @@ Eclipseを使ったアプリケーションの開発
 
 ``eclipse:add-maven-repo`` クラスパス変数M2_REPOを設定
 ------------------------------------------------------
+..  attention::
+    この手順( ``eclipse:add-maven-repo`` の実行)はEclipseにm2eプラグインが入っている場合は不要です。例えば Eclipse 3.7(Indigo) 以降のEclipse IDE for Java Developers にはm2eがあらかじめインストールされているため、この手順は不要となります。
+
 Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。
 
 ワークスペースをデフォルト値( ``$HOME/workspce`` )に指定して起動した場合は、以下のコマンドを実行します。
@@ -359,6 +385,30 @@ EclipseからプロジェクトをImportするには、Eclipseのメニューか
 
     mvn clean compile eclipse:eclipse
 
+Mavenプロジェクトへの変換(m2eプラグインの利用)
+----------------------------------------------
+m2eプラグインを使ってアプリケーション用プロジェクトをMavenプロジェクトに変換すると、Eclipse上からMavenを実行することが可能になるなど、いくつか便利な機能を使用できます。
+
+Mavenプロジェクトへの変換は任意です。変換を行う場合は以下の手順に従ってください。
+
+m2e buildhelper connector のインストール
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+m2eの拡張機能であるm2e buildhelper connectorをインストールします。
+
+1. Eclipseのメニューから [Window] -> [Preferences] -> [Maven] -> [Discovery] を選択し、ダイアログに表示される [Open Dialog] ボタンを押下します。
+2. install n2e connectors ダイアログが表示されるので、このなかから「buildhelper」のチェックをONにして [Finish] ボタンを押下します。
+3. ウィザードに従ってconnectorをインストールします。
+    1. Install ダイアログでは そのまま [Next>] ボタンを押下します。
+    2. Install Details ダイアログでは そのまま [Next>] ボタンを押下します。
+    3. Review Licenses ダイアログでは [I accept...] を選択して [Finish] ボタンを押下します。
+    4. Security Warinig ダイアログが表示された場合、そのまま [OK] ボタンを押下します。
+    5. Software Updates ダイアログではEclipseの再起動を促されるので、 [Yes] ボタンを押下してEclipseを再起動します。
+
+Mavenプロジェクトへの変換
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Eclipseのパッケージエクスプローラーからアプリケーション用プロジェクトを右クリックして [Configure] -> [Convert to Maven Project] を選択します。
+
+これでMavenプロジェクトへの変換が行われました。アプリケーション用プロジェクトに対してMavenを実行する場合は、アプリケーション用プロジェクトを右クリックして [Run As] を選択するとサブメニューに [Maven build...] など、いくつかのMaven実行用メニューが表示されるのでこれを選択してください。
 
 アプリケーション用依存ライブラリの追加
 ======================================

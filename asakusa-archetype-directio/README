@@ -1,0 +1,6 @@
+Asakusa Framework Maven Archetype for Direct I/O
+
+Asakusa Framework上でDirect I/Oと連携した
+バッチアプリケーションを開発するための
+プロジェクトを作成するアーキタイプ。
+

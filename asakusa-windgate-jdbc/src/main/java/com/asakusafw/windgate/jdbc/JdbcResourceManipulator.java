@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,11 +90,12 @@ public class JdbcResourceManipulator extends ResourceManipulator {
     private void truncate(JdbcScript<?> jdbc) throws IOException {
         assert jdbc != null;
         Connection conn = profile.openConnection();
+        Statement statement = null;
         try {
             LOG.info("Truncating table: {} (for {})",
                     jdbc.getTableName(),
                     jdbc.getName());
-            Statement statement = conn.createStatement();
+            statement = conn.createStatement();
             statement.execute(profile.getTruncateStatement(jdbc.getTableName()));
             conn.commit();
         } catch (SQLException e) {
@@ -103,6 +104,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
                     jdbc.getName(),
                     jdbc.getTableName()), e);
         } finally {
+            close(statement);
             close(conn);
         }
     }
@@ -182,6 +184,18 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         } finally {
             if (succeed == false) {
                 close(conn);
+            }
+        }
+    }
+
+    private void close(Statement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to close JDBC statement: {0}",
+                        getName()), e);
             }
         }
     }

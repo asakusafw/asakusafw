@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 package com.asakusafw.runtime.flow;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
@@ -29,14 +31,20 @@ import com.asakusafw.runtime.core.Result;
 /**
  * 結果を出力する。
  * @param <T> 結果の型
+ * @since 0.1.0
+ * @since 0.2.5
  */
-public class ResultOutput<T extends Writable> implements Result<T> {
+public class ResultOutput<T> implements Result<T> {
 
     static final Log LOG = LogFactory.getLog(ResultOutput.class);
 
     private final TaskAttemptContext context;
 
     private final RecordWriter<Object, Object> writer;
+
+    private final List<Counter> counters;
+
+    private long records;
 
     /**
      * インスタンスを生成する。
@@ -46,24 +54,47 @@ public class ResultOutput<T extends Writable> implements Result<T> {
      * @throws InterruptedException 初期化に失敗した場合
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     public ResultOutput(
             TaskAttemptContext context,
             RecordWriter writer) throws IOException, InterruptedException {
+        this(context, writer, Collections.<Counter>emptyList());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param context current context
+     * @param writer target writer
+     * @param counters record counters
+     * @throws IOException if initialization failed by I/O exception
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public ResultOutput(
+            TaskAttemptContext context,
+            RecordWriter writer,
+            List<Counter> counters) throws IOException, InterruptedException {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         if (writer == null) {
             throw new IllegalArgumentException("writer must not be null"); //$NON-NLS-1$
         }
+        if (counters == null) {
+            throw new IllegalArgumentException("counters must not be null"); //$NON-NLS-1$
+        }
         this.context = context;
         this.writer = writer;
+        this.counters = counters;
     }
 
     @Override
     public void add(T result) {
         try {
             writer.write(getKey(result), result);
+            records++;
         } catch (Exception e) {
             throw new Result.OutputException(e);
         }
@@ -85,6 +116,9 @@ public class ResultOutput<T extends Writable> implements Result<T> {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public void close() throws IOException, InterruptedException {
+        for (Counter counter : counters) {
+            counter.increment(records);
+        }
         writer.close(context);
     }
 }

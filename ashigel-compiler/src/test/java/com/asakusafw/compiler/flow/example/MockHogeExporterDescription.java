@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 package com.asakusafw.compiler.flow.example;
 
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 
 /**
  * Mock {@link ExporterDescription} for {@link MockHoge}.
  */
-public class MockHogeExporterDescription extends FileExporterDescription {
+public class MockHogeExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

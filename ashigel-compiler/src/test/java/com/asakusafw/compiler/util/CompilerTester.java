@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -73,7 +73,7 @@ public class CompilerTester implements MethodRule {
 
     String testName;
 
-    private FlowCompilerOptions options;
+    private final FlowCompilerOptions options;
 
     /**
      * インスタンスを生成する。
@@ -291,7 +291,7 @@ public class CompilerTester implements MethodRule {
 
     private List<File> buildClassPath(Class<?>... libraryClasses) {
         List<File> classPath = new ArrayList<File>();
-        classPath.add(findClassPathFromClass(AbstractStageClient.class));
+        classPath.add(findClassPathFromClass(StageConstants.class));
         for (Class<?> libraryClass : libraryClasses) {
             classPath.add(findClassPathFromClass(libraryClass));
         }
@@ -421,7 +421,7 @@ public class CompilerTester implements MethodRule {
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> type,
             Import importer) throws IOException {
-        Iterator<Location> iter = importer.getLocations().iterator();
+        Iterator<Location> iter = importer.getInputInfo().getLocations().iterator();
         assert iter.hasNext();
         Location location = iter.next();
         return hadoop.openOutput(type, location);
@@ -573,15 +573,15 @@ public class CompilerTester implements MethodRule {
      */
     public class TestInput<T extends Writable> implements Closeable {
 
-        private Class<T> type;
+        private final Class<T> type;
 
-        private ModelOutput<T> output;
+        private final ModelOutput<T> output;
 
-        private String name;
+        private final String name;
 
-        private Location path;
+        private final Location path;
 
-        private DataSize dataSize;
+        private final DataSize dataSize;
 
         TestInput(Class<T> type, String name, Location path, DataSize dataSize) throws IOException {
             assert type != null;
@@ -628,11 +628,11 @@ public class CompilerTester implements MethodRule {
      */
     public class TestOutput<T extends Writable> {
 
-        private Class<T> type;
+        private final Class<T> type;
 
-        private String name;
+        private final String name;
 
-        private Location pathPrefix;
+        private final Location pathPrefix;
 
         TestOutput(Class<T> type, String name, Location pathPrefix) {
             assert type != null;

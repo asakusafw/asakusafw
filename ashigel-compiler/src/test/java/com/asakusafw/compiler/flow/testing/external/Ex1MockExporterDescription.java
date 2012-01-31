@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.flow.testing.external;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 
 /**
  * {@link Ex1}のモックエクスポーター記述。
  */
-public class Ex1MockExporterDescription extends FileExporterDescription {
+public class Ex1MockExporterDescription extends TemporaryOutputDescription {
 
     @Override
     public Class<?> getModelType() {

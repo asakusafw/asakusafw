@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,17 @@ import java.util.regex.Pattern;
 import org.apache.hadoop.mapreduce.InputFormat;
 
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.flow.epilogue.parallel.ParallelSortClientEmitter;
-import com.asakusafw.compiler.flow.epilogue.parallel.ResolvedSlot;
-import com.asakusafw.compiler.flow.epilogue.parallel.Slot;
-import com.asakusafw.compiler.flow.epilogue.parallel.SlotResolver;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
+import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
+import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
+import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
@@ -45,12 +50,21 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
  * ファイルの入出力を処理する。
+ * @since 0.1.0
+ * @version 0.2.5
  */
 public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final Pattern VALID_OUTPUT_NAME = Pattern.compile("[0-9A-Za-z]+");
 
     private static final String MODULE_NAME = "fileio";
+
+    /**
+     * The option name for {@link FileExporterDescription} is enabled.
+     */
+    public static final String OPTION_EXPORTER_ENABLED = "MAPREDUCE-370";
+
+    private static final GenericOptionValue DEFAULT_EXPORTER_ENABLED = GenericOptionValue.AUTO;
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -64,9 +78,37 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
+        boolean valid = validateOutputs(outputs);
+        return valid;
+    }
+
+    private boolean validateOutputs(List<OutputDescription> outputs) {
+        assert outputs != null;
         boolean valid = true;
+        GenericOptionValue exporterEnabled = getExporterEnabled();
+        if (exporterEnabled == null) {
+            valid = false;
+            exporterEnabled = DEFAULT_EXPORTER_ENABLED;
+        }
+        boolean mr370applied = checkClassExists("org.apache.hadoop.mapreduce.lib.output.MultipleOutputs");
         for (OutputDescription output : outputs) {
             FileExporterDescription desc = extract(output);
+            if (exporterEnabled == GenericOptionValue.DISABLED) {
+                valid = false;
+                getEnvironment().error(
+                        "出力{0}を利用するにはコンパイルオプション\"{1}={2}\"の指定が必要です",
+                        desc.getClass().getName(),
+                        getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
+                        GenericOptionValue.ENABLED.getSymbol());
+            } else if (mr370applied == false && exporterEnabled == GenericOptionValue.AUTO) {
+                valid = false;
+                getEnvironment().error(
+                        "現在のディストリビューションは{1}に対応していません。" +
+                        "別のディストリビューションを利用するか、{2}に置き換えてください (出力{0})。",
+                        desc.getClass().getName(),
+                        FileExporterDescription.class.getSimpleName(),
+                        "DirectFileOutputDescription (directio)");
+            }
             String pathPrefix = desc.getPathPrefix();
             if (pathPrefix == null) {
                 valid = false;
@@ -100,21 +142,107 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         }
         return valid;
     }
+    private boolean checkClassExists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class<? extends InputFormat> getInputFormatType(InputDescription description) {
-        return extract(description).getInputFormat();
+    private GenericOptionValue getExporterEnabled() {
+        String attribute = getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED);
+        if (attribute == null) {
+            attribute = DEFAULT_EXPORTER_ENABLED.getSymbol();
+        }
+        GenericOptionValue value = GenericOptionValue.fromSymbol(attribute);
+        if (value == null) {
+            getEnvironment().error(
+                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
+                    getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
+                    attribute,
+                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
+            return null;
+        } else {
+            return value;
+        }
     }
 
     @Override
-    public Set<Location> getInputLocations(InputDescription description) {
+    public SourceInfo getInputInfo(InputDescription description) {
         FileImporterDescription desc = extract(description);
-        Set<Location> results = new HashSet<Location>();
-        for (String path : desc.getPaths()) {
-            results.add(Location.fromPath(path, '/'));
+        if (isCacheTarget(desc)) {
+            String outputName = getProcessedInputName(description);
+            Location location = getEnvironment().getPrologueLocation(MODULE_NAME).append(outputName).asPrefix();
+            return new SourceInfo(Collections.singleton(location), TemporaryInputFormat.class);
+        } else {
+            return getOrifinalInputInfo(desc);
         }
-        return results;
+    }
+
+    private SourceInfo getOrifinalInputInfo(FileImporterDescription desc) {
+        assert desc != null;
+        Set<Location> locations = new HashSet<Location>();
+        for (String path : desc.getPaths()) {
+            locations.add(Location.fromPath(path, '/'));
+        }
+        return new SourceInfo(locations, desc.getInputFormat());
+    }
+
+    private boolean isCacheTarget(ImporterDescription desc) {
+        assert desc != null;
+        switch (desc.getDataSize()) {
+        case TINY:
+            return getEnvironment().getOptions().isHashJoinForTiny();
+        case SMALL:
+            return getEnvironment().getOptions().isHashJoinForSmall();
+        default:
+            return false;
+        }
+    }
+
+    private String getProcessedInputName(InputDescription description) {
+        assert description != null;
+        StringBuilder buf = new StringBuilder();
+        for (char c : description.getName().toCharArray()) {
+            // 0 as escape character
+            if ('1' <= c && c <= '9' || 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z') {
+                buf.append(c);
+            } else if (c <= 0xff) {
+                buf.append('0');
+                buf.append(String.format("%02x", (int) c));
+            } else {
+                buf.append("0u");
+                buf.append(String.format("%04x", (int) c));
+            }
+        }
+        return buf.toString();
+    }
+
+    @Override
+    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+        List<CopyDescription> targets = new ArrayList<CopyDescription>();
+        for (Input input : context.getInputs()) {
+            InputDescription description = input.getDescription();
+            FileImporterDescription desc = extract(description);
+            if (isCacheTarget(desc)) {
+                targets.add(new CopyDescription(
+                        getProcessedInputName(description),
+                        getEnvironment().getDataClasses().load(description.getDataType()),
+                        getOrifinalInputInfo(desc),
+                        TemporaryOutputFormat.class));
+            }
+        }
+        if (targets.isEmpty()) {
+            return Collections.emptyList();
+        }
+        CopierClientEmitter emitter = new CopierClientEmitter(getEnvironment());
+        CompiledStage stage = emitter.emitPrologue(
+                MODULE_NAME,
+                targets,
+                getEnvironment().getPrologueLocation(MODULE_NAME));
+        return Collections.singletonList(stage);
     }
 
     @Override
@@ -129,10 +257,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
             }
             ParallelSortClientEmitter emitter = new ParallelSortClientEmitter(getEnvironment());
             String moduleId = generateModuleName(saw, entry.getKey());
-            CompiledStage stage = emitter.emit(
-                    moduleId,
-                    resolved,
-                    entry.getKey());
+            CompiledStage stage = emitter.emit(moduleId, resolved, entry.getKey());
             results.add(stage);
         }
         return results;
@@ -218,7 +343,7 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
         assert output != null;
         assert name != null;
         List<Slot.Input> inputs = new ArrayList<Slot.Input>();
-        for (OutputSource source : output.getSources()) {
+        for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
                 inputs.add(new Slot.Input(location, format));
