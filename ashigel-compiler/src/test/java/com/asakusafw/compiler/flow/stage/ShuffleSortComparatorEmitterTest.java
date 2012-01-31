@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Writable;
 import org.junit.Test;
@@ -30,10 +29,6 @@ import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.example.CoGroupStage;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
-import com.asakusafw.compiler.flow.stage.ShuffleAnalyzer;
-import com.asakusafw.compiler.flow.stage.ShuffleKeyEmitter;
-import com.asakusafw.compiler.flow.stage.ShuffleModel;
-import com.asakusafw.compiler.flow.stage.ShuffleSortComparatorEmitter;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 package test.modelgen.io;
 import java.io.IOException;
 
+import test.modelgen.model.AllTypesWNoerr;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
-
-import test.modelgen.model.AllTypesWNoerr;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として{@link AllTypesWNoerr}を読み出す。
  */

@@ -7,21 +7,29 @@ Asakusa Framework本体
 Asakusa Frameworkは以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作プラットフォーム(本体)
-    :widths: 10 10
+    :widths: 2 3 5 
     :header-rows: 1
 
     * - 種類
       - バージョン
+      - 備考
     * - オペレーティングシステム
       - CentOS 5.5 [#]_
+      - 
     * - Java SDK
-      - Java SE6 Update 22 [#]_
+      - Java SE6 Update 26 [#]_
+      - 
     * - Hadoop
       - CDH3 Update 2 [#]_
+      - 
+    * - Hadoop
+      - Apache Hadoop 0.20.203.0 [#]_
+      - Asakusa Framework のバージョン ``0.2.5`` 時点では基本的な動作確認テストのみが行われています。
 
 ..  [#] http://www.centos.org/
 ..  [#] http://www.oracle.com/technetwork/java/javase/
 ..  [#] http://www.cloudera.com/hadoop/
+..  [#] http://hadoop.apache.org/common/docs/r0.20.203.0/
 
 アプリケーション開発環境
 ========================
@@ -35,12 +43,17 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発では
       - バージョン
     * - オペレーティングシステム
       - Ubuntu Desktop 11.10 [#]_
+    * - オペレーティングシステム
+      - CentOS 6.2 [#]_
     * - ビルドツール
       - Apache Maven 3.0.3 [#]_
     * - 統合開発環境
       - Eclipse IDE for Java Developers 3.6.2 [#]_
+    * - 統合開発環境
+      - Eclipse IDE for Java Developers 3.7.1 
 
 ..  [#] http://www.ubuntu.com/
+..  [#] http://www.centos.org/
 ..  [#] http://maven.apache.org/
 ..  [#] http://eclipse.org/
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public class Difference {
             if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
                 buf.append('\\');
                 buf.append(ASCII_SPECIAL_ESCAPE[c]);
-            } else if (Character.isISOControl(c) || !Character.isDefined(c)){
+            } else if (Character.isISOControl(c) || !Character.isDefined(c)) {
                 buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
             } else {
                 buf.append(c);

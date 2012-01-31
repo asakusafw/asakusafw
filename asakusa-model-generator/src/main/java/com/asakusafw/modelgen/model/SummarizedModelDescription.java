@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class SummarizedModelDescription extends ModelDescription {
 
-    private List<Source> groupBy;
+    private final List<Source> groupBy;
 
     /**
      * インスタンスを生成する。
@@ -127,7 +127,7 @@ public class SummarizedModelDescription extends ModelDescription {
         if (getProperties().equals(other.getProperties()) == false) {
             return false;
         }
-        if (groupBy.equals(other.getProperties()) == false) {
+        if (getGroupBy().equals(other.getGroupBy()) == false) {
             return false;
         }
         return true;

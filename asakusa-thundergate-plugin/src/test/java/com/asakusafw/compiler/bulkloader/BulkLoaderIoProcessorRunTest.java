@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.io.property.PropertyLoader;
+import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
 import com.asakusafw.vocabulary.bulkloader.DbImporterDescription;
 import com.asakusafw.vocabulary.flow.In;

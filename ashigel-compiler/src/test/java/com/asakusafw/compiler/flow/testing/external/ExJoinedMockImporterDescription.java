@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 
 /**
  * {@link ExJoined}のモックインポーター記述。
  */
-public class ExJoinedMockImporterDescription extends FileImporterDescription {
+public class ExJoinedMockImporterDescription extends TemporaryInputDescription {
 
     @Override
     public Class<?> getModelType() {

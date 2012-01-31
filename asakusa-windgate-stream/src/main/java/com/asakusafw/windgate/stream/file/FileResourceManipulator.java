@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.asakusafw.windgate.stream.file;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +72,7 @@ public class FileResourceManipulator extends ResourceManipulator {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         File path = FileResourceUtil.getPath(profile, script, arguments, DriverScript.Kind.SOURCE);
-        LOG.info("Deleting file: {}",
-                path.getAbsolutePath());
-        path.delete();
+        delete(path);
     }
 
     @Override
@@ -82,9 +81,20 @@ public class FileResourceManipulator extends ResourceManipulator {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         File path = FileResourceUtil.getPath(profile, script, arguments, DriverScript.Kind.DRAIN);
+        delete(path);
+    }
+
+    private void delete(File path) {
+        assert path != null;
         LOG.info("Deleting file: {}",
                 path.getAbsolutePath());
-        path.delete();
+        if (path.delete()) {
+            LOG.info("Deleted file: {}",
+                    path.getAbsolutePath());
+        } else {
+            LOG.info("Failed to delete file: {}",
+                    path.getAbsolutePath());
+        }
     }
 
     @Override

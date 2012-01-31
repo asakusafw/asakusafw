@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package com.asakusafw.runtime.io.csv;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -67,12 +67,16 @@ public class CsvParserTest {
 
     private CsvParser create(String content) {
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 headers,
                 trueFormat,
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        return new CsvParser(new StringReader(content), testName.getMethodName(), conf);
+        return new CsvParser(
+                new ByteArrayInputStream(content.getBytes(conf.getCharset())),
+                testName.getMethodName(),
+                conf);
     }
 
     /**
@@ -1180,18 +1184,14 @@ public class CsvParserTest {
      */
     @Test
     public void too_many_characters() throws Exception {
-        Reader infinite = new Reader() {
+        InputStream infinite = new InputStream() {
             @Override
-            public int read(char[] cbuf, int off, int len) throws IOException {
-                Arrays.fill(cbuf, off, off + len, 'a');
-                return len;
-            }
-            @Override
-            public void close() throws IOException {
-                return;
+            public int read() throws IOException {
+                return 'a';
             }
         };
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 headers,
                 trueFormat,
                 falseFormat,

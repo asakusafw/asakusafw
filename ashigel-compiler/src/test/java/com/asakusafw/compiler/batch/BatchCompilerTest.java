@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.BatchInfo;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
  * Test for {@link BatchCompiler}.
@@ -137,8 +137,8 @@ public class BatchCompilerTest {
 
     private Location seqfile(Export exporter) {
         ExporterDescription desc = exporter.getDescription().getExporterDescription();
-        assertThat(desc, instanceOf(FileExporterDescription.class));
-        FileExporterDescription d = (FileExporterDescription) desc;
+        assertThat(desc, instanceOf(TemporaryOutputDescription.class));
+        TemporaryOutputDescription d = (TemporaryOutputDescription) desc;
         return Location.fromPath(d.getPathPrefix(), '/');
     }
 }

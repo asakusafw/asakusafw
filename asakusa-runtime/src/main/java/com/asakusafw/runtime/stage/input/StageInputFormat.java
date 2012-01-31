@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -35,16 +36,16 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
-import com.asakusafw.runtime.stage.input.StageInputDriver.Input;
+
+import com.asakusafw.runtime.stage.StageInput;
 
 /**
  * ステージへの複数の入力を処理する{@link InputFormat}。
  * <p>
  * {@link StageInputDriver}に指定された実際のInputFormatに処理を移譲する。
  * </p>
- * <p>
- * 現在のところ、{@link FileInputFormat}およびそのサブクラスに関するもののみを取り扱う。
- * </p>
+ * @since 0.1.0
+ * @version 0.2.5
  */
 @SuppressWarnings("rawtypes")
 public class StageInputFormat extends InputFormat {
@@ -53,29 +54,31 @@ public class StageInputFormat extends InputFormat {
 
     @Override
     public List<InputSplit> getSplits(JobContext context) throws IOException, InterruptedException {
-        Map<FormatAndMapper, List<Path>> paths = getPaths(context);
-        Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats = instantiateFormats(paths.keySet());
+        Map<FormatAndMapper, List<StageInput>> paths = getPaths(context);
+        Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
+            instantiateFormats(context, paths.keySet());
 
         Job temporaryJob = new Job(context.getConfiguration());
         List<InputSplit> results = new ArrayList<InputSplit>();
-        for (Map.Entry<FormatAndMapper, List<Path>> entry : paths.entrySet()) {
+        for (Map.Entry<FormatAndMapper, List<StageInput>> entry : paths.entrySet()) {
             FormatAndMapper formatAndMapper = entry.getKey();
-            List<Path> current = entry.getValue();
-            if (current.isEmpty()) {
-                // May not come here in this version (all input should have a path)
-                LOG.warn(MessageFormat.format(
-                        "No paths are specified: format={0}, mapper={1}",
-                        formatAndMapper.formatClass.getName(),
-                        formatAndMapper.mapperClass.getName()));
-            } else {
-                FileInputFormat.setInputPaths(temporaryJob, current.toArray(new Path[current.size()]));
-            }
+            List<StageInput> current = entry.getValue();
             InputFormat<?, ?> format = formats.get(formatAndMapper.formatClass);
-            assert format != null : formatAndMapper.formatClass;
-            List<InputSplit> splits = format.getSplits(temporaryJob);
+            List<? extends InputSplit> splits;
+            if (format instanceof FileInputFormat<?, ?>) {
+                FileInputFormat.setInputPaths(temporaryJob, toPathArray(current));
+                splits = format.getSplits(temporaryJob);
+            } else if (format instanceof BridgeInputFormat) {
+                splits = ((BridgeInputFormat) format).getSplits(context, current);
+            } else if (format instanceof TemporaryInputFormat<?>) {
+                splits = ((TemporaryInputFormat<?>) format).getSplits(context, current);
+            } else {
+                splits = format.getSplits(temporaryJob);
+            }
+            assert format != null : formatAndMapper.formatClass.getName();
             for (InputSplit split : splits) {
-                StageInputSplit wrapped =
-                    new StageInputSplit(split, formatAndMapper.formatClass, formatAndMapper.mapperClass);
+                StageInputSplit wrapped = new StageInputSplit(
+                        split, formatAndMapper.formatClass, formatAndMapper.mapperClass);
                 wrapped.setConf(context.getConfiguration());
                 results.add(wrapped);
             }
@@ -83,34 +86,46 @@ public class StageInputFormat extends InputFormat {
         return results;
     }
 
-    private Map<FormatAndMapper, List<Path>> getPaths(JobContext context) throws IOException {
+    private Path[] toPathArray(List<StageInput> inputs) {
+        assert inputs != null;
+        List<Path> paths = new ArrayList<Path>();
+        for (StageInput input : inputs) {
+            paths.add(new Path(input.getPathString()));
+        }
+        return paths.toArray(new Path[paths.size()]);
+    }
+
+    private Map<FormatAndMapper, List<StageInput>> getPaths(JobContext context) throws IOException {
         assert context != null;
-        List<Input> inputs = StageInputDriver.getInputs(context.getConfiguration());
-        Map<FormatAndMapper, List<Path>> paths = new HashMap<FormatAndMapper, List<Path>>();
-        for (Input input : inputs) {
+        List<StageInput> inputs = StageInputDriver.getInputs(context.getConfiguration());
+        Map<FormatAndMapper, List<StageInput>> paths = new HashMap<FormatAndMapper, List<StageInput>>();
+        for (StageInput input : inputs) {
             FormatAndMapper fam = new FormatAndMapper(input.getFormatClass(), input.getMapperClass());
-            List<Path> list = paths.get(fam);
+            List<StageInput> list = paths.get(fam);
             if (list == null) {
-                list = new ArrayList<Path>();
+                list = new ArrayList<StageInput>();
                 paths.put(fam, list);
             }
-            list.add(input.getPath());
+            list.add(input);
         }
         return paths;
     }
 
     private Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> instantiateFormats(
+            JobContext context,
             Set<FormatAndMapper> pairs) throws IOException {
+        assert context != null;
         assert pairs != null;
+        Configuration conf = context.getConfiguration();
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> results =
             new HashMap<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>>();
         for (FormatAndMapper pair : pairs) {
             Class<? extends InputFormat<?, ?>> type = pair.formatClass;
             if (results.containsKey(type) == false) {
                 try {
-                    InputFormat<?, ?> instance = type.newInstance();
+                    InputFormat<?, ?> instance = ReflectionUtils.newInstance(type, conf);
                     results.put(type, instance);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     throw new IOException(MessageFormat.format(
                             "Cannot instantiate {0}",
                             type.getName()), e);
@@ -131,9 +146,6 @@ public class StageInputFormat extends InputFormat {
         return new StageInputRecordReader(original);
     }
 
-    /**
-     * {@link InputFormat}と{@link Mapper}のクラスを保持するクラス。
-     */
     private static class FormatAndMapper {
 
         final Class<? extends InputFormat<?, ?>> formatClass;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
     private final Connection connection;
 
     private final T object;
+
+    private Statement statement;
 
     private ResultSet resultSet;
 
@@ -112,7 +114,7 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
 
     private ResultSet prepareResultSet() throws SQLException {
         String sql = createSql();
-        Statement statement = connection.createStatement();
+        statement = connection.createStatement();
         boolean succeed = false;
         try {
             WGLOG.info("I03001",
@@ -199,16 +201,6 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 script.getTableName());
         sawNext = false;
         if (resultSet != null) {
-            Statement statement = null;
-            try {
-                statement = resultSet.getStatement();
-            } catch (SQLException e) {
-                WGLOG.warn(e, "W03001",
-                        profile.getResourceName(),
-                        script.getName(),
-                        script.getTableName(),
-                        script.getColumnNames());
-            }
             try {
                 resultSet.close();
                 resultSet = null;

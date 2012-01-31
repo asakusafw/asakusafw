@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,8 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         if (type != description.getModelType()) {
-            throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
         return importers.createOutput(definition, description, context);
@@ -162,7 +163,8 @@ public class TestDataPreparator {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         if (type != description.getModelType()) {
-            throw new IllegalArgumentException("invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "invalid model type: type must be = description.getModelType()"); //$NON-NLS-1$
         }
         DataModelDefinition<T> definition = findDefinition(type);
         return exporters.createOutput(definition, description, context);

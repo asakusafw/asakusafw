@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public class BatchScript {
         List<FlowScript> results = new ArrayList<FlowScript>();
         while (work.isEmpty() == false) {
             boolean worked = false;
-            for (Iterator<FlowScript> iter = work.iterator(); iter.hasNext(); ) {
+            for (Iterator<FlowScript> iter = work.iterator(); iter.hasNext();) {
                 FlowScript script = iter.next();
                 boolean blocked = false;
                 for (String blockerId : script.getBlockerIds()) {
@@ -149,7 +149,7 @@ public class BatchScript {
         String batchId = properties.getProperty(KEY_ID);
         Set<String> flowIds = FlowScript.extractFlowIds(properties);
         List<FlowScript> flowScripts = new ArrayList<FlowScript>();
-        for (String flowId: flowIds) {
+        for (String flowId : flowIds) {
             FlowScript flowScript = FlowScript.load(properties, flowId);
             flowScripts.add(flowScript);
         }

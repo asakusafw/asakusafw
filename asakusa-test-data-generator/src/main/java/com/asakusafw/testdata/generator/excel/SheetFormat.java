@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.asakusafw.testdata.generator.excel;
  * Generating format of each Excel sheet.
  * @since 0.2.0
  */
-public class SheetFormat {
+public final class SheetFormat {
 
     private final Kind kind;
 
@@ -72,6 +72,17 @@ public class SheetFormat {
      */
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SheetFormat [kind=");
+        builder.append(kind);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

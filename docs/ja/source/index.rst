@@ -29,6 +29,7 @@ Asakusa Framework入門
     testing/index
     windgate/index
     thundergate/index
+    directio/index
     yaess/index
     application/index
     administration/index

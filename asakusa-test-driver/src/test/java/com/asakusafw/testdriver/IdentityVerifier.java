@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class IdentityVerifier implements ModelVerifier<Object> {
         if (expected == null) {
             return MessageFormat.format("Invalid actual: {0}", actual);
         } else if (actual == null) {
-            return MessageFormat.format("Missing actual: {0}", actual);
+            return MessageFormat.format("Missing actual for: {0}", expected);
         } else if (expected.equals(actual) == false) {
             return MessageFormat.format("Inconsistent: {0} <=> {1}", expected, actual);
         }

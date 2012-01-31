@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -270,7 +270,7 @@ public class TableOutput<T> implements ModelOutput<T> {
         }
 
         @Override
-        public void datetimeProperty(PropertyName name,DataModelReflection context) throws SQLException {
+        public void datetimeProperty(PropertyName name, DataModelReflection context) throws SQLException {
             Calendar value = (Calendar) context.getValue(name);
             if (value == null) {
                 statement.setNull(index, Types.TIME);

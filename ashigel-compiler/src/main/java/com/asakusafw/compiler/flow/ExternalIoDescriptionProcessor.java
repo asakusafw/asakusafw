@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package com.asakusafw.compiler.flow;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.hadoop.mapreduce.InputFormat;
@@ -65,24 +67,17 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     public abstract boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs);
 
     /**
-     * 指定の入力を後続のステージが利用するための{@link InputFormat}クラスを返す。
-     * @param description 対応する入力の記述
-     * @return 後続のステージが利用するための{@link InputFormat}クラス
+     * Returns source information for the input.
+     * @param description target description
+     * @return resolved information
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    @SuppressWarnings("rawtypes")
-    public abstract Class<? extends InputFormat> getInputFormatType(InputDescription description);
-
-    /**
-     * 指定の入力を利用するステージから見た、入力位置の一覧を返す。
-     * @param description 対応する入力の記述
-     * @return 実際の入力位置の一覧
-     */
-    public abstract Set<Location> getInputLocations(InputDescription description);
+    public abstract SourceInfo getInputInfo(InputDescription description);
 
     /**
      * 指定の入力に対して、前処理を実行するクライアントプログラムを返す。
      * <p>
-     * {@link #getInputLocations(InputDescription)}は、この前処理が
+     * {@link #getInputInfo(InputDescription)}は、この前処理が
      * <em>完了した後</em>のパスを指定する必要がある。
      * </p>
      * <p>
@@ -135,9 +130,9 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      */
     public static class IoContext {
 
-        private List<Input> inputs;
+        private final List<Input> inputs;
 
-        private List<Output> outputs;
+        private final List<Output> outputs;
 
         /**
          * インスタンスを生成する。
@@ -172,9 +167,9 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      */
     public static class Output {
 
-        private OutputDescription description;
+        private final OutputDescription description;
 
-        private List<OutputSource> sources;
+        private final List<SourceInfo> sources;
 
         /**
          * インスタンスを生成する。
@@ -182,7 +177,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          * @param sources この出力の元となる情報の一覧
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
-        public Output(OutputDescription description, List<OutputSource> sources) {
+        public Output(OutputDescription description, List<SourceInfo> sources) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(sources, "sources"); //$NON-NLS-1$
             this.description = description;
@@ -201,7 +196,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          * この出力の元となる情報の一覧を返す。
          * @return この出力の元となる情報の一覧
          */
-        public List<OutputSource> getSources() {
+        public List<SourceInfo> getSources() {
             return sources;
         }
     }
@@ -211,9 +206,9 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      */
     public static class Input {
 
-        private InputDescription description;
+        private final InputDescription description;
 
-        private Class<? extends OutputFormat<?, ?>> format;
+        private final Class<? extends OutputFormat<?, ?>> format;
 
         /**
          * インスタンスを生成する。
@@ -245,26 +240,47 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * 出力の元となる情報。
+     * 入出力の元となる情報。
      */
-    public static class OutputSource {
+    public static class SourceInfo {
 
-        private Set<Location> locations;
+        private final Set<Location> locations;
 
-        private Class<? extends InputFormat<?, ?>> format;
+        private final Class<? extends InputFormat<?, ?>> format;
+
+        private final Map<String, String> attributes;
 
         /**
-         * インスタンスを生成する。
-         * @param locations 入力元の位置
-         * @param format 入力フォーマット
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param locations input source locations
+         * @param format input format
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        @SuppressWarnings({ "rawtypes" })
+        public SourceInfo(
+                Set<Location> locations,
+                Class<? extends InputFormat> format) {
+            this(locations, format, Collections.<String, String>emptyMap());
+        }
+
+        /**
+         * Creates a new instance.
+         * @param locations input source locations
+         * @param format input format
+         * @param attributes attributes
+         * @throws IllegalArgumentException if some parameters were {@code null}
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        public OutputSource(Set<Location> locations, Class<? extends InputFormat> format) {
+        public SourceInfo(
+                Set<Location> locations,
+                Class<? extends InputFormat> format,
+                Map<String, String> attributes) {
             Precondition.checkMustNotBeNull(locations, "locations"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(format, "format"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(attributes, "attributes"); //$NON-NLS-1$
             this.locations = locations;
             this.format = (Class<? extends InputFormat<?, ?>>) format;
+            this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
         }
 
         /**
@@ -281,6 +297,14 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          */
         public Class<? extends InputFormat<?, ?>> getFormat() {
             return format;
+        }
+
+        /**
+         * Returns the attributes.
+         * @return the attributes
+         */
+        public Map<String, String> getAttributes() {
+            return attributes;
         }
     }
 

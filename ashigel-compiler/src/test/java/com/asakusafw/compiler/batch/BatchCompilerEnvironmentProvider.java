@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 
 /**
  * {@link BatchCompilingEnvironment}をテスト向けに提供する。
@@ -58,7 +58,7 @@ public class BatchCompilerEnvironmentProvider implements MethodRule {
                             method.getMethod().getName())),
                     Arrays.asList(new File[] {
                            DirectFlowCompiler.toLibraryPath(getClass()),
-                           DirectFlowCompiler.toLibraryPath(AbstractStageClient.class),
+                           DirectFlowCompiler.toLibraryPath(StageConstants.class),
                     }),
                     target.getClass().getClassLoader(),
                     FlowCompilerOptions.load(System.getProperties()));

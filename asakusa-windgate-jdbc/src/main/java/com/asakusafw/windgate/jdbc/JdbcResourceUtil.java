@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,15 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess.OperationKind;
  * Common utility classes for this package.
  * @since 0.2.2
  */
-class JdbcResourceUtil {
+final class JdbcResourceUtil {
 
     static final WindGateLogger WGLOG = new JdbcLogger(JdbcResourceUtil.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JdbcResourceUtil.class);
+
+    private JdbcResourceUtil() {
+        return;
+    }
 
     static String join(Iterable<String> list) {
         assert list != null;

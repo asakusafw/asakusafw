@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,13 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 
@@ -44,8 +43,10 @@ import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
+import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvIoFactory;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
  * Export対象ファイルをDBサーバへ送信するクラス。
@@ -66,7 +67,7 @@ public class ExportFileSend {
     /**
      * Export対象ファイルをDBサーバへ送信する。
      * <p>
-     * SequenceFile形式のExport対象ファイルを読み込んでTSV形式に変換した上で、DBサーバの標準入力へ送信する。
+     * Export対象ファイルを読み込んでTSV形式に変換した上で、DBサーバの標準入力へ送信する。
      * 送信は、Exporterの標準入力にファイルを書き込む事で行う。
      * </p>
      * @param bean パラメータを保持するBean
@@ -149,7 +150,7 @@ public class ExportFileSend {
         }
     }
     /**
-     * 指定されたSequenceFileを読み込んでTSV形式で{@link FileList.Writer}に書き出す。
+     * 指定された一時ファイルを読み込んでTSV形式で{@link FileList.Writer}に書き出す。
      * @param <T> データモデルの型
      * @param targetTableModel Exportデータに対応するModelのクラス型
      * @param filePath Exportファイル
@@ -194,8 +195,8 @@ public class ExportFileSend {
                 }
 
                 // TODO 見通しを良くする
-                // SequenceFileをHDFSから読み込むオブジェクトを生成する
-                SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+                // テンポラリ領域から結果を読み込むオブジェクトを生成する
+                ModelInput<T> input = TemporaryStorage.openInput(conf, targetTableModel, path);
                 try {
                     while (true) {
                         // エントリを追加
@@ -209,9 +210,9 @@ public class ExportFileSend {
                             LOG.info("TG-COLLECTOR-02004",
                                     tableName, path.toString(), fileName);
 
-                            // SequenceFileを読み込み、Model→TSV変換を行う
+                            // 入力を読み込み、Model→TSV変換を行う
                             boolean nextFile = false;
-                            while (reader.next(NullWritable.get(), model)) {
+                            while (input.readTo(model)) {
                                 // Modolを書き出す
                                 modelOut.write(model);
                                 count++;
@@ -239,7 +240,7 @@ public class ExportFileSend {
                         }
                     }
                 } finally {
-                    reader.close();
+                    input.close();
                 }
             }
             if (addEntry) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.util.Set;
 import com.asakusafw.compiler.flow.processor.operator.UpdateFlowFactory;
 import com.asakusafw.compiler.flow.processor.operator.UpdateFlowFactory.WithParameter;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.vocabulary.external.FileExporterDescription;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
+import com.asakusafw.compiler.testing.TemporaryInputDescription;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
@@ -37,9 +37,9 @@ import com.asakusafw.vocabulary.flow.Out;
 @JobFlow(name = "side")
 public class SideJobFlow extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out;
+    private final Out<Ex1> out;
 
     /**
      * インスタンスを生成する。
@@ -66,7 +66,7 @@ public class SideJobFlow extends FlowDescription {
     /**
      * インポーター。
      */
-    public static class Importer extends FileImporterDescription {
+    public static class Importer extends TemporaryInputDescription {
 
         @Override
         public Class<?> getModelType() {
@@ -82,7 +82,7 @@ public class SideJobFlow extends FlowDescription {
     /**
      * エクスポーター。
      */
-    public static class Exporter extends FileExporterDescription {
+    public static class Exporter extends TemporaryOutputDescription {
 
         @Override
         public Class<?> getModelType() {

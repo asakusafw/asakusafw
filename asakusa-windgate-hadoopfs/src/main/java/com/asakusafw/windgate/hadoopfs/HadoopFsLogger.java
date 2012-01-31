@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import com.asakusafw.windgate.core.WindGateLogger;
  */
 public class HadoopFsLogger extends WindGateLogger {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.windgate.hadoopfs.log"); //$NON-NLS-1$
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.asakusafw.windgate.hadoopfs.log"); //$NON-NLS-1$
 
     /**
      * Creates a new instance.

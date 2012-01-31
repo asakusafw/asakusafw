@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,11 @@ public class CsvFormatException extends RecordFormatException {
     public enum Reason {
 
         /**
+         * Unexpected line break is appearred in value (only if restricted).
+         */
+        UNEXPECTED_LINE_BREAK,
+
+        /**
          * Unexpected EOF is appearred (may be in double-quote).
          */
         UNEXPECTED_EOF,
@@ -111,13 +116,14 @@ public class CsvFormatException extends RecordFormatException {
         private final String actual;
 
         /**
-         * @param reason
-         * @param path
-         * @param lineNumber
-         * @param recordNumber
-         * @param columnNumber
-         * @param expected
-         * @param actual
+         * Creates a new instance.
+         * @param reason the reason of this status
+         * @param path the source path
+         * @param lineNumber current (physical) line number (1-origin)
+         * @param recordNumber current record number (1-origin)
+         * @param columnNumber current column number (1-origin)
+         * @param expected the expected status description
+         * @param actual the actual status description
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         public Status(
@@ -138,6 +144,7 @@ public class CsvFormatException extends RecordFormatException {
         }
 
         /**
+         * Return the reason of this status.
          * @return the reason
          */
         public Reason getReason() {
@@ -145,6 +152,7 @@ public class CsvFormatException extends RecordFormatException {
         }
 
         /**
+         * Return the path to the target file.
          * @return the path
          */
         public String getPath() {
@@ -152,27 +160,31 @@ public class CsvFormatException extends RecordFormatException {
         }
 
         /**
-         * @return the lineNumber
+         * Returns the current line number (1-origin).
+         * @return the line number
          */
         public int getLineNumber() {
             return lineNumber;
         }
 
         /**
-         * @return the recordNumber
+         * Returns the current record number (1-origin).
+         * @return the record number
          */
         public int getRecordNumber() {
             return recordNumber;
         }
 
         /**
-         * @return the columnNumber
+         * Returns the current column number (1-origin).
+         * @return the column number
          */
         public int getColumnNumber() {
             return columnNumber;
         }
 
         /**
+         * Returns the expected status description.
          * @return the expected
          */
         public String getExpected() {
@@ -180,6 +192,7 @@ public class CsvFormatException extends RecordFormatException {
         }
 
         /**
+         * Returns the actual status description.
          * @return the actual
          */
         public String getActual() {

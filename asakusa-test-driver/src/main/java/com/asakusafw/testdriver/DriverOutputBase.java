@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
-import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelVerifier;
+import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyRule;
-import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -68,14 +68,16 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected DifferenceSinkFactory differenceSink;
 
     /**
-     * @return the exporterDescription
+     * Returns the exporter description for this output.
+     * @return the description
      */
     protected ExporterDescription getExporterDescription() {
         return exporterDescription;
     }
 
     /**
-     * @param exporterDescription the exporterDescription to set
+     * Sets the exporter description for this output.
+     * @param exporterDescription the description
      */
     protected void setExporterDescription(ExporterDescription exporterDescription) {
         this.exporterDescription = exporterDescription;
@@ -123,13 +125,13 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     /**
      * Sets the verifier for this output.
      * @param expectedUri the URI which represents the expected data set
-     * @param verifier the model verifier
+     * @param modelVerifier the model verifier
      * @throws IOException if failed to create verifier
      * @since 0.2.3
      */
-    protected void setVerifier(URI expectedUri, ModelVerifier<? super T> verifier) throws IOException {
+    protected void setVerifier(URI expectedUri, ModelVerifier<? super T> modelVerifier) throws IOException {
         LOG.info("expected: {}", expectedUri);
-        VerifyRule rule = driverContext.getRepository().toVerifyRule(modelType, verifier);
+        VerifyRule rule = driverContext.getRepository().toVerifyRule(modelType, modelVerifier);
         VerifierFactory factory = driverContext.getRepository().getVerifierFactory(expectedUri, rule);
         setVerifier(factory);
     }
@@ -164,18 +166,18 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     /**
      * Sets the verify rule for this output.
      * @param expectedPath the path which represents the expected data set
-     * @param verifier the model verifier
+     * @param modelVerifier the model verifier
      * @throws IOException if failed to create verifier
      * @since 0.2.3
      */
-    protected void setVerifier(String expectedPath, ModelVerifier<? super T> verifier) throws IOException {
+    protected void setVerifier(String expectedPath, ModelVerifier<? super T> modelVerifier) throws IOException {
         URI expectedUri;
         try {
             expectedUri = toUri(expectedPath);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("invalid expected URI:" + expectedPath, e);
         }
-        setVerifier(expectedUri, verifier);
+        setVerifier(expectedUri, modelVerifier);
     }
 
     /**

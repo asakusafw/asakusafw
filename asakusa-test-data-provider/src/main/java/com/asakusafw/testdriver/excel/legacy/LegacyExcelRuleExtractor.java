@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,8 +152,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return ValueConditionKind.CONTAIN;
         case TODAY:
             return ValueConditionKind.TODAY;
+        default:
+            throw new AssertionError(condition);
         }
-        throw new AssertionError(condition);
     }
 
     private boolean isKeyProperty(Row row) throws FormatException {
@@ -189,8 +190,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return NullityConditionKind.DENY_ABSENT;
         case NULL_IS_OK:
             return NullityConditionKind.ACCEPT_ABSENT;
+        default:
+            throw new AssertionError(condition);
         }
-        throw new AssertionError(condition);
     }
 
     private String getStringCell(Row row, ConditionSheetItem item) throws FormatException {

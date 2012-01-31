@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.runtime.io.csv;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,12 @@ import com.asakusafw.runtime.value.DateTime;
  * @since 0.2.4
  */
 public class CsvConfiguration {
+
+    /**
+     * The default charset encoding.
+     * @see #getCharset()
+     */
+    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     /**
      * The default header cells (empty list).
@@ -58,6 +65,20 @@ public class CsvConfiguration {
      */
     public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    /**
+     * The default date time format.
+     * @see #isLineBreakInValue()
+     */
+    public static final char DEFAULT_SEPARATOR_CHAR = ',';
+
+    /**
+     * The default date time format.
+     * @see #isLineBreakInValue()
+     */
+    public static final boolean DEFAULT_LINE_BREAK_IN_VALUE = true;
+
+    private final Charset charset;
+
     private final List<String> headerCells;
 
     private final String trueFormat;
@@ -68,8 +89,13 @@ public class CsvConfiguration {
 
     private final String dateTimeFormat;
 
+    private volatile boolean lineBreakInValue = DEFAULT_LINE_BREAK_IN_VALUE;
+
+    private volatile char separatorChar = DEFAULT_SEPARATOR_CHAR;
+
     /**
      * Creates a new instance.
+     * @param charset character set encoding name
      * @param headerCells header cell values, or an empty list for no header
      * @param trueFormat the {@code true} representation
      * @param falseFormat the {@code false} representation
@@ -78,11 +104,15 @@ public class CsvConfiguration {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public CsvConfiguration(
+            Charset charset,
             List<String> headerCells,
             String trueFormat,
             String falseFormat,
             String dateFormat,
             String dateTimeFormat) {
+        if (charset == null) {
+            throw new IllegalArgumentException("charset must not be null"); //$NON-NLS-1$
+        }
         if (headerCells == null) {
             throw new IllegalArgumentException("headerCells must not be null"); //$NON-NLS-1$
         }
@@ -98,11 +128,20 @@ public class CsvConfiguration {
         if (dateTimeFormat == null) {
             throw new IllegalArgumentException("dateTimeFormat must not be null"); //$NON-NLS-1$
         }
+        this.charset = charset;
         this.headerCells = headerCells;
         this.trueFormat = trueFormat;
         this.falseFormat = falseFormat;
         this.dateFormat = dateFormat;
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    /**
+     * Returns the character set encoding name.
+     * @return the encoding
+     */
+    public Charset getCharset() {
+        return charset;
     }
 
     /**
@@ -143,5 +182,37 @@ public class CsvConfiguration {
      */
     public String getDateTimeFormat() {
         return dateTimeFormat;
+    }
+
+    /**
+     * Returns whether allows line breaks in value.
+     * @return {@code true} if allow, otherwise {@code false}
+     */
+    public boolean isLineBreakInValue() {
+        return lineBreakInValue;
+    }
+
+    /**
+     * Sets whether allows line breaks in value.
+     * @param allow {@code true} to allow, otherwise {@code false}
+     */
+    public void setLineBreakInValue(boolean allow) {
+        this.lineBreakInValue = allow;
+    }
+
+    /**
+     * Returns the field separator character.
+     * @return the separator
+     */
+    public char getSeparatorChar() {
+        return separatorChar;
+    }
+
+    /**
+     * Sets the field separator character.
+     * @param separatorChar the separator
+     */
+    public void setSeparatorChar(char separatorChar) {
+        this.separatorChar = separatorChar;
     }
 }

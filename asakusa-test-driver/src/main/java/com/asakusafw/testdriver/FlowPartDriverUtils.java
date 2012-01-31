@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ package com.asakusafw.testdriver;
 
 
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 
 /**
  * フロー部品用のテストドライバを実行するためのユーティリティクラス。
  * @since 0.2.0
  */
-class FlowPartDriverUtils {
+final class FlowPartDriverUtils {
 
 
     /**
@@ -42,7 +42,7 @@ class FlowPartDriverUtils {
      */
     public static Location createInputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append(StageConstants.EXPR_EXECUTION_ID)
                 .append("input")
                 .append(normalize(name));
         return location;
@@ -57,7 +57,7 @@ class FlowPartDriverUtils {
      */
     public static Location createOutputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
+                .append(StageConstants.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
         return location;
     }
 
@@ -69,7 +69,7 @@ class FlowPartDriverUtils {
      */
     public static Location createWorkingLocation(TestDriverContext driverContext) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(AbstractStageClient.EXPR_EXECUTION_ID)
+                .append(StageConstants.EXPR_EXECUTION_ID)
                 .append("temp");
         return location;
     }

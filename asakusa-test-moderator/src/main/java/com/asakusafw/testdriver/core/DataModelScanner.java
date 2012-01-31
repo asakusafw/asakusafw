@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,18 +272,5 @@ public abstract class DataModelScanner<C, E extends Throwable> {
      */
     public void anyProperty(PropertyName name, C context) throws E {
         return;
-    }
-
-    /**
-     * Dummy throwable class without checked.
-     * @since 0.2.0
-     */
-    public static final class _ extends Error {
-
-        private static final long serialVersionUID = 1L;
-
-        private _() {
-            return;
-        }
     }
 }

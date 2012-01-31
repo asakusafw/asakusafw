@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,37 +20,12 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import com.asakusafw.dmdl.model.AstAttribute;
-import com.asakusafw.dmdl.model.AstAttributeElement;
-import com.asakusafw.dmdl.model.AstAttributeValueArray;
-import com.asakusafw.dmdl.model.AstBasicType;
-import com.asakusafw.dmdl.model.AstDescription;
-import com.asakusafw.dmdl.model.AstGrouping;
-import com.asakusafw.dmdl.model.AstJoin;
-import com.asakusafw.dmdl.model.AstLiteral;
-import com.asakusafw.dmdl.model.AstModelDefinition;
-import com.asakusafw.dmdl.model.AstModelFolding;
-import com.asakusafw.dmdl.model.AstModelMapping;
-import com.asakusafw.dmdl.model.AstModelReference;
-import com.asakusafw.dmdl.model.AstReferenceType;
-import com.asakusafw.dmdl.model.AstName;
-import com.asakusafw.dmdl.model.AstNode;
-import com.asakusafw.dmdl.model.AstPropertyDefinition;
-import com.asakusafw.dmdl.model.AstPropertyFolding;
-import com.asakusafw.dmdl.model.AstPropertyMapping;
-import com.asakusafw.dmdl.model.AstQualifiedName;
-import com.asakusafw.dmdl.model.AstRecordDefinition;
-import com.asakusafw.dmdl.model.AstScript;
-import com.asakusafw.dmdl.model.AstSequenceType;
-import com.asakusafw.dmdl.model.AstSimpleName;
-import com.asakusafw.dmdl.model.AstSummarize;
-import com.asakusafw.dmdl.model.AstTerm;
-import com.asakusafw.dmdl.model.AstUnionExpression;
+import com.asakusafw.dmdl.model.*;
 
 /**
  * Emits {@link AstNode} as DMDL syntax.
  */
-public class DmdlEmitter {
+public final class DmdlEmitter {
 
     /**
      * Emits the node as DMDL.

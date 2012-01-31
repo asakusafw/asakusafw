@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import java.util.ResourceBundle;
  */
 public class WindGateCoreLogger extends WindGateLogger {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.windgate.core.log"); //$NON-NLS-1$
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.asakusafw.windgate.core.log"); //$NON-NLS-1$
 
     /**
      * Creates a new instance.

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package com.asakusafw.testtools.excel;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
-
 
 import org.apache.hadoop.io.Writable;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -53,9 +50,6 @@ import com.asakusafw.testtools.ColumnInfo;
 import com.asakusafw.testtools.ColumnMatchingCondition;
 import com.asakusafw.testtools.Constants;
 import com.asakusafw.testtools.NullValueCondition;
-import com.asakusafw.testtools.excel.CellTypeMismatchException;
-import com.asakusafw.testtools.excel.ExcelUtils;
-import com.asakusafw.testtools.excel.InvalidExcelBookException;
 
 public class ExcelUtilsTest {
 

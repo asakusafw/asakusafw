@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,24 @@
 package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.Task;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputFormat;
@@ -36,6 +45,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
+import com.asakusafw.runtime.stage.StageOutput;
 
 /**
  * ステージ出力を設定するためのドライバ。
@@ -45,6 +55,8 @@ import com.asakusafw.runtime.flow.ResultOutput;
  */
 public class StageOutputDriver {
 
+    static final Log LOG = LogFactory.getLog(StageOutputDriver.class);
+
     private static final String K_NAMES = "com.asakusafw.stage.output.names";
 
     private static final String K_FORMAT_PREFIX = "com.asakusafw.stage.output.format.";
@@ -52,6 +64,8 @@ public class StageOutputDriver {
     private static final String K_KEY_PREFIX = "com.asakusafw.stage.output.key.";
 
     private static final String K_VALUE_PREFIX = "com.asakusafw.stage.output.value.";
+
+    private static final String COUNTER_GROUP = "com.asakusafw.stage.output.RecordCounters";
 
     private final Map<String, ResultOutput<?>> resultSinks;
 
@@ -88,7 +102,6 @@ public class StageOutputDriver {
         assert context != null;
         assert name != null;
         Configuration conf = context.getConfiguration();
-        Job job = new Job(conf);
         @SuppressWarnings("rawtypes")
         Class<? extends OutputFormat> formatClass = conf.getClass(
                 getPropertyName(K_FORMAT_PREFIX, name),
@@ -113,14 +126,69 @@ public class StageOutputDriver {
                     name));
         }
 
+        List<Counter> counters = getCounters(context, name);
+        if (TemporaryOutputFormat.class.isAssignableFrom(formatClass)) {
+            return buildTemporarySink(context, name, valueClass, counters);
+        } else {
+            return buildNormalSink(context, name, formatClass, keyClass, valueClass, counters);
+        }
+    }
+
+    private List<Counter> getCounters(TaskInputOutputContext<?, ?, ?, ?> context, String name) {
+        assert context != null;
+        assert name != null;
+        try {
+            List<Counter> results = new ArrayList<Counter>();
+            if (context.getTaskAttemptID().isMap()) {
+                results.add(context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS));
+            } else {
+                results.add(context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS));
+            }
+            results.add(context.getCounter(COUNTER_GROUP, name));
+            return results;
+        } catch (RuntimeException e) {
+            LOG.warn("Failed to create counters", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private ResultOutput<?> buildTemporarySink(
+            TaskAttemptContext context,
+            String name,
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert valueClass != null;
+        assert counters != null;
+        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
+        RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
+        return new ResultOutput<Writable>(context, writer, counters);
+    }
+
+    private ResultOutput<?> buildNormalSink(
+            TaskAttemptContext context,
+            String name,
+            @SuppressWarnings("rawtypes") Class<? extends OutputFormat> formatClass,
+            Class<?> keyClass,
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert formatClass != null;
+        assert keyClass != null;
+        assert valueClass != null;
+        assert counters != null;
+        Job job = new Job(context.getConfiguration());
         job.setOutputFormatClass(formatClass);
         job.setOutputKeyClass(keyClass);
         job.setOutputValueClass(valueClass);
         TaskAttemptContext localContext = new TaskAttemptContext(
                 job.getConfiguration(),
                 context.getTaskAttemptID());
-        BackDoor.setOutputFilePrefix(localContext, name);
-
+        if (FileOutputFormat.class.isAssignableFrom(formatClass)) {
+            setOutputFilePrefix(localContext, name);
+        }
         OutputFormat<?, ?> format = ReflectionUtils.newInstance(
                 formatClass,
                 localContext.getConfiguration());
@@ -128,11 +196,28 @@ public class StageOutputDriver {
         return new ResultOutput<Writable>(localContext, writer);
     }
 
+    private static final String METHOD_SET_OUTPUT_NAME = "setOutputName";
+
+    private void setOutputFilePrefix(JobContext localContext, String name) throws IOException {
+        assert localContext != null;
+        assert name != null;
+        try {
+            Method method = FileOutputFormat.class.getDeclaredMethod(
+                    METHOD_SET_OUTPUT_NAME, JobContext.class, String.class);
+            method.setAccessible(true);
+            method.invoke(null, localContext, name);
+        } catch (Exception e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure output name of \"{0}\" ([MAPREDUCE-370] may be not applied)",
+                    name), e);
+        }
+    }
+
     /**
      * 指定の名前を持つ出力のシンクオブジェクトを返す。
      * <p>
      * ここに指定する名前は、ジョブの起動時にあらかじめ
-     * {@link #add(Job, String, Class, Class, Class)}で登録しておく必要がある。
+     * {@link #set(Job, String, Collection)}で登録しておく必要がある。
      * </p>
      * @param <T> 出力の型
      * @param name 出力の名前
@@ -169,52 +254,66 @@ public class StageOutputDriver {
     }
 
     /**
-     * 指定のジョブの出力先ディレクトリを指定する。
-     * @param job 対象のジョブ
-     * @param path 出力先ディレクトリ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Sets the output specification for this job.
+     * @param job current job
+     * @param outputPath base output path
+     * @param outputList each output information
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
      */
-    public static void setPath(Job job, Path path) {
+    public static void set(Job job, String outputPath, Collection<StageOutput> outputList) {
         if (job == null) {
             throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
         }
-        if (path == null) {
-            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+        if (outputPath == null) {
+            throw new IllegalArgumentException("outputPath must not be null"); //$NON-NLS-1$
         }
-        FileOutputFormat.setOutputPath(job, path);
+        if (outputList == null) {
+            throw new IllegalArgumentException("outputList must not be null"); //$NON-NLS-1$
+        }
+        List<StageOutput> brigeOutputs = new ArrayList<StageOutput>();
+        List<StageOutput> normalOutputs = new ArrayList<StageOutput>();
+        boolean sawFileOutput = false;
+        boolean sawTemporaryOutput = false;
+        for (StageOutput output : outputList) {
+            Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
+            if (BridgeOutputFormat.class.isAssignableFrom(formatClass)) {
+                brigeOutputs.add(output);
+            } else {
+                normalOutputs.add(output);
+            }
+        }
+        if (brigeOutputs.isEmpty() == false) {
+            BridgeOutputFormat.set(job, brigeOutputs);
+        }
+        for (StageOutput output : normalOutputs) {
+            String name = output.getName();
+            Class<?> keyClass = output.getKeyClass();
+            Class<?> valueClass = output.getValueClass();
+            Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
+            sawFileOutput |= FileOutputFormat.class.isAssignableFrom(formatClass);
+            sawTemporaryOutput |= TemporaryOutputFormat.class.isAssignableFrom(formatClass);
+            addOutput(job, name, formatClass, keyClass, valueClass);
+        }
+        if (sawFileOutput) {
+            FileOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
+        if (sawTemporaryOutput) {
+            TemporaryOutputFormat.setOutputPath(job, new Path(outputPath));
+        }
     }
 
-    /**
-     * 指定のジョブに出力の情報を追加する。
-     * @param job 対象のジョブ
-     * @param name 出力ファイルの接頭辞
-     * @param formatClass 入力フォーマットクラス
-     * @param keyClass 出力するキーの型
-     * @param valueClass 出力する値の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     */
-    @SuppressWarnings("rawtypes")
-    public static void add(
+    private static void addOutput(
             Job job,
             String name,
-            Class<? extends OutputFormat> formatClass,
+            Class<?> formatClass,
             Class<?> keyClass,
             Class<?> valueClass) {
-        if (job == null) {
-            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (formatClass == null) {
-            throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
-        }
-        if (keyClass == null) {
-            throw new IllegalArgumentException("keyClass must not be null"); //$NON-NLS-1$
-        }
-        if (valueClass == null) {
-            throw new IllegalArgumentException("valueClass must not be null"); //$NON-NLS-1$
-        }
+        assert job != null;
+        assert name != null;
+        assert formatClass != null;
+        assert keyClass != null;
+        assert valueClass != null;
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Output name \"{0}\" is not valid",
@@ -252,14 +351,5 @@ public class StageOutputDriver {
 
     private static boolean isValidNameChar(char c) {
         return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
-    }
-
-    private abstract static class BackDoor extends FileOutputFormat<Object, Object> {
-
-        static void setOutputFilePrefix(JobContext context, String name) {
-            assert context != null;
-            assert name != null;
-            FileOutputFormat.setOutputName(context, name);
-        }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,13 +57,13 @@ public final class JoinResourceEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(JoinResourceEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private ImportBuilder importer;
+    private final ImportBuilder importer;
 
-    private JoinResourceDescription resource;
+    private final JoinResourceDescription resource;
 
     private JoinResourceEmitter(FlowCompilingEnvironment environment, JoinResourceDescription resource) {
         assert environment != null;
@@ -144,7 +144,7 @@ public final class JoinResourceEmitter {
     private List<TypeBodyDeclaration> createMembers() {
         List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
         results.add(createGetCacheName());
-        results.add(createCreateLeftValueObject());
+        results.add(createCreateValueObject());
         results.add(createBuildLeftKey());
         results.add(createBuildRightKey());
         return results;
@@ -164,7 +164,7 @@ public final class JoinResourceEmitter {
                     .toReturnStatement()));
     }
 
-    private MethodDeclaration createCreateLeftValueObject() {
+    private MethodDeclaration createCreateValueObject() {
         Expression result = new TypeBuilder(factory, importer.toType(resource.getMasterDataClass().getType()))
             .newObject()
             .toExpression();
@@ -174,7 +174,7 @@ public final class JoinResourceEmitter {
                     .Protected()
                     .toAttributes(),
                 importer.toType(resource.getMasterDataClass().getType()),
-                factory.newSimpleName("createLeftValueObject"),
+                factory.newSimpleName("createValueObject"),
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(factory, result)
                     .toReturnStatement()));

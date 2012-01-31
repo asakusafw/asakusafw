@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Stage;
-import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.ScriptWorkDescription;
@@ -189,7 +189,6 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         assert context != null;
         assert desc != null;
 
-        // TODO credencials, parameters, recoveries
         context.put("## Script - \"{0}\"", desc.getCommand());
         context.put("echo \"Processing script ''{0}''\"", desc.getCommand());
         dumpRun(context, null, desc.getCommand());
@@ -302,7 +301,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         context.put("# Hadoop Stage - {0}",
                 stage.getQualifiedName().toNameString());
         context.put("echo \"Processing hadoop job ''{0}''\"",
-                AbstractStageClient.getDefinitionId(batchId, flowId, stageId));
+                StageConstants.getDefinitionId(batchId, flowId, stageId));
         dumpRun(context, model, toHadoopJob(model, stage));
     }
 
@@ -357,10 +356,10 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         assert context != null;
         assert model != null;
         VariableTable variables = new VariableTable();
-        variables.defineVariable(AbstractStageClient.VAR_USER, "$USER");
-        variables.defineVariable(AbstractStageClient.VAR_BATCH_ID, "$" + VAR_BATCH_ID);
-        variables.defineVariable(AbstractStageClient.VAR_FLOW_ID, "$" + VAR_FLOW_ID);
-        variables.defineVariable(AbstractStageClient.VAR_EXECUTION_ID, EXPR_EXECUTION_ID);
+        variables.defineVariable(StageConstants.VAR_USER, "$USER");
+        variables.defineVariable(StageConstants.VAR_BATCH_ID, "$" + VAR_BATCH_ID);
+        variables.defineVariable(StageConstants.VAR_FLOW_ID, "$" + VAR_FLOW_ID);
+        variables.defineVariable(StageConstants.VAR_EXECUTION_ID, EXPR_EXECUTION_ID);
         String path = getEnvironment().getConfiguration().getRootLocation().toPath('/');
         try {
             String parsed = variables.parse(path, true);
@@ -415,9 +414,9 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
                 toLiteral(stage.getQualifiedName().toNameString()),
                 quote(JOBFLOW_LIB_DEST),
                 toLiteral(Naming.getJobflowClassPackageName(model.getFlowId())),
-                toLiteral(AbstractStageClient.PROP_EXECUTION_ID),
+                toLiteral(StageConstants.PROP_EXECUTION_ID),
                 VAR_EXECUTION_ID,
-                toLiteral(AbstractStageClient.PROP_USER),
+                toLiteral(StageConstants.PROP_USER),
                 getPluginProperties(),
                 K_OPTS);
     }
@@ -426,7 +425,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         return join(" ", new String[] {
                 "-D",
                 MessageFormat.format("{0}={1}",
-                        toLiteral(AbstractStageClient.PROP_ASAKUSA_BATCH_ARGS),
+                        toLiteral(StageConstants.PROP_ASAKUSA_BATCH_ARGS),
                         quote(EXPR_BATCH_ARGS))
         });
     }
@@ -464,7 +463,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private static class Context implements Closeable {
 
-        private PrintWriter writer;
+        private final PrintWriter writer;
 
         public Context(OutputStream output) {
             assert output != null;

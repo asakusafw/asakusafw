@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,7 +276,7 @@ public class ImportProtocolDecide {
      * If a target table does not use cache feature or related cache did not exist, there will be not in the result.
      * @param bean importer information
      * @return the collected pairs
-     * @throws BulkLoaderSystemException
+     * @throws BulkLoaderSystemException if failed to obtain remote cache info
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean bean) throws BulkLoaderSystemException {

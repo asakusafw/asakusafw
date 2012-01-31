@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.util.PropertiesUtil;
 import com.asakusafw.yaess.core.util.StreamRedirectTask;
@@ -193,22 +194,25 @@ final class ProcessUtil {
     }
 
     /**
-     * Returns an implementation of {@link ProcessExecutor} which redirects into {@link #execute(List, Map)}.
-     * @return {@link ProcessExecutor} which redirects into {@link #execute(List, Map) execute(command, env)}
+     * Returns an implementation of {@link ProcessExecutor} which redirects into
+     * {@link #execute(ExecutionContext, List, Map)}.
+     * @return {@link ProcessExecutor} which redirects into {@link #execute(ExecutionContext, List, Map)}
      */
     public static ProcessExecutor getProcessExecutor() {
         return new ProcessExecutor() {
             @Override
             public int execute(
+                    ExecutionContext context,
                     List<String> command,
                     Map<String, String> env) throws InterruptedException, IOException {
-                return ProcessUtil.execute(command, env);
+                return ProcessUtil.execute(context, command, env);
             }
         };
     }
 
     /**
      * Executes a command.
+     * @param context current context
      * @param command target command
      * @param env environment variables
      * @return exit code
@@ -217,6 +221,7 @@ final class ProcessUtil {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static int execute(
+            ExecutionContext context,
             List<String> command,
             Map<String, String> env) throws InterruptedException, IOException {
         if (command == null) {
@@ -226,6 +231,7 @@ final class ProcessUtil {
             throw new IllegalArgumentException("env must not be null"); //$NON-NLS-1$
         }
         ProcessBuilder builder = new ProcessBuilder(command);
+        builder.redirectErrorStream(true);
         builder.environment().putAll(env);
 
         String home = System.getProperty("user.home", ".");
@@ -238,12 +244,10 @@ final class ProcessUtil {
         try {
             ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
             redirect(empty, process.getOutputStream());
-            Future<?> stdout = redirect(process.getInputStream(), System.out);
-            Future<?> stderr = redirect(process.getErrorStream(), System.err);
+            Future<?> stdout = redirect(process.getInputStream(), context.getOutput());
             int exit = process.waitFor();
             try {
                 stdout.get();
-                stderr.get();
             } catch (ExecutionException e) {
                 // don't care
             }

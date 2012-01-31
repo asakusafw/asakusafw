@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,14 +34,13 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
 
     private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
 
-    /** フロー記述ドライバ */
+    /** フロー記述ドライバ。 */
     protected FlowDescriptionDriver descDriver;
 
-    private In<T> in;
+    private final In<T> in;
 
     /**
-     * コンストラクタ
-     *
+     * コンストラクタ。
      * @param driverContext テストドライバコンテキスト。
      * @param descDriver フロー定義ドライバ。
      * @param name 入力の名前。
@@ -83,10 +82,11 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
      */
     public FlowPartDriverInput<T> withDataSize(DataSize dataSize) {
         if (!(importerDescription instanceof DirectImporterDescription)) {
-            throw new UnsupportedOperationException("withDataSize method is only support DirectImporterDescription but was: "
+            throw new UnsupportedOperationException(
+                    "withDataSize method is only support DirectImporterDescription but was: "
                     + importerDescription.getClass().getName());
         } else {
-            ((DirectImporterDescription)importerDescription).setDataSize(dataSize);
+            ((DirectImporterDescription) importerDescription).setDataSize(dataSize);
         }
         return this;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,8 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
-
 import org.junit.Test;
 
-import com.asakusafw.compiler.batch.BatchClass;
-import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.batch.batch.Abstract;
 import com.asakusafw.compiler.batch.batch.DescribeFailBatch;
 import com.asakusafw.compiler.batch.batch.InstantiateFailBatch;

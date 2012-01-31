@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.asakusafw.runtime.value;
 
-import org.apache.hadoop.io.WritableComparable;
+import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する変更可能な値。
@@ -23,8 +23,10 @@ import org.apache.hadoop.io.WritableComparable;
  * このクラスのサブクラスの実装は、基本的にスレッドセーフでない。
  * </p>
  * @param <V> 値の種類
+ * @since 0.1.0
+ * @version 0.2.5
  */
-public abstract class ValueOption<V extends ValueOption<V>> implements WritableComparable<V>, Restorable {
+public abstract class ValueOption<V extends ValueOption<V>> implements WritableRawComparable, Restorable {
 
     /**
      * この値が{@code null}を表す場合に{@code true}となる。

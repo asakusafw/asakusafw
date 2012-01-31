@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,23 +152,13 @@ public final class FileNameUtil {
         String path = ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST);
         try {
             // NOTE HADOOP_HOME/conf配下にクラスパスを追加するとStackOverFlowErrorが発生するため、設定ファイルから取得するようにしている。
-//            fs = FileSystem.get(conf);
             fs = FileSystem.get(new URI(path), conf);
-
             fs.setWorkingDirectory(fs.getHomeDirectory());
             workingDirPath = fs.getWorkingDirectory();
         } catch (IOException e) {
             throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00019", path);
         } catch (URISyntaxException e) {
             throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00018", path);
-        } finally {
-            if (fs != null) {
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         VariableTable variables = Constants.createVariableTable();
@@ -223,15 +213,11 @@ public final class FileNameUtil {
             String executionId)
         throws BulkLoaderSystemException {
 
-        FileSystem fs = null;
         Path workingDirPath = null;
         Configuration conf = new Configuration();
         try {
-            // NOTE HADOOP_HOME/conf配下にクラスパスを追加するとStackOverFlowErrorが発生するため、設定ファイルから取得するようにしている。
-//            fs = FileSystem.get(conf);
-            fs = FileSystem.get(
-                    new URI(ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST)),
-                    conf);
+            URI uri = new URI(ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
+            FileSystem fs = FileSystem.get(uri, conf);
             fs.setWorkingDirectory(fs.getHomeDirectory());
             workingDirPath = fs.getWorkingDirectory();
         } catch (IOException e) {
@@ -242,16 +228,6 @@ public final class FileNameUtil {
             throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
                     "HDFSのパスが不正。URI："
                     + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-        } finally {
-            if (fs != null) {
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
-                            "HDFSのファイルシステムのクローズに失敗。URI："
-                            + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-                }
-            }
         }
 
         VariableTable variables = Constants.createVariableTable();

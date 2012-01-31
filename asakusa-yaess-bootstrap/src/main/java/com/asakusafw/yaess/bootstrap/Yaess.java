@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import com.asakusafw.yaess.core.task.ExecutionTask;
  * A YAESS program main entry point.
  * @since 0.2.3
  */
-public class Yaess {
+public final class Yaess {
 
     static final Logger LOG = LoggerFactory.getLogger(Yaess.class);
 
@@ -100,6 +100,10 @@ public class Yaess {
         OPTIONS.addOption(OPT_PHASE_NAME);
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_ARGUMENT);
+    }
+
+    private Yaess() {
+        return;
     }
 
     /**

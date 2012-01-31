@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.PropertyMappingKind;
 import com.asakusafw.dmdl.thundergate.driver.CacheSupportDriver;
-import com.asakusafw.dmdl.thundergate.driver.PrimaryKeyDriver;
 import com.asakusafw.dmdl.thundergate.driver.OriginalNameDriver;
+import com.asakusafw.dmdl.thundergate.driver.PrimaryKeyDriver;
 import com.asakusafw.dmdl.thundergate.model.Aggregator;
 import com.asakusafw.dmdl.thundergate.model.Attribute;
 import com.asakusafw.dmdl.thundergate.model.ModelProperty;

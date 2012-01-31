@@ -3,7 +3,7 @@ WindGateユーザーガイド
 ======================
 
 この文書では、WindGateの利用方法について紹介します。
-WindGateの導入方法については :doc:`../administration/deployment-with-windgate` のWindGateに関する項目を参照してください。
+WindGateの導入方法については :doc:`../administration/deployment-with-windgate` を参照してください。
 
 WindGateプロファイル
 ====================
@@ -433,6 +433,24 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 また、データモデルとバイトストリームをマッピングする ``DataModelStreamSupport`` [#]_ の実装クラスを作成します。
 この実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
 
+なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
+
+..  list-table:: WindGateで利用するライブラリ等
+    :widths: 50 50
+    :header-rows: 1
+
+    * - ライブラリ
+      - 概要
+    * - ``asakusa-windgate-vocabulary``
+      - DSL用のクラス群
+    * - ``asakusa-windgate-plugin``
+      - DSLコンパイラプラグイン
+    * - ``asakusa-windgate-test-moderator``
+      - テストドライバプラグイン
+    * - ``asakusa-windgate-dmdl``
+      - DMDLコンパイラプラグイン
+
+
 ..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport``
 
 
@@ -456,15 +474,18 @@ CSV形式 [#]_ に対応した ``DataModelStreamSupport`` の実装クラスを�
 
 また、 単純な `ローカルファイルシステムを利用するインポーター記述`_ と `ローカルファイルシステムを利用するエクスポーター記述`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvImporterDescription`` 、後者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvExporterDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
 
+この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-windgate-dmdl`` を追加する必要があります。
+DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
+
 ..  [#] ここでのCSV形式は、RFC 4180 (http://www.ietf.org/rfc/rfc4180.txt) で提唱されている形式を拡張したものです。
-    文字セットをASCIIの範囲外にも拡張したり、CR, LFのみを改行と見なしたり、ダブルクウォート文字の取り扱いを緩くしたりなどの拡張を加えています。
+    文字セットをASCIIの範囲外にも拡張したり、CRLF以外にもCRのみやLFのみも改行と見なしたり、ダブルクウォート文字の取り扱いを緩くしたりなどの拡張を加えています。
     `CSV形式の注意点`_ も参照してください。
 
 CSV形式の設定
 ~~~~~~~~~~~~~
 ``@windgate.csv`` 属性には、次のような要素を指定できます。
 
-..  list-table:: WindGate実行時のシステムプロパティ
+..  list-table:: CSV形式の設定
     :widths: 10 10 20 60
     :header-rows: 1
 
@@ -701,6 +722,23 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 
 また、データモデルと ``PreparedStatement`` , ``ResultSet`` をマッピングする ``DataModelJdbcSupport`` [#]_ の実装クラスを作成します。
 この実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
+
+なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
+
+..  list-table:: WindGateで利用するライブラリ等
+    :widths: 50 50
+    :header-rows: 1
+
+    * - ライブラリ
+      - 概要
+    * - ``asakusa-windgate-vocabulary``
+      - DSL用のクラス群
+    * - ``asakusa-windgate-plugin``
+      - DSLコンパイラプラグイン
+    * - ``asakusa-windgate-test-moderator``
+      - テストドライバプラグイン
+    * - ``asakusa-windgate-dmdl``
+      - DMDLコンパイラプラグイン
 
 ..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport``
 

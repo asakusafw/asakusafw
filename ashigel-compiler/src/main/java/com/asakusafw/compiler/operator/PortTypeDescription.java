@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import javax.lang.model.type.TypeMirror;
  * Represents the data type of each port.
  * @since 0.2.0
  */
-public class PortTypeDescription {
+public final class PortTypeDescription {
 
     private final Kind kind;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ public abstract class AbstractJobScheduler extends JobScheduler {
             }
             if (sawError) {
                 throw new IOException(MessageFormat.format(
-                        "Jobnet execution was failed by preceding errors (batch={0}, flow={1}, phase={2}, execution={3})",
+                        "Jobnet was failed by preceding errors (batch={0}, flow={1}, phase={2}, execution={3})",
                         context.getBatchId(),
                         context.getFlowId(),
                         context.getPhase(),
@@ -161,7 +161,7 @@ public abstract class AbstractJobScheduler extends JobScheduler {
 
         private boolean submitAllWaiting() throws IOException, InterruptedException {
             boolean sawSubmit = false;
-            for (Iterator<Job> iter = waiting.iterator(); iter.hasNext(); ) {
+            for (Iterator<Job> iter = waiting.iterator(); iter.hasNext();) {
                 Job next = iter.next();
                 LOG.debug("Attemps to submit job: {}", next.getId());
                 if (isBlocked(next)) {
@@ -235,7 +235,8 @@ public abstract class AbstractJobScheduler extends JobScheduler {
             assert job != null;
             monitor.checkCancelled();
             try {
-                Executing execution = executor.submit(monitor.createJobMonitor(job.getId(), 1), context, job, doneQueue);
+                Executing execution = executor.submit(
+                        monitor.createJobMonitor(job.getId(), 1), context, job, doneQueue);
                 executing.put(execution.getJob().getId(), execution);
                 return true;
             } catch (IOException e) {

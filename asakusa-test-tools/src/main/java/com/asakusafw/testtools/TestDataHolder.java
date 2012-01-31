@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,9 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.io.sequencefile.SequenceFileModelOutput;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateOption;
@@ -375,7 +378,6 @@ public class TestDataHolder {
      * @throws InvocationTargetException モデルオブジェクトのメソッド実行に失敗した場合
      * @throws SQLException ResultSetから値を取得できなかった場合
      */
-    @SuppressWarnings("deprecation")
     private Writable getModelFromResultSet(ResultSet rs)
             throws InstantiationException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, SQLException {
@@ -496,10 +498,28 @@ public class TestDataHolder {
      * 出力データをシーケンスファイルに書き出す。
      * @param writer 書き出し先
      * @throws IOException 書き出しに失敗した場合
+     * @deprecated Use {@link #store(ModelOutput)} instead
      */
+    @Deprecated
     public void store(SequenceFile.Writer writer) throws IOException {
+        store(new SequenceFileModelOutput<Writable>(writer));
+    }
+
+    /**
+     * Store dataset into the specified output.
+     * @param output target output
+     * @throws IOException if failed to store
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    public void store(ModelOutput<?> output) throws IOException {
+        if (output == null) {
+            throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
+        }
+        @SuppressWarnings("unchecked")
+        ModelOutput<Writable> unsafe = (ModelOutput<Writable>) output;
         for (Writable model : source) {
-            writer.append(NullWritable.get(), model);
+            unsafe.write(model);
         }
     }
 
@@ -507,7 +527,9 @@ public class TestDataHolder {
      * 実データをシーケンスファイルから読み込む。
      * @param reader 読み込み元
      * @throws IOException 読み込みに失敗した場合
+     * @deprecated Use {@link #load(ModelInput)} instead
      */
+    @Deprecated
     public void load(SequenceFile.Reader reader) throws IOException {
         NullWritable key = NullWritable.get();
         for (;;) {
@@ -520,6 +542,36 @@ public class TestDataHolder {
                 throw new RuntimeException(e);
             }
             if (reader.next(key, model)) {
+                actual.add(model);
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Loads dataset from the specified input.
+     * @param input source input
+     * @throws IOException if failed to load
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.5
+     */
+    public void load(ModelInput<?> input) throws IOException {
+        if (input == null) {
+            throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
+        }
+        @SuppressWarnings("unchecked")
+        ModelInput<Writable> unsafe = (ModelInput<Writable>) input;
+        for (;;) {
+            Writable model;
+            try {
+                model = modelClass.newInstance();
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            if (unsafe.readTo(model)) {
                 actual.add(model);
             } else {
                 break;

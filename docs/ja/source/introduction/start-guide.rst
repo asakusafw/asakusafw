@@ -137,7 +137,11 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
     export ASAKUSA_HOME=$HOME/asakusa
     export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATH
 
-環境変数をデスクトップ環境に反映させるため、一度デスクトップ環境からログアウトし、再ログインします。
+``~/.profile`` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
+
+..  code-block:: sh
+
+    . ~/.profile
 
 インストールソフトウェアの動作確認
 ----------------------------------
@@ -211,13 +215,13 @@ Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から
     tar xf eclipse-java-*-linux-gtk.tar.gz
     mv eclipse ~/eclipse
 
-次に、Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。ここでは、ワークスペースディレクトリに$HOME/workspace を指定します。
+Eclipseを起動するには、$HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
 
-..  code-block:: sh
+..  attention::
+    GUIのファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して ``~/.profile`` で定義した環境変数を反映させるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
 
-    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
-
-Eclipseを起動するには、ファイラーから $HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
+..  attention::
+    Eclipse 3.6以前のEclipse IDE for Java Developersを使用している場合は、Eclipseを起動する前にクラスパス変数M2_REPOを設定する必要があります。詳しくは :doc:`../application/maven-archetype` の :ref:`eclipse-configuration` を参照して下さい。
 
 Asakusa Frameworkのインストールとサンプルアプリケーションの実行
 ===============================================================
@@ -244,9 +248,10 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-)
     2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 (<-3を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 4 (0.2.4) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 5 (0.2.5) を選択します。
 
 ..  code-block:: sh
 
@@ -255,7 +260,8 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     2: 0.2.2
     3: 0.2.3
     4: 0.2.4
-    Choose a number: 4: 4 (<-4を入力)
+    5: 0.2.5
+    Choose a number: 5: 5 (<-5を入力)
 
 この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 

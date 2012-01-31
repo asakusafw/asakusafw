@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.external.FileIoProcessor;
 import com.asakusafw.compiler.testing.JobflowInfo;
-import com.asakusafw.runtime.stage.AbstractStageClient;
-import com.asakusafw.testdriver.core.TestToolRepository;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.core.TestToolRepository;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
  */
 public class TestDriverContext implements TestContext {
+
+    static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
+
+    /**
+     * The system property key of runtime workig directory.
+     * This working directory must be a relative path from the default working directory.
+     */
+    public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir";
+
+    /**
+     * The system property key of compiler working directory.
+     */
+    public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir";
 
     /**
      * Environmental variable: the framework home path.
@@ -49,7 +67,7 @@ public class TestDriverContext implements TestContext {
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
-    private File frameworkHomePath;
+    private volatile File frameworkHomePath;
     private final Class<?> callerClass;
     private final TestToolRepository repository;
     private final Map<String, String> extraConfigurations;
@@ -83,6 +101,15 @@ public class TestDriverContext implements TestContext {
         this.extraConfigurations = new TreeMap<String, String>();
         this.batchArgs = new TreeMap<String, String>();
         this.options = new FlowCompilerOptions();
+        configureOptions();
+    }
+
+    private void configureOptions() {
+        LOG.debug("Auto detecting current execution environment");
+        // FIXME Make it pluggable
+        this.options.putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.AUTO.getSymbol());
     }
 
     /**
@@ -150,7 +177,8 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * @return the osUser
+     * Returns the current user name in OS.
+     * @return the current user name
      */
     public String getOsUser() {
         String user = System.getenv("USER");
@@ -158,10 +186,12 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * @return the compileWorkBaseDir
+     * Returns the path to the compiler working directory.
+     * Clients can configure this property using system property {@value #KEY_COMPILER_WORKING_DIRECTORY}.
+     * @return the compiler working directory
      */
     public String getCompileWorkBaseDir() {
-        String dir = System.getProperty("asakusa.testdriver.compilerwork.dir");
+        String dir = System.getProperty(KEY_COMPILER_WORKING_DIRECTORY);
         if (dir == null) {
             return COMPILERWORK_DIR_DEFAULT;
         }
@@ -169,10 +199,13 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * @return the clusterWorkDir
+     * Returns the path to the runtime working directory.
+     * This working directory is relative path from cluster's default working directory.
+     * Clients can configure this property using system property {@value #KEY_RUNTIME_WORKING_DIRECTORY}.
+     * @return the compiler working directory
      */
     public String getClusterWorkDir() {
-        String dir = System.getProperty("asakusa.testdriver.hadoopwork.dir");
+        String dir = System.getProperty(KEY_RUNTIME_WORKING_DIRECTORY);
         if (dir == null) {
             return HADOOPWORK_DIR_DEFAULT;
         }
@@ -180,7 +213,9 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * @return the callerClass
+     * Returns the caller class.
+     * This is ordinally used for detect test dataset on the classpath.
+     * @return the caller class
      */
     public Class<?> getCallerClass() {
         return callerClass;
@@ -236,14 +271,17 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * @return the extraConfigurations
+     * Returns extra configurations for the runtime.
+     * For Hadoop, these configurations are passed using {@code -D <key>=<value>}.
+     * @return the extra configurations (key value pairs)
      */
     public Map<String, String> getExtraConfigurations() {
         return extraConfigurations;
     }
 
     /**
-     * @return the batchArgs
+     * Returns the batch arguments.
+     * @return the batch arguments
      */
     public Map<String, String> getBatchArgs() {
         return batchArgs;
@@ -258,19 +296,20 @@ public class TestDriverContext implements TestContext {
     public Map<String, String> getArguments() {
         Map<String, String> copy = new HashMap<String, String>(getBatchArgs());
         if (currentBatchId != null) {
-            copy.put(AbstractStageClient.VAR_BATCH_ID, currentBatchId);
+            copy.put(StageConstants.VAR_BATCH_ID, currentBatchId);
         }
         if (currentFlowId != null) {
-            copy.put(AbstractStageClient.VAR_FLOW_ID, currentFlowId);
+            copy.put(StageConstants.VAR_FLOW_ID, currentFlowId);
         }
         if (currentExecutionId != null) {
-            copy.put(AbstractStageClient.VAR_EXECUTION_ID, currentExecutionId);
+            copy.put(StageConstants.VAR_EXECUTION_ID, currentExecutionId);
         }
         return Collections.unmodifiableMap(copy);
     }
 
     /**
-     * @return the options
+     * Returns the compiler options.
+     * @return the compiler options
      */
     public FlowCompilerOptions getOptions() {
         return options;
@@ -283,7 +322,9 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @return the currentBatchId
+     * Returns the current batch ID.
+     * @return the current batch ID, or {@code null} if not set
+     * @see #setCurrentBatchId(String)
      */
     public String getCurrentBatchId() {
         return currentBatchId;
@@ -291,7 +332,8 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param currentBatchId the currentBatchId to set
+     * Configures the current batch ID.
+     * @param currentBatchId the ID
      */
     public void setCurrentBatchId(String currentBatchId) {
         this.currentBatchId = currentBatchId;
@@ -299,7 +341,9 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @return the currentFlowId
+     * Returns the current flow ID.
+     * @return the ID, or {@code null} if not set
+     * @see #setCurrentFlowId(String)
      */
     public String getCurrentFlowId() {
         return currentFlowId;
@@ -307,7 +351,8 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param currentFlowId the currentFlowId to set
+     * Configures the current flow ID.
+     * @param currentFlowId the ID
      */
     public void setCurrentFlowId(String currentFlowId) {
         this.currentFlowId = currentFlowId;
@@ -315,7 +360,9 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @return the currentExecutionId
+     * Returns the current execution ID.
+     * @return the ID, or {@code null} if not set
+     * @see #setCurrentExecutionId(String)
      */
     public String getCurrentExecutionId() {
         return currentExecutionId;
@@ -323,7 +370,8 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param currentExecutionId the currentExecutionId to set
+     * Returns the current execution ID.
+     * @param currentExecutionId the ID
      */
     public void setCurrentExecutionId(String currentExecutionId) {
         this.currentExecutionId = currentExecutionId;
@@ -331,7 +379,8 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @return the skipCleanInput
+     * Returns whether this test skips to cleanup input data source.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanInput() {
         return skipCleanInput;
@@ -339,15 +388,17 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipCleanInput the skipCleanInput to set
+     * Sets whether this test skips to cleanup input data source (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipCleanInput(boolean skipCleanInput) {
-        this.skipCleanInput = skipCleanInput;
+    public void setSkipCleanInput(boolean skip) {
+        this.skipCleanInput = skip;
     }
 
 
     /**
-     * @return the skipCleanOutput
+     * Returns whether this test skips to cleanup input data source.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanOutput() {
         return skipCleanOutput;
@@ -355,15 +406,17 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipCleanOutput the skipCleanOutput to set
+     * Sets whether this test skips to cleanup output data source (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipCleanOutput(boolean skipCleanOutput) {
-        this.skipCleanOutput = skipCleanOutput;
+    public void setSkipCleanOutput(boolean skip) {
+        this.skipCleanOutput = skip;
     }
 
 
     /**
-     * @return the skipPrepareInput
+     * Returns whether this test skips to cleanup input data source.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareInput() {
         return skipPrepareInput;
@@ -371,15 +424,17 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipPrepareInput the skipPrepareInput to set
+     * Sets whether this test skips to prepare input data source (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipPrepareInput(boolean skipPrepareInput) {
-        this.skipPrepareInput = skipPrepareInput;
+    public void setSkipPrepareInput(boolean skip) {
+        this.skipPrepareInput = skip;
     }
 
 
     /**
-     * @return the skipPrepareOutput
+     * Returns whether this test skips to prepare output data source.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareOutput() {
         return skipPrepareOutput;
@@ -387,15 +442,17 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipPrepareOutput the skipPrepareOutput to set
+     * Sets whether this test skips to prepare output data source (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipPrepareOutput(boolean skipPrepareOutput) {
-        this.skipPrepareOutput = skipPrepareOutput;
+    public void setSkipPrepareOutput(boolean skip) {
+        this.skipPrepareOutput = skip;
     }
 
 
     /**
-     * @return the skipRunJobflow
+     * Returns whether this test skips to execute jobflows.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipRunJobflow() {
         return skipRunJobflow;
@@ -403,15 +460,17 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipRunJobflow the skipRunJobflow to set
+     * Sets whether this test skips to execute jobflows (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipRunJobflow(boolean skipRunJobflow) {
-        this.skipRunJobflow = skipRunJobflow;
+    public void setSkipRunJobflow(boolean skip) {
+        this.skipRunJobflow = skip;
     }
 
 
     /**
-     * @return the skipVerify
+     * Returns whether this test skips to verify the testing result.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipVerify() {
         return skipVerify;
@@ -419,43 +478,10 @@ public class TestDriverContext implements TestContext {
 
 
     /**
-     * @param skipVerify the skipVerify to set
+     * Sets whether this test skips to verify the testing result (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
      */
-    public void setSkipVerify(boolean skipVerify) {
-        this.skipVerify = skipVerify;
+    public void setSkipVerify(boolean skip) {
+        this.skipVerify = skip;
     }
-
-
-    /**
-     * @return the envFrameworkPath
-     */
-    public static String getEnvFrameworkPath() {
-        return ENV_FRAMEWORK_PATH;
-    }
-
-
-    /**
-     * @return the submitJobScript
-     */
-    public static String getSubmitJobScript() {
-        return SUBMIT_JOB_SCRIPT;
-    }
-
-
-    /**
-     * @return the compilerworkDirDefault
-     */
-    public static String getCompilerworkDirDefault() {
-        return COMPILERWORK_DIR_DEFAULT;
-    }
-
-
-    /**
-     * @return the hadoopworkDirDefault
-     */
-    public static String getHadoopworkDirDefault() {
-        return HADOOPWORK_DIR_DEFAULT;
-    }
-
-
 }

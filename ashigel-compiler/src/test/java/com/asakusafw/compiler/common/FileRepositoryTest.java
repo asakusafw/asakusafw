@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,10 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.zip.ZipInputStream;
 
-
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
-import com.asakusafw.compiler.common.FileRepository;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.util.TemporaryFolder;
 

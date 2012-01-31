@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class JobflowAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(JobflowAnalyzer.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     private boolean sawError;
 
@@ -271,11 +271,8 @@ public class JobflowAnalyzer {
                 error("{0}は不明なインポーターを利用しています", input);
                 continue;
             }
-            Set<Location> locations = proc.getInputLocations(input);
-            assert locations.size() == 1 : "sidedata must be singular: " + input;
-            Location source = locations.iterator().next();
-            assert source.isPrefix() == false : "sidedata must not have wildcard: " + input;
-            results.add(new SideData(source, input.getName()));
+            Set<Location> locations = proc.getInputInfo(input).getLocations();
+            results.add(new SideData(locations, input.getName()));
         }
         return results;
     }

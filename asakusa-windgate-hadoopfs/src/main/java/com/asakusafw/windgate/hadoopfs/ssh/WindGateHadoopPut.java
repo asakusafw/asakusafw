@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,18 +98,14 @@ public class WindGateHadoopPut {
     void doPut(FileList.Reader source) throws IOException {
         assert source != null;
         FileSystem fs = FileSystem.get(conf);
-        try {
-            while (source.next()) {
-                FileStatus status = source.getCurrentFile();
-                InputStream input = source.openContent();
-                try {
-                    doPut(fs, status, input);
-                } finally {
-                    input.close();
-                }
+        while (source.next()) {
+            FileStatus status = source.getCurrentFile();
+            InputStream input = source.openContent();
+            try {
+                doPut(fs, status, input);
+            } finally {
+                input.close();
             }
-        } finally {
-            fs.close();
         }
     }
 

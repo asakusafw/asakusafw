@@ -1,0 +1,16 @@
+@directio.csv(
+    charset = "ISO-2022-JP",
+    allow_linefeed = TRUE,
+    has_header = TRUE,
+    true = "T",
+    false = "F",
+    date = "yyyy/MM/dd",
+    datetime = "yyyy/MM/dd+HH:mm:ss",
+)
+model = {
+    text_value : TEXT;
+    true_value : BOOLEAN;
+    false_value : BOOLEAN;
+    date_value : DATE;
+    date_time_value : DATETIME;
+};

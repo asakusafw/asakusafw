@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -354,13 +353,14 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
 
     private String[][] parse(int columns, String string) {
         CsvConfiguration conf = new CsvConfiguration(
+                CsvConfiguration.DEFAULT_CHARSET,
                 CsvConfiguration.DEFAULT_HEADER_CELLS,
                 CsvConfiguration.DEFAULT_TRUE_FORMAT,
                 CsvConfiguration.DEFAULT_FALSE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
-        StringReader reader = new StringReader(string);
-        CsvParser parser = new CsvParser(reader, string, conf);
+        ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
+        CsvParser parser = new CsvParser(input, string, conf);
         List<String[]> results = new ArrayList<String[]>();
         try {
             StringOption buffer = new StringOption();

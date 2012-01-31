@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         }
         nextRowNumber = 1;
         Map<PropertyName, Integer> results = new LinkedHashMap<PropertyName, Integer>();
-        for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext(); ) {
+        for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext();) {
             Cell cell = iter.next();
             int type = cell.getCellType();
             if (type == Cell.CELL_TYPE_BLANK) {

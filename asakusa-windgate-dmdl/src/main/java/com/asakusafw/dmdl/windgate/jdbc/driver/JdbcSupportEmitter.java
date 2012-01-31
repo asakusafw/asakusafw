@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,7 +226,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static class SupportGenerator {
+    private static final class SupportGenerator {
 
         private static final String NAME_CALENDAR = "calendar";
 
@@ -1118,7 +1118,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static class DescriptionGenerator {
+    private static final class DescriptionGenerator {
 
         // for reduce library dependencies
         private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.JdbcImporterDescription";

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.asakusafw.dmdl.thundergate.view.model.CreateView;
 public final class ViewParser {
 
     /**
-     * Parses VIEW structure and returns its
+     * Parses VIEW structure and returns its abstract syntax tree.
      * @param definition target view definition
      * @return parsing results
      * @throws IOException if failed to parse the view

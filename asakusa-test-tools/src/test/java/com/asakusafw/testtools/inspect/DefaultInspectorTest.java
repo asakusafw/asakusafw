@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,7 @@
  */
 package com.asakusafw.testtools.inspect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -28,9 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import org.apache.hadoop.io.Writable;
 import org.junit.Test;
+
+import test.modelgen.model.AllTypesWNoerr;
 
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
@@ -39,11 +36,7 @@ import com.asakusafw.testtools.RowMatchingCondition;
 import com.asakusafw.testtools.TestDataHolder;
 import com.asakusafw.testtools.db.DbUtils;
 import com.asakusafw.testtools.excel.ExcelUtils;
-import com.asakusafw.testtools.inspect.Cause;
-import com.asakusafw.testtools.inspect.DefaultInspector;
 import com.asakusafw.testtools.inspect.Cause.Type;
-
-import test.modelgen.model.AllTypesWNoerr;
 
 public class DefaultInspectorTest {
 

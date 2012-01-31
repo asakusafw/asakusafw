@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import java.util.TreeMap;
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.log.Log;
-import com.asakusafw.runtime.io.property.PropertyLoader;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
+import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 
 /**
  * プロパティファイルからジョブフロー設定を読み取るクラス。

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.apache.commons.cli.ParseException;
  * Generates an execution ID.
  * @since 0.2.3
  */
-public class GenerateExecutionId {
+public final class GenerateExecutionId {
 
     static final Option OPT_BATCH_ID;
     static final Option OPT_FLOW_ID;
@@ -59,6 +59,10 @@ public class GenerateExecutionId {
         OPTIONS.addOption(OPT_BATCH_ID);
         OPTIONS.addOption(OPT_FLOW_ID);
         OPTIONS.addOption(OPT_ARGUMENT);
+    }
+
+    private GenerateExecutionId() {
+        return;
     }
 
     /**

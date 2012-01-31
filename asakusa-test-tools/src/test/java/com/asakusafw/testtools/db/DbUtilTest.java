@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,15 @@
 package com.asakusafw.testtools.db;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.junit.Test;
 
 import com.asakusafw.testtools.ColumnInfo;
-import com.asakusafw.testtools.db.DbUtils;
 import com.asakusafw.testtools.excel.ExcelUtils;
 
 public class DbUtilTest {

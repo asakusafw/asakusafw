@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package com.asakusafw.yaess.core.task;
 import java.util.Collections;
 import java.util.Set;
 
-import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
+import com.asakusafw.yaess.core.Job;
 
 /**
  * An abstract super class of {@link Job} implementation for each handler's lifecycle event.

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,8 +332,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
                 return ArrayListBuffer.class;
             case ESCAPE:
                 return FileMapListBuffer.class;
+            default:
+                throw new AssertionError(kind);
             }
-            throw new AssertionError(kind);
         }
 
         /**

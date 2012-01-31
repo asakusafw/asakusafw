@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 
 import com.asakusafw.bulkloader.common.StreamRedirectThread;
@@ -76,7 +77,7 @@ public abstract class StreamFileListProvider implements FileListProvider {
     @Override
     public final void waitForComplete() throws IOException, InterruptedException {
         synchronized (running) {
-            for (Iterator<Thread> iter = running.iterator(); iter.hasNext(); ) {
+            for (Iterator<Thread> iter = running.iterator(); iter.hasNext();) {
                 Thread next = iter.next();
                 if (next.isAlive()) {
                     next.join();

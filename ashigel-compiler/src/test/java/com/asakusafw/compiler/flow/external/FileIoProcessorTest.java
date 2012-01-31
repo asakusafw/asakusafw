@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,44 @@ package com.asakusafw.compiler.flow.external;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.jar.JarFile;
 
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
+import com.asakusafw.compiler.flow.external.flow.IndependentOutExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.IndependentOutputJob;
+import com.asakusafw.compiler.flow.external.flow.InvalidFileNameOutputJob;
+import com.asakusafw.compiler.flow.external.flow.MissingPathOutputJob;
+import com.asakusafw.compiler.flow.external.flow.MixedInputJob;
+import com.asakusafw.compiler.flow.external.flow.MultipleOutputJob;
+import com.asakusafw.compiler.flow.external.flow.NestedOutExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.NestedOutputJob;
+import com.asakusafw.compiler.flow.external.flow.NormalInputJob;
+import com.asakusafw.compiler.flow.external.flow.Out1ExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.Out2ExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.Out3ExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.Out4ExporterDesc;
+import com.asakusafw.compiler.flow.external.flow.RootOutputJob;
+import com.asakusafw.compiler.flow.external.flow.SingleOutputJob;
+import com.asakusafw.compiler.flow.external.flow.SingularOutputJob;
+import com.asakusafw.compiler.flow.external.flow.TinyInputJob;
+import com.asakusafw.compiler.flow.testing.external.Ex1MockExporterDescription;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
+import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -34,15 +63,82 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
 /**
- * Test for {@link FileIoProcessor}.
+ * Test for {@link FileIoProcessorTest}.
  */
 public class FileIoProcessorTest {
+
+    static final Logger LOG = LoggerFactory.getLogger(FileIoProcessorTest.class);
+
+    static volatile boolean enableOutput = false;
 
     /**
      * Test helper.
      */
     @Rule
-    public CompilerTester tester = new CompilerTester();
+    public final CompilerTester tester = new CompilerTester();
+
+    /**
+     * Run only enable output.
+     */
+    @Rule
+    public final MethodRule check = new MethodRule() {
+
+        @Override
+        public Statement apply(final Statement base, final FrameworkMethod method, Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    Assume.assumeTrue(method.getName().startsWith("output_") == false || enableOutput);
+                    base.evaluate();
+                }
+            };
+        }
+    };
+
+    /**
+     * Checks Hadoop environment.
+     */
+    @BeforeClass
+    public static void checkHadoop() {
+        enableOutput = hasMapreduce370();
+    }
+
+    private static boolean hasMapreduce370() {
+        try {
+            File corelib = findHadoopCoreLib();
+            if (corelib != null) {
+                String classFile = "org/apache/hadoop/mapreduce/lib/output/MultipleOutputs.class";
+                LOG.debug("Searching MultipleOutputs");
+                JarFile jar = new JarFile(corelib);
+                try {
+                    boolean found = jar.getJarEntry(classFile) != null;
+                    LOG.debug("Searched MultipleOutputs: found={}", found);
+                    return found;
+                } finally {
+                    jar.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static File findHadoopCoreLib() {
+        String hadoop = System.getenv("HADOOP_HOME");
+        if (hadoop != null) {
+            File home = new File(hadoop);
+            for (File file : home.listFiles()) {
+                String name = file.getName();
+                if (name.startsWith("hadoop-core-") && name.endsWith(".jar")) {
+                    LOG.debug("hadoop-core.jar is found on: {}", file.getAbsoluteFile());
+                    return file;
+                }
+            }
+        }
+        LOG.debug("hadoop-core.jar is not found");
+        return null;
+    }
 
     /**
      * validated.
@@ -50,6 +146,21 @@ public class FileIoProcessorTest {
      */
     @Test
     public void validate() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
+        tester.compileJobflow(SingleOutputJob.class);
+    }
+
+    /**
+     * missing path.
+     * @throws Exception expected
+     */
+    @Test(expected = IOException.class)
+    public void validate_invalid_compiler_option() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                "__INVALID__");
         tester.compileJobflow(SingleOutputJob.class);
     }
 
@@ -59,6 +170,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_missing_path() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(MissingPathOutputJob.class);
     }
 
@@ -68,6 +182,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_inavalid_file_name() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(InvalidFileNameOutputJob.class);
     }
 
@@ -77,6 +194,9 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_singular_file() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(SingularOutputJob.class);
     }
 
@@ -86,7 +206,138 @@ public class FileIoProcessorTest {
      */
     @Test(expected = IOException.class)
     public void validate_root() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         tester.compileJobflow(RootOutputJob.class);
+    }
+
+    /**
+     * Input single dataset.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_single() throws Exception {
+        JobflowInfo info = tester.compileJobflow(NormalInputJob.class);
+
+        ModelOutput<Ex1> s10 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
+        writeEx1(s10, 1, 2);
+
+        ModelOutput<Ex1> s20 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
+        writeEx1(s20, 3, 4, 5);
+
+        ModelOutput<Ex1> s21 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-1", '/'));
+        writeEx1(s21, 6, 7, 8, 9);
+
+        assertThat(tester.run(info), is(true));
+        checkResults(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    /**
+     * Input a tiny dataset.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_tiny() throws Exception {
+        tester.options().setHashJoinForTiny(true);
+        JobflowInfo info = tester.compileJobflow(TinyInputJob.class);
+
+        ModelOutput<Ex2> s10 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
+        writeEx2(s10, 1, 2);
+
+        ModelOutput<Ex2> s20 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
+        writeEx2(s20, 3, 4, 5);
+
+        ModelOutput<Ex2> s21 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-1", '/'));
+        writeEx2(s21, 6, 7, 8, 9);
+
+        assertThat(tester.run(info), is(true));
+        checkResults(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    /**
+     * Input mixed datasets.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_mixed() throws Exception {
+        tester.options().setHashJoinForTiny(true);
+        JobflowInfo info = tester.compileJobflow(MixedInputJob.class);
+
+        ModelOutput<Ex1> s10 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
+        writeEx1(s10, 1, 2, 3);
+        ModelOutput<Ex1> s20 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
+        writeEx1(s20, 4, 5, 6);
+
+        ModelOutput<Ex2> t10 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
+        writeEx2(t10, 1, 2);
+        ModelOutput<Ex2> t20 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
+        writeEx2(t20, 5, 6);
+
+        assertThat(tester.run(info), is(true));
+        checkResults(1, 2, 5, 6);
+    }
+
+    private void writeEx1(ModelOutput<Ex1> output, int... sids) throws IOException {
+        try {
+            Ex1 value = new Ex1();
+            for (int sid : sids) {
+                value.setSid(sid);
+                value.setValue(sid);
+                value.setStringAsString(String.valueOf(sid));
+                output.write(value);
+            }
+        } finally {
+            output.close();
+        }
+    }
+
+    private void writeEx2(ModelOutput<Ex2> output, int... sids) throws IOException {
+        try {
+            Ex2 value = new Ex2();
+            for (int sid : sids) {
+                value.setSid(sid);
+                value.setValue(sid);
+                value.setStringAsString(String.valueOf(sid));
+                output.write(value);
+            }
+        } finally {
+            output.close();
+        }
+    }
+
+    private void checkResults(int... sids) {
+        List<Ex1> list;
+        try {
+            Ex1MockExporterDescription instance = new Ex1MockExporterDescription();
+            list = tester.getList(
+                    Ex1.class,
+                    Location.fromPath(instance.getPathPrefix(), '/'),
+                    new Comparator<Ex1>() {
+                        @Override
+                        public int compare(Ex1 o1, Ex1 o2) {
+                            return o1.getSidOption().compareTo(o2.getSidOption());
+                        }
+                    });
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+        assertThat(list.size(), is(sids.length));
+        for (int i = 0; i < sids.length; i++) {
+            assertThat(list.get(i).getSid(), is((long) sids[i]));
+        }
+    }
+
+    /**
+     * Fail for MAPREDUCE-370.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void mapreduce_370() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.DISABLED.getSymbol());
+        tester.compileJobflow(SingleOutputJob.class);
     }
 
     /**
@@ -94,7 +345,10 @@ public class FileIoProcessorTest {
      * @throws Exception if failed
      */
     @Test
-    public void single() throws Exception {
+    public void output_single() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -113,7 +367,10 @@ public class FileIoProcessorTest {
      * @throws Exception if failed
      */
     @Test
-    public void multiple() throws Exception {
+    public void output_multiple() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -144,7 +401,10 @@ public class FileIoProcessorTest {
      * @throws Exception if failed
      */
     @Test
-    public void independent() throws Exception {
+    public void output_independent() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
@@ -167,7 +427,10 @@ public class FileIoProcessorTest {
      * @throws Exception if failed
      */
     @Test
-    public void nested() throws Exception {
+    public void output_nested() throws Exception {
+        tester.options().putExtraAttribute(
+                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                GenericOptionValue.ENABLED.getSymbol());
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
         ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));

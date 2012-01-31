@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import com.asakusafw.windgate.core.WindGateLogger;
 /**
  * A WindGate abort main entry point.
  */
-public class WindGateAbort {
+public final class WindGateAbort {
 
     static final WindGateLogger WGLOG = new WindGateBootstrapLogger(WindGateAbort.class);
 
@@ -68,6 +68,10 @@ public class WindGateAbort {
         OPTIONS.addOption(OPT_PROFILE);
         OPTIONS.addOption(OPT_SESSION_ID);
         OPTIONS.addOption(OPT_PLUGIN);
+    }
+
+    private WindGateAbort() {
+        return;
     }
 
     /**

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.vocabulary.external.FileImporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -35,19 +34,19 @@ public class AbstractImporterPreparatorTest {
      */
     @Test
     public void getDescriptionClass() {
-        class Target extends AbstractImporterPreparator<FileImporterDescription> {
+        class Target extends AbstractImporterPreparator<DummyImporterDescription> {
             @Override
-            public void truncate(FileImporterDescription description) {
+            public void truncate(DummyImporterDescription description) {
                 return;
             }
             @Override
             public <V> ModelOutput<V> createOutput(DataModelDefinition<V> definition,
-                    FileImporterDescription description) {
+                    DummyImporterDescription description) {
                 return null;
             }
         }
         Target obj = new Target();
-        assertThat(obj.getDescriptionClass(), is((Object) FileImporterDescription.class));
+        assertThat(obj.getDescriptionClass(), is((Object) DummyImporterDescription.class));
     }
 
     /**
@@ -69,5 +68,9 @@ public class AbstractImporterPreparatorTest {
         }
         Target obj = new Target();
         obj.getDescriptionClass();
+    }
+
+    abstract static class DummyImporterDescription implements ImporterDescription {
+        // no special members
     }
 }

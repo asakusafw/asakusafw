@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.asakusafw.windgate.retryable;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
+
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;
@@ -123,7 +124,7 @@ public class RetryableProcessProfile {
             WGLOG.error("E00001",
                     profile.getName(),
                     configKey,
-                    value);
+                    null);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Process \"{0}\" must declare \"{1}\"",
                     profile.getName(),

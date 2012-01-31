@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.asakusafw.windgate.hadoopfs.ssh.FileList;
-import com.asakusafw.windgate.hadoopfs.ssh.WindGateHadoopGet;
-
 /**
  * Test for {@link WindGateHadoopGet}.
  */
@@ -70,9 +67,6 @@ public class WindGateHadoopGetTest {
     public void tearDown() throws Exception {
         if (stdout != null) {
             System.setOut(stdout);
-        }
-        if (fs != null) {
-            fs.close();
         }
         clear();
     }

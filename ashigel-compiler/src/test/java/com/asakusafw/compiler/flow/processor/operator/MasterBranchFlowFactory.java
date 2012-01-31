@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Asakusa Framework Team.
+ * Copyright 2011-2012 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.Generated;
 
 import com.asakusafw.compiler.flow.testing.model.Ex1;
