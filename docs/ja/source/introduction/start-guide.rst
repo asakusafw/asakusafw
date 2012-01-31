@@ -137,7 +137,11 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
     export ASAKUSA_HOME=$HOME/asakusa
     export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATH
 
-環境変数をデスクトップ環境に反映させるため、一度デスクトップ環境からログアウトし、再ログインします。
+``~/.profile`` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
+
+..  code-block:: sh
+
+    . ~/.profile
 
 インストールソフトウェアの動作確認
 ----------------------------------
@@ -211,7 +215,10 @@ Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から
     tar xf eclipse-java-*-linux-gtk.tar.gz
     mv eclipse ~/eclipse
 
-Eclipseを起動するには、ファイラーから $HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
+Eclipseを起動するには、$HOME/eclipse/eclipse を実行します。ワークスペースはデフォルトの$HOME/workspace をそのまま指定します。
+
+..  attention::
+    GUIのファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して ``~/.profile`` で定義した環境変数を反映させるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
 
 ..  attention::
     Eclipse 3.6以前のEclipse IDE for Java Developersを使用している場合は、Eclipseを起動する前にクラスパス変数M2_REPOを設定する必要があります。詳しくは :doc:`../application/maven-archetype` の :ref:`eclipse-configuration` を参照して下さい。
