@@ -62,6 +62,11 @@ public enum ImportType {
         return ImportTypeToImportType.REVERSE_DICTIONARY.get(key);
     }
 
+    @Override
+    public String toString() {
+        return importType;
+    }
+
     private static class ImportTypeToImportType {
         static final Map<String, ImportType> REVERSE_DICTIONARY;
         static {
