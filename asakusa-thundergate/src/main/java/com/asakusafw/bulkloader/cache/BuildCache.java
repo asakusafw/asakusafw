@@ -86,7 +86,6 @@ public class BuildCache {
         assert flowId != null;
         assert tableName != null;
         assert executionId != null;
-        boolean released = false;
         try {
             ImportBean bean = createBean(targetName, batchId, flowId, executionId, tableName);
             if (bean == null) {
@@ -94,13 +93,15 @@ public class BuildCache {
             }
             Importer importer = new Importer();
             int exitCode = importer.importTables(bean);
-            int releaseExit = new ReleaseCacheLock().execute(targetName, executionId);
-            released = true;
-            if (releaseExit != Constants.EXIT_CODE_SUCCESS && exitCode == Constants.EXIT_CODE_SUCCESS) {
-                exitCode = Constants.EXIT_CODE_WARNING;
-            }
             if (exitCode == Constants.EXIT_CODE_SUCCESS) {
-                LOG.error("TG-BUILDCACHE-01006", targetName, batchId, flowId, executionId, tableName);
+                LOG.info("TG-BUILDCACHE-01007", targetName, batchId, flowId, executionId, tableName);
+                int releaseExit = new ReleaseCacheLock().execute(targetName, executionId);
+                if (releaseExit != Constants.EXIT_CODE_SUCCESS) {
+                    LOG.error("TG-BUILDCACHE-01008", targetName, batchId, flowId, executionId, tableName);
+                    exitCode = Constants.EXIT_CODE_WARNING;
+                }
+            } else {
+                LOG.info("TG-BUILDCACHE-01009", targetName, batchId, flowId, executionId, tableName);
             }
             return exitCode;
         } catch (BulkLoaderSystemException e) {
@@ -108,16 +109,12 @@ public class BuildCache {
             return Constants.EXIT_CODE_ERROR;
         } catch (Exception e) {
             try {
-                LOG.error(e, "TG-BUILDCACHE-01007", targetName, batchId, flowId, executionId, tableName);
+                LOG.error(e, "TG-BUILDCACHE-01010", targetName, batchId, flowId, executionId, tableName);
                 return Constants.EXIT_CODE_ERROR;
             } catch (Exception e1) {
                 System.err.print("build-cacheで不明なエラーが発生しました。");
                 e1.printStackTrace();
                 return Constants.EXIT_CODE_ERROR;
-            }
-        } finally {
-            if (released == false) {
-                new ReleaseCacheLock().execute(targetName, executionId);
             }
         }
     }
@@ -159,6 +156,10 @@ public class BuildCache {
         }
         if (table == null) {
             LOG.error("TG-BUILDCACHE-01005", targetName, batchId, jobflowId, executionId, tableName);
+            return null;
+        }
+        if (table.getCacheId() == null) {
+            LOG.error("TG-BUILDCACHE-01006", targetName, batchId, jobflowId, executionId, tableName);
             return null;
         }
         table.setLockType(ImportTableLockType.NONE);
