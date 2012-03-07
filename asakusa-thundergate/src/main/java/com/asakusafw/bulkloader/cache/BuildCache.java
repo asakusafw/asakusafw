@@ -65,9 +65,9 @@ public class BuildCache {
         if (initExit != Constants.EXIT_CODE_SUCCESS) {
             System.exit(initExit);
         }
-        LOG.error("TG-BUILDCACHE-01001", targetName, batchId, flowId, executionId, tableName);
+        LOG.info("TG-BUILDCACHE-01001", targetName, batchId, flowId, executionId, tableName);
         int exitCode = new BuildCache().execute(targetName, batchId, flowId, tableName, executionId);
-        LOG.error("TG-BUILDCACHE-01002", targetName, batchId, flowId, executionId, tableName, exitCode);
+        LOG.info("TG-BUILDCACHE-01002", targetName, batchId, flowId, executionId, tableName, exitCode);
 
         System.exit(exitCode);
     }
