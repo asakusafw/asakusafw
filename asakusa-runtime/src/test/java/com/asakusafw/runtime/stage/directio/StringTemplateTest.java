@@ -74,6 +74,17 @@ public class StringTemplateTest {
     }
 
     /**
+     * date placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_date_null() throws Exception {
+        Mock mock = new Mock(spec(DATE, "yyyy/MM/dd"));
+        mock.setMock(new DateOption());
+        mock.apply(); // no error
+    }
+
+    /**
      * datetime placeholder.
      * @throws Exception if failed
      */
@@ -82,6 +93,17 @@ public class StringTemplateTest {
         Mock mock = new Mock(spec(DATETIME, "yyyy-MM-dd/HH"));
         mock.setMock(new DateTimeOption(new DateTime(2012, 2, 3, 4, 5, 6)));
         assertThat(mock.apply(), is("2012-02-03/04"));
+    }
+
+    /**
+     * datetime placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_datetime_null() throws Exception {
+        Mock mock = new Mock(spec(DATETIME, "yyyy-MM-dd/HH"));
+        mock.setMock(new DateTimeOption());
+        mock.apply(); // no error
     }
 
     /**

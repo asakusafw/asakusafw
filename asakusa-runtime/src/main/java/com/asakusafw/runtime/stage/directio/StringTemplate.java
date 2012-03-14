@@ -232,9 +232,14 @@ public abstract class StringTemplate implements WritableRawComparable {
 
                     @Override
                     void set(Object propertyValue) {
-                        Date date = ((DateOption) propertyValue).get();
-                        DateUtil.setDayToCalendar(date.getElapsedDays(), calendar);
-                        representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
+                        DateOption option = (DateOption) propertyValue;
+                        if (option.isNull()) {
+                            representation.set(String.valueOf(option));
+                        } else {
+                            Date date = option.get();
+                            DateUtil.setDayToCalendar(date.getElapsedDays(), calendar);
+                            representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
+                        }
                     }
                 };
             }
@@ -264,9 +269,14 @@ public abstract class StringTemplate implements WritableRawComparable {
 
                     @Override
                     void set(Object propertyValue) {
-                        DateTime date = ((DateTimeOption) propertyValue).get();
-                        DateUtil.setSecondToCalendar(date.getElapsedSeconds(), calendar);
-                        representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
+                        DateTimeOption option = (DateTimeOption) propertyValue;
+                        if (option.isNull()) {
+                            representation.set(String.valueOf(option));
+                        } else {
+                            DateTime date = option.get();
+                            DateUtil.setSecondToCalendar(date.getElapsedSeconds(), calendar);
+                            representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
+                        }
                     }
                 };
             }
