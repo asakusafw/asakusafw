@@ -1,0 +1,5 @@
+com.asakusafw.compiler.tool.analysis.DescribeOriginalStructureProcessor
+com.asakusafw.compiler.tool.analysis.DescribeCompiledStructureProcessor
+com.asakusafw.compiler.tool.analysis.VisualizeOriginalStructureProcessor
+com.asakusafw.compiler.tool.analysis.VisualizeCompiledStructureProcessor
+com.asakusafw.compiler.tool.analysis.VisualizeJobflowStructureProcessor

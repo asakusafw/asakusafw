@@ -127,7 +127,7 @@ public class BatchCompiler {
                 graph.addEdge(unit, predecessor);
             }
         }
-        Workflow workflow = new Workflow(graph);
+        Workflow workflow = new Workflow(description, graph);
         return workflow;
     }
 }
