@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.2.6-BETA2</version>
+		<version>0.2.6-BETA3</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
