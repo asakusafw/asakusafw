@@ -179,7 +179,7 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 アーキタイプから生成されたプロジェクト構成は以下の通りです [#]_ 。
 
 ..  code-block:: sh
-
+     
     project
     |-- pom.xml
     |-- build.properties
@@ -273,7 +273,7 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 
 ..  attention::
     この機能は ``asakusa-archetype-thundergate`` のみで提供されています。
-    ``asakusa-archetype-windgate`` では利用できません。
+    ``asakusa-archetype-windgate`` や ``asakusa-archetype-directio`` では利用できません。
 
 モデルクラスをSQLのDDLとして記述する場合、SQLファイルはプロジェクトの ``src/main/sql/modelgen`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.sql`` の拡張子を付けて保存してください。
 
@@ -288,7 +288,7 @@ SQLファイルは複数配置することが出来ます。上記ディレク�
 
 ..  code-block:: sh
 
-    mvn generate-sources
+    mvn clean generate-sources
 
 モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述するビルド定義ファイルにて変更することが出来ます。
 
@@ -310,20 +310,16 @@ DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を
 
 ``package`` バッチコンパイルの実行
 ----------------------------------
-アーキタイプから作成したプロジェクトの ``pom.xml`` に対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
+アーキタイプから作成したプロジェクトのpom.xmlに対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
 
 ..  code-block:: sh
 
-    mvn package
-
-..  code-block:: sh
-
-    [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
-    シンボル: クラス ExOperatorFactory
+    mvn clean package
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
+
 * :doc:`../administration/deployment-with-windgate`
 * :doc:`../administration/deployment-with-thundergate`
 * :doc:`../administration/deployment-with-directio`
@@ -334,9 +330,14 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
     これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
 
 ..  attention::
-    バッチコンパイルの最中にJavaのソースファイルのコンパイルに関する警告が表示されることがあります。
+    バッチコンパイルの最中にJavaのソースファイルのコンパイル時に以下の警告が表示されることがあります。
     これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
     最終的にコンパイルが成功していれば問題ありません。
+
+..  code-block:: sh
+
+    [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
+    シンボル: クラス ExOperatorFactory
 
 .. _batch-compile-option-with-pom:
 

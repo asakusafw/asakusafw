@@ -824,6 +824,10 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 
 上記のうち実行IDを除いては、 `実行計画の確認`_ のものと同様です。
 
+
+..  [#] ``com.asakusafw.vocabulary.batch.Batch``
+..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+
 フェーズ単位の実行
 ------------------
 バッチをフェーズ単位で部分的に実行するには、コマンドラインから ``$ASAKUSA_HOME/yaess/bin/yaess-phase.sh <バッチID> <フローID> <フェーズ名> <実行ID>`` と入力します。
@@ -833,10 +837,10 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 
 バッチID
     バッチのID。
-    Asakusa DSL内で ``@Batch(name = "...")`` [#]_ として指定した名前を利用する。
+    Asakusa DSL内で ``@Batch(name = "...")`` として指定した名前を利用する。
 フローID
     ジョブフローのID。
-    Asakusa DSL内で ``@JobFlow(name = "...")`` [#]_ として指定した名前を利用する。
+    Asakusa DSL内で ``@JobFlow(name = "...")`` として指定した名前を利用する。
 フェーズ名
     ジョブフロー内のフェーズ名。
     バッチ全体を実行する場合には上記をジョブフローごとに順番に実行する。
@@ -858,5 +862,3 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
     実行と実行の間にほかのバッチに割り込まれてしまう可能性がありますので、これより上位の仕組みでの排他制御が必要になるかもしれません。
 
 
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
