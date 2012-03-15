@@ -46,11 +46,11 @@ public class PseudElementDescription implements FlowElementDescription {
 
     private String name;
 
-    private List<FlowElementPortDescription> inputPorts;
+    private final List<FlowElementPortDescription> inputPorts;
 
-    private List<FlowElementPortDescription> outputPorts;
+    private final List<FlowElementPortDescription> outputPorts;
 
-    private Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
+    private final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
 
     /**
      * インスタンスを生成する。
