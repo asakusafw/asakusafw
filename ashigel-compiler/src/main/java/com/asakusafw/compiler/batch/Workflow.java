@@ -17,6 +17,7 @@ package com.asakusafw.compiler.batch;
 
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.ashigeru.util.graph.Graph;
 
@@ -25,16 +26,29 @@ import com.ashigeru.util.graph.Graph;
  */
 public class Workflow {
 
-    private Graph<Unit> graph;
+    private final BatchDescription description;
+
+    private final Graph<Unit> graph;
 
     /**
      * インスタンスを生成する。
+     * @param description バッチの構造
      * @param graph 処理単位の依存元から依存先へのグラフ
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    public Workflow(Graph<Unit> graph) {
+    public Workflow(BatchDescription description, Graph<Unit> graph) {
+        Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
+        this.description = description;
         this.graph = graph;
+    }
+
+    /**
+     * このバッチの構造を返す。
+     * @return このバッチの構造
+     */
+    public BatchDescription getDescription() {
+        return description;
     }
 
     /**
@@ -50,7 +64,7 @@ public class Workflow {
      */
     public static class Unit {
 
-        private WorkDescription description;
+        private final WorkDescription description;
 
         private boolean isProcessed;
 

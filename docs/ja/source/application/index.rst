@@ -20,14 +20,14 @@ Clouderaから提供されているCloudera's Hadoop Demo VM上にAsakusa Framew
 
 開発環境マイグレーションガイド
 ------------------------------
-Asakusa Framework のバージョンアップ時必要となる開発環境に対してのバージョン固有の移行手順について解説します。
+Asakusa Frameworkのバージョンアップ時必要となる開発環境に対してのバージョン固有の移行手順について解説します。
 
 開発ツールの利用
 ================
 
-フローDSLのコンパイル結果のグラフ化
------------------------------------
-Graphvizを使ってフローDSLのコンパイル結果をグラフ化する手順を説明します。
+Asakusa DSLの可視化
+-------------------
+Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するDSLの可視化の仕組みについて解説します。
 
 関連するドキュメント
 ====================
@@ -39,5 +39,6 @@ Graphvizを使ってフローDSLのコンパイル結果をグラフ化する手
     user-guide
     with-cloudera-vm
     migration-guide
+    dsl-visualization
     graphviz
 

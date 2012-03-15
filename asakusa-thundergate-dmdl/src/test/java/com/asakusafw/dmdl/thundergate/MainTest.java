@@ -75,6 +75,25 @@ public class MainTest {
     }
 
     /**
+     * configuration with empty encoding.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void encoding_empty() throws Exception {
+        List<String> arguments = new ArrayList<String>();
+        File jdbc = jdbc();
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+
+        Configuration conf = Main.loadConfigurationFromArguments(
+                arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getEncoding(), is(Charset.forName("UTF-8")));
+    }
+
+    /**
      * configuration with empty includes/excludes.
      * @throws Exception if test was failed
      */

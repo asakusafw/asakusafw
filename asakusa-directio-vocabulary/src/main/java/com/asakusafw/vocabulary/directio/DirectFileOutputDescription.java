@@ -66,6 +66,12 @@ public abstract class DirectFileOutputDescription implements ExporterDescription
      *   <li> each property name should be represented in {@code snake_case} </li>
      *   </ul>
      * </li>
+     * <li> <code>[&lt;lower-bound&gt;..&lt;upper-bound&gt;] </code> (random-number)
+     *   <ul>
+     *   <li> generates a random number between lower-bound and upper-bound (inclusive) </li>
+     *   <li> this muset be {@code 0 <= lower-bound < upper-bound} </li>
+     *   </ul>
+     * </li>
      * </ul>
      * This path can include variables as <code>${&lt;variable-name&gt;}</code>,
      * but replacement can only contains normal characters.

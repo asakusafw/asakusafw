@@ -113,8 +113,8 @@ public class JobflowCompiler {
 
     private CompiledJobflow emit(JobflowModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
-        LOG.debug("{}に対する外部入出力の記述を生成します",
-                model.getStageGraph().getInput().getSource().getDescription().getName());
+        LOG.debug("{}.{}に対する外部入出力の記述を生成します",
+                model.getBatchId(), model.getFlowId());
         Map<ExternalIoDescriptionProcessor, List<Import>> imports = group(model.getImports());
         Map<ExternalIoDescriptionProcessor, List<Export>> exports = group(model.getExports());
         fillEmptyList(imports, exports.keySet());

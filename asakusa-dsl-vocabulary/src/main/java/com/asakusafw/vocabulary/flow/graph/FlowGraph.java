@@ -25,14 +25,18 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
  * フローの構造を表すグラフ。
+ * @since 0.1.0
+ * @version 0.2.6
  */
 public class FlowGraph {
 
-    private Class<? extends FlowDescription> description;
+    private final Class<? extends FlowDescription> description;
 
-    private List<FlowIn<?>> flowInputs;
+    private final List<FlowIn<?>> flowInputs;
 
-    private List<FlowOut<?>> flowOutputs;
+    private final List<FlowOut<?>> flowOutputs;
+
+    private FlowGraph origin;
 
     /**
      * インスタンスを生成する。
@@ -57,6 +61,29 @@ public class FlowGraph {
         this.description = description;
         this.flowInputs = Collections.unmodifiableList(new ArrayList<FlowIn<?>>(flowInputs));
         this.flowOutputs = Collections.unmodifiableList(new ArrayList<FlowOut<?>>(flowOutputs));
+        this.origin = this;
+    }
+
+    /**
+     * このフローグラフの元の情報を設定する。
+     * @param origin このフローグラフの元の情報
+     * @since 0.2.6
+     */
+    public void setOrigin(FlowGraph origin) {
+        if (origin == null) {
+            this.origin = this;
+        } else {
+            this.origin = origin;
+        }
+    }
+
+    /**
+     * このフローグラフの元の情報を返す。
+     * @return このフローグラフの元の情報
+     * @since 0.2.6
+     */
+    public FlowGraph getOrigin() {
+        return origin;
     }
 
     /**

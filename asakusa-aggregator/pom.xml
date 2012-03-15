@@ -29,6 +29,7 @@
 		<module>../asakusa-runtime</module>
 		<module>../ashigel-compiler</module>
 		<module>../ashigel-compiler-bootstrap</module>
+		<module>../asakusa-dsl-analysis-plugin</module>
 		<module>../asakusa-model-generator</module>
 		<module>../asakusa-dmdl-core</module>
 		<module>../asakusa-dmdl-java</module>

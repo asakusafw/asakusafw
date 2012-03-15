@@ -212,7 +212,7 @@ public class JobflowAnalyzer {
         Set<SideData> sideData = analyzeSideData(model);
         Reduce reduce = analyzeReduce(model);
         Stage stage = new Stage(
-                model.getStageBlock().getStageNumber(),
+                model,
                 processes,
                 deliveries,
                 reduce,

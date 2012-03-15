@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -139,6 +140,42 @@ public class DirectFileIoProcessorRunTest {
         assertThat(get("output/a-output.txt"), is(list("a1")));
         assertThat(get("output/b-output.txt"), is(list("b1", "b2")));
         assertThat(get("output/c-output.txt"), is(list("c1", "c2", "c3")));
+    }
+
+    /**
+     * file partitioning by random.
+     * @throws Exception if failed
+     */
+    @Test
+    public void random() throws Exception {
+        List<String> lines = new ArrayList<String>();
+        for (int i = 0; i < 1000; i++) {
+            lines.add(String.format("%03d", i));
+        }
+        put("input/input.txt", lines.toArray(new String[lines.size()]));
+        In<Line1> in = tester.input("in1", new Input("input", "*"));
+        Out<Line1> out = tester.output("out1", new Output("output", "output-[1..4].txt", "+value"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> o1 = get("output/output-1.txt");
+        List<String> o2 = get("output/output-2.txt");
+        List<String> o3 = get("output/output-3.txt");
+        List<String> o4 = get("output/output-4.txt");
+
+        // probably ok
+        assertThat(o1.size(), is(greaterThan(0)));
+        assertThat(o2.size(), is(greaterThan(0)));
+        assertThat(o3.size(), is(greaterThan(0)));
+        assertThat(o4.size(), is(greaterThan(0)));
+
+        List<String> results = new ArrayList<String>();
+        results.addAll(o1);
+        results.addAll(o2);
+        results.addAll(o3);
+        results.addAll(o4);
+
+        Collections.sort(results);
+        assertThat(results, is(lines));
     }
 
     /**

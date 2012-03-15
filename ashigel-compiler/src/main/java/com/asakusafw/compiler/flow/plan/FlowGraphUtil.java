@@ -155,10 +155,9 @@ public final class FlowGraphUtil {
                 new HashMap<FlowElementInput, FlowElementInput>(),
                 new HashMap<FlowElementOutput, FlowElementOutput>());
 
-        return new FlowGraph(
-                graph.getDescription(),
-                flowInputs,
-                flowOutputs);
+        FlowGraph copy = new FlowGraph(graph.getDescription(), flowInputs, flowOutputs);
+        copy.setOrigin(graph);
+        return copy;
     }
 
     /**
