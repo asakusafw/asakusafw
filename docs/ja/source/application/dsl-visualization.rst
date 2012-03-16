@@ -25,7 +25,7 @@ Asakusa DSLをバッチコンパイルして生成したバッチアプリケー
       - バッチコンパイル前のバッチ構造を示すテキストファイル
     * - batch/original-structure.dot
       - バッチコンパイル前のバッチ構造を示すdotファイル
-    * - original-merged-structure.dot
+    * - batch/original-merged-structure.txt
       - バッチコンパイル前のバッチ構造を示すテキストファイル。同一の演算子を単一のノードとして表現する。
     * - jobflow/<フローID>/flowgraph.dot
       - フローの入出力を示すdotファイル
