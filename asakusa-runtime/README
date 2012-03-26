@@ -19,3 +19,20 @@ Map Reduceジョブを実行する際に利用するライブラリ。
 
 * com.asakusafw.runtime.flow
 データフローの表現に利用するMap Reduce用のライブラリ。
+
+* com.asakusafw.runtime.report
+レポートAPIインターフェースの実装クラス群。
+
+==
+Report API via Commons Logging.
+
+<configuration>
+    <property>
+        <name>com.asakusafw.runtime.core.Report.Delegate</name>
+        <value>com.asakusafw.runtime.report.CommonsLoggingReport</value>
+    </property>
+</configuration>
+
+==
+
+
