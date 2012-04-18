@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.core;
+package com.asakusafw.yaess.multidispatch;
 
 import java.io.IOException;
 import java.util.Map;
+
+import com.asakusafw.yaess.core.CommandScript;
+import com.asakusafw.yaess.core.CommandScriptHandler;
+import com.asakusafw.yaess.core.ExecutionContext;
+import com.asakusafw.yaess.core.ExecutionMonitor;
+import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
+import com.asakusafw.yaess.core.ServiceProfile;
 
 /**
  * Mock {@link CommandScriptHandler}.
@@ -44,6 +51,16 @@ public class MockCommandScriptHandler extends ExecutionScriptHandlerBase impleme
         }
     }
 
+    @Override
+    public void setUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
+        hook(context, null);
+    }
+
+    @Override
+    public void cleanUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
+        hook(context, null);
+    }
+
     /**
      * Execution hook for testing.
      * @param context context
@@ -51,7 +68,7 @@ public class MockCommandScriptHandler extends ExecutionScriptHandlerBase impleme
      * @throws InterruptedException if interrupted
      * @throws IOException if failed
      */
-    protected void hook(ExecutionContext context, CommandScript script) throws InterruptedException, IOException {
+    void hook(ExecutionContext context, CommandScript script) throws InterruptedException, IOException {
         return;
     }
 }

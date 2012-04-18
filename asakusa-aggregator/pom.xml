@@ -63,6 +63,7 @@
 		<module>../asakusa-yaess-tools</module>
 		<module>../asakusa-yaess-plugin</module>
 		<module>../asakusa-yaess-jsch</module>
+		<module>../asakusa-yaess-multidispatch</module>
 		<module>../asakusa-yaess-paralleljob</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-distribution</module>

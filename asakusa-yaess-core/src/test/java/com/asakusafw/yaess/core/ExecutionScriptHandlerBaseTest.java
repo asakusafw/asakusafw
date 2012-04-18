@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,8 +45,8 @@ public class ExecutionScriptHandlerBaseTest {
         CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
-        assertThat(handler.getResourceId(), is(ExecutionScriptHandler.DEFAULT_RESOURCE_ID));
-        assertThat(handler.getEnvironmentVariables().size(), is(0));
+        assertThat(handler.getResourceId(context(), null), is(ExecutionScriptHandler.DEFAULT_RESOURCE_ID));
+        assertThat(handler.getEnvironmentVariables(context(), null).size(), is(0));
     }
 
     /**
@@ -65,9 +66,9 @@ public class ExecutionScriptHandlerBaseTest {
         CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
-        assertThat(handler.getEnvironmentVariables().size(), is(2));
-        assertThat(handler.getEnvironmentVariables().get("a"), is("A"));
-        assertThat(handler.getEnvironmentVariables().get("b"), is("B"));
+        assertThat(handler.getEnvironmentVariables(context(), null).size(), is(2));
+        assertThat(handler.getEnvironmentVariables(context(), null).get("a"), is("A"));
+        assertThat(handler.getEnvironmentVariables(context(), null).get("b"), is("B"));
     }
 
     /**
@@ -86,7 +87,7 @@ public class ExecutionScriptHandlerBaseTest {
         CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
-        assertThat(handler.getResourceId(), is("testing"));
+        assertThat(handler.getResourceId(context(), null), is("testing"));
     }
 
     /**
@@ -110,9 +111,9 @@ public class ExecutionScriptHandlerBaseTest {
         CommandScriptHandler handler = profile.newInstance();
 
         assertThat(handler.getHandlerId(), is("command.*"));
-        assertThat(handler.getResourceId(), is("alt"));
-        assertThat(handler.getEnvironmentVariables().size(), is(1));
-        assertThat(handler.getEnvironmentVariables().get("hoge"), is("foo"));
+        assertThat(handler.getResourceId(context(), null), is("alt"));
+        assertThat(handler.getEnvironmentVariables(context(), null).size(), is(1));
+        assertThat(handler.getEnvironmentVariables(context(), null).get("hoge"), is("foo"));
     }
 
     /**
@@ -132,5 +133,9 @@ public class ExecutionScriptHandlerBaseTest {
                 new ProfileContext(getClass().getClassLoader(), new VariableResolver(entries)));
 
         profile.newInstance();
+    }
+
+    private ExecutionContext context() {
+        return new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap());
     }
 }

@@ -13,36 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.core;
+package com.asakusafw.yaess.multidispatch;
 
 import java.io.IOException;
-import java.util.Map;
+import com.asakusafw.yaess.core.CommandScript;
+import com.asakusafw.yaess.core.CommandScriptHandler;
+import com.asakusafw.yaess.core.ExecutionContext;
 
 /**
  * Mock {@link CommandScriptHandler}.
  */
-public class MockCommandScriptHandler extends ExecutionScriptHandlerBase implements CommandScriptHandler {
-
-    @Override
-    protected void doConfigure(
-            ServiceProfile<?> profile,
-            Map<String, String> desiredProperties,
-            Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
-        return;
-    }
-
-    @Override
-    public void execute(
-            ExecutionMonitor monitor,
-            ExecutionContext context,
-            CommandScript script) throws InterruptedException, IOException {
-        monitor.open(1);
-        try {
-            hook(context, script);
-        } finally {
-            monitor.close();
-        }
-    }
+public class FailCommandScriptHandler extends MockCommandScriptHandler {
 
     /**
      * Execution hook for testing.
@@ -51,7 +32,23 @@ public class MockCommandScriptHandler extends ExecutionScriptHandlerBase impleme
      * @throws InterruptedException if interrupted
      * @throws IOException if failed
      */
-    protected void hook(ExecutionContext context, CommandScript script) throws InterruptedException, IOException {
-        return;
+    @Override
+    void hook(ExecutionContext context, CommandScript script) throws InterruptedException, IOException {
+        String resourceId = getResourceId(context, script);
+        throw new MessageException(context, resourceId);
+    }
+
+    static final class MessageException extends IOException {
+
+        private static final long serialVersionUID = 1L;
+
+        final ExecutionContext context;
+
+        final String message;
+
+        MessageException(ExecutionContext context, String message) {
+            this.context = context;
+            this.message = message;
+        }
     }
 }

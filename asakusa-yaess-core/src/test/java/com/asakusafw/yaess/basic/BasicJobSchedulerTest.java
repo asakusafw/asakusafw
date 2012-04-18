@@ -321,7 +321,7 @@ public class BasicJobSchedulerTest {
         }
 
         @Override
-        public String getResourceId() {
+        public String getResourceId(ExecutionContext context) {
             return "testing";
         }
     }

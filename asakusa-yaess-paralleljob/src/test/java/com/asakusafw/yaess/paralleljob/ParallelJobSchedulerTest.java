@@ -400,7 +400,7 @@ public class ParallelJobSchedulerTest {
         }
 
         @Override
-        public String getResourceId() {
+        public String getResourceId(ExecutionContext context) {
             return resourceId;
         }
     }
