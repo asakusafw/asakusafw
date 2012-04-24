@@ -35,6 +35,14 @@ Examples:
     
     # run a batch "example.params" with {date="2011-03-31", code="123"}
     yaess-batch.sh example.params -A date=2011-03-31 -A code=123
+
+Environment Variables:
+    \$ASAKUSA_HOME
+        The location where the Asakusa Framework is installed
+    \$YAESS_OPTS
+        Java VM options for YAESS execution
+    \$YS_PATH_SEPARATOR
+        Path separator character (default is ':')
 EOF
 }
 
@@ -110,8 +118,10 @@ echo "  Plug-ins: $_YS_PLUGIN"
 echo " Classpath: $_YS_CLASSPATH"
 echo "Main Class: $_YS_CLASS"
 echo " Arguments: $@"
+echo "Properties: $YAESS_OPTS"
 
 java \
+    $YAESS_OPTS \
     "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
@@ -131,6 +141,7 @@ then
     echo " Batch ID: $_OPT_BATCH_ID" 1>&2
     echo " Plug-ins: $_YS_PLUGIN" 1>&2
     echo "Arguments: $@" 1>&2
+    echo "Properties: $YAESS_OPTS" 1>&2
     echo "Finished: FAILURE"
     exit $_YS_RET
 fi
