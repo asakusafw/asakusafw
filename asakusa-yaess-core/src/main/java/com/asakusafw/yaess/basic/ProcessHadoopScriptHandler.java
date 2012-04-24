@@ -207,7 +207,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env);
+        int exit = executor.execute(context, command, env, monitor.getOutput());
         if (exit == 0) {
             return;
         }
@@ -248,7 +248,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env);
+        int exit = executor.execute(context, command, env, monitor.getOutput());
         if (exit == 0) {
             return;
         }

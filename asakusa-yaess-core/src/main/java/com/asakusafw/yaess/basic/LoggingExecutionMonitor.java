@@ -151,12 +151,8 @@ public class LoggingExecutionMonitor extends PhaseMonitor {
         int step = (int) Math.floor(relative / stepUnit);
         if (step != workedStep && closed == false) {
             LOG.info(MessageFormat.format(
-                    "STEP - {0} [{5}%] ({1}|{2}|{4}@{3})",
+                    "STEP - {0} [{1}%]",
                     label,
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getExecutionId(),
-                    context.getPhase(),
                     String.format("%.02f", relative * 100)));
         }
         this.workedTaskSize = normalized;
