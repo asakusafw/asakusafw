@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -64,9 +65,11 @@ import com.asakusafw.yaess.core.YaessProfile;
 /**
  * Task to execute target batch, flow, or phase.
  * @since 0.2.3
- * @version 0.2.5
+ * @version 0.2.6
  */
 public class ExecutionTask {
+
+    static final String KEY_SKIP_FLOWS = "skipFlows";
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionTask.class);
 
@@ -82,7 +85,9 @@ public class ExecutionTask {
 
     private final Properties script;
 
-    private final Map<String, String> arguments;
+    private final Map<String, String> batchArguments;
+
+    private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
 
     /**
      * Creates a new instance.
@@ -92,7 +97,7 @@ public class ExecutionTask {
      * @param hadoopHandler Hadoop script handler
      * @param commandHandlers command script handlers and its profile names
      * @param script target script
-     * @param arguments current arguments
+     * @param batchArguments current batch arguments
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public ExecutionTask(
@@ -102,7 +107,7 @@ public class ExecutionTask {
             HadoopScriptHandler hadoopHandler,
             Map<String, CommandScriptHandler> commandHandlers,
             Properties script,
-            Map<String, String> arguments) {
+            Map<String, String> batchArguments) {
         if (monitors == null) {
             throw new IllegalArgumentException("monitors must not be null"); //$NON-NLS-1$
         }
@@ -121,8 +126,8 @@ public class ExecutionTask {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
-        if (arguments == null) {
-            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        if (batchArguments == null) {
+            throw new IllegalArgumentException("batchArguments must not be null"); //$NON-NLS-1$
         }
         this.monitors = monitors;
         this.locks = locks;
@@ -130,14 +135,14 @@ public class ExecutionTask {
         this.hadoopHandler = hadoopHandler;
         this.commandHandlers = Collections.unmodifiableMap(new HashMap<String, CommandScriptHandler>(commandHandlers));
         this.script = script;
-        this.arguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(arguments));
+        this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(batchArguments));
     }
 
     /**
      * Loads profile and create a new {@link ExecutionTask}.
      * @param profile target profile
      * @param script target script
-     * @param arguments execution arguments
+     * @param batchArguments current batch arguments
      * @return the created task
      * @throws InterruptedException if interrupted while configuring services
      * @throws IOException if failed to configure services
@@ -146,15 +151,38 @@ public class ExecutionTask {
     public static ExecutionTask load(
             YaessProfile profile,
             Properties script,
-            Map<String, String> arguments) throws InterruptedException, IOException {
+            Map<String, String> batchArguments) throws InterruptedException, IOException {
+        return load(profile, script, batchArguments, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Loads profile and create a new {@link ExecutionTask}.
+     * @param profile target profile
+     * @param script target script
+     * @param batchArguments current batch arguments
+     * @param yaessArguments current controll arguments
+     * @return the created task
+     * @throws InterruptedException if interrupted while configuring services
+     * @throws IOException if failed to configure services
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.6
+     */
+    public static ExecutionTask load(
+            YaessProfile profile,
+            Properties script,
+            Map<String, String> batchArguments,
+            Map<String, String> yaessArguments) throws InterruptedException, IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
-        if (arguments == null) {
-            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        if (batchArguments == null) {
+            throw new IllegalArgumentException("batchArguments must not be null"); //$NON-NLS-1$
+        }
+        if (yaessArguments == null) {
+            throw new IllegalArgumentException("yaessArguments must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Loading execution monitor feature");
         ExecutionMonitorProvider monitors = profile.getMonitors().newInstance();
@@ -174,7 +202,64 @@ public class ExecutionTask {
                 : profile.getCommandHandlers().entrySet()) {
             commandHandlers.put(entry.getKey(), entry.getValue().newInstance());
         }
-        return new ExecutionTask(monitors, locks, scheduler, hadoopHandler, commandHandlers, script, arguments);
+
+        ExecutionTask result = new ExecutionTask(
+                monitors,
+                locks,
+                scheduler,
+                hadoopHandler,
+                commandHandlers,
+                script,
+                batchArguments);
+
+        LOG.debug("Applying definitions");
+        Map<String, String> copyDefinitions = new TreeMap<String, String>(yaessArguments);
+        consumeSkipFlows(result, copyDefinitions, script);
+        checkRest(copyDefinitions);
+
+        return result;
+    }
+
+    private static void consumeSkipFlows(ExecutionTask task, Map<String, String> copyDefinitions, Properties script) {
+        assert copyDefinitions != null;
+        assert script != null;
+        String flows = copyDefinitions.remove(KEY_SKIP_FLOWS);
+        if (flows == null || flows.trim().isEmpty()) {
+            return;
+        }
+        LOG.debug("Definition: {}={}", KEY_SKIP_FLOWS, flows);
+        BatchScript batchScript = BatchScript.load(script);
+        for (String flowIdCandidate : flows.split(",")) {
+            String flowId = flowIdCandidate.trim();
+            if (flowId.isEmpty() == false) {
+                FlowScript flow = batchScript.findFlow(flowId);
+                if (flow == null) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Unknown flowId in definition {0} : {1}",
+                            KEY_SKIP_FLOWS,
+                            flowId));
+                }
+                task.skipFlows.add(flowId);
+            }
+        }
+    }
+
+    private static void checkRest(Map<String, String> copyDefinitions) {
+        assert copyDefinitions != null;
+        if (copyDefinitions.isEmpty() == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Unknown definitions: {0}",
+                    copyDefinitions.keySet()));
+        }
+    }
+
+    /**
+     * Returns the view of flow IDs which should be skipped.
+     * @return the the view of skip targets
+     * @since 0.2.6
+     */
+    Set<String> getSkipFlows() {
+        return skipFlows;
     }
 
     /**
@@ -275,7 +360,7 @@ public class ExecutionTask {
         if (phase == null) {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
-        ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, arguments);
+        ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, batchArguments);
         executePhase(context);
     }
 
@@ -306,6 +391,13 @@ public class ExecutionTask {
         assert batchId != null;
         assert flow != null;
         assert executionId != null;
+        if (skipFlows.contains(flow.getId())) {
+            // TODO logging
+            LOG.info(MessageFormat.format(
+                    "Execution was skipped by definition (batchId={0}, flowId={1})",
+                    batchId, flow.getId()));
+            return;
+        }
         executePhase(batchId, flow, executionId, ExecutionPhase.SETUP);
         boolean succeed = false;
         try {
@@ -341,7 +433,7 @@ public class ExecutionTask {
             FlowScript flow,
             String executionId,
             ExecutionPhase phase) throws InterruptedException, IOException {
-        ExecutionContext context = new ExecutionContext(batchId, flow.getId(), executionId, phase, arguments);
+        ExecutionContext context = new ExecutionContext(batchId, flow.getId(), executionId, phase, batchArguments);
         Set<ExecutionScript> scripts = flow.getScripts().get(phase);
         assert scripts != null;
         executePhase(context, scripts);
@@ -351,7 +443,14 @@ public class ExecutionTask {
             ExecutionContext context,
             Set<ExecutionScript> executions) throws InterruptedException, IOException {
         assert context != null;
-                assert executions != null;
+        assert executions != null;
+        if (skipFlows.contains(context.getFlowId())) {
+            // TODO logging
+            LOG.info(MessageFormat.format(
+                    "Execution was skipped by definition (batchId={0}, flowId={1}, phase={2})",
+                    context.getBatchId(), context.getFlowId(), context.getPhase()));
+            return;
+        }
         List<? extends Job> jobs;
         ErrorHandler handler;
         switch (context.getPhase()) {
