@@ -40,6 +40,14 @@ Parameters:
         generated automatically (experimental feature)
     -A <key>=<value>
         argument for this execution
+
+Environment Variables:
+    \$ASAKUSA_HOME
+        The location where the Asakusa Framework is installed
+    \$YAESS_OPTS
+        Java VM options for YAESS execution
+    \$YS_PATH_SEPARATOR
+        Path separator character (default is ':')
 EOF
 }
 
@@ -87,6 +95,7 @@ then
         echo "     Flow ID: $_OPT_FLOW_ID" 1>&2
         echo "    Plug-ins: $_YS_PLUGIN" 1>&2
         echo "   Arguments: $@" 1>&2
+        echo "  Properties: $YAESS_OPTS" 1>&2
         echo "Finished: FAILURE"
         exit $_YS_GEN_RET
     fi
@@ -140,8 +149,10 @@ echo "    Plug-ins: $_YS_PLUGIN"
 echo "   Classpath: $_YS_CLASSPATH"
 echo "  Main Class: $_YS_CLASS"
 echo "   Arguments: $@"
+echo "  Properties: $YAESS_OPTS"
 
 java \
+    $YAESS_OPTS \
     "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
@@ -167,6 +178,7 @@ then
     echo "Execution ID: $_OPT_EXECUTION_ID"
     echo "    Plug-ins: $_YS_PLUGIN" 1>&2
     echo "   Arguments: $@" 1>&2
+    echo "  Properties: $YAESS_OPTS" 1>&2
     echo "Finished: FAILURE"
     exit $_YS_RET
 fi
