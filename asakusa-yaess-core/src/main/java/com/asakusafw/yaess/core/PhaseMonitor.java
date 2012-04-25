@@ -16,6 +16,7 @@
 package com.asakusafw.yaess.core;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Receives phase execution's progress.
@@ -70,6 +71,11 @@ public abstract class PhaseMonitor implements ExecutionMonitor {
         return false;
     }
 
+    @Override
+    public OutputStream getOutput() throws IOException {
+        return System.out;
+    }
+
     /**
      * Creates a new child task monitor with the specified task size.
      * @param jobId target job ID
@@ -108,6 +114,17 @@ public abstract class PhaseMonitor implements ExecutionMonitor {
     }
 
     /**
+     * Returns an output stream for jobs.
+     * The default implementation returns the {@link #getOutput() this.getOutput()}.
+     * @param jobId target job ID
+     * @return the target stream
+     * @throws IOException if failed to obtain output
+     */
+    protected OutputStream getJobOutput(String jobId) throws IOException {
+        return getOutput();
+    }
+
+    /**
      * Notifies the job was closed.
      * The default implementation does nothing.
      * @param jobId target job ID
@@ -129,13 +146,13 @@ public abstract class PhaseMonitor implements ExecutionMonitor {
         SUCCESS,
 
         /**
-         * Job was failed.
-         */
-        FAILED,
-
-        /**
          * Job was cancelled.
          */
         CANCELLED,
+
+        /**
+         * Job was failed.
+         */
+        FAILED,
     }
 }

@@ -17,6 +17,7 @@ package com.asakusafw.yaess.jsch;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -246,8 +247,17 @@ public class JschProcessExecutor implements ProcessExecutor {
             ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables) throws InterruptedException, IOException {
+        return execute(context, commandLineTokens, environmentVariables, System.out);
+    }
+
+    @Override
+    public int execute(
+            ExecutionContext context,
+            List<String> commandLineTokens,
+            Map<String, String> environmentVariables,
+            OutputStream output) throws InterruptedException, IOException {
         try {
-            return execute0(context, commandLineTokens, environmentVariables);
+            return execute0(context, commandLineTokens, environmentVariables, output);
         } catch (JSchException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to execute command via SSH ({0}@{1}:{2})",
@@ -260,10 +270,12 @@ public class JschProcessExecutor implements ProcessExecutor {
     private int execute0(
             ExecutionContext context,
             List<String> commandLineTokens,
-            Map<String, String> environmentVariables) throws JSchException, InterruptedException {
+            Map<String, String> environmentVariables,
+            OutputStream output) throws JSchException, InterruptedException {
         assert context != null;
         assert commandLineTokens != null;
         assert environmentVariables != null;
+        assert output != null;
         Session session = jsch.getSession(user, host);
         if (port != null) {
             session.setPort(port);
@@ -277,8 +289,8 @@ public class JschProcessExecutor implements ProcessExecutor {
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
             channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
-            channel.setOutputStream(context.getOutput(), true);
-            channel.setErrStream(context.getOutput(), true);
+            channel.setOutputStream(output, true);
+            channel.setErrStream(output, true);
             channel.connect((int) TimeUnit.SECONDS.toMillis(60));
             try {
                 while (true) {

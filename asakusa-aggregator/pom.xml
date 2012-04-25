@@ -65,6 +65,7 @@
 		<module>../asakusa-yaess-jsch</module>
 		<module>../asakusa-yaess-multidispatch</module>
 		<module>../asakusa-yaess-paralleljob</module>
+		<module>../asakusa-yaess-flowlog</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-distribution</module>
 		<module>../asakusa-archetype-directio</module>

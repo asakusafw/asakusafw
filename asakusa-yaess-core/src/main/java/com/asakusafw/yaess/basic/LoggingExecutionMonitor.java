@@ -33,8 +33,6 @@ public class LoggingExecutionMonitor extends PhaseMonitor {
 
     static final Logger LOG = LoggerFactory.getLogger(LoggingExecutionMonitor.class);
 
-    private final ExecutionContext context;
-
     private final String label;
 
     private final double stepUnit;
@@ -59,7 +57,6 @@ public class LoggingExecutionMonitor extends PhaseMonitor {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        this.context = context;
         this.label = MessageFormat.format("{0}|{1}|{3}@{2}",
                 context.getBatchId(),
                 context.getFlowId(),
@@ -151,12 +148,8 @@ public class LoggingExecutionMonitor extends PhaseMonitor {
         int step = (int) Math.floor(relative / stepUnit);
         if (step != workedStep && closed == false) {
             LOG.info(MessageFormat.format(
-                    "STEP - {0} [{5}%] ({1}|{2}|{4}@{3})",
+                    "STEP - {0} [{1}%]",
                     label,
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getExecutionId(),
-                    context.getPhase(),
                     String.format("%.02f", relative * 100)));
         }
         this.workedTaskSize = normalized;
