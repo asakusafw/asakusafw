@@ -181,9 +181,10 @@ public class ParallelJobExecutor implements JobExecutor {
         if (job == null) {
             throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
         }
-        ExecutorService executor = resourceExecutors.get(job.getResourceId());
+        String resourceId = job.getResourceId(context);
+        ExecutorService executor = resourceExecutors.get(resourceId);
         if (executor == null) {
-            LOG.debug("Resource {} is not defined: {}", job.getResourceId(), job.getId());
+            LOG.debug("Resource {} is not defined: {}", resourceId, job.getId());
             executor = defaultExecutor;
         }
         Executing executing = new Executing(monitor, context, job, doneQueue);

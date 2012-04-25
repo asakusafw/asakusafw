@@ -41,6 +41,7 @@ public class TrackingCommandScriptHandler extends ExecutionScriptHandlerBase imp
     @Override
     protected void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         Map<String, String> conf = profile.getConfiguration();
         String trackerClassName = conf.get(ExecutionTracker.KEY_CLASS);

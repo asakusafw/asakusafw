@@ -56,7 +56,10 @@ public abstract class Job {
 
     /**
      * Returns the resource ID which this job requires in execution.
+     * @param context current execution context
      * @return the resource ID required in this job
+     * @throws InterruptedException if this execution is interrupted
+     * @throws IOException if failed to execute this job
      */
-    public abstract String getResourceId();
+    public abstract String getResourceId(ExecutionContext context) throws InterruptedException, IOException;
 }
