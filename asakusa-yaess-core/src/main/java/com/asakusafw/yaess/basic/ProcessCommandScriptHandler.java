@@ -174,14 +174,15 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Command job: code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from command job: "
+                + "code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
                 script.getId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
     private void command(
@@ -200,13 +201,14 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from command job: "
+                + "code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
     private Map<String, String> buildEnvironmentVariables(ExecutionScript script) {

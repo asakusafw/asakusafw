@@ -148,7 +148,7 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
      * Exit abnormally.
      * @throws Exception if failed
      */
-    @Test(expected = IOException.class)
+    @Test(expected = ExitCodeException.class)
     public void abnormal_exit() throws Exception {
         File shell = putScript("abnormal.sh", "bin/script.sh");
 

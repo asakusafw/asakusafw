@@ -175,7 +175,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      * Exit abnormally.
      * @throws Exception if failed
      */
-    @Test(expected = IOException.class)
+    @Test(expected = ExitCodeException.class)
     public void abnormal_exit() throws Exception {
         String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         putScript("abnormal.sh", new File(target));
