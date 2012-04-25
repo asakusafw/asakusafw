@@ -54,6 +54,7 @@ public class FlowLoggerTest {
     public void simple() throws Exception {
         FlowLoggerProfile profile = profile(false, false, false);
         File log = profile.getLogFile(context(MAIN));
+        File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
 
@@ -67,7 +68,9 @@ public class FlowLoggerTest {
         log2.open(1);
         int l21 = checkLines(log, l12, CLEANUP);
         log2.close();
-        checkLines(log, l21, CLEANUP);
+
+        assertThat(log.isFile(), is(false));
+        checkLines(escape, l21, CLEANUP);
     }
 
     /**
@@ -78,6 +81,7 @@ public class FlowLoggerTest {
     public void chain() throws Exception {
         FlowLoggerProfile profile = profile(false, false, false);
         File log = profile.getLogFile(context(MAIN));
+        File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
 
@@ -91,11 +95,12 @@ public class FlowLoggerTest {
         log2.open(1);
         int l21 = checkLines(log, l12, CLEANUP);
         log2.close();
-        int l22 = checkLines(log, l21, CLEANUP);
+        assertThat(log.isFile(), is(false));
+        checkLines(escape, l21, CLEANUP);
 
         FlowLogger log3 = new FlowLogger(context(SETUP), profile);
         log3.open(1);
-        int l31 = checkLines(log, l22, SETUP);
+        int l31 = checkLines(log, l00, SETUP);
         log3.close();
         checkLines(log, l31, SETUP);
     }
@@ -134,6 +139,7 @@ public class FlowLoggerTest {
     public void deleteOnCleanup() throws Exception {
         FlowLoggerProfile profile = profile(false, true, true);
         File log = profile.getLogFile(context(MAIN));
+        File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
 
@@ -147,7 +153,9 @@ public class FlowLoggerTest {
         log2.open(1);
         checkLines(log, l12, CLEANUP);
         log2.close();
+
         assertThat(log.isFile(), is(false));
+        assertThat(escape.isFile(), is(false));
     }
 
     /**
@@ -158,6 +166,7 @@ public class FlowLoggerTest {
     public void deleteOnCleanup_error() throws Exception {
         FlowLoggerProfile profile = profile(true, true, true);
         File log = profile.getLogFile(context(MAIN));
+        File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
 
@@ -179,6 +188,7 @@ public class FlowLoggerTest {
             log2.close();
         }
         assertThat(log.isFile(), is(true));
+        assertThat(escape.isFile(), is(false));
     }
 
     private int checkLines(File log, int last, ExecutionPhase phase) throws IOException {

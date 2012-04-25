@@ -182,8 +182,28 @@ public class FlowLoggerProfile {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        return getFile(context, "logs");
+    }
+
+    /**
+     * Returns abstract path for the escaped log file.
+     * @param context current context
+     * @return escaped log file
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public File getEscapeFile(ExecutionContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        return getFile(context, "cleanup");
+    }
+
+    private File getFile(ExecutionContext context, String dirName) {
+        assert context != null;
+        assert dirName != null;
         File base = new File(getDirectory(), context.getBatchId());
-        File log = new File(base, context.getFlowId());
+        File ongoing = new File(base, dirName);
+        File log = new File(ongoing, context.getFlowId());
         return log;
     }
 

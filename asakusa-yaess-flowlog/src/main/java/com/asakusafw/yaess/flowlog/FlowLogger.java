@@ -61,6 +61,8 @@ public class FlowLogger extends PhaseMonitor {
 
     private final File file;
 
+    private final File escapeFile;
+
     private PrintWriter writer;
 
     private final boolean teeLog;
@@ -101,6 +103,7 @@ public class FlowLogger extends PhaseMonitor {
             this.stepUnit = Math.max(profile.getStepUnit(), 0.01) - 0.0000000000001;
         }
         this.file = profile.getLogFile(context);
+        this.escapeFile = profile.getEscapeFile(context);
         this.encoding = profile.getEncoding();
         this.dateFormat = profile.getDateFormat();
         this.teeLog = profile.isTeeLog();
@@ -128,8 +131,22 @@ public class FlowLogger extends PhaseMonitor {
                         parent));
             }
         }
-        boolean append = deleteOnSetup == false || context.getPhase() != ExecutionPhase.SETUP;
-        OutputStream output = new FileOutputStream(file, append);
+        boolean keepLogs = deleteOnSetup == false || context.getPhase() != ExecutionPhase.SETUP;
+        if (keepLogs == false && escapeFile.exists()) {
+            // TODO logging
+            LOG.info(MessageFormat.format(
+                    "Deleting the last escaped log: {1} ({0})",
+                    label,
+                    escapeFile.getAbsolutePath()));
+            if (escapeFile.delete() == false && escapeFile.exists()) {
+                // TODO logging
+                LOG.info(MessageFormat.format(
+                        "Failed to delete the last escaped log: {1} ({0})",
+                        label,
+                        escapeFile.getAbsolutePath()));
+            }
+        }
+        OutputStream output = new FileOutputStream(file, keepLogs);
         boolean succeed = false;
         try {
             Writer w = new OutputStreamWriter(output, encoding);
@@ -232,12 +249,37 @@ public class FlowLogger extends PhaseMonitor {
             writer.close();
             writer = null;
         }
-        if (deleteOnCleanup && context.getPhase() == ExecutionPhase.CLEANUP && worstStatus == JobStatus.SUCCESS) {
-            if (file.delete() == false) {
+        if (context.getPhase() == ExecutionPhase.CLEANUP && worstStatus == JobStatus.SUCCESS) {
+            if (deleteOnCleanup) {
                 // TODO logging
-                LOG.warn(MessageFormat.format(
-                        "Failed to delete flow log: {0}",
+                LOG.info(MessageFormat.format(
+                        "Deleting a suceeded flow log: {1} ({0})",
+                        label,
                         file.getAbsolutePath()));
+                if (file.delete() == false) {
+                    // TODO logging
+                    LOG.warn(MessageFormat.format(
+                            "Failed to delete flow log: {0}",
+                            file.getAbsolutePath()));
+                }
+            } else {
+                File parent = escapeFile.getParentFile();
+                if (parent.mkdirs() == false) {
+                    if (parent.isDirectory() == false) {
+                        // TODO logging
+                        LOG.warn(MessageFormat.format(
+                                "Failed to create a parent directory for flow logger : {1} ({0})",
+                                label,
+                                parent));
+                    }
+                }
+                // TODO logging
+                LOG.info(MessageFormat.format(
+                        "Escaping a suceeded flow log: {1} -> {2} ({0})",
+                        label,
+                        file.getAbsolutePath(),
+                        escapeFile.getAbsolutePath()));
+                file.renameTo(escapeFile);
             }
         }
     }
