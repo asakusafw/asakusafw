@@ -195,17 +195,25 @@ final class ProcessUtil {
 
     /**
      * Returns an implementation of {@link ProcessExecutor} which redirects into
-     * {@link #execute(ExecutionContext, List, Map)}.
-     * @return {@link ProcessExecutor} which redirects into {@link #execute(ExecutionContext, List, Map)}
+     * {@link #execute(ExecutionContext, List, Map, OutputStream)}.
+     * @return {@link ProcessExecutor} which redirects into {@link #execute(ExecutionContext, List, Map, OutputStream)}
      */
     public static ProcessExecutor getProcessExecutor() {
         return new ProcessExecutor() {
             @Override
             public int execute(
                     ExecutionContext context,
+                    List<String> commandLineTokens,
+                    Map<String, String> environmentVariables) throws InterruptedException, IOException {
+                return execute(context, commandLineTokens, environmentVariables, System.out);
+            }
+            @Override
+            public int execute(
+                    ExecutionContext context,
                     List<String> command,
-                    Map<String, String> env) throws InterruptedException, IOException {
-                return ProcessUtil.execute(context, command, env);
+                    Map<String, String> env,
+                    OutputStream output) throws InterruptedException, IOException {
+                return ProcessUtil.execute(context, command, env, output);
             }
         };
     }
@@ -215,6 +223,7 @@ final class ProcessUtil {
      * @param context current context
      * @param command target command
      * @param env environment variables
+     * @param output current information output
      * @return exit code
      * @throws InterruptedException if interrupted while waiting process exit
      * @throws IOException if failed to execute the command
@@ -223,7 +232,8 @@ final class ProcessUtil {
     public static int execute(
             ExecutionContext context,
             List<String> command,
-            Map<String, String> env) throws InterruptedException, IOException {
+            Map<String, String> env,
+            OutputStream output) throws InterruptedException, IOException {
         if (command == null) {
             throw new IllegalArgumentException("command must not be null"); //$NON-NLS-1$
         }
@@ -244,7 +254,7 @@ final class ProcessUtil {
         try {
             ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
             redirect(empty, process.getOutputStream());
-            Future<?> stdout = redirect(process.getInputStream(), context.getOutput());
+            Future<?> stdout = redirect(process.getInputStream(), output);
             int exit = process.waitFor();
             try {
                 stdout.get();

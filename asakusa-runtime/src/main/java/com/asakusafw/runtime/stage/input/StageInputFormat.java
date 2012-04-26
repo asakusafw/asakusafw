@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage.input;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.stage.StageInput;
+import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
 /**
  * ステージへの複数の入力を処理する{@link InputFormat}。
@@ -45,21 +47,53 @@ import com.asakusafw.runtime.stage.StageInput;
  * {@link StageInputDriver}に指定された実際のInputFormatに処理を移譲する。
  * </p>
  * @since 0.1.0
- * @version 0.2.5
+ * @version 0.2.6
  */
 @SuppressWarnings("rawtypes")
 public class StageInputFormat extends InputFormat {
 
+    private static final String DEFAULT = "default";
+
     static final Log LOG = LogFactory.getLog(StageInputFormat.class);
+
+    private static final Map<String, Class<? extends SplitCombiner>> SPLIT_COMBINERS;
+    static {
+        Map<String, Class<? extends SplitCombiner>> map = new HashMap<String, Class<? extends SplitCombiner>>();
+        map.put(DEFAULT, DefaultSplitCombiner.class);
+        map.put("disabled", IdentitySplitCombiner.class);
+        map.put("extreme", ExtremeSplitCombiner.class);
+        SPLIT_COMBINERS = Collections.unmodifiableMap(map);
+    }
 
     @Override
     public List<InputSplit> getSplits(JobContext context) throws IOException, InterruptedException {
+        List<StageInputSplit> splits = computeSplits(context);
+        SplitCombiner combiner = getSplitCombiner(context);
+        if (LOG.isDebugEnabled()) {
+            if ((combiner instanceof IdentitySplitCombiner) == false) {
+                LOG.debug(MessageFormat.format(
+                        "Combines {0} splits: {1}",
+                        splits.size(),
+                        combiner.getClass().getName()));
+            }
+        }
+        List<StageInputSplit> combined = combiner.combine(context, splits);
+        if (LOG.isDebugEnabled() && splits.size() != combined.size()) {
+            LOG.debug(MessageFormat.format(
+                    "Input splits are combined: {0} -> {1}",
+                    splits.size(),
+                    combined.size()));
+        }
+        return new ArrayList<InputSplit>(combined);
+    }
+
+    private List<StageInputSplit> computeSplits(JobContext context) throws IOException, InterruptedException {
+        assert context != null;
         Map<FormatAndMapper, List<StageInput>> paths = getPaths(context);
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
             instantiateFormats(context, paths.keySet());
-
         Job temporaryJob = new Job(context.getConfiguration());
-        List<InputSplit> results = new ArrayList<InputSplit>();
+        List<StageInputSplit> results = new ArrayList<StageInputSplit>();
         for (Map.Entry<FormatAndMapper, List<StageInput>> entry : paths.entrySet()) {
             FormatAndMapper formatAndMapper = entry.getKey();
             List<StageInput> current = entry.getValue();
@@ -76,14 +110,47 @@ public class StageInputFormat extends InputFormat {
                 splits = format.getSplits(temporaryJob);
             }
             assert format != null : formatAndMapper.formatClass.getName();
+            Class<? extends Mapper<?, ?, ?, ?>> mapper = formatAndMapper.mapperClass;
             for (InputSplit split : splits) {
-                StageInputSplit wrapped = new StageInputSplit(
-                        split, formatAndMapper.formatClass, formatAndMapper.mapperClass);
+                Source source = new Source(split, formatAndMapper.formatClass);
+                StageInputSplit wrapped = new StageInputSplit(mapper, Collections.singletonList(source));
                 wrapped.setConf(context.getConfiguration());
                 results.add(wrapped);
             }
         }
         return results;
+    }
+
+    private SplitCombiner getSplitCombiner(JobContext context) {
+        assert context != null;
+        Class<? extends SplitCombiner> combinerClass = getSplitCombinerClass(context);
+        return ReflectionUtils.newInstance(combinerClass, context.getConfiguration());
+    }
+
+    private Class<? extends SplitCombiner> getSplitCombinerClass(JobContext context) {
+        assert context != null;
+        Configuration conf = context.getConfiguration();
+        String combinerType = conf.get("com.asakusafw.input.combine", DEFAULT);
+        if (isLocalMode(context) && combinerType.equals(DEFAULT)) {
+            return ExtremeSplitCombiner.class;
+        }
+        Class<? extends SplitCombiner> defined = SPLIT_COMBINERS.get(combinerType);
+        if (defined != null) {
+            return defined;
+        }
+        try {
+            return conf.getClassByName(combinerType).asSubclass(SplitCombiner.class);
+        } catch (Exception e) {
+            LOG.warn(MessageFormat.format(
+                    "Failed to load a combiner \"{0}\"",
+                    combinerType), e);
+            return IdentitySplitCombiner.class;
+        }
+    }
+
+    private boolean isLocalMode(JobContext context) {
+        assert context != null;
+        return context.getConfiguration().get("mapred.job.tracker", "unknown").equals("local");
     }
 
     private Path[] toPathArray(List<StageInput> inputs) {
@@ -140,10 +207,7 @@ public class StageInputFormat extends InputFormat {
             InputSplit split,
             TaskAttemptContext context) throws IOException, InterruptedException {
         assert split instanceof StageInputSplit;
-        StageInputSplit input = (StageInputSplit) split;
-        InputFormat format = ReflectionUtils.newInstance(input.getFormatClass(), context.getConfiguration());
-        RecordReader original = format.createRecordReader(input.getOriginal(), context);
-        return new StageInputRecordReader(original);
+        return new StageInputRecordReader();
     }
 
     private static class FormatAndMapper {

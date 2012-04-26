@@ -19,10 +19,16 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -33,16 +39,18 @@ import org.apache.hadoop.util.ReflectionUtils;
  * <p>
  * 全体の{@code InputFormat, Mapper}に関する設定を無視して、スプリットごとにそれぞれを指定できる。
  * </p>
+ * @since 0.1.0
+ * @version 0.2.6
  */
 public class StageInputSplit extends InputSplit implements Writable, Configurable {
 
-    private InputSplit original;
-
-    private Class<? extends InputFormat<?, ?>> formatClass;
-
     private Class<? extends Mapper<?, ?, ?, ?>> mapperClass;
 
+    private List<Source> sources = new ArrayList<Source>();
+
     private Configuration configuration;
+
+    private String[] locations;
 
     /**
      * {@link Writable}の初期化用にインスタンスを生成する。
@@ -57,7 +65,9 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
      * @param formatClass このスプリットの元になった{@link InputFormat}
      * @param mapperClass このスプリットを処理する{@link Mapper}
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * @deprecated Use {@link #StageInputSplit(Class, List)} instead
      */
+    @Deprecated
     public StageInputSplit(
             InputSplit original,
             Class<? extends InputFormat<?, ?>> formatClass,
@@ -71,35 +81,104 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         if (mapperClass == null) {
             throw new IllegalArgumentException("mapperClass must not be null"); //$NON-NLS-1$
         }
-        this.original = original;
-        this.formatClass = formatClass;
+        this.sources = Collections.singletonList(new Source(original, formatClass));
         this.mapperClass = mapperClass;
+    }
+
+    /**
+     * Creates a new instance.
+     * @param mapperClass target mapper class
+     * @param sources input format and splits
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.6
+     */
+    public StageInputSplit(Class<? extends Mapper<?, ?, ?, ?>> mapperClass, List<Source> sources) {
+        this(mapperClass, sources, null);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param mapperClass target mapper class
+     * @param sources input format and splits
+     * @param locations hint for locations (nullable)
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.6
+     */
+    public StageInputSplit(Class<? extends Mapper<?, ?, ?, ?>> mapperClass, List<Source> sources, String[] locations) {
+        if (mapperClass == null) {
+            throw new IllegalArgumentException("mapperClass must not be null"); //$NON-NLS-1$
+        }
+        if (sources == null) {
+            throw new IllegalArgumentException("sources must not be null"); //$NON-NLS-1$
+        }
+        this.mapperClass = mapperClass;
+        this.sources = sources;
+        this.locations = locations;
     }
 
     @Override
     public long getLength() throws IOException, InterruptedException {
-        return original.getLength();
+        long results = 0;
+        for (Source source : sources) {
+            results += source.getSplit().getLength();
+        }
+        return results;
     }
 
     @Override
     public String[] getLocations() throws IOException, InterruptedException {
-        return original.getLocations();
+        if (locations != null) {
+            return locations;
+        }
+        List<String> results = new ArrayList<String>();
+        Set<String> saw = new HashSet<String>();
+        for (Source source : sources) {
+            String[] elements = source.getSplit().getLocations();
+            if (elements != null) {
+                for (String element : elements) {
+                    if (saw.contains(element) == false) {
+                        saw.add(element);
+                        results.add(element);
+                    }
+                }
+            }
+        }
+        return results.toArray(new String[results.size()]);
     }
 
     /**
      * 実際のデータに関するスプリットの情報を返す。
      * @return 実際のデータに関するスプリットの情報
+     * @deprecated Use {@link #getSources()} instead.
      */
+    @Deprecated
     public InputSplit getOriginal() {
-        return original;
+        if (sources.size() != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return sources.get(0).getSplit();
     }
 
     /**
      * このスプリットの元になったフォーマットクラスを返す。
      * @return このスプリットの元になったフォーマットクラス
+     * @deprecated Use {@link #getSources()} instead.
      */
+    @Deprecated
     public Class<? extends InputFormat<?, ?>> getFormatClass() {
-        return formatClass;
+        if (sources.size() != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return sources.get(0).getFormatClass();
+    }
+
+    /**
+     * Returns the sources.
+     * @return the sources
+     * @since 0.2.6
+     */
+    public List<Source> getSources() {
+        return sources;
     }
 
     /**
@@ -112,21 +191,49 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
 
     @Override
     public void write(DataOutput out) throws IOException {
-        Class<? extends InputSplit> splitClass = original.getClass();
-        writeClassByName(out, splitClass);
-        writeClassByName(out, formatClass);
         writeClassByName(out, mapperClass);
-        ((Writable) original).write(out);
+        WritableUtils.writeVInt(out, sources.size());
+        for (Source source : sources) {
+            Class<? extends InputSplit> splitClass = source.getSplit().getClass();
+            writeClassByName(out, source.getFormatClass());
+            writeClassByName(out, splitClass);
+            ((Writable) source.getSplit()).write(out);
+        }
+        if (locations == null) {
+            WritableUtils.writeVInt(out, -1);
+        } else {
+            WritableUtils.writeVInt(out, locations.length);
+            for (String string : locations) {
+                WritableUtils.writeString(out, string);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void readFields(DataInput in) throws IOException {
-        Class<? extends InputSplit> splitClass = readClassByName(InputSplit.class, in);
-        this.formatClass = (Class<? extends InputFormat<?, ?>>) readClassByName(InputFormat.class, in);
         this.mapperClass = (Class<? extends Mapper<?, ?, ?, ?>>) readClassByName(Mapper.class, in);
-        this.original = ReflectionUtils.newInstance(splitClass, configuration);
-        ((Writable) original).readFields(in);
+        int sourceCount = WritableUtils.readVInt(in);
+        List<Source> newSources = new ArrayList<Source>();
+        for (int i = 0; i < sourceCount; i++) {
+            Class<? extends InputFormat<?, ?>> formatClass =
+                (Class<? extends InputFormat<?, ?>>) readClassByName(InputFormat.class, in);
+            Class<? extends InputSplit> splitClass = readClassByName(InputSplit.class, in);
+            InputSplit inputSplit = ReflectionUtils.newInstance(splitClass, getConf());
+            ((Writable) inputSplit).readFields(in);
+            newSources.add(new Source(inputSplit, formatClass));
+        }
+        this.sources = newSources;
+        int locationCount = WritableUtils.readVInt(in);
+        if (locationCount < 0) {
+            this.locations = null;
+        } else {
+            String[] array = new String[locationCount];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = WritableUtils.readString(in);
+            }
+            this.locations = array;
+        }
     }
 
     private void writeClassByName(DataOutput out, Class<?> aClass) throws IOException {
@@ -159,5 +266,49 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     @Override
     public Configuration getConf() {
         return configuration;
+    }
+
+    /**
+     * Represents a pair of {@link InputSplit} and its {@link InputFormat} class.
+     * @since 0.2.6
+     */
+    public static final class Source {
+
+        private final InputSplit split;
+
+        private final Class<? extends InputFormat<?, ?>> formatClass;
+
+        /**
+         * Creates a new instance.
+         * @param split an {@link InputSplit}
+         * @param formatClass a class of {@link InputFormat}
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public Source(InputSplit split, Class<? extends InputFormat<?, ?>> formatClass) {
+            if (split == null) {
+                throw new IllegalArgumentException("split must not be null"); //$NON-NLS-1$
+            }
+            if (formatClass == null) {
+                throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
+            }
+            this.split = split;
+            this.formatClass = formatClass;
+        }
+
+        /**
+         * Returns the {@link InputSplit}
+         * @return the split
+         */
+        public InputSplit getSplit() {
+            return split;
+        }
+
+        /**
+         * Returns the {@link InputFormat} class.
+         * @return the format class
+         */
+        public Class<? extends InputFormat<?, ?>> getFormatClass() {
+            return formatClass;
+        }
     }
 }

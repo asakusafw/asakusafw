@@ -54,6 +54,7 @@ public final class Yaess {
     static final Option OPT_PHASE_NAME;
     static final Option OPT_PLUGIN;
     static final Option OPT_ARGUMENT;
+    static final Option OPT_DEFINITION;
 
     private static final Options OPTIONS;
     static {
@@ -91,6 +92,12 @@ public final class Yaess {
         OPT_ARGUMENT.setArgName("name=value");
         OPT_ARGUMENT.setRequired(false);
 
+        OPT_DEFINITION = new Option("D", true, "name-value pair");
+        OPT_DEFINITION.setArgs(2);
+        OPT_DEFINITION.setValueSeparator('=');
+        OPT_DEFINITION.setArgName("name=value");
+        OPT_DEFINITION.setRequired(false);
+
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_PROFILE);
         OPTIONS.addOption(OPT_SCRIPT);
@@ -100,6 +107,7 @@ public final class Yaess {
         OPTIONS.addOption(OPT_PHASE_NAME);
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_ARGUMENT);
+        OPTIONS.addOption(OPT_DEFINITION);
     }
 
     private Yaess() {
@@ -142,7 +150,7 @@ public final class Yaess {
         }
         ExecutionTask task;
         try {
-            task = ExecutionTask.load(conf.profile, conf.script, conf.arguments);
+            task = ExecutionTask.load(conf.profile, conf.script, conf.arguments, conf.definitions);
         } catch (Exception e) {
             // TODO logging
             LOG.error(MessageFormat.format(
@@ -197,6 +205,8 @@ public final class Yaess {
         LOG.debug("Plug-ins: {}", plugins);
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
         LOG.debug("Execution arguments: {}", arguments);
+        Properties definitions = cmd.getOptionProperties(OPT_DEFINITION.getOpt());
+        LOG.debug("Execution definitions: {}", definitions);
 
         LOG.debug("Loading plugins: {}", plugins);
         List<File> pluginFiles = CommandLineUtil.parseFileList(plugins);
@@ -238,13 +248,20 @@ public final class Yaess {
             }
         }
 
-        result.arguments = new TreeMap<String, String>();
-        for (Map.Entry<Object, Object> entry : arguments.entrySet()) {
-            result.arguments.put((String) entry.getKey(), (String) entry.getValue());
-        }
+        result.arguments = toMap(arguments);
+        result.definitions = toMap(definitions);
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
         return result;
+    }
+
+    private static Map<String, String> toMap(Properties p) {
+        assert p != null;
+        Map<String, String> results = new TreeMap<String, String>();
+        for (Map.Entry<Object, Object> entry : p.entrySet()) {
+            results.put((String) entry.getKey(), (String) entry.getValue());
+        }
+        return results;
     }
 
     private static Mode computeMode(String flowId, String executionId, String phaseName) {
@@ -286,6 +303,7 @@ public final class Yaess {
         String executionId;
         ExecutionPhase phase;
         Map<String, String> arguments;
+        Map<String, String> definitions;
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();

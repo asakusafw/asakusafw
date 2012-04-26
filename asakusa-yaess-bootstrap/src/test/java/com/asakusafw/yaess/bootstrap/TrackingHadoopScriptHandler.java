@@ -41,6 +41,7 @@ public class TrackingHadoopScriptHandler extends ExecutionScriptHandlerBase impl
     @Override
     protected void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         Map<String, String> conf = profile.getConfiguration();
         String trackerClassName = conf.get(ExecutionTracker.KEY_CLASS);

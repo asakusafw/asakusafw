@@ -18,3 +18,6 @@
 
 # Path separator character
 # YS_PATH_SEPARATOR=":"
+
+# Java VM options
+# YAESS_OPTS="-client"

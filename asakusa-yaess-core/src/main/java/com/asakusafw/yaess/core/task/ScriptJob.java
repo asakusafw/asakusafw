@@ -79,7 +79,7 @@ public class ScriptJob<T extends ExecutionScript> extends Job {
     }
 
     @Override
-    public String getResourceId() {
-        return handler.getResourceId();
+    public String getResourceId(ExecutionContext context) throws InterruptedException, IOException {
+        return handler.getResourceId(context, script);
     }
 }

@@ -1,0 +1,38 @@
+YAESS Script Handler Dispatcher.
+
+==
+YAESS Profile:
+
+hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
+hadoop.conf = $<path to dispatch configuration directory>
+hadoop.default = <default HadoopScriptHandler class>
+hadoop.default.<key> = <default HadoopScriptHandler property>
+hadoop.<component> = <other HadoopScriptHandler class>
+hadoop.<component>.<key> = <other HadoopScriptHandler property>
+
+command.<profile> = com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher
+command.<profile>.conf = $<path to dispatch configuration directory>
+command.<profile>.default = <default CommandScriptHandler class>
+command.<profile>.default.<key> = <default CommandScriptHandler property>
+command.<profile>.<component> = <other CommandScriptHandler class>
+command.<profile>.<component>.<key> = <other CommandScriptHandler property>
+
+==
+Dispatch configuration:
+
+<batch-id>.properties
+"""
+# uses the specified component in the target stage
+<flow-id>.<phase-name>.<stage-id> = <component name>
+
+# uses the specified component in the target phase
+<flow-id>.<phase-name>.* = <component name>
+
+# uses the specified component in the target flow
+<flow-id>.* = <component name>
+
+# uses the specified component in the target batch
+* = <component name>
+"""
+
+If the file or suitable rule is not defined, the "default" component will be used.

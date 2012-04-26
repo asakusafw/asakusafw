@@ -17,6 +17,7 @@ package com.asakusafw.yaess.core;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Receives execution's progress.
@@ -49,6 +50,11 @@ public interface ExecutionMonitor extends Closeable {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
             }
+        }
+
+        @Override
+        public OutputStream getOutput() throws IOException {
+            return System.out;
         }
 
         @Override
@@ -87,6 +93,14 @@ public interface ExecutionMonitor extends Closeable {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     void setProgress(double workedSize) throws IOException;
+
+    /**
+     * Returns output stream for extra information.
+     * This stream must not be closed by out of the monitors, the stream will be closed automatically in the monitor.
+     * @return current output stream
+     * @throws IOException if failed to prepare the output
+     */
+    OutputStream getOutput() throws IOException;
 
     /**
      * Ends the current task and notify this event to the corresponding receiver.

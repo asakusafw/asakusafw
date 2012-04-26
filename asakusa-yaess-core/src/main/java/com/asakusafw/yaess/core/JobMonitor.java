@@ -16,6 +16,7 @@
 package com.asakusafw.yaess.core;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Receives job's progress.
@@ -84,6 +85,11 @@ public class JobMonitor implements ExecutionMonitor {
     @Override
     public synchronized void setProgress(double workedSize) throws IOException {
         changeCurrentProgress(workedSize);
+    }
+
+    @Override
+    public OutputStream getOutput() throws IOException {
+        return parent.getJobOutput(jobId);
     }
 
     @Override

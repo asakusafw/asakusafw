@@ -26,6 +26,7 @@ public class MockCommandScriptHandler extends ExecutionScriptHandlerBase impleme
     @Override
     protected void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         return;
     }

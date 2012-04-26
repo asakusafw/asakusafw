@@ -22,6 +22,7 @@ hadoop = <subclass of HadoopScriptHandler>
 hadoop.env.ASAKUSA_HOME = $<Asakusa installation home>
 hadoop.resource = <this resource name>?
 hadoop.env.<key> = $<extra environment variables>
+hadoop.prop.<key> = $<extra Hadoop properties>
 hadoop.<key> = <service-specific configuration value>
 
 # if <profile-name> is *, it command handler behaves as default command handler.
@@ -78,6 +79,7 @@ hadoop.command.<position> = $<prefix command token>
 hadoop.cleanup.<position> = $<prefix command token>
 hadoop.workingDirectory = target/hadoopwork/${execution_id}
 hadoop.env.<key> = $<extra environment variables>
+hadoop.prop.<key> = $<extra Hadoop properties>
 
 command.<profile-name> = com.asakusafw.yaess.basic.BasicCommandScriptHandler
 command.<profile-name>.env.ASAKUSA_HOME = ${ASAKUSA_HOME}

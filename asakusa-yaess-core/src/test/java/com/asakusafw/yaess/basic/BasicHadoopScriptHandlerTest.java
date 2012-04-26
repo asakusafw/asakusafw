@@ -85,7 +85,10 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
                 map("hello", "world", "hoge", "foo"),
                 map());
 
-        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
+        HadoopScriptHandler handler = handler(
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                "prop.hello", "handler",
+                "prop.bar", "moga");
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         execute(context, script, handler);
@@ -106,6 +109,10 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
         int hoge = rest.indexOf("hoge=foo");
         assertThat(hoge, greaterThanOrEqualTo(1));
         assertThat(rest.get(hoge - 1), is("-D"));
+
+        int bar = rest.indexOf("bar=moga");
+        assertThat(bar, greaterThanOrEqualTo(1));
+        assertThat(rest.get(bar - 1), is("-D"));
     }
 
     /**
@@ -175,7 +182,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
      * Exit abnormally.
      * @throws Exception if failed
      */
-    @Test(expected = IOException.class)
+    @Test(expected = ExitCodeException.class)
     public void abnormal_exit() throws Exception {
         String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
         putScript("abnormal.sh", new File(target));

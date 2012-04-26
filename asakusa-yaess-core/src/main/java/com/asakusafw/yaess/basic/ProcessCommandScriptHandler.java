@@ -46,6 +46,7 @@ command.&lt;profile-name&gt.command.&lt;position&gt; = $&lt;prefix command token
 command.&lt;profile-name&gt.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>
  * @since 0.2.3
+ * @version 0.2.6
  */
 public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandlerBase implements CommandScriptHandler {
 
@@ -62,6 +63,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
     @Override
     protected final void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         this.currentProfile = profile;
         this.commandPrefix = extractCommand(profile, ProcessUtil.PREFIX_COMMAND);
@@ -119,7 +121,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         monitor.open(1);
         try {
             if (setupCommand.isEmpty() == false) {
-                command(monitor, context, setupCommand);
+                command(monitor, context, null, setupCommand);
             }
         } finally {
             monitor.close();
@@ -133,7 +135,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         monitor.open(1);
         try {
             if (cleanupCommand.isEmpty() == false) {
-                command(monitor, context, cleanupCommand);
+                command(monitor, context, null, cleanupCommand);
             }
         } finally {
             monitor.close();
@@ -148,7 +150,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         assert context != null;
         assert script != null;
 
-        Map<String, String> env = buildEnvironmentVariables(script);
+        Map<String, String> env = buildEnvironmentVariables(context, script);
         LOG.debug("Env: {}", env);
 
         List<String> original = script.getCommandLineTokens();
@@ -170,23 +172,25 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env);
+        int exit = executor.execute(context, command, env, monitor.getOutput());
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Command job: code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from command job: "
+                + "code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
                 script.getId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
     private void command(
             ExecutionMonitor monitor,
             ExecutionContext context,
+            ExecutionScript script,
             List<String> command) throws InterruptedException, IOException {
         assert monitor != null;
         assert context != null;
@@ -196,23 +200,26 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         LOG.debug("Command: {}", command);
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, getEnvironmentVariables());
+        int exit = executor.execute(context, command, getEnvironmentVariables(context, script), monitor.getOutput());
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from command job: "
+                + "code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
-    private Map<String, String> buildEnvironmentVariables(ExecutionScript script) {
+    private Map<String, String> buildEnvironmentVariables(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException {
         assert script != null;
         Map<String, String> env = new HashMap<String, String>();
-        env.putAll(getEnvironmentVariables());
+        env.putAll(getEnvironmentVariables(context, script));
         env.putAll(script.getEnvironmentVariables());
         return env;
     }

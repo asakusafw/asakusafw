@@ -15,7 +15,6 @@
  */
 package com.asakusafw.yaess.core;
 
-import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,8 +41,6 @@ public class ExecutionContext {
 
     private final ExecutionPhase phase;
 
-    private final OutputStream output;
-
     private final Map<String, String> arguments;
 
     /**
@@ -61,27 +58,6 @@ public class ExecutionContext {
             String executionId,
             ExecutionPhase phase,
             Map<String, String> arguments) {
-        this(batchId, flowId, executionId, phase, System.out, arguments);
-    }
-
-    /**
-     * Creates a new instance.
-     * @param batchId current batch ID
-     * @param flowId current flow ID
-     * @param executionId current execution ID
-     * @param phase current execution phase
-     * @param output text information sink
-     * @param arguments current argument pairs
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     * @since 0.2.5
-     */
-    public ExecutionContext(
-            String batchId,
-            String flowId,
-            String executionId,
-            ExecutionPhase phase,
-            OutputStream output,
-            Map<String, String> arguments) {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
@@ -94,9 +70,6 @@ public class ExecutionContext {
         if (phase == null) {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
-        if (output == null) {
-            throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
-        }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
@@ -104,7 +77,6 @@ public class ExecutionContext {
         this.flowId = flowId;
         this.executionId = executionId;
         this.phase = phase;
-        this.output = output;
         this.arguments = Collections.unmodifiableMap(new HashMap<String, String>(arguments));
     }
 
@@ -138,15 +110,6 @@ public class ExecutionContext {
      */
     public ExecutionPhase getPhase() {
         return phase;
-    }
-
-    /**
-     * Returns the text information sink.
-     * @return the output
-     * @since 0.2.5
-     */
-    public OutputStream getOutput() {
-        return output;
     }
 
     /**

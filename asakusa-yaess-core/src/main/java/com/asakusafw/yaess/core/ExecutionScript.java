@@ -203,7 +203,7 @@ public interface ExecutionScript {
         private String getAsakusaHomePath(
                 ExecutionContext context,
                 ExecutionScript script,
-                ExecutionScriptHandler<?> handler) throws IOException {
+                ExecutionScriptHandler<?> handler) throws IOException, InterruptedException {
             assert context != null;
             assert script != null;
             assert handler != null;
@@ -214,7 +214,8 @@ public interface ExecutionScript {
                         inScript);
                 return inScript;
             }
-            String inHandler = handler.getEnvironmentVariables().get(ENV_ASAKUSA_HOME);
+            Map<String, String> environmentVariables = handler.getEnvironmentVariables(context, script);
+            String inHandler = environmentVariables.get(ENV_ASAKUSA_HOME);
             if (inHandler != null) {
                 LOG.debug("Asakusa location is found in handler: {} -> {}",
                         script.getId(),
