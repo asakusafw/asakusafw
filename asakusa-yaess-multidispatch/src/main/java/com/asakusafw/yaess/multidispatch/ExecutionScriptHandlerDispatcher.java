@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -51,6 +54,10 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     static final String KEY_CONF = "conf";
 
+    static final String KEY_SETUP = "setUp";
+
+    static final String KEY_CLEANUP = "cleanUp";
+
     static final String KEY_DEFAULT = "default";
 
     static final String SUFFIX_CONF = ".properties";
@@ -64,6 +71,10 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
     private volatile Reference<Map<String, Properties>> confCache = new SoftReference<Map<String, Properties>>(null);
 
     private volatile Map<String, ExecutionScriptHandler<T>> delegations;
+
+    private volatile List<String> setUpEnabled;
+
+    private volatile List<String> cleanUpEnabled;
 
     /**
      * Creates a new instance.
@@ -82,6 +93,26 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         this.prefix = profile.getPrefix();
         this.confDirectory = getConfDirectory(profile);
         this.delegations = getDelegations(profile);
+        this.setUpEnabled = getNames(profile, KEY_SETUP);
+        this.cleanUpEnabled = getNames(profile, KEY_CLEANUP);
+        for (String name : setUpEnabled) {
+            if (delegations.containsKey(name) == false) {
+                throw new IOException(MessageFormat.format(
+                        "Failed to detect setUp target: {2} in {0}.{1}",
+                        profile.getPrefix(),
+                        KEY_SETUP,
+                        name));
+            }
+        }
+        for (String name : cleanUpEnabled) {
+            if (delegations.containsKey(name) == false) {
+                throw new IOException(MessageFormat.format(
+                        "Failed to detect cleanUp target: {2} in {0}.{1}",
+                        profile.getPrefix(),
+                        KEY_CLEANUP,
+                        name));
+            }
+        }
     }
 
     private File getConfDirectory(ServiceProfile<?> profile) throws IOException {
@@ -120,6 +151,8 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         Map<String, String> conf = profile.getConfiguration();
         Set<String> keys = PropertiesUtil.getChildKeys(conf, "", ".");
         keys.remove(KEY_CONF);
+        keys.remove(KEY_SETUP);
+        keys.remove(KEY_CLEANUP);
         if (keys.contains(KEY_DEFAULT) == false) {
             throw new IOException(MessageFormat.format(
                     "Default profile for multidispatch plugin is not defined: {0}.{1}",
@@ -151,6 +184,23 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             }
             ExecutionScriptHandler<T> subInstance = subProfile.newInstance();
             results.put(key, subInstance);
+        }
+        return results;
+    }
+
+    private List<String> getNames(ServiceProfile<?> profile, String key) {
+        assert profile != null;
+        assert key != null;
+        String value = profile.getConfiguration().get(key);
+        if (value == null) {
+            return Collections.singletonList(KEY_DEFAULT);
+        }
+        List<String> results = new ArrayList<String>();
+        for (String name : value.split(",")) {
+            String trimmed = name.trim();
+            if (trimmed.isEmpty() == false) {
+                results.add(trimmed);
+            }
         }
         return results;
     }
@@ -299,18 +349,21 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     @Override
     public void setUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        ExecutionScriptHandler<T> target = resolve(context, null);
-        // TODO logging
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
-                    "Starting setUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                    target.getHandlerId(),
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId()));
+        for (String name : setUpEnabled) {
+            ExecutionScriptHandler<T> target = delegations.get(name);
+            assert target != null;
+            // TODO logging
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Starting setUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
+                        target.getHandlerId(),
+                        context.getBatchId(),
+                        context.getFlowId(),
+                        context.getPhase(),
+                        context.getExecutionId()));
+            }
+            target.setUp(monitor, context);
         }
-        target.setUp(monitor, context);
     }
 
     @Override
@@ -335,18 +388,21 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     @Override
     public void cleanUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        ExecutionScriptHandler<T> target = resolve(context, null);
-        // TODO logging
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
-                    "Starting cleanUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                    target.getHandlerId(),
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId()));
+        for (String name : cleanUpEnabled) {
+            ExecutionScriptHandler<T> target = delegations.get(name);
+            assert target != null;
+            // TODO logging
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Starting cleanUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
+                        target.getHandlerId(),
+                        context.getBatchId(),
+                        context.getFlowId(),
+                        context.getPhase(),
+                        context.getExecutionId()));
+            }
+            target.cleanUp(monitor, context);
         }
-        target.cleanUp(monitor, context);
     }
 
     private enum FindPattern {
