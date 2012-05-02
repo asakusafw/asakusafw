@@ -5,6 +5,8 @@ YAESS Profile:
 
 hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
 hadoop.conf = $<path to dispatch configuration directory>
+hadoop.setup = <component names separated by comma>
+hadoop.cleanup = <component names separated by comma>
 hadoop.default = <default HadoopScriptHandler class>
 hadoop.default.<key> = <default HadoopScriptHandler property>
 hadoop.<component> = <other HadoopScriptHandler class>
@@ -12,6 +14,8 @@ hadoop.<component>.<key> = <other HadoopScriptHandler property>
 
 command.<profile> = com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher
 command.<profile>.conf = $<path to dispatch configuration directory>
+command.<profile>.setup = <component names separated by comma>
+command.<profile>.cleanup = <component names separated by comma>
 command.<profile>.default = <default CommandScriptHandler class>
 command.<profile>.default.<key> = <default CommandScriptHandler property>
 command.<profile>.<component> = <other CommandScriptHandler class>
