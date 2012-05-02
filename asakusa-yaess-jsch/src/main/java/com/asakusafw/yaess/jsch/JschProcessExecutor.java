@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.yaess.basic.ProcessExecutor;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -40,6 +41,8 @@ import com.jcraft.jsch.Session;
  * @since 0.2.3
  */
 public class JschProcessExecutor implements ProcessExecutor {
+
+    static final YaessLogger YSLOG = new YaessJschLogger(JschProcessExecutor.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JschProcessExecutor.class);
 
@@ -283,28 +286,46 @@ public class JschProcessExecutor implements ProcessExecutor {
         session.setConfig("StrictHostKeyChecking", "no");
         session.setServerAliveInterval((int) TimeUnit.SECONDS.toMillis(30));
 
-        // TODO logging
-        session.connect((int) TimeUnit.SECONDS.toMillis(60));
         try {
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
-            channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
-            channel.setOutputStream(output, true);
-            channel.setErrStream(output, true);
-            channel.connect((int) TimeUnit.SECONDS.toMillis(60));
+            YSLOG.info("I00001", user, host, port, privateKey);
+            long sessionStart = System.currentTimeMillis();
+            session.connect((int) TimeUnit.SECONDS.toMillis(60));
+            long sessionEnd = System.currentTimeMillis();
+            YSLOG.info("I00002", user, host, port, privateKey, sessionEnd - sessionStart);
+
+            int exitStatus;
             try {
-                while (true) {
-                    if (channel.isClosed()) {
-                        break;
+                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
+                channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
+                channel.setOutputStream(output, true);
+                channel.setErrStream(output, true);
+
+                YSLOG.info("I00003", user, host, port, privateKey, commandLineTokens.get(0));
+                long channelStart = System.currentTimeMillis();
+                channel.connect((int) TimeUnit.SECONDS.toMillis(60));
+                long channelEnd = System.currentTimeMillis();
+                YSLOG.info("I00004", user, host, port, privateKey, commandLineTokens.get(0), channelEnd - channelStart);
+
+                try {
+                    while (true) {
+                        if (channel.isClosed()) {
+                            break;
+                        }
+                        Thread.sleep(100);
                     }
-                    Thread.sleep(100);
+                    exitStatus = channel.getExitStatus();
+                } finally {
+                    channel.disconnect();
                 }
-                return channel.getExitStatus();
             } finally {
-                channel.disconnect();
+                session.disconnect();
             }
-        } finally {
-            session.disconnect();
+            YSLOG.info("I00005", user, host, port, privateKey, commandLineTokens.get(0), exitStatus);
+            return exitStatus;
+        } catch (JSchException e) {
+            YSLOG.error(e, "E00001", user, host, port, privateKey);
+            throw e;
         }
     }
 
@@ -316,9 +337,9 @@ public class JschProcessExecutor implements ProcessExecutor {
         StringBuilder buf = new StringBuilder();
         for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
             if (SH_NAME.matcher(entry.getKey()).matches() == false) {
-                // TODO logging
-                LOG.warn("Invalid variable name will be ignored: {}",
-                        entry.getKey());
+                YSLOG.warn("W00001",
+                        entry.getKey(),
+                        entry.getValue());
                 continue;
             }
             if (buf.length() > 0) {

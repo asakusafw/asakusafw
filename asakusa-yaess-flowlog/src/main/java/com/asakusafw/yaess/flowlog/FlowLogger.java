@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.YaessLogger;
 
 /**
  * An implementation of {@link PhaseMonitor} to save log for each jobflow.
@@ -41,7 +43,15 @@ import com.asakusafw.yaess.core.PhaseMonitor;
  */
 public class FlowLogger extends PhaseMonitor {
 
+    static final YaessLogger YSLOG = new YaessFlowLogLogger(FlowLogger.class);
+
     static final Logger LOG = LoggerFactory.getLogger(FlowLogger.class);
+
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("com.asakusafw.yaess.flowlog.flowlog");
+
+    private static final double MIN_STEP_UNIT = 0.01;
+
+    private static final double DELTA_STEP_UNIT = 0.0000000000001;
 
     private final ExecutionContext context;
 
@@ -64,8 +74,6 @@ public class FlowLogger extends PhaseMonitor {
     private final File escapeFile;
 
     private PrintWriter writer;
-
-    private final boolean teeLog;
 
     private final boolean reportJob;
 
@@ -100,13 +108,12 @@ public class FlowLogger extends PhaseMonitor {
         if (profile.getStepUnit() <= 0) {
             this.stepUnit = Double.MAX_VALUE;
         } else {
-            this.stepUnit = Math.max(profile.getStepUnit(), 0.01) - 0.0000000000001;
+            this.stepUnit = Math.max(profile.getStepUnit(), MIN_STEP_UNIT) - DELTA_STEP_UNIT;
         }
         this.file = profile.getLogFile(context);
         this.escapeFile = profile.getEscapeFile(context);
         this.encoding = profile.getEncoding();
         this.dateFormat = profile.getDateFormat();
-        this.teeLog = profile.isTeeLog();
         this.reportJob = profile.isReportJob();
         this.deleteOnSetup = profile.isDeleteOnSetup();
         this.deleteOnCleanup = profile.isDeleteOnCleanup();
@@ -122,29 +129,10 @@ public class FlowLogger extends PhaseMonitor {
                     label));
         }
         opened = true;
-        File parent = file.getParentFile();
-        if (parent != null && parent.mkdirs() == false) {
-            if (parent.isDirectory() == false) {
-                LOG.warn(MessageFormat.format(
-                        "Failed to create a parent directory for flow logger : {1} ({0})",
-                        label,
-                        parent));
-            }
-        }
+        prepareParentDirectory(file);
         boolean keepLogs = deleteOnSetup == false || context.getPhase() != ExecutionPhase.SETUP;
-        if (keepLogs == false && escapeFile.exists()) {
-            // TODO logging
-            LOG.info(MessageFormat.format(
-                    "Deleting the last escaped log: {1} ({0})",
-                    label,
-                    escapeFile.getAbsolutePath()));
-            if (escapeFile.delete() == false && escapeFile.exists()) {
-                // TODO logging
-                LOG.info(MessageFormat.format(
-                        "Failed to delete the last escaped log: {1} ({0})",
-                        label,
-                        escapeFile.getAbsolutePath()));
-            }
+        if (keepLogs == false) {
+            cleanEscapedLog();
         }
         OutputStream output = new FileOutputStream(file, keepLogs);
         boolean succeed = false;
@@ -158,10 +146,7 @@ public class FlowLogger extends PhaseMonitor {
             }
         }
         this.totalTaskSize = taskSize;
-        record(MessageFormat.format(
-                "START {1} ({0})",
-                label,
-                context.getPhase()));
+        record(Level.INFO, Target.PHASE, Trigger.START);
     }
 
     @Override
@@ -179,25 +164,12 @@ public class FlowLogger extends PhaseMonitor {
         if (jobId == null) {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
-        if (reportJob) {
-            record(MessageFormat.format(
-                    "START JOB - {1}/{0}",
-                    label,
-                    jobId));
-        }
+        record(Level.INFO, Target.JOB, Trigger.START, jobId);
     }
 
     @Override
     protected void onJobMonitorClosed(String jobId) {
-        if (jobId == null) {
-            throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
-        }
-        if (reportJob) {
-            record(MessageFormat.format(
-                    "END JOB - {1}/{0}",
-                    label,
-                    jobId));
-        }
+        return;
     }
 
     @Override
@@ -208,16 +180,7 @@ public class FlowLogger extends PhaseMonitor {
         if (status == null) {
             throw new IllegalArgumentException("status must not be null"); //$NON-NLS-1$
         }
-        if (reportJob || status != JobStatus.SUCCESS) {
-            record(MessageFormat.format(
-                    "{2} JOB - {1}/{0}",
-                    label,
-                    jobId,
-                    status));
-        }
-        if (cause != null) {
-            record(cause);
-        }
+        record(cause, toLevel(status), Target.JOB, Trigger.FINISH, jobId, status);
         if (status.compareTo(worstStatus) > 0) {
             worstStatus = status;
         }
@@ -237,50 +200,70 @@ public class FlowLogger extends PhaseMonitor {
         }
         closed = true;
         set(totalTaskSize);
-        record(MessageFormat.format(
-                "{1} {2} ({0})",
-                label,
-                worstStatus,
-                context.getPhase()));
-        if (occurredException != null) {
-            record(occurredException);
-        }
+        record(occurredException, toLevel(worstStatus), Target.PHASE, Trigger.FINISH, worstStatus);
         if (writer != null) {
             writer.close();
             writer = null;
         }
         if (context.getPhase() == ExecutionPhase.CLEANUP && worstStatus == JobStatus.SUCCESS) {
             if (deleteOnCleanup) {
-                // TODO logging
-                LOG.info(MessageFormat.format(
-                        "Deleting a suceeded flow log: {1} ({0})",
-                        label,
-                        file.getAbsolutePath()));
-                if (file.delete() == false) {
-                    // TODO logging
-                    LOG.warn(MessageFormat.format(
-                            "Failed to delete flow log: {0}",
-                            file.getAbsolutePath()));
-                }
+                cleanCurrentLog();
             } else {
-                File parent = escapeFile.getParentFile();
-                if (parent.mkdirs() == false) {
-                    if (parent.isDirectory() == false) {
-                        // TODO logging
-                        LOG.warn(MessageFormat.format(
-                                "Failed to create a parent directory for flow logger : {1} ({0})",
-                                label,
-                                parent));
-                    }
-                }
-                // TODO logging
-                LOG.info(MessageFormat.format(
-                        "Escaping a suceeded flow log: {1} -> {2} ({0})",
-                        label,
-                        file.getAbsolutePath(),
-                        escapeFile.getAbsolutePath()));
-                file.renameTo(escapeFile);
+                cleanEscapedLog();
+                escapeCurrentLog();
             }
+        }
+    }
+
+    private void prepareParentDirectory(File f) {
+        assert f != null;
+        File parent = f.getParentFile();
+        if (parent.mkdirs() == false) {
+            if (parent.isDirectory() == false) {
+                YSLOG.warn("W01001",
+                        label,
+                        parent.getAbsolutePath());
+            }
+        }
+    }
+
+    private void cleanCurrentLog() {
+        if (file.exists()) {
+            YSLOG.info("I01002",
+                    label,
+                    file.getAbsolutePath());
+            if (file.delete() == false && file.exists()) {
+                YSLOG.warn("W01003",
+                        label,
+                        file.getAbsolutePath());
+            }
+        }
+    }
+
+    private void cleanEscapedLog() {
+        if (escapeFile.exists()) {
+            YSLOG.info("I01001",
+                    label,
+                    escapeFile.getAbsolutePath());
+            if (escapeFile.delete() == false && escapeFile.exists()) {
+                YSLOG.warn("W01002",
+                        label,
+                        escapeFile.getAbsolutePath());
+            }
+        }
+    }
+
+    private void escapeCurrentLog() {
+        YSLOG.info("I01003",
+                label,
+                file.getAbsolutePath(),
+                escapeFile.getAbsolutePath());
+        prepareParentDirectory(escapeFile);
+        if (file.renameTo(escapeFile) == false) {
+            YSLOG.warn("W01004",
+                    label,
+                    file.getAbsolutePath(),
+                    escapeFile.getAbsolutePath());
         }
     }
 
@@ -289,40 +272,86 @@ public class FlowLogger extends PhaseMonitor {
         double relative = normalized / totalTaskSize;
         int step = (int) Math.floor(relative / stepUnit);
         if (step != workedStep && closed == false) {
-            record(MessageFormat.format(
-                    "STEP [{1}%] - ({0})",
-                    label,
-                    String.format("%.02f", relative * 100)));
+            record(Level.INFO, Target.PHASE, Trigger.STEP, String.format("%.02f", relative * 100));
         }
         this.workedTaskSize = normalized;
         this.workedStep = step;
     }
 
-    private synchronized void record(String message) {
-        assert message != null;
-        writer.printf("%s %s%n", now(), message);
-        writer.flush();
-        if (teeLog) {
-            LOG.info(message);
+    private Level toLevel(JobStatus status) {
+        assert status != null;
+        switch (status) {
+        case SUCCESS:
+            return Level.INFO;
+        case FAILED:
+            return Level.ERROR;
+        case CANCELLED:
+            return Level.ERROR;
+        default:
+            throw new AssertionError(status);
         }
     }
 
-    private synchronized void record(Throwable exception) {
-        assert exception != null;
-        writer.println(MessageFormat.format(
-                "{0} Exception occured in {1}",
-                now(),
-                label));
-        exception.printStackTrace(writer);
-        writer.flush();
-        if (teeLog) {
-            LOG.error(MessageFormat.format(
-                    "Exception occured in {0}",
-                    label), exception);
+    private void record(Level level, Target target, Trigger trigger, Object... arguments) {
+        record(null, level, target, trigger, arguments);
+    }
+
+    private synchronized void record(Throwable t, Level level, Target target, Trigger trigger, Object... arguments) {
+        if (target == Target.JOB && reportJob == false) {
+            return;
         }
+        String pattern = BUNDLE.getString(target.name() + trigger.name());
+        String message = MessageFormat.format(pattern, arguments);
+        String record = MessageFormat.format(
+                "{0} [{1}:{2}-{3}-{4}] {5} (batchId={6}, flowId={7}, executionId={8}, phase={9})",
+                now(),
+                level,
+                trigger,
+                context.getPhase().name(),
+                target,
+                message,
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getExecutionId(),
+                context.getPhase());
+        record(t, record);
+    }
+
+    private synchronized void record(Throwable exception, String message) {
+        LOG.debug(message, exception);
+        writer.println(message);
+        if (exception != null) {
+            exception.printStackTrace(writer);
+        }
+        writer.flush();
     }
 
     private String now() {
         return dateFormat.format(new Date());
+    }
+
+    private enum Level {
+
+        INFO,
+
+        WARN,
+
+        ERROR,
+    }
+
+    private enum Target {
+
+        PHASE,
+
+        JOB,
+    }
+
+    private enum Trigger {
+
+        START,
+
+        STEP,
+
+        FINISH,
     }
 }

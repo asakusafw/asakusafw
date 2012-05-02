@@ -7,7 +7,6 @@ monitor.directory = $<logging output directory>
 monitor.encoding = $<log file encoding>
 monitor.stepUnit = 0.00
 monitor.dateFormat = yyyy-MM-dd HH:mm:ss
-monitor.teeLog = <true:also output report to standard logger|false:don't report>
 monitor.reportJob = <true:also report job status|false:don't report>
 monitor.deleteOnSetup = <true:delete log file when setup was started|false:keep last log file>
 monitor.deleteOnCleanup = <true:delete log file when cleanup was succeeded|false:keep log file>

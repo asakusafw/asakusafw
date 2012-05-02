@@ -57,6 +57,8 @@ import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
+import com.asakusafw.yaess.core.YaessCoreLogger;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
 import com.asakusafw.yaess.core.PhaseMonitor;
 import com.asakusafw.yaess.core.ServiceProfile;
@@ -70,6 +72,8 @@ import com.asakusafw.yaess.core.YaessProfile;
 public class ExecutionTask {
 
     static final String KEY_SKIP_FLOWS = "skipFlows";
+
+    static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionTask.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionTask.class);
 
@@ -288,12 +292,26 @@ public class ExecutionTask {
             }
         });
         BatchScript batchScript = BatchScript.load(script);
-        ExecutionLock lock = locks.newInstance(batchId);
+        YSLOG.info("I01000", batchId);
+        long start = System.currentTimeMillis();
         try {
-            BatchScheduler batchScheduler = new BatchScheduler(batchId, batchScript, lock, executor);
-            batchScheduler.run();
+            ExecutionLock lock = locks.newInstance(batchId);
+            try {
+                BatchScheduler batchScheduler = new BatchScheduler(batchId, batchScript, lock, executor);
+                batchScheduler.run();
+            } finally {
+                lock.close();
+            }
+            YSLOG.info("I01001", batchId);
+        } catch (IOException e) {
+            YSLOG.error(e, "E01001", batchId);
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W01001", batchId);
+            throw e;
         } finally {
-            lock.close();
+            long end = System.currentTimeMillis();
+            YSLOG.info("I01999", batchId, end - start);
         }
     }
 
@@ -391,40 +409,50 @@ public class ExecutionTask {
         assert batchId != null;
         assert flow != null;
         assert executionId != null;
-        if (skipFlows.contains(flow.getId())) {
-            // TODO logging
-            LOG.info(MessageFormat.format(
-                    "Execution was skipped by definition (batchId={0}, flowId={1})",
-                    batchId, flow.getId()));
-            return;
-        }
-        executePhase(batchId, flow, executionId, ExecutionPhase.SETUP);
-        boolean succeed = false;
+        YSLOG.info("I02000", batchId, flow.getId(), executionId);
+        long start = System.currentTimeMillis();
         try {
-            executePhase(batchId, flow, executionId, ExecutionPhase.INITIALIZE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.IMPORT);
-            executePhase(batchId, flow, executionId, ExecutionPhase.PROLOGUE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.MAIN);
-            executePhase(batchId, flow, executionId, ExecutionPhase.EPILOGUE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.EXPORT);
-            succeed = true;
-        } finally {
-            if (succeed) {
-                executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
-            } else {
-                try {
+            if (skipFlows.contains(flow.getId())) {
+                YSLOG.info("I02002", batchId, flow.getId(), executionId);
+                return;
+            }
+            executePhase(batchId, flow, executionId, ExecutionPhase.SETUP);
+            boolean succeed = false;
+            try {
+                executePhase(batchId, flow, executionId, ExecutionPhase.INITIALIZE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.IMPORT);
+                executePhase(batchId, flow, executionId, ExecutionPhase.PROLOGUE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.MAIN);
+                executePhase(batchId, flow, executionId, ExecutionPhase.EPILOGUE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.EXPORT);
+                succeed = true;
+            } finally {
+                if (succeed) {
                     executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
-                } catch (Exception e) {
-                    // TODO logging WARN
-                    LOG.warn("Finalize failed", e);
+                } else {
+                    YSLOG.info("I02003", batchId, flow.getId(), executionId);
+                    try {
+                        executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
+                    } catch (Exception e) {
+                        YSLOG.warn(e, "W02002", batchId, flow.getId(), executionId);
+                    }
                 }
             }
-        }
-        try {
-            executePhase(batchId, flow, executionId, ExecutionPhase.CLEANUP);
-        } catch (Exception e) {
-            // TODO logging WARN
-            LOG.warn("Cleanup failed", e);
+            try {
+                executePhase(batchId, flow, executionId, ExecutionPhase.CLEANUP);
+            } catch (Exception e) {
+                YSLOG.warn(e, "W02003", batchId, flow.getId(), executionId);
+            }
+            YSLOG.info("I02001", batchId, flow.getId(), executionId);
+        } catch (IOException e) {
+            YSLOG.error(e, "E02001", batchId, flow.getId(), executionId);
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W02001", batchId, flow.getId(), executionId);
+            throw e;
+        } finally {
+            long end = System.currentTimeMillis();
+            YSLOG.info("I02999", batchId, flow.getId(), executionId, end - start);
         }
     }
 
@@ -444,38 +472,56 @@ public class ExecutionTask {
             Set<ExecutionScript> executions) throws InterruptedException, IOException {
         assert context != null;
         assert executions != null;
-        if (skipFlows.contains(context.getFlowId())) {
-            // TODO logging
-            LOG.info(MessageFormat.format(
-                    "Execution was skipped by definition (batchId={0}, flowId={1}, phase={2})",
-                    context.getBatchId(), context.getFlowId(), context.getPhase()));
-            return;
-        }
-        List<? extends Job> jobs;
-        ErrorHandler handler;
-        switch (context.getPhase()) {
-        case SETUP:
-            jobs = buildSetupJobs(context);
-            handler = JobScheduler.STRICT;
-            break;
-        case CLEANUP:
-            jobs = buildCleanupJobs(context);
-            handler = JobScheduler.BEST_EFFORT;
-            break;
-        case FINALIZE:
-            jobs = buildExecutionJobs(context, executions);
-            handler = JobScheduler.BEST_EFFORT;
-            break;
-        default:
-            jobs = buildExecutionJobs(context, executions);
-            handler = JobScheduler.STRICT;
-            break;
-        }
-        PhaseMonitor monitor = monitors.newInstance(context);
+        YSLOG.info("I03000",
+                context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+        long start = System.currentTimeMillis();
         try {
-            scheduler.execute(monitor, context, jobs, handler);
+            if (skipFlows.contains(context.getFlowId())) {
+                YSLOG.info("I03002",
+                        context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+                return;
+            }
+            List<? extends Job> jobs;
+            ErrorHandler handler;
+            switch (context.getPhase()) {
+            case SETUP:
+                jobs = buildSetupJobs(context);
+                handler = JobScheduler.STRICT;
+                break;
+            case CLEANUP:
+                jobs = buildCleanupJobs(context);
+                handler = JobScheduler.BEST_EFFORT;
+                break;
+            case FINALIZE:
+                jobs = buildExecutionJobs(context, executions);
+                handler = JobScheduler.BEST_EFFORT;
+                break;
+            default:
+                jobs = buildExecutionJobs(context, executions);
+                handler = JobScheduler.STRICT;
+                break;
+            }
+            PhaseMonitor monitor = monitors.newInstance(context);
+            try {
+                scheduler.execute(monitor, context, jobs, handler);
+            } finally {
+                monitor.close();
+            }
+            YSLOG.info("I03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+        } catch (IOException e) {
+            YSLOG.error(e, "E03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+            throw e;
         } finally {
-            monitor.close();
+            long end = System.currentTimeMillis();
+            YSLOG.info("I03999",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    end - start);
         }
     }
 
@@ -595,6 +641,7 @@ public class ExecutionTask {
                     waitForComplete();
                 }
             } finally {
+                YSLOG.info("I01004", batchId);
                 for (FlowScriptTask task : running.values()) {
                     task.cancel(true);
                 }
@@ -602,8 +649,7 @@ public class ExecutionTask {
                     try {
                         waitForComplete();
                     } catch (IOException e) {
-                        // TODO logging
-                        LOG.warn("Error has occurred while shutting down", e);
+                        YSLOG.warn(e, "W01002", batchId);
                     }
                 }
             }
@@ -647,6 +693,7 @@ public class ExecutionTask {
                     return null;
                 }
             });
+            YSLOG.info("I01003", batchId, flow.getId());
             executor.execute(task);
             running.put(flow.getId(), task);
         }
@@ -661,9 +708,7 @@ public class ExecutionTask {
                 boolean blocked = blocking.remove(flow.getId());
                 assert blocked;
             } catch (CancellationException e) {
-                LOG.info(MessageFormat.format(
-                        "Flow execution is cancelled (batch={0}, flow={1})",
-                        flow.getId()), e);
+                YSLOG.info(e, "I01005", batchId, flow.getId());
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof IOException) {
                     throw (IOException) e.getCause();

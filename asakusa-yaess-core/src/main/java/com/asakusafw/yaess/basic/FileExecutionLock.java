@@ -29,12 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionLock;
+import com.asakusafw.yaess.core.YaessLogger;
 
 /**
  * An implementation of {@link ExecutionLock} using local file system locks.
  * @since 0.2.3
  */
 class FileExecutionLock extends ExecutionLock {
+
+    static final YaessLogger YSLOG = new YaessBasicLogger(FileExecutionLock.class);
 
     static final Logger LOG = LoggerFactory.getLogger(FileExecutionLock.class);
 
@@ -80,7 +83,12 @@ class FileExecutionLock extends ExecutionLock {
         this.batchId = batchId;
         this.directory = directory;
         this.flowLocks = new HashMap<String, LockObject>();
-        this.batchLock = acquireForBatch();
+        try {
+            this.batchLock = acquireForBatch();
+        } catch (IOException e) {
+            YSLOG.error("E41001", batchId, lockScope);
+            throw e;
+        }
     }
 
     @Override
@@ -94,14 +102,22 @@ class FileExecutionLock extends ExecutionLock {
         if (closed) {
             throw new IOException("Lock manager is already closed");
         }
-        if (flowLocks.containsKey(flowId)) {
+        LockObject other = flowLocks.get(flowId);
+        if (other != null) {
+            YSLOG.error("E41002", batchId, flowId, executionId, lockScope);
             throw new IOException(MessageFormat.format(
-                    "Failed to lock target flow (re-entrant): {0}",
-                    flowId));
+                    "Failed to lock target flow (re-entrant): {0} ({1})",
+                    flowId,
+                    other.label));
         }
-        LockObject lock = acquireForFlow(flowId, executionId);
-        if (lock != null) {
-            flowLocks.put(flowId, lock);
+        try {
+            LockObject lock = acquireForFlow(flowId, executionId);
+            if (lock != null) {
+                flowLocks.put(flowId, lock);
+            }
+        } catch (IOException e) {
+            YSLOG.error("E41002", batchId, flowId, executionId, lockScope);
+            throw e;
         }
     }
 
@@ -177,9 +193,9 @@ class FileExecutionLock extends ExecutionLock {
 
     private static class LockObject implements Closeable {
 
-        private final String label;
+        final String label;
 
-        private final File path;
+        final File path;
 
         private final RandomAccessFile file;
 
@@ -245,11 +261,7 @@ class FileExecutionLock extends ExecutionLock {
             try {
                 this.file.close();
             } catch (IOException e) {
-                // TODO logging
-                LOG.warn(MessageFormat.format(
-                        "Failed to close {0} ({1})",
-                        label,
-                        path), e);
+                YSLOG.warn(e, "W41002", label, path);
             }
         }
 
@@ -257,22 +269,14 @@ class FileExecutionLock extends ExecutionLock {
             try {
                 this.lock.release();
             } catch (IOException e) {
-                // TODO logging
-                LOG.warn(MessageFormat.format(
-                        "Failed to release file lock: {0} ({1})",
-                        label,
-                        path), e);
+                YSLOG.warn(e, "W41001", label, path);
             }
         }
 
         private void deleteFile() {
             // FIXME more safe
             if (path.delete() == false) {
-                // TODO logging
-                LOG.warn(MessageFormat.format(
-                        "Failed delete lock file: {0} ({1})",
-                        label,
-                        path));
+                YSLOG.warn("W41003", label, path);
             }
         }
     }

@@ -36,11 +36,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.asakusafw.yaess.core.YaessLogger;
+
 /**
  * Utilities for command line interfaces.
  * @since 0.2.3
  */
 public final class CommandLineUtil {
+
+    static final YaessLogger YSLOG = new YaessBootstrapLogger(CommandLineUtil.class);
 
     static final Logger LOG = LoggerFactory.getLogger(CommandLineUtil.class);
 
@@ -145,16 +149,13 @@ public final class CommandLineUtil {
             try {
                 if (file.exists() == false) {
                     throw new FileNotFoundException(MessageFormat.format(
-                            "Failed to load plugin \"{0}\"",
+                            "Plug-in file/directory is not found \"{0}\"",
                             file.getAbsolutePath()));
                 }
                 URL url = file.toURI().toURL();
                 pluginLocations.add(url);
             } catch (IOException e) {
-                // TODO logging
-                LOG.warn(MessageFormat.format(
-                        "Failed to load plugin: {0}",
-                        file.getAbsolutePath()), e);
+                YSLOG.warn(e, "W99001", file.getAbsolutePath());
             }
         }
         ClassLoader serviceLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {

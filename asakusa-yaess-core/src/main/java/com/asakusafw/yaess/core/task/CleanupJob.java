@@ -16,7 +16,6 @@
 package com.asakusafw.yaess.core.task;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
@@ -27,6 +26,8 @@ import com.asakusafw.yaess.core.ExecutionScriptHandler;
  * @since 0.2.3
  */
 public class CleanupJob extends HandlerLifecycleJob {
+
+    private static final String JOB_ID = "(cleanup)";
 
     /**
      * Creates a new instance.
@@ -45,9 +46,12 @@ public class CleanupJob extends HandlerLifecycleJob {
     }
 
     @Override
-    public String getLabel() {
-        return MessageFormat.format(
-                "CleanUp({0})",
-                handler.getHandlerId());
+    public String getServiceLabel() {
+        return handler.getHandlerId();
+    }
+
+    @Override
+    public String getJobLabel() {
+        return JOB_ID;
     }
 }

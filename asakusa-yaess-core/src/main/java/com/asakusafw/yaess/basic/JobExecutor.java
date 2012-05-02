@@ -53,6 +53,7 @@ public interface JobExecutor {
     /**
      * An abstraction of job execution.
      * @since 0.2.3
+     * @version 0.2.6
      */
     public final class Executing extends FutureTask<Void> {
 
@@ -97,7 +98,7 @@ public interface JobExecutor {
                 @Override
                 public Void call() throws Exception {
                     LOG.debug("Starting job: {} in {}", job.getId(), Thread.currentThread().getName());
-                    job.execute(monitor, context);
+                    job.launch(monitor, context);
                     LOG.debug("Completing job: {} in {}", job.getId(), Thread.currentThread().getName());
                     return null;
                 }

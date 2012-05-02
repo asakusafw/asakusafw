@@ -219,7 +219,6 @@ public class FlowLoggerTest {
                 Charset.forName("UTF-8"),
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
                 0.10,
-                true,
                 reportJob,
                 deleteOnSetup,
                 deleteOnCleanup);

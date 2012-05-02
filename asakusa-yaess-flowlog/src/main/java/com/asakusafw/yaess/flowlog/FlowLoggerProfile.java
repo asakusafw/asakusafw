@@ -40,8 +40,6 @@ public class FlowLoggerProfile {
 
     static final String KEY_DATE_FORMAT = "dateFormat";
 
-    static final String KEY_TEE_LOG = "teeLog";
-
     static final String KEY_REPORT_JOB = "reportJob";
 
     static final String KEY_DELETE_ON_SETUP = "deleteOnSetup";
@@ -53,8 +51,6 @@ public class FlowLoggerProfile {
     static final String DEFAULT_STEP_UNIT = "0.00";
 
     static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-    static final String DEFAULT_TEE_LOG = "true";
 
     static final String DEFAULT_REPORT_JOB = "true";
 
@@ -70,8 +66,6 @@ public class FlowLoggerProfile {
 
     private final double stepUnit;
 
-    private final boolean teeLog;
-
     private final boolean reportJob;
 
     private final boolean deleteOnSetup;
@@ -83,7 +77,6 @@ public class FlowLoggerProfile {
             Charset encoding,
             DateFormat dateFormat,
             double stepUnit,
-            boolean teeLog,
             boolean reportJob,
             boolean deleteOnSetup,
             boolean deleteOnCleanup) {
@@ -100,7 +93,6 @@ public class FlowLoggerProfile {
         this.encoding = encoding;
         this.dateFormat = dateFormat;
         this.stepUnit = stepUnit;
-        this.teeLog = teeLog;
         this.reportJob = reportJob;
         this.deleteOnSetup = deleteOnSetup;
         this.deleteOnCleanup = deleteOnCleanup;
@@ -136,14 +128,6 @@ public class FlowLoggerProfile {
      */
     public double getStepUnit() {
         return stepUnit;
-    }
-
-    /**
-     * Returns whether also output each log into the global logger.
-     * @return {@code true} to also output log into the global logger, otherwise {@code false}
-     */
-    public boolean isTeeLog() {
-        return teeLog;
     }
 
     /**
@@ -222,7 +206,6 @@ public class FlowLoggerProfile {
         String encString = extract(profile, copy, KEY_ENCODING, DEFAULT_ENCODING, true);
         String dfString = extract(profile, copy, KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT, false);
         double stepUnit = extractDouble(profile, copy, KEY_STEP_UNIT, DEFAULT_STEP_UNIT);
-        boolean teeLog = extractBoolean(profile, copy, KEY_TEE_LOG, DEFAULT_TEE_LOG);
         boolean reportJob = extractBoolean(profile, copy, KEY_REPORT_JOB, DEFAULT_REPORT_JOB);
         boolean deleteOnSetup = extractBoolean(profile, copy, KEY_DELETE_ON_SETUP, DEFAULT_DELETE_ON_SETUP);
         boolean deleteOnCleanup = extractBoolean(profile, copy, KEY_DELETE_ON_CLEANUP, DEFAULT_DELETE_ON_CLEANUP);
@@ -256,7 +239,7 @@ public class FlowLoggerProfile {
         return new FlowLoggerProfile(
                 file, encoding, dateFormat,
                 stepUnit,
-                teeLog, reportJob,
+                reportJob,
                 deleteOnSetup, deleteOnCleanup);
     }
 
