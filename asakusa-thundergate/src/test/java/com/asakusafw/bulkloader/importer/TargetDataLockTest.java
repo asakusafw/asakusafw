@@ -36,6 +36,7 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ImportTableLockType;
 import com.asakusafw.bulkloader.common.ImportTableLockedOperation;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;
 import com.asakusafw.testtools.inspect.Cause;
@@ -256,10 +257,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-       assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -544,10 +547,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-       assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -602,10 +607,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -660,10 +667,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -718,10 +727,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -776,10 +787,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -834,10 +847,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();
@@ -892,10 +907,12 @@ public class TargetDataLockTest {
 
         // テスト対象クラス実行
         TargetDataLock lock = new TargetDataLock();
-        boolean result = lock.lock(bean);
-
-        // 実行結果の検証
-        assertFalse(result);
+        try {
+            lock.lock(bean);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok.
+        }
 
         // DBの結果を検証
         util.loadFromDatabase();

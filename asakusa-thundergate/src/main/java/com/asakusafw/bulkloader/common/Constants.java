@@ -68,6 +68,10 @@ public final class Constants {
      * 終了コード 警告終了。
      */
     public static final int EXIT_CODE_WARNING = 2;
+    /**
+     * Exit code: failed but is retryable.
+     */
+    public static final int EXIT_CODE_RETRYABLE = 3;
 
     /**
      * プロパティファイル

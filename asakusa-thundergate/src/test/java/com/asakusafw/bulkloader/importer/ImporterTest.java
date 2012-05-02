@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,6 +40,7 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.testtools.TestUtils;
@@ -546,7 +548,7 @@ public class ImporterTest {
                      * @see com.asakusafw.bulkloader.importer.StubTargetDataLock#lock(com.asakusafw.bulkloader.bean.ImportBean)
                      */
                     @Override
-                    public boolean lock(ImportBean bean) {
+                    public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
                         Properties p = ConfigurationLoader.getProperty();
                         p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
                         ConfigurationLoader.setProperty(p);
@@ -589,7 +591,7 @@ public class ImporterTest {
                      * @see com.asakusafw.bulkloader.importer.StubTargetDataLock#lock(com.asakusafw.bulkloader.bean.ImportBean)
                      */
                     @Override
-                    public boolean lock(ImportBean bean) {
+                    public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
                         Properties p = ConfigurationLoader.getProperty();
                         p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.FALSE.getDeleteType());
                         ConfigurationLoader.setProperty(p);
@@ -603,6 +605,77 @@ public class ImporterTest {
 
         // 結果の検証
         assertEquals(0, result);
+    }
+
+    /**
+     * Executes importer but {@link BulkLoaderReRunnableException} is thrown trying to acquire cache lock.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_cache_lock_conflict() throws Exception {
+        String[] args = new String[6];
+        args[0] = "primary";
+        args[1] = targetName;
+        args[2] = "batch01";
+        args[3] = "11";
+        args[4] = "11-1";
+        args[5] = "20101023102050";
+        Importer importer = new StubImporter() {
+            @Override
+            protected ImportProtocolDecide createImportProtocolDecide() {
+                return new ImportProtocolDecide() {
+                    @Override
+                    public void execute(ImportBean bean) throws BulkLoaderReRunnableException {
+                        throw new BulkLoaderReRunnableException(ImporterTest.class, "TG-IMPORTER-11005", "A", "b");
+                    }
+                };
+            }
+        };
+        int result = importer.execute(args);
+        assertEquals(Constants.EXIT_CODE_RETRYABLE, result);
+    }
+
+    /**
+     * Executes importer but {@link BulkLoaderReRunnableException} is thrown trying to acquire cache lock.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_data_lock_conflict() throws Exception {
+        String[] args = new String[6];
+        args[0] = "primary";
+        args[1] = targetName;
+        args[2] = "batch01";
+        args[3] = "11";
+        args[4] = "11-1";
+        args[5] = "20101023102050";
+        final AtomicBoolean cacheReleased = new AtomicBoolean(false);
+        Importer importer = new StubImporter() {
+            @Override
+            protected ImportProtocolDecide createImportProtocolDecide() {
+                return new ImportProtocolDecide() {
+                    @Override
+                    public void execute(ImportBean bean) throws BulkLoaderReRunnableException {
+                        cacheReleased.set(false);
+                    }
+                    @Override
+                    public void cleanUpForRetry(ImportBean bean) throws BulkLoaderSystemException {
+                        cacheReleased.set(true);
+                    }
+                };
+            }
+            @Override
+            protected TargetDataLock createTargetDataLock() {
+                return new StubTargetDataLock() {
+                    @Override
+                    public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
+                        throw new BulkLoaderReRunnableException(ImporterTest.class, "TG-IMPORTER-11005", "A", "b");
+                    }
+                };
+            }
+        };
+        int result = importer.execute(args);
+        assertEquals(Constants.EXIT_CODE_RETRYABLE, result);
+        assertTrue(cacheReleased.get());
     }
 }
 class StubImporter extends Importer {
@@ -691,7 +764,7 @@ class StubTargetDataLock extends TargetDataLock {
         return;
     }
     @Override
-    public boolean lock(ImportBean bean) {
+    public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
         return result;
     }
     @Override

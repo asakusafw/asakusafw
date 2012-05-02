@@ -30,6 +30,7 @@ import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ImportType;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -113,6 +114,9 @@ public class Importer {
             }
             int exitCode = importTables(bean);
             return exitCode;
+        } catch (BulkLoaderReRunnableException e) {
+            LOG.log(e);
+            return Constants.EXIT_CODE_RETRYABLE;
         } catch (BulkLoaderSystemException e) {
             LOG.log(e);
             return Constants.EXIT_CODE_ERROR;
@@ -134,9 +138,10 @@ public class Importer {
      * @param bean target
      * @return exit code
      * @throws BulkLoaderSystemException if failed to import by system exception
+     * @throws BulkLoaderReRunnableException if failed to import but is retryable
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public int importTables(ImportBean bean) throws BulkLoaderSystemException {
+    public int importTables(ImportBean bean) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
         if (bean == null) {
             throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
         }
@@ -147,6 +152,7 @@ public class Importer {
         String executionId = bean.getExecutionId();
 
         Connection lockConn = null;
+        boolean protocolDecided = false;
         try {
             String jobflowSid;
             if (bean.isPrimary()) {
@@ -172,6 +178,7 @@ public class Importer {
 
                 ImportProtocolDecide protocolDecide = createImportProtocolDecide();
                 protocolDecide.execute(bean);
+                protocolDecided = true;
 
                 // Import対象テーブルのロックを取得
                 TargetDataLock targetLock = createTargetDataLock();
@@ -271,12 +278,24 @@ public class Importer {
             LOG.info("TG-IMPORTER-01002",
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
             return Constants.EXIT_CODE_SUCCESS;
+        } catch (BulkLoaderReRunnableException e) {
+            ImportProtocolDecide protocolDecide = createImportProtocolDecide();
+            try {
+                if (protocolDecided) {
+                    protocolDecide.cleanUpForRetry(bean);
+                }
+                throw e;
+            } catch (BulkLoaderSystemException inner) {
+                LOG.log(e);
+                throw inner;
+            }
         } finally {
             if (lockConn != null) {
                 DBAccessUtil.releaseJobflowInstanceLock(lockConn);
             }
         }
     }
+
     /**
      * パラメータを保持するBeanを作成する。
      * @param importerType Import処理区分
