@@ -176,7 +176,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         }
         throw new ExitCodeException(MessageFormat.format(
                 "Unexpected exit code from command job: "
-                + "code={4} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
+                + "code={5} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
