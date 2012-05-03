@@ -45,7 +45,7 @@ public class StageResourceDriver implements Closeable {
 
     private final Configuration configuration;
 
-    private final FileSystem fileSystem;
+    private final FileSystem localFileSystem;
 
     /**
      * インスタンスを生成する。
@@ -58,15 +58,7 @@ public class StageResourceDriver implements Closeable {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
         this.configuration = configuration;
-        this.fileSystem = FileSystem.getLocal(configuration);
-    }
-
-    /**
-     * リソースを保持するファイルシステムのオブジェクトを返す。
-     * @return リソースを保持するファイルシステムのオブジェクト
-     */
-    public FileSystem getResourceFileSystem() {
-        return this.fileSystem;
+        this.localFileSystem = FileSystem.getLocal(configuration);
     }
 
     /**
@@ -79,9 +71,6 @@ public class StageResourceDriver implements Closeable {
 
     /**
      * このドライバに登録されたリソースへのパスを返す。
-     * <p>
-     * このパスは、{@link #getResourceFileSystem()}によって得られるファイルシステム上のパスを表す。
-     * </p>
      * @param resourceName リソースの名前
      * @return 対応するリソースへのパス一覧
      * @throws IOException リソースの検索に失敗した場合
@@ -101,7 +90,7 @@ public class StageResourceDriver implements Closeable {
             if (resolvedPath == null) {
                 return Collections.emptyList();
             }
-            results.add(fileSystem.makeQualified(resolvedPath));
+            results.add(resolvedPath);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -112,31 +101,26 @@ public class StageResourceDriver implements Closeable {
         return results;
     }
 
-    private Path findLocalCache(String resouceName, String localName) throws IOException {
+    private Path findLocalCache(String resourceName, String localName) throws IOException {
         assert localName != null;
         Path cache = new Path(localName);
-        if (fileSystem.exists(cache)) {
+        if (localFileSystem.exists(cache)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("symlink found: " + cache);
             }
-            return cache;
+            return localFileSystem.makeQualified(cache);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("symlink not found: " + localName);
         }
-        Path directPath = findCacheForLocalMode(resouceName, localName);
-        if (directPath == null || fileSystem.exists(directPath) == false) {
-            LOG.warn(MessageFormat.format(
-                    "Failed to resolve stage resource \"{1}\" (resource={0})",
-                    resouceName,
-                    localName));
-        }
+        Path directPath = findCacheForLocalMode(resourceName, localName);
         return directPath;
     }
 
     private Path findCacheForLocalMode(String resourceName, String localName) throws IOException {
         assert resourceName != null;
         assert localName != null;
+        Path remotePath = null;
         String remoteName = null;
         for (URI uri : DistributedCache.getCacheFiles(configuration)) {
             if (localName.equals(uri.getFragment())) {
@@ -144,6 +128,7 @@ public class StageResourceDriver implements Closeable {
                     LOG.debug("fragment matched: " + uri);
                 }
                 String rpath = uri.getPath();
+                remotePath = new Path(uri);
                 remoteName = rpath.substring(rpath.lastIndexOf('/') + 1);
                 break;
             }
@@ -154,16 +139,41 @@ public class StageResourceDriver implements Closeable {
             }
             return null;
         }
+        assert remotePath != null;
         for (Path path : DistributedCache.getLocalCacheFiles(configuration)) {
             String localFileName = path.getName();
-            if (remoteName.equals(localFileName)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("local path matched: " + path);
-                }
-                return path;
+            if (remoteName.equals(localFileName) == false) {
+                continue;
             }
+            if (localFileSystem.exists(path) == false) {
+                continue;
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("local path matched: " + path);
+            }
+            return localFileSystem.makeQualified(path);
         }
-        return null;
+        FileSystem remoteFileSystem = remotePath.getFileSystem(configuration);
+        remotePath = remoteFileSystem.makeQualified(remotePath);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("distributed cache is not localized explicitly: " + remotePath);
+        }
+        if (isLocal(remoteFileSystem) == false) {
+            LOG.warn(MessageFormat.format(
+                    "Failed to resolve stage resource in local cache \"{1}\" (resource={0})",
+                    resourceName,
+                    localName));
+        }
+        return remotePath;
+    }
+
+    private boolean isLocal(FileSystem fs) {
+        assert fs != null;
+        if (fs == localFileSystem) {
+            return true;
+        }
+        // TODO user getCanonicalUri() on 1.0.0
+        return fs.getUri().equals(localFileSystem.getUri());
     }
 
     @Override
