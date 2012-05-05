@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow.plan;
 
+import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,17 +36,26 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
+import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
+import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.FlowOut;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
+import com.asakusafw.vocabulary.operator.Branch;
+import com.asakusafw.vocabulary.operator.Project;
+import com.asakusafw.vocabulary.operator.Restructure;
+import com.asakusafw.vocabulary.operator.Split;
 import com.ashigeru.util.graph.Graph;
 import com.ashigeru.util.graph.Graphs;
 
@@ -707,16 +717,79 @@ public class StagePlanner {
             return;
         }
         for (FlowElementOutput output : element.getOutputPorts()) {
-            Collection<FlowElement> successors = FlowGraphUtil.getSucceedingBoundaries(output);
-            for (FlowElement successor : successors) {
-                assert FlowGraphUtil.isBoundary(successor);
-                if (FlowGraphUtil.isShuffleBoundary(successor)) {
-                    LOG.debug("{}の直後にステージ境界を挿入します", output);
-                    FlowGraphUtil.insertCheckpoint(output);
-                    break;
-                }
+            insertCheckpointsWithPushDown(output);
+        }
+    }
+
+    private void insertCheckpointsWithPushDown(FlowElementOutput start) {
+        assert start != null;
+        LinkedList<FlowElementOutput> work = new LinkedList<FlowElementOutput>();
+        work.add(start);
+        while (work.isEmpty() == false) {
+            FlowElementOutput output = work.removeFirst();
+            if (isSuccessShuffleBoundary(output) == false) {
+                continue;
+            }
+            Set<PortConnection> connections = output.getConnected();
+            if (connections.size() != 1) {
+                LOG.debug("Inserts checkpoint after {}", output);
+                FlowGraphUtil.insertCheckpoint(output);
+                continue;
+            }
+            FlowElementInput input = connections.iterator().next().getDownstream();
+            FlowElement successor = input.getOwner();
+            if (isPushDownTarget(successor) == false) {
+                LOG.debug("Inserts checkpoint after {}", output);
+                FlowGraphUtil.insertCheckpoint(output);
+                continue;
+            }
+            LOG.debug("Pushdown operator {}", successor);
+            work.addAll(successor.getOutputPorts());
+        }
+    }
+
+    private boolean isSuccessShuffleBoundary(FlowElementOutput output) {
+        assert output != null;
+        Collection<FlowElement> successors = FlowGraphUtil.getSucceedingBoundaries(output);
+        for (FlowElement successor : successors) {
+            assert FlowGraphUtil.isBoundary(successor);
+            if (FlowGraphUtil.isShuffleBoundary(successor) == false) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPushDownTarget(FlowElement element) {
+        assert element != null;
+        if (element.getInputPorts().size() != 1) {
+            return false;
+        }
+        FlowElementInput input = element.getInputPorts().get(0);
+        if (input.getConnected().size() != 1) {
+            return false;
+        }
+        if (FlowGraphUtil.isBoundary(element)) {
+            return false;
+        }
+        FlowElementDescription desc = element.getDescription();
+        if (desc.getKind() == FlowElementKind.PSEUD) {
+            return true;
+        } else if (desc.getKind() == FlowElementKind.OPERATOR) {
+            OperatorDescription op = (OperatorDescription) desc;
+            Class<? extends Annotation> kind = op.getDeclaration().getAnnotationType();
+            // FIXME bless operators
+            if (kind == Branch.class
+                    || kind == Split.class
+                    || kind == Project.class
+                    || kind == Restructure.class
+                    || kind == SideDataCheck.class
+                    || kind == SideDataBranch.class) {
+                return true;
             }
         }
+        return false;
     }
 
     /**
