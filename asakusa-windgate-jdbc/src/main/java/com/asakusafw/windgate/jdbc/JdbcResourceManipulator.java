@@ -99,10 +99,12 @@ public class JdbcResourceManipulator extends ResourceManipulator {
             statement.execute(profile.getTruncateStatement(jdbc.getTableName()));
             conn.commit();
         } catch (SQLException e) {
-            LOG.warn(MessageFormat.format(
-                    "Failed to truncate table: {1} (process={0})",
-                    jdbc.getName(),
-                    jdbc.getTableName()), e);
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to truncate table: {1} (process={0})",
+                        jdbc.getName(),
+                        jdbc.getTableName()), ex);
+            }
         } finally {
             close(statement);
             close(conn);
@@ -193,9 +195,11 @@ public class JdbcResourceManipulator extends ResourceManipulator {
             try {
                 statement.close();
             } catch (SQLException e) {
-                LOG.warn(MessageFormat.format(
-                        "Failed to close JDBC statement: {0}",
-                        getName()), e);
+                for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                    LOG.warn(MessageFormat.format(
+                            "Failed to close JDBC statement: {0}",
+                            getName()), ex);
+                }
             }
         }
     }
@@ -205,9 +209,11 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         try {
             conn.close();
         } catch (SQLException e) {
-            LOG.warn(MessageFormat.format(
-                    "Failed to close JDBC connection: {0}",
-                    getName()), e);
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to close JDBC connection: {0}",
+                        getName()), ex);
+            }
         }
     }
 

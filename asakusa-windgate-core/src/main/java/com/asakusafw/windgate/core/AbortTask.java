@@ -98,27 +98,36 @@ public class AbortTask {
         WGLOG.info("I01000",
                 sessionId,
                 profile.getName());
-        if (sessionId != null) {
-            doAbortSingle(sessionId);
-        } else {
-            int failureCount = 0;
-            for (String sid : sessionProvider.getCreatedIds()) {
-                try {
-                    doAbortSingle(sid);
-                } catch (IOException e) {
-                    failureCount++;
-                    WGLOG.warn(e, "W01001",
-                            sid,
-                            profile.getName());
+        long start = System.currentTimeMillis();
+        try {
+            if (sessionId != null) {
+                doAbortSingle(sessionId);
+            } else {
+                int failureCount = 0;
+                for (String sid : sessionProvider.getCreatedIds()) {
+                    try {
+                        doAbortSingle(sid);
+                    } catch (IOException e) {
+                        failureCount++;
+                        WGLOG.warn(e, "W01001",
+                                sid,
+                                profile.getName());
+                    }
+                }
+                if (failureCount > 0) {
+                    throw new IOException("Failed to abort some sessions");
                 }
             }
-            if (failureCount > 0) {
-                throw new IOException("Failed to abort some sessions");
-            }
+            WGLOG.info("I01005",
+                    sessionId,
+                    profile.getName());
+        } finally {
+            long end = System.currentTimeMillis();
+            WGLOG.info("I01999",
+                    sessionId,
+                    profile.getName(),
+                    end - start);
         }
-        WGLOG.info("I01999",
-                sessionId,
-                profile.getName());
     }
 
     private boolean doAbortSingle(String targetSessionId) throws IOException {

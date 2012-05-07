@@ -69,9 +69,11 @@ public class WindGateHadoopDelete {
      */
     public static void main(String[] args) {
         WGLOG.info("I20000");
+        long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
         int result = new WindGateHadoopDelete(conf).execute(args);
-        WGLOG.info("I22999", result);
+        long end = System.currentTimeMillis();
+        WGLOG.info("I22999", result, end - start);
         System.exit(result);
     }
 

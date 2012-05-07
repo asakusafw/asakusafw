@@ -67,9 +67,11 @@ public class WindGateHadoopPut {
             throw new IllegalArgumentException("args must not be null"); //$NON-NLS-1$
         }
         WGLOG.info("I21000");
+        long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
         int result = new WindGateHadoopPut(conf).execute(args);
-        WGLOG.info("I21999", result);
+        long end= System.currentTimeMillis();
+        WGLOG.info("I21999", result, end - start);
         System.exit(result);
     }
 
