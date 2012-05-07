@@ -67,8 +67,10 @@ Operator DSLで作成する演算子はデータフローの「部品」であ�
 
 Flow DSLでコア演算子を利用する場合、
 一般的に ``CoreOperatorFactory`` [#]_ というファクトリクラスが提供するメソッドを使用します。
+また、上記ファクトリクラスと同名のクラスメソッド群を持つ ``CoreOperators`` [#]_ も利用可能です。
 
 ..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperatorFactory``
+..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperators``
 
 演算子の性能特性
 ----------------
