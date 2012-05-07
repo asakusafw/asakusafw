@@ -617,7 +617,7 @@ YAESSの実行に特別な環境変数を利用する場合、 ``$ASAKUSA_HOME/y
 
 YAESSを利用する場合、以下の環境変数が必要です。
 
-..  list-table:: WindGateの実行に必要な環境変数
+..  list-table:: YAESSの実行に必要な環境変数
     :widths: 10 60
     :header-rows: 1
 
@@ -628,6 +628,17 @@ YAESSを利用する場合、以下の環境変数が必要です。
 
 特別な理由がない限り、 ``ASAKUSA_HOME`` はYAESSを実行する前にあらかじめ定義しておいてください。
 ``$ASAKUSA_HOME/yaess/conf/env.sh`` では、その他必要な環境変数を定義するようにしてください。
+
+また、特別な環境変数として以下を利用できます。
+
+..  list-table:: YAESSで利用可能な環境変数
+    :widths: 10 60
+    :header-rows: 1
+
+    * - 名前
+      - 備考
+    * - ``YAESS_OPTS``
+      - YAESSを実行するJava VMの追加オプション。
 
 
 YAESSのログ設定
