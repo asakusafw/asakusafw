@@ -20,3 +20,5 @@ YAESSの主な用途は下記のとおりです。
 
     start-guide
     user-guide
+    log-table
+
