@@ -133,12 +133,11 @@ public class ExecutionScriptHandlerDispatcherTest {
      * @throws Exception if failed
      */
     @Test
-    public void setUp_default() throws Exception {
-        put("testing.*=other");
-
+    public void setUp() throws Exception {
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
+        declare(conf, "specified", FailCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.SETUP);
@@ -156,13 +155,13 @@ public class ExecutionScriptHandlerDispatcherTest {
      * @throws Exception if failed
      */
     @Test
-    public void setUp_specified() throws Exception {
+    public void setUp_match() throws Exception {
         put("testing.*=other");
 
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
-        declare(conf, ExecutionScriptHandlerDispatcher.KEY_SETUP, "other");
+        declare(conf, "specified", FailCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.SETUP);
@@ -180,17 +179,24 @@ public class ExecutionScriptHandlerDispatcherTest {
      * @throws Exception if failed
      */
     @Test
-    public void setUp_nothing() throws Exception {
+    public void setUp_specified() throws Exception {
         put("testing.*=other");
 
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
-        declare(conf, ExecutionScriptHandlerDispatcher.KEY_SETUP, "");
+        declare(conf, "specified", FailCommandScriptHandler.class);
+        declare(conf, ExecutionScriptHandlerDispatcher.KEY_SETUP, "specified");
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.SETUP);
-        dispatcher.setUp(ExecutionMonitor.NULL, something);
+        try {
+            dispatcher.setUp(ExecutionMonitor.NULL, something);
+            fail();
+        } catch (MessageException e) {
+            assertThat(e.message, is("specified"));
+            assertThat(e.context.getPhase(), is(ExecutionPhase.SETUP));
+        }
     }
 
     /**
@@ -335,18 +341,16 @@ public class ExecutionScriptHandlerDispatcherTest {
         assertThat(dispatcher.getResourceId(context, otherScript), is("match"));
     }
 
-
     /**
      * run cleanUp.
      * @throws Exception if failed
      */
     @Test
-    public void cleanUp_default() throws Exception {
-        put("testing.*=other");
-
+    public void cleanUp() throws Exception {
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
+        declare(conf, "specified", FailCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.CLEANUP);
@@ -364,13 +368,13 @@ public class ExecutionScriptHandlerDispatcherTest {
      * @throws Exception if failed
      */
     @Test
-    public void cleanUp_specified() throws Exception {
+    public void cleanUp_match() throws Exception {
         put("testing.*=other");
 
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
-        declare(conf, ExecutionScriptHandlerDispatcher.KEY_CLEANUP, "other");
+        declare(conf, "specified", FailCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.CLEANUP);
@@ -388,17 +392,24 @@ public class ExecutionScriptHandlerDispatcherTest {
      * @throws Exception if failed
      */
     @Test
-    public void cleanUp_nothing() throws Exception {
+    public void cleanUp_specified() throws Exception {
         put("testing.*=other");
 
         Map<String, String> conf = createConf();
         declare(conf, "default", FailCommandScriptHandler.class);
         declare(conf, "other", FailCommandScriptHandler.class);
-        declare(conf, ExecutionScriptHandlerDispatcher.KEY_CLEANUP, "");
+        declare(conf, "specified", FailCommandScriptHandler.class);
+        declare(conf, ExecutionScriptHandlerDispatcher.KEY_CLEANUP, "specified");
         CommandScriptHandlerDispatcher dispatcher = create(conf);
 
         ExecutionContext something = context("testing", ExecutionPhase.CLEANUP);
-        dispatcher.cleanUp(ExecutionMonitor.NULL, something);
+        try {
+            dispatcher.cleanUp(ExecutionMonitor.NULL, something);
+            fail();
+        } catch (MessageException e) {
+            assertThat(e.message, is("specified"));
+            assertThat(e.context.getPhase(), is(ExecutionPhase.CLEANUP));
+        }
     }
 
     /**
@@ -430,13 +441,37 @@ public class ExecutionScriptHandlerDispatcherTest {
     }
 
     /**
+     * setup target is wrong.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void invalid_forceSetup() throws Exception {
+        Map<String, String> conf = createConf();
+        declare(conf, ExecutionScriptHandlerDispatcher.KEY_SETUP, "INVALID");
+        declare(conf, "default", MockCommandScriptHandler.class);
+        create(conf);
+    }
+
+    /**
+     * setup target is wrong.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void invalid_forceCleanup() throws Exception {
+        Map<String, String> conf = createConf();
+        declare(conf, ExecutionScriptHandlerDispatcher.KEY_CLEANUP, "INVALID");
+        declare(conf, "default", MockCommandScriptHandler.class);
+        create(conf);
+    }
+
+    /**
      * conf directory is invalid.
      * @throws Exception if failed
      */
     @Test(expected = IOException.class)
     public void invalid_confdir() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
-        conf.put(ExecutionScriptHandlerDispatcher.KEY_CONF, "${invalid}");
+        conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, "${invalid}");
         declare(conf, "default", MockCommandScriptHandler.class);
         create(conf);
     }
@@ -448,7 +483,7 @@ public class ExecutionScriptHandlerDispatcherTest {
     @Test
     public void confdir_not_exist() throws Exception {
         Map<String, String> conf = new HashMap<String, String>();
-        conf.put(ExecutionScriptHandlerDispatcher.KEY_CONF, new File(folder.getRoot(), "empty").getAbsolutePath());
+        conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, new File(folder.getRoot(), "empty").getAbsolutePath());
         declare(conf, "default", MockCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
         assertThat(dispatcher.getResourceId(context("flow"), null), is("default"));
@@ -490,7 +525,7 @@ public class ExecutionScriptHandlerDispatcherTest {
 
     private Map<String, String> createConf() {
         Map<String, String> conf = new HashMap<String, String>();
-        conf.put("conf", folder.getRoot().getAbsolutePath());
+        conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         return conf;
     }
 

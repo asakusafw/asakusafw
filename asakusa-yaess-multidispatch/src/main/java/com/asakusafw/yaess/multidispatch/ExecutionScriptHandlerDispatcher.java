@@ -22,10 +22,7 @@ import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -52,13 +49,15 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     private static final String LABEL_UNDEFINED = "(undefined)";
 
-    static final String KEY_CONF = "conf";
+    static final String PREFIX_CONF = "conf";
 
-    static final String KEY_SETUP = "setUp";
+    static final String KEY_DIRECTORY = PREFIX_CONF + ".directory";
 
-    static final String KEY_CLEANUP = "cleanUp";
+    static final String KEY_SETUP = PREFIX_CONF + ".setup";
 
-    static final String KEY_DEFAULT = "default";
+    static final String KEY_CLEANUP = PREFIX_CONF + ".cleanup";
+
+    static final String PREFIX_DEFAULT = "default";
 
     static final String SUFFIX_CONF = ".properties";
 
@@ -72,9 +71,9 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     private volatile Map<String, ExecutionScriptHandler<T>> delegations;
 
-    private volatile List<String> setUpEnabled;
+    private volatile String forceSetUp;
 
-    private volatile List<String> cleanUpEnabled;
+    private volatile String forceCleanUp;
 
     /**
      * Creates a new instance.
@@ -93,36 +92,32 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         this.prefix = profile.getPrefix();
         this.confDirectory = getConfDirectory(profile);
         this.delegations = getDelegations(profile);
-        this.setUpEnabled = getNames(profile, KEY_SETUP);
-        this.cleanUpEnabled = getNames(profile, KEY_CLEANUP);
-        for (String name : setUpEnabled) {
-            if (delegations.containsKey(name) == false) {
-                throw new IOException(MessageFormat.format(
-                        "Failed to detect setUp target: {2} in {0}.{1}",
-                        profile.getPrefix(),
-                        KEY_SETUP,
-                        name));
-            }
+        this.forceSetUp = profile.getConfiguration().get(KEY_SETUP);
+        this.forceCleanUp = profile.getConfiguration().get(KEY_CLEANUP);
+        if (forceSetUp != null && delegations.containsKey(forceSetUp) == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to detect setUp target: \"{2}\" in {0}.{1}",
+                    profile.getPrefix(),
+                    KEY_SETUP,
+                    forceSetUp));
         }
-        for (String name : cleanUpEnabled) {
-            if (delegations.containsKey(name) == false) {
-                throw new IOException(MessageFormat.format(
-                        "Failed to detect cleanUp target: {2} in {0}.{1}",
-                        profile.getPrefix(),
-                        KEY_CLEANUP,
-                        name));
-            }
+        if (forceCleanUp != null && delegations.containsKey(forceCleanUp) == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to detect cleanUp target: \"{2}\" in {0}.{1}",
+                    profile.getPrefix(),
+                    KEY_CLEANUP,
+                    forceCleanUp));
         }
     }
 
     private File getConfDirectory(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        String value = profile.getConfiguration().get(KEY_CONF);
+        String value = profile.getConfiguration().get(KEY_DIRECTORY);
         if (value == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to detect configuration directory: {0}.{1}",
                     profile.getPrefix(),
-                    KEY_CONF));
+                    KEY_DIRECTORY));
         }
         try {
             value = profile.getContext().getContextParameters().replace(value, true);
@@ -130,7 +125,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             throw new IOException(MessageFormat.format(
                     "Failed to resolve configuration directory: {0}.{1} = {2}",
                     profile.getPrefix(),
-                    KEY_CONF,
+                    KEY_DIRECTORY,
                     value), e);
         }
         File dir = new File(value);
@@ -139,7 +134,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             LOG.info(MessageFormat.format(
                     "Configuration directory does not exist: {0}.{1} = {2}",
                     profile.getPrefix(),
-                    KEY_CONF,
+                    KEY_DIRECTORY,
                     value));
         }
         return dir;
@@ -150,14 +145,12 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         assert profile != null;
         Map<String, String> conf = profile.getConfiguration();
         Set<String> keys = PropertiesUtil.getChildKeys(conf, "", ".");
-        keys.remove(KEY_CONF);
-        keys.remove(KEY_SETUP);
-        keys.remove(KEY_CLEANUP);
-        if (keys.contains(KEY_DEFAULT) == false) {
+        keys.remove(PREFIX_CONF);
+        if (keys.contains(PREFIX_DEFAULT) == false) {
             throw new IOException(MessageFormat.format(
                     "Default profile for multidispatch plugin is not defined: {0}.{1}",
                     profile.getPrefix(),
-                    KEY_DEFAULT));
+                    PREFIX_DEFAULT));
         }
 
         Properties properties = new Properties();
@@ -188,23 +181,6 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         return results;
     }
 
-    private List<String> getNames(ServiceProfile<?> profile, String key) {
-        assert profile != null;
-        assert key != null;
-        String value = profile.getConfiguration().get(key);
-        if (value == null) {
-            return Collections.singletonList(KEY_DEFAULT);
-        }
-        List<String> results = new ArrayList<String>();
-        for (String name : value.split(",")) {
-            String trimmed = name.trim();
-            if (trimmed.isEmpty() == false) {
-                results.add(trimmed);
-            }
-        }
-        return results;
-    }
-
     @Override
     public String getHandlerId() {
         return prefix;
@@ -229,7 +205,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
                     script == null ? LABEL_UNDEFINED : script.getId(),
                     key));
         }
-        ExecutionScriptHandler<T> defaultTarget = delegations.get(KEY_DEFAULT);
+        ExecutionScriptHandler<T> defaultTarget = delegations.get(PREFIX_DEFAULT);
         assert defaultTarget != null;
         return defaultTarget;
     }
@@ -349,21 +325,24 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     @Override
     public void setUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        for (String name : setUpEnabled) {
-            ExecutionScriptHandler<T> target = delegations.get(name);
-            assert target != null;
-            // TODO logging
-            if (LOG.isInfoEnabled()) {
-                LOG.info(MessageFormat.format(
-                        "Starting setUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                        target.getHandlerId(),
-                        context.getBatchId(),
-                        context.getFlowId(),
-                        context.getPhase(),
-                        context.getExecutionId()));
-            }
-            target.setUp(monitor, context);
+        ExecutionScriptHandler<T> target;
+        if (forceSetUp != null) {
+            target = delegations.get(forceSetUp);
+        } else {
+            target = resolve(context, null);
         }
+        assert target != null;
+        // TODO logging
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Starting setUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
+                    target.getHandlerId(),
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getPhase(),
+                    context.getExecutionId()));
+        }
+        target.setUp(monitor, context);
     }
 
     @Override
@@ -388,21 +367,24 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     @Override
     public void cleanUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        for (String name : cleanUpEnabled) {
-            ExecutionScriptHandler<T> target = delegations.get(name);
-            assert target != null;
-            // TODO logging
-            if (LOG.isInfoEnabled()) {
-                LOG.info(MessageFormat.format(
-                        "Starting cleanUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                        target.getHandlerId(),
-                        context.getBatchId(),
-                        context.getFlowId(),
-                        context.getPhase(),
-                        context.getExecutionId()));
-            }
-            target.cleanUp(monitor, context);
+        ExecutionScriptHandler<T> target;
+        if (forceCleanUp != null) {
+            target = delegations.get(forceCleanUp);
+        } else {
+            target = resolve(context, null);
         }
+        assert target != null;
+        // TODO logging
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Starting cleanUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
+                    target.getHandlerId(),
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getPhase(),
+                    context.getExecutionId()));
+        }
+        target.cleanUp(monitor, context);
     }
 
     private enum FindPattern {
