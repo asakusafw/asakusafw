@@ -445,8 +445,10 @@ Hadoop本体の関連するドキュメントを参照してください。
 ================
 Direct I/Oを利用してファイルを入出力するには、 `Hadoopのファイルシステムを利用したデータソース`_ などの設定をしておきます。
 
-また、データモデルと対象のファイル形式をマッピングする ``BinaryStreamFormat`` [#]_ の作成が必要です。
-この実装クラスは、DMDLコンパイラの拡張 [#]_ を利用して自動的に生成できます。
+また、データモデルと対象のファイル形式をマッピングする ``DataFormat`` [#]_ の作成が必要です。
+``DataFormat`` のサブタイプとして、任意のストリームを取り扱う ``BinaryStreamFormat`` [#]_ や、Hadoopのファイルを取り扱う ``HadoopFileFormat`` [#]_ を現在利用できます ( ``DataFormat`` は直接実装できません ) 。
+
+上記のうち、CSVファイルを読み書きするための実装クラスは、DMDLコンパイラの拡張 [#]_ を利用して自動的に生成できます。
 
 なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
 
@@ -465,12 +467,14 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
     * - ``asakusa-directio-dmdl``
       - DMDLコンパイラプラグイン
 
+..  [#] ``com.asakusafw.runtime.directio.DataFormat``
 ..  [#] ``com.asakusafw.runtime.directio.BinaryStreamFormat``
+..  [#] ``com.asakusafw.runtime.directio.hadoop.HadoopFileFormat``
 ..  [#] :doc:`../dmdl/user-guide` を参照
 
-CSV形式のBinaryStreamFormatの作成
----------------------------------
-CSV形式 [#]_ に対応した ``BinaryStreamFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.csv`` を指定します。
+CSV形式のDataFormatの作成
+-------------------------
+CSV形式 [#]_ に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.csv`` を指定します。
 
 ..  code-block:: none
 
@@ -484,7 +488,7 @@ CSV形式 [#]_ に対応した ``BinaryStreamFormat`` の実装クラスを自�
     };
 
 上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.csv.<データモデル名>CsvFormat`` というクラスが自動生成されます。
-このクラスは ``BinaryStreamFormat`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
+このクラスは ``DataFormat`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
 
 また、 単純な `ファイルを入力に利用するDSL`_ と `ファイルを出力に利用するDSL`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvInputDescription`` 、後者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
 
@@ -641,6 +645,85 @@ CSV形式の注意点
   * ``@directio.csv.record_number``
 
 
+シーケンスファイル形式のDataFormatの作成
+----------------------------------------
+Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 ``SequenceFileFormat`` [#]_ のサブクラスを作成します。
+``SequenceFileFormat`` は ``HadoopFileFormat`` のサブクラスで、シーケンスファイルを読み書きするための骨格実装が提供されています。
+
+このクラスを継承する際には、以下の型引数を ``SequenceFileFormat<K, V, T>`` にそれぞれ指定してください。
+
+``K``
+    対象シーケンスファイルのキーオブジェクトの型
+
+``V``
+    対象シーケンスファイルの値オブジェクトの型
+
+``T``
+    アプリケーションで利用するデータモデルオブジェクトの型
+
+このクラスでは、下記のメソッドをオーバーライドします。
+
+``Class<T> getSupportedType()``
+    対象となるデータモデルのクラスを戻り値に指定します。
+
+``K createKeyObject()``
+    対象のシーケンスファイルのキーと同じクラスのオブジェクトを戻り値に指定します。
+
+``V createValueObject()``
+    対象のシーケンスファイルの値と同じクラスのオブジェクトを戻り値に指定します。
+
+``void copyToModel(K key, V value, T model)``
+    シーケンスファイルから読み出したキー ( ``key`` ) と 値 ( ``value`` ) の内容を、対象のデータモデルオブジェクト ( ``model`` ) に設定します。
+    このメソッドは、シーケンスファイルからデータ読み出す際に、レコードごとに起動されます。
+    このメソッドによって変更されたデータモデルオブジェクトは、以降の処理の入力として利用されます。
+
+``void copyFromModel(T model, K key, V value)``
+    結果を表すデータモデルオブジェクトの内容を、シーケンスファイルのキー ( ``key`` ) と値 ( ``value`` ) に設定します。
+    このメソッドは、シーケンスファイルにデータを書き込む際に、レコードごとに起動されます。
+    このメソッドによって変更されたキーと値がそのままシーケンスファイルに書き出されます。
+
+以下は実装例です。
+
+..  code-block:: java
+
+    public class ExampleSequenceFormat extends SequenceFileFormat<LongWritable, Text, MyData> {
+
+        @Override
+        public Class<MyData> getSupportedType() {
+            return MyData.class;
+        }
+
+        @Override
+        protected LongWritable createKeyObject() {
+            return new LongWritable();
+        }
+
+        @Override
+        protected Text createValueObject() {
+            return new Text();
+        }
+
+        @Override
+        protected void copyToModel(LongWritable key, Text value, MyData model) {
+            model.setPosition(key.get());
+            model.setText(value);
+        }
+
+        @Override
+        protected void copyFromModel(MyData model, LongWritable key, Text value) {
+            key.set(model.getPositionOption().or(0L));
+            value.set(model.getTextOption().or("(null)"));
+        }
+    }
+
+..  hint::
+    この機能は、 `Apache Sqoop`_ 等のツールと連携することを想定して提供されています。
+
+..  [#] ``org.apache.hadoop.io.SequenceFile``
+..  [#] ``com.asakusafw.runtime.directio.hadoop.SequenceFileFormat``
+
+..  _`Apache Sqoop` : http://sqoop.apache.org/
+
 ファイルを入力に利用するDSL
 ---------------------------
 Direct I/Oを利用してファイルからデータを読み出す場合、 ``DirectFileInputDescription`` [#]_ クラスのサブクラスを作成して必要な情報を記述します。
@@ -664,8 +747,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
-``Class<? extends BinaryStreamFormat<?>> getFormat()``
-    ``BinaryStreamFormat`` の実装クラスを戻り値に指定します。
+``Class<? extends DataFormat<?>> getFormat()``
+    ``DataFormat`` の実装クラスを戻り値に指定します。
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -696,7 +779,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return DocumentCsvFormat.class;
         }
 
@@ -799,8 +882,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
-``Class<? extends BinaryStreamFormat<?>> getFormat()``
-    ``BinaryStreamFormat`` の実装クラスを戻り値に指定します。
+``Class<? extends DataFormat<?>> getFormat()``
+    ``DataFormat`` の実装クラスを戻り値に指定します。
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -831,7 +914,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return DocumentCsvFormat.class;
         }
     }
