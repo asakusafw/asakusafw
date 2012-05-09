@@ -31,6 +31,7 @@ import com.asakusafw.bulkloader.cache.LocalCacheInfo;
 import com.asakusafw.bulkloader.cache.LocalCacheInfoRepository;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.FileNameUtil;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
@@ -49,9 +50,10 @@ public class ImportProtocolDecide {
      * Executes this operation.
      * @param bean importer been
      * @throws BulkLoaderSystemException if failed to decide import protocol
+     * @throws BulkLoaderReRunnableException if failed to decide import protocol, but is worth retrying operation later
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void execute(ImportBean bean) throws BulkLoaderSystemException {
+    public void execute(ImportBean bean) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
         if (bean == null) {
             throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
         }
@@ -76,7 +78,38 @@ public class ImportProtocolDecide {
                 bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
     }
 
-    private void prepareForCache(ImportBean bean) throws BulkLoaderSystemException {
+    /**
+     * Cleanup cache for retry the importer operation.
+     * @param bean importer been
+     * @throws BulkLoaderSystemException if failed to cleanup
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public void cleanUpForRetry(ImportBean bean) throws BulkLoaderSystemException {
+        if (bean == null) {
+            throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
+        }
+        boolean findCache = false;
+        for (String tableName : bean.getImportTargetTableList()) {
+            ImportTargetTableBean table = bean.getTargetTable(tableName);
+            if (table.getCacheId() != null) {
+                findCache = true;
+            }
+        }
+        if (findCache == false) {
+            return;
+        }
+//        LOG.info("TG-IMPORTER-11012",
+//                bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
+//        Connection connection = DBConnection.getConnection();
+//        LocalCacheInfoRepository repository = new LocalCacheInfoRepository(connection);
+//        try {
+//            repository.releaseLock(bean.getExecutionId());
+//        } finally {
+//            DBConnection.closeConn(connection);
+//        }
+    }
+
+    private void prepareForCache(ImportBean bean) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
         assert bean != null;
         boolean succeed = false;
         Connection connection = DBConnection.getConnection();
@@ -137,7 +170,7 @@ public class ImportProtocolDecide {
 
     private void acquireCacheLock(
             ImportBean bean,
-            LocalCacheInfoRepository repository) throws BulkLoaderSystemException {
+            LocalCacheInfoRepository repository) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
         assert bean != null;
         assert repository != null;
         for (String tableName : bean.getImportTargetTableList()) {
@@ -148,7 +181,7 @@ public class ImportProtocolDecide {
             }
             boolean locked = repository.tryLock(bean.getExecutionId(), tableInfo.getCacheId(), tableName);
             if (locked == false) {
-                throw new BulkLoaderSystemException(getClass(), "TG-IMPORTER-11005",
+                throw new BulkLoaderReRunnableException(getClass(), "TG-IMPORTER-11005",
                         tableName,
                         tableInfo.getCacheId());
             }

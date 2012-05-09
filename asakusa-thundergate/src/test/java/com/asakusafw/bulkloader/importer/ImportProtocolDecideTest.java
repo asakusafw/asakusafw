@@ -43,6 +43,7 @@ import com.asakusafw.bulkloader.cache.LocalCacheInfo;
 import com.asakusafw.bulkloader.cache.LocalCacheInfoRepository;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.DBConnection;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
@@ -586,6 +587,50 @@ public class ImportProtocolDecideTest {
         service.execute(bean);
 
         assertThat(tb1.getImportProtocol().getKind(), is(FileProtocol.Kind.CREATE_CACHE));
+    }
+
+    /**
+     * Cache lock is conflict.
+     * @throws Exception if failed
+     */
+    @Test
+    public void conflict_lock() throws Exception {
+        ImportBean bean1 = createBean();
+        Map<String, ImportTargetTableBean> targetTable1 = new HashMap<String, ImportTargetTableBean>();
+        ImportTargetTableBean tb1 = new ImportTargetTableBean();
+        tb1.setCacheId("tb1");
+        tb1.setDfsFilePath("tb1");
+        tb1.setImportTargetType(ImportTarget1.class);
+        tb1.setImportTargetColumns(Arrays.asList("A"));
+        tb1.setSearchCondition("");
+        targetTable1.put("__TG_TEST1", tb1);
+        bean1.setTargetTable(targetTable1);
+
+        ImportBean bean2 = createBean();
+        Map<String, ImportTargetTableBean> targetTable2 = new HashMap<String, ImportTargetTableBean>();
+        ImportTargetTableBean tb2 = new ImportTargetTableBean();
+        tb2.setCacheId("tb1");
+        tb2.setDfsFilePath("tb1");
+        tb2.setImportTargetType(ImportTarget1.class);
+        tb2.setImportTargetColumns(Arrays.asList("A"));
+        tb2.setSearchCondition("");
+        targetTable2.put("__TG_TEST1", tb2);
+        bean2.setTargetTable(targetTable2);
+
+        ImportProtocolDecide service = new ImportProtocolDecide() {
+            @Override
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+                    throws BulkLoaderSystemException {
+                return Collections.emptyMap();
+            }
+        };
+        service.execute(bean1);
+        try {
+            service.execute(bean2);
+            fail();
+        } catch (BulkLoaderReRunnableException e) {
+            // ok
+        }
     }
 
     private ImportBean createBean() {
