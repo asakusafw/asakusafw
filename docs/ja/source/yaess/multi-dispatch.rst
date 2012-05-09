@@ -205,8 +205,8 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
     hadoop.conf.directory = ${ASAKUSA_HOME}/batchapps/${BATCH_ID}/etc/multidispatch/
     
-    command.<profile> = com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher
-    command.<profile>.conf.directory = ${ASAKUSA_HOME}/batchapps/${BATCH_ID}/etc/multidispatch/
+    command.* = com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher
+    command.*.conf.directory = ${ASAKUSA_HOME}/batchapps/${BATCH_ID}/etc/multidispatch/
     
     # ローカル環境向けサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
