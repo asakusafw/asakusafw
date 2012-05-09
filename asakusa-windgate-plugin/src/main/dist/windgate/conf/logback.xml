@@ -3,7 +3,7 @@
     class="ch.qos.logback.core.ConsoleAppender">
    <target>System.out</target>
     <encoder>
-      <pattern>%d{yyyy/MM/dd HH:mm:ss} %-5level [%thread] [%X{batchId}|%X{flowId}] %msg%n</pattern>
+      <pattern>%d{yyyy/MM/dd HH:mm:ss} %-5level %msg [%X{batchId}|%X{flowId}]%n</pattern>
     </encoder>
   </appender>
 
