@@ -86,6 +86,7 @@ _TGC_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _TGC_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
 _TGC_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
 _TGC_RUNTIME_LIB="$_TGC_CORE_LIB_DIR/asakusa-runtime.jar"
+_TGC_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _TGC_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 
 _TGC_LIBJAR="$_TGC_APP_LIB"
@@ -118,6 +119,7 @@ echo "     Data Type: $_OPT_MODEL_CLASS"
     "$_TGC_RUNTIME_LIB" \
     "$_TGC_TOOL_LAUNCHER" \
     "$_TGC_CLASS_NAME" \
+    -conf "$_TGC_PLUGIN_CONF" \
     -libjars "$_TGC_LIBJAR" \
     "$_OPT_SUBCOMMAND" \
     "$_OPT_CACHE_PATH" \
