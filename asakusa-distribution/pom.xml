@@ -124,7 +124,17 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-flowlog</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-yaess-jsch</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-multidispatch</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

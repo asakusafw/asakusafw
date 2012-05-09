@@ -97,7 +97,9 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/plugin</outputDirectory>
 			<includes>
+				<include>com.asakusafw:asakusa-yaess-flowlog</include>
 				<include>com.asakusafw:asakusa-yaess-jsch</include>
+				<include>com.asakusafw:asakusa-yaess-multidispatch</include>
 				<include>com.asakusafw:asakusa-yaess-paralleljob</include>
 				<include>com.jcraft:jsch</include>
 			</includes>

@@ -150,7 +150,9 @@
 						<exclude>com.asakusafw:asakusa-windgate-test-moderator</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-multidispatch</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-tools</exclude>
 						<exclude>com.asakusafw:ashigel-compiler-bootstrap</exclude>
