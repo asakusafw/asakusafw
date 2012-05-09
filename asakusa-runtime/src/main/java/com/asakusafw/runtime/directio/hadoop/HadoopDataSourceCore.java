@@ -30,11 +30,13 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.FilePattern;
@@ -79,7 +81,7 @@ class HadoopDataSourceCore implements DirectDataSource {
                     resourcePattern));
         }
         FilePattern pattern = validate(resourcePattern);
-        BinaryStreamFormat<T> sformat = validate(format);
+        FragmentableDataFormat<T> sformat = validateFragmentable(format);
         HadoopDataSourceProfile p = profile;
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
@@ -197,7 +199,29 @@ class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
-        BinaryStreamFormat<T> sformat = validate(format);
+        if (format instanceof HadoopFileFormat<?>) {
+            HadoopFileFormat<T> fformat = (HadoopFileFormat<T>) format;
+            return fformat.createInput(
+                    dataType,
+                    new Path(fragment.getPath()),
+                    fragment.getOffset(),
+                    fragment.getSize(),
+                    counter);
+        } else {
+            return openStreamInput(dataType, format, fragment, counter);
+        }
+    }
+
+    private <T> ModelInput<T> openStreamInput(
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            DirectInputFragment fragment,
+            Counter counter) throws IOException, InterruptedException {
+        assert dataType != null;
+        assert format != null;
+        assert fragment != null;
+        assert counter != null;
+        BinaryStreamFormat<T> sformat = validateStream(format);
         FileSystem fs = profile.getFileSystem();
         FSDataInputStream stream = fs.open(new Path(fragment.getPath()));
         boolean succeed = false;
@@ -307,8 +331,31 @@ class HadoopDataSourceCore implements DirectDataSource {
             fs = profile.getFileSystem();
             attempt = getAttemptOutput(context);
         }
-        BinaryStreamFormat<T> sformat = validate(format);
         Path file = append(append(attempt, basePath), resourcePath);
+        if (format instanceof HadoopFileFormat<?>) {
+            HadoopFileFormat<T> fformat = (HadoopFileFormat<T>) format;
+            return fformat.createOutput(dataType, file, counter);
+        } else {
+            return openStreamOutput(fs, file, dataType, format, basePath, resourcePath, counter);
+        }
+    }
+
+    private <T> ModelOutput<T> openStreamOutput(
+            FileSystem fs,
+            Path file,
+            Class<? extends T> dataType,
+            DataFormat<T> format,
+            String basePath,
+            String resourcePath,
+            Counter counter) throws IOException, InterruptedException {
+        assert fs != null;
+        assert file != null;
+        assert dataType != null;
+        assert format != null;
+        assert basePath != null;
+        assert resourcePath != null;
+        assert counter != null;
+        BinaryStreamFormat<T> sformat = validateStream(format);
         FSDataOutputStream stream = fs.create(file);
         boolean succeed = false;
         try {
@@ -374,7 +421,19 @@ class HadoopDataSourceCore implements DirectDataSource {
         return (FilePattern) pattern;
     }
 
-    private <T> BinaryStreamFormat<T> validate(DataFormat<T> format) throws IOException {
+    private <T> FragmentableDataFormat<T> validateFragmentable(DataFormat<T> format) throws IOException {
+        assert format != null;
+        if ((format instanceof FragmentableDataFormat<?>) == false) {
+            throw new IOException(MessageFormat.format(
+                    "{2} must be a subtype of {1} (path={0})",
+                    profile.getContextPath(),
+                    FragmentableDataFormat.class.getName(),
+                    format.getClass().getName()));
+        }
+        return (FragmentableDataFormat<T>) format;
+    }
+
+    private <T> BinaryStreamFormat<T> validateStream(DataFormat<T> format) throws IOException {
         assert format != null;
         if ((format instanceof BinaryStreamFormat<?>) == false) {
             throw new IOException(MessageFormat.format(

@@ -27,8 +27,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
+import com.asakusafw.runtime.directio.FragmentableDataFormat;
 
 /**
  * A structured profile for {@link HadoopDataSource}.
@@ -64,12 +65,12 @@ public class HadoopDataSourceProfile {
     public static final String KEY_OUTPUT_STREAMING = "output.streaming";
 
     /**
-     * The property key name for {@link #getMinimumFragmentSize(BinaryStreamFormat)}.
+     * The property key name for {@link #getMinimumFragmentSize(FragmentableDataFormat)}.
      */
     public static final String KEY_MIN_FRAGMENT = "fragment.min";
 
     /**
-     * The property key name for {@link #getPreferredFragmentSize(BinaryStreamFormat)}.
+     * The property key name for {@link #getPreferredFragmentSize(FragmentableDataFormat)}.
      */
     public static final String KEY_PREF_FRAGMENT = "fragment.pref";
 
@@ -201,7 +202,7 @@ public class HadoopDataSourceProfile {
      * @throws InterruptedException if interrupted
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public long getMinimumFragmentSize(BinaryStreamFormat<?> format) throws IOException, InterruptedException {
+    public long getMinimumFragmentSize(FragmentableDataFormat<?> format) throws IOException, InterruptedException {
         if (format == null) {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
@@ -232,7 +233,7 @@ public class HadoopDataSourceProfile {
      * @throws InterruptedException if interrupted
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public long getPreferredFragmentSize(BinaryStreamFormat<?> format) throws IOException, InterruptedException {
+    public long getPreferredFragmentSize(FragmentableDataFormat<?> format) throws IOException, InterruptedException {
         if (format == null) {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }

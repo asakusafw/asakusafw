@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.directio;
+package com.asakusafw.runtime.directio.hadoop;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+
+import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
@@ -26,9 +31,9 @@ import com.asakusafw.runtime.io.ModelOutput;
  * Data model format of {@link InputStream} / {@link OutputStream} .
  * This implementation class must have a public constructor without any parameters.
  * @param <T> the type of target data model
- * @since 0.2.5
+ * @since 0.2.6
  */
-public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T> {
+public abstract class HadoopFileFormat<T> extends Configured implements FragmentableDataFormat<T> {
 
     /**
      * Returns the preffered fragment size (in bytes).
@@ -51,10 +56,10 @@ public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T>
     /**
      * Creates a new {@link ModelInput} for the specified properties.
      * @param dataType the target data type
-     * @param path the path about the target stream (for label)
-     * @param stream the target stream
+     * @param path the path to the target file
      * @param offset starting stream offset
      * @param fragmentSize suggested fragment bytes count, or {@code -1} as infinite
+     * @param counter the current counter
      * @return the created reader
      * @throws IOException if failed to create reader
      * @throws InterruptedException if interrupted
@@ -63,16 +68,16 @@ public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T>
      */
     public abstract ModelInput<T> createInput(
             Class<? extends T> dataType,
-            String path,
-            InputStream stream,
+            Path path,
             long offset,
-            long fragmentSize) throws IOException, InterruptedException;
+            long fragmentSize,
+            Counter counter) throws IOException, InterruptedException;
 
     /**
      * Creates a new {@link ModelOutput} for the specified properties.
      * @param dataType the target data type
-     * @param path the path about the target stream (for label)
-     * @param stream the target stream
+     * @param path the path to the target file
+     * @param counter the current counter
      * @return the created writer
      * @throws IOException if failed to create writer
      * @throws InterruptedException if interrupted
@@ -81,6 +86,6 @@ public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T>
      */
     public abstract ModelOutput<T> createOutput(
             Class<? extends T> dataType,
-            String path,
-            OutputStream stream) throws IOException, InterruptedException;
+            Path path,
+            Counter counter) throws IOException, InterruptedException;
 }

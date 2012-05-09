@@ -64,6 +64,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  * Emits {@link StringTemplate} subclasses.
  * @since 0.2.5
  */
+@SuppressWarnings("deprecation")
 public class NamingClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(NamingClassEmitter.class);

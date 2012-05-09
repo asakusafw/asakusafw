@@ -15,7 +15,7 @@
  */
 package com.asakusafw.vocabulary.directio;
 
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
@@ -29,6 +29,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
+ * @version 0.2.6
  */
 public abstract class DirectFileInputDescription implements ImporterDescription {
 
@@ -113,10 +114,10 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
     public abstract String getResourcePattern();
 
     /**
-     * Returns an implementation of {@link BinaryStreamFormat} class.
-     * @return the class of {@link BinaryStreamFormat}
+     * Returns an implementation of {@link DataFormat} class.
+     * @return the class of {@link DataFormat}
      */
-    public abstract Class<? extends BinaryStreamFormat<?>> getFormat();
+    public abstract Class<? extends DataFormat<?>> getFormat();
 
     @Override
     public DataSize getDataSize() {

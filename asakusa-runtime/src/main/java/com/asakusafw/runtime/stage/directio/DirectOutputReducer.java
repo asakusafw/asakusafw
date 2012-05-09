@@ -16,6 +16,8 @@
 package com.asakusafw.runtime.stage.directio;
 
 import java.io.IOException;
+
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import com.asakusafw.runtime.directio.Counter;
@@ -64,7 +66,7 @@ public final class DirectOutputReducer extends Reducer<
         String path = variables.parse(group.getPath(), false);
         String id = repository.getRelatedId(path);
         OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, id);
-        DataFormat format = group.getFormat();
+        DataFormat format = configure(context, group.getFormat());
         DirectDataSource datasource = repository.getRelatedDataSource(path);
         String basePath = repository.getComponentPath(path);
         String resourcePath = variables.parse(group.getResourcePath());
@@ -87,5 +89,12 @@ public final class DirectOutputReducer extends Reducer<
         context.getCounter(COUNTER_GROUP, id + ".files").increment(1);
         context.getCounter(COUNTER_GROUP, id + ".records").increment(records);
         context.getCounter(COUNTER_GROUP, id + ".size").increment(counter.get());
+    }
+
+    private <T> T configure(Context context, T object) {
+        if (object instanceof Configurable) {
+            ((Configurable) object).setConf(context.getConfiguration());
+        }
+        return object;
     }
 }

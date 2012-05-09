@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,10 @@ public final class DirectIoTestHelper {
     private static final WeakHashMap<TestContext, DirectDataSourceRepository> REPOSITORY_CACHE =
         new WeakHashMap<TestContext, DirectDataSourceRepository>();
 
+    private final TestContext context;
+
+    private final Configuration hadoopConfiguration;
+
     final VariableTable variables;
 
     final DirectDataSource dataSource;
@@ -91,12 +96,14 @@ public final class DirectIoTestHelper {
         if (rootPath == null) {
             throw new IllegalArgumentException("rootPath must not be null"); //$NON-NLS-1$
         }
+        this.context = context;
+        this.hadoopConfiguration = createConfiguration();
         LOG.debug("Creating test helper for Direct I/O (basePath={})", rootPath);
         this.variables = new VariableTable(RedefineStrategy.ERROR);
         variables.defineVariables(context.getArguments());
         String resolvedRootPath = resolve(rootPath);
         LOG.debug("Resolved base path: {} -> {}", rootPath, resolvedRootPath);
-        DirectDataSourceRepository repo = getRepository(context);
+        DirectDataSourceRepository repo = getRepository();
         try {
             this.id = repo.getRelatedId(resolvedRootPath);
             this.dataSource = repo.getRelatedDataSource(resolvedRootPath);
@@ -104,7 +111,7 @@ public final class DirectIoTestHelper {
             throw new IOException(MessageFormat.format(
                     "Failed to initialize Direct I/O for \"{0}\", please check configuration ({1})",
                     resolvedRootPath,
-                    findExtraConfiguration(context)), e);
+                    findExtraConfiguration()), e);
         } catch (InterruptedException e) {
             throw (IOException) new InterruptedIOException("interrupted").initCause(e);
         }
@@ -114,19 +121,18 @@ public final class DirectIoTestHelper {
         LOG.debug("Direct I/O Mapping: {} -> id={}", resolvedRootPath, id);
     }
 
-    private synchronized DirectDataSourceRepository getRepository(TestContext context) throws IOException {
+    private synchronized DirectDataSourceRepository getRepository() {
         assert context != null;
         DirectDataSourceRepository cached = REPOSITORY_CACHE.get(context);
         if (cached != null) {
             return cached;
         }
-        DirectDataSourceRepository repo = createRepository(context);
+        DirectDataSourceRepository repo = createRepository();
         REPOSITORY_CACHE.put(context, repo);
         return repo;
     }
 
-    private DirectDataSourceRepository createRepository(TestContext context) throws IOException {
-        assert context != null;
+    private Configuration createConfiguration() throws IOException {
         Configuration conf;
         ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -134,15 +140,18 @@ public final class DirectIoTestHelper {
         } finally {
             Thread.currentThread().setContextClassLoader(contextLoader);
         }
-        URL extra = findExtraConfiguration(context);
+        URL extra = findExtraConfiguration();
         if (extra != null) {
             conf.addResource(extra);
         }
-        return HadoopDataSourceUtil.loadRepository(conf);
+        return conf;
     }
 
-    private URL findExtraConfiguration(TestContext context) throws IOException {
-        assert context != null;
+    private DirectDataSourceRepository createRepository() {
+        return HadoopDataSourceUtil.loadRepository(hadoopConfiguration);
+    }
+
+    private URL findExtraConfiguration() throws IOException {
         File file = findFileOnHomePath(context, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
         if (file == null) {
             throw new IOException(MessageFormat.format(
@@ -202,7 +211,7 @@ public final class DirectIoTestHelper {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        final OutputAttemptContext context = createContext();
+        final OutputAttemptContext outputContext = createOutputContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
         LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
@@ -212,11 +221,11 @@ public final class DirectIoTestHelper {
                 description.getClass().getName(),
         });
         try {
-            dataSource.setupTransactionOutput(context.getTransactionContext());
-            dataSource.setupAttemptOutput(context);
+            dataSource.setupTransactionOutput(outputContext.getTransactionContext());
+            dataSource.setupAttemptOutput(outputContext);
             Counter counter = new Counter();
             final ModelOutput<T> output =
-                dataSource.openOutput(context, dataType, format, basePath, outputPath, counter);
+                dataSource.openOutput(outputContext, dataType, format, basePath, outputPath, counter);
             return new ModelOutput<T>() {
                 @Override
                 public void write(T model) throws IOException {
@@ -226,10 +235,10 @@ public final class DirectIoTestHelper {
                 public void close() throws IOException {
                     output.close();
                     try {
-                        dataSource.commitAttemptOutput(context);
-                        dataSource.cleanupAttemptOutput(context);
-                        dataSource.commitTransactionOutput(context.getTransactionContext());
-                        dataSource.cleanupTransactionOutput(context.getTransactionContext());
+                        dataSource.commitAttemptOutput(outputContext);
+                        dataSource.cleanupAttemptOutput(outputContext);
+                        dataSource.commitTransactionOutput(outputContext.getTransactionContext());
+                        dataSource.cleanupTransactionOutput(outputContext.getTransactionContext());
                     } catch (InterruptedException e) {
                         throw (IOException) new InterruptedIOException("interrupted").initCause(e);
                     }
@@ -357,7 +366,7 @@ public final class DirectIoTestHelper {
         return variables.parse(string);
     }
 
-    private OutputAttemptContext createContext() {
+    private OutputAttemptContext createOutputContext() {
         String tx = UUID.randomUUID().toString();
         String attempt = UUID.randomUUID().toString();
         return new OutputAttemptContext(tx, attempt, id, new Counter());
@@ -371,12 +380,13 @@ public final class DirectIoTestHelper {
         assert formatClass != null;
         DataFormat<?> format;
         try {
-            format = formatClass.getConstructor().newInstance();
+            format = ReflectionUtils.newInstance(formatClass, hadoopConfiguration);
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
                     "Failed to create data format: {0}",
                     formatClass.getName()), e);
         }
+
         if (format.getSupportedType().isAssignableFrom(dataType) == false) {
             throw new IOException(MessageFormat.format(
                     "The data format does not support {1}: {0}",
