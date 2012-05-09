@@ -38,11 +38,15 @@ import com.asakusafw.bulkloader.log.Log;
  * Builds each cache for table.
  * @since 0.2.6
  */
-public class BuildCache {
+public final class BuildCache {
 
     static final Log LOG = new Log(BuildCache.class);
 
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
+
+    private BuildCache() {
+        return;
+    }
 
     /**
      * Program entry.

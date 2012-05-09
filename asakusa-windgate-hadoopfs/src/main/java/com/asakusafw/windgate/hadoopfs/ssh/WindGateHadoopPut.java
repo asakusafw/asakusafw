@@ -70,7 +70,7 @@ public class WindGateHadoopPut {
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
         int result = new WindGateHadoopPut(conf).execute(args);
-        long end= System.currentTimeMillis();
+        long end = System.currentTimeMillis();
         WGLOG.info("I21999", result, end - start);
         System.exit(result);
     }
