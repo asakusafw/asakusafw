@@ -113,9 +113,11 @@ public class JdbcResourceMirror extends ResourceMirror {
                             script.getName());
                     connection.close();
                 } catch (SQLException e) {
-                    WGLOG.warn(e, "W02001",
-                            getName(),
-                            script.getName());
+                    for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                        WGLOG.warn(ex, "W02001",
+                                getName(),
+                                script.getName());
+                    }
                 }
             }
         }
@@ -147,9 +149,11 @@ public class JdbcResourceMirror extends ResourceMirror {
                             script.getName());
                     connection.close();
                 } catch (SQLException e) {
-                    WGLOG.warn(e, "W02001",
-                            getName(),
-                            script.getName());
+                    for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                        WGLOG.warn(ex, "W02001",
+                                getName(),
+                                script.getName());
+                    }
                 }
             }
         }
