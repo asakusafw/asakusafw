@@ -113,7 +113,7 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         }
         this.mapperClass = mapperClass;
         this.sources = sources;
-        this.locations = locations;
+        this.locations = locations == null ? null : locations.clone();
     }
 
     @Override
@@ -128,7 +128,7 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     @Override
     public String[] getLocations() throws IOException, InterruptedException {
         if (locations != null) {
-            return locations;
+            return locations.clone();
         }
         List<String> results = new ArrayList<String>();
         Set<String> saw = new HashSet<String>();
@@ -296,7 +296,7 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         }
 
         /**
-         * Returns the {@link InputSplit}
+         * Returns the {@link InputSplit}.
          * @return the split
          */
         public InputSplit getSplit() {

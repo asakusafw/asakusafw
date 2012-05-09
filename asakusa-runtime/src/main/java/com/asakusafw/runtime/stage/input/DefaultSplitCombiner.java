@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         return results;
     }
 
-    private List<StageInputSplit> resolve(Environment env, Gene gene, Class<? extends Mapper<?,?,?,?>> mapper) {
+    private List<StageInputSplit> resolve(Environment env, Gene gene, Class<? extends Mapper<?, ?, ?, ?>> mapper) {
         List<List<SplitDef>> slots = new ArrayList<List<SplitDef>>();
         for (int i = 0, n = env.slots.length; i < n; i++) {
             slots.add(new ArrayList<SplitDef>());
@@ -363,7 +364,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         nextBest.time = parentBest.time;
 
         // sort by score
-        Arrays.sort(parent);
+        Arrays.sort(parent, Gene.COMPARATOR);
 
         // crossover
         Random random = env.random;
@@ -498,9 +499,41 @@ public class DefaultSplitCombiner extends SplitCombiner {
                 return 0;
             }
         }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + location;
+            long temp;
+            temp = Double.doubleToLongBits(time);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            LocationAndTime other = (LocationAndTime) obj;
+            if (location != other.location) {
+                return false;
+            }
+            if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time)) {
+                return false;
+            }
+            return true;
+        }
     }
 
-    private static final class Gene implements Comparable<Gene> {
+    private static final class Gene {
+
+        static final Comparator<Gene> COMPARATOR = GeneComparator.INSTANCE;
 
         final Environment environment;
 
@@ -540,16 +573,21 @@ public class DefaultSplitCombiner extends SplitCombiner {
             this.time = max;
         }
 
-        @Override
-        public int compareTo(Gene o) {
-            double a = time;
-            double b = o.time;
-            if (a < b) {
-                return -1;
-            } else if (a > b) {
-                return +1;
-            } else {
-                return 0;
+        private enum GeneComparator implements Comparator<Gene> {
+
+            INSTANCE,
+            ;
+            @Override
+            public int compare(Gene o1, Gene o2) {
+                double a = o1.time;
+                double b = o2.time;
+                if (a < b) {
+                    return -1;
+                } else if (a > b) {
+                    return +1;
+                } else {
+                    return 0;
+                }
             }
         }
     }
