@@ -191,10 +191,10 @@ Hadoopの動作確認
 
     hadoop version
 
-    Hadoop 0.20.2-cdh3u2
+    Hadoop 0.20.2-cdh3u3
     Subversion ...
-    Compiled by jenkins on Fri Oct 14 01:36:05 PDT 2011
-    From source with checksum 644e5db6c59d45bca96cec7f220dda51
+    Compiled by root on Tue Mar 20 13:45:02 PDT 2012
+    From source with checksum fc0b509a5d10a59ca4a620ed2f321480
 
 ..  attention::
     Hadoopのみバージョンを確認するためのコマンドが ``hadoop version`` となっていて、 ``version`` の前にハイフンが不要です。
