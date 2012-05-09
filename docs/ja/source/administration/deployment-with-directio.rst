@@ -271,11 +271,13 @@ YAESSプラグインライブラリのデプロイ
 
 ..  note::
     Asakusa Frameworkのインストールアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
-    あらかじめ以下の2つのプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
+    あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
 
     * ``asakusa-yaess-paralleljob`` : ジョブを並列実行のためのプラグイン
     * ``asakusa-yaess-jsch`` : SSH経由でジョブを起動するためのプラグイン
     * ``jsch`` : ``asakusa-yaess-jsch`` が依存するSSH接続用ライブラリ
+    * ``asakusa-yaess-flowlog`` : ジョブフローごとに進捗状況を個別ファイルに出力するためのプラグイン
+    * ``asakusa-yaess-multidispatch`` : ジョブの実行クラスタの振り分けを行うためのプラグイン
 
 YAESSのプラグインライブラリについては、 :doc:`../yaess/user-guide` も参考にしてください。
 
