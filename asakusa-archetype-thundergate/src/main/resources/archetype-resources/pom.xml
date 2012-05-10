@@ -9,7 +9,7 @@
 	<properties>
 		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
 
-		<hadoop.version>0.20.2-cdh3u3</hadoop.version>
+		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 		<ashigeru.util.version>0.1.0</ashigeru.util.version>
@@ -51,7 +51,7 @@
 		<repository>
 			<id>repository.cloudera.com</id>
 			<name>Cloudera Maven Repository</name>
-			<url>https://repository.cloudera.com/content/repositories/releases</url>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

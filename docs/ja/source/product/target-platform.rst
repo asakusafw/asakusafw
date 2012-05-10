@@ -20,7 +20,7 @@ Asakusa Frameworkは以下のプラットフォームで動作を検証してい
       - Java SE6 Update 26 [#]_
       - 
     * - Hadoop
-      - CDH3 Update 3 [#]_
+      - CDH3 Update 4 [#]_
       - 
     * - Hadoop
       - Apache Hadoop 0.20.203.0 [#]_
