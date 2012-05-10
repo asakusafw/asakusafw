@@ -31,7 +31,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 /**
  * Mock {@link BinaryStreamFormat}.
  */
-public class MockFormat extends BinaryStreamFormat<Text> {
+public class MockStreamFormat extends BinaryStreamFormat<Text> {
 
     @Override
     public Class<Text> getSupportedType() {

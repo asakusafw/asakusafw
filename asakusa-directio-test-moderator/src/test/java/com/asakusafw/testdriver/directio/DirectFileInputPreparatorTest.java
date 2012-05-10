@@ -33,7 +33,11 @@ import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSource;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -42,6 +46,7 @@ import com.asakusafw.testdriver.core.SpiImporterPreparator;
 /**
  * Test for {@link DirectFileInputPreparator}.
  */
+@RunWith(Parameterized.class)
 public class DirectFileInputPreparatorTest {
 
     /**
@@ -55,6 +60,28 @@ public class DirectFileInputPreparatorTest {
      */
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+
+    private final Class<? extends DataFormat<Text>> format;
+
+    /**
+     * Returns the parameters.
+     * @return the parameters
+     */
+    @Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { MockStreamFormat.class },
+                { MockFileFormat.class },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param format the format.
+     */
+    public DirectFileInputPreparatorTest(Class<? extends DataFormat<Text>> format) {
+        this.format = format;
+    }
 
     /**
      * truncate.
@@ -76,7 +103,7 @@ public class DirectFileInputPreparatorTest {
         assertThat(outer.exists(), is(true));
 
         testee.truncate(
-            new MockInputDescription("base", "something"),
+            new MockInputDescription("base", "something", format),
             profile.getTextContext());
         assertThat(file.exists(), is(false));
         assertThat(deep.exists(), is(false));
@@ -95,7 +122,7 @@ public class DirectFileInputPreparatorTest {
 
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         testee.truncate(
-            new MockInputDescription("base", "something"),
+            new MockInputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -119,7 +146,7 @@ public class DirectFileInputPreparatorTest {
         assertThat(outer.exists(), is(true));
 
         testee.truncate(
-            new MockInputDescription("${target}", "something"),
+            new MockInputDescription("${target}", "something", format),
             profile.getTextContext("target", "base"));
         assertThat(file.exists(), is(false));
         assertThat(deep.exists(), is(false));
@@ -139,7 +166,7 @@ public class DirectFileInputPreparatorTest {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("base", "input.txt"),
+                new MockInputDescription("base", "input.txt", format),
                 profile.getTextContext());
         put(output, "Hello, world!");
         assertThat(get("base/input.txt"), is(Arrays.asList("Hello, world!")));
@@ -158,7 +185,7 @@ public class DirectFileInputPreparatorTest {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("base", "input.txt"),
+                new MockInputDescription("base", "input.txt", format),
                 profile.getTextContext());
         put(output, "Hello1", "Hello2", "Hello3");
 
@@ -182,7 +209,7 @@ public class DirectFileInputPreparatorTest {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("${vbase}", "${vinput}.txt"),
+                new MockInputDescription("${vbase}", "${vinput}.txt", format),
                 profile.getTextContext("vbase", "base", "vinput", "input"));
         put(output, "Hello, world!");
         assertThat(get("base/input.txt"), is(Arrays.asList("Hello, world!")));
@@ -201,7 +228,7 @@ public class DirectFileInputPreparatorTest {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("base", "{alpha|beta|gamma/data}/{a/x|b|c}-*.csv"),
+                new MockInputDescription("base", "{alpha|beta|gamma/data}/{a/x|b|c}-*.csv", format),
                 profile.getTextContext());
         put(output, "Hello, world!");
         List<File> files = find("base");
@@ -222,7 +249,7 @@ public class DirectFileInputPreparatorTest {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("base", "**/data-*.csv"),
+                new MockInputDescription("base", "**/data-*.csv", format),
                 profile.getTextContext());
         put(output, "Hello, world!");
         List<File> files = find("base");
@@ -238,7 +265,7 @@ public class DirectFileInputPreparatorTest {
     public void no_config() throws Exception {
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         testee.truncate(
-            new MockInputDescription("base", "something"),
+            new MockInputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -254,7 +281,7 @@ public class DirectFileInputPreparatorTest {
 
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
         testee.truncate(
-            new MockInputDescription("base", "something"),
+            new MockInputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -271,7 +298,7 @@ public class DirectFileInputPreparatorTest {
         SpiImporterPreparator testee = new SpiImporterPreparator(getClass().getClassLoader());
         ModelOutput<Text> output = testee.createOutput(
                 new MockTextDefinition(),
-                new MockInputDescription("base", "input.txt"),
+                new MockInputDescription("base", "input.txt", format),
                 profile.getTextContext());
         put(output, "Hello, world!");
         assertThat(get("base/input.txt"), is(Arrays.asList("Hello, world!")));

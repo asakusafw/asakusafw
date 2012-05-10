@@ -26,9 +26,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.compiler.directio.testing.model.Line1;
 import com.asakusafw.compiler.directio.testing.model.Line2;
@@ -40,6 +44,7 @@ import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.DirectImporterDescription;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
@@ -52,6 +57,7 @@ import com.asakusafw.vocabulary.flow.Out;
 /**
  * Test for {@link DirectFileIoProcessor}.
  */
+@RunWith(Parameterized.class)
 public class DirectFileIoProcessorTest {
 
     /**
@@ -59,6 +65,27 @@ public class DirectFileIoProcessorTest {
      */
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+    private final Class<? extends DataFormat<Text>> format;
+
+    /**
+     * Returns the parameters.
+     * @return the parameters
+     */
+    @Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { LineFormat.class },
+                { LineFileFormat.class },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param format the format.
+     */
+    public DirectFileIoProcessorTest(Class<? extends DataFormat<Text>> format) {
+        this.format = format;
+    }
 
     /**
      * simple.
@@ -66,8 +93,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -81,13 +108,13 @@ public class DirectFileIoProcessorTest {
     public void validate_dual() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
         In<Line1> in1 = flow.createIn("in1",
-                new Input(Line1.class, LineFormat.class, "input", "input-1.txt", DataSize.LARGE));
+                new Input(Line1.class, format, "input", "input-1.txt", DataSize.LARGE));
         In<Line2> in2 = flow.createIn("in2",
-                new Input(Line2.class, LineFormat.class, "input", "input-2.txt", DataSize.TINY));
+                new Input(Line2.class, format, "input", "input-2.txt", DataSize.TINY));
         Out<Line1> out1 = flow.createOut("out1",
-                new Output(Line1.class, LineFormat.class, "output-1", "output.txt"));
+                new Output(Line1.class, format, "output-1", "output.txt"));
         Out<Line2> out2 = flow.createOut("out2",
-                new Output(Line2.class, LineFormat.class, "output-2", "output.txt"));
+                new Output(Line2.class, format, "output-2", "output.txt"));
 
         FlowDescription desc = new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
@@ -101,7 +128,7 @@ public class DirectFileIoProcessorTest {
     public void validate_no_input() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
         In<Line1> in = flow.createIn("in1", new DirectImporterDescription(Line1.class, "some/file-*"));
-        Out<Line1> out = flow.createOut("out1", new Output("something", "output.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "something", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -114,7 +141,7 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_no_output() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("something", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "something", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new DirectExporterDescription(Line1.class, "some/file-*"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
@@ -129,8 +156,8 @@ public class DirectFileIoProcessorTest {
     public void validate_input_tiny() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
         In<Line1> in = flow.createIn("in1", new Input(
-                Line1.class, LineFormat.class, "input", "input.txt", DataSize.TINY));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+                Line1.class, format, "input", "input.txt", DataSize.TINY));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -143,8 +170,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_input_variable() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "${input}.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "${input}.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -157,8 +184,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_output_pattern() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "{first}.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "{first}.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -171,8 +198,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_output_variable() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "${output}.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "${output}.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -185,8 +212,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_output_asc() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt", "+value"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "+value"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -199,8 +226,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_output_desc() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt", "-value"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "-value"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -213,8 +240,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void validate_output_complexorder() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt", "-length", "+position"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "-length", "+position"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -229,8 +256,8 @@ public class DirectFileIoProcessorTest {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
         In<Line1> in = flow.createIn(
                 "in1",
-                new Input(Line1.class, LineFormat.class, "input", "?", DataSize.UNKNOWN));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+                new Input(Line1.class, format, "input", "?", DataSize.UNKNOWN));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -246,7 +273,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn(
                 "in1",
                 new Input(Line1.class, null, "input", "*", DataSize.UNKNOWN));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -262,7 +289,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn(
                 "in1",
                 new Input(Line1.class, PrivateFormat.class, "input", "*", DataSize.UNKNOWN));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -278,7 +305,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn(
                 "in1",
                 new Input(Line1.class, VoidFormat.class, "input", "*", DataSize.UNKNOWN));
-        Out<Line1> out = flow.createOut("out1", new Output("output", "output.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -291,9 +318,9 @@ public class DirectFileIoProcessorTest {
     @Test
     public void invalid_output_resource() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
-                new Output(Line1.class, LineFormat.class, "output", "?", "position"));
+                new Output(Line1.class, format, "output", "?", "position"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -306,9 +333,9 @@ public class DirectFileIoProcessorTest {
     @Test
     public void invalid_output_order() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
-                new Output(Line1.class, LineFormat.class, "output", "output.txt", "?"));
+                new Output(Line1.class, format, "output", "output.txt", "?"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -321,7 +348,7 @@ public class DirectFileIoProcessorTest {
     @Test
     public void no_output_format() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, null, "output", "output.txt", "position"));
 
@@ -336,7 +363,7 @@ public class DirectFileIoProcessorTest {
     @Test
     public void invalid_output_format() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, PrivateFormat.class, "output", "output.txt", "position"));
 
@@ -351,7 +378,7 @@ public class DirectFileIoProcessorTest {
     @Test
     public void inconsistent_output_format() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("input", "input.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, VoidFormat.class, "output", "output.txt", "position"));
 
@@ -366,8 +393,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void input_conflict_output() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("path/conflict", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("path/conflict", "output.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "path/conflict", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "path/conflict", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -380,8 +407,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void input_contains_output() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("conflict", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("conflict/output", "output.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "conflict", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "conflict/output", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -394,8 +421,8 @@ public class DirectFileIoProcessorTest {
     @Test
     public void output_contains_input() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in = flow.createIn("in1", new Input("conflict/input", "input.txt"));
-        Out<Line1> out = flow.createOut("out1", new Output("conflict", "output.txt"));
+        In<Line1> in = flow.createIn("in1", new Input(format, "conflict/input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -408,10 +435,10 @@ public class DirectFileIoProcessorTest {
     @Test
     public void output_conflict_output() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in1 = flow.createIn("in1", new Input("input", "input-1.txt"));
-        In<Line1> in2 = flow.createIn("in2", new Input("input", "input-2.txt"));
-        Out<Line1> out1 = flow.createOut("out1", new Output("conflict", "output.txt"));
-        Out<Line1> out2 = flow.createOut("out2", new Output("conflict", "output.txt"));
+        In<Line1> in1 = flow.createIn("in1", new Input(format, "input", "input-1.txt"));
+        In<Line1> in2 = flow.createIn("in2", new Input(format, "input", "input-2.txt"));
+        Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
+        Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict", "output.txt"));
 
         FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
@@ -424,10 +451,10 @@ public class DirectFileIoProcessorTest {
     @Test
     public void output_common_prefix() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in1 = flow.createIn("in1", new Input("input", "input-1.txt"));
-        In<Line1> in2 = flow.createIn("in2", new Input("input", "input-2.txt"));
-        Out<Line1> out1 = flow.createOut("out1", new Output("conflict/a", "output.txt"));
-        Out<Line1> out2 = flow.createOut("out2", new Output("conflict/aa", "output.txt"));
+        In<Line1> in1 = flow.createIn("in1", new Input(format, "input", "input-1.txt"));
+        In<Line1> in2 = flow.createIn("in2", new Input(format, "input", "input-2.txt"));
+        Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict/a", "output.txt"));
+        Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict/aa", "output.txt"));
 
         FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
@@ -440,10 +467,10 @@ public class DirectFileIoProcessorTest {
     @Test
     public void output_contains_output() {
         FlowDescriptionDriver flow = new FlowDescriptionDriver();
-        In<Line1> in1 = flow.createIn("in1", new Input("input", "input-1.txt"));
-        In<Line1> in2 = flow.createIn("in2", new Input("input", "input-2.txt"));
-        Out<Line1> out1 = flow.createOut("out1", new Output("conflict", "output.txt"));
-        Out<Line1> out2 = flow.createOut("out2", new Output("conflict/internal", "output.txt"));
+        In<Line1> in1 = flow.createIn("in1", new Input(format, "input", "input-1.txt"));
+        In<Line1> in2 = flow.createIn("in2", new Input(format, "input", "input-2.txt"));
+        Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
+        Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict/internal", "output.txt"));
 
         FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
@@ -471,14 +498,14 @@ public class DirectFileIoProcessorTest {
     private static class Input extends DirectFileInputDescription {
 
         private final Class<?> modelType;
-        private final Class<? extends BinaryStreamFormat<?>> format;
+        private final Class<? extends DataFormat<?>> format;
         private final String basePath;
         private final String resourcePattern;
         private final DataSize dataSize;
 
         Input(
                 Class<?> modelType,
-                Class<? extends BinaryStreamFormat<?>> format,
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 DataSize dataSize) {
@@ -490,12 +517,13 @@ public class DirectFileIoProcessorTest {
         }
 
         Input(
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern) {
             this.modelType = Line1.class;
             this.basePath = basePath;
             this.resourcePattern = resourcePattern;
-            this.format = LineFormat.class;
+            this.format = format;
             this.dataSize = DataSize.UNKNOWN;
         }
 
@@ -505,7 +533,7 @@ public class DirectFileIoProcessorTest {
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return format;
         }
 
@@ -528,14 +556,14 @@ public class DirectFileIoProcessorTest {
     private static class Output extends DirectFileOutputDescription {
 
         private final Class<?> modelType;
-        private final Class<? extends BinaryStreamFormat<?>> format;
+        private final Class<? extends DataFormat<?>> format;
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
 
         Output(
                 Class<?> modelType,
-                Class<? extends BinaryStreamFormat<?>> format,
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 String... order) {
@@ -547,11 +575,12 @@ public class DirectFileIoProcessorTest {
         }
 
         Output(
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 String... order) {
             this.modelType = Line1.class;
-            this.format = LineFormat.class;
+            this.format = format;
             this.basePath = basePath;
             this.resourcePattern = resourcePattern;
             this.order = order;
@@ -563,7 +592,7 @@ public class DirectFileIoProcessorTest {
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return format;
         }
 

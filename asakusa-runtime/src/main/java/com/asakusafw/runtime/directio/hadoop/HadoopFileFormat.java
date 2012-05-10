@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import com.asakusafw.runtime.directio.Counter;
@@ -34,6 +36,21 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @since 0.2.6
  */
 public abstract class HadoopFileFormat<T> extends Configured implements FragmentableDataFormat<T> {
+
+    /**
+     * Creates a new instance without configuration.
+     */
+    public HadoopFileFormat() {
+        super();
+    }
+
+    /**
+     * Creates a new instance with configuration.
+     * @param conf configuration
+     */
+    public HadoopFileFormat(Configuration conf) {
+        super(conf);
+    }
 
     /**
      * Returns the preffered fragment size (in bytes).
@@ -56,6 +73,7 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
     /**
      * Creates a new {@link ModelInput} for the specified properties.
      * @param dataType the target data type
+     * @param fileSystem the file system to open the target path
      * @param path the path to the target file
      * @param offset starting stream offset
      * @param fragmentSize suggested fragment bytes count, or {@code -1} as infinite
@@ -68,6 +86,7 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
      */
     public abstract ModelInput<T> createInput(
             Class<? extends T> dataType,
+            FileSystem fileSystem,
             Path path,
             long offset,
             long fragmentSize,
@@ -76,6 +95,7 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
     /**
      * Creates a new {@link ModelOutput} for the specified properties.
      * @param dataType the target data type
+     * @param fileSystem the file system to open the target path
      * @param path the path to the target file
      * @param counter the current counter
      * @return the created writer
@@ -86,6 +106,7 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
      */
     public abstract ModelOutput<T> createOutput(
             Class<? extends T> dataType,
+            FileSystem fileSystem,
             Path path,
             Counter counter) throws IOException, InterruptedException;
 }

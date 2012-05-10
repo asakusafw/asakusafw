@@ -15,10 +15,15 @@
  */
 package com.asakusafw.runtime.directio.hadoop;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
@@ -35,6 +40,8 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @since 0.2.6
  */
 public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
+
+    static final Log LOG = LogFactory.getLog(SequenceFileFormat.class);
 
     @Override
     public long getPreferredFragmentSize() throws IOException, InterruptedException {
@@ -79,15 +86,36 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
     @Override
     public ModelInput<T> createInput(
             Class<? extends T> dataType,
+            FileSystem fileSystem,
             Path path,
             long offset,
             long fragmentSize,
             final Counter counter) throws IOException, InterruptedException {
-        FileSystem fs = path.getFileSystem(getConf());
         final long end = offset + fragmentSize;
         final K keyBuffer = createKeyObject();
         final V valueBuffer = createValueObject();
-        final SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, getConf());
+        final SequenceFile.Reader reader;
+        try {
+            reader = new SequenceFile.Reader(fileSystem, path, getConf());
+        } catch (EOFException e) {
+            FileStatus status = fileSystem.getFileStatus(path);
+            if (status.getLen() == 0L) {
+                LOG.warn(MessageFormat.format(
+                        "Target sequence file is empty: {0}",
+                        path));
+                return new ModelInput<T>() {
+                    @Override
+                    public boolean readTo(T model) throws IOException {
+                        return false;
+                    }
+                    @Override
+                    public void close() throws IOException {
+                        return;
+                    }
+                };
+            }
+            throw e;
+        }
         boolean succeed = false;
         try {
             if (offset > reader.getPosition()) {
@@ -137,14 +165,14 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
     @Override
     public ModelOutput<T> createOutput(
             Class<? extends T> dataType,
+            FileSystem fileSystem,
             Path path,
             final Counter counter) throws IOException, InterruptedException {
-        FileSystem fs = path.getFileSystem(getConf());
         // TODO codec
         final K keyBuffer = createKeyObject();
         final V valueBuffer = createValueObject();
         final SequenceFile.Writer writer = SequenceFile.createWriter(
-                fs,
+                fileSystem,
                 getConf(),
                 path,
                 keyBuffer.getClass(),
