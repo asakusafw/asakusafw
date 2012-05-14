@@ -260,6 +260,11 @@
 	</target>
 
 	<target name="install-framework-thundergate">
+		<condition property="asakusa.thundergate.switch.to" value="standalone">
+			<not>
+				<isset property="asakusa.thundergate.switch.to" />
+			</not>
+		</condition>
 		<move todir="${env.HOME}">
 			<fileset dir="${env.ASAKUSA_HOME}/bulkloader/bin">
 				<include name=".bulkloader_db_profile" />
@@ -313,7 +318,7 @@
 		<chmod perm="777" file="/tmp/asakusa" type="dir" />
 
 		<antcall target="thundergate-create-table" />
-		<antcall target="switch-standalone" />
+		<antcall target="switch-${asakusa.thundergate.switch.to}" />
 	</target>
 
 	<target name="thundergate-create-table" if="asakusa.build.database.enabled">
