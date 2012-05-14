@@ -177,6 +177,12 @@
 			<version>${commons.logging.version}</version>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop.thirdparty.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
