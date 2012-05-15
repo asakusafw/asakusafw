@@ -63,6 +63,7 @@ import com.asakusafw.runtime.stage.StageOutput;
 /**
  * A bridge implementation for Hadoop {@link OutputFormat}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
@@ -171,7 +172,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             } catch (IOException e) {
                 throw new IOException(MessageFormat.format(
                         "There are no corresponded data sources for the base path: {0}",
-                        spec.basePath));
+                        spec.basePath), e);
             }
         }
     }
@@ -273,10 +274,24 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio task setup for datasource: datasource={0} job={1}, task={2}",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()));
+                }
                 OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.setupAttemptOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio task setup: datasource={0} (job={1}, task={2})",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while setup attempt: {0}, {1} (path={2})",
@@ -285,6 +300,12 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             containerPath)).initCause(e);
                 }
                 context.getCounter().add(1);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio task setup: job={0}, task={1}",
+                        taskContext.getJobID(),
+                        taskContext.getTaskAttemptID()));
             }
         }
 
@@ -302,20 +323,43 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio task commit for datasource: datasource={0} job={1}, task={2}",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()));
+                }
                 OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.commitAttemptOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio task commit: datasource={0} (job={1}, task={2})",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while commit attempt: {0}, {1} (path={2})",
                             context.getTransactionId(),
                             context.getAttemptId(),
                             containerPath)).initCause(e);
+                } catch (RuntimeException e) {
+                    LOG.fatal("TASK COMMIT FAILED", e);
+                    throw e;
                 }
                 context.getCounter().add(1);
             }
             doCleanupTask(taskContext);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio task commit: job={0}, task={1}",
+                        taskContext.getJobID(),
+                        taskContext.getTaskAttemptID()));
+            }
         }
 
         @Override
@@ -330,6 +374,12 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         taskContext.getTaskAttemptID()));
             }
             doCleanupTask(taskContext);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio task abort: job={0}, task={1}",
+                        taskContext.getJobID(),
+                        taskContext.getTaskAttemptID()));
+            }
         }
 
         private void doCleanupTask(TaskAttemptContext taskContext) throws IOException {
@@ -337,10 +387,24 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio task cleanup for datasource: datasource={0} job={1}, task={2}",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()));
+                }
                 OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.cleanupAttemptOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio task cleanup: datasource={0} (job={1}, task={2})",
+                            id,
+                            taskContext.getJobID(),
+                            taskContext.getTaskAttemptID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while cleanup attempt: {0}, {1} (path={2})",
@@ -366,10 +430,22 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio job setup: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()));
+                }
                 OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.setupTransactionOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio job setup: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while setup transaction: {0}, (path={1})",
@@ -377,6 +453,11 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             containerPath)).initCause(e);
                 }
                 context.getCounter().add(1);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio job setup: job={0}",
+                        jobContext.getJobID()));
             }
         }
 
@@ -392,6 +473,11 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             setCommitted(jobContext, true);
             doCleanupJob(jobContext);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio job commit: job={0}",
+                        jobContext.getJobID()));
+            }
         }
 
         private void setTransactionInfo(JobContext jobContext, boolean value) throws IOException {
@@ -416,7 +502,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     writer.printf("Batch Arguments: %s%n", conf.getRaw(StageConstants.PROP_ASAKUSA_BATCH_ARGS));
                     writer.printf("  Hadoop Job ID: %s%n", jobContext.getJobID());
                     writer.printf("Hadoop Job Name: %s%n", jobContext.getJobName());
-                    writer.close();
+                    writer.flush();
                 } finally {
                     output.close();
                 }
@@ -512,6 +598,12 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             if (state == State.FAILED) {
                 doCleanupJob(jobContext);
             }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Finish directio job abort: job={0}, state={1}",
+                        jobContext.getJobID(),
+                        state));
+            }
         }
 
         private void doCleanupJob(JobContext jobContext) throws IOException {
@@ -528,10 +620,22 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio job rollforward: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()));
+                }
                 OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.commitTransactionOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio job rollforward: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while commit transaction: {0}, (path={1})",
@@ -546,10 +650,22 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
                 String id = entry.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Start directio job cleanup: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()));
+                }
                 OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.cleanupTransactionOutput(context);
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio job cleanup: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()), e);
+                    throw e;
                 } catch (InterruptedException e) {
                     throw (IOException) new InterruptedIOException(MessageFormat.format(
                             "Interrupted while cleanup transaction: {0}, (path={1})",

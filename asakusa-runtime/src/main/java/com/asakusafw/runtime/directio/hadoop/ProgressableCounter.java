@@ -15,12 +15,15 @@
  */
 package com.asakusafw.runtime.directio.hadoop;
 
+import java.text.MessageFormat;
+
 import org.apache.hadoop.util.Progressable;
 import com.asakusafw.runtime.directio.Counter;
 
 /**
  * Counter which reports a progress using {@link Progressable}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 public final class ProgressableCounter extends Counter {
 
@@ -41,5 +44,13 @@ public final class ProgressableCounter extends Counter {
     @Override
     protected void onChanged() {
         progressable.progress();
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "{0}({1})",
+                getClass().getSimpleName(),
+                progressable.getClass().getSimpleName());
     }
 }
