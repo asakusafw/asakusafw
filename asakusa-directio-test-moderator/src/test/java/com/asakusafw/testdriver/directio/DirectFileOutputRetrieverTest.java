@@ -24,10 +24,16 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSource;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -37,6 +43,7 @@ import com.asakusafw.testdriver.core.SpiExporterRetriever;
 /**
  * Test for {@link DirectFileOutputRetriever}.
  */
+@RunWith(Parameterized.class)
 public class DirectFileOutputRetrieverTest {
 
     /**
@@ -50,6 +57,28 @@ public class DirectFileOutputRetrieverTest {
      */
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+
+    private final Class<? extends DataFormat<Text>> format;
+
+    /**
+     * Returns the parameters.
+     * @return the parameters
+     */
+    @Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { MockStreamFormat.class },
+                { MockFileFormat.class },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param format the format.
+     */
+    public DirectFileOutputRetrieverTest(Class<? extends DataFormat<Text>> format) {
+        this.format = format;
+    }
 
     /**
      * truncate.
@@ -71,7 +100,7 @@ public class DirectFileOutputRetrieverTest {
         assertThat(outer.exists(), is(true));
 
         testee.truncate(
-            new MockOutputDescription("base", "something"),
+            new MockOutputDescription("base", "something", format),
             profile.getTextContext());
         assertThat(file.exists(), is(false));
         assertThat(deep.exists(), is(false));
@@ -90,7 +119,7 @@ public class DirectFileOutputRetrieverTest {
 
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         testee.truncate(
-            new MockOutputDescription("base", "something"),
+            new MockOutputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -114,7 +143,7 @@ public class DirectFileOutputRetrieverTest {
         assertThat(outer.exists(), is(true));
 
         testee.truncate(
-            new MockOutputDescription("${target}", "something"),
+            new MockOutputDescription("${target}", "something", format),
             profile.getTextContext("target", "base"));
         assertThat(file.exists(), is(false));
         assertThat(deep.exists(), is(false));
@@ -136,7 +165,7 @@ public class DirectFileOutputRetrieverTest {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("base", "output.txt"),
+                new MockOutputDescription("base", "output.txt", format),
                 profile.getTextContext());
         List<String> list = get(input);
         assertThat(list, is(Arrays.asList("Hello, world!")));
@@ -157,7 +186,7 @@ public class DirectFileOutputRetrieverTest {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("base", "output.txt"),
+                new MockOutputDescription("base", "output.txt", format),
                 profile.getTextContext());
 
         List<String> list = get(input);
@@ -184,7 +213,7 @@ public class DirectFileOutputRetrieverTest {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("base", "{value}.txt"),
+                new MockOutputDescription("base", "{value}.txt", format),
                 profile.getTextContext());
 
         List<String> list = get(input);
@@ -209,7 +238,7 @@ public class DirectFileOutputRetrieverTest {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("${vbase}", "${voutput}.txt"),
+                new MockOutputDescription("${vbase}", "${voutput}.txt", format),
                 profile.getTextContext("vbase", "base", "voutput", "output"));
         List<String> list = get(input);
         assertThat(list, is(Arrays.asList("Hello, world!")));
@@ -232,7 +261,7 @@ public class DirectFileOutputRetrieverTest {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("base", "output-{id}.txt"),
+                new MockOutputDescription("base", "output-{id}.txt", format),
                 profile.getTextContext());
         List<String> list = get(input);
         assertThat(list.size(), is(3));
@@ -249,7 +278,7 @@ public class DirectFileOutputRetrieverTest {
     public void no_config() throws Exception {
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         testee.truncate(
-            new MockOutputDescription("base", "something"),
+            new MockOutputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -265,7 +294,7 @@ public class DirectFileOutputRetrieverTest {
 
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         testee.truncate(
-            new MockOutputDescription("base", "something"),
+            new MockOutputDescription("base", "something", format),
             profile.getTextContext());
     }
 
@@ -284,7 +313,7 @@ public class DirectFileOutputRetrieverTest {
         SpiExporterRetriever testee = new SpiExporterRetriever(getClass().getClassLoader());
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
-                new MockOutputDescription("base", "output.txt"),
+                new MockOutputDescription("base", "output.txt", format),
                 profile.getTextContext());
         List<String> list = get(input);
         assertThat(list, is(Arrays.asList("Hello, world!")));

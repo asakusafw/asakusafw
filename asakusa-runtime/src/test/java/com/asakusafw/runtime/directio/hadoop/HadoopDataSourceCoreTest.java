@@ -703,6 +703,7 @@ public class HadoopDataSourceCoreTest {
         @Override
         public ModelInput<StringBuilder> createInput(
                 Class<? extends StringBuilder> dataType,
+                FileSystem fileSystem,
                 Path path,
                 long offset,
                 long fragmentSize,
@@ -730,6 +731,7 @@ public class HadoopDataSourceCoreTest {
         @Override
         public ModelOutput<StringBuilder> createOutput(
                 Class<? extends StringBuilder> dataType,
+                FileSystem fileSystem,
                 Path path,
                 Counter counter) throws IOException, InterruptedException {
             FileSystem fs = FileSystem.get(path.toUri(), getConf());

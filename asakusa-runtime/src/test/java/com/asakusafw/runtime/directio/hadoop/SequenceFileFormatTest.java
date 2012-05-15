@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
@@ -88,6 +89,7 @@ public class SequenceFileFormatTest {
 
         ModelInput<StringOption> in = format.createInput(
                 StringOption.class,
+                fs,
                 path,
                 0,
                 fs.getFileStatus(path).getLen(),
@@ -138,6 +140,7 @@ public class SequenceFileFormatTest {
                 length = Math.min(length, fileLen - offset);
                 ModelInput<StringOption> in = format.createInput(
                         StringOption.class,
+                        fs,
                         path,
                         offset,
                         length,
@@ -196,6 +199,7 @@ public class SequenceFileFormatTest {
             length = Math.min(length, fileLen - offset);
             ModelInput<StringOption> in = format.createInput(
                     StringOption.class,
+                    fs,
                     path,
                     offset,
                     length,
@@ -215,6 +219,53 @@ public class SequenceFileFormatTest {
     }
 
     /**
+     * Test for input empty file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_empty() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing").toURI());
+        fs.create(path).close();
+        ModelInput<StringOption> in = format.createInput(
+                StringOption.class,
+                fs,
+                path,
+                0,
+                fs.getFileStatus(path).getLen(),
+                new Counter());
+        try {
+            assertThat("eof", in.readTo(new StringOption()), is(false));
+        } finally {
+            in.close();
+        }
+    }
+
+    /**
+     * Test for input invalid file.
+     * @throws Exception if failed
+     */
+    @Test(expected = IOException.class)
+    public void input_invalid() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing").toURI());
+        FSDataOutputStream output = fs.create(path);
+        try {
+            output.writeUTF("Hello, world!");
+        } finally {
+            output.close();
+        }
+        ModelInput<StringOption> in = format.createInput(
+                StringOption.class,
+                fs,
+                path,
+                0,
+                fs.getFileStatus(path).getLen(),
+                new Counter());
+        in.close();
+    }
+
+    /**
      * Test method for output.
      * @throws Exception if failed
      */
@@ -224,7 +275,7 @@ public class SequenceFileFormatTest {
         final int count = 10000;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        ModelOutput<StringOption> out = format.createOutput(StringOption.class, path, new Counter());
+        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
         try {
             StringOption value = new StringOption();
             for (int i = 0; i < count; i++) {
