@@ -110,7 +110,7 @@ Direct I/O
 なお、これらのツールとの連携は `Asakusa DSL`_ から記述できます。
 
 ..  [#] http://www.mysql.com/
-..  [#] Direct I/OはAsakusa Frameworkのバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
+..  [#] Direct I/OはAsakusa Frameworkのバージョン |version| の時点で実験的な機能として提供しています。
 
 自動テストサポート
 ------------------
