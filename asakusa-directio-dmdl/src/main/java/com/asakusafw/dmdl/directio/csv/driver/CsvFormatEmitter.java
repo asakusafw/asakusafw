@@ -362,6 +362,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
                 case VALUE:
+                case FILE_NAME:
                 case IGNORE:
                     break;
                 default:
