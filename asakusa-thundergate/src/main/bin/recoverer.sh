@@ -40,15 +40,6 @@ CLASS_NAME="com.asakusafw.bulkloader.recoverer.Recoverer"
 
 . $ASAKUSA_HOME/bulkloader/bin/set-classpath-db.sh
 
-LIB_DIR=$ASAKUSA_HOME/batchapps
-for dname in `ls $LIB_DIR`
-do
-   for fname in `ls $LIB_DIR/$dname/lib/*.jar`
-   do
-     BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$fname
-   done
-done
-
 cd $ASAKUSA_HOME
 
 if [ $# -eq 1 -o $# -eq 2 ]; then
