@@ -251,7 +251,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 (<-3を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 5 (0.2.5) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 6 (0.2.6) を選択します。
 
 ..  code-block:: sh
 
@@ -261,7 +261,8 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     3: 0.2.3
     4: 0.2.4
     5: 0.2.5
-    Choose a number: 5: 5 (<-5を入力)
+    6: 0.2.6
+    Choose a number: 6: 6 (<-6を入力)
 
 この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 

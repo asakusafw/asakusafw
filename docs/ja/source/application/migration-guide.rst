@@ -36,7 +36,7 @@ ver0.2.6へのマイグレーション
 
 アセンブリディスクリプタの変更
 ------------------------------
-ver0.2.6ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が追加/変更になったため、これらのファイルをver0.2.6が提供するファイルに変更してください。変更手順は以下の通りです。
+ver0.2.6ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が変更になったため、これらのファイルをver0.2.6が提供するファイルに変更してください。変更手順は以下の通りです。
 
 1. ver0.2.6のアーキタイプからダミーのプロジェクトを任意のディレクトリに作成する。
 2. 作成したプロジェクトの ``src/main/assembly`` に含まれるすべてのファイルを既存のアプリケーションプロジェクトの `src/main/assembly` 配下にコピーする。
@@ -44,19 +44,23 @@ ver0.2.6ではアプリケーションプロジェクトに含まれるアセン
 
 pom.xmlの変更
 -------------
-ver0.2.6ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下の手順に従ってpom.xmlを0.2.6向けに変更してください。
+ver0.2.6ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.6向けに変更してください。
 
-asakusa-dsl-analysis-plugin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ver0.2.6では :doc:`dsl-visualization` で説明するAsakusa DSLの可視化の機能が強化されました。この機能を提供するコンパイラプラグイン用の依存性定義を追加します。
+* アーキタイプ:asaksua-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-thundergate-026pom.patch <migration/asakusa-archetype-thundergate-026pom.patch>`
+* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-windgate-026pom.patch <migration/asakusa-archetype-windgate-026pom.patch>`
+* アーキタイプ:asaksua-archetype-directio (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-directio-026pom.patch <migration/asakusa-archetype-directio-026pom.patch>`
+
+上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
 
 ..  code-block:: sh
 
-        <dependency>
-            <groupId>com.asakusafw</groupId>
-            <artifactId>asakusa-dsl-analysis-plugin</artifactId>
-            <version>${asakusafw.version}</version>
-        </dependency>
+    cd app-project
+    patch < /tmp/asakusa-archetype-windgate-026pom.patch
+
+pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、ver0.2.6のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
 
 ver0.2.5へのマイグレーション
 ============================
