@@ -4,6 +4,82 @@
 Asakusa Framework リリースノート
 ================================
 
+Release 0.2.6
+=============
+May 31, 2012
+
+Enhancements
+------------
+* [ :issue:`84` ] - WindGate logging improvement
+* [ :issue:`138` ] - Provide command script building cache for ThunderGate
+    * See: :doc:`thundergate/cache`
+* [ :issue:`139` ] - Specified index at duplication check for Exporter
+* [ :issue:`143` ] - Specify the number of divisions to the output file of Direct I/O
+    * See: :doc:`directio/user-guide`
+* [ :issue:`145` ] - YAESS script for executing per JobFlow.
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`147` ] - Generate Asakusa DSL analysis files at batch compile
+    * See: :doc:`application/dsl-visualization`
+* [ :issue:`148` ] - CoreOperators for eliminating to use CoreOperatorFactory
+    * See: :doc:`dsl/operators`
+* [ :issue:`149` ] - Run tests of archetypes in the integration-test phase of Maven.
+* [ :issue:`150` ] - Report API implementation using Commons Logging.
+    * See: :doc:`administration/deployment-runtime-plugins`
+* [ :issue:`152` ] - Combines input splits
+    * See: :doc:`administration/configure-hadoop-parameters`
+* [ :issue:`153` ] - Multi-cluster support for YAESS
+    * See: :doc:`yaess/multi-dispatch`
+* [ :issue:`154` ] - Simple job queue for YAESS (experimental)
+    * See: `Asakusa Framework Sandbox: YAESS JobQueue`_
+* [ :issue:`155` ] - Skip specifing jobflows on yaess-batch.
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`156` ] - Write execution history per jobflow on YAESS.
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`157` ] - Specify Java command-line option on YAESS
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`159` ] - Logging Improvement for YAESS
+    * See: :doc:`yaess/log-table`
+* [ :issue:`162` ] - support CDH3u3
+* [ :issue:`163` ] - Add exit code for retryable abend to ThunderGate
+* [ :issue:`164` ] - ThunderGate loads configuration properties with asakusa-resources.xml
+* [ :issue:`165` ] - Direct I/O supports SequenceFile format
+    * See: :doc:`directio/user-guide`
+* [ :issue:`166` ] - Optimize execution plan for reducing output file size
+* [ :issue:`171` ] - Add default YAESS plugins to deployment archive.
+    * See: :doc:`administration/deployment-with-directio`
+    * See: :doc:`administration/deployment-with-windgate`
+* [ :issue:`172` ] - Align log code in each log record
+* [ :issue:`173` ] - support CDH3u4
+* [ :issue:`176` ] - Select defalut hadoop mode of ThunderGate configuration installing to local
+
+..  attention::
+    Direct I/O is still an experimental feature.
+
+..  _`Asakusa Framework Sandbox: YAESS JobQueue`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/yaess/jobqueue.html
+
+Bug fixes
+---------
+* [ :issue:`140` ] - NPE when running DMDL Genarator without encoding option
+* [ :issue:`141` ] - Code example for generated DMDL is wrong
+* [ :issue:`144` ] - Failed with NPE when Direct I/O outputs with specifing date format
+* [ :issue:`146` ] - Misleading description about batch compiler option
+* [ :issue:`151` ] - Cause message which include exception is not shown when running WindGate with Postgresql
+* [ :issue:`158` ] - Improper use of IOException on logging YAESS.
+* [ :issue:`161` ] - Eliminates unnecessary output files in map task
+* [ :issue:`167` ] - Batch application with distributed cache may not work on standalone mode
+* [ :issue:`168` ] - Invalid script message to finalizer.sh and recoverer.sh
+* [ :issue:`170` ] - Legacy TestDriver does not guarantee ordering to load test data sheet files.
+* [ :issue:`175` ] - Multipart upload of S3 with Direct I/O does not work.
+* [ :issue:`177` ] - File will not be split if @directio.csv.file_name is used
+* [ :issue:`178` ] - The jar file without the necessity that the recoverer of ThunderGate reads is read
+
+Others
+------
+* [ :issue:`142` ] - 0.2.6 Documentation
+* [ :issue:`169` ] - Refoctoring for release 0.2.6
+
+----
+
 Release 0.2.5
 =============
 Jan 31, 2012
@@ -97,6 +173,9 @@ Enhancements
     * See: :doc:`thundergate/cache`
 * [ :issue:`99` ] - support CDH3u2
 * [ :issue:`102` ] - Simplify test driver internal APIs
+
+..  attention::
+    WindGate is still an experimental feature.
 
 Bug fixes
 ---------
