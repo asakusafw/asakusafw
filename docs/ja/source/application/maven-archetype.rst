@@ -415,10 +415,12 @@ Eclipseのパッケージエクスプローラーからアプリケーション�
 
 アプリケーション用依存ライブラリの追加
 ======================================
-バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
 これに加えて、依存するjarファイルを ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
-以下はApache Commons Lang 2.6を配置する例です。
+以下はJavaの日付ライブラリである `Joda Time`_ 2.1 を配置する例です。
+
+..  _`Joda Time`: http://joda-time.sourceforge.net/
 
 pom.xmlの編集
 -------------
@@ -428,9 +430,9 @@ pom.xmlの ``<dependencies>`` 内に依存定義を追加します。
 ..  code-block:: xml
 
     <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.1</version>
     </dependency>
 
 依存ライブラリのコピー
@@ -446,14 +448,14 @@ MavenのDependencyプラグイン [#]_ を利用して依存ライブラリを�
 
 ..  [#] http://maven.apache.org/plugins/maven-dependency-plugin/
 
-Asausaの拡張ライブラリディレクトリへjarファイルを配置
------------------------------------------------------
+Asakusaの拡張ライブラリディレクトリへjarファイルを配置
+------------------------------------------------------
 
 ``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
 ..  code-block:: sh
 
-    cp target/dependency/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+    cp target/dependency/joda-time-2.1.jar $ASAKUSA_HOME/ext/lib
 
 
 ``build.properties`` ビルド定義ファイル
