@@ -59,7 +59,6 @@ public class FlowLoggerProfileTest {
         assertThat(profile.getEncoding(), is(Charset.forName(DEFAULT_ENCODING)));
         assertThat(profile.getDateFormat(), is((DateFormat) new SimpleDateFormat(DEFAULT_DATE_FORMAT)));
         assertThat(profile.getStepUnit(), closeTo(Double.parseDouble(DEFAULT_STEP_UNIT), 0.00001));
-        assertThat(profile.isTeeLog(), is(Boolean.parseBoolean(DEFAULT_TEE_LOG)));
         assertThat(profile.isReportJob(), is(Boolean.parseBoolean(DEFAULT_REPORT_JOB)));
         assertThat(profile.isDeleteOnSetup(), is(Boolean.parseBoolean(DEFAULT_DELETE_ON_SETUP)));
         assertThat(profile.isDeleteOnCleanup(), is(Boolean.parseBoolean(DEFAULT_DELETE_ON_CLEANUP)));
@@ -76,7 +75,6 @@ public class FlowLoggerProfileTest {
                 KEY_ENCODING, "ASCII",
                 KEY_DATE_FORMAT, "yyyy",
                 KEY_STEP_UNIT, "0.50",
-                KEY_TEE_LOG, "false",
                 KEY_REPORT_JOB, "false",
                 KEY_DELETE_ON_SETUP, "false",
                 KEY_DELETE_ON_CLEANUP, "false");
@@ -88,7 +86,6 @@ public class FlowLoggerProfileTest {
         assertThat(profile.getEncoding(), is(Charset.forName("ASCII")));
         assertThat(profile.getDateFormat(), is((DateFormat) new SimpleDateFormat("yyyy")));
         assertThat(profile.getStepUnit(), closeTo(Double.parseDouble("0.50"), 0.00001));
-        assertThat(profile.isTeeLog(), is(Boolean.parseBoolean("false")));
         assertThat(profile.isReportJob(), is(Boolean.parseBoolean("false")));
         assertThat(profile.isDeleteOnSetup(), is(Boolean.parseBoolean("false")));
         assertThat(profile.isDeleteOnCleanup(), is(Boolean.parseBoolean("false")));

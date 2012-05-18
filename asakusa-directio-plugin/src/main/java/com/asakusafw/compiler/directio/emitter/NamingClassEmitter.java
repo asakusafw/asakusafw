@@ -64,6 +64,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  * Emits {@link StringTemplate} subclasses.
  * @since 0.2.5
  */
+@SuppressWarnings("deprecation")
 public class NamingClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(NamingClassEmitter.class);
@@ -303,7 +304,9 @@ public class NamingClassEmitter {
                         .field(FIELD_RANDOM_HOLDER)
                         .method("modify", new ExpressionBuilder(factory, factory.newThis())
                             .field(FIELD_RANDOMIZER)
-                            .method("nextInt", Models.toLiteral(factory, rand.getUpperBound() - rand.getLowerBound() + 1))
+                            .method(
+                                    "nextInt",
+                                    Models.toLiteral(factory, rand.getUpperBound() - rand.getLowerBound() + 1))
                             .apply(InfixOperator.PLUS, Models.toLiteral(factory, rand.getLowerBound()))
                             .toExpression())
                         .toStatement());

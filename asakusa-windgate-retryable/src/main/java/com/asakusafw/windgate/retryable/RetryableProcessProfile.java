@@ -91,6 +91,7 @@ public class RetryableProcessProfile {
         } catch (Exception e) {
             WGLOG.error(e, "E00001",
                     profile.getName(),
+                    KEY_COMPONENT,
                     componentClassName);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to create component process provider for \"{0}\": {1}",
@@ -110,6 +111,7 @@ public class RetryableProcessProfile {
         } catch (IOException e) {
             WGLOG.error(e, "E00001",
                     profile.getName(),
+                    KEY_COMPONENT,
                     componentClassName);
             throw e;
         }

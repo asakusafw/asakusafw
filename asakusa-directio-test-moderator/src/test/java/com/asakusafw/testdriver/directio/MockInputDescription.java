@@ -17,7 +17,7 @@ package com.asakusafw.testdriver.directio;
 
 import org.apache.hadoop.io.Text;
 
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 
 /**
@@ -29,9 +29,12 @@ public class MockInputDescription extends DirectFileInputDescription {
 
     private final String resourcePattern;
 
-    MockInputDescription(String basePath, String resourcePattern) {
+    private final Class<? extends DataFormat<?>> format;
+
+    MockInputDescription(String basePath, String resourcePattern, Class<? extends DataFormat<?>> format) {
         this.basePath = basePath;
         this.resourcePattern = resourcePattern;
+        this.format = format;
     }
 
     @Override
@@ -40,8 +43,8 @@ public class MockInputDescription extends DirectFileInputDescription {
     }
 
     @Override
-    public Class<? extends BinaryStreamFormat<?>> getFormat() {
-        return MockFormat.class;
+    public Class<? extends DataFormat<?>> getFormat() {
+        return format;
     }
 
     @Override

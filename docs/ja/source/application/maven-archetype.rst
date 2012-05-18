@@ -45,7 +45,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
 ..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
-..  [#] Direct I/O はバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
+..  [#] Direct I/O はバージョン |version| の時点で実験的な機能として提供しています。
 
 
 ``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
@@ -80,7 +80,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     3: 0.2.3
     4: 0.2.4
     5: 0.2.5
-    Choose a number: 5: 5 [使用するAsakusa Frameworkのバージョンを選択]
+    6: 0.2.6
+    Choose a number: 6: 6 [使用するAsakusa Frameworkのバージョンを選択]
 
     ...
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
@@ -414,10 +415,12 @@ Eclipseのパッケージエクスプローラーからアプリケーション�
 
 アプリケーション用依存ライブラリの追加
 ======================================
-バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
 これに加えて、依存するjarファイルを ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
-以下はApache Commons Lang 2.6を配置する例です。
+以下はJavaの日付ライブラリである `Joda Time`_ 2.1 を配置する例です。
+
+..  _`Joda Time`: http://joda-time.sourceforge.net/
 
 pom.xmlの編集
 -------------
@@ -427,9 +430,9 @@ pom.xmlの ``<dependencies>`` 内に依存定義を追加します。
 ..  code-block:: xml
 
     <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.1</version>
     </dependency>
 
 依存ライブラリのコピー
@@ -445,14 +448,14 @@ MavenのDependencyプラグイン [#]_ を利用して依存ライブラリを�
 
 ..  [#] http://maven.apache.org/plugins/maven-dependency-plugin/
 
-Asausaの拡張ライブラリディレクトリへjarファイルを配置
------------------------------------------------------
+Asakusaの拡張ライブラリディレクトリへjarファイルを配置
+------------------------------------------------------
 
 ``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
 ..  code-block:: sh
 
-    cp target/dependency/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+    cp target/dependency/joda-time-2.1.jar $ASAKUSA_HOME/ext/lib
 
 
 ``build.properties`` ビルド定義ファイル

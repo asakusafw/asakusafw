@@ -93,6 +93,11 @@ public enum ExecutionPhase {
         return Lazy.SYMBOLS.get(symbol);
     }
 
+    @Override
+    public String toString() {
+        return getSymbol();
+    }
+
     private static final class Lazy {
 
         static final Map<String, ExecutionPhase> SYMBOLS;

@@ -69,6 +69,8 @@ public class StageOutputDriver {
 
     private final Map<String, ResultOutput<?>> resultSinks;
 
+    private final TaskInputOutputContext<?, ?, ?, ?> context;
+
     /**
      * インスタンスを生成する。
      * @param context 現在のタスク試行コンテキスト
@@ -81,119 +83,18 @@ public class StageOutputDriver {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        this.resultSinks = buildSinks(context);
+        this.context = context;
+        this.resultSinks = prepareSinks(context);
     }
 
-    private Map<String, ResultOutput<?>> buildSinks(
-            TaskInputOutputContext<?, ?, ?, ?> context) throws IOException, InterruptedException {
+    private static Map<String, ResultOutput<?>> prepareSinks(TaskInputOutputContext<?, ?, ?, ?> context) {
         assert context != null;
         Map<String, ResultOutput<?>> results = new HashMap<String, ResultOutput<?>>();
         Configuration conf = context.getConfiguration();
         for (String name : conf.getStringCollection(K_NAMES)) {
-            ResultOutput<?> sink = buildSink(context, name);
-            results.put(name, sink);
+            results.put(name, null);
         }
         return results;
-    }
-
-    private ResultOutput<?> buildSink(
-            TaskInputOutputContext<?, ?, ?, ?> context,
-            String name) throws IOException, InterruptedException {
-        assert context != null;
-        assert name != null;
-        Configuration conf = context.getConfiguration();
-        @SuppressWarnings("rawtypes")
-        Class<? extends OutputFormat> formatClass = conf.getClass(
-                getPropertyName(K_FORMAT_PREFIX, name),
-                null,
-                OutputFormat.class);
-        Class<?> keyClass = conf.getClass(getPropertyName(K_KEY_PREFIX, name), null);
-        Class<?> valueClass = conf.getClass(getPropertyName(K_VALUE_PREFIX, name), null);
-
-        if (formatClass == null) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "OutputFormat is not declared for output \"{0}\"",
-                    name));
-        }
-        if (keyClass == null) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "Output key type is not declared for output \"{0}\"",
-                    name));
-        }
-        if (valueClass == null) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "Output value type is not declared for output \"{0}\"",
-                    name));
-        }
-
-        List<Counter> counters = getCounters(context, name);
-        if (TemporaryOutputFormat.class.isAssignableFrom(formatClass)) {
-            return buildTemporarySink(context, name, valueClass, counters);
-        } else {
-            return buildNormalSink(context, name, formatClass, keyClass, valueClass, counters);
-        }
-    }
-
-    private List<Counter> getCounters(TaskInputOutputContext<?, ?, ?, ?> context, String name) {
-        assert context != null;
-        assert name != null;
-        try {
-            List<Counter> results = new ArrayList<Counter>();
-            if (context.getTaskAttemptID().isMap()) {
-                results.add(context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS));
-            } else {
-                results.add(context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS));
-            }
-            results.add(context.getCounter(COUNTER_GROUP, name));
-            return results;
-        } catch (RuntimeException e) {
-            LOG.warn("Failed to create counters", e);
-            return Collections.emptyList();
-        }
-    }
-
-    private ResultOutput<?> buildTemporarySink(
-            TaskAttemptContext context,
-            String name,
-            Class<?> valueClass,
-            List<Counter> counters) throws IOException, InterruptedException {
-        assert context != null;
-        assert name != null;
-        assert valueClass != null;
-        assert counters != null;
-        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
-        RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
-        return new ResultOutput<Writable>(context, writer, counters);
-    }
-
-    private ResultOutput<?> buildNormalSink(
-            TaskAttemptContext context,
-            String name,
-            @SuppressWarnings("rawtypes") Class<? extends OutputFormat> formatClass,
-            Class<?> keyClass,
-            Class<?> valueClass,
-            List<Counter> counters) throws IOException, InterruptedException {
-        assert context != null;
-        assert name != null;
-        assert formatClass != null;
-        assert keyClass != null;
-        assert valueClass != null;
-        assert counters != null;
-        Job job = new Job(context.getConfiguration());
-        job.setOutputFormatClass(formatClass);
-        job.setOutputKeyClass(keyClass);
-        job.setOutputValueClass(valueClass);
-        TaskAttemptContext localContext = new TaskAttemptContext(
-                job.getConfiguration(),
-                context.getTaskAttemptID());
-        if (FileOutputFormat.class.isAssignableFrom(formatClass)) {
-            setOutputFilePrefix(localContext, name);
-        }
-        OutputFormat<?, ?> format = ReflectionUtils.newInstance(
-                formatClass,
-                localContext.getConfiguration());
-        RecordWriter<?, ?> writer = format.getRecordWriter(localContext);
-        return new ResultOutput<Writable>(localContext, writer);
     }
 
     private static final String METHOD_SET_OUTPUT_NAME = "setOutputName";
@@ -232,13 +133,111 @@ public class StageOutputDriver {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        ResultOutput<?> sink = resultSinks.get(name);
-        if (sink == null) {
+        if (resultSinks.containsKey(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Output \"{0}\" is not declared",
                     name));
         }
+        ResultOutput<?> sink = resultSinks.get(name);
+        if (sink == null) {
+            sink = buildSink(name);
+            resultSinks.put(name, sink);
+        }
         return (Result<T>) sink;
+    }
+
+    private ResultOutput<?> buildSink(String name) throws IOException, InterruptedException {
+        assert name != null;
+        Configuration conf = context.getConfiguration();
+        @SuppressWarnings("rawtypes")
+        Class<? extends OutputFormat> formatClass = conf.getClass(
+                getPropertyName(K_FORMAT_PREFIX, name),
+                null,
+                OutputFormat.class);
+        Class<?> keyClass = conf.getClass(getPropertyName(K_KEY_PREFIX, name), null);
+        Class<?> valueClass = conf.getClass(getPropertyName(K_VALUE_PREFIX, name), null);
+
+        if (formatClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "OutputFormat is not declared for output \"{0}\"",
+                    name));
+        }
+        if (keyClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "Output key type is not declared for output \"{0}\"",
+                    name));
+        }
+        if (valueClass == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "Output value type is not declared for output \"{0}\"",
+                    name));
+        }
+
+        List<Counter> counters = getCounters(name);
+        if (TemporaryOutputFormat.class.isAssignableFrom(formatClass)) {
+            return buildTemporarySink(name, valueClass, counters);
+        } else {
+            return buildNormalSink(name, formatClass, keyClass, valueClass, counters);
+        }
+    }
+
+    private List<Counter> getCounters(String name) {
+        assert name != null;
+        try {
+            List<Counter> results = new ArrayList<Counter>();
+            if (context.getTaskAttemptID().isMap()) {
+                results.add(context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS));
+            } else {
+                results.add(context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS));
+            }
+            results.add(context.getCounter(COUNTER_GROUP, name));
+            return results;
+        } catch (RuntimeException e) {
+            LOG.warn("Failed to create counters", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private ResultOutput<?> buildTemporarySink(
+            String name,
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert valueClass != null;
+        assert counters != null;
+        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
+        RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
+        return new ResultOutput<Writable>(context, writer, counters);
+    }
+
+    private ResultOutput<?> buildNormalSink(
+            String name,
+            @SuppressWarnings("rawtypes") Class<? extends OutputFormat> formatClass,
+            Class<?> keyClass,
+            Class<?> valueClass,
+            List<Counter> counters) throws IOException, InterruptedException {
+        assert context != null;
+        assert name != null;
+        assert formatClass != null;
+        assert keyClass != null;
+        assert valueClass != null;
+        assert counters != null;
+        Job job = new Job(context.getConfiguration());
+        job.setOutputFormatClass(formatClass);
+        job.setOutputKeyClass(keyClass);
+        job.setOutputValueClass(valueClass);
+        TaskAttemptContext localContext = new TaskAttemptContext(
+                job.getConfiguration(),
+                context.getTaskAttemptID());
+        if (FileOutputFormat.class.isAssignableFrom(formatClass)) {
+            setOutputFilePrefix(localContext, name);
+        }
+        OutputFormat<?, ?> format = ReflectionUtils.newInstance(
+                formatClass,
+                localContext.getConfiguration());
+        RecordWriter<?, ?> writer = format.getRecordWriter(localContext);
+        return new ResultOutput<Writable>(localContext, writer);
     }
 
     /**
@@ -247,9 +246,13 @@ public class StageOutputDriver {
      * @throws InterruptedException 出力の破棄に割り込みが発行された場合
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
-    public void close() throws IOException, InterruptedException {
-        for (ResultOutput<?> output : resultSinks.values()) {
-            output.close();
+    public synchronized void close() throws IOException, InterruptedException {
+        for (Map.Entry<String, ResultOutput<?>> entry : resultSinks.entrySet()) {
+            ResultOutput<?> output = entry.getValue();
+            if (output != null) {
+                output.close();
+                entry.setValue(null);
+            }
         }
     }
 

@@ -40,7 +40,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.stage.input.BridgeInputFormat;
@@ -219,7 +219,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         return buf.toString();
     }
 
-    private boolean validateFormat(Class<?> desc, Class<?> model, Class<? extends BinaryStreamFormat<?>> format) {
+    private boolean validateFormat(Class<?> desc, Class<?> model, Class<? extends DataFormat<?>> format) {
         assert desc != null;
         if (format == null) {
             getEnvironment().error(
@@ -227,7 +227,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                     desc.getName());
             return false;
         }
-        BinaryStreamFormat<?> formatObject;
+        DataFormat<?> formatObject;
         try {
             formatObject = format.getConstructor().newInstance();
         } catch (Exception e) {

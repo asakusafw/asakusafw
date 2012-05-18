@@ -97,6 +97,11 @@ public abstract class ExecutionLock implements Closeable {
             return name().toLowerCase();
         }
 
+        @Override
+        public String toString() {
+            return getSymbol();
+        }
+
         /**
          * Returns an {@link Scope} corresponded to the symbol.
          * @param symbol target symbol

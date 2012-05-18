@@ -32,11 +32,16 @@ import java.util.Scanner;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import com.asakusafw.compiler.directio.testing.model.Line1;
 import com.asakusafw.compiler.directio.testing.model.Line2;
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -46,6 +51,7 @@ import com.asakusafw.vocabulary.flow.Out;
 /**
  * Test for {@link DirectFileIoProcessor}.
  */
+@RunWith(Parameterized.class)
 public class DirectFileIoProcessorRunTest {
 
     /**
@@ -54,6 +60,28 @@ public class DirectFileIoProcessorRunTest {
     @Rule
     public CompilerTester tester = new CompilerTester();
 
+    private final Class<? extends DataFormat<Text>> format;
+
+    /**
+     * Returns the parameters.
+     * @return the parameters
+     */
+    @Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { LineFormat.class },
+                { LineFileFormat.class },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param format the format.
+     */
+    public DirectFileIoProcessorRunTest(Class<? extends DataFormat<Text>> format) {
+        this.format = format;
+    }
+
     /**
      * simple.
      * @throws Exception if failed
@@ -61,8 +89,8 @@ public class DirectFileIoProcessorRunTest {
     @Test
     public void simple() throws Exception {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
-        In<Line1> in = tester.input("in1", new Input("input", "*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "output.txt"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
@@ -80,8 +108,8 @@ public class DirectFileIoProcessorRunTest {
     public void tiny() throws Exception {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
         In<Line1> in = tester.input("in1",
-                new Input(Line1.class, LineFormat.class, "input", "*", DataSize.TINY));
-        Out<Line1> out = tester.output("out1", new Output("output", "output.txt"));
+                new Input(Line1.class, format, "input", "*", DataSize.TINY));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
@@ -101,8 +129,8 @@ public class DirectFileIoProcessorRunTest {
         put("input/input-2.txt", "2Hello");
         put("input/input-3.txt", "3Hello");
         put("input/other.txt", "4Hello");
-        In<Line1> in = tester.input("in1", new Input("input", "input-*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "output.txt"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
@@ -119,8 +147,8 @@ public class DirectFileIoProcessorRunTest {
     @Test
     public void order() throws Exception {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
-        In<Line1> in = tester.input("in1", new Input("input", "*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "output.txt", "-value"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt", "-value"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         assertThat(get("output/output.txt"), is(list("3Hello", "2Hello", "1Hello")));
@@ -133,8 +161,8 @@ public class DirectFileIoProcessorRunTest {
     @Test
     public void partition() throws Exception {
         put("input/input.txt", "a1", "b1", "b2", "c1", "c2", "c3");
-        In<Line1> in = tester.input("in1", new Input("input", "*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "{first}-output.txt", "+value"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "{first}-output.txt", "+value"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         assertThat(get("output/a-output.txt"), is(list("a1")));
@@ -153,8 +181,8 @@ public class DirectFileIoProcessorRunTest {
             lines.add(String.format("%03d", i));
         }
         put("input/input.txt", lines.toArray(new String[lines.size()]));
-        In<Line1> in = tester.input("in1", new Input("input", "*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "output-[1..4].txt", "+value"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output-[1..4].txt", "+value"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> o1 = get("output/output-1.txt");
@@ -188,8 +216,8 @@ public class DirectFileIoProcessorRunTest {
         put("input/input-2.txt", "2Hello");
         put("input/input-3.txt", "3Hello");
         put("input/other.txt", "4Hello");
-        In<Line1> in = tester.input("in1", new Input("${input-dir}", "${input-pattern}"));
-        Out<Line1> out = tester.output("out1", new Output("${output-dir}", "${output-pattern}"));
+        In<Line1> in = tester.input("in1", new Input(format, "${input-dir}", "${input-pattern}"));
+        Out<Line1> out = tester.output("out1", new Output(format, "${output-dir}", "${output-pattern}"));
 
         tester.hadoop.getVariables().defineVariable("input-dir", "input");
         tester.hadoop.getVariables().defineVariable("input-pattern", "input-*");
@@ -213,13 +241,13 @@ public class DirectFileIoProcessorRunTest {
         put("input/input-1.txt", "Hello1");
         put("input/input-2.txt", "Hello2");
         In<Line1> in1 = tester.input("in1",
-                new Input(Line1.class, LineFormat.class, "input", "input-1.txt", DataSize.LARGE));
+                new Input(Line1.class, format, "input", "input-1.txt", DataSize.LARGE));
         In<Line2> in2 = tester.input("in2",
-                new Input(Line2.class, LineFormat.class, "input", "input-2.txt", DataSize.TINY));
+                new Input(Line2.class, format, "input", "input-2.txt", DataSize.TINY));
         Out<Line1> out1 = tester.output("out1",
-                new Output(Line1.class, LineFormat.class, "output-1", "output.txt"));
+                new Output(Line1.class, format, "output-1", "output.txt"));
         Out<Line2> out2 = tester.output("out2",
-                new Output(Line2.class, LineFormat.class, "output-2", "output.txt"));
+                new Output(Line2.class, format, "output-2", "output.txt"));
         assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
 
         assertThat(get("output-1/output.txt"), is(list("Hello1")));
@@ -232,8 +260,8 @@ public class DirectFileIoProcessorRunTest {
      */
     @Test
     public void input_missing() throws Exception {
-        In<Line1> in = tester.input("in1", new Input("input", "*"));
-        Out<Line1> out = tester.output("out1", new Output("output", "output.txt"));
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(false));
     }
 
@@ -275,17 +303,18 @@ public class DirectFileIoProcessorRunTest {
         }
     }
 
+
     private static class Input extends DirectFileInputDescription {
 
         private final Class<?> modelType;
-        private final Class<? extends BinaryStreamFormat<?>> format;
+        private final Class<? extends DataFormat<?>> format;
         private final String basePath;
         private final String resourcePattern;
         private final DataSize dataSize;
 
         Input(
                 Class<?> modelType,
-                Class<? extends BinaryStreamFormat<?>> format,
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 DataSize dataSize) {
@@ -297,12 +326,13 @@ public class DirectFileIoProcessorRunTest {
         }
 
         Input(
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern) {
             this.modelType = Line1.class;
             this.basePath = basePath;
             this.resourcePattern = resourcePattern;
-            this.format = LineFormat.class;
+            this.format = format;
             this.dataSize = DataSize.UNKNOWN;
         }
 
@@ -312,7 +342,7 @@ public class DirectFileIoProcessorRunTest {
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return format;
         }
 
@@ -335,14 +365,14 @@ public class DirectFileIoProcessorRunTest {
     private static class Output extends DirectFileOutputDescription {
 
         private final Class<?> modelType;
-        private final Class<? extends BinaryStreamFormat<?>> format;
+        private final Class<? extends DataFormat<?>> format;
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
 
         Output(
                 Class<?> modelType,
-                Class<? extends BinaryStreamFormat<?>> format,
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 String... order) {
@@ -354,11 +384,12 @@ public class DirectFileIoProcessorRunTest {
         }
 
         Output(
+                Class<? extends DataFormat<?>> format,
                 String basePath,
                 String resourcePattern,
                 String... order) {
             this.modelType = Line1.class;
-            this.format = LineFormat.class;
+            this.format = format;
             this.basePath = basePath;
             this.resourcePattern = resourcePattern;
             this.order = order;
@@ -370,7 +401,7 @@ public class DirectFileIoProcessorRunTest {
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return format;
         }
 

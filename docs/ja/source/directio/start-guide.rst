@@ -8,7 +8,7 @@ Direct I/O スタートガイド
 Direct I/Oの詳しい利用方法については :doc:`user-guide` を参照してください。
 
 ..  caution::
-    Direct I/O はAsakusa Frameworkのバージョン ``0.2.5`` において実験的な機能として提供しています。
+    Direct I/O はAsakusa Frameworkのバージョン |version| において実験的な機能として提供しています。
     今後のバージョンで利用方法や挙動の一部が変更される可能性があります。
 
 

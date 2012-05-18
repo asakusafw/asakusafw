@@ -25,28 +25,27 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.BlockLocation;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.ResourcePattern;
-import com.asakusafw.runtime.directio.util.CountInputStream;
-import com.asakusafw.runtime.directio.util.CountOutputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
  * An implementation of {@link DirectDataSource} using {@link FileSystem}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 class HadoopDataSourceCore implements DirectDataSource {
 
@@ -79,7 +78,7 @@ class HadoopDataSourceCore implements DirectDataSource {
                     resourcePattern));
         }
         FilePattern pattern = validate(resourcePattern);
-        BinaryStreamFormat<T> sformat = validate(format);
+        FragmentableDataFormat<T> sformat = validateFragmentable(format);
         HadoopDataSourceProfile p = profile;
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
@@ -197,81 +196,23 @@ class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
-        BinaryStreamFormat<T> sformat = validate(format);
-        FileSystem fs = profile.getFileSystem();
-        FSDataInputStream stream = fs.open(new Path(fragment.getPath()));
-        boolean succeed = false;
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Process opening input [stream opened] (id={0}, path={1}, offset={2}, size={3})",
-                        profile.getId(),
-                        fragment.getPath(),
-                        fragment.getOffset(),
-                        fragment.getSize()));
-            }
-            long offset = fragment.getOffset();
-            if (offset != 0) {
-                stream.seek(offset);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format(
-                            "Process opening input [sought to offset] (id={0}, path={1}, offset={2}, size={3})",
-                            profile.getId(),
-                            fragment.getPath(),
-                            fragment.getOffset(),
-                            fragment.getSize()));
-                }
-            }
-            CountInputStream cstream;
-            if (LOG.isDebugEnabled()) {
-                final HadoopDataSourceProfile p = profile;
-                final DirectInputFragment f = fragment;
-                cstream = new CountInputStream(stream, counter) {
-                    @Override
-                    public void close() throws IOException {
-                        LOG.debug(MessageFormat.format(
-                                "Start closing input (id={0}, path={1}, offset={2}, size={3})",
-                                p.getId(),
-                                f.getPath(),
-                                f.getOffset(),
-                                f.getSize()));
-                        super.close();
-                        LOG.debug(MessageFormat.format(
-                                "Finish closing input (id={0}, path={1}, offset={2}, size={3})",
-                                p.getId(),
-                                f.getPath(),
-                                f.getOffset(),
-                                f.getSize()));
-                    }
-                };
-            } else {
-                cstream = new CountInputStream(stream, counter);
-            }
-            ModelInput<T> input =
-                sformat.createInput(dataType, fragment.getPath(), cstream, offset, fragment.getSize());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Finish opening input (id={0}, path={1}, offset={2}, size={3})",
-                        profile.getId(),
-                        fragment.getPath(),
-                        fragment.getOffset(),
-                        fragment.getSize()));
-            }
-            succeed = true;
-            return input;
-        } finally {
-            if (succeed == false) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOG.warn(MessageFormat.format(
-                            "Failed to close input (path={1}, offset={2}, size={3})",
-                            fragment.getPath(),
-                            fragment.getOffset(),
-                            fragment.getSize()), e);
-                }
-            }
+        HadoopFileFormat<T> fileFormat = convertFormat(format);
+        ModelInput<T> input = fileFormat.createInput(
+                dataType,
+                profile.getFileSystem(),
+                new Path(fragment.getPath()),
+                fragment.getOffset(),
+                fragment.getSize(),
+                counter);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finish opening input (id={0}, path={1}, offset={2}, size={3})",
+                    profile.getId(),
+                    fragment.getPath(),
+                    fragment.getOffset(),
+                    fragment.getSize()));
         }
+        return input;
     }
 
     @Override
@@ -307,54 +248,18 @@ class HadoopDataSourceCore implements DirectDataSource {
             fs = profile.getFileSystem();
             attempt = getAttemptOutput(context);
         }
-        BinaryStreamFormat<T> sformat = validate(format);
         Path file = append(append(attempt, basePath), resourcePath);
-        FSDataOutputStream stream = fs.create(file);
-        boolean succeed = false;
-        try {
-            CountOutputStream cstream;
-            if (LOG.isDebugEnabled()) {
-                final HadoopDataSourceProfile p = profile;
-                final Path f = file;
-                cstream = new CountOutputStream(stream, counter) {
-                    @Override
-                    public void close() throws IOException {
-                        LOG.debug(MessageFormat.format(
-                                "Start closing output (id={0}, file={1})",
-                                p.getId(),
-                                f));
-                        super.close();
-                        LOG.debug(MessageFormat.format(
-                                "Finish closing output (id={0}, file={1})",
-                                p.getId(),
-                                f));
-                    }
-                };
-            } else {
-                cstream = new CountOutputStream(stream, counter);
-            }
-            ModelOutput<T> output = sformat.createOutput(dataType, file.toString(), cstream);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Finish opening output (id={0}, path={1}, resource={2}, file={3})",
-                        profile.getId(),
-                        basePath,
-                        resourcePath,
-                        file));
-            }
-            succeed = true;
-            return output;
-        } finally {
-            if (succeed == false) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOG.warn(MessageFormat.format(
-                            "Failed to close output (path={0})",
-                            file), e);
-                }
-            }
+        HadoopFileFormat<T> fileFormat = convertFormat(format);
+        ModelOutput<T> output = fileFormat.createOutput(dataType, fs, file, counter);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finish opening output (id={0}, path={1}, resource={2}, file={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePath,
+                    file));
         }
+        return output;
     }
 
     boolean isLocalAttemptOutput() {
@@ -374,7 +279,28 @@ class HadoopDataSourceCore implements DirectDataSource {
         return (FilePattern) pattern;
     }
 
-    private <T> BinaryStreamFormat<T> validate(DataFormat<T> format) throws IOException {
+    private <T> FragmentableDataFormat<T> validateFragmentable(DataFormat<T> format) throws IOException {
+        assert format != null;
+        if ((format instanceof FragmentableDataFormat<?>) == false) {
+            throw new IOException(MessageFormat.format(
+                    "{2} must be a subtype of {1} (path={0})",
+                    profile.getContextPath(),
+                    FragmentableDataFormat.class.getName(),
+                    format.getClass().getName()));
+        }
+        return (FragmentableDataFormat<T>) format;
+    }
+
+    private <T> HadoopFileFormat<T> convertFormat(DataFormat<T> format) throws IOException {
+        assert format != null;
+        if (format instanceof HadoopFileFormat<?>) {
+            return (HadoopFileFormat<T>) format;
+        } else {
+            return new HadoopFileFormatAdapter<T>(validateStream(format), profile.getFileSystem().getConf());
+        }
+    }
+
+    private <T> BinaryStreamFormat<T> validateStream(DataFormat<T> format) throws IOException {
         assert format != null;
         if ((format instanceof BinaryStreamFormat<?>) == false) {
             throw new IOException(MessageFormat.format(

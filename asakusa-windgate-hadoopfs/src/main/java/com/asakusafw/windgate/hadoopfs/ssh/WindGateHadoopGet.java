@@ -77,9 +77,11 @@ public class WindGateHadoopGet {
      */
     public static void main(String[] args) {
         WGLOG.info("I20000");
+        long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
         int result = new WindGateHadoopGet(conf).execute(args);
-        WGLOG.info("I20999", result);
+        long end = System.currentTimeMillis();
+        WGLOG.info("I20999", result, end - start);
         System.exit(result);
     }
 

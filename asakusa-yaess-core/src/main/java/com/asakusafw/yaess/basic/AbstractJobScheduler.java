@@ -37,6 +37,7 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.PhaseMonitor.JobStatus;
 
 /**
@@ -44,6 +45,8 @@ import com.asakusafw.yaess.core.PhaseMonitor.JobStatus;
  * @since 0.2.3
  */
 public abstract class AbstractJobScheduler extends JobScheduler {
+
+    static final YaessLogger YSLOG = new YaessBasicLogger(AbstractJobScheduler.class);
 
     static final Logger LOG = LoggerFactory.getLogger(AbstractJobScheduler.class);
 
@@ -249,14 +252,13 @@ public abstract class AbstractJobScheduler extends JobScheduler {
         private void handleException(Job job, IOException exception) throws IOException {
             assert job != null;
             assert exception != null;
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Error occurred execution job: {4} (batch={0}, flow={1}, phase={2}, execution={3})",
+            YSLOG.error(exception, "E21001",
                     context.getBatchId(),
                     context.getFlowId(),
-                    context.getPhase(),
                     context.getExecutionId(),
-                    job.getId()), exception);
+                    context.getPhase(),
+                    job.getJobLabel(),
+                    job.getServiceLabel());
             if (handler.handle(context, exception) == false) {
                 cancelExecution();
                 throw exception;

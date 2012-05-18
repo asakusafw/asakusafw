@@ -27,12 +27,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
+import com.asakusafw.runtime.directio.FragmentableDataFormat;
 
 /**
  * A structured profile for {@link HadoopDataSource}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 public class HadoopDataSourceProfile {
 
@@ -64,12 +66,12 @@ public class HadoopDataSourceProfile {
     public static final String KEY_OUTPUT_STREAMING = "output.streaming";
 
     /**
-     * The property key name for {@link #getMinimumFragmentSize(BinaryStreamFormat)}.
+     * The property key name for {@link #getMinimumFragmentSize(FragmentableDataFormat)}.
      */
     public static final String KEY_MIN_FRAGMENT = "fragment.min";
 
     /**
-     * The property key name for {@link #getPreferredFragmentSize(BinaryStreamFormat)}.
+     * The property key name for {@link #getPreferredFragmentSize(FragmentableDataFormat)}.
      */
     public static final String KEY_PREF_FRAGMENT = "fragment.pref";
 
@@ -82,6 +84,12 @@ public class HadoopDataSourceProfile {
      * The property key name for {@link #isCombineBlocks()}.
      */
     public static final String KEY_COMBINE_BLOCKS = "block.combine";
+
+    /**
+     * The property key name for {@link #getKeepAliveInterval()}.
+     * @since 0.2.6
+     */
+    public static final String KEY_KEEPALIVE_INTERVAL = "keepalive.interval";
 
     private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp";
 
@@ -96,6 +104,8 @@ public class HadoopDataSourceProfile {
     private static final boolean DEFAULT_SPLIT_BLOCKS = true;
 
     private static final boolean DEFAULT_COMBINE_BLOCKS = true;
+
+    private static final long DEFAULT_KEEPALIVE_INTERVAL = 0;
 
     private final String id;
 
@@ -116,6 +126,8 @@ public class HadoopDataSourceProfile {
     private boolean splitBlocks = DEFAULT_SPLIT_BLOCKS;
 
     private boolean combineBlocks = DEFAULT_COMBINE_BLOCKS;
+
+    private long keepAliveInterval = DEFAULT_KEEPALIVE_INTERVAL;
 
     private final FileSystem fileSystem;
 
@@ -201,7 +213,7 @@ public class HadoopDataSourceProfile {
      * @throws InterruptedException if interrupted
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public long getMinimumFragmentSize(BinaryStreamFormat<?> format) throws IOException, InterruptedException {
+    public long getMinimumFragmentSize(FragmentableDataFormat<?> format) throws IOException, InterruptedException {
         if (format == null) {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
@@ -232,7 +244,7 @@ public class HadoopDataSourceProfile {
      * @throws InterruptedException if interrupted
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public long getPreferredFragmentSize(BinaryStreamFormat<?> format) throws IOException, InterruptedException {
+    public long getPreferredFragmentSize(FragmentableDataFormat<?> format) throws IOException, InterruptedException {
         if (format == null) {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
@@ -319,6 +331,24 @@ public class HadoopDataSourceProfile {
         this.outputStreaming = required;
     }
 
+    /**
+     * Returns keep-alive interval.
+     * @return keep-alive interval in ms, or {@code 0} if keep-alive is disabled
+     * @since 0.2.6
+     */
+    public long getKeepAliveInterval() {
+        return keepAliveInterval;
+    }
+
+    /**
+     * Sets keep-alive interval.
+     * @param interval keep-alive interval in ms, or {@code 0} to disable keep-alive
+     * @since 0.2.6
+     */
+    public void setKeepAliveInterval(long interval) {
+        this.keepAliveInterval = interval;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -342,6 +372,8 @@ public class HadoopDataSourceProfile {
         builder.append(splitBlocks);
         builder.append(", combineBlocks=");
         builder.append(combineBlocks);
+        builder.append(", keepAliveInterval=");
+        builder.append(keepAliveInterval);
         builder.append(", fileSystem=");
         builder.append(fileSystem);
         builder.append(", localFileSystem=");
@@ -401,6 +433,7 @@ public class HadoopDataSourceProfile {
         result.setOutputStreaming(takeBoolean(profile, attributes, KEY_OUTPUT_STREAMING, DEFAULT_OUTPUT_STREAMING));
         result.setSplitBlocks(takeBoolean(profile, attributes, KEY_SPLIT_BLOCKS, DEFAULT_SPLIT_BLOCKS));
         result.setCombineBlocks(takeBoolean(profile, attributes, KEY_COMBINE_BLOCKS, DEFAULT_COMBINE_BLOCKS));
+        result.setKeepAliveInterval(takeKeepAliveInterval(profile, attributes, conf));
 
         if (attributes.isEmpty() == false) {
             throw new IOException(MessageFormat.format(
@@ -527,6 +560,33 @@ public class HadoopDataSourceProfile {
             throw new IOException(MessageFormat.format(
                     "\"{0}\" must be boolean: {1}",
                     fqn(profile, key),
+                    string));
+        }
+    }
+
+    private static long takeKeepAliveInterval(
+            DirectDataSourceProfile profile,
+            Map<String, String> attributes,
+            Configuration conf) throws IOException {
+        assert profile != null;
+        assert attributes != null;
+        assert conf != null;
+        String string = attributes.remove(KEY_KEEPALIVE_INTERVAL);
+        if (string == null) {
+            return DEFAULT_KEEPALIVE_INTERVAL;
+        }
+        try {
+            long value = Long.parseLong(string);
+            if (value < 0) {
+                throw new IOException(MessageFormat.format(
+                        "Keep-alive interval must not be negative: {0}",
+                        fqn(profile, KEY_KEEPALIVE_INTERVAL)));
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            throw new IOException(MessageFormat.format(
+                    "Keep-alive interval must be integer: {0}={1}",
+                    fqn(profile, KEY_KEEPALIVE_INTERVAL),
                     string));
         }
     }

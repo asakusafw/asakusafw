@@ -95,11 +95,13 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
         try {
             this.resultSet = prepareResultSet();
         } catch (SQLException e) {
-            WGLOG.error(e, "E03001",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName(),
-                    script.getColumnNames());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E03001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to prepare JDBC source (resource={0}, table={1}, columns={2})",
                     profile.getResourceName(),
@@ -140,11 +142,13 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    WGLOG.warn(e, "W03001",
-                            profile.getResourceName(),
-                            script.getName(),
-                            script.getTableName(),
-                            script.getColumnNames());
+                    for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                        WGLOG.warn(ex, "W03001",
+                                profile.getResourceName(),
+                                script.getName(),
+                                script.getTableName(),
+                                script.getColumnNames());
+                    }
                 }
             }
         }
@@ -174,11 +178,13 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
             return sawNext;
         } catch (SQLException e) {
             sawNext = false;
-            WGLOG.error(e, "E03001",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName(),
-                    script.getColumnNames());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E03001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to fetch next object from JDBC source (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -206,30 +212,36 @@ public class JdbcSourceDriver<T> implements SourceDriver<T> {
                 resultSet = null;
                 support = null;
             } catch (SQLException e) {
-                WGLOG.warn(e, "W03001",
-                        profile.getResourceName(),
-                        script.getName(),
-                        script.getTableName(),
-                        script.getColumnNames());
+                for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                    WGLOG.warn(ex, "W03001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            script.getTableName(),
+                            script.getColumnNames());
+                }
             }
             try {
                 if (statement != null) {
                     statement.close();
                 }
             } catch (SQLException e) {
-                WGLOG.warn(e, "W03001",
-                        profile.getResourceName(),
-                        script.getName(),
-                        script.getTableName(),
-                        script.getColumnNames());
+                for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                    WGLOG.warn(ex, "W03001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            script.getTableName(),
+                            script.getColumnNames());
+                }
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            WGLOG.warn(e, "W02001",
-                    profile.getResourceName(),
-                    script.getName());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.warn(ex, "W02001",
+                        profile.getResourceName(),
+                        script.getName());
+            }
         }
     }
 }

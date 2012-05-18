@@ -44,7 +44,7 @@ public interface ExecutionScriptHandler<T extends ExecutionScript> extends Servi
      * This value can includes local environment variables in form of <code>${VARIABLE-NAME}</code>.
      * @since 0.2.6
      */
-    public static final String KEY_PROP_PREFIX = "prop.";
+    String KEY_PROP_PREFIX = "prop.";
 
     /**
      * The configuration key name of {@link #getResourceId(ExecutionContext, ExecutionScript) resource ID}.

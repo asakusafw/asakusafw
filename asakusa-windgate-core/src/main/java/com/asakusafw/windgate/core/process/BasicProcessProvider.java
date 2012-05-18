@@ -50,82 +50,92 @@ public class BasicProcessProvider extends ProcessProvider {
                 script.getName(),
                 script.getSourceScript().getResourceName(),
                 script.getDrainScript().getResourceName());
-
+        long start = System.currentTimeMillis();
         long count = 0;
-        IOException exception = null;
-        SourceDriver<T> source = null;
-        DrainDriver<T> drain = null;
         try {
-            LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
-                    script.getSourceScript().getResourceName(),
-                    script.getName());
-            source = drivers.createSource(script);
-            LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
-                    script.getDrainScript().getResourceName(),
-                    script.getName());
-            drain = drivers.createDrain(script);
+            IOException exception = null;
+            SourceDriver<T> source = null;
+            DrainDriver<T> drain = null;
+            try {
+                LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
+                        script.getSourceScript().getResourceName(),
+                        script.getName());
+                source = drivers.createSource(script);
+                LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
+                        script.getDrainScript().getResourceName(),
+                        script.getName());
+                drain = drivers.createDrain(script);
 
-            LOG.debug("Preparing source driver for resource \"{}\" in process \"{}\"",
-                    script.getSourceScript().getResourceName(),
-                    script.getName());
-            source.prepare();
-            LOG.debug("Preparing drain driver for resource \"{}\" in process \"{}\"",
-                    script.getSourceScript().getResourceName(),
-                    script.getName());
-            drain.prepare();
+                LOG.debug("Preparing source driver for resource \"{}\" in process \"{}\"",
+                        script.getSourceScript().getResourceName(),
+                        script.getName());
+                source.prepare();
+                LOG.debug("Preparing drain driver for resource \"{}\" in process \"{}\"",
+                        script.getSourceScript().getResourceName(),
+                        script.getName());
+                drain.prepare();
 
-            LOG.debug("Starting transfer \"{}\" -> \"{}\" in process \"{}\"", new Object[] {
-                    script.getSourceScript().getResourceName(),
-                    script.getDrainScript().getResourceName(),
-                    script.getName(),
-            });
+                LOG.debug("Starting transfer \"{}\" -> \"{}\" in process \"{}\"", new Object[] {
+                        script.getSourceScript().getResourceName(),
+                        script.getDrainScript().getResourceName(),
+                        script.getName(),
+                });
 
-            while (source.next()) {
-                T obj = source.get();
-                drain.put(obj);
-                count++;
+                while (source.next()) {
+                    T obj = source.get();
+                    drain.put(obj);
+                    count++;
+                }
+            } catch (IOException e) {
+                exception = e;
+                WGLOG.error(e, "E05001",
+                        script.getName(),
+                        script.getSourceScript().getResourceName(),
+                        script.getDrainScript().getResourceName());
+            } finally {
+                try {
+                    if (source != null) {
+                        LOG.debug("Closing source driver in process \"{}\"",
+                                script.getName());
+                        source.close();
+                    }
+                } catch (IOException e) {
+                    exception = exception == null ? e : exception;
+                    WGLOG.error(e, "E05002",
+                            script.getName(),
+                            script.getSourceScript().getResourceName(),
+                            script.getDrainScript().getResourceName());
+                }
+                try {
+                    if (drain != null) {
+                        LOG.debug("Closing drain driver in process \"{}\"",
+                                script.getName());
+                        drain.close();
+                    }
+                } catch (IOException e) {
+                    exception = exception == null ? e : exception;
+                    WGLOG.error(e, "E05003",
+                            script.getName(),
+                            script.getSourceScript().getResourceName(),
+                            script.getDrainScript().getResourceName());
+                }
             }
-        } catch (IOException e) {
-            exception = e;
-            WGLOG.error(e, "E05001",
+            if (exception != null) {
+                throw exception;
+            }
+            WGLOG.info("I05001",
                     script.getName(),
                     script.getSourceScript().getResourceName(),
-                    script.getDrainScript().getResourceName());
+                    script.getDrainScript().getResourceName(),
+                    count);
         } finally {
-            try {
-                if (source != null) {
-                    LOG.debug("Closing source driver in process \"{}\"",
-                            script.getName());
-                    source.close();
-                }
-            } catch (IOException e) {
-                exception = exception == null ? e : exception;
-                WGLOG.error(e, "E05002",
-                        script.getName(),
-                        script.getSourceScript().getResourceName(),
-                        script.getDrainScript().getResourceName());
-            }
-            try {
-                if (drain != null) {
-                    LOG.debug("Closing drain driver in process \"{}\"",
-                            script.getName());
-                    drain.close();
-                }
-            } catch (IOException e) {
-                exception = exception == null ? e : exception;
-                WGLOG.error(e, "E05003",
-                        script.getName(),
-                        script.getSourceScript().getResourceName(),
-                        script.getDrainScript().getResourceName());
-            }
+            long end = System.currentTimeMillis();
+            WGLOG.info("I05999",
+                    script.getName(),
+                    script.getSourceScript().getResourceName(),
+                    script.getDrainScript().getResourceName(),
+                    count,
+                    end - start);
         }
-        if (exception != null) {
-            throw exception;
-        }
-        WGLOG.info("I05999",
-                script.getName(),
-                script.getSourceScript().getResourceName(),
-                script.getDrainScript().getResourceName(),
-                count);
     }
 }

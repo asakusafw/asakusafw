@@ -340,7 +340,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         if (script != null) {
             variables = buildEnvironmentVariables(context, script);
         } else {
-            variables = getEnvironmentVariables(context, script);
+            variables = getEnvironmentVariables(context, null);
         }
         String home = variables.get(ExecutionScript.ENV_ASAKUSA_HOME);
         if (home == null) {

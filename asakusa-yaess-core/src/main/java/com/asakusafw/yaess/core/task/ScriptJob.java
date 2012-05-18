@@ -16,7 +16,6 @@
 package com.asakusafw.yaess.core.task;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Set;
 
 import com.asakusafw.yaess.core.ExecutionContext;
@@ -61,11 +60,13 @@ public class ScriptJob<T extends ExecutionScript> extends Job {
     }
 
     @Override
-    public String getLabel() {
-        return MessageFormat.format(
-                "{0}({1})",
-                script.getId(),
-                handler.getHandlerId());
+    public String getServiceLabel() {
+        return handler.getHandlerId();
+    }
+
+    @Override
+    public String getJobLabel() {
+        return script.getId();
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionScript;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.util.PropertiesUtil;
 
 /**
@@ -45,13 +46,21 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
 public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript>
         implements ExecutionScriptHandler<T> {
 
+    static final YaessLogger YSLOG = new YaessMultiDispatchLogger(ExecutionScriptHandlerDispatcher.class);
+
     static final Logger LOG = LoggerFactory.getLogger(ExecutionScriptHandlerDispatcher.class);
 
     private static final String LABEL_UNDEFINED = "(undefined)";
 
-    static final String KEY_CONF = "conf";
+    static final String PREFIX_CONF = "conf";
 
-    static final String KEY_DEFAULT = "default";
+    static final String KEY_DIRECTORY = PREFIX_CONF + ".directory";
+
+    static final String KEY_SETUP = PREFIX_CONF + ".setup";
+
+    static final String KEY_CLEANUP = PREFIX_CONF + ".cleanup";
+
+    static final String PREFIX_DEFAULT = "default";
 
     static final String SUFFIX_CONF = ".properties";
 
@@ -64,6 +73,10 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
     private volatile Reference<Map<String, Properties>> confCache = new SoftReference<Map<String, Properties>>(null);
 
     private volatile Map<String, ExecutionScriptHandler<T>> delegations;
+
+    private volatile String forceSetUp;
+
+    private volatile String forceCleanUp;
 
     /**
      * Creates a new instance.
@@ -82,16 +95,32 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         this.prefix = profile.getPrefix();
         this.confDirectory = getConfDirectory(profile);
         this.delegations = getDelegations(profile);
+        this.forceSetUp = profile.getConfiguration().get(KEY_SETUP);
+        this.forceCleanUp = profile.getConfiguration().get(KEY_CLEANUP);
+        if (forceSetUp != null && delegations.containsKey(forceSetUp) == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to detect setUp target: \"{2}\" in {0}.{1}",
+                    profile.getPrefix(),
+                    KEY_SETUP,
+                    forceSetUp));
+        }
+        if (forceCleanUp != null && delegations.containsKey(forceCleanUp) == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to detect cleanUp target: \"{2}\" in {0}.{1}",
+                    profile.getPrefix(),
+                    KEY_CLEANUP,
+                    forceCleanUp));
+        }
     }
 
     private File getConfDirectory(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        String value = profile.getConfiguration().get(KEY_CONF);
+        String value = profile.getConfiguration().get(KEY_DIRECTORY);
         if (value == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to detect configuration directory: {0}.{1}",
                     profile.getPrefix(),
-                    KEY_CONF));
+                    KEY_DIRECTORY));
         }
         try {
             value = profile.getContext().getContextParameters().replace(value, true);
@@ -99,17 +128,15 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             throw new IOException(MessageFormat.format(
                     "Failed to resolve configuration directory: {0}.{1} = {2}",
                     profile.getPrefix(),
-                    KEY_CONF,
+                    KEY_DIRECTORY,
                     value), e);
         }
         File dir = new File(value);
         if (dir.exists() == false) {
-            // TODO logging
-            LOG.info(MessageFormat.format(
-                    "Configuration directory does not exist: {0}.{1} = {2}",
+            YSLOG.info("I00001",
                     profile.getPrefix(),
-                    KEY_CONF,
-                    value));
+                    KEY_DIRECTORY,
+                    value);
         }
         return dir;
     }
@@ -119,12 +146,12 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         assert profile != null;
         Map<String, String> conf = profile.getConfiguration();
         Set<String> keys = PropertiesUtil.getChildKeys(conf, "", ".");
-        keys.remove(KEY_CONF);
-        if (keys.contains(KEY_DEFAULT) == false) {
+        keys.remove(PREFIX_CONF);
+        if (keys.contains(PREFIX_DEFAULT) == false) {
             throw new IOException(MessageFormat.format(
                     "Default profile for multidispatch plugin is not defined: {0}.{1}",
                     profile.getPrefix(),
-                    KEY_DEFAULT));
+                    PREFIX_DEFAULT));
         }
 
         Properties properties = new Properties();
@@ -160,7 +187,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         return prefix;
     }
 
-    private final ExecutionScriptHandler<T> resolve(
+    private ExecutionScriptHandler<T> resolve(
             ExecutionContext context,
             ExecutionScript script) throws IOException {
         assert context != null;
@@ -172,14 +199,15 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
                 return target;
             }
             throw new IOException(MessageFormat.format(
-                    "Invalid dispatch target for multidispatch plugin: {4} (batchId={0}, flowId={1}, phase={2}, stageId={3})",
+                    "Invalid dispatch target for multidispatch plugin: "
+                    + "{4} (batchId={0}, flowId={1}, phase={2}, stageId={3})",
                     context.getBatchId(),
                     context.getFlowId(),
                     context.getPhase(),
                     script == null ? LABEL_UNDEFINED : script.getId(),
                     key));
         }
-        ExecutionScriptHandler<T> defaultTarget = delegations.get(KEY_DEFAULT);
+        ExecutionScriptHandler<T> defaultTarget = delegations.get(PREFIX_DEFAULT);
         assert defaultTarget != null;
         return defaultTarget;
     }
@@ -264,11 +292,9 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
                 in.close();
             }
         } catch (IOException e) {
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Failed to load multidispatch configuration file: batch={0}, file={1}",
+            YSLOG.error(e, "E01001",
                     context.getBatchId(),
-                    file.getAbsolutePath()), e);
+                    file.getAbsolutePath());
             throw e;
         }
     }
@@ -299,17 +325,19 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     @Override
     public void setUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        ExecutionScriptHandler<T> target = resolve(context, null);
-        // TODO logging
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
-                    "Starting setUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                    target.getHandlerId(),
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId()));
+        ExecutionScriptHandler<T> target;
+        if (forceSetUp != null) {
+            target = delegations.get(forceSetUp);
+        } else {
+            target = resolve(context, null);
         }
+        assert target != null;
+        YSLOG.info("I01001",
+                target.getHandlerId(),
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getPhase(),
+                context.getExecutionId());
         target.setUp(monitor, context);
     }
 
@@ -319,33 +347,32 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             ExecutionContext context,
             T script) throws InterruptedException, IOException {
         ExecutionScriptHandler<T> target = resolve(context, script);
-        // TODO logging
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
-                    "Starting stage using {0} (batchId={1}, flowId={2}, phase={3}, stageId={5}, executionId={4})",
-                    target.getHandlerId(),
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId(),
-                    script.getId()));
-        }
+        assert target != null;
+        YSLOG.info("I01002",
+                target.getHandlerId(),
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getPhase(),
+                context.getExecutionId(),
+                script.getId());
         target.execute(monitor, context, script);
     }
 
     @Override
     public void cleanUp(ExecutionMonitor monitor, ExecutionContext context) throws InterruptedException, IOException {
-        ExecutionScriptHandler<T> target = resolve(context, null);
-        // TODO logging
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
-                    "Starting cleanUp using {0} (batchId={1}, flowId={2}, phase={3}, executionId={4})",
-                    target.getHandlerId(),
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId()));
+        ExecutionScriptHandler<T> target;
+        if (forceCleanUp != null) {
+            target = delegations.get(forceCleanUp);
+        } else {
+            target = resolve(context, null);
         }
+        assert target != null;
+        YSLOG.info("I01003",
+                target.getHandlerId(),
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getPhase(),
+                context.getExecutionId());
         target.cleanUp(monitor, context);
     }
 

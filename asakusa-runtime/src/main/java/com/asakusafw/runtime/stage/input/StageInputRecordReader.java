@@ -38,7 +38,7 @@ public class StageInputRecordReader extends RecordReader {
     private static final RecordReader<?, ?> VOID = new RecordReader<Object, Object>() {
 
         @Override
-        public void initialize(InputSplit split, TaskAttemptContext context) {
+        public void initialize(InputSplit split, TaskAttemptContext ctxt) {
             return;
         }
 

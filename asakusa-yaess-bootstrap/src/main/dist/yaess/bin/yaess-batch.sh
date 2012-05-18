@@ -45,7 +45,7 @@ Examples:
     yaess-batch.sh example.params -A date=2011-03-31 -A code=123
     
     # run a batch "example.skip" except joblows "first" and "second"
-    yaess-batch.sh example.skip -D skipFlow=first,second
+    yaess-batch.sh example.skip -D skipFlows=first,second
 
 Environment Variables:
     \$ASAKUSA_HOME

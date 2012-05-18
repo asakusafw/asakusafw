@@ -19,6 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -245,7 +249,7 @@ public class JobFlowParamLoader {
                 } else if (IMP_BEAN_NAME.equals(keyMeans)) {
                     // JavaBeansクラス名
                     try {
-                        bean.setImportTargetType(Class.forName(value));
+                        bean.setImportTargetType(loadClass(value));
                     } catch (ClassNotFoundException e) {
                         LOG.error(e, "TG-COMMON-00002",
                                 "Import対象テーブルに対応するJavaBeanのクラスが存在しない",
@@ -411,7 +415,7 @@ public class JobFlowParamLoader {
                 } else if (EXP_BEAN_NAME.equals(keyMeans)) {
                     // JavaBeansクラス名
                     try {
-                        bean.setExportTargetType(Class.forName(value));
+                        bean.setExportTargetType(loadClass(value));
                     } catch (ClassNotFoundException e) {
                         LOG.error(e, "TG-COMMON-00003",
                                 "Export対象テーブルに対応するJavaBeanのクラスが存在しない",
@@ -435,6 +439,16 @@ public class JobFlowParamLoader {
 
         return true;
     }
+
+    private Class<?> loadClass(String className) throws ClassNotFoundException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            return Class.forName(className, false, classLoader);
+        } else {
+            return Class.forName(className);
+        }
+    }
+
     /**
      * リカバリ処理で使用するパラメータを読み取る。
      * 当メソッドを呼出した後は以下のメソッドを使用できるようになる。
@@ -450,7 +464,6 @@ public class JobFlowParamLoader {
     public boolean loadRecoveryParam(String targetName, String batchId, String jobflowId) {
         // ジョブフロー設定のファイル名を作成
         File propFile = createJobFlowConfFile(jobflowId, batchId);
-
         // プロパティを取得
         Properties importProp = null;
         Properties exportProp = null;
@@ -464,17 +477,41 @@ public class JobFlowParamLoader {
             return false;
         }
 
-        // インポート対象テーブルの設定を作成する
-        if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
-            return false;
+        ClassLoader jobflowLoader;
+        try {
+            final URL jarLocation = propFile.getAbsoluteFile().getCanonicalFile().toURI().toURL();
+            jobflowLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                @Override
+                public ClassLoader run() {
+                    URLClassLoader loader = new URLClassLoader(
+                            new URL[] { jarLocation },
+                            getClass().getClassLoader());
+                    return loader;
+                }
+            });
+        } catch (IOException e) {
+            LOG.debugMessage("Failed to load the jobflow library: {0}",
+                    propFile);
+            jobflowLoader = getClass().getClassLoader();
         }
 
-        // エクスポート対象テーブルの設定を作成する
-        if (!createExportTargetTableBean(exportProp, targetName, jobflowId, propFile.getPath())) {
-            return false;
-        }
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(jobflowLoader);
+            // インポート対象テーブルの設定を作成する
+            if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
+                return false;
+            }
 
-        return checkRecoveryParam(exportTargetTables, targetName, jobflowId, propFile.getPath());
+            // エクスポート対象テーブルの設定を作成する
+            if (!createExportTargetTableBean(exportProp, targetName, jobflowId, propFile.getPath())) {
+                return false;
+            }
+
+            return checkRecoveryParam(exportTargetTables, targetName, jobflowId, propFile.getPath());
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
     /**
      * リカバリ処理で使用する設定のチェックを行う。

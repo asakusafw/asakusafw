@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ProfileContext;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.YaessProfile;
 import com.asakusafw.yaess.core.task.ExecutionTask;
 
@@ -43,6 +44,8 @@ import com.asakusafw.yaess.core.task.ExecutionTask;
  * @since 0.2.3
  */
 public final class Yaess {
+
+    static final YaessLogger YSLOG = new YaessBootstrapLogger(Yaess.class);
 
     static final Logger LOG = LoggerFactory.getLogger(Yaess.class);
 
@@ -120,7 +123,11 @@ public final class Yaess {
      */
     public static void main(String... args) {
         CommandLineUtil.prepareLogContext();
+        YSLOG.info("I00000");
+        long start = System.currentTimeMillis();
         int status = execute(args);
+        long end = System.currentTimeMillis();
+        YSLOG.info("I00999", status, end - start);
         System.exit(status);
     }
 
@@ -142,22 +149,17 @@ public final class Yaess {
             for (ExecutionPhase phase : ExecutionPhase.values()) {
                 System.out.printf("    %s%n", phase.getSymbol());
             }
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Failed to analyze program arguments ({0})",
-                    Arrays.toString(args)), e);
+            YSLOG.error(e, "E00001", Arrays.toString(args));
             return 1;
         }
         ExecutionTask task;
         try {
             task = ExecutionTask.load(conf.profile, conf.script, conf.arguments, conf.definitions);
         } catch (Exception e) {
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Failed to load service components ({0})",
-                    conf), e);
+            YSLOG.error(e, "E00002", conf);
             return 1;
         }
+        YSLOG.info("I00001", conf);
         try {
             switch (conf.mode) {
             case BATCH:
@@ -174,10 +176,7 @@ public final class Yaess {
             }
             return 0;
         } catch (Exception e) {
-            // TODO logging
-            LOG.error(MessageFormat.format(
-                    "Failed to execute a jobnet ({0})",
-                    conf), e);
+            YSLOG.error(e, "E00003", conf);
             return 1;
         }
     }
@@ -221,6 +220,7 @@ public final class Yaess {
             Properties properties = CommandLineUtil.loadProperties(new File(profile));
             result.profile = YaessProfile.load(properties, context);
         } catch (Exception e) {
+            YSLOG.error(e, "E01001", profile);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
                     profile), e);
@@ -231,6 +231,7 @@ public final class Yaess {
             Properties properties = CommandLineUtil.loadProperties(new File(script));
             result.script = properties;
         } catch (Exception e) {
+            YSLOG.error(e, "E01002", script);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid script \"{0}\".",
                     script), e);

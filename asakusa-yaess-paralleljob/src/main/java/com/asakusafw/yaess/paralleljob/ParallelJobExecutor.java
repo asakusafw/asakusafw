@@ -36,6 +36,7 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.util.PropertiesUtil;
 
 /**
@@ -43,6 +44,8 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
  * @since 0.2.3
  */
 public class ParallelJobExecutor implements JobExecutor {
+
+    static final YaessLogger YSLOG = new YaessParallelJobLogger(ParallelJobExecutor.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ParallelJobExecutor.class);
 
@@ -184,8 +187,25 @@ public class ParallelJobExecutor implements JobExecutor {
         String resourceId = job.getResourceId(context);
         ExecutorService executor = resourceExecutors.get(resourceId);
         if (executor == null) {
+            YSLOG.warn("W01001",
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getExecutionId(),
+                    context.getPhase(),
+                    job.getJobLabel(),
+                    job.getServiceLabel(),
+                    resourceId);
             LOG.debug("Resource {} is not defined: {}", resourceId, job.getId());
             executor = defaultExecutor;
+        } else {
+            YSLOG.info("I01001",
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getExecutionId(),
+                    context.getPhase(),
+                    job.getJobLabel(),
+                    job.getServiceLabel(),
+                    resourceId);
         }
         Executing executing = new Executing(monitor, context, job, doneQueue);
         executor.execute(executing);

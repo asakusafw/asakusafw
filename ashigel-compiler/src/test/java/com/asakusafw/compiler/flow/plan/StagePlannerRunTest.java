@@ -31,9 +31,17 @@ import com.asakusafw.compiler.flow.example.StickyStage;
 import com.asakusafw.compiler.flow.example.TwinCogroupStage;
 import com.asakusafw.compiler.flow.example.VolatileStage;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
+import com.asakusafw.compiler.flow.testing.model.Ex2;
+import com.asakusafw.compiler.flow.testing.operator.ExOperatorFactory;
+import com.asakusafw.compiler.flow.testing.operator.ExOperatorFactory.Branch;
+import com.asakusafw.compiler.flow.testing.operator.ExOperatorFactory.Cogroup;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.compiler.util.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.CompilerTester.TestOutput;
+import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.In;
+import com.asakusafw.vocabulary.flow.Out;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
 /**
  * Test for {@link StagePlanner} (with Running).
@@ -197,5 +205,41 @@ public class StagePlannerRunTest {
         assertThat(list1.get(2).getValue(), is(15));
 
         assertThat(list1, is(list2));
+    }
+
+    /**
+     * split and unify.
+     * @throws Exception if failed
+     */
+    @Test
+    public void branch_pushdown() throws Exception {
+        TestInput<Ex1> in1 = tester.input(Ex1.class, "in1");
+        TestOutput<Ex1> out1 = tester.output(Ex1.class, "out1");
+        Ex1 model = new Ex1();
+        model.setValue(0);
+        in1.add(model);
+        model.setValue(1);
+        in1.add(model);
+        model.setValue(2);
+        in1.add(model);
+        final In<Ex1> pIn1 = in1.flow();
+        final Out<Ex1> pOut1 = out1.flow();
+        boolean result = tester.runFlow(new FlowDescription() {
+            @Override
+            protected void describe() {
+                ExOperatorFactory f = new ExOperatorFactory();
+                CoreOperatorFactory c = new CoreOperatorFactory();
+                Cogroup cog1 = f.cogroup(pIn1, c.empty(Ex2.class));
+                c.stop(cog1.r2);
+                Branch bra = f.branch(cog1.r1);
+                c.stop(bra.cancel);
+                c.stop(bra.no);
+                Cogroup cog2 = f.cogroup(bra.yes, c.empty(Ex2.class));
+                c.stop(cog2.r2);
+                pOut1.add(cog2.r1);
+            }
+        });
+        assertThat(result, is(true));
+        assertThat(out1.toList().size(), is(1));
     }
 }

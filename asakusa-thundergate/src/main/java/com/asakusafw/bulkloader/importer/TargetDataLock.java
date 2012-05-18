@@ -56,8 +56,9 @@ public class TargetDataLock {
      * レコードロックの場合はImport対象テーブルにジョブフローSIDを登録する。
      * @param bean パラメータを保持するBean
      * @return ロック取得結果（成功した場合：true、失敗した場合：false）
+     * @throws BulkLoaderReRunnableException if failed to acquire data lock but is retryable
      */
-    public boolean lock(ImportBean bean) {
+    public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
         // リトライ回数
         int retryCount = bean.getRetryCount();
         // リトライインターバル
@@ -107,7 +108,7 @@ public class TargetDataLock {
                         }
                     } else {
                         // リトライ不可の場合、異常終了する。
-                        throw new BulkLoaderSystemException(e, getClass(), "TG-IMPORTER-02003");
+                        throw new BulkLoaderReRunnableException(e, getClass(), "TG-IMPORTER-02003");
                     }
                 }
             }

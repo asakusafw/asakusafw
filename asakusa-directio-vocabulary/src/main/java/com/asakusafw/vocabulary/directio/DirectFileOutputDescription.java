@@ -17,7 +17,7 @@ package com.asakusafw.vocabulary.directio;
 
 import java.util.List;
 
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -30,6 +30,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
+ * @version 0.2.6
  */
 public abstract class DirectFileOutputDescription implements ExporterDescription {
 
@@ -88,8 +89,8 @@ public abstract class DirectFileOutputDescription implements ExporterDescription
     public abstract List<String> getOrder();
 
     /**
-     * Returns an implementation of {@link BinaryStreamFormat} class.
-     * @return the class of {@link BinaryStreamFormat}
+     * Returns an implementation of {@link DataFormat} class.
+     * @return the class of {@link DataFormat}
      */
-    public abstract Class<? extends BinaryStreamFormat<?>> getFormat();
+    public abstract Class<? extends DataFormat<?>> getFormat();
 }

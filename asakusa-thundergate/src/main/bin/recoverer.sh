@@ -27,7 +27,7 @@ recoverer.sh
  順  引数                             必須/任意
  -----------------------------------------------
  1   ターゲット名                      必須
- 2   ジョブフロー実行ID                必須
+ 2   ジョブフロー実行ID                任意
 
 EOF
 }
@@ -39,15 +39,6 @@ LOGFILE_BASENAME="recoverer"
 CLASS_NAME="com.asakusafw.bulkloader.recoverer.Recoverer"
 
 . $ASAKUSA_HOME/bulkloader/bin/set-classpath-db.sh
-
-LIB_DIR=$ASAKUSA_HOME/batchapps
-for dname in `ls $LIB_DIR`
-do
-   for fname in `ls $LIB_DIR/$dname/lib/*.jar`
-   do
-     BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$fname
-   done
-done
 
 cd $ASAKUSA_HOME
 

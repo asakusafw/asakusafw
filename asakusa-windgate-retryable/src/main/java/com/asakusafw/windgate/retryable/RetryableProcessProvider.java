@@ -54,41 +54,51 @@ public class RetryableProcessProvider extends ProcessProvider {
                 script.getSourceScript().getResourceName(),
                 script.getDrainScript().getResourceName(),
                 processProfile.getRetryCount());
-        int attempt = 1;
-        while (true) {
-            assert attempt <= maxAttempts;
-            try {
-                processProfile.getComponent().execute(drivers, script);
-                break;
-            } catch (InterruptedIOException e) {
-                WGLOG.error(e, "E01002",
-                        script.getName(),
-                        script.getSourceScript().getResourceName(),
-                        script.getDrainScript().getResourceName());
-                throw e;
-            } catch (IOException e) {
-                if (attempt < maxAttempts) {
-                    WGLOG.warn(e, "W01001",
+        long start = System.currentTimeMillis();
+        try {
+            int attempt = 1;
+            while (true) {
+                assert attempt <= maxAttempts;
+                try {
+                    processProfile.getComponent().execute(drivers, script);
+                    break;
+                } catch (InterruptedIOException e) {
+                    WGLOG.error(e, "E01002",
                             script.getName(),
                             script.getSourceScript().getResourceName(),
-                            script.getDrainScript().getResourceName(),
-                            attempt,
-                            processProfile.getRetryCount());
-                    attempt++;
-                } else {
-                    WGLOG.error(e, "E01001",
-                            script.getName(),
-                            script.getSourceScript().getResourceName(),
-                            script.getDrainScript().getResourceName(),
-                            maxAttempts);
+                            script.getDrainScript().getResourceName());
                     throw e;
+                } catch (IOException e) {
+                    if (attempt < maxAttempts) {
+                        WGLOG.warn(e, "W01001",
+                                script.getName(),
+                                script.getSourceScript().getResourceName(),
+                                script.getDrainScript().getResourceName(),
+                                attempt,
+                                processProfile.getRetryCount());
+                        attempt++;
+                    } else {
+                        WGLOG.error(e, "E01001",
+                                script.getName(),
+                                script.getSourceScript().getResourceName(),
+                                script.getDrainScript().getResourceName(),
+                                maxAttempts);
+                        throw e;
+                    }
                 }
             }
+            WGLOG.info("I01001",
+                    script.getName(),
+                    script.getSourceScript().getResourceName(),
+                    script.getDrainScript().getResourceName(),
+                    attempt);
+        } finally {
+            long end = System.currentTimeMillis();
+            WGLOG.info("I01999",
+                    script.getName(),
+                    script.getSourceScript().getResourceName(),
+                    script.getDrainScript().getResourceName(),
+                    end - start);
         }
-        WGLOG.info("I01999",
-                script.getName(),
-                script.getSourceScript().getResourceName(),
-                script.getDrainScript().getResourceName(),
-                attempt);
     }
 }

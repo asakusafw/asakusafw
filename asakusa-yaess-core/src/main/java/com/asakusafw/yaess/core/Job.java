@@ -21,8 +21,56 @@ import java.util.Set;
 /**
  * Represents an atomic job for YAESS.
  * @since 0.2.3
+ * @version 0.2.6
  */
 public abstract class Job {
+
+    static final YaessLogger YSLOG = new YaessCoreLogger(Job.class);
+
+    /**
+     * Executes this job.
+     * @param monitor a progress monitor for this job
+     * @param context current execution context
+     * @throws InterruptedException if this execution is interrupted
+     * @throws IOException if failed to execute this job
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.6
+     */
+    public final void launch(
+            ExecutionMonitor monitor,
+            ExecutionContext context) throws InterruptedException, IOException {
+        if (monitor == null) {
+            throw new IllegalArgumentException("monitor must not be null"); //$NON-NLS-1$
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        YSLOG.info("I04000",
+                context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                getJobLabel(), getServiceLabel());
+        long start = System.currentTimeMillis();
+        try {
+            execute(monitor, context);
+            YSLOG.info("I04001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    getJobLabel(), getServiceLabel());
+        } catch (IOException e) {
+            YSLOG.error(e, "E04001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    getJobLabel(), getServiceLabel());
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W04001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    getJobLabel(), getServiceLabel());
+            throw e;
+        } finally {
+            long end = System.currentTimeMillis();
+            YSLOG.info("I04999",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    getJobLabel(), getServiceLabel(), end - start);
+        }
+    }
 
     /**
      * Executes this job.
@@ -31,15 +79,21 @@ public abstract class Job {
      * @throws InterruptedException if this execution is interrupted
      * @throws IOException if failed to execute this job
      */
-    public abstract void execute(
+    protected abstract void execute(
             ExecutionMonitor monitor,
             ExecutionContext context) throws InterruptedException, IOException;
 
     /**
-     * Returns the label of this job.
-     * @return the label of this job
+     * Returns the target job label.
+     * @return the target job label
      */
-    public abstract String getLabel();
+    public abstract String getJobLabel();
+
+    /**
+     * Returns the service label which actually executes this job.
+     * @return the service label
+     */
+    public abstract String getServiceLabel();
 
     /**
      * Returns the ID of this job for other succeeding jobs.

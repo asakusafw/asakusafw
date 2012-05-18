@@ -36,6 +36,8 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
  */
 public abstract class ExecutionScriptHandlerBase implements Service {
 
+    static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionScriptHandlerBase.class);
+
     static final Logger LOG = LoggerFactory.getLogger(ExecutionScriptHandlerBase.class);
 
     private volatile String prefix;
@@ -93,7 +95,11 @@ public abstract class ExecutionScriptHandlerBase implements Service {
                 String value = profile.getContext().getContextParameters().replace(unresolved, true);
                 resolved.put(key, value);
             } catch (IllegalArgumentException e) {
-                // TODO logging
+                YSLOG.error(e, "E10001",
+                        profile.getPrefix(),
+                        ExecutionScriptHandler.KEY_PROP_PREFIX,
+                        key,
+                        unresolved);
                 throw new IOException(MessageFormat.format(
                         "Failed to resolve a property: {0}.{1}.{2} = {3}",
                         profile.getPrefix(),
@@ -121,7 +127,11 @@ public abstract class ExecutionScriptHandlerBase implements Service {
                 String value = profile.getContext().getContextParameters().replace(unresolved, true);
                 resolved.put(key, value);
             } catch (IllegalArgumentException e) {
-                // TODO logging
+                YSLOG.error(e, "E10001",
+                        profile.getPrefix(),
+                        ExecutionScriptHandler.KEY_ENV_PREFIX,
+                        key,
+                        unresolved);
                 throw new IOException(MessageFormat.format(
                         "Failed to resolve environment variable: {0}.{1}.{2} = {3}",
                         profile.getPrefix(),
