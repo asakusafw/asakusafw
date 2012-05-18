@@ -89,7 +89,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
     "EXECUTE(20) must return Some(TestJobInfo(20, value20, Waiting, None))\n" +
       " and then    TestJobInfo(20, value20, Running, None)\n" +
       " and finally TestJobInfo(20, value20, Completed, Some(TestJobInfo(20,value20,Running,None)))" in {
-        val actorRef = TestActorRef(new TestJobQueue(1, 2500))
+        val actorRef = TestActorRef(new TestJobQueue(1, 5000))
 
         val execute = (actorRef ? EXECUTE(20)).mapTo[JOB_INFO_OPT[TestJobInfo]]
         val JOB_INFO_OPT(result) = Await.result(execute, timeout.duration)
@@ -98,12 +98,16 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
 
         Thread.sleep(2500)
 
+        // running 2500
+
         val info1 = (actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]]
         val JOB_INFO_OPT(result1) = Await.result(info1, timeout.duration)
 
         result1 must beSome(TestJobInfo(20, "value20", Running, None))
 
-        Thread.sleep(2500)
+        Thread.sleep(5000)
+
+        // completed 2500
 
         val info2 = (actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]]
         val JOB_INFO_OPT(result2) = Await.result(info2, timeout.duration)
@@ -112,6 +116,8 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
 
         Thread.sleep(5000)
 
+        // deleted 2500
+
         val info3 = (actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]]
         val JOB_INFO_OPT(result3) = Await.result(info3, timeout.duration)
 
@@ -119,7 +125,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       }
 
     "EXECUTE(1) and EXECUTE(20) must take 10 seconds" in {
-      val actorRef = TestActorRef(new TestJobQueue(1, 2500))
+      val actorRef = TestActorRef(new TestJobQueue(1, 5000))
       actorRef ! REGISTER(TestJobInfo(0, "data", null, None))
 
       val JOB_INFO_OPT(execute01_1) = Await.result((actorRef ? EXECUTE(1)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
@@ -130,6 +136,8 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
 
       Thread.sleep(2500)
 
+      // running 01 2500, waiting 20
+
       val JOB_INFO_OPT(execute01_2) = Await.result((actorRef ? INFO(1)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
       val JOB_INFO_OPT(execute20_2) = Await.result((actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
 
@@ -137,6 +145,8 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       execute20_2 must beSome(TestJobInfo(20, "value20", Waiting, None))
 
       Thread.sleep(5000)
+
+      // completed 01 2500, running 20 2500
 
       val JOB_INFO_OPT(execute01_3) = Await.result((actorRef ? INFO(1)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
       val JOB_INFO_OPT(execute20_3) = Await.result((actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
@@ -146,13 +156,17 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
 
       Thread.sleep(5000)
 
+      // deleted 01 2500, completed 20 2500
+
       val JOB_INFO_OPT(execute01_4) = Await.result((actorRef ? INFO(1)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
       val JOB_INFO_OPT(execute20_4) = Await.result((actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
 
       execute01_4 must beNone
       execute20_4 must beSome(TestJobInfo(20, "value20", Completed, Some("TestJobInfo(20,value20,Running,None)")))
 
-      Thread.sleep(2500)
+      Thread.sleep(5000)
+
+      // deleted 01 7500, delted 20 2500
 
       val JOB_INFO_OPT(execute01_5) = Await.result((actorRef ? INFO(1)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
       val JOB_INFO_OPT(execute20_5) = Await.result((actorRef ? INFO(20)).mapTo[JOB_INFO_OPT[TestJobInfo]], timeout.duration)
