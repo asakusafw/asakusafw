@@ -28,7 +28,7 @@ import java.util.List;
  * <li> {@link #getModelType()} 対象のモデルクラス </li>
  * <li> {@link #getLockType()} ロックの方法 </li>
  * <li> {@link #getWhere()} インポートする対象の検索条件 (デフォルトは「すべて」) </li>
- * <li> {@link #isCacheEnabled()} キャッシュ利用の有無 (デフォルトは「利用」) </li>
+ * <li> {@link #isCacheEnabled()} キャッシュ利用の有無 (デフォルトは「利用しない」) </li>
  * <li> {@link #getDataSize()} おおよそのデータサイズ (デフォルトは「不明」) </li>
  * </ul>
  * <p>
