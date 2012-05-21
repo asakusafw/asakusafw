@@ -7,7 +7,7 @@
 	<version>${version}</version>
 
 	<properties>
-		<asakusafw.version>0.2-SNAPSHOT</asakusafw.version>
+		<asakusafw.version>0.4-SNAPSHOT</asakusafw.version>
 
 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
