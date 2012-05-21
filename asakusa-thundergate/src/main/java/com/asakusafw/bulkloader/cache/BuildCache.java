@@ -28,7 +28,6 @@ import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
-import com.asakusafw.bulkloader.common.ImportTableLockType;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.importer.Importer;
@@ -148,7 +147,7 @@ public final class BuildCache {
                 ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_RETRY_INTERVAL)));
 
         JobFlowParamLoader loader = new JobFlowParamLoader();
-        if (loader.loadImportParam(targetName, batchId, jobflowId, false) == false) {
+        if (loader.loadCacheBuildParam(targetName, batchId, jobflowId) == false) {
             return null;
         }
         ImportTargetTableBean table = null;
@@ -166,7 +165,6 @@ public final class BuildCache {
             LOG.error("TG-BUILDCACHE-01006", targetName, batchId, jobflowId, executionId, tableName);
             return null;
         }
-        table.setLockType(ImportTableLockType.NONE);
         bean.setTargetTable(Collections.singletonMap(tableName, table));
         return bean;
     }

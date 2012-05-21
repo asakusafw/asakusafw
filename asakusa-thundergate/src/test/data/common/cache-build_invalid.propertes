@@ -1,0 +1,9 @@
+import.target-table=XXX
+
+XXX.target-column=columnA,columnB,columnC
+XXX.search-condition=${x}=${x}
+XXX.cache-id=1
+XXX.lock-type=1
+XXX.locked-operation=3
+XXX.bean-name=test.modelgen.table.model.ImportTarget1
+XXX.hdfs-import-file=/${user}/${execution_id}/import_target1

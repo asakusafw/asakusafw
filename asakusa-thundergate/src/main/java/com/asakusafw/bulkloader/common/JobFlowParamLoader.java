@@ -26,6 +26,7 @@ import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -146,13 +147,76 @@ public class JobFlowParamLoader {
             String batchId,
             String jobflowId,
             boolean isPrimary) {
-        // ジョブフロー設定のファイル名を作成
         File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        if (importTargetTables.isEmpty()) {
+            return true;
+        }
+        return checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), isPrimary);
+    }
 
-        // プロパティを取得
-        Properties importProp = null;
+    /**
+     * Loads the jobflow parameters in extractor.
+     * @param targetName target name
+     * @param batchId the batch ID
+     * @param jobflowId the jobflow ID
+     * @return {@code true} if the parameters are valid, otherwise {@code false}
+     * @since 0.2.6
+     */
+    public boolean loadExtractParam(String targetName, String batchId, String jobflowId) {
+        File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        if (importTargetTables.isEmpty()) {
+            return true;
+        }
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            ImportTargetTableBean tableInfo = entry.getValue();
+            tableInfo.setSearchCondition(null);
+        }
+        boolean result = checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), true);
+        return result;
+    }
+
+    /**
+     * Loads the jobflow parameters in cache building.
+     * @param targetName target name
+     * @param batchId the batch ID
+     * @param jobflowId the jobflow ID
+     * @return {@code true} if the parameters are valid, otherwise {@code false}
+     * @since 0.2.6
+     */
+    public boolean loadCacheBuildParam(String targetName, String batchId, String jobflowId) {
+        File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        Map<String, ImportTargetTableBean> cacheTables = new HashMap<String, ImportTargetTableBean>();
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            String tableName = entry.getKey();
+            ImportTargetTableBean tableInfo = entry.getValue();
+            if (tableInfo.getCacheId() == null) {
+                LOG.debugMessage("Table \"{0}\" does not use cache mechanism", tableName);
+                continue;
+            }
+            tableInfo.setLockType(ImportTableLockType.NONE);
+            tableInfo.setLockedOperation(ImportTableLockedOperation.FORCE);
+            cacheTables.put(tableName, tableInfo);
+        }
+        if (cacheTables.isEmpty()) {
+            return true;
+        }
+        boolean result = checkImportParam(cacheTables, targetName, jobflowId, propFile.getPath(), false);
+        return result;
+    }
+
+    private boolean fetchImporterParams(String targetName, String jobflowId, File propFile) {
+        Properties properties;
         try {
-            importProp = getImportProp(propFile, targetName);
+            properties = getImportProp(propFile, targetName);
         } catch (IOException e) {
             LOG.error(
                     e,
@@ -163,19 +227,12 @@ public class JobFlowParamLoader {
                     propFile.getPath());
             return false;
         }
-
-        // インポート対象テーブルの設定を作成する
-        if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
+        if (!createImportTargetTableBean(properties, targetName, jobflowId, propFile.getPath())) {
             return false;
-        } else {
-            if (importTargetTables.size() == 0) {
-                // Import対象テーブルがない場合は正常終了する。
-                return true;
-            }
         }
-
-        return checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), isPrimary);
+        return true;
     }
+
     /**
      * プロパティを解析してimportTargetTableを作成する。
      * @param importProp プロパティ
