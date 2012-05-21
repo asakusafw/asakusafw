@@ -162,7 +162,7 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
         FSDataOutputStream stream = fileSystem.create(path);
         boolean succeed = false;
         try {
-            CountOutputStream cstream = new CountOutputStream(stream, counter);
+            CountOutputStream cstream;
             if (LOG.isDebugEnabled()) {
                 cstream = new CountOutputStream(stream, counter) {
                     @Override

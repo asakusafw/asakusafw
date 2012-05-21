@@ -492,6 +492,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             fs.makeQualified(transactionInfo)));
                 }
                 FSDataOutputStream output = fs.create(transactionInfo, false);
+                boolean closed = false;
                 try {
                     PrintWriter writer = new PrintWriter(
                             new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET));
@@ -502,9 +503,13 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     writer.printf("Batch Arguments: %s%n", conf.getRaw(StageConstants.PROP_ASAKUSA_BATCH_ARGS));
                     writer.printf("  Hadoop Job ID: %s%n", jobContext.getJobID());
                     writer.printf("Hadoop Job Name: %s%n", jobContext.getJobName());
-                    writer.flush();
+                    writer.close();
+                    closed = true;
                 } finally {
-                    output.close();
+                    // avoid double close
+                    if (closed == false) {
+                        output.close();
+                    }
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
