@@ -51,6 +51,7 @@ Enhancements
 * [ :issue:`172` ] - Align log code in each log record
 * [ :issue:`173` ] - support CDH3u4
 * [ :issue:`176` ] - Select defalut hadoop mode of ThunderGate configuration installing to local
+* [ :issue:`184` ] - YAESS command option running JobFlow serialized forcibly (experimental)
 
 ..  attention::
     Direct I/O is still an experimental feature.
