@@ -633,6 +633,47 @@ public class ImportProtocolDecideTest {
         }
     }
 
+    /**
+     * Cache lock is conflict.
+     * @throws Exception if failed
+     */
+    @Test
+    public void release_lock() throws Exception {
+        ImportBean bean1 = createBean();
+        Map<String, ImportTargetTableBean> targetTable1 = new HashMap<String, ImportTargetTableBean>();
+        ImportTargetTableBean tb1 = new ImportTargetTableBean();
+        tb1.setCacheId("tb1");
+        tb1.setDfsFilePath("tb1");
+        tb1.setImportTargetType(ImportTarget1.class);
+        tb1.setImportTargetColumns(Arrays.asList("A"));
+        tb1.setSearchCondition("");
+        targetTable1.put("__TG_TEST1", tb1);
+        bean1.setTargetTable(targetTable1);
+
+        ImportBean bean2 = createBean();
+        Map<String, ImportTargetTableBean> targetTable2 = new HashMap<String, ImportTargetTableBean>();
+        ImportTargetTableBean tb2 = new ImportTargetTableBean();
+        tb2.setCacheId("tb1");
+        tb2.setDfsFilePath("tb1");
+        tb2.setImportTargetType(ImportTarget1.class);
+        tb2.setImportTargetColumns(Arrays.asList("A"));
+        tb2.setSearchCondition("");
+        targetTable2.put("__TG_TEST1", tb2);
+        bean2.setTargetTable(targetTable2);
+
+        ImportProtocolDecide service = new ImportProtocolDecide() {
+            @Override
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+                    throws BulkLoaderSystemException {
+                return Collections.emptyMap();
+            }
+        };
+        service.execute(bean1);
+        service.cleanUpForRetry(bean1);
+        service.execute(bean2);
+        // ok.
+    }
+
     private ImportBean createBean() {
         ImportBean bean = new ImportBean();
         bean.setTargetName("target");

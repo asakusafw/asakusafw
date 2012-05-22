@@ -98,15 +98,15 @@ public class ImportProtocolDecide {
         if (findCache == false) {
             return;
         }
-//        LOG.info("TG-IMPORTER-11012",
-//                bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
-//        Connection connection = DBConnection.getConnection();
-//        LocalCacheInfoRepository repository = new LocalCacheInfoRepository(connection);
-//        try {
-//            repository.releaseLock(bean.getExecutionId());
-//        } finally {
-//            DBConnection.closeConn(connection);
-//        }
+        LOG.info("TG-IMPORTER-11012",
+                bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), bean.getExecutionId());
+        Connection connection = DBConnection.getConnection();
+        LocalCacheInfoRepository repository = new LocalCacheInfoRepository(connection);
+        try {
+            repository.releaseLock(bean.getExecutionId());
+        } finally {
+            DBConnection.closeConn(connection);
+        }
     }
 
     private void prepareForCache(ImportBean bean) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
