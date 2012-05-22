@@ -36,6 +36,8 @@ Parameters:
 Definitions:
     -D skipFlows=<flowId>[,<flowId>[,...]]
         ignores target jobflow execution
+    -D serializeFlows=true
+        serializes each jobflow execution (for debug)
 
 Examples:
     # run a batch "example.batch"
