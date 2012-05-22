@@ -51,6 +51,8 @@ import com.ashigeru.util.graph.Graphs;
 
 /**
  * ジョブフロー内で利用されるプログラムをコンパイルする。
+ * @since 0.1.0
+ * @version 0.2.6
  */
 public class JobflowCompiler {
 
@@ -63,6 +65,8 @@ public class JobflowCompiler {
 
     private final StageClientEmitter stageClientEmitter;
 
+    private final CleanupStageClientEmitter cleanupStageClientEmitter;
+
     /**
      * インスタンスを生成する。
      * @param environment 環境オブジェクト
@@ -73,6 +77,7 @@ public class JobflowCompiler {
         this.environment = environment;
         this.analyzer = new JobflowAnalyzer(environment);
         this.stageClientEmitter = new StageClientEmitter(environment);
+        this.cleanupStageClientEmitter = new CleanupStageClientEmitter(environment);
     }
 
     /**
@@ -270,9 +275,11 @@ public class JobflowCompiler {
     }
 
     private void compileClients(JobflowModel jobflow) throws IOException {
+        assert jobflow != null;
         for (Stage stage : jobflow.getStages()) {
             CompiledStage client = stageClientEmitter.emit(stage);
             stage.setCompiled(client);
         }
+        cleanupStageClientEmitter.emit();
     }
 }

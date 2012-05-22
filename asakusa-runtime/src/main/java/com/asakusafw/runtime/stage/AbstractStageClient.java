@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Writable;
@@ -37,8 +36,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.util.Tool;
-
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
 import com.asakusafw.runtime.stage.input.StageInputMapper;
@@ -51,23 +48,10 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
+ * @since 0.1.0
+ * @version 0.2.6
  */
-public abstract class AbstractStageClient extends Configured implements Tool {
-
-    /**
-     * {@link #getBatchId()}のメソッド名。
-     */
-    public static final String METHOD_BATCH_ID = "getBatchId";
-
-    /**
-     * {@link #getFlowId()}のメソッド名。
-     */
-    public static final String METHOD_FLOW_ID = "getFlowId";
-
-    /**
-     * {@link #getStageId()}のメソッド名。
-     */
-    public static final String METHOD_STAGE_ID = "getStageId";
+public abstract class AbstractStageClient extends BaseStageClient {
 
     /**
      * {@link #getStageOutputPath()}のメソッド名。
@@ -137,72 +121,16 @@ public abstract class AbstractStageClient extends Configured implements Tool {
     }
 
     /**
-     * 処理中のユーザー名を返す。
-     * @return 処理中のユーザー名
+     * このステージへの入力一覧を返す。
+     * @return 入力一覧
      */
-    protected String getUser() {
-        return getMandatoryProperty(PROP_USER);
-    }
-
-    /**
-     * このフロー全体(一連のステージ)の実行時識別子を返す。
-     * @return 実行時識別子
-     */
-    protected String getExecutionId() {
-        return getMandatoryProperty(PROP_EXECUTION_ID);
-    }
-
-    private String getMandatoryProperty(String key) {
-        assert key != null;
-        String value = getConf().get(key);
-        if (value == null || value.isEmpty()) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "プロパティ\"{0}\"が設定されていません",
-                    key));
-        }
-        return value;
-    }
-
-    /**
-     * このクライアントによって起動されるジョブのバッチIDを返す。
-     * @return バッチID
-     */
-    protected abstract String getBatchId();
-
-    /**
-     * このクライアントによって起動されるジョブのフローIDを返す。
-     * @return フローID
-     */
-    protected abstract String getFlowId();
-
-    /**
-     * このクライアントによって起動されるジョブのステージ名を返す。
-     * @return ステージ名
-     */
-    protected abstract String getStageId();
-
-    /**
-     * このクライアントによって起動されるジョブの定義IDを返す。
-     * @return 定義ID
-     */
-    protected String getDefinitionId() {
-        String batchId = getBatchId();
-        String flowId = getFlowId();
-        String stageId = getStageId();
-        return StageConstants.getDefinitionId(batchId, flowId, stageId);
-    }
+    protected abstract List<StageInput> getStageInputs();
 
     /**
      * このステージからの出力に利用するベースパスを返す。
      * @return ベースパス
      */
     protected abstract String getStageOutputPath();
-
-    /**
-     * このステージへの入力一覧を返す。
-     * @return 入力一覧
-     */
-    protected abstract List<StageInput> getStageInputs();
 
     /**
      * このステージからの出力一覧を返す。
