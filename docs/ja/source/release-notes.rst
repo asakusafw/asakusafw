@@ -72,6 +72,8 @@ Bug fixes
 * [ :issue:`175` ] - Multipart upload of S3 with Direct I/O does not work.
 * [ :issue:`177` ] - File will not be split if @directio.csv.file_name is used
 * [ :issue:`178` ] - The jar file without the necessity that the recoverer of ThunderGate reads is read
+* [ :issue:`182` ] - build-cache.sh failed at reading import DSL property.
+* [ :issue:`183` ] - DbImporterDescription has wrong description of JavaDoc.
 
 Others
 ------

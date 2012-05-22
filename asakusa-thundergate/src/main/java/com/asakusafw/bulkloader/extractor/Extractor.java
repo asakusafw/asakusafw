@@ -149,7 +149,7 @@ public class Extractor {
 
         // DSLプロパティを読み込み
         JobFlowParamLoader dslLoader = createJobFlowParamLoader();
-        if (!dslLoader.loadImportParam(bean.getTargetName(), bean.getBatchId(), bean.getJobflowId(), true)) {
+        if (!dslLoader.loadExtractParam(bean.getTargetName(), bean.getBatchId(), bean.getJobflowId())) {
             return null;
         }
         bean.setTargetTable(dslLoader.getImportTargetTables());

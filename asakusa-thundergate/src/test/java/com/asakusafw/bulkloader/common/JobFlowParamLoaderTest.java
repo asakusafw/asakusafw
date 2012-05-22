@@ -15,6 +15,7 @@
  */
 package com.asakusafw.bulkloader.common;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -2608,5 +2609,94 @@ public class JobFlowParamLoaderTest {
 
         // 実行結果を検証
         assertFalse(result);
+    }
+
+    /**
+     * Test for {@link JobFlowParamLoader#loadCacheBuildParam(String, String, String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadCacheBuildParam() throws Exception {
+        JobFlowParamLoader loader = new JobFlowParamLoader(){
+            @Override
+            protected Properties getImportProp(File dslFile, String targetName) throws IOException {
+                System.out.println(dslFile);
+                File propFile = new File("src/test/data/common/cache-build.propertes");
+                FileInputStream fis = new FileInputStream(propFile);
+                Properties prop = new Properties();
+                prop.load(fis);
+                return prop;
+            }
+        };
+        boolean result = loader.loadCacheBuildParam(targetName, "batch01", "11");
+        assertThat(result, is(true));
+        assertThat(loader.getImportTargetTables().size(), is(2));
+        ImportTargetTableBean target = loader.getImportTargetTables().get("XXX");
+        assertThat(target.getCacheId(), is(notNullValue()));
+        assertThat(target.getLockType(), is(ImportTableLockType.NONE));
+    }
+
+    /**
+     * Test for {@link JobFlowParamLoader#loadCacheBuildParam(String, String, String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadCacheBuildParam_invalid() throws Exception {
+        JobFlowParamLoader loader = new JobFlowParamLoader(){
+            @Override
+            protected Properties getImportProp(File dslFile, String targetName) throws IOException {
+                System.out.println(dslFile);
+                File propFile = new File("src/test/data/common/cache-build_invalid.propertes");
+                FileInputStream fis = new FileInputStream(propFile);
+                Properties prop = new Properties();
+                prop.load(fis);
+                return prop;
+            }
+        };
+        boolean result = loader.loadCacheBuildParam(targetName, "batch01", "11");
+        assertThat(result, is(false));
+    }
+
+    /**
+     * Test for {@link JobFlowParamLoader#loadExtractParam(String, String, String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadExtractParam() throws Exception {
+        JobFlowParamLoader loader = new JobFlowParamLoader(){
+            @Override
+            protected Properties getImportProp(File dslFile, String targetName) throws IOException {
+                System.out.println(dslFile);
+                File propFile = new File("src/test/data/common/cache-build.propertes");
+                FileInputStream fis = new FileInputStream(propFile);
+                Properties prop = new Properties();
+                prop.load(fis);
+                return prop;
+            }
+        };
+        boolean result = loader.loadExtractParam(targetName, "batch01", "11");
+        assertThat(result, is(true));
+        assertThat(loader.getImportTargetTables().size(), is(2));
+    }
+
+    /**
+     * Test for {@link JobFlowParamLoader#loadExtractParam(String, String, String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadExtractParam_invalid() throws Exception {
+        JobFlowParamLoader loader = new JobFlowParamLoader(){
+            @Override
+            protected Properties getImportProp(File dslFile, String targetName) throws IOException {
+                System.out.println(dslFile);
+                File propFile = new File("src/test/data/common/cache-build_invalid.propertes");
+                FileInputStream fis = new FileInputStream(propFile);
+                Properties prop = new Properties();
+                prop.load(fis);
+                return prop;
+            }
+        };
+        boolean result = loader.loadExtractParam(targetName, "batch01", "11");
+        assertThat(result, is(false));
     }
 }
