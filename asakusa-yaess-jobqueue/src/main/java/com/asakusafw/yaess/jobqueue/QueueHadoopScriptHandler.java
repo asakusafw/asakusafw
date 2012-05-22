@@ -17,6 +17,7 @@ package com.asakusafw.yaess.jobqueue;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,6 +53,11 @@ import com.asakusafw.yaess.jobqueue.client.JobStatus;
  * @since 0.2.6
  */
 public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase implements HadoopScriptHandler {
+
+    /**
+     * This is a copy from asakusa-runtime.
+     */
+    static final String CLEANUP_STAGE_CLASS = "com.asakusafw.runtime.stage.CleanupStageClient";
 
     static final YaessLogger YSLOG = new YaessJobQueueLogger(QueueHadoopScriptHandler.class);
 
@@ -110,6 +116,29 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
             ExecutionMonitor monitor,
             ExecutionContext context,
             HadoopScript script) throws InterruptedException, IOException {
+        run(monitor, context, script);
+    }
+
+    @Override
+    public void cleanUp(
+            ExecutionMonitor monitor,
+            ExecutionContext context) throws InterruptedException, IOException {
+        HadoopScript script = new HadoopScript(
+                context.getPhase().getSymbol(),
+                Collections.<String>emptySet(),
+                CLEANUP_STAGE_CLASS,
+                Collections.<String, String>emptyMap(),
+                Collections.<String, String>emptyMap());
+        run(monitor, context, script);
+    }
+
+    private void run(
+            ExecutionMonitor monitor,
+            ExecutionContext context,
+            HadoopScript script) throws InterruptedException, IOException {
+        assert monitor != null;
+        assert context != null;
+        assert script != null;
         monitor.open(100);
         try {
             monitor.checkCancelled();
@@ -183,6 +212,7 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
             ExecutionMonitor monitor,
             ExecutionContext context,
             HadoopScript script) throws InterruptedException, IOException {
+        assert monitor != null;
         assert context != null;
         assert script != null;
         JobScript job = convert(context, script);
@@ -195,29 +225,29 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
             } catch (IOException e) {
                 clients.setError(client);
                 YSLOG.warn(e, "W01001",
-                        context.getBatchId(),
-                        context.getFlowId(),
-                        context.getPhase(),
-                        context.getExecutionId(),
-                        script.getId(),
+                        job.getBatchId(),
+                        job.getFlowId(),
+                        job.getPhase(),
+                        job.getExecutionId(),
+                        job.getStageId(),
                         client);
             }
         }
         YSLOG.warn("E01001",
-                context.getBatchId(),
-                context.getFlowId(),
-                context.getPhase(),
-                context.getExecutionId(),
-                script.getId(),
+                job.getBatchId(),
+                job.getFlowId(),
+                job.getPhase(),
+                job.getExecutionId(),
+                job.getStageId(),
                 clients.count());
         throw new IOException(MessageFormat.format(
                 "Failed to request Hadoop job "
                 + "(batchId={0}, flowId={1}, phase={2}, stageId={4}, executionId={3})",
-                context.getBatchId(),
-                context.getFlowId(),
-                context.getPhase(),
-                context.getExecutionId(),
-                script.getId()));
+                job.getBatchId(),
+                job.getFlowId(),
+                job.getPhase(),
+                job.getExecutionId(),
+                job.getStageId()));
     }
 
     private JobId registerWithTimeout(
@@ -292,9 +322,9 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
         result.setFlowId(context.getFlowId());
         result.setExecutionId(context.getExecutionId());
         result.setPhase(context.getPhase());
+        result.setArguments(new HashMap<String, String>(context.getArguments()));
         result.setStageId(script.getId());
         result.setMainClassName(script.getClassName());
-        result.setArguments(new HashMap<String, String>(context.getArguments()));
         result.setProperties(merge(getProperties(context, script), script.getHadoopProperties()));
         result.setEnvironmentVariables(new HashMap<String, String>(script.getEnvironmentVariables()));
         return result;
