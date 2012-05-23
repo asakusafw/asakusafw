@@ -19,6 +19,8 @@ import java.text.MessageFormat;
 
 /**
  * エミッタの名前付け。
+ * @since 0.1.0
+ * @version 0.2.6
  */
 public final class Naming {
 
@@ -217,6 +219,15 @@ public final class Naming {
      */
     public static String getStageName(int stageNumber) {
         return String.format("stage%04d", stageNumber);
+    }
+
+    /**
+     * Returns the cleanup stage.
+     * @return the stage name
+     * @since 0.2.6
+     */
+    public static String getCleanupStageName() {
+        return "cleanup";
     }
 
     /**

@@ -50,6 +50,7 @@ import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
@@ -279,9 +280,13 @@ public class CompilerTester implements MethodRule {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
         for (StageInfo stage : info.getStages()) {
-            boolean succeed = hadoop.runJob(
-                    info.getPackageFile(),
-                    stage.getClassName());
+            boolean succeed = hadoop.runJob(info.getPackageFile(), stage.getClassName());
+            if (succeed == false) {
+                return false;
+            }
+        }
+        if (info.getStages().isEmpty() == false) {
+            boolean succeed = hadoop.runJob(info.getPackageFile(), AbstractCleanupStageClient.IMPLEMENTATION);
             if (succeed == false) {
                 return false;
             }
