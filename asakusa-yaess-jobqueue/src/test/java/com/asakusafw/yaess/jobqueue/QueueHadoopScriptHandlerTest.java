@@ -222,6 +222,34 @@ public class QueueHadoopScriptHandlerTest {
         assertThat(c2.count, is(greaterThan(0)));
     }
 
+    /**
+     * simple cleanup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanup() throws Exception {
+        MockJobClient c1 = new MockJobClient("testing", COMPLETED);
+        JobClientProfile profile = new JobClientProfile("testing", list(c1), 1000, 10);
+        QueueHadoopScriptHandler handler = create();
+        handler.doConfigure(profile);
+        ExecutionContext context = context();
+        handler.cleanUp(ExecutionMonitor.NULL, context);
+
+        JobScript js = c1.registered.get("testing");
+        assertThat(js, is(notNullValue()));
+        assertThat(js.getBatchId(), is(context.getBatchId()));
+        assertThat(js.getFlowId(), is(context.getFlowId()));
+        assertThat(js.getExecutionId(), is(context.getExecutionId()));
+        assertThat(js.getPhase(), is(context.getPhase()));
+        assertThat(js.getMainClassName(), is(QueueHadoopScriptHandler.CLEANUP_STAGE_CLASS));
+        assertThat(js.getArguments(), is(context.getArguments()));
+
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.putAll(map("s", "service"));
+
+        assertThat(js.getProperties(), is(properties));
+    }
+
     QueueHadoopScriptHandler create() {
         ServiceProfile<QueueHadoopScriptHandler> profile = new ServiceProfile<QueueHadoopScriptHandler>(
                 "testing",
