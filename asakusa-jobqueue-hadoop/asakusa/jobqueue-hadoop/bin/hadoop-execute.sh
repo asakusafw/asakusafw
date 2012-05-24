@@ -146,8 +146,14 @@ echo "   $_OPT_MAPRED_TEMP_DIR"
     "$@"
 
 _JQ_RET=$?
-if [ $_JQ_RET -ne 0 ]
+if [ $_JQ_RET -eq 0 ]
 then
+    if [ "$HADOOP_TMP_DIR" != "" ]
+    then
+        rm -rf "$HADOOP_TMP_DIR/$_OPT_JRID"
+    fi
+    exit $_JQ_RET
+else
     echo "JobQueue Hadoop failed with exit code: $_JQ_RET" 1>&2
     echo "         JRID: $_OPT_JRID" 1>&2
     echo "  Runtime Lib: $_JQ_RUNTIME_LIB"  1>&2

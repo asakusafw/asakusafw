@@ -3,6 +3,7 @@
 # ~~~~
 
 # Home page
+GET     /                           controllers.Application.index
 GET     /jobs                       controllers.JobQueueController.index
 POST    /jobs                       controllers.JobQueueController.register
 GET     /jobs/:jrid                 controllers.JobQueueController.info(jrid)
