@@ -272,7 +272,7 @@ class HadoopJobQueue(
     SQL("""
           UPDATE JOB_QUEUE SET status = {status}, exit_code = {exitCode} WHERE jrid = {jrid}
         """).on(
-      'status -> (if (exitCode == 0) Completed.name else Error.name),
+      'status -> Completed.name,
       'exitCode -> exitCode,
       'jrid -> jobContext.jobInfo.jrid).executeUpdate()
     super.complete(jobContext, exitCode)

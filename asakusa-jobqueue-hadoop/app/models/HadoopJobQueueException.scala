@@ -80,7 +80,7 @@ object NoPhaseIdException extends NoPhaseIdException
 class NoStageIdException extends HadoopJobQueueException {
 
   override def toJson = Json.toJson(Map(
-    "status" -> Error.name,
+    "status" -> status,
     "errorCode" -> Status.BAD_REQUEST.toString,
     "errorMessage" -> "No stageId specified."))
 }
