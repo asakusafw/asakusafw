@@ -84,16 +84,8 @@ object JobQueueController extends Controller {
     val jobInfo = Await.result(future, Timeout.duration).jobInfo
 
     jobInfo.map { jobInfo =>
-      jobInfo.status match {
-        case Error => InternalServerError(toJson(Map(
-          "status" -> jobInfo.status.name,
-          "jrid" -> jobInfo.jrid,
-          "exitCode" -> jobInfo.exitCode.get.toString,
-          "errorCode" -> INTERNAL_SERVER_ERROR.toString,
-          "errorMessage" -> MessageFormat.format("JobQueue ({0}) failed with exit code: {1}", jobInfo.jrid, jobInfo.exitCode.get.toString))))
-        case _ => Ok(toJson(Map(
-          "status" -> jobInfo.status.name, "jrid" -> jobInfo.jrid) ++ jobInfo.exitCode.map("exitCode" -> _.toString)))
-      }
+      Ok(toJson(Map(
+        "status" -> jobInfo.status.name, "jrid" -> jobInfo.jrid) ++ jobInfo.exitCode.map("exitCode" -> _.toString)))
     }.getOrElse(NotFound(JobQueueNotFoundException.toJson))
   }
 
