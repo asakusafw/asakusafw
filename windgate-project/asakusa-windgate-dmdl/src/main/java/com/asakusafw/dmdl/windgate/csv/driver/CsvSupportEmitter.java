@@ -215,7 +215,6 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     Collections.<TypeParameterDeclaration>emptyList(),
@@ -658,7 +657,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     new JavadocBuilder(f)
                         .text("An abstract implementation of ")
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using WindGate CSV",
+                        .text(" {0} description using Direct I/O CSV",
                                 importer ? "importer" : "exporter")
                         .text(".")
                         .toJavadoc(),
