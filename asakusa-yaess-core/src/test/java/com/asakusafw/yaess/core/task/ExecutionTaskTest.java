@@ -491,6 +491,26 @@ public class ExecutionTaskTest {
     }
 
     /**
+     * Executes batch but some flows are skipped.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeBatch_seriaize() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        prf.setTracker(FlowSerialized.class);
+        ExecutionTask task = prf.task();
+        task.setSerializeFlows(true);
+        task.executeBatch("batch");
+
+        List<Record> results = SerialExecutionTracker.get(prf.trackingId);
+        checkFlowHappensBefore(results, "testing", "left");
+        checkFlowHappensBefore(results, "testing", "right");
+        checkFlowHappensBefore(results, "left", "last");
+        checkFlowHappensBefore(results, "right", "last");
+        verifyPhaseOrder(results);
+    }
+
+    /**
      * Executes batch but exporter is failed.
      * @throws Exception if failed
      */
@@ -711,6 +731,33 @@ public class ExecutionTaskTest {
 
     static String profile(Record record) {
         return ((CommandScript) record.script).getProfileName();
+    }
+
+    /**
+     * for {@link ExecutionTaskTest#executeFlow_failed_export()}.
+     */
+    public static class FlowSerialized extends SerialExecutionTracker {
+
+        private String flowId;
+
+        @Override
+        public synchronized void add(Id id, Record record) throws IOException, InterruptedException {
+            switch (record.context.getPhase()) {
+            case SETUP:
+                assertThat(flowId, is(nullValue()));
+                flowId = record.context.getFlowId();
+                break;
+            case CLEANUP:
+                assertThat(flowId, is(record.context.getFlowId()));
+                flowId = null;
+                break;
+            default:
+                Thread.sleep(100);
+                assertThat(flowId, is(record.context.getFlowId()));
+                break;
+            }
+            super.add(id, record);
+        }
     }
 
     /**

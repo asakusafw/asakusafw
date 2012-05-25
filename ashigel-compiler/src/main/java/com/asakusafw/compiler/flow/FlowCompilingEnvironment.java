@@ -36,6 +36,8 @@ import com.ashigeru.lang.java.model.util.Models;
 
 /**
  * 個々のジョブフローをコンパイルする際の環境。
+ * @since 0.1.0
+ * @version 0.2.6
  */
 public class FlowCompilingEnvironment {
 

@@ -73,6 +73,8 @@ public class ExecutionTask {
 
     static final String KEY_SKIP_FLOWS = "skipFlows";
 
+    static final String KEY_SERIALIZE_FLOWS = "serializeFlows";
+
     static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionTask.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionTask.class);
@@ -92,6 +94,8 @@ public class ExecutionTask {
     private final Map<String, String> batchArguments;
 
     private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
+
+    private volatile boolean serializeFlows = false;
 
     /**
      * Creates a new instance.
@@ -219,6 +223,7 @@ public class ExecutionTask {
         LOG.debug("Applying definitions");
         Map<String, String> copyDefinitions = new TreeMap<String, String>(yaessArguments);
         consumeSkipFlows(result, copyDefinitions, script);
+        consumeSerializeFlows(result, copyDefinitions, script);
         checkRest(copyDefinitions);
 
         return result;
@@ -248,6 +253,31 @@ public class ExecutionTask {
         }
     }
 
+    private static void consumeSerializeFlows(
+            ExecutionTask task,
+            Map<String, String> copyDefinitions,
+            Properties script) {
+        assert task != null;
+        assert copyDefinitions != null;
+        assert script != null;
+        String value = copyDefinitions.remove(KEY_SERIALIZE_FLOWS);
+        if (value == null) {
+            return;
+        }
+        value = value.trim();
+        LOG.debug("Definition: {}={}", KEY_SERIALIZE_FLOWS, value);
+        if (value.equalsIgnoreCase("true")) {
+            task.serializeFlows = true;
+        } else if (value .equalsIgnoreCase("false")) {
+            task.serializeFlows = false;
+        } else {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Unknown option value in definition {0} : {1}",
+                    KEY_SERIALIZE_FLOWS,
+                    value));
+        }
+    }
+
     private static void checkRest(Map<String, String> copyDefinitions) {
         assert copyDefinitions != null;
         if (copyDefinitions.isEmpty() == false) {
@@ -267,6 +297,15 @@ public class ExecutionTask {
     }
 
     /**
+     * Sets whether the flow execution was serialized in {@link #executeBatch(String)}.
+     * @param serialize {@code true} to serialize, otherwise {@code false}
+     * @since 0.2.6
+     */
+    void setSerializeFlows(boolean serialize) {
+        this.serializeFlows = serialize;
+    }
+
+    /**
      * Executes a target flow.
      * If execution is failed except on {@link ExecutionPhase#SETUP setup}, {@link ExecutionPhase#FINALIZE finalize},
      * or {@link ExecutionPhase#CLEANUP cleanup}, then the {@code finalize} phase will be executed for recovery
@@ -277,20 +316,11 @@ public class ExecutionTask {
      * @throws IOException if failed to execute target batch
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void executeBatch(final String batchId) throws InterruptedException, IOException {
+    public void executeBatch(String batchId) throws InterruptedException, IOException {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
-        ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName(MessageFormat.format(
-                        "JobflowExecutor-{0}",
-                        batchId));
-                return thread;
-            }
-        });
+        ExecutorService executor = createJobflowExecutor(batchId);
         BatchScript batchScript = BatchScript.load(script);
         YSLOG.info("I01000", batchId);
         long start = System.currentTimeMillis();
@@ -312,6 +342,26 @@ public class ExecutionTask {
         } finally {
             long end = System.currentTimeMillis();
             YSLOG.info("I01999", batchId, end - start);
+        }
+    }
+
+    private ExecutorService createJobflowExecutor(final String batchId) {
+        assert batchId != null;
+        ThreadFactory threadFactory = new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r);
+                thread.setName(MessageFormat.format(
+                        "JobflowExecutor-{0}",
+                        batchId));
+                thread.setDaemon(true);
+                return thread;
+            }
+        };
+        if (serializeFlows) {
+            return Executors.newFixedThreadPool(1, threadFactory);
+        } else {
+            return Executors.newCachedThreadPool(threadFactory);
         }
     }
 

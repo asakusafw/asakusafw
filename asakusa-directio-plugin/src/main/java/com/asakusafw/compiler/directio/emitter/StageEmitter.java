@@ -37,6 +37,7 @@ import com.asakusafw.runtime.io.util.ShuffleKey.AbstractGroupComparator;
 import com.asakusafw.runtime.io.util.ShuffleKey.AbstractOrderComparator;
 import com.asakusafw.runtime.io.util.ShuffleKey.Partitioner;
 import com.asakusafw.runtime.stage.AbstractStageClient;
+import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.directio.AbstractDirectOutputKey;
@@ -429,15 +430,15 @@ public class StageEmitter {
         private List<MethodDeclaration> createIdMethods() {
             List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
             results.add(createValueMethod(
-                    AbstractStageClient.METHOD_BATCH_ID,
+                    BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),
                     Models.toLiteral(factory, environment.getBatchId())));
             results.add(createValueMethod(
-                    AbstractStageClient.METHOD_FLOW_ID,
+                    BaseStageClient.METHOD_FLOW_ID,
                     t(String.class),
                     Models.toLiteral(factory, environment.getFlowId())));
             results.add(createValueMethod(
-                    AbstractStageClient.METHOD_STAGE_ID,
+                    BaseStageClient.METHOD_STAGE_ID,
                     t(String.class),
                     Models.toLiteral(factory, Naming.getEpilogueName(moduleId))));
             return results;
