@@ -33,7 +33,7 @@ import org.junit.runner._
  * @since TODO
  */
 @RunWith(classOf[JUnitRunner])
-class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specification {
+class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specification with Tags {
 
   implicit val timeout = Timeout(10, TimeUnit.SECONDS)
 
@@ -48,7 +48,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       result.value must equalTo("data")
       result.status must equalTo(Initialized)
       result.exitCode must beNone
-    }
+    } tag ("register")
 
     "INFO(5) must return None" in {
       val actorRef = TestActorRef(new TestJobQueue(1, 100))
@@ -57,7 +57,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       val JOB_INFO_OPT(result) = Await.result(info, timeout.duration)
 
       result must beNone
-    }
+    } tag ("info5")
 
     "INFO(10) must return Some(TestJobInfo(10, value10, Completed, Some(0)))" in {
       val actorRef = TestActorRef(new TestJobQueue(1, 100))
@@ -66,7 +66,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       val JOB_INFO_OPT(result) = Await.result(info, timeout.duration)
 
       result must beSome(TestJobInfo(10, "value10", Completed, Some("0")))
-    }
+    } tag ("info10")
 
     "EXECUTE(5) must return None" in {
       val actorRef = TestActorRef(new TestJobQueue(1, 100))
@@ -75,7 +75,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       val JOB_INFO_OPT(result) = Await.result(execute, timeout.duration)
 
       result must beNone
-    }
+    } tag ("execute5")
 
     "EXECUTE(10) must return Some(TestJobInfo(10, value10, Completed, Some(0))" in {
       val actorRef = TestActorRef(new TestJobQueue(1, 100))
@@ -84,7 +84,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
       val JOB_INFO_OPT(result) = Await.result(execute, timeout.duration)
 
       result must beSome(TestJobInfo(10, "value10", Completed, Some("0")))
-    }
+    } tag ("execute10")
 
     "EXECUTE(20) must return Some(TestJobInfo(20, value20, Waiting, None))\n" +
       " and then    TestJobInfo(20, value20, Running, None)\n" +
@@ -122,7 +122,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
         val JOB_INFO_OPT(result3) = Await.result(info3, timeout.duration)
 
         result3 must beNone
-      }
+      } tag ("execute20")
 
     "EXECUTE(1) and EXECUTE(20) must take 10 seconds" in {
       val actorRef = TestActorRef(new TestJobQueue(1, 5000))
@@ -173,7 +173,7 @@ class JobQueueSpec extends TestKit(ActorSystem("JobQueueSpec")) with Specificati
 
       execute01_5 must beNone
       execute20_5 must beNone
-    }
-  }
+    } tag ("execute0120")
+  } section ("TestJobQueue")
 
 }
