@@ -23,7 +23,7 @@ war <<= (war, name, version, scalaVersion) map { (war, name, version, scalaVersi
 
 assembly <<= (name, version, target, war) map { (name, version, target, war) =>
   val archiver = new TarArchiver()
-  archiver.setDestFile(target / (name + "-" + version + ".tar.gz"))
+  archiver.setDestFile(target / ("asakusa-jobqueue-server-" + version + ".tar.gz"))
   val compressionMethod = new TarArchiver.TarCompressionMethod()
   compressionMethod.setValue("gzip")
   archiver.setCompression(compressionMethod)
