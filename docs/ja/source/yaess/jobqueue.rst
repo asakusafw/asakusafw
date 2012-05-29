@@ -64,6 +64,136 @@ JobQueueサーバーがダウンから復旧したら、次回以降のYAESSの�
 JobQueueサーバーの利用方法
 ==========================
 
+JobQueueサーバーは、Apache Tomcat [#]_ Version 7以降(以下、Tomcatと表記します)上のWebアプリケーションとして動作します。
+
+Tomcatの構築手順やSSL、ベーシック認証の設定等は、Tomcatの公式のドキュメント [#]_ 等を参考にしてください。
+以降、Tomcatをインストールしたディレクトリを、 ``${CATALINA_HOME}`` と表記します。
+
+.. attention::
+
+    Tomcatは *ASAKUSA_USER* から実行するように設定してください。
+
+.. [#] http://tomcat.apache.org/download-70.cgi
+.. [#] http://tomcat.apache.org/tomcat-7.0-doc/index.html
+
+JobQueueサーバー・コンポーネントのインストール
+----------------------------------------------
+
+JobQueueサーバーに必要なコンポーネントをダウンロードします。
+
+* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.2.6.tar.gz
+
+ダウンロードが完了したら、以下の例を参考にしてJobQueueサーバーのコンポーネントを ``$ASAKUSA_HOME`` にインストールします
+(標準の ``~/Downloads`` にダウンロードした場合の例です)。
+
+.. code-block:: sh
+
+    cd ~/Downloads
+    cp asakusa-jobqueue-server-0.2.6.tar.gz "$ASAKUSA_HOME"
+    cd "$ASAKUSA_HOME"
+    tar zxvf asakusa-jobqueue-server-0.2.6.tar.gz
+    find "$ASAKUSA_HOME" -name "*.sh" | xargs chmod u+x
+
+JobQueueサーバーの設定
+----------------------
+
+JobQueueサーバーの動作に必要な設定を行います。
+``${ASAKUSA_HOME}/jobqueue/conf/jobqueue.properties`` をエディタで開き、修正を行なってください。
+
+.. list-table:: JobQueueサーバーの設定
+    :widths: 10 15
+    :header-rows: 1
+
+    * - 名前
+      - 値
+    * - core.worker
+      - 同時実行可能なジョブのスロット数
+    * - hadoop.log.dir
+      - Hadoopジョブ実行時のログ出力先
+
+.. warning::
+    ``core.worker`` が設定されていない場合、JobQueueサーバー起動時にエラーとなります。
+
+Hadoopジョブの設定
+------------------
+
+JobQueueサーバーがキックするHadoopジョブの設定を行います。
+``${ASAKUSA_HOME}/jobqueue-hadoop/conf/env.sh`` をエディタで開き、修正を行なってください。
+
+.. list-table:: Hadoopジョブの設定
+    :widths: 10 40
+    :header-rows: 1
+
+    * - 名前
+      - 値
+    * - ``JQ_HADOOP_PROPERTIES`` 
+      - Hadoopジョブに追加のパラメータを指定することができます。
+    * - ``HADOOP_TMP_DIR``
+      - ジョブの実行ごとに指定のディレクトリ以下にHadoopのテンポラリ領域を作成します。
+
+        省略された場合は、Hadoopのデフォルトのテンポラリ領域を使用し、全てのジョブで共有します。
+
+以下は ``${ASAKUSA_HOME}/jobqueue-hadoop/conf/env.sh`` の例です。
+
+.. code-block:: sh
+
+    export JQ_HADOOP_PROPERTIES="-D com.example.property=example"
+    export HADOOP_TMP_DIR="/tmp/hadoop-${USER}"
+
+.. note::
+
+    Tomcat起動時に ``HADOOP_HOME`` 環境変数を設定しない場合には、ここで設定する必要があります。
+
+jobqueue.warのデプロイ
+----------------------
+
+``${ASAKUSA_HOME}/webapps/jobqueue.war`` をTomcatにデプロイしてください。
+
+Tomcatにデプロイするには、 ``jobqueue.war`` ファイルを ``${CATALINA_HOME}/webapps`` にコピーするか、
+次のようなコンテキスト設定ファイルで ``jobqueue.war`` ファイルのパスを指定してください。
+
+例) ``${CATALINA_HOME}/conf/Catalina/localhost/jobqueue.xml`` 
+
+.. code-block:: xml
+
+    <Context docBase="${ASAKUSA_HOME}/webapps/jobqueue.war" />
+
+環境変数の設定
+--------------
+
+Tomcat起動時に、JobQueueサーバーの利用に必要となる環境変数を設定します。
+
+``~/.profile`` をエディタで開き、最下行に以下の定義を追加します。
+
+.. code-block:: sh
+
+    export JAVA_HOME=/usr/lib/jvm/jdk-6
+    export HADOOP_HOME=/usr/lib/hadoop
+    export ASAKUSA_HOME=$HOME/asakusa
+    export CATALINA_OPTS='-DapplyEvolutions.default=true'
+
+``~/.profile`` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
+
+.. code-block:: sh
+
+    . ~/.profile
+
+Tomcatの起動
+------------
+
+ドキュメントに従ってTomcatを起動してください。
+
+動作確認
+--------
+
+デプロイ先のURLのコンテキストルート [#]_ にアクセスして、次のようなJSONが出力されればJobQueueサーバーが正しく動作しています。
+
+.. code-block:: json
+
+    {"application":"asakusa-jobqueue","configurations":{"ASAKUSA_HOME":"/home/asakusa/asakusa","core.worker":4,"hadoop.log.dir":"/tmp/hadoop-asakusa/logs"}}
+
+.. [#] コンテキストパスを ``jobqueue`` にした場合、 http://localhost:8080/jobqueue にアクセスしてください。
+
 JobQueueクライアントプラグインの利用方法
 ========================================
 
@@ -122,7 +252,7 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
 `JobQueueを利用したHadoopジョブの実行`_ に加えて以下の設定を追加します。
 
 ..  list-table:: ラウンドロビン方式を利用する設定
-    :widths: 10 15
+    :widths: 10 20
     :header-rows: 1
 
     * - 名前
