@@ -32,7 +32,7 @@ import play.api.test.Helpers._
  * @since TODO
  */
 @RunWith(classOf[JUnitRunner])
-class JobQueueControllerSpec extends Specification {
+class JobQueueControllerSpec extends Specification with Tags {
 
   object TestContext extends BeforeAfter {
 
@@ -76,7 +76,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "status").as[String] must equalTo("initialized")
         (contents \ "jrid").asOpt[String] must not none
       }
-    }
+    } tag ("post-ok")
 
     "POST /jobs must return BadRequest without batchId" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -100,7 +100,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No batchId specified.")
       }
-    }
+    } tag ("without-batchId")
 
     "POST /jobs must return BadRequest without flowId" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -124,7 +124,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No flowId specified.")
       }
-    }
+    } tag ("without-flowId")
 
     "POST /jobs must return BadRequest without executionId" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -148,7 +148,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No executionId specified.")
       }
-    }
+    } tag ("without-executionId")
 
     "POST /jobs must return BadRequest without phaseId" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -172,7 +172,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No phaseId specified.")
       }
-    }
+    } tag ("without-phaseId")
 
     "POST /jobs must return BadRequest without stageId" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -196,7 +196,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No stageId specified.")
       }
-    }
+    } tag ("without-stageId")
 
     "POST /jobs must return BadRequest without mainClass" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -220,7 +220,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("400")
         (contents \ "errorMessage").as[String] must equalTo("No mainClass specified.")
       }
-    }
+    } tag ("without-mainClass")
 
     "GET /jobs/:jrid must return status" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -245,7 +245,7 @@ class JobQueueControllerSpec extends Specification {
         val contents = parse(contentAsString(info))
         (contents \ "status").as[String] must equalTo("initialized")
       }
-    }
+    } tag ("get")
 
     "GET /jobs/:jrid must return NotFound with not exisiting jrid" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -259,7 +259,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("404")
         (contents \ "errorMessage").as[String] must equalTo("Specified jrid was not found.")
       }
-    }
+    } tag ("get-notfound")
 
     "PUT /jobs/:jrid/execute must return status" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -296,7 +296,7 @@ class JobQueueControllerSpec extends Specification {
         (deleted \ "errorCode").as[String] must equalTo("404")
         (deleted \ "errorMessage").as[String] must equalTo("Specified jrid was not found.")
       }
-    }
+    } tag ("execute")
 
     "PUT /jobs/:jrid/execute must return NotFound with not exisiting jrid" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -310,7 +310,7 @@ class JobQueueControllerSpec extends Specification {
         (contents \ "errorCode").as[String] must equalTo("404")
         (contents \ "errorMessage").as[String] must equalTo("Specified jrid was not found.")
       }
-    }
-  }
+    } tag ("execute-notfound")
+  } section ("JobQueueController")
 
 }

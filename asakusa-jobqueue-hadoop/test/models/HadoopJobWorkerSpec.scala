@@ -29,7 +29,7 @@ import com.asakusafw.jobqueue.core._
  * @since TODO
  */
 @RunWith(classOf[JUnitRunner])
-class HadoopJobWorkerSpec extends Specification {
+class HadoopJobWorkerSpec extends Specification with Tags {
 
   object TestContext extends Before {
 
@@ -37,7 +37,7 @@ class HadoopJobWorkerSpec extends Specification {
      * @see org.specs2.specification.Before#before()
      */
     def before = {
-      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true)
+      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true, false)
     }
   }
 
@@ -60,16 +60,16 @@ class HadoopJobWorkerSpec extends Specification {
         "argument\\=1=avalue\\=\\\\\\,1 " +
         "-D prop1=pvalue1 -D prop2=pvalue2\n")
       new String(err.toByteArray) must equalTo("env1: evalue1\n")
-    }
+    } tag ("run")
 
     "doesn't run not executable sh file" in TestContext {
-      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(false)
+      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(false, false)
       val worker = new HadoopJobWorker(new File("test/asakusa"))
       val exitCode = worker.run(JobContext(
         HadoopJobInfo("jrid", "batchId", "flowId", "executionId", "phaseId", "stageId", "mainClass", Running, None,
           Map("argument1" -> "avalue1"), Map("prop1" -> "pvalue1"), Map("env1" -> "evalue1"))))
       exitCode must equalTo(126)
-    }
+    } tag ("notexecutable")
 
     "doesn't run not existing sh file" in TestContext {
       val worker = new HadoopJobWorker(new File("test/dosakusa"))
@@ -77,7 +77,7 @@ class HadoopJobWorkerSpec extends Specification {
         HadoopJobInfo("jrid", "batchId", "flowId", "executionId", "phaseId", "stageId", "mainClass", Running, None,
           Map("argument1" -> "avalue1"), Map("prop1" -> "pvalue1"), Map("env1" -> "evalue1"))))
       exitCode must equalTo(127)
-    }
-  }
+    } tag ("notexisting")
+  } section ("HadoopJobWorker")
 
 }
