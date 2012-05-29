@@ -15,6 +15,7 @@
  */
 package com.asakusafw.yaess.jobqueue;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.asakusafw.yaess.jobqueue.client.JobClient;
@@ -26,6 +27,8 @@ import com.asakusafw.yaess.jobqueue.client.JobClient;
 public class JobClientProvider {
 
     private final JobClient[] clients;
+
+    private final boolean[] blackList;
 
     private int location;
 
@@ -42,6 +45,7 @@ public class JobClientProvider {
             throw new IllegalArgumentException("clients must not be empty"); //$NON-NLS-1$
         }
         this.clients = clients.toArray(new JobClient[clients.size()]);
+        this.blackList = new boolean[clients.size()];
         this.location = 0;
     }
 
@@ -58,12 +62,25 @@ public class JobClientProvider {
      * @return a client.
      */
     public JobClient get() {
-        JobClient client;
-        synchronized (clients) {
-            client = clients[location];
-            location = (location + 1) % clients.length;
+        JobClient[] cs = clients;
+        boolean[] bs = blackList;
+        assert cs.length >= 1;
+        while (true) {
+            synchronized (cs) {
+                for (int i = 0; i < cs.length; i++) {
+                    JobClient client = cs[location];
+                    boolean enabled = blackList[location] == false;
+                    location = (location + 1) % cs.length;
+                    if (enabled) {
+                        return client;
+                    }
+                }
+            }
+            // clear black list
+            synchronized (cs) {
+                Arrays.fill(bs, false);
+            }
         }
-        return client;
     }
 
     /**
@@ -75,6 +92,19 @@ public class JobClientProvider {
         if (client == null) {
             throw new IllegalArgumentException("client must not be null"); //$NON-NLS-1$
         }
-        // do nothing
+        int index = -1;
+        JobClient[] cs = clients;
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == client) {
+                index = i;
+                break;
+            }
+        }
+        if (index >= 0) {
+            boolean[] bs = blackList;
+            synchronized (cs) {
+                bs[index] = true;
+            }
+        }
     }
 }
