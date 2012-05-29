@@ -4,7 +4,22 @@ name := "asakusa-jobqueue-core"
 
 version := "0.2-SNAPSHOT"
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+description := "Asakusa JobQueue Core"
+
+homepage := Some(url("http://asakusafw.com"))
+
+startYear := Some(2012)
+
+licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+organizationName := "Asakusa Framework Team"
+
+organizationHomepage := Some(url("http://asakusafw.com"))
+
+resolvers ++= Seq(
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "Asakusa Framework Repository" at "http://asakusafw.s3.amazonaws.com/maven/releases",
+  "Asakusa Framework Snapshot Repository" at "http://asakusafw.s3.amazonaws.com/maven/snapshots")
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-actor" % "2.0",
