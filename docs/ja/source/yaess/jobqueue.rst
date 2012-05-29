@@ -79,6 +79,8 @@ JobQueueクライアントプラグインの利用方法
 * `HttpComponents Core <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.4`` で動作確認 )
 * `HttpComponents Client <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.3`` で動作確認 )
 * `Gson <http://code.google.com/p/google-gson/>`_ ( ``Ver.1.7.1`` で動作確認 )
+* `Commons Codec <http://commons.apache.org/codec/>`_ ( ``Ver.1.4`` で動作確認 )
+* `Commons Logging <http://commons.apache.org/logging/>`_ ( ``Ver.1.1.1`` で動作確認 )
 
 プラグインライブラリの登録方法は、 :asakusafw:`YAESS本体のマニュアル <yaess/user-guide.html>` を参照してください。
 
