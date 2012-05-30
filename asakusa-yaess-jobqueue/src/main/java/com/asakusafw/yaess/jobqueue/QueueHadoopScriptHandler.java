@@ -216,7 +216,7 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
         assert context != null;
         assert script != null;
         JobScript job = convert(context, script);
-        for (int i = 1, n = clients.count(); i <= n; i++) {
+        for (int i = 1, n = clients.count() * 2; i <= n; i++) {
             monitor.checkCancelled();
             JobClient client = clients.get();
             try {
