@@ -170,6 +170,49 @@ Tomcat起動時に、JobQueueサーバーの利用に必要となる環境変数
      
     . ~/.profile
 
+JobQueueサーバーのログ出力
+--------------------------
+JobQueueサーバーはログ出力にLogback [#]_ を利用しています。
+
+標準ではコンソールに出力されますが、出力先やログレベルを変更する場合にはLogbackの設定を変更する必要があります。
+次の例のような設定ファイルを作成してください。
+
+..  code-block:: xml
+    
+    <configuration>
+    
+      <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
+    
+      <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/tmp/asakusa/log/jobqueue-server.log</file>
+        <append>true</append> 
+        <encoder>
+          <pattern>%d{yyyy/MM/dd HH:mm:ss} %-5level [%thread] %msg%n</pattern>
+        </encoder>
+      </appender>
+    
+      <logger name="play" level="INFO" />
+      <logger name="application" level="INFO" />
+    
+      <!-- Off these ones as they are annoying, and anyway we manage configuration ourself -->
+      <logger name="com.avaje.ebean.config.PropertyMapLoader" level="OFF" />
+      <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
+      <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
+    
+      <root level="INFO">
+        <appender-ref ref="FILE" />
+      </root>
+    
+    </configuration>
+
+設定ファイルを指定するため、上記の ``CATALINA_OPTS`` 環境変数に以下のように設定を追加してください。
+
+..  code-block:: sh
+    
+    export CATALINA_OPTS='-DapplyEvolutions.default=true -Dlogger.file=/path/to/logger.xml'
+
+..  [#] http://logback.qos.ch/
+
 Tomcatの起動
 ------------
 ドキュメントに従ってTomcatを起動してください。
