@@ -17,6 +17,12 @@
 		</license>
 	</licenses>
 
+    <inceptionYear>2011</inceptionYear>
+    <organization>
+        <name>Asakusa Framework Team</name>
+        <url>http://asakusafw.com</url>
+    </organization>
+
 	<properties>
 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
