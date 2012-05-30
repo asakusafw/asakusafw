@@ -89,7 +89,7 @@ Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javas
     cd /usr/lib/jvm
     sudo ln -s jdk1.6.0_* jdk-6
 
-..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-ia64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
+..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-x64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
 
 このほかに環境変数の設定が必要ですが、本手順では後ほどまとめて設定するため、このまま次に進みます。
 
