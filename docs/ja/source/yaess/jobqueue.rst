@@ -64,16 +64,17 @@ JobQueueサーバーがダウンから復旧したら、次回以降のYAESSの�
 JobQueueサーバーの利用方法
 ==========================
 
-JobQueueサーバーは、Apache Tomcat [#]_ Version 7以降(以下、Tomcatと表記します)上のWebアプリケーションとして動作します。
+JobQueueサーバーは、Servlet API 3.0に対応したサーブレットコンテナ上のWebアプリケーションとして動作します。
+ここでは、Apache Tomcat [#]_ Version 7(以下、Tomcatと表記します)を使ったJobQueueサーバーの利用方法を説明します。
 
-Tomcatの構築手順やSSL、ベーシック認証の設定等は、Tomcatの公式のドキュメント [#]_ 等を参考にしてください。
+Tomcatの構築手順やSSL、ベーシック認証の設定等は、Tomcatの公式ドキュメント [#]_ 等を参考にしてください。
 以降、Tomcatをインストールしたディレクトリを、 ``${CATALINA_HOME}`` と表記します。
 
 .. attention::
 
     Tomcatは *ASAKUSA_USER* から実行するように設定してください。
 
-.. [#] http://tomcat.apache.org/download-70.cgi
+.. [#] http://tomcat.apache.org
 .. [#] http://tomcat.apache.org/tomcat-7.0-doc/index.html
 
 JobQueueサーバー・コンポーネントのインストール
@@ -111,9 +112,6 @@ JobQueueサーバーの動作に必要な設定を行います。
     * - hadoop.log.dir
       - Hadoopジョブ実行時のログ出力先
 
-.. warning::
-    ``core.worker`` が設定されていない場合、JobQueueサーバー起動時にエラーとなります。
-
 Hadoopジョブの設定
 ------------------
 
@@ -127,7 +125,7 @@ JobQueueサーバーがキックするHadoopジョブの設定を行います。
     * - 名前
       - 値
     * - ``JQ_HADOOP_PROPERTIES`` 
-      - Hadoopジョブに追加のパラメータを指定することができます。
+      - Hadoopジョブに追加のGenericオプションを指定することができます。
     * - ``HADOOP_TMP_DIR``
       - ジョブの実行ごとに指定のディレクトリ以下にHadoopのテンポラリ領域を作成します。
 
