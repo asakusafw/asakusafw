@@ -42,15 +42,15 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発では
     * - 種類
       - バージョン
     * - オペレーティングシステム
-      - Ubuntu Desktop 11.10 [#]_
+      - Ubuntu Desktop 12.04 [#]_
     * - オペレーティングシステム
       - CentOS 6.2 [#]_
     * - ビルドツール
-      - Apache Maven 3.0.3 [#]_
+      - Apache Maven 3.0.4 [#]_
     * - 統合開発環境
       - Eclipse IDE for Java Developers 3.6.2 [#]_
     * - 統合開発環境
-      - Eclipse IDE for Java Developers 3.7.1 
+      - Eclipse IDE for Java Developers 3.7.2 
 
 ..  [#] http://www.ubuntu.com/
 ..  [#] http://www.centos.org/
