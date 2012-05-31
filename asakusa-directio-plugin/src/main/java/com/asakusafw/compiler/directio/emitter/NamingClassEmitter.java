@@ -20,22 +20,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.directio.OutputPattern.CompiledResourcePattern;
+import com.asakusafw.compiler.directio.OutputPattern.RandomNumber;
+import com.asakusafw.compiler.directio.OutputPattern.SourceKind;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.stage.directio.StringTemplate;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
 import com.asakusafw.runtime.stage.directio.StringTemplate.FormatSpec;
+import com.asakusafw.runtime.value.IntOption;
 import com.ashigeru.lang.java.model.syntax.Comment;
 import com.ashigeru.lang.java.model.syntax.CompilationUnit;
 import com.ashigeru.lang.java.model.syntax.ConstructorDeclaration;
 import com.ashigeru.lang.java.model.syntax.Expression;
+import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
 import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
+import com.ashigeru.lang.java.model.syntax.InfixOperator;
 import com.ashigeru.lang.java.model.syntax.Javadoc;
 import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
 import com.ashigeru.lang.java.model.syntax.ModelFactory;
@@ -58,6 +64,7 @@ import com.ashigeru.lang.java.model.util.TypeBuilder;
  * Emits {@link StringTemplate} subclasses.
  * @since 0.2.5
  */
+@SuppressWarnings("deprecation")
 public class NamingClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(NamingClassEmitter.class);
@@ -129,6 +136,10 @@ public class NamingClassEmitter {
 
     private static final class Engine {
 
+        private static final String FIELD_RANDOM_HOLDER = "randomValue";
+
+        private static final String FIELD_RANDOMIZER = "randomizer";
+
         private final String moduleId;
 
         private final String outputName;
@@ -181,11 +192,18 @@ public class NamingClassEmitter {
             SimpleName name = getClassName();
             importer.resolvePackageMember(name);
             List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            if (requireRandomNumber()) {
+                members.add(createRandomHolder());
+                members.add(createRandomizer());
+            }
             members.add(createConstructor());
             members.add(createSetMethod());
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(
+                                importer.toType(SuppressWarnings.class),
+                                Models.toLiteral(factory, "deprecation"))
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -194,6 +212,44 @@ public class NamingClassEmitter {
                     t(StringTemplate.class),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private boolean requireRandomNumber() {
+            for (CompiledResourcePattern naming : namingInfo) {
+                if (naming.getKind() == SourceKind.RANDOM) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private FieldDeclaration createRandomHolder() {
+            new IntOption().modify(index);
+            return factory.newFieldDeclaration(
+                    null,
+                    new AttributeBuilder(factory)
+                        .Private()
+                        .Final()
+                        .toAttributes(),
+                    importer.toType(IntOption.class),
+                    factory.newSimpleName(FIELD_RANDOM_HOLDER),
+                    new TypeBuilder(factory, importer.toType(IntOption.class))
+                        .newObject()
+                        .toExpression());
+        }
+
+        private FieldDeclaration createRandomizer() {
+            return factory.newFieldDeclaration(
+                    null,
+                    new AttributeBuilder(factory)
+                        .Private()
+                        .Final()
+                        .toAttributes(),
+                    importer.toType(Random.class),
+                    factory.newSimpleName(FIELD_RANDOMIZER),
+                    new TypeBuilder(factory, importer.toType(Random.class))
+                        .newObject(Models.toLiteral(factory, 12345))
+                        .toExpression());
         }
 
         private ConstructorDeclaration createConstructor() {
@@ -232,11 +288,39 @@ public class NamingClassEmitter {
                 .toLocalVariableDeclaration(t(dataType.getType()), object));
             int position = 0;
             for (CompiledResourcePattern naming : namingInfo) {
-                DataClass.Property property = naming.getTarget();
-                if (property != null) {
+                switch (naming.getKind()) {
+                case NOTHING:
+                    break;
+                case PROPERTY: {
+                    DataClass.Property property = naming.getTarget();
                     statements.add(new ExpressionBuilder(factory, factory.newThis())
                         .method("setProperty", Models.toLiteral(factory, position), property.createGetter(object))
                         .toStatement());
+                    break;
+                }
+                case RANDOM: {
+                    RandomNumber rand = naming.getRandomNumber();
+                    statements.add(new ExpressionBuilder(factory, factory.newThis())
+                        .field(FIELD_RANDOM_HOLDER)
+                        .method("modify", new ExpressionBuilder(factory, factory.newThis())
+                            .field(FIELD_RANDOMIZER)
+                            .method(
+                                    "nextInt",
+                                    Models.toLiteral(factory, rand.getUpperBound() - rand.getLowerBound() + 1))
+                            .apply(InfixOperator.PLUS, Models.toLiteral(factory, rand.getLowerBound()))
+                            .toExpression())
+                        .toStatement());
+                    statements.add(new ExpressionBuilder(factory, factory.newThis())
+                        .method("setProperty",
+                                Models.toLiteral(factory, position),
+                                new ExpressionBuilder(factory, factory.newThis())
+                                    .field(FIELD_RANDOM_HOLDER)
+                                    .toExpression())
+                        .toStatement());
+                    break;
+                }
+                default:
+                    throw new AssertionError();
                 }
                 position++;
             }

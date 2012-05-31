@@ -19,9 +19,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -142,13 +147,76 @@ public class JobFlowParamLoader {
             String batchId,
             String jobflowId,
             boolean isPrimary) {
-        // ジョブフロー設定のファイル名を作成
         File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        if (importTargetTables.isEmpty()) {
+            return true;
+        }
+        return checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), isPrimary);
+    }
 
-        // プロパティを取得
-        Properties importProp = null;
+    /**
+     * Loads the jobflow parameters in extractor.
+     * @param targetName target name
+     * @param batchId the batch ID
+     * @param jobflowId the jobflow ID
+     * @return {@code true} if the parameters are valid, otherwise {@code false}
+     * @since 0.2.6
+     */
+    public boolean loadExtractParam(String targetName, String batchId, String jobflowId) {
+        File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        if (importTargetTables.isEmpty()) {
+            return true;
+        }
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            ImportTargetTableBean tableInfo = entry.getValue();
+            tableInfo.setSearchCondition(null);
+        }
+        boolean result = checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), true);
+        return result;
+    }
+
+    /**
+     * Loads the jobflow parameters in cache building.
+     * @param targetName target name
+     * @param batchId the batch ID
+     * @param jobflowId the jobflow ID
+     * @return {@code true} if the parameters are valid, otherwise {@code false}
+     * @since 0.2.6
+     */
+    public boolean loadCacheBuildParam(String targetName, String batchId, String jobflowId) {
+        File propFile = createJobFlowConfFile(jobflowId, batchId);
+        if (fetchImporterParams(targetName, jobflowId, propFile) == false) {
+            return false;
+        }
+        Map<String, ImportTargetTableBean> cacheTables = new HashMap<String, ImportTargetTableBean>();
+        for (Map.Entry<String, ImportTargetTableBean> entry : importTargetTables.entrySet()) {
+            String tableName = entry.getKey();
+            ImportTargetTableBean tableInfo = entry.getValue();
+            if (tableInfo.getCacheId() == null) {
+                LOG.debugMessage("Table \"{0}\" does not use cache mechanism", tableName);
+                continue;
+            }
+            tableInfo.setLockType(ImportTableLockType.NONE);
+            tableInfo.setLockedOperation(ImportTableLockedOperation.FORCE);
+            cacheTables.put(tableName, tableInfo);
+        }
+        if (cacheTables.isEmpty()) {
+            return true;
+        }
+        boolean result = checkImportParam(cacheTables, targetName, jobflowId, propFile.getPath(), false);
+        return result;
+    }
+
+    private boolean fetchImporterParams(String targetName, String jobflowId, File propFile) {
+        Properties properties;
         try {
-            importProp = getImportProp(propFile, targetName);
+            properties = getImportProp(propFile, targetName);
         } catch (IOException e) {
             LOG.error(
                     e,
@@ -159,19 +227,12 @@ public class JobFlowParamLoader {
                     propFile.getPath());
             return false;
         }
-
-        // インポート対象テーブルの設定を作成する
-        if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
+        if (!createImportTargetTableBean(properties, targetName, jobflowId, propFile.getPath())) {
             return false;
-        } else {
-            if (importTargetTables.size() == 0) {
-                // Import対象テーブルがない場合は正常終了する。
-                return true;
-            }
         }
-
-        return checkImportParam(importTargetTables, targetName, jobflowId, propFile.getPath(), isPrimary);
+        return true;
     }
+
     /**
      * プロパティを解析してimportTargetTableを作成する。
      * @param importProp プロパティ
@@ -245,7 +306,7 @@ public class JobFlowParamLoader {
                 } else if (IMP_BEAN_NAME.equals(keyMeans)) {
                     // JavaBeansクラス名
                     try {
-                        bean.setImportTargetType(Class.forName(value));
+                        bean.setImportTargetType(loadClass(value));
                     } catch (ClassNotFoundException e) {
                         LOG.error(e, "TG-COMMON-00002",
                                 "Import対象テーブルに対応するJavaBeanのクラスが存在しない",
@@ -411,7 +472,7 @@ public class JobFlowParamLoader {
                 } else if (EXP_BEAN_NAME.equals(keyMeans)) {
                     // JavaBeansクラス名
                     try {
-                        bean.setExportTargetType(Class.forName(value));
+                        bean.setExportTargetType(loadClass(value));
                     } catch (ClassNotFoundException e) {
                         LOG.error(e, "TG-COMMON-00003",
                                 "Export対象テーブルに対応するJavaBeanのクラスが存在しない",
@@ -435,6 +496,16 @@ public class JobFlowParamLoader {
 
         return true;
     }
+
+    private Class<?> loadClass(String className) throws ClassNotFoundException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            return Class.forName(className, false, classLoader);
+        } else {
+            return Class.forName(className);
+        }
+    }
+
     /**
      * リカバリ処理で使用するパラメータを読み取る。
      * 当メソッドを呼出した後は以下のメソッドを使用できるようになる。
@@ -450,7 +521,6 @@ public class JobFlowParamLoader {
     public boolean loadRecoveryParam(String targetName, String batchId, String jobflowId) {
         // ジョブフロー設定のファイル名を作成
         File propFile = createJobFlowConfFile(jobflowId, batchId);
-
         // プロパティを取得
         Properties importProp = null;
         Properties exportProp = null;
@@ -464,17 +534,41 @@ public class JobFlowParamLoader {
             return false;
         }
 
-        // インポート対象テーブルの設定を作成する
-        if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
-            return false;
+        ClassLoader jobflowLoader;
+        try {
+            final URL jarLocation = propFile.getAbsoluteFile().getCanonicalFile().toURI().toURL();
+            jobflowLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                @Override
+                public ClassLoader run() {
+                    URLClassLoader loader = new URLClassLoader(
+                            new URL[] { jarLocation },
+                            getClass().getClassLoader());
+                    return loader;
+                }
+            });
+        } catch (IOException e) {
+            LOG.debugMessage("Failed to load the jobflow library: {0}",
+                    propFile);
+            jobflowLoader = getClass().getClassLoader();
         }
 
-        // エクスポート対象テーブルの設定を作成する
-        if (!createExportTargetTableBean(exportProp, targetName, jobflowId, propFile.getPath())) {
-            return false;
-        }
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(jobflowLoader);
+            // インポート対象テーブルの設定を作成する
+            if (!createImportTargetTableBean(importProp, targetName, jobflowId, propFile.getPath())) {
+                return false;
+            }
 
-        return checkRecoveryParam(exportTargetTables, targetName, jobflowId, propFile.getPath());
+            // エクスポート対象テーブルの設定を作成する
+            if (!createExportTargetTableBean(exportProp, targetName, jobflowId, propFile.getPath())) {
+                return false;
+            }
+
+            return checkRecoveryParam(exportTargetTables, targetName, jobflowId, propFile.getPath());
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
     /**
      * リカバリ処理で使用する設定のチェックを行う。

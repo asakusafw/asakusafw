@@ -110,9 +110,12 @@ public final class WindGate {
     public static void main(String... args) {
         CommandLineUtil.prepareLogContext();
         WGLOG.info("I00000");
+        long start = System.currentTimeMillis();
         int status = execute(args);
+        long end = System.currentTimeMillis();
         WGLOG.info("I00999",
-                status);
+                status,
+                end - start);
         System.exit(status);
     }
 

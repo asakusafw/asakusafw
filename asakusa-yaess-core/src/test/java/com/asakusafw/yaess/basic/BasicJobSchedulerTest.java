@@ -306,7 +306,12 @@ public class BasicJobSchedulerTest {
         }
 
         @Override
-        public String getLabel() {
+        public String getJobLabel() {
+            return id;
+        }
+
+        @Override
+        public String getServiceLabel() {
             return id;
         }
 
@@ -321,7 +326,7 @@ public class BasicJobSchedulerTest {
         }
 
         @Override
-        public String getResourceId() {
+        public String getResourceId(ExecutionContext context) {
             return "testing";
         }
     }

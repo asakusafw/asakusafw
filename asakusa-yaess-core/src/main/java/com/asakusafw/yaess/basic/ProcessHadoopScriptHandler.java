@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ hadoop.workingDirectory = $<cluster working directory>
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>
  * @since 0.2.3
+ * @version 0.2.6
  */
 public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerBase implements HadoopScriptHandler {
 
@@ -115,6 +117,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     @Override
     protected final void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         this.currentProfile = profile;
         this.workingDirectory = profile.getConfiguration().get(KEY_WORKING_DIRECTORY);
@@ -185,10 +188,10 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         assert context != null;
         assert script != null;
 
-        Map<String, String> env = buildEnvironmentVariables(script);
+        Map<String, String> env = buildEnvironmentVariables(context, script);
         LOG.debug("Env: {}", env);
 
-        List<String> original = buildExecuteCommand(context, script);
+        List<String> original = buildExecutionCommand(context, script);
         List<String> command;
         try {
             command = ProcessUtil.buildCommand(commandPrefix, original, Collections.<String>emptyList());
@@ -207,18 +210,19 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env);
+        int exit = executor.execute(context, command, env, monitor.getOutput());
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop job: code={5} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from Hadoop job: "
+                + "code={5} (batch={0}, flow={1}, phase={2}, stage={4}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
                 script.getId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
     private void cleanUp0(
@@ -227,7 +231,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         assert monitor != null;
         assert context != null;
 
-        Map<String, String> env = getEnvironmentVariables();
+        Map<String, String> env = getEnvironmentVariables(context, null);
         LOG.debug("Env: {}", env);
 
         List<String> original = buildCleanupCommand(context);
@@ -248,38 +252,46 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env);
+        int exit = executor.execute(context, command, env, monitor.getOutput());
         if (exit == 0) {
             return;
         }
-        throw new IOException(MessageFormat.format(
-                "Failed to execute Hadoop Cleanup job: code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
+        throw new ExitCodeException(MessageFormat.format(
+                "Unexpected exit code from Hadoop Cleanup job: "
+                + "code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
                 context.getBatchId(),
                 context.getFlowId(),
                 context.getPhase(),
                 context.getExecutionId(),
-                String.valueOf(exit)));
+                String.valueOf(exit)), exit);
     }
 
-    private Map<String, String> buildEnvironmentVariables(ExecutionScript script) {
+    private Map<String, String> buildEnvironmentVariables(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException {
         assert script != null;
         Map<String, String> env = new HashMap<String, String>();
-        env.putAll(getEnvironmentVariables());
+        env.putAll(getEnvironmentVariables(context, script));
         env.putAll(script.getEnvironmentVariables());
         return env;
     }
 
-    private List<String> buildExecuteCommand(ExecutionContext context, HadoopScript script) throws IOException {
+    private List<String> buildExecutionCommand(
+            ExecutionContext context,
+            HadoopScript script) throws IOException, InterruptedException {
         assert context != null;
         assert script != null;
         List<String> command = new ArrayList<String>();
-        command.add(getCommand(PATH_EXECUTE, script));
+        command.add(getCommand(context, PATH_EXECUTE, script));
         command.add(script.getClassName());
         command.add(context.getBatchId());
         command.add(context.getFlowId());
         command.add(context.getExecutionId());
         command.add(context.getArgumentsAsString());
-        for (Map.Entry<String, String> entry : script.getHadoopProperties().entrySet()) {
+
+        Map<String, String> props = buildHadoopProperties(context, script);
+
+        for (Map.Entry<String, String> entry : props.entrySet()) {
             command.add("-D");
             command.add(MessageFormat.format("{0}={1}",
                     entry.getKey(),
@@ -288,7 +300,18 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         return command;
     }
 
-    private List<String> buildCleanupCommand(ExecutionContext context) throws IOException {
+    private Map<String, String> buildHadoopProperties(
+            ExecutionContext context,
+            HadoopScript script) throws InterruptedException, IOException {
+        assert context != null;
+        assert script != null;
+        Map<String, String> props = new TreeMap<String, String>();
+        props.putAll(getProperties(context, script));
+        props.putAll(script.getHadoopProperties());
+        return props;
+    }
+
+    private List<String> buildCleanupCommand(ExecutionContext context) throws IOException, InterruptedException {
         assert workingDirectory != null;
         assert context != null;
         Map<String, String> map = new HashMap<String, String>();
@@ -299,7 +322,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         String resolved = resolver.replace(workingDirectory, false);
 
         List<String> command = new ArrayList<String>();
-        command.add(getCommand(PATH_CLEANUP, null));
+        command.add(getCommand(context, PATH_CLEANUP, null));
         command.add(resolved);
         command.add(context.getBatchId());
         command.add(context.getFlowId());
@@ -308,13 +331,16 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         return command;
     }
 
-    private String getCommand(String command, HadoopScript script) throws IOException {
+    private String getCommand(
+            ExecutionContext context,
+            String command,
+            HadoopScript script) throws IOException, InterruptedException {
         assert command != null;
         Map<String, String> variables;
         if (script != null) {
-            variables = buildEnvironmentVariables(script);
+            variables = buildEnvironmentVariables(context, script);
         } else {
-            variables = getEnvironmentVariables();
+            variables = getEnvironmentVariables(context, null);
         }
         String home = variables.get(ExecutionScript.ENV_ASAKUSA_HOME);
         if (home == null) {

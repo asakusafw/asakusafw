@@ -20,6 +20,7 @@
 				<include>finalizer.sh</include>
 				<include>recoverer.sh</include>
 				<include>release-cache-lock.sh</include>
+				<include>build-cache.sh</include>
 				<include>delete-cache-info.sh</include>
 				<include>gc-cache-storage.sh</include>
 				<include>set-classpath-db.sh</include>

@@ -6,7 +6,7 @@ Direct I/O ユーザーガイド
 Direct I/Oの導入方法については :doc:`../administration/deployment-with-directio` を参照してください。
 
 ..  caution::
-    Direct I/O はAsakusa Frameworkのバージョン ``0.2.5`` において実験的な機能として提供しています。
+    Direct I/O はAsakusa Frameworkのバージョン |version| において実験的な機能として提供しています。
     今後のバージョンで利用方法や挙動の一部が変更される可能性があります。
 
 
@@ -49,7 +49,7 @@ Direct I/Oの入力には次のような特徴があります。
 * 大きなデータを分割して分散して読みだす
 
 ..  warning::
-    バージョン ``0.2.5`` では、同一の入力を複数回読む場合があります。
+    バージョン |version| では、同一の入力を複数回読む場合があります。
     これは将来のバージョンで改善される予定です。
 
 以降では上記の特徴に関するアーキテクチャを紹介します。
@@ -98,7 +98,7 @@ Direct I/Oで複数のデータソースに対して出力を行う際、内部�
 または整合性のとれた出力結果を得られるようになっています。
 
 ..  warning::
-    バージョン ``0.2.5`` ではトランザクションの修復を自動的には行いません。
+    バージョン |version| ではトランザクションの修復を自動的には行いません。
     `トランザクションのメンテナンス`_ を参考に、手動で修復を行ってください。
 
 Direct I/Oのトランザクション処理は主に以下の流れで行います。
@@ -312,6 +312,39 @@ Hadoopのファイルシステムを利用したデータソースでは、指�
 ..  [#] 具体的には、 ``...fs.tempdir`` 以下のファイルを ``...fs.path`` 以下のディレクトリに ``FileSystem.rename()`` で移動できる必要があります。
 ..  [#] 試行領域に直接出力をしない場合にローカルテンポラリ領域が設定されていないと実行時にエラーとなります。
 
+
+Keep Aliveの設定
+~~~~~~~~~~~~~~~~
+Hadoopの一部のファイルシステムでは、データを大きなブロックで転送するような実装になっています。
+大きなブロックを転送する際にハートビート信号を送らず、そのような状態が長く続くとタスクがジョブトラッカーによって強制終了されてしまいます。
+
+`Hadoopのファイルシステムを利用したデータソース`_ において、Keep Aliveの設定を行うことで上記の問題を回避できます。
+これは、Direct I/Oでデータの転送を行っている裏側で、自動的に疑似的にハートビート信号を送り続けます。
+
+..  list-table:: Keep Aliveの設定
+    :widths: 30 5 20
+    :header-rows: 1
+    
+    * - 名前
+      - 形式
+      - 値
+    * - ``com.asakusafw.directio.<DSID>.keepalive.interval``
+      - long
+      - ハートビート信号を送る間隔 (ミリ秒)
+
+``...keepalive.interval`` を省略した場合、Direct I/OでのKeep Aliveの設定は無効になります。
+設定する場合には、タスク試行のタイムアウト時間 [#]_ の半分程度を指定するのが良いでしょう。
+
+..  [#] 通常は 600,000 ミリ秒程度です
+
+..  caution::
+    Keep Aliveの設定は注意深く行ってください。
+    タスク試行内の処理がフリーズしてしまった場合、通常そのタスク試行はタイムアウトすることになります。
+    しかし、上記のKeep Aliveが有効になっていると、まだ動き続けていると見なされてタイムアウトしない場合があります。
+
+..  hint::
+    上記の他に、Hadoop本体の設定 ``mapred.task.timeout`` を変更することでも対応可能です。
+
 HDFSでの設定例
 ~~~~~~~~~~~~~~
 以下はHDFSの入出力を行う場合の設定例です。
@@ -373,8 +406,19 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
 このため、上記の設定では主に次のようなことを行っています。
 
 * 入力データの分割を行わない ( ``...fragment.min = -1`` )
+
+  * 一部の実装では、巨大な入力データを途中から読み出す際にウェイトが発生するようです。
+
 * 試行領域をローカルファイルシステム上に作成する ( ``...output.streaming = false`` )
+
+  * 試行領域をS3上に作成した場合、試行の成功の際にファイルの名前を変更します。しかし、S3上でファイルの名前を変更すると、コピーと削除の組み合わせが内部的に発生します。
+
 * ステージ領域をスキップする ( ``...output.staging = false`` )
+
+  * ステージ領域を利用する場合、タスクが全て成功した後にファイルの名前変更を行います。試行領域の時と同様に、S3上でのファイル名変更はHDFS上のそれより時間がかかります。
+
+..  attention::
+    ステージ領域をスキップするとトランザクション処理が行えなくなるため、必要に応じて上記の設定を行ってください。
 
 ..  _`Amazon S3`: http://aws.amazon.com/s3/
 
@@ -445,8 +489,10 @@ Hadoop本体の関連するドキュメントを参照してください。
 ================
 Direct I/Oを利用してファイルを入出力するには、 `Hadoopのファイルシステムを利用したデータソース`_ などの設定をしておきます。
 
-また、データモデルと対象のファイル形式をマッピングする ``BinaryStreamFormat`` [#]_ の作成が必要です。
-この実装クラスは、DMDLコンパイラの拡張 [#]_ を利用して自動的に生成できます。
+また、データモデルと対象のファイル形式をマッピングする ``DataFormat`` [#]_ の作成が必要です。
+``DataFormat`` のサブタイプとして、任意のストリームを取り扱う ``BinaryStreamFormat`` [#]_ や、Hadoopのファイルを取り扱う ``HadoopFileFormat`` [#]_ を現在利用できます ( ``DataFormat`` は直接実装できません ) 。
+
+上記のうち、CSVファイルを読み書きするための実装クラスは、DMDLコンパイラの拡張 [#]_ を利用して自動的に生成できます。
 
 なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
 
@@ -465,12 +511,14 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
     * - ``asakusa-directio-dmdl``
       - DMDLコンパイラプラグイン
 
+..  [#] ``com.asakusafw.runtime.directio.DataFormat``
 ..  [#] ``com.asakusafw.runtime.directio.BinaryStreamFormat``
+..  [#] ``com.asakusafw.runtime.directio.hadoop.HadoopFileFormat``
 ..  [#] :doc:`../dmdl/user-guide` を参照
 
-CSV形式のBinaryStreamFormatの作成
----------------------------------
-CSV形式 [#]_ に対応した ``BinaryStreamFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.csv`` を指定します。
+CSV形式のDataFormatの作成
+-------------------------
+CSV形式 [#]_ に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.csv`` を指定します。
 
 ..  code-block:: none
 
@@ -484,7 +532,7 @@ CSV形式 [#]_ に対応した ``BinaryStreamFormat`` の実装クラスを自�
     };
 
 上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.csv.<データモデル名>CsvFormat`` というクラスが自動生成されます。
-このクラスは ``BinaryStreamFormat`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
+このクラスは ``DataFormat`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
 
 また、 単純な `ファイルを入力に利用するDSL`_ と `ファイルを出力に利用するDSL`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvInputDescription`` 、後者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
 
@@ -641,6 +689,85 @@ CSV形式の注意点
   * ``@directio.csv.record_number``
 
 
+シーケンスファイル形式のDataFormatの作成
+----------------------------------------
+Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 ``SequenceFileFormat`` [#]_ のサブクラスを作成します。
+``SequenceFileFormat`` は ``HadoopFileFormat`` のサブクラスで、シーケンスファイルを読み書きするための骨格実装が提供されています。
+
+このクラスを継承する際には、以下の型引数を ``SequenceFileFormat<K, V, T>`` にそれぞれ指定してください。
+
+``K``
+    対象シーケンスファイルのキーオブジェクトの型
+
+``V``
+    対象シーケンスファイルの値オブジェクトの型
+
+``T``
+    アプリケーションで利用するデータモデルオブジェクトの型
+
+このクラスでは、下記のメソッドをオーバーライドします。
+
+``Class<T> getSupportedType()``
+    対象となるデータモデルのクラスを戻り値に指定します。
+
+``K createKeyObject()``
+    対象のシーケンスファイルのキーと同じクラスのオブジェクトを戻り値に指定します。
+
+``V createValueObject()``
+    対象のシーケンスファイルの値と同じクラスのオブジェクトを戻り値に指定します。
+
+``void copyToModel(K key, V value, T model)``
+    シーケンスファイルから読み出したキー ( ``key`` ) と 値 ( ``value`` ) の内容を、対象のデータモデルオブジェクト ( ``model`` ) に設定します。
+    このメソッドは、シーケンスファイルからデータ読み出す際に、レコードごとに起動されます。
+    このメソッドによって変更されたデータモデルオブジェクトは、以降の処理の入力として利用されます。
+
+``void copyFromModel(T model, K key, V value)``
+    結果を表すデータモデルオブジェクトの内容を、シーケンスファイルのキー ( ``key`` ) と値 ( ``value`` ) に設定します。
+    このメソッドは、シーケンスファイルにデータを書き込む際に、レコードごとに起動されます。
+    このメソッドによって変更されたキーと値がそのままシーケンスファイルに書き出されます。
+
+以下は実装例です。
+
+..  code-block:: java
+
+    public class ExampleSequenceFormat extends SequenceFileFormat<LongWritable, Text, MyData> {
+
+        @Override
+        public Class<MyData> getSupportedType() {
+            return MyData.class;
+        }
+
+        @Override
+        protected LongWritable createKeyObject() {
+            return new LongWritable();
+        }
+
+        @Override
+        protected Text createValueObject() {
+            return new Text();
+        }
+
+        @Override
+        protected void copyToModel(LongWritable key, Text value, MyData model) {
+            model.setPosition(key.get());
+            model.setText(value);
+        }
+
+        @Override
+        protected void copyFromModel(MyData model, LongWritable key, Text value) {
+            key.set(model.getPositionOption().or(0L));
+            value.set(model.getTextOption().or("(null)"));
+        }
+    }
+
+..  hint::
+    この機能は、 `Apache Sqoop`_ 等のツールと連携することを想定して提供されています。
+
+..  [#] ``org.apache.hadoop.io.SequenceFile``
+..  [#] ``com.asakusafw.runtime.directio.hadoop.SequenceFileFormat``
+
+..  _`Apache Sqoop` : http://sqoop.apache.org/
+
 ファイルを入力に利用するDSL
 ---------------------------
 Direct I/Oを利用してファイルからデータを読み出す場合、 ``DirectFileInputDescription`` [#]_ クラスのサブクラスを作成して必要な情報を記述します。
@@ -664,8 +791,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
-``Class<? extends BinaryStreamFormat<?>> getFormat()``
-    ``BinaryStreamFormat`` の実装クラスを戻り値に指定します。
+``Class<? extends DataFormat<?>> getFormat()``
+    ``DataFormat`` の実装クラスを戻り値に指定します。
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -696,7 +823,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return DocumentCsvFormat.class;
         }
 
@@ -799,8 +926,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
-``Class<? extends BinaryStreamFormat<?>> getFormat()``
-    ``BinaryStreamFormat`` の実装クラスを戻り値に指定します。
+``Class<? extends DataFormat<?>> getFormat()``
+    ``DataFormat`` の実装クラスを戻り値に指定します。
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -831,7 +958,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
-        public Class<? extends BinaryStreamFormat<?>> getFormat() {
+        public Class<? extends DataFormat<?>> getFormat() {
             return DocumentCsvFormat.class;
         }
     }
@@ -892,6 +1019,20 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
       - プレースホルダ
       - プロパティの内容を指定のフォーマットで文字列化して利用します。
         プロパティはDMDLと同様に ``snake_case`` の形式でプロパティ名を指定します。
+    * - ``[開始番号..終了番号]``
+      - ランダムな値
+      - 開始番号以上、終了番号以下のランダムな数値に置き換えます。
+        それぞれの番号は0以上かつ2の31乗未満で、開始番号より終了番号のほうが大きな数値である必要があります。
+
+..  hint::
+    出力ファイルが1つになってしまう場合や、出力ファイルのサイズに大きな偏りができてしまう場合、
+    「ランダムな値」を利用することでパフォーマンスを向上させられる場合があります。
+
+..  hint::
+    「ランダムな値」をゼロ埋めしたい場合、 ``[0..9][0..9]`` のように書けます。
+
+..  warning::
+    出力するレコード数が「ランダムな値」の範囲よりも十分に大きくない場合、ランダムな値のすべての範囲に対するファイルが生成されない場合があります。
 
 ..  warning::
     `入力ファイル名のパターン`_ とは異なり、出力ファイル名のパターンでは変数名にプレースホルダなどを含められません。

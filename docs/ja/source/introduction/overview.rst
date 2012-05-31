@@ -11,7 +11,7 @@ Asakusa Frameworkは、基幹向けの分散バッチアプリケーションを
 現在のところ、Asakusa Frameworkはバッチ処理基盤にHadoop [#]_ を採用しています。
 Hadoopは信頼性の高い、スケーラブルな分散処理基盤を提供する目的で作成されたオープンソースソフトウェアで、現在さまざまな分野で利用されています。
 
-Asakusa Frameworkでは、基幹向けのバッチアプリケーションを作成を主眼に置いた独自の領域特化言語(Domain Specific Language, DSL)を利用してアプリケーションを作成します。
+Asakusa Frameworkでは、基幹向けのバッチアプリケーションの作成を主眼に置いた、独自のドメイン特化言語(Domain Specific Language, DSL)を利用してアプリケーションを作成します。
 このDSLはプログラミング言語Javaを基礎に作成していて、Hadoopや分散処理特有のプログラムをほとんど記述することなく、
 シンプルなJavaのプログラムの組み合わせから複雑なHadoop上のアプリケーションを作成できます。
 
@@ -110,7 +110,7 @@ Direct I/O
 なお、これらのツールとの連携は `Asakusa DSL`_ から記述できます。
 
 ..  [#] http://www.mysql.com/
-..  [#] Direct I/OはAsakusa Frameworkのバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
+..  [#] Direct I/OはAsakusa Frameworkのバージョン |version| の時点で実験的な機能として提供しています。
 
 自動テストサポート
 ------------------

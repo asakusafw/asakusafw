@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -122,6 +121,7 @@ public class CacheBuildClient extends Configured implements Tool {
 
     private void update() throws IOException, InterruptedException {
         Job job = new Job(getConf());
+        job.setJobName("TGC-UPDATE-" + storage.getPatchDirectory());
 
         List<StageInput> inputList = new ArrayList<StageInput>();
         inputList.add(new StageInput(
@@ -188,9 +188,16 @@ public class CacheBuildClient extends Configured implements Tool {
 
     private void create() throws InterruptedException, IOException {
         Job job = new Job(getConf());
-        TemporaryInputFormat.setInputPaths(job, Collections.singletonList(storage.getPatchContents("*")));
-        job.setInputFormatClass(TemporaryInputFormat.class);
-        job.setMapperClass(DeleteMapper.class);
+        job.setJobName("TGC-CREATE-" + storage.getPatchDirectory());
+
+        List<StageInput> inputList = new ArrayList<StageInput>();
+        inputList.add(new StageInput(
+                storage.getPatchContents("*").toString(),
+                TemporaryInputFormat.class,
+                DeleteMapper.class));
+        StageInputDriver.set(job, inputList);
+        job.setInputFormatClass(StageInputFormat.class);
+        job.setMapperClass(StageInputMapper.class);
         job.setMapOutputKeyClass(NullWritable.class);
         job.setMapOutputValueClass(modelClass);
         job.setOutputKeyClass(NullWritable.class);

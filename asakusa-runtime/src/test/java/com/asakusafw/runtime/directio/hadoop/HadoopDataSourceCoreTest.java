@@ -31,24 +31,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.util.CountInputStream;
+import com.asakusafw.runtime.directio.util.CountOutputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
  * Test for {@link HadoopDataSourceCore}.
  */
+@RunWith(Parameterized.class)
 public class HadoopDataSourceCoreTest {
 
     /**
@@ -56,6 +67,8 @@ public class HadoopDataSourceCoreTest {
      */
     @Rule
     public final TemporaryFolder temp = new TemporaryFolder();
+
+    private final DataFormat<StringBuilder> format;
 
     private Configuration conf;
 
@@ -72,12 +85,35 @@ public class HadoopDataSourceCoreTest {
     private final Counter counter = new Counter();
 
     /**
+     * Returns the parameters.
+     * @return the parameters
+     */
+    @Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { new MockStreamFormat() },
+                { new MockFileFormat() },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param format the format.
+     */
+    public HadoopDataSourceCoreTest(DataFormat<StringBuilder> format) {
+        this.format = format;
+    }
+
+    /**
      * Initializes the test.
      * @throws Exception if some errors were occurred
      */
     @Before
     public void setUp() throws Exception {
         conf = new Configuration(true);
+        if (format instanceof Configurable) {
+            ((Configurable) format).setConf(conf);
+        }
         mapping = new File(temp.getRoot(), "mapping").getCanonicalFile();
         temporary = new File(temp.getRoot(), "temporary").getCanonicalFile();
         localtemp = new File(temp.getRoot(), "localtemp").getCanonicalFile();
@@ -102,7 +138,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
@@ -125,7 +161,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
@@ -152,7 +188,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(greaterThanOrEqualTo(fragmentCount / 2)));
@@ -176,7 +212,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(3));
@@ -200,7 +236,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -235,7 +271,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -273,7 +309,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -312,7 +348,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -346,7 +382,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -380,7 +416,7 @@ public class HadoopDataSourceCoreTest {
             ModelOutput<StringBuilder> output = core.openOutput(
                     context,
                     StringBuilder.class,
-                    new MockFormat(),
+                    format,
                     "output",
                     "file" + i + ".txt",
                     counter);
@@ -409,7 +445,7 @@ public class HadoopDataSourceCoreTest {
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 StringBuilder.class,
-                new MockFormat(),
+                format,
                 "output",
                 "file.txt",
                 counter);
@@ -500,7 +536,7 @@ public class HadoopDataSourceCoreTest {
             HadoopDataSourceCore core, List<DirectInputFragment> fragments) throws IOException, InterruptedException {
         List<String> results = new ArrayList<String>();
         for (DirectInputFragment fragment : fragments) {
-            ModelInput<StringBuilder> input = core.openInput(StringBuilder.class, new MockFormat(), fragment, counter);
+            ModelInput<StringBuilder> input = core.openInput(StringBuilder.class, format, fragment, counter);
             try {
                 StringBuilder buf = new StringBuilder();
                 while (input.readTo(buf)) {
@@ -581,9 +617,9 @@ public class HadoopDataSourceCoreTest {
         core.cleanupTransactionOutput(context.getTransactionContext());
     }
 
-    private static class MockFormat extends BinaryStreamFormat<StringBuilder> {
+    private static class MockStreamFormat extends BinaryStreamFormat<StringBuilder> {
 
-        MockFormat() {
+        MockStreamFormat() {
             return;
         }
 
@@ -638,6 +674,69 @@ public class HadoopDataSourceCoreTest {
                     w.close();
                 }
             };
+        }
+    }
+
+    private static class MockFileFormat extends HadoopFileFormat<StringBuilder> {
+
+        private final MockStreamFormat format = new MockStreamFormat();
+
+        MockFileFormat() {
+            return;
+        }
+
+        @Override
+        public Class<StringBuilder> getSupportedType() {
+            return format.getSupportedType();
+        }
+
+        @Override
+        public long getPreferredFragmentSize() throws IOException, InterruptedException {
+            return format.getPreferredFragmentSize();
+        }
+
+        @Override
+        public long getMinimumFragmentSize() throws IOException, InterruptedException {
+            return format.getMinimumFragmentSize();
+        }
+
+        @Override
+        public ModelInput<StringBuilder> createInput(
+                Class<? extends StringBuilder> dataType,
+                FileSystem fileSystem,
+                Path path,
+                long offset,
+                long fragmentSize,
+                Counter counter) throws IOException, InterruptedException {
+            FileSystem fs = FileSystem.get(path.toUri(), getConf());
+            FSDataInputStream in = fs.open(path);
+            boolean succeed = false;
+            try {
+                in.seek(offset);
+                ModelInput<StringBuilder> result = format.createInput(
+                        dataType,
+                        path.toString(),
+                        new CountInputStream(in, counter),
+                        offset,
+                        fragmentSize);
+                succeed = true;
+                return result;
+            } finally {
+                if (succeed == false) {
+                    in.close();
+                }
+            }
+        }
+
+        @Override
+        public ModelOutput<StringBuilder> createOutput(
+                Class<? extends StringBuilder> dataType,
+                FileSystem fileSystem,
+                Path path,
+                Counter counter) throws IOException, InterruptedException {
+            FileSystem fs = FileSystem.get(path.toUri(), getConf());
+            FSDataOutputStream out = fs.create(path);
+            return format.createOutput(dataType, path.toString(), new CountOutputStream(out, counter));
         }
     }
 }

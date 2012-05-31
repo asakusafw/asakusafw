@@ -81,9 +81,12 @@ public final class WindGateAbort {
     public static void main(String... args) {
         CommandLineUtil.prepareLogContext();
         WGLOG.info("I01000");
+        long start = System.currentTimeMillis();
         int status = execute(args);
+        long end = System.currentTimeMillis();
         WGLOG.info("I01999",
-                status);
+                status,
+                end - start);
         System.exit(status);
     }
 

@@ -385,7 +385,12 @@ public class ParallelJobSchedulerTest {
         }
 
         @Override
-        public String getLabel() {
+        public String getJobLabel() {
+            return id;
+        }
+
+        @Override
+        public String getServiceLabel() {
             return id;
         }
 
@@ -400,7 +405,7 @@ public class ParallelJobSchedulerTest {
         }
 
         @Override
-        public String getResourceId() {
+        public String getResourceId(ExecutionContext context) {
             return resourceId;
         }
     }

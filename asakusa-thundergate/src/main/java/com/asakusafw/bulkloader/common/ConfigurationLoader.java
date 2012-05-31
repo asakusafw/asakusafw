@@ -549,6 +549,26 @@ public final class ConfigurationLoader {
     }
 
     /**
+     * Returns index name for duplication check about target table.
+     * @param batchId current batch ID
+     * @param jobflowId current jobflow ID
+     * @param tableName target table name
+     * @return corresponded index name, or {@code null} if not defined
+     * @since 0.2.6
+     */
+    public static String getForceIndexName(String batchId, String jobflowId, String tableName) {
+        StringBuilder buf = new StringBuilder();
+        buf.append("dupcheck.index.");
+        buf.append(batchId);
+        buf.append("|");
+        buf.append(jobflowId);
+        buf.append("|");
+        buf.append(tableName);
+        String indexName = prop.getProperty(buf.toString());
+        return indexName;
+    }
+
+    /**
      * このクラスが提供するプロパティを設定する。
      * @param p 設定するプロパティ
      * @deprecated UT用

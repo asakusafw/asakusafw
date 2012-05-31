@@ -28,6 +28,7 @@ import java.util.Map;
 
 import com.asakusafw.bulkloader.bean.ExportTargetTableBean;
 import com.asakusafw.bulkloader.bean.ExporterBean;
+import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
@@ -184,6 +185,15 @@ public class ExportFileLoad {
                 duplicateCheckSql.append(" WHERE ");
                 duplicateCheckSql.append("EXISTS(SELECT * FROM ");
                 duplicateCheckSql.append(tableName);
+
+                String forceIndex = ConfigurationLoader.getForceIndexName(
+                        bean.getBatchId(), bean.getJobflowId(), tableName);
+                if (forceIndex != null) {
+                    duplicateCheckSql.append(" FORCE INDEX (");
+                    duplicateCheckSql.append(forceIndex);
+                    duplicateCheckSql.append(")");
+                }
+
                 duplicateCheckSql.append(" WHERE ");
                 List<String> key = tableBean.getKeyColumns();
 

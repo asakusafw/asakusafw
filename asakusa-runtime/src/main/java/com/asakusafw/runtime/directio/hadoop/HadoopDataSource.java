@@ -27,23 +27,26 @@ import org.apache.hadoop.fs.FileSystem;
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.ResourcePattern;
+import com.asakusafw.runtime.directio.keepalive.KeepAliveDataSource;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
  * An implementation of {@link AbstractDirectDataSource} using {@link FileSystem}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 public class HadoopDataSource extends AbstractDirectDataSource implements Configurable {
 
     static final Log LOG = LogFactory.getLog(HadoopDataSource.class);
 
-    private volatile HadoopDataSourceCore core;
+    private volatile DirectDataSource core;
 
     private volatile Configuration conf;
 
@@ -70,6 +73,9 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
         }
         HadoopDataSourceProfile hProfile = HadoopDataSourceProfile.convert(profile, conf);
         this.core = new HadoopDataSourceCore(hProfile);
+        if (hProfile.getKeepAliveInterval() > 0) {
+            this.core = new KeepAliveDataSource(core, hProfile.getKeepAliveInterval());
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Finish configuring Hadoop data source: {0}",

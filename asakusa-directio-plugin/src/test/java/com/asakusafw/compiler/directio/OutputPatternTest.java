@@ -105,6 +105,19 @@ public class OutputPatternTest {
     }
 
     /**
+     * resource pattern with random.
+     */
+    @Test
+    public void resource_randomNumber() {
+        List<CompiledResourcePattern> pattern = OutputPattern.compileResourcePattern(
+                "[0..10]", dataClass);
+        assertThat(pattern.size(), is(1));
+        assertThat(pattern.get(0).getRandomNumber().getLowerBound(), is(0));
+        assertThat(pattern.get(0).getRandomNumber().getUpperBound(), is(10));
+        assertThat(pattern.get(0).getFormat(), is(Format.NATURAL));
+    }
+
+    /**
      * resource pattern with variable.
      */
     @Test
@@ -134,8 +147,8 @@ public class OutputPatternTest {
     @Test
     public void resource_complex() {
         List<CompiledResourcePattern> pattern = OutputPattern.compileResourcePattern(
-                "{stringValue}/${category}-{dateValue:yyyy-MM-dd}.csv", dataClass);
-        assertThat(pattern.size(), is(4));
+                "{stringValue}/${category}-{dateValue:yyyy-MM-dd}-[10..99].csv", dataClass);
+        assertThat(pattern.size(), is(6));
 
         assertThat(pattern.get(0).getTarget().getName(), is("stringValue"));
         assertThat(pattern.get(0).getFormat(), is(Format.NATURAL));
@@ -148,7 +161,13 @@ public class OutputPatternTest {
         assertThat(pattern.get(2).getArgument(), is("yyyy-MM-dd"));
 
         assertThat(pattern.get(3).getFormat(), is(Format.PLAIN));
-        assertThat(pattern.get(3).getArgument(), is(".csv"));
+        assertThat(pattern.get(3).getArgument(), is("-"));
+
+        assertThat(pattern.get(4).getRandomNumber().getLowerBound(), is(10));
+        assertThat(pattern.get(4).getRandomNumber().getUpperBound(), is(99));
+
+        assertThat(pattern.get(5).getFormat(), is(Format.PLAIN));
+        assertThat(pattern.get(5).getArgument(), is(".csv"));
     }
 
     /**
@@ -203,8 +222,24 @@ public class OutputPatternTest {
      * resource pattern with invalid character.
      */
     @Test(expected = IllegalArgumentException.class)
+    public void resource_random_eof() {
+        OutputPattern.compileResourcePattern("hoge[100..", dataClass);
+    }
+
+    /**
+     * resource pattern with invalid character.
+     */
+    @Test(expected = IllegalArgumentException.class)
     public void resource_variable_eof() {
         OutputPattern.compileResourcePattern("hoge${foo", dataClass);
+    }
+
+    /**
+     * resource pattern with invalid random number range.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void resource_random_invalid_range() {
+        OutputPattern.compileResourcePattern("[1..1]", dataClass);
     }
 
     /**

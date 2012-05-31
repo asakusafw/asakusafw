@@ -45,7 +45,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
 ..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
-..  [#] Direct I/O はバージョン ``0.2.5`` の時点で実験的な機能として提供しています。
+..  [#] Direct I/O はバージョン |version| の時点で実験的な機能として提供しています。
 
 
 ``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
@@ -80,7 +80,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     3: 0.2.3
     4: 0.2.4
     5: 0.2.5
-    Choose a number: 5: 5 [使用するAsakusa Frameworkのバージョンを選択]
+    6: 0.2.6
+    Choose a number: 6: 6 [使用するAsakusa Frameworkのバージョンを選択]
 
     ...
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
@@ -179,7 +180,7 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 アーキタイプから生成されたプロジェクト構成は以下の通りです [#]_ 。
 
 ..  code-block:: sh
-
+     
     project
     |-- pom.xml
     |-- build.properties
@@ -273,7 +274,7 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 
 ..  attention::
     この機能は ``asakusa-archetype-thundergate`` のみで提供されています。
-    ``asakusa-archetype-windgate`` では利用できません。
+    ``asakusa-archetype-windgate`` や ``asakusa-archetype-directio`` では利用できません。
 
 モデルクラスをSQLのDDLとして記述する場合、SQLファイルはプロジェクトの ``src/main/sql/modelgen`` ディレクトリ以下に配置してください。また、スクリプトのファイル名には ``.sql`` の拡張子を付けて保存してください。
 
@@ -288,7 +289,7 @@ SQLファイルは複数配置することが出来ます。上記ディレク�
 
 ..  code-block:: sh
 
-    mvn generate-sources
+    mvn clean generate-sources
 
 モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述するビルド定義ファイルにて変更することが出来ます。
 
@@ -310,20 +311,16 @@ DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を
 
 ``package`` バッチコンパイルの実行
 ----------------------------------
-アーキタイプから作成したプロジェクトの ``pom.xml`` に対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
+アーキタイプから作成したプロジェクトのpom.xmlに対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
 
 ..  code-block:: sh
 
-    mvn package
-
-..  code-block:: sh
-
-    [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
-    シンボル: クラス ExOperatorFactory
+    mvn clean package
 
 Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコンパイルは成功です。バッチコンパイルが完了すると、 ``target`` ディレクトリにバッチコンパイル結果のアーカイブファイルが ``${artifactid}-batchapps-${version}.jar`` というファイル名で生成されます。
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
+
 * :doc:`../administration/deployment-with-windgate`
 * :doc:`../administration/deployment-with-thundergate`
 * :doc:`../administration/deployment-with-directio`
@@ -334,10 +331,16 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
     これらのファイルをHadoopクラスタにデプロイしてもバッチアプリケーションとしては動作しないので注意してください。
 
 ..  attention::
-    バッチコンパイルの最中にJavaのソースファイルのコンパイルに関する警告が表示されることがあります。
+    バッチコンパイルの最中にJavaのソースファイルのコンパイル時に以下の警告が表示されることがあります。
     これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
     最終的にコンパイルが成功していれば問題ありません。
 
+..  code-block:: sh
+
+    [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
+    シンボル: クラス ExOperatorFactory
+
+.. _batch-compile-option-with-pom:
 
 バッチコンパイルオプションの指定
 --------------------------------
@@ -412,10 +415,12 @@ Eclipseのパッケージエクスプローラーからアプリケーション�
 
 アプリケーション用依存ライブラリの追加
 ======================================
-バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの、例えばApache Commons Lang等）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
+バッチアプリケーションの演算子から共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの）を使用する場合は、まず通常のMavenを使ったアプリケーションと同様pom.xmlに依存定義( ``<dependency>`` )を追加します。
 これに加えて、依存するjarファイルを ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
-以下はApache Commons Lang 2.6を配置する例です。
+以下はJavaの日付ライブラリである `Joda Time`_ 2.1 を配置する例です。
+
+..  _`Joda Time`: http://joda-time.sourceforge.net/
 
 pom.xmlの編集
 -------------
@@ -425,9 +430,9 @@ pom.xmlの ``<dependencies>`` 内に依存定義を追加します。
 ..  code-block:: xml
 
     <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.1</version>
     </dependency>
 
 依存ライブラリのコピー
@@ -443,14 +448,14 @@ MavenのDependencyプラグイン [#]_ を利用して依存ライブラリを�
 
 ..  [#] http://maven.apache.org/plugins/maven-dependency-plugin/
 
-Asausaの拡張ライブラリディレクトリへjarファイルを配置
------------------------------------------------------
+Asakusaの拡張ライブラリディレクトリへjarファイルを配置
+------------------------------------------------------
 
 ``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``$ASAKUSA_HOME/ext/lib`` ディレクトリに配置します。
 
 ..  code-block:: sh
 
-    cp target/dependency/commons-lang-2.6.jar $ASAKUSA_HOME/ext/lib
+    cp target/dependency/joda-time-2.1.jar $ASAKUSA_HOME/ext/lib
 
 
 ``build.properties`` ビルド定義ファイル

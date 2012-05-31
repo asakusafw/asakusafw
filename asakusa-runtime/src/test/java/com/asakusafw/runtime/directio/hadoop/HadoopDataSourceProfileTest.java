@@ -78,6 +78,7 @@ public class HadoopDataSourceProfileTest {
         assertThat(result.isOutputStreaming(), is(true));
         assertThat(result.isCombineBlocks(), is(true));
         assertThat(result.isSplitBlocks(), is(true));
+        assertThat(result.getKeepAliveInterval(), is(0L));
     }
 
     /**
@@ -135,6 +136,7 @@ public class HadoopDataSourceProfileTest {
         attributes.put(KEY_OUTPUT_STREAMING, "false");
         attributes.put(KEY_SPLIT_BLOCKS, "false");
         attributes.put(KEY_COMBINE_BLOCKS, "false");
+        attributes.put(KEY_KEEPALIVE_INTERVAL, "12345");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
                 HadoopDataSource.class,
@@ -161,6 +163,7 @@ public class HadoopDataSourceProfileTest {
         assertThat(result.isOutputStreaming(), is(false));
         assertThat(result.isCombineBlocks(), is(false));
         assertThat(result.isSplitBlocks(), is(false));
+        assertThat(result.getKeepAliveInterval(), is(12345L));
     }
 
     /**

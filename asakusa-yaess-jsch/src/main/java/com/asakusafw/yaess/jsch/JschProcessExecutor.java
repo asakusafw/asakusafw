@@ -17,6 +17,7 @@ package com.asakusafw.yaess.jsch;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.yaess.basic.ProcessExecutor;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -39,6 +41,8 @@ import com.jcraft.jsch.Session;
  * @since 0.2.3
  */
 public class JschProcessExecutor implements ProcessExecutor {
+
+    static final YaessLogger YSLOG = new YaessJschLogger(JschProcessExecutor.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JschProcessExecutor.class);
 
@@ -246,8 +250,17 @@ public class JschProcessExecutor implements ProcessExecutor {
             ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables) throws InterruptedException, IOException {
+        return execute(context, commandLineTokens, environmentVariables, System.out);
+    }
+
+    @Override
+    public int execute(
+            ExecutionContext context,
+            List<String> commandLineTokens,
+            Map<String, String> environmentVariables,
+            OutputStream output) throws InterruptedException, IOException {
         try {
-            return execute0(context, commandLineTokens, environmentVariables);
+            return execute0(context, commandLineTokens, environmentVariables, output);
         } catch (JSchException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to execute command via SSH ({0}@{1}:{2})",
@@ -260,10 +273,12 @@ public class JschProcessExecutor implements ProcessExecutor {
     private int execute0(
             ExecutionContext context,
             List<String> commandLineTokens,
-            Map<String, String> environmentVariables) throws JSchException, InterruptedException {
+            Map<String, String> environmentVariables,
+            OutputStream output) throws JSchException, InterruptedException {
         assert context != null;
         assert commandLineTokens != null;
         assert environmentVariables != null;
+        assert output != null;
         Session session = jsch.getSession(user, host);
         if (port != null) {
             session.setPort(port);
@@ -271,28 +286,46 @@ public class JschProcessExecutor implements ProcessExecutor {
         session.setConfig("StrictHostKeyChecking", "no");
         session.setServerAliveInterval((int) TimeUnit.SECONDS.toMillis(30));
 
-        // TODO logging
-        session.connect((int) TimeUnit.SECONDS.toMillis(60));
         try {
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
-            channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
-            channel.setOutputStream(context.getOutput(), true);
-            channel.setErrStream(context.getOutput(), true);
-            channel.connect((int) TimeUnit.SECONDS.toMillis(60));
+            YSLOG.info("I00001", user, host, port, privateKey);
+            long sessionStart = System.currentTimeMillis();
+            session.connect((int) TimeUnit.SECONDS.toMillis(60));
+            long sessionEnd = System.currentTimeMillis();
+            YSLOG.info("I00002", user, host, port, privateKey, sessionEnd - sessionStart);
+
+            int exitStatus;
             try {
-                while (true) {
-                    if (channel.isClosed()) {
-                        break;
+                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                channel.setCommand(buildCommand(commandLineTokens, environmentVariables));
+                channel.setInputStream(new ByteArrayInputStream(new byte[0]), true);
+                channel.setOutputStream(output, true);
+                channel.setErrStream(output, true);
+
+                YSLOG.info("I00003", user, host, port, privateKey, commandLineTokens.get(0));
+                long channelStart = System.currentTimeMillis();
+                channel.connect((int) TimeUnit.SECONDS.toMillis(60));
+                long channelEnd = System.currentTimeMillis();
+                YSLOG.info("I00004", user, host, port, privateKey, commandLineTokens.get(0), channelEnd - channelStart);
+
+                try {
+                    while (true) {
+                        if (channel.isClosed()) {
+                            break;
+                        }
+                        Thread.sleep(100);
                     }
-                    Thread.sleep(100);
+                    exitStatus = channel.getExitStatus();
+                } finally {
+                    channel.disconnect();
                 }
-                return channel.getExitStatus();
             } finally {
-                channel.disconnect();
+                session.disconnect();
             }
-        } finally {
-            session.disconnect();
+            YSLOG.info("I00005", user, host, port, privateKey, commandLineTokens.get(0), exitStatus);
+            return exitStatus;
+        } catch (JSchException e) {
+            YSLOG.error(e, "E00001", user, host, port, privateKey);
+            throw e;
         }
     }
 
@@ -304,9 +337,9 @@ public class JschProcessExecutor implements ProcessExecutor {
         StringBuilder buf = new StringBuilder();
         for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
             if (SH_NAME.matcher(entry.getKey()).matches() == false) {
-                // TODO logging
-                LOG.warn("Invalid variable name will be ignored: {}",
-                        entry.getKey());
+                YSLOG.warn("W00001",
+                        entry.getKey(),
+                        entry.getValue());
                 continue;
             }
             if (buf.length() > 0) {

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.hadoop.io.Text;
 
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 
 /**
@@ -32,9 +32,12 @@ public class MockOutputDescription extends DirectFileOutputDescription {
 
     private final String resourcePattern;
 
-    MockOutputDescription(String basePath, String resourcePattern) {
+    private final Class<? extends DataFormat<?>> format;
+
+    MockOutputDescription(String basePath, String resourcePattern, Class<? extends DataFormat<?>> format) {
         this.basePath = basePath;
         this.resourcePattern = resourcePattern;
+        this.format = format;
     }
 
     @Override
@@ -43,8 +46,8 @@ public class MockOutputDescription extends DirectFileOutputDescription {
     }
 
     @Override
-    public Class<? extends BinaryStreamFormat<?>> getFormat() {
-        return MockFormat.class;
+    public Class<? extends DataFormat<?>> getFormat() {
+        return format;
     }
 
     @Override

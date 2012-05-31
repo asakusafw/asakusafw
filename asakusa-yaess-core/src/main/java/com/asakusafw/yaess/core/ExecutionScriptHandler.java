@@ -27,22 +27,32 @@ import java.util.Map;
  * implement {@link HadoopScriptHandler} or {@link CommandScriptHandler} instead.
  * @param <T> the type of script
  * @since 0.2.3
+ * @version 0.2.6
  */
 public interface ExecutionScriptHandler<T extends ExecutionScript> extends Service {
 
     /**
-     * The configuration key prefix of {@link #getEnvironmentVariables() environment variables}.
+     * The configuration key prefix of {@link #getEnvironmentVariables(ExecutionContext, ExecutionScript)
+     * environment variables}.
      * This value can includes local environment variables in form of <code>${VARIABLE-NAME}</code>.
      */
     String KEY_ENV_PREFIX = "env.";
 
     /**
-     * The configuration key name of {@link #getResourceId() resource ID}.
+     * The configuration key prefix of {@link #getProperties(ExecutionContext, ExecutionScript)
+     * system or hadoop properties}.
+     * This value can includes local environment variables in form of <code>${VARIABLE-NAME}</code>.
+     * @since 0.2.6
+     */
+    String KEY_PROP_PREFIX = "prop.";
+
+    /**
+     * The configuration key name of {@link #getResourceId(ExecutionContext, ExecutionScript) resource ID}.
      */
     String KEY_RESOURCE = "resource";
 
     /**
-     * The default value of {@link #getResourceId() resource ID}.
+     * The default value of {@link #getResourceId(ExecutionContext, ExecutionScript) resource ID}.
      */
     String DEFAULT_RESOURCE_ID = "default";
 
@@ -54,15 +64,38 @@ public interface ExecutionScriptHandler<T extends ExecutionScript> extends Servi
 
     /**
      * Returns the ID of a resource which is used for executing this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
      * @return the required resource ID
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
      */
-    String getResourceId();
+    String getResourceId(ExecutionContext context, ExecutionScript script) throws InterruptedException, IOException;
+
+    /**
+     * Returns desired system/hadoop properties to execute scripts using this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
+     * @return desired system or hadoop properties
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
+     * @since 0.2.6
+     */
+    Map<String, String> getProperties(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException;
 
     /**
      * Returns desired environment variables to execute scripts using this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
      * @return desired environment variables
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
      */
-    Map<String, String> getEnvironmentVariables();
+    Map<String, String> getEnvironmentVariables(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException;
 
     /**
      * Setup the target environment.

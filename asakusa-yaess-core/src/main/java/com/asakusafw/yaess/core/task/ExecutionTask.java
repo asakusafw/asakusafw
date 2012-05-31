@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -56,6 +57,8 @@ import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
+import com.asakusafw.yaess.core.YaessCoreLogger;
+import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
 import com.asakusafw.yaess.core.PhaseMonitor;
 import com.asakusafw.yaess.core.ServiceProfile;
@@ -64,9 +67,15 @@ import com.asakusafw.yaess.core.YaessProfile;
 /**
  * Task to execute target batch, flow, or phase.
  * @since 0.2.3
- * @version 0.2.5
+ * @version 0.2.6
  */
 public class ExecutionTask {
+
+    static final String KEY_SKIP_FLOWS = "skipFlows";
+
+    static final String KEY_SERIALIZE_FLOWS = "serializeFlows";
+
+    static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionTask.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionTask.class);
 
@@ -82,7 +91,11 @@ public class ExecutionTask {
 
     private final Properties script;
 
-    private final Map<String, String> arguments;
+    private final Map<String, String> batchArguments;
+
+    private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
+
+    private volatile boolean serializeFlows = false;
 
     /**
      * Creates a new instance.
@@ -92,7 +105,7 @@ public class ExecutionTask {
      * @param hadoopHandler Hadoop script handler
      * @param commandHandlers command script handlers and its profile names
      * @param script target script
-     * @param arguments current arguments
+     * @param batchArguments current batch arguments
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public ExecutionTask(
@@ -102,7 +115,7 @@ public class ExecutionTask {
             HadoopScriptHandler hadoopHandler,
             Map<String, CommandScriptHandler> commandHandlers,
             Properties script,
-            Map<String, String> arguments) {
+            Map<String, String> batchArguments) {
         if (monitors == null) {
             throw new IllegalArgumentException("monitors must not be null"); //$NON-NLS-1$
         }
@@ -121,8 +134,8 @@ public class ExecutionTask {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
-        if (arguments == null) {
-            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        if (batchArguments == null) {
+            throw new IllegalArgumentException("batchArguments must not be null"); //$NON-NLS-1$
         }
         this.monitors = monitors;
         this.locks = locks;
@@ -130,14 +143,14 @@ public class ExecutionTask {
         this.hadoopHandler = hadoopHandler;
         this.commandHandlers = Collections.unmodifiableMap(new HashMap<String, CommandScriptHandler>(commandHandlers));
         this.script = script;
-        this.arguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(arguments));
+        this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(batchArguments));
     }
 
     /**
      * Loads profile and create a new {@link ExecutionTask}.
      * @param profile target profile
      * @param script target script
-     * @param arguments execution arguments
+     * @param batchArguments current batch arguments
      * @return the created task
      * @throws InterruptedException if interrupted while configuring services
      * @throws IOException if failed to configure services
@@ -146,15 +159,38 @@ public class ExecutionTask {
     public static ExecutionTask load(
             YaessProfile profile,
             Properties script,
-            Map<String, String> arguments) throws InterruptedException, IOException {
+            Map<String, String> batchArguments) throws InterruptedException, IOException {
+        return load(profile, script, batchArguments, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Loads profile and create a new {@link ExecutionTask}.
+     * @param profile target profile
+     * @param script target script
+     * @param batchArguments current batch arguments
+     * @param yaessArguments current controll arguments
+     * @return the created task
+     * @throws InterruptedException if interrupted while configuring services
+     * @throws IOException if failed to configure services
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.2.6
+     */
+    public static ExecutionTask load(
+            YaessProfile profile,
+            Properties script,
+            Map<String, String> batchArguments,
+            Map<String, String> yaessArguments) throws InterruptedException, IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
-        if (arguments == null) {
-            throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
+        if (batchArguments == null) {
+            throw new IllegalArgumentException("batchArguments must not be null"); //$NON-NLS-1$
+        }
+        if (yaessArguments == null) {
+            throw new IllegalArgumentException("yaessArguments must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Loading execution monitor feature");
         ExecutionMonitorProvider monitors = profile.getMonitors().newInstance();
@@ -174,7 +210,99 @@ public class ExecutionTask {
                 : profile.getCommandHandlers().entrySet()) {
             commandHandlers.put(entry.getKey(), entry.getValue().newInstance());
         }
-        return new ExecutionTask(monitors, locks, scheduler, hadoopHandler, commandHandlers, script, arguments);
+
+        ExecutionTask result = new ExecutionTask(
+                monitors,
+                locks,
+                scheduler,
+                hadoopHandler,
+                commandHandlers,
+                script,
+                batchArguments);
+
+        LOG.debug("Applying definitions");
+        Map<String, String> copyDefinitions = new TreeMap<String, String>(yaessArguments);
+        consumeSkipFlows(result, copyDefinitions, script);
+        consumeSerializeFlows(result, copyDefinitions, script);
+        checkRest(copyDefinitions);
+
+        return result;
+    }
+
+    private static void consumeSkipFlows(ExecutionTask task, Map<String, String> copyDefinitions, Properties script) {
+        assert copyDefinitions != null;
+        assert script != null;
+        String flows = copyDefinitions.remove(KEY_SKIP_FLOWS);
+        if (flows == null || flows.trim().isEmpty()) {
+            return;
+        }
+        LOG.debug("Definition: {}={}", KEY_SKIP_FLOWS, flows);
+        BatchScript batchScript = BatchScript.load(script);
+        for (String flowIdCandidate : flows.split(",")) {
+            String flowId = flowIdCandidate.trim();
+            if (flowId.isEmpty() == false) {
+                FlowScript flow = batchScript.findFlow(flowId);
+                if (flow == null) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Unknown flowId in definition {0} : {1}",
+                            KEY_SKIP_FLOWS,
+                            flowId));
+                }
+                task.skipFlows.add(flowId);
+            }
+        }
+    }
+
+    private static void consumeSerializeFlows(
+            ExecutionTask task,
+            Map<String, String> copyDefinitions,
+            Properties script) {
+        assert task != null;
+        assert copyDefinitions != null;
+        assert script != null;
+        String value = copyDefinitions.remove(KEY_SERIALIZE_FLOWS);
+        if (value == null) {
+            return;
+        }
+        value = value.trim();
+        LOG.debug("Definition: {}={}", KEY_SERIALIZE_FLOWS, value);
+        if (value.equalsIgnoreCase("true")) {
+            task.serializeFlows = true;
+        } else if (value .equalsIgnoreCase("false")) {
+            task.serializeFlows = false;
+        } else {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Unknown option value in definition {0} : {1}",
+                    KEY_SERIALIZE_FLOWS,
+                    value));
+        }
+    }
+
+    private static void checkRest(Map<String, String> copyDefinitions) {
+        assert copyDefinitions != null;
+        if (copyDefinitions.isEmpty() == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Unknown definitions: {0}",
+                    copyDefinitions.keySet()));
+        }
+    }
+
+    /**
+     * Returns the view of flow IDs which should be skipped.
+     * @return the the view of skip targets
+     * @since 0.2.6
+     */
+    Set<String> getSkipFlows() {
+        return skipFlows;
+    }
+
+    /**
+     * Sets whether the flow execution was serialized in {@link #executeBatch(String)}.
+     * @param serialize {@code true} to serialize, otherwise {@code false}
+     * @since 0.2.6
+     */
+    void setSerializeFlows(boolean serialize) {
+        this.serializeFlows = serialize;
     }
 
     /**
@@ -188,27 +316,52 @@ public class ExecutionTask {
      * @throws IOException if failed to execute target batch
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public void executeBatch(final String batchId) throws InterruptedException, IOException {
+    public void executeBatch(String batchId) throws InterruptedException, IOException {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
-        ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
+        ExecutorService executor = createJobflowExecutor(batchId);
+        BatchScript batchScript = BatchScript.load(script);
+        YSLOG.info("I01000", batchId);
+        long start = System.currentTimeMillis();
+        try {
+            ExecutionLock lock = locks.newInstance(batchId);
+            try {
+                BatchScheduler batchScheduler = new BatchScheduler(batchId, batchScript, lock, executor);
+                batchScheduler.run();
+            } finally {
+                lock.close();
+            }
+            YSLOG.info("I01001", batchId);
+        } catch (IOException e) {
+            YSLOG.error(e, "E01001", batchId);
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W01001", batchId);
+            throw e;
+        } finally {
+            long end = System.currentTimeMillis();
+            YSLOG.info("I01999", batchId, end - start);
+        }
+    }
+
+    private ExecutorService createJobflowExecutor(final String batchId) {
+        assert batchId != null;
+        ThreadFactory threadFactory = new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r);
                 thread.setName(MessageFormat.format(
                         "JobflowExecutor-{0}",
                         batchId));
+                thread.setDaemon(true);
                 return thread;
             }
-        });
-        BatchScript batchScript = BatchScript.load(script);
-        ExecutionLock lock = locks.newInstance(batchId);
-        try {
-            BatchScheduler batchScheduler = new BatchScheduler(batchId, batchScript, lock, executor);
-            batchScheduler.run();
-        } finally {
-            lock.close();
+        };
+        if (serializeFlows) {
+            return Executors.newFixedThreadPool(1, threadFactory);
+        } else {
+            return Executors.newCachedThreadPool(threadFactory);
         }
     }
 
@@ -275,7 +428,7 @@ public class ExecutionTask {
         if (phase == null) {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
-        ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, arguments);
+        ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, batchArguments);
         executePhase(context);
     }
 
@@ -306,33 +459,50 @@ public class ExecutionTask {
         assert batchId != null;
         assert flow != null;
         assert executionId != null;
-        executePhase(batchId, flow, executionId, ExecutionPhase.SETUP);
-        boolean succeed = false;
+        YSLOG.info("I02000", batchId, flow.getId(), executionId);
+        long start = System.currentTimeMillis();
         try {
-            executePhase(batchId, flow, executionId, ExecutionPhase.INITIALIZE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.IMPORT);
-            executePhase(batchId, flow, executionId, ExecutionPhase.PROLOGUE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.MAIN);
-            executePhase(batchId, flow, executionId, ExecutionPhase.EPILOGUE);
-            executePhase(batchId, flow, executionId, ExecutionPhase.EXPORT);
-            succeed = true;
-        } finally {
-            if (succeed) {
-                executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
-            } else {
-                try {
+            if (skipFlows.contains(flow.getId())) {
+                YSLOG.info("I02002", batchId, flow.getId(), executionId);
+                return;
+            }
+            executePhase(batchId, flow, executionId, ExecutionPhase.SETUP);
+            boolean succeed = false;
+            try {
+                executePhase(batchId, flow, executionId, ExecutionPhase.INITIALIZE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.IMPORT);
+                executePhase(batchId, flow, executionId, ExecutionPhase.PROLOGUE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.MAIN);
+                executePhase(batchId, flow, executionId, ExecutionPhase.EPILOGUE);
+                executePhase(batchId, flow, executionId, ExecutionPhase.EXPORT);
+                succeed = true;
+            } finally {
+                if (succeed) {
                     executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
-                } catch (Exception e) {
-                    // TODO logging WARN
-                    LOG.warn("Finalize failed", e);
+                } else {
+                    YSLOG.info("I02003", batchId, flow.getId(), executionId);
+                    try {
+                        executePhase(batchId, flow, executionId, ExecutionPhase.FINALIZE);
+                    } catch (Exception e) {
+                        YSLOG.warn(e, "W02002", batchId, flow.getId(), executionId);
+                    }
                 }
             }
-        }
-        try {
-            executePhase(batchId, flow, executionId, ExecutionPhase.CLEANUP);
-        } catch (Exception e) {
-            // TODO logging WARN
-            LOG.warn("Cleanup failed", e);
+            try {
+                executePhase(batchId, flow, executionId, ExecutionPhase.CLEANUP);
+            } catch (Exception e) {
+                YSLOG.warn(e, "W02003", batchId, flow.getId(), executionId);
+            }
+            YSLOG.info("I02001", batchId, flow.getId(), executionId);
+        } catch (IOException e) {
+            YSLOG.error(e, "E02001", batchId, flow.getId(), executionId);
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W02001", batchId, flow.getId(), executionId);
+            throw e;
+        } finally {
+            long end = System.currentTimeMillis();
+            YSLOG.info("I02999", batchId, flow.getId(), executionId, end - start);
         }
     }
 
@@ -341,7 +511,7 @@ public class ExecutionTask {
             FlowScript flow,
             String executionId,
             ExecutionPhase phase) throws InterruptedException, IOException {
-        ExecutionContext context = new ExecutionContext(batchId, flow.getId(), executionId, phase, arguments);
+        ExecutionContext context = new ExecutionContext(batchId, flow.getId(), executionId, phase, batchArguments);
         Set<ExecutionScript> scripts = flow.getScripts().get(phase);
         assert scripts != null;
         executePhase(context, scripts);
@@ -351,32 +521,57 @@ public class ExecutionTask {
             ExecutionContext context,
             Set<ExecutionScript> executions) throws InterruptedException, IOException {
         assert context != null;
-                assert executions != null;
-        List<? extends Job> jobs;
-        ErrorHandler handler;
-        switch (context.getPhase()) {
-        case SETUP:
-            jobs = buildSetupJobs(context);
-            handler = JobScheduler.STRICT;
-            break;
-        case CLEANUP:
-            jobs = buildCleanupJobs(context);
-            handler = JobScheduler.BEST_EFFORT;
-            break;
-        case FINALIZE:
-            jobs = buildExecutionJobs(context, executions);
-            handler = JobScheduler.BEST_EFFORT;
-            break;
-        default:
-            jobs = buildExecutionJobs(context, executions);
-            handler = JobScheduler.STRICT;
-            break;
-        }
-        PhaseMonitor monitor = monitors.newInstance(context);
+        assert executions != null;
+        YSLOG.info("I03000",
+                context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+        long start = System.currentTimeMillis();
         try {
-            scheduler.execute(monitor, context, jobs, handler);
+            if (skipFlows.contains(context.getFlowId())) {
+                YSLOG.info("I03002",
+                        context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+                return;
+            }
+            List<? extends Job> jobs;
+            ErrorHandler handler;
+            switch (context.getPhase()) {
+            case SETUP:
+                jobs = buildSetupJobs(context);
+                handler = JobScheduler.STRICT;
+                break;
+            case CLEANUP:
+                jobs = buildCleanupJobs(context);
+                handler = JobScheduler.BEST_EFFORT;
+                break;
+            case FINALIZE:
+                jobs = buildExecutionJobs(context, executions);
+                handler = JobScheduler.BEST_EFFORT;
+                break;
+            default:
+                jobs = buildExecutionJobs(context, executions);
+                handler = JobScheduler.STRICT;
+                break;
+            }
+            PhaseMonitor monitor = monitors.newInstance(context);
+            try {
+                scheduler.execute(monitor, context, jobs, handler);
+            } finally {
+                monitor.close();
+            }
+            YSLOG.info("I03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+        } catch (IOException e) {
+            YSLOG.error(e, "E03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+            throw e;
+        } catch (InterruptedException e) {
+            YSLOG.warn(e, "W03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+            throw e;
         } finally {
-            monitor.close();
+            long end = System.currentTimeMillis();
+            YSLOG.info("I03999",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase(),
+                    end - start);
         }
     }
 
@@ -496,6 +691,7 @@ public class ExecutionTask {
                     waitForComplete();
                 }
             } finally {
+                YSLOG.info("I01004", batchId);
                 for (FlowScriptTask task : running.values()) {
                     task.cancel(true);
                 }
@@ -503,8 +699,7 @@ public class ExecutionTask {
                     try {
                         waitForComplete();
                     } catch (IOException e) {
-                        // TODO logging
-                        LOG.warn("Error has occurred while shutting down", e);
+                        YSLOG.warn(e, "W01002", batchId);
                     }
                 }
             }
@@ -548,6 +743,7 @@ public class ExecutionTask {
                     return null;
                 }
             });
+            YSLOG.info("I01003", batchId, flow.getId());
             executor.execute(task);
             running.put(flow.getId(), task);
         }
@@ -562,9 +758,7 @@ public class ExecutionTask {
                 boolean blocked = blocking.remove(flow.getId());
                 assert blocked;
             } catch (CancellationException e) {
-                LOG.info(MessageFormat.format(
-                        "Flow execution is cancelled (batch={0}, flow={1})",
-                        flow.getId()), e);
+                YSLOG.info(e, "I01005", batchId, flow.getId());
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof IOException) {
                     throw (IOException) e.getCause();

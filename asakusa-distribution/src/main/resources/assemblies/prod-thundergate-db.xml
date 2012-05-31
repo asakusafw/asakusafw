@@ -34,6 +34,7 @@
 				<include>commons-logging:commons-logging</include>
 				<include>log4j:log4j</include>
 				<include>mysql:mysql-connector-java</include>
+				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
@@ -58,7 +59,9 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>yaess/plugin</outputDirectory>
 			<includes>
+				<include>com.asakusafw:asakusa-yaess-flowlog</include>
 				<include>com.asakusafw:asakusa-yaess-jsch</include>
+				<include>com.asakusafw:asakusa-yaess-multidispatch</include>
 				<include>com.asakusafw:asakusa-yaess-paralleljob</include>
 				<include>com.jcraft:jsch</include>
 			</includes>
@@ -90,6 +93,7 @@
 				<include>finalizer.sh</include>
 				<include>recoverer.sh</include>
 				<include>release-cache-lock.sh</include>
+				<include>build-cache.sh</include>
 				<include>delete-cache-info.sh</include>
 				<include>gc-cache-storage.sh</include>
 				<include>set-classpath-db.sh</include>

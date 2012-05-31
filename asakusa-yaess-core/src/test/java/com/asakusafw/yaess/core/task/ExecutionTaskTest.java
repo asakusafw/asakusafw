@@ -245,6 +245,21 @@ public class ExecutionTaskTest {
     }
 
     /**
+     * Execute phase but will be skipped.
+     * @throws Exception if failed
+     */
+    @Test
+    public void phase_sskip() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        ExecutionTask task = prf.task();
+        task.getSkipFlows().add("testing");
+        task.executePhase("batch", "testing", "f-setup", ExecutionPhase.SETUP);
+
+        List<Record> results = SerialExecutionTracker.get(prf.trackingId);
+        assertThat(results, is(Collections.<Record>emptyList()));
+    }
+
+    /**
      * Executes flow.
      * @throws Exception if failed
      */
@@ -266,6 +281,21 @@ public class ExecutionTaskTest {
         assertThat(phase(results, "testing", ExecutionPhase.EXPORT).size(), is(2));
         assertThat(phase(results, "testing", ExecutionPhase.FINALIZE).size(), is(2));
         assertThat(phase(results, "testing", ExecutionPhase.CLEANUP).size(), is(2));
+    }
+
+    /**
+     * Executes flow but is skipped.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeFlow_skip() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        ExecutionTask task = prf.task();
+        task.getSkipFlows().add("testing");
+        task.executeFlow("batch", "testing", "flow");
+
+        List<Record> results = SerialExecutionTracker.get(prf.trackingId);
+        assertThat(results, is(Collections.<Record>emptyList()));
     }
 
     /**
@@ -409,6 +439,75 @@ public class ExecutionTaskTest {
         assertThat(phase(results, "last", ExecutionPhase.EXPORT).size(), is(0));
         assertThat(phase(results, "last", ExecutionPhase.FINALIZE).size(), is(0));
         assertThat(phase(results, "last", ExecutionPhase.CLEANUP).size(), is(2));
+    }
+
+    /**
+     * Executes batch but some flows are skipped.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeBatch_skip() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        ExecutionTask task = prf.task();
+        task.getSkipFlows().add("left");
+        task.executeBatch("batch");
+
+        List<Record> results = SerialExecutionTracker.get(prf.trackingId);
+        checkFlowHappensBefore(results, "testing", "right");
+        checkFlowHappensBefore(results, "right", "last");
+        verifyPhaseOrder(results);
+
+        assertThat(phase(results, "testing", ExecutionPhase.SETUP).size(), is(2));
+        assertThat(phase(results, "testing", ExecutionPhase.INITIALIZE).size(), is(1));
+        assertThat(phase(results, "testing", ExecutionPhase.IMPORT).size(), is(2));
+        assertThat(phase(results, "testing", ExecutionPhase.PROLOGUE).size(), is(1));
+        assertThat(phase(results, "testing", ExecutionPhase.MAIN).size(), is(4));
+        assertThat(phase(results, "testing", ExecutionPhase.EPILOGUE).size(), is(1));
+        assertThat(phase(results, "testing", ExecutionPhase.EXPORT).size(), is(2));
+        assertThat(phase(results, "testing", ExecutionPhase.FINALIZE).size(), is(2));
+        assertThat(phase(results, "testing", ExecutionPhase.CLEANUP).size(), is(2));
+
+        assertThat(flow(results, "left").size(), is(0));
+
+        assertThat(phase(results, "right", ExecutionPhase.SETUP).size(), is(2));
+        assertThat(phase(results, "right", ExecutionPhase.INITIALIZE).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.IMPORT).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.PROLOGUE).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.MAIN).size(), is(1));
+        assertThat(phase(results, "right", ExecutionPhase.EPILOGUE).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.EXPORT).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.FINALIZE).size(), is(0));
+        assertThat(phase(results, "right", ExecutionPhase.CLEANUP).size(), is(2));
+
+        assertThat(phase(results, "last", ExecutionPhase.SETUP).size(), is(2));
+        assertThat(phase(results, "last", ExecutionPhase.INITIALIZE).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.IMPORT).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.PROLOGUE).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.MAIN).size(), is(1));
+        assertThat(phase(results, "last", ExecutionPhase.EPILOGUE).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.EXPORT).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.FINALIZE).size(), is(0));
+        assertThat(phase(results, "last", ExecutionPhase.CLEANUP).size(), is(2));
+    }
+
+    /**
+     * Executes batch but some flows are skipped.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeBatch_seriaize() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        prf.setTracker(FlowSerialized.class);
+        ExecutionTask task = prf.task();
+        task.setSerializeFlows(true);
+        task.executeBatch("batch");
+
+        List<Record> results = SerialExecutionTracker.get(prf.trackingId);
+        checkFlowHappensBefore(results, "testing", "left");
+        checkFlowHappensBefore(results, "testing", "right");
+        checkFlowHappensBefore(results, "left", "last");
+        checkFlowHappensBefore(results, "right", "last");
+        verifyPhaseOrder(results);
     }
 
     /**
@@ -632,6 +731,33 @@ public class ExecutionTaskTest {
 
     static String profile(Record record) {
         return ((CommandScript) record.script).getProfileName();
+    }
+
+    /**
+     * for {@link ExecutionTaskTest#executeFlow_failed_export()}.
+     */
+    public static class FlowSerialized extends SerialExecutionTracker {
+
+        private String flowId;
+
+        @Override
+        public synchronized void add(Id id, Record record) throws IOException, InterruptedException {
+            switch (record.context.getPhase()) {
+            case SETUP:
+                assertThat(flowId, is(nullValue()));
+                flowId = record.context.getFlowId();
+                break;
+            case CLEANUP:
+                assertThat(flowId, is(record.context.getFlowId()));
+                flowId = null;
+                break;
+            default:
+                Thread.sleep(100);
+                assertThat(flowId, is(record.context.getFlowId()));
+                break;
+            }
+            super.add(id, record);
+        }
     }
 
     /**

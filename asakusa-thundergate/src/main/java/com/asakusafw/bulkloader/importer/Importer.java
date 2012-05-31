@@ -30,6 +30,7 @@ import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.ImportType;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.common.TsvDeleteType;
+import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 
@@ -90,8 +91,6 @@ public class Importer {
             recoveryTable = args[6];
         }
 
-        Connection lockConn = null;
-        ImportBean bean = null;
         try {
             // 初期処理
             if (!BulkLoaderInitializer.initDBServer(jobflowId, executionId, PROPERTIES, targetName)) {
@@ -105,14 +104,56 @@ public class Importer {
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
 
             // パラメータオブジェクトを作成
-            bean = createBean(importerType, targetName, batchId, jobflowId, executionId, endDate, recoveryTable);
+            ImportBean bean =
+                createBean(importerType, targetName, batchId, jobflowId, executionId, endDate, recoveryTable);
             if (bean == null) {
                 // パラメータのチェックでエラー
                 LOG.error("TG-IMPORTER-01009",
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
+            int exitCode = importTables(bean);
+            return exitCode;
+        } catch (BulkLoaderReRunnableException e) {
+            LOG.log(e);
+            return Constants.EXIT_CODE_RETRYABLE;
+        } catch (BulkLoaderSystemException e) {
+            LOG.log(e);
+            return Constants.EXIT_CODE_ERROR;
+        } catch (Exception e) {
+            try {
+                LOG.error(e, "TG-IMPORTER-01010",
+                        new Date(), importerType, targetName, batchId, jobflowId, executionId);
+                return Constants.EXIT_CODE_ERROR;
+            } catch (Exception e1) {
+                System.err.print("Importerで不明なエラーが発生しました。");
+                e1.printStackTrace();
+                return Constants.EXIT_CODE_ERROR;
+            }
+        }
+    }
 
+    /**
+     * Imports tables described in the specified bean.
+     * @param bean target
+     * @return exit code
+     * @throws BulkLoaderSystemException if failed to import by system exception
+     * @throws BulkLoaderReRunnableException if failed to import but is retryable
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public int importTables(ImportBean bean) throws BulkLoaderSystemException, BulkLoaderReRunnableException {
+        if (bean == null) {
+            throw new IllegalArgumentException("bean must not be null"); //$NON-NLS-1$
+        }
+        String importerType = (bean.isPrimary() ? ImportType.PRIMARY : ImportType.SECONDARY).toString();
+        String targetName = bean.getTargetName();
+        String batchId = bean.getBatchId();
+        String jobflowId = bean.getJobflowId();
+        String executionId = bean.getExecutionId();
+
+        Connection lockConn = null;
+        boolean protocolDecided = false;
+        try {
             String jobflowSid;
             if (bean.isPrimary()) {
                 // ジョブフロー実行IDの排他制御
@@ -137,6 +178,7 @@ public class Importer {
 
                 ImportProtocolDecide protocolDecide = createImportProtocolDecide();
                 protocolDecide.execute(bean);
+                protocolDecided = true;
 
                 // Import対象テーブルのロックを取得
                 TargetDataLock targetLock = createTargetDataLock();
@@ -236,26 +278,24 @@ public class Importer {
             LOG.info("TG-IMPORTER-01002",
                     new Date(), importerType, targetName, batchId, jobflowId, executionId);
             return Constants.EXIT_CODE_SUCCESS;
-        } catch (BulkLoaderSystemException e) {
-            LOG.log(e);
-            return Constants.EXIT_CODE_ERROR;
-        } catch (Exception e) {
+        } catch (BulkLoaderReRunnableException e) {
+            ImportProtocolDecide protocolDecide = createImportProtocolDecide();
             try {
-                LOG.error(e, "TG-IMPORTER-01010",
-                        new Date(), importerType, targetName, batchId, jobflowId, executionId);
-                return Constants.EXIT_CODE_ERROR;
-            } catch (Exception e1) {
-                System.err.print("Importerで不明なエラーが発生しました。");
-                e1.printStackTrace();
-                return Constants.EXIT_CODE_ERROR;
+                if (protocolDecided) {
+                    protocolDecide.cleanUpForRetry(bean);
+                }
+                throw e;
+            } catch (BulkLoaderSystemException inner) {
+                LOG.log(e);
+                throw inner;
             }
         } finally {
-            if (bean != null && bean.isPrimary()) {
-                // ジョブフロー実行IDの排他を解除
+            if (lockConn != null) {
                 DBAccessUtil.releaseJobflowInstanceLock(lockConn);
             }
         }
     }
+
     /**
      * パラメータを保持するBeanを作成する。
      * @param importerType Import処理区分

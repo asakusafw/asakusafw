@@ -28,7 +28,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @param <T> the type of target data model
  * @since 0.2.5
  */
-public abstract class BinaryStreamFormat<T> implements DataFormat<T> {
+public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T> {
 
     /**
      * Returns the preffered fragment size (in bytes).
@@ -36,6 +36,7 @@ public abstract class BinaryStreamFormat<T> implements DataFormat<T> {
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
+    @Override
     public abstract long getPreferredFragmentSize() throws IOException, InterruptedException;
 
     /**
@@ -44,6 +45,7 @@ public abstract class BinaryStreamFormat<T> implements DataFormat<T> {
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
+    @Override
     public abstract long getMinimumFragmentSize() throws IOException, InterruptedException;
 
     /**

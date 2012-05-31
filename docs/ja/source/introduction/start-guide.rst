@@ -7,10 +7,19 @@ Asakusa Framework スタートガイド
 ==============
 Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。WindowsPC上で開発を行う場合、Windows上でLinuxの仮想マシンを実行し、ここで開発を行うと便利です。
 
-このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 11.10 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
+このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
 
 ..  _`VMWare Player`: http://www.vmware.com/jp/products/desktop_virtualization/player/overview 
-..  _`Ubuntu 11.10 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/News/ubuntu1110-desktop-ja-remix
+..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix-cd 
+
+..  tip::
+    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである `Jinrikisha`_ (人力車) を利用する方法もあります。
+    
+    `Jinrikisha`_ を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメント (http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html) に従って開発環境を構築することができます。
+    
+    `Jinrikisha`_ ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に、Jinrikishaのドキュメントに従って開発環境を構築することを推奨します。
+
+..  _`Jinrikisha`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
 
 VMWare Playerのインストール
 ---------------------------
@@ -20,11 +29,13 @@ VMWare Playerのダウンロードサイト (http://www.vmware.com/go/get-player
 
 ダウンロードしたインストーラを実行し、インストール画面の指示に従ってVMWare Playerをインストールします。
 
+.. _install-ubuntu:
+
 Ubuntu Desktop のインストール
 -----------------------------
 Ubuntu Desktopをダウンロードし、インストールを行います。
 
-Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/products/JA-Localized/download) からisoファイル(CDイメージ)をダウンロードします。
+Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/download/ja-remix-cd) からisoファイル(CDイメージ)をダウンロードします。
 
 ダウンロードが完了したらVMWare Playerを起動し、以下の手順に従ってUbuntu Desktopをインストールします。
 
@@ -44,13 +55,14 @@ Ubuntu Desktopが起動したら、同梱のブラウザなどを使用してUbu
 
     LANG=C xdg-user-dirs-gtk-update
 
-ダイアログが開いたら「次回からチェックしない」にチェックを入れ、「Update Names」を選択します。
+ダイアログが開いたら「Don't ask me this again (次回からチェックしない) 」にチェックを入れ、「Update Names」を選択します。
 
 そのほか、必須の手順ではないですがここでVMWare Toolsをインストールしておくとよいでしょう。
 
 ..  [#] ここで「インストーラ ディスク イメージ ファイル」を選択し、isoファイルを選択するとOSの「簡易インストール」が行われますが、簡易インストールでは日本語環境がインストールされないほか、いくつかの設定が適切に行われないため、簡易インストールの使用は推奨しません。
 ..  [#] [ctrl] + [alt] + [t] キーでターミナルが起動します。
 
+.. _install-java:
 
 Java(JDK)のインストール
 -----------------------
@@ -77,7 +89,7 @@ Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javas
     cd /usr/lib/jvm
     sudo ln -s jdk1.6.0_* jdk-6
 
-..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-ia64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
+..  [#] ダウンロードするファイルは「jdk-6uXX-linux-i586.bin」(XXはUpdate番号) です。本スタートガイドの環境に従う場合は、x64版(xx-x64.bin)や、RPM版のファイル(xx-rpm.bin)をダウンロードしないよう注意してください。
 
 このほかに環境変数の設定が必要ですが、本手順では後ほどまとめて設定するため、このまま次に進みます。
 
@@ -191,10 +203,10 @@ Hadoopの動作確認
 
     hadoop version
 
-    Hadoop 0.20.2-cdh3u2
+    Hadoop 0.20.2-cdh3u4
     Subversion ...
-    Compiled by jenkins on Fri Oct 14 01:36:05 PDT 2011
-    From source with checksum 644e5db6c59d45bca96cec7f220dda51
+    Compiled by root on Mon May  7 14:02:54 PDT 2012
+    From source with checksum a60c9795e41a3248b212344fb131c12c
 
 ..  attention::
     Hadoopのみバージョンを確認するためのコマンドが ``hadoop version`` となっていて、 ``version`` の前にハイフンが不要です。
@@ -251,7 +263,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 (<-3を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 5 (0.2.5) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 6 (0.2.6) を選択します。
 
 ..  code-block:: sh
 
@@ -261,7 +273,8 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     3: 0.2.3
     4: 0.2.4
     5: 0.2.5
-    Choose a number: 5: 5 (<-5を入力)
+    6: 0.2.6
+    Choose a number: 6: 6 (<-6を入力)
 
 この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 

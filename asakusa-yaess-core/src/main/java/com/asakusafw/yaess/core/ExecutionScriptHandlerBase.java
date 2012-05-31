@@ -32,8 +32,11 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
  * Note that this class does not implement {@link ExecutionScriptHandler},
  * so that subclasses must implement {@link HadoopScriptHandler} or {@link CommandScriptHandler}.
  * @since 0.2.3
+ * @version 0.2.6
  */
 public abstract class ExecutionScriptHandlerBase implements Service {
+
+    static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionScriptHandlerBase.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionScriptHandlerBase.class);
 
@@ -41,15 +44,19 @@ public abstract class ExecutionScriptHandlerBase implements Service {
 
     private volatile String resourceId;
 
+    private volatile Map<String, String> properties;
+
     private volatile Map<String, String> environmentVariables;
 
     @Override
     public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         this.prefix = profile.getPrefix();
         configureResourceId(profile);
+        Map<String, String> desiredProperties = getDesiredProperties(profile);
         Map<String, String> desiredEnvironmentVariables = getDesiredEnvironmentVariables(profile);
-        environmentVariables = Collections.unmodifiableMap(desiredEnvironmentVariables);
-        doConfigure(profile, desiredEnvironmentVariables);
+        this.properties = Collections.unmodifiableMap(desiredProperties);
+        this.environmentVariables = Collections.unmodifiableMap(desiredEnvironmentVariables);
+        doConfigure(profile, desiredProperties, desiredEnvironmentVariables);
     }
 
     /**
@@ -75,6 +82,38 @@ public abstract class ExecutionScriptHandlerBase implements Service {
         }
     }
 
+    private Map<String, String> getDesiredProperties(ServiceProfile<?> profile) throws IOException {
+        assert profile != null;
+        NavigableMap<String, String> vars = PropertiesUtil.createPrefixMap(
+                profile.getConfiguration(),
+                ExecutionScriptHandler.KEY_PROP_PREFIX);
+        Map<String, String> resolved = new TreeMap<String, String>();
+        for (Map.Entry<String, String> entry : vars.entrySet()) {
+            String key = entry.getKey();
+            String unresolved = entry.getValue();
+            try {
+                String value = profile.getContext().getContextParameters().replace(unresolved, true);
+                resolved.put(key, value);
+            } catch (IllegalArgumentException e) {
+                YSLOG.error(e, "E10001",
+                        profile.getPrefix(),
+                        ExecutionScriptHandler.KEY_PROP_PREFIX,
+                        key,
+                        unresolved);
+                throw new IOException(MessageFormat.format(
+                        "Failed to resolve a property: {0}.{1}.{2} = {3}",
+                        profile.getPrefix(),
+                        ExecutionScriptHandler.KEY_PROP_PREFIX,
+                        key,
+                        unresolved), e);
+            }
+        }
+        LOG.debug("Desired properties for {}: {}",
+                profile.getPrefix(),
+                resolved);
+        return resolved;
+    }
+
     private Map<String, String> getDesiredEnvironmentVariables(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
         NavigableMap<String, String> vars = PropertiesUtil.createPrefixMap(
@@ -88,7 +127,11 @@ public abstract class ExecutionScriptHandlerBase implements Service {
                 String value = profile.getContext().getContextParameters().replace(unresolved, true);
                 resolved.put(key, value);
             } catch (IllegalArgumentException e) {
-                // TODO logging
+                YSLOG.error(e, "E10001",
+                        profile.getPrefix(),
+                        ExecutionScriptHandler.KEY_ENV_PREFIX,
+                        key,
+                        unresolved);
                 throw new IOException(MessageFormat.format(
                         "Failed to resolve environment variable: {0}.{1}.{2} = {3}",
                         profile.getPrefix(),
@@ -106,27 +149,55 @@ public abstract class ExecutionScriptHandlerBase implements Service {
     /**
      * Configures this handler internally (extention point).
      * @param profile the profile of this service
+     * @param desiredProperties the current desired system/hadoop properties (configurable)
      * @param desiredEnvironmentVariables the current desired environment variables (configurable)
      * @throws InterruptedException if interrupted in configuration
      * @throws IOException if failed to configure this service
      */
     protected abstract void doConfigure(
             ServiceProfile<?> profile,
+            Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException;
 
     /**
      * Returns the ID of a resource which is used for executing this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
      * @return the required resource ID
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
      */
-    public final String getResourceId() {
+    public final String getResourceId(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException {
         return resourceId;
     }
 
     /**
-     * Returns desired environment variables to execute scripts using this handler.
-     * @return desired environment variables
+     * Returns desired system/hadoop properties to execute scripts using this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
+     * @return desired system or hadoop properties
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
      */
-    public final Map<String, String> getEnvironmentVariables() {
+    public Map<String, String> getProperties(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException {
+        return properties;
+    }
+
+    /**
+     * Returns desired environment variables to execute scripts using this handler.
+     * @param context the current execution context
+     * @param script the target script (nullable)
+     * @return desired environment variables
+     * @throws InterruptedException if this operation is interrupted
+     * @throws IOException if failed to setup the target environment
+     */
+    public Map<String, String> getEnvironmentVariables(
+            ExecutionContext context,
+            ExecutionScript script) throws InterruptedException, IOException {
         return environmentVariables;
     }
 

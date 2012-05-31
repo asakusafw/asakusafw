@@ -86,4 +86,5 @@ __EOF__
 
 cd "$_ECLIPSE_HOME"
 ./eclipse &
+cd -
 ====

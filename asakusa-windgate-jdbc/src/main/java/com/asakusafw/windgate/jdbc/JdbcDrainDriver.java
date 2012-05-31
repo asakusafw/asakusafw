@@ -101,10 +101,12 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             }
         } catch (SQLException e) {
             sawError = true;
-            WGLOG.error(e, "E04001",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E04001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to prepare JDBC drain (resource={0}, table={1}, columns={2})",
                     profile.getResourceName(),
@@ -115,11 +117,13 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             this.statement = prepareStatement();
         } catch (SQLException e) {
             sawError = true;
-            WGLOG.error(e, "E04002",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName(),
-                    script.getColumnNames());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E04002",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to prepare JDBC drain (resource={0}, table={1}, columns={2})",
                     profile.getResourceName(),
@@ -172,11 +176,13 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             statement.addBatch();
         } catch (SQLException e) {
             sawError = true;
-            WGLOG.error(e, "E04003",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName(),
-                    script.getColumnNames());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E04003",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to put object to JDBC drain: {2} (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -202,11 +208,13 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             putLimitRest = batchPutUnit;
         } catch (SQLException e) {
             sawError = true;
-            WGLOG.error(e, "E04004",
-                    profile.getResourceName(),
-                    script.getName(),
-                    script.getTableName(),
-                    script.getColumnNames());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.error(ex, "E04004",
+                        profile.getResourceName(),
+                        script.getName(),
+                        script.getTableName(),
+                        script.getColumnNames());
+            }
             throw new IOException(MessageFormat.format(
                     "Failed to flush table into JDBC drain (resource={0}, table={1})",
                     profile.getResourceName(),
@@ -231,19 +239,23 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             try {
                 statement.close();
             } catch (SQLException e) {
-                WGLOG.warn(e, "W04001",
-                        profile.getResourceName(),
-                        script.getName(),
-                        script.getTableName(),
-                        script.getColumnNames());
+                for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                    WGLOG.warn(ex, "W04001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            script.getTableName(),
+                            script.getColumnNames());
+                }
             }
         }
         try {
             connection.close();
         } catch (SQLException e) {
-            WGLOG.warn(e, "W02001",
-                    profile.getResourceName(),
-                    script.getName());
+            for (SQLException ex = e; ex != null; ex = ex.getNextException()) {
+                WGLOG.warn(ex, "W02001",
+                        profile.getResourceName(),
+                        script.getName());
+            }
         }
         if (occurred != null) {
             throw occurred;

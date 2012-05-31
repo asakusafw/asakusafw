@@ -35,12 +35,17 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 /**
  * Processes patterns in {@link DirectFileOutputDescription}.
  * @since 0.2.5
+ * @version 0.2.6
  */
 public final class OutputPattern {
 
-    static final int CHAR_BLOCK_OPEN = '{';
+    static final int CHAR_BRACE_OPEN = '{';
 
-    static final int CHAR_BLOCK_CLOSE = '}';
+    static final int CHAR_BRACE_CLOSE = '}';
+
+    static final int CHAR_BLOCK_OPEN = '[';
+
+    static final int CHAR_BLOCK_CLOSE = ']';
 
     static final int CHAR_SEPARATE_IN_BLOCK = ':';
 
@@ -100,16 +105,16 @@ public final class OutputPattern {
                 String literal = cursor.consumeLiteral();
                 results.add(new CompiledResourcePattern(literal));
             } else if (cursor.isPlaceHolder()) {
-                String[] ph = cursor.consumePlaceHolder();
-                DataClass.Property property = findProperty(dataType, ph[0]);
+                Formatted ph = cursor.consumePlaceHolder();
+                DataClass.Property property = findProperty(dataType, (String) ph.original);
                 if (property == null) {
                     cursor.rewind();
                     throw new IllegalArgumentException(MessageFormat.format(
                             "Unknown property \"{1}\": {0}",
                             cursor,
-                            ph[0]));
+                            ph.original));
                 }
-                String argument = ph[1];
+                String argument = ph.formatString;
                 Format format = findFormat(property, argument);
                 if (format == null) {
                     cursor.rewind();
@@ -128,6 +133,10 @@ public final class OutputPattern {
                             argument == null ? "" : argument), e);
                 }
                 results.add(new CompiledResourcePattern(property, format, argument));
+            } else if (cursor.isRandomNumber()) {
+                Formatted rand = cursor.consumeRandomNumber();
+                RandomNumber source = (RandomNumber) rand.original;
+                results.add(new CompiledResourcePattern(source, Format.NATURAL, null));
             } else {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Invalid character: {0}",
@@ -240,6 +249,13 @@ public final class OutputPattern {
             if (isEof()) {
                 return false;
             }
+            return cbuf[position] == CHAR_BRACE_OPEN;
+        }
+
+        boolean isRandomNumber() {
+            if (isEof()) {
+                return false;
+            }
             return cbuf[position] == CHAR_BLOCK_OPEN;
         }
 
@@ -268,7 +284,7 @@ public final class OutputPattern {
             int start = position;
             assert cbuf[position] == CHAR_VARIABLE_START;
             advance();
-            if (isEof() || cbuf[position] != CHAR_BLOCK_OPEN) {
+            if (isEof() || cbuf[position] != CHAR_BRACE_OPEN) {
                 return;
             }
             advance();
@@ -280,7 +296,7 @@ public final class OutputPattern {
                             this));
                 }
                 char c = cbuf[position];
-                if (c == CHAR_BLOCK_CLOSE) {
+                if (c == CHAR_BRACE_CLOSE) {
                     break;
                 }
                 advance();
@@ -288,11 +304,12 @@ public final class OutputPattern {
             advance();
         }
 
-        String[] consumePlaceHolder() {
+        Formatted consumePlaceHolder() {
             assert isPlaceHolder();
             this.lastSegmentPosition = position;
             int start = position + 1;
-            String[] results = new String[2];
+            String propertyName;
+            String formatString;
             advance();
             while (true) {
                 if (isEof()) {
@@ -302,12 +319,12 @@ public final class OutputPattern {
                             this));
                 }
                 char c = cbuf[position];
-                if (c == CHAR_BLOCK_CLOSE || c == CHAR_SEPARATE_IN_BLOCK) {
+                if (c == CHAR_BRACE_CLOSE || c == CHAR_SEPARATE_IN_BLOCK) {
                     break;
                 }
                 advance();
             }
-            results[0] = String.valueOf(cbuf, start, position - start);
+            propertyName = String.valueOf(cbuf, start, position - start);
             if (cbuf[position] == CHAR_SEPARATE_IN_BLOCK) {
                 advance();
                 int formatStart = position;
@@ -319,16 +336,74 @@ public final class OutputPattern {
                                 this));
                     }
                     char c = cbuf[position];
-                    if (c == CHAR_BLOCK_CLOSE) {
+                    if (c == CHAR_BRACE_CLOSE) {
                         break;
                     }
                     advance();
                 }
-                results[1] = String.valueOf(cbuf, formatStart, position - formatStart);
+                formatString = String.valueOf(cbuf, formatStart, position - formatStart);
+            } else {
+                formatString = null;
             }
-            assert cbuf[position] == CHAR_BLOCK_CLOSE;
+            assert cbuf[position] == CHAR_BRACE_CLOSE;
             advance();
-            return results;
+            return new Formatted(propertyName, formatString);
+        }
+
+        private static final Pattern RNG = Pattern.compile("(\\d+)\\.{2,3}(\\d+)(:(.*))?");
+        Formatted consumeRandomNumber() {
+            assert isRandomNumber();
+            this.lastSegmentPosition = position;
+            int start = position + 1;
+            while (true) {
+                if (isEof()) {
+                    position = start;
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Random number is not closed: {0}",
+                            this));
+                }
+                char c = cbuf[position];
+                if (c == CHAR_BLOCK_CLOSE) {
+                    break;
+                }
+                advance();
+            }
+            String content = String.valueOf(cbuf, start, position - start);
+            Matcher matcher = RNG.matcher(content);
+            if (matcher.matches() == false) {
+                position = start;
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Invalid random number format: {0}",
+                        this));
+            }
+            int lower;
+            try {
+                lower = Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException e) {
+                position = start + matcher.start(1);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Invalid random number format: {0}",
+                        this), e);
+            }
+            int upper;
+            try {
+                upper = Integer.parseInt(matcher.group(2));
+            } catch (NumberFormatException e) {
+                position = start + matcher.start(2);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Invalid random number format: {0}",
+                        this), e);
+            }
+            if (lower >= upper) {
+                position = start + matcher.start(1);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "The random number [lower..upper] must be lower < upper: {0}",
+                        this));
+            }
+
+            String format = matcher.group(4);
+            advance();
+            return new Formatted(new RandomNumber(lower, upper), format);
         }
 
         private void advance() {
@@ -351,13 +426,27 @@ public final class OutputPattern {
         }
     }
 
+    private static class Formatted {
+
+        final Object original;
+
+        final String formatString;
+
+        Formatted(Object original, String formatString) {
+            this.original = original;
+            this.formatString = formatString;
+        }
+    }
+
     /**
      * The compiled resource pattern.
      * @since 0.2.5
      */
     public static final class CompiledResourcePattern {
 
-        private final DataClass.Property target;
+        private final SourceKind kind;
+
+        private final Object source;
 
         private final Format format;
 
@@ -372,7 +461,8 @@ public final class OutputPattern {
             if (string == null) {
                 throw new IllegalArgumentException("string must not be null"); //$NON-NLS-1$
             }
-            this.target = null;
+            this.kind = SourceKind.NOTHING;
+            this.source = null;
             this.format = Format.PLAIN;
             this.argument = string;
         }
@@ -391,18 +481,74 @@ public final class OutputPattern {
             if (format == null) {
                 throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
             }
-            this.target = target;
+            this.kind = SourceKind.PROPERTY;
+            this.source = target;
             this.format = format;
             this.argument = argument;
             format.check(target.getType(), argument);
         }
 
         /**
+         * Creates a new instance.
+         * @param source the source object
+         * @param format format kind
+         * @param argument format argument (nullable)
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public CompiledResourcePattern(RandomNumber source, Format format, String argument) {
+            if (source == null) {
+                throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+            }
+            if (format == null) {
+                throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
+            }
+            this.kind = SourceKind.RANDOM;
+            this.source = source;
+            this.format = format;
+            this.argument = argument;
+        }
+
+        /**
+         * Returns the kind of the souce of this fragment.
+         * @return the kind
+         * @since 0.2.6
+         */
+        public SourceKind getKind() {
+            return kind;
+        }
+
+        /**
+         * Returns the source of this fragment.
+         * @return the source, or {@code null} if the source is not specified
+         * @since 0.2.6
+         */
+        public Object getSource() {
+            return source;
+        }
+
+        /**
          * Returns the target property.
-         * @return the target property, or {@code null} if this is a literal
+         * @return the target property, or {@code null} if the source is not a property
+         * @see #getSource()
          */
         public DataClass.Property getTarget() {
-            return target;
+            if (kind != SourceKind.PROPERTY) {
+                return null;
+            }
+            return (DataClass.Property) source;
+        }
+
+        /**
+         * Returns the random number specification.
+         * @return the random number spec, or {@code null} if the source is not a random number
+         * @see #getSource()
+         * @since 0.2.6
+         */
+        public RandomNumber getRandomNumber() {
+            if (kind != SourceKind.RANDOM) {
+                return null;
+            }
+            return (RandomNumber) source;
         }
 
         /**
@@ -421,7 +567,6 @@ public final class OutputPattern {
             return argument;
         }
     }
-
 
     /**
      * The compiled ordering pattern.
@@ -461,6 +606,67 @@ public final class OutputPattern {
          */
         public boolean isAscend() {
             return ascend;
+        }
+    }
+
+    /**
+     * The source kind.
+     * @since 0.2.6
+     */
+    public enum SourceKind {
+
+        /**
+         * Source is nothing (for literals).
+         */
+        NOTHING,
+
+        /**
+         * Source is a property.
+         * @see DataClass.Property
+         */
+        PROPERTY,
+
+        /**
+         * Source is a random number generator.
+         * @see RandomNumber
+         */
+        RANDOM,
+    }
+
+    /**
+     * Represents a random number.
+     * @since 0.2.6
+     */
+    public static class RandomNumber {
+
+        private final int lowerBound;
+
+        private final int upperBound;
+
+        /**
+         * Creates a new instance.
+         * @param lowerBound the lower bound (inclusive)
+         * @param upperBound the upper bound (inclusive)
+         */
+        public RandomNumber(int lowerBound, int upperBound) {
+            this.lowerBound = lowerBound;
+            this.upperBound = upperBound;
+        }
+
+        /**
+         * Returns the lower bound of this random number.
+         * @return the lower bound (inclusive)
+         */
+        public int getLowerBound() {
+            return lowerBound;
+        }
+
+        /**
+         * Returns the upper bound of this random number.
+         * @return the upper bound (inclusive)
+         */
+        public int getUpperBound() {
+            return upperBound;
         }
     }
 }

@@ -21,13 +21,23 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    yaess-batch.sh batch-id [-A <key>=<value> [-A <key>=<value>  [...]]]
+    yaess-batch.sh batch-id \\
+        [-A <key>=<value> [-A <key>=<value>  [...]]] \\
+        [-D <key>=<value> [-D <key>=<value>  [...]]]
 
 Parameters:
     batch-id
         batch ID of current execution
     -A <key>=<value>
         argument for this execution
+    -D <key>=<value>
+        definition for this execution
+
+Definitions:
+    -D skipFlows=<flowId>[,<flowId>[,...]]
+        ignores target jobflow execution
+    -D serializeFlows=true
+        serializes each jobflow execution (for debug)
 
 Examples:
     # run a batch "example.batch"
@@ -35,6 +45,17 @@ Examples:
     
     # run a batch "example.params" with {date="2011-03-31", code="123"}
     yaess-batch.sh example.params -A date=2011-03-31 -A code=123
+    
+    # run a batch "example.skip" except joblows "first" and "second"
+    yaess-batch.sh example.skip -D skipFlows=first,second
+
+Environment Variables:
+    \$ASAKUSA_HOME
+        The location where the Asakusa Framework is installed
+    \$YAESS_OPTS
+        Java VM options for YAESS execution
+    \$YS_PATH_SEPARATOR
+        Path separator character (default is ':')
 EOF
 }
 
@@ -110,8 +131,10 @@ echo "  Plug-ins: $_YS_PLUGIN"
 echo " Classpath: $_YS_CLASSPATH"
 echo "Main Class: $_YS_CLASS"
 echo " Arguments: $@"
+echo "Properties: $YAESS_OPTS"
 
 java \
+    $YAESS_OPTS \
     "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
@@ -131,6 +154,7 @@ then
     echo " Batch ID: $_OPT_BATCH_ID" 1>&2
     echo " Plug-ins: $_YS_PLUGIN" 1>&2
     echo "Arguments: $@" 1>&2
+    echo "Properties: $YAESS_OPTS" 1>&2
     echo "Finished: FAILURE"
     exit $_YS_RET
 fi

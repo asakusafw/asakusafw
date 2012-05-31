@@ -164,60 +164,70 @@ public class GateTask implements Closeable {
                 sessionId,
                 profile.getName(),
                 script.getName());
-        WGLOG.info("I00001",
-                sessionId,
-                profile.getName(),
-                script.getName());
-        SessionMirror session = attachSession(createSession);
+        long start = System.currentTimeMillis();
         try {
-            WGLOG.info("I00002",
+            WGLOG.info("I00001",
                     sessionId,
                     profile.getName(),
                     script.getName());
-            List<ResourceMirror> resources = createResources();
-            if (createSession) {
-                WGLOG.info("I00003",
-                        sessionId,
-                        profile.getName(),
-                        script.getName());
-                fireSessionCreated(resources);
-            }
-            WGLOG.info("I00004",
-                    sessionId,
-                    profile.getName(),
-                    script.getName());
-            prepareResources(resources);
-            WGLOG.info("I00005",
-                    sessionId,
-                    profile.getName(),
-                    script.getName());
-            runGateProcesses(resources);
-            if (completeSession) {
-                WGLOG.info("I00006",
-                        sessionId,
-                        profile.getName(),
-                        script.getName());
-                fireSessionCompleted(resources);
-                WGLOG.info("I00007",
-                        sessionId,
-                        profile.getName(),
-                        script.getName());
-                session.complete();
-            }
-        } finally {
+            SessionMirror session = attachSession(createSession);
             try {
-                session.close();
-            } catch (IOException e) {
-                WGLOG.warn(e, "W00001",
+                WGLOG.info("I00002",
                         sessionId,
                         profile.getName(),
                         script.getName());
+                List<ResourceMirror> resources = createResources();
+                if (createSession) {
+                    WGLOG.info("I00003",
+                            sessionId,
+                            profile.getName(),
+                            script.getName());
+                    fireSessionCreated(resources);
+                }
+                WGLOG.info("I00004",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
+                prepareResources(resources);
+                WGLOG.info("I00005",
+                        sessionId,
+                        profile.getName(),
+                        script.getName());
+                runGateProcesses(resources);
+                if (completeSession) {
+                    WGLOG.info("I00006",
+                            sessionId,
+                            profile.getName(),
+                            script.getName());
+                    fireSessionCompleted(resources);
+                    WGLOG.info("I00007",
+                            sessionId,
+                            profile.getName(),
+                            script.getName());
+                    session.complete();
+                }
+            } finally {
+                try {
+                    session.close();
+                } catch (IOException e) {
+                    WGLOG.warn(e, "W00001",
+                            sessionId,
+                            profile.getName(),
+                            script.getName());
+                }
             }
+            WGLOG.info("I00008",
+                    sessionId,
+                    profile.getName(),
+                    script.getName());
+        } finally {
+            long end = System.currentTimeMillis();
+            WGLOG.info("I00999",
+                    sessionId,
+                    profile.getName(),
+                    script.getName(),
+                    end - start);
         }
-        WGLOG.info("I00999",
-                sessionId,
-                profile.getName(),
-                script.getName());
     }
 
     private SessionMirror attachSession(boolean create) throws IOException {

@@ -15,13 +15,12 @@
  */
 package com.asakusafw.yaess.core.util;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.asakusafw.yaess.core.YaessCoreLogger;
+import com.asakusafw.yaess.core.YaessLogger;
 
 /**
  * Redirects an input stream into other output stream.
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamRedirectTask implements Runnable {
 
-    static final Logger LOG = LoggerFactory.getLogger(StreamRedirectTask.class);
+    static final YaessLogger YSLOG = new YaessCoreLogger(StreamRedirectTask.class);
 
     private final InputStream input;
 
@@ -89,14 +88,12 @@ public class StreamRedirectTask implements Runnable {
                         out.write(buf, 0, read);
                     } catch (IOException e) {
                         outputFailed = true;
-                        // TODO logging
-                        LOG.warn("Failed to redirect into target output stream", e);
+                        YSLOG.warn(e, "W99001");
                     }
                 }
             }
         } catch (IOException e) {
-            // TODO logging
-            LOG.warn("Failed to redirect source input stream", e);
+            YSLOG.warn(e, "W99002");
         } finally {
             if (closeInput) {
                 close(input);
@@ -107,11 +104,19 @@ public class StreamRedirectTask implements Runnable {
         }
     }
 
-    private static void close(Closeable c) {
+    private static void close(InputStream c) {
         try {
             c.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            YSLOG.warn(e, "W99004");
+        }
+    }
+
+    private static void close(OutputStream c) {
+        try {
+            c.close();
+        } catch (IOException e) {
+            YSLOG.warn(e, "W99003");
         }
     }
 }

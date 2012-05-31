@@ -228,8 +228,10 @@ public final class Main {
                 result.setEncoding(charset);
                 LOG.info("Encoding: {}", charset);
             } catch (Exception e) {
-                result.setEncoding(Charset.defaultCharset());
+                result.setEncoding(Constants.OUTPUT_ENCODING);
             }
+        } else {
+            result.setEncoding(Constants.OUTPUT_ENCODING);
         }
 
         checkIf(cmd, OPT_SID_COLUMN, OPT_TIMESTAMP_COLUMN);

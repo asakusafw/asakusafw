@@ -94,7 +94,7 @@ MySQLに定義されたテーブルごとに、DMDLのレコードモデルを�
         UPDT_DATETIME    DATETIME,
         NAME             VARCHAR(255),
         VALUE            INT
-    ) type=InnoDB;
+    ) engine=InnoDB;
 
 上記のテーブルから生成されるレコードモデルの構造は次のような形です。
 
@@ -104,6 +104,7 @@ MySQLに定義されたテーブルごとに、DMDLのレコードモデルを�
         sid : LONG;
         version_no : LONG;
         rgst_datetime : DATETIME;
+        updt_datetime : DATETIME;
         name : TEXT;
         value : INT;
     };

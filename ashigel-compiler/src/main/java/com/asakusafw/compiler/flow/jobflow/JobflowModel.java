@@ -33,6 +33,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
+import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -171,7 +172,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      */
     public static class Stage extends Compilable.Trait<CompiledStage> {
 
-        private final int number;
+        private final StageModel model;
 
         private final List<Process> processes;
 
@@ -183,7 +184,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
 
         /**
          * インスタンスを生成する。
-         * @param number このステージのステージ番号
+         * @param model このステージの構造
          * @param processes このステージのプロセス情報一覧
          * @param deliveries このステージの成果物一覧
          * @param reduceOrNull このステージのレデューサー定義、利用しない場合は{@code null}
@@ -191,15 +192,16 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
         public Stage(
-                int number,
+                StageModel model,
                 List<Process> processes,
                 List<Delivery> deliveries,
                 Reduce reduceOrNull,
                 Set<SideData> sideData) {
+            Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(processes, "processes"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(deliveries, "deliveries"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(sideData, "sideData"); //$NON-NLS-1$
-            this.number = number;
+            this.model = model;
             this.processes = processes;
             this.deliveries = deliveries;
             this.reduceOrNull = reduceOrNull;
@@ -209,10 +211,17 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         /**
          * このステージのステージ番号を返す。
          * @return このステージのステージ番号
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
         public int getNumber() {
-            return number;
+            return model.getStageBlock().getStageNumber();
+        }
+
+        /**
+         * このステージの構造を返す。
+         * @return このステージの構造
+         */
+        public StageModel getModel() {
+            return model;
         }
 
         /**

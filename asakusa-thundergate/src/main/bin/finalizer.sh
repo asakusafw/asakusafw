@@ -34,6 +34,12 @@ finalizer.sh
 EOF
 }
 
+if [ $# -ne 4 ]
+then
+    usage
+    exit 1
+fi
+
 $ASAKUSA_HOME/bulkloader/bin/recoverer.sh $1 $4
 rc=$?
 

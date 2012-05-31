@@ -219,6 +219,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         ModelWrapper model = loaded.newModel("Model");
         ModelWrapper buffer = loaded.newModel("Model");
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);

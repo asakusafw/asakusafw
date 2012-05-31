@@ -5,7 +5,7 @@
 この文書では、ジョブのデータ入出力にDirect I/Oを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
 
 ..  caution::
-    Direct I/O はAsakusa Frameworkのバージョン ``0.2.5`` において実験的な機能として提供しています。
+    Direct I/O はAsakusa Frameworkのバージョン |version| において実験的な機能として提供しています。
     今後のバージョンで利用方法や挙動の一部が変更される可能性があります。
 
 用語の定義
@@ -151,7 +151,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``asakusafw-${asakusafw.version}-prod-directio.tar.gz``
 
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
-例えばversion 0.2.5 を使っている場合、ファイル名は ``asakusafw-0.2.5-prod-directio.tar.gz`` になります。
+例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-directio.tar.gz になります。
 
 ..  [#] このアーカイブには (Direct I/Oを含む) Asakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
 
@@ -271,11 +271,13 @@ YAESSプラグインライブラリのデプロイ
 
 ..  note::
     Asakusa Frameworkのインストールアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
-    あらかじめ以下の2つのプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
+    あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
 
     * ``asakusa-yaess-paralleljob`` : ジョブを並列実行のためのプラグイン
     * ``asakusa-yaess-jsch`` : SSH経由でジョブを起動するためのプラグイン
     * ``jsch`` : ``asakusa-yaess-jsch`` が依存するSSH接続用ライブラリ
+    * ``asakusa-yaess-flowlog`` : ジョブフローごとに進捗状況を個別ファイルに出力するためのプラグイン
+    * ``asakusa-yaess-multidispatch`` : ジョブの実行クラスタの振り分けを行うためのプラグイン
 
 YAESSのプラグインライブラリについては、 :doc:`../yaess/user-guide` も参考にしてください。
 

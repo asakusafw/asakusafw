@@ -16,69 +16,128 @@
 package com.asakusafw.runtime.stage.input;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.util.ReflectionUtils;
+
+import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
 /**
  * {@link StageInputSplit}を処理する{@link RecordReader}の実装。
+ * @since 0.1.0
+ * @version 0.2.6
  */
 @SuppressWarnings("rawtypes")
 public class StageInputRecordReader extends RecordReader {
 
-    private final RecordReader<?, ?> original;
+    private static final RecordReader<?, ?> VOID = new RecordReader<Object, Object>() {
 
-    /**
-     * インスタンスを生成する。
-     * @param original {@link StageInputSplit#getOriginal()}を処理する{@link RecordReader}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     */
-    public StageInputRecordReader(RecordReader<?, ?> original) {
-        if (original == null) {
-            throw new IllegalArgumentException("original must not be null"); //$NON-NLS-1$
+        @Override
+        public void initialize(InputSplit split, TaskAttemptContext ctxt) {
+            return;
         }
-        this.original = original;
-    }
 
-    /**
-     * 実際の処理を行う{@link RecordReader}を返す。
-     * @return 実際の処理を行う{@link RecordReader}
-     */
-    public RecordReader<?, ?> getOriginal() {
-        return original;
-    }
+        @Override
+        public boolean nextKeyValue() {
+            return false;
+        }
+
+        @Override
+        public Object getCurrentKey() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public Object getCurrentValue() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public float getProgress() {
+            return 0f;
+        }
+
+        @Override
+        public void close() {
+            return;
+        }
+    };
+
+    private Iterator<Source> sources;
+
+    private TaskAttemptContext context;
+
+    private RecordReader<?, ?> current;
+
+    private boolean eof;
+
+    private float progressPerSource;
+
+    private float baseProgress;
 
     @Override
     public void initialize(
             InputSplit split,
-            TaskAttemptContext context) throws IOException, InterruptedException {
+            TaskAttemptContext taskContext) throws IOException, InterruptedException {
         assert split instanceof StageInputSplit;
-        original.initialize(((StageInputSplit) split).getOriginal(), context);
+        List<Source> sourceList = ((StageInputSplit) split).getSources();
+        this.sources = sourceList.iterator();
+        this.context = taskContext;
+        this.progressPerSource = sourceList.isEmpty() ? 1f : 1f / sourceList.size();
+        this.baseProgress = 0f;
+        prepare();
+    }
+
+    private void prepare() throws IOException, InterruptedException {
+        if (current != null) {
+            baseProgress += progressPerSource;
+            current.close();
+        }
+        if (sources.hasNext()) {
+            Source next = sources.next();
+            InputFormat<?, ?> format = ReflectionUtils.newInstance(next.getFormatClass(), context.getConfiguration());
+            current = format.createRecordReader(next.getSplit(), context);
+            current.initialize(next.getSplit(), context);
+        } else {
+            eof = true;
+            current = VOID;
+        }
     }
 
     @Override
     public boolean nextKeyValue() throws IOException, InterruptedException {
-        return original.nextKeyValue();
+        while (eof == false) {
+            if (current.nextKeyValue()) {
+                return true;
+            }
+            prepare();
+        }
+        return false;
     }
 
     @Override
     public Object getCurrentKey() throws IOException, InterruptedException {
-        return original.getCurrentKey();
+        return current.getCurrentKey();
     }
 
     @Override
     public Object getCurrentValue() throws IOException, InterruptedException {
-        return original.getCurrentValue();
+        return current.getCurrentValue();
     }
 
     @Override
     public float getProgress() throws IOException, InterruptedException {
-        return original.getProgress();
+        float progress = current.getProgress();
+        return baseProgress + progress * progressPerSource;
     }
 
     @Override
     public void close() throws IOException {
-        original.close();
+        current.close();
     }
 }

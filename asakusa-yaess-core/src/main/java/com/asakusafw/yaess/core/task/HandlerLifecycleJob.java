@@ -15,9 +15,11 @@
  */
 package com.asakusafw.yaess.core.task;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
+import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.Job;
 
@@ -55,7 +57,7 @@ public abstract class HandlerLifecycleJob extends Job {
     }
 
     @Override
-    public String getResourceId() {
-        return handler.getResourceId();
+    public String getResourceId(ExecutionContext context) throws InterruptedException, IOException {
+        return handler.getResourceId(context, null);
     }
 }

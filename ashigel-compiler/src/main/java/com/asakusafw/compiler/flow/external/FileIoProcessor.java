@@ -103,8 +103,8 @@ public class FileIoProcessor extends ExternalIoDescriptionProcessor {
             } else if (mr370applied == false && exporterEnabled == GenericOptionValue.AUTO) {
                 valid = false;
                 getEnvironment().error(
-                        "現在のディストリビューションは{1}に対応していません。" +
-                        "別のディストリビューションを利用するか、{2}に置き換えてください (出力{0})。",
+                        "現在のディストリビューションは{1}に対応していません。"
+                        + "別のディストリビューションを利用するか、{2}に置き換えてください (出力{0})。",
                         desc.getClass().getName(),
                         FileExporterDescription.class.getSimpleName(),
                         "DirectFileOutputDescription (directio)");

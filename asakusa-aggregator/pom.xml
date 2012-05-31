@@ -29,6 +29,7 @@
 		<module>../asakusa-runtime</module>
 		<module>../ashigel-compiler</module>
 		<module>../ashigel-compiler-bootstrap</module>
+		<module>../asakusa-dsl-analysis-plugin</module>
 		<module>../asakusa-model-generator</module>
 		<module>../asakusa-dmdl-core</module>
 		<module>../asakusa-dmdl-java</module>
@@ -62,12 +63,14 @@
 		<module>../asakusa-yaess-tools</module>
 		<module>../asakusa-yaess-plugin</module>
 		<module>../asakusa-yaess-jsch</module>
+		<module>../asakusa-yaess-multidispatch</module>
 		<module>../asakusa-yaess-paralleljob</module>
+		<module>../asakusa-yaess-flowlog</module>
 		<module>../asakusa-cleaner</module>
+		<module>../asakusa-distribution</module>
 		<module>../asakusa-archetype-directio</module>
 		<module>../asakusa-archetype-thundergate</module>
 		<module>../asakusa-archetype-windgate</module>
-		<module>../asakusa-distribution</module>
 	</modules>
 
 	<build>

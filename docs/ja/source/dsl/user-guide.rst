@@ -1025,8 +1025,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     ただし、およそハッシュ表の元になったデータサイズの倍程度のメモリを必要とするため、
     適用範囲が限られてしまうという問題はあります。
 
-..  [#] ``java`` コマンドの起動引数に ``-Dcom.asakusafw.compiler.options=...``
-    の形式で指定します
+..  [#] :doc:`../application/maven-archetype` に従ってアプリケーションプロジェクトを作成した場合は、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。詳しくは :ref:`batch-compile-option-with-pom` を参照してください。
 ..  [#] :doc:`operators` の単純集計演算子や畳み込み演算子を参照
 ..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
 
