@@ -32,7 +32,9 @@ Asakusa Framework Checks
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
     <module name="MemberName"/>
-    <module name="MethodName"/>
+    <module name="MethodName">
+        <property name="format" value="^([a-z][a-zA-Z0-9]*|__[a-zA-Z0-9_]*)$"/>
+    </module>
     <module name="PackageName"/>
     <module name="ParameterName"/>
     <module name="StaticVariableName">
@@ -57,7 +59,9 @@ Asakusa Framework Checks
     <module name="MethodLength">
       <property name="severity" value="error"/>
     </module>
-    <module name="ParameterNumber"/>
+    <module name="ParameterNumber">
+        <property name="max" value="10"/>
+    </module>
     <module name="EmptyForIteratorPad"/>
     <module name="MethodParamPad"/>
     <module name="NoWhitespaceAfter">
@@ -73,7 +77,9 @@ Asakusa Framework Checks
     <module name="WhitespaceAround"/>
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
+<!--
     <module name="AvoidNestedBlocks"/>
+-->
     <module name="EmptyBlock">
       <property name="severity" value="info"/>
     </module>
