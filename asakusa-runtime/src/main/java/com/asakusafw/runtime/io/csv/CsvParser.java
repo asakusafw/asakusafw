@@ -154,165 +154,25 @@ public class CsvParser implements RecordParser {
             int c = getNextCharacter();
             switch (state) {
             case STATE_LINE_HEAD:
+                state = onLineHead(c);
+                break;
             case STATE_CELL_HEAD:
-                switch (c) {
-                case '"':
-                    state = STATE_QUOTED;
-                    break;
-                case '\r':
-                    state = STATE_SAW_CR;
-                    break;
-                case '\n':
-                    state = STATE_FINAL;
-                    addSeparator();
-                    currentPhysicalLine++;
-                    break;
-                case EOF:
-                    if (state == STATE_CELL_HEAD) {
-                        addSeparator();
-                    }
-                    state = STATE_FINAL;
-                    break;
-                default:
-                    if (c == separator) {
-                        state = STATE_CELL_HEAD;
-                        addSeparator();
-                    } else {
-                        state = STATE_CELL_BODY;
-                        emit(c);
-                    }
-                    break;
-                }
+                state = onCellHead(c);
                 break;
             case STATE_CELL_BODY:
-                switch (c) {
-                case '"': // illegal character
-                    // state = STATE_CELL_BODY;
-                    emit(c);
-                    break;
-                case '\r':
-                    state = STATE_SAW_CR;
-                    break;
-                case '\n':
-                    state = STATE_FINAL;
-                    addSeparator();
-                    currentPhysicalLine++;
-                    break;
-                case EOF:
-                    state = STATE_FINAL;
-                    addSeparator();
-                    break;
-                default:
-                    if (c == separator) {
-                        state = STATE_CELL_HEAD;
-                        addSeparator();
-                    } else {
-                        state = STATE_CELL_BODY;
-                        emit(c);
-                    }
-                    break;
-                }
+                state = onCellBody(c);
                 break;
             case STATE_QUOTED:
-                switch (c) {
-                case '"':
-                    state = STATE_NEST_QUOTE;
-                    break;
-                case '\r':
-                    state = STATE_QUOTED_SAW_CR;
-                    emit(c);
-                    break;
-                case '\n':
-                    // state = STATE_QUOTED;
-                    if (allowLineBreakInValue == false) {
-                        exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
-                    }
-                    currentPhysicalLine++;
-                    emit(c);
-                    break;
-                case EOF: // invalid state
-                    state = STATE_FINAL;
-                    addSeparator();
-                    exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
-                    break;
-                default:
-                    // state = STATE_QUOTED;
-                    emit(c);
-                }
+                state = onQuoted(c);
                 break;
             case STATE_NEST_QUOTE:
-                switch (c) {
-                case '"':
-                    state = STATE_QUOTED;
-                    emit(c);
-                    break;
-                case '\r':
-                    state = STATE_SAW_CR;
-                    break;
-                case '\n':
-                    state = STATE_FINAL;
-                    addSeparator();
-                    currentPhysicalLine++;
-                    break;
-                case EOF:
-                    state = STATE_FINAL;
-                    addSeparator();
-                    break;
-                default:
-                    if (c == separator) {
-                        state = STATE_CELL_HEAD;
-                        addSeparator();
-                    } else {
-                        state = STATE_CELL_BODY;
-                        warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, "cell separator", String.valueOf(c)));
-                        emit(c);
-                    }
-                    break;
-                }
+                state = onNestQuote(c);
                 break;
             case STATE_SAW_CR:
-                currentPhysicalLine++;
-                switch (c) {
-                case '\n':
-                    state = STATE_FINAL;
-                    addSeparator();
-                    break;
-                case EOF:
-                    state = STATE_FINAL;
-                    addSeparator();
-                    break;
-                default:
-                    state = STATE_FINAL;
-                    addSeparator();
-                    rewindCharacter();
-                }
+                state = onSawCr(c);
                 break;
             case STATE_QUOTED_SAW_CR:
-                currentPhysicalLine++;
-                switch (c) {
-                case '"':
-                    state = STATE_NEST_QUOTE;
-                    break;
-                case '\r':
-                    // state = STATE_QUOTED_SAW_CR;
-                    emit(c);
-                    break;
-                case '\n':
-                    state = STATE_QUOTED;
-                    if (allowLineBreakInValue == false) {
-                        exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
-                    }
-                    emit(c);
-                    break;
-                case EOF: // invalid state
-                    state = STATE_FINAL;
-                    addSeparator();
-                    exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
-                    break;
-                default:
-                    state = STATE_QUOTED;
-                    emit(c);
-                }
+                state = onQuotedSawCr(c);
                 break;
             default:
                 throw new AssertionError(state);
@@ -320,6 +180,212 @@ public class CsvParser implements RecordParser {
         }
         lineBuffer.flip();
         cellBeginPositions.flip();
+    }
+
+    private int onLineHead(int c) throws IOException {
+        int state;
+        switch (c) {
+        case '"':
+            state = STATE_QUOTED;
+            break;
+        case '\r':
+            state = STATE_SAW_CR;
+            break;
+        case '\n':
+            state = STATE_FINAL;
+            addSeparator();
+            currentPhysicalLine++;
+            break;
+        case EOF:
+            state = STATE_FINAL;
+            break;
+        default:
+            if (c == separator) {
+                state = STATE_CELL_HEAD;
+                addSeparator();
+            } else {
+                state = STATE_CELL_BODY;
+                emit(c);
+            }
+            break;
+        }
+        return state;
+    }
+
+    private int onCellHead(int c) throws IOException {
+        int state;
+        switch (c) {
+        case '"':
+            state = STATE_QUOTED;
+            break;
+        case '\r':
+            state = STATE_SAW_CR;
+            break;
+        case '\n':
+            state = STATE_FINAL;
+            addSeparator();
+            currentPhysicalLine++;
+            break;
+        case EOF:
+            state = STATE_FINAL;
+            addSeparator();
+            break;
+        default:
+            if (c == separator) {
+                state = STATE_CELL_HEAD;
+                addSeparator();
+            } else {
+                state = STATE_CELL_BODY;
+                emit(c);
+            }
+            break;
+        }
+        return state;
+    }
+
+    private int onCellBody(int c) throws IOException {
+        int state;
+        switch (c) {
+        case '"': // illegal character
+            state = STATE_CELL_BODY;
+            emit(c);
+            break;
+        case '\r':
+            state = STATE_SAW_CR;
+            break;
+        case '\n':
+            state = STATE_FINAL;
+            addSeparator();
+            currentPhysicalLine++;
+            break;
+        case EOF:
+            state = STATE_FINAL;
+            addSeparator();
+            break;
+        default:
+            if (c == separator) {
+                state = STATE_CELL_HEAD;
+                addSeparator();
+            } else {
+                state = STATE_CELL_BODY;
+                emit(c);
+            }
+            break;
+        }
+        return state;
+    }
+
+    private int onQuoted(int c) throws IOException {
+        int state;
+        switch (c) {
+        case '"':
+            state = STATE_NEST_QUOTE;
+            break;
+        case '\r':
+            state = STATE_QUOTED_SAW_CR;
+            emit(c);
+            break;
+        case '\n':
+            state = STATE_QUOTED;
+            if (allowLineBreakInValue == false) {
+                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+            }
+            currentPhysicalLine++;
+            emit(c);
+            break;
+        case EOF: // invalid state
+            state = STATE_FINAL;
+            addSeparator();
+            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
+            break;
+        default:
+            state = STATE_QUOTED;
+            emit(c);
+        }
+        return state;
+    }
+
+    private int onNestQuote(int c) throws IOException {
+        int state;
+        switch (c) {
+        case '"':
+            state = STATE_QUOTED;
+            emit(c);
+            break;
+        case '\r':
+            state = STATE_SAW_CR;
+            break;
+        case '\n':
+            state = STATE_FINAL;
+            addSeparator();
+            currentPhysicalLine++;
+            break;
+        case EOF:
+            state = STATE_FINAL;
+            addSeparator();
+            break;
+        default:
+            if (c == separator) {
+                state = STATE_CELL_HEAD;
+                addSeparator();
+            } else {
+                state = STATE_CELL_BODY;
+                warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, "cell separator", String.valueOf(c)));
+                emit(c);
+            }
+            break;
+        }
+        return state;
+    }
+
+    private int onSawCr(int c) {
+        int state;
+        currentPhysicalLine++;
+        switch (c) {
+        case '\n':
+            state = STATE_FINAL;
+            addSeparator();
+            break;
+        case EOF:
+            state = STATE_FINAL;
+            addSeparator();
+            break;
+        default:
+            state = STATE_FINAL;
+            addSeparator();
+            rewindCharacter();
+        }
+        return state;
+    }
+
+    private int onQuotedSawCr(int c) throws IOException {
+        int state;
+        currentPhysicalLine++;
+        switch (c) {
+        case '"':
+            state = STATE_NEST_QUOTE;
+            break;
+        case '\r':
+            state = STATE_QUOTED_SAW_CR;
+            emit(c);
+            break;
+        case '\n':
+            state = STATE_QUOTED;
+            if (allowLineBreakInValue == false) {
+                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+            }
+            emit(c);
+            break;
+        case EOF: // invalid state
+            state = STATE_FINAL;
+            addSeparator();
+            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
+            break;
+        default:
+            state = STATE_QUOTED;
+            emit(c);
+        }
+        return state;
     }
 
     private void warn(Status status) {

@@ -55,9 +55,15 @@ import com.asakusafw.testtools.db.DbUtils;
  */
 public class ExcelBookBuilder {
 
-    private Connection conn;
-    private String tableName;
-    private String databaseName;
+    private static final String CELL_TRUE = "○";
+
+    private static final String CELL_FALSE = "";
+
+    private static final String CELL_EMPTY = "";
+
+    private final Connection conn;
+    private final String tableName;
+    private final String databaseName;
     private HSSFWorkbook workbook;
     private ColumnInfo[] columnInfos;
     private HSSFCellStyle commonStyle;
@@ -93,8 +99,32 @@ public class ExcelBookBuilder {
         // ワークブックを生成
         workbook = new HSSFWorkbook();
 
-        // TODO フォントについて再考 (とはいえ、MSなのでよさそう？)
         // セルスタイルを作成
+        configureColumnStyle();
+
+        // 入力データのシートと出力データのシートを生成
+        HSSFSheet inputSheet = createInputDataSheet(Constants.INPUT_DATA_SHEET_NAME);
+        int inputSheetIndex = workbook.getSheetIndex(inputSheet);
+        HSSFSheet outputSheet = workbook.cloneSheet(inputSheetIndex);
+        int outputSheetIndex = workbook.getSheetIndex(outputSheet);
+        workbook.setSheetName(outputSheetIndex, Constants.OUTPUT_DATA_SHEET_NAME);
+
+        // テスト条件のシートを生成
+        createTestConditionSheet(Constants.TEST_CONDITION_SHEET_NAME);
+
+        // ファイルの生成
+        String bookName = tableName + ".xls";
+        File outputFile = new File(outputDirectory, bookName);
+        OutputStream os = new FileOutputStream(outputFile);
+        try {
+            workbook.write(os);
+        } finally {
+            DbUtils.closeQuietly(os);
+        }
+    }
+
+    private void configureColumnStyle() {
+        assert workbook != null;
         HSSFFont font = workbook.createFont();
         font.setFontName("ＭＳ ゴシック");
 
@@ -134,29 +164,6 @@ public class ExcelBookBuilder {
         dateStyle = workbook.createCellStyle();
         dateStyle.cloneStyleFrom(commonStyle);
         dateStyle.setDataFormat(df.getFormat("yyyy-mm-dd"));
-
-
-        // 入力データのシートと出力データのシートを生成
-        HSSFSheet inputSheet = createInputDataSheet(Constants.INPUT_DATA_SHEET_NAME);
-        int inputSheetIndex = workbook.getSheetIndex(inputSheet);
-        HSSFSheet outputSheet = workbook.cloneSheet(inputSheetIndex);
-        int outputSheetIndex = workbook.getSheetIndex(outputSheet);
-        workbook.setSheetName(outputSheetIndex, Constants.OUTPUT_DATA_SHEET_NAME);
-
-        // テスト条件のシートを生成
-        createTestConditionSheet(Constants.TEST_CONDITION_SHEET_NAME);
-
-        // ファイルの生成
-        String bookName = tableName + ".xls";
-        File outputFile = new File(outputDirectory, bookName);
-
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(outputFile);
-            workbook.write(os);
-        } finally {
-            DbUtils.closeQuietly(os);
-        }
     }
 
     private HSSFCell getCell(HSSFSheet sheet, int rownum, int col) {
@@ -198,6 +205,40 @@ public class ExcelBookBuilder {
 
         // 各カラムの情報を設定
         int startRow = ConditionSheetItem.NO.getRow();
+        int endRow = configureColumns(sheet, startRow);
+
+        // 入力規則を設定
+        setExplicitListConstraint(sheet,
+                RowMatchingCondition.getJapaneseNames(),
+                ConditionSheetItem.ROW_MATCHING_CONDITION.getRow(),
+                ConditionSheetItem.ROW_MATCHING_CONDITION.getRow(),
+                ConditionSheetItem.ROW_MATCHING_CONDITION.getCol() + 1,
+                ConditionSheetItem.ROW_MATCHING_CONDITION.getCol() + 1);
+
+        setExplicitListConstraint(sheet,
+                ColumnMatchingCondition.getJapaneseNames(),
+                startRow + 1,
+                endRow,
+                ConditionSheetItem.MATCHING_CONDITION.getCol(),
+                ConditionSheetItem.MATCHING_CONDITION.getCol());
+
+        setExplicitListConstraint(sheet,
+                NullValueCondition.getJapaneseNames(),
+                startRow + 1,
+                endRow,
+                ConditionSheetItem.NULL_VALUE_CONDITION.getCol(),
+                ConditionSheetItem.NULL_VALUE_CONDITION.getCol());
+
+
+        // カラム幅の調整
+        for (int i = 0; i <= maxColumn + 1; i++) {
+            sheet.autoSizeColumn(i);
+        }
+        return sheet;
+    }
+
+    private int configureColumns(HSSFSheet sheet, int startRow) {
+        assert columnInfos != null;
         int row = startRow;
         int no = 0;
         for (ColumnInfo info : columnInfos) {
@@ -237,7 +278,7 @@ public class ExcelBookBuilder {
             case SMALL_INT:
             case TIMESTAMP:
             case TINY_INT:
-                widthCell.setCellValue("");
+                widthCell.setCellValue(CELL_EMPTY);
                 break;
             default:
                 throw new RuntimeException(MessageFormat.format(
@@ -260,7 +301,7 @@ public class ExcelBookBuilder {
             case TIMESTAMP:
             case TINY_INT:
             case VARCHAR:
-                scaleCell.setCellValue("");
+                scaleCell.setCellValue(CELL_EMPTY);
                 break;
             default:
                 throw new RuntimeException(MessageFormat.format(
@@ -271,18 +312,17 @@ public class ExcelBookBuilder {
             HSSFCell nullableCell = getCell(sheet, row, ConditionSheetItem.NULLABLE.getCol());
             nullableCell.setCellStyle(centerAlignFixedValueStyle);
             if (info.isNullable()) {
-                // FIXME externalize constants
-                nullableCell.setCellValue("○");
+                nullableCell.setCellValue(CELL_TRUE);
             } else {
-                nullableCell.setCellValue("");
+                nullableCell.setCellValue(CELL_FALSE);
             }
 
             HSSFCell pkCell = getCell(sheet, row, ConditionSheetItem.KEY_FLAG.getCol());
             pkCell.setCellStyle(centerAlignStyle);
             if (info.isKey()) {
-                pkCell.setCellValue("○");
+                pkCell.setCellValue(CELL_TRUE);
             } else {
-                pkCell.setCellValue("");
+                pkCell.setCellValue(CELL_FALSE);
             }
 
             HSSFCell machingCondtionCell = getCell(sheet, row, ConditionSheetItem.MATCHING_CONDITION.getCol());
@@ -295,35 +335,7 @@ public class ExcelBookBuilder {
 
         }
         int endRow = row;
-
-        // 入力規則を設定
-        setExplicitListConstraint(sheet,
-                RowMatchingCondition.getJapaneseNames(),
-                ConditionSheetItem.ROW_MATCHING_CONDITION.getRow(),
-                ConditionSheetItem.ROW_MATCHING_CONDITION.getRow(),
-                ConditionSheetItem.ROW_MATCHING_CONDITION.getCol() + 1,
-                ConditionSheetItem.ROW_MATCHING_CONDITION.getCol() + 1);
-
-        setExplicitListConstraint(sheet,
-                ColumnMatchingCondition.getJapaneseNames(),
-                startRow + 1,
-                endRow,
-                ConditionSheetItem.MATCHING_CONDITION.getCol(),
-                ConditionSheetItem.MATCHING_CONDITION.getCol());
-
-        setExplicitListConstraint(sheet,
-                NullValueCondition.getJapaneseNames(),
-                startRow + 1,
-                endRow,
-                ConditionSheetItem.NULL_VALUE_CONDITION.getCol(),
-                ConditionSheetItem.NULL_VALUE_CONDITION.getCol());
-
-
-        // カラム幅の調整
-        for (int i = 0; i <= maxColumn + 1; i++) {
-            sheet.autoSizeColumn(i);
-        }
-        return sheet;
+        return endRow;
     }
 
     private void setExplicitListConstraint(
