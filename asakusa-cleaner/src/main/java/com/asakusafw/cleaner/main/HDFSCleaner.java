@@ -171,7 +171,11 @@ public class HDFSCleaner {
                     cleanResult = false;
                 } finally {
                     if (fs != null) {
-                        fs.close();
+                        try {
+                            fs.close();
+                        } catch (IOException ignored) {
+                            // ignored
+                        }
                     }
                 }
             }
@@ -184,7 +188,7 @@ public class HDFSCleaner {
                 Log.log(CLASS, MessageIdConst.HCLN_EXIT_WARNING, new Date(), mode, prop[0]);
                 return Constants.EXIT_CODE_WARNING;
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             try {
                 Log.log(e, CLASS, MessageIdConst.HCLN_EXCEPRION, new Date(), mode, prop[0]);
                 return Constants.EXIT_CODE_ERROR;
