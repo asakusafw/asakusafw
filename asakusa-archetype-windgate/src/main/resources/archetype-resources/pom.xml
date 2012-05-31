@@ -7,7 +7,7 @@
 	<version>${version}</version>
 
 	<properties>
-		<asakusafw.version>0.2.6-RC3</asakusafw.version>
+		<asakusafw.version>0.2.6</asakusafw.version>
 
 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
