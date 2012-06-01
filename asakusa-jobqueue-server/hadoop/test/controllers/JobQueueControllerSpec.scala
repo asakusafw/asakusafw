@@ -34,14 +34,16 @@ import play.api.test.Helpers._
 @RunWith(classOf[JUnitRunner])
 class JobQueueControllerSpec extends Specification with Tags {
 
+  val asakusaHome = new File(getClass.getClassLoader.getResource("asakusa").toURI)
+
   object TestContext extends BeforeAfter {
 
     /* (non-Javadoc)
      * @see org.specs2.specification.Before#before()
      */
     def before = {
-      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true)
-      System.setProperty("ASAKUSA_HOME", "test/asakusa")
+      new File(asakusaHome + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true)
+      System.setProperty("ASAKUSA_HOME", asakusaHome.toString)
     }
 
     /* (non-Javadoc)

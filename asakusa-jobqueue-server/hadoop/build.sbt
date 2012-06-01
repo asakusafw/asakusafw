@@ -1,6 +1,8 @@
 import java.io.FileInputStream
 import java.util.jar.Manifest
-import org.codehaus.plexus.archiver.tar.TarArchiver
+
+libraryDependencies ++= Seq(
+  "com.github.play2war" %% "play2-war-core" % "0.3")
 
 war <<= (war, name, version, scalaVersion) map { (war, name, version, scalaVersion) =>
   IO.withTemporaryDirectory { dir =>
@@ -21,18 +23,4 @@ war <<= (war, name, version, scalaVersion) map { (war, name, version, scalaVersi
   war
 }
 
-assembly <<= (name, version, target, war) map { (name, version, target, war) =>
-  val archiver = new TarArchiver()
-  archiver.setDestFile(target / ("asakusa-jobqueue-server-" + version + ".tar.gz"))
-  val compressionMethod = new TarArchiver.TarCompressionMethod()
-  compressionMethod.setValue("gzip")
-  archiver.setCompression(compressionMethod)
-  archiver.addFile(war, "webapps/jobqueue.war")
-  archiver.addDirectory(file("asakusa"), "")
-  archiver.createArchive()
-  archiver.getDestFile()
-}
-
-addArtifact(Artifact(appName, "war", "war"), war)
-
-addArtifact(Artifact(appName, "tgz", "tar.gz"), assembly)
+addArtifact(Artifact(hadoop.id, "war", "war"), war)

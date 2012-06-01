@@ -1,6 +1,6 @@
 Asakusa JobQueue Server for Hadoop Jobs
 
-A JobQueue Server to manage Asakusa Hadoop Jobs.
+A JobQueue implementation to manage Asakusa Hadoop Jobs.
 
 == jobqueue.properties
 

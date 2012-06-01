@@ -1,6 +1,3 @@
-// Comment to get more information during initialization
-logLevel := Level.Warn
-
 // The Typesafe repository 
 resolvers ++= Seq(
     "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -11,3 +8,6 @@ addSbtPlugin("play" % "sbt-plugin" % "2.0")
 
 // play2war plugin
 addSbtPlugin("com.github.play2war" % "play2-war-plugin" % "0.3")
+
+// sbteclipse
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0")
