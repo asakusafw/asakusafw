@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -797,10 +798,13 @@ public class HDFSCleanerTest {
 }
 class StubHDFSCleaner extends HDFSCleaner {
     boolean exec = false;
-    public StubHDFSCleaner() {};
+    public StubHDFSCleaner() {
+        super(new Configuration());
+    }
     public StubHDFSCleaner(boolean exec) {
+        super(new Configuration());
         this.exec = exec;
-    };
+    }
     ArrayList<String> instanceId = new ArrayList<String>();
     /**
      * @see com.asakusafw.cleaner.main.HDFSCleaner#createPath(java.lang.String)

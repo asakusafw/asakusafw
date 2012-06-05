@@ -32,25 +32,57 @@ cleanHDFS.sh
 EOF
 }
 
+if [ $# -ne 2 ]
+then
+    usage
+    exit 1
+fi
+
 LOGFILE_BASENAME="hdfsCleaner"
 CLASS_NAME="com.asakusafw.cleaner.main.HDFSCleaner"
 
-D=`dirname $0`
-DIR=`cd $D/..;pwd`
+D=$(dirname $0)
+DIR=$(cd $D/..;pwd)
 USER_NAME=$(whoami)
 
 CLEAN_CLASSPATH=$DIR/conf
 CLEAN_CLASSPATH=$CLEAN_CLASSPATH:$DIR/lib/*
 
+CLEAN_MODE="$1"
+CLEAN_CONF="$2"
+
 export CLEANER_HOME=$DIR
 . $DIR/conf/.clean_hdfs_profile
 
-if [ $# -eq 2 ]; then
-  $JAVA_HOME/bin/java $HDFSCLEANER_JAVA_OPTS -Dclean.home=$DIR -Dlogfile.basename=$LOGFILE_BASENAME -classpath $CLEAN_CLASSPATH $CLASS_NAME $1 $USER_NAME $2
-  rc=$?
-else
-  usage
-  rc=1
+if [ "$HADOOP_CMD" = "" ]
+then
+    if [ "$HADOOP_HOME" != "" ]
+    then
+        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
+        unset HADOOP_HOME
+    else
+        HADOOP_CMD="$(which hadoop)"
+        _RET=$?
+        if [ $_RET -ne 0 ]
+        then
+            echo 'hadoop command is not found' 1>&2
+            exit 1
+        fi
+    fi
 fi
+
+if [ ! -x "$HADOOP_CMD" ]
+then
+    echo "$HADOOP_CMD is not executable" 1>&2
+    exit 1
+fi
+
+export HADOOP_CLASSPATH="$CLEAN_CLASSPATH"
+HADOOP_OPTS="$HADOOP_OPTS $HDFSCLEANER_JAVA_OPTS"
+HADOOP_OPTS="$HADOOP_OPTS -Dclean.home=$DIR"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
+"$HADOOP_CMD"  $CLASS_NAME "$CLEAN_MODE" "$USER_NAME" "$CLEAN_CONF"
+rc=$?
 
 exit $rc
