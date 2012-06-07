@@ -23,6 +23,8 @@ import org.junit.Assume;
 import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+
 /**
  * Skips tests if Hadoop is not installed.
  */
@@ -32,9 +34,9 @@ public class HadoopEnvironmentChecker extends TestWatchman {
 
     @Override
     public void starting(FrameworkMethod method) {
-        if (System.getenv("HADOOP_HOME") == null) {
+        if (ConfigurationProvider.findHadoopCommand() == null) {
             LOG.warn(MessageFormat.format(
-                    "HADOOP_HOME is not defined. skip {}.{}",
+                    "hadoop command is not found. skip {0}.{1}",
                     method.getClass().getName(),
                     method.getName()));
             Assume.assumeTrue(false);

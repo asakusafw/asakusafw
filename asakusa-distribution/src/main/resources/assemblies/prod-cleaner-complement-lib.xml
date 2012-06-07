@@ -23,7 +23,7 @@
 				</excludes>
 			</unpackOptions>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -40,7 +40,7 @@
 				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 	</dependencySets>
 

@@ -33,6 +33,17 @@ Parameters:
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 2>&1
+        exit 1
+    fi
+}
+
 if [ $# -lt 2 ]; then
     usage
     exit 1
@@ -44,47 +55,10 @@ _OPT_FLOW_ID="$1"
 shift
 
 _YS_ROOT="$(dirname $0)/.."
-if [ -e "$_YS_ROOT/conf/env.sh" ]
-then
-    . "$_YS_ROOT/conf/env.sh"
-fi
-
-if [ "$YS_PATH_SEPARATOR" = "" ]
-then
-    _YS_PATH_SEPARATOR=':'
-else 
-    _YS_PATH_SEPARATOR="$YS_PATH_SEPARATOR"
-fi
-
-_YS_CLASSPATH=""
-if [ -d "$_YS_ROOT/conf" ]
-then
-    _YS_CLASSPATH="$_YS_ROOT/conf"
-fi
-if [ -d "$_YS_ROOT/lib" ]
-then
-    for f in $(ls "$_YS_ROOT/lib/")
-    do
-        if [ "$_YS_CLASSPATH" = "" ]
-        then
-            _YS_CLASSPATH="${_YS_ROOT}/lib/$f"
-        else
-            _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}${_YS_ROOT}/lib/$f"
-        fi
-    done
-fi
-if [ -d "$_YS_ROOT/tools" ]
-then
-    for f in $(ls "$_YS_ROOT/tools/")
-    do
-        if [ "$_YS_CLASSPATH" = "" ]
-        then
-            _YS_CLASSPATH="${_YS_ROOT}/tools/$f"
-        else
-            _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}${_YS_ROOT}/tools/$f"
-        fi
-    done
-fi
+import "$_YS_ROOT/conf/env.sh"
+import "$_YS_ROOT/libexec/validate-env.sh"
+import "$_YS_ROOT/libexec/configure-classpath.sh"
+import "$_YS_ROOT/libexec/configure-tools-classpath.sh"
 
 _YS_CLASS="com.asakusafw.yaess.tools.GenerateExecutionId"
 

@@ -73,7 +73,7 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
     * - ``hadoop``
       - ``com.asakusafw.yaess.basic.BasicHadoopScriptHandler``
     * - ``hadoop.env.HADOOP_HOME``
-      - Hadoopのインストール先
+      - Hadoopのインストール先 [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
@@ -81,6 +81,7 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
 ここでは同一環境上のHadoopを利用する設定ですので、 ``hadoop.env.HADOOP_HOME`` には ``${HADOOP_HOME}`` を、
 ``hadoop.env.ASAKUSA_HOME`` には ``${ASAKUSA_HOME}`` をそれぞれ指定すれば、現在の環境変数をそのまま利用できます。
 
+..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 ..  [#] 現在の仕様では、 ``$ASAKUSA_HOME`` のように ``{`` と ``}`` に囲まれていない形式は利用できません。
 
 
@@ -107,7 +108,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
     * - ``hadoop.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
     * - ``hadoop.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先
+      - リモートのHadoopのインストール先 [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
@@ -116,6 +117,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
 
 なお、この仕組みではSSHでの通信に JSch [#]_ を利用しています。
 
+..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 ..  [#] http://www.jcraft.com/jsch/
 
 
@@ -134,9 +136,20 @@ Hadoopを利用する際に特別な環境変数が必要な場合、以下の�
 
 ここで指定する値には、 ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
+なお、Hadoopを起動する際には、起動する対象のHadoopコマンドの配置場所を環境変数を利用して通知してやる必要があります。
+Hadoopコマンドを実行する際には、次の手順でHadoopコマンドを検索します。
+
+* 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を ``hadoop`` コマンドとみなして利用します。
+* 環境変数 ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを利用します。
+* ``hadoop`` コマンドのパス (環境変数 ``PATH`` ) が通っている場合、それを利用します。
+
+上記の手順でHadoopコマンドが見つからない場合、Hadoopコマンドの実行に失敗します。
+
 ..  note::
     ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.ASAKUSA_HOME`` は上記の一部です。
-    ただし、これらの環境変数はHadoopの実行に必要であるため、常に指定するようにしてください。
+    このうち、 ``ASAKUSA_HOME`` はHadoopの実行に必要であるため、常に指定するようにしてください。
+
+    ``HADOOP_HOME`` は代わりに ``HADOOP_CMD`` を指定することも可能です。
 
 ..  note::
     ``hadoop.env.<環境変数名>=${<環境変数名>}`` のように書くと、現在の環境変数を対象の環境にそのまま受け渡せます。

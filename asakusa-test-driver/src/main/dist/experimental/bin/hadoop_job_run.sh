@@ -74,9 +74,32 @@ then
     fi
 fi
 
+if [ "$HADOOP_CMD" = "" ]
+then
+    if [ "$HADOOP_HOME" != "" ]
+    then
+        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
+        unset HADOOP_HOME
+    else
+        HADOOP_CMD="$(which hadoop)"
+        _RET=$?
+        if [ $_RET -ne 0 ]
+        then
+            echo 'hadoop command is not found' 1>&2
+            exit 1
+        fi
+    fi
+fi
+
+if [ ! -x "$HADOOP_CMD" ]
+then
+    echo "$HADOOP_CMD is not executable" 1>&2
+    exit 1
+fi
+
 cd $HOME
 
-RUNCMD="$HADOOP_HOME/bin/hadoop jar $BATCH_RUNTIME_JAR $TOOL_LAUNCHER_CLASSNAME $STAGE_CLIENT_CLASSNAME -conf $PLUGIN_CONF -libjars $LIBJAR" 
+RUNCMD="$HADOOP_CMD jar $BATCH_RUNTIME_JAR $TOOL_LAUNCHER_CLASSNAME $STAGE_CLIENT_CLASSNAME -conf $PLUGIN_CONF -libjars $LIBJAR" 
 
 echo "[COMMAND] $RUNCMD" "$@" $DPROP
 $RUNCMD "$@" $DPROP

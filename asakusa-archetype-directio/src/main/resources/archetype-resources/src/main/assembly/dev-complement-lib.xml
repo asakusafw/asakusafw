@@ -24,7 +24,7 @@
 				</excludes>
 			</unpackOptions>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -36,7 +36,7 @@
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -54,7 +54,7 @@
 				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -69,7 +69,7 @@
 				<include>com.jcraft:jsch</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -81,7 +81,7 @@
 				<include>com.asakusafw:asakusa-windgate-stream</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -95,7 +95,7 @@
 				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -110,7 +110,7 @@
 				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -124,7 +124,7 @@
 				<include>com.jcraft:jsch</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -135,7 +135,7 @@
 				<include>com.google.code.gson:gson</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -149,9 +149,10 @@
 				<include>commons-lang:commons-lang</include>
 				<include>commons-logging:commons-logging</include>
 				<include>log4j:log4j</include>
+				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 	</dependencySets>
 </assembly>

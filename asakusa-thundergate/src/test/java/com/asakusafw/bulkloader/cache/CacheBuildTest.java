@@ -41,6 +41,7 @@ import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
@@ -313,7 +314,7 @@ public class CacheBuildTest {
     }
 
     private Configuration getConfiguration() {
-        return ConfigurationFactory.getDefault().newInstance();
+        return new ConfigurationProvider().newInstance();
     }
 
     private List<TestDataModel> collect(CacheStorage storage, Path contents) throws IOException {

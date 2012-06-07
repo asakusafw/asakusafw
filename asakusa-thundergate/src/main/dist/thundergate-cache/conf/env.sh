@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -16,11 +15,8 @@
 #
 
 
-# Set your Hadoop installation path
-if [ "$HADOOP_HOME" = "" ]
-then
-    export HADOOP_HOME="/usr/lib/hadoop"
-fi
+# Set your Hadoop installation path (optional)
+#export HADOOP_HOME="/usr/lib/hadoop"
 
 # Set your Asakusa installation path
 if [ "$ASAKUSA_HOME" = "" ]

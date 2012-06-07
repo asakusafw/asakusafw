@@ -162,7 +162,7 @@ URI
 ..  _`Amazon S3`: http://aws.amazon.com/s3/
 
 ..  [#] Direct I/Oに無関係の項目は、 :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定です。
-..  [#] ``$HADOOP_HOME/conf/core-site.xml`` 内の ``fs.default.name`` に指定したファイルシステムです。
+..  [#] Hadoopの設定ファイル ``core-site.xml`` 内の ``fs.default.name`` に指定したファイルシステムです。
 
 
 複数データソースの利用

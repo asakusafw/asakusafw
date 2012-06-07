@@ -10,29 +10,11 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../asakusa-cleaner/src/main/bin</directory>
-			<outputDirectory>cleaner/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-cleaner/src/main/conf</directory>
-			<outputDirectory>cleaner/conf</outputDirectory>
+			<directory>../asakusa-cleaner/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
-		</fileSet>
-
-		<!-- lib -->
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>cleaner/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
 		</fileSet>
 	</fileSets>
-
 </assembly>

@@ -179,14 +179,14 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
-..  attention::
-    このリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
-    WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
-    
-    なお、WindGateの本体は、環境変数に ``HADOOP_HOME`` が設定されている場合に ``$HADOOP_HOME/bin/hadoop`` コマンドを経由して起動します。
-    環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
-
 ..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+
+Hadoopを利用する際の環境変数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Hadoopクラスタと通信するリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
+WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
+
+環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
 
 SSH経由でリモートのHadoopを利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -226,6 +226,9 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 および ``windgate/lib`` ディレクトリに JSch [#]_ の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
+リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です (SequenceFileの設定などを利用します)。
+必要な環境変数については `Hadoopを利用する際の環境変数`_ を参照してください。
+
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 
 Hadoopブリッジ
@@ -234,8 +237,14 @@ WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリ
 このツールは通常 ``$ASAKUSA_HOME/windgate-ssh`` というディレクトリにインストールされているため、これをリモートコンピューター上にコピーして利用します。
 また、プロファイルの ``resource.hadoop.target`` にはインストール先のディレクトリ名をフルパスで指定してください。
 
-このツールの内部では、リモートコンピューター上の ``$HADOOP_HOME/bin/hadoop`` コマンドを利用してHadoopクラスタの操作を行います。
-環境変数 ``HADOOP_HOME`` は ``windgate-ssh/conf/env.sh`` 内で設定してください。
+このツールの内部では、以下の順序で ``hadoop`` コマンドを検索し、そのコマンドでHadoopクラスタの操作を行います。
+
+* 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を ``hadoop`` コマンドとみなして利用します。
+* 環境変数 ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを利用します。
+* ``hadoop`` コマンドのパスが通っている場合、それを利用します。
+
+上記のうち、必要な環境変数を ``windgate-ssh/conf/env.sh`` 内で設定してください。
+結果としてコマンドが見つからなかった場合にはエラーになります。
 
 また、ログの設定は ``windgate-ssh/conf/logback.xml`` で行えます。
 WindGate本体と同様に、SLF4JとLogbackを利用しています [#]_ 。
@@ -360,8 +369,6 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環�
       - 備考
     * - ``ASAKUSA_HOME``
       - Asakusaのインストール先パス。
-    * - ``HADOOP_HOME``
-      - Hadoopのインストール先パス [#]_ 。
     * - ``HADOOP_USER_CLASSPATH_FIRST``
       - `WindGateのログ設定`_ 時にHadoopのログ機構を利用しないための設定。 ``true`` を指定する。
 
@@ -376,20 +383,31 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環�
 
     * - 名前
       - 備考
+    * - ``HADOOP_CMD``
+      - 利用する ``hadoop`` コマンドのパス。
+    * - ``HADOOP_HOME``
+      - Hadoopのインストール先パス。
     * - ``WINDGATE_OPTS``
       - WindGateを実行するJava VMの追加オプション。
 
-..  [#] 環境変数 ``$HADOOP_HOME`` が設定されている場合、WindGateは ``$HADOOP_HOME/bin/hadoop`` コマンドを利用してアプリケーションを起動します。
-    逆に ``$HADOOP_HOME`` が設定されていない場合、 ``java`` コマンドを利用してアプリケーションを起動します。
-    前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は ``$ASAKUSA_HOME/windgate/lib`` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
+なお、WindGateの本体は、以下の規約に従って起動します (上にあるものほど優先度が高いです)。
 
-    特別な理由がない限り、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内で ``HADOOP_HOME`` を設定しておくのがよいでしょう。
-    または、 :doc:`YAESS <../yaess/index>` を利用して外部から ``HADOOP_HOME`` を設定することも可能です。
+* 環境変数に ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` コマンドを経由して起動します。
+* 環境変数に ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを経由して起動します。
+* ``hadoop`` コマンドのパスが通っている場合、 ``hadoop`` コマンドを経由して起動します。
+* ``java`` コマンドから直接起動します。
 
+このため、 ``HADOOP_CMD`` と ``HADOOP_HOME`` の両方を指定した場合、 ``HADOOP_CMD`` の設定を優先します。
 
 ..  [#] :doc:`YAESS <../yaess/index>` を経由してWindGateを実行する場合、WindGateで利用する環境変数 ``ASAKUSA_HOME`` はYAESS側の設定で行えます。
     詳しくは :doc:`../yaess/user-guide` を参照してください。
 
+
+..  [#] ``hadoop`` コマンドが見つからない場合、WindGateは代わりに ``java`` コマンドを利用してアプリケーションを起動します。
+    前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は ``$ASAKUSA_HOME/windgate/lib`` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
+
+    特別な理由がない限り、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内で ``HADOOP_CMD`` や ``HADOOP_HOME`` を設定しておくのがよいでしょう。
+    または、 :doc:`YAESS <../yaess/index>` を利用して外部から環境変数を設定することも可能です。
 
 WindGateのログ設定
 ~~~~~~~~~~~~~~~~~~
