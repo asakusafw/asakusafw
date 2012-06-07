@@ -42,6 +42,9 @@
 		<module>../asakusa-directio-dmdl</module>
 		<module>../asakusa-directio-plugin</module>
 		<module>../asakusa-directio-test-moderator</module>
+		<module>../asakusa-fileio-vocabulary</module>
+		<module>../asakusa-fileio-plugin</module>
+		<module>../asakusa-fileio-test-moderator</module>
 		<module>../asakusa-thundergate-runtime</module>
 		<module>../asakusa-thundergate-vocabulary</module>
 		<module>../asakusa-thundergate-dmdl</module>
@@ -71,6 +74,8 @@
 		<module>../asakusa-archetype-directio</module>
 		<module>../asakusa-archetype-thundergate</module>
 		<module>../asakusa-archetype-windgate</module>
+		<module>../asakusa-legacy-test-driver</module>
+		<module>../asakusa-legacy-workflow-plugin</module>
 	</modules>
 
 	<build>
