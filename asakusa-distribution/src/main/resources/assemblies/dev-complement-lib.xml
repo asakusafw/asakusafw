@@ -154,5 +154,15 @@
 			<fileMode>0644</fileMode>
 			<directoryMode>0775</directoryMode>
 		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>tools/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-operation-tools</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</dependencySet>
 	</dependencySets>
 </assembly>

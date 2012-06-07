@@ -67,6 +67,7 @@
 		<module>../asakusa-yaess-paralleljob</module>
 		<module>../asakusa-yaess-flowlog</module>
 		<module>../asakusa-cleaner</module>
+		<module>../asakusa-operation-tools</module>
 		<module>../asakusa-distribution</module>
 		<module>../asakusa-archetype-directio</module>
 		<module>../asakusa-archetype-thundergate</module>

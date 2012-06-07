@@ -49,6 +49,7 @@ Asakusa Framework のバージョンアップに伴う、運用環境に対し�
     deployment-with-directio
     deployment-runtime-plugins
     deployment-cleaner
+    utility-tool-user-guide
     configure-hadoop-parameters
     generate-deployment-archive-from-source
     migration-guide
