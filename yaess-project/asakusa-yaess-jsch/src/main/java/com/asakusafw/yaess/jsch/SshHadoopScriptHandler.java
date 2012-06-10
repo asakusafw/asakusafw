@@ -37,14 +37,14 @@ import com.jcraft.jsch.JSchException;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * Additionally, the handler lanuches a command if {@code hadoop.workingDirectory} is defined.
+ * Additionally, the handler lanuches a command if {@code hadoop.cleanup} is true.
  * <ol>
- * <li> Specified in {@code hadoop.workingDirectory} </li>
+ * <li> {@link #CLEANUP_STAGE_CLASS} </li>
  * <li> {@link ExecutionContext#getBatchId() batch-id} </li>
  * <li> {@link ExecutionContext#getFlowId() flow-id} </li>
  * <li> {@link ExecutionContext#getExecutionId() execution-id} </li>
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
- * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
+ * <li> hadoop properties (with "-D") </li>
  * </ol>
  *
  * <h3> Profile format </h3>
@@ -54,15 +54,15 @@ import com.jcraft.jsch.JSchException;
 # this will be replaced as original command tokens (0-origin position)
 hadoop = &lt;this class name&gt;
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.workingDirectory = $<cluster working directory>
 hadoop.ssh.user=asakusa
 hadoop.ssh.host=localhost
 hadoop.ssh.port=22
 hadoop.ssh.privateKey=${HOME}/.ssh/id_dsa
 hadoop.ssh.passPhrase=
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
+hadoop.cleanup = whether enables cleanup
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
+hadoop.prop.&lt;key&gt; = $&lt;extra Hadoop properties&gt;
 </code></pre>
  * @since 0.2.3
  */

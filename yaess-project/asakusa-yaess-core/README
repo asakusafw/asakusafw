@@ -76,8 +76,7 @@ scheduler = com.asakusafw.yaess.basic.BasicJobScheduler
 hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 hadoop.command.<position> = $<prefix command token>
-hadoop.cleanup.<position> = $<prefix command token>
-hadoop.workingDirectory = target/hadoopwork/${execution_id}
+hadoop.cleanup = true|false
 hadoop.env.<key> = $<extra environment variables>
 hadoop.prop.<key> = $<extra Hadoop properties>
 
