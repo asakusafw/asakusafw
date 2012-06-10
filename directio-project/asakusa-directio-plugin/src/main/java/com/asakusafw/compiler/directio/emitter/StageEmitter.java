@@ -33,6 +33,7 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.io.util.ShuffleKey.AbstractGroupComparator;
 import com.asakusafw.runtime.io.util.ShuffleKey.AbstractOrderComparator;
 import com.asakusafw.runtime.io.util.ShuffleKey.Partitioner;
@@ -273,6 +274,7 @@ public class StageEmitter {
         arguments.add(Models.toLiteral(f, slot.basePath));
         arguments.add(Models.toLiteral(f, slot.resourcePath));
         arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
+
         return emitConstructorClass(
                 className,
                 f.newParameterizedType(
@@ -626,23 +628,41 @@ public class StageEmitter {
 
         private MethodDeclaration createStageOutputsMethod() {
             SimpleName list = factory.newSimpleName("results");
+            SimpleName attributes = factory.newSimpleName("attributes");
 
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageOutput.class)), list));
+            statements.add(new ExpressionBuilder(factory, Models.toNullLiteral(factory))
+                .toLocalVariableDeclaration(t(Map.class, t(String.class), t(String.class)), attributes));
 
             Type formatType = t(BridgeOutputFormat.class);
             for (CompiledSlot slot : slots) {
                 Slot origin = slot.original;
                 Expression valueType = factory.newClassLiteral(importer.toType(origin.valueType));
+                statements.add(new ExpressionBuilder(factory, attributes)
+                    .assignFrom(new TypeBuilder(factory, t(HashMap.class, t(String.class), t(String.class)))
+                        .newObject()
+                        .toExpression())
+                    .toStatement());
+                int index = 1;
+                for (String pattern : slot.original.deletePatterns) {
+                    statements.add(new ExpressionBuilder(factory, attributes)
+                        .method("put",
+                                Models.toLiteral(factory, String.format(
+                                        "%s%02d", DirectDataSourceConstants.PREFIX_DELETE_PATTERN, index++)),
+                                Models.toLiteral(factory, pattern))
+                        .toStatement());
+                }
                 statements.add(new ExpressionBuilder(factory, list)
                     .method("add", new TypeBuilder(factory, t(StageOutput.class))
                         .newObject(
                                 Models.toLiteral(factory, origin.basePath),
                                 factory.newClassLiteral(t(NullWritable.class)),
                                 valueType,
-                                factory.newClassLiteral(formatType))
+                                factory.newClassLiteral(formatType),
+                                attributes)
                         .toExpression())
                     .toStatement());
             }

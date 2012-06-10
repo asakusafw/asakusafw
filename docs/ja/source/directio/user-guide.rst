@@ -921,6 +921,16 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
     それぞれのプロパティは ``+property_name`` で昇順、 ``-property_name`` で降順を表します。
     プロパティ名はDMDLのプロパティ名と同様、すべて小文字で単語をアンダースコア ( ``_`` ) で区切ってください。
 
+    省略した場合、出力ファイルのソートを行いません。
+
+``List<String> getDeletePatterns()``
+    出力を行う前に削除するファイル名パターンの一覧を戻り値に指定します。
+    ``getBasePath()`` で指定したパスを起点に、これらのパターンが表すパスを消去した後に、ファイルの出力を行います。
+
+    パターンには ``*`` (ワイルドカード) など、 `入力ファイル名のパターン`_ と同様のものを利用できます。
+
+    省略した場合、ファイルの削除を行いません。
+
 ``Class<?> getModelType()``
     処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
 
@@ -953,6 +963,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
+        public List<String> getDeletePatterns() {
+            return Arrays.asList("${oldyear}/*/data.csv");
+        }
+
+        @Override
         public Class<?> getModelType() {
             return Document.class;
         }
@@ -962,6 +977,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
             return DocumentCsvFormat.class;
         }
     }
+
+..  note::
+    出力先のファイルがすでに存在する場合、古いファイルを削除してからこの出力で上書きします。
+    ただし、ファイルに対するレコードがひとつも存在しない場合にはファイル自体が作成されず、古いファイルが残ってしまう場合があります。
+    出力先にワイルドカードやランダムな値を利用する場合には、 ``getDeletePatterns()`` を利用してファイルを削除しておいたほうが良い場合があります。
 
 ..  [#] ``com.asakusafw.vocabulary.directio.DirectFileOutputDescription``
 

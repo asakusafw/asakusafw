@@ -29,6 +29,7 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.ResourceInfo;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.ResourcePattern;
@@ -242,8 +243,19 @@ public class KeepAliveDataSourceTest {
         }
 
         @Override
-        public boolean delete(String basePath, ResourcePattern resourcePattern) throws IOException,
-                InterruptedException {
+        public List<ResourceInfo> list(
+                String basePath,
+                ResourcePattern resourcePattern,
+                Counter counter) throws IOException, InterruptedException {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean delete(
+                String basePath,
+                ResourcePattern resourcePattern,
+                boolean recursive,
+                Counter counter) throws IOException, InterruptedException {
             return false;
         }
 

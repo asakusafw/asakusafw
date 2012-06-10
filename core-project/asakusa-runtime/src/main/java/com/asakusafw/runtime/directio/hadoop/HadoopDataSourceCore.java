@@ -34,6 +34,7 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.ResourceInfo;
 import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
@@ -318,12 +319,13 @@ public class HadoopDataSourceCore implements DirectDataSource {
     }
 
     @Override
-    public boolean delete(
+    public List<ResourceInfo> list(
             String basePath,
-            ResourcePattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern,
+            Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start deleting files (id={0}, path={1}, resource={2})",
+                    "Start listing files (id={0}, path={1}, resource={2})",
                     profile.getId(),
                     basePath,
                     resourcePattern));
@@ -333,9 +335,56 @@ public class HadoopDataSourceCore implements DirectDataSource {
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
         Path base = append(root, basePath);
-        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
-        List<FileStatus> targets = HadoopDataSourceUtil.onlyMinimalCovered(stats);
         Path temporary = p.getTemporaryFileSystemPath();
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
+        stats = normalize(stats, root, temporary);
+
+        List<ResourceInfo> results = new ArrayList<ResourceInfo>();
+        for (FileStatus stat : stats) {
+            counter.add(1);
+            ResourceInfo resource = new ResourceInfo(
+                    profile.getId(),
+                    stat.getPath().toString(),
+                    stat.isDir());
+            results.add(resource);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finish listing files (id={0}, path={1}, resource={2}, count={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    results.size()));
+        }
+        return results;
+    }
+
+    @Override
+    public boolean delete(
+            String basePath,
+            ResourcePattern resourcePattern,
+            boolean recursive,
+            Counter counter) throws IOException, InterruptedException {
+        assert basePath.startsWith("/") == false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start deleting files (id={0}, path={1}, resource={2}, recursive={3})",
+                    profile.getId(),
+                    basePath,
+                    resourcePattern,
+                    recursive));
+        }
+        FilePattern pattern = validate(resourcePattern);
+        HadoopDataSourceProfile p = profile;
+        FileSystem fs = p.getFileSystem();
+        Path root = p.getFileSystemPath();
+        Path base = append(root, basePath);
+        List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
+        Path temporary = p.getTemporaryFileSystemPath();
+        stats = normalize(stats, root, temporary);
+        if (recursive) {
+            stats = HadoopDataSourceUtil.onlyMinimalCovered(stats);
+        }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -346,17 +395,23 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     stats.size()));
         }
         boolean succeed = true;
-        for (FileStatus stat : targets) {
-            if (isIn(stat, temporary)) {
-                continue;
-            }
+        for (FileStatus stat : stats) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Deleting file (id={0}, path={1})",
+                        "Deleting file (id={0}, path={1}, recursive={2})",
+                        profile.getId(),
+                        stat.getPath(),
+                        recursive));
+            }
+            if (recursive == false && stat.isDir()) {
+                LOG.info(MessageFormat.format(
+                        "Skip deleting directory (id={0}, path={1})",
                         profile.getId(),
                         stat.getPath()));
+            } else {
+                counter.add(1);
+                succeed &= fs.delete(stat.getPath(), recursive);
             }
-            succeed &= fs.delete(stat.getPath(), true);
         }
 
         if (LOG.isDebugEnabled()) {
@@ -368,6 +423,19 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     stats.size()));
         }
         return succeed;
+    }
+
+    private List<FileStatus> normalize(List<FileStatus> stats, Path root, Path temporary) {
+        assert stats != null;
+        assert root != null;
+        assert temporary != null;
+        List<FileStatus> results = new ArrayList<FileStatus>();
+        for (FileStatus stat : stats) {
+            if (root.equals(stat.getPath()) == false && isIn(stat, temporary) == false) {
+                results.add(stat);
+            }
+        }
+        return results;
     }
 
     private Path append(Path parent, String child) {

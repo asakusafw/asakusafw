@@ -53,17 +53,20 @@ import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import com.asakusafw.runtime.directio.DirectDataSource;
+import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
+import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.StageOutput;
+import com.asakusafw.runtime.util.VariableTable;
 
 /**
  * A bridge implementation for Hadoop {@link OutputFormat}.
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.4.0
  */
 public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
@@ -105,10 +108,23 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         }
         List<OutputSpec> specs = new ArrayList<OutputSpec>();
         for (StageOutput output : outputList) {
-            OutputSpec spec = new OutputSpec(output.getName());
+            List<String> deletePatterns = getDeletePatterns(output);
+            OutputSpec spec = new OutputSpec(output.getName(), deletePatterns);
             specs.add(spec);
         }
         save(context.getConfiguration(), specs);
+    }
+
+    private static List<String> getDeletePatterns(StageOutput output) {
+        assert output != null;
+        List<String> results = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : output.getAttributes().entrySet()) {
+            if (entry.getKey().startsWith(DirectDataSourceConstants.PREFIX_DELETE_PATTERN)) {
+                String rawDeletePattern = entry.getValue();
+                results.add(rawDeletePattern);
+            }
+        }
+        return results;
     }
 
     private static void save(Configuration conf, List<OutputSpec> specs) {
@@ -121,6 +137,10 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             WritableUtils.writeVInt(output, specs.size());
             for (OutputSpec spec : specs) {
                 WritableUtils.writeString(output, spec.basePath);
+                WritableUtils.writeVInt(output, spec.deletePatterns.size());
+                for (String pattern : spec.deletePatterns) {
+                    WritableUtils.writeString(output, pattern);
+                }
             }
             output.close();
             conf.set(KEY, new String(sink.toByteArray(), ASCII));
@@ -149,7 +169,13 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             int specCount = WritableUtils.readVInt(input);
             for (int specIndex = 0; specIndex < specCount; specIndex++) {
                 String basePath = WritableUtils.readString(input);
-                results.add(new OutputSpec(basePath));
+                int patternCount = WritableUtils.readVInt(input);
+                List<String> patterns = new ArrayList<String>();
+                for (int patternIndex = 0; patternIndex < patternCount; patternIndex++) {
+                    String pattern = WritableUtils.readString(input);
+                    patterns.add(pattern);
+                }
+                results.add(new OutputSpec(basePath, patterns));
             }
             return results;
         } catch (IOException e) {
@@ -166,6 +192,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
         DirectDataSourceRepository repo = getDataSourceRepository(context);
         List<OutputSpec> specs = getSpecs(context);
+        VariableTable table = getVariableTable(context);
         for (OutputSpec spec : specs) {
             try {
                 repo.getContainerPath(spec.basePath);
@@ -173,6 +200,16 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 throw new IOException(MessageFormat.format(
                         "There are no corresponded data sources for the base path: {0}",
                         spec.basePath), e);
+            }
+            for (String pattern : spec.deletePatterns) {
+                try {
+                    String resolved = table.parse(pattern);
+                    FilePattern.compile(resolved);
+                } catch (IllegalArgumentException e) {
+                    throw new IOException(MessageFormat.format(
+                            "Invalid delete pattern: {0}",
+                            pattern), e);
+                }
             }
         }
     }
@@ -209,20 +246,32 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         return new BridgeOutputCommitter(repository, specs);
     }
 
+    static VariableTable getVariableTable(JobContext context) {
+        assert context != null;
+        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+        VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
+        variables.defineVariables(arguments);
+        return variables;
+    }
+
     private static final class OutputSpec {
 
         final String basePath;
 
-        OutputSpec(String basePath) {
+        final List<String> deletePatterns;
+
+        OutputSpec(String basePath, List<String> deletePatterns) {
             assert basePath != null;
             this.basePath = basePath;
+            this.deletePatterns = deletePatterns;
         }
 
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Output(path={0})",
-                    basePath);
+                    "Output(path={0}, delete={1})",
+                    basePath,
+                    deletePatterns);
         }
     }
 
@@ -232,12 +281,15 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         private final Map<String, String> outputMap;
 
+        private final List<OutputSpec> outputSpecs;
+
         BridgeOutputCommitter(
                 DirectDataSourceRepository repository,
                 List<OutputSpec> outputList) throws IOException {
             assert repository != null;
             assert outputList != null;
             this.repository = repository;
+            this.outputSpecs = outputList;
             this.outputMap = createMap(repository, outputList);
         }
 
@@ -426,6 +478,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         "Start directio job setup: job={0}",
                         jobContext.getJobID()));
             }
+            cleanOutput(jobContext);
             setTransactionInfo(jobContext, true);
             for (Map.Entry<String, String> entry : outputMap.entrySet()) {
                 String containerPath = entry.getKey();
@@ -458,6 +511,53 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 LOG.debug(MessageFormat.format(
                         "Finish directio job setup: job={0}",
                         jobContext.getJobID()));
+            }
+        }
+
+        private void cleanOutput(JobContext jobContext) throws IOException {
+            assert jobContext != null;
+            VariableTable variables = getVariableTable(jobContext);
+            for (OutputSpec spec : outputSpecs) {
+                if (spec.deletePatterns.isEmpty()) {
+                    continue;
+                }
+                String id = repository.getRelatedId(spec.basePath);
+                OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
+                try {
+                    DirectDataSource repo = repository.getRelatedDataSource(spec.basePath);
+                    String basePath = repository.getComponentPath(spec.basePath);
+                    for (String pattern : spec.deletePatterns) {
+                        String resolved = variables.parse(pattern);
+                        FilePattern resources = FilePattern.compile(resolved);
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info(MessageFormat.format(
+                                    "Deleting output: datasource={0}, basePath={1}, pattern={2}",
+                                    id,
+                                    basePath,
+                                    resolved));
+                        }
+                        boolean succeed = repo.delete(basePath, resources, true, context.getCounter());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(MessageFormat.format(
+                                    "Deleted output (succeed={3}): datasource={0}, basePath={1}, pattern={2}",
+                                    id,
+                                    basePath,
+                                    resolved,
+                                    succeed));
+                        }
+                    }
+                } catch (IOException e) {
+                    LOG.error(MessageFormat.format(
+                            "Failed directio job setup: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID()), e);
+                    throw e;
+                } catch (InterruptedException e) {
+                    throw (IOException) new InterruptedIOException(MessageFormat.format(
+                            "Interrupted while setup cleaning output: datasource={0} (job={1})",
+                            id,
+                            jobContext.getJobID())).initCause(e);
+                }
             }
         }
 

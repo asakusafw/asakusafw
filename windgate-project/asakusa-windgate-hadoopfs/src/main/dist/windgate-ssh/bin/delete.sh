@@ -26,7 +26,9 @@ import() {
     fi
 }
 
-_WG_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_WG_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_WG_ROOT/conf/env.sh"
 import "$_WG_ROOT/libexec/configure-classpath.sh"
 import "$_WG_ROOT/libexec/configure-hadoop-cmd.sh"

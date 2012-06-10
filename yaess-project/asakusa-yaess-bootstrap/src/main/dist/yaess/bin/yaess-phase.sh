@@ -75,7 +75,9 @@ shift
 _OPT_EXECUTION_ID="$1"
 shift
 
-_YS_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_YS_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"
 import "$_YS_ROOT/libexec/configure-classpath.sh"

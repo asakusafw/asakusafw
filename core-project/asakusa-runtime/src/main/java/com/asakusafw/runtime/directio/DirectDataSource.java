@@ -121,9 +121,27 @@ public interface DirectDataSource {
             Counter counter) throws IOException, InterruptedException;
 
     /**
+     * List resources.
+     * @param basePath base path of target resources
+     * @param resourcePattern search pattern of target resources from {@code basePath}
+     * @param counter the resource counter
+     * @return the found resources, or an empty list if there are no resources
+     * @throws IOException if failed to list resources by I/O error
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    List<ResourceInfo> list(
+            String basePath,
+            ResourcePattern resourcePattern,
+            Counter counter) throws IOException, InterruptedException;
+
+    /**
      * Deletes resources.
      * @param basePath base path of target resources
      * @param resourcePattern search pattern of target resources from {@code basePath}
+     * @param recursive also deletes containers and thier components recursively
+     *     (only if this datasource supports containers)
+     * @param counter the resource counter
      * @return {@code true} if successfully deleted, otherwise {@code false}
      * @throws IOException if failed to delete resources by I/O error
      * @throws InterruptedException if interrupted
@@ -131,7 +149,9 @@ public interface DirectDataSource {
      */
     boolean delete(
             String basePath,
-            ResourcePattern resourcePattern) throws IOException, InterruptedException;
+            ResourcePattern resourcePattern,
+            boolean recursive,
+            Counter counter) throws IOException, InterruptedException;
 
     /**
      * Prepares output area for the attempt.

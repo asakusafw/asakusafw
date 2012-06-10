@@ -187,7 +187,7 @@ public final class DirectIoTestHelper {
                 id,
         });
         try {
-            dataSource.delete(basePath, ALL);
+            dataSource.delete(basePath, ALL, true, new Counter());
         } catch (InterruptedException e) {
             throw (IOException) new InterruptedIOException("interrupted").initCause(e);
         }

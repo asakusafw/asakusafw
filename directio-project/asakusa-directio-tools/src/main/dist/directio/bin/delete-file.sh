@@ -17,14 +17,20 @@
 
 usage() {
     cat 1>&2 <<EOF
-Applies Direct I/O Transaction
+Delete Direct I/O Files/Directories
 
 Usage:
-    $0 execuion-id
+    $0 base-path [-r] resource-pattern [resource-pattern [..]]
 
 Parameters:
-    execution-id
-        execution ID of target execution
+    -r, -recursive
+        also delete directories and their contents recursively.
+    base-path
+        base path of files/directories to be deleted.
+        this is used for detecting direct datasource configuration.
+    resource-pattern
+        resource pattern of files/directories to be deleted.
+        this must be relative paths from base-path.
 EOF
 }
 
@@ -39,10 +45,14 @@ import() {
     fi
 }
 
-if [ $# -eq 1 ]
+if [ "$1" = "-h" -o "$1" = "-help" ]
 then
-    _OPT_EXECUTION_ID="$1"
-else
+    usage
+    exit
+fi
+
+if [ $# -lt 2 ]
+then
     usage
     exit 1
 fi
@@ -59,16 +69,16 @@ cd
 _DIO_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _DIO_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
-_DIO_CLASS_NAME="com.asakusafw.directio.tools.DirectIoApplyTransaction"
+_DIO_CLASS_NAME="com.asakusafw.directio.tools.DirectIoDelete"
 
 import "$_DIO_ROOT/libexec/configure-libjars.sh"
 import "$_DIO_ROOT/libexec/configure-hadoop-cmd.sh"
 
-echo "Starting Apply Direct I/O Transaction:"
+echo "Starting Delete Direct I/O Files:"
 echo " Hadoop Command: $HADOOP_CMD"
 echo "          Class: $_DIO_CLASS_NAME"
 echo "      Libraries: $_DIO_LIBJARS"
-echo "   Execution ID: $_OPT_EXECUTION_ID"
+echo "      Arguments: $*"
 
 "$HADOOP_CMD" jar \
     "$_DIO_RUNTIME_LIB" \
@@ -76,17 +86,17 @@ echo "   Execution ID: $_OPT_EXECUTION_ID"
     "$_DIO_CLASS_NAME" \
     -conf "$_DIO_PLUGIN_CONF" \
     -libjars "$_DIO_LIBJARS" \
-    "$_OPT_EXECUTION_ID"
+    "$@"
 
 _DIO_RET=$?
 if [ $_DIO_RET -ne 0 ]
 then
-    echo "Apply Direct I/O Transaction failed with exit code: $_DIO_RET" 1>&2
-    echo " Execution ID: $_OPT_EXECUTION_ID"  1>&2
+    echo "Delete Direct I/O Files failed with exit code: $_DIO_RET" 1>&2
     echo "  Runtime Lib: $_DIO_RUNTIME_LIB"  1>&2
     echo "     Launcher: $_DIO_TOOL_LAUNCHER"  1>&2
     echo "        Class: $_DIO_CLASS_NAME" 1>&2
     echo "Configuration: -conf $_DIO_PLUGIN_CONF"  1>&2
     echo "    Libraries: -libjars $_DIO_LIBJARS"  1>&2
+    echo "    Arguments: $*" 1>&2
     exit $_DIO_RET
 fi

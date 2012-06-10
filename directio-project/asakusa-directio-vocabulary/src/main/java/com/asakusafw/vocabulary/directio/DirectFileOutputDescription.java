@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.directio;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.runtime.directio.DataFormat;
@@ -30,6 +31,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
+ * @version 0.4.0
  */
 public abstract class DirectFileOutputDescription implements ExporterDescription {
 
@@ -95,7 +97,46 @@ public abstract class DirectFileOutputDescription implements ExporterDescription
      * and each property name should be represented in {@code snake_case}.
      * @return record order
      */
-    public abstract List<String> getOrder();
+    public List<String> getOrder() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the resource path pattern to delete before output.
+     * The framework will delete files using this pattern on {@link #getBasePath() the base path}.
+     * Each pattern can include following characters:
+     * <ul>
+     * <li> normal characters
+     *   <ul>
+     *   <li> just represents a path </li>
+     *   <li> excepts <code>"\", "$", "*", "?", "#", "|", "{", "}", "[", "]"</code> </li>
+     *   </ul>
+     * </li>
+     * <li> <code>${variable-name}</code> (variables)
+     *   <ul>
+     *   <li> replaced in runtime with barch arguments </li>
+     *   </ul>
+     * </li>
+     * <li> {@code *} (wildcard character)
+     *   <ul>
+     *   <li> represents wildcard of file/directory name </li>
+     *   </ul>
+     * </li>
+     * <li> {@code **} (wildcard segment)
+     *   <ul>
+     *   <li> represents all directories and files includes sub directories and files </li>
+     *   <li> this must be an alternative of file/directory name;
+     *        for example, {@code **.csv} is <em>NOT</em> accepted (<code>&#42;&#42;/&#42;.csv</code> instead)
+     *   </li>
+     *   </ul>
+     * </li>
+     * </ul>
+     * @return the list of delete patterns
+     * @since 0.4.0
+     */
+    public List<String> getDeletePatterns() {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns an implementation of {@link DataFormat} class.
