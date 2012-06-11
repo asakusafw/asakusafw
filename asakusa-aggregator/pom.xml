@@ -70,12 +70,12 @@
 		<module>../asakusa-yaess-paralleljob</module>
 		<module>../asakusa-yaess-flowlog</module>
 		<module>../asakusa-cleaner</module>
+		<module>../asakusa-legacy-test-driver</module>
+		<module>../asakusa-legacy-workflow-plugin</module>
 		<module>../asakusa-distribution</module>
 		<module>../asakusa-archetype-directio</module>
 		<module>../asakusa-archetype-thundergate</module>
 		<module>../asakusa-archetype-windgate</module>
-		<module>../asakusa-legacy-test-driver</module>
-		<module>../asakusa-legacy-workflow-plugin</module>
 	</modules>
 
 	<build>
