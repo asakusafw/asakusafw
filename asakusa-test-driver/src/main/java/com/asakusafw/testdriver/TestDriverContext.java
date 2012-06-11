@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
-import com.asakusafw.compiler.flow.external.FileIoProcessor;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.core.TestContext;
@@ -106,9 +105,8 @@ public class TestDriverContext implements TestContext {
 
     private void configureOptions() {
         LOG.debug("Auto detecting current execution environment");
-        // FIXME Make it pluggable
         this.options.putExtraAttribute(
-                FileIoProcessor.OPTION_EXPORTER_ENABLED,
+                "MAPREDUCE-370",
                 GenericOptionValue.AUTO.getSymbol());
     }
 
