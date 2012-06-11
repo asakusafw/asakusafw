@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-
 usage() {
     cat 1>&2 <<EOF
 YAESS Hadoop Cleanup Tool
@@ -41,6 +40,17 @@ Parameters:
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 2>&1
+        exit 1
+    fi
+}
+
 if [ $# -lt 5 ]
 then
     echo "$@" 1>&2
@@ -60,18 +70,17 @@ _OPT_BATCH_ARGUMENTS="$1"
 shift
 
 _YS_ROOT="$(dirname $0)/.."
-if [ -e "$_YS_ROOT/conf/env.sh" ]
-then
-    . "$_YS_ROOT/conf/env.sh"
-fi
+import "$_YS_ROOT/conf/env.sh"
+import "$_YS_ROOT/libexec/configure-hadoop-cmd.sh"
 
 # Move to home directory
 cd
 
 echo "Starting Asakusa Hadoop CleanUp:"
+echo "     Hadoop Command: $HADOOP_CMD"
 echo "  Working Directory: $_OPT_WORKING_DIRECTORY"
 
-"$HADOOP_HOME/bin/hadoop" fs \
+"$HADOOP_CMD" fs \
     -rmr \
     "$_OPT_WORKING_DIRECTORY" \
     "$@"

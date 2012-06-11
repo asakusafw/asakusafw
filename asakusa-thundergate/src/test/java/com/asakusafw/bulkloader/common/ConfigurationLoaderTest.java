@@ -44,6 +44,8 @@ public class ConfigurationLoaderTest {
 
     static final Log LOG = new Log(ConfigurationLoaderTest.class);
 
+    private static final String PATH_DB_PARAMETER = "src/test/dist/bulkloader/conf/db-param.properties";
+
     /** 読み込むプロパティファイル */
     private static List<String> propertys_db = Arrays.asList(new String[]{"bulkloader-conf-db.properties"});
     private static List<String> propertys_hc = Arrays.asList(new String[]{"bulkloader-conf-hc.properties"});
@@ -1132,7 +1134,7 @@ public class ConfigurationLoaderTest {
         assertEquals("jdbc:mysql://localhost/__asakusa_utest_thundergate", ConfigurationLoader.getProperty("jdbc.url"));
         assertEquals("__asakusa_ut_tg", ConfigurationLoader.getProperty("jdbc.user"));
         assertEquals("__asakusa_ut_tg", ConfigurationLoader.getProperty("jdbc.password"));
-        assertEquals("src/test/conf/db-param.properties", ConfigurationLoader.getProperty("db.parameter"));
+        assertEquals(PATH_DB_PARAMETER, ConfigurationLoader.getProperty("db.parameter"));
 
     }
     /**
@@ -1172,7 +1174,7 @@ public class ConfigurationLoaderTest {
         p.setProperty("jdbc.url", "jdbc:mysql://localhost/asakusa");
         p.setProperty("jdbc.user", "asakusa");
         p.setProperty("jdbc.password", "asakusa");
-        p.setProperty("db.parameter", "src/test/conf/db-param.properties");
+        p.setProperty("db.parameter", PATH_DB_PARAMETER);
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
@@ -1199,7 +1201,7 @@ public class ConfigurationLoaderTest {
         p.setProperty("jdbc.driver", "com.mysql.jdbc.Driver");
         p.setProperty("jdbc.user", "asakusa");
         p.setProperty("jdbc.password", "asakusa");
-        p.setProperty("db.parameter", "src/test/conf/db-param.properties");
+        p.setProperty("db.parameter", PATH_DB_PARAMETER);
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
@@ -1226,7 +1228,7 @@ public class ConfigurationLoaderTest {
         p.setProperty("jdbc.driver", "com.mysql.jdbc.Driver");
         p.setProperty("jdbc.url", "jdbc:mysql://localhost/asakusa");
         p.setProperty("jdbc.password", "asakusa");
-        p.setProperty("db.parameter", "src/test/conf/db-param.properties");
+        p.setProperty("db.parameter", PATH_DB_PARAMETER);
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
@@ -1253,7 +1255,7 @@ public class ConfigurationLoaderTest {
         p.setProperty("jdbc.driver", "com.mysql.jdbc.Driver");
         p.setProperty("jdbc.url", "jdbc:mysql://localhost/asakusa");
         p.setProperty("jdbc.user", "asakusa");
-        p.setProperty("db.parameter", "src/test/conf/db-param.properties");
+        p.setProperty("db.parameter", PATH_DB_PARAMETER);
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");
@@ -1281,7 +1283,7 @@ public class ConfigurationLoaderTest {
         p.setProperty("jdbc.url", "jdbc:mysql://localhost/asakusa");
         p.setProperty("jdbc.user", "asakusa");
         p.setProperty("jdbc.password", "asakusa");
-        p.setProperty("db.parameter", "src/test/conf/db-param.properties");
+        p.setProperty("db.parameter", PATH_DB_PARAMETER);
         ConfigurationLoader.setProperty(p);
         try {
             ConfigurationLoader.loadJDBCProp("target2");

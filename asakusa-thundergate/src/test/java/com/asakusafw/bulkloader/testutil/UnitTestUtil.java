@@ -57,12 +57,14 @@ import com.asakusafw.bulkloader.transfer.FileList;
 public class UnitTestUtil {
     private static final String DELIM = ";";
     private static final String SQLFILE_ENCODING = "UTF-8";
+    private static final String PATH_DIST_MAIN = "main/dist/bulkloader";
+    private static final String PATH_DIST_TEST = "test/dist/bulkloader";
     private static final File targetDir = new File("target/asakusa-thundergate/");
 
     public static void setUpEnv() throws Exception {
         Properties p = System.getProperties();
         p.setProperty(Constants.ASAKUSA_HOME, "src");
-        p.setProperty(Constants.THUNDER_GATE_HOME, "src/test");
+        p.setProperty(Constants.THUNDER_GATE_HOME, "src/" + PATH_DIST_TEST);
         ConfigurationLoader.setSysProp(p);
         System.setProperties(p);
     }
@@ -83,16 +85,24 @@ public class UnitTestUtil {
     public static void tearDownAfterClass() throws Exception {
         FileUtils.deleteDirectory(targetDir);
     }
+
+    private static File getHomeDir() {
+        return new File(ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME));
+    }
+
+    private static File getHomeFile(String path) {
+        File home = getHomeDir();
+        return new File(home, path);
+    }
+
     public static void setUpDB() throws Exception {
-        String strMainSqlDir = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME) + "/main/sql/";
-        File mainSqlDir = new File(strMainSqlDir);
-        String strTestSqlDir = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME) + "/test/sql/";
-        File testSqlDir = new File(strTestSqlDir);
-        File createSysTableSql = new File(mainSqlDir, "create_table.sql");
-        File insertImportTableLockSql = new File(testSqlDir, "insert_import_table_lock.sql");
-        File createUtestTableSql = new File(testSqlDir, "create_utest_table.sql");
-        File dropSysTableSql = new File(mainSqlDir, "drop_table.sql");
-        File dropUtestTableSql = new File(testSqlDir, "drop_utest_table.sql");
+        File mainDir = getHomeFile(PATH_DIST_MAIN);
+        File testDir = getHomeFile(PATH_DIST_TEST);
+        File createSysTableSql = new File(mainDir, "sql/create_table.sql");
+        File insertImportTableLockSql = new File(testDir, "sql/insert_import_table_lock.sql");
+        File createUtestTableSql = new File(testDir, "sql/create_utest_table.sql");
+        File dropSysTableSql = new File(mainDir, "sql/drop_table.sql");
+        File dropUtestTableSql = new File(testDir, "sql/drop_utest_table.sql");
 
         // UT用のテーブルを削除
         executeWithFile(dropUtestTableSql.getAbsolutePath());
@@ -104,12 +114,10 @@ public class UnitTestUtil {
         executeWithFile(createUtestTableSql.getAbsolutePath());
     }
     public static void tearDownDB() throws Exception {
-        String strMainSqlDir = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME) + "/main/sql/";
-        File mainSqlDir = new File(strMainSqlDir);
-        String strTestSqlDir = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME) + "/test/sql/";
-        File testSqlDir = new File(strTestSqlDir);
-        File dropSysTableSql = new File(mainSqlDir, "drop_table.sql");
-        File dropUtestTableSql = new File(testSqlDir, "drop_utest_table.sql");
+        File mainDir = getHomeFile(PATH_DIST_MAIN);
+        File testDir = getHomeFile(PATH_DIST_TEST);
+        File dropSysTableSql = new File(mainDir, "sql/drop_table.sql");
+        File dropUtestTableSql = new File(testDir, "sql/drop_utest_table.sql");
 
         // UT用のテーブルを削除
         executeWithFile(dropUtestTableSql.getAbsolutePath());

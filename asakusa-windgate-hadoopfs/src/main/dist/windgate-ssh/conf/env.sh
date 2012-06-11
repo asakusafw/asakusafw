@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -15,6 +14,7 @@
 # limitations under the License.
 #
 
+# Set your Hadoop installation path (optional)
+#export HADOOP_HOME="/usr/lib/hadoop"
 
-export HADOOP_HOME="/usr/lib/hadoop"
 export HADOOP_USER_CLASSPATH_FIRST=true

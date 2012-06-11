@@ -13,124 +13,75 @@
 			<directory>src/main/resources/scripts</directory>
 			<outputDirectory>scripts</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/bin</directory>
-			<outputDirectory>bulkloader/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/conf</directory>
-			<outputDirectory>bulkloader/conf</outputDirectory>
+			<directory>../asakusa-thundergate/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/sql</directory>
-			<outputDirectory>bulkloader/sql</outputDirectory>
+			<directory>../asakusa-windgate-plugin/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
-			<outputDirectory>thundergate-cache</outputDirectory>
+			<directory>../asakusa-windgate-hadoopfs/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-windgate-plugin/src/main/dist/windgate</directory>
-			<outputDirectory>windgate</outputDirectory>
-			<fileMode>0755</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-windgate-hadoopfs/src/main/dist/windgate-ssh</directory>
-			<outputDirectory>windgate-ssh</outputDirectory>
-			<fileMode>0755</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-cleaner/src/main/bin</directory>
-			<outputDirectory>cleaner/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-cleaner/src/main/conf</directory>
-			<outputDirectory>cleaner/conf</outputDirectory>
+			<directory>../asakusa-cleaner/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
-			<outputDirectory>experimental/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/core/conf</directory>
-			<outputDirectory>core/conf</outputDirectory>
+			<directory>../asakusa-test-driver/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/conf</directory>
-			<outputDirectory>yaess/conf</outputDirectory>
+			<directory>../asakusa-yaess-bootstrap/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-yaess-tools/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
-			<outputDirectory>yaess-hadoop/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
-			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<directory>../asakusa-yaess-tools/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-directio-plugin/src/main/dist/directio/bin</directory>
-			<outputDirectory>directio/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directory>../asakusa-yaess-core/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-directio-plugin/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
 			<directory>../asakusa-operation-tools/src/main/dist</directory>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
@@ -143,7 +94,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -151,7 +102,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -159,7 +110,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -168,72 +119,6 @@
 				<exclude>*</exclude>
 			</excludes>
 			<directoryMode>0777</directoryMode>
-		</fileSet>
-
-		<!-- lib -->
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>bulkloader/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>windgate/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>windgate-ssh/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>core/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>cleaner/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>yaess/lib</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>yaess/plugin</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources/assemblies</directory>
-			<outputDirectory>yaess/tools</outputDirectory>
-			<excludes>
-				<exclude>*</exclude>
-			</excludes>
-			<directoryMode>0775</directoryMode>
 		</fileSet>
 	</fileSets>
 

@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-
 usage() {
     cat <<EOF
 Builds cache for ThunderGate.
@@ -40,23 +39,20 @@ Parameters:
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 2>&1
+        exit 1
+    fi
+}
+
 _TGC_ROOT="$(dirname $0)/.."
-if [ -e "$_TGC_ROOT/conf/env.sh" ]
-then
-    . "$_TGC_ROOT/conf/env.sh"
-fi
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
-
-if [ "$HADOOP_HOME" = "" ]
-then
-    echo '$HADOOP_HOME'" is not defined" 1>&2
-    exit 1
-fi
+import "$_TGC_ROOT/conf/env.sh"
+import "$_TGC_ROOT/libexec/validate-env.sh"
 
 if [ $# -ne 6 ]
 then
@@ -83,44 +79,29 @@ cd
 
 _TGC_CLASS_NAME="com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient"
 _TGC_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_TGC_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
-_TGC_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
-_TGC_RUNTIME_LIB="$_TGC_CORE_LIB_DIR/asakusa-runtime.jar"
+_TGC_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
 _TGC_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _TGC_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 
-_TGC_LIBJAR="$_TGC_APP_LIB"
-
-if [ -d "$_TGC_CORE_LIB_DIR" ]
-then
-    for f in $(ls "$_TGC_CORE_LIB_DIR")
-    do
-        _TGC_LIBJAR="$_TGC_LIBJAR,$_TGC_CORE_LIB_DIR/$f"
-    done
-fi
-
-if [ -d "$_TGC_EXT_LIB_DIR" ]
-then
-    for f in $(ls "$_TGC_EXT_LIB_DIR")
-    do
-        _TGC_LIBJAR="$_TGC_LIBJAR,$_TGC_EXT_LIB_DIR/$f"
-    done
-fi
+_TGC_LIBJARS="$_TGC_APP_LIB"
+import "$_TGC_ROOT/libexec/configure-libjars.sh"
+import "$_TGC_ROOT/libexec/configure-hadoop-cmd.sh"
 
 echo "Starting Build ThunderGate Cache:"
-echo "   Sub Command: $_OPT_SUBCOMMAND"
-echo "      Batch ID: $_OPT_BATCH_ID"
-echo "       Flow ID: $_OPT_FLOW_ID"
-echo "  Execution ID: $_OPT_EXECUTION_ID"
-echo "    Cache Path: $_OPT_CACHE_PATH"
-echo "     Data Type: $_OPT_MODEL_CLASS"
+echo " Hadoop Command: $HADOOP_CMD"
+echo "    Sub Command: $_OPT_SUBCOMMAND"
+echo "       Batch ID: $_OPT_BATCH_ID"
+echo "        Flow ID: $_OPT_FLOW_ID"
+echo "   Execution ID: $_OPT_EXECUTION_ID"
+echo "     Cache Path: $_OPT_CACHE_PATH"
+echo "      Data Type: $_OPT_MODEL_CLASS"
 
-"$HADOOP_HOME/bin/hadoop" jar \
+"$HADOOP_CMD" jar \
     "$_TGC_RUNTIME_LIB" \
     "$_TGC_TOOL_LAUNCHER" \
     "$_TGC_CLASS_NAME" \
     -conf "$_TGC_PLUGIN_CONF" \
-    -libjars "$_TGC_LIBJAR" \
+    -libjars "$_TGC_LIBJARS" \
     "$_OPT_SUBCOMMAND" \
     "$_OPT_CACHE_PATH" \
     "$_OPT_MODEL_CLASS"
@@ -135,6 +116,6 @@ then
     echo "  Sub Command: $_OPT_SUBCOMMAND"  1>&2
     echo "   Cache Path: $_OPT_CACHE_PATH"  1>&2
     echo "   Model Type: $_OPT_MODEL_CLASS"  1>&2
-    echo "    Libraries: -libjars $_TGC_LIBJAR"  1>&2
+    echo "    Libraries: -libjars $_TGC_LIBJARS"  1>&2
     exit $_TGC_RET
 fi

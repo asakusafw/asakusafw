@@ -23,7 +23,7 @@
 				</excludes>
 			</unpackOptions>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -38,7 +38,7 @@
 				<include>log4j:log4j</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 	</dependencySets>
 

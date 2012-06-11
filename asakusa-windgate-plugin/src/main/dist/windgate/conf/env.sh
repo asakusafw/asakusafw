@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -15,11 +14,6 @@
 # limitations under the License.
 #
 
-
-if [ "$HADOOP_HOME" = "" ]
-then
-    export HADOOP_HOME="/usr/lib/hadoop"
-    echo "HADOOP_HOME was not set. We assumes HADOOP_HOME=\"$HADOOP_HOME\"" 2>&1
-fi
-
+# Set your Hadoop installation path (optional)
+#export HADOOP_HOME="/usr/lib/hadoop"
 export HADOOP_USER_CLASSPATH_FIRST=true

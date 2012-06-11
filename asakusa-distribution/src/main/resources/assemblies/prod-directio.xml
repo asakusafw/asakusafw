@@ -18,7 +18,7 @@
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -33,7 +33,7 @@
 				<include>org.slf4j:slf4j-api</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -47,7 +47,7 @@
 				<include>com.jcraft:jsch</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -58,7 +58,7 @@
 				<include>com.google.code.gson:gson</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -78,64 +78,57 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
-			<outputDirectory>experimental/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/core/conf</directory>
-			<outputDirectory>core/conf</outputDirectory>
+			<directory>src/main/resources/scripts</directory>
+			<outputDirectory>scripts</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-bootstrap/src/main/dist/yaess/conf</directory>
-			<outputDirectory>yaess/conf</outputDirectory>
+			<directory>../asakusa-cleaner/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-yaess-tools/src/main/dist/yaess/bin</directory>
-			<outputDirectory>yaess/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
-			<outputDirectory>yaess-hadoop/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
-			<outputDirectory>yaess-hadoop/conf</outputDirectory>
+			<directory>../asakusa-test-driver/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
-			<directory>../asakusa-directio-plugin/src/main/dist/directio/bin</directory>
-			<outputDirectory>directio/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directory>../asakusa-yaess-bootstrap/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-tools/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-directio-plugin/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
 			<directory>../asakusa-operation-tools/src/main/dist</directory>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>/</outputDirectory>
 			<fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
@@ -148,7 +141,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -156,7 +149,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -164,7 +157,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 	</fileSets>
 

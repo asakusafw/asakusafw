@@ -79,8 +79,8 @@ public class DBConnectionTest {
             DBConnection.closeConn(null);
             DBConnection.closeConn(conn);
         } catch (Exception e) {
-            fail();
             e.printStackTrace();
+            fail();
         }
     }
     /**
@@ -95,13 +95,13 @@ public class DBConnectionTest {
         try {
             BulkLoaderInitializer.initDBServer(jobflowId, executionId, Arrays.asList(new String[]{"bulkloader-conf-db.properties"}), targetName);
             Properties p = ConfigurationLoader.getProperty();
-            p.setProperty(Constants.PROP_KEY_NAME_DB_PRAM, "src/test/conf/db-param.properties");
+            p.setProperty(Constants.PROP_KEY_NAME_DB_PRAM, "src/test/dist/bulkloader/conf/db-param.properties");
             ConfigurationLoader.setProperty(p);
             Connection conn = DBConnection.getConnection();
             DBConnection.closeConn(conn);
         } catch (Exception e) {
-            fail();
             e.printStackTrace();
+            fail();
         }
     }
     /**
@@ -146,9 +146,9 @@ public class DBConnectionTest {
             DBConnection.getConnection();
             fail();
         } catch (Exception e) {
+            e.printStackTrace();
             assertTrue(e instanceof BulkLoaderSystemException);
             assertTrue(e.getCause() instanceof SQLException);
-            e.printStackTrace();
         }
     }
 }

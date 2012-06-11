@@ -15,38 +15,32 @@
 # limitations under the License.
 #
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 2>&1
+        exit 1
+    fi
+}
 
 _WG_ROOT="$(dirname $0)/.."
-if [ -e "$_WG_ROOT/conf/env.sh" ]
-then
-    . "$_WG_ROOT/conf/env.sh"
-fi
-
-if [ "$HADOOP_HOME" = "" -o ! -d "$HADOOP_HOME" ]
-then
-    echo '$HADOOP_HOME'" is invalid: $HADOOP_HOME" 1>&2
-    exit 1
-fi
-
-_WG_CLASSPATH="$_WG_ROOT/conf"
-if [ -d "$_WG_ROOT/lib" ]
-then
-    for f in $(ls "$_WG_ROOT/lib/")
-    do
-        _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
-    done
-fi
+import "$_WG_ROOT/conf/env.sh"
+import "$_WG_ROOT/libexec/configure-classpath.sh"
+import "$_WG_ROOT/libexec/configure-hadoop-cmd.sh"
 
 _WG_CLASS="com.asakusafw.windgate.hadoopfs.ssh.WindGateHadoopGet"
 
 echo "$_WG_CLASS" 1>&2
 for f in $*
 do
-    echo "$f" 1>&2
+    echo "  $f" 1>&2
 done
 
 export HADOOP_CLASSPATH="$_WG_CLASSPATH"
-"$HADOOP_HOME/bin/hadoop" "$_WG_CLASS" $*
+"$HADOOP_CMD" "$_WG_CLASS" $*
 
 _WG_RET=$?
 if [ $_WG_RET -ne 0 ]

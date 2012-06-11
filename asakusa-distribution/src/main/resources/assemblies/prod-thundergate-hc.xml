@@ -19,7 +19,7 @@
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -36,7 +36,7 @@
 				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
 			<scope>test</scope>
@@ -56,78 +56,50 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../asakusa-thundergate/src/main/bin</directory>
-			<outputDirectory>bulkloader/bin</outputDirectory>
+			<directory>../asakusa-thundergate/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>.bulkloader_hc_profile</include>
-				<include>collector.sh</include>
-				<include>extractor.sh</include>
-				<include>get-cache-info.sh</include>
-				<include>delete-cache-storage.sh</include>
-				<include>set-classpath-hc.sh</include>
+				<include>bulkloader/bin/.bulkloader_hc_profile</include>
+				<include>bulkloader/bin/collector.sh</include>
+				<include>bulkloader/bin/extractor.sh</include>
+				<include>bulkloader/bin/get-cache-info.sh</include>
+				<include>bulkloader/bin/delete-cache-storage.sh</include>
+				<include>bulkloader/bin/set-classpath-hc.sh</include>
+				<include>bulkloader/conf/bulkloader-conf-hc.properties</include>
+				<include>bulkloader/conf/log4j.xml</include>
+				<include>thundergate-cache/**</include>
 			</includes>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/conf</directory>
-			<outputDirectory>bulkloader/conf</outputDirectory>
-			<includes>
-				<include>bulkloader-conf-hc.properties</include>
-				<include>log4j.xml</include>
-			</includes>
-			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-thundergate/src/main/dist/thundergate-cache</directory>
-			<outputDirectory>thundergate-cache</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/core/conf</directory>
-			<outputDirectory>core/conf</outputDirectory>
-			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-test-driver/src/main/dist/experimental/bin</directory>
-			<outputDirectory>experimental/bin</outputDirectory>
-			<includes>
-				<include>clean_hadoop_work.sh</include>
-				<include>hadoop_job_run.sh</include>
-			</includes>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/bin</directory>
-			<outputDirectory>yaess-hadoop/bin</outputDirectory>
-			<fileMode>0744</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-yaess-core/src/main/dist/yaess-hadoop/conf</directory>
-			<outputDirectory>yaess-hadoop/conf</outputDirectory>
-			<fileMode>0644</fileMode>
-			<directoryMode>0775</directoryMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>../asakusa-operation-tools/src/main/dist</directory>
-			<outputDirectory>.</outputDirectory>
 			<fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
-		
+		<fileSet>
+			<directory>../asakusa-test-driver/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>core/conf/**</include>
+				<include>experimental/bin/clean_hadoop_work.sh</include>
+				<include>experimental/bin/hadoop_job_run.sh</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-yaess-core/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>../asakusa-operation-tools/src/main/dist</directory>
+			<outputDirectory>/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<lineEnding>unix</lineEnding>
+		</fileSet>
+
 		<!-- empty directory -->
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -135,7 +107,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -143,7 +115,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/assemblies</directory>
@@ -151,7 +123,7 @@
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
-			<directoryMode>0775</directoryMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 	</fileSets>
 

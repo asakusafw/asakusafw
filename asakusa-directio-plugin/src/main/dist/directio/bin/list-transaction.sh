@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-
 cd
 usage() {
     cat 1>&2 <<EOF
@@ -26,67 +25,45 @@ Usage:
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 2>&1
+        exit 1
+    fi
+}
+
 if [ $# -ne 0 ]
 then
     usage
     exit 1
 fi
 
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME is not defined' 1>&2
-    exit 1
-fi
-
-if [ "$HADOOP_HOME" = "" ]
-then
-    echo '$HADOOP_HOME is not defined' 1>&2
-    exit 1
-fi
+_DIO_ROOT="$(dirname $0)/.."
+import "$_DIO_ROOT/libexec/validate-env.sh"
 
 _DIO_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_DIO_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
-_DIO_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
 _DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
-_DIO_RUNTIME_LIB="$_DIO_CORE_LIB_DIR/asakusa-runtime.jar"
+_DIO_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
 _DIO_CLASS_NAME="com.asakusafw.runtime.directio.hadoop.DirectIoListTransaction"
 
-if [ -d "$_DIO_CORE_LIB_DIR" ]
-then
-    for f in $(ls "$_DIO_CORE_LIB_DIR")
-    do
-        _DIO_TMP="$_DIO_CORE_LIB_DIR/$f"
-        if [ "$_DIO_LIBJAR" = "" ]
-            _DIO_LIBJAR="$_DIO_TMP"
-        then
-            _DIO_LIBJAR="$_DIO_LIBJAR,$_DIO_TMP"
-        fi
-    done
-fi
-
-if [ -d "$_DIO_EXT_LIB_DIR" ]
-then
-    for f in $(ls "$_DIO_EXT_LIB_DIR")
-    do
-        _DIO_TMP="$_DIO_EXT_LIB_DIR/$f"
-        if [ "$_DIO_LIBJAR" = "" ]
-            _DIO_LIBJAR="$_DIO_TMP"
-        then
-            _DIO_LIBJAR="$_DIO_LIBJAR,$_DIO_TMP"
-        fi
-    done
-fi
+import "$_DIO_ROOT/libexec/configure-libjars.sh"
+import "$_DIO_ROOT/libexec/configure-hadoop-cmd.sh"
 
 echo "Starting List Direct I/O Transaction:"
-echo "   App Library: $_DIO_APP_LIB"
-echo "         Class: $_DIO_CLASS_NAME"
+echo " Hadoop Command: $HADOOP_CMD"
+echo "    App Library: $_DIO_APP_LIB"
+echo "          Class: $_DIO_CLASS_NAME"
 
-"$HADOOP_HOME/bin/hadoop" jar \
+"$HADOOP_CMD" jar \
     "$_DIO_RUNTIME_LIB" \
     "$_DIO_TOOL_LAUNCHER" \
     "$_DIO_CLASS_NAME" \
     -conf "$_DIO_PLUGIN_CONF" \
-    -libjars "$_DIO_LIBJAR"
+    -libjars "$_DIO_LIBJARS"
 
 _DIO_RET=$?
 if [ $_DIO_RET -ne 0 ]
@@ -96,6 +73,6 @@ then
     echo "     Launcher: $_DIO_TOOL_LAUNCHER"  1>&2
     echo "  Stage Class: $_DIO_CLASS_NAME" 1>&2
     echo "Configuration: -conf $_DIO_PLUGIN_CONF"  1>&2
-    echo "    Libraries: -libjars $_DIO_LIBJAR"  1>&2
+    echo "    Libraries: -libjars $_DIO_LIBJARS"  1>&2
     exit $_DIO_RET
 fi

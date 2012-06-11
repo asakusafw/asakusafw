@@ -19,12 +19,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +43,7 @@ import com.asakusafw.runtime.stage.ToolLauncher;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 
 /**
  * A driver for control Hadoop jobs for testing.
@@ -60,49 +57,16 @@ public class HadoopDriver implements Closeable {
      */
     public static final String RUNTIME_WORK_ROOT = "target/testing";
 
-    private final File home;
+    private final File command;
 
     private final Configuration configuration;
 
     private final VariableTable variables;
 
-    private HadoopDriver(File home) {
-        assert home != null;
-        this.home = home;
-        this.configuration = createConfiguration();
+    private HadoopDriver() {
+        this.command = ConfigurationProvider.findHadoopCommand();
+        this.configuration = new ConfigurationProvider().newInstance();
         this.variables = new VariableTable(RedefineStrategy.ERROR);
-    }
-
-    private ClassLoader createLoader() throws MalformedURLException {
-        File conf = new File(home, "conf");
-        URL url = conf.toURI().toURL();
-        final URL defaultConfigPath = url;
-        final ClassLoader current = Thread.currentThread().getContextClassLoader();
-        if (defaultConfigPath != null) {
-            ClassLoader ehnahced = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    return new URLClassLoader(new URL[] { defaultConfigPath }, current);
-                }
-            });
-            if (ehnahced != null) {
-                return ehnahced;
-            }
-        }
-        return current;
-    }
-
-    private Configuration createConfiguration() {
-        ClassLoader context = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(createLoader());
-            Configuration conf = new Configuration(true);
-            return conf;
-        } catch (MalformedURLException e) {
-            return new Configuration();
-        } finally {
-            Thread.currentThread().setContextClassLoader(context);
-        }
     }
 
     /**
@@ -140,35 +104,10 @@ public class HadoopDriver implements Closeable {
 
     /**
      * インスタンスを生成する。
-     * @return 生成したインスタンス、利用できない場合は{@code null}
+     * @return 生成したインスタンス
      */
     public static HadoopDriver createInstance() {
-        File home = getHome();
-        if (home == null) {
-            return null;
-        }
-        return new HadoopDriver(home);
-    }
-
-    /**
-     * Hadoopのインストール先を返す。
-     * @return Hadoopのインストール先、不明の場合は{@code null}
-     */
-    public static File getHome() {
-        String home = System.getenv("HADOOP_HOME");
-        if (home == null) {
-            home = System.getProperty("HADOOP_HOME");
-        }
-        if (home == null) {
-            LOG.warn("HADOOP_HOME is not set");
-            return null;
-        }
-        File homeDir = new File(home);
-        if (homeDir.isDirectory() == false) {
-            LOG.warn("HADOOP_HOME: {} is not found", homeDir);
-            return null;
-        }
-        return homeDir.isDirectory() ? homeDir : null;
+        return new HadoopDriver();
     }
 
     /**
@@ -384,7 +323,7 @@ public class HadoopDriver implements Closeable {
     }
 
     private String getHadoop() {
-        return new File(home, "bin/hadoop").getAbsolutePath();
+        return command.getAbsolutePath();
     }
 
     @Override

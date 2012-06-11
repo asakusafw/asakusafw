@@ -203,7 +203,6 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 
 以下は具体的な設定例です。
 
-
 ..  code-block:: properties
 
     command.* = com.asakusafw.yaess.jsch.SshCommandScriptHandler
