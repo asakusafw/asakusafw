@@ -351,9 +351,8 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						</goals>
 						<configuration>
 							<descriptorRefs>
-								<descriptorRef>dev-complement-lib</descriptorRef>
-								<descriptorRef>prod-windgate-complement-lib</descriptorRef>
-								<descriptorRef>prod-thundergate-hc-complement-lib</descriptorRef>
+								<descriptorRef>dev</descriptorRef>
+								<descriptorRef>prod-windgate</descriptorRef>
 							</descriptorRefs>
 							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
@@ -492,20 +491,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-distribution</artifactId>
-			<version>${asakusafw.version}</version>
-			<classifier>dev-exclude-lib</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-distribution</artifactId>
-			<version>${asakusafw.version}</version>
-			<classifier>prod-windgate-exclude-lib</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-test-moderator</artifactId>
 			<version>${asakusafw.version}</version>
 			<scope>test</scope>
@@ -521,6 +506,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-yaess-plugin</artifactId>
 			<version>${asakusafw.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

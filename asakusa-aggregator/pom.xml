@@ -71,6 +71,7 @@
 		<module>../asakusa-yaess-flowlog</module>
 		<module>../asakusa-cleaner</module>
 		<module>../asakusa-operation-tools</module>
+		<module>../asakusa-development-tools</module>
 		<module>../asakusa-legacy-test-driver</module>
 		<module>../asakusa-legacy-workflow-plugin</module>
 		<module>../asakusa-distribution</module>
