@@ -24,11 +24,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
-
+import org.apache.hadoop.util.Tool;
 import com.asakusafw.cleaner.bean.DFSCleanerBean;
 import com.asakusafw.cleaner.common.CleanerInitializer;
 import com.asakusafw.cleaner.common.ConfigurationLoader;
@@ -42,9 +43,26 @@ import com.asakusafw.cleaner.log.Log;
  * @author yuta.shirai
  *
  */
-public class HDFSCleaner {
+public class HDFSCleaner extends Configured implements Tool {
     /** クラス。 */
     private static final Class<?> CLASS = HDFSCleaner.class;
+
+
+
+    /**
+     * Creates a new instance.
+     */
+    public HDFSCleaner() {
+        super();
+    }
+
+    /**
+     * Creates a new instance with configuration object.
+     * @param conf configuration
+     */
+    public HDFSCleaner(Configuration conf) {
+        super(conf);
+    }
 
     /**
      * メインメソッド
@@ -55,12 +73,19 @@ public class HDFSCleaner {
      * ・args[2]=コンフィグレーションファイル
      *
      * @param args コマンドライン引数
+     * @throws Exception if failed to execute
      */
-    public static void main(String[] args) {
-        HDFSCleaner cleaner = new HDFSCleaner();
-        int result = cleaner.execute(args);
+    public static void main(String[] args) throws Exception {
+        HDFSCleaner tool = new HDFSCleaner();
+        int result = tool.run(args);
         System.exit(result);
     }
+
+    @Override
+    public int run(String[] args) throws Exception {
+        return execute(args);
+    }
+
     /**
      * HDFSCleanerの処理を実行する。
      * @param args コマンドライン引数
@@ -134,7 +159,7 @@ public class HDFSCleaner {
                     Path cleanDir = bean[i].getCleanDir();
                     // ファイルシステムを取得
                     try {
-                        Configuration conf = new Configuration();
+                        Configuration conf = getConf();
                         fs = cleanDir.getFileSystem(conf);
                         if (fs == null) {
                             Log.log(CLASS, MessageIdConst.HCLN_CLEN_DIR_ERROR,
