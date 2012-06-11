@@ -517,13 +517,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-distribution</artifactId>
-			<version>${asakusafw.version}</version>
-			<classifier>prod-cleaner-exclude-lib</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-thundergate</artifactId>
 			<version>${asakusafw.version}</version>
 			<scope>test</scope>
