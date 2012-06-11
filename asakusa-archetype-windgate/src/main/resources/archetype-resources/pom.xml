@@ -76,6 +76,28 @@
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>com.asakusafw.releases</id>
+			<name>Asakusa Framework Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.snapshots</id>
+			<name>Asakusa Framework Snapshot Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -314,6 +336,13 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.asakusafw</groupId>
+						<artifactId>asakusa-distribution</artifactId>
+						<version>${asakusafw.version}</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>default-cli</id>
@@ -321,11 +350,11 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/dev-complement-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-windgate-complement-lib.xml</descriptor>
-								<descriptor>src/main/assembly/prod-cleaner-complement-lib.xml</descriptor>
-							</descriptors>
+							<descriptorRefs>
+								<descriptorRef>dev-complement-lib</descriptorRef>
+								<descriptorRef>prod-windgate-complement-lib</descriptorRef>
+								<descriptorRef>prod-thundergate-hc-complement-lib</descriptorRef>
+							</descriptorRefs>
 							<finalName>asakusafw-${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
