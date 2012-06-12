@@ -20,25 +20,24 @@ import java.text.MessageFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assume;
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
-
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 
 /**
  * Skips tests if Hadoop is not installed.
  */
-public class HadoopEnvironmentChecker extends TestWatchman {
+public class HadoopEnvironmentChecker extends TestWatcher {
 
     static Log LOG = LogFactory.getLog(HadoopEnvironmentChecker.class);
 
     @Override
-    public void starting(FrameworkMethod method) {
+    protected void starting(Description description) {
         if (ConfigurationProvider.findHadoopCommand() == null) {
             LOG.warn(MessageFormat.format(
                     "hadoop command is not found. skip {0}.{1}",
-                    method.getClass().getName(),
-                    method.getName()));
+                    description.getTestClass().getName(),
+                    description.getMethodName()));
             Assume.assumeTrue(false);
         }
     }

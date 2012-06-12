@@ -30,8 +30,8 @@ import java.util.List;
 
 import org.apache.hadoop.io.Writable;
 import org.junit.Assume;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.asakusafw.compiler.common.JavaName;
@@ -64,7 +64,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * コンパイラのテストを行う。
  */
-public class CompilerTester implements MethodRule {
+public class CompilerTester implements TestRule {
 
     HadoopDriver hadoop;
 
@@ -88,20 +88,17 @@ public class CompilerTester implements MethodRule {
     }
 
     @Override
-    public Statement apply(
-            final Statement base,
-            final FrameworkMethod method,
-            Object target) {
+    public Statement apply(final Statement base, final Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 Assume.assumeNotNull(hadoop);
                 try {
-                    testClass = method.getMethod().getDeclaringClass();
+                    testClass = description.getTestClass();
                     testName = MessageFormat.format(
                             "{0}_{1}",
-                            method.getMethod().getDeclaringClass().getSimpleName(),
-                            method.getName());
+                            description.getTestClass().getSimpleName(),
+                            description.getMethodName().replaceAll("\\W", "_"));
                     hadoop.clean();
                     base.evaluate();
                 } finally {

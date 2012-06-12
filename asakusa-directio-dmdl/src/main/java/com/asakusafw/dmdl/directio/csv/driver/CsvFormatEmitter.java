@@ -573,6 +573,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     break;
                 default:
                     // ignored
+                    break;
                 }
             }
             statements.add(new ExpressionBuilder(f, parser)

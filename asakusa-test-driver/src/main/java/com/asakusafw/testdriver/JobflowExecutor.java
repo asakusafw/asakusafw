@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -524,7 +525,7 @@ class InputStreamThread extends Thread {
      *            入力ストリーム
      */
     public InputStreamThread(InputStream is) {
-        br = new BufferedReader(new InputStreamReader(is));
+        br = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));
     }
 
     /**

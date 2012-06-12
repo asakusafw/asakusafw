@@ -62,7 +62,7 @@ public class VolatilePackager
 
     private static final Charset CHARSET = Charset.forName("UTF-8");
 
-    private MockEmitter emitter;
+    private final MockEmitter emitter;
 
     Map<String, byte[]> contents;
 
@@ -197,7 +197,7 @@ public class VolatilePackager
                     break;
                 }
             }
-            if(successed != Boolean.TRUE) {
+            if(Boolean.TRUE.equals(successed) == false) {
                 throw new IOException(MessageFormat.format(
                         "{0}のコンパイルに失敗しました: {1}",
                         getEnvironment().getTargetId(),

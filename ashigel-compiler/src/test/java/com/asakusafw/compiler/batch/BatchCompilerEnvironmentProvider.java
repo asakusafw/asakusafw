@@ -19,8 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
@@ -32,35 +32,36 @@ import com.asakusafw.runtime.stage.StageConstants;
 /**
  * {@link BatchCompilingEnvironment}をテスト向けに提供する。
  */
-public class BatchCompilerEnvironmentProvider implements MethodRule {
+public class BatchCompilerEnvironmentProvider implements TestRule {
 
     private BatchCompilerConfiguration config;
 
     private BatchCompilingEnvironment environment;
 
+
     @Override
-    public Statement apply(Statement base, FrameworkMethod method, Object target) {
+    public Statement apply(Statement base, Description description) {
         try {
             config = DirectBatchCompiler.createConfig(
-                    method.getName(),
+                    description.getMethodName(),
                     "com.example",
                     Location.fromPath(String.format(
                             "target/testing/%s_%s",
-                            method.getMethod().getDeclaringClass().getName(),
-                            method.getMethod().getName()), '/'),
+                            description.getTestClass().getName(),
+                            description.getMethodName()), '/'),
                     new File(String.format(
                             "target/testing/%s_%s/output",
-                            method.getMethod().getDeclaringClass().getName(),
-                            method.getMethod().getName())),
+                            description.getTestClass().getName(),
+                            description.getMethodName())),
                     new File(String.format(
                             "target/testing/%s_%s/build",
-                            method.getMethod().getDeclaringClass().getName(),
-                            method.getMethod().getName())),
+                            description.getTestClass().getName(),
+                            description.getMethodName())),
                     Arrays.asList(new File[] {
                            DirectFlowCompiler.toLibraryPath(getClass()),
                            DirectFlowCompiler.toLibraryPath(StageConstants.class),
                     }),
-                    target.getClass().getClassLoader(),
+                    description.getTestClass().getClassLoader(),
                     FlowCompilerOptions.load(System.getProperties()));
         } catch (IOException e) {
             throw new AssertionError(e);

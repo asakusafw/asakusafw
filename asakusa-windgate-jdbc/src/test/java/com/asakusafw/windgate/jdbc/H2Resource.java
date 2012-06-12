@@ -34,13 +34,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 /**
  * Keep a connection of H2 'in memory' Database.
  */
-public class H2Resource extends TestWatchman {
+public class H2Resource extends TestWatcher {
 
     private final String name;
 
@@ -58,9 +58,9 @@ public class H2Resource extends TestWatchman {
     }
 
     @Override
-    public void starting(FrameworkMethod method) {
+    protected void starting(Description description) {
         org.h2.Driver.load();
-        this.context = method.getMethod().getDeclaringClass();
+        this.context = description.getTestClass();
         this.connection = open();
         boolean green = false;
         try {
@@ -71,7 +71,7 @@ public class H2Resource extends TestWatchman {
             throw new AssertionError(e);
         } finally {
             if (green == false) {
-                finished(method);
+                finished(description);
             }
         }
     }
@@ -236,7 +236,7 @@ public class H2Resource extends TestWatchman {
     }
 
     @Override
-    public void finished(FrameworkMethod method) {
+    public void finished(Description description) {
         if (connection != null) {
             try {
                 connection.close();
