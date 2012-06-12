@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.directio.hadoop;
+package com.asakusafw.directio.tools;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -27,11 +27,12 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
+import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor;
 import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.TransactionInfo;
 
 /**
  * CLI for {@link DirectIoTransactionEditor#apply(String)}.
- * @since 0.2.5
+ * @since 0.4.0
  */
 public final class DirectIoListTransaction extends Configured implements Tool {
 

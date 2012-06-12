@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Legacy Workflow Script Generator Plug-in</name>
+	<name>Direct I/O Command Line Tools</name>
 	<groupId>com.asakusafw</groupId>
-	<artifactId>asakusa-legacy-workflow-plugin</artifactId>
+	<artifactId>asakusa-directio-tools</artifactId>
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
@@ -11,7 +11,7 @@
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
-	<description>Legacy Workflow Script Generator Plug-in for Asakusa DSL Compiler</description>
+	<description>Direct I/O Access Facility Command Line Tools</description>
 	<url>http://asakusafw.com</url>
 	<licenses>
 		<license>
@@ -48,18 +48,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>ashigel-compiler</artifactId>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-runtime</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<optional>true</optional>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>

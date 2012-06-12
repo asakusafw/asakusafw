@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.directio.hadoop;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+package com.asakusafw.directio.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +22,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.hadoop.conf.Configuration;
@@ -35,7 +31,6 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
@@ -45,14 +40,17 @@ import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.TransactionInfo;
+import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor;
+import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceCore;
+import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
+import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
  * Test for {@link DirectIoTransactionEditor}.
  */
-public class DirectIoTransactionEditorTest {
+public class DirectIoCommandTestRoot {
 
     /**
      * A temporary folder.
@@ -60,15 +58,30 @@ public class DirectIoTransactionEditorTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private Configuration conf;
+    /**
+     * Current configuration.
+     */
+    protected Configuration conf;
 
-    private DirectIoTransactionEditor testee;
+    /**
+     * Editor.
+     */
+    protected DirectIoTransactionEditor editor;
 
-    private DirectDataSourceRepository repo;
+    /**
+     * Current repository.
+     */
+    protected DirectDataSourceRepository repo;
 
-    private File production1;
+    /**
+     * Storage mapped to c1.
+     */
+    protected File production1;
 
-    private File production2;
+    /**
+     * Storage mapped to c2.
+     */
+    protected File production2;
 
     private File temporary;
 
@@ -105,8 +118,8 @@ public class DirectIoTransactionEditorTest {
                 new MockProvider(profile1),
                 new MockProvider(profile2)));
 
-        testee = new DirectIoTransactionEditor(repo);
-        testee.setConf(conf);
+        editor = new DirectIoTransactionEditor(repo);
+        editor.setConf(conf);
     }
 
     /**
@@ -127,147 +140,30 @@ public class DirectIoTransactionEditorTest {
     }
 
     /**
-     * Apply.
-     * @throws Exception if failed
+     * Sets writable flag to target recursively.
+     * @param target target path
+     * @param writable flag
+     * @return true iff is succeeded
      */
-    @Test
-    public void apply() throws Exception {
-        indoubt("ex1");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.apply("__UNKNOWN__"), is(false));
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.apply("ex1"), is(true));
-        assertThat(count(production1), is(1));
-        assertThat(count(production2), is(1));
-
-        assertThat(testee.apply("ex1"), is(false));
-    }
-
-    /**
-     * Apply partial.
-     * @throws Exception if failed
-     */
-    @Test
-    public void apply_partial() throws Exception {
-        indoubt("ex1");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        writable(production1, false);
-        try {
-            testee.apply("ex1");
-        } catch (IOException e) {
-            // ok.
-        }
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(1));
-
-        writable(production1, true);
-        assertThat(testee.apply("ex1"), is(true));
-        assertThat(count(production1), is(1));
-        assertThat(count(production2), is(1));
-
-        assertThat(testee.apply("ex1"), is(false));
-    }
-
-    /**
-     * Abort.
-     * @throws Exception if failed
-     */
-    @Test
-    public void abort() throws Exception {
-        indoubt("ex1");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.abort("__UNKNOWN__"), is(false));
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.abort("ex1"), is(true));
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        assertThat(testee.abort("ex1"), is(false));
-    }
-
-    /**
-     * Abort partial.
-     * @throws Exception if failed
-     */
-    @Test
-    public void abort_partial() throws Exception {
-        indoubt("ex1");
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(0));
-
-        writable(production1, false);
-        try {
-            testee.apply("ex1");
-        } catch (IOException e) {
-            // ok.
-        }
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(1));
-
-        writable(production1, true);
-        assertThat(testee.abort("ex1"), is(true));
-        assertThat(count(production1), is(0));
-        assertThat(count(production2), is(1));
-
-        assertThat(testee.abort("ex1"), is(false));
-    }
-
-    /**
-     * List.
-     * @throws Exception if failed
-     */
-    @Test
-    public void list() throws Exception {
-        indoubt("ex1");
-        indoubt("ex2");
-        indoubt("ex3");
-
-        List<TransactionInfo> c1 = testee.list();
-        assertThat(c1.size(), is(3));
-        get(c1, "ex1");
-        get(c1, "ex2");
-        get(c1, "ex3");
-
-        testee.apply("ex2");
-        List<TransactionInfo> c2 = testee.list();
-        assertThat(c2.size(), is(2));
-        get(c1, "ex1");
-        get(c1, "ex3");
-
-        testee.apply("ex1");
-        List<TransactionInfo> c3 = testee.list();
-        assertThat(c3.size(), is(1));
-        get(c1, "ex3");
-
-        testee.apply("ex3");
-        List<TransactionInfo> c4 = testee.list();
-        assertThat(c4.size(), is(0));
-    }
-
-    private boolean writable(File target, boolean lock) {
+    protected boolean writable(File target, boolean writable) {
         if (target.exists() == false) {
             return false;
         }
         boolean succeed = true;
         if (target.isDirectory()) {
             for (File child : target.listFiles()) {
-                succeed &= writable(child, lock);
+                succeed &= writable(child, writable);
             }
         }
-        return succeed && target.setWritable(lock);
+        return succeed && target.setWritable(writable);
     }
 
-    private int count(File dir) {
+    /**
+     * Returns target file count.
+     * @param dir target dir
+     * @return count
+     */
+    protected int count(File dir) {
         int count = 0;
         for (File file : dir.listFiles()) {
             if (file.getName().startsWith(".") == false) {
@@ -277,16 +173,13 @@ public class DirectIoTransactionEditorTest {
         return count;
     }
 
-    private TransactionInfo get(List<TransactionInfo> list, String executionId) {
-        for (TransactionInfo commit : list) {
-            if (commit.getExecutionId().equals(executionId)) {
-                return commit;
-            }
-        }
-        throw new AssertionError(executionId);
-    }
-
-    private void indoubt(String executionId) throws IOException, InterruptedException {
+    /**
+     * Creates a new indoubt transaction.
+     * @param executionId target execution id
+     * @throws IOException if failed
+     * @throws InterruptedException if interrupted
+     */
+    protected void indoubt(String executionId) throws IOException, InterruptedException {
         Path txPath = HadoopDataSourceUtil.getTransactionInfoPath(conf, executionId);
         Path cmPath = HadoopDataSourceUtil.getCommitMarkPath(conf, executionId);
         FileSystem fs = txPath.getFileSystem(conf);
@@ -324,7 +217,10 @@ public class DirectIoTransactionEditorTest {
         }
     }
 
-    private static final class MockProvider implements DirectDataSourceProvider {
+    /**
+     * Mock {@link DirectDataSourceProvider}.
+     */
+    protected static final class MockProvider implements DirectDataSourceProvider {
 
         HadoopDataSourceProfile profile;
 
@@ -348,7 +244,10 @@ public class DirectIoTransactionEditorTest {
         }
     }
 
-    private static class MockFormat extends BinaryStreamFormat<StringBuilder> {
+    /**
+     * Mock {@link BinaryStreamFormat}.
+     */
+    protected static class MockFormat extends BinaryStreamFormat<StringBuilder> {
 
         MockFormat() {
             return;

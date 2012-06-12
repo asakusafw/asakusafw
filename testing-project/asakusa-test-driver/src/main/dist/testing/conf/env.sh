@@ -14,28 +14,5 @@
 # limitations under the License.
 #
 
-if [ -d "$ASAKUSA_HOME/core/lib" ]
-then
-    for f in $(ls "$ASAKUSA_HOME/core/lib")
-    do
-        if [ "$_DIO_LIBJARS" = "" ]
-        then
-            _DIO_LIBJARS="$ASAKUSA_HOME/core/lib/$f"
-        else
-            _DIO_LIBJARS="$_DIO_LIBJARS,$ASAKUSA_HOME/core/lib/$f"
-        fi
-    done
-fi
-
-if [ -d "$ASAKUSA_HOME/ext/lib" ]
-then
-    for f in $(ls "$ASAKUSA_HOME/ext/lib")
-    do
-        if [ "$_DIO_LIBJARS" = "" ]
-        then
-            _DIO_LIBJARS="$ASAKUSA_HOME/ext/lib/$f"
-        else
-            _DIO_LIBJARS="$_DIO_LIBJARS,$ASAKUSA_HOME/ext/lib/$f"
-        fi
-    done
-fi
+# Set extra Hadoop properties
+# export TD_HADOOP_PROPERTIES="-D com.example.property=example"
