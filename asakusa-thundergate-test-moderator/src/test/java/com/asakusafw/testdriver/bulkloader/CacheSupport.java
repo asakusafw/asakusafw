@@ -73,7 +73,7 @@ public class CacheSupport implements ThunderGateCacheSupport {
 
     @Override
     public boolean __tgc__Deleted() {
-        return booleanValue == Boolean.TRUE;
+        return Boolean.TRUE.equals(booleanValue);
     }
 
     @Override

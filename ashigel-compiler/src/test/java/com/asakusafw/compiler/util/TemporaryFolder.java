@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * テスト開始時にテンポラリフォルダを作成し、終了時に削除する。
  */
-public class TemporaryFolder implements MethodRule {
+public class TemporaryFolder implements TestRule {
 
     static final Logger LOG = LoggerFactory.getLogger(TemporaryFolder.class);
 
@@ -149,14 +149,11 @@ public class TemporaryFolder implements MethodRule {
     }
 
     @Override
-    public Statement apply(
-            final Statement base,
-            final FrameworkMethod method,
-            Object target) {
+    public Statement apply(final Statement base, final Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                create(method);
+                create(description);
                 try {
                     base.evaluate();
                 } finally {
@@ -166,11 +163,11 @@ public class TemporaryFolder implements MethodRule {
         };
     }
 
-    void create(FrameworkMethod method) throws Exception {
+    void create(Description description) throws Exception {
         folder = File.createTempFile(
                 String.format("%s_%s",
-                        method.getMethod().getDeclaringClass().getSimpleName(),
-                        method.getMethod().getName()),
+                        description.getTestClass().getSimpleName(),
+                        description.getMethodName()),
                 ".tmp");
         if (folder.delete() == false) {
             LOG.debug("Failed to delete a placeholder: {}", folder);

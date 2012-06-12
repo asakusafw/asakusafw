@@ -17,8 +17,10 @@ package com.asakusafw.yaess.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,7 +114,7 @@ public final class Explain {
             .disableHtmlEscaping()
             .setPrettyPrinting()
             .create();
-        Writer writer = new PrintWriter(System.out);
+        Writer writer = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
         gson.toJson(batch, writer);
         writer.flush();
     }

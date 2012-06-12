@@ -28,9 +28,9 @@ import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +40,14 @@ import com.asakusafw.runtime.stage.ToolLauncher;
 /**
  * Deploys mock framework environment.
  */
-public class FrameworkDeployer implements MethodRule {
+public class FrameworkDeployer implements TestRule {
 
     static final Logger LOG = LoggerFactory.getLogger(FrameworkDeployer.class);
 
     final TemporaryFolder folder = new TemporaryFolder();
 
     @Override
-    public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+    public Statement apply(final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {

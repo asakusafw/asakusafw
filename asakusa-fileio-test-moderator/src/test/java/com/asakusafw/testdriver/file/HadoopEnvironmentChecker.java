@@ -16,8 +16,8 @@
 package com.asakusafw.testdriver.file;
 
 import org.junit.Assume;
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,16 +26,16 @@ import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 /**
  * Skips tests if Hadoop is not installed.
  */
-class HadoopEnvironmentChecker extends TestWatchman {
+class HadoopEnvironmentChecker extends TestWatcher {
 
     static Logger LOG = LoggerFactory.getLogger(HadoopEnvironmentChecker.class);
 
     @Override
-    public void starting(FrameworkMethod method) {
+    protected void starting(Description description) {
         if (ConfigurationProvider.findHadoopCommand() == null) {
             LOG.warn("hadoop command is not found. skip {}.{}",
-                    method.getClass().getName(),
-                    method.getName());
+                    description.getTestClass().getName(),
+                    description.getMethodName());
             Assume.assumeTrue(false);
         }
     }

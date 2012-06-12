@@ -28,9 +28,8 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,17 +79,11 @@ public class HadoopFileIoProcessorTest {
      * Run only enable output.
      */
     @Rule
-    public final MethodRule check = new MethodRule() {
+    public final TestWatcher check = new TestWatcher() {
 
         @Override
-        public Statement apply(final Statement base, final FrameworkMethod method, Object target) {
-            return new Statement() {
-                @Override
-                public void evaluate() throws Throwable {
-                    Assume.assumeTrue(method.getName().startsWith("output_") == false || enableOutput);
-                    base.evaluate();
-                }
-            };
+        protected void starting(Description description) {
+            Assume.assumeTrue(description.getMethodName().startsWith("output_") == false || enableOutput);
         }
     };
 

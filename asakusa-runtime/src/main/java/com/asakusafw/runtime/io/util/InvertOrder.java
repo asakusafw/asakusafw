@@ -70,7 +70,7 @@ public class InvertOrder implements WritableRawComparable {
     @Override
     public int compareTo(WritableRawComparable o) {
         InvertOrder other = (InvertOrder) o;
-        return -entity.compareTo(other.entity);
+        return other.entity.compareTo(entity);
     }
 
     @Override

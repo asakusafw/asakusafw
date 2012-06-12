@@ -35,9 +35,9 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.asakusafw.bulkloader.transfer.FileListProvider;
@@ -48,14 +48,14 @@ import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 /**
  * Deploys mock framework environment.
  */
-public class FrameworkEmulator implements MethodRule {
+public class FrameworkEmulator implements TestRule {
 
     static final Log LOG = LogFactory.getLog(FrameworkEmulator.class);
 
     final TemporaryFolder folder = new TemporaryFolder();
 
     @Override
-    public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+    public Statement apply(final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
