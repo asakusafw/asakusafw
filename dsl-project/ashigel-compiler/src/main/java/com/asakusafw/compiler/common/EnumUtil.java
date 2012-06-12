@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.asakusafw.utils.collections.Tuple2;
+import com.asakusafw.utils.collections.Tuples;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.ashigeru.util.collection.Tuple2;
-import com.ashigeru.util.collection.Tuples;
 
 /**
  * 列挙を取り扱うためのユーティリティ。

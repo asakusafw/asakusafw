@@ -61,12 +61,14 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simple-graph</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>java-dom</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -87,8 +89,9 @@
 			<artifactId>junit-dep</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jsr199-testing</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

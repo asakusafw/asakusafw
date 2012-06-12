@@ -37,8 +37,8 @@ import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockExporterDescription;
 import com.asakusafw.compiler.flow.testing.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.flow.testing.external.ExSummarizedMockExporterDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 
 /**
  * Test for {@link JobflowAnalyzer}.

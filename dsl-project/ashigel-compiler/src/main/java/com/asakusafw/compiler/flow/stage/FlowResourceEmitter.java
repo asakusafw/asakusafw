@@ -31,7 +31,7 @@ import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
 import com.asakusafw.runtime.flow.FlowResource;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * {@link FlowResourceDescription}をコンパイルして{@link FlowResource}を生成する。

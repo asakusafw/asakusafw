@@ -24,16 +24,16 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LineEndProcessor;
 import com.asakusafw.compiler.flow.join.JoinResourceDescription;
 import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
+import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
-import com.ashigeru.util.collection.Tuple2;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * {@link SideDataBranch}を処理する。

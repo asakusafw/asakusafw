@@ -25,6 +25,7 @@
 
 	<modules>
 		<module>asakusa-parent</module>
+		<module>utils-project</module>
 		<module>core-project</module>
 		<module>dsl-project</module>
 		<module>dmdl-project</module>

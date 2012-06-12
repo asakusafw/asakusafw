@@ -22,7 +22,7 @@ import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.stage.directio.DirectOutputOrder;
 import com.asakusafw.runtime.stage.directio.DirectOutputSpec;
 import com.asakusafw.runtime.stage.directio.StringTemplate;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * Represents {@link DirectOutputSpec} for compile time.

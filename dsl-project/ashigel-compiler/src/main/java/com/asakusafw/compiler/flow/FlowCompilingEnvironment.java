@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * 個々のジョブフローをコンパイルする際の環境。

@@ -31,6 +31,7 @@ import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.FlowPart;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -38,7 +39,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link FlowClassEmitter}.

@@ -24,17 +24,17 @@ import java.util.List;
 
 import com.asakusafw.modelgen.Constants;
 import com.asakusafw.modelgen.model.ModelDescription;
-import com.ashigeru.lang.java.model.syntax.Comment;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.PackageDeclaration;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.util.CommentEmitTrait;
-import com.ashigeru.lang.java.model.util.Emitter;
-import com.ashigeru.lang.java.model.util.Filer;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Comment;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.util.CommentEmitTrait;
+import com.asakusafw.utils.java.model.util.Emitter;
+import com.asakusafw.utils.java.model.util.Filer;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * 全てのエミッタの基底となるエミッタ。

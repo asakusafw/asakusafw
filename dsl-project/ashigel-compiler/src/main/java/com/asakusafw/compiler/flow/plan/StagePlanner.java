@@ -38,6 +38,8 @@ import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
 import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
 import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -56,8 +58,6 @@ import com.asakusafw.vocabulary.operator.Branch;
 import com.asakusafw.vocabulary.operator.Project;
 import com.asakusafw.vocabulary.operator.Restructure;
 import com.asakusafw.vocabulary.operator.Split;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * 演算子グラフの実行計画を立案する。

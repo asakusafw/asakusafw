@@ -20,8 +20,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Test for {@link DataClass}.
@@ -49,7 +49,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createNewInstance(com.ashigeru.lang.java.model.syntax.Type)}のテスト。
+     * {@link DataClass.Unresolved#createNewInstance(com.asakusafw.utils.java.model.syntax.Type)}のテスト。
      */
     @Test
     public void unresolved_createNewInstance() {
@@ -60,7 +60,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#assign(com.ashigeru.lang.java.model.syntax.Expression, com.ashigeru.lang.java.model.syntax.Expression)}のテスト。
+     * {@link DataClass.Unresolved#assign(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
      */
     @Test
     public void unresolved_assign() {
@@ -71,7 +71,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createReader(com.ashigeru.lang.java.model.syntax.Expression, com.ashigeru.lang.java.model.syntax.Expression)}のテスト。
+     * {@link DataClass.Unresolved#createReader(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
      */
     @Test
     public void unresolved_createReader() {
@@ -82,7 +82,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createWriter(com.ashigeru.lang.java.model.syntax.Expression, com.ashigeru.lang.java.model.syntax.Expression)}のテスト。
+     * {@link DataClass.Unresolved#createWriter(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
      */
     @Test
     public void unresolved_createWriter() {

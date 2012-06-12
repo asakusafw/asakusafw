@@ -33,13 +33,13 @@ import com.asakusafw.compiler.operator.OperatorProcessor.Context;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
-import com.ashigeru.lang.java.model.syntax.DocElement;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * 演算子メソッドの内容を記述する情報。

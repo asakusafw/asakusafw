@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -32,7 +33,6 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription.Declaration;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription.Parameter;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link OperatorClassEmitter}.

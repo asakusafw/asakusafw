@@ -21,7 +21,7 @@ import com.asakusafw.compiler.flow.join.JoinResourceDescription;
 import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * {@link SideDataCheck}を処理する。

@@ -28,9 +28,9 @@ import com.asakusafw.runtime.util.TypeUtil;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.operator.MasterJoin;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Statement;
 
 /**
  * {@link MasterJoin マスタ結合演算子}を処理する。

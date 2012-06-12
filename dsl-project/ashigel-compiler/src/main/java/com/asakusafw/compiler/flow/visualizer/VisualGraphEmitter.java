@@ -45,8 +45,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.FlowOut;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.ashigeru.lang.java.internal.model.util.LiteralAnalyzer;
-import com.ashigeru.lang.java.model.util.NoThrow;
+import com.asakusafw.utils.java.internal.model.util.LiteralAnalyzer;
+import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
  * グラフを可視化する。

@@ -18,8 +18,8 @@ package com.asakusafw.compiler.common;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
 
 /**
  * 衝突しない名前を作成する。

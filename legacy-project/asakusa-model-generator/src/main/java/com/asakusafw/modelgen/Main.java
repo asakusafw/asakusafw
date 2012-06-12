@@ -38,8 +38,8 @@ import com.asakusafw.modelgen.emitter.ModelOutputEmitter;
 import com.asakusafw.modelgen.model.ModelDescription;
 import com.asakusafw.modelgen.model.ModelRepository;
 import com.asakusafw.modelgen.source.DatabaseSource;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * プログラムエントリ。

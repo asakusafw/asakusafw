@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.asakusafw.compiler.flow.DataClass;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.Statement;
 
 /**
  * Mock {@link DataClass}.
@@ -71,7 +71,7 @@ public class MockDataClass implements DataClass {
     }
 
     @Override
-    public Expression createNewInstance(com.ashigeru.lang.java.model.syntax.Type type) {
+    public Expression createNewInstance(com.asakusafw.utils.java.model.syntax.Type type) {
         throw new UnsupportedOperationException();
     }
 
@@ -124,7 +124,7 @@ public class MockDataClass implements DataClass {
         }
 
         @Override
-        public Expression createNewInstance(com.ashigeru.lang.java.model.syntax.Type target) {
+        public Expression createNewInstance(com.asakusafw.utils.java.model.syntax.Type target) {
             throw new UnsupportedOperationException();
         }
 

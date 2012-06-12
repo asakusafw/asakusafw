@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.util.CommentEmitTrait;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.util.CommentEmitTrait;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * エミッタが取り扱うデータの型。

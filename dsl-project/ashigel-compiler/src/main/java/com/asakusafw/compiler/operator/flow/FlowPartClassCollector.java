@@ -38,7 +38,7 @@ import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
 import com.asakusafw.compiler.operator.PortTypeDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
-import com.ashigeru.lang.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
  * フロー部品からなる演算子を集める。

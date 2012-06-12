@@ -28,6 +28,8 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -38,8 +40,6 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Checkpoint;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Empty;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * Test for {@link CoreOperatorFactory}.

@@ -45,14 +45,14 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.MapUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription.Declaration;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * Visualizes compiled workflow.

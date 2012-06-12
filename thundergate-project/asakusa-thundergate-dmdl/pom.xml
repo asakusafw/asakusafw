@@ -68,8 +68,9 @@
 			<artifactId>commons-cli</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jsr199-testing</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

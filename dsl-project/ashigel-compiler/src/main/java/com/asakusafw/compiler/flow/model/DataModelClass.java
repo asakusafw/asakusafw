@@ -30,12 +30,12 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.repository.ValueOptionProperty;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * {@link DataModel}を利用した{@link DataClass}の実装。

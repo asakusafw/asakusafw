@@ -30,7 +30,6 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
- * @version 0.4.0
  */
 public abstract class DirectFileOutputDescription implements ExporterDescription {
 

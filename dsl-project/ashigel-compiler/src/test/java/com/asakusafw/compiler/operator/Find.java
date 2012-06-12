@@ -18,16 +18,16 @@ package com.asakusafw.compiler.operator;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.ashigeru.lang.java.model.syntax.Attribute;
-import com.ashigeru.lang.java.model.syntax.ConstructorDeclaration;
-import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelKind;
-import com.ashigeru.lang.java.model.syntax.Modifier;
-import com.ashigeru.lang.java.model.syntax.ModifierKind;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.syntax.VariableDeclarator;
+import com.asakusafw.utils.java.model.syntax.Attribute;
+import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
+import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelKind;
+import com.asakusafw.utils.java.model.syntax.Modifier;
+import com.asakusafw.utils.java.model.syntax.ModifierKind;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 
 /**
  * ツリー探索用のユーティリティ。

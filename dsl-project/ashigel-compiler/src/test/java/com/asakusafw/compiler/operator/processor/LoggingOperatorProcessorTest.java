@@ -21,9 +21,9 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link LoggingOperatorProcessor}.

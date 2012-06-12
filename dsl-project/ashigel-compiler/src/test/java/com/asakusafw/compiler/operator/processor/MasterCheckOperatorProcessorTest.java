@@ -24,9 +24,9 @@ import com.asakusafw.compiler.operator.model.MockFoo;
 import com.asakusafw.compiler.operator.model.MockHoge;
 import com.asakusafw.compiler.operator.model.MockKeyValue1;
 import com.asakusafw.compiler.operator.model.MockKeyValue2;
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link MasterCheckOperatorProcessor}.

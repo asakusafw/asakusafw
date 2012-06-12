@@ -26,8 +26,6 @@
 	<properties>
 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 		<mysql.jdbc.version>5.1.20</mysql.jdbc.version>
-		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
-		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.configuration.version>1.8</commons.configuration.version>
 		<commons.io.version>2.3</commons.io.version>
@@ -445,36 +443,6 @@ encoding/<project>=UTF-8
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-library</artifactId>
 				<version>${hamcrest.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>java-dom</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>javadoc-parser</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>jsr269-bridge</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>jsr199-testing</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.util</groupId>
-				<artifactId>collection</artifactId>
-				<version>${ashigeru.util.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.util</groupId>
-				<artifactId>simple-graph</artifactId>
-				<version>${ashigeru.util.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>mysql</groupId>

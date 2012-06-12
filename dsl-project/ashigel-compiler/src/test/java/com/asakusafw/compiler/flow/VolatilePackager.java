@@ -44,12 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.batch.MockEmitter;
-import com.ashigeru.lang.java.jsr199.testing.VolatileClassFile;
-import com.ashigeru.lang.java.jsr199.testing.VolatileClassOutputManager;
-import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
-import com.ashigeru.lang.java.jsr199.testing.VolatileResourceFile;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.jsr199.testing.VolatileClassFile;
+import com.asakusafw.utils.java.jsr199.testing.VolatileClassOutputManager;
+import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
+import com.asakusafw.utils.java.jsr199.testing.VolatileResourceFile;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * メモリ上に構成物を展開するパッケージャ。

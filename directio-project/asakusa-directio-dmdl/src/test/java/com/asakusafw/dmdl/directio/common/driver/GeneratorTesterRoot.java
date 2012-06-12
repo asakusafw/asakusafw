@@ -52,10 +52,10 @@ import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceResource;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
-import com.ashigeru.lang.java.jsr199.testing.VolatileCompiler;
-import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
+import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Testing utilities for this project.

@@ -18,9 +18,9 @@ package com.asakusafw.dmdl.java;
 import java.util.Locale;
 
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.util.Emitter;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.util.Emitter;
 
 /**
  * Configurations for DMDL Java emitter.

@@ -40,8 +40,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simple-graph</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

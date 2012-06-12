@@ -60,7 +60,7 @@ import com.asakusafw.vocabulary.operator.MasterBranch;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * フローグラフを書き換えてJoinを最適化する。

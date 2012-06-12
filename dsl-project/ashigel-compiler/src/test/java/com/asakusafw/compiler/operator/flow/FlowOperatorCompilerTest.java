@@ -22,12 +22,12 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.operator.OperatorCompilerTestRoot;
 import com.asakusafw.compiler.operator.model.MockHoge;
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link FlowOperatorCompiler}.

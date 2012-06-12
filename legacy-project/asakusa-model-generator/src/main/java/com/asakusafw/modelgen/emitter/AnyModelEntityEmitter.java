@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.modelgen.model.ModelDescription;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * 利用可能な任意のモデルを出力する。
