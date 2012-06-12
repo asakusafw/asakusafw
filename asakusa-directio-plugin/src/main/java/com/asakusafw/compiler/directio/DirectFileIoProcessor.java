@@ -18,6 +18,7 @@ package com.asakusafw.compiler.directio;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,10 @@ import com.ashigeru.lang.java.model.util.Models;
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(DirectFileIoProcessor.class);
+
+    private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern";
+
+    private static final String METHOD_ORDER = "getOrder";
 
     private static final String MODULE_NAME = "directio";
 
@@ -121,15 +126,18 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         DirectFileOutputDescription desc = extract(output);
         DataClass dataType = getEnvironment().getDataClasses().load(desc.getModelType());
         String pattern = desc.getResourcePattern();
+        List<CompiledResourcePattern> compiledPattern;
         try {
-            OutputPattern.compileResourcePattern(pattern, dataType);
+            compiledPattern = OutputPattern.compileResourcePattern(pattern, dataType);
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
                     "出力リソース名のパターンが不正です ({1}) [{0}]",
                     e.getMessage(),
                     desc.getClass().getName());
             valid = false;
+            compiledPattern = Collections.emptyList();
         }
+
         List<String> orders = desc.getOrder();
         try {
             OutputPattern.compileOrder(orders, dataType);
@@ -140,6 +148,38 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                     desc.getClass().getName());
             valid = false;
         }
+
+        Set<OutputPattern.SourceKind> kinds = pickSourceKinds(compiledPattern);
+        if (kinds.contains(OutputPattern.SourceKind.ENVIRONMENT)) {
+            if (kinds.contains(OutputPattern.SourceKind.PROPERTY)) {
+                getEnvironment().error(
+                        "出力リソース名にワイルドカードを含む場合、プロパティ ('{'name'}') は指定できません"
+                        + " ({1}.{2}()): {0}",
+                        pattern,
+                        desc.getClass().getName(),
+                        METHOD_RESOURCE_PATTERN);
+                valid = false;
+            }
+            if (kinds.contains(OutputPattern.SourceKind.RANDOM)) {
+                getEnvironment().error(
+                        "出力リソース名にワイルドカードを含む場合、ランダム ([m..n]) は指定できません"
+                        + " ({1}.{2}()): {0}",
+                        pattern,
+                        desc.getClass().getName(),
+                        METHOD_RESOURCE_PATTERN);
+                valid = false;
+            }
+            if (orders.isEmpty() == false) {
+                getEnvironment().error(
+                        "出力リソース名にワイルドカードを含む場合、出力順序は指定できません"
+                        + " ({1}.{2}()): {0}",
+                        pattern,
+                        desc.getClass().getName(),
+                        METHOD_ORDER);
+                valid = false;
+            }
+        }
+
         valid &= validateFormat(desc.getClass(), desc.getModelType(), desc.getFormat());
         return valid;
     }
@@ -329,19 +369,38 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             DataClass dataType = getEnvironment().getDataClasses().load(desc.getModelType());
             List<CompiledResourcePattern> namingInfo =
                 OutputPattern.compileResourcePattern(desc.getResourcePattern(), dataType);
-            List<CompiledOrder> orderingInfo = OutputPattern.compileOrder(desc.getOrder(), dataType);
-            String outputName = output.getDescription().getName();
-            Name naming = namingEmitter.emit(outputName, slots.size() + 1, dataType, namingInfo);
-            Name ordering = orderingEmitter.emit(outputName, slots.size() + 1, dataType, orderingInfo);
-            Slot slot = new Slot(
-                    outputName,
-                    output.getSources(),
-                    Models.toName(f, desc.getModelType().getName()),
-                    desc.getBasePath(),
-                    Models.toName(f, desc.getFormat().getName()),
-                    naming,
-                    ordering);
-            slots.add(slot);
+            Set<OutputPattern.SourceKind> kinds = pickSourceKinds(namingInfo);
+            if (kinds.contains(OutputPattern.SourceKind.ENVIRONMENT)) {
+                assert kinds.contains(OutputPattern.SourceKind.PROPERTY) == false;
+                assert kinds.contains(OutputPattern.SourceKind.RANDOM) == false;
+                assert desc.getOrder().isEmpty();
+                String outputName = output.getDescription().getName();
+                Slot slot = new Slot(
+                        outputName,
+                        output.getSources(),
+                        Models.toName(f, desc.getModelType().getName()),
+                        desc.getBasePath(),
+                        desc.getResourcePattern(),
+                        Models.toName(f, desc.getFormat().getName()),
+                        null,
+                        null);
+                slots.add(slot);
+            } else {
+                List<CompiledOrder> orderingInfo = OutputPattern.compileOrder(desc.getOrder(), dataType);
+                String outputName = output.getDescription().getName();
+                Name naming = namingEmitter.emit(outputName, slots.size() + 1, dataType, namingInfo);
+                Name ordering = orderingEmitter.emit(outputName, slots.size() + 1, dataType, orderingInfo);
+                Slot slot = new Slot(
+                        outputName,
+                        output.getSources(),
+                        Models.toName(f, desc.getModelType().getName()),
+                        desc.getBasePath(),
+                        desc.getResourcePattern(),
+                        Models.toName(f, desc.getFormat().getName()),
+                        naming,
+                        ordering);
+                slots.add(slot);
+            }
         }
         if (slots.isEmpty()) {
             return Collections.emptyList();
@@ -361,6 +420,15 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         default:
             return false;
         }
+    }
+
+    private Set<OutputPattern.SourceKind> pickSourceKinds(List<CompiledResourcePattern> fragments) {
+        assert fragments != null;
+        Set<OutputPattern.SourceKind> results = EnumSet.noneOf(OutputPattern.SourceKind.class);
+        for (CompiledResourcePattern fragment : fragments) {
+            results.add(fragment.getKind());
+        }
+        return results;
     }
 
     private DirectFileInputDescription extract(InputDescription description) {

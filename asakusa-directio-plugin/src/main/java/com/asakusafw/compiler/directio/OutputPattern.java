@@ -47,6 +47,8 @@ public final class OutputPattern {
 
     static final int CHAR_BLOCK_CLOSE = ']';
 
+    static final int CHAR_WILDCARD = '*';
+
     static final int CHAR_SEPARATE_IN_BLOCK = ':';
 
     static final int CHAR_VARIABLE_START = '$';
@@ -137,6 +139,9 @@ public final class OutputPattern {
                 Formatted rand = cursor.consumeRandomNumber();
                 RandomNumber source = (RandomNumber) rand.original;
                 results.add(new CompiledResourcePattern(source, Format.NATURAL, null));
+            } else if (cursor.isWildcard()) {
+                cursor.consumeWildcard();
+                results.add(new CompiledResourcePattern());
             } else {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Invalid character: {0}",
@@ -257,6 +262,13 @@ public final class OutputPattern {
                 return false;
             }
             return cbuf[position] == CHAR_BLOCK_OPEN;
+        }
+
+        boolean isWildcard() {
+            if (isEof()) {
+                return false;
+            }
+            return cbuf[position] == CHAR_WILDCARD;
         }
 
         void rewind() {
@@ -406,6 +418,11 @@ public final class OutputPattern {
             return new Formatted(new RandomNumber(lower, upper), format);
         }
 
+        void consumeWildcard() {
+            assert isWildcard();
+            advance();
+        }
+
         private void advance() {
             position = Math.min(position + 1, cbuf.length);
         }
@@ -441,6 +458,7 @@ public final class OutputPattern {
     /**
      * The compiled resource pattern.
      * @since 0.2.5
+     * @version 0.4.0
      */
     public static final class CompiledResourcePattern {
 
@@ -451,6 +469,17 @@ public final class OutputPattern {
         private final Format format;
 
         private final String argument;
+
+        /**
+         * Creates a new wildcard.
+         * @since 0.4.0
+         */
+        public CompiledResourcePattern() {
+            this.kind = SourceKind.ENVIRONMENT;
+            this.source = null;
+            this.format = Format.PLAIN;
+            this.argument = null;
+        }
 
         /**
          * Creates a new literal.
@@ -612,6 +641,7 @@ public final class OutputPattern {
     /**
      * The source kind.
      * @since 0.2.6
+     * @version 0.4.0
      */
     public enum SourceKind {
 
@@ -631,6 +661,12 @@ public final class OutputPattern {
          * @see RandomNumber
          */
         RANDOM,
+
+        /**
+         * Source is from current Environment ID.
+         * @since 0.4.0
+         */
+        ENVIRONMENT,
     }
 
     /**

@@ -25,6 +25,16 @@ import com.asakusafw.runtime.io.util.WritableRawComparableTuple;
 public abstract class DirectOutputOrder extends WritableRawComparableTuple {
 
     /**
+     * An empty order.
+     */
+    public static final DirectOutputOrder EMPTY = new DirectOutputOrder() {
+        @Override
+        public void set(Object object) {
+            return;
+        }
+    };
+
+    /**
      * Creates a new instance.
      * @param objects element objects
      * @throws IllegalArgumentException if some parameters were {@code null}

@@ -24,6 +24,7 @@ import com.asakusafw.runtime.model.DataModel;
 
 /**
  * An abstract implementation of each mapper class for direct output.
+ * This writes output for {@link DirectOutputReducer}.
  * @param <T> target data type
  * @since 0.2.5
  */

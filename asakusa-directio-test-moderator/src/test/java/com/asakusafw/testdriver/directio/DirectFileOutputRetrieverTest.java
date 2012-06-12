@@ -108,6 +108,60 @@ public class DirectFileOutputRetrieverTest {
     }
 
     /**
+     * truncate with placeholders.
+     * @throws Exception if failed
+     */
+    @Test
+    public void truncate_placeholders() throws Exception {
+        profile.add("root", HadoopDataSource.class, "/");
+        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.put();
+
+        DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
+
+        File file = put("base/hoge.txt", "Hello, world!");
+        File deep = put("base/d/e/e/p/hoge.txt", "Hello, world!");
+        File outer = put("outer/hoge.txt", "Hello, world!");
+        assertThat(file.exists(), is(true));
+        assertThat(deep.exists(), is(true));
+        assertThat(outer.exists(), is(true));
+
+        testee.truncate(
+            new MockOutputDescription("base", "output-{id}", format),
+            profile.getTextContext());
+        assertThat(file.exists(), is(false));
+        assertThat(deep.exists(), is(false));
+        assertThat(outer.exists(), is(true));
+    }
+
+    /**
+     * truncate with wildcard.
+     * @throws Exception if failed
+     */
+    @Test
+    public void truncate_wildcard() throws Exception {
+        profile.add("root", HadoopDataSource.class, "/");
+        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.put();
+
+        DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
+
+        File file = put("base/hoge.txt", "Hello, world!");
+        File deep = put("base/d/e/e/p/hoge.txt", "Hello, world!");
+        File outer = put("outer/hoge.txt", "Hello, world!");
+        assertThat(file.exists(), is(true));
+        assertThat(deep.exists(), is(true));
+        assertThat(outer.exists(), is(true));
+
+        testee.truncate(
+            new MockOutputDescription("base", "output-*", format),
+            profile.getTextContext());
+        assertThat(file.exists(), is(false));
+        assertThat(deep.exists(), is(false));
+        assertThat(outer.exists(), is(true));
+    }
+
+    /**
      * truncate empty target.
      * @throws Exception if failed
      */
@@ -262,6 +316,32 @@ public class DirectFileOutputRetrieverTest {
         DataModelSource input = testee.createSource(
                 new MockTextDefinition(),
                 new MockOutputDescription("base", "output-{id}.txt", format),
+                profile.getTextContext());
+        List<String> list = get(input);
+        assertThat(list.size(), is(3));
+        assertThat(list, hasItem("Hello1"));
+        assertThat(list, hasItem("Hello2"));
+        assertThat(list, hasItem("Hello3"));
+    }
+
+    /**
+     * output with wildcard.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createInput_wildcard() throws Exception {
+        profile.add("root", HadoopDataSource.class, "/");
+        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.put();
+
+        put("base/output-1.txt", "Hello1");
+        put("base/output-2.txt", "Hello2");
+        put("base/output-3.txt", "Hello3");
+
+        DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
+        DataModelSource input = testee.createSource(
+                new MockTextDefinition(),
+                new MockOutputDescription("base", "output-*.txt", format),
                 profile.getTextContext());
         List<String> list = get(input);
         assertThat(list.size(), is(3));

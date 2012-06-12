@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -207,6 +208,24 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * wildcard.
+     * @throws Exception if failed
+     */
+    @Test
+    public void wildcard() throws Exception {
+        put("input/input.txt", "1Hello", "2Hello", "3Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output-*.txt"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output-*.txt");
+        assertThat(list.size(), is(3));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+    }
+
+    /**
      * use variables.
      * @throws Exception if failed
      */
@@ -233,6 +252,68 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * use variables.
+     * @throws Exception if failed
+     */
+    @Test
+    public void variable_wildcard() throws Exception {
+        put("input/input-1.txt", "1Hello");
+        put("input/input-2.txt", "2Hello");
+        put("input/input-3.txt", "3Hello");
+        put("input/other.txt", "4Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "${input-dir}", "${input-pattern}"));
+        Out<Line1> out = tester.output("out1", new Output(format, "${output-dir}", "${output-pattern}-*.txt"));
+
+        tester.hadoop.getVariables().defineVariable("input-dir", "input");
+        tester.hadoop.getVariables().defineVariable("input-pattern", "input-*");
+        tester.hadoop.getVariables().defineVariable("output-dir", "output");
+        tester.hadoop.getVariables().defineVariable("output-pattern", "output");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output-*.txt");
+        assertThat(list.size(), is(3));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+    }
+
+    /**
+     * empty input.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_empty() throws Exception {
+        put("input/input-1.txt");
+        put("input/input-2.txt");
+        put("input/input-3.txt");
+        put("input/other.txt", "Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output-1", "output.txt"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<Path> list = find("output/output-*.txt");
+        assertThat(list.toString(), list.size(), is(0));
+    }
+
+    /**
+     * empty input.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_empty_noreduce() throws Exception {
+        put("input/input-1.txt");
+        put("input/input-2.txt");
+        put("input/input-3.txt");
+        put("input/other.txt", "Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output-*", "output.txt"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<Path> list = find("output/output-*.txt");
+        assertThat(list.toString(), list.size(), is(0));
+    }
+
+    /**
      * dual in/out.
      * @throws Exception if failed
      */
@@ -255,6 +336,50 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * dual in/out.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dual_io_noreduce() throws Exception {
+        put("input/input-1.txt", "Hello1");
+        put("input/input-2.txt", "Hello2");
+        In<Line1> in1 = tester.input("in1",
+                new Input(Line1.class, format, "input", "input-1.txt", DataSize.LARGE));
+        In<Line2> in2 = tester.input("in2",
+                new Input(Line2.class, format, "input", "input-2.txt", DataSize.TINY));
+        Out<Line1> out1 = tester.output("out1",
+                new Output(Line1.class, format, "output-1", "output-*.txt"));
+        Out<Line2> out2 = tester.output("out2",
+                new Output(Line2.class, format, "output-2", "output-*.txt"));
+        assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
+
+        assertThat(get("output-1/output-*.txt"), is(list("Hello1")));
+        assertThat(get("output-2/output-*.txt"), is(list("Hello2")));
+    }
+
+    /**
+     * dual in/out.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dual_io_mixed() throws Exception {
+        put("input/input-1.txt", "Hello1");
+        put("input/input-2.txt", "Hello2");
+        In<Line1> in1 = tester.input("in1",
+                new Input(Line1.class, format, "input", "input-1.txt", DataSize.LARGE));
+        In<Line2> in2 = tester.input("in2",
+                new Input(Line2.class, format, "input", "input-2.txt", DataSize.TINY));
+        Out<Line1> out1 = tester.output("out1",
+                new Output(Line1.class, format, "output-1", "output-1.txt"));
+        Out<Line2> out2 = tester.output("out2",
+                new Output(Line2.class, format, "output-2", "output-*.txt"));
+        assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
+
+        assertThat(get("output-1/output-*.txt"), is(list("Hello1")));
+        assertThat(get("output-2/output-*.txt"), is(list("Hello2")));
+    }
+
+    /**
      * input is missing.
      * @throws Exception if failed
      */
@@ -273,20 +398,35 @@ public class DirectFileIoProcessorRunTest {
         return new Path("target/testing/directio-fs", target);
     }
 
+    private List<Path> find(String target) throws IOException {
+        FileSystem fs = FileSystem.get(tester.hadoop.getConfiguration());
+        FileStatus[] list = fs.globStatus(getPath(target));
+        if (list == null) {
+            return Collections.emptyList();
+        }
+        List<Path> results = new ArrayList<Path>();
+        for (FileStatus file : list) {
+            results.add(file.getPath());
+        }
+        return results;
+    }
+
     private List<String> get(String target) throws IOException {
         FileSystem fs = FileSystem.get(tester.hadoop.getConfiguration());
-        InputStream input = fs.open(getPath(target));
-        try {
-            Scanner s = new Scanner(new InputStreamReader(input, "UTF-8"));
-            List<String> results = new ArrayList<String>();
-            while (s.hasNextLine()) {
-                results.add(s.nextLine());
+        List<String> results = new ArrayList<String>();
+        for (Path path : find(target)) {
+            InputStream input = fs.open(path);
+            try {
+                Scanner s = new Scanner(new InputStreamReader(input, "UTF-8"));
+                while (s.hasNextLine()) {
+                    results.add(s.nextLine());
+                }
+                s.close();
+            } finally {
+                input.close();
             }
-            s.close();
-            return results;
-        } finally {
-            input.close();
         }
+        return results;
     }
 
     private void put(String target, String... contents) throws IOException {
