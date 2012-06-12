@@ -182,7 +182,7 @@ public final class DirectBatchCompiler {
         config.setGraphRewriters(new SpiFlowGraphRewriterRepository());
         config.setFactory(Models.getModelFactory());
         config.setFlowElements(new SpiFlowElementProcessorRepository());
-        config.setLinkingResources(DirectFlowCompiler.createRepositories(extraResources));
+        config.setLinkingResources(DirectFlowCompiler.createRepositories(serviceClassLoader, extraResources));
         config.setOutputDirectory(outputDirectory);
         config.setRootLocation(clusterWorkingLocation);
         config.setRootPackageName(basePackageName);

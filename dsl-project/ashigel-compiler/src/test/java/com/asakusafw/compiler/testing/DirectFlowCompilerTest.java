@@ -283,6 +283,102 @@ public class DirectFlowCompilerTest {
         assertThat(results.get(0).getValue(), is(31));
     }
 
+    /**
+     * compile with a submodule.
+     * @throws Exception if failed
+     */
+    @Test
+    public void compileWithSubmoduleJar() throws Exception {
+        List<File> classpath = Arrays.asList(new File[] {
+                DirectFlowCompiler.toLibraryPath(ValueOption.class),
+                DirectFlowCompiler.toLibraryPath(Ex1.class),
+        });
+        File jar = copy("submodule.jar");
+        ClassLoader cl = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+
+        TestInput<Ex1> in = tester.input(Ex1.class, "ex1");
+        TestOutput<Ex1> out = tester.output(Ex1.class, "ex1");
+
+        JobflowInfo info = DirectFlowCompiler.compile(
+                tester.analyzeFlow(new UpdateFlowSimple(in.flow(), out.flow())),
+                "simple",
+                "simple",
+                "com.example",
+                Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
+                temporary.newFolder(),
+                classpath,
+                cl,
+                FlowCompilerOptions.load(System.getProperties()));
+
+        File compiled = info.getPackageFile();
+        load(compiled, "com.example.Submodule");
+    }
+
+    /**
+     * compile with a submodule.
+     * @throws Exception if failed
+     */
+    @Test
+    public void compileWithSubmoduleFolder() throws Exception {
+        List<File> classpath = Arrays.asList(new File[] {
+                DirectFlowCompiler.toLibraryPath(ValueOption.class),
+                DirectFlowCompiler.toLibraryPath(Ex1.class),
+        });
+        File jar = extract("submodule.jar");
+        ClassLoader cl = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+
+        TestInput<Ex1> in = tester.input(Ex1.class, "ex1");
+        TestOutput<Ex1> out = tester.output(Ex1.class, "ex1");
+
+        JobflowInfo info = DirectFlowCompiler.compile(
+                tester.analyzeFlow(new UpdateFlowSimple(in.flow(), out.flow())),
+                "simple",
+                "simple",
+                "com.example",
+                Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
+                temporary.newFolder(),
+                classpath,
+                cl,
+                FlowCompilerOptions.load(System.getProperties()));
+
+        File compiled = info.getPackageFile();
+        load(compiled, "com.example.Submodule");
+    }
+
+    /**
+     * compile with duplicated class libraries.
+     * @throws Exception if failed
+     */
+    @Test
+    public void compileWithSubmoduleDuplicated() throws Exception {
+        File jar = copy("submodule.jar");
+        List<File> classpath = Arrays.asList(new File[] {
+                DirectFlowCompiler.toLibraryPath(ValueOption.class),
+                DirectFlowCompiler.toLibraryPath(Ex1.class),
+                DirectFlowCompiler.toLibraryPath(ValueOption.class),
+                DirectFlowCompiler.toLibraryPath(Ex1.class),
+                jar,
+        });
+        ClassLoader cl = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+
+        TestInput<Ex1> in = tester.input(Ex1.class, "ex1");
+        TestOutput<Ex1> out = tester.output(Ex1.class, "ex1");
+
+        JobflowInfo info = DirectFlowCompiler.compile(
+                tester.analyzeFlow(new UpdateFlowSimple(in.flow(), out.flow())),
+                "simple",
+                "simple",
+                "com.example",
+                Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
+                temporary.newFolder(),
+                classpath,
+                cl,
+                FlowCompilerOptions.load(System.getProperties()));
+
+        File compiled = info.getPackageFile();
+        load(compiled, "com.example.Submodule");
+    }
+
     private Class<?> load(File file, String className) {
         try {
             URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
