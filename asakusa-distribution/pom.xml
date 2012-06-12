@@ -28,23 +28,6 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>create-distribution-exclude-lib</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/resources/assemblies/dev-exclude-lib.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-directio-exclude-lib.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-thundergate-db-exclude-lib.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-thundergate-hc-exclude-lib.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-windgate-exclude-lib.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-cleaner-exclude-lib.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
 						<id>default-cli</id>
 						<goals>
 							<goal>single</goal>
@@ -53,8 +36,7 @@
 							<descriptors>
 								<descriptor>src/main/resources/assemblies/dev.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-directio.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-thundergate-db.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-thundergate-hc.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-cleaner.xml</descriptor>
 							</descriptors>
@@ -63,10 +45,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- FIXME avoid maven assembly plugin's bug -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-components-for-assembly-plugin-bug</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/components</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/assemblies/components</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+
+		<!-- Core -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-runtime</artifactId>
@@ -74,9 +81,13 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-operation-tools</artifactId>
+			<artifactId>asakusa-test-driver</artifactId>
 			<version>${project.version}</version>
+			<classifier>dist</classifier>
 		</dependency>
+
+
+		<!-- ThunderGate -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-thundergate</artifactId>
@@ -84,18 +95,27 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-thundergate-runtime</artifactId>
+			<artifactId>asakusa-thundergate</artifactId>
 			<version>${project.version}</version>
+			<classifier>dist</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-cleaner</artifactId>
+			<artifactId>asakusa-thundergate-runtime</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<!-- WindGate -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-windgate-bootstrap</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-plugin</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -109,6 +129,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-windgate-stream</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -117,6 +143,16 @@
 			<artifactId>asakusa-windgate-jdbc</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<!-- Direct I/O -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-directio-plugin</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- YAESS -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-yaess-bootstrap</artifactId>
@@ -124,8 +160,20 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-bootstrap</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-yaess-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-core</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -152,7 +200,48 @@
 			<artifactId>asakusa-yaess-tools</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
 
+		<!-- Operation -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-operation-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-operation-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- Development -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-development-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- Legacy -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- 3rd party libraries -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
