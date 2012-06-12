@@ -207,6 +207,20 @@ public class DirectFileIoProcessorTest {
     }
 
     /**
+     * output with wildcard.
+     */
+    @Test
+    public void validate_output_wildcard() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "*.txt"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(not(nullValue())));
+    }
+
+    /**
      * output ordering.
      */
     @Test
@@ -336,6 +350,51 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "output.txt", "?"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * invalid output resource.
+     */
+    @Test
+    public void invalid_output_wildcard_and_property() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1",
+                new Output(Line1.class, format, "output", "{value}-*"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * invalid output resource.
+     */
+    @Test
+    public void invalid_output_wildcard_and_random() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1",
+                new Output(Line1.class, format, "output", "*-[1..10]"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * invalid output resource.
+     */
+    @Test
+    public void invalid_output_wildcard_and_order() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1",
+                new Output(Line1.class, format, "output", "*.csv", "position"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);

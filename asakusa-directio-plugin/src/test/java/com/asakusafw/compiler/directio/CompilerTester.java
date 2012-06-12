@@ -146,7 +146,7 @@ public class CompilerTester implements TestRule {
                 graph,
                 "testing",
                 description.getClass().getName(),
-                "com.example",
+                "com.asakusafw.example",
                 hadoop.toPath(path("runtime", "stages")),
                 new File("target/localwork", testName),
                 classPath,
@@ -172,7 +172,7 @@ public class CompilerTester implements TestRule {
                 driver.getJobFlowClass().getGraph(),
                 "testing",
                 driver.getJobFlowClass().getConfig().name(),
-                "com.example",
+                "com.asakusafw.example",
                 hadoop.toPath(path("runtime", "jobflow")),
                 new File("target/localwork", testName),
                 classPath,
@@ -195,7 +195,7 @@ public class CompilerTester implements TestRule {
         List<File> classPath = buildClassPath(description);
         BatchInfo info = DirectBatchCompiler.compile(
                 description,
-                "com.example",
+                "com.asakusafw.example",
                 hadoop.toPath(path("runtime", "batch")),
                 new File("target/CompilerTester/" + testName + "/output"),
                 new File("target/CompilerTester/" + testName + "/build"),

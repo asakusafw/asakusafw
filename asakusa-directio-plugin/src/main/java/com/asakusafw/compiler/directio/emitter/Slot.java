@@ -36,7 +36,9 @@ public class Slot {
 
     final Name valueType;
 
-    final String path;
+    final String basePath;
+
+    final String resourcePath;
 
     final Name formatClass;
 
@@ -49,7 +51,8 @@ public class Slot {
      * @param name the name of this slot
      * @param sources source information
      * @param valueType name of value type
-     * @param path target base path
+     * @param basePath target base path
+     * @param resourcePath target resource path
      * @param formatClass {@link DataFormat} class name
      * @param namingClass {@link StringTemplate} class name
      * @param orderClass {@link DirectOutputOrder} class name
@@ -58,14 +61,17 @@ public class Slot {
             String name,
             List<SourceInfo> sources,
             Name valueType,
-            String path,
+            String basePath,
+            String resourcePath,
             Name formatClass,
             Name namingClass,
             Name orderClass) {
+        assert (namingClass == null) == (orderClass == null);
         this.name = name;
         this.sources = sources;
         this.valueType = valueType;
-        this.path = path;
+        this.basePath = basePath;
+        this.resourcePath = resourcePath;
         this.formatClass = formatClass;
         this.namingClass = namingClass;
         this.orderClass = orderClass;

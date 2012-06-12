@@ -43,6 +43,7 @@ import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.directio.AbstractDirectOutputKey;
 import com.asakusafw.runtime.stage.directio.AbstractDirectOutputMapper;
 import com.asakusafw.runtime.stage.directio.AbstractDirectOutputValue;
+import com.asakusafw.runtime.stage.directio.AbstractNoReduceDirectOutputMapper;
 import com.asakusafw.runtime.stage.directio.DirectOutputReducer;
 import com.asakusafw.runtime.stage.directio.DirectOutputSpec;
 import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
@@ -111,7 +112,31 @@ public class StageEmitter {
         LOG.debug("Start preparing output stage for Direct I/O epilogue: batch={}, flow={}",
                 environment.getBatchId(),
                 environment.getFlowId());
+        if (requiresReducer(slots)) {
+            return emitClientWithReducer(slots, outputLocation);
+        } else {
+            return emitClientWithoutReducer(slots, outputLocation);
+        }
+    }
 
+    private boolean requiresReducer(List<Slot> slots) {
+        assert slots != null;
+        for (Slot slot : slots) {
+            if (requiresReducer(slot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean requiresReducer(Slot slot) {
+        assert slot != null;
+        return slot.orderClass != null;
+    }
+
+    private CompiledStage emitClientWithReducer(List<Slot> slots, Location outputLocation) throws IOException {
+        assert slots != null;
+        assert outputLocation != null;
         LOG.debug("Emitting shuffle key for Direct I/O epilogue");
         Name key = emitKey(slots);
 
@@ -127,8 +152,26 @@ public class StageEmitter {
         LOG.debug("Emitting mappers for Direct I/O epilogue");
         List<CompiledSlot> compiledSlots = emitMappers(slots, key, value);
 
-        LOG.debug("Emitting stage client for Direct I/O epilogue");
+        LOG.debug("Emitting stage client (with reducer) for Direct I/O epilogue");
         Name client = emitClient(compiledSlots, key, value, grouping, ordering, outputLocation);
+
+        LOG.debug("Finish preparing output stage for Direct I/O epilogue: batch={}, flow={}, class={}", new Object[] {
+                environment.getBatchId(),
+                environment.getFlowId(),
+                client.toNameString(),
+        });
+        return new CompiledStage(client, Naming.getEpilogueName(moduleId));
+    }
+
+    private CompiledStage emitClientWithoutReducer(List<Slot> slots, Location outputLocation) throws IOException {
+        assert slots != null;
+        assert outputLocation != null;
+
+        LOG.debug("Emitting mappers for Direct I/O epilogue");
+        List<CompiledSlot> compiledSlots = emitMappers(slots, null, null);
+
+        LOG.debug("Emitting stage client (without reducer) for Direct I/O epilogue");
+        Name client = emitClient(compiledSlots, null, null, null, null, outputLocation);
 
         LOG.debug("Finish preparing output stage for Direct I/O epilogue: batch={}, flow={}, class={}", new Object[] {
                 environment.getBatchId(),
@@ -169,21 +212,31 @@ public class StageEmitter {
                 key);
     }
 
-    private List<CompiledSlot> emitMappers(List<Slot> slots, Name key, Name value) throws IOException {
+    private List<CompiledSlot> emitMappers(List<Slot> slots, Name keyOrNull, Name valueOrNull) throws IOException {
+        assert slots != null;
         List<CompiledSlot> results = new ArrayList<CompiledSlot>();
         int index = 0;
         for (Slot slot : slots) {
-            Name mapper = emitMapper(slot, index, key, value);
+            Name mapper;
+            if (requiresReducer(slot)) {
+                assert keyOrNull != null;
+                assert valueOrNull != null;
+                mapper = emitShuffleMapper(slot, index, keyOrNull, valueOrNull);
+            } else {
+                mapper = emitOutputMapper(slot, index);
+            }
             results.add(new CompiledSlot(slot, mapper));
             index++;
         }
         return results;
     }
 
-    private Name emitMapper(Slot slot, int index, Name key, Name value) throws IOException {
+    private Name emitShuffleMapper(Slot slot, int index, Name key, Name value) throws IOException {
         assert slot != null;
         assert key != null;
         assert value != null;
+        assert index >= 0;
+        assert requiresReducer(slot);
         ModelFactory f = environment.getModelFactory();
         SimpleName className = f.newSimpleName(Naming.getMapClass(index));
         ImportBuilder importer = new ImportBuilder(
@@ -193,12 +246,37 @@ public class StageEmitter {
         importer.resolvePackageMember(className);
         List<Expression> arguments = new ArrayList<Expression>();
         arguments.add(Models.toLiteral(f, index));
-        arguments.add(f.newClassLiteral(importer.toType(key)));
-        arguments.add(f.newClassLiteral(importer.toType(value)));
+        arguments.add(classLiteralOrNull(f, importer, key));
+        arguments.add(classLiteralOrNull(f, importer, value));
         return emitConstructorClass(
                 className,
                 f.newParameterizedType(
                         importer.toType(AbstractDirectOutputMapper.class),
+                        importer.toType(slot.valueType)),
+                importer,
+                arguments);
+    }
+
+    private Name emitOutputMapper(Slot slot, int index) throws IOException {
+        assert slot != null;
+        assert index >= 0;
+        assert requiresReducer(slot) == false;
+        ModelFactory f = environment.getModelFactory();
+        SimpleName className = f.newSimpleName(Naming.getMapClass(index));
+        ImportBuilder importer = new ImportBuilder(
+                f,
+                f.newPackageDeclaration(environment.getEpiloguePackageName(moduleId)),
+                Strategy.TOP_LEVEL);
+        importer.resolvePackageMember(className);
+        List<Expression> arguments = new ArrayList<Expression>();
+        arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
+        arguments.add(Models.toLiteral(f, slot.basePath));
+        arguments.add(Models.toLiteral(f, slot.resourcePath));
+        arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
+        return emitConstructorClass(
+                className,
+                f.newParameterizedType(
+                        importer.toType(AbstractNoReduceDirectOutputMapper.class),
                         importer.toType(slot.valueType)),
                 importer,
                 arguments);
@@ -217,15 +295,19 @@ public class StageEmitter {
         importer.resolvePackageMember(className);
         List<Expression> elements = new ArrayList<Expression>();
         for (Slot slot : slots) {
-            List<Expression> arguments = new ArrayList<Expression>();
-            arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
-            arguments.add(Models.toLiteral(f, slot.path));
-            arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
-            arguments.add(f.newClassLiteral(importer.toType(slot.namingClass)));
-            arguments.add(f.newClassLiteral(importer.toType(slot.orderClass)));
-            elements.add(new TypeBuilder(f, importer.toType(DirectOutputSpec.class))
-                .newObject(arguments)
-                .toExpression());
+            if (requiresReducer(slot)) {
+                List<Expression> arguments = new ArrayList<Expression>();
+                arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
+                arguments.add(Models.toLiteral(f, slot.basePath));
+                arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
+                arguments.add(f.newClassLiteral(importer.toType(slot.namingClass)));
+                arguments.add(f.newClassLiteral(importer.toType(slot.orderClass)));
+                elements.add(new TypeBuilder(f, importer.toType(DirectOutputSpec.class))
+                    .newObject(arguments)
+                    .toExpression());
+            } else {
+                elements.add(Models.toNullLiteral(f));
+            }
         }
         return emitConstructorClass(
                 className,
@@ -234,6 +316,16 @@ public class StageEmitter {
                 Collections.singletonList(f.newArrayCreationExpression(
                         (ArrayType) importer.toType(DirectOutputSpec[].class),
                         f.newArrayInitializer(elements))));
+    }
+
+    private Expression classLiteralOrNull(ModelFactory f, ImportBuilder importer, Name nameOrNull) {
+        assert f != null;
+        assert importer != null;
+        if (nameOrNull == null) {
+            return Models.toNullLiteral(f);
+        } else {
+            return f.newClassLiteral(importer.toType(nameOrNull));
+        }
     }
 
     private Name emitWithClass(String classNameString, Class<?> baseClass, Name argumentClassName) throws IOException {
@@ -248,7 +340,7 @@ public class StageEmitter {
                 Strategy.TOP_LEVEL);
         importer.resolvePackageMember(className);
         List<Expression> arguments = new ArrayList<Expression>();
-        arguments.add(f.newClassLiteral(importer.toType(argumentClassName)));
+        arguments.add(classLiteralOrNull(f, importer, argumentClassName));
         return emitConstructorClass(className, importer.toType(baseClass), importer, arguments);
     }
 
@@ -300,24 +392,30 @@ public class StageEmitter {
 
     private Name emitClient(
             List<CompiledSlot> compiledSlots,
-            Name key, Name value,
-            Name grouping, Name ordering, Location outputLocation) throws IOException {
+            Name keyOrNull, Name valueOrNull,
+            Name groupingOrNull, Name orderingOrNull,
+            Location outputLocation) throws IOException {
         assert compiledSlots != null;
-        assert key != null;
-        assert value != null;
-        assert grouping != null;
-        assert ordering != null;
         assert outputLocation != null;
-        Name partitioner = Models.toName(environment.getModelFactory(), Partitioner.class.getName().replace('$', '.'));
-        Name reducer = Models.toName(environment.getModelFactory(), DirectOutputReducer.class.getName());
+        Name partitionerOrNull;
+        Name reducerOrNull;
+        if (keyOrNull != null) {
+            partitionerOrNull = Models.toName(
+                    environment.getModelFactory(), Partitioner.class.getName().replace('$', '.'));
+            reducerOrNull = Models.toName(
+                    environment.getModelFactory(), DirectOutputReducer.class.getName());
+        } else {
+            partitionerOrNull = null;
+            reducerOrNull = null;
+        }
         Engine engine = new Engine(
                 environment,
                 moduleId,
                 compiledSlots,
                 outputLocation,
-                key, value,
-                grouping, ordering, partitioner,
-                reducer);
+                keyOrNull, valueOrNull,
+                groupingOrNull, orderingOrNull, partitionerOrNull,
+                reducerOrNull);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
@@ -413,7 +511,9 @@ public class StageEmitter {
             members.add(createStageOutputPath());
             members.add(createStageInputsMethod());
             members.add(createStageOutputsMethod());
-            members.addAll(createShuffleMethods());
+            if (key != null) {
+                members.addAll(createShuffleMethods());
+            }
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
@@ -507,36 +607,21 @@ public class StageEmitter {
 
         private List<MethodDeclaration> createShuffleMethods() {
             List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_SHUFFLE_KEY_CLASS,
-                    importer.toType(key)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_SHUFFLE_VALUE_CLASS,
-                    importer.toType(value)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_GROUPING_COMPARATOR_CLASS,
-                    importer.toType(grouping)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_SORT_COMPARATOR_CLASS,
-                    importer.toType(ordering)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_PARTITIONER_CLASS,
-                    importer.toType(partitioner)));
-            results.add(createClassLiteralMethod(
-                    AbstractStageClient.METHOD_REDUCER_CLASS,
-                    importer.toType(reducer)));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_SHUFFLE_KEY_CLASS, key));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_SHUFFLE_VALUE_CLASS, value));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_GROUPING_COMPARATOR_CLASS, grouping));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_SORT_COMPARATOR_CLASS, ordering));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_PARTITIONER_CLASS, partitioner));
+            results.add(createClassLiteralMethod(AbstractStageClient.METHOD_REDUCER_CLASS, reducer));
             return results;
         }
 
         private MethodDeclaration createClassLiteralMethod(
                 String methodName,
-                Type type) {
+                Name typeName) {
             assert methodName != null;
-            assert type != null;
-            return createValueMethod(
-                    methodName,
-                    t(Class.class, type),
-                    factory.newClassLiteral(type));
+            Type type = importer.toType(typeName);
+            return createValueMethod(methodName, t(Class.class, type), factory.newClassLiteral(type));
         }
 
         private MethodDeclaration createStageOutputsMethod() {
@@ -554,7 +639,7 @@ public class StageEmitter {
                 statements.add(new ExpressionBuilder(factory, list)
                     .method("add", new TypeBuilder(factory, t(StageOutput.class))
                         .newObject(
-                                Models.toLiteral(factory, origin.path),
+                                Models.toLiteral(factory, origin.basePath),
                                 factory.newClassLiteral(t(NullWritable.class)),
                                 valueType,
                                 factory.newClassLiteral(formatType))

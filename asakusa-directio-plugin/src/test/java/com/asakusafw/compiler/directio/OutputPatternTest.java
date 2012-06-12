@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.directio.OutputPattern.CompiledOrder;
 import com.asakusafw.compiler.directio.OutputPattern.CompiledResourcePattern;
+import com.asakusafw.compiler.directio.OutputPattern.SourceKind;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
 
@@ -118,6 +119,17 @@ public class OutputPatternTest {
     }
 
     /**
+     * resource pattern with wildcard.
+     */
+    @Test
+    public void resource_wildcard() {
+        List<CompiledResourcePattern> pattern = OutputPattern.compileResourcePattern(
+                "*", dataClass);
+        assertThat(pattern.size(), is(1));
+        assertThat(pattern.get(0).getKind(), is(SourceKind.ENVIRONMENT));
+    }
+
+    /**
      * resource pattern with variable.
      */
     @Test
@@ -147,27 +159,32 @@ public class OutputPatternTest {
     @Test
     public void resource_complex() {
         List<CompiledResourcePattern> pattern = OutputPattern.compileResourcePattern(
-                "{stringValue}/${category}-{dateValue:yyyy-MM-dd}-[10..99].csv", dataClass);
-        assertThat(pattern.size(), is(6));
+                "{stringValue}/${category}-{dateValue:yyyy-MM-dd}-[10..99]-*.csv", dataClass);
+        assertThat(pattern.size(), is(8));
 
         assertThat(pattern.get(0).getTarget().getName(), is("stringValue"));
         assertThat(pattern.get(0).getFormat(), is(Format.NATURAL));
 
-        assertThat(pattern.get(1).getFormat(), is(Format.PLAIN));
+        assertThat(pattern.get(1).getKind(), is(SourceKind.NOTHING));
         assertThat(pattern.get(1).getArgument(), is("/${category}-"));
 
         assertThat(pattern.get(2).getTarget().getName(), is("dateValue"));
         assertThat(pattern.get(2).getFormat(), is(Format.DATE));
         assertThat(pattern.get(2).getArgument(), is("yyyy-MM-dd"));
 
-        assertThat(pattern.get(3).getFormat(), is(Format.PLAIN));
+        assertThat(pattern.get(3).getKind(), is(SourceKind.NOTHING));
         assertThat(pattern.get(3).getArgument(), is("-"));
 
         assertThat(pattern.get(4).getRandomNumber().getLowerBound(), is(10));
         assertThat(pattern.get(4).getRandomNumber().getUpperBound(), is(99));
 
         assertThat(pattern.get(5).getFormat(), is(Format.PLAIN));
-        assertThat(pattern.get(5).getArgument(), is(".csv"));
+        assertThat(pattern.get(5).getArgument(), is("-"));
+
+        assertThat(pattern.get(6).getKind(), is(SourceKind.ENVIRONMENT));
+
+        assertThat(pattern.get(7).getKind(), is(SourceKind.NOTHING));
+        assertThat(pattern.get(7).getArgument(), is(".csv"));
     }
 
     /**
@@ -199,7 +216,7 @@ public class OutputPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void resource_invalid_character() {
-        OutputPattern.compileResourcePattern("*", dataClass);
+        OutputPattern.compileResourcePattern("?", dataClass);
     }
 
     /**

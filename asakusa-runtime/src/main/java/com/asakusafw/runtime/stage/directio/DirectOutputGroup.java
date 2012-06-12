@@ -20,13 +20,21 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.io.util.NullWritableRawComparable;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * Group object in shuffle key in direct output stages.
  * @since 0.2.5
+ * @version 0.4.0
  */
 class DirectOutputGroup implements WritableRawComparable {
+
+    /**
+     * An empty output.
+     * @since 0.4.0
+     */
+    public static final DirectOutputGroup EMPTY = new DirectOutputGroup();
 
     private final String path;
 
@@ -35,6 +43,18 @@ class DirectOutputGroup implements WritableRawComparable {
     private final DataFormat<?> format;
 
     private final StringTemplate nameGenerator;
+
+    private DirectOutputGroup() {
+        this.path = "";
+        this.dataType = NullWritableRawComparable.class;
+        this.format = new DataFormat<NullWritableRawComparable>() {
+            @Override
+            public Class<NullWritableRawComparable> getSupportedType() {
+                return NullWritableRawComparable.class;
+            }
+        };
+        this.nameGenerator = StringTemplate.EMPTY;
+    }
 
     /**
      * Creates a new instance.

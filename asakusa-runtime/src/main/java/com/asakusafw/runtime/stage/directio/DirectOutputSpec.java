@@ -80,7 +80,12 @@ public class DirectOutputSpec {
         }
         Class<?>[] results = new Class<?>[specs.length];
         for (int i = 0; i < specs.length; i++) {
-            results[i] = specs[i].valueType;
+            DirectOutputSpec spec = specs[i];
+            if (spec == null) {
+                results[i] = DirectOutputGroup.EMPTY.getDataType();
+            } else {
+                results[i] = specs[i].valueType;
+            }
         }
         return results;
     }
@@ -91,7 +96,12 @@ public class DirectOutputSpec {
         }
         DirectOutputGroup[] elements = new DirectOutputGroup[specs.length];
         for (int i = 0; i < specs.length; i++) {
-            elements[i] = specs[i].createGroup();
+            DirectOutputSpec spec = specs[i];
+            if (spec == null) {
+                elements[i] = DirectOutputGroup.EMPTY;
+            } else {
+                elements[i] = spec.createGroup();
+            }
         }
         return new WritableRawComparableUnion(elements);
     }
@@ -102,7 +112,12 @@ public class DirectOutputSpec {
         }
         DirectOutputOrder[] elements = new DirectOutputOrder[specs.length];
         for (int i = 0; i < specs.length; i++) {
-            elements[i] = specs[i].createOrder();
+            DirectOutputSpec spec = specs[i];
+            if (spec == null) {
+                elements[i] = DirectOutputOrder.EMPTY;
+            } else {
+                elements[i] = spec.createOrder();
+            }
         }
         return new WritableRawComparableUnion(elements);
     }

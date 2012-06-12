@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.4.0
  */
 public abstract class DirectFileOutputDescription implements ExporterDescription {
 
@@ -71,6 +71,16 @@ public abstract class DirectFileOutputDescription implements ExporterDescription
      *   <ul>
      *   <li> generates a random number between lower-bound and upper-bound (inclusive) </li>
      *   <li> this muset be {@code 0 <= lower-bound < upper-bound} </li>
+     *   </ul>
+     * </li>
+     * <li> <code>*</code> (wildcard)
+     *   <ul>
+     *   <li> generates a random string from execution context </li>
+     *   <li>
+     *      <em>IMPORTANT</em>:
+     *      If there are wildcard in resource pattern, you CANNOT use neither placeholders nor random-numbers.
+     *      Additionally {@link #getOrder()} must be returns empty list.
+     *   </li>
      *   </ul>
      * </li>
      * </ul>
