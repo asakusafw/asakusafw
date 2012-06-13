@@ -276,7 +276,7 @@ encoding/<project>=UTF-8
 					<configuration>
 						<aggregate>true</aggregate>
 						<strictCheck>true</strictCheck>
-						<header>../asakusa-parent/src/main/conf/source-header.txt</header>
+						<header>../../asakusa-parent/src/main/conf/source-header.txt</header>
 						<includes>
 							<include>src/**/*.java</include>
 							<include>src/**/*.flex</include>
@@ -297,7 +297,7 @@ encoding/<project>=UTF-8
 					<configuration>
 						<xmlOutput>true</xmlOutput>
 						<findbugsXmlOutput>true</findbugsXmlOutput>
-						<excludeFilterFile>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFilterFile>
+						<excludeFilterFile>../../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFilterFile>
 						<sourceEncoding>UTF-8</sourceEncoding>
 						<outputEncoding>UTF-8</outputEncoding>
 					</configuration>
@@ -307,7 +307,7 @@ encoding/<project>=UTF-8
 					<artifactId>maven-checkstyle-plugin</artifactId>
 					<version>2.9.1</version>
 					<configuration>
-						<configLocation>../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
+						<configLocation>../../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -345,7 +345,7 @@ encoding/<project>=UTF-8
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.9.1</version>
 				<configuration>
-					<configLocation>../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
+					<configLocation>../../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -355,7 +355,7 @@ encoding/<project>=UTF-8
 				<configuration>
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
-					<excludeFileFilter>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFileFilter>
+					<excludeFileFilter>../../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFileFilter>
 					<sourceEncoding>UTF-8</sourceEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
