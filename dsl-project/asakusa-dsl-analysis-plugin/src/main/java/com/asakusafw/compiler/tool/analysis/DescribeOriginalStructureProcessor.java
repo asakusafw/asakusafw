@@ -36,14 +36,14 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * Describes raw workflow.

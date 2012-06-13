@@ -33,13 +33,13 @@ import com.asakusafw.dmdl.semantics.trait.MappingFactor;
 import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Key;
-import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.ArrayInitializer;
-import com.ashigeru.lang.java.model.syntax.ClassLiteral;
-import com.ashigeru.lang.java.model.syntax.Literal;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Annotation;
+import com.asakusafw.utils.java.model.syntax.ArrayInitializer;
+import com.asakusafw.utils.java.model.syntax.ClassLiteral;
+import com.asakusafw.utils.java.model.syntax.Literal;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Implements joined-model feature.

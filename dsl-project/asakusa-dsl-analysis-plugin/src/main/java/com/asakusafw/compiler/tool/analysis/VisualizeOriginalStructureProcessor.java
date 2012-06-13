@@ -40,6 +40,8 @@ import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
@@ -50,8 +52,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription.Declaration;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * Visualizes raw workflow.

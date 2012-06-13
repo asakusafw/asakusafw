@@ -46,8 +46,8 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel.Source;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Stage;
 import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 
 /**
  * ジョブフロー内で利用されるプログラムをコンパイルする。

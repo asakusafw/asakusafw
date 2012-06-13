@@ -26,10 +26,10 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Fold;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@link Fold 畳み込み演算子}を処理する。

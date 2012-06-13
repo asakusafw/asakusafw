@@ -23,6 +23,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
@@ -31,8 +33,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * Test for {@link FlowGraphUtil}.

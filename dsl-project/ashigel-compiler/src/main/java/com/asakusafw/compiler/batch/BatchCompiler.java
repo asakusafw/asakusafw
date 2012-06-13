@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.Work;
 import com.asakusafw.vocabulary.batch.WorkDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * バッチDSLをコンパイルするコンパイラ。

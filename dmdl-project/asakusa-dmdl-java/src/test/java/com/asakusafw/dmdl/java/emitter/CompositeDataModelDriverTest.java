@@ -38,9 +38,9 @@ import com.asakusafw.dmdl.java.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.Annotation;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
  * Test for {@link CompositeDataModelDriver}.

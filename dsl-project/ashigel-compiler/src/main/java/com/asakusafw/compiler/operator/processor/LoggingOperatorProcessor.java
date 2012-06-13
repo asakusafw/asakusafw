@@ -27,7 +27,7 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.operator.Logging;
-import com.ashigeru.lang.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
  * {@link Logging ロギング演算子}を処理する。

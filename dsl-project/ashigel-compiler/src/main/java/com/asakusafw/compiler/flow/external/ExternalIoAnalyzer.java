@@ -30,13 +30,13 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.Repository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.utils.collections.Tuple2;
+import com.asakusafw.utils.collections.Tuples;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.FlowOut;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
-import com.ashigeru.util.collection.Tuple2;
-import com.ashigeru.util.collection.Tuples;
 
 /**
  * 外部I/Oとの連携に関する分析を行う。

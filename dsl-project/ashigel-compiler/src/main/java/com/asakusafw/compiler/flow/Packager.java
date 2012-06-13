@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * ジョブフローのパッケージングを行う。

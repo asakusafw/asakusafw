@@ -52,9 +52,9 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.Packager;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.util.Filer;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.util.Filer;
 
 /**
  * ファイルシステム上に構成物を展開するパッケージャ。

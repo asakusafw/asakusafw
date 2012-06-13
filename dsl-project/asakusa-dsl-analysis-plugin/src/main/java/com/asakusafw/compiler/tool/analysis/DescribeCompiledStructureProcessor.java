@@ -46,15 +46,15 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.MapUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * Describes compiled workflow.

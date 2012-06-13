@@ -24,16 +24,16 @@ import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
-import com.ashigeru.lang.java.model.syntax.BasicTypeKind;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.InfixOperator;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.InfixOperator;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * シャッフルに関するソースコードを出力する際に、共通して利用するコード。

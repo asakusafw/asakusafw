@@ -24,11 +24,11 @@ import com.asakusafw.runtime.core.Report;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Logging.Level;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * {@link Logging ロギング演算子}を処理する。

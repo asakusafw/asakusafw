@@ -26,10 +26,10 @@ import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.operator.Split;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * {@link Split 分割演算子}を処理する。

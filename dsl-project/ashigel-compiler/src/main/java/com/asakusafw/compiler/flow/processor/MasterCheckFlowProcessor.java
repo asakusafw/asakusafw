@@ -19,7 +19,7 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.MasterCheck;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * {@link MasterCheck マスタ確認演算子}を処理する。

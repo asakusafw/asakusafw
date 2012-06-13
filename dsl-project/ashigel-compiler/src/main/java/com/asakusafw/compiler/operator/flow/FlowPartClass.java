@@ -22,7 +22,7 @@ import javax.lang.model.element.TypeElement;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
-import com.ashigeru.lang.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
  * フロー部品クラスの情報。

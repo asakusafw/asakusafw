@@ -21,7 +21,7 @@ import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Project;
-import com.ashigeru.lang.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.Expression;
 
 /**
  * {@link Project 射影演算子}を処理する。

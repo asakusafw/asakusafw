@@ -31,7 +31,7 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.testing.MockResult;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * Test for {@link ConvertFlowProcessor}.

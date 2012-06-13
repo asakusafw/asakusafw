@@ -38,11 +38,11 @@ import com.asakusafw.compiler.repository.SpiExternalIoDescriptionProcessorReposi
 import com.asakusafw.compiler.repository.SpiFlowElementProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
 import com.asakusafw.compiler.repository.SpiWorkflowProcessorRepository;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * バッチを直接コンパイルして、JARのパッケージを作成する。

@@ -46,13 +46,13 @@ import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.JoinedModel;
 import com.asakusafw.vocabulary.model.SummarizedModel;
-import com.ashigeru.lang.java.jsr199.testing.VolatileCompiler;
-import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.util.Emitter;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
+import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.util.Emitter;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Test root for this package.

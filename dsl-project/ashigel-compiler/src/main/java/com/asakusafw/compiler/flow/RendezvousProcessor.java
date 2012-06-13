@@ -26,9 +26,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * 合流地点に配置される演算子を処理する。

@@ -39,15 +39,15 @@ import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Packager;
 import com.asakusafw.compiler.util.TemporaryFolder;
-import com.ashigeru.lang.java.model.syntax.Comment;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.ImportDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Comment;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.ImportDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Test for {@link FilePackager}.

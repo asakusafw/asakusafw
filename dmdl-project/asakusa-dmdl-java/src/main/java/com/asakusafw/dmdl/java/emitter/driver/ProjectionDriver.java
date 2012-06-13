@@ -24,7 +24,7 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
-import com.ashigeru.lang.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
  * Enables models projectable.

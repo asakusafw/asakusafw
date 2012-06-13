@@ -41,24 +41,29 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
-			<artifactId>collection</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>collections</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simple-graph</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jsr269-bridge</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>java-dom</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>javadoc-parser</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -81,8 +86,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jsr199-testing</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

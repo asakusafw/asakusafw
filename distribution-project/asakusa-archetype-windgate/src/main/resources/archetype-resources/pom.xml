@@ -10,8 +10,6 @@
 		<asakusafw.version>0.4-SNAPSHOT</asakusafw.version>
 
 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
-		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
-		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 		<commons.io.version>2.3</commons.io.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.logging.version>1.0.4</commons.logging.version>
@@ -216,11 +214,11 @@ org.eclipse.jdt.apt.reconcileEnabled=true
     <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-runtime/${asakusafw.version}/asakusa-runtime-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-dsl-vocabulary/${asakusafw.version}/asakusa-dsl-vocabulary-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/ashigel-compiler/${asakusafw.version}/ashigel-compiler-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/ashigeru/lang/java/java-dom/${ashigeru.lang.version}/java-dom-${ashigeru.lang.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/ashigeru/lang/java/javadoc-parser/${ashigeru.lang.version}/javadoc-parser-${ashigeru.lang.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/ashigeru/lang/java/jsr269-bridge/${ashigeru.lang.version}/jsr269-bridge-${ashigeru.lang.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/ashigeru/util/collection/${ashigeru.util.version}/collection-${ashigeru.util.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/ashigeru/util/simple-graph/${ashigeru.util.version}/simple-graph-${ashigeru.util.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/java-dom/${asakusafw.version}/java-dom-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/javadoc-parser/${asakusafw.version}/javadoc-parser-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/jsr269-bridge/${asakusafw.version}/jsr269-bridge-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/collections/${asakusafw.version}/collections-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/simple-graph/${asakusafw.version}/simple-graph-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/commons-io/commons-io/${commons.io.version}/commons-io-${commons.io.version}.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/commons-lang/commons-lang/${commons.lang.version}/commons-lang-${commons.lang.version}.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-classic/${logback.version}/logback-classic-${logback.version}.jar" enabled="true" runInBatchMode="false"/>

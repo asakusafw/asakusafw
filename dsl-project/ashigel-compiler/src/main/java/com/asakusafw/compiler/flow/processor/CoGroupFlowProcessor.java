@@ -24,10 +24,10 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.operator.CoGroup;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@link CoGroup グループ化結合演算子}を処理する。

@@ -30,9 +30,9 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * Operator DSL Compilerの環境。

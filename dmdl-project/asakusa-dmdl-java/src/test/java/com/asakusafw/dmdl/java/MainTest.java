@@ -36,7 +36,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceRepository.Cursor;
-import com.ashigeru.lang.java.model.util.Emitter;
+import com.asakusafw.utils.java.model.util.Emitter;
 
 /**
  * Test for {@link Main}.

@@ -23,8 +23,8 @@ import javax.lang.model.element.ExecutableElement;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * 演算子DSLコンパイラのサブプロセッサとして動作する、個々の演算子注釈を処理するためのインターフェース。

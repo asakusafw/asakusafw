@@ -25,17 +25,17 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.InfixOperator;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.InfixOperator;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * Overrides default {@link Object} methods.

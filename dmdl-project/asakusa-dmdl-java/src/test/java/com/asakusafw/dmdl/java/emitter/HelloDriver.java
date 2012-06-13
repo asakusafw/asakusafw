@@ -20,12 +20,12 @@ import java.util.List;
 
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Creates a new method {@code def hello() = "hello"}.

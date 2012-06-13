@@ -46,11 +46,11 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Stage;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.ScriptWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * ワークフローの情報を実験用のシェルスクリプトの形式で残す。

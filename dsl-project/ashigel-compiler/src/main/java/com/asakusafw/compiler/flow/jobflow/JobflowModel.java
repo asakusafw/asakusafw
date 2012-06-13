@@ -36,12 +36,12 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * ジョブフロー全体のモデル。

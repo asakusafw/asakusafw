@@ -28,20 +28,20 @@ import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
-import com.ashigeru.lang.java.model.syntax.Attribute;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.ModelKind;
-import com.ashigeru.lang.java.model.syntax.Modifier;
-import com.ashigeru.lang.java.model.syntax.ModifierKind;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.SingleElementAnnotation;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.JavadocBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Attribute;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelKind;
+import com.asakusafw.utils.java.model.syntax.Modifier;
+import com.asakusafw.utils.java.model.syntax.ModifierKind;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.SingleElementAnnotation;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.JavadocBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Implements {@code *AsString} methods.

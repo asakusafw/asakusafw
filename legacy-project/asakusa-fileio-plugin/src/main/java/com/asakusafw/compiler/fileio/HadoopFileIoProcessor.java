@@ -51,7 +51,6 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 /**
  * ファイルの入出力を処理する。
  * @since 0.1.0
- * @version 0.4.0
  */
 public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
 

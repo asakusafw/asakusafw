@@ -25,7 +25,6 @@ import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.2.5
- * @version 0.4.0
  */
 public class ConfigurationFactory extends ConfigurationProvider {
 

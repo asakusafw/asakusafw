@@ -29,7 +29,7 @@ import javax.tools.Diagnostic;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 
 /**
  * {@link OperatorProcessor}の骨格実装。

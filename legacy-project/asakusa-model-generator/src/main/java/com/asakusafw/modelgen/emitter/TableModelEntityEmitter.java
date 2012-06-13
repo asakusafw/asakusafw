@@ -25,12 +25,12 @@ import com.asakusafw.modelgen.model.TableModelDescription;
 import com.asakusafw.vocabulary.model.DataModel;
 import com.asakusafw.vocabulary.model.Property;
 import com.asakusafw.vocabulary.model.TableModel;
-import com.ashigeru.lang.java.model.syntax.Annotation;
-import com.ashigeru.lang.java.model.syntax.Javadoc;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.JavadocBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Annotation;
+import com.asakusafw.utils.java.model.syntax.Javadoc;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.JavadocBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@link TableModelDescription}に対するエンティティ情報をファイル上に出力するエミッタ。

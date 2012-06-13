@@ -38,7 +38,7 @@ import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerOptions;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.vocabulary.flow.FlowPart;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * フロー部品をもとにした演算子ファクトリーを生成する。

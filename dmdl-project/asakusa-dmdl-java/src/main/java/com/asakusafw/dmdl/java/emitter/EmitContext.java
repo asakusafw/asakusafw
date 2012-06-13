@@ -52,17 +52,17 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.ashigeru.lang.java.model.syntax.Comment;
-import com.ashigeru.lang.java.model.syntax.CompilationUnit;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.syntax.QualifiedName;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.syntax.Comment;
+import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.QualifiedName;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Emitting context.

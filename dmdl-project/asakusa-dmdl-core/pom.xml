@@ -57,12 +57,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
-			<artifactId>collection</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>collections</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.util</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simple-graph</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

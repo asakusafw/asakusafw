@@ -49,14 +49,14 @@ import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
 import com.asakusafw.vocabulary.operator.Sticky;
 import com.asakusafw.vocabulary.operator.Volatile;
-import com.ashigeru.lang.java.model.syntax.DocBlock;
-import com.ashigeru.lang.java.model.syntax.DocElement;
-import com.ashigeru.lang.java.model.syntax.Javadoc;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.ModelKind;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.parser.javadoc.JavadocConverter;
-import com.ashigeru.lang.java.parser.javadoc.JavadocParseException;
+import com.asakusafw.utils.java.model.syntax.DocBlock;
+import com.asakusafw.utils.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.Javadoc;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelKind;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.parser.javadoc.JavadocConverter;
+import com.asakusafw.utils.java.parser.javadoc.JavadocParseException;
 
 /**
  * メソッドやコンストラクターの宣言を解析する。

@@ -22,17 +22,17 @@ import java.util.List;
 import com.asakusafw.compiler.common.EnumUtil;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
+import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.MasterBranch;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
-import com.ashigeru.util.collection.Tuple2;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * {@link MasterBranch マスタ分岐演算子}を処理する。

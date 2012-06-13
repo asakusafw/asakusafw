@@ -31,14 +31,14 @@ import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
-import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
-import com.ashigeru.lang.java.model.syntax.Literal;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.Literal;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * JavaのDOMを構築する際のユーティリティ。

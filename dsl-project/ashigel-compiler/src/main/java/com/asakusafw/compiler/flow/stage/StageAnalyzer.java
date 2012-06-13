@@ -43,14 +43,14 @@ import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.compiler.flow.stage.StageModel.Sink;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * 各ステージのマップレデュースで行われる内容を解析する。

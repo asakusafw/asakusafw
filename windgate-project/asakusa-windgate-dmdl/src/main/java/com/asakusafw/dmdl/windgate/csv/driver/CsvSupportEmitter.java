@@ -43,25 +43,25 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
-import com.ashigeru.lang.java.model.syntax.ClassDeclaration;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.ExpressionStatement;
-import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.InfixOperator;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.Name;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.WildcardBoundKind;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.JavadocBuilder;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
+import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.InfixOperator;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.JavadocBuilder;
+import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * Emits {@link DataModelStreamSupport} implementations.
@@ -610,7 +610,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private final ModelDeclaration model;
 
-        private final com.ashigeru.lang.java.model.syntax.Type supportClass;
+        private final com.asakusafw.utils.java.model.syntax.Type supportClass;
 
         private final ModelFactory f;
 
@@ -668,7 +668,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.getTypeName(),
                     context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                    Collections.<com.ashigeru.lang.java.model.syntax.Type>emptyList(),
+                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
                     createMembers());
             context.emit(decl);
         }
@@ -701,7 +701,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createGetter(
-                com.ashigeru.lang.java.model.syntax.Type type,
+                com.asakusafw.utils.java.model.syntax.Type type,
                 String name,
                 Expression value) {
             assert type != null;

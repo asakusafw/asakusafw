@@ -47,8 +47,8 @@ import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
 import com.asakusafw.dmdl.semantics.trait.SummarizeTrait;
 import com.asakusafw.dmdl.spi.AttributeDriver;
 import com.asakusafw.dmdl.spi.TypeDriver;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 
 /**
  * Analyzes DMDL AST and builds DMDL semantic models.

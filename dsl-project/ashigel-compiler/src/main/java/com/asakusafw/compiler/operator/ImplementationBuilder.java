@@ -26,23 +26,23 @@ import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
-import com.ashigeru.lang.java.model.syntax.Attribute;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.syntax.FieldAccessExpression;
-import com.ashigeru.lang.java.model.syntax.FieldDeclaration;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Statement;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ExpressionBuilder;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.TypeBuilder;
+import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.Attribute;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.FieldAccessExpression;
+import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * 演算子メソッドの実装を構築するビルダー。

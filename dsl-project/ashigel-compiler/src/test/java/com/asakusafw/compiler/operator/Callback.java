@@ -25,7 +25,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@link DelegateProcessor}から呼び戻される。

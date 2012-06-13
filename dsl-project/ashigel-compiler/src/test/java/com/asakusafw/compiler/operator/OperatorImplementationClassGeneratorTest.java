@@ -15,7 +15,7 @@
  */
 package com.asakusafw.compiler.operator;
 
-import static com.ashigeru.lang.java.model.syntax.ModifierKind.*;
+import static com.asakusafw.utils.java.model.syntax.ModifierKind.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -25,15 +25,15 @@ import javax.lang.model.element.PackageElement;
 
 import org.junit.Test;
 
-import com.ashigeru.lang.java.jsr269.bridge.Jsr269;
-import com.ashigeru.lang.java.model.syntax.ClassDeclaration;
-import com.ashigeru.lang.java.model.syntax.FormalParameterDeclaration;
-import com.ashigeru.lang.java.model.syntax.MethodDeclaration;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
-import com.ashigeru.lang.java.model.util.ImportBuilder.Strategy;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
+import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.util.ImportBuilder.Strategy;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Test for {@link OperatorImplementationClassGenerator}.

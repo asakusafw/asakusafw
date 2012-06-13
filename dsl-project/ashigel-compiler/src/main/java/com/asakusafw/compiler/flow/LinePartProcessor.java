@@ -24,8 +24,8 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
-import com.ashigeru.lang.java.model.syntax.Expression;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * ラインのいずれかに配置される演算子を処理する。

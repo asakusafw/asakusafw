@@ -25,7 +25,7 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.Location;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * 個々のジョブフローをコンパイルするコンパイラの設定。

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * 演算子DSLで利用する演算子に関するプロセッサ。

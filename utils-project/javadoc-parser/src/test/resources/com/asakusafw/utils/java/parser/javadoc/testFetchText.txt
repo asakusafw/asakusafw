@@ -1,0 +1,8 @@
+onlyIdentifier
+Identifier with space
+{@code empty text}
+head {@code middle} tail
+ *   <- 3spaces ->   
+ *   <- 3spaces ->   
+ *   <- 3spaces ->   
+ *   <- 3spaces ->   

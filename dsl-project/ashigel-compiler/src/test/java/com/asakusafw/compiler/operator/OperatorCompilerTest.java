@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -46,7 +47,6 @@ import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 import com.asakusafw.vocabulary.operator.Split;
 import com.asakusafw.vocabulary.operator.Summarize;
 import com.asakusafw.vocabulary.operator.Update;
-import com.ashigeru.util.graph.Graph;
 
 /**
  * Test for {@link OperatorCompiler}.

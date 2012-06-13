@@ -22,15 +22,15 @@ import javax.annotation.Generated;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.util.GeneratorUtil;
-import com.ashigeru.lang.java.model.syntax.Javadoc;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.syntax.SimpleName;
-import com.ashigeru.lang.java.model.syntax.Type;
-import com.ashigeru.lang.java.model.syntax.TypeBodyDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeDeclaration;
-import com.ashigeru.lang.java.model.syntax.TypeParameterDeclaration;
-import com.ashigeru.lang.java.model.util.AttributeBuilder;
-import com.ashigeru.lang.java.model.util.ImportBuilder;
+import com.asakusafw.utils.java.model.syntax.Javadoc;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.model.syntax.Type;
+import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
+import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * 演算子クラスの派生生成物の情報を構築するジェネレータ。

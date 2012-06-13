@@ -36,7 +36,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * ステージ内で利用されるプログラムをコンパイルする。

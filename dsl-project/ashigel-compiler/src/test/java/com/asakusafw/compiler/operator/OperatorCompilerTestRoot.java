@@ -41,6 +41,8 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.After;
 
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -48,13 +50,11 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
-import com.ashigeru.lang.java.jsr199.testing.SafeProcessor;
-import com.ashigeru.lang.java.jsr199.testing.VolatileCompiler;
-import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
-import com.ashigeru.lang.java.model.syntax.ModelFactory;
-import com.ashigeru.lang.java.model.util.Models;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.java.jsr199.testing.SafeProcessor;
+import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
+import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * 演算子コンパイラに関するテストの基底。

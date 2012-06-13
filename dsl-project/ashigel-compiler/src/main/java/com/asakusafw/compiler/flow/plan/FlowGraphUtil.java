@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
@@ -42,8 +44,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.flow.util.PseudElementDescription;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
 
 /**
  * {@link FlowGraph}に関するユーティリティ。

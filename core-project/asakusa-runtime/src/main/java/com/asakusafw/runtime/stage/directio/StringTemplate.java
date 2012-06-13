@@ -37,7 +37,6 @@ import com.asakusafw.runtime.value.DateUtil;
 /**
  * Generates a string for the object.
  * @since 0.2.5
- * @version 0.4.0
  */
 public abstract class StringTemplate implements WritableRawComparable {
 

@@ -26,7 +26,6 @@ import com.asakusafw.runtime.io.util.WritableRawComparable;
 /**
  * Group object in shuffle key in direct output stages.
  * @since 0.2.5
- * @version 0.4.0
  */
 class DirectOutputGroup implements WritableRawComparable {
 

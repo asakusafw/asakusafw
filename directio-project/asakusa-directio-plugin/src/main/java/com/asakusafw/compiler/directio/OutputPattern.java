@@ -458,7 +458,6 @@ public final class OutputPattern {
     /**
      * The compiled resource pattern.
      * @since 0.2.5
-     * @version 0.4.0
      */
     public static final class CompiledResourcePattern {
 
@@ -641,7 +640,6 @@ public final class OutputPattern {
     /**
      * The source kind.
      * @since 0.2.6
-     * @version 0.4.0
      */
     public enum SourceKind {
 

@@ -20,9 +20,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ashigeru.lang.java.jsr199.testing.VolatileJavaFile;
-import com.ashigeru.lang.java.model.syntax.PackageDeclaration;
-import com.ashigeru.lang.java.model.util.Emitter;
+import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
+import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
+import com.asakusafw.utils.java.model.util.Emitter;
 
 /**
  * Emitter implementation to save emitted files on heap.

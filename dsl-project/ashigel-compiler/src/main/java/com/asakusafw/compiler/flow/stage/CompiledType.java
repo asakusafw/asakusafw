@@ -16,7 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.ashigeru.lang.java.model.syntax.Name;
+import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * コンパイルされたクラスやインターフェース。

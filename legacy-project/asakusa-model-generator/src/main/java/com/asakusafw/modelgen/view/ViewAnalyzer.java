@@ -36,8 +36,8 @@ import com.asakusafw.modelgen.view.model.CreateView.Kind;
 import com.asakusafw.modelgen.view.model.Name;
 import com.asakusafw.modelgen.view.model.On;
 import com.asakusafw.modelgen.view.model.Select;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graphs;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graphs;
 
 /**
  * ビューの構造を解析する。

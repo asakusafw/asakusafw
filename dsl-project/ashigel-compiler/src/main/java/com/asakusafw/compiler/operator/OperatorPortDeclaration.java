@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.ashigeru.lang.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
  * 演算子メソッドが利用する変数。

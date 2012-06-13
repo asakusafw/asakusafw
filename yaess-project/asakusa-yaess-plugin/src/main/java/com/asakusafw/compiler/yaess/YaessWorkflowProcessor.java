@@ -44,6 +44,8 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.Command;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
+import com.asakusafw.utils.graph.Graph;
+import com.asakusafw.utils.graph.Graph.Vertex;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.yaess.core.BatchScript;
 import com.asakusafw.yaess.core.CommandScript;
@@ -51,8 +53,6 @@ import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ExecutionScript;
 import com.asakusafw.yaess.core.FlowScript;
 import com.asakusafw.yaess.core.HadoopScript;
-import com.ashigeru.util.graph.Graph;
-import com.ashigeru.util.graph.Graph.Vertex;
 
 /**
  * An implementation of {@link WorkflowProcessor} for YAESS.
