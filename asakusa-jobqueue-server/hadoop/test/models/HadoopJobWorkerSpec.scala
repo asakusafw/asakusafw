@@ -31,21 +31,23 @@ import com.asakusafw.jobqueue.core._
 @RunWith(classOf[JUnitRunner])
 class HadoopJobWorkerSpec extends Specification with Tags {
 
+  val asakusaHome = new File(getClass.getClassLoader.getResource("asakusa").toURI)
+
   object TestContext extends Before {
 
     /* (non-Javadoc)
      * @see org.specs2.specification.Before#before()
      */
     def before = {
-      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true, false)
+      new File(asakusaHome + HadoopJobWorker.JobQueueHadoopScript).setExecutable(true, false)
     }
   }
 
   "HadoopJobWorker" should {
 
     "run hadoop-execute.sh" in TestContext {
-      val worker = new HadoopJobWorker(new File("test/asakusa"))
-      val workingDirectory = new File("test")
+      val worker = new HadoopJobWorker(asakusaHome)
+      val workingDirectory = new File("target")
       val in = new ByteArrayInputStream("stdin\n".getBytes())
       val out = new ByteArrayOutputStream()
       val err = new ByteArrayOutputStream()
@@ -63,8 +65,8 @@ class HadoopJobWorkerSpec extends Specification with Tags {
     } tag ("run")
 
     "doesn't run not executable sh file" in TestContext {
-      new File("test/asakusa" + HadoopJobWorker.JobQueueHadoopScript).setExecutable(false, false)
-      val worker = new HadoopJobWorker(new File("test/asakusa"))
+      new File(asakusaHome + HadoopJobWorker.JobQueueHadoopScript).setExecutable(false, false)
+      val worker = new HadoopJobWorker(asakusaHome)
       val exitCode = worker.run(JobContext(
         HadoopJobInfo("jrid", "batchId", "flowId", "executionId", "phaseId", "stageId", "mainClass", Running, None,
           Map("argument1" -> "avalue1"), Map("prop1" -> "pvalue1"), Map("env1" -> "evalue1"))))
@@ -72,7 +74,7 @@ class HadoopJobWorkerSpec extends Specification with Tags {
     } tag ("notexecutable")
 
     "doesn't run not existing sh file" in TestContext {
-      val worker = new HadoopJobWorker(new File("test/dosakusa"))
+      val worker = new HadoopJobWorker(new File("dosakusa"))
       val exitCode = worker.run(JobContext(
         HadoopJobInfo("jrid", "batchId", "flowId", "executionId", "phaseId", "stageId", "mainClass", Running, None,
           Map("argument1" -> "avalue1"), Map("prop1" -> "pvalue1"), Map("env1" -> "evalue1"))))
