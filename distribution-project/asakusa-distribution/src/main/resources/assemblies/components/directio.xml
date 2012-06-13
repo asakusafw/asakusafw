@@ -10,7 +10,7 @@
 			<outputDirectory>/</outputDirectory>
 			<outputFileNameMapping></outputFileNameMapping>
 			<includes>
-				<include>com.asakusafw:asakusa-directio-plugin:jar:dist</include>
+				<include>com.asakusafw:asakusa-directio-tools:jar:dist</include>
 			</includes>
 			<unpack>true</unpack>
 			<unpackOptions>
@@ -19,6 +19,19 @@
 				</excludes>
 				<lineEnding>unix</lineEnding>
 			</unpackOptions>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</dependencySet>
+		<dependencySet>
+			<scope>test</scope>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>directio/lib</outputDirectory>
+			<includes>
+				<include>com.asakusafw:asakusa-directio-tools</include>
+			</includes>
+			<excludes>
+				<exclude>com.asakusafw:*:*:dist</exclude>
+			</excludes>
 			<fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
 		</dependencySet>

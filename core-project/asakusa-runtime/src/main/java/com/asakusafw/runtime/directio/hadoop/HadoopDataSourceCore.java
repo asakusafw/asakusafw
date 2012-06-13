@@ -47,7 +47,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @since 0.2.5
  * @version 0.2.6
  */
-class HadoopDataSourceCore implements DirectDataSource {
+public class HadoopDataSourceCore implements DirectDataSource {
 
     static final Log LOG = LogFactory.getLog(HadoopDataSourceCore.class);
 
@@ -57,7 +57,12 @@ class HadoopDataSourceCore implements DirectDataSource {
 
     private final HadoopDataSourceProfile profile;
 
-    HadoopDataSourceCore(HadoopDataSourceProfile profile) {
+    /**
+     * Creates a new instance.
+     * @param profile profile of target data source
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public HadoopDataSourceCore(HadoopDataSourceProfile profile) {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }

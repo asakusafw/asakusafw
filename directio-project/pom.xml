@@ -28,6 +28,7 @@
 		<module>asakusa-directio-plugin</module>
 		<module>asakusa-directio-test-moderator</module>
 		<module>asakusa-directio-vocabulary</module>
+		<module>asakusa-directio-tools</module>
 	</modules>
 
 </project>

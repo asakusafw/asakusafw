@@ -38,7 +38,8 @@
 								<descriptor>src/main/resources/assemblies/prod-directio.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
-								<descriptor>src/main/resources/assemblies/prod-cleaner.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/ext-cleaner.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/ext-experimental-shell-script.xml</descriptor>
 							</descriptors>
 							<finalName>asakusafw-${project.version}</finalName>
 						</configuration>
@@ -81,7 +82,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-test-driver</artifactId>
+			<artifactId>asakusa-runtime-configuration</artifactId>
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
 		</dependency>
@@ -147,7 +148,12 @@
 		<!-- Direct I/O -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-directio-plugin</artifactId>
+			<artifactId>asakusa-directio-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-directio-tools</artifactId>
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
 		</dependency>
@@ -223,12 +229,24 @@
 		<!-- Development -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-test-driver</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-development-tools</artifactId>
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
 		</dependency>
 
 		<!-- Legacy -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-legacy-workflow-plugin</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-cleaner</artifactId>

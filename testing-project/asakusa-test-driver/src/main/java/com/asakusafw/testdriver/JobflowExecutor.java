@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class JobflowExecutor {
     /**
      * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
      */
-    protected static final String SUBMIT_JOB_SCRIPT = "experimental/bin/hadoop_job_run.sh";
+    public static final String SUBMIT_JOB_SCRIPT = "testing/bin/hadoop-execute.sh";
 
     private final TestDriverContext context;
 
@@ -321,31 +320,27 @@ public class JobflowExecutor {
 
     private void runHadoopJob(HadoopJobInfo hadoopJobInfo) throws IOException {
         assert hadoopJobInfo != null;
-        String[] shellCmd = {
-                new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath(),
-                hadoopJobInfo.getClassName(),
-                hadoopJobInfo.getJarName()
-        };
+        List<String> command = new ArrayList<String>();
+        command.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
+        command.add(hadoopJobInfo.getJarName());
+        command.add(hadoopJobInfo.getClassName());
+
         Map<String, String> dPropMap = hadoopJobInfo.getDPropMap();
         if (dPropMap != null) {
-            dPropMap.keySet();
-            List<String> list = new ArrayList<String>();
-            list.addAll(Arrays.asList(shellCmd));
             for (Map.Entry<String, String> entry : dPropMap.entrySet()) {
-                list.add("-D");
-                list.add(entry.getKey() + "=" + entry.getValue());
+                command.add("-D");
+                command.add(entry.getKey() + "=" + entry.getValue());
             }
-            shellCmd = list.toArray(new String[list.size()]);
         }
 
-        int exitValue = runShell(shellCmd, getEnvironmentVariables());
+        int exitValue = runShell(command.toArray(new String[command.size()]), getEnvironmentVariables());
         if (exitValue != 0) {
             // 異常終了
             throw new AssertionError(MessageFormat.format(
                     "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command={2})",
                     exitValue,
                     hadoopJobInfo.getJobFlowId(),
-                    Arrays.toString(shellCmd)));
+                    command));
         }
     }
 
@@ -372,7 +367,7 @@ public class JobflowExecutor {
         if (environmentVariables == null) {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
-        LOG.info("【COMMAND】 {}", toStringShellCmdArray(shellCmd));
+        LOG.info("[COMMAND] {}", toStringShellCmdArray(shellCmd));
 
         ProcessBuilder builder = new ProcessBuilder(shellCmd);
         builder.redirectErrorStream(true);

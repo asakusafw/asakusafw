@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,10 +66,8 @@ public class FrameworkDeployer implements TestRule {
 
     void deploySubmitScript() throws IOException {
         LOG.debug("Deploying submit script");
-        File source = new File("src/main/dist", TestDriverContext.SUBMIT_JOB_SCRIPT);
-        File target = new File(getFrameworkHome(), TestDriverContext.SUBMIT_JOB_SCRIPT);
-        copy(source, target);
-        target.setExecutable(true);
+        File source = new File("src/main/dist");
+        copy(source, getFrameworkHome());
     }
 
     void deployRuntimeLibrary() throws IOException {
@@ -193,6 +192,16 @@ public class FrameworkDeployer implements TestRule {
     }
 
     private void copy(File source, File target) throws IOException {
+        if (source.isDirectory()) {
+            for (File child : source.listFiles()) {
+                copy(child, new File(target, child.getName()));
+            }
+        } else {
+            copyFile(source, target);
+        }
+    }
+
+    private void copyFile(File source, File target) throws FileNotFoundException, IOException {
         assert source != null;
         assert target != null;
         InputStream input = new FileInputStream(source);
@@ -206,6 +215,9 @@ public class FrameworkDeployer implements TestRule {
             }
         } finally {
             input.close();
+        }
+        if (source.canExecute()) {
+            target.setExecutable(true);
         }
     }
 

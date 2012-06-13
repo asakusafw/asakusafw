@@ -10,8 +10,7 @@
 			<outputDirectory>/</outputDirectory>
 			<outputFileNameMapping></outputFileNameMapping>
 			<includes>
-				<include>com.asakusafw:asakusa-test-driver:jar:dist</include>
-				<include>com.asakusafw:asakusa-development-tools:jar:dist</include>
+				<include>com.asakusafw:asakusa-legacy-workflow-plugin:jar:dist</include>
 			</includes>
 			<unpack>true</unpack>
 			<unpackOptions>
