@@ -203,8 +203,7 @@ public class SingleLinkedListTest {
             try {
                 list.first();
                 fail();
-            }
-            catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
                 // ok.
             }
         }
@@ -228,8 +227,7 @@ public class SingleLinkedListTest {
             try {
                 list.rest();
                 fail();
-            }
-            catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
                 // ok.
             }
         }
@@ -255,8 +253,7 @@ public class SingleLinkedListTest {
             try {
                 iter.next();
                 fail();
-            }
-            catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
                 // ok.
             }
         }
@@ -267,8 +264,7 @@ public class SingleLinkedListTest {
             try {
                 iter.next();
                 fail();
-            }
-            catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
                 // ok.
             }
         }

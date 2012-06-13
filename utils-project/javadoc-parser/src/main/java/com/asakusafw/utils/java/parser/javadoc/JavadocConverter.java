@@ -48,9 +48,9 @@ import com.asakusafw.utils.java.model.syntax.Type;
  */
 public class JavadocConverter {
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private JavadocParser parser;
+    private final JavadocParser parser;
 
     /**
      * インスタンスを生成する。
@@ -115,7 +115,7 @@ public class JavadocConverter {
 
         final ModelFactory factory;
 
-        private TypeMapper types;
+        private final TypeMapper types;
 
         Mapper(ModelFactory factory, int offset) {
             assert factory != null;
@@ -146,8 +146,7 @@ public class JavadocConverter {
         }
 
         @Override
-        public DocElement visitQualifiedName(IrDocQualifiedName elem,
-                Void _) {
+        public DocElement visitQualifiedName(IrDocQualifiedName elem, Void _) {
             Name qualifier = (Name) elem.getQualifier().accept(this, null);
             SimpleName simple = (SimpleName) elem.getName().accept(this, null);
             return factory.newQualifiedName(qualifier, simple);
@@ -168,10 +167,7 @@ public class JavadocConverter {
             for (IrDocMethodParameter p : elem.getParameters()) {
                 params.add(convert(p));
             }
-            return factory.newDocMethod(
-                type,
-                name,
-                params);
+            return factory.newDocMethod(type, name, params);
         }
 
         private DocMethodParameter convert(IrDocMethodParameter elem) {
@@ -179,8 +175,7 @@ public class JavadocConverter {
             SimpleName name;
             if (elem.getName() != null) {
                 name = (SimpleName) elem.getName().accept(this, null);
-            }
-            else {
+            } else {
                 name = null;
             }
             return factory.newDocMethodParameter(

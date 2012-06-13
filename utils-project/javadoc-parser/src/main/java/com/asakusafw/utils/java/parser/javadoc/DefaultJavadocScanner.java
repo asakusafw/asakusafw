@@ -62,8 +62,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
             while (tokenizer.yylex() != -1) {
                 // do nothing
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw (AssertionError) new AssertionError(tokenizer.getStore()).initCause(e);
         }
         ArrayList<JavadocToken> list = new ArrayList<JavadocToken>(tokenizer.getStore());
@@ -116,8 +115,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
     private void setIndex(int position) {
         if (position > tokens.size()) {
             index = tokens.size();
-        }
-        else {
+        } else {
             index = position;
         }
     }
@@ -128,8 +126,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
         int size = tokens.size();
         if (pos >= size) {
             return size;
-        }
-        else {
+        } else {
             return pos;
         }
     }
@@ -137,8 +134,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
     private JavadocToken token(int position) {
         if (position == tokens.size()) {
             return eof;
-        }
-        else {
+        } else {
             return tokens.get(position);
         }
     }

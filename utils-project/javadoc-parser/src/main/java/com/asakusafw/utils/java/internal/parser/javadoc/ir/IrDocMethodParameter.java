@@ -111,16 +111,14 @@ public class IrDocMethodParameter extends AbstractIrDocElement {
             if (other.name != null) {
                 return false;
             }
-        }
-        else if (!name.equals(other.name)) {
+        } else if (!name.equals(other.name)) {
             return false;
         }
         if (type == null) {
             if (other.type != null) {
                 return false;
             }
-        }
-        else if (!type.equals(other.type)) {
+        } else if (!type.equals(other.type)) {
             return false;
         }
         if (variableArity != other.variableArity) {
@@ -134,12 +132,10 @@ public class IrDocMethodParameter extends AbstractIrDocElement {
         if (getName() == null) {
             if (isVariableArity()) {
                 return getType() + "..."; //$NON-NLS-1$
-            }
-            else {
+            } else {
                 return getType().toString();
             }
-        }
-        else {
+        } else {
             return MessageFormat.format(
                 "{0}{1}{2}", //$NON-NLS-1$
                 getType(),

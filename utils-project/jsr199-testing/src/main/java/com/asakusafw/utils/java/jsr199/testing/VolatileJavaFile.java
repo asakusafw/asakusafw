@@ -91,8 +91,7 @@ public class VolatileJavaFile extends SimpleJavaFileObject {
                 null,
                 "/" + path.replace('\\', '/') + JavaFileObject.Kind.SOURCE.extension,
                 null);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
     }

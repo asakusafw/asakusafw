@@ -56,8 +56,7 @@ public class IllegalDocCommentFormatException extends JavadocParseException {
     private static String buildMessage(boolean head) {
         if (head) {
             return Messages.getString("IllegalDocCommentFormatException.messageMissingHeader"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             return Messages.getString("IllegalDocCommentFormatException.messageMissingFooter"); //$NON-NLS-1$
         }
     }

@@ -61,8 +61,8 @@ public class FollowsReferenceBlockParserTest extends JavadocTestRoot {
         {
             FollowsReferenceBlockParser parser = new FollowsReferenceBlockParser();
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "    * hoge.foo.Bar");
+                "\n"
+                + "    * hoge.foo.Bar");
             IrDocBlock block = parser.parse(null, scanner);
             List<? extends IrDocFragment> fragments = block.getFragments();
             assertKinds(fragments, NAMED_TYPE);
@@ -71,8 +71,8 @@ public class FollowsReferenceBlockParserTest extends JavadocTestRoot {
         {
             FollowsReferenceBlockParser parser = new FollowsReferenceBlockParser();
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "    * hoge.foo.Bar?");
+                "\n"
+                + "    * hoge.foo.Bar?");
             IrDocBlock block = parser.parse(null, scanner);
             List<? extends IrDocFragment> fragments = block.getFragments();
             assertKinds(fragments, TEXT);

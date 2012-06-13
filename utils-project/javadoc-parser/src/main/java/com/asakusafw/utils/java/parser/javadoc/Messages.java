@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 /**
  * 自動生成されたメッセージバンドルクラス。
  */
-class Messages {
+final class Messages {
 
     private static final String BUNDLE_NAME = "com.asakusafw.utils.java.parser.javadoc.messages"; //$NON-NLS-1$
 
@@ -34,8 +34,7 @@ class Messages {
     static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
-        }
-        catch (MissingResourceException e) {
+        } catch (MissingResourceException e) {
             return '!' + key + '!';
         }
     }

@@ -34,7 +34,7 @@ public class DefaultJavadocBlockParser extends JavadocBlockParser {
     }
 
     /**
-     * インスタンスを生成する
+     * インスタンスを生成する。
      * @param blockParsers インラインブロックを解析するパーサ
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
@@ -42,17 +42,11 @@ public class DefaultJavadocBlockParser extends JavadocBlockParser {
         super(blockParsers);
     }
 
-    /**
-     * 常に{@code true}を返す。
-     */
     @Override
     public boolean canAccept(String tag) {
         return true;
     }
 
-    /**
-     * {@link JavadocBlockParser#fetchRestFragments(JavadocScanner)}を利用して全ての要素を構文解析する。
-     */
     @Override
     public IrDocBlock parse(String tag, JavadocScanner scanner) throws JavadocParseException {
         List<IrDocFragment> fragments = fetchRestFragments(scanner);

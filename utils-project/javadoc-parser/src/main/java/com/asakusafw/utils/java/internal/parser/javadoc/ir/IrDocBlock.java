@@ -62,12 +62,10 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
     public void setTag(String tag) {
         if (tag == null) {
             this.tag = null;
-        }
-        else {
+        } else {
             if (tag.length() == 0 || tag.charAt(0) != '@') {
                 this.tag = ('@' + tag).intern();
-            }
-            else {
+            } else {
                 this.tag = tag;
             }
         }
@@ -122,8 +120,7 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
             if (other.tag != null) {
                 return false;
             }
-        }
-        else if (!tag.equals(other.tag)) {
+        } else if (!tag.equals(other.tag)) {
             return false;
         }
         return true;

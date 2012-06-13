@@ -165,8 +165,7 @@ public class PrintEmitContext implements EmitContext {
             before(State.SYMBOL);
             putToken("{");
             push();
-        }
-        else {
+        } else {
             pop();
             before(State.SEPARATOR);
             putToken("}");
@@ -188,8 +187,7 @@ public class PrintEmitContext implements EmitContext {
         }
         if (direction == EmitDirection.BEGIN) {
             push();
-        }
-        else {
+        } else {
             pop();
         }
     }
@@ -224,8 +222,7 @@ public class PrintEmitContext implements EmitContext {
             before(State.BLOCK_START);
             putToken("/**");
             this.inDocComment = true;
-        }
-        else {
+        } else {
             this.inDocComment = false;
             before(State.BLOCK_END);
             putToken(" */");
@@ -248,8 +245,7 @@ public class PrintEmitContext implements EmitContext {
         if (direction == EmitDirection.BEGIN) {
             before(State.SYMBOL);
             putToken("{");
-        }
-        else {
+        } else {
             before(State.SYMBOL);
             putToken("}");
         }
@@ -309,8 +305,7 @@ public class PrintEmitContext implements EmitContext {
             before(State.BLOCK_START);
             putToken("{");
             push();
-        }
-        else {
+        } else {
             pop();
             before(State.BLOCK_END);
             putToken("}");
@@ -374,11 +369,9 @@ public class PrintEmitContext implements EmitContext {
         case BLOCK_END: {
             if (next == State.SEPARATOR) {
                 state = State.LINE_END;
-            }
-            else if (next == State.BLOCK_START) {
+            } else if (next == State.BLOCK_START) {
                 state = State.LINE_END;
-            }
-            else if (next != State.LINE_END) {
+            } else if (next != State.LINE_END) {
                 putLineBreak();
             }
             break;
@@ -417,9 +410,9 @@ public class PrintEmitContext implements EmitContext {
     private void putToken(String token) {
         assert token != null;
         int length = token.length();
-        if (inComment == false &&
-                column + length > 120 &&
-                bodyColumn + length > 80) {
+        if (inComment == false
+                && column + length > 120
+                && bodyColumn + length > 80) {
             putLineBreak(true);
         }
         writer.print(token);

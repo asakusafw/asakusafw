@@ -130,8 +130,7 @@ public class VolatileResourceFile implements FileObject {
                 null,
                 "/" + path.replace('\\', '/'),
                 null);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
     }

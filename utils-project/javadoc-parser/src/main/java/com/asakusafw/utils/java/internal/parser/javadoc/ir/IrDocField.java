@@ -65,8 +65,7 @@ public class IrDocField extends IrDocMember {
             if (oType != null) {
                 return false;
             }
-        }
-        else if (type.equals(oType) == false) {
+        } else if (type.equals(oType) == false) {
             return false;
         }
         IrDocSimpleName name = getName();
@@ -75,8 +74,7 @@ public class IrDocField extends IrDocMember {
             if (oName != null) {
                 return false;
             }
-        }
-        else if (name.equals(oName) == false) {
+        } else if (name.equals(oName) == false) {
             return false;
         }
         return true;
@@ -89,8 +87,7 @@ public class IrDocField extends IrDocMember {
                 "#{1}", //$NON-NLS-1$
                 getDeclaringType(),
                 getName());
-        }
-        else {
+        } else {
             return MessageFormat.format(
                 "{0}#{1}", //$NON-NLS-1$
                 getDeclaringType(),

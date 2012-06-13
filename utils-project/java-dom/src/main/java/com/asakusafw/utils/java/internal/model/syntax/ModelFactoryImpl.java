@@ -2352,8 +2352,7 @@ public class ModelFactoryImpl implements ModelFactory {
         ExpressionPriority priority = ExpressionPriority.valueOf(expression);
         if (ExpressionPriority.isParenthesesRequired(context, false, priority)) {
             return newParenthesizedExpression0(expression);
-        }
-        else {
+        } else {
             return expression;
         }
     }
@@ -2365,8 +2364,7 @@ public class ModelFactoryImpl implements ModelFactory {
         ExpressionPriority priority = ExpressionPriority.valueOf(expression);
         if (ExpressionPriority.isParenthesesRequired(context, true, priority)) {
             return newParenthesizedExpression0(expression);
-        }
-        else {
+        } else {
             return expression;
         }
     }

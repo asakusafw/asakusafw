@@ -107,8 +107,7 @@ public class DefaultJavadocBlockParserTest extends JavadocTestRoot {
             try {
                 parser.parse(null, string("Hello, {@b THIS} world!"));
                 fail();
-            }
-            catch (MissingJavadocBlockParserException e) {
+            } catch (MissingJavadocBlockParserException e) {
                 assertEquals("b", e.getTagName());
             }
         }

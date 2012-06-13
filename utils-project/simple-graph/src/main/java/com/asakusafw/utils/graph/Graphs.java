@@ -30,7 +30,7 @@ import com.asakusafw.utils.graph.Graph.Vertex;
 /**
  * {@link Graph}に関する操作を行うライブラリ。
  */
-public class Graphs {
+public final class Graphs {
 
     /**
      * 頂点を一つも持たない{@code Graph}のインスタンスを生成して返す。
@@ -196,9 +196,7 @@ public class Graphs {
             // 該当するノードならば結果に追加し、以降の探索を打ち切り
             if (accepted) {
                 results.add(first);
-            }
-            // 該当するノードでなければ、続けて検索する
-            else {
+            } else { // 該当するノードでなければ、続けて検索する
                 queue.addAll(graph.getConnected(first));
             }
         }
@@ -259,9 +257,7 @@ public class Graphs {
             // 該当するノードならば結果に追加し、以降の探索を打ち切り
             if (accepted) {
                 results.add(first);
-            }
-            // 該当するノードでなければ、続けて検索する
-            else {
+            } else { // 該当するノードでなければ、続けて検索する
                 results.add(first);
                 queue.addAll(graph.getConnected(first));
             }
@@ -286,9 +282,7 @@ public class Graphs {
             // 強連結成分が2要素以上ならば、それらは循環
             if (scc.size() >= 2) {
                 results.add(scc);
-            }
-            // 強連結成分が1要素ならば、自己参照がある場合のみ循環
-            else if (scc.size() == 1) {
+            } else if (scc.size() == 1) { // 強連結成分が1要素ならば、自己参照がある場合のみ循環
                 V vertex = scc.iterator().next();
                 if (graph.isConnected(vertex, vertex)) {
                     results.add(scc);

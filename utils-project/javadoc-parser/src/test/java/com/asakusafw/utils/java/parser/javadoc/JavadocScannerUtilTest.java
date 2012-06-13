@@ -234,49 +234,49 @@ public class JavadocScannerUtilTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "Hello, world!\n" +
-                "@stop");
+                "Hello, world!\n"
+                + "@stop");
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 0);
             assertEquals(AT, scanner.lookahead(count).getKind());
             assertEquals("stop", scanner.lookahead(count + 1).getText());
         }
         {
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "  * Hello, world!\n" +
-                "  * @stop");
+                "\n"
+                + "  * Hello, world!\n"
+                + "  * @stop");
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 0);
             assertEquals(AT, scanner.lookahead(count).getKind());
             assertEquals("stop", scanner.lookahead(count + 1).getText());
         }
         {
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "  * Hello, world!\n" +
-                "  *             @stop");
+                "\n"
+                + "  * Hello, world!\n"
+                + "  *             @stop");
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 0);
             assertEquals(AT, scanner.lookahead(count).getKind());
             assertEquals("stop", scanner.lookahead(count + 1).getText());
         }
         {
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "  * {@code block start-->\n" +
-                "  * @dummy\n" +
-                "  * }\n" +
-                "  * @stop");
+                "\n"
+                + "  * {@code block start-->\n"
+                + "  * @dummy\n"
+                + "  * }\n"
+                + "  * @stop");
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 0);
             assertEquals(AT, scanner.lookahead(count).getKind());
             assertEquals("stop", scanner.lookahead(count + 1).getText());
         }
         {
             DefaultJavadocScanner scanner = string(
-                "\n" +
-                "  * @start\n" +
-                "  * {@code block start-->\n" +
-                "  * @dummy\n" +
-                "  * }\n" +
-                "  * @stop");
+                "\n"
+                + "  * @start\n"
+                + "  * {@code block start-->\n"
+                + "  * @dummy\n"
+                + "  * }\n"
+                + "  * @stop");
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 6);
             assertEquals(AT, scanner.lookahead(6 + count).getKind());
             assertEquals("stop", scanner.lookahead(6 + count + 1).getText());

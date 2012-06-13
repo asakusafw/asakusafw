@@ -47,8 +47,7 @@ public class DefaultJavadocTokenStream implements JavadocTokenStream {
         int index = scanner.getIndex();
         try {
             return nextToken();
-        }
-        finally {
+        } finally {
             scanner.seek(index);
         }
     }
@@ -66,11 +65,9 @@ public class DefaultJavadocTokenStream implements JavadocTokenStream {
             if (kind == JavadocTokenKind.LINE_BREAK) {
                 int offset = JavadocScannerUtil.countUntilNextLineStart(scanner, 0);
                 scanner.consume(offset);
-            }
-            else if (kind == JavadocTokenKind.WHITE_SPACES) {
+            } else if (kind == JavadocTokenKind.WHITE_SPACES) {
                 scanner.consume(1);
-            }
-            else {
+            } else {
                 scanner.consume(1);
                 return token;
             }

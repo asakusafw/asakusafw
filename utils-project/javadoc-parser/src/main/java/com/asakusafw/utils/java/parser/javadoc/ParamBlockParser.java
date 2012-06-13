@@ -53,8 +53,7 @@ public class ParamBlockParser extends AcceptableJavadocBlockParser {
         IrDocSimpleName name = fetchSimpleName(scanner);
         if (name != null) {
             fragments.add(name);
-        }
-        else {
+        } else {
             consumeIfTypeParameter(scanner, fragments);
         }
 

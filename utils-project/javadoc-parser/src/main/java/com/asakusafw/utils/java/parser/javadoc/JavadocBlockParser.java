@@ -39,13 +39,13 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 public abstract class JavadocBlockParser extends JavadocBaseParser {
 
     private static final Set<JavadocTokenKind> S_FOLLOW;
-    static {{
+    static {
         Set<JavadocTokenKind> set = EnumSet.noneOf(JavadocTokenKind.class);
         set.add(JavadocTokenKind.WHITE_SPACES);
         set.add(JavadocTokenKind.LINE_BREAK);
         set.add(JavadocTokenKind.EOF);
         S_FOLLOW = Collections.unmodifiableSet(set);
-    }}
+    }
 
     /**
      * インスタンスを生成する。
@@ -56,7 +56,7 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
     }
 
     /**
-     * インスタンスを生成する
+     * インスタンスを生成する。
      * @param blockParsers インラインブロックを解析するパーサ
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
@@ -119,24 +119,20 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
                 if (la == JavadocTokenKind.LINE_BREAK) {
                     int count = JavadocScannerUtil.countUntilNextPrintable(scanner, 0);
                     scanner.consume(count);
-                }
-                else if (la == JavadocTokenKind.LEFT_BRACE) {
+                } else if (la == JavadocTokenKind.LEFT_BRACE) {
                     JavadocBlockInfo info = JavadocBlockParserUtil.fetchBlockInfo(scanner);
                     IrDocBlock inline = parseBlock(info);
                     fragments.add(inline);
-                }
-                else if (la == JavadocTokenKind.EOF) {
+                } else if (la == JavadocTokenKind.EOF) {
                     break;
-                }
-                else {
+                } else {
                     IrDocText text = JavadocBlockParserUtil.fetchText(scanner, false, false);
                     fragments.add(text);
                 }
             }
             fragments.trimToSize();
             return fragments;
-        }
-        catch (JavadocParseException e) {
+        } catch (JavadocParseException e) {
             scanner.seek(index);
             throw e;
         }

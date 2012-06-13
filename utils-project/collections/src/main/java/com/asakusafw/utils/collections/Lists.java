@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * リストに関するユーティリティ群。
  */
-public class Lists {
+public final class Lists {
 
     /**
      * 空のリストを生成して返す。

@@ -27,7 +27,7 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 /**
  * {@link JavadocScanner}のユーティリティ群。
  */
-public class JavadocScannerUtil {
+public final class JavadocScannerUtil {
 
     private static final Set<JavadocTokenKind> S_LINE_BREAK =
         Collections.singleton(JavadocTokenKind.LINE_BREAK);
@@ -40,6 +40,10 @@ public class JavadocScannerUtil {
 
     private static final Set<JavadocTokenKind> S_RIGHT_BRACE =
         Collections.singleton(JavadocTokenKind.RIGHT_BRACE);
+
+    private JavadocScannerUtil() {
+        return;
+    }
 
     /**
      * 指定のレンジのトークン一覧を返す。
@@ -116,18 +120,15 @@ public class JavadocScannerUtil {
                     offset++;
                     offset += countUntil(S_RIGHT_BRACE, scanner, start + offset);
                 }
-            }
-            else if (kind == JavadocTokenKind.LINE_BREAK) {
+            } else if (kind == JavadocTokenKind.LINE_BREAK) {
                 offset += countUntilNextPrintable(scanner, start + offset);
                 JavadocTokenKind la = scanner.lookahead(start + offset).getKind();
                 if (la == JavadocTokenKind.AT) {
                     return offset;
                 }
-            }
-            else if (kind == JavadocTokenKind.EOF) {
+            } else if (kind == JavadocTokenKind.EOF) {
                 return offset;
-            }
-            else {
+            } else {
                 offset++;
             }
         }
@@ -158,16 +159,13 @@ public class JavadocScannerUtil {
             JavadocTokenKind kind = la.getKind();
             if (kind == JavadocTokenKind.EOF) {
                 return (returnMinusIfMissing ? -1 : offset);
-            }
-            else if (sawAster && kind == JavadocTokenKind.SLASH) {
+            } else if (sawAster && kind == JavadocTokenKind.SLASH) {
                 offset--;
                 return offset;
-            }
-            else if (kind == JavadocTokenKind.ASTERISK) {
+            } else if (kind == JavadocTokenKind.ASTERISK) {
                 sawAster = true;
                 offset++;
-            }
-            else {
+            } else {
                 sawAster = false;
                 offset++;
             }
@@ -184,11 +182,10 @@ public class JavadocScannerUtil {
             JavadocToken token = scanner.lookahead(start + offset);
             JavadocTokenKind kind = token.getKind();
             if (
-                    kind == JavadocTokenKind.EOF ||
-                    kinds.contains(kind) == breakOnFound) {
+                    kind == JavadocTokenKind.EOF
+                    || kinds.contains(kind) == breakOnFound) {
                 return offset;
-            }
-            else {
+            } else {
                 offset++;
             }
         }
@@ -210,8 +207,7 @@ public class JavadocScannerUtil {
             JavadocTokenKind kind = token.getKind();
             if (kind == JavadocTokenKind.EOF) {
                 return offset;
-            }
-            else if (kind != JavadocTokenKind.LINE_BREAK) {
+            } else if (kind != JavadocTokenKind.LINE_BREAK) {
                 return offset;
             }
             offset += countUntilNextLineStart(scanner, start + offset);
@@ -232,8 +228,7 @@ public class JavadocScannerUtil {
         JavadocToken token = scanner.lookahead(start + offset);
         if (token.getKind() == JavadocTokenKind.EOF) {
             return offset;
-        }
-        else {
+        } else {
             offset++;
         }
         offset += countWhile(S_WHITE_SPACES, scanner, start + offset);
@@ -254,8 +249,7 @@ public class JavadocScannerUtil {
             int offset = countUntilNextLineStart(scanner, 0);
             if (offset == 0) {
                 break;
-            }
-            else {
+            } else {
                 scanner.consume(offset);
                 consumed++;
             }

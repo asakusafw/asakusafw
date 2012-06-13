@@ -23,7 +23,11 @@ import java.util.List;
 /**
  * このパッケージ共通のユーティリティ。
  */
-class Util {
+final class Util {
+
+    private Util() {
+        return;
+    }
 
     static void notNull(Object reference, String name) {
         if (reference == null) {

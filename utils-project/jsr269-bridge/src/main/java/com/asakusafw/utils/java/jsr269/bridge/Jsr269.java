@@ -62,7 +62,8 @@ public class Jsr269 {
 
     private static final EnumMap<javax.lang.model.element.Modifier, ModifierKind> MODIFIERS;
     static {
-        MODIFIERS = new EnumMap<javax.lang.model.element.Modifier, ModifierKind>(javax.lang.model.element.Modifier.class);
+        MODIFIERS =
+            new EnumMap<javax.lang.model.element.Modifier, ModifierKind>(javax.lang.model.element.Modifier.class);
         MODIFIERS.put(javax.lang.model.element.Modifier.ABSTRACT, ModifierKind.ABSTRACT);
         MODIFIERS.put(javax.lang.model.element.Modifier.FINAL, ModifierKind.FINAL);
         MODIFIERS.put(javax.lang.model.element.Modifier.NATIVE, ModifierKind.NATIVE);
@@ -76,7 +77,7 @@ public class Jsr269 {
         MODIFIERS.put(javax.lang.model.element.Modifier.VOLATILE, ModifierKind.VOLATILE);
     }
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
     /**
      * インスタンスを生成する。
@@ -410,8 +411,7 @@ public class Jsr269 {
         TypeDeclaration primary = Emitter.findPrimaryType(unit);
         if (primary == null) {
             name.append("package-info");
-        }
-        else {
+        } else {
             name.append(primary.getName());
         }
         JavaFileObject source = filer.createSourceFile(name);
@@ -420,8 +420,7 @@ public class Jsr269 {
             PrintWriter output = new PrintWriter(writer);
             Models.emit(unit, output);
             output.close();
-        }
-        finally {
+        } finally {
             writer.close();
         }
     }

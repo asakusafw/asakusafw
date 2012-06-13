@@ -31,7 +31,7 @@ import com.asakusafw.utils.java.model.syntax.Model;
  */
 abstract class ModelRoot implements Model {
 
-    private Map<Class<?>, Object> traits = new WeakHashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> traits = new WeakHashMap<Class<?>, Object>();
 
     @Override
     public <T> T findModelTrait(Class<T> traitClass) {
@@ -52,8 +52,7 @@ abstract class ModelRoot implements Model {
         }
         if (traitObject == null) {
             traits.remove(traitClass);
-        }
-        else {
+        } else {
             assert traitClass.isInstance(traitObject);
             traits.put(traitClass, traitObject);
         }
@@ -81,8 +80,7 @@ abstract class ModelRoot implements Model {
         PrintWriter output = new PrintWriter(buffer);
         try {
             ModelEmitter.emit(this, new PrintEmitContext(output));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace(output);
         }
         output.flush();

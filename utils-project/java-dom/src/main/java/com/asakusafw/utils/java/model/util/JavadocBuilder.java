@@ -103,8 +103,7 @@ public class JavadocBuilder {
         }
         if (tag.startsWith("@")) {
             flushBlock(tag);
-        }
-        else {
+        } else {
             flushBlock("@" + tag);
         }
         return this;

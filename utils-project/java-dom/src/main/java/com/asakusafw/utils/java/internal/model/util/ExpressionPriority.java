@@ -177,8 +177,7 @@ public enum ExpressionPriority {
         case ARRAY_CREATION_EXPRESSION:
             if (((ArrayCreationExpression) expression).getArrayInitializer() == null) {
                 return PRIMARY;
-            }
-            else {
+            } else {
                 return ARRAY_INITIALIZER;
             }
         case ASSIGNMENT_EXPRESSION:

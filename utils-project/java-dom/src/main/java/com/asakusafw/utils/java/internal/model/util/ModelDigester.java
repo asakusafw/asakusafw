@@ -23,7 +23,7 @@ import com.asakusafw.utils.java.model.util.NoThrow;
 /**
  * {@link Model}のダイジェスト値を算出する。
  */
-public class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
+public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
 
     /**
      * このクラスのインスタンス。
@@ -893,8 +893,7 @@ public class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
     private void digest(Model model, DigestContext context) {
         if (model == null) {
             context.add(0);
-        }
-        else {
+        } else {
             model.accept(this, context);
         }
     }
@@ -917,8 +916,7 @@ public class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
     private void digest(String value, DigestContext context) {
         if (value == null) {
             context.add(0);
-        }
-        else {
+        } else {
             context.add(value.hashCode());
         }
     }
@@ -926,8 +924,7 @@ public class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
     private void digest(Enum<?> value, DigestContext context) {
         if (value == null) {
             context.add(0);
-        }
-        else {
+        } else {
             context.add(value.hashCode());
         }
     }

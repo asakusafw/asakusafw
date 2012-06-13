@@ -208,11 +208,9 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
         while (true) {
             if (thisNode == null) {
                 return thatNode == null;
-            }
-            else if (thatNode == null) {
+            } else if (thatNode == null) {
                 return false;
-            }
-            else {
+            } else {
                 if (thisNode.value == null) {
                     return thatNode.value == null;
                 }
@@ -284,8 +282,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
         int size = stream.readInt();
         if (size == 0) {
             head = null;
-        }
-        else {
+        } else {
             List<E> store = new ArrayList<E>(size);
             for (int i = 0; i < size; i++) {
                 @SuppressWarnings("unchecked")

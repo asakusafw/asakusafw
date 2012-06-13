@@ -26,7 +26,7 @@ public class MissingJavadocBlockParserException extends JavadocParseException {
 
     private static final long serialVersionUID = 1L;
 
-    private String tagName;
+    private final String tagName;
 
     /**
      * インスタンスを生成する。
@@ -40,8 +40,12 @@ public class MissingJavadocBlockParserException extends JavadocParseException {
     }
 
     private static String buildMessage(String tag) {
-        String blockName = (tag == null ? Messages.getString("MissingJavadocBlockParserException.nameSynopsisBlock") : tag); //$NON-NLS-1$
-        return MessageFormat.format(Messages.getString("MissingJavadocBlockParserException.errorMissingBlockParser"), blockName); //$NON-NLS-1$
+        String blockName = (tag == null
+                ? Messages.getString("MissingJavadocBlockParserException.nameSynopsisBlock") //$NON-NLS-1$
+                : tag);
+        return MessageFormat.format(
+                Messages.getString("MissingJavadocBlockParserException.errorMissingBlockParser"),  //$NON-NLS-1$
+                blockName);
     }
 
     /**

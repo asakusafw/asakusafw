@@ -91,12 +91,12 @@ public enum JavadocTokenKind {
     RIGHT_PAREN,
 
     /**
-     * {@code "<"}
+     * {@code "<"}.
      */
     LESS,
 
     /**
-     * {@code ">"}
+     * {@code ">"}.
      */
     GREATER,
 
@@ -106,7 +106,7 @@ public enum JavadocTokenKind {
     SLASH,
 
     /**
-     * {@code "?"}
+     * {@code "?"}.
      */
     QUESTION,
 

@@ -36,28 +36,28 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
      * このメソッドが識別可能な型は次のとおりである。
      * <ul>
      *   <li>
-     *     {@link Class} -
-     *     {@link #visitClass(Class, Object)
+     *     {@link Class}
+     - *     {@link #visitClass(Class, Object)
      *     visitClass(type, context)}
      *   </li>
      *   <li>
-     *     {@link GenericArrayType} -
-     *     {@link #visitGenericArrayType(GenericArrayType, Object)
+     *     {@link GenericArrayType}
+     - *     {@link #visitGenericArrayType(GenericArrayType, Object)
      *     visitGenericArrayType(type, context)}
      *   </li>
      *   <li>
-     *     {@link ParameterizedType} -
-     *     {@link #visitParameterizedType(ParameterizedType, Object)
+     *     {@link ParameterizedType}
+     - *     {@link #visitParameterizedType(ParameterizedType, Object)
      *     visitParameterizedType(type, context)}
      *   </li>
      *   <li>
-     *     {@link TypeVariable} -
-     *     {@link #visitTypeVariable(TypeVariable, Object)
+     *     {@link TypeVariable}
+     - *     {@link #visitTypeVariable(TypeVariable, Object)
      *     visitTypeVariable(type, context)}
      *   </li>
      *   <li>
-     *     {@link WildcardType} -
-     *     {@link #visitWildcardType(WildcardType, Object)
+     *     {@link WildcardType}
+     - *     {@link #visitWildcardType(WildcardType, Object)
      *     visitWildcardType(type, context)}
      *   </li>
      * </ul>
@@ -85,20 +85,15 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
         }
         if (type instanceof Class<?>) {
             return visitClass((Class<?>) type, context);
-        }
-        else if (type instanceof GenericArrayType) {
+        } else if (type instanceof GenericArrayType) {
             return visitGenericArrayType((GenericArrayType) type, context);
-        }
-        else if (type instanceof ParameterizedType) {
+        } else if (type instanceof ParameterizedType) {
             return visitParameterizedType((ParameterizedType) type, context);
-        }
-        else if (type instanceof TypeVariable<?>) {
+        } else if (type instanceof TypeVariable<?>) {
             return visitTypeVariable((TypeVariable<?>) type, context);
-        }
-        else if (type instanceof WildcardType) {
+        } else if (type instanceof WildcardType) {
             return visitWildcardType((WildcardType) type, context);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(MessageFormat.format(
                 "Unknown Type Kind: {0} ({1})",
                 type,

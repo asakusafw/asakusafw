@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.model.util;
 /**
  * Javaの文字エスケープに関する処理。
  */
-public class JavaEscape {
+public final class JavaEscape {
 
     private static final char[] ASCII_SPECIAL_ESCAPE = new char[128];
     static {
@@ -52,15 +52,12 @@ public class JavaEscape {
             if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
                 buf.append('\\');
                 buf.append(ASCII_SPECIAL_ESCAPE[c]);
-            }
-            else if ((charValue && c == '\'') || (!charValue && c == '"')) {
+            } else if ((charValue && c == '\'') || (!charValue && c == '"')) {
                 buf.append('\\');
                 buf.append(c);
-            }
-            else if (unicodeEscape || Character.isISOControl(c) || !Character.isDefined(c)){
+            } else if (unicodeEscape || Character.isISOControl(c) || !Character.isDefined(c)) {
                 addCodePoint(buf, c);
-            }
-            else {
+            } else {
                 buf.append(c);
             }
         }

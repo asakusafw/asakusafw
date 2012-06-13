@@ -44,7 +44,7 @@ import com.asakusafw.utils.java.model.syntax.Type;
 /**
  * {@link Model}に関するユーティリティ群。
  */
-public class Models {
+public final class Models {
 
     private static final Map<Class<?>, BasicTypeKind> WRAPPER_TYPE_KINDS;
     static {
@@ -84,8 +84,7 @@ public class Models {
         ModelKind kind = name.getModelKind();
         if (kind == ModelKind.SIMPLE_NAME) {
             return Collections.singletonList((SimpleName) name);
-        }
-        else {
+        } else {
             LinkedList<SimpleName> result = new LinkedList<SimpleName>();
             Name current = name;
             do {
@@ -426,11 +425,9 @@ public class Models {
             default:
                 throw new AssertionError(kind);
             }
-        }
-        else if (valueClass == String.class) {
+        } else if (valueClass == String.class) {
             return toLiteral(factory, (String) value);
-        }
-        else if (value instanceof java.lang.reflect.Type) {
+        } else if (value instanceof java.lang.reflect.Type) {
             return toClassLiteral(factory, (java.lang.reflect.Type) value);
         }
         throw new IllegalArgumentException(MessageFormat.format(
@@ -676,8 +673,7 @@ public class Models {
         for (String value : array) {
             if (value == null) {
                 literals.add(Models.toNullLiteral(factory));
-            }
-            else {
+            } else {
                 literals.add(Models.toLiteral(factory, value));
             }
         }
@@ -704,8 +700,7 @@ public class Models {
         for (java.lang.reflect.Type value : array) {
             if (value == null) {
                 literals.add(Models.toNullLiteral(factory));
-            }
-            else {
+            } else {
                 literals.add(Models.toClassLiteral(factory, value));
             }
         }

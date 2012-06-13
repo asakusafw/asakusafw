@@ -90,8 +90,7 @@ public class IrDocText extends AbstractIrDocElement implements IrDocFragment {
             if (other.content != null) {
                 return false;
             }
-        }
-        else if (!content.equals(other.content)) {
+        } else if (!content.equals(other.content)) {
             return false;
         }
         return true;

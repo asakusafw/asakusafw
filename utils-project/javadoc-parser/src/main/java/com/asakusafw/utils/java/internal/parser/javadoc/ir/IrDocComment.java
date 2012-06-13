@@ -89,8 +89,7 @@ public class IrDocComment extends AbstractIrDocElement {
             if (other.blocks != null) {
                 return false;
             }
-        }
-        else if (!blocks.equals(other.blocks)) {
+        } else if (!blocks.equals(other.blocks)) {
             return false;
         }
         return true;
