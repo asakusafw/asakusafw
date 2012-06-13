@@ -1,0 +1,282 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Asakusa Framework Distribution Module</name>
+	<groupId>com.asakusafw</groupId>
+	<artifactId>asakusa-distribution</artifactId>
+	<parent>
+		<artifactId>asakusa-parent</artifactId>
+		<groupId>com.asakusafw</groupId>
+		<version>0.4-SNAPSHOT</version>
+		<relativePath>../../asakusa-parent</relativePath>
+	</parent>
+
+	<description>Asakusa Framework Distribution Module</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/resources/assemblies/dev.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-directio.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-thundergate.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/prod-cleaner.xml</descriptor>
+							</descriptors>
+							<finalName>asakusafw-${project.version}</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- FIXME avoid maven assembly plugin's bug -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-components-for-assembly-plugin-bug</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/components</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/assemblies/components</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<!-- Core -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-test-driver</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+
+		<!-- ThunderGate -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-thundergate-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- WindGate -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-bootstrap</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-plugin</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-stream</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-windgate-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Direct I/O -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-directio-plugin</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- YAESS -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-bootstrap</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-bootstrap</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-core</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-flowlog</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-jsch</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-multidispatch</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-paralleljob</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- Operation -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-operation-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-operation-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- Development -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-development-tools</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- Legacy -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-cleaner</artifactId>
+			<version>${project.version}</version>
+			<classifier>dist</classifier>
+		</dependency>
+
+		<!-- 3rd party libraries -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.jdbc.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>${commons.configuration.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop.thirdparty.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
+	</dependencies>
+
+</project>
