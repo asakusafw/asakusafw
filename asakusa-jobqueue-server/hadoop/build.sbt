@@ -2,7 +2,7 @@ import java.io.FileInputStream
 import java.util.jar.Manifest
 
 libraryDependencies ++= Seq(
-  "com.github.play2war" %% "play2-war-core" % "0.3")
+  "com.github.play2war" %% "play2-war-core" % "0.4")
 
 war <<= (war, name, version, scalaVersion) map { (war, name, version, scalaVersion) =>
   IO.withTemporaryDirectory { dir =>
