@@ -52,7 +52,7 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.ashigeru.lang.java</groupId>
+			<groupId>com.asakusafw</groupId>
 			<artifactId>jsr199-testing</artifactId>
 			<scope>test</scope>
 		</dependency>
