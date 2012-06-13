@@ -11,3 +11,6 @@ addSbtPlugin("com.github.play2war" % "play2-war-plugin" % "0.4")
 
 // sbteclipse
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0")
+
+// findbugs4sbt
+addSbtPlugin("de.johoop" % "findbugs4sbt" % "1.1.6")
