@@ -6,7 +6,6 @@ Asakusa Framework Sandbox
     :maxdepth: 1
 
     windgate/index
-    yaess/index
 
 ToDo
 ====
