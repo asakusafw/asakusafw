@@ -1,9 +1,0 @@
-YAESS Script Handlers for JobQueue
-
-==
-hadoop = com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler
-hadoop.timeout = $<registration timeout (ms)>
-hadoop.pollingInterval = $<status polling interval (ms)>
-hadoop.<n>.url = $<target URL base>
-hadoop.<n>.user = $<authentication user name>
-hadoop.<n>.password = $<authentication password>

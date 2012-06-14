@@ -26,7 +26,6 @@
 	<modules>
 		<module>../asakusa-sandbox-parent</module>
 		<module>../asakusa-windgate-dmdl-ext</module>
-		<module>../asakusa-yaess-jobqueue</module>
 	</modules>
 
 	<build>
