@@ -49,9 +49,9 @@ import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
  */
 public class ImportBuilder {
 
-    private PackageDeclaration packageDecl;
+    private final PackageDeclaration packageDecl;
 
-    private Resolver resolver;
+    private final Resolver resolver;
 
     /**
      * インスタンスを生成する。
@@ -87,8 +87,7 @@ public class ImportBuilder {
         Type type;
         if (name.getModelKind() == ModelKind.SIMPLE_NAME) {
             type = reservePackageMember((SimpleName) name);
-        }
-        else {
+        } else {
             type = reservePackageMember((QualifiedName) name);
         }
         return resolve(type);
@@ -98,8 +97,7 @@ public class ImportBuilder {
         assert name != null;
         if (packageDecl == null) {
             return resolver.factory.newNamedType(name);
-        }
-        else {
+        } else {
             Name qualified = Models.append(
                     resolver.factory,
                     packageDecl.getName(),
@@ -117,8 +115,7 @@ public class ImportBuilder {
         SimpleName first = iter.next();
         if (packageDecl == null) {
             current = first;
-        }
-        else {
+        } else {
             current = resolver.factory.newQualifiedName(
                     packageDecl.getName(),
                     first);
@@ -212,7 +209,7 @@ public class ImportBuilder {
     private enum ImportComparator implements Comparator<ImportDeclaration> {
 
         /**
-         * 唯一のインスタンス
+         * 唯一のインスタンス。
          */
         INSTANCE,
 
@@ -290,8 +287,8 @@ public class ImportBuilder {
             QualifiedName qname = (QualifiedName) name;
             SimpleName renamed = imported.get(qname);
             if (renamed == null) {
-                if (reserved.containsKey(qname.getSimpleName()) &&
-                        reserved.get(qname.getSimpleName()).equals(qname) == false) {
+                if (reserved.containsKey(qname.getSimpleName())
+                        && reserved.get(qname.getSimpleName()).equals(qname) == false) {
                     return elem;
                 }
                 imported.put(qname, qname.getSimpleName());
@@ -315,8 +312,7 @@ public class ImportBuilder {
             }
             if (current.getModelKind() == ModelKind.QUALIFIED_NAME) {
                 segments.addFirst(((QualifiedName) current).getSimpleName());
-            }
-            else {
+            } else {
                 segments.addFirst((SimpleName) current);
             }
             return current;
@@ -338,8 +334,7 @@ public class ImportBuilder {
             SimpleName parent;
             if (qualifier.getModelKind() == ModelKind.QUALIFIED_NAME) {
                 parent = ((QualifiedName) qualifier).getSimpleName();
-            }
-            else {
+            } else {
                 parent = (SimpleName) qualifier;
             }
             return isClassName(parent);
@@ -358,8 +353,8 @@ public class ImportBuilder {
             for (Type t : elem.getTypeArguments()) {
                 arguments.add(t.accept(this, _));
             }
-            if (nonparameterized.equals(elem.getType()) &&
-                    arguments.equals(elem.getTypeArguments())) {
+            if (nonparameterized.equals(elem.getType())
+                    && arguments.equals(elem.getTypeArguments())) {
                 return elem;
             }
             return factory.newParameterizedType(nonparameterized, arguments);
@@ -375,7 +370,7 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitWildcard(Wildcard elem, Void _) throws NoThrow {
+        public Type visitWildcard(Wildcard elem, Void _) {
             if (elem.getBoundKind() == WildcardBoundKind.UNBOUNDED) {
                 return elem;
             }

@@ -23,7 +23,7 @@ import com.asakusafw.utils.java.model.util.NoThrow;
 /**
  * {@link Model}どうしを比較するビジタ。
  */
-public class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
+public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
 
     /**
      * このクラスのインスタンス。

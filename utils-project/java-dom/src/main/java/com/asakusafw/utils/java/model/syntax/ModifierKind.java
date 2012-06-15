@@ -163,8 +163,7 @@ public enum ModifierKind {
         Set<DeclarationKind> allGrants;
         if (grant.isEmpty()) {
             allGrants = declarable;
-        }
-        else {
+        } else {
             allGrants = new HashSet<DeclarationKind>(grant);
             allGrants.addAll(declarable);
         }
@@ -257,8 +256,7 @@ public enum ModifierKind {
     public String getKeyword() {
         if (isImplicit()) {
             return MessageFormat.format("ACC_{0}", name()); //$NON-NLS-1$
-        }
-        else {
+        } else {
             return name().toLowerCase();
         }
     }

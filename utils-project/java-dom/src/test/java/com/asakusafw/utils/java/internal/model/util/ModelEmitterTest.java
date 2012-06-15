@@ -1790,8 +1790,7 @@ public class ModelEmitterTest {
         }));
         try {
             klass.newInstance();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             assertThat(e, instanceOf(IOException.class));
         }
     }
@@ -2287,8 +2286,7 @@ public class ModelEmitterTest {
         Object object = create(klass);
         try {
             object.toString();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             assertThat(t, instanceOf(exception));
         }
     }
@@ -2330,8 +2328,7 @@ public class ModelEmitterTest {
                     Method element = annotationType.getDeclaredMethod(annotationElementName);
                     element.setAccessible(true);
                     return element.invoke(a);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new AssertionError(e);
                 }
             }
@@ -2382,8 +2379,7 @@ public class ModelEmitterTest {
                 return method.getReturnType();
             }
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
@@ -2406,8 +2402,7 @@ public class ModelEmitterTest {
         }
         try {
             return compiler.getClassLoader().loadClass(name);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new AssertionError(e);
         }
     }
@@ -2420,8 +2415,7 @@ public class ModelEmitterTest {
         }
         try {
             return (T) target.getConstructor(argTypes).newInstance(args);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }

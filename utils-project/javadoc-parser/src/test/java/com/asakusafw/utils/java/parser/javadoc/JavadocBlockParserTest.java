@@ -124,8 +124,7 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
             try {
                 parser.parseBlock(block);
                 fail();
-            }
-            catch (MissingJavadocBlockParserException e) {
+            } catch (MissingJavadocBlockParserException e) {
                 // ok.
                 assertEquals("e", e.getTagName());
             }
@@ -162,8 +161,8 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "Multi\n" +
-                "Lines");
+                "Multi\n"
+                + "Lines");
             List<IrDocFragment> fragments = parser.fetchRestFragments(scanner);
             assertKinds(fragments, TEXT, TEXT);
             assertTextEquals("Multi", fragments.get(0));
@@ -171,10 +170,10 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "Formatted\n" +
-                "     * Text\n" +
-                "     * \n" +
-                "     * Sequence\n");
+                "Formatted\n"
+                + "     * Text\n"
+                + "     * \n"
+                + "     * Sequence\n");
             List<IrDocFragment> fragments = parser.fetchRestFragments(scanner);
             assertKinds(fragments, TEXT, TEXT, TEXT);
             assertTextEquals("Formatted", fragments.get(0));
@@ -213,8 +212,8 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "This returns {@code null} {@code value}\n" +
-                "    * {@link Object}");
+                "This returns {@code null} {@code value}\n"
+                + "    * {@link Object}");
             List<IrDocFragment> fragments = parser.fetchRestFragments(scanner);
             assertKinds(fragments, TEXT, BLOCK, TEXT, BLOCK, BLOCK);
             assertTextEquals("This returns ", fragments.get(0));

@@ -69,11 +69,9 @@ public abstract class Callback {
         this.elements = env.getElementUtils();
         try {
             test();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             this.runtimeException = e;
-        }
-        catch (Error e) {
+        } catch (Error e) {
             this.error = e;
         }
     }
@@ -84,8 +82,7 @@ public abstract class Callback {
     public void rethrow() {
         if (runtimeException != null) {
             throw runtimeException;
-        }
-        else if (error != null) {
+        } else if (error != null) {
             throw error;
         }
     }
@@ -106,8 +103,7 @@ public abstract class Callback {
         assertThat(klass.getName(), type, not(nullValue()));
         if (arguments.length == 0) {
             return types.erasure(type.asType());
-        }
-        else {
+        } else {
             return types.getDeclaredType(type, arguments);
         }
     }

@@ -63,15 +63,12 @@ public class JavadocTestRoot {
             String content = new String(out.toByteArray(), "UTF-8"); //$NON-NLS-1$
             content = content.replaceAll("\r\n|\r", "\n");
             return content;
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             throw new AssertionError(e);
-        }
-        finally {
+        } finally {
             try {
                 in.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new AssertionError(e);
             }
         }

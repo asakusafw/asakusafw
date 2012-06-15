@@ -132,8 +132,7 @@ public class DefaultJavadocTokenStreamTest extends JavadocTestRoot {
         try {
             stream.rewind();
             fail();
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // ok.
         }
     }
@@ -160,8 +159,7 @@ public class DefaultJavadocTokenStreamTest extends JavadocTestRoot {
         try {
             stream.discard();
             fail();
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // ok.
         }
     }

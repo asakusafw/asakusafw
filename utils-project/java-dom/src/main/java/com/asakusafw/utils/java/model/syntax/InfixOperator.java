@@ -224,8 +224,7 @@ public enum InfixOperator {
     public String getAssignmentSymbol() {
         if (this == ASSIGN) {
             return ASSIGN.getSymbol();
-        }
-        else {
+        } else {
             return getSymbol() + ASSIGN.getSymbol();
         }
     }

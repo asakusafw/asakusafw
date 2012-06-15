@@ -131,12 +131,10 @@ public class VolatileCompilerTest {
                     }
                     content.append(buf, 0, read);
                 }
-            }
-            finally {
+            } finally {
                 in.close();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
         return new VolatileJavaFile(path, content.toString());

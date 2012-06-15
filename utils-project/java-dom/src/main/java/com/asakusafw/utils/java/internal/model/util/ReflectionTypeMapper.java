@@ -79,8 +79,7 @@ public class ReflectionTypeMapper
         Type candidate;
         if (owner == null || owner instanceof Class<?>) {
             candidate = dispatch(rawType, context);
-        }
-        else {
+        } else {
             Type enclosing = dispatch(owner, context);
             assert rawType instanceof Class<?> : rawType;
             candidate = context.newQualifiedType(

@@ -36,7 +36,7 @@ public enum ImportKind {
     SINGLE_TYPE(Target.TYPE, Range.SINGLE),
 
     /**
-     * オンデマンドの型インポート宣言
+     * オンデマンドの型インポート宣言。
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.2] Type-Import-on-Demand Declaration} </li>
@@ -56,7 +56,7 @@ public enum ImportKind {
     SINGLE_STATIC(Target.MEMBER, Range.SINGLE),
 
     /**
-     * オンデマンドの{@code static}インポート宣言
+     * オンデマンドの{@code static}インポート宣言。
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.4] Static-Import-on-Demand Declaration} </li>
@@ -111,16 +111,13 @@ public enum ImportKind {
         if (target == Target.TYPE) {
             if (range == Range.SINGLE) {
                 return SINGLE_TYPE;
-            }
-            else {
+            } else {
                 return TYPE_ON_DEMAND;
             }
-        }
-        else {
+        } else {
             if (range == Range.SINGLE) {
                 return SINGLE_STATIC;
-            }
-            else {
+            } else {
                 return STATIC_ON_DEMAND;
             }
         }

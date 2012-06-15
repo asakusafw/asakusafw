@@ -97,8 +97,7 @@ public class IrDocArrayType extends AbstractIrDocElement implements IrDocType {
             if (other.componentType != null) {
                 return false;
             }
-        }
-        else if (!componentType.equals(other.componentType)) {
+        } else if (!componentType.equals(other.componentType)) {
             return false;
         }
         return true;

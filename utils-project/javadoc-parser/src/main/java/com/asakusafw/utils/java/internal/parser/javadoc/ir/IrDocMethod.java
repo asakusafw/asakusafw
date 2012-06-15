@@ -93,8 +93,7 @@ public class IrDocMethod extends IrDocMember {
             if (oType != null) {
                 return false;
             }
-        }
-        else if (type.equals(oType) == false) {
+        } else if (type.equals(oType) == false) {
             return false;
         }
         IrDocSimpleName name = getName();
@@ -103,16 +102,14 @@ public class IrDocMethod extends IrDocMember {
             if (oName != null) {
                 return false;
             }
-        }
-        else if (name.equals(oName) == false) {
+        } else if (name.equals(oName) == false) {
             return false;
         }
         if (parameters == null) {
             if (other.parameters != null) {
                 return false;
             }
-        }
-        else if (parameters.equals(other.parameters) == false) {
+        } else if (parameters.equals(other.parameters) == false) {
             return false;
         }
         return true;
@@ -126,8 +123,7 @@ public class IrDocMethod extends IrDocMember {
                 getDeclaringType(),
                 getName(),
                 parameters);
-        }
-        else {
+        } else {
             return MessageFormat.format(
                 "{0}#{1}({2})", //$NON-NLS-1$
                 getDeclaringType(),

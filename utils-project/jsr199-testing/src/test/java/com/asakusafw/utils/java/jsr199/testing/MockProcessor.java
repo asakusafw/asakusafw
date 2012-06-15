@@ -76,8 +76,7 @@ public class MockProcessor extends AbstractProcessor {
                 Writer rw = resource.openWriter();
                 rw.write("example=OK");
                 rw.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new AssertionError(e);
             }
         }
@@ -89,11 +88,9 @@ public class MockProcessor extends AbstractProcessor {
             Class<?> klass = Class.forName("Generated", true, loader);
             Field field = klass.getDeclaredField("ELEMENTS");
             return new HashSet<String>(Arrays.asList((String[]) field.get(null)));
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return Collections.emptySet();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }

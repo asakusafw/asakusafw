@@ -20,10 +20,14 @@ import java.math.BigInteger;
 /**
  * リテラルを解析する。
  */
-public class LiteralAnalyzer {
+public final class LiteralAnalyzer {
 
     private static final BigInteger MAX_INT = BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.ONE);
     private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE);
+
+    private LiteralAnalyzer() {
+        return;
+    }
 
     /**
      * 指定の文字列をリテラルとして解析し、解析結果のトークンを返す。
@@ -74,11 +78,9 @@ public class LiteralAnalyzer {
     public static boolean booleanValueOf(String literal) {
         if (LiteralToken.TOKEN_TRUE.equals(literal)) {
             return true;
-        }
-        else if (LiteralToken.TOKEN_FALSE.equals(literal)) {
+        } else if (LiteralToken.TOKEN_FALSE.equals(literal)) {
             return false;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(literal);
         }
     }
@@ -94,7 +96,7 @@ public class LiteralAnalyzer {
         if (length < 3 || literal.charAt(0) != '\'' || literal.charAt(length - 1) != '\'') {
             throw new IllegalArgumentException(literal);
         }
-        String unescaped = JavaEscape.unescape(literal.substring(1, length-1));
+        String unescaped = JavaEscape.unescape(literal.substring(1, length - 1));
         if (unescaped.length() != 1) {
             throw new IllegalArgumentException(literal);
         }
@@ -135,8 +137,7 @@ public class LiteralAnalyzer {
             if (number.bitLength() > 32) {
                 throw new NumberFormatException(literal);
             }
-        }
-        else {
+        } else {
             if (number.bitLength() > 31 && !number.equals(MAX_INT)) {
                 throw new NumberFormatException(literal);
             }
@@ -154,8 +155,7 @@ public class LiteralAnalyzer {
         String target;
         if (literal.endsWith("l") || literal.endsWith("L")) { //$NON-NLS-1$ //$NON-NLS-2$
             target = literal.substring(0, literal.length() - 1);
-        }
-        else {
+        } else {
             target = literal;
         }
         IntegerHolder h = parseInteger(target);
@@ -165,8 +165,7 @@ public class LiteralAnalyzer {
             if (number.bitLength() > 64) {
                 throw new NumberFormatException(literal);
             }
-        }
-        else {
+        } else {
             if (number.bitLength() > 63 && !number.equals(MAX_LONG)) {
                 throw new NumberFormatException(literal);
             }
@@ -186,7 +185,7 @@ public class LiteralAnalyzer {
         if (length < 2 || literal.charAt(0) != '\"' || literal.charAt(length - 1) != '\"') {
             throw new IllegalArgumentException(literal);
         }
-        return JavaEscape.unescape(literal.substring(1,length-1));
+        return JavaEscape.unescape(literal.substring(1, length - 1));
     }
 
     /**
@@ -202,26 +201,19 @@ public class LiteralAnalyzer {
         Class<? extends Object> klass = value.getClass();
         if (klass == Boolean.class) {
             return booleanLiteralOf((Boolean) value);
-        }
-        else if (klass == Character.class) {
+        } else if (klass == Character.class) {
             return charLiteralOf((Character) value);
-        }
-        else if (klass == Double.class) {
+        } else if (klass == Double.class) {
             return doubleLiteralOf((Double) value);
-        }
-        else if (klass == Float.class) {
+        } else if (klass == Float.class) {
             return floatLiteralOf((Float) value);
-        }
-        else if (klass == Integer.class) {
+        } else if (klass == Integer.class) {
             return intLiteralOf((Integer) value);
-        }
-        else if (klass == Long.class) {
+        } else if (klass == Long.class) {
             return longLiteralOf((Long) value);
-        }
-        else if (klass == String.class) {
+        } else if (klass == String.class) {
             return stringLiteralOf((String) value);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(value.toString());
         }
     }
@@ -261,8 +253,7 @@ public class LiteralAnalyzer {
     public static String floatLiteralOf(float value) {
         if (Float.isInfinite(value) || Float.isNaN(value)) {
             return String.valueOf(value);
-        }
-        else {
+        } else {
             return String.valueOf(value) + "f"; //$NON-NLS-1$
         }
     }
@@ -314,18 +305,15 @@ public class LiteralAnalyzer {
         if (literal.startsWith("-")) { //$NON-NLS-1$
             target = literal.substring(1).trim();
             positive = false;
-        }
-        else {
+        } else {
             target = literal;
             positive = true;
         }
         if (target.length() > 2 && (target.startsWith("0x") || target.startsWith("0X"))) { //$NON-NLS-1$ //$NON-NLS-2$
             return new IntegerHolder(positive, target.substring(2), 16);
-        }
-        else if (target.length() > 1 && target.startsWith("0")) { //$NON-NLS-1$
+        } else if (target.length() > 1 && target.startsWith("0")) { //$NON-NLS-1$
             return new IntegerHolder(positive, target.substring(1), 8);
-        }
-        else {
+        } else {
             return new IntegerHolder(positive, target, 10);
         }
     }
@@ -345,8 +333,7 @@ public class LiteralAnalyzer {
             BigInteger bint = new BigInteger(this.literal, this.radix);
             if (this.positive) {
                 return bint;
-            }
-            else {
+            } else {
                 return bint.negate();
             }
         }

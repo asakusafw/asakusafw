@@ -56,8 +56,7 @@ public class SafeProcessor implements Processor {
     public void rethrow() {
         if (runtimeException != null) {
             throw runtimeException;
-        }
-        else if (error != null) {
+        } else if (error != null) {
             throw error;
         }
     }
@@ -88,12 +87,10 @@ public class SafeProcessor implements Processor {
             RoundEnvironment roundEnv) {
         try {
             return this.delegate.process(annotations, roundEnv);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             runtimeException = e;
             throw e;
-        }
-        catch (Error e) {
+        } catch (Error e) {
             error = e;
             throw e;
         }

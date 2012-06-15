@@ -91,45 +91,45 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
     /**
      * この単純名を表現する文字列。
      */
-    private String string;
+    private String token;
 
     @Override
     public String getToken() {
-        return this.string;
+        return this.token;
     }
 
     /**
      * この単純名を表現する文字列を設定する。
-     * @param string
+     * @param token
      *     この単純名を表現する文字列
      * @throws IllegalArgumentException
      *     {@code string}に{@code null}が指定された場合
      * @throws IllegalArgumentException
      *     {@code string}に空が指定された場合
      */
-    public void setToken(String string) {
-        Util.notNull(string, "string"); //$NON-NLS-1$
-        if (string.isEmpty()) {
-            throw new IllegalArgumentException("string must not be null"); //$NON-NLS-1$
+    public void setToken(String token) {
+        Util.notNull(token, "token"); //$NON-NLS-1$
+        if (token.isEmpty()) {
+            throw new IllegalArgumentException("token must not be null"); //$NON-NLS-1$
         }
-        if (Character.isJavaIdentifierStart(string.charAt(0)) == false) {
+        if (Character.isJavaIdentifierStart(token.charAt(0)) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "string must be a valid Java identifier ({0} has invalid start)",
-                    LiteralAnalyzer.stringLiteralOf(string)));
+                    LiteralAnalyzer.stringLiteralOf(token)));
         }
-        for (int i = 1, n = string.length(); i < n; i++) {
-            if (Character.isJavaIdentifierPart(string.charAt(i)) == false) {
+        for (int i = 1, n = token.length(); i < n; i++) {
+            if (Character.isJavaIdentifierPart(token.charAt(i)) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
                         "string must be a valid Java identifier ({0} has invalid part)",
-                        LiteralAnalyzer.stringLiteralOf(string)));
+                        LiteralAnalyzer.stringLiteralOf(token)));
             }
         }
-        if (RESERVED.contains(string)) {
+        if (RESERVED.contains(token)) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "string must be a valid Java identifier ({0} is a reserved word)",
-                    LiteralAnalyzer.stringLiteralOf(string)));
+                    LiteralAnalyzer.stringLiteralOf(token)));
         }
-        this.string = string;
+        this.token = token;
     }
 
     @Override

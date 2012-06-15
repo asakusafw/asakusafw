@@ -218,8 +218,7 @@ public class HashGraph<V> implements Graph<V> {
                 if (other.from != null) {
                     return false;
                 }
-            }
-            else if ((this.from.equals(other.from)) == false) {
+            } else if ((this.from.equals(other.from)) == false) {
                 return false;
             }
             if ((this.to.equals(other.to)) == false) {

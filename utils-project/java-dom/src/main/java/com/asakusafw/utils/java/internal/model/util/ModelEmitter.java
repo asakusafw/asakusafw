@@ -363,8 +363,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
                 Matcher m = HEAD_ASTER.matcher(line);
                 if (m.find()) {
                     results.add(line.substring(m.end()));
-                }
-                else {
+                } else {
                     results.add(line);
                 }
             }
@@ -685,8 +684,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             LocalVariableDeclaration decl =
                 (LocalVariableDeclaration) elem.getInitialization();
             processLocalVaribale(decl, context);
-        }
-        else {
+        } else {
             process(elem.getInitialization(), context);
         }
         context.separator(";");
@@ -891,8 +889,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         }
         if (appears(elem.getBody())) {
             process(elem.getBody(), context);
-        }
-        else {
+        } else {
             context.separator(";");
         }
         context.declaration(EmitDirection.END);
@@ -1131,8 +1128,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
                 process(stmt, context);
                 context.switchLabel(EmitDirection.BEGIN);
                 inLabel = true;
-            }
-            else {
+            } else {
                 process(stmt, context);
             }
         }
@@ -1264,8 +1260,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         if (elem.getBoundKind() == WildcardBoundKind.UPPER_BOUNDED) {
             context.keyword("extends");
             process(elem.getTypeBound(), context);
-        }
-        else if (elem.getBoundKind() == WildcardBoundKind.LOWER_BOUNDED) {
+        } else if (elem.getBoundKind() == WildcardBoundKind.LOWER_BOUNDED) {
             context.keyword("super");
             process(elem.getTypeBound(), context);
         }
@@ -1338,11 +1333,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             context.docInlineBlock(EmitDirection.BEGIN);
             process(elem, context);
             context.docInlineBlock(EmitDirection.END);
-        }
-        else if (elem.getModelKind() == ModelKind.DOC_TEXT) {
+        } else if (elem.getModelKind() == ModelKind.DOC_TEXT) {
             process(elem, context);
-        }
-        else {
+        } else {
             context.padding();
             process(elem, context);
             if (last == false) {
@@ -1389,8 +1382,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         if (elem.getString().startsWith(" ")) {
             context.symbol(elem.getString());
-        }
-        else {
+        } else {
             context.immediate(elem.getString());
         }
         return null;

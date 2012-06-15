@@ -64,8 +64,7 @@ public final class JavadocParser extends JavadocBaseParser {
             elem.setBlocks(blocks);
             elem.setLocation(info.getLocation());
             return elem;
-        }
-        catch (JavadocParseException e) {
+        } catch (JavadocParseException e) {
             scanner.seek(index);
             throw e;
         }
@@ -96,8 +95,7 @@ public final class JavadocParser extends JavadocBaseParser {
             JavadocBlockInfo info;
             if (kind == JavadocTokenKind.AT) {
                 info = fetchStandAloneBlock(scanner, scanner.getTokens());
-            }
-            else {
+            } else {
                 info = fetchSynopsisBlock(scanner);
             }
 
@@ -106,8 +104,7 @@ public final class JavadocParser extends JavadocBaseParser {
             }
 
             return parseBlock(info);
-        }
-        catch (JavadocParseException e) {
+        } catch (JavadocParseException e) {
             scanner.seek(index);
             throw e;
         }
@@ -237,8 +234,7 @@ public final class JavadocParser extends JavadocBaseParser {
             // 概要ブロックが空の場合はnull
             scanner.consume(offset);
             return null;
-        }
-        else {
+        } else {
             // 概要ブロックを解析
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, offset);
             int success = scanner.lookahead(offset + count).getStartPosition();
@@ -279,8 +275,8 @@ public final class JavadocParser extends JavadocBaseParser {
 
     private static class JavadocInfo {
 
-        private IrLocation location;
-        private List<JavadocBlockInfo> blockScanners;
+        private final IrLocation location;
+        private final List<JavadocBlockInfo> blockScanners;
 
         JavadocInfo(IrLocation location, List<JavadocBlockInfo> blockScanners) {
             super();
@@ -289,7 +285,7 @@ public final class JavadocParser extends JavadocBaseParser {
         }
 
         /**
-         * 本体の位置
+         * 本体の位置。
          * @return 本体の位置
          */
         public IrLocation getLocation() {
@@ -297,8 +293,8 @@ public final class JavadocParser extends JavadocBaseParser {
         }
 
         /**
-         * ブロックスキャナの一覧
-         * @return ブロックスキャナなの一覧
+         * ブロックスキャナの一覧。
+         * @return ブロックスキャナの一覧
          */
         public List<JavadocBlockInfo> getBlocks() {
             return this.blockScanners;

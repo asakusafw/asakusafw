@@ -47,7 +47,7 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 /**
  * Javadocタグブロックの構文解析に利用するツール集。
  */
-public class JavadocBlockParserUtil {
+public final class JavadocBlockParserUtil {
 
     /**
      * 空白文字の一覧。
@@ -94,6 +94,10 @@ public class JavadocBlockParserUtil {
             map.put(k.getSymbol().intern(), k);
         }
         BASIC_TYPE_NAMES = Collections.unmodifiableMap(map);
+    }
+
+    private JavadocBlockParserUtil() {
+        return;
     }
 
     /**
@@ -172,8 +176,7 @@ public class JavadocBlockParserUtil {
                     break;
                 }
                 offset++;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -287,8 +290,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -315,8 +317,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -339,8 +340,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -367,8 +367,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -391,8 +390,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -415,8 +413,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -439,8 +436,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -463,8 +459,7 @@ public class JavadocBlockParserUtil {
         if (!follows(stream, follow)) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
             return elem;
         }
@@ -520,24 +515,21 @@ public class JavadocBlockParserUtil {
                 return null;
             }
             parameters = Collections.emptyList();
-        }
-        else {
+        } else {
             parameters = new ArrayList<IrDocMethodParameter>();
             parameters.add(first);
             while (true) {
                 delim = stream.nextToken();
                 if (delim.getKind() == RIGHT_PAREN) {
                     break;
-                }
-                else if (delim.getKind() == COMMA) {
+                } else if (delim.getKind() == COMMA) {
                     IrDocMethodParameter p = fetchMethodParameter(stream);
                     if (p == null) {
                         stream.rewind();
                         return null;
                     }
                     parameters.add(p);
-                }
-                else {
+                } else {
                     stream.rewind();
                     return null;
                 }
@@ -560,15 +552,14 @@ public class JavadocBlockParserUtil {
         if (type == null) {
             stream.rewind();
             return null;
-        }
-        else {
+        } else {
             stream.discard();
         }
         IrLocation delim = type.getLocation();
         boolean varargs;
         if (consumeIfMatch(stream, DOT) != null) {
-            if ((stream.lookahead(0).getKind() != DOT) ||
-                    (stream.lookahead(1).getKind() != DOT)) {
+            if ((stream.lookahead(0).getKind() != DOT)
+                    || (stream.lookahead(1).getKind() != DOT)) {
                 stream.rewind();
                 return null;
             }
@@ -576,8 +567,7 @@ public class JavadocBlockParserUtil {
             JavadocToken lastDot = stream.nextToken();
             delim = lastDot.getLocation();
             varargs = true;
-        }
-        else {
+        } else {
             varargs = false;
         }
 
@@ -653,8 +643,7 @@ public class JavadocBlockParserUtil {
             if (stop == null) {
                 stream.rewind();
                 break;
-            }
-            else {
+            } else {
                 stream.discard();
                 IrDocArrayType t = new IrDocArrayType(elem);
                 setLocation(t, elem.getLocation(), stop.getLocation());
@@ -680,8 +669,7 @@ public class JavadocBlockParserUtil {
             if (simple == null) {
                 stream.rewind();
                 break;
-            }
-            else {
+            } else {
                 IrDocQualifiedName qualified = new IrDocQualifiedName(name,
                     simple);
                 setLocation(qualified, name.getLocation(), simple.getLocation());
@@ -712,8 +700,7 @@ public class JavadocBlockParserUtil {
             IrDocSimpleName name = new IrDocSimpleName(token.getText());
             setLocation(name, token, token);
             return name;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -750,8 +737,7 @@ public class JavadocBlockParserUtil {
         if (elem == null) {
             scanner.seek(mark);
             return null;
-        }
-        else {
+        } else {
             return elem;
         }
     }

@@ -1,6 +1,7 @@
 <FindBugsFilter>
   <Match classregex=".*\.EscapeDecoder" />
   <Match classregex=".*\.LiteralParser" />
+  <Match classregex=".*\.JavadocTokenizer" />
   <Match classregex=".*\.ParseException" />
   <Match classregex=".*\.Jj.*" />
   <Match classregex=".*\.SimpleCharStream" />

@@ -25,7 +25,7 @@ import java.util.Map;
  * 要素の組に関するユーティリティ群。
  * @see Tuple2
  */
-public class Tuples {
+public final class Tuples {
 
     /**
      * 二要素からなる組を構築して返す。
@@ -60,7 +60,7 @@ public class Tuples {
         if (_2 == null) {
             throw new IllegalArgumentException("_2 must not be null"); //$NON-NLS-1$
         }
-        ArrayList<Tuple2<T1, T2>> zipped = new ArrayList<Tuple2<T1,T2>>();
+        ArrayList<Tuple2<T1, T2>> zipped = new ArrayList<Tuple2<T1, T2>>();
         Iterator<? extends T1> iter1 = _1.iterator();
         Iterator<? extends T2> iter2 = _2.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
@@ -123,7 +123,7 @@ public class Tuples {
         if (entries == null) {
             throw new IllegalArgumentException("iterables must not be null"); //$NON-NLS-1$
         }
-        List<Tuple2<T1, T2>> result = new ArrayList<Tuple2<T1,T2>>();
+        List<Tuple2<T1, T2>> result = new ArrayList<Tuple2<T1, T2>>();
         for (Map.Entry<? extends T1, ? extends T2> entry : entries) {
             result.add(valueOf(entry));
         }
@@ -212,8 +212,7 @@ public class Tuples {
                 return 0;
             }
             return -1;
-        }
-        else if (b == null) {
+        } else if (b == null) {
             return +1;
         }
         return comparator.compare(a, b);

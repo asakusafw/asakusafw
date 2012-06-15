@@ -62,8 +62,7 @@ public class CompilationUnitJavaFile extends SimpleJavaFileObject {
         String path = toPath(unit);
         try {
             return new URI(URI_SCHEME, null, "/" + path, null);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -80,8 +79,7 @@ public class CompilationUnitJavaFile extends SimpleJavaFileObject {
         TypeDeclaration primaryType = findPrimaryType(unit);
         if (primaryType != null) {
             buf.append(primaryType.getName().toNameString());
-        }
-        else {
+        } else {
             buf.append("package-info");
         }
         buf.append(".java");

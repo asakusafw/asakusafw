@@ -87,7 +87,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends Mapper<
     }
 
     @Override
-    public void run(Context context) throws IOException ,InterruptedException {
+    public void run(Context context) throws IOException, InterruptedException {
         if (context.nextKeyValue() == false) {
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(

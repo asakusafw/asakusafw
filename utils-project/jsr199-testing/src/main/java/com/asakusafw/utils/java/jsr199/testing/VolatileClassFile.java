@@ -76,8 +76,7 @@ public class VolatileClassFile extends SimpleJavaFileObject {
                 null,
                 "/" + path,
                 null);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException(
                 MessageFormat.format(
                     "Invalid binary name \"{0}\"",

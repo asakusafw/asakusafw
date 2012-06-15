@@ -53,10 +53,10 @@ public class JavadocParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                " * a\n" +
-                " * @tag\n" +
-                " */");
+                "/**\n"
+                + " * a\n"
+                + " * @tag\n"
+                + " */");
             IrDocComment doc = parser.parse(scanner);
             List<? extends IrDocBlock> blocks = doc.getBlocks();
             assertEquals(2, blocks.size());
@@ -65,11 +65,11 @@ public class JavadocParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                " * a\n" +
-                " * @tag1\n" +
-                " * @tag2\n" +
-                " */");
+                "/**\n"
+                + " * a\n"
+                + " * @tag1\n"
+                + " * @tag2\n"
+                + " */");
             IrDocComment doc = parser.parse(scanner);
             List<? extends IrDocBlock> blocks = doc.getBlocks();
             assertEquals(3, blocks.size());
@@ -79,66 +79,62 @@ public class JavadocParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                " * a\n" +
-                " * @tag\n" +
-                " *");
+                "/**\n"
+                + " * a\n"
+                + " * @tag\n"
+                + " *");
             try {
                 parser.parse(scanner);
                 fail();
-            }
-            catch (IllegalDocCommentFormatException e) {
+            } catch (IllegalDocCommentFormatException e) {
                 // ok.
             }
         }
         {
             DefaultJavadocScanner scanner = string(
-                "**\n" +
-                " * a\n" +
-                " * @tag\n" +
-                " */");
+                "**\n"
+                + " * a\n"
+                + " * @tag\n"
+                + " */");
             try {
                 parser.parse(scanner);
                 fail();
-            }
-            catch (IllegalDocCommentFormatException e) {
+            } catch (IllegalDocCommentFormatException e) {
                 // ok.
             }
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/*\n" +
-                " * a\n" +
-                " * @tag\n" +
-                " */");
+                "/*\n"
+                + " * a\n"
+                + " * @tag\n"
+                + " */");
             try {
                 parser.parse(scanner);
                 fail();
-            }
-            catch (IllegalDocCommentFormatException e) {
+            } catch (IllegalDocCommentFormatException e) {
                 // ok.
             }
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                " * a\n" +
-                " * @tag\n" +
-                " /");
+                "/**\n"
+                + " * a\n"
+                + " * @tag\n"
+                + " /");
             try {
                 parser.parse(scanner);
                 fail();
-            }
-            catch (IllegalDocCommentFormatException e) {
+            } catch (IllegalDocCommentFormatException e) {
                 // ok.
             }
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                "***a\n" +
-                "***@tag\n" +
-                "**/");
+                "/**\n"
+                + "***a\n"
+                + "***@tag\n"
+                + "**/");
             parser.parse(scanner);
             // ok
         }
@@ -165,12 +161,12 @@ public class JavadocParserTest extends JavadocTestRoot {
         }
         {
             DefaultJavadocScanner scanner = string(
-                "/**\n" +
-                " * Hello, this is {@code world}!\n" +
-                " * testtest\n" +
-                " * @param a {@link String}\n" +
-                " * @throws hoge.foo.Bar If occurred\n" +
-                " */");
+                "/**\n"
+                + " * Hello, this is {@code world}!\n"
+                + " * testtest\n"
+                + " * @param a {@link String}\n"
+                + " * @throws hoge.foo.Bar If occurred\n"
+                + " */");
             IrDocComment doc = parser.parse(scanner);
             List<? extends IrDocBlock> blocks = doc.getBlocks();
             assertEquals(3, blocks.size());

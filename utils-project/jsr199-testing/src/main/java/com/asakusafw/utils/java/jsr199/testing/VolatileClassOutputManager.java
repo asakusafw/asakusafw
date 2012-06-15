@@ -105,8 +105,7 @@ public class VolatileClassOutputManager
     public void close() throws IOException {
         try {
             super.close();
-        }
-        finally {
+        } finally {
             this.sourceMap = new TreeMap<String, VolatileJavaFile>();
             this.classMap = new TreeMap<String, VolatileClassFile>();
             this.resourceMap = new TreeMap<String, VolatileResourceFile>();
@@ -117,8 +116,7 @@ public class VolatileClassOutputManager
     public boolean hasLocation(Location location) {
         if (location == StandardLocation.CLASS_OUTPUT) {
             return true;
-        }
-        else {
+        } else {
             return super.hasLocation(location);
         }
     }
@@ -138,8 +136,7 @@ public class VolatileClassOutputManager
                 return resourceMap.get(path);
             }
             return getJavaFileForInput(location, binaryName, JavaFileObject.Kind.CLASS);
-        }
-        else if (location == StandardLocation.SOURCE_OUTPUT) {
+        } else if (location == StandardLocation.SOURCE_OUTPUT) {
             String binaryName = normalizePath(
                 packageName,
                 relativeName,
@@ -149,8 +146,7 @@ public class VolatileClassOutputManager
                 return resourceMap.get(path);
             }
             return getJavaFileForInput(location, binaryName, JavaFileObject.Kind.SOURCE);
-        }
-        else {
+        } else {
             return super.getFileForInput(location, packageName, relativeName);
         }
     }
@@ -180,8 +176,7 @@ public class VolatileClassOutputManager
                 binaryName,
                 JavaFileObject.Kind.CLASS,
                 sibling);
-        }
-        else if (location == StandardLocation.SOURCE_OUTPUT) {
+        } else if (location == StandardLocation.SOURCE_OUTPUT) {
             String binaryName = normalizePath(
                 packageName,
                 relativeName,
@@ -200,8 +195,7 @@ public class VolatileClassOutputManager
                 binaryName,
                 JavaFileObject.Kind.SOURCE,
                 sibling);
-        }
-        else {
+        } else {
             return super.getFileForOutput(location, packageName, relativeName, sibling);
         }
     }
@@ -217,15 +211,13 @@ public class VolatileClassOutputManager
                 return classMap.get(binaryName);
             }
             return null;
-        }
-        else if (location == StandardLocation.SOURCE_OUTPUT) {
+        } else if (location == StandardLocation.SOURCE_OUTPUT) {
             String binaryName = normalizeClassName(className);
             if (sourceMap.containsKey(binaryName)) {
                 return sourceMap.get(binaryName);
             }
             return null;
-        }
-        else {
+        } else {
             return super.getJavaFileForInput(location, className, kind);
         }
     }
@@ -244,8 +236,7 @@ public class VolatileClassOutputManager
             VolatileClassFile classFile = new VolatileClassFile(binaryName);
             classMap.put(binaryName, classFile);
             return classFile;
-        }
-        else if (location == StandardLocation.SOURCE_OUTPUT) {
+        } else if (location == StandardLocation.SOURCE_OUTPUT) {
             String binaryName = normalizeClassName(className);
             if (sourceMap.containsKey(binaryName)) {
                 return sourceMap.get(binaryName);
@@ -253,8 +244,7 @@ public class VolatileClassOutputManager
             VolatileJavaFile javaFile = new VolatileJavaFile(className.replace('.', '/'));
             sourceMap.put(binaryName, javaFile);
             return javaFile;
-        }
-        else {
+        } else {
             return super.getJavaFileForOutput(location, className, kind, sibling);
         }
     }
@@ -270,26 +260,24 @@ public class VolatileClassOutputManager
                 return Collections.emptySet();
             }
             return inPackage(classMap, packageName, recurse);
-        }
-        else if (location == StandardLocation.SOURCE_OUTPUT) {
+        } else if (location == StandardLocation.SOURCE_OUTPUT) {
             if (kinds.contains(JavaFileObject.Kind.SOURCE) == false) {
                 return Collections.emptySet();
             }
             return inPackage(sourceMap, packageName, recurse);
-        }
-        else {
+        } else {
             return super.list(location, packageName, kinds, recurse);
         }
     }
 
     @Override
     public boolean isSameFile(FileObject a, FileObject b) {
-        if (a instanceof VolatileJavaFile ||
-                a instanceof VolatileClassFile) {
+        if (a instanceof VolatileJavaFile
+                || a instanceof VolatileClassFile) {
             return a.toUri().equals(b.toUri());
         }
-        if (b instanceof VolatileJavaFile ||
-                b instanceof VolatileClassFile) {
+        if (b instanceof VolatileJavaFile
+                || b instanceof VolatileClassFile) {
             return b.toUri().equals(a.toUri());
         }
         return super.isSameFile(a, b);
@@ -306,8 +294,7 @@ public class VolatileClassOutputManager
         if (packageName.isEmpty()) {
             map = all;
             prefix = 0;
-        }
-        else {
+        } else {
             String binaryName = normalizeClassName(packageName);
             map = all.subMap(
                 binaryName + NAME_SEPARATOR,

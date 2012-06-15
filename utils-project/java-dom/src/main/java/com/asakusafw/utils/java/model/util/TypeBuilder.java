@@ -160,8 +160,7 @@ public class TypeBuilder {
         if (context.getModelKind() == ModelKind.NAMED_TYPE) {
             Name enclosed = Models.append(f, toNamedType().getName(), name);
             return chain(f.newNamedType(enclosed));
-        }
-        else {
+        } else {
             Type current = context;
             for (SimpleName segment : Models.toList(name)) {
                 current = f.newQualifiedType(current, segment);

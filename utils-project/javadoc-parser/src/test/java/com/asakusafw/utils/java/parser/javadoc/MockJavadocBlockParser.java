@@ -62,8 +62,7 @@ public class MockJavadocBlockParser extends JavadocBlockParser {
     public boolean canAccept(String tag) {
         if (acceptable == null) {
             return true;
-        }
-        else {
+        } else {
             return acceptable.matcher(tag == null ? "<SYNOPSIS>" : tag).matches();
         }
     }
