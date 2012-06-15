@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.Socket;
@@ -49,9 +48,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +78,8 @@ public class HttpJobClient implements JobClient {
     static final Logger LOG = LoggerFactory.getLogger(HttpJobClient.class);
 
     private static final Charset ENCODING = Charset.forName("UTF-8");
+
+    static final ContentType CONTENT_TYPE = ContentType.create("text/json", ENCODING);
 
     private static final GsonBuilder GSON_BUILDER;
     static {
@@ -142,7 +144,7 @@ public class HttpJobClient implements JobClient {
 
     private DefaultHttpClient createClient() {
         try {
-            DefaultHttpClient client = new DefaultHttpClient(new ThreadSafeClientConnManager());
+            DefaultHttpClient client = new DefaultHttpClient(new PoolingClientConnectionManager());
             SSLSocketFactory socketFactory = TrustedSSLSocketFactory.create();
             Scheme sch = new Scheme("https", 443, socketFactory);
             client.getConnectionManager().getSchemeRegistry().register(sch);
@@ -366,11 +368,7 @@ public class HttpJobClient implements JobClient {
         assert script != null;
         String json = GSON_BUILDER.create().toJson(script);
         LOG.trace("request: {}", json);
-        try {
-            return new StringEntity(json, "text/json", ENCODING.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError(e);
-        }
+        return new StringEntity(json, CONTENT_TYPE);
     }
 
     @Override
