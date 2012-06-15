@@ -27,6 +27,7 @@
 		<module>asakusa-yaess-bootstrap</module>
 		<module>asakusa-yaess-core</module>
 		<module>asakusa-yaess-flowlog</module>
+		<module>asakusa-yaess-jobqueue</module>
 		<module>asakusa-yaess-jsch</module>
 		<module>asakusa-yaess-multidispatch</module>
 		<module>asakusa-yaess-paralleljob</module>
