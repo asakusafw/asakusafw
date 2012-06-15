@@ -22,6 +22,7 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
+import com.asakusafw.runtime.directio.ResourceInfo;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.ResourcePattern;
@@ -84,8 +85,30 @@ public class KeepAliveDataSource implements DirectDataSource {
     }
 
     @Override
-    public boolean delete(String basePath, ResourcePattern resourcePattern) throws IOException, InterruptedException {
-        return entity.delete(basePath, resourcePattern);
+    public List<ResourceInfo> list(
+            String basePath,
+            ResourcePattern resourcePattern,
+            Counter counter) throws IOException, InterruptedException {
+        heartbeat.register(counter);
+        try {
+            return entity.list(basePath, resourcePattern, counter);
+        } finally {
+            heartbeat.unregister(counter);
+        }
+    }
+
+    @Override
+    public boolean delete(
+            String basePath,
+            ResourcePattern resourcePattern,
+            boolean recursive,
+            Counter counter) throws IOException, InterruptedException {
+        heartbeat.register(counter);
+        try {
+            return entity.delete(basePath, resourcePattern, recursive, counter);
+        } finally {
+            heartbeat.unregister(counter);
+        }
     }
 
     @Override

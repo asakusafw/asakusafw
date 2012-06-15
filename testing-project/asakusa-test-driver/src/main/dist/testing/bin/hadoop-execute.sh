@@ -55,7 +55,9 @@ shift
 _OPT_CLASS_NAME="$1"
 shift
 
-_TD_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_TD_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_TD_ROOT/conf/env.sh"
 import "$_TD_ROOT/libexec/validate-env.sh"
 

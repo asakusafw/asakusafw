@@ -50,7 +50,9 @@ import() {
     fi
 }
 
-_TGC_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_TGC_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_TGC_ROOT/conf/env.sh"
 import "$_TGC_ROOT/libexec/validate-env.sh"
 

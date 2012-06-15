@@ -278,6 +278,58 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * delete file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete() throws Exception {
+        put("input/input.txt", "1Hello", "2Hello", "3Hello");
+        put("output/deleted.txt", "4Hello");
+        put("output/keep.txt", "5Hello");
+        put("output/deleted-1.txt", "6Hello");
+        put("output/deleted-2.txt", "7Hello");
+
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt")
+            .delete("deleted.txt")
+            .delete("deleted-*.txt"));
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/*.txt");
+        assertThat(list.size(), is(4));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+        assertThat(list, hasItem("5Hello"));
+    }
+
+    /**
+     * delete file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_variable() throws Exception {
+        put("input/input.txt", "1Hello", "2Hello", "3Hello");
+        put("output/keep.txt", "4Hello");
+        put("output/deleted-1.txt", "5Hello");
+        put("output/deleted-2.txt", "6Hello");
+
+        In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt")
+            .delete("${pattern}-*.txt"));
+
+        tester.hadoop.getVariables().defineVariable("pattern", "deleted");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/*.txt");
+        assertThat(list.size(), is(4));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+        assertThat(list, hasItem("4Hello"));
+    }
+
+    /**
      * empty input.
      * @throws Exception if failed
      */
@@ -509,6 +561,7 @@ public class DirectFileIoProcessorRunTest {
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
+        private final List<String> deletes = new ArrayList<String>();
 
         Output(
                 Class<?> modelType,
@@ -535,6 +588,11 @@ public class DirectFileIoProcessorRunTest {
             this.order = order;
         }
 
+        Output delete(String pattern) {
+            deletes.add(pattern);
+            return this;
+        }
+
         @Override
         public Class<?> getModelType() {
             return modelType;
@@ -558,6 +616,11 @@ public class DirectFileIoProcessorRunTest {
         @Override
         public List<String> getOrder() {
             return Arrays.asList(order);
+        }
+
+        @Override
+        public List<String> getDeletePatterns() {
+            return deletes;
         }
     }
 }

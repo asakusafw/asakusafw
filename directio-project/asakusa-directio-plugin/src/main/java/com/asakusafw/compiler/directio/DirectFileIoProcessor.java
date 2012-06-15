@@ -138,6 +138,19 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             compiledPattern = Collections.emptyList();
         }
 
+        for (String patternString : desc.getDeletePatterns()) {
+            try {
+                FilePattern.compile(patternString);
+            } catch (IllegalArgumentException e) {
+                getEnvironment().error(
+                        "削除するリソース名のパターン(\"{2}\")が不正です ({1}) [{0}]",
+                        e.getMessage(),
+                        desc.getClass().getName(),
+                        patternString);
+                valid = false;
+            }
+        }
+
         List<String> orders = desc.getOrder();
         try {
             OutputPattern.compileOrder(orders, dataType);
@@ -383,7 +396,8 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                         desc.getResourcePattern(),
                         Models.toName(f, desc.getFormat().getName()),
                         null,
-                        null);
+                        null,
+                        desc.getDeletePatterns());
                 slots.add(slot);
             } else {
                 List<CompiledOrder> orderingInfo = OutputPattern.compileOrder(desc.getOrder(), dataType);
@@ -398,7 +412,8 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                         desc.getResourcePattern(),
                         Models.toName(f, desc.getFormat().getName()),
                         naming,
-                        ordering);
+                        ordering,
+                        desc.getDeletePatterns());
                 slots.add(slot);
             }
         }

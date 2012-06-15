@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-cd
 usage() {
     cat 1>&2 <<EOF
 WindGate - A portable data transfer tool
@@ -71,9 +70,14 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
-_WG_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_WG_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_WG_ROOT/conf/env.sh"
 import "$_WG_ROOT/libexec/validate-env.sh"
+
+# Move to home directory
+cd
 
 _WG_PROFILE="$_WG_ROOT/profile/${_OPT_PROFILE}.properties"
 _WG_SCRIPT="$_OPT_SCRIPT"

@@ -470,7 +470,7 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
 
         assertThat(file.exists(), is(true));
-        boolean result = core.delete("delete", FilePattern.compile("**/*"));
+        boolean result = core.delete("delete", FilePattern.compile("**/*"), true, counter);
 
         assertThat(result, is(true));
         assertThat(file.exists(), is(false));
@@ -496,7 +496,7 @@ public class HadoopDataSourceCoreTest {
         for (File file : files) {
             assertThat(file.exists(), is(true));
         }
-        boolean result = core.delete("delete", FilePattern.compile("**/*"));
+        boolean result = core.delete("delete", FilePattern.compile("**/*"), true, counter);
 
         assertThat(result, is(true));
         for (File file : files) {
@@ -526,10 +526,29 @@ public class HadoopDataSourceCoreTest {
         assertThat(onProd.exists(), is(true));
         assertThat(onTemp.exists(), is(true));
 
-        boolean result = core.delete("", FilePattern.compile("**/*"));
+        boolean result = core.delete("", FilePattern.compile("**/*"), true, counter);
         assertThat(result, is(true));
         assertThat(onProd.exists(), is(false));
         assertThat(onTemp.exists(), is(true));
+    }
+
+    /**
+     * simple delete.
+     * @throws Exception if failed
+     */
+    @Test
+    public void delete_all() throws Exception {
+        File file = new File(mapping, "file.txt");
+        put(file, "Hello, world!");
+
+        HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
+
+        assertThat(file.exists(), is(true));
+        boolean result = core.delete("", FilePattern.compile("**"), true, counter);
+
+        assertThat(result, is(true));
+        assertThat(file.exists(), is(false));
+        assertThat("the root directory must not be deleted", mapping.exists(), is(true));
     }
 
     private List<String> consume(

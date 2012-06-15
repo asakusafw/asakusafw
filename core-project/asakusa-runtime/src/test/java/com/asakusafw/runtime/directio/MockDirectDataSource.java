@@ -92,9 +92,19 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
     }
 
     @Override
+    public List<ResourceInfo> list(
+            String basePath,
+            ResourcePattern resourcePattern,
+            Counter counter) throws IOException, InterruptedException {
+        return Collections.emptyList();
+    }
+
+    @Override
     public boolean delete(
             String basePath,
-            ResourcePattern resourcePattern) throws IOException, InterruptedException {
+            ResourcePattern resourcePattern,
+            boolean recursive,
+            Counter counter) throws IOException, InterruptedException {
         return false;
     }
 

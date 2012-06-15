@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -263,6 +264,36 @@ public class DirectFileIoProcessorTest {
     }
 
     /**
+     * output deletion.
+     */
+    @Test
+    public void validate_output_delete() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
+            .delete("**"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(not(nullValue())));
+    }
+
+    /**
+     * output deletion.
+     */
+    @Test
+    public void validate_output_complexdelete() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
+            .delete("*.txt").delete("*.csv"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(not(nullValue())));
+    }
+
+    /**
      * invalid input resource.
      */
     @Test
@@ -395,6 +426,21 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "*.csv", "position"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * invalid output delete.
+     */
+    @Test
+    public void invalid_output_delete() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
+            .delete("?"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);
@@ -619,6 +665,7 @@ public class DirectFileIoProcessorTest {
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
+        private final List<String> deletes = new ArrayList<String>();
 
         Output(
                 Class<?> modelType,
@@ -645,6 +692,11 @@ public class DirectFileIoProcessorTest {
             this.order = order;
         }
 
+        Output delete(String pattern) {
+            deletes.add(pattern);
+            return this;
+        }
+
         @Override
         public Class<?> getModelType() {
             return modelType;
@@ -668,6 +720,11 @@ public class DirectFileIoProcessorTest {
         @Override
         public List<String> getOrder() {
             return Arrays.asList(order);
+        }
+
+        @Override
+        public List<String> getDeletePatterns() {
+            return deletes;
         }
     }
 

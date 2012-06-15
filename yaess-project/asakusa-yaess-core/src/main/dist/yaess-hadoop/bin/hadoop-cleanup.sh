@@ -69,7 +69,9 @@ shift
 _OPT_BATCH_ARGUMENTS="$1"
 shift
 
-_YS_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_YS_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/configure-hadoop-cmd.sh"
 

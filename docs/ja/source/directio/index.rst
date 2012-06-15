@@ -31,3 +31,5 @@ ThunderGateやWindGateと異なりデータ転送用の特別なツールは不�
 
     start-guide
     user-guide
+    tools-guide
+

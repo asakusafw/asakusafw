@@ -27,6 +27,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 /**
  * Represents {@link DirectOutputSpec} for compile time.
  * @since 0.2.5
+ * @version 0.4.0
  */
 public class Slot {
 
@@ -46,6 +47,8 @@ public class Slot {
 
     final Name orderClass;
 
+    final List<String> deletePatterns;
+
     /**
      * Creates a new instance.
      * @param name the name of this slot
@@ -56,6 +59,7 @@ public class Slot {
      * @param formatClass {@link DataFormat} class name
      * @param namingClass {@link StringTemplate} class name
      * @param orderClass {@link DirectOutputOrder} class name
+     * @param deletePatterns delete file patterns
      */
     public Slot(
             String name,
@@ -65,7 +69,8 @@ public class Slot {
             String resourcePath,
             Name formatClass,
             Name namingClass,
-            Name orderClass) {
+            Name orderClass,
+            List<String> deletePatterns) {
         assert (namingClass == null) == (orderClass == null);
         this.name = name;
         this.sources = sources;
@@ -75,5 +80,6 @@ public class Slot {
         this.formatClass = formatClass;
         this.namingClass = namingClass;
         this.orderClass = orderClass;
+        this.deletePatterns = deletePatterns;
     }
 }

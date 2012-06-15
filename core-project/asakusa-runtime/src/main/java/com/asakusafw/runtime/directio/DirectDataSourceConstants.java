@@ -36,6 +36,11 @@ public final class DirectDataSourceConstants {
      */
     public static final String KEY_FORMAT_CLASS = "formatClass";
 
+    /**
+     * The attribute key prefix of delete patterns.
+     */
+    public static final String PREFIX_DELETE_PATTERN = "deletePattern.";
+
     private DirectDataSourceConstants() {
         return;
     }

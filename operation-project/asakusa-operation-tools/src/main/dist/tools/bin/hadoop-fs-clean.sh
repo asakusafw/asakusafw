@@ -67,7 +67,9 @@ then
     exit 2
 fi
 
-_TL_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_TL_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_TL_ROOT/conf/env.sh"
 import "$_TL_ROOT/libexec/configure-hadoop-cmd.sh"
 import "$_TL_ROOT/libexec/configure-classpath.sh"

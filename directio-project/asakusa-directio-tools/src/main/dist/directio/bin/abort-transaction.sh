@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-cd
 usage() {
     cat 1>&2 <<EOF
 Aborts Direct I/O Transaction
@@ -48,9 +47,14 @@ else
     exit 1
 fi
 
-_DIO_ROOT="$(dirname $0)/.."
+_dirname=$(dirname "$0")
+_DIO_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 import "$_DIO_ROOT/conf/env.sh"
 import "$_DIO_ROOT/libexec/validate-env.sh"
+
+# Move to home directory
+cd
 
 _DIO_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
