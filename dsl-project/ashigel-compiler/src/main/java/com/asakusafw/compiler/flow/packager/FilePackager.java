@@ -187,7 +187,9 @@ public class FilePackager
                 while (cursor.next()) {
                     Location location = cursor.getLocation();
                     if (saw.contains(location)) {
-                        LOG.warn("{}は既に追加済みなので無視されます", location);
+                        if (location.equals(FRAGMENT_MARKER_PATH) == false) {
+                            LOG.warn("{}は既に追加済みなので無視されます", location);
+                        }
                         continue;
                     }
                     saw.add(location);

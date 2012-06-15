@@ -12,7 +12,31 @@
 		<equals arg1="${asakusa.testdatasheet.generate}" arg2="true" />
 	</condition>
 
-	<target name="generate-model" description="Generate data model classes form DMDL scripts.">
+	<resourcecount property="asakusa.dmdl.file.count">
+		<fileset dir="${asakusa.dmdl.dir}" erroronmissingdir="false">
+			<include name="*.dmdl"/>
+		</fileset>
+	</resourcecount>
+
+	<resourcecount property="asakusa.thundergate.ddl.file.count">
+		<fileset dir="src/main/sql/modelgen" erroronmissingdir="false">
+			<include name="*.sql"/>
+		</fileset>
+	</resourcecount>
+
+	<condition property="asakusa.dmdl.not.exists">
+		<equals arg1="0" arg2="${asakusa.dmdl.file.count}" />
+	</condition>
+
+	<condition property="asakusa.thundergate.dmdl.not.exists">
+		<and>
+			<equals arg1="0" arg2="${asakusa.dmdl.file.count}" />
+			<equals arg1="0" arg2="${asakusa.thundergate.ddl.file.count}" />
+		</and>
+	</condition>
+
+	<target name="generate-model" description="Generate data model classes form DMDL scripts."
+        unless="asakusa.dmdl.not.exists">
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
 
@@ -51,8 +75,9 @@
 	</target>
 
 	<target name="modelgen-with-thundergate-dmdl"
-	        description="Genrate dmdl for ThunderGate from Information Schema of MySQL and Generate and generate data model classes form DMDL scripts."
-	        if="asakusa.build.database.enabled">
+		description="Genrate dmdl for ThunderGate from Information Schema of MySQL and Generate and generate data model classes form DMDL scripts."
+		if="asakusa.build.database.enabled"
+		unless="asakusa.thundergate.dmdl.not.exists">
 		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />

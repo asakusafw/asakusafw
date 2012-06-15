@@ -37,7 +37,7 @@ public class ZipRepository implements ResourceRepository {
 
     static final Logger LOG = LoggerFactory.getLogger(ZipRepository.class);
 
-    private File archive;
+    private final File archive;
 
     /**
      * インスタンスを生成する。
@@ -52,7 +52,7 @@ public class ZipRepository implements ResourceRepository {
                     "{0} is not a directory",
                     archive));
         }
-        this.archive = archive;
+        this.archive = archive.getAbsoluteFile().getCanonicalFile();
     }
 
     @Override
@@ -72,9 +72,9 @@ public class ZipRepository implements ResourceRepository {
 
     private static class EntryCursor implements Cursor {
 
-        private File source;
+        private final File source;
 
-        private ZipInputStream stream;
+        private final ZipInputStream stream;
 
         private ZipEntry current;
 

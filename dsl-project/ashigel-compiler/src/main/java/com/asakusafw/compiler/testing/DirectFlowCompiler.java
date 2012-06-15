@@ -22,7 +22,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,7 @@ import com.asakusafw.compiler.flow.FlowCompiler;
 import com.asakusafw.compiler.flow.FlowCompilerConfiguration;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.Packager;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.packager.FilePackager;
@@ -51,6 +55,8 @@ import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * フロー部品やジョブフローを直接コンパイルして、JARのパッケージを作成する。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class DirectFlowCompiler {
 
@@ -93,7 +99,7 @@ public final class DirectFlowCompiler {
         if (localWorkingDirectory.exists()) {
             clean(localWorkingDirectory);
         }
-        List<ResourceRepository> repositories = createRepositories(extraResources);
+        List<ResourceRepository> repositories = createRepositories(serviceClassLoader, extraResources);
         FlowCompilerConfiguration config = createConfig(
                 batchId,
                 flowId,
@@ -167,10 +173,23 @@ public final class DirectFlowCompiler {
     }
 
     static List<ResourceRepository> createRepositories(
+            ClassLoader classLoader,
             List<File> extraResources) throws IOException {
+        assert classLoader != null;
         assert extraResources != null;
+        List<File> targets = new ArrayList<File>();
+        targets.addAll(collectLibraryPathsFromMarker(classLoader));
+        targets.addAll(extraResources);
         List<ResourceRepository> results = new ArrayList<ResourceRepository>();
-        for (File file : extraResources) {
+        Set<File> saw = new HashSet<File>();
+        for (File file : targets) {
+            LOG.debug("Preparing fragment resource: {}", file);
+            File canonical = file.getAbsoluteFile().getCanonicalFile();
+            if (saw.contains(canonical)) {
+                LOG.debug("Skipped duplicated Fragment resource: {}", file);
+                continue;
+            }
+            saw.add(file);
             if (file.isDirectory()) {
                 results.add(new FileRepository(file));
             } else if (file.isFile() && file.getName().endsWith(".zip")) {
@@ -235,48 +254,77 @@ public final class DirectFlowCompiler {
         return findLibraryPathFromClass(memberClass);
     }
 
+    private static List<File> collectLibraryPathsFromMarker(ClassLoader classLoader) throws IOException {
+        assert classLoader != null;
+        String path = Packager.FRAGMENT_MARKER_PATH.toPath('/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        List<File> results = new ArrayList<File>();
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            LOG.debug("Submodule marker found: {}", url);
+            File library = findLibraryFromUrl(url, path);
+            if (library != null) {
+                LOG.debug("Submodule is registered: {}", library);
+                results.add(library);
+            }
+        }
+        return results;
+    }
+
     private static File findLibraryPathFromClass(Class<?> aClass) {
         assert aClass != null;
-        int start = aClass.getName().lastIndexOf('.') + 1;
-        String name = aClass.getName().substring(start);
+        String className = aClass.getName();
+        int start = className.lastIndexOf('.') + 1;
+        String name = className.substring(start);
         URL resource = aClass.getResource(name + ".class");
         if (resource == null) {
             LOG.warn("Failed to locate the class file: {}", aClass.getName());
             return null;
         }
+        String resourcePath = className.replace('.', '/') + ".class";
+        return findLibraryFromUrl(resource, resourcePath);
+    }
+
+    private static File findLibraryFromUrl(URL resource, String resourcePath) {
+        assert resource != null;
+        assert resourcePath != null;
         String protocol = resource.getProtocol();
         if (protocol.equals("file")) {
             File file = new File(resource.getPath());
-            return toClassPathRoot(aClass, file);
+            return toClassPathRoot(file, resourcePath);
         }
         if (protocol.equals("jar")) {
             String path = resource.getPath();
-            return toClassPathRoot(aClass, path);
+            return toClassPathRoot(path, resourcePath);
         } else {
             LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
                     resource,
-                    aClass.getName());
+                    resourcePath);
             return null;
         }
     }
 
-    private static File toClassPathRoot(Class<?> aClass, File classFile) {
-        assert aClass != null;
-        assert classFile != null;
-        assert classFile.isFile();
-        String name = aClass.getName();
-        File current = classFile.getParentFile();
-        assert current != null && current.isDirectory() : classFile;
-        for (int i = name.indexOf('.'); i >= 0; i = name.indexOf('.', i + 1)) {
+    private static File toClassPathRoot(File resourceFile, String resourcePath) {
+        assert resourceFile != null;
+        assert resourcePath != null;
+        assert resourceFile.isFile();
+        File current = resourceFile.getParentFile();
+        assert current != null && current.isDirectory() : resourceFile;
+        for (int start = resourcePath.indexOf('/'); start >= 0; start = resourcePath.indexOf('/', start + 1)) {
             current = current.getParentFile();
-            assert current != null && current.isDirectory() : classFile;
+            if (current == null || current.isDirectory() == false) {
+                LOG.warn("Failed to locate the library path: {} ({})",
+                        resourceFile,
+                        resourcePath);
+                return null;
+            }
         }
         return current;
     }
 
-    private static File toClassPathRoot(Class<?> aClass, String uriQualifiedPath) {
-        assert aClass != null;
+    private static File toClassPathRoot(String uriQualifiedPath, String resourceName) {
         assert uriQualifiedPath != null;
+        assert resourceName != null;
         int entry = uriQualifiedPath.lastIndexOf('!');
         String qualifier;
         if (entry >= 0) {
@@ -291,14 +339,14 @@ public final class DirectFlowCompiler {
             LOG.warn(MessageFormat.format(
                     "Failed to locate the JAR library file {}: {}",
                     qualifier,
-                    aClass.getName()),
+                    resourceName),
                     e);
             throw new UnsupportedOperationException(qualifier, e);
         }
         if (archive.getScheme().equals("file") == false) {
             LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
                     archive,
-                    aClass.getName());
+                    resourceName);
             return null;
         }
         File file = new File(archive);

@@ -37,21 +37,22 @@ public class FileRepository implements ResourceRepository {
 
     static final Logger LOG = LoggerFactory.getLogger(FileRepository.class);
 
-    private File root;
+    private final File root;
 
     /**
      * インスタンスを生成する。
      * @param root リポジトリのルートディレクトリ
+     * @throws IOException if failed to canonicalize path
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    public FileRepository(File root) {
+    public FileRepository(File root) throws IOException {
         Precondition.checkMustNotBeNull(root, "root"); //$NON-NLS-1$
         if (root.isDirectory() == false) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "{0} is not a directory",
                     root));
         }
-        this.root = root;
+        this.root = root.getAbsoluteFile().getCanonicalFile();
     }
 
     @Override
@@ -95,7 +96,7 @@ public class FileRepository implements ResourceRepository {
 
     private static class ResourceCursor implements Cursor {
 
-        private Iterator<Resource> iterator;
+        private final Iterator<Resource> iterator;
 
         private Resource current;
 

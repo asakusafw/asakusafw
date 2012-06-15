@@ -24,8 +24,16 @@ import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * ジョブフローのパッケージングを行う。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public interface Packager extends FlowCompilingEnvironment.Initializable {
+
+    /**
+     * The location of fragment marker file in each class library.
+     * @since 0.4.0
+     */
+    Location FRAGMENT_MARKER_PATH = Location.fromPath("META-INF/asakusa/fragment", '/');
 
     /**
      * 指定のJavaソースプログラムを出力するためのストリームを開いて返す。
