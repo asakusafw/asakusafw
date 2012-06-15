@@ -23,10 +23,15 @@ import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.util.ReflectionUtils;
+
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -38,10 +43,15 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @param <V> the type of raw sequence file value
  * @param <T> the type of target data model
  * @since 0.2.6
+ * @version 0.4.0
  */
 public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
 
     static final Log LOG = LogFactory.getLog(SequenceFileFormat.class);
+
+    static final String KEY_COMPRESSION_CODEC = "com.asakusafw.output.sequencefile.compression.codec";
+
+    static final String VALUE_COMPRESSION_AUTO = "auto";
 
     @Override
     public long getPreferredFragmentSize() throws IOException, InterruptedException {
@@ -168,15 +178,25 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
             FileSystem fileSystem,
             Path path,
             final Counter counter) throws IOException, InterruptedException {
-        // TODO codec
         final K keyBuffer = createKeyObject();
         final V valueBuffer = createValueObject();
+        CompressionCodec codec = getCompressionCodec(path);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Creating sequence file (path={0}, type={1}, codec={2})",
+                    path,
+                    dataType.getName(),
+                    codec));
+        }
+        configure(codec);
         final SequenceFile.Writer writer = SequenceFile.createWriter(
                 fileSystem,
                 getConf(),
                 path,
                 keyBuffer.getClass(),
-                valueBuffer.getClass());
+                valueBuffer.getClass(),
+                codec == null ? CompressionType.NONE : CompressionType.BLOCK,
+                codec);
         boolean succeed = false;
         try {
             ModelOutput<T> output = new ModelOutput<T>() {
@@ -204,5 +224,39 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
                 writer.close();
             }
         }
+    }
+
+    private void configure(Object object) {
+        if (object instanceof Configurable) {
+            Configurable configurable = (Configurable) object;
+            if (configurable.getConf() == null) {
+                configurable.setConf(getConf());
+            }
+        }
+    }
+
+    /**
+     * Returns a compression codec for output sequence files.
+     * Clients can override this method in subclasses, and return the suitable {@link CompressionCodec} object.
+     * @param path target path
+     * @return a compression codec used to output, or {@code null} if output will not be compressed
+     * @throws IOException if failed to create a compression codec
+     * @throws InterruptedException if interrupted
+     */
+    public CompressionCodec getCompressionCodec(Path path) throws IOException, InterruptedException {
+        String codecClassName = getConf().get(KEY_COMPRESSION_CODEC);
+        if (codecClassName != null && codecClassName.isEmpty() == false) {
+            try {
+                Class<?> codecClass = getConf().getClassByName(codecClassName);
+                return ReflectionUtils.newInstance(codecClass.asSubclass(CompressionCodec.class), getConf());
+            } catch (Exception e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to load compression codec ({0}={1})",
+                        KEY_COMPRESSION_CODEC,
+                        codecClassName), e);
+                return null;
+            }
+        }
+        return null;
     }
 }
