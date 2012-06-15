@@ -38,6 +38,7 @@
 								<descriptor>src/main/resources/assemblies/prod-directio.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-thundergate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/ext-yaess-jobqueue-plugin.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-cleaner.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-experimental-shell-script.xml</descriptor>
 							</descriptors>
@@ -189,6 +190,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-yaess-jsch</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-yaess-jobqueue</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
