@@ -20,24 +20,22 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.legacy.workflow.ExperimentalWorkflowProcessor;
+import com.asakusafw.compiler.testing.BatchInfo;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
  * バッチ用のテストドライバクラス。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 @SuppressWarnings("deprecation")
 public class BatchTestDriver extends TestDriverTestToolsBase {
@@ -81,7 +79,7 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
             File compilerOutputDir = new File(compileWorkDir, "output");
             File compilerLocalWorkingDir = new File(compileWorkDir, "build");
 
-            DirectBatchCompiler.compile(
+            BatchInfo batchInfo = DirectBatchCompiler.compile(
                     batchDescriptionClass,
                     "test.batch",
                     Location.fromPath(driverContext.getClusterWorkDir(), '/'),
@@ -93,33 +91,9 @@ public class BatchTestDriver extends TestDriverTestToolsBase {
                     batchDescriptionClass.getClassLoader(),
                     driverContext.getOptions());
 
-            // バッチコンパイラが生成したテスト用シェルスクリプトを実行
-            String[] batchRunCmd = new String[] {
-                    "/bin/bash",
-                    ExperimentalWorkflowProcessor.getScriptOutput(compilerOutputDir).getAbsolutePath(),
-            };
-            // 環境変数に-Dの引数一覧を積む
-            StringBuilder dProps = new StringBuilder();
-            for (Map.Entry<String, String> entry : driverContext.getExtraConfigurations().entrySet()) {
-                dProps.append(MessageFormat.format(
-                        " -D \"{0}={1}\"",
-                        entry.getKey(),
-                        entry.getValue()));
-            }
-
-            VariableTable variables = new VariableTable();
-            variables.defineVariables(driverContext.getBatchArgs());
-
-            Map<String, String> environment = new TreeMap<String, String>();
-            environment.put(ExperimentalWorkflowProcessor.VAR_BATCH_ARGS, variables.toSerialString());
-            environment.put(ExperimentalWorkflowProcessor.K_OPTS, dProps.toString());
-
-            int exitCode = executor.runShell(batchRunCmd, environment);
-            if (exitCode != 0) {
-                throw new AssertionError(MessageFormat.format(
-                        "バッチの実行に失敗しました (exitCode={0}): {1}",
-                        exitCode,
-                        batchDescriptionClass.getName()));
+            for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
+                driverContext.prepareCurrentJobflow(jobflowInfo);
+                executor.runJobflow(jobflowInfo);
             }
 
             // テスト結果検証ツールを実行し、Excel上の期待値とDB上の実際値を比較する。
