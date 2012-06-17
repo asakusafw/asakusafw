@@ -15,7 +15,6 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
  * 単純なバッチ。

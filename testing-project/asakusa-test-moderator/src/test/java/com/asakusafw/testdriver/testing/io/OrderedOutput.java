@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 package com.asakusafw.testdriver.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
 import com.asakusafw.testdriver.testing.model.Ordered;
-import java.io.IOException;
 /**
  * <code>ordered</code>をTSVなどのレコード形式で出力する。
  */

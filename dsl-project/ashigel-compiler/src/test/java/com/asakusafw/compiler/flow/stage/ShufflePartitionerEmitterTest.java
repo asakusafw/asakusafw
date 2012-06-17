@@ -32,8 +32,8 @@ import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
  * Test for {@link ShufflePartitionerEmitter}.

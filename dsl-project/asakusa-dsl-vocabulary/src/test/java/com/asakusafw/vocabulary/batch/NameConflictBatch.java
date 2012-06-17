@@ -15,7 +15,6 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
  * ジョブフローの名前が衝突するバッチ。

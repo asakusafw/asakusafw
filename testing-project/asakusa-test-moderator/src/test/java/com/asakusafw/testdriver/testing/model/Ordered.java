@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 package com.asakusafw.testdriver.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
@@ -23,11 +30,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.testdriver.testing.io.OrderedInput;
 import com.asakusafw.testdriver.testing.io.OrderedOutput;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * orderedを表すデータモデルクラス。
  */

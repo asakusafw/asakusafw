@@ -25,10 +25,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.asakusafw.utils.graph.Graph;
-import com.asakusafw.utils.graph.Graphs;
-import com.asakusafw.utils.graph.Matcher;
-
 /**
  * Test for {@link Graphs}.
  */

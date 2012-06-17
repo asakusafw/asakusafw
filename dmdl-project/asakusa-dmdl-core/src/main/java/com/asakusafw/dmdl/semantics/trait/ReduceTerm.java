@@ -21,7 +21,7 @@ import com.asakusafw.dmdl.model.AstTerm;
 import com.asakusafw.dmdl.semantics.Element;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Reducing terms.
@@ -57,8 +57,8 @@ public class ReduceTerm<T extends AstTerm<T>> implements Element {
         }
         this.term = term;
         this.source = source;
-        this.mappings = Util.freeze(mappings);
-        this.grouping = Util.freeze(grouping);
+        this.mappings = Lists.freeze(mappings);
+        this.grouping = Lists.freeze(grouping);
     }
 
     @Override

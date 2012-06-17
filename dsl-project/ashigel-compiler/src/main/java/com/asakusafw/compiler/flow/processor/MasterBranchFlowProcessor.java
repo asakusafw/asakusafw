@@ -16,16 +16,13 @@
 package com.asakusafw.compiler.flow.processor;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.EnumUtil;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Tuple2;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.operator.MasterBranch;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
@@ -33,6 +30,9 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.MasterBranch;
 
 /**
  * {@link MasterBranch マスタ分岐演算子}を処理する。
@@ -48,7 +48,7 @@ public class MasterBranchFlowProcessor extends RendezvousProcessor {
         FlowElementPortDescription tx = context.getInputPort(MasterBranch.ID_INPUT_TRANSACTION);
 
         OperatorDescription desc = context.getOperatorDescription();
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(masterAnalyzer.getGetCheckedMasterExpression());
         arguments.add(context.getProcessInput(tx));
         for (OperatorDescription.Parameter param : desc.getParameters()) {
@@ -69,10 +69,10 @@ public class MasterBranchFlowProcessor extends RendezvousProcessor {
                     context.convert(enumType),
                     branch));
 
-        List<Statement> cases = new ArrayList<Statement>();
+        List<Statement> cases = Lists.create();
         for (Tuple2<Enum<?>, FlowElementPortDescription> tuple : constants) {
-            Enum<?> constant = tuple._1;
-            FlowElementPortDescription port = tuple._2;
+            Enum<?> constant = tuple.first;
+            FlowElementPortDescription port = tuple.second;
             ResultMirror next = context.getOutput(port);
             cases.add(f.newSwitchCaseLabel(f.newSimpleName(constant.name())));
             cases.add(next.createAdd(context.getProcessInput(tx)));

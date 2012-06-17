@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +38,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * 演算子クラスを直接コンパイルする。
@@ -144,7 +145,7 @@ public final class OperatorCompilerDriver {
         assert sourcePath != null;
         assert outputPath != null;
         assert encoding != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         Collections.addAll(results, "-proc:only");
         Collections.addAll(results, "-source", "1.6");
         Collections.addAll(results, "-target", "1.6");
@@ -166,7 +167,7 @@ public final class OperatorCompilerDriver {
                 results.add(source);
             }
         }
-        return new ArrayList<File>(results);
+        return Lists.from(results);
     }
 
     private static File findSource(File sourcePath, Class<?> aClass) throws IOException {
@@ -229,7 +230,7 @@ public final class OperatorCompilerDriver {
         String encoding = cmd.getOptionValue(OPT_ENCODING.getOpt(), "UTF-8");
         String[] classes = cmd.getOptionValues(OPT_CLASSES.getOpt());
 
-        List<Class<?>> operatorClasses = new ArrayList<Class<?>>();
+        List<Class<?>> operatorClasses = Lists.create();
         for (String className : classes) {
             Class<?> oc = Class.forName(className);
             operatorClasses.add(oc);

@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.bulkloader;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.Properties;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.utils.collections.Lists;
 
 
 /**
@@ -125,7 +125,7 @@ public class BulkLoaderScript {
 
     static List<String> toNames(List<? extends Table> tables) {
         assert tables != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (Table table : tables) {
             results.add(table.getName());
         }
@@ -147,7 +147,7 @@ public class BulkLoaderScript {
 
     static List<String> toPaths(List<Location> locations) {
         assert locations != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (Location location : locations) {
             results.add(toPath(location));
         }
@@ -156,7 +156,7 @@ public class BulkLoaderScript {
 
     static List<Location> fromPaths(List<String> paths) {
         assert paths != null;
-        List<Location> results = new ArrayList<Location>();
+        List<Location> results = Lists.create();
         for (String path : paths) {
             results.add(fromPath(path));
         }
@@ -187,7 +187,7 @@ public class BulkLoaderScript {
         if (fields.isEmpty()) {
             return Collections.emptyList();
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         int start = 0;
         while (true) {
             int end = fields.indexOf(',', start);
@@ -406,7 +406,7 @@ public class BulkLoaderScript {
             ClassLoader loader = (loaderOrNull == null)
                     ? BulkLoaderScript.class.getClassLoader()
                     : loaderOrNull;
-            List<ImportTable> results = new ArrayList<ImportTable>();
+            List<ImportTable> results = Lists.create();
             for (String prefix : split(get(properties, K_TARGET_TABLES, true))) {
                 results.add(fromProperties(properties, prefix, loader));
             }
@@ -603,7 +603,7 @@ public class BulkLoaderScript {
             ClassLoader loader = (loaderOrNull == null)
                     ? BulkLoaderScript.class.getClassLoader()
                     : loaderOrNull;
-            List<ExportTable> results = new ArrayList<ExportTable>();
+            List<ExportTable> results = Lists.create();
             for (String prefix : split(get(properties, K_TARGET_TABLES, true))) {
                 results.add(fromProperties(properties, prefix, loader));
             }

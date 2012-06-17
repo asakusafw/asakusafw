@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.directio.testing.model;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.directio.testing.io.LineInput;
 import com.asakusafw.compiler.directio.testing.io.LineOutput;
 import com.asakusafw.runtime.model.DataModelKind;
@@ -23,8 +26,6 @@ import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * lineを表す射影モデルインターフェース。
  */

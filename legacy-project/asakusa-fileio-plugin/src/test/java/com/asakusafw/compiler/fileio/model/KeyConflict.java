@@ -23,7 +23,6 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.compiler.fileio.io.KeyConflictInput;
 import com.asakusafw.compiler.fileio.io.KeyConflictOutput;
-import com.asakusafw.compiler.fileio.model.Ex1;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;

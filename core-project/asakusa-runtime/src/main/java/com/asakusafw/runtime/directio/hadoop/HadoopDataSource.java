@@ -24,15 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectInputFragment;
-import com.asakusafw.runtime.directio.ResourceInfo;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
+import com.asakusafw.runtime.directio.ResourceInfo;
 import com.asakusafw.runtime.directio.ResourcePattern;
 import com.asakusafw.runtime.directio.keepalive.KeepAliveDataSource;
 import com.asakusafw.runtime.io.ModelInput;

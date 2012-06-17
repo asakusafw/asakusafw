@@ -20,8 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +37,8 @@ import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.common.FileRepository;
 import com.asakusafw.compiler.common.ZipRepository;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
@@ -139,13 +139,13 @@ public final class AllBatchCompilerDriver {
         File outputDirectory = new File(output);
         Location hadoopWorkLocation = Location.fromPath(hadoopWork, '/');
         File compilerWorkDirectory = new File(compilerWork);
-        List<File> linkingResources = new ArrayList<File>();
+        List<File> linkingResources = Lists.create();
         if (link != null) {
             for (String s : link.split(File.pathSeparator)) {
                 linkingResources.add(new File(s));
             }
         }
-        List<URL> pluginLocations = new ArrayList<URL>();
+        List<URL> pluginLocations = Lists.create();
         if (plugin != null) {
             for (String s : plugin.split(File.pathSeparator)) {
                 try {
@@ -164,7 +164,7 @@ public final class AllBatchCompilerDriver {
             }
         }
 
-        Set<String> errorBatches = new HashSet<String>();
+        Set<String> errorBatches = Sets.create();
         boolean succeeded = true;
         try {
             ResourceRepository scanner = getScanner(new File(scanPath));

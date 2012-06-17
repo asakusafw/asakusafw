@@ -15,11 +15,11 @@
  */
 package com.asakusafw.dmdl.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents simple names.
@@ -72,7 +72,7 @@ public class AstSimpleName extends AbstractAstNode implements AstName {
         if (start < 0) {
             return Collections.singletonList(identifier);
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         if (start != 0) {
             results.add(identifier.substring(0, start));
         }

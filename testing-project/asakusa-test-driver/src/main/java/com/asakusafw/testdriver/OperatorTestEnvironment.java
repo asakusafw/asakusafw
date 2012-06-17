@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -27,6 +26,7 @@ import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * 演算子のテスト時に各種プラグインを利用可能にするためのリソース。
@@ -94,8 +94,8 @@ public class OperatorTestEnvironment extends ExternalResource {
             throw new IllegalArgumentException("configurationPath must not be null"); //$NON-NLS-1$
         }
         this.configurationPath = configurationPath;
-        this.extraConfigurations = new HashMap<String, String>();
-        this.batchArguments = new HashMap<String, String>();
+        this.extraConfigurations = Maps.create();
+        this.batchArguments = Maps.create();
         this.dirty = false;
     }
 

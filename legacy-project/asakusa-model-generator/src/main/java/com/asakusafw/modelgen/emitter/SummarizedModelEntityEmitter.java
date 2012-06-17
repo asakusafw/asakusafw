@@ -28,11 +28,6 @@ import com.asakusafw.modelgen.model.ModelProperty;
 import com.asakusafw.modelgen.model.ModelReference;
 import com.asakusafw.modelgen.model.Source;
 import com.asakusafw.modelgen.model.SummarizedModelDescription;
-import com.asakusafw.vocabulary.model.DataModel;
-import com.asakusafw.vocabulary.model.Key;
-import com.asakusafw.vocabulary.model.ModelRef;
-import com.asakusafw.vocabulary.model.Property;
-import com.asakusafw.vocabulary.model.SummarizedModel;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.AnnotationElement;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -46,6 +41,11 @@ import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.model.DataModel;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.model.ModelRef;
+import com.asakusafw.vocabulary.model.Property;
+import com.asakusafw.vocabulary.model.SummarizedModel;
 
 /**
  * {@link SummarizedModelDescription}に対するエンティティ情報をファイル上に出力するエミッタ。

@@ -15,66 +15,65 @@
  */
 package com.asakusafw.utils.collections;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 /**
- * Utilities about {@link List}.
+ * Utilities about {@link Set}.
  */
-public final class Lists {
+public final class Sets {
 
     /**
-     * Returns an empty list.
-     * The list is modifiable.
+     * Returns an empty set.
+     * The set is modifiable.
      * @param <E> element type
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> create() {
-        return new ArrayList<E>();
+    public static <E> Set<E> create() {
+        return new HashSet<E>();
     }
 
     /**
-     * Returns a list which consists of the specified element.
-     * The list is modifiable.
+     * Returns a set which consists of the specified element.
+     * The set is modifiable.
      * @param <E> element type
      * @param elem the element
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> of(E elem) {
-        ArrayList<E> result = new ArrayList<E>();
+    public static <E> Set<E> of(E elem) {
+        HashSet<E> result = new HashSet<E>();
         result.add(elem);
         return result;
     }
 
     /**
-     * Returns a list which consists of the specified elements.
-     * The list is modifiable.
+     * Returns a set which consists of the specified elements.
+     * The set is modifiable.
      * @param <E> element type
      * @param elem1 the first element
      * @param elem2 the second element
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> of(E elem1, E elem2) {
-        ArrayList<E> result = new ArrayList<E>();
+    public static <E> Set<E> of(E elem1, E elem2) {
+        HashSet<E> result = new HashSet<E>();
         result.add(elem1);
         result.add(elem2);
         return result;
     }
 
     /**
-     * Returns a list which consists of the specified elements.
-     * The list is modifiable.
+     * Returns a set which consists of the specified elements.
+     * The set is modifiable.
      * @param <E> element type
      * @param elem1 the first element
      * @param elem2 the second element
      * @param elem3 the third element
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> of(E elem1, E elem2, E elem3) {
-        ArrayList<E> result = new ArrayList<E>();
+    public static <E> Set<E> of(E elem1, E elem2, E elem3) {
+        HashSet<E> result = new HashSet<E>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -82,21 +81,21 @@ public final class Lists {
     }
 
     /**
-     * Returns a list which consists of the specified elements.
-     * The list is modifiable.
+     * Returns a set which consists of the specified elements.
+     * The set is modifiable.
      * @param <E> element type
      * @param elem1 the first element
      * @param elem2 the second element
      * @param elem3 the third element
      * @param elem4 the fourth element
      * @param rest the rest elements
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> of(E elem1, E elem2, E elem3, E elem4, E... rest) {
+    public static <E> Set<E> of(E elem1, E elem2, E elem3, E elem4, E... rest) {
         if (rest == null) {
             throw new IllegalArgumentException("rest must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> result = new ArrayList<E>();
+        HashSet<E> result = new HashSet<E>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -106,34 +105,34 @@ public final class Lists {
     }
 
     /**
-     * Returns a list which consists of the specified elements.
-     * The list is modifiable.
+     * Returns a set which consists of the specified elements.
+     * The set is modifiable.
      * @param <E> element type
      * @param elements the elements
-     * @return created list
+     * @return created set
      */
-    public static <E> List<E> from(E[] elements) {
+    public static <E> Set<E> from(E[] elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> result = new ArrayList<E>();
+        HashSet<E> result = new HashSet<E>();
         Collections.addAll(result, elements);
         return result;
     }
 
     /**
-     * Returns a list which has copy of the elements.
-     * The list is modifiable.
+     * Returns a set which has copy of the elements.
+     * The set is modifiable.
      * @param <E> element type
      * @param elements the elements
-     * @return created list
+     * @return created set
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static <E> List<E> from(Iterable<? extends E> elements) {
+    public static <E> Set<E> from(Iterable<? extends E> elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> copy = new ArrayList<E>();
+        HashSet<E> copy = new HashSet<E>();
         for (E element : elements) {
             copy.add(element);
         }
@@ -141,49 +140,47 @@ public final class Lists {
     }
 
     /**
-     * Returns a freezed list which has copy of the elements.
+     * Returns a freezed set which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
-     * @return created list
+     * @return created set
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static <E> List<E> freeze(Iterable<? extends E> elements) {
+    public static <E> Set<E> freeze(Iterable<? extends E> elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
         Iterator<? extends E> iter = elements.iterator();
         if (iter.hasNext() == false) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
         E first = iter.next();
         if (iter.hasNext() == false) {
-            return Collections.singletonList(first);
+            return Collections.singleton(first);
         }
-        ArrayList<E> copy = new ArrayList<E>();
+        HashSet<E> copy = new HashSet<E>();
         copy.add(first);
         while (iter.hasNext()) {
             copy.add(iter.next());
         }
-        copy.trimToSize();
-        return Collections.unmodifiableList(copy);
+        return Collections.unmodifiableSet(copy);
     }
 
     /**
-     * Returns a freezed list which has copy of the elements.
+     * Returns a freezed set which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
-     * @return created list
+     * @return created set
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static <E> List<E> freeze(E[] elements) {
+    public static <E> Set<E> freeze(E[] elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        E[] copy = elements.clone();
-        return Collections.unmodifiableList(Arrays.asList(copy));
+        return Collections.unmodifiableSet(from(elements));
     }
 
-    private Lists() {
+    private Sets() {
         return;
     }
 }

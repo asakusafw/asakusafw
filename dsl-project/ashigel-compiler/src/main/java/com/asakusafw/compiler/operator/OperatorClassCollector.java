@@ -17,9 +17,6 @@ package com.asakusafw.compiler.operator;
 
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +33,9 @@ import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
 
@@ -44,11 +44,11 @@ import com.asakusafw.vocabulary.operator.OperatorHelper;
  */
 public class OperatorClassCollector {
 
-    private OperatorCompilingEnvironment environment;
+    private final OperatorCompilingEnvironment environment;
 
-    private RoundEnvironment round;
+    private final RoundEnvironment round;
 
-    private List<TargetMethod> targetMethods;
+    private final List<TargetMethod> targetMethods;
 
     private boolean sawError;
 
@@ -65,7 +65,7 @@ public class OperatorClassCollector {
         Precondition.checkMustNotBeNull(round, "round"); //$NON-NLS-1$
         this.environment = environment;
         this.round = round;
-        this.targetMethods = new ArrayList<TargetMethod>();
+        this.targetMethods = Lists.create();
     }
 
     /**
@@ -142,18 +142,12 @@ public class OperatorClassCollector {
         if (sawError) {
             throw new OperatorCompilerException("演算子メソッドの分析に失敗したため、処理を中止します");
         }
-        Map<TypeElement, List<TargetMethod>> mapping =
-                new HashMap<TypeElement, List<TargetMethod>>();
+        Map<TypeElement, List<TargetMethod>> mapping = Maps.create();
         for (TargetMethod target : targetMethods) {
-            List<TargetMethod> members = mapping.get(target.type);
-            if (members == null) {
-                members = new ArrayList<TargetMethod>();
-                mapping.put(target.type, members);
-            }
-            members.add(target);
+            Maps.addToList(mapping, target.type, target);
         }
 
-        List<OperatorClass> results = new ArrayList<OperatorClass>();
+        List<OperatorClass> results = Lists.create();
         for (Map.Entry<TypeElement, List<TargetMethod>> entry : mapping.entrySet()) {
             OperatorClass klass = toOperatorClass(entry.getKey(), entry.getValue());
             results.add(klass);
@@ -218,7 +212,7 @@ public class OperatorClassCollector {
     }
 
     private void validateMemberNames(TypeElement type) {
-        Map<String, Element> saw = new HashMap<String, Element>();
+        Map<String, Element> saw = Maps.create();
         for (Element member : type.getEnclosedElements()) {
             ElementKind kind = member.getKind();
             if (kind != ElementKind.METHOD
@@ -242,10 +236,10 @@ public class OperatorClassCollector {
         assert type != null;
         assert targets != null;
 
-        Set<ExecutableElement> methods = new HashSet<ExecutableElement>();
+        Set<ExecutableElement> methods = Sets.create();
         methods.addAll(ElementFilter.methodsIn(type.getEnclosedElements()));
 
-        Set<ExecutableElement> saw = new HashSet<ExecutableElement>();
+        Set<ExecutableElement> saw = Sets.create();
         for (TargetMethod target : targets) {
             ExecutableElement method = target.method;
             if (saw.contains(method)) {

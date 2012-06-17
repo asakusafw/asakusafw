@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.common;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.utils.collections.Tuples;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
@@ -52,14 +52,12 @@ public final class EnumUtil {
                     enumType));
         }
 
-        Map<String, FlowElementPortDescription> portNames =
-            new HashMap<String, FlowElementPortDescription>();
+        Map<String, FlowElementPortDescription> portNames = Maps.create();
         for (FlowElementPortDescription port : ports) {
             portNames.put(port.getName(), port);
         }
 
-        List<Tuple2<Enum<?>, FlowElementPortDescription>> results =
-            new ArrayList<Tuple2<Enum<?>, FlowElementPortDescription>>();
+        List<Tuple2<Enum<?>, FlowElementPortDescription>> results = Lists.create();
         for (Enum<?> constant : constants) {
             String name = JavaName.of(constant.name()).toMemberName();
             FlowElementPortDescription port = portNames.get(name);

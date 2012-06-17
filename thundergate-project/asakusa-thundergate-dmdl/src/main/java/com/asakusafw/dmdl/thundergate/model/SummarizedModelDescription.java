@@ -16,11 +16,11 @@
 package com.asakusafw.dmdl.thundergate.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * 別のモデルを集約した構造を表現するモデル。
@@ -40,9 +40,8 @@ public class SummarizedModelDescription extends ModelDescription {
             List<ModelProperty> properties,
             List<Source> groupBy) {
         super(reference, properties);
-        this.groupBy = Collections.unmodifiableList(
-                new ArrayList<Source>(groupBy));
-        Set<String> groupKeys = new HashSet<String>();
+        this.groupBy = Lists.freeze(groupBy);
+        Set<String> groupKeys = Sets.create();
         for (Source source : groupBy) {
             groupKeys.add(source.getName());
         }

@@ -38,6 +38,7 @@ import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -189,7 +190,7 @@ public class CopierClientEmitter {
         private TypeDeclaration createType() throws IOException {
             SimpleName name = factory.newSimpleName(Naming.getClientClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             members.add(createStageInputsMethod());
@@ -208,7 +209,7 @@ public class CopierClientEmitter {
         }
 
         private List<MethodDeclaration> createIdMethods() {
-            List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> results = Lists.create();
             results.add(createValueMethod(
                     BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),
@@ -237,7 +238,7 @@ public class CopierClientEmitter {
             SimpleName list = factory.newSimpleName("results");
             SimpleName attributes = factory.newSimpleName("attributes");
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageInput.class)), list));
@@ -290,7 +291,7 @@ public class CopierClientEmitter {
 
         private MethodDeclaration createStageOutputsMethod() {
             SimpleName list = factory.newSimpleName("results");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageOutput.class)), list));

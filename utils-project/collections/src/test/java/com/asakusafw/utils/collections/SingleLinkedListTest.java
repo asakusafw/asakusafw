@@ -16,7 +16,6 @@
 package com.asakusafw.utils.collections;
 
 import static org.hamcrest.Matchers.*;
-
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -32,8 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.junit.Test;
-
-import com.asakusafw.utils.collections.SingleLinkedList;
 
 /**
  * Test for {@link SingleLinkedList}.
@@ -63,21 +60,7 @@ public class SingleLinkedListTest {
     }
 
     /**
-     * Test method for {@link SingleLinkedList#SingleLinkedList(SingleLinkedList)}.
-     */
-    @Test
-    public void new_sll() {
-        List<String> from = Arrays.asList("a", "b", "c");
-        SingleLinkedList<String> base = new SingleLinkedList<String>(from);
-        SingleLinkedList<String> list = new SingleLinkedList<String>(base);
-        assertThat(list.size(), is(3));
-        assertThat(list.get(0), is("a"));
-        assertThat(list.get(1), is("b"));
-        assertThat(list.get(2), is("c"));
-    }
-
-    /**
-     * Test method for {@link SingleLinkedList#SingleLinkedList(java.util.Collection)}.
+     * Test method for {@link SingleLinkedList#SingleLinkedList(Iterable)}.
      */
     @Test
     public void new_collection() {

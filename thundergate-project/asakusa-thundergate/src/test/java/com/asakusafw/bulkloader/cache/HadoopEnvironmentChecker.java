@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assume;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 
 /**

@@ -15,14 +15,12 @@
  */
 package com.asakusafw.compiler.flow;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -30,6 +28,8 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
  * ラインに配置される演算子を処理する。
@@ -62,7 +62,7 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
                 OperatorDescription desc,
                 Map<FlowResourceDescription, Expression> resources) {
             super(environment, importer, names, desc, resources);
-            this.generatedStatements = new ArrayList<Statement>();
+            this.generatedStatements = Lists.create();
         }
 
         /**

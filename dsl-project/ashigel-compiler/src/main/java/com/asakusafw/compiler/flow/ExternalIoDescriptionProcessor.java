@@ -17,7 +17,6 @@ package com.asakusafw.compiler.flow;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,7 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -280,7 +280,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
             Precondition.checkMustNotBeNull(attributes, "attributes"); //$NON-NLS-1$
             this.locations = locations;
             this.format = (Class<? extends InputFormat<?, ?>>) format;
-            this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
+            this.attributes = Maps.freeze(attributes);
         }
 
         /**

@@ -15,17 +15,13 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowElementProcessor.DataObjectMirror;
 import com.asakusafw.compiler.flow.FlowElementProcessor.ListBufferMirror;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
-import com.asakusafw.vocabulary.flow.processor.InputBuffer;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -33,6 +29,10 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 
 /**
  * {@code Master*}系の演算子を解析する。
@@ -141,7 +141,7 @@ public class MasterKindFlowAnalyzer {
         context.addProcess(master, list.createAdvance(proc));
         context.addEnd(list.createEnd());
 
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(list.get());
         arguments.add(context.getProcessInput(tx));
         for (OperatorDescription.Parameter param : desc.getParameters()) {

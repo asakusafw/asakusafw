@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 package com.asakusafw.testdriver.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.testdriver.testing.model.Projection;
-import java.io.IOException;
 /**
  * TSVファイルなどのレコードを表すファイルを入力として<code>projection</code>を読み出す
  */

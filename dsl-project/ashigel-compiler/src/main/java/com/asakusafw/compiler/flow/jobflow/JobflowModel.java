@@ -18,8 +18,6 @@ package com.asakusafw.compiler.flow.jobflow;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,19 +27,21 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.Compilable;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
-import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
+import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * ジョブフロー全体のモデル。
@@ -144,7 +144,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public Graph<Stage> getDependencyGraph() {
-        Map<Delivery, Stage> deliveries = new HashMap<Delivery, Stage>();
+        Map<Delivery, Stage> deliveries = Maps.create();
         for (Stage stage : stages) {
             for (Delivery delivery : stage.getDeliveries()) {
                 deliveries.put(delivery, stage);
@@ -435,7 +435,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          */
         public void resolveSources(Collection<? extends Source> opposites) {
             Precondition.checkMustNotBeNull(opposites, "opposites"); //$NON-NLS-1$
-            this.sources = new HashSet<JobflowModel.Source>(opposites);
+            this.sources = Sets.from(opposites);
         }
 
         /**
@@ -458,7 +458,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          * @see #resolveSources(Collection)
          */
         public Set<Location> getResolvedLocations() {
-            Set<Location> results = new HashSet<Location>();
+            Set<Location> results = Sets.create();
             for (Source source : getResolvedSources()) {
                 results.addAll(source.getInputInfo().getLocations());
             }

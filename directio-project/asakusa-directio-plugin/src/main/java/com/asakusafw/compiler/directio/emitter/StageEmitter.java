@@ -48,6 +48,7 @@ import com.asakusafw.runtime.stage.directio.AbstractNoReduceDirectOutputMapper;
 import com.asakusafw.runtime.stage.directio.DirectOutputReducer;
 import com.asakusafw.runtime.stage.directio.DirectOutputSpec;
 import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Comment;
@@ -215,7 +216,7 @@ public class StageEmitter {
 
     private List<CompiledSlot> emitMappers(List<Slot> slots, Name keyOrNull, Name valueOrNull) throws IOException {
         assert slots != null;
-        List<CompiledSlot> results = new ArrayList<CompiledSlot>();
+        List<CompiledSlot> results = Lists.create();
         int index = 0;
         for (Slot slot : slots) {
             Name mapper;
@@ -245,7 +246,7 @@ public class StageEmitter {
                 f.newPackageDeclaration(environment.getEpiloguePackageName(moduleId)),
                 Strategy.TOP_LEVEL);
         importer.resolvePackageMember(className);
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(Models.toLiteral(f, index));
         arguments.add(classLiteralOrNull(f, importer, key));
         arguments.add(classLiteralOrNull(f, importer, value));
@@ -269,7 +270,7 @@ public class StageEmitter {
                 f.newPackageDeclaration(environment.getEpiloguePackageName(moduleId)),
                 Strategy.TOP_LEVEL);
         importer.resolvePackageMember(className);
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
         arguments.add(Models.toLiteral(f, slot.basePath));
         arguments.add(Models.toLiteral(f, slot.resourcePath));
@@ -295,10 +296,10 @@ public class StageEmitter {
                 f.newPackageDeclaration(environment.getEpiloguePackageName(moduleId)),
                 Strategy.TOP_LEVEL);
         importer.resolvePackageMember(className);
-        List<Expression> elements = new ArrayList<Expression>();
+        List<Expression> elements = Lists.create();
         for (Slot slot : slots) {
             if (requiresReducer(slot)) {
-                List<Expression> arguments = new ArrayList<Expression>();
+                List<Expression> arguments = Lists.create();
                 arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
                 arguments.add(Models.toLiteral(f, slot.basePath));
                 arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
@@ -341,7 +342,7 @@ public class StageEmitter {
                 f.newPackageDeclaration(environment.getEpiloguePackageName(moduleId)),
                 Strategy.TOP_LEVEL);
         importer.resolvePackageMember(className);
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(classLiteralOrNull(f, importer, argumentClassName));
         return emitConstructorClass(className, importer.toType(baseClass), importer, arguments);
     }
@@ -508,7 +509,7 @@ public class StageEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getClientClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             members.add(createStageInputsMethod());
@@ -530,7 +531,7 @@ public class StageEmitter {
         }
 
         private List<MethodDeclaration> createIdMethods() {
-            List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> results = Lists.create();
             results.add(createValueMethod(
                     BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),
@@ -557,7 +558,7 @@ public class StageEmitter {
             SimpleName list = factory.newSimpleName("results");
             SimpleName attributes = factory.newSimpleName("attributes");
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageInput.class)), list));
@@ -608,7 +609,7 @@ public class StageEmitter {
         }
 
         private List<MethodDeclaration> createShuffleMethods() {
-            List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> results = Lists.create();
             results.add(createClassLiteralMethod(AbstractStageClient.METHOD_SHUFFLE_KEY_CLASS, key));
             results.add(createClassLiteralMethod(AbstractStageClient.METHOD_SHUFFLE_VALUE_CLASS, value));
             results.add(createClassLiteralMethod(AbstractStageClient.METHOD_GROUPING_COMPARATOR_CLASS, grouping));
@@ -630,7 +631,7 @@ public class StageEmitter {
             SimpleName list = factory.newSimpleName("results");
             SimpleName attributes = factory.newSimpleName("attributes");
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageOutput.class)), list));

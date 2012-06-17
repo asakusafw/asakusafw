@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +32,7 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -55,6 +53,8 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 
 /**
  * Mapperプログラムを出力するエミッタ。
@@ -167,7 +167,7 @@ public class MapperEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getMapClass(unit.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.add(createCache());
             members.addAll(fragments.createFields());
             members.add(createSetup());
@@ -243,7 +243,7 @@ public class MapperEmitter {
         }
 
         private MethodDeclaration createRun() {
-            List<Statement> loop = new ArrayList<Statement>();
+            List<Statement> loop = Lists.create();
 
             for (FlowBlock.Input input : unit.getInputs()) {
                 Expression expr = fragments.getLine(input.getElementPort());
@@ -255,7 +255,7 @@ public class MapperEmitter {
                     .toStatement());
             }
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method("setup", context)
                 .toStatement());

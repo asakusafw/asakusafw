@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * DMDL source repository includes list of source files.
@@ -51,7 +51,7 @@ public class DmdlSourceFile implements DmdlSourceRepository {
         if (encoding == null) {
             throw new IllegalArgumentException("encoding must not be null"); //$NON-NLS-1$
         }
-        this.files = Util.freeze(sourceFiles);
+        this.files = Lists.freeze(sourceFiles);
         this.encoding = encoding;
     }
 

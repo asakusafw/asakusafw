@@ -17,7 +17,6 @@ package com.asakusafw.compiler.testing;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -38,11 +37,12 @@ import com.asakusafw.compiler.repository.SpiExternalIoDescriptionProcessorReposi
 import com.asakusafw.compiler.repository.SpiFlowElementProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
 import com.asakusafw.compiler.repository.SpiWorkflowProcessorRepository;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
+import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
-import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * バッチを直接コンパイルして、JARのパッケージを作成する。
@@ -116,7 +116,7 @@ public final class DirectBatchCompiler {
     public static BatchInfo toInfo(Workflow workflow, File outputDirectory) {
         Precondition.checkMustNotBeNull(workflow, "workflow"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputDirectory, "outputDirectory"); //$NON-NLS-1$
-        List<JobflowInfo> jobflows = new ArrayList<JobflowInfo>();
+        List<JobflowInfo> jobflows = Lists.create();
         for (Workflow.Unit unit : Graphs.sortPostOrder(workflow.getGraph())) {
             JobflowInfo jobflow = toJobflow(unit, outputDirectory);
             if (jobflow != null) {
@@ -212,7 +212,7 @@ public final class DirectBatchCompiler {
 
     private static List<StageInfo> toStagePlan(JobflowModel jobflow) {
         assert jobflow != null;
-        List<StageInfo> results = new ArrayList<StageInfo>();
+        List<StageInfo> results = Lists.create();
         for (CompiledStage compiled : jobflow.getCompiled().getPrologueStages()) {
             results.add(toInfo(compiled));
         }

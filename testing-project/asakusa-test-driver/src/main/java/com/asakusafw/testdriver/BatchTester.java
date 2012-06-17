@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -35,6 +34,7 @@ import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.testdriver.core.VerifyContext;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
@@ -44,7 +44,7 @@ public class BatchTester extends TestDriverBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
-    private final Map<String, JobFlowTester> jobFlowMap = new HashMap<String, JobFlowTester>();
+    private final Map<String, JobFlowTester> jobFlowMap = Maps.create();
 
     /**
      * コンストラクタ。

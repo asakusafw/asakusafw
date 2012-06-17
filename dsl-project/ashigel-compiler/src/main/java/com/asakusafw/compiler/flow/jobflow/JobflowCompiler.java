@@ -16,10 +16,8 @@
 package com.asakusafw.compiler.flow.jobflow;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +44,8 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel.Source;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Stage;
 import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 
@@ -125,9 +125,9 @@ public class JobflowCompiler {
         fillEmptyList(imports, exports.keySet());
         fillEmptyList(exports, imports.keySet());
 
-        List<ExternalIoCommandProvider> commands = new ArrayList<ExternalIoCommandProvider>();
-        List<CompiledStage> prologues = new ArrayList<CompiledStage>();
-        List<CompiledStage> epilogues = new ArrayList<CompiledStage>();
+        List<ExternalIoCommandProvider> commands = Lists.create();
+        List<CompiledStage> prologues = Lists.create();
+        List<CompiledStage> epilogues = Lists.create();
         for (Map.Entry<ExternalIoDescriptionProcessor, List<Import>> entry : imports.entrySet()) {
             ExternalIoDescriptionProcessor proc = entry.getKey();
             List<Import> importGroup = entry.getValue();
@@ -159,13 +159,13 @@ public class JobflowCompiler {
         assert processor != null;
         assert importGroup != null;
         assert exportGroup != null;
-        List<Input> inputs = new ArrayList<Input>();
+        List<Input> inputs = Lists.create();
         for (Import model : importGroup) {
             inputs.add(new Input(model.getDescription(), model.getOutputFormatType()));
         }
-        List<Output> outputs = new ArrayList<Output>();
+        List<Output> outputs = Lists.create();
         for (Export model : exportGroup) {
-            List<SourceInfo> sources = new ArrayList<SourceInfo>();
+            List<SourceInfo> sources = Lists.create();
             for (Source source : model.getResolvedSources()) {
                 sources.add(source.getInputInfo());
             }
@@ -240,7 +240,7 @@ public class JobflowCompiler {
 
     private List<String> getStageIds(Collection<Stage> stages) {
         assert stages != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (Stage stage : stages) {
             results.add(stage.getCompiled().getStageId());
         }
@@ -260,16 +260,10 @@ public class JobflowCompiler {
 
     private <T extends Processible> Map<ExternalIoDescriptionProcessor, List<T>> group(List<T> targets) {
         assert targets != null;
-        Map<ExternalIoDescriptionProcessor, List<T>> results =
-            new HashMap<ExternalIoDescriptionProcessor, List<T>>();
+        Map<ExternalIoDescriptionProcessor, List<T>> results = Maps.create();
         for (T processible : targets) {
             ExternalIoDescriptionProcessor proc = processible.getProcessor();
-            List<T> members = results.get(proc);
-            if (members == null) {
-                members = new ArrayList<T>();
-                results.put(proc, members);
-            }
-            members.add(processible);
+            Maps.addToList(results, proc, processible);
         }
         return results;
     }

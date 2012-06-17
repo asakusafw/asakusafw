@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.stage;
 
 import java.text.MessageFormat;
+
 import com.asakusafw.runtime.util.VariableTable;
 
 /**

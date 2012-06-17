@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.operator;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.processing.Filer;
@@ -30,6 +29,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -45,7 +45,7 @@ public class OperatorCompilingEnvironment {
 
     private final OperatorCompilerOptions options;
 
-    private final Map<Class<?>, DeclaredType> rawTypeCache = new HashMap<Class<?>, DeclaredType>();
+    private final Map<Class<?>, DeclaredType> rawTypeCache = Maps.create();
 
     /**
      * インスタンスを生成する。

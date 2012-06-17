@@ -23,13 +23,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.vocabulary.batch.BatchDescription;
-import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
-import com.asakusafw.vocabulary.batch.Work;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**

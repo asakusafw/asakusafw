@@ -40,9 +40,7 @@ import com.asakusafw.runtime.io.csv.CsvConfiguration;
 import com.asakusafw.runtime.io.csv.CsvEmitter;
 import com.asakusafw.runtime.io.csv.CsvParser;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
@@ -62,6 +60,9 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
 
 /**
  * Emits {@link DataModelStreamSupport} implementations.
@@ -228,7 +229,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = Lists.create();
             results.add(createGetConfiguration());
             results.add(createGetSupportedType());
             results.add(createCreateReader());
@@ -239,8 +240,8 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createGetConfiguration() {
-            List<Statement> statements = new ArrayList<Statement>();
-            List<Expression> arguments = new ArrayList<Expression>();
+            List<Statement> statements = Lists.create();
+            List<Expression> arguments = Lists.create();
             arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
                 .method("forName", Models.toLiteral(f, conf.getCharsetName()))
                 .toExpression());
@@ -313,7 +314,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreateReader() {
             SimpleName path = f.newSimpleName("path");
             SimpleName stream = f.newSimpleName("stream");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -350,7 +351,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreateWriter() {
             SimpleName path = f.newSimpleName("path");
             SimpleName stream = f.newSimpleName("stream");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -400,9 +401,9 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser");
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(CsvParser.class, parser));
-            List<ExpressionStatement> constructorStatements = new ArrayList<ExpressionStatement>();
+            List<ExpressionStatement> constructorStatements = Lists.create();
             constructorStatements.add(mapField(parser));
             if (hasFileName()) {
                 members.add(createPrivateField(StringOption.class, f.newSimpleName(FIELD_PATH_NAME)));
@@ -423,7 +424,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
                         .method("next")
@@ -500,7 +501,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter");
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(CsvEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,
@@ -510,7 +511,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(emitter))));
 
             SimpleName object = f.newSimpleName("object");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (isValueField(property)) {
                     statements.add(new ExpressionBuilder(f, emitter)
@@ -674,7 +675,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = Lists.create();
             results.add(createGetModelType());
             results.add(createGetStreamSupport());
             return results;

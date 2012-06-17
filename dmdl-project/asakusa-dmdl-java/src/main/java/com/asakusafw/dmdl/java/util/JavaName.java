@@ -15,10 +15,10 @@
  */
 package com.asakusafw.dmdl.java.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.dmdl.model.AstSimpleName;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Manipulates names used in Java.
@@ -34,7 +34,7 @@ public class JavaName {
         if (words.isEmpty()) {
             throw new IllegalArgumentException("words"); //$NON-NLS-1$
         }
-        this.words = new ArrayList<String>();
+        this.words = Lists.create();
         for (String word : words) {
             this.words.add(normalize(word));
         }
@@ -142,7 +142,7 @@ public class JavaName {
     }
 
     private static List<String> normalize(List<String> segments) {
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (String segment : segments) {
             if (segment.isEmpty() == false) {
                 results.add(segment);

@@ -55,13 +55,13 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
-import com.asakusafw.runtime.directio.OutputAttemptContext;
-import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.FilePattern.PatternElement;
 import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
 import com.asakusafw.runtime.directio.FilePattern.Segment;
 import com.asakusafw.runtime.directio.FilePattern.Selection;
+import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.stage.StageConstants;
 
 /**

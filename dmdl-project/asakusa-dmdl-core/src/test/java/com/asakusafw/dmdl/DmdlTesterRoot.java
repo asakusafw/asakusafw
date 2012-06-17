@@ -26,8 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.hamcrest.BaseMatcher;
@@ -51,6 +49,7 @@ import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.dmdl.spi.AttributeDriver;
 import com.asakusafw.dmdl.spi.TypeDriver;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Testing utilities for this project.
@@ -66,13 +65,12 @@ public abstract class DmdlTesterRoot {
     /**
      * {@link TypeDriver}s.
      */
-    protected final List<TypeDriver> typeDrivers = new ArrayList<TypeDriver>(Arrays.asList(
-            new BasicTypeDriver()));
+    protected final List<TypeDriver> typeDrivers = Lists.<TypeDriver>of(new BasicTypeDriver());
 
     /**
      * {@link AttributeDriver}s.
      */
-    protected final List<AttributeDriver> attributeDrivers = new ArrayList<AttributeDriver>();
+    protected final List<AttributeDriver> attributeDrivers = Lists.create();
 
     /**
      * Returns a type matcher.

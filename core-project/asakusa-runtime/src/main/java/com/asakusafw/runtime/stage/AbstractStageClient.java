@@ -36,12 +36,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
+
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
 import com.asakusafw.runtime.stage.input.StageInputMapper;
-import com.asakusafw.runtime.stage.output.StageOutputFormat;
 import com.asakusafw.runtime.stage.output.LegacyBridgeOutputCommitter;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
+import com.asakusafw.runtime.stage.output.StageOutputFormat;
 import com.asakusafw.runtime.stage.resource.StageResourceDriver;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;

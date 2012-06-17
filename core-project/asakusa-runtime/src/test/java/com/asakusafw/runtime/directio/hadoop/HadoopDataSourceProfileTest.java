@@ -16,6 +16,8 @@
 package com.asakusafw.runtime.directio.hadoop;
 
 import static com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +26,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

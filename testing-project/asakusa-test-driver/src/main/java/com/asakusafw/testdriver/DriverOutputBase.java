@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyRule;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -113,7 +113,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             URI expectedUri,
             URI ruleUri,
             List<? extends ModelTester<? super T>> extraRules) throws IOException {
-        List<TestRule> ruleFragments = new ArrayList<TestRule>();
+        List<TestRule> ruleFragments = Lists.create();
         for (ModelTester<? super T> tester : extraRules) {
             TestRule fragment = driverContext.getRepository().toVerifyRuleFragment(modelType, tester);
             ruleFragments.add(fragment);

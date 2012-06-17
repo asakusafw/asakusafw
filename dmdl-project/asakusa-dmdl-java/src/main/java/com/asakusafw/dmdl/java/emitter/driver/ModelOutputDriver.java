@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.java.emitter.driver;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
 import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -115,7 +115,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createBodyDeclarations() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = Lists.create();
             results.add(createEmitterField());
             results.add(createConstructor());
             results.add(createWriter());
@@ -155,7 +155,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createConstructorBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             results.add(f.newIfStatement(
                     new ExpressionBuilder(f, createEmitterFieldName())
                         .apply(InfixOperator.EQUALS, Models.toNullLiteral(f))
@@ -189,7 +189,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createWriterBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 results.add(createWriterStatement(property));
             }
@@ -228,7 +228,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createCloserBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             results.add(new ExpressionBuilder(f, createEmitterFieldName())
                 .method("close")
                 .toStatement());

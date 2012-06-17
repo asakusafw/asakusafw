@@ -16,9 +16,7 @@
 package com.asakusafw.compiler.operator;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +37,16 @@ import javax.tools.Diagnostic;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.DataModelMirror.Kind;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.java.model.syntax.DocBlock;
+import com.asakusafw.utils.java.model.syntax.DocElement;
+import com.asakusafw.utils.java.model.syntax.Javadoc;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.ModelKind;
+import com.asakusafw.utils.java.model.syntax.SimpleName;
+import com.asakusafw.utils.java.parser.javadoc.JavadocConverter;
+import com.asakusafw.utils.java.parser.javadoc.JavadocParseException;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Out;
@@ -49,14 +57,6 @@ import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
 import com.asakusafw.vocabulary.operator.Sticky;
 import com.asakusafw.vocabulary.operator.Volatile;
-import com.asakusafw.utils.java.model.syntax.DocBlock;
-import com.asakusafw.utils.java.model.syntax.DocElement;
-import com.asakusafw.utils.java.model.syntax.Javadoc;
-import com.asakusafw.utils.java.model.syntax.ModelFactory;
-import com.asakusafw.utils.java.model.syntax.ModelKind;
-import com.asakusafw.utils.java.model.syntax.SimpleName;
-import com.asakusafw.utils.java.parser.javadoc.JavadocConverter;
-import com.asakusafw.utils.java.parser.javadoc.JavadocParseException;
 
 /**
  * メソッドやコンストラクターの宣言を解析する。
@@ -395,7 +395,7 @@ public class ExecutableAnalyzer {
         if (order == null) {
             order = Collections.emptyList();
         }
-        List<ShuffleKey.Order> formedOrder = new ArrayList<ShuffleKey.Order>();
+        List<ShuffleKey.Order> formedOrder = Lists.create();
         for (String orderString : order) {
             ShuffleKey.Order o = ShuffleKey.Order.parse(orderString);
             if (o == null) {
@@ -438,7 +438,7 @@ public class ExecutableAnalyzer {
             return null;
         }
         List<?> list = (List<?>) object;
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (Object element : list) {
             Object elementValue = ((AnnotationValue) element).getValue();
             if ((elementValue instanceof String) == false) {
@@ -515,7 +515,7 @@ public class ExecutableAnalyzer {
     static Map<String, AnnotationValue> getValues(
             AnnotationMirror annotation) {
         assert annotation != null;
-        Map<String, AnnotationValue> results = new HashMap<String, AnnotationValue>();
+        Map<String, AnnotationValue> results = Maps.create();
         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
                 : annotation.getElementValues().entrySet()) {
             ExecutableElement key = entry.getKey();
@@ -613,7 +613,7 @@ public class ExecutableAnalyzer {
                 throw new IllegalStateException();
             }
             TypeElement decl = (TypeElement) element;
-            List<VariableElement> results = new ArrayList<VariableElement>();
+            List<VariableElement> results = Lists.create();
             for (Element member : decl.getEnclosedElements()) {
                 if (member.getKind() == ElementKind.ENUM_CONSTANT) {
                     results.add((VariableElement) member);

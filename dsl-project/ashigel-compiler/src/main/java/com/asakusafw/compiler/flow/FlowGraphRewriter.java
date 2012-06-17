@@ -18,9 +18,9 @@ package com.asakusafw.compiler.flow;
 import java.util.List;
 
 import com.asakusafw.runtime.flow.FlowResource;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * {@link FlowGraph}を書き換えるエンジンのインターフェース。

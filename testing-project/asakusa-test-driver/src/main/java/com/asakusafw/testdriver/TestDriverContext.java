@@ -18,7 +18,6 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,12 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
-import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
@@ -286,7 +286,7 @@ public class TestDriverContext implements TestContext {
 
     @Override
     public Map<String, String> getArguments() {
-        Map<String, String> copy = new HashMap<String, String>(getBatchArgs());
+        Map<String, String> copy = Maps.from(getBatchArgs());
         if (currentBatchId != null) {
             copy.put(StageConstants.VAR_BATCH_ID, currentBatchId);
         }

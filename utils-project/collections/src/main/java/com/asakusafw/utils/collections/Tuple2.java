@@ -16,59 +16,50 @@
 package com.asakusafw.utils.collections;
 
 /**
- * 二要素からなる組。
- * @param <T1> 第一要素の型
- * @param <T2> 第二要素の型
+ * Represents a tuple with 2 elements.
+ * @param <T1> type of first element
+ * @param <T2> type of second element
  */
 public class Tuple2<T1, T2> {
 
     /**
-     * 第一要素。
+     * The first element.
      */
-    public final T1 _1;
+    public final T1 first;
 
     /**
-     * 第二要素。
+     * The second element.
      */
-    public final T2 _2;
+    public final T2 second;
 
     /**
-     * インスタンスを生成する。
-     *
-     * @param _1
-     *            第一要素
-     * @param _2
-     *            第二要素
+     * Creates a new instance.
+     * @param first the first element
+     * @param second the second element
      */
-    public Tuple2(T1 _1, T2 _2) {
-        this._1 = _1;
-        this._2 = _2;
+    public Tuple2(T1 first, T2 second) {
+        this.first = first;
+        this.second = second;
     }
 
     /**
-     * 第一要素を返す。
-     *
-     * @return 第一要素
+     * Creates a new instance.
+     * @param <T1> type of first element
+     * @param <T2> type of second element
+     * @param first the first element
+     * @param second the second element
+     * @return the created instance.
      */
-    public T1 getFirst() {
-        return _1;
-    }
-
-    /**
-     * 第二要素を返す。
-     *
-     * @return 第二要素
-     */
-    public T2 getSecond() {
-        return _2;
+    public static <T1, T2> Tuple2<T1, T2> of(T1 first, T2 second) {
+        return new Tuple2<T1, T2>(first, second);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_1 == null) ? 0 : _1.hashCode());
-        result = prime * result + ((_2 == null) ? 0 : _2.hashCode());
+        result = prime * result + ((first == null) ? 0 : first.hashCode());
+        result = prime * result + ((second == null) ? 0 : second.hashCode());
         return result;
     }
 
@@ -84,18 +75,18 @@ public class Tuple2<T1, T2> {
             return false;
         }
         Tuple2<?, ?> other = (Tuple2<?, ?>) obj;
-        if (_1 == null) {
-            if (other._1 != null) {
+        if (first == null) {
+            if (other.first != null) {
                 return false;
             }
-        } else if (_1.equals(other._1) == false) {
+        } else if (first.equals(other.first) == false) {
             return false;
         }
-        if (_2 == null) {
-            if (other._2 != null) {
+        if (second == null) {
+            if (other.second != null) {
                 return false;
             }
-        } else if (_2.equals(other._2) == false) {
+        } else if (second.equals(other.second) == false) {
             return false;
         }
         return true;
@@ -103,6 +94,6 @@ public class Tuple2<T1, T2> {
 
     @Override
     public String toString() {
-        return String.format("(%s, %s)", _1, _2); //$NON-NLS-1$
+        return String.format("(%s, %s)", first, second); //$NON-NLS-1$
     }
 }

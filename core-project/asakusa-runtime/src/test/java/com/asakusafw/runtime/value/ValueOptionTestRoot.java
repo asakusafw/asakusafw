@@ -25,11 +25,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-
 import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.runtime.value.Restorable;
-import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * {@link ValueOption}のテストに関する基底。

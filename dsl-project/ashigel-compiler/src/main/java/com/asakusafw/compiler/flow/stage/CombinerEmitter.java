@@ -16,10 +16,8 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +35,8 @@ import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedCombiner;
 import com.asakusafw.runtime.flow.SegmentedReducer;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.vocabulary.flow.graph.FlowElement;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -59,6 +57,8 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
 /**
  * Combinerプログラムを出力するエミッタ。
@@ -149,8 +149,8 @@ public class CombinerEmitter {
                     ImportBuilder.Strategy.TOP_LEVEL);
             this.names = new NameGenerator(factory);
             this.context = names.create("context");
-            this.shuffleNames = new HashMap<ShuffleModel.Segment, SimpleName>();
-            this.rendezvousNames = new HashMap<Fragment, SimpleName>();
+            this.shuffleNames = Maps.create();
+            this.rendezvousNames = Maps.create();
         }
 
         public CompilationUnit generate() {
@@ -165,7 +165,7 @@ public class CombinerEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getCombineClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(prepareFields());
             members.add(createSetup());
             members.add(createCleanup());
@@ -192,7 +192,7 @@ public class CombinerEmitter {
         }
 
         private List<FieldDeclaration> prepareFields() {
-            List<FieldDeclaration> fields = new ArrayList<FieldDeclaration>();
+            List<FieldDeclaration> fields = Lists.create();
 
             // shufles
             for (ShuffleModel.Segment segment : shuffle.getSegments()) {
@@ -230,8 +230,8 @@ public class CombinerEmitter {
         }
 
         private MethodDeclaration createSetup() {
-            Map<FlowElementInput, Segment> segments = new HashMap<FlowElementInput, Segment>();
-            List<Statement> statements = new ArrayList<Statement>();
+            Map<FlowElementInput, Segment> segments = Maps.create();
+            List<Statement> statements = Lists.create();
 
             // shuffle outputs
             for (Map.Entry<ShuffleModel.Segment, SimpleName> entry : shuffleNames.entrySet()) {
@@ -251,7 +251,7 @@ public class CombinerEmitter {
             for (Map.Entry<Fragment, SimpleName> entry : rendezvousNames.entrySet()) {
                 Fragment fragment = entry.getKey();
                 Type rendezvousType = importer.toType(fragment.getCompiled().getQualifiedName());
-                List<Expression> arguments = new ArrayList<Expression>();
+                List<Expression> arguments = Lists.create();
                 for (FlowElementInput input : fragment.getInputPorts()) {
                     Segment segment = segments.get(input);
                     assert segment != null;
@@ -288,7 +288,7 @@ public class CombinerEmitter {
         }
 
         private MethodDeclaration createCleanup() {
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             for (SimpleName name : shuffleNames.values()) {
                 statements.add(new ExpressionBuilder(factory, factory.newThis())
                     .field(name)
@@ -319,12 +319,12 @@ public class CombinerEmitter {
         }
 
         private MethodDeclaration createGetRendezvous() {
-            Map<FlowElement, SimpleName> fragments = new HashMap<FlowElement, SimpleName>();
+            Map<FlowElement, SimpleName> fragments = Maps.create();
             for (Map.Entry<Fragment, SimpleName> entry : rendezvousNames.entrySet()) {
                 fragments.put(entry.getKey().getFactors().get(0).getElement(), entry.getValue());
             }
 
-            List<Statement> cases = new ArrayList<Statement>();
+            List<Statement> cases = Lists.create();
             for (List<ShuffleModel.Segment> group : ShuffleEmiterUtil.groupByElement(shuffle)) {
                 for (ShuffleModel.Segment segment : group) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -346,7 +346,7 @@ public class CombinerEmitter {
                 .toThrowStatement());
 
             SimpleName argument = names.create("nextKey");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, argument)
                         .method(SegmentedWritable.ID_GETTER)

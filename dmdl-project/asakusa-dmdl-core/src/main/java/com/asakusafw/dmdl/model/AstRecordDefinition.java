@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents a record structure definition.
@@ -43,7 +43,7 @@ public class AstRecordDefinition extends AbstractAstNode implements AstRecord {
             Region region,
             List<AstPropertyDefinition> properties) {
         this.region = region;
-        this.properties = Util.freeze(properties);
+        this.properties = Lists.freeze(properties);
     }
 
     @Override

@@ -15,19 +15,19 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.flow.processor.InputBuffer;
-import com.asakusafw.vocabulary.operator.CoGroup;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
+import com.asakusafw.vocabulary.operator.CoGroup;
 
 /**
  * {@link CoGroup グループ化結合演算子}を処理する。
@@ -42,8 +42,8 @@ public class CoGroupFlowProcessor extends RendezvousProcessor {
         InputBuffer bufferKind = desc.getAttribute(InputBuffer.class);
         assert bufferKind != null;
 
-        List<Expression> arguments = new ArrayList<Expression>();
-        List<ListBufferMirror> buffers = new ArrayList<ListBufferMirror>();
+        List<Expression> arguments = Lists.create();
+        List<ListBufferMirror> buffers = Lists.create();
         for (FlowElementPortDescription input : desc.getInputPorts()) {
             ListBufferMirror list = context.createListBuffer(input.getDataType(), bufferKind);
             buffers.add(list);

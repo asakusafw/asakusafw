@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import com.asakusafw.cleaner.bean.LocalFileCleanerBean;
 import com.asakusafw.cleaner.common.ConfigurationLoader;
-import com.asakusafw.cleaner.main.LocalFileCleaner;
 import com.asakusafw.cleaner.testutil.UnitTestUtil;
 
 /**

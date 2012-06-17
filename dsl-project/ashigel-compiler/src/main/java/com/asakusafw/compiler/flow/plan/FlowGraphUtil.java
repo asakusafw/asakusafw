@@ -15,11 +15,9 @@
  */
 package com.asakusafw.compiler.flow.plan;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
@@ -61,7 +62,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> collectElements(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        Set<FlowElement> elements = new HashSet<FlowElement>();
+        Set<FlowElement> elements = Sets.create();
         for (FlowIn<?> in : graph.getFlowInputs()) {
             elements.add(in.getFlowElement());
         }
@@ -80,7 +81,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> collectFlowParts(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         for (FlowElement element : collectElements(graph)) {
             FlowElementDescription description = element.getDescription();
             if (description.getKind() == FlowElementKind.FLOW_COMPONENT) {
@@ -98,7 +99,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> collectBoundaries(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             if (FlowGraphUtil.isBoundary(element)) {
                 results.add(element);
@@ -134,16 +135,16 @@ public final class FlowGraphUtil {
     public static FlowGraph deepCopy(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
 
-        Map<FlowElement, FlowElement> elemMapping = new HashMap<FlowElement, FlowElement>();
+        Map<FlowElement, FlowElement> elemMapping = Maps.create();
 
         // 入出力のコピー
-        List<FlowIn<?>> flowInputs = new ArrayList<FlowIn<?>>();
+        List<FlowIn<?>> flowInputs = Lists.create();
         for (FlowIn<?> orig : graph.getFlowInputs()) {
             FlowIn<?> copy = FlowIn.newInstance(orig.getDescription());
             elemMapping.put(orig.getFlowElement(), copy.getFlowElement());
             flowInputs.add(copy);
         }
-        List<FlowOut<?>> flowOutputs = new ArrayList<FlowOut<?>>();
+        List<FlowOut<?>> flowOutputs = Lists.create();
         for (FlowOut<?> orig : graph.getFlowOutputs()) {
             FlowOut<?> copy = FlowOut.newInstance(orig.getDescription());
             elemMapping.put(orig.getFlowElement(), copy.getFlowElement());
@@ -365,8 +366,8 @@ public final class FlowGraphUtil {
         assert element.getOutputPorts().size() == 1;
         FlowElementInput input = element.getInputPorts().get(0);
         FlowElementOutput output = element.getOutputPorts().get(0);
-        Set<PortConnection> sources = new HashSet<PortConnection>(input.getConnected());
-        Set<PortConnection> targets = new HashSet<PortConnection>(output.getConnected());
+        Set<PortConnection> sources = Sets.from(input.getConnected());
+        Set<PortConnection> targets = Sets.from(output.getConnected());
         if (sources.size() <= 1 && targets.size() <= 1) {
             return false;
         } else {
@@ -411,11 +412,11 @@ public final class FlowGraphUtil {
      */
     public static void skip(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-        List<FlowElementOutput> sources = new ArrayList<FlowElementOutput>();
+        List<FlowElementOutput> sources = Lists.create();
         for (FlowElementInput input : element.getInputPorts()) {
             sources.addAll(input.disconnectAll());
         }
-        List<FlowElementInput> targets = new ArrayList<FlowElementInput>();
+        List<FlowElementInput> targets = Lists.create();
         for (FlowElementOutput output : element.getOutputPorts()) {
             targets.addAll(output.disconnectAll());
         }
@@ -478,16 +479,16 @@ public final class FlowGraphUtil {
      */
     public static FlowPath getSucceedBoundaryPath(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-        Set<FlowElement> startings = new HashSet<FlowElement>();
+        Set<FlowElement> startings = Sets.create();
         startings.add(element);
         return getSuccessBoundaryPath(startings);
     }
 
     private static FlowPath getSuccessBoundaryPath(Set<FlowElement> startings) {
         assert startings != null;
-        Set<FlowElement> passings = new HashSet<FlowElement>();
-        Set<FlowElement> arrivals = new HashSet<FlowElement>();
-        Set<FlowElement> saw = new HashSet<FlowElement>();
+        Set<FlowElement> passings = Sets.create();
+        Set<FlowElement> arrivals = Sets.create();
+        Set<FlowElement> saw = Sets.create();
 
         LinkedList<FlowElement> successors = new LinkedList<FlowElement>();
         for (FlowElement starting : startings) {
@@ -522,7 +523,7 @@ public final class FlowGraphUtil {
      */
     public static FlowPath getPredeceaseBoundaryPath(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-        Set<FlowElement> startings = new HashSet<FlowElement>();
+        Set<FlowElement> startings = Sets.create();
         startings.add(element);
 
         return getPredeceaseBoundaryPath(startings);
@@ -530,9 +531,9 @@ public final class FlowGraphUtil {
 
     private static FlowPath getPredeceaseBoundaryPath(Set<FlowElement> startings) {
         assert startings != null;
-        Set<FlowElement> passings = new HashSet<FlowElement>();
-        Set<FlowElement> arrivals = new HashSet<FlowElement>();
-        Set<FlowElement> saw = new HashSet<FlowElement>();
+        Set<FlowElement> passings = Sets.create();
+        Set<FlowElement> arrivals = Sets.create();
+        Set<FlowElement> saw = Sets.create();
 
         LinkedList<FlowElement> predecessors = new LinkedList<FlowElement>();
         for (FlowElement starting : startings) {
@@ -621,7 +622,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> getSuccessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         addSuccessors(results, element);
         return results;
     }
@@ -646,7 +647,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> getPredecessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         addPredecessors(results, element);
         return results;
     }
@@ -680,8 +681,8 @@ public final class FlowGraphUtil {
             return Collections.emptySet();
         }
 
-        Set<FlowElement> saw = new HashSet<FlowElement>();
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> saw = Sets.create();
+        Set<FlowElement> results = Sets.create();
         while (nextSuccessors.isEmpty() == false) {
             FlowElement successor = nextSuccessors.removeFirst();
             if (saw.contains(successor)) {
@@ -712,7 +713,7 @@ public final class FlowGraphUtil {
         Precondition.checkMustNotBeNull(connections, "connections"); //$NON-NLS-1$
         LinkedList<PortConnection> next = new LinkedList<PortConnection>();
         next.add(start);
-        Set<PortConnection> results = new HashSet<PortConnection>();
+        Set<PortConnection> results = Sets.create();
         while (next.isEmpty() == false) {
             PortConnection successor = next.removeFirst();
             if (connections.contains(successor)) {
@@ -745,7 +746,7 @@ public final class FlowGraphUtil {
 
         // フロー部品の外側からの入力と、フロー部品の内部の入力を結線する
         List<FlowElementInput> externalInputs = element.getInputPorts();
-        List<FlowElementOutput> internalInputs = new ArrayList<FlowElementOutput>();
+        List<FlowElementOutput> internalInputs = Lists.create();
         for (FlowIn<?> fin : graph.getFlowInputs()) {
             internalInputs.add(fin.toOutputPort());
         }
@@ -753,7 +754,7 @@ public final class FlowGraphUtil {
 
         // フロー部品の内側からの出力と、フロー部品の外側への出力を結線する
         List<FlowElementOutput> externalOutputs = element.getOutputPorts();
-        List<FlowElementInput> internalOutputs = new ArrayList<FlowElementInput>();
+        List<FlowElementInput> internalOutputs = Lists.create();
         for (FlowOut<?> fout : graph.getFlowOutputs()) {
             internalOutputs.add(fout.toInputPort());
         }

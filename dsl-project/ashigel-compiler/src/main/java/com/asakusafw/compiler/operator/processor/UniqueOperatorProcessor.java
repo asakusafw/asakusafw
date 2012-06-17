@@ -24,14 +24,14 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
-import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.operator.GroupSort;
-import com.asakusafw.vocabulary.operator.Unique;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.GroupSort;
+import com.asakusafw.vocabulary.operator.Unique;
 
 /**
  * {@link Unique 重複検出演算子}を処理する。

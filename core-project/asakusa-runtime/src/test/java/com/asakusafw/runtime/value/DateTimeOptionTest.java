@@ -20,9 +20,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.runtime.value.DateTime;
-import com.asakusafw.runtime.value.DateTimeOption;
-
 /**
  * Test for {@link DateTimeOption}.
  */

@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents an array of values.
@@ -43,7 +43,7 @@ public class AstAttributeValueArray extends AbstractAstNode implements AstAttrib
             Region region,
             List<? extends AstAttributeValue> elements) {
         this.region = region;
-        this.elements = Util.freeze(elements);
+        this.elements = Lists.freeze(elements);
     }
 
     @Override

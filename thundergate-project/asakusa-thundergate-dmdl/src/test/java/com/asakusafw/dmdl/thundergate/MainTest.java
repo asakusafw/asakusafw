@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +29,8 @@ import java.util.Properties;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link Main}.
@@ -48,7 +49,7 @@ public class MainTest {
      */
     @Test
     public void simple() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
 
@@ -80,7 +81,7 @@ public class MainTest {
      */
     @Test
     public void encoding_empty() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
 
@@ -99,7 +100,7 @@ public class MainTest {
      */
     @Test
     public void matcher_empty() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
 
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
@@ -120,7 +121,7 @@ public class MainTest {
      */
     @Test
     public void matcher_only_includes() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
 
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
@@ -143,7 +144,7 @@ public class MainTest {
      */
     @Test
     public void matcher_only_excludes() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
 
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
@@ -166,7 +167,7 @@ public class MainTest {
      */
     @Test
     public void with_cache() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
 
         File jdbc = jdbc();
         File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();

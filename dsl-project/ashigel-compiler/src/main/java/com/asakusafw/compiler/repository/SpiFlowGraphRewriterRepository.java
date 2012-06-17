@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Service Provider Interfaceを利用してグラフ書き換えエンジンを探索するリポジトリー。
@@ -39,7 +39,7 @@ public class SpiFlowGraphRewriterRepository
     @Override
     protected void doInitialize() {
         LOG.info("グラフ書き換えプラグインを読み出します");
-        this.rewriters = new ArrayList<FlowGraphRewriter>();
+        this.rewriters = Lists.create();
         ServiceLoader<FlowGraphRewriter> services = ServiceLoader.load(
                 FlowGraphRewriter.class,
                 getEnvironment().getServiceClassLoader());

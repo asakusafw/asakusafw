@@ -15,20 +15,20 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.runtime.core.Report;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.operator.Logging;
-import com.asakusafw.vocabulary.operator.Logging.Level;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.Logging;
+import com.asakusafw.vocabulary.operator.Logging.Level;
 
 /**
  * {@link Logging ロギング演算子}を処理する。
@@ -43,7 +43,7 @@ public class LoggingFlowProcessor extends LinePartProcessor {
         Expression impl = context.createImplementation();
         OperatorDescription desc = context.getOperatorDescription();
 
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(input);
         for (OperatorDescription.Parameter param : desc.getParameters()) {
             arguments.add(Models.toLiteral(f, param.getValue()));

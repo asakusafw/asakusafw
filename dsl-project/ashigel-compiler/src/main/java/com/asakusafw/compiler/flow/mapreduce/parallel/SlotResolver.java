@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.flow.mapreduce.parallel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * {@link Slot}を解析して{@link ResolvedSlot}に変換する。
@@ -48,7 +48,7 @@ public class SlotResolver {
      */
     public List<ResolvedSlot> resolve(List<Slot> slots) {
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
-        List<ResolvedSlot> results = new ArrayList<ResolvedSlot>();
+        List<ResolvedSlot> results = Lists.create();
         int number = 0;
         for (Slot slot : slots) {
             ResolvedSlot compiled = compile(slot, number++);
@@ -60,7 +60,7 @@ public class SlotResolver {
     private ResolvedSlot compile(Slot slot, int number) {
         assert slot != null;
         DataClass valueClass = environment.getDataClasses().load(slot.getType());
-        List<Property> sortProperties = new ArrayList<Property>();
+        List<Property> sortProperties = Lists.create();
         if (valueClass == null) {
             valueClass = new DataClass.Unresolved(environment.getModelFactory(), slot.getType());
             environment.error("型{0}をロードできませんでした", slot.getType());

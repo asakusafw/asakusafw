@@ -15,11 +15,10 @@
  */
 package com.asakusafw.compiler.fileio.flow;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.asakusafw.compiler.fileio.model.Ex2;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
@@ -34,7 +33,7 @@ public class TinyImporterDescription extends FileImporterDescription {
 
     @Override
     public Set<String> getPaths() {
-        return new HashSet<String>(Arrays.asList("target/testing/in/tiny1-*", "target/testing/in/tiny2-*"));
+        return Sets.of("target/testing/in/tiny1-*", "target/testing/in/tiny2-*");
     }
 
     @Override

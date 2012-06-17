@@ -15,12 +15,12 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  *　演算子プロセッサに対するユーティリティ群。
@@ -39,7 +39,7 @@ public final class OperatorProcessorUtil {
         for (String name : names) {
             checkName(analyzer, name);
         }
-        Set<String> saw = new HashSet<String>();
+        Set<String> saw = Sets.create();
         for (String name : names) {
             if (saw.contains(name)) {
                 analyzer.error("ポート名\"{}\"が重複しています", name);

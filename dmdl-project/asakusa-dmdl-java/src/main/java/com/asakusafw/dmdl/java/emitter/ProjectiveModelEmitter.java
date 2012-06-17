@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.java.emitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +25,7 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -104,7 +104,7 @@ public class ProjectiveModelEmitter {
     }
 
     private List<Attribute> createModifiers() throws IOException {
-        List<Attribute> results = new ArrayList<Attribute>();
+        List<Attribute> results = Lists.create();
         results.addAll(driver.getTypeAnnotations(context, model));
         results.addAll(new AttributeBuilder(f)
             .Public()
@@ -113,7 +113,7 @@ public class ProjectiveModelEmitter {
     }
 
     private List<TypeBodyDeclaration> createMembers() throws IOException {
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         results.addAll(driver.getFields(context, model));
         results.addAll(createPropertyAccessors());
         results.addAll(driver.getMethods(context, model));
@@ -121,7 +121,7 @@ public class ProjectiveModelEmitter {
     }
 
     private List<MethodDeclaration> createPropertyAccessors() throws IOException {
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             results.add(createGetter(property));
             results.add(createSetter(property));

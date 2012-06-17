@@ -36,8 +36,8 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
 import com.asakusafw.runtime.testing.MockResult;
-import com.asakusafw.vocabulary.operator.GroupSort;
 import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.vocabulary.operator.GroupSort;
 
 /**
  * Test for {@link GroupSort}.

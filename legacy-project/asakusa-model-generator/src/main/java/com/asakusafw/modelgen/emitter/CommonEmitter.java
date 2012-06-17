@@ -38,9 +38,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.vocabulary.model.DataModel;
-import com.asakusafw.vocabulary.model.JoinedModel;
-import com.asakusafw.vocabulary.model.SummarizedModel;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -49,6 +46,9 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.model.DataModel;
+import com.asakusafw.vocabulary.model.JoinedModel;
+import com.asakusafw.vocabulary.model.SummarizedModel;
 
 /**
  * 名前を構築する。

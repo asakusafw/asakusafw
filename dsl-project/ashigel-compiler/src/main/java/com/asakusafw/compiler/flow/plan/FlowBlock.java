@@ -16,10 +16,7 @@
 package com.asakusafw.compiler.flow.plan;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -31,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -75,8 +75,8 @@ public class FlowBlock {
             List<FlowElementInput> inputs,
             List<FlowElementOutput> outputs,
             Set<FlowElement> elements) {
-        List<PortConnection> toInput = new ArrayList<PortConnection>();
-        List<PortConnection> fromOutput = new ArrayList<PortConnection>();
+        List<PortConnection> toInput = Lists.create();
+        List<PortConnection> fromOutput = Lists.create();
         for (FlowElementInput in : inputs) {
             toInput.addAll(in.getConnected());
         }
@@ -116,7 +116,7 @@ public class FlowBlock {
         this.source = source;
         this.blockInputs = toBlockInputs(inputs);
         this.blockOutputs = toBlockOutputs(outputs);
-        this.elements = new HashSet<FlowElement>(elements);
+        this.elements = Sets.from(elements);
         this.detached = false;
     }
 
@@ -136,14 +136,9 @@ public class FlowBlock {
         Map<FlowElementInput, Set<PortConnection>> map = new LinkedHashMap<FlowElementInput, Set<PortConnection>>();
         for (PortConnection input : inputs) {
             FlowElementInput port = input.getDownstream();
-            Set<PortConnection> conns = map.get(port);
-            if (conns == null) {
-                conns = new HashSet<PortConnection>();
-                map.put(port, conns);
-            }
-            conns.add(input);
+            Maps.addToSet(map, port, input);
         }
-        List<FlowBlock.Input> results = new ArrayList<FlowBlock.Input>();
+        List<FlowBlock.Input> results = Lists.create();
         for (Map.Entry<FlowElementInput, Set<PortConnection>> entry : map.entrySet()) {
             results.add(new FlowBlock.Input(entry.getKey(), entry.getValue()));
         }
@@ -155,14 +150,9 @@ public class FlowBlock {
         Map<FlowElementOutput, Set<PortConnection>> map = new LinkedHashMap<FlowElementOutput, Set<PortConnection>>();
         for (PortConnection output : outputs) {
             FlowElementOutput port = output.getUpstream();
-            Set<PortConnection> conns = map.get(port);
-            if (conns == null) {
-                conns = new HashSet<PortConnection>();
-                map.put(port, conns);
-            }
-            conns.add(output);
+            Maps.addToSet(map, port, output);
         }
-        List<FlowBlock.Output> results = new ArrayList<FlowBlock.Output>();
+        List<FlowBlock.Output> results = Lists.create();
         for (Map.Entry<FlowElementOutput, Set<PortConnection>> entry : map.entrySet()) {
             results.add(new FlowBlock.Output(entry.getKey(), entry.getValue()));
         }
@@ -318,13 +308,13 @@ public class FlowBlock {
             return;
         }
         LOG.debug("{}を{}からデタッチします", this, getSource());
-        Map<FlowElement, FlowElement> mapping = new HashMap<FlowElement, FlowElement>();
-        Map<FlowElementInput, FlowElementInput> inputs = new HashMap<FlowElementInput, FlowElementInput>();
-        Map<FlowElementOutput, FlowElementOutput> outputs = new HashMap<FlowElementOutput, FlowElementOutput>();
+        Map<FlowElement, FlowElement> mapping = Maps.create();
+        Map<FlowElementInput, FlowElementInput> inputs = Maps.create();
+        Map<FlowElementOutput, FlowElementOutput> outputs = Maps.create();
         FlowGraphUtil.deepCopy(elements, mapping, inputs, outputs);
 
         // 要素の張り替え
-        this.elements = new HashSet<FlowElement>(mapping.values());
+        this.elements = Sets.from(mapping.values());
 
         // 入力の張り替え
         for (FlowBlock.Input blockIn : blockInputs) {
@@ -415,7 +405,7 @@ public class FlowBlock {
         LOG.debug("{}の不要な演算子を検索しています", this);
 
         Set<FlowElement> blockEdge = collectBlockEdges();
-        Set<FlowElement> removed = new HashSet<FlowElement>();
+        Set<FlowElement> removed = Sets.create();
         LinkedList<FlowElement> work = new LinkedList<FlowElement>();
         work.addAll(elements);
 
@@ -462,8 +452,8 @@ public class FlowBlock {
         boolean changed = false;
         LOG.debug("{}の不要な入出力を検索しています", this);
 
-        Set<FlowElement> inputElements = new HashSet<FlowElement>();
-        Set<FlowElement> outputElements = new HashSet<FlowElement>();
+        Set<FlowElement> inputElements = Sets.create();
+        Set<FlowElement> outputElements = Sets.create();
         for (FlowBlock.Output output : blockOutputs) {
             outputElements.add(output.getElementPort().getOwner());
         }
@@ -538,7 +528,7 @@ public class FlowBlock {
     }
 
     private Set<FlowElement> collectBlockEdges() {
-        Set<FlowElement> blockEdge = new HashSet<FlowElement>();
+        Set<FlowElement> blockEdge = Sets.create();
         for (FlowBlock.Input input : getBlockInputs()) {
             blockEdge.add(input.getElementPort().getOwner());
         }
@@ -577,7 +567,7 @@ public class FlowBlock {
         public Input(FlowElementInput input, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
             this.input = input;
-            this.connections = new ArrayList<FlowBlock.Connection>();
+            this.connections = Lists.create();
             this.originalConnections = originalConnections;
         }
 
@@ -625,7 +615,7 @@ public class FlowBlock {
         }
 
         void disconnect() {
-            for (Connection conn : new ArrayList<Connection>(connections)) {
+            for (Connection conn : Lists.from(connections)) {
                 conn.disconnect();
             }
         }
@@ -659,7 +649,7 @@ public class FlowBlock {
         public Output(FlowElementOutput output, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
             this.output = output;
-            this.connections = new ArrayList<FlowBlock.Connection>();
+            this.connections = Lists.create();
             this.originalConnections = originalConnections;
         }
 
@@ -716,7 +706,7 @@ public class FlowBlock {
         }
 
         void disconnect() {
-            for (Connection conn : new ArrayList<Connection>(connections)) {
+            for (Connection conn : Lists.from(connections)) {
                 conn.disconnect();
             }
         }

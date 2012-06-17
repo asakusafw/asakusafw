@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents a DMDL Script.
@@ -44,7 +44,7 @@ public class AstScript extends AbstractAstNode {
             throw new IllegalArgumentException("models must not be null"); //$NON-NLS-1$
         }
         this.region = region;
-        this.models = Util.freeze(models);
+        this.models = Lists.freeze(models);
     }
 
     @Override

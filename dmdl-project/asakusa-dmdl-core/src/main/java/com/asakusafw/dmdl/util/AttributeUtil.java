@@ -15,10 +15,8 @@
  */
 package com.asakusafw.dmdl.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +27,8 @@ import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * Utility methods for {@link AstAttribute}.
@@ -49,7 +49,7 @@ public final class AttributeUtil {
         if (attribute == null) {
             throw new IllegalArgumentException("attribute must not be null"); //$NON-NLS-1$
         }
-        Map<String, AstAttributeElement> results = new HashMap<String, AstAttributeElement>();
+        Map<String, AstAttributeElement> results = Maps.create();
         for (AstAttributeElement element : attribute.elements) {
             results.put(element.name.identifier, element);
         }
@@ -76,7 +76,7 @@ public final class AttributeUtil {
         if (elements.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Diagnostic> results = new ArrayList<Diagnostic>();
+        List<Diagnostic> results = Lists.create();
         for (AstAttributeElement element : attribute.elements) {
             results.add(new Diagnostic(
                     Level.ERROR,

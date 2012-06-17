@@ -23,8 +23,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +45,8 @@ import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
@@ -225,7 +225,7 @@ public class JobflowExecutor {
 
     private Map<String, String> createHadoopProperties(CommandContext commands) {
         assert commands != null;
-        Map<String, String> dPropMap = new HashMap<String, String>();
+        Map<String, String> dPropMap = Maps.create();
         dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
         dPropMap.put(StageConstants.PROP_EXECUTION_ID, commands.getExecutionId());
         dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
@@ -240,15 +240,15 @@ public class JobflowExecutor {
         assert info != null;
         assert commands != null;
         assert properties != null;
-        List<Job> jobs = new ArrayList<Job>();
+        List<Job> jobs = Lists.create();
         for (StageInfo stage : info.getStages()) {
             jobs.add(new Job(stage.getClassName(), commands.getExecutionId(), properties));
         }
 
-        List<Command> initializers = new ArrayList<Command>();
-        List<Command> importers = new ArrayList<Command>();
-        List<Command> exporters = new ArrayList<Command>();
-        List<Command> finalizers = new ArrayList<Command>();
+        List<Command> initializers = Lists.create();
+        List<Command> importers = Lists.create();
+        List<Command> exporters = Lists.create();
+        List<Command> finalizers = Lists.create();
 
         for (ExternalIoCommandProvider provider : info.getCommandProviders()) {
             initializers.addAll(convert(provider.getInitializeCommand(commands)));
@@ -268,7 +268,7 @@ public class JobflowExecutor {
     }
 
     private List<TestExecutionPlan.Command> convert(List<ExternalIoCommandProvider.Command> commands) {
-        List<TestExecutionPlan.Command> results = new ArrayList<TestExecutionPlan.Command>();
+        List<TestExecutionPlan.Command> results = Lists.create();
         for (ExternalIoCommandProvider.Command cmd : commands) {
             results.add(new TestExecutionPlan.Command(
                     cmd.getCommandTokens(),
@@ -320,7 +320,7 @@ public class JobflowExecutor {
 
     private void runHadoopJob(HadoopJobInfo hadoopJobInfo) throws IOException {
         assert hadoopJobInfo != null;
-        List<String> command = new ArrayList<String>();
+        List<String> command = Lists.create();
         command.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
         command.add(hadoopJobInfo.getJarName());
         command.add(hadoopJobInfo.getClassName());
@@ -345,7 +345,7 @@ public class JobflowExecutor {
     }
 
     private Map<String, String> getEnvironmentVariables() {
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = Maps.create();
         variables.put(TestDriverContext.ENV_FRAMEWORK_PATH, context.getFrameworkHomePath().getAbsolutePath());
         return variables;
     }
@@ -511,7 +511,7 @@ class InputStreamThread extends Thread {
 
     private BufferedReader br;
 
-    private final List<String> list = new ArrayList<String>();
+    private final List<String> list = Lists.create();
 
     /**
      * コンストラクタ。

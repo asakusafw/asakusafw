@@ -16,10 +16,8 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,10 +37,8 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -66,6 +62,10 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
  * Shuffleを必要とする要素を処理するフラグメントクラスを生成するエミッタ。
@@ -142,7 +142,7 @@ public class ReduceFragmentEmitter {
 
         private NameGenerator names;
 
-        private List<FieldDeclaration> extraFields = new ArrayList<FieldDeclaration>();
+        private List<FieldDeclaration> extraFields = Lists.create();
 
         private Type valueType;
 
@@ -185,10 +185,10 @@ public class ReduceFragmentEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getReduceFragmentClass(fragment.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(connection.createFields());
             ConstructorDeclaration ctor = connection.createConstructor(name);
-            List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> methods = Lists.create();
             SimpleName value = names.create("value");
             methods.add(createProcess(value));
             methods.addAll(emit(value));
@@ -227,7 +227,7 @@ public class ReduceFragmentEmitter {
 
         private MethodDeclaration createProcess(SimpleName value) {
             assert value != null;
-            List<Statement> cases = new ArrayList<Statement>();
+            List<Statement> cases = Lists.create();
             for (FlowElementInput input : fragment.getInputPorts()) {
                 Segment segment = shuffle.findSegment(input);
                 cases.add(factory.newSwitchCaseLabel(
@@ -245,7 +245,7 @@ public class ReduceFragmentEmitter {
                 .newObject(value)
                 .toThrowStatement());
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, value)
                         .method(SegmentedWritable.ID_GETTER)
@@ -303,8 +303,7 @@ public class ReduceFragmentEmitter {
                 throw new IllegalArgumentException(desc.toString());
             }
             OperatorDescription description = (OperatorDescription) desc;
-            Map<FlowElementPortDescription, Expression> inputs =
-                new HashMap<FlowElementPortDescription, Expression>();
+            Map<FlowElementPortDescription, Expression> inputs = Maps.create();
             for (FlowElementInput port : factor.getElement().getInputPorts()) {
                 inputs.put(port.getDescription(), argument);
             }
@@ -324,7 +323,7 @@ public class ReduceFragmentEmitter {
             assert context != null;
             assert argument != null;
             extraFields.addAll(context.getGeneratedFields());
-            List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> results = Lists.create();
             results.add(createBegin(context.getBeginStatements()));
             results.add(createEnd(context.getEndStatements()));
             for (FlowElementInput input : fragment.getInputPorts()) {

@@ -16,22 +16,22 @@
 package com.asakusafw.dmdl.thundergate.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * モデルオブジェクトを保持するリポジトリ。
  */
 public class ModelRepository {
 
-    private LinkedHashMap<ModelReference, ModelDescription> models =
+    private final LinkedHashMap<ModelReference, ModelDescription> models =
         new LinkedHashMap<ModelReference, ModelDescription>();
 
-    private Map<String, ModelDescription> simpleNames =
-        new HashMap<String, ModelDescription>();
+    private final Map<String, ModelDescription> simpleNames = Maps.create();
 
     /**
      * このリポジトリにモデルを追加する。
@@ -83,7 +83,7 @@ public class ModelRepository {
         ModelDescription model = simpleNames.get(simpleName);
         if (model == null) {
             // 衝突
-            List<ModelReference> conflicted = new ArrayList<ModelReference>();
+            List<ModelReference> conflicted = Lists.create();
             for (ModelReference ref : models.keySet()) {
                 if (simpleName.equals(ref.getSimpleName())) {
                     conflicted.add(ref);
@@ -102,7 +102,7 @@ public class ModelRepository {
      * @return このリポジトリに登録されたモデル一覧
      */
     public List<ModelDescription> all() {
-        return new ArrayList<ModelDescription>(models.values());
+        return Lists.from(models.values());
     }
 
     /**
@@ -110,7 +110,7 @@ public class ModelRepository {
      * @return このリポジトリに登録されたモデルのうち、テーブルにマッピングされるものの一覧
      */
     public List<TableModelDescription> allTables() {
-        List<TableModelDescription> results = new ArrayList<TableModelDescription>();
+        List<TableModelDescription> results = Lists.create();
         for (ModelDescription model : models.values()) {
             if (model instanceof TableModelDescription) {
                 results.add((TableModelDescription) model);

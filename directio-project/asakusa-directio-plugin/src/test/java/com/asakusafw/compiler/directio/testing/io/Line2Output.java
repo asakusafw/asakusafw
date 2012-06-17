@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.directio.testing.io;
+import java.io.IOException;
+
 import com.asakusafw.compiler.directio.testing.model.Line2;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
-import java.io.IOException;
 /**
  * <code>line2</code>をTSVなどのレコード形式で出力する。
  */

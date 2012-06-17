@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,9 +33,7 @@ import com.asakusafw.compiler.flow.LinePartProcessor.Context;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.operator.Identity;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -59,6 +56,9 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.Identity;
 
 /**
  * Shuffleに対するフラグメントクラスを生成するエミッタ。
@@ -233,7 +233,7 @@ public class ShuffleFragmentEmitter {
 
         final SimpleName valueModel;
 
-        final List<FieldDeclaration> extraFields = new ArrayList<FieldDeclaration>();
+        final List<FieldDeclaration> extraFields = Lists.create();
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -277,7 +277,7 @@ public class ShuffleFragmentEmitter {
             SimpleName name = getClassSimpleName();
             importer.resolvePackageMember(name);
 
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(createFields());
             ConstructorDeclaration ctor = createConstructor();
             MethodDeclaration method = createBody();
@@ -304,7 +304,7 @@ public class ShuffleFragmentEmitter {
         abstract Type getInputType();
 
         private List<FieldDeclaration> createFields() {
-            List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+            List<FieldDeclaration> results = Lists.create();
             results.add(createCollectorField());
             results.add(createKeyField());
             results.add(createValueField());
@@ -353,7 +353,7 @@ public class ShuffleFragmentEmitter {
 
         private ConstructorDeclaration createConstructor() {
             SimpleName name = getClassSimpleName();
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(collector)
                 .assignFrom(collector)
@@ -402,7 +402,7 @@ public class ShuffleFragmentEmitter {
 
         private List<Statement> createStatements(SimpleName argument) {
             assert argument != null;
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
 
             LinePartProcessor.Context context = createPartConext(argument);
             Expression shuffleInput = preprocess(context, results);

@@ -16,9 +16,10 @@
 package com.asakusafw.dmdl.thundergate.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * 別のモデルを結合した構造を表現するモデル。
@@ -52,10 +53,8 @@ public class JoinedModelDescription extends ModelDescription {
                     "結合条件が左右で異なります ({0})",
                     reference));
         }
-        this.leftCondition = Collections.unmodifiableList(
-                new ArrayList<Source>(leftCondition));
-        this.rightCondition = Collections.unmodifiableList(
-                new ArrayList<Source>(rightCondition));
+        this.leftCondition = Lists.freeze(leftCondition);
+        this.rightCondition = Lists.freeze(rightCondition);
     }
 
     @Override

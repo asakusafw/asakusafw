@@ -21,12 +21,12 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -314,7 +314,7 @@ public class StageBlockTest {
     }
 
     private Set<FlowBlock> set(FlowBlock... blocks) {
-        Set<FlowBlock> results = new HashSet<FlowBlock>();
+        Set<FlowBlock> results = Sets.create();
         Collections.addAll(results, blocks);
         return results;
     }

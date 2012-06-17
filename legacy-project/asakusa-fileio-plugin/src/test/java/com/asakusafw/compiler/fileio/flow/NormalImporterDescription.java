@@ -15,11 +15,10 @@
  */
 package com.asakusafw.compiler.fileio.flow;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.asakusafw.compiler.fileio.model.Ex1;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.external.FileImporterDescription;
 
 /**
@@ -34,6 +33,6 @@ public class NormalImporterDescription extends FileImporterDescription {
 
     @Override
     public Set<String> getPaths() {
-        return new HashSet<String>(Arrays.asList("target/testing/in/normal1-*", "target/testing/in/normal2-*"));
+        return Sets.of("target/testing/in/normal1-*", "target/testing/in/normal2-*");
     }
 }

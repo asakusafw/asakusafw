@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage.preparator;
 import java.io.IOException;
 
 import org.apache.hadoop.mapreduce.Mapper;
+
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 

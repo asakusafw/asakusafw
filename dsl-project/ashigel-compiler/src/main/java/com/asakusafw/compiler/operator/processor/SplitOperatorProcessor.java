@@ -25,11 +25,11 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
-import com.asakusafw.vocabulary.operator.Split;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.operator.Split;
 
 /**
  * {@link Split 分割演算子}を処理する。

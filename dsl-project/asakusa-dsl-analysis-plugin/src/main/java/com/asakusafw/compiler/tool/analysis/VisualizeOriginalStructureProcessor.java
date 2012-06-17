@@ -22,10 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +37,9 @@ import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
@@ -75,8 +75,7 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }
@@ -181,9 +180,9 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
 
         private final boolean merged;
 
-        private final Map<Object, String> ids = new HashMap<Object, String>();
+        private final Map<Object, String> ids = Maps.create();
 
-        private final Set<String> sawConnections = new HashSet<String>();
+        private final Set<String> sawConnections = Sets.create();
 
         private int indent = 0;
 

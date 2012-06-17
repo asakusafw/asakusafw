@@ -15,10 +15,9 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
+import static com.asakusafw.vocabulary.model.Summarized.Aggregator.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-
-import static com.asakusafw.vocabulary.model.Summarized.Aggregator.*;
 
 import java.util.Arrays;
 

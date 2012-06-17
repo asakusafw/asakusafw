@@ -19,13 +19,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import com.asakusafw.runtime.directio.AbstractDirectDataSource;
-import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataFormat;
-import com.asakusafw.runtime.directio.DirectDataSourceProfile;
-import com.asakusafw.runtime.directio.DirectInputFragment;
-import com.asakusafw.runtime.directio.OutputAttemptContext;
-import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 

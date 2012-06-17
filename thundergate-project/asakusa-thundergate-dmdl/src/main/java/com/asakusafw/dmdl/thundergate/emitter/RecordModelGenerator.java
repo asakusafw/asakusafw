@@ -15,7 +15,6 @@
  */
 package com.asakusafw.dmdl.thundergate.emitter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,7 @@ import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.thundergate.Constants;
 import com.asakusafw.dmdl.thundergate.model.ModelProperty;
 import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Creates record models.
@@ -72,7 +72,7 @@ public final class RecordModelGenerator {
         if (extra == null) {
             throw new IllegalArgumentException("extra must not be null"); //$NON-NLS-1$
         }
-        List<AstAttribute> attrs = new ArrayList<AstAttribute>();
+        List<AstAttribute> attrs = Lists.create();
         attrs.add(AstBuilder.getAutoProjection());
         attrs.add(AstBuilder.getNamespace(AstBuilder.toDmdlName(Constants.SOURCE_TABLE)));
         attrs.add(AstBuilder.getOriginalName(model.getReference().getSimpleName()));
@@ -93,7 +93,7 @@ public final class RecordModelGenerator {
     }
 
     private AstRecord generateTerm() {
-        List<AstPropertyDefinition> properties = new ArrayList<AstPropertyDefinition>();
+        List<AstPropertyDefinition> properties = Lists.create();
         for (ModelProperty property : model.getProperties()) {
             properties.add(new AstPropertyDefinition(
                     null,

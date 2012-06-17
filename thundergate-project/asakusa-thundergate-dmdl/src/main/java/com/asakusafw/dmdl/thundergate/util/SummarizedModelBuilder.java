@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.util;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import com.asakusafw.dmdl.thundergate.model.ModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelProperty;
 import com.asakusafw.dmdl.thundergate.model.Source;
 import com.asakusafw.dmdl.thundergate.model.SummarizedModelDescription;
+import com.asakusafw.utils.collections.Lists;
 
 
 /**
@@ -58,8 +58,8 @@ public class SummarizedModelBuilder extends ModelBuilder<SummarizedModelBuilder>
         super(tableName);
         this.alias = (alias == null) ? model.getReference().getSimpleName() : alias;
         this.sources = new TreeMap<String, Source>();
-        this.groupProperties = new ArrayList<Source>();
-        this.columns = new ArrayList<Column>();
+        this.groupProperties = Lists.create();
+        this.columns = Lists.create();
         for (Source s : model.getPropertiesAsSources()) {
             sources.put(s.getName(), s);
         }
@@ -144,7 +144,7 @@ public class SummarizedModelBuilder extends ModelBuilder<SummarizedModelBuilder>
                     "プロパティが追加されていません ({0})",
                     getReference()));
         }
-        List<ModelProperty> properties = new ArrayList<ModelProperty>();
+        List<ModelProperty> properties = Lists.create();
         for (Column column : columns) {
             Aggregator aggregator = column.aggregator;
             Source source = column.source;

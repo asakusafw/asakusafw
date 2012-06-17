@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import org.junit.Test;
 
 import com.asakusafw.dmdl.DmdlTesterRoot;
 import com.asakusafw.dmdl.model.*;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link DmdlParser}.
@@ -511,7 +511,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
 
     @SuppressWarnings("unchecked")
     private <T extends AstTerm<T>> List<T> extract(AstExpression<T> expression) {
-        List<T> results = new ArrayList<T>();
+        List<T> results = Lists.create();
         LinkedList<AstExpression<T>> work = new LinkedList<AstExpression<T>>();
         work.add(expression);
         int count = 0;

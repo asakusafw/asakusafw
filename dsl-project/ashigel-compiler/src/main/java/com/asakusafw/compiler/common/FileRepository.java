@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * ファイルシステム上のディレクトリをリソースのリポジトリとする。
@@ -57,7 +57,7 @@ public class FileRepository implements ResourceRepository {
 
     @Override
     public Cursor createCursor() throws IOException {
-        List<Resource> results = new ArrayList<Resource>();
+        List<Resource> results = Lists.create();
         collect(results, null, root);
         return new ResourceCursor(results.iterator());
     }

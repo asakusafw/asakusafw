@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents attributes of declarations.
@@ -58,7 +58,7 @@ public class AstAttribute extends AbstractAstNode {
         }
         this.region = region;
         this.name = name;
-        this.elements = Util.freeze(elements);
+        this.elements = Lists.freeze(elements);
     }
 
     /**
@@ -80,7 +80,7 @@ public class AstAttribute extends AbstractAstNode {
         }
         this.region = region;
         this.name = name;
-        this.elements = Util.freeze(Arrays.asList(elements));
+        this.elements = Lists.freeze(Arrays.asList(elements));
     }
 
     @Override

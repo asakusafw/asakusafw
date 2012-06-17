@@ -17,9 +17,9 @@ package com.asakusafw.compiler.fileio.flow;
 
 import static com.asakusafw.vocabulary.flow.util.CoreOperators.*;
 
+import com.asakusafw.compiler.fileio.external.Ex1MockExporterDescription;
 import com.asakusafw.compiler.fileio.model.Ex1;
 import com.asakusafw.compiler.fileio.model.Ex2;
-import com.asakusafw.compiler.fileio.external.Ex1MockExporterDescription;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;

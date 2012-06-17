@@ -18,14 +18,14 @@ package com.asakusafw.compiler.flow.processor;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.testing.MockResult;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 
@@ -33,7 +33,7 @@ class PortMapper {
 
     private Fragment fragment;
 
-    private Map<String, Result<?>> created = new HashMap<String, Result<?>>();
+    private Map<String, Result<?>> created = Maps.create();
 
     public PortMapper(Fragment fragment) {
         this.fragment = fragment;
@@ -50,7 +50,7 @@ class PortMapper {
     }
 
     public Object[] toArguments() {
-        List<Result<?>> results = new ArrayList<Result<?>>();
+        List<Result<?>> results = Lists.create();
         for (FlowElementOutput out : fragment.getOutputPorts()) {
             String name = out.getDescription().getName();
             Result<?> port = created.get(name);

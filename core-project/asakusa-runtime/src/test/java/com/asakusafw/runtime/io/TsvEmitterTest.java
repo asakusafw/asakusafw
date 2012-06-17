@@ -23,13 +23,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.asakusafw.runtime.io.RecordParser;
-import com.asakusafw.runtime.io.TsvEmitter;
-import com.asakusafw.runtime.io.TsvParser;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;

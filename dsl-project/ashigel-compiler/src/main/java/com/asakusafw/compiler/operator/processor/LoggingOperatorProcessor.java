@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
@@ -24,10 +23,11 @@ import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.operator.Logging;
-import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
  * {@link Logging ロギング演算子}を処理する。
@@ -66,7 +66,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        List<DocElement> elements = new ArrayList<DocElement>();
+        List<DocElement> elements = Lists.create();
         elements.addAll(a.getExecutableDocument());
         elements.add(context.environment.getFactory().newDocText(
                 "<p>なお、この演算子の出力は結線しなくても自動的に停止演算子に結線される。</p>"));

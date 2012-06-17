@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +31,7 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedReducer;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -53,6 +52,7 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElement;
 
 /**
  * Reducerプログラムを出力するエミッタ。
@@ -145,7 +145,7 @@ public class ReducerEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getReduceClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(fragments.createFields());
             members.add(createSetup());
             members.add(createCleanup());
@@ -207,7 +207,7 @@ public class ReducerEmitter {
         }
 
         private MethodDeclaration createGetRendezvous() {
-            List<Statement> cases = new ArrayList<Statement>();
+            List<Statement> cases = Lists.create();
             for (List<ShuffleModel.Segment> group : ShuffleEmiterUtil.groupByElement(shuffle)) {
                 for (ShuffleModel.Segment segment : group) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -222,7 +222,7 @@ public class ReducerEmitter {
                 .toThrowStatement());
 
             SimpleName argument = names.create("nextKey");
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, argument)
                         .method(SegmentedWritable.ID_GETTER)

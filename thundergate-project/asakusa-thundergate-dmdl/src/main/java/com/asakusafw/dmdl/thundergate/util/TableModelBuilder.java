@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.util;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +28,7 @@ import com.asakusafw.dmdl.thundergate.model.PropertyType;
 import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
 import com.asakusafw.dmdl.thundergate.model.Source;
 import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * {@link TableModelDescription}を構築するビルダー。
@@ -43,7 +43,7 @@ public class TableModelBuilder extends ModelBuilder<TableModelBuilder> {
      */
     public TableModelBuilder(String tableName) {
         super(tableName);
-        this.columns = new ArrayList<Column>();
+        this.columns = Lists.create();
     }
 
     /**
@@ -111,7 +111,7 @@ public class TableModelBuilder extends ModelBuilder<TableModelBuilder> {
                     "プロパティが追加されていません ({0})",
                     getReference()));
         }
-        List<ModelProperty> properties = new ArrayList<ModelProperty>();
+        List<ModelProperty> properties = Lists.create();
         for (Column column : columns) {
             ModelProperty property = toProperty(column);
             properties.add(property);

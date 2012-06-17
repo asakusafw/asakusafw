@@ -17,12 +17,9 @@ package com.asakusafw.compiler.bulkloader;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,6 +49,9 @@ import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
 import com.asakusafw.thundergate.runtime.property.PropertyLoader;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription.DuplicateRecordCheck;
 import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
@@ -158,7 +158,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         boolean valid = true;
         for (OutputDescription output : outputs) {
             BulkLoadExporterDescription desc = extract(output);
-            Set<String> columns = new HashSet<String>(desc.getColumnNames());
+            Set<String> columns = Sets.from(desc.getColumnNames());
             if (columns.containsAll(desc.getTargetColumnNames()) == false) {
                 getEnvironment().error(
                         "\"{0}\"の正常テーブルには全体の出力カラムに含まれないカラムが存在します: {1}",
@@ -197,8 +197,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean checkAssignment(List<InputDescription> inputs, List<OutputDescription> outputs) {
         assert inputs != null;
         assert outputs != null;
-        Set<String> primaryTargets = new HashSet<String>();
-        Set<String> secondaryTargets = new HashSet<String>();
+        Set<String> primaryTargets = Sets.create();
+        Set<String> secondaryTargets = Sets.create();
         for (InputDescription description : inputs) {
             BulkLoadImporterDescription desc = extract(description);
             if (desc.getMode() == Mode.PRIMARY) {
@@ -227,7 +227,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             }
         }
 
-        Set<String> exportTargets = new HashSet<String>();
+        Set<String> exportTargets = Sets.create();
         for (OutputDescription description : outputs) {
             BulkLoadExporterDescription desc = extract(description);
             exportTargets.add(desc.getTargetName());
@@ -264,7 +264,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             return Collections.emptyList();
         }
 
-        List<Slot> slots = new ArrayList<Slot>();
+        List<Slot> slots = Lists.create();
         for (Output output : context.getOutputs()) {
             Slot slot = toSlot(output);
             slots.add(slot);
@@ -285,7 +285,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Slot toSlot(Output output) {
         BulkLoadExporterDescription desc = extract(output.getDescription());
-        List<Slot.Input> inputs = new ArrayList<Slot.Input>();
+        List<Slot.Input> inputs = Lists.create();
         for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
@@ -397,33 +397,23 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Map<String, BulkLoaderScript> toScripts(IoContext context) {
         assert context != null;
-        Map<String, List<Input>> inputs = new HashMap<String, List<Input>>();
+        Map<String, List<Input>> inputs = Maps.create();
         for (Input input : context.getInputs()) {
             String target = extract(input.getDescription()).getTargetName();
-            List<Input> in = inputs.get(target);
-            if (in == null) {
-                in = new ArrayList<Input>();
-                inputs.put(target, in);
-            }
-            in.add(input);
+            Maps.addToList(inputs, target, input);
         }
 
-        Map<String, List<Output>> outputs = new HashMap<String, List<Output>>();
+        Map<String, List<Output>> outputs = Maps.create();
         for (Output output : context.getOutputs()) {
             String target = extract(output.getDescription()).getTargetName();
-            List<Output> out = outputs.get(target);
-            if (out == null) {
-                out = new ArrayList<Output>();
-                outputs.put(target, out);
-            }
-            out.add(output);
+            Maps.addToList(outputs, target, output);
         }
 
-        Set<String> targets = new HashSet<String>();
+        Set<String> targets = Sets.create();
         targets.addAll(inputs.keySet());
         targets.addAll(outputs.keySet());
 
-        Map<String, BulkLoaderScript> results = new HashMap<String, BulkLoaderScript>();
+        Map<String, BulkLoaderScript> results = Maps.create();
         for (String target : targets) {
             List<Input> in = inputs.get(target);
             List<Output> out = outputs.get(target);
@@ -436,8 +426,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     private BulkLoaderScript toScript(List<Input> inputs, List<Output> outputs) {
-        List<ImportTable> imports = new ArrayList<ImportTable>();
-        List<ExportTable> exports = new ArrayList<ExportTable>();
+        List<ImportTable> imports = Lists.create();
+        List<ExportTable> exports = Lists.create();
         for (Input input : inputs) {
             imports.add(convert(input.getDescription()));
         }
@@ -574,8 +564,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId(),
                 primary,
-                new ArrayList<String>(targets),
-                new ArrayList<String>(cacheUsers));
+                Lists.from(targets),
+                Lists.from(cacheUsers));
     }
 
     static ExternalIoCommandProvider findRelated(List<ExternalIoCommandProvider> commands) {
@@ -622,8 +612,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             this.batchId = batchId;
             this.flowId = flowId;
             this.primary = primary;
-            this.secondaries = new ArrayList<String>(secondaries);
-            this.cacheUsers = new ArrayList<String>(cacheUsers);
+            this.secondaries = Lists.from(secondaries);
+            this.cacheUsers = Lists.from(cacheUsers);
         }
 
         @Override
@@ -633,7 +623,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getImportCommand(CommandContext context) {
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             if (primary != null) {
                 results.add(new Command(
                         Arrays.asList(new String[] {
@@ -671,7 +661,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getExportCommand(CommandContext context) {
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             if (primary != null) {
                 results.add(new Command(
                             Arrays.asList(new String[] {
@@ -691,7 +681,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getFinalizeCommand(CommandContext context) {
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             if (primary != null) {
                 results.add(new Command(
                         Arrays.asList(new String[] {

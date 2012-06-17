@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +26,7 @@ import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
 import com.asakusafw.compiler.operator.util.GeneratorUtil;
-import com.asakusafw.vocabulary.flow.FlowDescription;
-import com.asakusafw.vocabulary.flow.Operator;
-import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
-import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
-import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -52,6 +47,11 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.Operator;
+import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
+import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
+import com.asakusafw.vocabulary.flow.graph.Inline;
 
 /**
  * フロー部品クラスから演算子ファクトリークラスのJava DOMを構築する。
@@ -124,7 +124,7 @@ public class FlowFactoryClassGenerator {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
 
         TypeDeclaration objectClass = createObjectClass();
         results.add(objectClass);
@@ -171,7 +171,7 @@ public class FlowFactoryClassGenerator {
     private List<TypeBodyDeclaration> createObjectMembers(NamedType objectType) {
         assert objectType != null;
         NameGenerator names = new NameGenerator(factory);
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         results.add(createResolverField());
         for (OperatorPortDeclaration var : flowClass.getOutputPorts()) {
             results.add(createObjectOutputField(var, names));
@@ -305,7 +305,7 @@ public class FlowFactoryClassGenerator {
 
     private List<FormalParameterDeclaration> createParametersForConstructor(
             NameGenerator names) {
-        List<FormalParameterDeclaration> parameters = new ArrayList<FormalParameterDeclaration>();
+        List<FormalParameterDeclaration> parameters = Lists.create();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(names.reserve(var.getName()));
             parameters.add(factory.newFormalParameterDeclaration(
@@ -325,7 +325,7 @@ public class FlowFactoryClassGenerator {
             List<FormalParameterDeclaration> parameters,
             NameGenerator names) {
         assert parameters != null;
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         SimpleName builderName = names.create("builder");
         statements.add(new TypeBuilder(factory, util.t(FlowPartDescription.Builder.class))
             .newObject(factory.newClassLiteral(util.t(flowClass.getElement())))
@@ -408,8 +408,8 @@ public class FlowFactoryClassGenerator {
         assert objectType != null;
         JavadocBuilder javadoc = new JavadocBuilder(factory);
         javadoc.inline(flowClass.getDocumentation());
-        List<FormalParameterDeclaration> parameters = new ArrayList<FormalParameterDeclaration>();
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<FormalParameterDeclaration> parameters = Lists.create();
+        List<Expression> arguments = Lists.create();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());

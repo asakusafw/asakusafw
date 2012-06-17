@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+
 import com.asakusafw.cleaner.common.ConfigurationLoader;
 import com.asakusafw.cleaner.common.Constants;
 

@@ -18,9 +18,7 @@ package com.asakusafw.dmdl.thundergate.util;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +31,8 @@ import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
 import com.asakusafw.dmdl.thundergate.model.Source;
 import com.asakusafw.dmdl.thundergate.model.StringType;
 import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 
 
 /**
@@ -104,8 +104,8 @@ public class JoinedModelBuilderTest {
     }
 
     private List<Source> sources(ModelDescription model, String... names) {
-        List<Source> results = new ArrayList<Source>();
-        Set<String> targets = new HashSet<String>();
+        List<Source> results = Lists.create();
+        Set<String> targets = Sets.create();
         Collections.addAll(targets, names);
         for (Source s : model.getPropertiesAsSources()) {
             if (targets.contains(s.getName())) {

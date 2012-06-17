@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.operator.util;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +27,7 @@ import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
-import com.asakusafw.vocabulary.flow.In;
-import com.asakusafw.vocabulary.flow.Out;
-import com.asakusafw.vocabulary.flow.Source;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -39,6 +36,9 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.In;
+import com.asakusafw.vocabulary.flow.Out;
+import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * JavaのDOMを構築する際のユーティリティ。
@@ -232,10 +232,10 @@ public class GeneratorUtil {
     private List<TypeParameterDeclaration> toTypeParameters(
             List<? extends TypeParameterElement> typeParameters) {
         assert typeParameters != null;
-        List<TypeParameterDeclaration> results = new ArrayList<TypeParameterDeclaration>();
+        List<TypeParameterDeclaration> results = Lists.create();
         for (TypeParameterElement typeParameter : typeParameters) {
             SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
-            List<Type> typeBounds = new ArrayList<Type>();
+            List<Type> typeBounds = Lists.create();
             for (TypeMirror typeBound : typeParameter.getBounds()) {
                 typeBounds.add(t(typeBound));
             }
@@ -267,7 +267,7 @@ public class GeneratorUtil {
     }
 
     private List<Type> toTypeVariables(List<? extends TypeParameterElement> typeParameters) {
-        List<Type> results = new ArrayList<Type>();
+        List<Type> results = Lists.create();
         for (TypeParameterElement typeParameter : typeParameters) {
             SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
             results.add(factory.newNamedType(name));

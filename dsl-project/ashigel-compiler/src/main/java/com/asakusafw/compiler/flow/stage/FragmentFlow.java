@@ -15,11 +15,8 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +40,11 @@ import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.flow.VoidResult;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
-import com.asakusafw.vocabulary.flow.graph.FlowElement;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -63,6 +60,9 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 /**
  * 処理断片を依存関係に従って再構築する。
@@ -85,11 +85,11 @@ public class FragmentFlow {
 
     private final SimpleName stageOutputs;
 
-    private final Map<FlowElementInput, FragmentNode> lines = new HashMap<FlowElementInput, FragmentNode>();
+    private final Map<FlowElementInput, FragmentNode> lines = Maps.create();
 
-    private final Map<FlowElement, FragmentNode> rendezvous = new HashMap<FlowElement, FragmentNode>();
+    private final Map<FlowElement, FragmentNode> rendezvous = Maps.create();
 
-    private Map<ResourceFragment, SimpleName> resources = new HashMap<ResourceFragment, SimpleName>();
+    private Map<ResourceFragment, SimpleName> resources = Maps.create();
 
     private final ModelFactory factory;
 
@@ -154,7 +154,7 @@ public class FragmentFlow {
     }
 
     private Map<ResourceFragment, SimpleName> createResources() {
-        Map<ResourceFragment, SimpleName> results = new HashMap<ResourceFragment, SimpleName>();
+        Map<ResourceFragment, SimpleName> results = Maps.create();
         for (Unit<?> unit : units) {
             for (Fragment fragment : unit.getFragments()) {
                 for (ResourceFragment resource : fragment.getResources()) {
@@ -198,7 +198,7 @@ public class FragmentFlow {
     }
 
     private Map<FlowElementOutput, FragmentNode> analyzeNodes() {
-        Map<FlowElementOutput, FragmentNode> results = new HashMap<FlowElementOutput, FragmentNode>();
+        Map<FlowElementOutput, FragmentNode> results = Maps.create();
         for (StageModel.Unit<?> unit : units) {
             for (Fragment fragment : unit.getFragments()) {
                 FragmentNode node;
@@ -221,7 +221,7 @@ public class FragmentFlow {
             Graph<FragmentNode> graph) {
         assert nodes != null;
         assert graph != null;
-        Set<FragmentNode> saw = new HashSet<FragmentNode>();
+        Set<FragmentNode> saw = Sets.create();
         for (Map.Entry<FlowElementOutput, FragmentNode> entry : nodes.entrySet()) {
             FragmentNode node = entry.getValue();
             if (saw.contains(node)) {
@@ -270,8 +270,7 @@ public class FragmentFlow {
         assert shuffle != null;
         assert stage.getStageBlock().hasReduceBlocks();
 
-        Map<FlowElementInput, FlowBlock.Input> inputMap =
-            new HashMap<FlowElementInput, FlowBlock.Input>();
+        Map<FlowElementInput, FlowBlock.Input> inputMap = Maps.create();
         for (FlowBlock reduceBlock : stage.getStageBlock().getReduceBlocks()) {
             for (FlowBlock.Input blockInput : reduceBlock.getBlockInputs()) {
                 inputMap.put(blockInput.getElementPort(), blockInput);
@@ -305,7 +304,7 @@ public class FragmentFlow {
      * @return 処理断片の先頭要素を参照するためのフィールド群
      */
     public List<FieldDeclaration> createFields() {
-        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        List<FieldDeclaration> results = Lists.create();
         results.add(createResourceManagerField());
         if (stageOutputs != null) {
             results.add(createStageOutputsField());
@@ -382,7 +381,7 @@ public class FragmentFlow {
      */
     public List<Statement> createSetup(Expression context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.addAll(setupResourceManager(context));
 
         if (stageOutputs != null) {
@@ -395,7 +394,7 @@ public class FragmentFlow {
 
     private List<Statement> setupResources(Expression context) {
         assert context != null;
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         for (Map.Entry<ResourceFragment, SimpleName> entry : resources.entrySet()) {
             ResourceFragment resource = entry.getKey();
             SimpleName field = entry.getValue();
@@ -416,7 +415,7 @@ public class FragmentFlow {
     }
 
     private List<Statement> setupFragments(Expression context) {
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         for (FragmentNode node : Graphs.sortPostOrder(dependencies)) {
             switch (node.getKind()) {
             case LINE:
@@ -440,7 +439,7 @@ public class FragmentFlow {
 
     private List<Statement> setupResourceManager(Expression context) {
         assert context != null;
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(resourceManager)
             .assignFrom(new TypeBuilder(factory, importer.toType(RuntimeResourceManager.class))
@@ -458,7 +457,7 @@ public class FragmentFlow {
 
     private List<Statement> setupStageOutputs(Expression context) {
         assert context != null;
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(stageOutputs)
             .assignFrom(new TypeBuilder(factory, importer.toType(StageOutputDriver.class))
@@ -515,7 +514,7 @@ public class FragmentFlow {
     private List<Expression> resolveArguments(FragmentNode node, StageModel.Fragment fragment) {
         assert node != null;
         assert fragment != null;
-        List<Expression> results = new ArrayList<Expression>();
+        List<Expression> results = Lists.create();
         // TODO 引数の並び順に暗黙の前提: リソース一覧 -> 出力一覧
         for (ResourceFragment resource : fragment.getResources()) {
             results.add(resolveResouce(resource));
@@ -568,7 +567,7 @@ public class FragmentFlow {
                 model.createNewInstance(dataType));
 
         SimpleName argumentName = names.create("arg");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         Iterator<FragmentNode> iter = downstream.iterator();
         while (iter.hasNext()) {
             FragmentNode node = iter.next();
@@ -653,7 +652,7 @@ public class FragmentFlow {
      */
     public List<Statement> createCleanup(SimpleName context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.addAll(cleanResourceManager(context));
         if (stageOutputs != null) {
             results.addAll(cleanStageOutputs(context));
@@ -694,7 +693,7 @@ public class FragmentFlow {
 
     private List<Statement> cleanResourceManager(SimpleName context) {
         assert context != null;
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(resourceManager)
             .method("cleanup")
@@ -708,7 +707,7 @@ public class FragmentFlow {
 
     private List<Statement> cleanStageOutputs(SimpleName context) {
         assert context != null;
-        List<Statement> results = new ArrayList<Statement>();
+        List<Statement> results = Lists.create();
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(stageOutputs)
             .method("close")
@@ -795,18 +794,13 @@ public class FragmentFlow {
             this.kind = kind;
             this.value = value;
             this.name = name;
-            this.downstreams = new HashMap<FlowElementOutput, Set<FragmentNode>>();
+            this.downstreams = Maps.create();
         }
 
         public void addDownstream(FlowElementOutput output, FragmentNode downstream) {
             assert output != null;
             assert downstream != null;
-            Set<FragmentNode> set = downstreams.get(output);
-            if (set == null) {
-                set = new HashSet<FragmentFlow.FragmentNode>();
-                downstreams.put(output, set);
-            }
-            set.add(downstream);
+            Maps.addToSet(downstreams, output, downstream);
         }
 
         public Set<FragmentNode> getDownstream(FlowElementOutput output) {

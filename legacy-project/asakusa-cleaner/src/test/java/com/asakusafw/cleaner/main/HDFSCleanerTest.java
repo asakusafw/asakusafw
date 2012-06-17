@@ -16,9 +16,7 @@
 package com.asakusafw.cleaner.main;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +36,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.asakusafw.cleaner.common.ConfigurationLoader;
-import com.asakusafw.cleaner.main.HDFSCleaner;
 import com.asakusafw.cleaner.testutil.UnitTestUtil;
 
 /**

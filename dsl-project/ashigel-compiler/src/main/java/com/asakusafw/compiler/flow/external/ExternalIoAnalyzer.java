@@ -15,9 +15,6 @@
  */
 package com.asakusafw.compiler.flow.external;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -30,6 +27,9 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.Repository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.utils.collections.Tuples;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -45,7 +45,7 @@ public class ExternalIoAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(ExternalIoAnalyzer.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -66,10 +66,8 @@ public class ExternalIoAnalyzer {
     public boolean validate(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.info("{}の入出力を検証しています", graph.getDescription().getName());
-        List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs =
-            new ArrayList<Tuple2<InputDescription, ExternalIoDescriptionProcessor>>();
-        List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs =
-            new ArrayList<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>>();
+        List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs = Lists.create();
+        List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs = Lists.create();
 
         if (collect(graph, inputs, outputs) == false) {
             return false;
@@ -91,10 +89,10 @@ public class ExternalIoAnalyzer {
             ExternalIoDescriptionProcessor proc) {
         assert inputs != null;
         assert proc != null;
-        List<T> results = new ArrayList<T>();
+        List<T> results = Lists.create();
         for (Tuple2<T, ExternalIoDescriptionProcessor> tuple : inputs) {
-            if (tuple._2.equals(proc)) {
-                results.add(tuple._1);
+            if (tuple.second.equals(proc)) {
+                results.add(tuple.first);
             }
         }
         return results;
@@ -105,22 +103,21 @@ public class ExternalIoAnalyzer {
             List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs) {
         assert inputs != null;
         assert outputs != null;
-        Map<Class<?>, ExternalIoDescriptionProcessor> actives =
-            new HashMap<Class<?>, ExternalIoDescriptionProcessor>();
+        Map<Class<?>, ExternalIoDescriptionProcessor> actives = Maps.create();
 
         // collect
         for (Tuple2<InputDescription, ExternalIoDescriptionProcessor> tuple : inputs) {
-            actives.put(tuple._2.getClass(), tuple._2);
+            actives.put(tuple.second.getClass(), tuple.second);
         }
         for (Tuple2<OutputDescription, ExternalIoDescriptionProcessor> tuple : outputs) {
-            actives.put(tuple._2.getClass(), tuple._2);
+            actives.put(tuple.second.getClass(), tuple.second);
         }
 
         // normalize
         normalize(inputs, actives);
         normalize(outputs, actives);
 
-        return new HashSet<ExternalIoDescriptionProcessor>(actives.values());
+        return Sets.from(actives.values());
     }
 
     private <T> void normalize(
@@ -131,8 +128,8 @@ public class ExternalIoAnalyzer {
         for (ListIterator<Tuple2<T, ExternalIoDescriptionProcessor>> iter = list.listIterator();
                 iter.hasNext();) {
             Tuple2<T, ExternalIoDescriptionProcessor> tuple = iter.next();
-            ExternalIoDescriptionProcessor normal = actives.get(tuple._2.getClass());
-            iter.set(Tuples.of(tuple._1, normal));
+            ExternalIoDescriptionProcessor normal = actives.get(tuple.second.getClass());
+            iter.set(Tuples.of(tuple.first, normal));
         }
     }
 

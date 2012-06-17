@@ -15,9 +15,7 @@
  */
 package com.asakusafw.dmdl.thundergate.emitter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +33,8 @@ import com.asakusafw.dmdl.thundergate.model.ModelProperty;
 import com.asakusafw.dmdl.thundergate.model.ModelReference;
 import com.asakusafw.dmdl.thundergate.model.Source;
 import com.asakusafw.dmdl.thundergate.model.SummarizedModelDescription;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * Creates summarized models.
@@ -78,8 +78,8 @@ public final class SummarizedModelGenerator {
     }
 
     private AstSummarize generateTerm(ModelReference sourceModel, List<Source> group) {
-        Map<String, ModelProperty> resolver = new HashMap<String, ModelProperty>();
-       List<AstPropertyFolding> foldings = new ArrayList<AstPropertyFolding>();
+        Map<String, ModelProperty> resolver = Maps.create();
+       List<AstPropertyFolding> foldings = Lists.create();
         for (ModelProperty property : model.getProperties()) {
             Source source = property.getSource();
             assert source.getDeclaring().equals(sourceModel);
@@ -97,7 +97,7 @@ public final class SummarizedModelGenerator {
                     AstBuilder.toName(property)));
         }
 
-        List<AstSimpleName> grouping = new ArrayList<AstSimpleName>();
+        List<AstSimpleName> grouping = Lists.create();
         for (Source source : group) {
             ModelProperty property = resolver.get(source.getName());
             assert property != null : source;

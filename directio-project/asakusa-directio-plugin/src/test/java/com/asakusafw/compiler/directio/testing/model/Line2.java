@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.directio.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.compiler.directio.testing.io.Line2Input;
 import com.asakusafw.compiler.directio.testing.io.Line2Output;
 import com.asakusafw.runtime.model.DataModel;
@@ -24,11 +31,6 @@ import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * line2を表すデータモデルクラス。
  */

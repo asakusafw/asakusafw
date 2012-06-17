@@ -15,10 +15,7 @@
  */
 package com.asakusafw.compiler.repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -31,6 +28,9 @@ import com.asakusafw.compiler.batch.BatchCompilingEnvironment;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.WorkflowProcessor;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
 /**
@@ -50,16 +50,15 @@ public class SpiWorkflowProcessorRepository
     protected void doInitialize() {
         LOG.info("ワークフロー処理のプラグインを読み出します");
         Iterable<? extends WorkflowProcessor> services = loadServices();
-        List<WorkflowProcessor> procs = new ArrayList<WorkflowProcessor>();
+        List<WorkflowProcessor> procs = Lists.create();
         for (WorkflowProcessor proc : services) {
             proc.initialize(getEnvironment());
             procs.add(proc);
             LOG.debug("{}が利用可能になります", proc.getClass().getName());
         }
 
-        Map<Class<? extends WorkDescriptionProcessor<?>>, WorkDescriptionProcessor<?>> saw =
-            new HashMap<Class<? extends WorkDescriptionProcessor<?>>, WorkDescriptionProcessor<?>>();
-        descriptionProcessors = new HashMap<Class<? extends WorkDescription>, WorkDescriptionProcessor<?>>();
+        Map<Class<? extends WorkDescriptionProcessor<?>>, WorkDescriptionProcessor<?>> saw = Maps.create();
+        descriptionProcessors = Maps.create();
         for (WorkflowProcessor proc : procs) {
             proc.initialize(getEnvironment());
             for (Class<? extends WorkDescriptionProcessor<?>> type
@@ -79,9 +78,9 @@ public class SpiWorkflowProcessorRepository
             }
         }
 
-        processors = new HashMap<WorkflowProcessor, Set<WorkDescriptionProcessor<?>>>();
+        processors = Maps.create();
         for (WorkflowProcessor proc : procs) {
-            Set<WorkDescriptionProcessor<?>> subProcs = new HashSet<WorkDescriptionProcessor<?>>();
+            Set<WorkDescriptionProcessor<?>> subProcs = Sets.create();
             for (Class<? extends WorkDescriptionProcessor<?>> subProcClass
                     : proc.getDescriptionProcessors()) {
                 WorkDescriptionProcessor<?> subProc = saw.get(subProcClass);
@@ -120,7 +119,7 @@ public class SpiWorkflowProcessorRepository
         if (descriptions.isEmpty()) {
             return Collections.emptySet();
         }
-        Set<WorkDescriptionProcessor<?>> procs = new HashSet<WorkDescriptionProcessor<?>>();
+        Set<WorkDescriptionProcessor<?>> procs = Sets.create();
         for (WorkDescription desc : descriptions) {
             WorkDescriptionProcessor<?> proc = findDescriptionProcessor(desc);
             if (proc == null) {
@@ -128,7 +127,7 @@ public class SpiWorkflowProcessorRepository
             }
             procs.add(proc);
         }
-        Set<WorkflowProcessor> results = new HashSet<WorkflowProcessor>();
+        Set<WorkflowProcessor> results = Sets.create();
         for (Map.Entry<WorkflowProcessor, Set<WorkDescriptionProcessor<?>>> entry
                 : processors.entrySet()) {
             if (entry.getValue().containsAll(procs)) {

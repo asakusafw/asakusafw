@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents a folding specification for each property.
@@ -44,7 +44,7 @@ public class AstModelFolding extends AbstractAstNode {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         this.region = region;
-        this.properties = Util.freeze(properties);
+        this.properties = Lists.freeze(properties);
     }
 
     @Override

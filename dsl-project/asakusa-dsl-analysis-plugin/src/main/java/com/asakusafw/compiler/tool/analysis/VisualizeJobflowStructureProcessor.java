@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +35,7 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.visualizer.VisualAnalyzer;
 import com.asakusafw.compiler.flow.visualizer.VisualGraph;
 import com.asakusafw.compiler.flow.visualizer.VisualGraphEmitter;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -57,8 +58,7 @@ public class VisualizeJobflowStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }

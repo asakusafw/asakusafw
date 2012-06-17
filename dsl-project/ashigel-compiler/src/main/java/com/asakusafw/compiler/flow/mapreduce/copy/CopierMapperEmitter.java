@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.mapreduce.copy;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.preparator.PreparatorMapper;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -149,7 +149,7 @@ final class CopierMapperEmitter {
         }
 
         private MethodDeclaration createOutputName() {
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, Models.toLiteral(factory, slot.getName()))
                 .toReturnStatement());
             return factory.newMethodDeclaration(

@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -52,6 +51,8 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.Packager;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Filer;
@@ -132,7 +133,7 @@ public class FilePackager
         JarOutputStream jar = new JarOutputStream(output);
         try {
             LOG.info("コンパイル結果をパッケージングします");
-            List<ResourceRepository> repos = new ArrayList<ResourceRepository>();
+            List<ResourceRepository> repos = Lists.create();
             if (classDirectory.exists()) {
                 repos.add(new FileRepository(classDirectory));
             }
@@ -156,7 +157,7 @@ public class FilePackager
         LOG.debug("生成されたソースプログラムをパッケージングします");
         JarOutputStream jar = new JarOutputStream(output);
         try {
-            List<ResourceRepository> repos = new ArrayList<ResourceRepository>();
+            List<ResourceRepository> repos = Lists.create();
             if (sourceDirectory.exists()) {
                 repos.add(new FileRepository(sourceDirectory));
             }
@@ -180,7 +181,7 @@ public class FilePackager
         assert jar != null;
         assert repos != null;
         boolean added = false;
-        Set<Location> saw = new HashSet<Location>();
+        Set<Location> saw = Sets.create();
         for (ResourceRepository repo : repos) {
             Cursor cursor = repo.createCursor();
             try {
@@ -268,7 +269,7 @@ public class FilePackager
                 Locale.getDefault(),
                 CHARSET);
         try {
-            List<String> arguments = new ArrayList<String>();
+            List<String> arguments = Lists.create();
             Collections.addAll(arguments, "-source", "1.6");
             Collections.addAll(arguments, "-target", "1.6");
             Collections.addAll(arguments, "-encoding", CHARSET.name());

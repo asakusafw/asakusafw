@@ -15,8 +15,6 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +24,8 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -41,15 +38,18 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
  * {@code *FragmentEmitter}の共通処理。
  */
 public class FragmentConnection {
 
-    private Map<FlowResourceDescription, SimpleName> resources = new HashMap<FlowResourceDescription, SimpleName>();
+    private Map<FlowResourceDescription, SimpleName> resources = Maps.create();
 
-    private Map<FlowElementOutput, SimpleName> successors = new HashMap<FlowElementOutput, SimpleName>();
+    private Map<FlowElementOutput, SimpleName> successors = Maps.create();
 
     private ModelFactory factory;
 
@@ -93,7 +93,7 @@ public class FragmentConnection {
      * @return リソースや出力に関するフィールドの一覧
      */
     public List<FieldDeclaration> createFields() {
-        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        List<FieldDeclaration> results = Lists.create();
         for (ResourceFragment resource : fragment.getResources()) {
             results.add(createResourceField(resource));
         }
@@ -113,8 +113,8 @@ public class FragmentConnection {
         Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
         JavadocBuilder javadoc = new JavadocBuilder(factory)
             .text("インスタンスを生成する。");
-        List<FormalParameterDeclaration> parameters = new ArrayList<FormalParameterDeclaration>();
-        List<Statement> statements = new ArrayList<Statement>();
+        List<FormalParameterDeclaration> parameters = Lists.create();
+        List<Statement> statements = Lists.create();
         for (ResourceFragment resource : fragment.getResources()) {
             SimpleName param = getResource(resource.getDescription());
             javadoc.param(param)
@@ -195,8 +195,7 @@ public class FragmentConnection {
      * @return リソースに関する定義とそれを参照するための式の表
      */
     public Map<FlowResourceDescription, Expression> getResources() {
-        Map<FlowResourceDescription, Expression> results =
-            new HashMap<FlowResourceDescription, Expression>();
+        Map<FlowResourceDescription, Expression> results = Maps.create();
         for (ResourceFragment key : fragment.getResources()) {
             SimpleName name = resources.get(key.getDescription());
             assert name != null;
@@ -214,8 +213,7 @@ public class FragmentConnection {
      * @return 出力に関する定義とそれを参照するための式の表
      */
     public Map<FlowElementPortDescription, Expression> getOutputs() {
-        Map<FlowElementPortDescription, Expression> results =
-            new HashMap<FlowElementPortDescription, Expression>();
+        Map<FlowElementPortDescription, Expression> results = Maps.create();
         for (FlowElementOutput key : fragment.getOutputPorts()) {
             SimpleName name = successors.get(key);
             assert name != null;

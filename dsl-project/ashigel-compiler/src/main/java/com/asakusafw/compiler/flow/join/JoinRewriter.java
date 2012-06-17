@@ -18,8 +18,6 @@ package com.asakusafw.compiler.flow.join;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +38,9 @@ import com.asakusafw.compiler.flow.join.operator.SideDataJoin;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoinUpdate;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -60,7 +61,6 @@ import com.asakusafw.vocabulary.operator.MasterBranch;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * フローグラフを書き換えてJoinを最適化する。
@@ -144,7 +144,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         for (FlowElementOutput output : input.getFlowElement().getOutputPorts()) {
             successors.addAll(output.getOpposites());
         }
-        Set<FlowElement> saw = new HashSet<FlowElement>();
+        Set<FlowElement> saw = Sets.create();
         boolean modified = false;
         while (successors.isEmpty() == false) {
             FlowElementInput next = successors.removeFirst();
@@ -264,7 +264,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         DataClass dataClass = toDataClass(input);
         ShuffleKey key = input.getDescription().getShuffleKey();
         assert key != null;
-        List<Property> results = new ArrayList<Property>();
+        List<Property> results = Lists.create();
         for (String name : key.getGroupProperties()) {
             Property property = dataClass.findProperty(name);
             if (property == null) {

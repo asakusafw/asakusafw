@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.processor;
 
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.asakusafw.compiler.common.TargetOperator;
@@ -24,6 +23,7 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.LineEndProcessor;
 import com.asakusafw.runtime.util.TypeUtil;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Joined.Term;
@@ -40,7 +40,7 @@ public class SplitFlowProcessor extends LineEndProcessor {
         FlowElementPortDescription inputPort = context.getInputPort(Split.ID_INPUT);
         Joined joined = TypeUtil.erase(inputPort.getDataType()).getAnnotation(Joined.class);
         assert joined != null;
-        Map<Class<?>, Term> terms = new HashMap<Class<?>, Joined.Term>();
+        Map<Class<?>, Term> terms = Maps.create();
         for (Term term : joined.terms()) {
             terms.put(term.source(), term);
         }

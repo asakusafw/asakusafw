@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -37,7 +36,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 import com.asakusafw.vocabulary.flow.testing.MockOut;
-import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Checkpoint;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Empty;
 

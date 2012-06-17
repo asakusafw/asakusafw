@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.emitter;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.dmdl.analyzer.driver.AutoProjectionDriver;
@@ -45,6 +44,7 @@ import com.asakusafw.dmdl.thundergate.model.PropertyType;
 import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
 import com.asakusafw.dmdl.thundergate.model.Source;
 import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * DMDL AST building utility.
@@ -283,7 +283,7 @@ public final class AstBuilder {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static AstAttribute getPrimaryKey(TableModelDescription model) {
-        List<AstSimpleName> primaryKeys = new ArrayList<AstSimpleName>();
+        List<AstSimpleName> primaryKeys = Lists.create();
         for (ModelProperty property : model.getProperties()) {
             if (property.getSource().getAttributes().contains(Attribute.PRIMARY_KEY)) {
                 primaryKeys.add(toName(property));

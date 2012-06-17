@@ -15,7 +15,7 @@
  */
 package com.asakusafw.dmdl.thundergate.driver;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +31,7 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Processes <code>&#64;thundergate.primary_key</code> attributes.
@@ -86,7 +87,7 @@ public class PrimaryKeyDriver extends ModelAttributeDriver {
                     "@{0} must declare the element \"{1}=...\"",
                     TARGET_NAME,
                     ELEMENT_NAME));
-            return null;
+            return Collections.emptyList();
         } else if ((nameElement.value instanceof AstAttributeValueArray) == false) {
             environment.report(new Diagnostic(
                     Level.ERROR,
@@ -94,10 +95,10 @@ public class PrimaryKeyDriver extends ModelAttributeDriver {
                     "@{0}.{1} must be an array of name",
                     TARGET_NAME,
                     ELEMENT_NAME));
-            return null;
+            return Collections.emptyList();
         }
         AstAttributeValueArray array = (AstAttributeValueArray) nameElement.value;
-        List<PropertySymbol> properties = new ArrayList<PropertySymbol>();
+        List<PropertySymbol> properties = Lists.create();
         for (AstAttributeValue value : array.elements) {
             if ((value instanceof AstSimpleName) == false) {
                 environment.report(new Diagnostic(

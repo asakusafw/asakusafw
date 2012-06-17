@@ -18,8 +18,6 @@ package com.asakusafw.testdriver.temporary;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
@@ -37,6 +35,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * Test for {@link TemporaryInputPreparator}.
@@ -118,7 +117,7 @@ public class TemporaryImporterPreparatorTest {
 
         MockTemporaryImporter(Class<?> modelType, String... paths) {
             this.modelType = modelType;
-            this.paths = new HashSet<String>(Arrays.asList(paths));
+            this.paths = Sets.from(paths);
         }
 
         @Override

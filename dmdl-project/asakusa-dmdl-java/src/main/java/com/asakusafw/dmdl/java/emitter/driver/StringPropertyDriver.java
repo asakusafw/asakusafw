@@ -15,7 +15,6 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +27,7 @@ import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -53,7 +53,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) {
         boolean projective = model.getOriginalAst().kind == ModelDefinitionKind.PROJECTIVE;
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             if (isTextType(property) == false) {
                 continue;
@@ -161,7 +161,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
 
     private List<Attribute> filterInterfaceMethodModifiers(List<? extends Attribute> modifiers) {
         assert modifiers != null;
-        List<Attribute> results = new ArrayList<Attribute>();
+        List<Attribute> results = Lists.create();
         for (Attribute attribute : modifiers) {
             if (attribute.getModelKind() == ModelKind.MODIFIER) {
                 ModifierKind kind = ((Modifier) attribute).getModifierKind();

@@ -44,6 +44,7 @@ import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+
 import com.asakusafw.runtime.stage.StageInput;
 
 /**

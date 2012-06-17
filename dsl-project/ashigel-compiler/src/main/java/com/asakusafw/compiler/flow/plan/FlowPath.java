@@ -16,13 +16,12 @@
 package com.asakusafw.compiler.flow.plan;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -35,13 +34,13 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
  */
 public class FlowPath {
 
-    private Direction direction;
+    private final Direction direction;
 
-    private Set<FlowElement> startings;
+    private final Set<FlowElement> startings;
 
-    private Set<FlowElement> passings;
+    private final Set<FlowElement> passings;
 
-    private Set<FlowElement> arrivals;
+    private final Set<FlowElement> arrivals;
 
     /**
      * インスタンスを生成する。
@@ -60,9 +59,9 @@ public class FlowPath {
         Precondition.checkMustNotBeNull(passings, "passings"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(arrivals, "arrivals"); //$NON-NLS-1$
         this.direction = direction;
-        this.startings = Collections.unmodifiableSet(new HashSet<FlowElement>(startings));
-        this.passings = Collections.unmodifiableSet(new HashSet<FlowElement>(passings));
-        this.arrivals = Collections.unmodifiableSet(new HashSet<FlowElement>(arrivals));
+        this.startings = Sets.freeze(startings);
+        this.passings = Sets.freeze(passings);
+        this.arrivals = Sets.freeze(arrivals);
     }
 
     /**
@@ -128,7 +127,7 @@ public class FlowPath {
     }
 
     private List<PortConnection> createBlockInputs(boolean includeStartings) {
-        List<PortConnection> results = new ArrayList<PortConnection>();
+        List<PortConnection> results = Lists.create();
         if (includeStartings) {
             for (FlowElement element : startings) {
                 for (FlowElementInput input : element.getInputPorts()) {
@@ -151,7 +150,7 @@ public class FlowPath {
     }
 
     private List<PortConnection> createBlockOutputs(boolean includeArrivals) {
-        List<PortConnection> results = new ArrayList<PortConnection>();
+        List<PortConnection> results = Lists.create();
         if (includeArrivals) {
             for (FlowElement element : arrivals) {
                 for (FlowElementOutput output : element.getOutputPorts()) {
@@ -175,7 +174,7 @@ public class FlowPath {
 
     private Set<FlowElement> createBlockElements(boolean includeStartings,
             boolean includeArrivals) {
-        Set<FlowElement> elements = new HashSet<FlowElement>();
+        Set<FlowElement> elements = Sets.create();
         elements.addAll(passings);
         if (includeStartings) {
             elements.addAll(startings);
@@ -197,13 +196,13 @@ public class FlowPath {
         if (this.direction != other.direction) {
             throw new IllegalArgumentException("other must have same direction"); //$NON-NLS-1$
         }
-        Set<FlowElement> newStartings = new HashSet<FlowElement>(startings);
+        Set<FlowElement> newStartings = Sets.from(startings);
         newStartings.addAll(other.startings);
 
-        Set<FlowElement> newPassings = new HashSet<FlowElement>(passings);
+        Set<FlowElement> newPassings = Sets.from(passings);
         newPassings.addAll(other.passings);
 
-        Set<FlowElement> newArrivals = new HashSet<FlowElement>(arrivals);
+        Set<FlowElement> newArrivals = Sets.from(arrivals);
         newArrivals.addAll(other.arrivals);
 
         return new FlowPath(
@@ -224,13 +223,13 @@ public class FlowPath {
         if (this.direction == other.direction) {
             throw new IllegalArgumentException("other must have different direction"); //$NON-NLS-1$
         }
-        Set<FlowElement> newStartings = new HashSet<FlowElement>(startings);
+        Set<FlowElement> newStartings = Sets.from(startings);
         newStartings.retainAll(other.arrivals);
 
-        Set<FlowElement> newPassings = new HashSet<FlowElement>(passings);
+        Set<FlowElement> newPassings = Sets.from(passings);
         newPassings.retainAll(other.passings);
 
-        Set<FlowElement> newArrivals = new HashSet<FlowElement>(arrivals);
+        Set<FlowElement> newArrivals = Sets.from(arrivals);
         newArrivals.retainAll(other.startings);
 
         return new FlowPath(

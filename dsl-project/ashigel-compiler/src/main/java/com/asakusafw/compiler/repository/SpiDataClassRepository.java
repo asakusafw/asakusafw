@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.repository;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,6 +28,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Aggregates repositories of {@link DataClass} using Service Provider Interface.
@@ -44,7 +44,7 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
     @Override
     protected void doInitialize() {
         LOG.info("データモデルクラスのプラグインを読み出します");
-        List<DataClassRepository> results = new ArrayList<DataClassRepository>();
+        List<DataClassRepository> results = Lists.create();
         ServiceLoader<DataClassRepository> services = ServiceLoader.load(
                 DataClassRepository.class,
                 getEnvironment().getServiceClassLoader());

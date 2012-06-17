@@ -15,12 +15,9 @@
  */
 package com.asakusafw.compiler.flow.jobflow;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +43,9 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.CompiledReduce;
 import com.asakusafw.compiler.flow.stage.CompiledShuffle;
 import com.asakusafw.compiler.flow.stage.StageModel;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
@@ -128,8 +128,8 @@ public class JobflowAnalyzer {
         assert stageModels != null;
         LOG.debug("入力を解析しています({})", graph.getInput());
 
-        Set<InputDescription> saw = new HashSet<InputDescription>();
-        List<Import> results = new ArrayList<JobflowModel.Import>();
+        Set<InputDescription> saw = Sets.create();
+        List<Import> results = Lists.create();
         for (FlowBlock.Output source : graph.getInput().getBlockOutputs()) {
             FlowElement element = source.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
@@ -148,7 +148,7 @@ public class JobflowAnalyzer {
             LOG.debug("入力{}が追加されます", prologue);
             results.add(prologue);
         }
-        Set<InputDescription> sideData = new HashSet<InputDescription>();
+        Set<InputDescription> sideData = Sets.create();
         for (StageModel stage : stageModels) {
             sideData.addAll(stage.getSideDataInputs());
         }
@@ -171,7 +171,7 @@ public class JobflowAnalyzer {
         assert stageModels != null;
         LOG.debug("出力を解析しています({})", graph.getOutput());
 
-        List<Export> results = new ArrayList<JobflowModel.Export>();
+        List<Export> results = Lists.create();
         for (FlowBlock.Input target : graph.getOutput().getBlockInputs()) {
             FlowElement element = target.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
@@ -197,7 +197,7 @@ public class JobflowAnalyzer {
 
     private List<Stage> analyzeStages(Collection<StageModel> stageModels) {
         assert stageModels != null;
-        List<Stage> results = new ArrayList<JobflowModel.Stage>();
+        List<Stage> results = Lists.create();
         for (StageModel model : sort(stageModels)) {
             results.add(analyzeStage(model));
         }
@@ -244,7 +244,7 @@ public class JobflowAnalyzer {
     private List<Delivery> analyzeDeliveries(StageModel model) {
         assert model != null;
         Location base = environment.getStageLocation(model.getStageBlock().getStageNumber());
-        List<Delivery> deliveries = new ArrayList<JobflowModel.Delivery>();
+        List<Delivery> deliveries = Lists.create();
         for (StageModel.Sink sink : model.getStageResults()) {
             Location location = base.append(sink.getName()).asPrefix();
             deliveries.add(new Delivery(sink.getOutputs(), Collections.singleton(location)));
@@ -253,7 +253,7 @@ public class JobflowAnalyzer {
     }
 
     private List<Process> analyzeProcesses(StageModel model) {
-        List<Process> processes = new ArrayList<JobflowModel.Process>();
+        List<Process> processes = Lists.create();
         for (StageModel.MapUnit unit : model.getMapUnits()) {
             processes.add(new Process(
                     unit.getInputs(),
@@ -264,7 +264,7 @@ public class JobflowAnalyzer {
 
     private Set<SideData> analyzeSideData(StageModel model) {
         assert model != null;
-        Set<SideData> results = new HashSet<SideData>();
+        Set<SideData> results = Sets.create();
         for (InputDescription input : model.getSideDataInputs()) {
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(input);
             if (proc == null) {
@@ -278,7 +278,7 @@ public class JobflowAnalyzer {
     }
 
     private List<StageModel> sort(Collection<StageModel> stageModels) {
-        List<StageModel> models = new ArrayList<StageModel>(stageModels);
+        List<StageModel> models = Lists.from(stageModels);
         Collections.sort(models, new Comparator<StageModel>() {
             @Override
             public int compare(StageModel o1, StageModel o2) {
@@ -314,7 +314,7 @@ public class JobflowAnalyzer {
     private void resolveTarget(Target target, Map<FlowBlock.Output, Source> sources) {
         assert target != null;
         assert sources != null;
-        Set<Source> opposites = new HashSet<Source>();
+        Set<Source> opposites = Sets.create();
         for (FlowBlock.Input input : target.getInputs()) {
             for (FlowBlock.Connection conn : input.getConnections()) {
                 FlowBlock.Output upstream = conn.getUpstream();
@@ -331,7 +331,7 @@ public class JobflowAnalyzer {
             List<Stage> stages) {
         assert imports != null;
         assert stages != null;
-        Map<FlowBlock.Output, Source> sources = new HashMap<FlowBlock.Output, Source>();
+        Map<FlowBlock.Output, Source> sources = Maps.create();
         for (Source source : imports) {
             for (FlowBlock.Output output : source.getOutputs()) {
                 sources.put(output, source);

@@ -16,12 +16,12 @@
 package com.asakusafw.compiler.flow.visualizer;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * 可視化用のグラフ。
@@ -55,9 +55,9 @@ public class VisualBlock implements VisualNode {
         Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(nodes, "nodes"); //$NON-NLS-1$
         this.label = label;
-        this.inputs = new HashSet<FlowBlock.Input>(inputs);
-        this.outputs = new HashSet<FlowBlock.Output>(outputs);
-        this.nodes = new HashSet<VisualNode>(nodes);
+        this.inputs = Sets.from(inputs);
+        this.outputs = Sets.from(outputs);
+        this.nodes = Sets.from(nodes);
     }
 
     /**

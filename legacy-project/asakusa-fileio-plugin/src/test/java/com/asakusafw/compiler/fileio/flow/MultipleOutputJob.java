@@ -15,10 +15,10 @@
  */
 package com.asakusafw.compiler.fileio.flow;
 
+import com.asakusafw.compiler.fileio.external.Ex1MockImporterDescription;
 import com.asakusafw.compiler.fileio.model.Ex1;
 import com.asakusafw.compiler.fileio.operator.ExOperatorFactory;
 import com.asakusafw.compiler.fileio.operator.ExOperatorFactory.Update;
-import com.asakusafw.compiler.fileio.external.Ex1MockImporterDescription;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;

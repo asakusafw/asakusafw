@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,11 +36,7 @@ import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.operator.Identity;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -62,6 +57,11 @@ import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.Identity;
 
 /**
  * Shuffleを必要としない1入力の要素を処理するフラグメントクラスを生成するエミッタ。
@@ -128,7 +128,7 @@ public class MapFragmentEmitter {
 
         private FragmentConnection connection;
 
-        private List<FieldDeclaration> extraFields = new ArrayList<FieldDeclaration>();
+        private List<FieldDeclaration> extraFields = Lists.create();
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -162,7 +162,7 @@ public class MapFragmentEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getMapFragmentClass(fragment.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(connection.createFields());
             ConstructorDeclaration ctor = connection.createConstructor(name);
             MethodDeclaration method = createBody();
@@ -206,7 +206,7 @@ public class MapFragmentEmitter {
 
         private List<Statement> createStatements(SimpleName argument) {
             assert argument != null;
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             boolean end = false;
             Expression input = argument;
             Iterator<Factor> factors = fragment.getFactors().iterator();

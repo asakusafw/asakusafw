@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.type.TypeMirror;
@@ -27,6 +26,7 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.CoGroup;
@@ -92,7 +92,7 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        List<ShuffleKey> keys = new ArrayList<ShuffleKey>();
+        List<ShuffleKey> keys = Lists.create();
         for (int i = 0; i < startResults; i++) {
             ShuffleKey key = a.getParameterKey(i);
             if (key == null) {

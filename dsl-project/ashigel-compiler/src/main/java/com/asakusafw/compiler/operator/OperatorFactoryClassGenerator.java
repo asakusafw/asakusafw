@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.operator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +25,7 @@ import javax.lang.model.element.VariableElement;
 import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.operator.OperatorProcessor.Context;
-import com.asakusafw.vocabulary.flow.Operator;
-import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -50,6 +46,10 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.Operator;
+import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
  * 演算子ファクトリークラスの情報を構築するジェネレータ。
@@ -106,7 +106,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     @Override
     protected List<TypeBodyDeclaration> createMembers() {
         NameGenerator names = new NameGenerator(factory);
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         for (OperatorMethod method : operatorClass.getMethods()) {
             OperatorProcessor.Context context = new OperatorProcessor.Context(
                     environment,
@@ -133,10 +133,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                         .parameterize(util.toTypeVariables(context.element))
                         .toType();
             }
-            MethodDeclaration factoryMethod = createFactoryMethod(
-                    context,
-                    descriptor,
-                    objectType);
+            MethodDeclaration factoryMethod = createFactoryMethod(context, descriptor, objectType);
             if (factoryMethod == null) {
                 continue;
             }
@@ -188,7 +185,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         assert context != null;
         assert descriptor != null;
         assert objectType != null;
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         results.add(createResolverField(context));
         for (OperatorPortDeclaration var : descriptor.getOutputPorts()) {
             results.add(createObjectOutputField(context, var));
@@ -296,7 +293,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         assert context != null;
         assert descriptor != null;
         assert parameters != null;
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         SimpleName builderName = context.names.create("builder");
         statements.add(new TypeBuilder(factory, util.t(OperatorDescription.Builder.class))
             .newObject(factory.newClassLiteral(util.t(descriptor.getAnnotationType())))
@@ -321,7 +318,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
 
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             ShuffleKey key = var.getShuffleKey();
-            List<Expression> arguments = new ArrayList<Expression>();
+            List<Expression> arguments = Lists.create();
             arguments.add(util.v(var.getName()));
             arguments.add(factory.newSimpleName(var.getName()));
             if (key != null) {
@@ -394,11 +391,11 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
 
     private Expression toSource(ShuffleKey key) {
         assert key != null;
-        List<Expression> group = new ArrayList<Expression>();
+        List<Expression> group = Lists.create();
         for (String property : key.getGroupProperties()) {
             group.add(Models.toLiteral(factory, property));
         }
-        List<Expression> order = new ArrayList<Expression>();
+        List<Expression> order = Lists.create();
         for (ShuffleKey.Order o : key.getOrderings()) {
             order.add(new TypeBuilder(factory, util.t(ShuffleKey.Order.class))
                 .newObject(
@@ -432,7 +429,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
             OperatorMethodDescriptor descriptor) {
         assert context != null;
         assert descriptor != null;
-        List<FormalParameterDeclaration> parameters = new ArrayList<FormalParameterDeclaration>();
+        List<FormalParameterDeclaration> parameters = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             SimpleName name = factory.newSimpleName(context.names.reserve(var.getName()));
             parameters.add(factory.newFormalParameterDeclaration(
@@ -457,9 +454,8 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         assert objectType != null;
         JavadocBuilder javadoc = new JavadocBuilder(factory);
         javadoc.inline(descriptor.getDocumentation());
-        List<FormalParameterDeclaration> parameters =
-                new ArrayList<FormalParameterDeclaration>();
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<FormalParameterDeclaration> parameters = Lists.create();
+        List<Expression> arguments = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
@@ -478,7 +474,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         }
         javadoc.returns().text("生成した演算子オブジェクト");
 
-        List<Type> rawParameterTypes = new ArrayList<Type>();
+        List<Type> rawParameterTypes = Lists.create();
         for (VariableElement var : context.element.getParameters()) {
             rawParameterTypes.add(util.t(environment.getErasure(var.asType())));
         }

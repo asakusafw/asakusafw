@@ -19,11 +19,11 @@ import java.util.Map;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * ラインの末尾に配置される演算子を処理する。

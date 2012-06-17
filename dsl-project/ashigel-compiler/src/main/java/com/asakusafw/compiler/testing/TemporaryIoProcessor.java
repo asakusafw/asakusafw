@@ -17,10 +17,8 @@ package com.asakusafw.compiler.testing;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +36,9 @@ import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
 import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -105,7 +106,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
     @Override
     public SourceInfo getInputInfo(InputDescription description) {
         TemporaryInputDescription desc = extract(description);
-        Set<Location> locations = new HashSet<Location>();
+        Set<Location> locations = Sets.create();
         for (String path : desc.getPaths()) {
             locations.add(Location.fromPath(path, '/'));
         }
@@ -114,8 +115,8 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
-        Set<String> saw = new HashSet<String>();
-        List<CompiledStage> results = new ArrayList<CompiledStage>();
+        Set<String> saw = Sets.create();
+        List<CompiledStage> results = Lists.create();
         for (Map.Entry<Location, List<Slot>> entry : groupByOutputLocation(context).entrySet()) {
             List<Slot> slots = entry.getValue();
             List<ResolvedSlot> resolved = new SlotResolver(getEnvironment()).resolve(slots);
@@ -199,12 +200,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
             TemporaryOutputDescription desc = extract(output.getDescription());
             Location path = Location.fromPath(desc.getPathPrefix(), '/');
             Location parent = path.getParent();
-            List<Slot> slots = results.get(parent);
-            if (slots == null) {
-                slots = new ArrayList<Slot>();
-                results.put(parent, slots);
-            }
-            slots.add(toSlot(output, path.getName()));
+            Maps.addToList(results, parent, toSlot(output, path.getName()));
         }
         return results;
     }
@@ -212,7 +208,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
     private Slot toSlot(Output output, String name) {
         assert output != null;
         assert name != null;
-        List<Slot.Input> inputs = new ArrayList<Slot.Input>();
+        List<Slot.Input> inputs = Lists.create();
         for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {

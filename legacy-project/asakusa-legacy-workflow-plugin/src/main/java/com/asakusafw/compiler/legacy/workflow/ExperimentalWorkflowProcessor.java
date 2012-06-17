@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -46,6 +45,7 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Stage;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
@@ -123,8 +123,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         results.add(ScriptWorkDescriptionProcessor.class);
         return results;

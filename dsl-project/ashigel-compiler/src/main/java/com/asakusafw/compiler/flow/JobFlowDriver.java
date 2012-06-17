@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.util.TypeUtil;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.Export;
@@ -54,7 +54,7 @@ public final class JobFlowDriver {
     private JobFlowDriver(Class<? extends FlowDescription> description) {
         assert description != null;
         this.description = description;
-        this.diagnostics = new ArrayList<String>();
+        this.diagnostics = Lists.create();
     }
 
     /**
@@ -369,7 +369,7 @@ public final class JobFlowDriver {
         Class<?>[] rawTypes = ctor.getParameterTypes();
         Type[] types = ctor.getGenericParameterTypes();
         Annotation[][] annotations = ctor.getParameterAnnotations();
-        List<Parameter> results = new ArrayList<JobFlowDriver.Parameter>();
+        List<Parameter> results = Lists.create();
         for (int i = 0; i < types.length; i++) {
             Import importer = null;
             Export expoter = null;

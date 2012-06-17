@@ -16,9 +16,10 @@
 package com.asakusafw.dmdl.thundergate;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * 解析対象のモデルが特定のパターンにマッチするかどうか判定する。
@@ -148,7 +149,7 @@ public interface ModelMatcher {
             if (constants == null) {
                 throw new IllegalArgumentException("constants must not be null"); //$NON-NLS-1$
             }
-            this.constants = new HashSet<String>(constants);
+            this.constants = Sets.from(constants);
         }
 
         @Override

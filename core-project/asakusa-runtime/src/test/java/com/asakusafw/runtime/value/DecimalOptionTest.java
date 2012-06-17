@@ -22,8 +22,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 
-import com.asakusafw.runtime.value.DecimalOption;
-
 /**
  * Test for {@link DecimalOption}.
  */

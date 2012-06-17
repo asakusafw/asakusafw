@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Enumerated {@link DmdlSourceRepository}.
@@ -40,7 +40,7 @@ public class CompositeSourceRepository implements DmdlSourceRepository {
         if (repositories == null) {
             throw new IllegalArgumentException("repositories must not be null"); //$NON-NLS-1$
         }
-        this.repositories = Util.freeze(repositories);
+        this.repositories = Lists.freeze(repositories);
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.util.List;
 import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.semantics.Trait;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Trait for holding primary key.
@@ -39,7 +39,7 @@ public class PrimaryKeyTrait implements Trait<PrimaryKeyTrait> {
      */
     public PrimaryKeyTrait(AstNode originalAst, List<PropertySymbol> properties) {
         this.originalAst = originalAst;
-        this.properties = Util.freeze(properties);
+        this.properties = Lists.freeze(properties);
     }
 
     @Override
