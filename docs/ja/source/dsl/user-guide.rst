@@ -291,7 +291,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
         同一のバッチIDやフローIDに対しても、ジョブフローの実行のたびに変化する。
         同一ジョブフローの実行中は必ず同じ値で、トランザクションを識別するために利用できる。
 
-..  [#] ``com.asakusafw.runtime.core.BatchContext``
+..  [#] :javadoc:`com.asakusafw.runtime.core.BatchContext`
 
 レポートAPI
 ~~~~~~~~~~~
@@ -316,7 +316,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 致命的な状況に対するレポートの仕組みも用意していますが、このレポートによって処理の流れに影響が出ることはありません。
 エラーによって処理を強制終了させたい場合などでは、ランタイム例外を演算子メソッドからスローするなどの方法が必要です。
 
-..  [#] ``com.asakusafw.runtime.core.Report``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Report`
 
 ..  attention::
     特定のデータに対してレポートのみを行い、その結果を最終的に出力しない場合、
@@ -478,7 +478,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     これらは、 `Operator DSLコンパイラ`_ のコンパイラプラグインを追加することで、
     新しいデータソースを利用できるようになります。
 
-..  [#] ``com.asakusafw.vocabulary.external.ImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.external.ImporterDescription`
 
 エクスポータ記述
 ~~~~~~~~~~~~~~~~
@@ -497,7 +497,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     実装クラスとなります。インポータ記述と同様に、このインターフェースだけを実装しても
     データソースを利用することはできません。
 
-..  [#] ``com.asakusafw.vocabulary.external.ExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.external.ExporterDescription`
 
 ジョブフロークラス
 ~~~~~~~~~~~~~~~~~~
@@ -528,8 +528,8 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.FlowDescription``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
 ジョブフローコンストラクタ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -593,10 +593,10 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
         this.stockOut = stockOut;
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
-..  [#] ``com.asakusafw.vocabulary.flow.Import``
-..  [#] ``com.asakusafw.vocabulary.flow.Export``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Import`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Export`
 
 フロー記述メソッド
 ~~~~~~~~~~~~~~~~~~
@@ -707,8 +707,8 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.FlowDescription``
-..  [#] ``com.asakusafw.vocabulary.flow.FlowPart``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowPart`
 
 
 フロー部品コンストラクタ
@@ -754,8 +754,8 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
         this.stockOut = stockOut;
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
 
 フロー部品のフロー記述
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -826,8 +826,8 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.batch.BatchDescription``
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.BatchDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
 
 
 バッチ記述メソッド
@@ -927,8 +927,8 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     指定された場合、コンパイルエラーが発生しても続けて次のバッチをコンパイルする。
     指定がない場合は、コンパイルエラーを見つけた時点でコンパイルを中断する。
 
-..  [#] ``com.asakusafw.compiler.bootstrap.BatchCompilerDriver``
-..  [#] ``com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver``
+..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.BatchCompilerDriver`
+..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver`
 
 
 モジュールの取り込み
@@ -1079,7 +1079,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 
 ..  [#] :doc:`../application/maven-archetype` に従ってアプリケーションプロジェクトを作成した場合は、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。詳しくは :ref:`batch-compile-option-with-pom` を参照してください。
 ..  [#] :doc:`operators` の単純集計演算子や畳み込み演算子を参照
-..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
 
 ワークフロー記述
 ~~~~~~~~~~~~~~~~

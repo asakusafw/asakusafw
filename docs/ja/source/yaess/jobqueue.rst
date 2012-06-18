@@ -258,7 +258,7 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler`
     * - ``hadoop.1.url``
       - JobQueueサーバーのURL
     * - ``hadoop.1.user``

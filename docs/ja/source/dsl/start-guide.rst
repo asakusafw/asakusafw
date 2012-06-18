@@ -264,7 +264,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 メソッドの引数に指定している ``Result`` [#]_ は、この演算子の出力を表しています。
 また、注釈 ``Key`` の要素 ``order`` は、要素の整列順序を表しています。
 
-..  [#] ``com.asakusafw.runtime.core.Result``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
 
 演算子のテスト
 --------------
@@ -377,9 +377,9 @@ WindGateからデータをインポートしてジョブフローで処理する
         }
     }
 
-..  [#] ``com.asakusafw.windgate.vocabulary.FsImporterDescription``
-..  [#] ``com.asakusafw.windgate.vocabulary.JdbcImporterDescription``
-..  [#] ``com.asakusafw.windgate.vocabulary.WindGateImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsImporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcImporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.WindGateImporterDescription`
 
 WindGateにエクスポートする
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -415,9 +415,9 @@ WindGateにエクスポートする
         }
     }
 
-..  [#] ``com.asakusafw.windgate.vocabulary.FsImporterDescription``
-..  [#] ``com.asakusafw.windgate.vocabulary.JdbcImporterDescription``
-..  [#] ``com.asakusafw.windgate.vocabulary.WindGateImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsImporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcImporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.WindGateImporterDescription`
 
 WindGateと連携する
 ~~~~~~~~~~~~~~~~~~
@@ -446,9 +446,9 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 なお、それぞれのジョブフロークラスは、末尾の名前が ``jobflow`` であるようなパッケージに配置することを推奨しています。
 
-..  [#] ``com.asakusafw.vocabulary.flow.FlowDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
 ..  [#] その他、publicなトップレベルクラスであり、具象クラスである(abstractを指定しない)、型引数を宣言しない、 ``FlowDescription`` 以外の親クラスや親インターフェースを指定しない、などの制約があります。
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
 コンストラクタの作成
 --------------------
@@ -492,10 +492,10 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
         ...
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Import``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
-..  [#] ``com.asakusafw.vocabulary.flow.Export``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Import`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Export`
 
 ジョブフローメソッドの作成
 --------------------------
@@ -533,7 +533,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
         ...
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperatorFactory``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.util.CoreOperatorFactory`
 
 入力と演算子を接続する
 ----------------------
@@ -872,9 +872,9 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 なお、それぞれのバッチクラスは、末尾の名前が ``batch`` であるようなパッケージに配置することを推奨しています。
 
-..  [#] ``com.asakusafw.vocabulary.batch.BatchDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.BatchDescription`
 ..  [#] その他、publicなトップレベルクラスであり、具象クラスである(abstractを指定しない)、型引数を宣言しない、明示的な親クラスや親インターフェースを指定しない、明示的なコンストラクタを宣言しない、などの制約があります。
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
 
 バッチメソッドの作成
 --------------------

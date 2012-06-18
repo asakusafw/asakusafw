@@ -90,9 +90,9 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.bulkloader.DbImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbImporterDescription`
 ..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` を利用して下さい
-..  [#] ``com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType``
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType`
 
 データベースのテーブルにエクスポートする
 ----------------------------------------
@@ -119,7 +119,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.bulkloader.DbExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbExporterDescription`
 ..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbExporterDescription`` の代わりに ``BulkLoadExporterDescription`` [#]_ を利用して下さい
 
 補助インポータ
@@ -191,7 +191,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
   * 通常のインポータを一つも利用しない場合、エクスポータのターゲット名は何を指定してもかまいません
 
 ..  [#] これとは逆の「補助エクスポータ」のような仕組みは現在提供していません
-..  [#] ``com.asakusafw.vocabulary.bulkloader.SecondaryImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.SecondaryImporterDescription`
 
 
 重複チェック機能
@@ -304,7 +304,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 
 
 ..  [#] エラーコードを格納するカラムだけは、正常テーブルになくても大丈夫です
-..  [#] ``com.asakusafw.vocabulary.bulkloader.DupCheckDbExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DupCheckDbExporterDescription`
 
 
 正常テーブルとエラーテーブルの構造が大きく異なる場合

@@ -31,7 +31,7 @@ Operator DSLで作成する演算子はデータフローの「部品」であ�
 なお、Operator DSLでは上記のグループを作成するために、 ``Key`` [#]_ という注釈を多用します。
 これは、グループ化のための方法や、グループ内での整列順序を指定するためのものです。
 
-..  [#] ``com.asakusafw.vocabulary.model.Key``
+..  [#] :javadoc:`com.asakusafw.vocabulary.model.Key`
 
 演算子の分類
 ------------
@@ -69,8 +69,8 @@ Flow DSLでコア演算子を利用する場合、
 一般的に ``CoreOperatorFactory`` [#]_ というファクトリクラスが提供するメソッドを使用します。
 また、上記ファクトリクラスと同名のクラスメソッド群を持つ ``CoreOperators`` [#]_ も利用可能です。
 
-..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperatorFactory``
-..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperators``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.util.CoreOperatorFactory`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.util.CoreOperators`
 
 演算子の性能特性
 ----------------
@@ -210,7 +210,7 @@ Map系の演算子に変換される場合もあります。
     Javaの対応する型
 
 ..  [#] ``java.util.List``
-..  [#] ``com.asakusafw.runtime.core.Result``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
 
 フロー制御演算子
 ================
@@ -1727,7 +1727,7 @@ Flow DSLからは次のように利用します。
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.processor.InputBuffer.ESCAPE``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.InputBuffer`
 
 分割演算子
 ----------
@@ -1992,7 +1992,7 @@ NULLに対する集約関数の動作
     現在は同機能の十分で包括的なテストが完了していない関係で、
     初期値は ``DEFAULT`` になっています。
 
-..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
 ..  [#] コンパイラオプションの設定については :doc:`user-guide` を参照してください
 
 畳み込み演算子

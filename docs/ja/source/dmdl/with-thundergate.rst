@@ -193,7 +193,7 @@ DMDLの生成
 ----------
 DMDLスクリプトからJavaデータモデルクラスを生成する場合、
 Asakusa Frameworkの ``asakusa-thundergate-dmdl-*.jar`` の
-``com.asakusafw.dmdl.thundergate.Main`` クラスを次の引数で起動します。
+:javadoc:`com.asakusafw.dmdl.thundergate.Main` クラスを次の引数で起動します。
 
 ..  code-block:: none
 

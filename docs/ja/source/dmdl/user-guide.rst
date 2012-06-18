@@ -393,7 +393,7 @@ Javaデータモデルクラスの生成
 ----------------------------
 DMDLスクリプトからJavaデータモデルクラスを生成する場合、
 Asakusa Frameworkの ``asakusa-dmdl-java-*.jar`` の
-``com.asakusafw.dmdl.java.Main`` クラスを次の引数で起動します。
+:javadoc:`com.asakusafw.dmdl.java.Main` クラスを次の引数で起動します。
 
 ..  code-block:: none
 
@@ -474,8 +474,8 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
       - short (ShortOption)
 
 ..  [#] ``org.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
-..  [#] ``com.asakusafw.value.Date``
-..  [#] ``com.asakusafw.value.DateTime``
+..  [#] :javadoc:`com.asakusafw.runtime.value.Date`
+..  [#] :javadoc:`com.asakusafw.runtime.value.DateTime`
 
 データモデルの属性
 ==================
