@@ -179,6 +179,19 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
     }
 
     /**
+     * Invoke setup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void setup() throws Exception {
+        HadoopScriptHandler handler = handler("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
+
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.SETUP, map());
+        handler.setUp(ExecutionMonitor.NULL, context);
+    }
+
+    /**
      * Exit abnormally.
      * @throws Exception if failed
      */

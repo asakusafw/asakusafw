@@ -212,7 +212,11 @@ public abstract class ExecutionScriptHandlerBase implements Service {
             ExecutionMonitor monitor,
             ExecutionContext context) throws InterruptedException, IOException {
         monitor.open(1);
-        monitor.close();
+        try {
+            voidSetUp(context);
+        } finally {
+            monitor.close();
+        }
     }
 
     /**
@@ -226,6 +230,38 @@ public abstract class ExecutionScriptHandlerBase implements Service {
             ExecutionMonitor monitor,
             ExecutionContext context) throws InterruptedException, IOException {
         monitor.open(1);
-        monitor.close();
+        try {
+            voidCleanUp(context);
+        } finally {
+            monitor.close();
+        }
+    }
+
+    /**
+     * Performs as {@link #setUp(ExecutionMonitor, ExecutionContext)} that does nothing.
+     * @param context current context
+     * @since 0.4.0
+     */
+    protected final void voidSetUp(ExecutionContext context) {
+        YSLOG.info("I51001",
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getExecutionId(),
+                context.getPhase(),
+                getHandlerId());
+    }
+
+    /**
+     * Performs as {@link #cleanUp(ExecutionMonitor, ExecutionContext)} that does nothing.
+     * @param context current context
+     * @since 0.4.0
+     */
+    protected final void voidCleanUp(ExecutionContext context) {
+        YSLOG.info("I51002",
+                context.getBatchId(),
+                context.getFlowId(),
+                context.getExecutionId(),
+                context.getPhase(),
+                getHandlerId());
     }
 }

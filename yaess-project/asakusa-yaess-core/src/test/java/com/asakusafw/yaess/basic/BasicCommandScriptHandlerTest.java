@@ -164,6 +164,32 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
     }
 
     /**
+     * Invoke setup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void setup() throws Exception {
+        CommandScriptHandler handler = handler();
+
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.SETUP, map());
+        handler.setUp(ExecutionMonitor.NULL, context);
+    }
+
+    /**
+     * Invoke cleanup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanup() throws Exception {
+        CommandScriptHandler handler = handler();
+
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.CLEANUP, map());
+        handler.cleanUp(ExecutionMonitor.NULL, context);
+    }
+
+    /**
      * Script is missing.
      * @throws Exception if failed
      */
@@ -207,7 +233,7 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
     private CommandScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
-                "hadoop", BasicCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
+                "command.testing", BasicCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
             return profile.newInstance();
         } catch (Exception e) {

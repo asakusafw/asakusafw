@@ -122,6 +122,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         try {
             if (setupCommand.isEmpty() == false) {
                 command(monitor, context, null, setupCommand);
+            } else {
+                voidSetUp(context);
             }
         } finally {
             monitor.close();
@@ -136,6 +138,8 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         try {
             if (cleanupCommand.isEmpty() == false) {
                 command(monitor, context, null, cleanupCommand);
+            } else {
+                voidCleanUp(context);
             }
         } finally {
             monitor.close();
