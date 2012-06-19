@@ -20,7 +20,7 @@
 
 	<resourcecount property="asakusa.thundergate.ddl.file.count">
 		<fileset dir="src/main/sql/modelgen" erroronmissingdir="false">
-			<include name="*.sql"/>
+			<include name="**/*.sql"/>
 		</fileset>
 	</resourcecount>
 
