@@ -4,3 +4,4 @@ com.asakusafw.dmdl.directio.csv.driver.CsvFileNameDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvLineNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvRecordNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvIgnoreDriver
+com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatDriver

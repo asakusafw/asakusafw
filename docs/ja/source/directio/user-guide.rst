@@ -692,6 +692,11 @@ CSV形式の注意点
 シーケンスファイル形式のDataFormatの作成
 ----------------------------------------
 Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 ``SequenceFileFormat`` [#]_ のサブクラスを作成します。
+
+..  hint::
+    以降の記述は、Asakusa Frameworkの外部で作成されたシーケンスファイルを利用する際の方法です。
+    シーケンスファイルにAsakusa Frameworkのデータモデル形式を直接利用する場合 `内部データ形式を利用したシーケンスファイル形式のDataFormatの作成`_ なども利用可能です。
+
 ``SequenceFileFormat`` は ``HadoopFileFormat`` のサブクラスで、シーケンスファイルを読み書きするための骨格実装が提供されています。
 
 このクラスを継承する際には、以下の型引数を ``SequenceFileFormat<K, V, T>`` にそれぞれ指定してください。
@@ -767,6 +772,44 @@ Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 `
 ..  [#] ``com.asakusafw.runtime.directio.hadoop.SequenceFileFormat``
 
 ..  _`Apache Sqoop` : http://sqoop.apache.org/
+
+内部データ形式を利用したシーケンスファイル形式のDataFormatの作成
+----------------------------------------------------------------
+シーケンスファイル対し、Asakusa Frameworkで利用するデータモデル形式を直接保存したり復元したりするような ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.sequence_file`` を指定します。
+
+..  code-block:: none
+
+    @directio.sequence_file
+    document = {
+        "the name of this document"
+        name : TEXT;
+
+        "the content of this document"
+        content : TEXT;
+    };
+
+上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.sequencefile.<データモデル名>SequenceFileFormat`` というクラスが自動生成されます。
+このクラスは ``DataFormat`` を実装し、対象のデータモデルオブジェクトをHadoopの直列化機構を直接利用したシーケンスファイルを取り扱えます。
+
+また、 単純な `ファイルを入力に利用するDSL`_ と `ファイルを出力に利用するDSL`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.sequencefile.Abstract<データモデル名>SequenceFileInputDescription`` 、後者は ``<出力先パッケージ>.sequencefile.Abstract<データモデル名>SequenceFileOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
+
+この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-directio-dmdl`` を追加する必要があります。
+DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
+
+..  warning::
+    シーケンスファイルの形式や、内部データのバイナリ表現はHadoopやAsakusa Frameworkのメジャーバージョンアップの際に変更になる場合があります。
+    データを長期にわたって保管する場合、CSVなどのポータブルな形式を利用することを推奨します。
+
+..  hint::
+    DMDLのデータモデル定義で、同一のデータモデルに ``@directio.csv`` と ``@directio.sequence_file`` の両方を指定することもできます。
+
+..  note::
+    シーケンスファイルの中身をテキスト形式で確認する場合、以下のコマンドを利用すると便利です。
+
+    ..  code-block:: sh
+    
+        hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime.jar,$ASAKUSA_HOME/batchapps/<Batch-ID>/lib/jobflow-<Flow-ID>.jar" -text "<path/to/sequence-file>"
+
 
 ファイルを入力に利用するDSL
 ---------------------------
