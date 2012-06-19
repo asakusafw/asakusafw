@@ -38,9 +38,13 @@ import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
  * Program entry for deleting cache storage.
- * This requires {@link FileList} with {@link FileProtocol.Kind#DELETE_CACHE} on standard input.
- * And then this returns {@link FileList} with {@link FileProtocol.Kind#RESPONSE_DELETED} and/or
- * {@link FileProtocol.Kind#RESPONSE_NOT_FOUND} on standard output.
+ * This requires {@link FileList} with
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#DELETE_CACHE}
+ * on standard input.
+ * And then this returns {@link FileList} with
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#RESPONSE_DELETED} and/or
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#RESPONSE_NOT_FOUND}
+ * on standard output.
  * This program requires following arguments:
  * <ol>
  * <li> target name </li>

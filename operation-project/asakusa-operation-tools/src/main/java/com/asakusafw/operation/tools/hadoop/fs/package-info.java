@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Command Line Tools for Hadoop FileSystm.
+ * Command Line Tools for Hadoop FileSystem.
  */
 package com.asakusafw.operation.tools.hadoop.fs;

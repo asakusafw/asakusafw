@@ -39,9 +39,13 @@ import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
  * Program entry for fetching {@link CacheInfo}.
- * This requires {@link FileList} with {@link FileProtocol.Kind#GET_CACHE_INFO} on standard input.
- * And then this returns {@link FileList} with {@link FileProtocol.Kind#RESPONSE_CACHE_INFO} and/or
- * {@link FileProtocol.Kind#RESPONSE_NOT_FOUND} on standard output.
+ * This requires {@link FileList} with
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#GET_CACHE_INFO}
+ * on standard input.
+ * And then this returns {@link FileList} with
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#RESPONSE_CACHE_INFO} and/or
+ * {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#RESPONSE_NOT_FOUND}
+ * on standard output.
  * This program requires following arguments:
  * <ol>
  * <li> target name </li>

@@ -93,9 +93,9 @@ public class DfsFileImport {
      * 出力先はプロトコルの形式によって異なる。
      * 利用可能なプロトコルは以下のとおり。
      * <ul>
-     * <li> {@link FileProtocol.Kind#CONTENT} </li>
-     * <li> {@link FileProtocol.Kind#CREATE_CACHE} </li>
-     * <li> {@link FileProtocol.Kind#UPDATE_CACHE} </li>
+     * <li> {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#CONTENT} </li>
+     * <li> {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#CREATE_CACHE} </li>
+     * <li> {@link com.asakusafw.bulkloader.transfer.FileProtocol.Kind#UPDATE_CACHE} </li>
      * </ul>
      * @param bean パラメータを保持するBean
      * @param user OSのユーザー名
