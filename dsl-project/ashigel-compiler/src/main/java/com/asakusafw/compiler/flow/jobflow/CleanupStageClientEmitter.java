@@ -26,8 +26,10 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
+import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.BaseStageClient;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -155,11 +157,26 @@ public class CleanupStageClientEmitter {
         }
 
         private MethodDeclaration createStageOutputPath() {
-            String path = environment.getTargetLocation().toPath(PATH_SEPARATOR);
+            Location location = environment.getTargetLocation();
+            location = getCleanupTarget(location);
+            String path = location.toPath(PATH_SEPARATOR);
             return createValueMethod(
                     AbstractCleanupStageClient.METHOD_CLEANUP_PATH,
                     t(String.class),
                     Models.toLiteral(factory, path));
+        }
+
+        private Location getCleanupTarget(Location location) {
+            Location candidate = location;
+            Location current = location;
+            while (current != null) {
+                String name = current.getName();
+                if (name.indexOf(StageConstants.EXPR_EXECUTION_ID) >= 0) {
+                    candidate = current;
+                }
+                current = current.getParent();
+            }
+            return candidate;
         }
 
         private Javadoc createJavadoc() {

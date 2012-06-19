@@ -265,6 +265,87 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
         handler.execute(ExecutionMonitor.NULL, context, script);
     }
 
+    /**
+     * cleanup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanup() throws Exception {
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
+        File shell = putScript("arguments.sh", new File(target));
+
+        HadoopScriptHandler handler = handler(
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                ProcessHadoopScriptHandler.KEY_CLEANUP, "true");
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.CLEANUP, map());
+
+        handler.cleanUp(ExecutionMonitor.NULL, context);
+
+        List<String> results = getOutput(shell);
+        assertThat(results.subList(0, 5), is(Arrays.asList(
+                ProcessHadoopScriptHandler.CLEANUP_STAGE_CLASS,
+                "tbatch",
+                "tflow",
+                "texec",
+                context.getArgumentsAsString())));
+    }
+
+    /**
+     * cleanup.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanup_skip() throws Exception {
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
+        File shell = putScript("arguments.sh", new File(target));
+
+        HadoopScriptHandler handler = handler(
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                ProcessHadoopScriptHandler.KEY_CLEANUP, "false");
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.CLEANUP, map());
+
+        handler.cleanUp(ExecutionMonitor.NULL, context);
+
+        try {
+            getOutput(shell);
+            fail();
+        } catch (IOException e) {
+            // ok,
+        }
+    }
+
+    /**
+     * cleanup with obsolete profiles.
+     * @throws Exception if failed
+     */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void cleanup_obsolete_profiles() throws Exception {
+        String target = new File(getAsakusaHome(), ProcessHadoopScriptHandler.PATH_EXECUTE).getAbsolutePath();
+        File shell = putScript("arguments.sh", new File(target));
+
+        HadoopScriptHandler handler = handler(
+                "env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath(),
+                ProcessHadoopScriptHandler.KEY_CLEANUP, "true",
+                ProcessHadoopScriptHandler.KEY_WORKING_DIRECTORY, "OBSOLETE",
+                ProcessUtil.PREFIX_CLEANUP + "1", "OBSOLETE");
+
+        ExecutionContext context = new ExecutionContext(
+                "tbatch", "tflow", "texec", ExecutionPhase.CLEANUP, map());
+
+        handler.cleanUp(ExecutionMonitor.NULL, context);
+
+        List<String> results = getOutput(shell);
+        assertThat(results.subList(0, 5), is(Arrays.asList(
+                ProcessHadoopScriptHandler.CLEANUP_STAGE_CLASS,
+                "tbatch",
+                "tflow",
+                "texec",
+                context.getArgumentsAsString())));
+    }
+
     private HadoopScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(

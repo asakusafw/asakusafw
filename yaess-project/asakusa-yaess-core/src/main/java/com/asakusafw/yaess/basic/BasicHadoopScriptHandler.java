@@ -33,14 +33,14 @@ import com.asakusafw.yaess.core.ServiceProfile;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * Additionally, the handler lanuches a command if {@code hadoop.workingDirectory} is defined.
+ * Additionally, the handler lanuches a command if {@code hadoop.cleanup} is true.
  * <ol>
- * <li> Specified in {@code hadoop.workingDirectory} </li>
+ * <li> {@link #CLEANUP_STAGE_CLASS} </li>
  * <li> {@link ExecutionContext#getBatchId() batch-id} </li>
  * <li> {@link ExecutionContext#getFlowId() flow-id} </li>
  * <li> {@link ExecutionContext#getExecutionId() execution-id} </li>
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
- * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
+ * <li> hadoop properties (with "-D") </li>
  * </ol>
  *
  * <h3> Profile format </h3>
@@ -51,9 +51,9 @@ import com.asakusafw.yaess.core.ServiceProfile;
 hadoop = &lt;this class name&gt;
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.workingDirectory = $<cluster working directory>
+hadoop.cleanup = whether enables cleanup
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
+hadoop.prop.&lt;key&gt; = $&lt;extra Hadoop properties&gt;
 </code></pre>
  * @since 0.2.3
  */

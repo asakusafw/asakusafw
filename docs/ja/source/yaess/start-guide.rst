@@ -107,7 +107,6 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
 ..  code-block:: properties
 
     hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
-    hadoop.workingDirectory = target/hadoopwork/${execution_id}
     hadoop.resource = hadoop-master
     hadoop.env.HADOOP_HOME = ${HADOOP_HOME}
     hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
@@ -123,8 +122,6 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
       - 値
     * - ``hadoop``
       - ``com.asakusafw.yaess.jsch.SshHadoopScriptHandler``
-    * - ``hadoop.workingDirectory``
-      - ジョブフローごとの出力先パス [#]_
     * - ``hadoop.ssh.user``
       - ログイン先のユーザー名
     * - ``hadoop.ssh.host``
@@ -145,7 +142,6 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
 ..  code-block:: properties
 
     hadoop = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
-    hadoop.workingDirectory = target/hadoopwork/${execution_id}
     hadoop.ssh.user = hadoop
     hadoop.ssh.host = hadoop.example.com
     hadoop.ssh.port = 22
@@ -158,11 +154,6 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
 ..  [#] 実際には ``$ASAKUSA_HOME/yaess-hadoop`` 以下のみが必要です。
         これは「Hadoopブリッジ」というツールで、YAESSからHadoopジョブを起動する際に利用されます。
         詳しくは :doc:`user-guide` を参照してください。
-
-..  [#] ここには、プロジェクトディレクトリの ``build.properties`` で設定した ``asakusa.hadoopwork.dir`` の値を指定します。
-        ここで指定されたパスは、ジョブフローの実行が成功した際にクリーニングされます。
-        クリーニングを行わない場合にはこの設定自体を削除してください。
-
 
 SSHを経由したThunderGate/WindGateの実行
 ---------------------------------------

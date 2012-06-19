@@ -34,7 +34,7 @@ import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.VariableResolver;
+import com.asakusafw.yaess.core.YaessLogger;
 
 /**
  * An abstract implementations of process-based {@link HadoopScriptHandler}.
@@ -47,14 +47,14 @@ import com.asakusafw.yaess.core.VariableResolver;
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
  * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
  * </ol>
- * Additionally, the handler lanuches a command if {@code hadoop.workingDirectory} is defined.
+ * Additionally, the handler lanuches a command if {@code hadoop.cleanup} is true.
  * <ol>
- * <li> Specified in {@code hadoop.workingDirectory} </li>
+ * <li> {@link #CLEANUP_STAGE_CLASS} </li>
  * <li> {@link ExecutionContext#getBatchId() batch-id} </li>
  * <li> {@link ExecutionContext#getFlowId() flow-id} </li>
  * <li> {@link ExecutionContext#getExecutionId() execution-id} </li>
  * <li> {@link ExecutionContext#getArgumentsAsString() batch-arguments} </li>
- * <li> {@link HadoopScript#getHadoopProperties() hadoop properties (with "-D")} </li>
+ * <li> hadoop properties (with "-D") </li>
  * </ol>
  *
  * <h3> Profile format </h3>
@@ -65,31 +65,41 @@ import com.asakusafw.yaess.core.VariableResolver;
 hadoop = &lt;this class name&gt;
 hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 hadoop.command.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.cleanup.&lt;position&gt; = $&lt;prefix command token&gt;
-hadoop.workingDirectory = $<cluster working directory>
+hadoop.cleanup = whether enables cleanup
 hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
+hadoop.prop.&lt;key&gt; = $&lt;extra Hadoop properties&gt;
 </code></pre>
  * @since 0.2.3
- * @version 0.2.6
+ * @version 0.4.0
  */
 public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerBase implements HadoopScriptHandler {
+
+    static final YaessLogger YSLOG = new YaessBasicLogger(ProcessHadoopScriptHandler.class);
 
     static final Logger LOG = LoggerFactory.getLogger(ProcessHadoopScriptHandler.class);
 
     /**
-     * (sub) key name of working directory.
+     * This is a copy from asakusa-runtime.
+     * @since 0.4.0
      */
+    public static final String CLEANUP_STAGE_CLASS = "com.asakusafw.runtime.stage.CleanupStageClient";
+
+    /**
+     * (sub) key name of working directory.
+     * @deprecated cleanup is obsoleted
+     */
+    @Deprecated
     public static final String KEY_WORKING_DIRECTORY = "workingDirectory";
+
+    /**
+     * (sub) key name of cleanup enabled.
+     */
+    public static final String KEY_CLEANUP = "cleanup";
 
     /**
      * The path to the Hadoop execution executable file (relative path from Asakusa home).
      */
     public static final String PATH_EXECUTE = "yaess-hadoop/bin/hadoop-execute.sh";
-
-    /**
-     * The path to the Hadoop cleanup executable file (relative path from Asakusa home).
-     */
-    public static final String PATH_CLEANUP = "yaess-hadoop/bin/hadoop-cleanup.sh";
 
     /**
      * Variable name of batch ID.
@@ -110,9 +120,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
 
     private volatile List<String> commandPrefix;
 
-    private volatile List<String> cleanupPrefix;
-
-    private volatile String workingDirectory;
+    private boolean cleanup;
 
     @Override
     protected final void doConfigure(
@@ -120,10 +128,22 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             Map<String, String> desiredProperties,
             Map<String, String> desiredEnvironmentVariables) throws InterruptedException, IOException {
         this.currentProfile = profile;
-        this.workingDirectory = profile.getConfiguration().get(KEY_WORKING_DIRECTORY);
         this.commandPrefix = extractCommand(profile, ProcessUtil.PREFIX_COMMAND);
-        this.cleanupPrefix = extractCommand(profile, ProcessUtil.PREFIX_CLEANUP);
+        this.cleanup = extractBoolean(profile, KEY_CLEANUP, true);
+        checkCleanupConfigurations(profile);
         configureExtension(profile);
+    }
+
+    private void checkCleanupConfigurations(ServiceProfile<?> profile) throws IOException {
+        assert profile != null;
+        String workingDirectory = profile.getConfiguration().get(KEY_WORKING_DIRECTORY);
+        if (workingDirectory != null) {
+            YSLOG.warn("W10001", profile.getPrefix(), KEY_WORKING_DIRECTORY, KEY_CLEANUP);
+        }
+        List<String> cleanupPrefix = extractCommand(profile, ProcessUtil.PREFIX_CLEANUP);
+        if (cleanupPrefix.isEmpty() == false) {
+            YSLOG.warn("W10001", profile.getPrefix(), ProcessUtil.PREFIX_CLEANUP + "*", KEY_CLEANUP);
+        }
     }
 
     private List<String> extractCommand(ServiceProfile<?> profile, String prefix) throws IOException {
@@ -136,6 +156,27 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             throw new IOException(MessageFormat.format(
                     "Failed to resolve command line tokens ({0})",
                     profile.getPrefix() + '.' + prefix + '*'), e);
+        }
+    }
+
+    private boolean extractBoolean(ServiceProfile<?> profile, String key, boolean defaultValue) throws IOException {
+        assert profile != null;
+        assert key != null;
+        String string = profile.getConfiguration().get(key);
+        if (string == null) {
+            return defaultValue;
+        }
+        string = string.trim();
+        if (string.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Boolean.parseBoolean(string);
+        } catch (RuntimeException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to resolve boolean value ({0}={1})",
+                    profile.getPrefix() + '.' + key,
+                    string), e);
         }
     }
 
@@ -172,8 +213,25 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             ExecutionContext context) throws InterruptedException, IOException {
         monitor.open(1);
         try {
-            if (workingDirectory != null) {
-                cleanUp0(monitor, context);
+            if (cleanup) {
+                YSLOG.info("I51001",
+                        context.getBatchId(),
+                        context.getFlowId(),
+                        context.getExecutionId(),
+                        getHandlerId());
+                HadoopScript script = new HadoopScript(
+                        context.getPhase().getSymbol(),
+                        Collections.<String>emptySet(),
+                        CLEANUP_STAGE_CLASS,
+                        Collections.<String, String>emptyMap(),
+                        Collections.<String, String>emptyMap());
+                execute0(monitor, context, script);
+            } else {
+                YSLOG.info("I51002",
+                        context.getBatchId(),
+                        context.getFlowId(),
+                        context.getExecutionId(),
+                        getHandlerId());
             }
         } finally {
             monitor.close();
@@ -225,47 +283,6 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
                 String.valueOf(exit)), exit);
     }
 
-    private void cleanUp0(
-            ExecutionMonitor monitor,
-            ExecutionContext context) throws InterruptedException, IOException {
-        assert monitor != null;
-        assert context != null;
-
-        Map<String, String> env = getEnvironmentVariables(context, null);
-        LOG.debug("Env: {}", env);
-
-        List<String> original = buildCleanupCommand(context);
-        List<String> command;
-        try {
-            command = ProcessUtil.buildCommand(cleanupPrefix, original, Collections.<String>emptyList());
-        } catch (IllegalArgumentException e) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to build cleanUp command: {5} (batch={0}, flow={1}, phase={2}, execution={3})",
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getPhase(),
-                    context.getExecutionId(),
-                    currentProfile.getPrefix(),
-                    original), e);
-        }
-        LOG.debug("Command: {}", command);
-
-        monitor.checkCancelled();
-        ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env, monitor.getOutput());
-        if (exit == 0) {
-            return;
-        }
-        throw new ExitCodeException(MessageFormat.format(
-                "Unexpected exit code from Hadoop Cleanup job: "
-                + "code={4} (batch={0}, flow={1}, phase={2}, exection={3})",
-                context.getBatchId(),
-                context.getFlowId(),
-                context.getPhase(),
-                context.getExecutionId(),
-                String.valueOf(exit)), exit);
-    }
-
     private Map<String, String> buildEnvironmentVariables(
             ExecutionContext context,
             ExecutionScript script) throws InterruptedException, IOException {
@@ -309,26 +326,6 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         props.putAll(getProperties(context, script));
         props.putAll(script.getHadoopProperties());
         return props;
-    }
-
-    private List<String> buildCleanupCommand(ExecutionContext context) throws IOException, InterruptedException {
-        assert workingDirectory != null;
-        assert context != null;
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(VAR_BATCH_ID, context.getBatchId());
-        map.put(VAR_FLOW_ID, context.getFlowId());
-        map.put(VAR_EXECUTION_ID, context.getExecutionId());
-        VariableResolver resolver = new VariableResolver(map);
-        String resolved = resolver.replace(workingDirectory, false);
-
-        List<String> command = new ArrayList<String>();
-        command.add(getCommand(context, PATH_CLEANUP, null));
-        command.add(resolved);
-        command.add(context.getBatchId());
-        command.add(context.getFlowId());
-        command.add(context.getExecutionId());
-        command.add(context.getArgumentsAsString());
-        return command;
     }
 
     private String getCommand(

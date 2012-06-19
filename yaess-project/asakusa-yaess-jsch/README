@@ -12,8 +12,7 @@ hadoop.ssh.privateKey=${HOME}/.ssh/id_dsa
 hadoop.ssh.passPhrase=
 hadoop.env.ASAKUSA_HOME = $<remote ASAKUSA_HOME>
 hadoop.command.<position> = $<prefix command token>
-hadoop.cleanup.<position> = $<prefix command token>
-hadoop.workingDirectory = target/hadoopwork/${execution_id}
+hadoop.cleanup = true|false
 hadoop.env.<key> = $<extra remote environment variables>
 
 command.<profile-name> = com.asakusafw.yaess.jsch.SshCommandScriptHandler
