@@ -46,16 +46,10 @@ object Global extends GlobalSettings {
     val nrWorker = Settings.nrWorker
     val duration = Settings.completedJobDuration
     val hadoopLogDir = try {
-      val dir = Settings.hadoopLogDir
-      if (((dir.exists && dir.isDirectory) || dir.mkdirs()) && dir.canWrite) {
-        Option(dir)
-      } else {
-        Logger.warn("hadoop.log.dir[" + dir.getAbsolutePath + "] was not writable: use stdout instead.")
-        None
-      }
+      Some(Settings.hadoopLogDir)
     } catch {
       case e: ConfigException =>
-        Logger.warn(e.getMessage, e)
+        Logger.warn(e.getMessage)
         None
     }
     val jobQueueAskTimeout = Settings.jobQueueAskTimeout
