@@ -15,11 +15,8 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +40,9 @@ import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.compiler.flow.stage.StageModel.Sink;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -59,7 +59,7 @@ public class StageAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(StageAnalyzer.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     private boolean sawError;
 
@@ -101,18 +101,18 @@ public class StageAnalyzer {
         LOG.debug("{}のマップレデュースプログラムを分析しています", block);
 
         NameGenerator names = new NameGenerator(environment.getModelFactory());
-        List<MapUnit> mapUnits = new ArrayList<MapUnit>();
+        List<MapUnit> mapUnits = Lists.create();
         for (FlowBlock flowBlock : block.getMapBlocks()) {
             mapUnits.addAll(collectMapUnits(flowBlock, names));
         }
         mapUnits = composeMapUnits(mapUnits);
 
-        List<ReduceUnit> reduceUnits = new ArrayList<ReduceUnit>();
+        List<ReduceUnit> reduceUnits = Lists.create();
         for (FlowBlock flowBlock : block.getReduceBlocks()) {
             reduceUnits.addAll(collectReduceUnits(flowBlock, names));
         }
 
-        List<Sink> outputs = new ArrayList<StageModel.Sink>();
+        List<Sink> outputs = Lists.create();
         if (block.hasReduceBlocks()) {
             outputs.addAll(collectOutputs(reduceUnits, block.getReduceBlocks(), names));
         } else {
@@ -139,23 +139,17 @@ public class StageAnalyzer {
 
     private List<MapUnit> composeMapUnits(List<MapUnit> mapUnits) {
         assert mapUnits != null;
-        Map<Set<FlowBlock.Output>, List<MapUnit>> sameInputs =
-            new HashMap<Set<FlowBlock.Output>, List<MapUnit>>();
+        Map<Set<FlowBlock.Output>, List<MapUnit>> sameInputs = Maps.create();
         for (MapUnit unit : mapUnits) {
-            Set<FlowBlock.Output> sources = new HashSet<FlowBlock.Output>();
+            Set<FlowBlock.Output> sources = Sets.create();
             for (FlowBlock.Input input : unit.getInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
                     sources.add(conn.getUpstream());
                 }
             }
-            List<MapUnit> group = sameInputs.get(sources);
-            if (group == null) {
-                group = new ArrayList<MapUnit>();
-                sameInputs.put(sources, group);
-            }
-            group.add(unit);
+            Maps.addToList(sameInputs, sources, unit);
         }
-        List<MapUnit> results = new ArrayList<MapUnit>();
+        List<MapUnit> results = Lists.create();
         for (Map.Entry<Set<FlowBlock.Output>, List<MapUnit>> entry : sameInputs.entrySet()) {
             Set<FlowBlock.Output> sources = entry.getKey();
             List<MapUnit> group = entry.getValue();
@@ -171,9 +165,9 @@ public class StageAnalyzer {
         if (group.size() == 1) {
             return group.get(0);
         }
-        Set<FlowBlock.Input> sawInputs = new HashSet<FlowBlock.Input>();
-        List<FlowBlock.Input> inputs = new ArrayList<FlowBlock.Input>();
-        List<Fragment> fragments = new ArrayList<Fragment>();
+        Set<FlowBlock.Input> sawInputs = Sets.create();
+        List<FlowBlock.Input> inputs = Lists.create();
+        List<Fragment> fragments = Lists.create();
 
         for (MapUnit unit : group) {
             fragments.addAll(unit.getFragments());
@@ -216,7 +210,7 @@ public class StageAnalyzer {
             Graph<Fragment> subgraph = createSubgraph(head, fgraph);
             streams.put(blockInput, subgraph);
         }
-        List<MapUnit> results = new ArrayList<MapUnit>();
+        List<MapUnit> results = Lists.create();
         for (Map.Entry<FlowBlock.Input, Graph<Fragment>> entry : streams.entrySet()) {
             FlowBlock.Input input = entry.getKey();
             Graph<Fragment> subgraph = entry.getValue();
@@ -243,23 +237,17 @@ public class StageAnalyzer {
             new LinkedHashMap<FlowElement, List<FlowBlock.Input>>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElement element = blockInput.getElementPort().getOwner();
-            List<FlowBlock.Input> group = inputGroups.get(element);
-            if (group == null) {
-                group = new ArrayList<FlowBlock.Input>();
-                inputGroups.put(element, group);
-            }
-            group.add(blockInput);
+            Maps.addToList(inputGroups, element, blockInput);
         }
 
-        Map<FlowElement, Graph<Fragment>> streams =
-            new HashMap<FlowElement, Graph<Fragment>>();
+        Map<FlowElement, Graph<Fragment>> streams = Maps.create();
 
         for (FlowElement element : inputGroups.keySet()) {
             Fragment head = fragments.get(element);
             Graph<Fragment> subgraph = createSubgraph(head, fgraph);
             streams.put(element, subgraph);
         }
-        List<ReduceUnit> results = new ArrayList<ReduceUnit>();
+        List<ReduceUnit> results = Lists.create();
         for (Map.Entry<FlowElement, Graph<Fragment>> entry : streams.entrySet()) {
             FlowElement element = entry.getKey();
             Graph<Fragment> subgraph = entry.getValue();
@@ -282,13 +270,13 @@ public class StageAnalyzer {
         assert units != null;
         assert blocks != null;
         assert names != null;
-        Set<FlowElementOutput> candidates = new HashSet<FlowElementOutput>();
+        Set<FlowElementOutput> candidates = Sets.create();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
                 candidates.add(blockOutput.getElementPort());
             }
         }
-        Set<FlowElementOutput> outputs = new HashSet<FlowElementOutput>();
+        Set<FlowElementOutput> outputs = Sets.create();
         for (Unit<?> unit : units) {
             for (Fragment fragment : unit.getFragments()) {
                 for (FlowElementOutput output : fragment.getOutputPorts()) {
@@ -299,8 +287,7 @@ public class StageAnalyzer {
             }
         }
 
-        Map<Set<FlowBlock.Input>, Set<FlowBlock.Output>> opposites =
-            new HashMap<Set<FlowBlock.Input>, Set<FlowBlock.Output>>();
+        Map<Set<FlowBlock.Input>, Set<FlowBlock.Output>> opposites = Maps.create();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
                 // 実際に出力につながらないポートは除外
@@ -308,20 +295,15 @@ public class StageAnalyzer {
                     continue;
                 }
                 // 同じ入力への出力でまとめる
-                Set<FlowBlock.Input> downstream = new HashSet<FlowBlock.Input>();
+                Set<FlowBlock.Input> downstream = Sets.create();
                 for (FlowBlock.Connection connection : blockOutput.getConnections()) {
                     downstream.add(connection.getDownstream());
                 }
-                Set<FlowBlock.Output> upstream = opposites.get(downstream);
-                if (upstream == null) {
-                    upstream = new HashSet<FlowBlock.Output>();
-                    opposites.put(downstream, upstream);
-                }
-                upstream.add(blockOutput);
+                Maps.addToSet(opposites, downstream, blockOutput);
             }
         }
 
-        List<Sink> results = new ArrayList<Sink>();
+        List<Sink> results = Lists.create();
         for (Set<FlowBlock.Output> group : opposites.values()) {
             String name = names.create("result").getToken();
             results.add(new Sink(group, names.create(name).getToken()));
@@ -374,7 +356,7 @@ public class StageAnalyzer {
     private Map<FlowElement, Fragment> collectFragments(
             Set<FlowElement> startElements) {
         assert startElements != null;
-        Map<FlowElement, Fragment> results = new HashMap<FlowElement, Fragment>();
+        Map<FlowElement, Fragment> results = Maps.create();
         for (FlowElement element : startElements) {
             Fragment fragment = getFragment(element, startElements);
             results.put(element, fragment);
@@ -388,8 +370,8 @@ public class StageAnalyzer {
         assert element != null;
         assert startElements != null;
         FlowElement current = element;
-        List<Factor> factors = new ArrayList<Factor>();
-        List<ResourceFragment> resources = new ArrayList<ResourceFragment>();
+        List<Factor> factors = Lists.create();
+        List<ResourceFragment> resources = Lists.create();
         while (true) {
             Factor factor = getFactor(current);
             if (factor == null) {
@@ -416,12 +398,12 @@ public class StageAnalyzer {
     private Set<FlowElement> collectFragmentStartElements(FlowBlock block) {
         assert block != null;
 
-        Set<FlowElement> outputs = new HashSet<FlowElement>();
+        Set<FlowElement> outputs = Sets.create();
         for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
             outputs.add(blockOutput.getElementPort().getOwner());
         }
 
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         for (FlowElement element : block.getElements()) {
 
             // 入力を取らない、または複数の入力を取る要素はフラグメントの先頭になる
@@ -483,7 +465,7 @@ public class StageAnalyzer {
         if (resources.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ResourceFragment> results = new ArrayList<ResourceFragment>();
+        List<ResourceFragment> results = Lists.create();
         for (FlowResourceDescription description : resources) {
             results.add(new ResourceFragment(description));
         }

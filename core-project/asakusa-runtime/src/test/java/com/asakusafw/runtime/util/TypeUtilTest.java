@@ -25,10 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-
 import org.junit.Test;
-
-import com.asakusafw.runtime.util.TypeUtil;
 
 /**
  * Test for {@link TypeUtil}.

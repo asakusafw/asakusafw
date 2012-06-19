@@ -16,7 +16,6 @@
 package com.asakusafw.runtime.directio;
 
 import static com.asakusafw.runtime.directio.FilePattern.PatternElementKind.*;
-
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -28,7 +27,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.FilePattern.PatternElement;
 import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
 import com.asakusafw.runtime.directio.FilePattern.Segment;

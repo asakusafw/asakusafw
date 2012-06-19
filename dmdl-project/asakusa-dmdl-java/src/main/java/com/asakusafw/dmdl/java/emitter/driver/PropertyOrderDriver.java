@@ -15,7 +15,6 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -23,6 +22,7 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.runtime.model.PropertyOrder;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -38,7 +38,7 @@ public class PropertyOrderDriver extends JavaDataModelDriver {
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
         ModelFactory f = context.getModelFactory();
-        List<Literal> names = new ArrayList<Literal>();
+        List<Literal> names = Lists.create();
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
             names.add(Models.toLiteral(f, prop.getName().identifier));
         }

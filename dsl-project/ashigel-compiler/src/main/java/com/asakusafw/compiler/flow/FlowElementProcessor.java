@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,11 +27,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.flow.ArrayListBuffer;
 import com.asakusafw.runtime.flow.FileMapListBuffer;
 import com.asakusafw.runtime.flow.ListBuffer;
-import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.flow.processor.InputBuffer;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -44,6 +39,11 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 
 /**
  * フロー要素を処理するプロセッサ。
@@ -136,7 +136,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
             this.names = names;
             this.description = desc;
             this.resources = resources;
-            this.generatedFields = new ArrayList<FieldDeclaration>();
+            this.generatedFields = Lists.create();
         }
 
         /**

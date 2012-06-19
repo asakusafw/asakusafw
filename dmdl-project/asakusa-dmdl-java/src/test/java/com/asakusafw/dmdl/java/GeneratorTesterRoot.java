@@ -23,10 +23,10 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
@@ -43,6 +43,7 @@ import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceResource;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -67,7 +68,7 @@ public class GeneratorTesterRoot {
     /**
      * {@link JavaDataModelDriver}s.
      */
-    protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<JavaDataModelDriver>();
+    protected final List<JavaDataModelDriver> emitDrivers = Lists.create();
 
     /**
      * Cleans up the test.

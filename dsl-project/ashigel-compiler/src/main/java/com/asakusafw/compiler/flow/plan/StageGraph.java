@@ -15,10 +15,10 @@
  */
 package com.asakusafw.compiler.flow.plan;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * 実行ステージ間の関係を示したグラフ。
@@ -47,7 +47,7 @@ public class StageGraph {
         Precondition.checkMustNotBeNull(stages, "stages"); //$NON-NLS-1$
         this.input = input;
         this.output = output;
-        this.stages = new ArrayList<StageBlock>(stages);
+        this.stages = Lists.from(stages);
     }
 
     /**

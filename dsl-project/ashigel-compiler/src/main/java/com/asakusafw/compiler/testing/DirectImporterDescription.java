@@ -16,10 +16,10 @@
 package com.asakusafw.compiler.testing;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * Direct access API for {@link TemporaryInputDescription}.
@@ -46,7 +46,7 @@ public class DirectImporterDescription extends TemporaryInputDescription {
             throw new IllegalArgumentException("paths must not be empty");
         }
         this.modelType = modelType;
-        this.paths = Collections.unmodifiableSet(new HashSet<String>(paths));
+        this.paths = Sets.freeze(paths);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DirectImporterDescription extends TemporaryInputDescription {
         Precondition.checkMustNotBeNull(path, "path"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(pathRest, "pathRest"); //$NON-NLS-1$
         this.modelType = modelType;
-        Set<String> pathSet = new HashSet<String>();
+        Set<String> pathSet = Sets.create();
         pathSet.add(path);
         Collections.addAll(pathSet, pathRest);
         this.paths = Collections.unmodifiableSet(pathSet);

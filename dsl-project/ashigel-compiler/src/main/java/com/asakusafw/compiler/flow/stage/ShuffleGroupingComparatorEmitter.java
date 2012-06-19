@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +32,7 @@ import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
 import com.asakusafw.runtime.flow.SegmentedWritable;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -140,7 +140,7 @@ public class ShuffleGroupingComparatorEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getShuffleGroupingComparatorClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.add(createCompareBytes());
             members.add(createCompareObjects());
             members.add(ShuffleEmiterUtil.createCompareInts(factory));
@@ -169,7 +169,7 @@ public class ShuffleGroupingComparatorEmitter {
             SimpleName s2 = factory.newSimpleName("s2");
             SimpleName l2 = factory.newSimpleName("l2");
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             SimpleName segmentId1 = factory.newSimpleName("segmentId1");
             SimpleName segmentId2 = factory.newSimpleName("segmentId2");
             statements.add(new TypeBuilder(factory, t(WritableComparator.class))
@@ -204,7 +204,7 @@ public class ShuffleGroupingComparatorEmitter {
             statements.add(new ExpressionBuilder(factory, v(-1))
                 .toLocalVariableDeclaration(t(int.class), size2));
 
-            List<Statement> cases = new ArrayList<Statement>();
+            List<Statement> cases = Lists.create();
             for (List<Segment> segments : ShuffleEmiterUtil.groupByElement(model)) {
                 for (Segment segment : segments) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -287,7 +287,7 @@ public class ShuffleGroupingComparatorEmitter {
             SimpleName o1 = factory.newSimpleName("o1");
             SimpleName o2 = factory.newSimpleName("o2");
 
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = Lists.create();
             SimpleName segmentId1 = factory.newSimpleName("segmentId1");
             SimpleName segmentId2 = factory.newSimpleName("segmentId2");
             statements.add(new ExpressionBuilder(factory, o1)
@@ -309,7 +309,7 @@ public class ShuffleGroupingComparatorEmitter {
                 .toLocalVariableDeclaration(t(int.class), diff));
             statements.add(createDiffBranch(diff));
 
-            List<Statement> cases = new ArrayList<Statement>();
+            List<Statement> cases = Lists.create();
             for (List<Segment> segments : ShuffleEmiterUtil.groupByElement(model)) {
                 for (Segment segment : segments) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));

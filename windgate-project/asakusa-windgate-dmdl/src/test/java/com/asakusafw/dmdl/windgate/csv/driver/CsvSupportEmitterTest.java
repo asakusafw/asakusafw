@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.io.Text;
@@ -37,6 +36,7 @@ import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
@@ -361,7 +361,7 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
         ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
         CsvParser parser = new CsvParser(input, string, conf);
-        List<String[]> results = new ArrayList<String[]>();
+        List<String[]> results = Lists.create();
         try {
             StringOption buffer = new StringOption();
             while (parser.next()) {

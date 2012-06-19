@@ -194,7 +194,6 @@ public class SequenceFileFormatTest {
         int index = 0;
         long offset = 0;
         while (offset < fileLen) {
-            System.out.println(index);
             long length = SequenceFile.SYNC_INTERVAL * 2;
             length = Math.min(length, fileLen - offset);
             ModelInput<StringOption> in = format.createInput(

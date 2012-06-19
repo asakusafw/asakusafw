@@ -24,12 +24,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 
-
 import org.junit.Test;
 
-import com.asakusafw.runtime.io.ModelInput;
-import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.io.TsvIoFactory;
 import com.asakusafw.runtime.io.testing.model.MockModel;
 
 /**

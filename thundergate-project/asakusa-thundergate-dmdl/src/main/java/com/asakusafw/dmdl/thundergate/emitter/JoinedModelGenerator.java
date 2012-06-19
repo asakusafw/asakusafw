@@ -15,9 +15,7 @@
  */
 package com.asakusafw.dmdl.thundergate.emitter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +35,8 @@ import com.asakusafw.dmdl.thundergate.model.JoinedModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelProperty;
 import com.asakusafw.dmdl.thundergate.model.ModelReference;
 import com.asakusafw.dmdl.thundergate.model.Source;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * Creates joined models.
@@ -83,8 +83,8 @@ public final class JoinedModelGenerator {
     }
 
     private AstJoin generateTerm(ModelReference sourceModel, List<Source> group, boolean from) {
-        Map<String, ModelProperty> resolver = new HashMap<String, ModelProperty>();
-        List<AstPropertyMapping> mappings = new ArrayList<AstPropertyMapping>();
+        Map<String, ModelProperty> resolver = Maps.create();
+        List<AstPropertyMapping> mappings = Lists.create();
         for (ModelProperty property : model.getProperties()) {
             Source source = from ? property.getFrom() : property.getJoined();
             if (source == null) {
@@ -103,7 +103,7 @@ public final class JoinedModelGenerator {
                     AstBuilder.toName(property)));
         }
 
-        List<AstSimpleName> grouping = new ArrayList<AstSimpleName>();
+        List<AstSimpleName> grouping = Lists.create();
         for (Source source : group) {
             ModelProperty property = resolver.get(source.getName());
             assert property != null : source;

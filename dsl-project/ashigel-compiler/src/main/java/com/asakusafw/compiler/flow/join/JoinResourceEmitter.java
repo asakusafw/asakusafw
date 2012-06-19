@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.flow.join;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,7 @@ import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.flow.join.JoinResource;
 import com.asakusafw.runtime.flow.join.LookUpKey;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -142,7 +142,7 @@ public final class JoinResourceEmitter {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         results.add(createGetCacheName());
         results.add(createCreateValueObject());
         results.add(createBuildLeftKey());
@@ -203,7 +203,7 @@ public final class JoinResourceEmitter {
         assert joinKeys != null;
         SimpleName value = factory.newSimpleName("value");
         SimpleName key = factory.newSimpleName("key");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         for (Property join : joinKeys) {
             statements.add(new ExpressionBuilder(factory, key)
                 .method("add", join.createGetter(value))

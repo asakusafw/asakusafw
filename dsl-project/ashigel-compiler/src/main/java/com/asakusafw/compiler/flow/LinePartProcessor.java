@@ -21,11 +21,11 @@ import java.util.Map;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
-import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * ラインのいずれかに配置される演算子を処理する。

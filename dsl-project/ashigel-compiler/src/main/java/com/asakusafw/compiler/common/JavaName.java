@@ -15,12 +15,13 @@
  */
 package com.asakusafw.compiler.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * Javaで使用する名前。
@@ -30,7 +31,7 @@ public class JavaName {
     private static final Set<String> RESERVED;
     static {
         // see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.9
-        Set<String> set = new HashSet<String>();
+        Set<String> set = Sets.create();
         set.add("abstract");
         set.add("continue");
         set.add("for");
@@ -92,7 +93,7 @@ public class JavaName {
         if (words == null) {
             throw new NullPointerException("words"); //$NON-NLS-1$
         }
-        this.words = new ArrayList<String>();
+        this.words = Lists.create();
         for (String word : words) {
             this.words.add(normalize(word));
         }
@@ -110,7 +111,7 @@ public class JavaName {
             String[] segments = nameString.split(EMPTY_NAME);
             return new JavaName(normalize(Arrays.asList(segments)));
         } else {
-            List<String> segments = new ArrayList<String>();
+            List<String> segments = Lists.create();
             int start = 0;
             for (int i = 1, n = nameString.length(); i < n; i++) {
                 if (Character.isUpperCase(nameString.charAt(i))) {
@@ -128,7 +129,7 @@ public class JavaName {
      * @return セグメント一覧
      */
     public List<String> getSegments() {
-        return new ArrayList<String>(words);
+        return Lists.from(words);
     }
 
     /**
@@ -244,7 +245,7 @@ public class JavaName {
     }
 
     private static List<String> normalize(List<String> segments) {
-        List<String> results = new ArrayList<String>();
+        List<String> results = Lists.create();
         for (String segment : segments) {
             if (segment.isEmpty() == false) {
                 results.add(segment);

@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.java.emitter.driver;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.runtime.model.ModelInputLocation;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -121,7 +121,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = Lists.create();
             results.add(createParserField());
             results.add(createConstructor());
             results.add(createReader());
@@ -162,7 +162,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createConstructorBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             results.add(f.newIfStatement(
                     new ExpressionBuilder(f, createParserFieldName())
                         .apply(InfixOperator.EQUALS, Models.toNullLiteral(f))
@@ -196,7 +196,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createReaderBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
 
             results.add(f.newIfStatement(
                     new ExpressionBuilder(f, createParserFieldName())
@@ -249,7 +249,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         }
 
         private List<Statement> createCloserBody() {
-            List<Statement> results = new ArrayList<Statement>();
+            List<Statement> results = Lists.create();
             results.add(new ExpressionBuilder(f, createParserFieldName())
                 .method("close")
                 .toStatement());

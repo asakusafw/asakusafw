@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+
 import org.junit.Test;
 
 import com.asakusafw.testdriver.core.MockExporterRetriever.Desc;

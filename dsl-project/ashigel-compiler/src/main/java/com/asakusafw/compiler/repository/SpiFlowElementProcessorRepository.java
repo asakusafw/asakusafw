@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.repository;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -29,6 +28,7 @@ import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.compiler.flow.LineProcessor;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
@@ -52,10 +52,10 @@ public class SpiFlowElementProcessorRepository
     protected void doInitialize() {
         LOG.info("フロー要素プロセッサのプラグインを読み出します");
         this.emptyProcessor = new LinePartProcessor.Nop();
-        this.lines = new HashMap<Class<? extends Annotation>, LineProcessor>();
-        this.rendezvouses = new HashMap<Class<? extends Annotation>, RendezvousProcessor>();
+        this.lines = Maps.create();
+        this.rendezvouses = Maps.create();
         emptyProcessor.initialize(getEnvironment());
-        Map<Class<?>, FlowElementProcessor> saw = new HashMap<Class<?>, FlowElementProcessor>();
+        Map<Class<?>, FlowElementProcessor> saw = Maps.create();
         ServiceLoader<FlowElementProcessor> services = ServiceLoader.load(
                 FlowElementProcessor.class,
                 getEnvironment().getServiceClassLoader());

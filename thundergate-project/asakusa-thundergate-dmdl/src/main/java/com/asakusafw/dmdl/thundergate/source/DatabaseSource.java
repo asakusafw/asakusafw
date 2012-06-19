@@ -22,7 +22,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -40,6 +39,7 @@ import com.asakusafw.dmdl.thundergate.view.ViewAnalyzer;
 import com.asakusafw.dmdl.thundergate.view.ViewDefinition;
 import com.asakusafw.dmdl.thundergate.view.ViewParser;
 import com.asakusafw.dmdl.thundergate.view.model.CreateView;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * データベースからテーブル情報を収集する。
@@ -52,9 +52,9 @@ public class DatabaseSource implements Closeable {
 
     static final Logger LOG = LoggerFactory.getLogger(DatabaseSource.class);
 
-    private Connection conn;
+    private final Connection conn;
 
-    private String databaseName;
+    private final String databaseName;
 
     /**
      * インスタンスを生成する。
@@ -125,7 +125,7 @@ public class DatabaseSource implements Closeable {
             + " AND tables.TABLE_TYPE = 'BASE TABLE'"
             + " ORDER BY TABLE_NAME, ORDINAL_POSITION";
 
-        List<ModelDescription> results = new ArrayList<ModelDescription>();
+        List<ModelDescription> results = Lists.create();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -179,7 +179,7 @@ public class DatabaseSource implements Closeable {
 
                 // Attributeに設定すべき項目があるか調べる
                 // 現状は、NOT NULL制約と、PRIMARY KEY制約にのみ対応
-                ArrayList<Attribute> attributeList = new ArrayList<Attribute>();
+                List<Attribute> attributeList = Lists.create();
                 if (isNullable != null && isNullable.equals(STR_NOT_NULL)) {
                     attributeList.add(Attribute.NOT_NULL);
                 }
@@ -267,7 +267,7 @@ public class DatabaseSource implements Closeable {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        List<ViewDefinition> results = new ArrayList<ViewDefinition>();
+        List<ViewDefinition> results = Lists.create();
 
         try {
             ps = conn.prepareStatement(sql);

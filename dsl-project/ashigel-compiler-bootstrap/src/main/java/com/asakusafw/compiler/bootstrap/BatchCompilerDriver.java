@@ -23,7 +23,6 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.BasicParser;
@@ -39,6 +38,7 @@ import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
@@ -133,13 +133,13 @@ public final class BatchCompilerDriver {
         File outputDirectory = new File(output);
         Location hadoopWorkLocation = Location.fromPath(hadoopWork, '/');
         File compilerWorkDirectory = new File(compilerWork);
-        List<File> linkingResources = new ArrayList<File>();
+        List<File> linkingResources = Lists.create();
         if (link != null) {
             for (String s : link.split(File.pathSeparator)) {
                 linkingResources.add(new File(s));
             }
         }
-        List<URL> pluginLocations = new ArrayList<URL>();
+        List<URL> pluginLocations = Lists.create();
         if (plugin != null) {
             for (String s : plugin.split(File.pathSeparator)) {
                 try {

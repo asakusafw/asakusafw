@@ -15,10 +15,8 @@
  */
 package com.asakusafw.compiler.flow;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.asakusafw.compiler.flow.plan.FlowPath;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -56,12 +57,11 @@ public class FlowGraphGenerator {
 
     private static final Class<String> TYPE = String.class;
 
-    private List<FlowIn<?>> flowInputs = new ArrayList<FlowIn<?>>();
+    private List<FlowIn<?>> flowInputs = Lists.create();
 
-    private List<FlowOut<?>> flowOutputs = new ArrayList<FlowOut<?>>();
+    private List<FlowOut<?>> flowOutputs = Lists.create();
 
-    private Map<String, FlowElement> elements =
-        new HashMap<String, FlowElement>();
+    private Map<String, FlowElement> elements = Maps.create();
 
     /**
      * 入力要素を追加する。
@@ -231,7 +231,7 @@ public class FlowGraphGenerator {
      * @return 発見したポート
      */
     public Set<FlowElementInput> inputs(String... inputs) {
-        Set<FlowElementInput> results = new HashSet<FlowElementInput>();
+        Set<FlowElementInput> results = Sets.create();
         for (String input : inputs) {
             results.add(input(input));
         }
@@ -253,7 +253,7 @@ public class FlowGraphGenerator {
      * @return 発見したポート
      */
     public Set<FlowElementOutput> outputs(String... outputs) {
-        Set<FlowElementOutput> results = new HashSet<FlowElementOutput>();
+        Set<FlowElementOutput> results = Sets.create();
         for (String output : outputs) {
             results.add(output(output));
         }
@@ -266,7 +266,7 @@ public class FlowGraphGenerator {
      * @return 要素の一覧
      */
     public Set<FlowElement> getAsSet(String... names) {
-        Set<FlowElement> results = new HashSet<FlowElement>();
+        Set<FlowElement> results = Sets.create();
         for (String name : names) {
             results.add(get(name));
         }
@@ -298,9 +298,9 @@ public class FlowGraphGenerator {
      * @return 構築したパス
      */
     public FlowPath toPath(FlowPath.Direction direction) {
-        Set<FlowElement> inputs = new HashSet<FlowElement>();
-        Set<FlowElement> passings = new HashSet<FlowElement>();
-        Set<FlowElement> outputs = new HashSet<FlowElement>();
+        Set<FlowElement> inputs = Sets.create();
+        Set<FlowElement> passings = Sets.create();
+        Set<FlowElement> outputs = Sets.create();
 
         for (FlowIn<?> node : flowInputs) {
             inputs.add(node.getFlowElement());
@@ -402,7 +402,7 @@ public class FlowGraphGenerator {
             PortDirection direction,
             String nameList) {
         String[] names = nameList.trim().split("\\s+");
-        List<FlowElementPortDescription> results = new ArrayList<FlowElementPortDescription>();
+        List<FlowElementPortDescription> results = Lists.create();
         for (String name : names) {
             results.add(new FlowElementPortDescription(name, TYPE, direction));
         }

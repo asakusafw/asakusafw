@@ -15,10 +15,7 @@
  */
 package com.asakusafw.dmdl.analyzer;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +44,9 @@ import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
 import com.asakusafw.dmdl.semantics.trait.SummarizeTrait;
 import com.asakusafw.dmdl.spi.AttributeDriver;
 import com.asakusafw.dmdl.spi.TypeDriver;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 
@@ -114,7 +114,7 @@ public class DmdlAnalyzer {
     private void computeDependencies(AstModelDefinition<?> definition) {
         assert definition != null;
         LOG.debug("Computing dependencies: {}", definition.name);
-        Set<AstSimpleName> references = new HashSet<AstSimpleName>();
+        Set<AstSimpleName> references = Sets.create();
         definition.expression.accept(references, ModelSymbolCollector.INSTANCE);
         modelDependencies.addNode(definition.name.identifier);
         for (AstSimpleName target : references) {
@@ -210,7 +210,7 @@ public class DmdlAnalyzer {
         assert model != null;
         assert expression != null;
         LOG.debug("Resolving joined: {}", model.getName());
-        List<ReduceTerm<AstJoin>> results = new ArrayList<ReduceTerm<AstJoin>>();
+        List<ReduceTerm<AstJoin>> results = Lists.create();
         for (AstJoin term : extract(expression)) {
             LOG.debug("Resolving joined term: {} -> {}", model.getName(), term.reference.name);
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
@@ -241,7 +241,7 @@ public class DmdlAnalyzer {
         assert term != null;
         LOG.debug("processing model mapping: {}", term.mapping);
 
-        Set<String> groupingPropertyNames = new HashSet<String>();
+        Set<String> groupingPropertyNames = Sets.create();
         if (term.grouping != null) {
             for (AstSimpleName name : term.grouping.properties) {
                 groupingPropertyNames.add(name.identifier);
@@ -264,7 +264,7 @@ public class DmdlAnalyzer {
                 }
             }
         } else {
-            Set<String> saw = new HashSet<String>();
+            Set<String> saw = Sets.create();
             for (AstPropertyMapping property : term.mapping.properties) {
                 if (saw.contains(property.target.identifier)) {
                     report(new Diagnostic(
@@ -305,7 +305,7 @@ public class DmdlAnalyzer {
         assert source != null;
         ModelDeclaration sourceModel = source.findDeclaration();
         assert sourceModel != null;
-        List<MappingFactor> results = new ArrayList<MappingFactor>();
+        List<MappingFactor> results = Lists.create();
         if (mapping == null) {
             for (PropertyDeclaration property : sourceModel.getDeclaredProperties()) {
                 PropertyDeclaration targetProperty = model.findPropertyDeclaration(property.getName().identifier);
@@ -339,9 +339,9 @@ public class DmdlAnalyzer {
             return false;
         }
         boolean green = true;
-        Map<String, Type> typeMap = new HashMap<String, Type>();
+        Map<String, Type> typeMap = Maps.create();
         for (ReduceTerm<AstJoin> term : terms) {
-            Set<String> groupingProperties = new HashSet<String>();
+            Set<String> groupingProperties = Sets.create();
             for (PropertySymbol grouping : term.getGrouping()) {
                 groupingProperties.add(grouping.getName().identifier);
             }
@@ -369,7 +369,7 @@ public class DmdlAnalyzer {
         assert model != null;
         assert expression != null;
         LOG.debug("Resolving summarized: {}", model.getName());
-        List<ReduceTerm<AstSummarize>> results = new ArrayList<ReduceTerm<AstSummarize>>();
+        List<ReduceTerm<AstSummarize>> results = Lists.create();
         for (AstSummarize term : extract(expression)) {
             LOG.debug("Resolving summarized term: {} -> {}", model.getName(), term.reference.name);
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
@@ -454,7 +454,7 @@ public class DmdlAnalyzer {
         assert folding != null;
         ModelDeclaration sourceModel = source.findDeclaration();
         assert sourceModel != null;
-        List<MappingFactor> results = new ArrayList<MappingFactor>();
+        List<MappingFactor> results = Lists.create();
         for (AstPropertyFolding propertyFolding : folding.properties) {
             PropertyDeclaration targetProperty = model.findPropertyDeclaration(propertyFolding.target.identifier);
             PropertyMappingKind mapping = resolveAggregateFunction(propertyFolding.aggregator);
@@ -494,11 +494,11 @@ public class DmdlAnalyzer {
         if (grouping == null) {
             return Collections.emptyList();
         } else {
-            Map<String, PropertySymbol> map = new HashMap<String, PropertySymbol>();
+            Map<String, PropertySymbol> map = Maps.create();
             for (PropertyDeclaration p : model.getDeclaredProperties()) {
                 map.put(p.getName().identifier, p.getSymbol());
             }
-            List<PropertySymbol> results = new ArrayList<PropertySymbol>();
+            List<PropertySymbol> results = Lists.create();
             for (AstSimpleName name : grouping.properties) {
                 PropertySymbol property = map.get(name.identifier);
                 if (property == null) {
@@ -595,7 +595,7 @@ public class DmdlAnalyzer {
 
     private class RecordExpressionResolver extends AbstractVisitor<ModelDeclaration, Void> {
 
-        final List<ModelSymbol> projections = new ArrayList<ModelSymbol>();
+        final List<ModelSymbol> projections = Lists.create();
 
         /**
          * Creates and returns a new instance.
@@ -656,7 +656,7 @@ public class DmdlAnalyzer {
         @Override
         public Void visitRecordDefinition(ModelDeclaration model, AstRecordDefinition node) {
             LOG.debug("processing record definition: {}", node);
-            Set<String> sawPropertyName = new HashSet<String>();
+            Set<String> sawPropertyName = Sets.create();
             for (AstPropertyDefinition property : node.properties) {
                 if (sawPropertyName.contains(property.name.identifier)) {
                     report(new Diagnostic(

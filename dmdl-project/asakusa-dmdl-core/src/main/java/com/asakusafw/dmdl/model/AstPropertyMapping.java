@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents a mapping function for each property.
@@ -71,7 +71,7 @@ public class AstPropertyMapping extends AbstractAstNode {
         }
         this.region = region;
         this.description = description;
-        this.attributes = Util.freeze(attributes);
+        this.attributes = Lists.freeze(attributes);
         this.source = source;
         this.target = target;
     }

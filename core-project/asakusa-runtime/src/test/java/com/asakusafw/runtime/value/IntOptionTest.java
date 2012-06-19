@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.runtime.value.IntOption;
-
 /**
  * Test for {@link IntOption}.
  */

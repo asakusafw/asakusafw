@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -29,7 +30,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Logging.Level;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * デバッグロギングを除去する。

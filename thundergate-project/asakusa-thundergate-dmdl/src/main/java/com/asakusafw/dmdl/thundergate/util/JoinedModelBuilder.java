@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.util;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,6 +24,7 @@ import com.asakusafw.dmdl.thundergate.model.JoinedModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelProperty;
 import com.asakusafw.dmdl.thundergate.model.Source;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * {@link JoinedModelDescription}を構築するビルダー。
@@ -58,7 +58,7 @@ public class JoinedModelBuilder extends ModelBuilder<JoinedModelBuilder> {
         if (right == null) {
             throw new IllegalArgumentException("right must not be null"); //$NON-NLS-1$
         }
-        this.columns = new ArrayList<String>();
+        this.columns = Lists.create();
         this.left = new Side(left);
         this.right = new Side(right);
         if (leftAlias != null) {
@@ -192,7 +192,7 @@ public class JoinedModelBuilder extends ModelBuilder<JoinedModelBuilder> {
         }
 
         // ペアの情報を元にプロパティを構築
-        List<ModelProperty> properties = new ArrayList<ModelProperty>();
+        List<ModelProperty> properties = Lists.create();
         for (String mapTo : columns) {
             SourcePair sources = pairs.get(mapTo);
             assert sources != null;
@@ -262,7 +262,7 @@ public class JoinedModelBuilder extends ModelBuilder<JoinedModelBuilder> {
             this.model = model;
             this.sources = new TreeMap<String, Source>();
             this.alias = model.getReference().getSimpleName();
-            this.condition = new ArrayList<Source>();
+            this.condition = Lists.create();
             this.mapping = new TreeMap<String, String>();
             for (Source s : model.getPropertiesAsSources()) {
                 sources.put(s.getName(), s);

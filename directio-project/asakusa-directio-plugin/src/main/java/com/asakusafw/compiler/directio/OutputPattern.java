@@ -17,9 +17,7 @@ package com.asakusafw.compiler.directio;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -30,6 +28,8 @@ import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 
 /**
@@ -100,7 +100,7 @@ public final class OutputPattern {
         if (dataType == null) {
             throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
         }
-        List<CompiledResourcePattern> results = new ArrayList<CompiledResourcePattern>();
+        List<CompiledResourcePattern> results = Lists.create();
         Cursor cursor = new Cursor(pattern);
         while (cursor.isEof() == false) {
             if (cursor.isLiteral()) {
@@ -166,8 +166,8 @@ public final class OutputPattern {
         if (dataType == null) {
             throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
         }
-        Set<String> saw = new HashSet<String>();
-        List<CompiledOrder> results = new ArrayList<CompiledOrder>();
+        Set<String> saw = Sets.create();
+        List<CompiledOrder> results = Lists.create();
         for (String order : orders) {
             boolean asc = false;
             String name = null;

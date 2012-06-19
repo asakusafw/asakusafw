@@ -18,7 +18,6 @@ package com.asakusafw.compiler.bulkloader;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +33,7 @@ import com.asakusafw.compiler.bulkloader.BulkLoaderScript.LockedOperation;
 import com.asakusafw.compiler.bulkloader.testing.model.Ex1;
 import com.asakusafw.compiler.bulkloader.testing.model.Ex2;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link BulkLoaderScript}.
@@ -45,8 +45,8 @@ public class BulkLoaderScriptTest {
      */
     @Test
     public void importers() {
-        List<ImportTable> importers = new ArrayList<ImportTable>();
-        List<ExportTable> exporters = new ArrayList<ExportTable>();
+        List<ImportTable> importers = Lists.create();
+        List<ExportTable> exporters = Lists.create();
         importers.add(new ImportTable(
                 Ex1.class,
                 "EX1",
@@ -77,8 +77,8 @@ public class BulkLoaderScriptTest {
      */
     @Test
     public void exporters() {
-        List<ImportTable> importers = new ArrayList<ImportTable>();
-        List<ExportTable> exporters = new ArrayList<ExportTable>();
+        List<ImportTable> importers = Lists.create();
+        List<ExportTable> exporters = Lists.create();
         exporters.add(new ExportTable(
                 Ex1.class,
                 "EX1",

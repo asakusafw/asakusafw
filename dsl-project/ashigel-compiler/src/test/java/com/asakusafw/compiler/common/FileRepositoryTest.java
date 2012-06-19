@@ -21,9 +21,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -36,6 +34,8 @@ import org.junit.Test;
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.util.TemporaryFolder;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * Test for {@link FileRepository}.
@@ -58,7 +58,7 @@ public class FileRepositoryTest {
         Cursor cur = repository.createCursor();
         Map<String, List<String>> entries = drain(cur);
 
-        Map<String, List<String>> expected = new HashMap<String, List<String>>();
+        Map<String, List<String>> expected = Maps.create();
         expected.put("hello.txt", Arrays.asList("Hello, world!"));
 
         assertThat(entries, is(expected));
@@ -74,7 +74,7 @@ public class FileRepositoryTest {
         Cursor cur = repository.createCursor();
         Map<String, List<String>> entries = drain(cur);
 
-        Map<String, List<String>> expected = new HashMap<String, List<String>>();
+        Map<String, List<String>> expected = Maps.create();
         expected.put("a.txt", Arrays.asList("aaa"));
         expected.put("b.txt", Arrays.asList("bbb"));
         expected.put("c.txt", Arrays.asList("ccc"));
@@ -92,7 +92,7 @@ public class FileRepositoryTest {
         Cursor cur = repository.createCursor();
         Map<String, List<String>> entries = drain(cur);
 
-        Map<String, List<String>> expected = new HashMap<String, List<String>>();
+        Map<String, List<String>> expected = Maps.create();
         expected.put("a.txt", Arrays.asList("aaa"));
         expected.put("a/b.txt", Arrays.asList("bbb"));
         expected.put("a/b/c.txt", Arrays.asList("ccc"));
@@ -110,7 +110,7 @@ public class FileRepositoryTest {
         Cursor cur = repository.createCursor();
         Map<String, List<String>> entries = drain(cur);
 
-        Map<String, List<String>> expected = new HashMap<String, List<String>>();
+        Map<String, List<String>> expected = Maps.create();
 
         assertThat(entries, is(expected));
     }
@@ -140,7 +140,7 @@ public class FileRepositoryTest {
                 Location location = cur.getLocation();
                 InputStream input = cur.openResource();
                 try {
-                    List<String> contents = new ArrayList<String>();
+                    List<String> contents = Lists.create();
                     Scanner scanner = new Scanner(input, "UTF-8");
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();

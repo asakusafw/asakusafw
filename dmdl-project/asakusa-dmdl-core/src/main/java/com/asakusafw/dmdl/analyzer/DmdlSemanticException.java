@@ -15,11 +15,11 @@
  */
 package com.asakusafw.dmdl.analyzer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.Diagnostic;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * DMDL Semantic Error.
@@ -28,7 +28,7 @@ public class DmdlSemanticException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private final ArrayList<Diagnostic> diagnostics;
+    private final List<Diagnostic> diagnostics;
 
     /**
      * Creates and returns a new instance.
@@ -43,7 +43,7 @@ public class DmdlSemanticException extends Exception {
         if (diagnostics == null) {
             throw new IllegalArgumentException("diagnostics must not be null"); //$NON-NLS-1$
         }
-        this.diagnostics = new ArrayList<Diagnostic>(diagnostics);
+        this.diagnostics = Lists.from(diagnostics);
     }
 
     /**

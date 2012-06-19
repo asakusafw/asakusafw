@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,15 +45,16 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.MapUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * Describes compiled workflow.
@@ -73,8 +73,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }
@@ -195,7 +194,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
     }
 
     private List<Stage> sort(Set<Stage> stages) {
-        List<Stage> results = new ArrayList<Stage>();
+        List<Stage> results = Lists.create();
         Collections.sort(results, new Comparator<Stage>() {
             @Override
             public int compare(Stage o1, Stage o2) {

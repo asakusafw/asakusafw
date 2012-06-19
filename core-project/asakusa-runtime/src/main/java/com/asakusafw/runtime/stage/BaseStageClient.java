@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage;
 import static com.asakusafw.runtime.stage.StageConstants.*;
 
 import java.text.MessageFormat;
+
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 

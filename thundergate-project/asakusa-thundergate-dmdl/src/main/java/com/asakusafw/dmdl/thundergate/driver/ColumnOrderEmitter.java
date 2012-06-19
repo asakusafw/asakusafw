@@ -15,19 +15,19 @@
  */
 package com.asakusafw.dmdl.thundergate.driver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.bulkloader.ColumnOrder;
 
 /**
  * Emits {@link ColumnOrder} annotations.
@@ -37,7 +37,7 @@ public class ColumnOrderEmitter extends JavaDataModelDriver {
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {
         ModelFactory f = context.getModelFactory();
-        List<Expression> columns = new ArrayList<Expression>();
+        List<Expression> columns = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             columns.add(Models.toLiteral(f, OriginalNameEmitter.getOriginalName(property)));
         }

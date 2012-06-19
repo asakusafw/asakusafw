@@ -15,7 +15,6 @@
  */
 package com.asakusafw.dmdl.thundergate.driver;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,12 +22,13 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
-import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.bulkloader.PrimaryKey;
 
 /**
  * Emits {@link PrimaryKey} annotations.
@@ -42,7 +42,7 @@ public class PrimaryKeyEmitter extends JavaDataModelDriver {
             return Collections.emptyList();
         }
         ModelFactory f = context.getModelFactory();
-        List<Expression> properties = new ArrayList<Expression>();
+        List<Expression> properties = Lists.create();
         for (PropertySymbol property : trait.getProperties()) {
             String name = context.getFieldName(property.findDeclaration()).getToken();
             properties.add(Models.toLiteral(f, name));

@@ -27,8 +27,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /**
- * 変更不可能なリンクリスト。
- * @param <E> 保持する要素の型
+ * Unmodifiable linked list.
+ * @param <E> element type
  */
 public class SingleLinkedList<E> implements Iterable<E>, Serializable {
 
@@ -37,16 +37,16 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     private transient Node<E> head;
 
     /**
-     * 要素を含まないリストを作成して返す。
+     * Creates a new instance without elements.
      */
     public SingleLinkedList() {
         head = null;
     }
 
     /**
-     * 指定のリストのコピーを返す。
-     * @param list コピー元のリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance from {@link List}.
+     * @param list target list
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public SingleLinkedList(List<? extends E> list) {
         if (list == null) {
@@ -56,27 +56,15 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * 指定のリストのコピーを返す。
-     * @param list コピー元のリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance from {@link Iterable}.
+     * @param iterable target iterable
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public SingleLinkedList(SingleLinkedList<? extends E> list) {
-        if (list == null) {
-            throw new IllegalArgumentException("list must not be null"); //$NON-NLS-1$
+    public SingleLinkedList(Iterable<? extends E> iterable) {
+        if (iterable == null) {
+            throw new IllegalArgumentException("iterable must not be null"); //$NON-NLS-1$
         }
-        head = restoreFromList(list.fill(new ArrayList<E>()));
-    }
-
-    /**
-     * 指定のコレクションのコピーを返す。
-     * @param collection コピー元のコレクション
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     */
-    public SingleLinkedList(Collection<? extends E> collection) {
-        if (collection == null) {
-            throw new IllegalArgumentException("collection must not be null"); //$NON-NLS-1$
-        }
-        head = restoreFromList(new ArrayList<E>(collection));
+        head = restoreFromList(Lists.from(iterable));
     }
 
     private SingleLinkedList(Node<E> head) {
@@ -84,16 +72,16 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * このリストが空のリストである場合のみ{@code null}を返す。
-     * @return 空のリストである場合のみ{@code null}
+     * Returns whether this list has no elements.
+     * @return {@code true} if this list is empty, otherwise {@code false}
      */
     public boolean isEmpty() {
         return head == null;
     }
 
     /**
-     * このリストに含まれる要素数を返す。
-     * @return このリストに含まれる要素数
+     * Returns number of elements in this list.
+     * @return number of elements in this list
      */
     public int size() {
         int size = 0;
@@ -104,20 +92,20 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * このリストの先頭に指定の値を追加した新しいリストを返す。
-     * この操作によって、このリストの状態は変更されない。
-     * @param value 追加する値
-     * @return 先頭に指定の値を追加した新しいリスト
+     * Creates and returns a new list with the value in head of this list.
+     * This operation does not modify this list.
+     * @param element target element
+     * @return the created list
      */
-    public SingleLinkedList<E> concat(E value) {
-        Node<E> next = new Node<E>(value, head);
+    public SingleLinkedList<E> concat(E element) {
+        Node<E> next = new Node<E>(element, head);
         return new SingleLinkedList<E>(next);
     }
 
     /**
-     * このリストの先頭の要素を返す。
-     * @return 先頭の要素
-     * @throws NoSuchElementException このリストが空であった場合
+     * Returns the first element in this list.
+     * @return the first element
+     * @throws NoSuchElementException if this list is empty
      */
     public E first() {
         if (isEmpty()) {
@@ -127,9 +115,9 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * このリストの先頭の要素を返す。
-     * @return 先頭の要素
-     * @throws NoSuchElementException このリストが空であった場合
+     * Returns a new list dropping the first element from this list.
+     * @return the rest of list
+     * @throws NoSuchElementException if this list is empty
      */
     public SingleLinkedList<E> rest() {
         if (isEmpty()) {
@@ -139,11 +127,10 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * このリストの{@code index}番目の要素を返す。
-     * {@code index}は0以上で指定し、0が指定された場合に最初の要素を返す。
-     * @param index 対象の要素番号
-     * @return {@code index}番目の要素
-     * @throws IndexOutOfBoundsException 範囲外の要素番号を指定した場合
+     * Returns the {@code index}th element in this list.
+     * @param index target element index (0-origin)
+     * @return {@code index}th element
+     * @throws IndexOutOfBoundsException if index is out of bound
      */
     public E get(int index) {
         if (index < 0) {
@@ -165,11 +152,11 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * この要素の内容を指定のコレクションにコピーして返す。
-     * @param <C> コレクションの型
-     * @param target 追加先のコレクション
-     * @return 引数に渡されたコレクション
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Fills elements in this list into the target {@link Collection}.
+     * @param <C> collection type
+     * @param target the target collection
+     * @return same as {@code target}
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public <C extends Collection<? super E>> C fill(C target) {
         if (target == null) {

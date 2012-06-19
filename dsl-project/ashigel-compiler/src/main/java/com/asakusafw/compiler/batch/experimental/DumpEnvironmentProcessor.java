@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.processor.ScriptWorkDescriptionProcessor;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * 環境変数{@code ASAKUSA_*}、およびシステムプロパティ{@code com.asakusafw.*}の一覧を出力する。
@@ -77,8 +77,7 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         results.add(ScriptWorkDescriptionProcessor.class);
         return results;

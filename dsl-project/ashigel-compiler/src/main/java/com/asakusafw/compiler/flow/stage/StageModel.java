@@ -16,9 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +27,8 @@ import com.asakusafw.compiler.flow.FlowElementProcessor.Kind;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageBlock;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -128,8 +128,8 @@ public class StageModel {
      * @return サイドデータ入力の一覧
      */
     public Set<InputDescription> getSideDataInputs() {
-        Set<ResourceFragment> resources = new HashSet<ResourceFragment>();
-        List<Unit<?>> units = new ArrayList<Unit<?>>();
+        Set<ResourceFragment> resources = Sets.create();
+        List<Unit<?>> units = Lists.create();
         units.addAll(getMapUnits());
         units.addAll(getReduceUnits());
         for (Unit<?> unit : units) {
@@ -137,7 +137,7 @@ public class StageModel {
                 resources.addAll(fragment.getResources());
             }
         }
-        Set<InputDescription> results = new HashSet<InputDescription>();
+        Set<InputDescription> results = Sets.create();
         for (ResourceFragment resource : resources) {
             results.addAll(resource.getDescription().getSideDataInputs());
         }
@@ -334,7 +334,7 @@ public class StageModel {
                 throw new IllegalArgumentException();
             }
             this.serialNumber = serialNumber;
-            this.factors = new ArrayList<Factor>(factors);
+            this.factors = Lists.from(factors);
             this.resources = resources;
         }
 

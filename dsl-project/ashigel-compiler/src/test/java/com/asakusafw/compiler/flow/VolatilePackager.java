@@ -23,7 +23,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.batch.MockEmitter;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassFile;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassOutputManager;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
@@ -165,7 +165,7 @@ public class VolatilePackager
                         Locale.getDefault(),
                         CHARSET));
         try {
-            List<String> arguments = new ArrayList<String>();
+            List<String> arguments = Lists.create();
             Collections.addAll(arguments, "-source", "1.6");
             Collections.addAll(arguments, "-target", "1.6");
             Collections.addAll(arguments, "-encoding", CHARSET.name());

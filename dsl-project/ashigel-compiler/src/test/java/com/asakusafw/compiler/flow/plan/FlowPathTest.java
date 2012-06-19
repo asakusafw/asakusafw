@@ -19,12 +19,12 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -238,7 +238,7 @@ public class FlowPathTest {
     }
 
     private Set<FlowElementInput> input(Collection<FlowBlock.Input> inputs) {
-        Set<FlowElementInput> results = new HashSet<FlowElementInput>();
+        Set<FlowElementInput> results = Sets.create();
         for (FlowBlock.Input port : inputs) {
             results.add(port.getElementPort());
         }
@@ -246,7 +246,7 @@ public class FlowPathTest {
     }
 
     private Set<FlowElementOutput> output(Collection<FlowBlock.Output> outputs) {
-        Set<FlowElementOutput> results = new HashSet<FlowElementOutput>();
+        Set<FlowElementOutput> results = Sets.create();
         for (FlowBlock.Output port : outputs) {
             results.add(port.getElementPort());
         }

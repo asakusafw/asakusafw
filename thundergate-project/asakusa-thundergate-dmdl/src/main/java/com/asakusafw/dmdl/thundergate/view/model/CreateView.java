@@ -16,13 +16,12 @@
 package com.asakusafw.dmdl.thundergate.view.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.asakusafw.dmdl.thundergate.model.Aggregator;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * {@code CREATE VIEW ~}.
@@ -75,11 +74,9 @@ public class CreateView {
             throw new IllegalArgumentException("groupBy must not be null"); //$NON-NLS-1$
         }
         this.name = name;
-        this.selectList = Collections.unmodifiableList(new ArrayList<Select>(
-                selectList));
+        this.selectList = Lists.freeze(selectList);
         this.from = from;
-        this.groupBy = Collections
-                .unmodifiableList(new ArrayList<Name>(groupBy));
+        this.groupBy = Lists.freeze(groupBy);
     }
 
     /**
@@ -111,7 +108,7 @@ public class CreateView {
      * @return the dependent models
      */
     public Set<Name> getDependencies() {
-        Set<Name> results = new HashSet<Name>();
+        Set<Name> results = Sets.create();
         results.add(from.table);
         if (from.join != null) {
             results.add(from.join.table);

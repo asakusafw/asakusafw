@@ -15,8 +15,6 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import com.asakusafw.vocabulary.batch.BatchDescription;
-import com.asakusafw.vocabulary.batch.Work;
 
 /**
  * グラフ構造。

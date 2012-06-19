@@ -15,9 +15,9 @@
  */
 package com.asakusafw.dmdl.thundergate.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * モデルの構造。
@@ -43,8 +43,7 @@ public abstract class ModelDescription {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
         this.reference = reference;
-        this.properties = Collections.unmodifiableList(
-                new ArrayList<ModelProperty>(properties));
+        this.properties = Lists.freeze(properties);
     }
 
     /**
@@ -68,7 +67,7 @@ public abstract class ModelDescription {
      * @return このモデルが有するプロパティの一覧
      */
     public List<Source> getPropertiesAsSources() {
-        List<Source> results = new ArrayList<Source>();
+        List<Source> results = Lists.create();
         for (ModelProperty property : getProperties()) {
             Source source = convertPropertyToSource(property);
             results.add(source);

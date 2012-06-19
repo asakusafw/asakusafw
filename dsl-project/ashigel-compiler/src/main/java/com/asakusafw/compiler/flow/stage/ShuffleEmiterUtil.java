@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +23,7 @@ import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
@@ -51,7 +51,7 @@ final class ShuffleEmiterUtil {
     public static final String PORT_TO_ELEMENT = "portIdToElementId";
 
     public static List<List<Segment>> groupByElement(ShuffleModel model) {
-        List<List<Segment>> results = new ArrayList<List<Segment>>();
+        List<List<Segment>> results = Lists.create();
         List<Segment> lastSegment = Collections.emptyList();
         int lastElementId = -1;
         for (Segment segment : model.getSegments()) {
@@ -60,7 +60,7 @@ final class ShuffleEmiterUtil {
                 if (lastSegment.isEmpty() == false) {
                     results.add(lastSegment);
                 }
-                lastSegment = new ArrayList<Segment>();
+                lastSegment = Lists.create();
             }
             lastSegment.add(segment);
         }
@@ -125,7 +125,7 @@ final class ShuffleEmiterUtil {
     public static MethodDeclaration createPortToElement(
             ModelFactory factory,
             ShuffleModel model) {
-        List<Statement> cases = new ArrayList<Statement>();
+        List<Statement> cases = Lists.create();
         for (List<Segment> segments : groupByElement(model)) {
             for (Segment segment : segments) {
                 cases.add(factory.newSwitchCaseLabel(

@@ -16,18 +16,19 @@
 package com.asakusafw.compiler.flow.jobflow;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
+import com.asakusafw.runtime.stage.BaseStageClient;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -120,7 +121,7 @@ public class CleanupStageClientEmitter {
 
         private TypeDeclaration createType() {
             importer.resolvePackageMember(fqn.getSimpleName());
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = Lists.create();
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             return factory.newClassDeclaration(
@@ -137,7 +138,7 @@ public class CleanupStageClientEmitter {
         }
 
         private List<MethodDeclaration> createIdMethods() {
-            List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+            List<MethodDeclaration> results = Lists.create();
             results.add(createValueMethod(
                     BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),

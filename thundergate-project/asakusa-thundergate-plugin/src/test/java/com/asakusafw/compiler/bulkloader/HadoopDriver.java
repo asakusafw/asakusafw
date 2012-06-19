@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -42,6 +41,7 @@ import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.ToolLauncher;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * A driver for control Hadoop jobs for testing.
@@ -124,7 +124,7 @@ public class HadoopDriver implements Closeable {
         }
         copyFromHadoop(location.toPath('/'), temp);
 
-        List<ModelInput<T>> sources = new ArrayList<ModelInput<T>>();
+        List<ModelInput<T>> sources = Lists.create();
         if (location.isPrefix()) {
             for (File file : temp.listFiles()) {
                 if (file.isFile() && file.getName().startsWith("_") == false) {
@@ -214,7 +214,7 @@ public class HadoopDriver implements Closeable {
             throw new IllegalArgumentException("className must not be null"); //$NON-NLS-1$
         }
         LOG.info("run {} with {}", className, jarFile);
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = Lists.create();
         arguments.add("jar");
         arguments.add(jarFile.getAbsolutePath());
         arguments.add(ToolLauncher.class.getName());
@@ -272,7 +272,7 @@ public class HadoopDriver implements Closeable {
 
     private int invoke(String... arguments) throws IOException {
         String hadoop = getHadoop();
-        List<String> commands = new ArrayList<String>();
+        List<String> commands = Lists.create();
         commands.add(hadoop);
         Collections.addAll(commands, arguments);
 

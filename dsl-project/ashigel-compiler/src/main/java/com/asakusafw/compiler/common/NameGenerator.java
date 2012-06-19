@@ -15,9 +15,9 @@
  */
 package com.asakusafw.compiler.common;
 
-import java.util.HashSet;
 import java.util.Set;
 
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 
@@ -26,9 +26,9 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
  */
 public class NameGenerator {
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private Set<String> used = new HashSet<String>();
+    private final Set<String> used = Sets.create();
 
     /**
      * インスタンスを生成する。

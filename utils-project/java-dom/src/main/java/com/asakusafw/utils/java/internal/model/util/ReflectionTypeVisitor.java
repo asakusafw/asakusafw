@@ -69,7 +69,7 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
      * @param context コンテキストオブジェクト(省略可)
      * @return 再束縛された{@code visit*}の実行結果
      * @throws E 再束縛された{@code visit*}の実行中に例外が発生した場合
-     * @thwows IllArgumentException
+     * @throws IllegalArgumentException
      *     引数{@code type}が
      *     {@link Class},
      *     {@link GenericArrayType},

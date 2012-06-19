@@ -16,12 +16,11 @@
 package com.asakusafw.runtime.stage.directio;
 
 import static com.asakusafw.runtime.stage.directio.StringTemplate.Format.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import org.apache.hadoop.io.DataInputBuffer;
 import org.apache.hadoop.io.DataOutputBuffer;

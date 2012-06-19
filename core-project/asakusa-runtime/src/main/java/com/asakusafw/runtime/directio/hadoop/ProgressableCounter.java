@@ -18,6 +18,7 @@ package com.asakusafw.runtime.directio.hadoop;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.util.Progressable;
+
 import com.asakusafw.runtime.directio.Counter;
 
 /**

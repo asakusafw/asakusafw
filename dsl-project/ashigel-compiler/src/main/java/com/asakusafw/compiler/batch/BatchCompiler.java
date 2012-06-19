@@ -18,12 +18,12 @@ package com.asakusafw.compiler.batch;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.BatchDescription;
@@ -74,7 +74,7 @@ public class BatchCompiler {
 
     private void processWorkflow(Workflow workflow) throws IOException {
         assert workflow != null;
-        Set<WorkDescription> descriptions = new HashSet<WorkDescription>();
+        Set<WorkDescription> descriptions = Sets.create();
         for (Workflow.Unit unit : workflow.getGraph().getNodeSet()) {
             descriptions.add(unit.getDescription());
         }
@@ -113,7 +113,7 @@ public class BatchCompiler {
     private Workflow createWorkflow(BatchDescription description) {
         assert description != null;
         Collection<Work> works = description.getWorks();
-        Map<Work, Workflow.Unit> units = new HashMap<Work, Workflow.Unit>();
+        Map<Work, Workflow.Unit> units = Maps.create();
         for (Work work : works) {
             units.put(work, new Workflow.Unit(work.getDescription()));
         }

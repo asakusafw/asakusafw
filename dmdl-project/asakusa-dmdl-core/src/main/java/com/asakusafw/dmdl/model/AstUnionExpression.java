@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.model;
 import java.util.List;
 
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Represents union of some model structures.
@@ -47,7 +47,7 @@ public class AstUnionExpression<T extends AstTerm<T>> extends AbstractAstNode
             throw new IllegalArgumentException("expressions must not be null"); //$NON-NLS-1$
         }
         this.region = region;
-        this.terms = Util.freeze(terms);
+        this.terms = Lists.freeze(terms);
     }
 
     @Override

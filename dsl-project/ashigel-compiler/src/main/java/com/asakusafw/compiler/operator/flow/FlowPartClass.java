@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.element.TypeElement;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
@@ -60,10 +60,10 @@ public class FlowPartClass {
         Precondition.checkMustNotBeNull(outputPorts, "outputPorts"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(parameters, "parameters"); //$NON-NLS-1$
         this.element = element;
-        this.documentation = new ArrayList<DocElement>(documentation);
-        this.inputPorts = new ArrayList<OperatorPortDeclaration>(inputPorts);
-        this.outputPorts = new ArrayList<OperatorPortDeclaration>(outputPorts);
-        this.parameters = new ArrayList<OperatorPortDeclaration>(parameters);
+        this.documentation = Lists.from(documentation);
+        this.inputPorts = Lists.from(inputPorts);
+        this.outputPorts = Lists.from(outputPorts);
+        this.parameters = Lists.from(parameters);
     }
 
     /**

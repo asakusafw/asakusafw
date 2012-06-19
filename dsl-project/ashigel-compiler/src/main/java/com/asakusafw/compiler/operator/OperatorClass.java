@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.operator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * 演算子クラスの構造を表現する。
@@ -40,7 +40,7 @@ public class OperatorClass {
     public OperatorClass(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         this.element = type;
-        this.methods = new ArrayList<OperatorMethod>();
+        this.methods = Lists.create();
     }
 
     /**

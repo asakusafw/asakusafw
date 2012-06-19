@@ -21,8 +21,6 @@ import static org.junit.Assert.*;
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
-import com.asakusafw.runtime.value.StringOption;
-
 /**
  * Test for {@link StringOption}.
  */

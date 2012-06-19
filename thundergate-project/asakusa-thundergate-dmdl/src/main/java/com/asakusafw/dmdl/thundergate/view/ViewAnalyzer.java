@@ -16,8 +16,6 @@
 package com.asakusafw.dmdl.thundergate.view;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +34,8 @@ import com.asakusafw.dmdl.thundergate.view.model.CreateView.Kind;
 import com.asakusafw.dmdl.thundergate.view.model.Name;
 import com.asakusafw.dmdl.thundergate.view.model.On;
 import com.asakusafw.dmdl.thundergate.view.model.Select;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 
@@ -46,7 +46,7 @@ public class ViewAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(ViewAnalyzer.class);
 
-    private final List<CreateView> added = new ArrayList<CreateView>();
+    private final List<CreateView> added = Lists.create();
 
     /**
      * この解析器に指定のビューを追加する。
@@ -74,8 +74,8 @@ public class ViewAnalyzer {
         LOG.info("ビューの関係を解析しています ({}個のビュー)", added.size());
         List<CreateView> sorted = sort();
 
-        Map<Name, ModelDescription> context = new HashMap<Name, ModelDescription>();
-        List<ModelDescription> analyzed = new ArrayList<ModelDescription>();
+        Map<Name, ModelDescription> context = Maps.create();
+        List<ModelDescription> analyzed = Lists.create();
         for (CreateView view : sorted) {
             LOG.info("ビューの構造を解析しています: {}", view.name);
             ModelDescription model = transform(view, repository, context);
@@ -211,7 +211,7 @@ public class ViewAnalyzer {
     }
 
     private List<CreateView> sort() {
-        Map<Name, CreateView> map = new HashMap<Name, CreateView>();
+        Map<Name, CreateView> map = Maps.create();
         Graph<Name> dependencies = Graphs.newInstance();
         for (CreateView view : added) {
             Name name = view.name;
@@ -232,7 +232,7 @@ public class ViewAnalyzer {
         // 依存関係の逆順に整列
         List<Name> sorted = Graphs.sortPostOrder(dependencies);
 
-        List<CreateView> results = new ArrayList<CreateView>();
+        List<CreateView> results = Lists.create();
         for (Name name : sorted) {
             // 外部参照でないものについてのみ結果に残す
             CreateView view = map.get(name);

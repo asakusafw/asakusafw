@@ -18,11 +18,8 @@ package com.asakusafw.compiler.windgate;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -46,6 +43,9 @@ import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
 import com.asakusafw.compiler.flow.mapreduce.parallel.SlotResolver;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -157,7 +157,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
 
-        List<Slot> slots = new ArrayList<Slot>();
+        List<Slot> slots = Lists.create();
         for (Output output : context.getOutputs()) {
             Slot slot = toSlot(output);
             slots.add(slot);
@@ -177,7 +177,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     private Slot toSlot(Output output) {
-        List<Slot.Input> inputs = new ArrayList<Slot.Input>();
+        List<Slot.Input> inputs = Lists.create();
         for (SourceInfo source : output.getSources()) {
             Class<? extends InputFormat<?, ?>> format = source.getFormat();
             for (Location location : source.getLocations()) {
@@ -266,32 +266,22 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Map<String, GateScript> toImporterScripts(Collection<Input> inputs) {
         assert inputs != null;
-        Map<String, List<ProcessScript<?>>> processes = new HashMap<String, List<ProcessScript<?>>>();
+        Map<String, List<ProcessScript<?>>> processes = Maps.create();
         for (Input input : inputs) {
             String profileName = extract(input.getDescription()).getProfileName();
-            List<ProcessScript<?>> list = processes.get(profileName);
-            if (list == null) {
-                list = new ArrayList<ProcessScript<?>>();
-                processes.put(profileName, list);
-            }
             ProcessScript<?> process = toProcessScript(input);
-            list.add(process);
+            Maps.addToList(processes, profileName, process);
         }
         return toGateScripts(processes);
     }
 
     private Map<String, GateScript> toExporterScripts(Collection<Output> outputs) {
         assert outputs != null;
-        Map<String, List<ProcessScript<?>>> processes = new HashMap<String, List<ProcessScript<?>>>();
+        Map<String, List<ProcessScript<?>>> processes = Maps.create();
         for (Output output : outputs) {
             String profileName = extract(output.getDescription()).getProfileName();
-            List<ProcessScript<?>> list = processes.get(profileName);
-            if (list == null) {
-                list = new ArrayList<ProcessScript<?>>();
-                processes.put(profileName, list);
-            }
             ProcessScript<?> process = toProcessScript(output);
-            list.add(process);
+            Maps.addToList(processes, profileName, process);
         }
         return toGateScripts(processes);
     }
@@ -382,12 +372,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public ExternalIoCommandProvider createCommandProvider(IoContext context) {
-        Set<String> importers = new HashSet<String>();
+        Set<String> importers = Sets.create();
         for (Input input : context.getInputs()) {
             WindGateImporterDescription desc = extract(input.getDescription());
             importers.add(desc.getProfileName());
         }
-        Set<String> exporters = new HashSet<String>();
+        Set<String> exporters = Sets.create();
         for (Output output : context.getOutputs()) {
             WindGateExporterDescription desc = extract(output.getDescription());
             exporters.add(desc.getProfileName());
@@ -451,9 +441,9 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getImportCommand(CommandContext context) {
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             for (String profile : importers) {
-                List<String> commands = new ArrayList<String>();
+                List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_PROCESS);
                 commands.add(profile);
                 if (exporters.contains(profile)) {
@@ -477,9 +467,9 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getExportCommand(CommandContext context) {
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             for (String profile : exporters) {
-                List<String> commands = new ArrayList<String>();
+                List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_PROCESS);
                 commands.add(profile);
                 if (importers.contains(profile)) {
@@ -506,9 +496,9 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             SortedSet<String> union = new TreeSet<String>();
             union.addAll(importers);
             union.addAll(exporters);
-            List<Command> results = new ArrayList<Command>();
+            List<Command> results = Lists.create();
             for (String profile : union) {
-                List<String> commands = new ArrayList<String>();
+                List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_FINALIZE);
                 commands.add(profile);
                 commands.add(batchId);

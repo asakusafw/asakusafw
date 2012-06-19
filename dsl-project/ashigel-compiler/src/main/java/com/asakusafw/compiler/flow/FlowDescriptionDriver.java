@@ -16,13 +16,13 @@
 package com.asakusafw.compiler.flow;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
@@ -40,11 +40,11 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  */
 public class FlowDescriptionDriver {
 
-    private List<Object> ports = new ArrayList<Object>();
+    private final List<Object> ports = Lists.create();
 
-    private Map<String, FlowIn<?>> inputs = new LinkedHashMap<String, FlowIn<?>>();
+    private final Map<String, FlowIn<?>> inputs = new LinkedHashMap<String, FlowIn<?>>();
 
-    private Map<String, FlowOut<?>> outputs = new LinkedHashMap<String, FlowOut<?>>();
+    private final Map<String, FlowOut<?>> outputs = new LinkedHashMap<String, FlowOut<?>>();
 
     /**
      * 指定の名前とインポーター記述を持つ入力を作成する。
@@ -171,8 +171,8 @@ NamePart: one of
         description.start();
         FlowGraph result = new FlowGraph(
                 description.getClass(),
-                new ArrayList<FlowIn<?>>(inputs.values()),
-                new ArrayList<FlowOut<?>>(outputs.values()));
+                Lists.from(inputs.values()),
+                Lists.from(outputs.values()));
         inputs.clear();
         outputs.clear();
         return result;

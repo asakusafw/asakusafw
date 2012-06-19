@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.ModelOutput;

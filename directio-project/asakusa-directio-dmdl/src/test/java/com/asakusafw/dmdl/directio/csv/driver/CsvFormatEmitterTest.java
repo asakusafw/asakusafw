@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -47,6 +46,7 @@ import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link CsvFormatEmitter}.
@@ -355,7 +355,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        List<Object> expected = new ArrayList<Object>();
+        List<Object> expected = Lists.create();
         for (int line = 0; line < 100; line++) {
             ModelWrapper buffer = loaded.newModel("Tuple");
             buffer.set("f1", new Text("f1:" + (line * 1)));
@@ -368,7 +368,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         byte[] bytes = output.toByteArray();
 
         for (int attempt = 0; attempt < 100; attempt++) {
-            List<Object> actual = new ArrayList<Object>();
+            List<Object> actual = Lists.create();
             int[] fragment = new int[random.nextInt(100) + 2];
             fragment[0] = output.size();
             for (int i = 1; i < fragment.length; i++) {
@@ -484,7 +484,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
         ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
         CsvParser parser = new CsvParser(input, string, conf);
-        List<String[]> results = new ArrayList<String[]>();
+        List<String[]> results = Lists.create();
         try {
             StringOption buffer = new StringOption();
             while (parser.next()) {

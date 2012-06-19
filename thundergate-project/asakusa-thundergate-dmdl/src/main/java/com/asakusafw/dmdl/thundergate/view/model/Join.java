@@ -16,9 +16,9 @@
 package com.asakusafw.dmdl.thundergate.view.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import com.asakusafw.utils.collections.Lists;
 
 /**
  * {@code JOIN ~ ON ~}.
@@ -56,7 +56,7 @@ public class Join {
         }
         this.table = table;
         this.alias = alias;
-        this.condition = Collections.unmodifiableList(new ArrayList<On>(condition));
+        this.condition = Lists.freeze(condition);
     }
 
     @Override

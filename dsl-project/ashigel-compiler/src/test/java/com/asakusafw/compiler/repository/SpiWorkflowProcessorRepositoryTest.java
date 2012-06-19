@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +37,8 @@ import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.WorkflowProcessor;
 import com.asakusafw.compiler.flow.example.SimpleJobFlow;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
@@ -207,7 +208,7 @@ public class SpiWorkflowProcessorRepositoryTest {
     }
 
     private Set<Object> classes(Set<?> instances) {
-        Set<Object> results = new HashSet<Object>();
+        Set<Object> results = Sets.create();
         for (Object t : instances) {
             results.add(t.getClass());
         }
@@ -215,7 +216,7 @@ public class SpiWorkflowProcessorRepositoryTest {
     }
 
     private <T> Matcher<? super Set<T>> contains(T... values) {
-        Set<T> expect = new HashSet<T>();
+        Set<T> expect = Sets.create();
         Collections.addAll(expect, values);
         return is(expect);
     }
@@ -226,8 +227,7 @@ public class SpiWorkflowProcessorRepositoryTest {
         }
         @Override
         public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-            List<Class<? extends WorkDescriptionProcessor<?>>> results =
-                new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+            List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
             results.add(MockDescProc1.class);
             return results;
         }
@@ -243,8 +243,7 @@ public class SpiWorkflowProcessorRepositoryTest {
         }
         @Override
         public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-            List<Class<? extends WorkDescriptionProcessor<?>>> results =
-                new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+            List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
             results.add(MockDescProc1.class);
             results.add(MockDescProc2.class);
             return results;
@@ -261,8 +260,7 @@ public class SpiWorkflowProcessorRepositoryTest {
         }
         @Override
         public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-            List<Class<? extends WorkDescriptionProcessor<?>>> results =
-                new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+            List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
             results.add(MockDescProc3.class);
             return results;
         }

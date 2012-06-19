@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.java.emitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.dmdl.util.Util;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -52,12 +51,12 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
         if (serviceClassLoader == null) {
             throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
         }
-        this.drivers = Util.freeze(loadSpi(serviceClassLoader));
+        this.drivers = Lists.freeze(loadSpi(serviceClassLoader));
     }
 
     private List<JavaDataModelDriver> loadSpi(ClassLoader serviceClassLoader) {
         assert serviceClassLoader != null;
-        List<JavaDataModelDriver> results = new ArrayList<JavaDataModelDriver>();
+        List<JavaDataModelDriver> results = Lists.create();
         ServiceLoader<JavaDataModelDriver> loader =
             ServiceLoader.load(JavaDataModelDriver.class, serviceClassLoader);
         for (JavaDataModelDriver driver : loader) {
@@ -87,7 +86,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
         if (drivers == null) {
             throw new IllegalArgumentException("drivers must not be null"); //$NON-NLS-1$
         }
-        this.drivers = Util.freeze(drivers);
+        this.drivers = Lists.freeze(drivers);
     }
 
     /**
@@ -107,7 +106,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException {
-        List<Type> results = new ArrayList<Type>();
+        List<Type> results = Lists.create();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getInterfaces(context, model));
         }
@@ -116,7 +115,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<FieldDeclaration> getFields(EmitContext context, ModelDeclaration model) throws IOException {
-        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        List<FieldDeclaration> results = Lists.create();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getFields(context, model));
         }
@@ -125,7 +124,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) throws IOException {
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getMethods(context, model));
         }
@@ -134,7 +133,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException {
-        List<Annotation> results = new ArrayList<Annotation>();
+        List<Annotation> results = Lists.create();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getTypeAnnotations(context, model));
         }
@@ -143,7 +142,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) throws IOException {
-        List<Annotation> results = new ArrayList<Annotation>();
+        List<Annotation> results = Lists.create();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getMemberAnnotations(context, property));
         }

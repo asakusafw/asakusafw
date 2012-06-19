@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -50,6 +49,7 @@ import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -262,7 +262,7 @@ public class CompilerTester implements TestRule {
     }
 
     private List<File> buildClassPath(Class<?>... libraryClasses) {
-        List<File> classPath = new ArrayList<File>();
+        List<File> classPath = Lists.create();
         classPath.add(findClassPathFromClass(StageConstants.class));
         for (Class<?> libraryClass : libraryClasses) {
             classPath.add(findClassPathFromClass(libraryClass));
@@ -446,7 +446,7 @@ public class CompilerTester implements TestRule {
             Location location) throws IOException {
         ModelInput<T> input = hadoop.openInput(type, location);
         try {
-            List<T> results = new ArrayList<T>();
+            List<T> results = Lists.create();
             while (true) {
                 T target = type.newInstance();
                 if (input.readTo(target) == false) {
@@ -583,7 +583,7 @@ public class CompilerTester implements TestRule {
         public List<T> toList() throws IOException {
             ModelInput<T> input = hadoop.openInput(type, pathPrefix);
             try {
-                List<T> results = new ArrayList<T>();
+                List<T> results = Lists.create();
                 while (true) {
                     T target = type.newInstance();
                     if (input.readTo(target) == false) {

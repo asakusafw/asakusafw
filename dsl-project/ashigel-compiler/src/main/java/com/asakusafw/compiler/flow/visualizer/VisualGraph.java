@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.visualizer;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * 可視化用のグラフ。
@@ -42,7 +42,7 @@ public class VisualGraph implements VisualNode {
     public VisualGraph(String label, Set<? extends VisualNode> nodes) {
         Precondition.checkMustNotBeNull(nodes, "nodes"); //$NON-NLS-1$
         this.label = label;
-        this.nodes = new HashSet<VisualNode>(nodes);
+        this.nodes = Sets.from(nodes);
     }
 
     /**

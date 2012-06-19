@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.thundergate.driver;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +30,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -67,7 +67,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         CacheSupportTrait trait = model.getTrait(CacheSupportTrait.class);
         assert trait != null;
 
-        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        List<FieldDeclaration> results = Lists.create();
         if (trait.getDeleteFlagValue() != null) {
             results.add(createDeleteFlagValueField(context, model, trait.getDeleteFlagValue()));
         }
@@ -82,7 +82,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         CacheSupportTrait trait = model.getTrait(CacheSupportTrait.class);
         assert trait != null;
 
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         results.add(createModelVersionMethod(context, model, trait));
         results.add(createTimestampColumnMethod(context, model, trait.getTimestamp()));
         results.add(createSystemIdMethod(context, model, trait.getSid()));
@@ -138,7 +138,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         assert model != null;
         assert trait != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         statements.add(new ExpressionBuilder(f, Models.toLiteral(f, computeModelVersion(context, model, trait)))
             .toReturnStatement());
         return f.newMethodDeclaration(
@@ -180,7 +180,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         assert timestamp != null;
         ModelFactory f = context.getModelFactory();
         String name = OriginalNameEmitter.getOriginalName(timestamp.findDeclaration());
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         statements.add(new ExpressionBuilder(f, Models.toLiteral(f, name))
             .toReturnStatement());
         return f.newMethodDeclaration(
@@ -203,7 +203,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         assert model != null;
         assert sid != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         statements.add(new ExpressionBuilder(f, f.newThis())
             .method(context.getValueGetterName(sid.findDeclaration()))
             .toReturnStatement());
@@ -226,7 +226,7 @@ public class CacheSupportEmitter extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         if (deleteFlagOrNull == null) {
             statements.add(new ExpressionBuilder(f, Models.toLiteral(f, false))
                 .toReturnStatement());

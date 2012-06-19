@@ -15,9 +15,9 @@
  */
 package com.asakusafw.dmdl.thundergate.model;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+
+import com.asakusafw.utils.collections.Sets;
 
 /**
  * プロパティの元になった情報。
@@ -53,7 +53,7 @@ public class Source {
         this.declaring = declaring;
         this.name = name;
         this.type = type;
-        this.attributes = Collections.unmodifiableSet(new HashSet<Attribute>(attributes));
+        this.attributes = Sets.freeze(attributes);
     }
 
     /**

@@ -15,10 +15,10 @@
  */
 package com.asakusafw.dmdl.thundergate.source;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.asakusafw.dmdl.thundergate.model.PropertyTypeKind;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  *  MySQLのデータ型に関する情報を保持する列挙型。
@@ -127,7 +127,7 @@ public enum MySqlDataType {
      * NFORMACTION_SCHEMA.COLUMNSのDATA_TYPEカラムの文字列と、
      * MySQLのデータ型との対応を保持するMap。
      */
-    private static Map<String, MySqlDataType> dataTypeMap = new HashMap<String, MySqlDataType>();
+    private static Map<String, MySqlDataType> dataTypeMap = Maps.create();
     static {
         for (MySqlDataType type : MySqlDataType.values()) {
             String mySqlStr = type.getDataTypeString();
@@ -142,7 +142,7 @@ public enum MySqlDataType {
      * NFORMACTION_SCHEMA.COLUMNSのDATA_TYPEカラムの文字列と、
      * プロパティの型との対応を保持するMap。
      */
-    private static Map<String, PropertyTypeKind> propertyMap = new HashMap<String, PropertyTypeKind>();
+    private static Map<String, PropertyTypeKind> propertyMap = Maps.create();
     static {
         for (MySqlDataType type : MySqlDataType.values()) {
             String mySqlStr = type.getDataTypeString();

@@ -16,19 +16,20 @@
 package com.asakusafw.compiler.flow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * 合流地点に配置される演算子を処理する。
@@ -141,9 +142,9 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
             Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
             this.inputs = inputs;
             this.outputs = outputs;
-            this.beginStatements = new ArrayList<Statement>();
-            this.processStatements = new HashMap<FlowElementPortDescription, List<Statement>>();
-            this.endStatements = new ArrayList<Statement>();
+            this.beginStatements = Lists.create();
+            this.processStatements = Maps.create();
+            this.endStatements = Lists.create();
             for (FlowElementPortDescription input : inputs.keySet()) {
                 processStatements.put(input, new ArrayList<Statement>());
             }

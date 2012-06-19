@@ -35,8 +35,8 @@ import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.SegmentedWritable;
 import com.asakusafw.runtime.testing.MockResult;
-import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.utils.java.model.syntax.Name;
+import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
  * Test for {@link ShuffleFragmentEmitter}.

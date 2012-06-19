@@ -17,9 +17,9 @@ package com.asakusafw.compiler.batch.batch;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.util.Emitter;
@@ -29,7 +29,7 @@ import com.asakusafw.utils.java.model.util.Emitter;
  */
 public class MockEmitter extends Emitter {
 
-    private List<VolatileJavaFile> emitted = new ArrayList<VolatileJavaFile>();
+    private List<VolatileJavaFile> emitted = Lists.create();
 
     @Override
     public PrintWriter openFor(

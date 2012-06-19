@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.visualizer;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 
 /**
@@ -44,7 +44,7 @@ public class VisualFlowPart implements VisualNode {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(nodes, "nodes"); //$NON-NLS-1$
         this.element = element;
-        this.nodes = new HashSet<VisualNode>(nodes);
+        this.nodes = Sets.from(nodes);
     }
 
     @Override

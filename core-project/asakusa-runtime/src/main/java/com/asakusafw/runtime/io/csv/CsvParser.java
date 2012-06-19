@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
+
 import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.runtime.io.csv.CsvFormatException.Reason;
 import com.asakusafw.runtime.io.csv.CsvFormatException.Status;

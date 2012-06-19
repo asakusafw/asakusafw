@@ -22,8 +22,6 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.compiler.fileio.io.ExJoined2Input;
 import com.asakusafw.compiler.fileio.io.ExJoined2Output;
-import com.asakusafw.compiler.fileio.model.Ex1;
-import com.asakusafw.compiler.fileio.model.Ex2;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;

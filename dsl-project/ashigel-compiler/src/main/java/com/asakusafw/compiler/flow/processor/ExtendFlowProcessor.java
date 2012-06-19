@@ -19,9 +19,9 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.LinePartProcessor;
+import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Extend;
-import com.asakusafw.utils.java.model.syntax.Expression;
 
 /**
  * {@link Extend 拡張演算子}を処理する。

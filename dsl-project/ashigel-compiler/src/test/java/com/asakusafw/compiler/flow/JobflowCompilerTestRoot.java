@@ -60,12 +60,12 @@ import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.vocabulary.flow.FlowDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * バッチコンパイラに関するテストの基底クラス。

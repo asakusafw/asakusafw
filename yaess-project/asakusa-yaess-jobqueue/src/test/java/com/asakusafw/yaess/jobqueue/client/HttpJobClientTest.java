@@ -479,7 +479,8 @@ public class HttpJobClientTest {
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
             response.setStatusCode(200);
-            response.setEntity(new StringEntity(new Gson().toJson(responseElement).toString(), "text/json", "UTF-8"));
+            response.setEntity(new StringEntity(
+                    new Gson().toJson(responseElement).toString(), HttpJobClient.CONTENT_TYPE));
             if (request instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
                 String content = EntityUtils.toString(entity, "UTF-8");
@@ -530,7 +531,7 @@ public class HttpJobClientTest {
                 JsonObject object = new JsonObject();
                 object.addProperty("error", code);
                 object.addProperty("message", code);
-                response.setEntity(new StringEntity(new Gson().toJson(object).toString(), "text/json", "UTF-8"));
+                response.setEntity(new StringEntity(new Gson().toJson(object).toString(), HttpJobClient.CONTENT_TYPE));
             }
             if (request instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();

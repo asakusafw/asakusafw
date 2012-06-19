@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.java.emitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +26,7 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -109,7 +109,7 @@ public class ConcreteModelEmitter {
     }
 
     private List<Attribute> createModifiers() throws IOException {
-        List<Attribute> results = new ArrayList<Attribute>();
+        List<Attribute> results = Lists.create();
         results.addAll(driver.getTypeAnnotations(context, model));
         results.addAll(new AttributeBuilder(f)
             .Public()
@@ -118,7 +118,7 @@ public class ConcreteModelEmitter {
     }
 
     private List<Type> createSuperInterfaces() throws IOException {
-        List<Type> results = new ArrayList<Type>();
+        List<Type> results = Lists.create();
         results.add(f.newParameterizedType(
                 context.resolve(DataModel.class),
                 context.resolve(context.getQualifiedTypeName())));
@@ -127,7 +127,7 @@ public class ConcreteModelEmitter {
     }
 
     private List<TypeBodyDeclaration> createMembers() throws IOException {
-        List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+        List<TypeBodyDeclaration> results = Lists.create();
         results.addAll(createPropertyFields());
         results.addAll(driver.getFields(context, model));
         results.addAll(createDataModelMethods());
@@ -137,7 +137,7 @@ public class ConcreteModelEmitter {
     }
 
     private List<FieldDeclaration> createPropertyFields() {
-        List<FieldDeclaration> results = new ArrayList<FieldDeclaration>();
+        List<FieldDeclaration> results = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             Type type = context.getFieldType(property);
             SimpleName name = context.getFieldName(property);
@@ -155,14 +155,14 @@ public class ConcreteModelEmitter {
     }
 
     private List<MethodDeclaration> createDataModelMethods() {
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         results.add(createResetMethod());
         results.add(createCopyMethod());
         return results;
     }
 
     private MethodDeclaration createResetMethod() {
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .field(context.getFieldName(property))
@@ -185,7 +185,7 @@ public class ConcreteModelEmitter {
 
     private MethodDeclaration createCopyMethod() {
         SimpleName other = context.createVariableName("other");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .field(context.getFieldName(property))
@@ -211,7 +211,7 @@ public class ConcreteModelEmitter {
     }
 
     private List<MethodDeclaration> createPropertyAccessors() throws IOException {
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             results.add(createValueGetter(property));
             results.add(createValueSetter(property));
@@ -223,7 +223,7 @@ public class ConcreteModelEmitter {
 
     private MethodDeclaration createValueGetter(PropertyDeclaration property) {
         assert property != null;
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = Lists.create();
         attributes.addAll(new AttributeBuilder(f)
             .Public()
             .toAttributes());
@@ -280,7 +280,7 @@ public class ConcreteModelEmitter {
 
     private MethodDeclaration createOptionGetter(PropertyDeclaration property) throws IOException {
         assert property != null;
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = Lists.create();
         attributes.addAll(driver.getMemberAnnotations(context, property));
         attributes.addAll(new AttributeBuilder(f)
             .Public()

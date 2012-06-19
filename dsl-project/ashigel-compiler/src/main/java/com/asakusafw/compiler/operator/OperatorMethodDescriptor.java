@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.operator;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,9 +29,7 @@ import javax.lang.model.util.Types;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration.Kind;
 import com.asakusafw.compiler.operator.OperatorProcessor.Context;
-import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
-import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -40,6 +37,9 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
  * 演算子メソッドの内容を記述する情報。
@@ -86,12 +86,12 @@ public class OperatorMethodDescriptor {
         Precondition.checkMustNotBeNull(outputPorts, "outputPorts"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(parameters, "parameters"); //$NON-NLS-1$
         this.annotationType = annotationType;
-        this.documentation = Collections.unmodifiableList(new ArrayList<DocElement>(documentation));
+        this.documentation = Lists.freeze(documentation);
         this.name = name;
-        this.inputPorts = Collections.unmodifiableList(new ArrayList<OperatorPortDeclaration>(inputPorts));
-        this.outputPorts = Collections.unmodifiableList(new ArrayList<OperatorPortDeclaration>(outputPorts));
-        this.parameters = Collections.unmodifiableList(new ArrayList<OperatorPortDeclaration>(parameters));
-        this.attributes = Collections.unmodifiableList(new ArrayList<Expression>(attributes));
+        this.inputPorts = Lists.freeze(inputPorts);
+        this.outputPorts = Lists.freeze(outputPorts);
+        this.parameters = Lists.freeze(parameters);
+        this.attributes = Lists.freeze(attributes);
     }
 
     /**
@@ -185,11 +185,11 @@ public class OperatorMethodDescriptor {
             this.context = context;
             this.annotationType = annotationType;
             this.name = context.element.getSimpleName().toString();
-            this.operatorDescription = new ArrayList<DocElement>();
-            this.inputPorts = new ArrayList<OperatorPortDeclaration>();
-            this.outputPorts = new ArrayList<OperatorPortDeclaration>();
-            this.parameters = new ArrayList<OperatorPortDeclaration>();
-            this.attributes = new ArrayList<Expression>();
+            this.operatorDescription = Lists.create();
+            this.inputPorts = Lists.create();
+            this.outputPorts = Lists.create();
+            this.parameters = Lists.create();
+            this.attributes = Lists.create();
         }
 
         /**
@@ -218,7 +218,7 @@ public class OperatorMethodDescriptor {
          */
         public void setDocumentation(List<? extends DocElement> description) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
-            this.operatorDescription = new ArrayList<DocElement>(description);
+            this.operatorDescription = Lists.from(description);
         }
 
         /**
@@ -382,7 +382,7 @@ public class OperatorMethodDescriptor {
             ModelFactory f = context.environment.getFactory();
             ImportBuilder ib = context.importer;
             Jsr269 conv = new Jsr269(f);
-            List<Expression> parameterTypeLiterals = new ArrayList<Expression>();
+            List<Expression> parameterTypeLiterals = Lists.create();
             for (VariableElement parameter : helperMethod.getParameters()) {
                 TypeMirror type = context.environment.getErasure(parameter.asType());
                 parameterTypeLiterals.add(new TypeBuilder(f, ib.resolve(conv.convert(type)))

@@ -17,6 +17,7 @@ package com.asakusafw.runtime.directio;
 
 import java.io.IOException;
 import java.util.List;
+
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 

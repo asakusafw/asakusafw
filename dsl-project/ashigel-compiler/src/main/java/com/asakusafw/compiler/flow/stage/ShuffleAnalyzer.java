@@ -16,8 +16,6 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +34,8 @@ import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -110,7 +110,7 @@ public class ShuffleAnalyzer {
         assert elements != null;
         LOG.debug("シャッフルへの各セグメントを分析しています");
 
-        List<ShuffleModel.Segment> segments = new ArrayList<ShuffleModel.Segment>();
+        List<ShuffleModel.Segment> segments = Lists.create();
         for (int elementId = 0, n = elements.size(); elementId < n; elementId++) {
             FlowElement element = elements.get(elementId);
             FlowElementDescription description = element.getDescription();
@@ -123,7 +123,7 @@ public class ShuffleAnalyzer {
                 continue;
             }
 
-            List<ShuffleModel.Segment> segmentsInElement = new ArrayList<ShuffleModel.Segment>();
+            List<ShuffleModel.Segment> segmentsInElement = Lists.create();
             LOG.debug("{}は{}を使ってシャッフルの情報を分析します", element, proc);
             for (FlowElementInput input : element.getInputPorts()) {
                 ShuffleDescription desc = extractDescription(proc, input);
@@ -178,7 +178,7 @@ public class ShuffleAnalyzer {
 
     private List<Term> getGroupingTerms(ShuffleModel.Segment segment) {
         assert segment != null;
-        List<Term> results = new ArrayList<ShuffleModel.Term>();
+        List<Term> results = Lists.create();
         for (ShuffleModel.Term term : segment.getTerms()) {
             if (term.getArrangement() == Arrangement.GROUPING) {
                 results.add(term);
@@ -203,8 +203,8 @@ public class ShuffleAnalyzer {
         assert reduceBlocks.isEmpty() == false;
         LOG.debug("{}から待ち合わせ要素を検索しています", reduceBlocks);
 
-        List<FlowElement> results = new ArrayList<FlowElement>();
-        Set<FlowElement> saw = new HashSet<FlowElement>();
+        List<FlowElement> results = Lists.create();
+        Set<FlowElement> saw = Sets.create();
         for (FlowBlock reducer : reduceBlocks) {
             for (FlowBlock.Input input : reducer.getBlockInputs()) {
                 FlowElement rendezvous = input.getElementPort().getOwner();
@@ -243,7 +243,7 @@ public class ShuffleAnalyzer {
             return null;
         }
 
-        List<ShuffleModel.Term> terms = new ArrayList<ShuffleModel.Term>();
+        List<ShuffleModel.Term> terms = Lists.create();
         for (String name : keyInfo.getGroupProperties()) {
             int termId = terms.size() + 1;
             DataClass.Property property = target.findProperty(name);

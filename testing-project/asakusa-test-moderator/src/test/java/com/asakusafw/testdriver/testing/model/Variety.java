@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 package com.asakusafw.testdriver.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.math.BigDecimal;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.ModelInputLocation;
@@ -34,12 +42,6 @@ import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.testdriver.testing.io.VarietyInput;
 import com.asakusafw.testdriver.testing.io.VarietyOutput;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.math.BigDecimal;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 /**
  * varietyを表すデータモデルクラス。
  */

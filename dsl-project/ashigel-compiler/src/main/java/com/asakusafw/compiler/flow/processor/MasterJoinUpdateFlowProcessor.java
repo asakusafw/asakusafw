@@ -15,19 +15,19 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
-import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
-import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
-import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
+import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 /**
  * {@link MasterJoinUpdate マスタつき更新演算子}を処理する。
@@ -49,7 +49,7 @@ public class MasterJoinUpdateFlowProcessor extends RendezvousProcessor {
         ResultMirror missed = context.getOutput(missedPort);
 
         Expression impl = context.createImplementation();
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = Lists.create();
         arguments.add(masterAnalyzer.getGetRawMasterExpression());
         arguments.add(context.getProcessInput(tx));
         for (OperatorDescription.Parameter param : desc.getParameters()) {

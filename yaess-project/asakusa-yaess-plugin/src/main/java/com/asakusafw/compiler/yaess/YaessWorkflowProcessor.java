@@ -19,12 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -44,6 +41,9 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.Command;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graph.Vertex;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
@@ -83,8 +83,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results =
-            new ArrayList<Class<? extends WorkDescriptionProcessor<?>>>();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }
@@ -119,7 +118,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private List<FlowScript> processJobflowList(Workflow workflow) {
         assert workflow != null;
-        List<FlowScript> jobflows = new ArrayList<FlowScript>();
+        List<FlowScript> jobflows = Lists.create();
         for (Graph.Vertex<Workflow.Unit> vertex : sortJobflow(workflow.getGraph())) {
             FlowScript jobflow = processJobflow(vertex.getNode(), vertex.getConnected());
             jobflows.add(jobflow);
@@ -129,7 +128,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private List<Graph.Vertex<JobflowModel.Stage>> sortStage(Iterable<Graph.Vertex<JobflowModel.Stage>> vertices) {
         assert vertices != null;
-        List<Graph.Vertex<JobflowModel.Stage>> results = new ArrayList<Graph.Vertex<JobflowModel.Stage>>();
+        List<Graph.Vertex<JobflowModel.Stage>> results = Lists.create();
         for (Graph.Vertex<JobflowModel.Stage> vertex : vertices) {
             results.add(vertex);
         }
@@ -152,7 +151,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private List<Graph.Vertex<Workflow.Unit>> sortJobflow(Iterable<Graph.Vertex<Workflow.Unit>> vertices) {
         assert vertices != null;
-        List<Graph.Vertex<Workflow.Unit>> results = new ArrayList<Graph.Vertex<Workflow.Unit>>();
+        List<Graph.Vertex<Workflow.Unit>> results = Lists.create();
         for (Graph.Vertex<Workflow.Unit> vertex : vertices) {
             results.add(vertex);
         }
@@ -173,7 +172,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
                 ExecutionScript.PLACEHOLDER_HOME + '/',
                 ExecutionScript.PLACEHOLDER_EXECUTION_ID,
                 ExecutionScript.PLACEHOLDER_ARGUMENTS);
-        Map<ExecutionPhase, List<ExecutionScript>> scripts = new HashMap<ExecutionPhase, List<ExecutionScript>>();
+        Map<ExecutionPhase, List<ExecutionScript>> scripts = Maps.create();
         scripts.put(ExecutionPhase.INITIALIZE, processInitializers(model, context));
         scripts.put(ExecutionPhase.IMPORT, processImporters(model, context));
         scripts.put(ExecutionPhase.PROLOGUE, processPrologues(model, context));
@@ -187,7 +186,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processInitializers(JobflowModel model, CommandContext context) {
         assert model != null;
         assert context != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (ExternalIoCommandProvider provider : model.getCompiled().getCommandProviders()) {
             List<Command> commands = provider.getInitializeCommand(context);
             List<ExecutionScript> scripts = processCommands(provider, commands);
@@ -199,7 +198,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processImporters(JobflowModel model, CommandContext context) {
         assert model != null;
         assert context != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (ExternalIoCommandProvider provider : model.getCompiled().getCommandProviders()) {
             List<ExecutionScript> scripts = processCommands(provider, provider.getImportCommand(context));
             results.addAll(scripts);
@@ -210,7 +209,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processExporters(JobflowModel model, CommandContext context) {
         assert model != null;
         assert context != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (ExternalIoCommandProvider provider : model.getCompiled().getCommandProviders()) {
             List<ExecutionScript> scripts = processCommands(provider, provider.getExportCommand(context));
             results.addAll(scripts);
@@ -221,7 +220,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processFinalizers(JobflowModel model, CommandContext context) {
         assert model != null;
         assert context != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (ExternalIoCommandProvider provider : model.getCompiled().getCommandProviders()) {
             List<ExecutionScript> scripts = processCommands(provider, provider.getFinalizeCommand(context));
             results.addAll(scripts);
@@ -232,7 +231,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processCommands(ExternalIoCommandProvider provider, List<Command> commands) {
         assert provider != null;
         assert commands != null;
-        List<ExecutionScript> scripts = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> scripts = Lists.create();
         String prefix = provider.getName();
         int index = 0;
         for (Command command : commands) {
@@ -267,7 +266,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     private List<ExecutionScript> processMain(JobflowModel model, CommandContext context) {
         assert model != null;
         assert context != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (Graph.Vertex<JobflowModel.Stage> stage : sortStage(model.getDependencyGraph())) {
             results.add(processStage(stage.getNode().getCompiled(), stage.getConnected()));
         }
@@ -276,7 +275,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private List<ExecutionScript> processStages(List<CompiledStage> stages) {
         assert stages != null;
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = Lists.create();
         for (CompiledStage stage : stages) {
             results.add(processStage(stage, Collections.<JobflowModel.Stage>emptySet()));
         }
@@ -302,7 +301,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private Set<String> toUnitNames(Set<Workflow.Unit> blockers) {
         assert blockers != null;
-        Set<String> names = new HashSet<String>();
+        Set<String> names = Sets.create();
         for (Workflow.Unit unit : blockers) {
             names.add(unit.getDescription().getName());
         }
@@ -311,7 +310,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     private Set<String> toStageNames(Set<JobflowModel.Stage> blockers) {
         assert blockers != null;
-        Set<String> names = new HashSet<String>();
+        Set<String> names = Sets.create();
         for (JobflowModel.Stage stage : blockers) {
             names.add(stage.getCompiled().getStageId());
         }

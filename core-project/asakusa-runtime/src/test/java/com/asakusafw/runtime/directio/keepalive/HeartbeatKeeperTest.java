@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.keepalive.HeartbeatKeeper;
 
 /**
  * Test for {@link HeartbeatKeeper}.

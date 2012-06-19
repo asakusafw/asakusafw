@@ -16,9 +16,7 @@
 package com.asakusafw.dmdl.java.emitter.driver;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +30,8 @@ import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.semantics.trait.MappingFactor;
 import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
 import com.asakusafw.dmdl.semantics.trait.SummarizeTrait;
-import com.asakusafw.vocabulary.model.Key;
-import com.asakusafw.vocabulary.model.Summarized;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ArrayInitializer;
 import com.asakusafw.utils.java.model.syntax.ClassLiteral;
@@ -43,6 +41,8 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.model.Summarized;
 
 /**
  * Implements summarized-model feature.
@@ -62,7 +62,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         }
 
         ModelFactory f = context.getModelFactory();
-        List<Annotation> eTerms = new ArrayList<Annotation>();
+        List<Annotation> eTerms = Lists.create();
         for (ReduceTerm<?> term : trait.getTerms()) {
             ClassLiteral source = f.newClassLiteral(context.resolve(term.getSource()));
             ArrayInitializer mappings = toMappings(context, term.getMappings());
@@ -84,7 +84,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         assert context != null;
         assert foldings != null;
         ModelFactory f = context.getModelFactory();
-        List<Annotation> eachFolding = new ArrayList<Annotation>();
+        List<Annotation> eachFolding = Lists.create();
         for (MappingFactor factor : foldings) {
             Expression aggregator = new TypeBuilder(f, context.resolve(Summarized.Aggregator.class))
                 .field(convert(factor.getKind()).name())
@@ -123,8 +123,8 @@ public class SummarizeDriver extends JavaDataModelDriver {
         assert context != null;
         assert term != null;
         ModelFactory f = context.getModelFactory();
-        List<Literal> properties = new ArrayList<Literal>();
-        Map<String, PropertySymbol> reverseMapping = new HashMap<String, PropertySymbol>();
+        List<Literal> properties = Lists.create();
+        Map<String, PropertySymbol> reverseMapping = Maps.create();
         for (MappingFactor mapping : term.getMappings()) {
             reverseMapping.put(mapping.getTarget().getName().identifier, mapping.getSource());
         }

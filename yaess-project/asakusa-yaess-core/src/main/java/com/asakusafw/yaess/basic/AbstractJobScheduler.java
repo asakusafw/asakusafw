@@ -37,8 +37,8 @@ import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.PhaseMonitor;
-import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.PhaseMonitor.JobStatus;
+import com.asakusafw.yaess.core.YaessLogger;
 
 /**
  * An abstract implementation of {@link JobScheduler}.

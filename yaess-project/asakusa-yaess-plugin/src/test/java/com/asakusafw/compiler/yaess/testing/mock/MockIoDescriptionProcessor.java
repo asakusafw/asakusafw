@@ -18,19 +18,21 @@ package com.asakusafw.compiler.yaess.testing.mock;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
+import com.asakusafw.utils.collections.Sets;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
-import com.asakusafw.utils.java.model.syntax.ModelFactory;
-import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Mock implementation for {@link ExternalIoDescriptionProcessor}.
@@ -54,7 +56,7 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public SourceInfo getInputInfo(InputDescription description) {
-        HashSet<Location> locations = new HashSet<Location>();
+        Set<Location> locations = Sets.create();
         locations.add(getEnvironment().getTargetLocation().append(description.getName()));
         return new SourceInfo(locations, TemporaryInputFormat.class);
     }

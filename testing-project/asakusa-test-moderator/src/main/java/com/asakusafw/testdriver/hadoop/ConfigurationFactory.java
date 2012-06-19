@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver.hadoop;
 
 import java.net.URL;
+
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

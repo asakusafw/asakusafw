@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.operator.flow;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,8 +36,9 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerOptions;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
-import com.asakusafw.vocabulary.flow.FlowPart;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
  * フロー部品をもとにした演算子ファクトリーを生成する。
@@ -69,7 +69,7 @@ public class FlowOperatorCompiler implements Processor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = Sets.create();
         results.add(FlowPart.class.getName());
         return results;
     }

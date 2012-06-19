@@ -17,9 +17,7 @@ package com.asakusafw.compiler.flow.processor;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +29,13 @@ import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.compiler.flow.ShuffleDescription;
 import com.asakusafw.runtime.util.TypeUtil;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
+import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
@@ -38,11 +43,6 @@ import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.model.Summarized;
 import com.asakusafw.vocabulary.model.Summarized.Aggregator;
 import com.asakusafw.vocabulary.operator.Summarize;
-import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.ModelFactory;
-import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.util.ExpressionBuilder;
-import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@link Summarize 単純集計演算子}を処理する。
@@ -75,13 +75,13 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
                     output));
         }
 
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = Maps.create();
         for (Summarized.Folding folding : summarized.term().foldings()) {
             if (folding.aggregator() == Aggregator.ANY) {
                 mapping.put(folding.source(), folding.destination());
             }
         }
-        List<String> remapped = new ArrayList<String>();
+        List<String> remapped = Lists.create();
         for (String original : input.getShuffleKey().getGroupProperties()) {
             String target = mapping.get(original);
             if (target == null) {
@@ -110,7 +110,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
 
         DataObjectMirror cache = context.createModelCache(output.getDataType());
 
-        List<Statement> combine = new ArrayList<Statement>();
+        List<Statement> combine = Lists.create();
         DataClass outputType = getEnvironment().getDataClasses().load(output.getDataType());
         Summarized summarized = TypeUtil.erase(output.getDataType()).getAnnotation(Summarized.class);
         for (Summarized.Folding folding : summarized.term().foldings()) {

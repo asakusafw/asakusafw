@@ -16,9 +16,6 @@
 package com.asakusafw.compiler.flow.plan;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
@@ -55,8 +55,8 @@ public class StageBlock {
     public StageBlock(Set<FlowBlock> mapBlocks, Set<FlowBlock> reduceBlocks) {
         Precondition.checkMustNotBeNull(mapBlocks, "mapBlocks"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(reduceBlocks, "reduceBlocks"); //$NON-NLS-1$
-        this.mapBlocks = new HashSet<FlowBlock>(mapBlocks);
-        this.reduceBlocks = new HashSet<FlowBlock>(reduceBlocks);
+        this.mapBlocks = Sets.from(mapBlocks);
+        this.reduceBlocks = Sets.from(reduceBlocks);
     }
 
     /**
@@ -169,7 +169,7 @@ public class StageBlock {
     private boolean bypass(FlowBlock block) {
         assert block != null;
         // FlowElementOutput -> FlowBlockOutput の逆参照表を作成
-        Map<FlowElementOutput, FlowBlock.Output> outputs = new HashMap<FlowElementOutput, FlowBlock.Output>();
+        Map<FlowElementOutput, FlowBlock.Output> outputs = Maps.create();
         for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
             outputs.put(blockOutput.getElementPort(), blockOutput);
         }
@@ -198,16 +198,14 @@ public class StageBlock {
     private void bypass(FlowBlock.Input input, FlowBlock.Output output) {
         assert input != null;
         assert output != null;
-        List<FlowBlock.Output> upstreams = new ArrayList<FlowBlock.Output>();
-        List<FlowBlock.Connection> inConns =
-            new ArrayList<FlowBlock.Connection>(input.getConnections());
+        List<FlowBlock.Output> upstreams = Lists.create();
+        List<FlowBlock.Connection> inConns = Lists.from(input.getConnections());
         for (FlowBlock.Connection conn : inConns) {
             upstreams.add(conn.getUpstream());
             conn.disconnect();
         }
-        List<FlowBlock.Input> downstreams = new ArrayList<FlowBlock.Input>();
-        List<FlowBlock.Connection> outConns =
-            new ArrayList<FlowBlock.Connection>(output.getConnections());
+        List<FlowBlock.Input> downstreams = Lists.create();
+        List<FlowBlock.Connection> outConns = Lists.from(output.getConnections());
         for (FlowBlock.Connection conn : outConns) {
             downstreams.add(conn.getDownstream());
             conn.disconnect();

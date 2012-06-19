@@ -28,13 +28,13 @@ import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.compiler.operator.processor.MasterKindOperatorAnalyzer.ResolveException;
-import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
-import com.asakusafw.vocabulary.operator.MasterCheck;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
  * {@link MasterCheck マスタ確認演算子}を処理する。

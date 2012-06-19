@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -39,6 +38,7 @@ import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Packager;
 import com.asakusafw.compiler.util.TemporaryFolder;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ImportDeclaration;
@@ -68,7 +68,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_java() throws Exception {
-        Set<String> entries = new HashSet<String>();
+        Set<String> entries = Sets.create();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -86,7 +86,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_resource() throws Exception {
-        Set<String> entries = new HashSet<String>();
+        Set<String> entries = Sets.create();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -104,7 +104,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_mixed() throws Exception {
-        Set<String> entries = new HashSet<String>();
+        Set<String> entries = Sets.create();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -128,7 +128,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_error() throws Exception {
-        Set<String> entries = new HashSet<String>();
+        Set<String> entries = Sets.create();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),

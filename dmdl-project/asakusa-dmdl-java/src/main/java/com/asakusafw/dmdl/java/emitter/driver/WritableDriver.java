@@ -18,7 +18,6 @@ package com.asakusafw.dmdl.java.emitter.driver;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,7 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
@@ -55,7 +55,7 @@ public class WritableDriver extends JavaDataModelDriver {
         if (model.getOriginalAst().kind == ModelDefinitionKind.PROJECTIVE) {
             return Collections.emptyList();
         }
-        List<MethodDeclaration> results = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> results = Lists.create();
         results.add(createWrite(context, model));
         results.add(createReadFields(context, model));
         return results;
@@ -66,7 +66,7 @@ public class WritableDriver extends JavaDataModelDriver {
         assert model != null;
         ModelFactory f = context.getModelFactory();
         SimpleName parameter = context.createVariableName("out");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             SimpleName fieldName = context.getFieldName(property);
             statements.add(new ExpressionBuilder(f, fieldName)
@@ -95,7 +95,7 @@ public class WritableDriver extends JavaDataModelDriver {
         assert model != null;
         ModelFactory f = context.getModelFactory();
         SimpleName parameter = context.createVariableName("in");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             SimpleName fieldName = context.getFieldName(property);
             statements.add(new ExpressionBuilder(f, fieldName)

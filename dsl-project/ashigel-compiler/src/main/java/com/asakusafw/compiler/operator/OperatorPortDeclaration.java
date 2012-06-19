@@ -15,13 +15,12 @@
  */
 package com.asakusafw.compiler.operator;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.DocElement;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
  * 演算子メソッドが利用する変数。
@@ -62,7 +61,7 @@ public class OperatorPortDeclaration {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         this.kind = kind;
-        this.documentation = Collections.unmodifiableList(new ArrayList<DocElement>(documentation));
+        this.documentation = Lists.freeze(documentation);
         this.name = name;
         this.type = type;
         this.position = position;
