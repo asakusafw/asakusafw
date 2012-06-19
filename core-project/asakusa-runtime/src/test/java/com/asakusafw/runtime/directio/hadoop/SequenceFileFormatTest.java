@@ -29,6 +29,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.DefaultCodec;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -301,10 +303,116 @@ public class SequenceFileFormatTest {
         }
     }
 
+    /**
+     * compressed output.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_compressed() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing").toURI());
+        ModelOutput<StringOption> out = format.codec(new DefaultCodec())
+            .createOutput(StringOption.class, fs, path, new Counter());
+        try {
+            out.write(new StringOption("Hello, world!"));
+        } finally {
+            out.close();
+        }
+
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+        try {
+            assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * compressed output.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_no_compressed() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing.gz").toURI());
+        ModelOutput<StringOption> out = format.codec(null)
+            .createOutput(StringOption.class, fs, path, new Counter());
+        try {
+            out.write(new StringOption("Hello, world!"));
+        } finally {
+            out.close();
+        }
+
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+        try {
+            assertThat(reader.getCompressionCodec(), is(nullValue()));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * compressed output.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_compressed_conf() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing").toURI());
+        format.getConf().set(SequenceFileFormat.KEY_COMPRESSION_CODEC, DefaultCodec.class.getName());
+        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
+        try {
+            out.write(new StringOption("Hello, world!"));
+        } finally {
+            out.close();
+        }
+
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+        try {
+            assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * invalid compressed output.
+     * @throws Exception if failed
+     */
+    @Test
+    public void output_compressed_invalid() throws Exception {
+        LocalFileSystem fs = FileSystem.getLocal(conf);
+        Path path = new Path(folder.newFile("testing").toURI());
+        format.getConf().set(SequenceFileFormat.KEY_COMPRESSION_CODEC, "__INVALID__");
+        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
+        try {
+            out.write(new StringOption("Hello, world!"));
+        } finally {
+            out.close();
+        }
+
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+        try {
+            assertThat(reader.getCompressionCodec(), is(nullValue()));
+        } finally {
+            reader.close();
+        }
+    }
+
     private static class MockFormat extends SequenceFileFormat<LongWritable, Text, StringOption> {
+
+        private CompressionCodec codec;
+
+        private boolean codecSet;
 
         MockFormat() {
             return;
+        }
+
+        MockFormat codec(CompressionCodec c) {
+            this.codecSet = true;
+            this.codec = c;
+            return this;
         }
 
         @Override
@@ -337,6 +445,14 @@ public class SequenceFileFormatTest {
         protected void copyFromModel(StringOption model, LongWritable key, Text value) throws IOException {
             key.set(1);
             value.set(model.get());
+        }
+
+        @Override
+        public CompressionCodec getCompressionCodec(Path path) throws IOException, InterruptedException {
+            if (codecSet == false) {
+                return super.getCompressionCodec(path);
+            }
+            return codec;
         }
     }
 }
