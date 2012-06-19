@@ -40,9 +40,9 @@ public class StageBlock {
 
     private static final int NOT_SET = -1;
 
-    private Set<FlowBlock> mapBlocks;
+    private final Set<FlowBlock> mapBlocks;
 
-    private Set<FlowBlock> reduceBlocks;
+    private final Set<FlowBlock> reduceBlocks;
 
     private int stageNumber = NOT_SET;
 
@@ -146,16 +146,17 @@ public class StageBlock {
      */
     public boolean compaction() {
         LOG.debug("{}をコンパクションします", this);
-        if (reduceBlocks.isEmpty() == false) {
-            return false;
-        }
         boolean changed = false;
+        if (reduceBlocks.isEmpty() == false) {
+            return changed;
+        }
         for (Iterator<FlowBlock> iter = mapBlocks.iterator(); iter.hasNext();) {
             FlowBlock block = iter.next();
-            boolean localChanged = bypass(block);
+            boolean localChanged = false;
+            localChanged |= bypass(block);
             changed |= localChanged;
             if (localChanged) {
-                block.compaction();
+                changed |= block.compaction();
             }
             if (block.isEmpty()) {
                 LOG.debug("{}の{}は空になったため削除されます", this, block);

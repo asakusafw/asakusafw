@@ -27,7 +27,7 @@ public class VisualElement implements VisualNode {
 
     private final UUID id = UUID.randomUUID();
 
-    private FlowElement element;
+    private final FlowElement element;
 
     /**
      * インスタンスを生成する。
@@ -62,5 +62,14 @@ public class VisualElement implements VisualNode {
         Precondition.checkMustNotBeNull(visitor, "visitor"); //$NON-NLS-1$
         R result = visitor.visitElement(context, this);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("VisualElement [element=");
+        builder.append(element);
+        builder.append("]");
+        return builder.toString();
     }
 }

@@ -16,6 +16,9 @@
 package com.asakusafw.compiler.flow.visualizer;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -49,7 +52,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * グラフを可視化する。
+ * Emits {@link VisualGraph} object as Graphviz dot format.
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class VisualGraphEmitter {
 
@@ -57,24 +62,22 @@ public final class VisualGraphEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(VisualGraphEmitter.class);
 
-    /**
-     * インスタンス化の禁止。
-     */
     private VisualGraphEmitter() {
         throw new AssertionError();
     }
 
     /**
-     * 指定のグラフをGraphviz dotの形式で指定のストリームに出力する。
-     * @param graph 対象のグラフ
-     * @param partial グラフだけで構造が完結しない場合に{@code true}
-     * @param stream 出力先
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Outputs a {@link VisualGraph} object to target file as Graphviz dot format.
+     * @param graph target graph
+     * @param partial {@code true} if target graph is partial, otherwise {@code false}
+     * @param stream output target
+     * @throws IOException if failed to output
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static void emit(VisualGraph graph, boolean partial, OutputStream stream) {
+    public static void emit(VisualGraph graph, boolean partial, OutputStream stream) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stream, "stream"); //$NON-NLS-1$
-        LOG.debug("可視化したグラフを出力しています");
+        LOG.debug("Emitting a visual graph: {}", graph.getId());
         EmitContext context = new EmitContext(stream);
         try {
             List<Relation> relations = analyzeRelations(graph, partial);
@@ -84,9 +87,29 @@ public final class VisualGraphEmitter {
         }
     }
 
+    /**
+     * Outputs a {@link VisualGraph} object to target file as Graphviz dot format.
+     * @param graph target graph
+     * @param partial {@code true} if target graph is partial, otherwise {@code false}
+     * @param file output target
+     * @throws IOException if failed to output
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public static void emit(VisualGraph graph, boolean partial, File file) throws IOException {
+        Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(file, "file"); //$NON-NLS-1$
+        OutputStream output = new FileOutputStream(file);
+        try {
+            emit(graph, partial, output);
+        } finally {
+            output.close();
+        }
+    }
+
     private static List<Relation> analyzeRelations(VisualGraph graph, boolean partial) {
         assert graph != null;
-        LOG.debug("グラフのノードを収集しています");
+        LOG.debug("Analyzing element relations");
         List<Relation> result = RelationCollector.collect(Collections.singleton(graph), partial);
         return result;
     }
@@ -95,7 +118,7 @@ public final class VisualGraphEmitter {
         assert context != null;
         assert nodes != null;
         assert relations != null;
-        LOG.debug("グラフの構造を出力しています");
+        LOG.debug("Emitting graph structure");
         context.put("digraph {");
         context.push();
         dumpStructure(context, nodes);
@@ -182,7 +205,7 @@ public final class VisualGraphEmitter {
                         resolveFailed(relation.source);
                     }
                     iter.remove();
-                } else if (engine.resolve(relation.sink) == false) {
+                } if (engine.resolve(relation.sink) == false) {
                     if (partial == false) {
                         resolveFailed(relation.sink);
                     }
@@ -194,7 +217,7 @@ public final class VisualGraphEmitter {
 
         private static void resolveFailed(Port port) {
             assert port != null;
-            LOG.warn("要素{}を解決できませんでした。グラフから除去します。", port.element);
+            LOG.warn("Failed to resolve an element {}, ignored.", port.element);
         }
 
         @Override
@@ -495,7 +518,7 @@ public final class VisualGraphEmitter {
             case OPERATOR:
                 context.put("{0} [shape=box, label={1}];",
                         toLiteral(node.getId().toString()),
-                        toLiteral(toOperatorName((OperatorDescription) element.getDescription())));
+                        toLiteral(toOperatorName(node)));
                 break;
             case FLOW_COMPONENT:
                 context.put("{0} [shape=component, label={1}];",
@@ -522,13 +545,16 @@ public final class VisualGraphEmitter {
             return super.visitLabel(context, node);
         }
 
-        static String toOperatorName(OperatorDescription description) {
-            assert description != null;
+        static String toOperatorName(VisualElement node) {
+            assert node != null;
+            FlowElement element = node.getElement();
+            assert element.getDescription().getKind() == FlowElementKind.OPERATOR;
+            OperatorDescription desc = (OperatorDescription) element.getDescription();
             StringBuilder buf = new StringBuilder();
             buf.append("@");
-            buf.append(description.getDeclaration().getAnnotationType().getSimpleName());
+            buf.append(desc.getDeclaration().getAnnotationType().getSimpleName());
             buf.append("\n");
-            buf.append(description.getName());
+            buf.append(desc.getName());
             return buf.toString();
         }
     }

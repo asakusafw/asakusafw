@@ -70,7 +70,7 @@ public class MapFragmentEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(MapFragmentEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -116,19 +116,19 @@ public class MapFragmentEmitter {
 
     private static class Engine {
 
-        private FlowCompilingEnvironment environment;
+        private final FlowCompilingEnvironment environment;
 
-        private Fragment fragment;
+        private final Fragment fragment;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private NameGenerator names;
+        private final NameGenerator names;
 
-        private FragmentConnection connection;
+        private final FragmentConnection connection;
 
-        private List<FieldDeclaration> extraFields = Lists.create();
+        private final List<FieldDeclaration> extraFields = Lists.create();
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -288,6 +288,7 @@ public class MapFragmentEmitter {
             }
             return new LinePartProcessor.Context(
                     environment,
+                    factor.getElement(),
                     importer,
                     names,
                     (OperatorDescription) description,
@@ -325,6 +326,7 @@ public class MapFragmentEmitter {
             }
             return new LineEndProcessor.Context(
                     environment,
+                    factorOrNull == null ? description : factorOrNull.getElement(),
                     importer,
                     names,
                     description,

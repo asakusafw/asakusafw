@@ -27,7 +27,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -64,9 +63,9 @@ public class OperatorCompilerTestRoot {
 
     ModelFactory f = Models.getModelFactory();
 
-    private VolatileCompiler compiler = new VolatileCompiler();
+    private final VolatileCompiler compiler = new VolatileCompiler();
 
-    private List<JavaFileObject> sources = Lists.create();
+    private final List<JavaFileObject> sources = Lists.create();
 
     /**
      * コンパイル時に{@code true}になっていたらソースのダンプを表示する。
@@ -164,7 +163,7 @@ public class OperatorCompilerTestRoot {
      * @return 述語
      */
     protected Matcher<? super Set<String>> isJust(String... names) {
-        return Matchers.<Set<String>>is(new HashSet<String>(Arrays.asList(names)));
+        return Matchers.<Set<String>>is(Sets.from(names));
     }
 
     /**

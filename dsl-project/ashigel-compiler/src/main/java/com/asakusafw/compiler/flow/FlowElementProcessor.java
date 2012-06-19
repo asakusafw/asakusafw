@@ -39,6 +39,8 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttributeProvider;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
@@ -73,12 +75,14 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * 処理の文脈の基底となるクラス。
      */
-    public abstract static class AbstractProcessorContext {
+    public abstract static class AbstractProcessorContext implements FlowElementAttributeProvider {
 
         /**
          * コンパイル環境。
          */
         protected final FlowCompilingEnvironment environment;
+
+        private final FlowElementAttributeProvider element;
 
         /**
          * Javaの構造を表すモデルオブジェクトを生成する。
@@ -113,6 +117,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         /**
          * インスタンスを生成する。
          * @param environment 環境
+         * @param element target element
          * @param importer インポート
          * @param names 名前生成
          * @param desc 演算子の定義記述
@@ -121,16 +126,19 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
          */
         public AbstractProcessorContext(
                 FlowCompilingEnvironment environment,
+                FlowElementAttributeProvider element,
                 ImportBuilder importer,
                 NameGenerator names,
                 OperatorDescription desc,
                 Map<FlowResourceDescription, Expression> resources) {
             Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(importer, "importer"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(names, "names"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(desc, "desc"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(resources, "resources"); //$NON-NLS-1$
             this.environment = environment;
+            this.element = element;
             this.factory = environment.getModelFactory();
             this.importer = importer;
             this.names = names;
@@ -145,6 +153,14 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
          */
         public OperatorDescription getOperatorDescription() {
             return description;
+        }
+
+        @Override
+        public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
+            if (attributeClass == null) {
+                throw new IllegalArgumentException("attributeClass must not be null"); //$NON-NLS-1$
+            }
+            return element.getAttribute(attributeClass);
         }
 
         /**

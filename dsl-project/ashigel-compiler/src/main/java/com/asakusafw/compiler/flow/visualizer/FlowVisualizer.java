@@ -27,6 +27,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * 各種要素を可視化のためのモデルに変換する。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class FlowVisualizer {
 
@@ -36,7 +38,7 @@ public class FlowVisualizer {
 
     private static final String PATH_STAGE_BLOCK = "META-INF/visualize/stageblock-{0}.dot";
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。

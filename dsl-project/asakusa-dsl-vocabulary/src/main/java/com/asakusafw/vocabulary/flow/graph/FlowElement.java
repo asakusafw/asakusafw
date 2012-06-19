@@ -28,8 +28,12 @@ import java.util.Map;
  * <p>
  * DSL利用者はこのクラスのオブジェクトを直接操作すべきでない。
  * </p>
+ * @since 0.1.0
+ * @version 0.4.0
  */
-public final class FlowElement {
+public final class FlowElement implements FlowElementAttributeProvider {
+
+    private final Object identity;
 
     private final FlowElementDescription description;
 
@@ -40,26 +44,34 @@ public final class FlowElement {
     private final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributeOverride;
 
     /**
-     * インスタンスを生成する。
-     * @param description この要素の定義記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description definition description
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElement(FlowElementDescription description) {
-        this(description, Collections.<FlowElementAttribute>emptyList());
+        this(new Object(), description, Collections.<FlowElementAttribute>emptyList());
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description この要素の定義記述
-     * @param attributeOverride 上書きする属性の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description definition description
+     * @param attributeOverride extra attributes for this element
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElement(
             FlowElementDescription description,
             Collection<? extends FlowElementAttribute> attributeOverride) {
-        if (description == null) {
-            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
-        }
+        this(new Object(), description, attributeOverride);
+    }
+
+    private FlowElement(
+            Object identity,
+            FlowElementDescription description,
+            Collection<? extends FlowElementAttribute> attributeOverride) {
+        assert identity != null;
+        assert description != null;
+        assert attributeOverride != null;
+        this.identity = identity;
         this.description = description;
         this.inputPorts = new ArrayList<FlowElementInput>();
         for (FlowElementPortDescription port : description.getInputPorts()) {
@@ -83,6 +95,24 @@ public final class FlowElement {
         for (FlowElementAttribute attribute : attributeOverride) {
             this.attributeOverride.put(attribute.getDeclaringClass(), attribute);
         }
+    }
+
+    /**
+     * Creates a new copy without any connections.
+     * This copy only has same {@link #getIdentity() identity}.
+     * @return the created copy
+     */
+    public FlowElement copy() {
+        return new FlowElement(identity, description, getAttributeOverride());
+    }
+
+    /**
+     * Returns the original identity.
+     * @return the identity
+     * @since 0.4.0
+     */
+    public Object getIdentity() {
+        return identity;
     }
 
     /**
@@ -133,6 +163,7 @@ public final class FlowElement {
      * @return 対象の属性値、未設定の場合は{@code null}
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
+    @Override
     public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
         if (attributeClass == null) {
             throw new IllegalArgumentException("attributeClass must not be null"); //$NON-NLS-1$

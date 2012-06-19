@@ -22,9 +22,15 @@ import java.text.MessageFormat;
  */
 public final class BatchRuntime {
 
-    private static final int VERSION_MAJOR = 0;
+    /**
+     * Major version.
+     */
+    public static final int VERSION_MAJOR = 4;
 
-    private static final int VERSION_MINOR = 1;
+    /**
+     * Minor version.
+     */
+    public static final int VERSION_MINOR = 0;
 
     /**
      * バージョンチェックを行い、互換性がなければ例外をスローする。

@@ -63,7 +63,7 @@ public class MapperEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(MapperEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -106,19 +106,19 @@ public class MapperEmitter {
 
     private static class Engine {
 
-        private StageModel.MapUnit unit;
+        private final StageModel.MapUnit unit;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private NameGenerator names;
+        private final NameGenerator names;
 
-        private FragmentFlow fragments;
+        private final FragmentFlow fragments;
 
-        private SimpleName context;
+        private final SimpleName context;
 
-        private SimpleName cache;
+        private final SimpleName cache;
 
         private DataClass dataClass;
 

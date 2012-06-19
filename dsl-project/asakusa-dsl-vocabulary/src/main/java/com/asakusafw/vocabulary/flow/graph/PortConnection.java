@@ -22,9 +22,9 @@ import java.text.MessageFormat;
  */
 public class PortConnection {
 
-    private FlowElementOutput upstream;
+    private final FlowElementOutput upstream;
 
-    private FlowElementInput downstream;
+    private final FlowElementInput downstream;
 
     private boolean connected;
 
@@ -60,18 +60,50 @@ public class PortConnection {
      * 指定のポート間を接続する。
      * @param upstream 上流ポート
      * @param downstream 下流ポート
-     * @return 接続を表すポート
      * @throws IllegalArgumentException {@code upstream}に出力以外が指定された場合、
      *     または{@code downstream}に入力以外が指定された場合、
      *     または入出力の型に不一致がある場合、
      *     または引数に{@code null}が指定された場合
      */
-    public static PortConnection connect(FlowElementOutput upstream, FlowElementInput downstream) {
+    public static void connect(FlowElementOutput upstream, FlowElementInput downstream) {
+        if (upstream == null) {
+            throw new IllegalArgumentException("upstream must not be null"); //$NON-NLS-1$
+        }
+        if (downstream == null) {
+            throw new IllegalArgumentException("downstream must not be null"); //$NON-NLS-1$
+        }
+        if (isConnected(upstream, downstream)) {
+            return;
+        }
+        connect0(upstream, downstream);
+    }
+
+    private static boolean isConnected(FlowElementOutput upstream, FlowElementInput downstream) {
+        assert upstream != null;
+        assert downstream != null;
+        if (upstream.getConnected().size() > downstream.getConnected().size()) {
+            for (PortConnection c : downstream.getConnected()) {
+                if (c.getUpstream() == upstream) {
+                    return true;
+                }
+            }
+        } else {
+            for (PortConnection c : upstream.getConnected()) {
+                if (c.getDownstream() == downstream) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void connect0(FlowElementOutput upstream, FlowElementInput downstream) {
+        assert upstream != null;
+        assert downstream != null;
         PortConnection connection = new PortConnection(upstream, downstream);
         upstream.register(connection);
         downstream.register(connection);
         connection.connected = true;
-        return connection;
     }
 
     /**

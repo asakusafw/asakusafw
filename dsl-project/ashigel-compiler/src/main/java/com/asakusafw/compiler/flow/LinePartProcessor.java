@@ -23,6 +23,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttributeProvider;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
@@ -49,13 +50,14 @@ public abstract class LinePartProcessor extends LineProcessor {
      */
     public static class Context extends LineProcessorContext {
 
-        private Expression input;
+        private final Expression input;
 
         private Expression resultValue;
 
         /**
          * インスタンスを生成する。
          * @param environment 環境
+         * @param element target element
          * @param importer インポート
          * @param names 名前生成
          * @param desc 演算子の定義記述
@@ -65,12 +67,13 @@ public abstract class LinePartProcessor extends LineProcessor {
          */
         public Context(
                 FlowCompilingEnvironment environment,
+                FlowElementAttributeProvider element,
                 ImportBuilder importer,
                 NameGenerator names,
                 OperatorDescription desc,
                 Expression input,
                 Map<FlowResourceDescription, Expression> resources) {
-            super(environment, importer, names, desc, resources);
+            super(environment, element, importer, names, desc, resources);
             Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
             this.input = input;
             this.resultValue = null;

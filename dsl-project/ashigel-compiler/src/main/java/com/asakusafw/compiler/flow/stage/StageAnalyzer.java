@@ -98,42 +98,46 @@ public class StageAnalyzer {
      */
     public StageModel analyze(StageBlock block, ShuffleModel shuffle) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.debug("{}のマップレデュースプログラムを分析しています", block);
+        LOG.debug("Analyzing stage {}", block);
 
-        NameGenerator names = new NameGenerator(environment.getModelFactory());
+        Context context = new Context(environment);
         List<MapUnit> mapUnits = Lists.create();
         for (FlowBlock flowBlock : block.getMapBlocks()) {
-            mapUnits.addAll(collectMapUnits(flowBlock, names));
+            mapUnits.addAll(collectMapUnits(context, flowBlock));
         }
         mapUnits = composeMapUnits(mapUnits);
 
         List<ReduceUnit> reduceUnits = Lists.create();
         for (FlowBlock flowBlock : block.getReduceBlocks()) {
-            reduceUnits.addAll(collectReduceUnits(flowBlock, names));
+            reduceUnits.addAll(collectReduceUnits(context, flowBlock));
         }
 
         List<Sink> outputs = Lists.create();
         if (block.hasReduceBlocks()) {
-            outputs.addAll(collectOutputs(reduceUnits, block.getReduceBlocks(), names));
+            outputs.addAll(collectOutputs(context, reduceUnits, block.getReduceBlocks()));
         } else {
-            outputs.addAll(collectOutputs(mapUnits, block.getMapBlocks(), names));
+            outputs.addAll(collectOutputs(context, mapUnits, block.getMapBlocks()));
         }
         if (hasError()) {
             return null;
         }
+
         StageModel model = new StageModel(block, mapUnits, shuffle, reduceUnits, outputs);
+
         LOG.debug("{}は{}のようにコンパイルされます", block, model);
         return model;
     }
 
-    private List<MapUnit> collectMapUnits(FlowBlock block, NameGenerator names) {
+    private List<MapUnit> collectMapUnits(
+            Context context,
+            FlowBlock block) {
+        assert context != null;
         assert block != null;
-        assert names != null;
         LOG.debug("{}を分解してMapperプログラムの情報を抽出します", block);
         Set<FlowElement> startElements = collectFragmentStartElements(block);
-        Map<FlowElement, Fragment> fragments = collectFragments(startElements);
+        Map<FlowElement, Fragment> fragments = collectFragments(context, startElements);
         Graph<Fragment> fgraph = buildFragmentGraph(fragments);
-        List<MapUnit> units = buildMapUnits(block, fragments, fgraph, names);
+        List<MapUnit> units = buildMapUnits(context, block, fragments, fgraph);
         return units;
     }
 
@@ -182,28 +186,29 @@ public class StageAnalyzer {
         return new MapUnit(inputs, fragments);
     }
 
-    private List<ReduceUnit> collectReduceUnits(FlowBlock block, NameGenerator names) {
+    private List<ReduceUnit> collectReduceUnits(
+            Context context,
+            FlowBlock block) {
+        assert context != null;
         assert block != null;
-        assert names != null;
         LOG.debug("{}を分解してReducerプログラムの情報を抽出します", block);
         Set<FlowElement> startElements = collectFragmentStartElements(block);
-        Map<FlowElement, Fragment> fragments = collectFragments(startElements);
+        Map<FlowElement, Fragment> fragments = collectFragments(context, startElements);
         Graph<Fragment> fgraph = buildFragmentGraph(fragments);
-        List<ReduceUnit> units = buildReduceUnits(block, fragments, fgraph, names);
+        List<ReduceUnit> units = buildReduceUnits(context, block, fragments, fgraph);
         return units;
     }
 
     private List<MapUnit> buildMapUnits(
+            Context context,
             FlowBlock block,
             Map<FlowElement, Fragment> fragments,
-            Graph<Fragment> fgraph,
-            NameGenerator names) {
+            Graph<Fragment> fgraph) {
+        assert context != null;
         assert block != null;
         assert fragments != null;
         assert fgraph != null;
-        assert names != null;
-        Map<FlowBlock.Input, Graph<Fragment>> streams =
-            new LinkedHashMap<FlowBlock.Input, Graph<Fragment>>();
+        Map<FlowBlock.Input, Graph<Fragment>> streams = new LinkedHashMap<FlowBlock.Input, Graph<Fragment>>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElementInput input = blockInput.getElementPort();
             Fragment head = fragments.get(input.getOwner());
@@ -226,15 +231,15 @@ public class StageAnalyzer {
     }
 
     private List<ReduceUnit> buildReduceUnits(
+            Context context,
             FlowBlock block,
             Map<FlowElement, Fragment> fragments,
-            Graph<Fragment> fgraph,
-            NameGenerator names) {
+            Graph<Fragment> fgraph) {
+        assert context != null;
         assert block != null;
         assert fragments != null;
         assert fgraph != null;
-        Map<FlowElement, List<FlowBlock.Input>> inputGroups =
-            new LinkedHashMap<FlowElement, List<FlowBlock.Input>>();
+        Map<FlowElement, List<FlowBlock.Input>> inputGroups = new LinkedHashMap<FlowElement, List<FlowBlock.Input>>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElement element = blockInput.getElementPort().getOwner();
             Maps.addToList(inputGroups, element, blockInput);
@@ -264,12 +269,12 @@ public class StageAnalyzer {
     }
 
     private List<Sink> collectOutputs(
+            Context context,
             Collection<? extends Unit<?>> units,
-            Collection<FlowBlock> blocks,
-            NameGenerator names) {
+            Collection<FlowBlock> blocks) {
+        assert context != null;
         assert units != null;
         assert blocks != null;
-        assert names != null;
         Set<FlowElementOutput> candidates = Sets.create();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
@@ -305,8 +310,8 @@ public class StageAnalyzer {
 
         List<Sink> results = Lists.create();
         for (Set<FlowBlock.Output> group : opposites.values()) {
-            String name = names.create("result").getToken();
-            results.add(new Sink(group, names.create(name).getToken()));
+            String name = context.names.create("result").getToken();
+            results.add(new Sink(group, context.names.create(name).getToken()));
         }
         return results;
     }
@@ -354,19 +359,24 @@ public class StageAnalyzer {
     }
 
     private Map<FlowElement, Fragment> collectFragments(
+            Context context,
             Set<FlowElement> startElements) {
+        assert context != null;
         assert startElements != null;
         Map<FlowElement, Fragment> results = Maps.create();
         for (FlowElement element : startElements) {
-            Fragment fragment = getFragment(element, startElements);
+            Fragment fragment = getFragment(context, element, startElements);
+            assert results.containsKey(element) == false;
             results.put(element, fragment);
         }
         return results;
     }
 
     private Fragment getFragment(
+            Context context,
             FlowElement element,
             Set<FlowElement> startElements) {
+        assert context != null;
         assert element != null;
         assert startElements != null;
         FlowElement current = element;
@@ -392,7 +402,7 @@ public class StageAnalyzer {
             }
             current = next;
         }
-        return new Fragment(factors, resources);
+        return new Fragment(context.getNextFragmentNumber(), factors, resources);
     }
 
     private Set<FlowElement> collectFragmentStartElements(FlowBlock block) {
@@ -475,5 +485,20 @@ public class StageAnalyzer {
     private void error(String format, Object...args) {
         environment.error(format, args);
         sawError = true;
+    }
+
+    private static class Context {
+
+        final NameGenerator names;
+
+        private int fragmentSerialNumber = 0;
+
+        Context(FlowCompilingEnvironment environment) {
+            names = new NameGenerator(environment.getModelFactory());
+        }
+
+        int getNextFragmentNumber() {
+            return ++fragmentSerialNumber;
+        }
     }
 }

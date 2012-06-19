@@ -19,8 +19,10 @@ import java.util.List;
 
 /**
  * フロー要素の定義記述。
+ * @since 0.1.0
+ * @version 0.4.0
  */
-public interface FlowElementDescription {
+public interface FlowElementDescription extends FlowElementAttributeProvider {
 
     /**
      * この要素の種類を返す。
@@ -59,13 +61,4 @@ public interface FlowElementDescription {
      * @return この要素が利用するリソースの一覧
      */
     List<FlowResourceDescription> getResources();
-
-    /**
-     * この要素に指定された指定の属性を返す。
-     * @param <T> 属性の種類
-     * @param attributeClass 属性の種類
-     * @return 対象の属性値、未設定の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
-    <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass);
 }

@@ -60,6 +60,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 /**
  * Processes {@link DirectFileInputDescription} and {@link DirectFileOutputDescription}.
  * @since 0.2.5
+ * @version 0.4.0
  */
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
@@ -309,13 +310,16 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             Location location = getEnvironment().getPrologueLocation(MODULE_NAME).append(outputName).asPrefix();
             return new SourceInfo(Collections.singleton(location), TemporaryInputFormat.class);
         } else {
-            return getOriginalInputInfo(desc);
+            return getOriginalInputInfo(description);
         }
     }
 
-    private SourceInfo getOriginalInputInfo(DirectFileInputDescription desc) {
-        assert desc != null;
-        Set<Location> locations = Collections.singleton(Location.fromPath(desc.getBasePath(), '/'));
+    private SourceInfo getOriginalInputInfo(InputDescription description) {
+        DirectFileInputDescription desc = extract(description);
+        Set<Location> locations = Collections.singleton(
+                Location.fromPath("__DIRECTIO__", '/')
+                .append(description.getName())
+                .append(Location.fromPath(desc.getBasePath(), '/')));
         return new SourceInfo(locations, INPUT_FORMAT, getAttributes(desc));
     }
 
@@ -323,6 +327,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         Map<String, String> attributes = Maps.create();
         attributes.put(DirectDataSourceConstants.KEY_DATA_CLASS, desc.getModelType().getName());
         attributes.put(DirectDataSourceConstants.KEY_FORMAT_CLASS, desc.getFormat().getName());
+        attributes.put(DirectDataSourceConstants.KEY_BASE_PATH, desc.getBasePath());
         attributes.put(DirectDataSourceConstants.KEY_RESOURCE_PATH, desc.getResourcePattern());
         return attributes;
     }
@@ -356,7 +361,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 targets.add(new CopyDescription(
                         getProcessedInputName(description),
                         getEnvironment().getDataClasses().load(description.getDataType()),
-                        getOriginalInputInfo(desc),
+                        getOriginalInputInfo(description),
                         TemporaryOutputFormat.class));
             }
         }

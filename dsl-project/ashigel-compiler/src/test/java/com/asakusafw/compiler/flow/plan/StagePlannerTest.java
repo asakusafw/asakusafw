@@ -18,13 +18,19 @@ package com.asakusafw.compiler.flow.plan;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
@@ -36,9 +42,32 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * Test for {@link StagePlanner}.
  */
+@RunWith(Parameterized.class)
 public class StagePlannerTest {
 
     private final FlowGraphGenerator gen = new FlowGraphGenerator();
+
+    private final GenericOptionValue opt;
+
+    /**
+     * Returns test parameter sets.
+     * @return test parameter sets
+     */
+    @Parameters
+    public static List<Object[]> parameters() {
+        return Arrays.asList(new Object[][] {
+                { GenericOptionValue.DISABLED },
+                { GenericOptionValue.ENABLED },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param opt options
+     */
+    public StagePlannerTest(GenericOptionValue opt) {
+        this.opt = opt;
+    }
 
     private StagePlanner getPlanner() {
         FlowCompilerOptions options = new FlowCompilerOptions();
@@ -48,6 +77,7 @@ public class StagePlannerTest {
         options.setEnableDebugLogging(true);
         options.setHashJoinForSmall(false);
         options.setHashJoinForTiny(false);
+        options.putExtraAttribute(StagePlanner.KEY_COMPRESS_FLOW_BLOCK_GROUP, opt.getSymbol());
         return new StagePlanner(
                 Collections.<FlowGraphRewriter>emptyList(),
                 options);
@@ -852,10 +882,10 @@ public class StagePlannerTest {
 
         FlowCompilerOptions options = new FlowCompilerOptions();
         options.setCompressFlowPart(true);
-        StagePlanner opt = new StagePlanner(
+        StagePlanner planner = new StagePlanner(
                 Collections.<FlowGraphRewriter>emptyList(),
                 options);
-        StageGraph stages = opt.plan(gen.toGraph());
+        StageGraph stages = planner.plan(gen.toGraph());
 
         assertThat(stages.getInput().getBlockOutputs().size(), is(1));
         assertThat(stages.getOutput().getBlockInputs().size(), is(1));

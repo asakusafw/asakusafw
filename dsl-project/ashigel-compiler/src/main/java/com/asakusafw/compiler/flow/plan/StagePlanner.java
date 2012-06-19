@@ -31,8 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
+import com.asakusafw.compiler.flow.debugging.Debug;
 import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
 import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.utils.collections.Lists;
@@ -55,6 +57,7 @@ import com.asakusafw.vocabulary.flow.graph.Inline;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.operator.Branch;
+import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Project;
 import com.asakusafw.vocabulary.operator.Restructure;
 import com.asakusafw.vocabulary.operator.Split;
@@ -63,6 +66,10 @@ import com.asakusafw.vocabulary.operator.Split;
  * 演算子グラフの実行計画を立案する。
  */
 public class StagePlanner {
+
+    static final String KEY_COMPRESS_FLOW_BLOCK_GROUP = "compressFlowBlockGroup";
+
+    static final GenericOptionValue DEFAULT_COMPRESS_FLOW_BLOCK_GROUP = GenericOptionValue.ENABLED;
 
     static final Logger LOG = LoggerFactory.getLogger(StagePlanner.class);
 
@@ -182,13 +189,13 @@ public class StagePlanner {
         trimFlowBlocks(computation);
 
         List<StageBlock> stageBlocks = buildStageBlocks(computation);
-        trimStageBlocks(stageBlocks);
+        compressStageBlocks(stageBlocks);
         sortStageBlocks(stageBlocks);
 
         return new StageGraph(input, output, stageBlocks);
     }
 
-    private void trimStageBlocks(List<StageBlock> blocks) {
+    private void compressStageBlocks(List<StageBlock> blocks) {
         assert blocks != null;
         boolean changed;
         LOG.debug("ステージブロックを整理しています");
@@ -266,6 +273,7 @@ public class StagePlanner {
 
         List<StageBlock> results = Lists.create();
         List<FlowBlockGroup> flowBlockGroups = collectFlowBlockGroups(blocks);
+        compressFlowBlockGroups(flowBlockGroups);
         for (FlowBlockGroup group : flowBlockGroups) {
             if (group.reducer) {
                 Set<FlowBlock> predecessors = getPredecessors(group.members);
@@ -284,6 +292,84 @@ public class StagePlanner {
             }
         }
         return results;
+    }
+
+    private void compressFlowBlockGroups(List<FlowBlockGroup> flowBlockGroups) {
+        assert flowBlockGroups != null;
+        GenericOptionValue active = options.getGenericExtraAttribute(
+                KEY_COMPRESS_FLOW_BLOCK_GROUP,
+                DEFAULT_COMPRESS_FLOW_BLOCK_GROUP);
+        if (active == GenericOptionValue.DISABLED) {
+            return;
+        }
+        LOG.debug("Compressing flow blocks");
+
+        // merge blocks
+        List<FlowBlock> blocks = Lists.create();
+        Map<FlowBlock.Input, Set<FlowBlock.Input>> inputMapping = Maps.create();
+        Map<FlowBlock.Output, Set<FlowBlock.Output>> outputMapping = Maps.create();
+        for (FlowBlockGroup group : flowBlockGroups) {
+            if (group.reducer) {
+                Set<FlowBlock> predecessors = getPredecessors(group.members);
+                if (predecessors.size() >= 2) {
+                    LOG.debug("Compressing flow blocks: {}", predecessors);
+                    FlowBlock mergedPreds = FlowBlock.fromBlocks(predecessors, inputMapping, outputMapping);
+                    group.predeceaseBlocks.clear();
+                    group.predeceaseBlocks.add(mergedPreds);
+                    blocks.add(mergedPreds);
+                }
+            }
+            if (group.members.size() >= 2) {
+                LOG.debug("Compressing flow blocks: {}", group.members);
+                FlowBlock mergedBlocks = FlowBlock.fromBlocks(group.members, inputMapping, outputMapping);
+                group.members.clear();
+                group.members.add(mergedBlocks);
+                blocks.add(mergedBlocks);
+            }
+        }
+
+        // reconnect
+        for (Map.Entry<FlowBlock.Input, Set<FlowBlock.Input>> entry : inputMapping.entrySet()) {
+            FlowBlock.Input origin = entry.getKey();
+            for (FlowBlock.Connection conn : Lists.from(origin.getConnections())) {
+                FlowBlock.Output opposite = conn.getUpstream();
+                Collection<FlowBlock.Output> resolvedOpposites;
+                if (outputMapping.containsKey(opposite)) {
+                    resolvedOpposites = outputMapping.get(opposite);
+                } else {
+                    resolvedOpposites = Collections.singleton(opposite);
+                }
+                conn.disconnect();
+                for (FlowBlock.Input mapped : entry.getValue()) {
+                    for (FlowBlock.Output resolved : resolvedOpposites) {
+                        FlowBlock.connect(resolved, mapped);
+                    }
+                }
+            }
+        }
+        for (Map.Entry<FlowBlock.Output, Set<FlowBlock.Output>> entry : outputMapping.entrySet()) {
+            FlowBlock.Output origin = entry.getKey();
+            for (FlowBlock.Connection conn : Lists.from(origin.getConnections())) {
+                FlowBlock.Input opposite = conn.getDownstream();
+                Collection<FlowBlock.Input> resolvedOpposites;
+                if (inputMapping.containsKey(opposite)) {
+                    resolvedOpposites = inputMapping.get(opposite);
+                } else {
+                    resolvedOpposites = Collections.singleton(opposite);
+                }
+                conn.disconnect();
+                for (FlowBlock.Output mapped : entry.getValue()) {
+                    for (FlowBlock.Input resolved : resolvedOpposites) {
+                        FlowBlock.connect(mapped, resolved);
+                    }
+                }
+            }
+        }
+
+        // optimize
+        detachFlowBlocks(blocks);
+        unifyFlowBlocks(blocks);
+        trimFlowBlocks(blocks);
     }
 
     private List<FlowBlockGroup> collectFlowBlockGroups(List<FlowBlock> blocks) {
@@ -356,8 +442,8 @@ public class StagePlanner {
         assert blocks != null;
         Set<FlowBlock> results = Sets.create();
         for (FlowBlock block : blocks) {
-            for (FlowBlock.Input input : block.getBlockInputs()) {
-                for (FlowBlock.Connection conn : input.getConnections()) {
+            for (FlowBlock.Input port : block.getBlockInputs()) {
+                for (FlowBlock.Connection conn : port.getConnections()) {
                     FlowBlock pred = conn.getUpstream().getOwner();
                     results.add(pred);
                 }
@@ -615,8 +701,20 @@ public class StagePlanner {
         assert computation != null;
         input.detach();
         output.detach();
-        for (FlowBlock block : computation) {
+        detachFlowBlocks(computation);
+    }
+
+    private void detachFlowBlocks(List<FlowBlock> blocks) {
+        assert blocks != null;
+        for (FlowBlock block : blocks) {
             block.detach();
+        }
+    }
+
+    private void unifyFlowBlocks(List<FlowBlock> blocks) {
+        assert blocks != null;
+        for (FlowBlock block : blocks) {
+            block.unify();
         }
     }
 
@@ -772,13 +870,14 @@ public class StagePlanner {
         } else if (desc.getKind() == FlowElementKind.OPERATOR) {
             OperatorDescription op = (OperatorDescription) desc;
             Class<? extends Annotation> kind = op.getDeclaration().getAnnotationType();
-            // FIXME bless operators
             if (kind == Branch.class
                     || kind == Split.class
                     || kind == Project.class
                     || kind == Restructure.class
                     || kind == SideDataCheck.class
-                    || kind == SideDataBranch.class) {
+                    || kind == SideDataBranch.class
+                    || kind == Logging.class
+                    || kind == Debug.class) {
                 return true;
             }
         }

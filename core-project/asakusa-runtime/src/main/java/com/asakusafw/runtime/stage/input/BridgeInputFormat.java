@@ -154,7 +154,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         Map<DirectInputGroup, List<InputPath>> results = new HashMap<DirectInputGroup, List<InputPath>>();
         for (StageInput input : inputList) {
-            String fullBasePath = input.getPathString();
+            String fullBasePath = extractBasePath(input);
             String basePath = variables.parse(repo.getComponentPath(fullBasePath));
             FilePattern pattern = extractSearchPattern(context, variables, input);
             Class<?> dataClass = extractDataClass(context, input);
@@ -168,6 +168,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             paths.add(new InputPath(fullBasePath, basePath, pattern));
         }
         return results;
+    }
+
+    private String extractBasePath(StageInput input) throws IOException {
+        assert input != null;
+        return extract(input, DirectDataSourceConstants.KEY_BASE_PATH);
     }
 
     private FilePattern extractSearchPattern(
@@ -189,7 +194,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Invalid resource path pattern: \"{1}\" (path={0})",
-                    input.getPathString(),
+                    extractBasePath(input),
                     value), e);
         }
     }
@@ -203,7 +208,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         } catch (ClassNotFoundException e) {
             throw new IOException(MessageFormat.format(
                     "Invalid data class: \"{1}\" (path={0})",
-                    input.getPathString(),
+                    extractBasePath(input),
                     value), e);
         }
     }
@@ -221,7 +226,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
                     "Invalid format class: \"{1}\" (path={0})",
-                    input.getPathString(),
+                    extractBasePath(input),
                     value), e);
         }
     }
@@ -231,7 +236,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (value == null) {
             throw new IOException(MessageFormat.format(
                     "A mandatory attribute \"{1}\" is not defined (path={0})",
-                    input.getPathString(),
+                    extractBasePath(input),
                     key));
         }
         return value;

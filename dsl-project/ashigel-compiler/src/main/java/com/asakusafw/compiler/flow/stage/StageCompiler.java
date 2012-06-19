@@ -40,6 +40,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
  * ステージ内で利用されるプログラムをコンパイルする。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class StageCompiler {
 
@@ -154,6 +156,9 @@ public class StageCompiler {
         StageBlock block = model.getStageBlock();
         for (StageModel.MapUnit unit : model.getMapUnits()) {
             for (StageModel.Fragment fragment : unit.getFragments()) {
+                if (fragment.isCompiled()) {
+                    continue;
+                }
                 CompiledType compiled = mapFragmentEmitter.emit(fragment, block);
                 fragment.setCompiled(compiled);
             }
@@ -176,6 +181,9 @@ public class StageCompiler {
 
         for (StageModel.ReduceUnit unit : model.getReduceUnits()) {
             for (StageModel.Fragment fragment : unit.getFragments()) {
+                if (fragment.isCompiled()) {
+                    continue;
+                }
                 CompiledType compiled;
                 if (fragment.isRendezvous()) {
                     compiled = reduceFragmentEmitter.emit(fragment, shuffle, block);
@@ -259,6 +267,9 @@ public class StageCompiler {
         }
         Set<FlowResourceDescription> saw = Sets.create();
         for (ResourceFragment fragment : resources) {
+            if (fragment.isCompiled()) {
+                continue;
+            }
             CompiledType resolved = resourceMap.get(fragment.getDescription());
             if (resolved == null) {
                 if (saw.contains(fragment.getDescription()) == false) {

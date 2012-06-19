@@ -18,3 +18,4 @@ com.asakusafw.compiler.flow.join.processor.SideDataBranchFlowProcessor
 com.asakusafw.compiler.flow.join.processor.SideDataCheckFlowProcessor
 com.asakusafw.compiler.flow.join.processor.SideDataJoinFlowProcessor
 com.asakusafw.compiler.flow.join.processor.SideDataJoinUpdateFlowProcessor
+com.asakusafw.compiler.flow.debugging.DebugFlowProcessor

@@ -28,6 +28,7 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttributeProvider;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
@@ -49,6 +50,7 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
         /**
          * インスタンスを生成する。
          * @param environment 環境
+         * @param element target element
          * @param importer インポート
          * @param names 名前生成
          * @param desc 演算子の定義記述
@@ -57,11 +59,12 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
          */
         protected LineProcessorContext(
                 FlowCompilingEnvironment environment,
+                FlowElementAttributeProvider element,
                 ImportBuilder importer,
                 NameGenerator names,
                 OperatorDescription desc,
                 Map<FlowResourceDescription, Expression> resources) {
-            super(environment, importer, names, desc, resources);
+            super(environment, element, importer, names, desc, resources);
             this.generatedStatements = Lists.create();
         }
 

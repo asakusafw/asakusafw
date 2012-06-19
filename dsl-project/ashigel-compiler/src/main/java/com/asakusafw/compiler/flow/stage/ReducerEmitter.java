@@ -61,7 +61,7 @@ public class ReducerEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ReducerEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -100,17 +100,17 @@ public class ReducerEmitter {
 
     private static class Engine {
 
-        private ShuffleModel shuffle;
+        private final ShuffleModel shuffle;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private NameGenerator names;
+        private final NameGenerator names;
 
-        private FragmentFlow fragments;
+        private final FragmentFlow fragments;
 
-        private SimpleName context;
+        private final SimpleName context;
 
         Engine(FlowCompilingEnvironment environment, StageModel model) {
             assert environment != null;

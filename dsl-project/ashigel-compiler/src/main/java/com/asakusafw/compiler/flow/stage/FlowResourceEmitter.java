@@ -40,9 +40,9 @@ public class FlowResourceEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowResourceEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
-    private List<FlowGraphRewriter> rewriters;
+    private final List<FlowGraphRewriter> rewriters;
 
     /**
      * インスタンスを生成する。

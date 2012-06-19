@@ -164,6 +164,11 @@ public class FlowCompilerOptions {
          */
         AUTO("auto"),
 
+        /**
+         * The option which is invalid.
+         */
+        INVALID("invalid"),
+
         ;
 
         private final String primary;
@@ -190,7 +195,7 @@ public class FlowCompilerOptions {
         /**
          * Returns a value corresponding to the symbol.
          * @param symbol target symbol
-         * @return corresnponded value, or {@code null} if does not exist
+         * @return corresnponded value, or {@link FlowCompilerOptions.GenericOptionValue#INVALID} if does not exist
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         public static GenericOptionValue fromSymbol(String symbol) {
@@ -202,7 +207,7 @@ public class FlowCompilerOptions {
                     return value;
                 }
             }
-            return null;
+            return INVALID;
         }
     }
 
@@ -411,6 +416,21 @@ OptionName:
      */
     public String getExtraAttribute(String name) {
         return this.extraAttributes.get(name);
+    }
+
+    /**
+     * Returns the extra attribute.
+     * @param name attribute name
+     * @param defaultValue the default value
+     * @return related value, or {@code null} if not configured
+     */
+    public GenericOptionValue getGenericExtraAttribute(String name, GenericOptionValue defaultValue) {
+        String value = this.extraAttributes.get(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        GenericOptionValue symbol = GenericOptionValue.fromSymbol(value);
+        return symbol;
     }
 
     /**

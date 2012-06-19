@@ -18,8 +18,14 @@ package com.asakusafw.runtime.directio;
 /**
  * Constants for {@link DirectDataSource} facility.
  * @since 0.2.5
+ * @version 0.4.0
  */
 public final class DirectDataSourceConstants {
+
+    /**
+     * The attribute key name of base path.
+     */
+    public static final String KEY_BASE_PATH = "basePath";
 
     /**
      * The attribute key name of resource path/pattern.
@@ -38,6 +44,7 @@ public final class DirectDataSourceConstants {
 
     /**
      * The attribute key prefix of delete patterns.
+     * @since 0.4.0
      */
     public static final String PREFIX_DELETE_PATTERN = "deletePattern.";
 

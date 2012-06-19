@@ -454,6 +454,7 @@ public class ShuffleFragmentEmitter {
                 .toDescription();
             return new LinePartProcessor.Context(
                     environment,
+                    description,
                     importer,
                     names,
                     description,
