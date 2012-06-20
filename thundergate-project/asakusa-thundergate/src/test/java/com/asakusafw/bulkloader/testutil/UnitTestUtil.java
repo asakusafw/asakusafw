@@ -57,14 +57,14 @@ import com.asakusafw.bulkloader.transfer.FileList;
 public class UnitTestUtil {
     private static final String DELIM = ";";
     private static final String SQLFILE_ENCODING = "UTF-8";
-    private static final String PATH_DIST_MAIN = "main/dist/bulkloader";
-    private static final String PATH_DIST_TEST = "test/dist/bulkloader";
+    private static final String PATH_DIST_MAIN = "src/main/dist/bulkloader";
+    private static final String PATH_DIST_TEST = "src/test/dist/bulkloader";
     private static final File targetDir = new File("target/asakusa-thundergate/");
 
     public static void setUpEnv() throws Exception {
         Properties p = System.getProperties();
-        p.setProperty(Constants.ASAKUSA_HOME, "src");
-        p.setProperty(Constants.THUNDER_GATE_HOME, "src/" + PATH_DIST_TEST);
+        p.setProperty(Constants.ASAKUSA_HOME, new File(".").getCanonicalPath());
+        p.setProperty(Constants.THUNDER_GATE_HOME, new File(PATH_DIST_TEST).getCanonicalPath());
         ConfigurationLoader.setSysProp(p);
         System.setProperties(p);
     }

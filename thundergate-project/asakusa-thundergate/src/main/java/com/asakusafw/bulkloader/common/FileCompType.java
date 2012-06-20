@@ -16,42 +16,47 @@
 package com.asakusafw.bulkloader.common;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * ファイル圧縮有無を表すENUM。
  * @author yuta.shirai
- *
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public enum FileCompType {
+
     /**
      * ファイル圧縮有無-圧縮する。
      */
-    DEFLATED("1"),
+    DEFLATED("COMPRESS", "1", "DEFLATE"),
 
     /**
      * ファイル圧縮有無-圧縮しない。
      */
-    STORED("0");
+    STORED( "NONE", "0","STORE")
+    ;
 
-    /**
-     * ファイル圧縮有無。
-     */
-    private String compType;
+    private String symbol;
+
+    Set<String> keys;
+
+    private FileCompType(String symbol, String... alternatives) {
+        this.symbol = symbol;
+        this.keys = new HashSet<String>();
+        this.keys.add(symbol);
+        Collections.addAll(this.keys, alternatives);
+    }
+
     /**
      * ファイル圧縮有無を返す。
      * @return lockType ファイル圧縮有無
      */
-    public String getCompType() {
-        return compType;
-    }
-    /**
-     * コンストラクタ。
-     * @param type ファイル圧縮有無
-     */
-    private FileCompType(String type) {
-        this.compType = type;
+    public String getSymbol() {
+        return symbol;
     }
     /**
      * {@code String}に対する定数を返す。
@@ -65,9 +70,11 @@ public enum FileCompType {
     private static class CompTypeToFileCompType {
         static final Map<String, FileCompType> REVERSE_DICTIONARY;
         static {
-            Map<String, FileCompType> map = new HashMap<String, FileCompType>();
+            Map<String, FileCompType> map = new TreeMap<String, FileCompType>(String.CASE_INSENSITIVE_ORDER);
             for (FileCompType elem : FileCompType.values()) {
-                map.put(elem.getCompType(), elem);
+                for (String key : elem.keys) {
+                    map.put(key, elem);
+                }
             }
             REVERSE_DICTIONARY = Collections.unmodifiableMap(map);
         }

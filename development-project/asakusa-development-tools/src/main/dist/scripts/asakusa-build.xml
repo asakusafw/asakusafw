@@ -14,13 +14,13 @@
 
 	<resourcecount property="asakusa.dmdl.file.count">
 		<fileset dir="${asakusa.dmdl.dir}" erroronmissingdir="false">
-			<include name="*.dmdl"/>
+			<include name="*.dmdl" />
 		</fileset>
 	</resourcecount>
 
 	<resourcecount property="asakusa.thundergate.ddl.file.count">
 		<fileset dir="src/main/sql/modelgen" erroronmissingdir="false">
-			<include name="**/*.sql"/>
+			<include name="**/*.sql" />
 		</fileset>
 	</resourcecount>
 
@@ -35,8 +35,9 @@
 		</and>
 	</condition>
 
-	<target name="generate-model" description="Generate data model classes form DMDL scripts."
-        unless="asakusa.dmdl.not.exists">
+	<target name="generate-model"
+	        description="Generate data model classes form DMDL scripts."
+	        unless="asakusa.dmdl.not.exists">
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
 
@@ -75,9 +76,9 @@
 	</target>
 
 	<target name="modelgen-with-thundergate-dmdl"
-		description="Genrate dmdl for ThunderGate from Information Schema of MySQL and Generate and generate data model classes form DMDL scripts."
-		if="asakusa.build.database.enabled"
-		unless="asakusa.thundergate.dmdl.not.exists">
+	        description="Genrate dmdl for ThunderGate from Information Schema of MySQL and Generate and generate data model classes form DMDL scripts."
+	        if="asakusa.build.database.enabled"
+	        unless="asakusa.thundergate.dmdl.not.exists">
 		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 		<mkdir dir="${asakusa.modelgen.output}" />
 		<mkdir dir="${asakusa.testdatasheet.output}" />
@@ -285,65 +286,13 @@
 	</target>
 
 	<target name="install-framework-thundergate">
-		<condition property="asakusa.thundergate.switch.to" value="standalone">
-			<not>
-				<isset property="asakusa.thundergate.switch.to" />
-			</not>
-		</condition>
-		<move todir="${env.HOME}">
-			<fileset dir="${env.ASAKUSA_HOME}/bulkloader/bin">
-				<include name=".bulkloader_db_profile" />
-				<include name=".bulkloader_hc_profile" />
-			</fileset>
-		</move>
 		<copy file="${env.ASAKUSA_HOME}/bulkloader/conf/[targetname]-jdbc.properties"
 		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
 
-		<replace file="${env.HOME}/.bulkloader_db_profile"
-		         token="export ASAKUSA_HOME="
-		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
-		<replace file="${env.HOME}/.bulkloader_db_profile"
-		         token="export JAVA_HOME="
-		         value="export JAVA_HOME=${env.JAVA_HOME}" />
-		<replace file="${env.HOME}/.bulkloader_hc_profile"
-		         token="export ASAKUSA_HOME="
-		         value="export ASAKUSA_HOME=${env.ASAKUSA_HOME}" />
-		<replace file="${env.HOME}/.bulkloader_hc_profile"
-		         token="export JAVA_HOME="
-		         value="export JAVA_HOME=${env.JAVA_HOME}" />
-		<replace file="${env.HOME}/.bulkloader_hc_profile"
-		         token="export HADOOP_HOME="
-		         value="export HADOOP_HOME=${env.HADOOP_HOME}" />
-
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
-		         token="hadoop-cluster.user=asakusa"
-		         value="hadoop-cluster.user=${env.USER}" />
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
-		         token="import.delete-tsv=1"
-		         value="import.delete-tsv=0" />
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
-		         token="export.delete-tsv=1"
-		         value="export.delete-tsv=0" />
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
-		         token="import.tsv-create-dir=temp"
-		         value="import.tsv-create-dir=/tmp/asakusa" />
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-db.properties"
-		         token="export.tsv-create-dir=temp"
-		         value="export.tsv-create-dir=/tmp/asakusa" />
-
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
-		         token="hadoop-cluster.workingdir.use=false"
-		         value="hadoop-cluster.workingdir.use=true" />
-
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/log4j.xml"
-		         token="/var/log"
-		         value="${env.ASAKUSA_HOME}/log" />
-
-		<mkdir dir="/tmp/asakusa" />
-		<chmod perm="777" file="/tmp/asakusa" type="dir" />
+		<mkdir dir="/tmp/thundergate-${env.USER}" />
+		<chmod perm="777" file="/tmp/thundergate-${env.USER}" type="dir" />
 
 		<antcall target="thundergate-create-table" />
-		<antcall target="switch-${asakusa.thundergate.switch.to}" />
 	</target>
 
 	<target name="thundergate-create-table" if="asakusa.build.database.enabled">
@@ -357,18 +306,6 @@
 			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/create_table.sql" />
 			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/insert_import_table_lock.sql" />
 		</sql>
-	</target>
-
-	<target name="switch-standalone">
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
-		         token="hdfs-protocol-host=hdfs://localhost:8020"
-		         value="hdfs-protocol-host=file:///" />
-	</target>
-
-	<target name="switch-pseudo">
-		<replace file="${env.ASAKUSA_HOME}/bulkloader/conf/bulkloader-conf-hc.properties"
-		         token="hdfs-protocol-host=file:///"
-		         value="hdfs-protocol-host=hdfs://localhost:8020" />
 	</target>
 
 </project>

@@ -81,7 +81,7 @@ public class ImportFileSend {
                 LOG.info("TG-IMPORTER-04004",
                         tableName,
                         targetTable.getImportFile().getAbsolutePath(),
-                        compType.getCompType());
+                        compType.getSymbol());
                 long dumpFileSize = sendTableFile(writer, tableName, targetTable);
                 LOG.info("TG-PROFILE-02003",
                         bean.getTargetName(),
@@ -94,7 +94,7 @@ public class ImportFileSend {
                 LOG.info("TG-IMPORTER-04005",
                         tableName,
                         targetTable.getImportFile().getAbsolutePath(),
-                        compType.getCompType());
+                        compType.getSymbol());
             }
             writer.close();
             provider.waitForComplete();
@@ -241,25 +241,26 @@ public class ImportFileSend {
         String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
         String hostName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
         String userName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
-        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_EXT_SHELL_NAME);
+        String scriptPath = ConfigurationLoader.getRemoteScriptPath(Constants.PATH_REMOTE_EXTRACTOR);
         String variableTable = Constants.createVariableTable().toSerialString();
         List<String> command = new ArrayList<String>();
-        command.add(shellName);
+        command.add(scriptPath);
         command.add(targetName);
         command.add(batchId);
         command.add(jobflowId);
         command.add(executionId);
         command.add(variableTable);
 
+        Map<String, String> env = ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV);
         LOG.info("TG-IMPORTER-04003",
                 sshPath,
                 hostName,
                 userName,
-                shellName,
+                scriptPath,
                 targetName,
                 batchId,
                 jobflowId,
                 executionId);
-        return new OpenSshFileListProvider(sshPath, userName, hostName, command);
+        return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
     }
 }

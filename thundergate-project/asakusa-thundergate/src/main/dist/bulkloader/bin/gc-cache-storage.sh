@@ -29,37 +29,50 @@ Parameters:
 __EOF__
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
 if [ $# -ne 1 ]
 then
     usage
     exit 1
 fi
 
+_dirname=$(dirname "$0")
+_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
+
 _OPT_TARGET_NAME="$1"
 
-. ~/.bulkloader_db_profile
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
+import "$_TG_ROOT/conf/env.sh"
+import "$_TG_ROOT/libexec/validate-env.sh"
+import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
+import "$_TG_ROOT/libexec/configure-classpath.sh"
 
 export BULKLOADER_HOME="$ASAKUSA_HOME/bulkloader"
 
 LOGFILE_BASENAME="gc-cache-storage"
 CLASS_NAME="com.asakusafw.bulkloader.cache.GcCacheStorage"
 
-. "$ASAKUSA_HOME"/bulkloader/bin/set-classpath-db.sh
-cd "$ASAKUSA_HOME"
+export HADOOP_CLASSPATH="$_TG_CLASSPATH"
+export HADOOP_USER_CLASSPATH_FIRST=true
+HADOOP_OPTS="$HADOOP_OPTS -Dasakusa.home=$ASAKUSA_HOME"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
+
+cd
 
 echo "Starting gc-cache-storage:"
 echo "   Target Name: $_OPT_TARGET_NAME"
 
-"$JAVA_HOME"/bin/java \
-    -Dasakusa.home="$ASAKUSA_HOME" \
-    -Dlogfile.basename="$LOGFILE_BASENAME" \
-    -classpath "$BULK_LOADER_CLASSPATH" \
+"$HADOOP_CMD" \
     "$CLASS_NAME" \
     "$_OPT_TARGET_NAME"
 

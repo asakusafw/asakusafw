@@ -121,11 +121,11 @@ public class DfsFileImportTest {
         // ImportBeanを生成
         Map<String, ImportTargetTableBean> targetTable = new LinkedHashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean tableBean1 = new ImportTargetTableBean();
-        tableBean1.setDfsFilePath("/${user}/${execution_id}/import/XXX");
+        tableBean1.setDfsFilePath("${execution_id}/import/XXX");
         tableBean1.setImportTargetType(this.getClass());
         targetTable.put("IMPORT_TARGET1", tableBean1);
         ImportTargetTableBean tableBean2 = new ImportTargetTableBean();
-        tableBean2.setDfsFilePath("/asakusa/import/XXX");
+        tableBean2.setDfsFilePath("asakusa/import/XXX");
         tableBean2.setImportTargetType(this.getClass());
         targetTable.put("IMPORT_TARGET2", tableBean2);
         ImportBean bean = new ImportBean();
@@ -179,8 +179,8 @@ public class DfsFileImportTest {
        assertTrue(result);
 
        // URIを検証
-       assertEquals("hdfs://localhost:8020/user/hadoop/JOB_FLOW01-001/import/XXX", fileImport.getUri()[0].toString());
-       assertEquals("hdfs://localhost:8020/user/asakusa/import/XXX", fileImport.getUri()[1].toString());
+       assertEquals("file:/tmp/bulkloader/JOB_FLOW01-001/import/XXX", fileImport.getUri()[0].toString());
+       assertEquals("file:/tmp/bulkloader/asakusa/import/XXX", fileImport.getUri()[1].toString());
 
        // ファイルの中身を検証
        assertTrue(UnitTestUtil.assertFile(new File("src/test/data/importer/IMP_IMPORT_TARGET2-1.tsv"), new File("target/asakusa-thundergate/SEND_OUT1.tsv")));
@@ -638,7 +638,7 @@ public class DfsFileImportTest {
 
         // プロパティを修正
         Properties prop = ConfigurationLoader.getProperty();
-        prop.setProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST, "あいう｜|://");
+        prop.setProperty(Constants.PROP_KEY_BASE_PATH, "INVALIDFS://");
 
         // テスト対象クラス実行
         DfsFileImport fileImport = new DfsFileImport() {
@@ -684,8 +684,7 @@ public class DfsFileImportTest {
         boolean result = fileImport.importFile(bean, "hadoop");
 
         // 戻り値を検証
-     assertFalse(result);
-
+        assertFalse(result);
     }
     /**
     *

@@ -32,22 +32,47 @@ recoverer.sh
 EOF
 }
 
-. ~/.bulkloader_db_profile
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
+if [ $# -ne 1 -a $# -ne 2 ]; then
+    usage
+    exit 1
+fi
+
+_dirname=$(dirname "$0")
+_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
+
+import "$_TG_ROOT/conf/env.sh"
+import "$_TG_ROOT/libexec/validate-env.sh"
+import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
+import "$_TG_ROOT/libexec/configure-classpath.sh"
+
 export BULKLOADER_HOME=$ASAKUSA_HOME/bulkloader
 
 LOGFILE_BASENAME="recoverer"
 CLASS_NAME="com.asakusafw.bulkloader.recoverer.Recoverer"
 
-. $ASAKUSA_HOME/bulkloader/bin/set-classpath-db.sh
+export HADOOP_CLASSPATH="$_TG_CLASSPATH"
+export HADOOP_USER_CLASSPATH_FIRST=true
+HADOOP_OPTS="$HADOOP_OPTS $RECOVERER_JAVA_OPTS"
+HADOOP_OPTS="$HADOOP_OPTS -Dasakusa.home=$ASAKUSA_HOME"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
 
-cd $ASAKUSA_HOME
+cd
 
-if [ $# -eq 1 -o $# -eq 2 ]; then
-  $JAVA_HOME/bin/java $RECOVERER_JAVA_OPTS -Dasakusa.home=$ASAKUSA_HOME -Dlogfile.basename=$LOGFILE_BASENAME -classpath $BULK_LOADER_CLASSPATH $CLASS_NAME $*
-  rc=$?
-else
-  usage
-  rc=1
-fi
+"$HADOOP_CMD" \
+    "$CLASS_NAME" \
+    "$@"
 
+rc=$?
 exit $rc

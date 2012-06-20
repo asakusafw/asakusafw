@@ -100,15 +100,15 @@ public class ExportFileSendTest {
         Map<String, ExportTargetTableBean> targetTable = new LinkedHashMap<String, ExportTargetTableBean>();
         ExportTargetTableBean table1 = new ExportTargetTableBean();
         List<String> list1 = new ArrayList<String>();
-        list1.add("/src/test/data/collector1");
-        list1.add("/${user}/${execution_id}/data/collector2");
+        list1.add("src/test/data/collector1");
+        list1.add("${execution_id}/data/collector2");
         table1.setDfsFilePaths(list1);
         table1.setExportTargetType(NullWritable.class);
         targetTable.put("EXP_TARGET1", table1);
 
         ExportTargetTableBean table2 = new ExportTargetTableBean();
         List<String> list2 = new ArrayList<String>();
-        list2.add("/src/test/data/collector3");
+        list2.add("src/test/data/collector3");
         table2.setDfsFilePaths(list2);
         table2.setExportTargetType(NullWritable.class);
         targetTable.put("EXP_TARGET2", table2);
@@ -127,9 +127,9 @@ public class ExportFileSendTest {
        // ディレクトリ名の検証
         List<String> dirs = send.getDirs();
         assertEquals(3, dirs.size());
-        assertEquals("hdfs://localhost:8020/user/src/test/data/collector1", dirs.get(0));
-        assertEquals("hdfs://localhost:8020/user/hadoop/JOB_FLOW01-001/data/collector2", dirs.get(1));
-        assertEquals("hdfs://localhost:8020/user/src/test/data/collector3", dirs.get(2));
+        assertEquals("file:/tmp/bulkloader/src/test/data/collector1", dirs.get(0));
+        assertEquals("file:/tmp/bulkloader/JOB_FLOW01-001/data/collector2", dirs.get(1));
+        assertEquals("file:/tmp/bulkloader/src/test/data/collector3", dirs.get(2));
 
     }
 

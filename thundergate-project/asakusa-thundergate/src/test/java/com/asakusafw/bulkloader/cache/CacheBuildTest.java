@@ -37,6 +37,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.FileNameUtil;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -50,8 +53,6 @@ import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
  * Test for building caches ({@link CacheBuildClient}).
  */
 public class CacheBuildTest {
-
-    private static final String COMMAND_PATH = "thundergate-cache/bin/build-cache.sh";
 
     /**
      * Checks whether hadoop is installed.
@@ -71,7 +72,9 @@ public class CacheBuildTest {
      */
     @Before
     public void setUp() throws Exception {
-        FileSystem.get(getConfiguration()).delete(new Path(getTargetUri()), true);
+        URI uri = getTargetUri();
+        FileSystem fs = FileSystem.get(uri, getConfiguration());
+        fs.delete(new Path(uri), true);
     }
 
     /**
@@ -292,7 +295,7 @@ public class CacheBuildTest {
 
     private void execute(String subcommand) throws IOException, InterruptedException {
         FileListProvider provider = emulator.execute(
-                COMMAND_PATH,
+                Constants.PATH_LOCAL_CACHE_BUILD,
                 subcommand,
                 "tbatch",
                 "tflow",
@@ -308,9 +311,14 @@ public class CacheBuildTest {
         }
     }
 
-    private URI getTargetUri() throws IOException {
-        Path path = new Path("target/testing/" + getClass().getSimpleName());
-        return FileSystem.get(getConfiguration()).makeQualified(path).toUri();
+    private URI getTargetUri() {
+        try {
+            return FileNameUtil.createPath(
+                    getConfiguration(),
+                    "target/testing/" + getClass().getSimpleName(), "dummy", "dummy").toUri();
+        } catch (BulkLoaderSystemException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private Configuration getConfiguration() {

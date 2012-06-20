@@ -16,6 +16,7 @@
 package com.asakusafw.bulkloader.transfer;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assume;
 import org.junit.Test;
@@ -35,7 +36,8 @@ public class OpenSshFileListProviderTest {
                     "/usr/bin/ssh",
                     System.getProperty("user.name"),
                     "localhost",
-                    Arrays.asList("echo", "hoge"));
+                    Arrays.asList("echo", "hoge", "VAR"),
+                    Collections.singletonMap("MESSAGE", "VAR"));
             try {
                 provider.discardWriter();
                 provider.discardReader();

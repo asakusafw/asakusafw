@@ -15,25 +15,22 @@
 # limitations under the License.
 #
 
-# DBをクリーニングするツール
-# ThunderGateで使用するシステムテーブルの内容を全て削除する。
-# 実行すると以下の処理を行う。
-# ・ジョブフロー実行テーブル(RUNNING_JOBFLOWS)のレコードを全件削除
-# ・ジョブフロー排他テーブル(JOBFLOW_INSTANCE_LOCK)のレコードを全件削除
-# ・ロック(テーブルロック・レコードロック)を全て解除
-# ・エクスポートテンポラリテーブルを全て削除
-# ・エクスポートテンポラリ管理のレコードを全件削除
+#Exporter起動コマンド
 
 usage() {
 	cat <<EOF
-DBをクリーニングするツールを起動します。
+Exporterを起動します。
 
 起動シェルスクリプト
-dbcleaner.sh
+exporter.sh
 
- 順  引数                                       必須/任意
- ---------------------------------------------------------
- 1   ターゲット名                                 必須
+ 順  引数                             必須/任意
+ -----------------------------------------------
+ 1   ターゲット名                      必須
+ 2   バッチID                          必須
+ 3   ジョブフローID                    必須
+ 4   ジョブフロー実行ID                必須
+ 5   変数表の文字列表記                必須
 
 EOF
 }
@@ -49,32 +46,52 @@ import() {
     fi
 }
 
-if [ $# -ne 1 ]; then
-    usage
-    exit 1
+if [ $# -ne 5 ]; then
+  usage
+  exit 1
 fi
 
 _dirname=$(dirname "$0")
 _TG_ROOT="$(cd "$_dirname" ; pwd)/.."
 
+_TARGET_NAME="$1"
+shift
+_BATCH_ID="$1"
+shift
+_FLOW_ID="$1"
+shift
+_EXECUTION_ID="$1"
+shift
+export BULKLOADER_ARGS="$1"
+shift
+
 import "$_TG_ROOT/conf/env.sh"
 import "$_TG_ROOT/libexec/validate-env.sh"
 import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
+
+_TG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_BATCH_ID/lib/jobflow-${_FLOW_ID}.jar"
 import "$_TG_ROOT/libexec/configure-classpath.sh"
 
-export BULKLOADER_HOME="$ASAKUSA_HOME/bulkloader"
+export BULKLOADER_HOME="$ASAKUSA_HOME"/bulkloader
 
-CLASS_NAME=com.asakusafw.bulkloader.tools.DBCleaner
+LOGFILE_BASENAME="exporter"
+CLASS_NAME="com.asakusafw.bulkloader.exporter.Exporter"
 
 export HADOOP_CLASSPATH="$_TG_CLASSPATH"
 export HADOOP_USER_CLASSPATH_FIRST=true
+HADOOP_OPTS="$HADOOP_OPTS $EXPORTER_JAVA_OPTS"
+HADOOP_OPTS="$HADOOP_OPTS -Dasakusa.home=$ASAKUSA_HOME"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
 
 cd
 
 "$HADOOP_CMD" \
-    $CLASS_NAME \
-    "$@"
-
+    "$CLASS_NAME" \
+    "$_TARGET_NAME" \
+    "$_BATCH_ID" \
+    "$_FLOW_ID" \
+    "$_EXECUTION_ID"
 rc=$?
-echo RETURN_CODE:$rc
+
 exit $rc

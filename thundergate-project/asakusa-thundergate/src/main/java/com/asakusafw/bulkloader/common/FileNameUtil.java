@@ -17,9 +17,8 @@ package com.asakusafw.bulkloader.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +33,8 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Import処理/Export処理で扱うファイル名の作成・抽出等の操作を行うユーティリティクラス。
  * @author yuta.shirai
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class FileNameUtil {
     /**
@@ -104,139 +105,69 @@ public final class FileNameUtil {
     }
 
     /**
-     * DFS上のImportファイルのファイルパス（フルパス）を生成して返す。
-     * @param dfsFilePath DFS上のファイルパス
-     * @param user OSのユーザー名
-     * @param executionId 実行ID
-     * @return フルパスに変換したDFS上のImportファイルパス
-     * @throws BulkLoaderSystemException 不正なURIの場合
+     * Resolves the raw path.
+     * @param conf current configuration
+     * @param rawPath raw path
+     * @param executionId current execution ID
+     * @param user current user name
+     * @return the resolved full path
+     * @throws BulkLoaderSystemException if failed to resolve the path
+     * @since 0.4.0
      */
-    public static URI createDfsImportURI(
-            String dfsFilePath,
+    public static Path createPath(
+            Configuration conf,
+            String rawPath,
             String executionId,
             String user) throws BulkLoaderSystemException {
+        return createPaths(conf, Collections.singletonList(rawPath), executionId, user).get(0);
+    }
+
+    /**
+     * Resolves the raw path.
+     * @param conf current configuration
+     * @param rawPaths raw paths
+     * @param executionId current execution ID
+     * @param user current user name
+     * @return the resolved full path
+     * @throws BulkLoaderSystemException if failed to resolve the path
+     * @since 0.4.0
+     */
+    public static List<Path> createPaths(
+            Configuration conf,
+            List<String> rawPaths,
+            String executionId,
+            String user) throws BulkLoaderSystemException {
+        String basePathString = ConfigurationLoader.getProperty(Constants.PROP_KEY_BASE_PATH);
+        Path basePath;
+        if (basePathString == null || basePathString.isEmpty()) {
+            basePath = null;
+        } else {
+            basePath = new Path(basePathString);
+        }
         VariableTable variables = Constants.createVariableTable();
         variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, user);
         variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, executionId);
-        StringBuilder path = new StringBuilder();
-        path.append(ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-        path.append(Constants.HDFSFIXED_PATH);
-        path.append(variables.parse(dfsFilePath, false));
+        FileSystem fs;
         try {
-            return new URI(path.toString());
-        } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00018", path.toString());
-        }
-    }
-
-    /**
-     * DFS上のImportファイルのファイルパス（フルパス）を生成して返す。
-     *
-     * createDfsImportURIはDfs上でしか正常に動作しないパスを返すため、
-     * スタンドアロンモードでも動作するためにワーキングディレクトリを使用する。
-     * bulkloader-conf-hc.properties のプロパティ workingdir.use を true に設定すると
-     * createDfsImportURIメソッドの代わりに本メソッドが呼ばれるようになる。
-     *
-     * @param dfsFilePath DFS/またはローカル上のファイルパス
-     * @param executionId 実行ID
-     * @return フルパスに変換したDFS/またはローカル上のファイルパス
-     * @throws BulkLoaderSystemException 不正なURIの場合
-     */
-    public static URI createDfsImportURIWithWorkingDir(
-            String dfsFilePath,
-            String executionId) throws BulkLoaderSystemException {
-
-        FileSystem fs = null;
-        Path workingDirPath = null;
-        Configuration conf = new Configuration();
-        String path = ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST);
-        try {
-            // NOTE HADOOP_HOME/conf配下にクラスパスを追加するとStackOverFlowErrorが発生するため、設定ファイルから取得するようにしている。
-            fs = FileSystem.get(new URI(path), conf);
-            fs.setWorkingDirectory(fs.getHomeDirectory());
-            workingDirPath = fs.getWorkingDirectory();
+            if (basePath == null) {
+                fs = FileSystem.get(conf);
+            } else {
+                fs = FileSystem.get(basePath.toUri(), conf);
+                basePath = fs.makeQualified(basePath);
+            }
         } catch (IOException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00019", path);
-        } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00018", path);
+            throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00019", rawPaths);
         }
-
-        VariableTable variables = Constants.createVariableTable();
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, workingDirPath.toString());
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, executionId);
-        String resolved = variables.parse(dfsFilePath, false);
-        try {
-            return new URI(resolved.substring(1)); // 先頭の[/]は除去する
-        } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
-                    // TODO MessageFormat.formatを検討
-                    "HDFSに書き出すURIが不正。URI：" + dfsFilePath.substring(1));
-        }
-    }
-    /**
-     * DFS上のディレクトリパスをフルパスにして返す。
-     * @param dfsFileDir DFS上のディレクトリパス
-     * @param user OSのユーザー名
-     * @param executionId ジョブフロー実行ID
-     * @return DFS上のディレクトリパス（フルパス）
-     */
-    public static List<String> createDfsExportURI(List<String> dfsFileDir, String user, String executionId) {
-        VariableTable variables = Constants.createVariableTable();
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, user);
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, executionId);
-        StringBuilder prefix = new StringBuilder();
-        List<String> results = new ArrayList<String>();
-        prefix.append(ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-        prefix.append(Constants.HDFSFIXED_PATH);
-        for (String dirPath : dfsFileDir) {
-            String expanded = variables.parse(dirPath, false);
-            results.add(prefix + expanded);
-        }
-        return results;
-    }
-
-    /**
-     * DFS上のEmportファイルのファイルパス（フルパス）を生成して返す。
-     *
-     * createDfsExportURIはDfs上でしか正常に動作しないパスを返すため、
-     * スタンドアロンモードでも動作するためにワーキングディレクトリを使用する。
-     * bulkloader-conf-hc.properties のプロパティ workingdir.use を true に設定すると
-     * createDfsExportURIメソッドの代わりに本メソッドが呼ばれるようになる。
-     *
-     * @param dfsFileDir DFS/またはローカル上のディレクトリパス
-     * @param executionId ジョブフロー実行ID
-     * @return DFS/またはローカル上のディレクトリパス（フルパス）
-     * @throws BulkLoaderSystemException 処理に失敗した場合
-     */
-    public static List<String> createDfsExportURIWithWorkingDir(
-            List<String> dfsFileDir,
-            String executionId)
-        throws BulkLoaderSystemException {
-
-        Path workingDirPath = null;
-        Configuration conf = new Configuration();
-        try {
-            URI uri = new URI(ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-            FileSystem fs = FileSystem.get(uri, conf);
-            fs.setWorkingDirectory(fs.getHomeDirectory());
-            workingDirPath = fs.getWorkingDirectory();
-        } catch (IOException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
-                    "HDFSのファイルシステムの取得に失敗。URI："
-                    + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-        } catch (URISyntaxException e) {
-            throw new BulkLoaderSystemException(e, CLASS, "TG-EXTRACTOR-02001",
-                    "HDFSのパスが不正。URI："
-                    + ConfigurationLoader.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST));
-        }
-
-        VariableTable variables = Constants.createVariableTable();
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_USER, workingDirPath.toString());
-        variables.defineVariable(Constants.HDFS_PATH_VARIABLE_EXECUTION_ID, executionId);
-        List<String> results = new ArrayList<String>();
-        for (String dirPath : dfsFileDir) {
-            String expanded = variables.parse(dirPath, false);
-            results.add(expanded.substring(1)); // 先頭の[/]は除去する
+        List<Path> results = new ArrayList<Path>();
+        for (String rawPath : rawPaths) {
+            String resolved = variables.parse(rawPath, false);
+            Path fullPath;
+            if (basePath == null) {
+                fullPath = fs.makeQualified(new Path(resolved));
+            } else {
+                fullPath = new Path(basePath, resolved);
+            }
+            results.add(fullPath);
         }
         return results;
     }

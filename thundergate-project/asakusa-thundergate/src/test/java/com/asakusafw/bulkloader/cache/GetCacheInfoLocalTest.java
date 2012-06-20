@@ -18,7 +18,6 @@ package com.asakusafw.bulkloader.cache;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +36,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,13 +47,15 @@ import com.asakusafw.bulkloader.bean.ImportBean;
 import com.asakusafw.bulkloader.bean.ImportTargetTableBean;
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.FileNameUtil;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileList.Reader;
 import com.asakusafw.bulkloader.transfer.FileList.Writer;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.StreamFileListProvider;
-import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
@@ -101,13 +101,10 @@ public class GetCacheInfoLocalTest {
     public void setUp() throws Exception {
         UnitTestUtil.startUp();
         remote.initialize("target", "batch", "flow", "exec", "tester");
-        remote.setConf(new Configuration());
+        remote.setConf(new ConfigurationProvider().newInstance());
         ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_HDFS_PROTCOL_HOST,
+                Constants.PROP_KEY_BASE_PATH,
                 folder.getRoot().getAbsoluteFile().toURI().toString());
-        ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_WORKINGDIR_USE,
-                String.valueOf(false));
     }
 
     /**
@@ -119,7 +116,7 @@ public class GetCacheInfoLocalTest {
         ImportBean bean = createBean();
         Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("normal"));
+        table.setDfsFilePath("normal");
         map.put("normal", table);
         bean.setTargetTable(map);
 
@@ -137,7 +134,7 @@ public class GetCacheInfoLocalTest {
         ImportBean bean = createBean();
         Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("nothing"));
+        table.setDfsFilePath("nothing");
         table.setCacheId("nothing");
         map.put("nothing", table);
         bean.setTargetTable(map);
@@ -172,7 +169,7 @@ public class GetCacheInfoLocalTest {
         ImportBean bean = createBean();
         Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("available"));
+        table.setDfsFilePath("available");
         table.setCacheId("available");
         map.put("available", table);
         bean.setTargetTable(map);
@@ -180,7 +177,7 @@ public class GetCacheInfoLocalTest {
         GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(1));
-        assertThat(results.get(qualify("available")), is(info));
+        assertThat(results.get("available"), is(info));
     }
 
     /**
@@ -209,33 +206,33 @@ public class GetCacheInfoLocalTest {
         Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
 
         ImportTargetTableBean table1 = new ImportTargetTableBean();
-        table1.setDfsFilePath(qualify("nothing1"));
+        table1.setDfsFilePath("nothing1");
         table1.setCacheId("nothing1");
         map.put("nothing1", table1);
         bean.setTargetTable(map);
 
         ImportTargetTableBean table2 = new ImportTargetTableBean();
-        table2.setDfsFilePath(qualify("available"));
+        table2.setDfsFilePath("available");
         table2.setCacheId("available");
         map.put("available", table2);
         bean.setTargetTable(map);
 
 
         ImportTargetTableBean table3 = new ImportTargetTableBean();
-        table3.setDfsFilePath(qualify("nothing3"));
+        table3.setDfsFilePath("nothing3");
         table3.setCacheId("nothing3");
         map.put("nothing3", table3);
         bean.setTargetTable(map);
 
         ImportTargetTableBean table4 = new ImportTargetTableBean();
-        table4.setDfsFilePath(qualify("nocache"));
+        table4.setDfsFilePath("nocache");
         map.put("nocache", table4);
         bean.setTargetTable(map);
 
         GetCacheInfoLocal service = new Mock();
         Map<String, CacheInfo> results = service.get(bean);
         assertThat(results.size(), is(1));
-        assertThat(results.get(qualify("available")), is(info));
+        assertThat(results.get("available"), is(info));
     }
 
     private ImportBean createBean() {
@@ -256,7 +253,7 @@ public class GetCacheInfoLocalTest {
         ImportBean bean = createBean();
         Map<String, ImportTargetTableBean> map = new HashMap<String, ImportTargetTableBean>();
         ImportTargetTableBean table = new ImportTargetTableBean();
-        table.setDfsFilePath(qualify("nothing"));
+        table.setDfsFilePath("nothing");
         table.setCacheId("nothing");
         map.put("nothing", table);
         bean.setTargetTable(map);
@@ -271,12 +268,11 @@ public class GetCacheInfoLocalTest {
     }
 
     private URI uri(String string) {
-        // FIXME for testing
-        return new File(folder.getRoot(), "user/tester/" + string).toURI();
-    }
-
-    private String qualify(String location) {
-        return "/" + StageConstants.EXPR_USER + "/" + location;
+        try {
+            return FileNameUtil.createPath(remote.getConf(), string, "dummy", "dummy").toUri();
+        } catch (BulkLoaderSystemException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private Calendar calendar(String string) {

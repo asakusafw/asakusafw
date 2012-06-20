@@ -22,12 +22,16 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.runtime.util.VariableTable;
 
 /**
  * 設定を読み込んで保持するクラス。
@@ -40,8 +44,20 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 ・システムプロパティ
 </pre>
  * @author yuta.shirai
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class ConfigurationLoader {
+
+    private static final Set<String> KEY_PATHS;
+    static {
+        Set<String> keys = new HashSet<String>();
+        keys.add(Constants.PROP_KEY_LOG_CONF_PATH);
+        keys.add(Constants.PROP_KEY_SSH_PATH);
+        keys.add(Constants.PROP_KEY_IMP_FILE_DIR);
+        keys.add(Constants.PROP_KEY_EXP_FILE_DIR);
+        KEY_PATHS = Collections.unmodifiableSet(keys);
+    }
 
     /**
      * このクラス。
@@ -108,8 +124,7 @@ public final class ConfigurationLoader {
      * @throws IllegalStateException 環境変数が不正な場合
      */
     public static void checkEnv() {
-        String variableName = Constants.ASAKUSA_HOME;
-        checkDirectory(variableName);
+        checkDirectory(Constants.ASAKUSA_HOME);
         checkDirectory(Constants.THUNDER_GATE_HOME);
     }
 
@@ -154,12 +169,7 @@ public final class ConfigurationLoader {
                         "エクスポート処理中間TSVファイルを生成する際にTSVファイルを分割するサイズの設定が不正。設定値：" + loadMaxSize);
             }
         }
-        // ワーキングディレクトリを使用するか
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
-            prop.setProperty(
-                    Constants.PROP_KEY_WORKINGDIR_USE,
-                    Constants.PROP_DEFAULT_WORKINGDIR_USE);
-        }
+
         // 出力ファイルの圧縮有無
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE))) {
             prop.setProperty(
@@ -168,23 +178,12 @@ public final class ConfigurationLoader {
         }
 
         // 必須チェック
-        // HDFSのプロトコルとホスト名
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_HDFS_PROTCOL_HOST))) {
-            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
-                    "HDFSのプロトコルとホスト名が設定されていない。");
-        }
 
         // configuration for cache
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL))) {
             prop.setProperty(
                     Constants.PROP_KEY_CACHE_BUILDER_PARALLEL,
                     Constants.PROP_DEFAULT_CACHE_BUILDER_PARALLEL);
-        }
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME))) {
-            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
-                    MessageFormat.format(
-                            "キャッシュ構築用のスクリプトパスが未設定: {0}",
-                            Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME));
         }
     }
     /**
@@ -312,6 +311,14 @@ public final class ConfigurationLoader {
         }
 
         // 必須チェック
+        // remote ASAKUSA_HOME
+        if (isEmpty(prop.getProperty(Constants.PROP_PREFIX_HC_ENV + Constants.ASAKUSA_HOME))) {
+            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
+                MessageFormat.format(
+                        "Hadoopクライアントの環境変数{1}が設定されていません ({0}.{1})",
+                        Constants.PROP_PREFIX_HC_ENV,
+                        Constants.ASAKUSA_HOME));
+        }
         // SSHのパス
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_SSH_PATH))) {
             throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
@@ -332,28 +339,10 @@ public final class ConfigurationLoader {
             throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
                     "Importファイルを置くディレクトリが設定されていません");
         }
-        // Extractorのシェル名
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_EXT_SHELL_NAME))) {
-            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
-                    "Extractorのシェル名が設定されていません");
-        }
         // エクスポートファイルを置くディレクトリのトップディレクトリ
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_EXP_FILE_DIR))) {
             throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
                     "エクスポートファイルを置くディレクトリが設定されていません");
-        }
-        // Collectorのシェル名
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_COL_SHELL_NAME))) {
-            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
-                    "Collectorのシェル名が設定されていません");
-        }
-
-        // configuration for cache
-        if (isEmpty(prop.getProperty(Constants.PROP_KEY_CACHE_INFO_SHELL_NAME))) {
-            throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00008",
-                    MessageFormat.format(
-                            "キャッシュ情報取得用のスクリプトパスが未設定: {0}",
-                            Constants.PROP_KEY_CACHE_INFO_SHELL_NAME));
         }
     }
     /**
@@ -363,23 +352,33 @@ public final class ConfigurationLoader {
         // デフォルト値の設定
         // log4j.xmlのパス
         if (isEmpty(prop.getProperty(Constants.PROP_KEY_LOG_CONF_PATH))) {
-            prop.setProperty(Constants.PROP_KEY_LOG_CONF_PATH, Constants.PROP_DEFAULT_LOG_CONF_PATH);
+            prop.setProperty(Constants.PROP_KEY_LOG_CONF_PATH, resolvePath(Constants.PROP_DEFAULT_LOG_CONF_PATH));
         }
     }
     /**
      * ファイルからプロパティを読み込む。
-     * @param properties 読み込むプロパティファイル
+     * @param propertyPaths 読み込むプロパティファイル
      * @throws FileNotFoundException ファイルが存在しない場合
      * @throws IOException ファイルの読み込みに失敗した場合
      */
-    private static void loadProperties(List<String> properties) throws IOException {
-        assert properties != null;
-        FileInputStream fis = null;
-        for (String strProp : properties) {
+    private static void loadProperties(List<String> propertyPaths) throws IOException {
+        assert propertyPaths != null;
+        Properties properties = loadRawProperties(propertyPaths);
+
+        VariableTable variables = new VariableTable();
+        variables.defineVariables(System.getenv());
+        prop.putAll(resolveProperties(variables, properties));
+    }
+
+    private static Properties loadRawProperties(List<String> propertyPaths) throws IOException {
+        assert propertyPaths != null;
+        Properties properties = new Properties();
+        for (String strProp : propertyPaths) {
             File propFile = createPropFileName(strProp);
+            FileInputStream fis = null;
             try {
                 fis = new FileInputStream(propFile);
-                prop.load(fis);
+                properties.load(fis);
             } catch (IOException e) {
                 System.err.println(
                         "プロパティファイルの読み込みに失敗しました。ファイル名："
@@ -397,7 +396,63 @@ public final class ConfigurationLoader {
                 }
             }
         }
+        return properties;
     }
+
+    private static Properties resolveProperties(VariableTable variables, Properties properties) {
+        assert variables != null;
+        assert properties != null;
+        Properties results = new Properties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                if (canResolveVariables(key)) {
+                    value = resolveVariables(variables, key, value);
+                } else if (canResolvePath(key)) {
+                    value = resolvePath(value);
+                }
+                results.setProperty(key, value);
+            }
+        }
+        return results;
+    }
+
+    private static String resolveVariables(VariableTable variables, String key, String value) {
+        assert variables != null;
+        assert key != null;
+        assert value != null;
+        try {
+            return variables.parse(value, true);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Failed to resolve environment variables in property file: key={0}, value={1}",
+                    key,
+                    value), e);
+        }
+    }
+
+    private static boolean canResolveVariables(String key) {
+        return true;
+    }
+
+    private static boolean canResolvePath(String key) {
+        assert key != null;
+        return KEY_PATHS.contains(key);
+    }
+
+    private static String resolvePath(String value) {
+        assert value != null;
+        File raw = new File(value);
+        if (raw.isAbsolute()) {
+            return value;
+        }
+        String basePath = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME);
+        File base = new File(basePath);
+        File target = new File(base, value);
+        return target.getAbsolutePath();
+    }
+
     /**
      * DBMSの接続情報を記述したプロパティファイルを読み込む。
      * @param targetName ターゲット名
@@ -407,7 +462,7 @@ public final class ConfigurationLoader {
         // DBMSの接続情報を記述したプロパティファイルを読み込み
         String propName = targetName + Constants.JDBC_PROP_NAME;
         try {
-            loadProperties(Arrays.asList(new String[]{propName}));
+            loadProperties(Arrays.asList(new String[] { propName }));
         } catch (IOException e) {
             throw new BulkLoaderSystemException(e, CLASS, "TG-COMMON-00012",
                     propName);
@@ -452,6 +507,28 @@ public final class ConfigurationLoader {
         File file1 = new File(applHome, Constants.PROP_FILE_PATH);
         File file2 = new File(file1, propFileName);
         return file2;
+    }
+    /**
+     * Returns the submap of current properties whose keys have the common prefix.
+     * Keys in the resulting map are dropped their common prefix.
+     * @param prefix the common prefix
+     * @return submap
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Map<String, String> getPropSubMap(String prefix) {
+        if (prefix == null) {
+            throw new IllegalArgumentException("prefix must not be null"); //$NON-NLS-1$
+        }
+        Map<String, String> results = new HashMap<String, String>();
+        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                String key = (String) entry.getKey();
+                if (key.startsWith(prefix)) {
+                    results.put(key.substring(prefix.length()), (String) entry.getValue());
+                }
+            }
+        }
+        return results;
     }
     /**
      * プロパティから特定の文字列から開始するKeyのリストを列挙する。
@@ -518,6 +595,40 @@ public final class ConfigurationLoader {
             return false;
         }
     }
+
+    /**
+     * Returns the script path.
+     * @param relativePath script relative path from thundergate installation home
+     * @return the script path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public static File getLocalScriptPath(String relativePath) {
+        if (relativePath == null) {
+            throw new IllegalArgumentException("relativePath must not be null"); //$NON-NLS-1$
+        }
+        File base = new File(getEnvProperty(Constants.THUNDER_GATE_HOME));
+        return new File(base, relativePath);
+    }
+
+    /**
+     * Returns the script path.
+     * @param relativePath script relative path from framework installation home
+     * @return the script path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public static String getRemoteScriptPath(String relativePath) {
+        if (relativePath == null) {
+            throw new IllegalArgumentException("relativePath must not be null"); //$NON-NLS-1$
+        }
+        String remoteHome = getProperty(Constants.PROP_PREFIX_HC_ENV + Constants.ASAKUSA_HOME);
+        if (remoteHome.endsWith("/") == false) {
+            remoteHome = remoteHome + "/";
+        }
+        return remoteHome + relativePath;
+    }
+
     /**
      * 指定のキーに対応するプロパティを返す。
      * @param key キー

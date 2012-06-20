@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -15,16 +14,24 @@
 # limitations under the License.
 #
 
-#rem クラスパスを設定するコマンド
-#rem 引数（バッチID,ジョブフローID）
-
-BULK_LOADER_CLASSPATH=$ASAKUSA_HOME/bulkloader/conf
-BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/core/lib/*
-BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/bulkloader/lib/*
-
-if [ -e "$ASAKUSA_HOME/batchapps/$1/lib/jobflow-$2.jar" ]
+if [ "$HADOOP_CMD" = "" ]
 then
-    BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/batchapps/$1/lib/jobflow-$2.jar
+    if [ "$HADOOP_HOME" != "" ]
+    then
+        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
+    else
+        HADOOP_CMD="$(which hadoop)"
+        _RET=$?
+        if [ $_RET -ne 0 ]
+        then
+            echo 'hadoop command is not found' 1>&2
+            exit 1
+        fi
+    fi
 fi
 
-export BULK_LOADER_CLASSPATH
+if [ ! -x "$HADOOP_CMD" ]
+then
+    echo "$HADOOP_CMD is not executable" 1>&2
+    exit 1
+fi

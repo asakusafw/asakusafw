@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -15,16 +14,15 @@
 # limitations under the License.
 #
 
-#rem クラスパスを設定するコマンド
-#rem 引数（バッチID,ジョブフローID）
+# common options
+#export JAVA_HOME=
+#export HADOOP_HOME="/usr/lib/hadoop"
 
-BULK_LOADER_CLASSPATH=$ASAKUSA_HOME/bulkloader/conf
-BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/core/lib/*
-BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/bulkloader/lib/*
+# for DB server side options
+#export IMPORTER_JAVA_OPTS=
+#export EXPORTER_JAVA_OPTS=
+#export RECOVERER_JAVA_OPTS=
 
-if [ -e "$ASAKUSA_HOME/batchapps/$1/lib/jobflow-$2.jar" ]
-then
-    BULK_LOADER_CLASSPATH=$BULK_LOADER_CLASSPATH:$ASAKUSA_HOME/batchapps/$1/lib/jobflow-$2.jar
-fi
-
-export BULK_LOADER_CLASSPATH
+# for Hadoop client side options
+#export EXTRACTOR_JAVA_OPTS=
+#export COLLECTOR_JAVA_OPTS=

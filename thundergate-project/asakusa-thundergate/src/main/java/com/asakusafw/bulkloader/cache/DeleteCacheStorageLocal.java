@@ -243,17 +243,19 @@ public class DeleteCacheStorageLocal {
         String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
         String hostName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
         String userName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
-        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_DELETE_CACHE_SHELL_NAME);
+        String scriptPath = ConfigurationLoader.getRemoteScriptPath(Constants.PATH_REMOTE_CACHE_DELETE);
         List<String> command = new ArrayList<String>();
-        command.add(shellName);
+        command.add(scriptPath);
         command.add(targetName);
+
+        Map<String, String> env = ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV);
 
         LOG.info("TG-GCCACHE-02002",
                 sshPath,
                 hostName,
                 userName,
-                shellName,
+                scriptPath,
                 targetName);
-        return new OpenSshFileListProvider(sshPath, userName, hostName, command);
+        return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
     }
 }

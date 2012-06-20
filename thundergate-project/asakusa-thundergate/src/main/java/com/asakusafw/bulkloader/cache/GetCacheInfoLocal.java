@@ -255,23 +255,26 @@ public class GetCacheInfoLocal {
         String sshPath = ConfigurationLoader.getProperty(Constants.PROP_KEY_SSH_PATH);
         String hostName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_HOST);
         String userName = ConfigurationLoader.getProperty(Constants.PROP_KEY_NAMENODE_USER);
-        String shellName = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_INFO_SHELL_NAME);
+        String scriptPath = ConfigurationLoader.getRemoteScriptPath(Constants.PATH_REMOTE_CACHE_INFO);
         List<String> command = new ArrayList<String>();
-        command.add(shellName);
+        command.add(scriptPath);
         command.add(targetName);
         command.add(batchId);
         command.add(jobflowId);
         command.add(executionId);
 
+        Map<String, String> env = ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV);
+
         LOG.info("TG-IMPORTER-12002",
                 sshPath,
                 hostName,
                 userName,
-                shellName,
+                scriptPath,
                 targetName,
                 batchId,
                 jobflowId,
                 executionId);
-        return new OpenSshFileListProvider(sshPath, userName, hostName, command);
+
+        return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
     }
 }

@@ -39,14 +39,12 @@
 			<outputDirectory>bulkloader/lib</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-thundergate:jar</include>
-				<include>org.apache.hadoop:hadoop-core</include>
 				<include>commons-configuration:commons-configuration</include>
 				<include>commons-io:commons-io</include>
 				<include>commons-lang:commons-lang</include>
 				<include>commons-logging:commons-logging</include>
 				<include>log4j:log4j</include>
 				<include>mysql:mysql-connector-java</include>
-				<include>org.apache.hadoop.thirdparty.guava:guava</include>
 			</includes>
 			<excludes>
 				<exclude>com.asakusafw:*:*:dist</exclude>

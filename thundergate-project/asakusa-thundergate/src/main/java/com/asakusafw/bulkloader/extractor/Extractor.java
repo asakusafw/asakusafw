@@ -97,7 +97,7 @@ public class Extractor {
                 return Constants.EXIT_CODE_ERROR;
             }
 
-            // Importファイルを受取り、HDFSに書き出す
+           // Importファイルを受取り、HDFSに書き出す
             LOG.info("TG-EXTRACTOR-01008",
                     targetName, batchId, jobFlowId, executionId, user);
 
