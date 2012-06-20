@@ -28,12 +28,16 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -47,9 +51,15 @@ import com.asakusafw.windgate.core.vocabulary.FileProcess;
  */
 public class HadoopFsMirrorTest {
 
-    private static final Path PREFIX = new Path("target/testing/" + HadoopFsMirrorTest.class.getName());
+    /**
+     * A temporary folder.
+     */
+    @Rule
+    public final TemporaryFolder temp = new TemporaryFolder();
 
-    private final Configuration conf = new Configuration();
+    private Configuration conf;
+
+    private Path working;
 
     private FileSystem fs;
 
@@ -59,8 +69,10 @@ public class HadoopFsMirrorTest {
      */
     @Before
     public void setUp() throws Exception {
-        fs = FileSystem.get(conf);
-        fs.delete(PREFIX, true);
+        conf = new ConfigurationProvider().newInstance();
+        working = new Path(temp.getRoot().toURI());
+        fs = FileSystem.get(working.toUri(), conf);
+        Assume.assumeThat(working.toString(), is(not(containsString(" "))));
     }
 
     /**
@@ -366,7 +378,7 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain_conflict() throws Exception {
-        fs.mkdirs(new Path(PREFIX, "CONFLICT"));
+        fs.mkdirs(new Path(working, "CONFLICT"));
 
         HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
         try {
@@ -405,7 +417,7 @@ public class HadoopFsMirrorTest {
     }
 
     private HadoopFsProfile profile() {
-        return new HadoopFsProfile("target", null);
+        return new HadoopFsProfile("target", working, null);
     }
 
     private GateScript script(ProcessScript<?>... processes) {
@@ -415,7 +427,7 @@ public class HadoopFsMirrorTest {
     private ProcessScript<Text> source(String resource, String... files) {
         StringBuilder buf = new StringBuilder();
         for (String file : files) {
-            buf.append(new Path(PREFIX, file).toString());
+            buf.append(file);
             buf.append(" ");
         }
         return new ProcessScript<Text>(
@@ -427,7 +439,7 @@ public class HadoopFsMirrorTest {
     private ProcessScript<Text> drain(String resource, String... files) {
         StringBuilder buf = new StringBuilder();
         for (String file : files) {
-            buf.append(new Path(PREFIX, file).toString());
+            buf.append(file);
             buf.append(" ");
         }
         return new ProcessScript<Text>(
@@ -456,7 +468,7 @@ public class HadoopFsMirrorTest {
 
     private void test(String path, String... expects) throws IOException {
         List<String> results = new ArrayList<String>();
-        Path resolved = new Path(PREFIX, path);
+        Path resolved = new Path(working, path);
         ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, resolved);
         try {
             Text text = new Text();
@@ -470,7 +482,7 @@ public class HadoopFsMirrorTest {
     }
 
     private void set(String path, String... values) throws IOException {
-        Path resolved = new Path(PREFIX, path);
+        Path resolved = new Path(working, path);
         ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, resolved);
         try {
             for (String string : values) {

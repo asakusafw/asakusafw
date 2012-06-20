@@ -49,6 +49,7 @@ import com.asakusafw.windgate.hadoopfs.temporary.ModelOutputDrainDriver;
 /**
  * An abstract implementation of {@link ResourceMirror} directly using Hadoop File System.
  * @since 0.2.2
+ * @since 0.4.0
  * @see FileProcess
  */
 public class HadoopFsMirror extends ResourceMirror {
@@ -124,7 +125,7 @@ public class HadoopFsMirror extends ResourceMirror {
         ModelInputProvider<T> provider = null;
         boolean succeeded = false;
         try {
-            FileSystem fs = FileSystem.get(configuration);
+            FileSystem fs = FileSystem.get(profile.getBasePath().toUri(), configuration);
             provider = new FileSystemModelInputProvider<T>(configuration, fs, pathList, script.getDataClass());
             SourceDriver<T> result = new ModelInputSourceDriver<T>(provider, value);
             succeeded = true;
@@ -205,30 +206,7 @@ public class HadoopFsMirror extends ResourceMirror {
                     kind.toString(),
                     FILE.key()));
         }
-        String[] paths = pathString.split("[ \t\r\n]+");
-        List<Path> results = new ArrayList<Path>();
-        for (String path : paths) {
-            if (path.isEmpty()) {
-                continue;
-            }
-            try {
-                String resolved = arguments.replace(path, true);
-                results.add(new Path(resolved));
-            } catch (IllegalArgumentException e) {
-                WGLOG.error(e, "E01001",
-                        getName(),
-                        proc.getName(),
-                        kind.prefix,
-                        FILE.key(),
-                        pathString);
-                throw new IOException(MessageFormat.format(
-                        "Failed to resolve the {2} path: {3} (resource={0}, process={1})",
-                        getName(),
-                        proc.getName(),
-                        kind.toString(),
-                        path));
-            }
-        }
+        List<Path> results = resolvePaths(proc, kind, pathString);
         if (kind == DriverScript.Kind.SOURCE && results.size() <= 0) {
             WGLOG.error("E01001",
                     getName(),
@@ -254,6 +232,51 @@ public class HadoopFsMirror extends ResourceMirror {
                     getName(),
                     proc.getName(),
                     results));
+        }
+        return results;
+    }
+
+    private List<Path> resolvePaths(
+            ProcessScript<?> proc,
+            DriverScript.Kind kind,
+            String pathString) throws IOException {
+        assert proc != null;
+        assert kind != null;
+        assert pathString != null;
+        Path basePath = profile.getBasePath();
+        String[] paths = pathString.split("[ \t\r\n]+");
+        List<Path> results = new ArrayList<Path>();
+        for (String path : paths) {
+            if (path.isEmpty()) {
+                continue;
+            }
+            String resolved;
+            try {
+                resolved = arguments.replace(path, true);
+            } catch (IllegalArgumentException e) {
+                WGLOG.error(e, "E01001",
+                        getName(),
+                        proc.getName(),
+                        kind.prefix,
+                        FILE.key(),
+                        pathString);
+                throw new IOException(MessageFormat.format(
+                        "Failed to resolve the {2} path: {3} (resource={0}, process={1})",
+                        getName(),
+                        proc.getName(),
+                        kind.toString(),
+                        path));
+            }
+            Path relative = new Path(resolved);
+            if (relative.isAbsolute()) {
+                WGLOG.warn("W01001",
+                        getName(),
+                        proc.getName(),
+                        kind.prefix,
+                        FILE.key(),
+                        pathString);
+            }
+            results.add(new Path(basePath, relative));
         }
         return results;
     }
