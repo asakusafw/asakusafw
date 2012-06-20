@@ -63,22 +63,26 @@ public class AbstractSshHadoopFsMirrorTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private final SshProfile profile = new SshProfile("dummy", "dummy", "user", "host", 0, "id", "pass", null) {
-        @Override
-        public String getGetCommand() {
-            return "get";
-        }
-        @Override
-        public String getPutCommand() {
-            return "put";
-        }
-        @Override
-        public String getDeleteCommand() {
-            return "delete";
-        }
-    };
+    private final SshProfile profile;
+    {
+        Map<String, String> emptyMap = Collections.emptyMap();
+        profile = new SshProfile("dummy", "dummy", "user", "host", 0, "id", "pass", null, emptyMap) {
+            @Override
+            public String getGetCommand() {
+                return "get";
+            }
+            @Override
+            public String getPutCommand() {
+                return "put";
+            }
+            @Override
+            public String getDeleteCommand() {
+                return "delete";
+            }
+        };
+    }
 
-    volatile String lastCommand;
+    volatile List<String> lastCommand;
 
     volatile File stdIn;
 
@@ -110,7 +114,7 @@ public class AbstractSshHadoopFsMirrorTest {
             resource.close();
         }
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("put"));
+        assertThat(lastCommand, is(Arrays.asList("put")));
         Map<String, List<String>> results = read(stdIn);
         assertThat(results.size(), is(1));
         assertThat(results.get("testing"), is(Arrays.asList("Hello, world!")));
@@ -143,7 +147,7 @@ public class AbstractSshHadoopFsMirrorTest {
             resource.close();
         }
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("put"));
+        assertThat(lastCommand, is(Arrays.asList("put")));
         Map<String, List<String>> results = read(stdIn);
         assertThat(results.size(), is(1));
         assertThat(results.get("testing-replacement"), is(Arrays.asList("Hello, world!")));
@@ -320,7 +324,7 @@ public class AbstractSshHadoopFsMirrorTest {
         }
         Collections.sort(results);
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("get testing-1"));
+        assertThat(lastCommand, is(Arrays.asList("get", "testing-1")));
         assertThat(results, is(Arrays.asList("Hello, world!")));
     }
 
@@ -364,7 +368,7 @@ public class AbstractSshHadoopFsMirrorTest {
         }
         Collections.sort(results);
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("get testing-replacement"));
+        assertThat(lastCommand, is(Arrays.asList("get", "testing-replacement")));
         assertThat(results, is(Arrays.asList("Hello, world!")));
     }
 
@@ -405,7 +409,7 @@ public class AbstractSshHadoopFsMirrorTest {
         }
         Collections.sort(results);
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("get testing-1"));
+        assertThat(lastCommand, is(Arrays.asList("get", "testing-1")));
         assertThat(results, is(Arrays.asList("Hello1, world!", "Hello2, world!", "Hello3, world!")));
     }
 
@@ -448,7 +452,8 @@ public class AbstractSshHadoopFsMirrorTest {
         }
         Collections.sort(results);
 
-        assertThat(lastCommand, equalToIgnoringWhiteSpace("get testing-1 testing-2 testing-3"));
+
+        assertThat(lastCommand, is(Arrays.asList("get", "testing-1", "testing-2", "testing-3")));
         assertThat(results, is(Arrays.asList("Hello1, world!", "Hello2, world!", "Hello3, world!")));
     }
 
@@ -714,7 +719,7 @@ public class AbstractSshHadoopFsMirrorTest {
         }
 
         @Override
-        protected SshConnection openConnection(SshProfile sshProfile, String command) throws IOException {
+        protected SshConnection openConnection(SshProfile sshProfile, List<String> command) throws IOException {
             lastCommand = command;
             return new SshConnection() {
 

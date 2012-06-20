@@ -201,23 +201,25 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
       - 値
     * - ``resource.hadoop``
       - ``com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider``
-    * - ``resource.hadoop.target``
-      - リモートコンピューター上の `Hadoopブリッジ`_ のインストール先
-    * - ``resource.hadoop.ssh.user``
+    * - ``resource.hadoop.user``
       - ログイン先のユーザー名
-    * - ``resource.hadoop.ssh.host``
+    * - ``resource.hadoop.host``
       - SSHのリモートホスト名
-    * - ``resource.hadoop.ssh.port``
+    * - ``resource.hadoop.port``
       - SSHのリモートポート番号
-    * - ``resource.hadoop.ssh.privateKey``
+    * - ``resource.hadoop.privateKey``
       - ローカルの秘密鍵の位置
-    * - ``resource.hadoop.ssh.passPhrase``
+    * - ``resource.hadoop.passPhrase``
       - 秘密鍵のパスフレーズ
     * - ``resource.hadoop.compression``
       - 転送時に利用する圧縮コーデッククラス名 (省略可)
+    * - ``resource.hadoop.env.ASAKUSA_HOME``
+      - ログイン先の Asakusa Framework のインストール先
+    * - ``resource.hadoop.env.<name>``
+      - ログイン先の環境変数 ``<name>`` の値
 
-上記のうち、 ``resource.hadoop.ssh.privateKey`` には ``${変数名}`` という形式で環境変数を含められます。
-この項目には通常、 ``${HOME}/.ssh/id_rsa`` を指定します。
+上記のうち、 ``resource.hadoop.privateKey`` や ``resource.hadoop.env.<name>`` には ``${変数名}`` という形式で環境変数を含められます。
+``resource.hadoop.env.ASAKUSA_HOME`` にも同様の形式で環境変数を含められます。
 
 `同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
@@ -229,13 +231,17 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です (SequenceFileの設定などを利用します)。
 必要な環境変数については `Hadoopを利用する際の環境変数`_ を参照してください。
 
+..  attention::
+    Asakusa Framework ``0.2.x`` 以前の設定項目 ``resource.hadoop.target`` はバージョン ``0.4.0`` より非推奨になりました。
+    代わりに ``resource.hadoop.env.ASAKUSA_HOME`` にログイン先の Asakusa Framework のインストール先を指定してください。
+
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 
 Hadoopブリッジ
 ^^^^^^^^^^^^^^
-WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリッジとよぶツールを経由します。
-このツールは通常 ``$ASAKUSA_HOME/windgate-ssh`` というディレクトリにインストールされているため、これをリモートコンピューター上にコピーして利用します。
-また、プロファイルの ``resource.hadoop.target`` にはインストール先のディレクトリ名をフルパスで指定してください。
+WindGateからSSHを経由してHadoopにアクセスする際に、HadoopブリッジとよぶAsakusa Frameworkのツールを経由します。
+このツールは通常 ``$ASAKUSA_HOME/windgate-ssh`` というディレクトリにインストールされていて、リモートコンピューターのAsakusa Frameworkにも同様のディレクトリが必要です。
+また、プロファイルの ``resource.hadoop.env.ASAKUSA_HOME`` には、リモートコンピューターのAsakusa Frameworkのインストール先をフルパスで指定してください。
 
 このツールの内部では、以下の順序で ``hadoop`` コマンドを検索し、そのコマンドでHadoopクラスタの操作を行います。
 
@@ -243,16 +249,16 @@ WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリ
 * 環境変数 ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを利用します。
 * ``hadoop`` コマンドのパスが通っている場合、それを利用します。
 
-上記のうち、必要な環境変数を ``windgate-ssh/conf/env.sh`` 内で設定してください。
+上記のうち、必要な環境変数をプロファイル内の ``resource.hadoop.env.<name>`` や、 リモート環境上の ``windgate-ssh/conf/env.sh`` ファイル内で設定してください。
 結果としてコマンドが見つからなかった場合にはエラーになります。
 
-また、ログの設定は ``windgate-ssh/conf/logback.xml`` で行えます。
+また、ログの設定は ``$ASAKUSA_HOME/windgate-ssh/conf/logback.xml`` で行えます。
 WindGate本体と同様に、SLF4JとLogbackを利用しています [#]_ 。
 
 ..  warning::
     HadoopブリッジはSSH経由で実行され、標準入出力を利用してWindGateとデータのやり取りを行います。
     ログを出力する際には、標準エラー出力やファイルなどに出力し、標準出力は利用しないようにしてください。
-    また、 ``windgate-ssh/conf/env.sh`` に指定した ``HADOOP_USER_CLASSPATH_FIRST`` の設定は、ログの設定を有効にするためにも必要です。
+    また、 ``$ASAKUSA_HOME/windgate-ssh/conf/env.sh`` に指定した ``HADOOP_USER_CLASSPATH_FIRST`` の設定は、ログの設定を有効にするためにも必要です。
 
 ..  [#] `WindGateのログ設定`_ を参照
 

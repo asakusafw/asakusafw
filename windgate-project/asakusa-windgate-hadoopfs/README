@@ -11,5 +11,5 @@ resource.<name>.host=localhost
 resource.<name>.port=22
 resource.<name>.privateKey=${HOME}/.ssh/id_rsa
 resource.<name>.passPhrase=
+resource.<name>.env.<key>=$<value>
 #resource.<name>.compression=org.apache.hadoop.io.compress.DefaultCodec
-

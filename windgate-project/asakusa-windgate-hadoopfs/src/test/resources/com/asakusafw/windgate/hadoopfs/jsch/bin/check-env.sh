@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # Copyright 2011-2012 Asakusa Framework Team.
 #
@@ -14,17 +15,4 @@
 # limitations under the License.
 #
 
-if [ "$HADOOP_CMD" = "" ]
-then
-    if [ "$HADOOP_HOME" != "" ]
-    then
-        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
-    else
-        HADOOP_CMD="$(which hadoop)"
-        _RET=$?
-        if [ $_RET -ne 0 ]
-        then
-            unset HADOOP_CMD
-        fi
-    fi
-fi
+echo -n "$WG_JSCH_TESTING"

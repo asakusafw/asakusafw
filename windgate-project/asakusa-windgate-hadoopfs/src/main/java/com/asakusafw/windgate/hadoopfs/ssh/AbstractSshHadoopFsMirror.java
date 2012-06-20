@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -257,13 +258,10 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
 
     private SshConnection openGet(List<String> paths) throws IOException {
         assert paths != null;
-        StringBuilder buf = new StringBuilder();
-        buf.append(profile.getGetCommand());
-        for (String path : paths) {
-            buf.append(' ');
-            buf.append(path);
-        }
-        SshConnection connection = openConnection(profile, buf.toString());
+        List<String> tokens = new ArrayList<String>();
+        tokens.add(profile.getGetCommand());
+        tokens.addAll(paths);
+        SshConnection connection = openConnection(profile, tokens);
         boolean succeed = false;
         try {
             connection.openStandardInput().close();
@@ -277,7 +275,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     }
 
     private SshConnection openPut() throws IOException {
-        SshConnection connection = openConnection(profile, profile.getPutCommand());
+        SshConnection connection = openConnection(profile, Collections.singletonList(profile.getPutCommand()));
         boolean succeed = false;
         try {
             connection.redirectStandardOutput(System.out, true);
@@ -297,7 +295,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
      * @return the opened connection
      * @throws IOException if failed to open
      */
-    protected abstract SshConnection openConnection(SshProfile sshProfile, String command) throws IOException;
+    protected abstract SshConnection openConnection(SshProfile sshProfile, List<String> command) throws IOException;
 
     private List<String> getPath(ProcessScript<?> proc, DriverScript.Kind kind) throws IOException {
         assert proc != null;

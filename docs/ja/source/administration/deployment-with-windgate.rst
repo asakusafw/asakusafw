@@ -175,7 +175,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``asakusafw-${asakusafw.version}-prod-windgate.tar.gz``
 
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
-例えばversion 0.2.4 を使っている場合、ファイル名は ``asakusafw-0.2.4-prod-windgate.tar.gz`` になります。
+例えばversion 0.4.0 を使っている場合、ファイル名は ``asakusafw-0.4.0-prod-windgate.tar.gz`` になります。
 
 ..  [#] このアーカイブにはAsakusa Frameworkのコアライブラリ、WindGate、YAESS、各種Hadoopブリッジが含まれています。
 
@@ -375,10 +375,6 @@ YAESSの設定についての詳細は、 :doc:`../yaess/user-guide` などを�
 ..  note::
     リモートマシン上のWindGateやHadoopを利用する場合、 ``...env.ASAKUSA_HOME`` の値には
     リモートマシンで `Asakusa Frameworkのデプロイ`_ を行ったパスを指定してください。
-
-..  note::
-    WindGateを利用する場合、 ``command.<プロファイル名>.env.HADOOP_HOME`` など、Hadoopのインストール先に関する設定が必要です。
-    または、 `WindGateの設定`_ 時に必要な環境変数を設定してください。
 
 
 Hadoopブリッジの設定
