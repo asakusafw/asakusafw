@@ -73,15 +73,25 @@ public class RuntimeResourceManager {
      * @throws IllegalStateException 同一のリソースが複数回初期化された場合
      */
     public void setup() throws IOException, InterruptedException {
-        LOG.info("実行時プラグインをロードしています");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Loading runtime plugins");
+        }
         List<? extends RuntimeResource> loaded = load();
         this.resources = new ArrayList<RuntimeResource>();
         for (RuntimeResource resource : loaded) {
-            LOG.info(MessageFormat.format("実行時プラグインを開始しています: {0}", resource.getClass().getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Activating runtime plugin: {0}",
+                        resource.getClass().getName()));
+            }
             resource.setup(configuration);
             resources.add(resource);
         }
-        LOG.info("実行時プラグインをロードしました");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Loaded {0} runtime plugins",
+                    resources.size()));
+        }
     }
 
     /**
@@ -92,16 +102,28 @@ public class RuntimeResourceManager {
      * @throws IllegalStateException 同一のリソースが複数回初期化された場合
      */
     public void cleanup() throws IOException, InterruptedException {
-        LOG.info(MessageFormat.format("実行時プラグインをアンロードしています: {0}個", resources.size()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Unloading {0} runtime plugins",
+                    resources.size()));
+        }
         try {
             for (RuntimeResource resource : resources) {
-                LOG.info(MessageFormat.format("実行時プラグインを終了しています: {0}", resource.getClass().getName()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Deactivating runtime plugin: {0}",
+                            resource.getClass().getName()));
+                }
                 resource.cleanup(configuration);
             }
-            LOG.info("実行時プラグインをアンロードしました");
         } finally {
             // TODO もう少しbest effortで解放するか
             this.resources = Collections.emptyList();
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Unloaded {0} runtime plugins",
+                    resources.size()));
         }
     }
 
@@ -119,8 +141,7 @@ public class RuntimeResourceManager {
         List<RuntimeResource> results = new ArrayList<RuntimeResource>();
         ClassLoader loader = configuration.getClassLoader();
         try {
-            for (RuntimeResource resource
-                    : ServiceLoader.load(RuntimeResource.class, loader)) {
+            for (RuntimeResource resource : ServiceLoader.load(RuntimeResource.class, loader)) {
                 results.add(resource);
             }
         } catch (RuntimeException e) {

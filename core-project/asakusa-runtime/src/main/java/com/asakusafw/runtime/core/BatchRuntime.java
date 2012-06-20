@@ -35,7 +35,7 @@ public final class BatchRuntime {
     public static void require(int major, int minor) {
         if (major != VERSION_MAJOR || minor != VERSION_MINOR) {
             throw new IllegalStateException(MessageFormat.format(
-                    "このバージョンはサポートされていません: 現在のバージョン={0}, 要求されたバージョン={2}",
+                    "Inconsistent version: runtime-version={0}, buildtime-version={2}",
                     toString(VERSION_MAJOR, VERSION_MINOR),
                     toString(major, minor)));
         }

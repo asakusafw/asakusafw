@@ -74,42 +74,50 @@ public interface RuntimeResource {
             String className = configuration.get(getClassNameKey(), null);
             if (className == null) {
                 LOG.warn(MessageFormat.format(
-                        "\"{0}\"の指定がありません (API:{1})",
+                        "Missing \"{0}\" in plugin configurations (API:{1})",
                         getClassNameKey(),
                         getInterfaceType().getName()));
                 return;
             }
-            LOG.info(MessageFormat.format(
-                    "{0}を設定しています: key={1}, value={2}",
-                    getInterfaceType().getName(),
-                    getClassNameKey(),
-                    className));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Loading plugin for {0}: key={1}, value={2}",
+                        getInterfaceType().getName(),
+                        getClassNameKey(),
+                        className));
+            }
             D loaded = loadDelegate(configuration, className);
 
-            LOG.info(MessageFormat.format(
-                    "{2}を{0}に登録します",
-                    getInterfaceType().getName(),
-                    getClassNameKey(),
-                    className));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Registering plugin {2} into {0}",
+                        getInterfaceType().getName(),
+                        getClassNameKey(),
+                        className));
+            }
             register(loaded, configuration);
 
             this.registered = loaded;
-            LOG.info(MessageFormat.format(
-                    "{2}を{0}に登録しました",
-                    getInterfaceType().getName(),
-                    getClassNameKey(),
-                    className));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Registered plugin {2} into {0}",
+                        getInterfaceType().getName(),
+                        getClassNameKey(),
+                        className));
+            }
         }
 
         @Override
         public void cleanup(ResourceConfiguration configuration)
                 throws IOException, InterruptedException {
             if (registered != null) {
-                LOG.info(MessageFormat.format(
-                        "{1}を{0}から登録解除しました",
-                        getInterfaceType().getName(),
-                        registered.getClass().getName()));
                 unregister(registered, configuration);
+                if (LOG.isDebugEnabled()) {
+                    LOG.info(MessageFormat.format(
+                            "Unregistered plugin {1} from {0}",
+                            getInterfaceType().getName(),
+                            registered.getClass().getName()));
+                }
                 registered = null;
             }
         }
@@ -126,7 +134,7 @@ public interface RuntimeResource {
                 return instance;
             } catch (Exception e) {
                 throw new IOException(MessageFormat.format(
-                        "{0}の初期化に失敗しました",
+                        "Failed to initialize a plugin {0}",
                         className), e);
             }
         }
