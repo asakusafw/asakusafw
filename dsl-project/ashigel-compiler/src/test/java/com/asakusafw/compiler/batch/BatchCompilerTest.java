@@ -29,7 +29,7 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.BatchInfo;
 import com.asakusafw.compiler.testing.TemporaryOutputDescription;
-import com.asakusafw.compiler.util.CompilerTester;
+import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 

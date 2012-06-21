@@ -33,6 +33,7 @@ import com.asakusafw.bulkloader.common.TsvDeleteType;
 import com.asakusafw.bulkloader.exception.BulkLoaderReRunnableException;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 
 /**
@@ -63,6 +64,8 @@ public class Importer {
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(Importer.class.getClassLoader());
         Importer importer = new Importer();
         int result = importer.execute(args);
         System.exit(result);
@@ -112,6 +115,13 @@ public class Importer {
                         new Date(), importerType, targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }
+
+            if (RuntimeContext.get().isSimulation()) {
+                // check only DB connection
+                DBConnection.getConnection().close();
+                return Constants.EXIT_CODE_SUCCESS;
+            }
+
             int exitCode = importTables(bean);
             return exitCode;
         } catch (BulkLoaderReRunnableException e) {

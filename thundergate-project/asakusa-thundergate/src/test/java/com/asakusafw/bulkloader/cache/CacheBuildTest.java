@@ -18,6 +18,7 @@ package com.asakusafw.bulkloader.cache;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
@@ -27,7 +28,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
@@ -41,6 +44,9 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
+import com.asakusafw.bulkloader.transfer.ProcessFileListProvider;
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
+import com.asakusafw.runtime.configuration.HadoopEnvironmentChecker;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
@@ -55,16 +61,22 @@ import com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient;
 public class CacheBuildTest {
 
     /**
-     * Checks whether hadoop is installed.
+     * This test class requires Hadoop is installed.
      */
     @Rule
-    public final HadoopEnvironmentChecker checker = new HadoopEnvironmentChecker();
+    public HadoopEnvironmentChecker check = new HadoopEnvironmentChecker(false);
 
     /**
-     * Emulates framework environment.
+     * Deploys framework.
      */
     @Rule
-    public final FrameworkEmulator emulator = new FrameworkEmulator();
+    public final FrameworkDeployer framework = new FrameworkDeployer() {
+
+        @Override
+        protected void deploy() throws IOException {
+            deployLibrary(CacheInfo.class, "core/lib/asakusa-thundergate.jar");
+        }
+    };
 
     /**
      * Initializes the test.
@@ -91,7 +103,7 @@ public class CacheBuildTest {
                 Collections.singleton("COL"),
                 "com.example.Model",
                 123L);
-        emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
+        framework.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
         CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
@@ -132,7 +144,7 @@ public class CacheBuildTest {
                 Collections.singleton("COL"),
                 "com.example.Model",
                 123L);
-        emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
+        framework.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
         CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
@@ -175,7 +187,7 @@ public class CacheBuildTest {
                 Collections.singleton("COL"),
                 "com.example.Model",
                 123L);
-        emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
+        framework.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
         CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
@@ -240,7 +252,7 @@ public class CacheBuildTest {
                 Collections.singleton("COL"),
                 "com.example.Model",
                 123L);
-        emulator.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
+        framework.deployLibrary(TestDataModel.class, "batchapps/tbatch/lib/jobflow-tflow.jar");
         CacheStorage storage = new CacheStorage(getConfiguration(), getTargetUri());
         try {
             storage.putPatchCacheInfo(info);
@@ -294,7 +306,7 @@ public class CacheBuildTest {
     }
 
     private void execute(String subcommand) throws IOException, InterruptedException {
-        FileListProvider provider = emulator.execute(
+        FileListProvider provider = execute(
                 Constants.PATH_LOCAL_CACHE_BUILD,
                 subcommand,
                 "tbatch",
@@ -309,6 +321,17 @@ public class CacheBuildTest {
         } finally {
             provider.close();
         }
+    }
+
+    private FileListProvider execute(String scriptPath, String... arguments) throws IOException {
+        List<String> command = new ArrayList<String>();
+        command.add(new File(framework.getHome(), scriptPath).getAbsolutePath());
+        Collections.addAll(command, arguments);
+
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("ASAKUSA_HOME", framework.getHome().getAbsolutePath());
+
+        return new ProcessFileListProvider(command, env);
     }
 
     private URI getTargetUri() {

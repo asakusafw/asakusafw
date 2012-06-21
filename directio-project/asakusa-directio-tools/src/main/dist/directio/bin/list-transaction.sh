@@ -30,7 +30,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -41,8 +41,7 @@ then
     exit 1
 fi
 
-_dirname=$(dirname "$0")
-_DIO_ROOT="$(cd "$_dirname" ; pwd)/.."
+_DIO_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_DIO_ROOT/conf/env.sh"
 import "$_DIO_ROOT/libexec/validate-env.sh"

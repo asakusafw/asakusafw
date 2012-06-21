@@ -30,14 +30,20 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * Deletes files from Hadoop File System and report them as {@link FileList} to the standard output.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public class WindGateHadoopDelete {
+
+    static {
+        StdioHelper.load();
+    }
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopDelete.class);
 
@@ -68,16 +74,18 @@ public class WindGateHadoopDelete {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(WindGateHadoopDelete.class.getClassLoader());
         WGLOG.info("I20000");
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
-        int result = new WindGateHadoopDelete(conf).execute(args);
+        int result = new WindGateHadoopDelete(conf).execute(StdioHelper.getOriginalStdout(), args);
         long end = System.currentTimeMillis();
         WGLOG.info("I22999", result, end - start);
         System.exit(result);
     }
 
-    int execute(String... args) {
+    int execute(OutputStream out, String... args) {
         assert args != null;
         if (args.length == 0) {
             WGLOG.error("E22001",
@@ -93,7 +101,7 @@ public class WindGateHadoopDelete {
         try {
             WGLOG.info("I22001",
                     paths);
-            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
+            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE));
             doDelete(paths, writer);
             WGLOG.info("I22002",
                     paths);
@@ -135,7 +143,12 @@ public class WindGateHadoopDelete {
         try {
             String failReason = null;
             try {
-                boolean deleted = fs.delete(status.getPath(), true);
+                boolean deleted;
+                if (RuntimeContext.get().isSimulation()) {
+                    deleted = true;
+                } else {
+                    deleted = fs.delete(status.getPath(), true);
+                }
                 if (deleted == false) {
                     if (fs.exists(status.getPath())) {
                         WGLOG.warn("W22001",

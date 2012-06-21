@@ -33,6 +33,27 @@ public abstract class ExecutionLock implements Closeable {
     static final Logger LOG = LoggerFactory.getLogger(ExecutionLock.class);
 
     /**
+     * Null implementation of {@link ExecutionLock}.
+     */
+    public static final ExecutionLock NULL = new ExecutionLock() {
+
+        @Override
+        public void endFlow(String flowId, String executionId) {
+            return;
+        }
+
+        @Override
+        public void beginFlow(String flowId, String executionId) {
+            return;
+        }
+
+        @Override
+        public void close() throws IOException {
+            return;
+        }
+    };
+
+    /**
      * Begin to process a flow using this lock.
      * @param flowId target flow ID
      * @param executionId  target execution ID

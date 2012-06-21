@@ -22,6 +22,8 @@ import java.text.MessageFormat;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+
 /**
  * A skeletal implementation of stage clients.
  * @since 0.2.6
@@ -98,4 +100,19 @@ public abstract class BaseStageClient extends Configured implements Tool {
         String stageId = getStageId();
         return StageConstants.getDefinitionId(batchId, flowId, stageId);
     }
+
+    @Override
+    public final int run(String[] args) throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(getConf().getClassLoader());
+        return execute(args);
+    }
+
+    /**
+     * Performs stage execution.
+     * @param args arguments
+     * @return exit code of the execution
+     * @throws Exception if failed to execute
+     */
+    protected abstract int execute(String[] args) throws Exception;
 }

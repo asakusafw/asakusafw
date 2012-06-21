@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Test;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
@@ -220,6 +222,33 @@ public class QueueHadoopScriptHandlerTest {
 
         assertThat(c1.count, is(greaterThan(0)));
         assertThat(c2.count, is(greaterThan(0)));
+    }
+
+    /**
+     * simple execution.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_runtime_context() throws Exception {
+        MockJobClient c1 = new MockJobClient("testing", COMPLETED);
+        JobClientProfile profile = new JobClientProfile("testing", list(c1), 1000, 10);
+        QueueHadoopScriptHandler handler = create();
+        handler.doConfigure(profile);
+
+        RuntimeContext rc = RuntimeContext.DEFAULT
+            .batchId("b")
+            .mode(ExecutionMode.SIMULATION)
+            .buildId("OK");
+        ExecutionContext context = new ExecutionContext(
+                "b", "f", "e", ExecutionPhase.MAIN,
+                Collections.<String, String>emptyMap(),
+                rc.unapply());
+
+        HadoopScript script = script();
+        handler.execute(ExecutionMonitor.NULL, context, script);
+
+        JobScript js = c1.registered.get("testing");
+        assertThat(RuntimeContext.DEFAULT.apply(js.getEnvironmentVariables()), is(rc));
     }
 
     /**

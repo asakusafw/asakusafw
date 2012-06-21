@@ -18,23 +18,30 @@ package com.asakusafw.windgate.hadoopfs.ssh;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.io.util.VoidOutputStream;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * Puts files onto Hadoop File System from {@link FileList} in the standard input.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public class WindGateHadoopPut {
+
+    static {
+        StdioHelper.load();
+    }
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopPut.class);
 
@@ -60,22 +67,20 @@ public class WindGateHadoopPut {
      * Program entry.
      * This requires {@link FileList} protocol in standard input.
      * @param args must be empty
-     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
-        if (args == null) {
-            throw new IllegalArgumentException("args must not be null"); //$NON-NLS-1$
-        }
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(WindGateHadoopPut.class.getClassLoader());
         WGLOG.info("I21000");
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
-        int result = new WindGateHadoopPut(conf).execute(args);
+        int result = new WindGateHadoopPut(conf).execute(StdioHelper.getOriginalStdin(), args);
         long end = System.currentTimeMillis();
         WGLOG.info("I21999", result, end - start);
         System.exit(result);
     }
 
-    int execute(String... args) {
+    int execute(InputStream in, String... args) {
         assert args != null;
         if (args.length != 0) {
             WGLOG.error("E21001",
@@ -86,7 +91,7 @@ public class WindGateHadoopPut {
         }
         try {
             WGLOG.info("I21001");
-            FileList.Reader reader = FileList.createReader(new BufferedInputStream(System.in, BUFFER_SIZE));
+            FileList.Reader reader = FileList.createReader(new BufferedInputStream(in, BUFFER_SIZE));
             doPut(reader);
             WGLOG.info("I21002");
             reader.close();
@@ -119,20 +124,21 @@ public class WindGateHadoopPut {
                 fs.getUri(),
                 status.getPath());
         long transferred = 0;
-        FSDataOutputStream output = fs.create(status.getPath(), true, BUFFER_SIZE);
+        OutputStream output;
+        if (RuntimeContext.get().isSimulation()) {
+            output = new VoidOutputStream();
+        } else {
+            output = fs.create(status.getPath(), true, BUFFER_SIZE);
+        }
         try {
-            try {
-                byte[] buf = new byte[256];
-                while (true) {
-                    int read = input.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    output.write(buf, 0, read);
-                    transferred += read;
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = input.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                output.close();
+                output.write(buf, 0, read);
+                transferred += read;
             }
         } finally {
             output.close();

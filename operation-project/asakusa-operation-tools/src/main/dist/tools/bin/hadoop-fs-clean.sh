@@ -50,7 +50,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -67,8 +67,7 @@ then
     exit 2
 fi
 
-_dirname=$(dirname "$0")
-_TL_ROOT="$(cd "$_dirname" ; pwd)/.."
+_TL_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_TL_ROOT/conf/env.sh"
 import "$_TL_ROOT/libexec/configure-hadoop-cmd.sh"

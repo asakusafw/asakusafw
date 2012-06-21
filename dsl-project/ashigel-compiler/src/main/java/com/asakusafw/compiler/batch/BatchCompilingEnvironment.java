@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class BatchCompilingEnvironment {
     private final BatchCompilerConfiguration configuration;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
+
+    private final String buildId = UUID.randomUUID().toString();
 
     private String firstError;
 
@@ -61,6 +64,15 @@ public class BatchCompilingEnvironment {
         configuration.getWorkflows().initialize(this);
         clearError();
         return this;
+    }
+
+    /**
+     * Returns the build ID of this batch compilation.
+     * @return the build ID
+     * @since 0.4.0
+     */
+    public String getBuildId() {
+        return buildId;
     }
 
     /**

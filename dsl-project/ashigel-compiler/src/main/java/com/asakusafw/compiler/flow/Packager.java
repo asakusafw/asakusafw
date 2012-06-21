@@ -30,10 +30,16 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public interface Packager extends FlowCompilingEnvironment.Initializable {
 
     /**
+     * The location of frmework info.
+     * @since 0.4.0
+     */
+    Location FRAMEWORK_INFO = Location.fromPath("META-INF/asakusa", '/');
+
+    /**
      * The location of fragment marker file in each class library.
      * @since 0.4.0
      */
-    Location FRAGMENT_MARKER_PATH = Location.fromPath("META-INF/asakusa/fragment", '/');
+    Location FRAGMENT_MARKER_PATH = FRAMEWORK_INFO.append("fragment");
 
     /**
      * 指定のJavaソースプログラムを出力するためのストリームを開いて返す。

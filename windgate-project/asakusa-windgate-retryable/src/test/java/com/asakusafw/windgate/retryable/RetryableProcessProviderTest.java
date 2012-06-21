@@ -15,7 +15,8 @@
  */
 package com.asakusafw.windgate.retryable;
 
-import static junit.framework.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -26,8 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.ProfileContext;
@@ -41,6 +46,12 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  * Test for {@link RetryableProcessProvider}.
  */
 public class RetryableProcessProviderTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * normal run.
@@ -105,6 +116,19 @@ public class RetryableProcessProviderTest {
         } catch (IOException e) {
             // ok.
         }
+    }
+
+    /**
+     * normal run as simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        ProcessProfile profile = profile(2, Action.SUCCESS);
+        ProcessProvider provider = profile.createProvider();
+        assertThat(RuntimeContext.get().canExecute(provider), is(true));
     }
 
     /**

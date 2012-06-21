@@ -33,12 +33,23 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 
 /**
  * Test for {@link WindGateHadoopPut}.
  */
 public class WindGateHadoopPutTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     private static final Path PREFIX = new Path("target/testing/windgate");
 
@@ -92,8 +103,9 @@ public class WindGateHadoopPutTest {
         put(writer, testing, "Hello, world!");
 
         writer.close();
-        System.setIn(new ByteArrayInputStream(buffer.toByteArray()));
-        int result = new WindGateHadoopPut(conf).execute();
+
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
 
         Map<String, String> contents = get();
@@ -118,8 +130,8 @@ public class WindGateHadoopPutTest {
         put(writer, testing3, "Hello3, world!");
 
         writer.close();
-        System.setIn(new ByteArrayInputStream(buffer.toByteArray()));
-        int result = new WindGateHadoopPut(conf).execute();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
 
         Map<String, String> contents = get();
@@ -139,8 +151,8 @@ public class WindGateHadoopPutTest {
         FileList.Writer writer = FileList.createWriter(buffer);
 
         writer.close();
-        System.setIn(new ByteArrayInputStream(buffer.toByteArray()));
-        int result = new WindGateHadoopPut(conf).execute();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
 
         Map<String, String> contents = get();
@@ -160,8 +172,8 @@ public class WindGateHadoopPutTest {
         put(writer, testing, "Hello, world!");
 
         writer.close();
-        System.setIn(new ByteArrayInputStream(buffer.toByteArray()));
-        int result = new WindGateHadoopPut(conf).execute(testing.toString());
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in, testing.toString());
         assertThat(result, is(not(0)));
     }
 
@@ -179,9 +191,32 @@ public class WindGateHadoopPutTest {
 
         // writer.close();
 
-        System.setIn(new ByteArrayInputStream(buffer.toByteArray()));
-        int result = new WindGateHadoopPut(conf).execute();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(not(0)));
+    }
+
+    /**
+     * Puts in simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void simulated() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        FileList.Writer writer = FileList.createWriter(buffer);
+
+        Path testing = new Path(PREFIX, "testing");
+        put(writer, testing, "Hello, world!");
+
+        writer.close();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
+        int result = new WindGateHadoopPut(conf).execute(in);
+        assertThat(result, is(0));
+
+        Map<String, String> contents = get();
+        assertThat(contents.size(), is(0));
     }
 
     private void put(FileList.Writer writer, Path path, String string) throws IOException {

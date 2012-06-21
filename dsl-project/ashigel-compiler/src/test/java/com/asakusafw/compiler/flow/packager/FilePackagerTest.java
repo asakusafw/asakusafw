@@ -31,13 +31,13 @@ import java.util.jar.JarInputStream;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Packager;
-import com.asakusafw.compiler.util.TemporaryFolder;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;

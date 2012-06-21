@@ -28,3 +28,19 @@ then
         _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
     done
 fi
+
+if [ -d "$ASAKUSA_HOME/core/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/core/lib/")
+    do
+        _WG_CLASSPATH="${_WG_CLASSPATH}:${ASAKUSA_HOME}/core/lib/$f"
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/ext/lib/")
+    do
+        _WG_CLASSPATH="${_WG_CLASSPATH}:${ASAKUSA_HOME}/ext/lib/$f"
+    done
+fi

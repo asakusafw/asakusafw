@@ -39,6 +39,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.yaess.basic.BasicLockProvider;
+import com.asakusafw.yaess.basic.BasicMonitorProvider;
 import com.asakusafw.yaess.core.CommandScript;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
@@ -260,6 +264,19 @@ public class ExecutionTaskTest {
     }
 
     /**
+     * Execute phase as simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void phase_sim() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        prf.setInvalid();
+        ExecutionTask task = prf.task();
+        task.setRuntimeContext(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+        task.executePhase("batch", "testing", "f1", ExecutionPhase.MAIN);
+    }
+
+    /**
      * Executes flow.
      * @throws Exception if failed
      */
@@ -296,6 +313,19 @@ public class ExecutionTaskTest {
 
         List<Record> results = SerialExecutionTracker.get(prf.trackingId);
         assertThat(results, is(Collections.<Record>emptyList()));
+    }
+
+    /**
+     * Executes flow in simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeFlow_sim() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        prf.setInvalid();
+        ExecutionTask task = prf.task();
+        task.setRuntimeContext(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+        task.executeFlow("batch", "testing", "flow");
     }
 
     /**
@@ -508,6 +538,19 @@ public class ExecutionTaskTest {
         checkFlowHappensBefore(results, "left", "last");
         checkFlowHappensBefore(results, "right", "last");
         verifyPhaseOrder(results);
+    }
+
+    /**
+     * Executes batch with simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void executeBatch_sim() throws Exception {
+        ProfileBuilder prf = new ProfileBuilder(folder.getRoot());
+        prf.setInvalid();
+        ExecutionTask task = prf.task();
+        task.setRuntimeContext(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+        task.executeBatch("batch");
     }
 
     /**
@@ -826,6 +869,8 @@ public class ExecutionTaskTest {
             this.replacement = new HashMap<String, String>();
             this.replacement.put("home", asakusaHome.getAbsolutePath());
             this.replacement.put("scope", ExecutionLock.Scope.WORLD.getSymbol());
+            this.replacement.put("locker", BasicLockProvider.class.getName());
+            this.replacement.put("monitor", BasicMonitorProvider.class.getName());
             this.replacement.put("lock", lockDir.getAbsolutePath());
             this.replacement.put("tracker", SerialExecutionTracker.class.getName());
             this.replacement.put("id", "testing");
@@ -835,6 +880,11 @@ public class ExecutionTaskTest {
 
         void setTracker(Class<? extends ExecutionTracker> tracker) {
             this.replacement.put("tracker", tracker.getName());
+        }
+
+        void setInvalid() {
+            this.replacement.put("monitor", MonitorProviderInvalid.class.getName());
+            this.replacement.put("locker", LockProviderInvalid.class.getName());
         }
 
         ExecutionTask task() throws IOException, InterruptedException {

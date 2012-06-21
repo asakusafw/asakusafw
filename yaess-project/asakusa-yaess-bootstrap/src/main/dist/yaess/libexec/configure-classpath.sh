@@ -30,6 +30,7 @@ then
             _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}$_YS_ROOT/conf"
         fi
 fi
+
 if [ -d "$_YS_ROOT/lib" ]
 then
     for f in $(ls "$_YS_ROOT/lib/")
@@ -40,5 +41,21 @@ then
         else
             _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}${_YS_ROOT}/lib/$f"
         fi
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/core/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/core/lib/")
+    do
+        _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}${ASAKUSA_HOME}/core/lib/$f"
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/ext/lib/")
+    do
+        _YS_CLASSPATH="${_YS_CLASSPATH}${_YS_PATH_SEPARATOR}${ASAKUSA_HOME}/ext/lib/$f"
     done
 fi

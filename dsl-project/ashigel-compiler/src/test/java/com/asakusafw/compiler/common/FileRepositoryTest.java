@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.util.TemporaryFolder;
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 
@@ -46,7 +46,7 @@ public class FileRepositoryTest {
      * 作業用のテンポラリフォルダ。
      */
     @Rule
-    public TemporaryFolder temporary = new TemporaryFolder();
+    public FrameworkDeployer framework = new FrameworkDeployer(false);
 
     /**
      * 単一のファイルのみを含む。
@@ -106,7 +106,7 @@ public class FileRepositoryTest {
      */
     @Test
     public void empty() throws Exception {
-        FileRepository repository = new FileRepository(temporary.newFolder());
+        FileRepository repository = new FileRepository(framework.getWork("empty"));
         Cursor cur = repository.createCursor();
         Map<String, List<String>> entries = drain(cur);
 
@@ -122,7 +122,8 @@ public class FileRepositoryTest {
         try {
             try {
                 ZipInputStream zip = new ZipInputStream(input);
-                File result = temporary.extract(zip);
+                File result = new File(framework.getWork("work"), name);
+                framework.extract(zip, result);
                 zip.close();
                 return result;
             } finally {

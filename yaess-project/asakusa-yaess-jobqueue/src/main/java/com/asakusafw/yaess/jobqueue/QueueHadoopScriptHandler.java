@@ -20,7 +20,6 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -326,18 +325,20 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
         result.setArguments(new HashMap<String, String>(context.getArguments()));
         result.setStageId(script.getId());
         result.setMainClassName(script.getClassName());
-        result.setProperties(merge(getProperties(context, script), script.getHadoopProperties()));
-        result.setEnvironmentVariables(new HashMap<String, String>(script.getEnvironmentVariables()));
-        return result;
-    }
 
-    private Map<String, String> merge(Map<String, String> base, Map<String, String> override) {
-        assert base != null;
-        assert override != null;
-        Map<String, String> results = new TreeMap<String, String>();
-        results.putAll(base);
-        results.putAll(override);
-        return results;
+        Map<String, String> props = new HashMap<String, String>();
+        props.putAll(getProperties(context, script));
+        props.putAll(script.getHadoopProperties());
+        result.setProperties(props);
+
+        Map<String, String> env = new HashMap<String, String>();
+        // NOTE: Handler has only dummy environment variables
+        // env.putAll(getEnvironmentVariables(context, script));
+        env.putAll(context.getEnvironmentVariables());
+        env.putAll(script.getEnvironmentVariables());
+        result.setEnvironmentVariables(env);
+
+        return result;
     }
 
     private void submitScript(ExecutionContext context, JobInfo info) throws IOException, InterruptedException {

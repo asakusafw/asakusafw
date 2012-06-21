@@ -34,8 +34,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.process.BasicProcessProvider;
 import com.asakusafw.windgate.core.process.ProcessProfile;
+import com.asakusafw.windgate.core.process.ProcessProvider;
+import com.asakusafw.windgate.core.resource.DriverFactory;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.session.SessionProfile;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
@@ -46,6 +51,12 @@ import com.asakusafw.windgate.file.session.FileSessionProvider;
  * Test for {@link GateTask}.
  */
 public class GateTaskTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * Temporary folder.
@@ -171,6 +182,30 @@ public class GateTaskTest {
                 new ParameterList()).execute();
     }
 
+    /**
+     * Simulated execution.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        File in = folder.newFile("in");
+        File out = folder.newFile("out");
+        out.delete();
+        put(in, "aaa", "bbb", "ccc");
+
+        new GateTask(
+                profile(),
+                script(p("testing", "void", "fs1", in, "fs2", out)),
+                "testing",
+                true,
+                true,
+                new ParameterList()).execute();
+
+        assertThat(out.exists(), is(false));
+    }
+
     private GateProfile profile() {
         CoreProfile core = new CoreProfile(2);
         SessionProfile session = new SessionProfile(
@@ -179,11 +214,20 @@ public class GateTaskTest {
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         folder.newFolder("session").getAbsolutePath()));
-        List<ProcessProfile> processes = Arrays.asList(new ProcessProfile(
-                "default",
-                BasicProcessProvider.class,
-                ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
-                Collections.<String, String>emptyMap()));
+        List<ProcessProfile> processes = Arrays.asList(new ProcessProfile[] {
+                new ProcessProfile(
+                        "default",
+                        BasicProcessProvider.class,
+                        ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
+                        Collections.<String, String>emptyMap()
+                ),
+                new ProcessProfile(
+                        "void",
+                        VoidProcessProvider.class,
+                        ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
+                        Collections.<String, String>emptyMap()
+                ),
+        });
         List<ResourceProfile> resources = Arrays.asList(new ResourceProfile[] {
                 new ResourceProfile(
                         "fs1",
@@ -238,13 +282,34 @@ public class GateTaskTest {
     }
 
     private ProcessScript<?> p(String name, String sourceName, File sourceFile, String drainName, File drainFile) {
+        return p(drainName, "default", sourceName, sourceFile, drainName, drainFile);
+    }
+
+    private ProcessScript<?> p(
+            String name, String processName, String sourceName, File sourceFile, String drainName, File drainFile) {
         return new ProcessScript<String>(
-                name, "default", String.class,
+                name, processName, String.class,
                 d(sourceName, sourceFile),
                 d(drainName, drainFile));
     }
 
     private DriverScript d(String name, File file) {
         return new DriverScript(name, Collections.singletonMap(FileProcess.FILE.key(), file.getPath()));
+    }
+
+    /**
+     * throws {@link AssertionError} on {@link #execute(DriverFactory, ProcessScript)}.
+     */
+    public static class VoidProcessProvider extends ProcessProvider {
+
+        @Override
+        protected void configure(ProcessProfile profile) throws IOException {
+            return;
+        }
+
+        @Override
+        public <T> void execute(DriverFactory drivers, ProcessScript<T> script) throws IOException {
+            throw new AssertionError();
+        }
     }
 }

@@ -28,7 +28,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Assume;
@@ -37,6 +40,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
@@ -45,6 +51,12 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
  * Test for {@link JschConnection}.
  */
 public class JschConnectionTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * Temporary folder.
@@ -195,7 +207,7 @@ public class JschConnectionTest {
      */
     @Test
     public void env() throws Exception {
-        putScript(target, "bin/check-env.sh", SshProfile.COMMAND_GET);
+        putScript(target, "libexec/check-env.sh", SshProfile.COMMAND_GET);
         JschConnection conn = new JschConnection(
                 profile,
                 Arrays.asList(profile.getGetCommand()));
@@ -209,6 +221,42 @@ public class JschConnectionTest {
         } finally {
             conn.close();
         }
+    }
+
+    /**
+     * Test for passing runtime context.
+     * @throws Exception if failed
+     */
+    @Test
+    public void inherit_context() throws Exception {
+        RuntimeContext context = RuntimeContext.DEFAULT
+            .mode(ExecutionMode.SIMULATION)
+            .batchId("testbatch")
+            .buildId("testverify");
+
+        RuntimeContext.set(context);
+
+        putScript(target, "libexec/check-context.sh", SshProfile.COMMAND_GET);
+        Map<String, String> results = new HashMap<String, String>();
+        JschConnection conn = new JschConnection(profile, Arrays.asList(profile.getGetCommand()));
+        try {
+            InputStream output = conn.openStandardOutput();
+            conn.connect();
+            Scanner s = new Scanner(output, "UTF-8");
+            while (s.hasNextLine()) {
+                String[] pair = s.nextLine().split("=", 2);
+                if (pair.length == 2) {
+                    results.put(pair[0], pair[1]);
+                }
+            }
+            int exit = conn.waitForExit(10000);
+            assertThat(exit, is(0));
+        } finally {
+            conn.close();
+        }
+
+        RuntimeContext restored = RuntimeContext.DEFAULT.apply(results);
+        assertThat(results.toString(), restored, is(context));
     }
 
     private void put(File file, String content) throws IOException {

@@ -32,6 +32,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ProfileContext;
@@ -80,6 +81,7 @@ public final class WindGateAbort {
      */
     public static void main(String... args) {
         CommandLineUtil.prepareLogContext();
+        CommandLineUtil.prepareRuntimeContext();
         WGLOG.info("I01000");
         long start = System.currentTimeMillis();
         int status = execute(args);
@@ -118,7 +120,9 @@ public final class WindGateAbort {
             return 1;
         }
         try {
-            task.execute();
+            if (RuntimeContext.get().canExecute(task)) {
+                task.execute();
+            }
             return 0;
         } catch (Exception e) {
             WGLOG.error(e, "E01002");

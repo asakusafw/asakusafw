@@ -24,6 +24,7 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Disables each cache information.
@@ -51,6 +52,7 @@ import com.asakusafw.bulkloader.log.Log;
 </tr>
 </table>
  * @since 0.2.3
+ * @version 0.4.0
  */
 public class DeleteCacheInfo {
 
@@ -64,6 +66,7 @@ public class DeleteCacheInfo {
      * @throws IllegalArgumentException if program arguments are invalid
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         if (args.length < 2) {
             LOG.error("TG-DELETECACHE-01003",
                     "引数の数が間違っています",
@@ -131,7 +134,12 @@ public class DeleteCacheInfo {
                 if (subCommand == SubCommand.CACHE) {
                     String cacheId = subArguments.get(0);
                     LOG.info("TG-DELETECACHE-02001", targetName, cacheId);
-                    boolean deleted = repo.deleteCacheInfo(cacheId);
+                    boolean deleted;
+                    if (RuntimeContext.get().canExecute(repo)) {
+                        deleted = repo.deleteCacheInfo(cacheId);
+                    } else {
+                        deleted = true;
+                    }
                     if (deleted) {
                         LOG.info("TG-DELETECACHE-02002", targetName, cacheId);
                     } else {
@@ -140,7 +148,12 @@ public class DeleteCacheInfo {
                 } else if (subCommand == SubCommand.TABLE) {
                     String tableName = subArguments.get(0);
                     LOG.info("TG-DELETECACHE-02004", targetName, tableName);
-                    int deleted = repo.deleteTableCacheInfo(tableName);
+                    int deleted;
+                    if (RuntimeContext.get().canExecute(repo)) {
+                        deleted = repo.deleteTableCacheInfo(tableName);
+                    } else {
+                        deleted = 1;
+                    }
                     if (deleted > 0) {
                         LOG.info("TG-DELETECACHE-02005", targetName, tableName, deleted);
                     } else {
@@ -148,7 +161,9 @@ public class DeleteCacheInfo {
                     }
                 } else if (subCommand == SubCommand.ALL) {
                     LOG.info("TG-DELETECACHE-02007", targetName);
-                    repo.deleteAllCacheInfo();
+                    if (RuntimeContext.get().canExecute(repo)) {
+                        repo.deleteAllCacheInfo();
+                    }
                     LOG.info("TG-DELETECACHE-02008", targetName);
                 } else {
                     // unknown subcommand

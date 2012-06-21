@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,19 +44,25 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.yaess.core.*;
 import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
 
 /**
  * Task to execute target batch, flow, or phase.
  * @since 0.2.3
- * @version 0.2.6
+ * @version 0.4.0
  */
 public class ExecutionTask {
 
     static final String KEY_SKIP_FLOWS = "skipFlows";
 
     static final String KEY_SERIALIZE_FLOWS = "serializeFlows";
+
+    static final String KEY_VERIFY_APPLICATION = "verifyApplication";
+
+    static final String KEY_VERIFY_DRYRUN = "dryRun";
 
     static final YaessLogger YSLOG = new YaessCoreLogger(ExecutionTask.class);
 
@@ -71,11 +78,15 @@ public class ExecutionTask {
 
     private final Map<String, CommandScriptHandler> commandHandlers;
 
-    private final Properties script;
+    private final BatchScript script;
 
     private final Map<String, String> batchArguments;
 
+    private final Map<String, String> subprocessEnvironmentVaritables = new ConcurrentHashMap<String, String>();
+
     private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
+
+    private volatile RuntimeContext runtimeContext;
 
     private volatile boolean serializeFlows = false;
 
@@ -96,7 +107,7 @@ public class ExecutionTask {
             JobScheduler scheduler,
             HadoopScriptHandler hadoopHandler,
             Map<String, CommandScriptHandler> commandHandlers,
-            Properties script,
+            BatchScript script,
             Map<String, String> batchArguments) {
         if (monitors == null) {
             throw new IllegalArgumentException("monitors must not be null"); //$NON-NLS-1$
@@ -126,6 +137,7 @@ public class ExecutionTask {
         this.commandHandlers = Collections.unmodifiableMap(new HashMap<String, CommandScriptHandler>(commandHandlers));
         this.script = script;
         this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(batchArguments));
+        this.runtimeContext = RuntimeContext.get();
     }
 
     /**
@@ -193,25 +205,58 @@ public class ExecutionTask {
             commandHandlers.put(entry.getKey(), entry.getValue().newInstance());
         }
 
+        LOG.debug("Extracting batch script");
+        BatchScript batch = BatchScript.load(script);
+
         ExecutionTask result = new ExecutionTask(
                 monitors,
                 locks,
                 scheduler,
                 hadoopHandler,
                 commandHandlers,
-                script,
+                batch,
                 batchArguments);
 
         LOG.debug("Applying definitions");
         Map<String, String> copyDefinitions = new TreeMap<String, String>(yaessArguments);
-        consumeSkipFlows(result, copyDefinitions, script);
-        consumeSerializeFlows(result, copyDefinitions, script);
+        consumeRuntimeContext(result, copyDefinitions, batch);
+        consumeSkipFlows(result, copyDefinitions, batch);
+        consumeSerializeFlows(result, copyDefinitions, batch);
         checkRest(copyDefinitions);
 
         return result;
     }
 
-    private static void consumeSkipFlows(ExecutionTask task, Map<String, String> copyDefinitions, Properties script) {
+    private static void consumeRuntimeContext(
+            ExecutionTask result,
+            Map<String, String> copyDefinitions,
+            BatchScript script) {
+        assert result != null;
+        assert copyDefinitions != null;
+        assert script != null;
+        RuntimeContext rc = RuntimeContext.get().batchId(script.getId()).buildId(script.getBuildId());
+
+        Ternary dryRunResult = consumeBoolean(copyDefinitions, KEY_VERIFY_DRYRUN);
+        if (dryRunResult == Ternary.TRUE) {
+            rc = rc.mode(ExecutionMode.SIMULATION);
+        } else if (dryRunResult == Ternary.FALSE) {
+            rc = rc.mode(ExecutionMode.PRODUCTION);
+        }
+
+        Ternary verify = consumeBoolean(copyDefinitions, KEY_VERIFY_APPLICATION);
+        if (verify == Ternary.FALSE) {
+            rc = rc.buildId(null);
+        }
+
+        result.runtimeContext = rc;
+        result.getEnv().putAll(rc.unapply());
+    }
+
+    private static void consumeSkipFlows(
+            ExecutionTask task,
+            Map<String, String> copyDefinitions,
+            BatchScript script) {
+        assert task != null;
         assert copyDefinitions != null;
         assert script != null;
         String flows = copyDefinitions.remove(KEY_SKIP_FLOWS);
@@ -219,11 +264,10 @@ public class ExecutionTask {
             return;
         }
         LOG.debug("Definition: {}={}", KEY_SKIP_FLOWS, flows);
-        BatchScript batchScript = BatchScript.load(script);
         for (String flowIdCandidate : flows.split(",")) {
             String flowId = flowIdCandidate.trim();
             if (flowId.isEmpty() == false) {
-                FlowScript flow = batchScript.findFlow(flowId);
+                FlowScript flow = script.findFlow(flowId);
                 if (flow == null) {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "Unknown flowId in definition {0} : {1}",
@@ -238,24 +282,34 @@ public class ExecutionTask {
     private static void consumeSerializeFlows(
             ExecutionTask task,
             Map<String, String> copyDefinitions,
-            Properties script) {
+            BatchScript script) {
         assert task != null;
         assert copyDefinitions != null;
         assert script != null;
-        String value = copyDefinitions.remove(KEY_SERIALIZE_FLOWS);
-        if (value == null) {
+
+        Ternary serialize = consumeBoolean(copyDefinitions, KEY_SERIALIZE_FLOWS);
+        if (serialize == null) {
             return;
         }
+        task.serializeFlows = serialize == Ternary.TRUE;
+    }
+
+    private static Ternary consumeBoolean(Map<String, String> copyDefinitions, String key) {
+        assert copyDefinitions != null;
+        String value = copyDefinitions.remove(key);
+        if (value == null) {
+            return Ternary.UNDEF;
+        }
         value = value.trim();
-        LOG.debug("Definition: {}={}", KEY_SERIALIZE_FLOWS, value);
+        LOG.debug("Definition: {}={}", key, value);
         if (value.equalsIgnoreCase("true")) {
-            task.serializeFlows = true;
-        } else if (value .equalsIgnoreCase("false")) {
-            task.serializeFlows = false;
+            return Ternary.TRUE;
+        } else if (value.equalsIgnoreCase("false")) {
+            return Ternary.FALSE;
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Unknown option value in definition {0} : {1}",
-                    KEY_SERIALIZE_FLOWS,
+                    "Invalid option value in definition {0} : {1}",
+                    key,
                     value));
         }
     }
@@ -288,6 +342,26 @@ public class ExecutionTask {
     }
 
     /**
+     * Sets runtime context.
+     * Note that the
+     * @param runtimeContext the runtime context
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    void setRuntimeContext(RuntimeContext runtimeContext) {
+        this.runtimeContext = runtimeContext;
+    }
+
+    /**
+     * Returns subprocesses' environment variables.
+     * @return subprocesses' environment variables
+     * @since 0.4.0
+     */
+    Map<String, String> getEnv() {
+        return this.subprocessEnvironmentVaritables;
+    }
+
+    /**
      * Executes a target flow.
      * If execution is failed except on {@link ExecutionPhase#SETUP setup}, {@link ExecutionPhase#FINALIZE finalize},
      * or {@link ExecutionPhase#CLEANUP cleanup}, then the {@code finalize} phase will be executed for recovery
@@ -303,13 +377,12 @@ public class ExecutionTask {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
         ExecutorService executor = createJobflowExecutor(batchId);
-        BatchScript batchScript = BatchScript.load(script);
         YSLOG.info("I01000", batchId);
         long start = System.currentTimeMillis();
         try {
-            ExecutionLock lock = locks.newInstance(batchId);
+            ExecutionLock lock = acquireExecutionLock(batchId);
             try {
-                BatchScheduler batchScheduler = new BatchScheduler(batchId, batchScript, lock, executor);
+                BatchScheduler batchScheduler = new BatchScheduler(batchId, script, lock, executor);
                 batchScheduler.run();
             } finally {
                 lock.close();
@@ -324,6 +397,24 @@ public class ExecutionTask {
         } finally {
             long end = System.currentTimeMillis();
             YSLOG.info("I01999", batchId, end - start);
+        }
+    }
+
+    private ExecutionLock acquireExecutionLock(String batchId) throws IOException {
+        assert batchId != null;
+        if (runtimeContext.canExecute(locks)) {
+            return locks.newInstance(batchId);
+        } else {
+            return ExecutionLock.NULL;
+        }
+    }
+
+    private PhaseMonitor obtainPhaseMonitor(ExecutionContext context) throws InterruptedException, IOException {
+        assert context != null;
+        if (runtimeContext.canExecute(monitors)) {
+            return monitors.newInstance(context);
+        } else {
+            return PhaseMonitor.NULL;
         }
     }
 
@@ -372,8 +463,15 @@ public class ExecutionTask {
         if (executionId == null) {
             throw new IllegalArgumentException("executionId must not be null"); //$NON-NLS-1$
         }
-        FlowScript flow = FlowScript.load(script, flowId);
-        ExecutionLock lock = locks.newInstance(batchId);
+        FlowScript flow = script.findFlow(flowId);
+        if (flow == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Flow is undefined: batchId={0}, flowId={1}, executionId={2}",
+                    batchId,
+                    flowId,
+                    executionId));
+        }
+        ExecutionLock lock = acquireExecutionLock(batchId);
         try {
             lock.beginFlow(flowId, executionId);
             executeFlow(batchId, flow, executionId);
@@ -410,7 +508,8 @@ public class ExecutionTask {
         if (phase == null) {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
-        ExecutionContext context = new ExecutionContext(batchId, flowId, executionId, phase, batchArguments);
+        ExecutionContext context = new ExecutionContext(
+                batchId, flowId, executionId, phase, batchArguments, subprocessEnvironmentVaritables);
         executePhase(context);
     }
 
@@ -426,8 +525,16 @@ public class ExecutionTask {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        Set<ExecutionScript> executions = FlowScript.load(script, context.getFlowId(), context.getPhase());
-        ExecutionLock lock = locks.newInstance(context.getBatchId());
+        FlowScript flow = script.findFlow(context.getFlowId());
+        if (flow == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Flow is undefined: batchId={0}, flowId={1}, executionId={2}",
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getExecutionId()));
+        }
+        Set<ExecutionScript> executions = flow.getScripts().get(context.getPhase());
+        ExecutionLock lock = acquireExecutionLock(context.getBatchId());
         try {
             lock.beginFlow(context.getFlowId(), context.getExecutionId());
             executePhase(context, executions);
@@ -493,7 +600,8 @@ public class ExecutionTask {
             FlowScript flow,
             String executionId,
             ExecutionPhase phase) throws InterruptedException, IOException {
-        ExecutionContext context = new ExecutionContext(batchId, flow.getId(), executionId, phase, batchArguments);
+        ExecutionContext context = new ExecutionContext(
+                batchId, flow.getId(), executionId, phase, batchArguments, subprocessEnvironmentVaritables);
         Set<ExecutionScript> scripts = flow.getScripts().get(phase);
         assert scripts != null;
         executePhase(context, scripts);
@@ -533,7 +641,7 @@ public class ExecutionTask {
                 handler = JobScheduler.STRICT;
                 break;
             }
-            PhaseMonitor monitor = monitors.newInstance(context);
+            PhaseMonitor monitor = obtainPhaseMonitor(context);
             try {
                 scheduler.execute(monitor, context, jobs, handler);
             } finally {
@@ -780,5 +888,14 @@ public class ExecutionTask {
                 throw new AssertionError(e);
             }
         }
+    }
+
+    private enum Ternary {
+
+        TRUE,
+
+        FALSE,
+
+        UNDEF,
     }
 }

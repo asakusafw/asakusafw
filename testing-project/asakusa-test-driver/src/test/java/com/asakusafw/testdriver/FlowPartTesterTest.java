@@ -27,6 +27,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -50,7 +51,7 @@ public class FlowPartTesterTest {
     @Test
     public void simple() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
@@ -64,7 +65,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/actual-path.xls");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -81,7 +82,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/actual-noverify.xls");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .dumpActual(target.getPath());
@@ -97,7 +98,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/actual-uri.xls");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -114,7 +115,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/actual-file.xls");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -131,7 +132,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/difference-path.html");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -153,7 +154,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/difference-uri.html");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -175,7 +176,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/difference-file.html");
         target.delete();
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -197,7 +198,7 @@ public class FlowPartTesterTest {
         File target = new File("target/testing/dump/difference-none.html");
         Assume.assumeThat(target.exists() == false || target.delete(), is(true));
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -221,7 +222,7 @@ public class FlowPartTesterTest {
         assertThat(outUrl, is(notNullValue()));
 
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare(inUrl.toExternalForm());
         Out<Simple> out = tester.output("out", Simple.class).verify(outUrl.toExternalForm(), new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
@@ -234,7 +235,7 @@ public class FlowPartTesterTest {
     @Test
     public void withSpace() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/with space-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/with space-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
@@ -250,7 +251,7 @@ public class FlowPartTesterTest {
         prefix = '/' + prefix;
 
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare(prefix + "data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify(prefix + "data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
@@ -262,7 +263,7 @@ public class FlowPartTesterTest {
     @Test
     public void simpleWithDataSize() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         FlowPartDriverInput<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json").withDataSize(DataSize.TINY);
         assertEquals(DataSize.TINY, in.getImporterDescription().getDataSize());
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
@@ -276,7 +277,7 @@ public class FlowPartTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_input_prepare_data() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("in", Simple.class).prepare("INVALID");
     }
 
@@ -286,7 +287,7 @@ public class FlowPartTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_prepare_data() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("out", Simple.class).prepare("INVALID");
     }
 
@@ -296,7 +297,7 @@ public class FlowPartTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_data() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("out", Simple.class).verify("INVALID", new IdentityVerifier());
     }
 
@@ -306,7 +307,7 @@ public class FlowPartTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_rule() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("out", Simple.class).verify("data/simple-out.json", "INVALID");
     }
 
@@ -316,7 +317,7 @@ public class FlowPartTesterTest {
     @Test
     public void skip() {
         FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.skipCleanInput(true);
         tester.skipCleanOutput(true);
         tester.skipPrepareInput(true);

@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
@@ -50,17 +51,17 @@ public class SshProfile {
     /**
      * The remote 'get' command path.
      */
-    public static final String COMMAND_GET = "bin/get.sh";
+    public static final String COMMAND_GET = "libexec/get.sh";
 
     /**
      * The remote 'put' command path.
      */
-    public static final String COMMAND_PUT = "bin/put.sh";
+    public static final String COMMAND_PUT = "libexec/put.sh";
 
     /**
      * The remote 'delete' command path.
      */
-    public static final String COMMAND_DELETE = "bin/delete.sh";
+    public static final String COMMAND_DELETE = "libexec/delete.sh";
 
     /**
      * The key of remote target installed path.

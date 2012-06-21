@@ -37,7 +37,7 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import com.asakusafw.runtime.core.BatchRuntime;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
 import com.asakusafw.runtime.stage.input.StageInputMapper;
@@ -54,11 +54,6 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
  * @version 0.4.0
  */
 public abstract class AbstractStageClient extends BaseStageClient {
-
-    /**
-     * Method name of {@link #checkEnvironment(Job, VariableTable)}.
-     */
-    public static final String METHOD_CHECK_ENVIRONMENT = "checkEnvironment";
 
     /**
      * {@link #getStageOutputPath()}のメソッド名。
@@ -116,15 +111,6 @@ public abstract class AbstractStageClient extends BaseStageClient {
     public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull";
 
     static final Log LOG = LogFactory.getLog(AbstractStageClient.class);
-
-    /**
-     * Checks current environment.
-     * @param job target job
-     * @param variables variables
-     */
-    protected void checkEnvironment(Job job, VariableTable variables) {
-        BatchRuntime.require(0, 0);
-    }
 
     /**
      * このステージに関する設定を行う。
@@ -226,7 +212,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     @Override
-    public int run(String[] args) throws Exception {
+    protected int execute(String[] args) throws Exception {
         Configuration conf = getConf();
         conf.set(StageConstants.PROP_BATCH_ID, getBatchId());
         conf.set(StageConstants.PROP_FLOW_ID, getFlowId());
@@ -247,7 +233,6 @@ public abstract class AbstractStageClient extends BaseStageClient {
         }
         Job job = new Job(conf);
         VariableTable variables = getPathParser(job.getConfiguration());
-        checkEnvironment(job, variables);
         configureJobInfo(job, variables);
         configureStageInput(job, variables);
         configureStageOutput(job, variables);
@@ -262,13 +247,20 @@ public abstract class AbstractStageClient extends BaseStageClient {
                 "Submitting Job: {0}",
                 job.getJobName()));
         long start = System.currentTimeMillis();
-        job.submit();
-        LOG.info(MessageFormat.format(
-                "Job Submitted: id={0}, name={1}",
-                job.getJobID(),
-                job.getJobName()));
-
-        boolean succeed = job.waitForCompletion(true);
+        boolean succeed;
+        if (RuntimeContext.get().isSimulation()) {
+            LOG.info(MessageFormat.format(
+                    "Job is skipped because current execution status is in simulation mode: name={0}",
+                    job.getJobName()));
+            succeed = true;
+        } else {
+            job.submit();
+            LOG.info(MessageFormat.format(
+                    "Job Submitted: id={0}, name={1}",
+                    job.getJobID(),
+                    job.getJobName()));
+            succeed = job.waitForCompletion(true);
+        }
         long end = System.currentTimeMillis();
         LOG.info(MessageFormat.format(
                 "Job Finished: elapsed=[{3}]ms, succeed={2}, id={0}, name={1}",
@@ -371,7 +363,11 @@ public abstract class AbstractStageClient extends BaseStageClient {
         for (StageResource cache : resources) {
             String resolved = variables.parse(cache.getLocation());
             LOG.info(MessageFormat.format("Distributed Cache: {0} @ {1}", cache.getName(), resolved));
-            StageResourceDriver.add(job, resolved, cache.getName());
+            if (RuntimeContext.get().isSimulation()) {
+                LOG.info("Preparing distributed cache is skipped in simulation mode");
+            } else {
+                StageResourceDriver.add(job, resolved, cache.getName());
+            }
         }
     }
 

@@ -57,8 +57,7 @@ if [ $# -ne 7 -a $# -ne 8 ]; then
   exit 1
 fi
 
-_dirname=$(dirname "$0")
-_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
+_TG_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 _IMPORTER_CLASS="$1"
 shift

@@ -41,6 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.compiler.directio.testing.model.Line1;
 import com.asakusafw.compiler.directio.testing.model.Line2;
+import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
@@ -238,10 +239,10 @@ public class DirectFileIoProcessorRunTest {
         In<Line1> in = tester.input("in1", new Input(format, "${input-dir}", "${input-pattern}"));
         Out<Line1> out = tester.output("out1", new Output(format, "${output-dir}", "${output-pattern}"));
 
-        tester.hadoop.getVariables().defineVariable("input-dir", "input");
-        tester.hadoop.getVariables().defineVariable("input-pattern", "input-*");
-        tester.hadoop.getVariables().defineVariable("output-dir", "output");
-        tester.hadoop.getVariables().defineVariable("output-pattern", "output.txt");
+        tester.variables().defineVariable("input-dir", "input");
+        tester.variables().defineVariable("input-pattern", "input-*");
+        tester.variables().defineVariable("output-dir", "output");
+        tester.variables().defineVariable("output-pattern", "output.txt");
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
@@ -264,10 +265,10 @@ public class DirectFileIoProcessorRunTest {
         In<Line1> in = tester.input("in1", new Input(format, "${input-dir}", "${input-pattern}"));
         Out<Line1> out = tester.output("out1", new Output(format, "${output-dir}", "${output-pattern}-*.txt"));
 
-        tester.hadoop.getVariables().defineVariable("input-dir", "input");
-        tester.hadoop.getVariables().defineVariable("input-pattern", "input-*");
-        tester.hadoop.getVariables().defineVariable("output-dir", "output");
-        tester.hadoop.getVariables().defineVariable("output-pattern", "output");
+        tester.variables().defineVariable("input-dir", "input");
+        tester.variables().defineVariable("input-pattern", "input-*");
+        tester.variables().defineVariable("output-dir", "output");
+        tester.variables().defineVariable("output-pattern", "output");
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/output-*.txt");
@@ -318,7 +319,7 @@ public class DirectFileIoProcessorRunTest {
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt")
             .delete("${pattern}-*.txt"));
 
-        tester.hadoop.getVariables().defineVariable("pattern", "deleted");
+        tester.variables().defineVariable("pattern", "deleted");
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<String> list = get("output/*.txt");
@@ -451,7 +452,7 @@ public class DirectFileIoProcessorRunTest {
     }
 
     private List<Path> find(String target) throws IOException {
-        FileSystem fs = FileSystem.get(tester.hadoop.getConfiguration());
+        FileSystem fs = FileSystem.get(tester.configuration());
         FileStatus[] list = fs.globStatus(getPath(target));
         if (list == null) {
             return Collections.emptyList();
@@ -464,7 +465,7 @@ public class DirectFileIoProcessorRunTest {
     }
 
     private List<String> get(String target) throws IOException {
-        FileSystem fs = FileSystem.get(tester.hadoop.getConfiguration());
+        FileSystem fs = FileSystem.get(tester.configuration());
         List<String> results = Lists.create();
         for (Path path : find(target)) {
             InputStream input = fs.open(path);
@@ -482,7 +483,7 @@ public class DirectFileIoProcessorRunTest {
     }
 
     private void put(String target, String... contents) throws IOException {
-        FileSystem fs = FileSystem.get(tester.hadoop.getConfiguration());
+        FileSystem fs = FileSystem.get(tester.configuration());
         OutputStream output = fs.create(getPath(target), true);
         try {
             PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"));

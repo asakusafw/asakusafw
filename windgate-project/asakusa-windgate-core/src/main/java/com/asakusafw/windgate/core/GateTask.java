@@ -35,6 +35,8 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;
 import com.asakusafw.windgate.core.resource.DriverRepository;
@@ -48,7 +50,9 @@ import com.asakusafw.windgate.core.session.SessionProvider;
 /**
  * Executes WindGate.
  * @since 0.2.2
+ * @version 0.4.0
  */
+@SimulationSupport
 public class GateTask implements Closeable {
 
     static final WindGateLogger WGLOG = new WindGateCoreLogger(GateTask.class);
@@ -234,11 +238,19 @@ public class GateTask implements Closeable {
         if (create) {
             LOG.debug("Creating session: {}",
                     sessionId);
-            return sessionProvider.create(sessionId);
+            if (RuntimeContext.get().canExecute(sessionProvider)) {
+                return sessionProvider.create(sessionId);
+            } else {
+                return new SessionMirror.Null(sessionId);
+            }
         } else {
             LOG.debug("Opening session: {}",
                     sessionId);
-            return sessionProvider.open(sessionId);
+            if (RuntimeContext.get().canExecute(sessionProvider)) {
+                return sessionProvider.open(sessionId);
+            } else {
+                return new SessionMirror.Null(sessionId);
+            }
         }
     }
 
@@ -262,7 +274,9 @@ public class GateTask implements Closeable {
                     LOG.debug("Initializing transactional resource \"{}\" for session \"{}\"",
                             resource.getName(),
                             sessionId);
-                    resource.onSessionCreated();
+                    if (RuntimeContext.get().canExecute(resource)) {
+                        resource.onSessionCreated();
+                    }
                 } catch (IOException e) {
                     WGLOG.error(e, "E00001",
                             sessionId,
@@ -286,7 +300,9 @@ public class GateTask implements Closeable {
                                 resource.getName(),
                                 sessionId);
                         try {
-                            resource.onSessionCreated();
+                            if (RuntimeContext.get().canExecute(resource)) {
+                                resource.onSessionCreated();
+                            }
                         } catch (IOException e) {
                             WGLOG.error(e, "E00001",
                                     sessionId,
@@ -322,7 +338,9 @@ public class GateTask implements Closeable {
                     LOG.debug("Preparing resource \"{}\"",
                             resource.getName());
                     try {
-                        resource.prepare(script);
+                        if (RuntimeContext.get().canExecute(resource)) {
+                            resource.prepare(script);
+                        }
                     } catch (IOException e) {
                         WGLOG.error(e, "E00002",
                                 sessionId,
@@ -359,7 +377,11 @@ public class GateTask implements Closeable {
                             process.getName(),
                             sessionId);
                     try {
-                        processProvider.execute(drivers, process);
+                        if (RuntimeContext.get().canExecute(processProvider)) {
+                            processProvider.execute(drivers, process);
+                        } else {
+                            LOG.info("Skipped process execution (simulated)");
+                        }
                     } catch (IOException e) {
                         WGLOG.error(e, "E00003",
                                 sessionId,
@@ -398,7 +420,9 @@ public class GateTask implements Closeable {
                                 resource.getName(),
                                 sessionId);
                         try {
-                            resource.onSessionCompleting();
+                            if (RuntimeContext.get().canExecute(resource)) {
+                                resource.onSessionCompleting();
+                            }
                         } catch (IOException e) {
                             WGLOG.error(e, "E00004",
                                     sessionId,
@@ -428,7 +452,9 @@ public class GateTask implements Closeable {
                         resource.getName(),
                         sessionId);
                 try {
-                    resource.onSessionCompleting();
+                    if (RuntimeContext.get().canExecute(resource)) {
+                        resource.onSessionCompleting();
+                    }
                 } catch (IOException e) {
                     WGLOG.error(e, "E00004",
                             sessionId,

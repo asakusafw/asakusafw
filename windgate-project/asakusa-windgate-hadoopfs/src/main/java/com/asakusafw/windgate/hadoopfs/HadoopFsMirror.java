@@ -30,7 +30,10 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.io.util.VoidModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
@@ -49,9 +52,10 @@ import com.asakusafw.windgate.hadoopfs.temporary.ModelOutputDrainDriver;
 /**
  * An abstract implementation of {@link ResourceMirror} directly using Hadoop File System.
  * @since 0.2.2
- * @since 0.4.0
+ * @version 0.4.0
  * @see FileProcess
  */
+@SimulationSupport
 public class HadoopFsMirror extends ResourceMirror {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(HadoopFsMirror.class);
@@ -162,7 +166,11 @@ public class HadoopFsMirror extends ResourceMirror {
         boolean succeeded = false;
         try {
             CompressionCodec codec = profile.getCompressionCodec();
-            output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path, codec);
+            if (RuntimeContext.get().isSimulation()) {
+                output = new VoidModelOutput<T>();
+            } else {
+                output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path, codec);
+            }
             DrainDriver<T> result = new ModelOutputDrainDriver<T>(output);
             succeeded = true;
             return result;
@@ -207,7 +215,7 @@ public class HadoopFsMirror extends ResourceMirror {
                     FILE.key()));
         }
         List<Path> results = resolvePaths(proc, kind, pathString);
-        if (kind == DriverScript.Kind.SOURCE && results.size() <= 0) {
+        if (kind == DriverScript.Kind.SOURCE && results.size() <= 0 && RuntimeContext.get().isSimulation() == false) {
             WGLOG.error("E01001",
                     getName(),
                     proc.getName(),

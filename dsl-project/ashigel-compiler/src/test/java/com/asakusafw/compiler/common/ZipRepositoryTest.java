@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.util.TemporaryFolder;
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 
@@ -42,10 +42,10 @@ import com.asakusafw.utils.collections.Maps;
 public class ZipRepositoryTest {
 
     /**
-     * 作業用のテンポラリフォルダ。
+     * temporary folder.
      */
     @Rule
-    public TemporaryFolder temporary = new TemporaryFolder();
+    public FrameworkDeployer framework = new FrameworkDeployer(false);
 
     /**
      * 単一のファイルのみを含む。
@@ -116,7 +116,9 @@ public class ZipRepositoryTest {
         assertThat(path, input, not(nullValue()));
         try {
             try {
-                return temporary.copy(input);
+                File file = new File(framework.getWork("temp"), name);
+                framework.dump(input, file);
+                return file;
             } finally {
                 input.close();
             }

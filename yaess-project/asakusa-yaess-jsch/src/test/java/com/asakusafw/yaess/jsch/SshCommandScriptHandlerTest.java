@@ -21,12 +21,15 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Test;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.yaess.core.CommandScript;
 import com.asakusafw.yaess.core.CommandScriptHandler;
 import com.asakusafw.yaess.core.ExecutionContext;
@@ -143,6 +146,43 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         assertThat(results, hasItem(equalToIgnoringWhiteSpace("script=SCRIPT")));
         assertThat(results, hasItem(equalToIgnoringWhiteSpace("handler=HANDLER")));
         assertThat(results, hasItem(equalToIgnoringWhiteSpace("override=SCRIPT")));
+    }
+
+    /**
+     * Passes runtime context.
+     * @throws Exception if failed
+     */
+    @Test
+    public void runtime_context() throws Exception {
+        File shell = putScript("environment.sh", "bin/script.sh");
+
+        CommandScript script = new CommandScript(
+                "testing", set(), "profile", "module",
+                Arrays.asList(shell.getAbsolutePath()),
+                map("script", "SCRIPT", "override", "SCRIPT"));
+
+        CommandScriptHandler handler = handler("env.handler", "HANDLER", "env.override", "HANDLER");
+
+        RuntimeContext rc = RuntimeContext.DEFAULT
+            .batchId("b")
+            .mode(ExecutionMode.SIMULATION)
+            .buildId("OK");
+        ExecutionContext context = new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, map(), rc.unapply());
+        execute(context, script, handler);
+
+        Map<String, String> map = new HashMap<String, String>();
+        for (String line : getOutput(shell)) {
+            if (line.trim().isEmpty()) {
+                continue;
+            }
+            String[] kv = line.split("=", 2);
+            if (kv.length != 2) {
+                continue;
+            }
+            map.put(kv[0], kv[1]);
+        }
+
+        assertThat(RuntimeContext.DEFAULT.apply(map), is(rc));
     }
 
     /**

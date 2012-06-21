@@ -32,6 +32,7 @@ import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.importer.Importer;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Builds each cache for table.
@@ -53,6 +54,8 @@ public final class BuildCache {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(BuildCache.class.getClassLoader());
         if (args.length != 4 && args.length != 5) {
             LOG.error("TG-BUILDCACHE-01003", Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
@@ -93,6 +96,9 @@ public final class BuildCache {
             ImportBean bean = createBean(targetName, batchId, flowId, executionId, tableName);
             if (bean == null) {
                 return Constants.EXIT_CODE_ERROR;
+            }
+            if (RuntimeContext.get().isSimulation()) {
+                return Constants.EXIT_CODE_SUCCESS;
             }
             Importer importer = new Importer();
             int exitCode = importer.importTables(bean);

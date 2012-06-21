@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitorProvider;
 import com.asakusafw.yaess.core.PhaseMonitor;
@@ -30,6 +31,7 @@ import com.asakusafw.yaess.core.ServiceProfile;
  * Basic implementation of {@link ExecutionMonitorProvider}.
  * @since 0.2.3
  */
+@SimulationSupport
 public class BasicMonitorProvider extends ExecutionMonitorProvider {
 
     static final Logger LOG = LoggerFactory.getLogger(BasicMonitorProvider.class);

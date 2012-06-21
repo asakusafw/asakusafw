@@ -18,6 +18,7 @@ package com.asakusafw.testdriver;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.batch.SimpleBatch;
 import com.asakusafw.testdriver.testing.model.Simple;
 
@@ -38,7 +39,7 @@ public class BatchTesterTest {
     @Test
     public void simple() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -50,7 +51,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_jobflow() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("INVALID").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("INVALID").output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -62,7 +63,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_input_prepare_name() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("INVALID", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -74,7 +75,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_input_prepare_type() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Void.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -86,7 +87,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_input_prepare_data() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("INVALID");
     }
 
@@ -96,7 +97,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_prepare_name() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("INVALID", Simple.class).prepare("data/simple-out.json");
         tester.runTest(SimpleBatch.class);
@@ -108,7 +109,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_prepare_type() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("simple", Void.class).prepare("data/simple-out.json");
         tester.runTest(SimpleBatch.class);
@@ -120,7 +121,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_prepare_data() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").output("simple", Simple.class).prepare("INVALID");
         tester.runTest(SimpleBatch.class);
     }
@@ -131,7 +132,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_verify_name() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("INVALID", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -143,7 +144,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_verify_type() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").input("simple", Simple.class).prepare("data/simple-in.json");
         tester.jobflow("simple").output("simple", Void.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleBatch.class);
@@ -155,7 +156,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_data() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").output("simple", Simple.class).verify("INVALID", new IdentityVerifier());
     }
 
@@ -165,7 +166,7 @@ public class BatchTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_rule() {
         BatchTester tester = new BatchTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.jobflow("simple").output("simple", Simple.class).verify("data/simple-out.json", "INVALID");
     }
 }

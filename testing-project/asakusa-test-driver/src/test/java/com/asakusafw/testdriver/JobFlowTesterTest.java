@@ -23,6 +23,7 @@ import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.jobflow.SimpleJobflow;
 import com.asakusafw.testdriver.testing.model.Simple;
 
@@ -43,7 +44,7 @@ public class JobFlowTesterTest {
     @Test
     public void simple() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
@@ -57,7 +58,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/actual-path.xls");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -74,7 +75,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/actual-uri.xls");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -91,7 +92,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/actual-file.xls");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/simple-out.json", new IdentityVerifier())
@@ -108,7 +109,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/difference-path.html");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -130,7 +131,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/difference-uri.html");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -152,7 +153,7 @@ public class JobFlowTesterTest {
         File target = new File("target/testing/dump/difference-file.html");
         target.delete();
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class)
             .verify("data/difference-out.json", new IdentityVerifier())
@@ -172,7 +173,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_input_prepare_name() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("INVALID", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
@@ -184,7 +185,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_input_prepare_type() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Void.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
@@ -196,7 +197,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_input_prepare_data() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("INVALID");
     }
 
@@ -206,7 +207,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_prepare_name() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("INVALID", Simple.class).prepare("data/simple-out.json");
         tester.runTest(SimpleJobflow.class);
@@ -218,7 +219,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_prepare_type() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Void.class).prepare("data/simple-out.json");
         tester.runTest(SimpleJobflow.class);
@@ -230,7 +231,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_prepare_data() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("simple", Simple.class).prepare("INVALID");
     }
 
@@ -240,7 +241,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_verify_name() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("INVALID", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
@@ -252,7 +253,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalStateException.class)
     public void invalid_output_verify_type() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Void.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(SimpleJobflow.class);
@@ -264,7 +265,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_data() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("simple", Simple.class).verify("INVALID", new IdentityVerifier());
     }
 
@@ -274,7 +275,7 @@ public class JobFlowTesterTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_output_verify_rule() {
         JobFlowTester tester = new JobFlowTester(getClass());
-        tester.setFrameworkHomePath(framework.getFrameworkHome());
+        tester.setFrameworkHomePath(framework.getHome());
         tester.output("simple", Simple.class).verify("data/simple-out.json", "INVALID");
     }
 }

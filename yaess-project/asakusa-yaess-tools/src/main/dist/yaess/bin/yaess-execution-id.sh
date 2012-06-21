@@ -39,7 +39,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -54,8 +54,7 @@ shift
 _OPT_FLOW_ID="$1"
 shift
 
-_dirname=$(dirname "$0")
-_YS_ROOT="$(cd "$_dirname" ; pwd)/.."
+_YS_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"

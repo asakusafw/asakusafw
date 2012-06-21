@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 import com.asakusafw.windgate.hadoopfs.ssh.SshConnection;
@@ -98,6 +100,9 @@ class JschConnection implements SshConnection {
             boolean succeeded = false;
             try {
                 channel = (ChannelExec) session.openChannel("exec");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Starting command via Jsch: {}", command);
+                }
                 channel.setCommand(command);
                 channel.setErrStream(System.err, true);
                 succeeded = true;
@@ -126,7 +131,9 @@ class JschConnection implements SshConnection {
         assert commandLineTokens != null;
         assert environmentVariables != null;
 
-        Map<String, String> env = environmentVariables;
+        Map<String, String> env = new HashMap<String, String>();
+        env.putAll(environmentVariables);
+        env.putAll(RuntimeContext.get().unapply());
 
         // FIXME for bsh only
         StringBuilder buf = new StringBuilder();

@@ -39,6 +39,8 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.io.util.VoidInputStream;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
@@ -46,8 +48,13 @@ import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
 /**
  * Gets files from Hadoop File System and write them as {@link FileList} to the standard output.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public class WindGateHadoopGet {
+
+    static {
+        StdioHelper.load();
+    }
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopGet.class);
 
@@ -76,16 +83,18 @@ public class WindGateHadoopGet {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(WindGateHadoopGet.class.getClassLoader());
         WGLOG.info("I20000");
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
-        int result = new WindGateHadoopGet(conf).execute(args);
+        int result = new WindGateHadoopGet(conf).execute(StdioHelper.getOriginalStdout(), args);
         long end = System.currentTimeMillis();
         WGLOG.info("I20999", result, end - start);
         System.exit(result);
     }
 
-    int execute(String... args) {
+    int execute(OutputStream out, String... args) {
         assert args != null;
         if (args.length == 0) {
             WGLOG.error("E20001",
@@ -101,7 +110,7 @@ public class WindGateHadoopGet {
         try {
             WGLOG.info("I20001",
                     paths);
-            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(System.out, BUFFER_SIZE));
+            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE));
             doGet(paths, writer);
             WGLOG.info("I20002",
                     paths);
@@ -194,7 +203,12 @@ public class WindGateHadoopGet {
                         continue;
                     }
                     found = true;
-                    InputStream in = fs.open(status.getPath(), BUFFER_SIZE);
+                    InputStream in;
+                    if (RuntimeContext.get().isSimulation()) {
+                        in = new VoidInputStream();
+                    } else {
+                        in = fs.open(status.getPath(), BUFFER_SIZE);
+                    }
                     boolean succeed = false;
                     try {
                         queue.put(new Pair(in, status));
@@ -206,7 +220,7 @@ public class WindGateHadoopGet {
                     }
                 }
             }
-            if (found == false) {
+            if (found == false && RuntimeContext.get().isSimulation() == false) {
                 throw new FileNotFoundException(paths.toString());
             }
         }
@@ -222,19 +236,21 @@ public class WindGateHadoopGet {
                 status.getPath());
         long transferred = 0;
         try {
-            OutputStream output = drain.openNext(status);
-            try {
-                byte[] buf = new byte[1024];
-                while (true) {
-                    int read = input.read(buf);
-                    if (read < 0) {
-                        break;
+            if (RuntimeContext.get().isSimulation() == false) {
+                OutputStream output = drain.openNext(status);
+                try {
+                    byte[] buf = new byte[1024];
+                    while (true) {
+                        int read = input.read(buf);
+                        if (read < 0) {
+                            break;
+                        }
+                        output.write(buf, 0, read);
+                        transferred += read;
                     }
-                    output.write(buf, 0, read);
-                    transferred += read;
+                } finally {
+                    output.close();
                 }
-            } finally {
-                output.close();
             }
         } finally {
             input.close();

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,6 +37,7 @@ import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 
 /**
@@ -284,7 +286,9 @@ public class ExportFileReceive {
         command.add(executionId);
         command.add(variableTable);
 
-        Map<String, String> env = ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV);
+        Map<String, String> env = new HashMap<String, String>();
+        env.putAll(ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV));
+        env.putAll(RuntimeContext.get().unapply());
 
         LOG.info("TG-EXPORTER-02007",
                 sshPath,

@@ -54,8 +54,7 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-_dirname=$(dirname "$0")
-_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
+_TG_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 _TARGET_NAME="$1"
 shift

@@ -363,6 +363,15 @@ public class FlowCompilingEnvironment {
     }
 
     /**
+     * Returns the current build ID.
+     * @return current build ID, or {@code null} if not defined
+     * @since 0.4.0
+     */
+    public String getBuildId() {
+        return config.getBuildId();
+    }
+
+    /**
      * この環境に対してエラーメッセージを追加する。
      * @param format メッセージのフォーマット ({@link MessageFormat}形式)
      * @param args メッセージの引数、空の配列を指定した場合は{@code format}がそのままメッセージとなる

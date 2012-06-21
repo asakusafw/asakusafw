@@ -56,6 +56,7 @@ import com.asakusafw.compiler.fileio.model.Ex2;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.external.FileExporterDescription;

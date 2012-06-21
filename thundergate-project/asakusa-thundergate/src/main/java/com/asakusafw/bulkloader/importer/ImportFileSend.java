@@ -39,6 +39,7 @@ import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
 import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Import対象ファイルをDBサーバからHDFSのNameノードへ送信するクラス。
@@ -251,7 +252,10 @@ public class ImportFileSend {
         command.add(executionId);
         command.add(variableTable);
 
-        Map<String, String> env = ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV);
+        Map<String, String> env = new HashMap<String, String>();
+        env.putAll(ConfigurationLoader.getPropSubMap(Constants.PROP_PREFIX_HC_ENV));
+        env.putAll(RuntimeContext.get().unapply());
+
         LOG.info("TG-IMPORTER-04003",
                 sshPath,
                 hostName,
@@ -261,6 +265,7 @@ public class ImportFileSend {
                 batchId,
                 jobflowId,
                 executionId);
+
         return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
     }
 }

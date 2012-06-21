@@ -28,6 +28,7 @@ import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Deletes disposed cache storages.
@@ -49,6 +50,7 @@ public class GcCacheStorage {
      * @throws IllegalArgumentException if program arguments are invalid
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         if (args.length != 1) {
             LOG.error("TG-GCCACHE-01003", Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
@@ -96,7 +98,12 @@ public class GcCacheStorage {
             Connection connection = DBConnection.getConnection();
             try {
                 LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
-                boolean succeed = execute(repo, targetName, executionId);
+                boolean succeed;
+                if (RuntimeContext.get().isSimulation()) {
+                    succeed = true;
+                } else {
+                    succeed = execute(repo, targetName, executionId);
+                }
                 if (succeed) {
                     LOG.info("TG-GCCACHE-01005", targetName);
                     return Constants.EXIT_CODE_SUCCESS;

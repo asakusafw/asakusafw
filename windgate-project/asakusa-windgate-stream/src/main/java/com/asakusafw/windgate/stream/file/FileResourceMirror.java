@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -38,7 +39,9 @@ import com.asakusafw.windgate.stream.WindGateStreamLogger;
 /**
  * An implementation of {@link ResourceMirror} using local file system.
  * @since 0.2.4
+ * @version 0.4.0
  */
+@SimulationSupport
 public class FileResourceMirror extends ResourceMirror {
 
     static final WindGateLogger WGLOG = new WindGateStreamLogger(FileResourceMirror.class);

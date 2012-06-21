@@ -72,6 +72,22 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-runtime-configuration</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<optional>true</optional>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ashigel-compiler</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<optional>true</optional>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<scope>test</scope>

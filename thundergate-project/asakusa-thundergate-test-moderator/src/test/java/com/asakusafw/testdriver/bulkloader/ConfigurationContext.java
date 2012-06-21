@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -38,9 +40,15 @@ public class ConfigurationContext extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         folder.create();
-        ClassLoader classLoader = new URLClassLoader(new URL[] {
-                folder.getRoot().toURI().toURL(),
-        }, getClass().getClassLoader());
+        final File root = folder.getRoot();
+        ClassLoader classLoader = AccessController.doPrivileged(new PrivilegedExceptionAction<ClassLoader>() {
+            @Override
+            public ClassLoader run() throws Exception {
+                return new URLClassLoader(
+                        new URL[] { root.toURI().toURL() },
+                        getClass().getClassLoader());
+            }
+        });
         context = Thread.currentThread().getContextClassLoader();
         boolean green = false;
         try {

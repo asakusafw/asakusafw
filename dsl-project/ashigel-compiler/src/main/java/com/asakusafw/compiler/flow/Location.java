@@ -22,6 +22,8 @@ import com.asakusafw.compiler.common.Precondition;
 
 /**
  * リソースの位置を表す。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class Location {
 
@@ -183,6 +185,38 @@ public class Location {
             buf.append(WILDCARD_SUFFIX);
         }
         return buf.toString();
+    }
+
+    /**
+     * Returns whether this location is a prefix of another location.
+     * @param other target location
+     * @return {@code true} if is prefix or same location, otherwise {@code false}
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public boolean isPrefixOf(Location other) {
+        if (other == null) {
+            throw new IllegalArgumentException("other must not be null"); //$NON-NLS-1$
+        }
+        int thisSegments = count(this);
+        int otherSegments = count(other);
+        if (thisSegments > otherSegments) {
+            return false;
+        }
+        Location current = other;
+        for (int i = 0, n = otherSegments - thisSegments; i < n; i++) {
+            current = current.getParent();
+        }
+        return this.equals(current);
+    }
+
+    private int count(Location location) {
+        int count = 1;
+        Location current = location.getParent();
+        while (current != null) {
+            count++;
+            current = current.getParent();
+        }
+        return count;
     }
 
     @Override

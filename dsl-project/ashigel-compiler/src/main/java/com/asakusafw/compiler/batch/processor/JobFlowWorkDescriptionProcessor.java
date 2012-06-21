@@ -89,6 +89,7 @@ public class JobFlowWorkDescriptionProcessor
         result.setRootPackageName(batch.getRootPackageName());
         result.setServiceClassLoader(batch.getServiceClassLoader());
         result.setOptions(getEnvironment().getConfiguration().getFlowCompilerOptions());
+        result.setBuildId(getEnvironment().getBuildId());
         return result;
     }
 

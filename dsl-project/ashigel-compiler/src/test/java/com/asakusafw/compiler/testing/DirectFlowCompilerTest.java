@@ -40,23 +40,16 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.flow.DuplicateFragments;
 import com.asakusafw.compiler.testing.flow.StraightFragments;
 import com.asakusafw.compiler.testing.flow.StraightRendezvousFragments;
-import com.asakusafw.compiler.util.CompilerTester;
-import com.asakusafw.compiler.util.CompilerTester.TestInput;
-import com.asakusafw.compiler.util.CompilerTester.TestOutput;
-import com.asakusafw.compiler.util.HadoopDriver;
-import com.asakusafw.compiler.util.TemporaryFolder;
+import com.asakusafw.compiler.util.tester.CompilerTester;
+import com.asakusafw.compiler.util.tester.HadoopDriver;
+import com.asakusafw.compiler.util.tester.CompilerTester.TestInput;
+import com.asakusafw.compiler.util.tester.CompilerTester.TestOutput;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Test for {@link DirectFlowCompiler}.
  */
 public class DirectFlowCompilerTest {
-
-    /**
-     * テンポラリフォルダ。
-     */
-    @Rule
-    public TemporaryFolder temporary = new TemporaryFolder();
 
     /**
      * コンパイラのテストに利用する。
@@ -153,7 +146,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 getClass().getClassLoader(),
                 FlowCompilerOptions.load(System.getProperties()));
@@ -191,7 +184,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 getClass().getClassLoader(),
                 FlowCompilerOptions.load(System.getProperties()));
@@ -233,7 +226,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 getClass().getClassLoader(),
                 FlowCompilerOptions.load(System.getProperties()));
@@ -272,7 +265,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 getClass().getClassLoader(),
                 FlowCompilerOptions.load(System.getProperties()));
@@ -305,7 +298,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 cl,
                 FlowCompilerOptions.load(System.getProperties()));
@@ -336,7 +329,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 cl,
                 FlowCompilerOptions.load(System.getProperties()));
@@ -370,7 +363,7 @@ public class DirectFlowCompilerTest {
                 "simple",
                 "com.example",
                 Location.fromPath(HadoopDriver.RUNTIME_WORK_ROOT, '/'),
-                temporary.newFolder(),
+                tester.framework().getWork("build"),
                 classpath,
                 cl,
                 FlowCompilerOptions.load(System.getProperties()));
@@ -396,8 +389,9 @@ public class DirectFlowCompilerTest {
         InputStream input = open(name);
         try {
             try {
-                File root = temporary.copy(name, input);
-                return root;
+                File target = new File(tester.framework().getWork("temp"), name);
+                tester.framework().dump(input, target);
+                return target;
             } finally {
                 input.close();
             }
@@ -411,9 +405,10 @@ public class DirectFlowCompilerTest {
         try {
             try {
                 ZipInputStream zip = new ZipInputStream(input);
-                File root = temporary.extract(zip);
+                File target = new File(tester.framework().getWork("temp"), name);
+                tester.framework().extract(zip, target);
                 zip.close();
-                return root;
+                return target;
             } finally {
                 input.close();
             }

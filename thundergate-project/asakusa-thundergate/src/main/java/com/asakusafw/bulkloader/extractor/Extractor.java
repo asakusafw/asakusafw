@@ -23,6 +23,7 @@ import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Extractorの実行クラス。
@@ -52,6 +53,8 @@ public class Extractor {
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(Extractor.class.getClassLoader());
         Extractor extractor = new Extractor();
         int result = extractor.execute(args);
         System.exit(result);
@@ -101,14 +104,16 @@ public class Extractor {
             LOG.info("TG-EXTRACTOR-01008",
                     targetName, batchId, jobFlowId, executionId, user);
 
-            DfsFileImport fileInport = createDfsFileImport();
-            if (!fileInport.importFile(bean, user)) {
-                LOG.error("TG-EXTRACTOR-01004",
-                        new Date(), targetName, batchId, jobFlowId, executionId, user);
-                return Constants.EXIT_CODE_ERROR;
-            } else {
-                LOG.info("TG-EXTRACTOR-01009",
-                        targetName, batchId, jobFlowId, executionId, user);
+            DfsFileImport fileImport = createDfsFileImport();
+            if (RuntimeContext.get().canExecute(fileImport)) {
+                if (!fileImport.importFile(bean, user)) {
+                    LOG.error("TG-EXTRACTOR-01004",
+                            new Date(), targetName, batchId, jobFlowId, executionId, user);
+                    return Constants.EXIT_CODE_ERROR;
+                } else {
+                    LOG.info("TG-EXTRACTOR-01009",
+                            targetName, batchId, jobFlowId, executionId, user);
+                }
             }
 
             // 正常終了
