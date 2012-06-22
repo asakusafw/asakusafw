@@ -300,6 +300,48 @@ class JobQueueControllerSpec extends Specification with Tags {
       }
     } tag ("execute")
 
+    "PUT /jobs/:jrid/execute must return status without log dir permission" in TestContext {
+      running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
+        Settings.hadoopLogDir.setWritable(false, false)
+        try {
+          val params = toJson(Map(
+            "batchId" -> toJson("batchId"),
+            "flowId" -> toJson("flowId"),
+            "executionId" -> toJson("executionId"),
+            "phaseId" -> toJson("phaseId"),
+            "stageId" -> toJson("stageId"),
+            "mainClass" -> toJson("mainClass"),
+            "arguments" -> toJson(Map("arg1" -> "avalue1")),
+            "properties" -> toJson(Map("prop1" -> "pvalue1")),
+            "env" -> toJson(Map("env1" -> "evalue1"))))
+          val register = JobQueueController.register(FakeRequest(POST, "/jobs", FakeHeaders(), params))
+
+          val jrid = (parse(contentAsString(register)) \ "jrid").as[String]
+
+          val execute = JobQueueController.execute(jrid)(FakeRequest(PUT, "/jobs/" + jrid + "/execute"))
+          status(execute) must equalTo(OK)
+          contentType(execute) must beSome("application/json")
+          charset(execute) must beSome("utf-8")
+
+          val contents = parse(contentAsString(execute))
+          (contents \ "status").as[String] must equalTo("waiting")
+          (contents \ "jrid").as[String] must equalTo(jrid)
+
+          while ((parse(contentAsString(JobQueueController.info(jrid)(FakeRequest(GET, "/jobs/" + jrid)))) \ "status").as[String] != "completed") {
+            Thread.sleep(100)
+          }
+
+          Thread.sleep(1000)
+
+          val deleted = parse(contentAsString(JobQueueController.info(jrid)(FakeRequest(GET, "/jobs/" + jrid))))
+          (deleted \ "errorCode").as[String] must equalTo("404")
+          (deleted \ "errorMessage").as[String] must equalTo("Specified jrid was not found.")
+        } finally {
+          Settings.hadoopLogDir.setWritable(true)
+        }
+      }
+    } tag ("execute-wo-logdir-permission")
+
     "PUT /jobs/:jrid/execute must return NotFound with not exisiting jrid" in TestContext {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val result = JobQueueController.execute("jrid")(FakeRequest(PUT, "/jobs/jrid/execute"))

@@ -21,7 +21,6 @@ import java.util.UUID
 
 import com.asakusafw.jobqueue.core._
 
-import akka.util.duration._
 import anorm.{ Error => _, _ }
 import play.api.Play.current
 import play.api.db.DB
@@ -239,11 +238,16 @@ class HadoopJobQueue(
           UPDATE JOB_QUEUE SET status = {status} WHERE jrid = {jrid}
         """).on('status -> Running.name, 'jrid -> jobInfo.jrid).executeUpdate()
     doInfo(jobInfo.jrid) map { jobInfo =>
-      val jobContext = hadoopLogDir.map { dir =>
+      val jobContext = hadoopLogDir.flatMap { dir =>
         val parent = new File(dir, jobInfo.jrid)
         parent.mkdirs()
-        JobContext[String, Int, HadoopJobInfo](jobInfo,
-          out = new FileOutputStream(new File(parent, "stdout")), err = new FileOutputStream(new File(parent, "stderr")))
+        if (parent.exists && parent.isDirectory && parent.canWrite) {
+          Some(JobContext[String, Int, HadoopJobInfo](jobInfo,
+            out = new FileOutputStream(new File(parent, "stdout")), err = new FileOutputStream(new File(parent, "stderr"))))
+        } else {
+          Logger.warn("log directory[" + parent.getAbsolutePath + "] was not writable: use stdout instead.")
+          None
+        }
       }.getOrElse(JobContext[String, Int, HadoopJobInfo](jobInfo))
       workers ! INVOKE_WORKER(jobContext)
       super.invoke(jobInfo)
