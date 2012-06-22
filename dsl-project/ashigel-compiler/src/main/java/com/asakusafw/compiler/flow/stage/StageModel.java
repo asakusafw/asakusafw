@@ -44,15 +44,15 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
  */
 public class StageModel {
 
-    private StageBlock stageBlock;
+    private final StageBlock stageBlock;
 
-    private List<MapUnit> mapUnits;
+    private final List<MapUnit> mapUnits;
 
-    private ShuffleModel shuffleModel;
+    private final ShuffleModel shuffleModel;
 
-    private List<ReduceUnit> reduceUnits;
+    private final List<ReduceUnit> reduceUnits;
 
-    private List<Sink> sinks;
+    private final List<Sink> sinks;
 
     /**
      * インスタンスを生成する。
@@ -76,14 +76,11 @@ public class StageModel {
         this.stageBlock = stageBlock;
         this.shuffleModel = shuffleModel;
         int unitSerial = 1;
-        int fragmentSerial = 1;
         for (MapUnit unit : mapUnits) {
             unit.renumberUnit(unitSerial++);
-            fragmentSerial = unit.renumberFragments(fragmentSerial);
         }
         for (ReduceUnit unit : reduceUnits) {
             unit.renumberUnit(unitSerial++);
-            fragmentSerial = unit.renumberFragments(fragmentSerial);
         }
         this.mapUnits = mapUnits;
         this.reduceUnits = reduceUnits;
@@ -167,9 +164,9 @@ public class StageModel {
      */
     public abstract static class Unit<T> extends Compilable.Trait<T> {
 
-        private List<FlowBlock.Input> inputs;
+        private final List<FlowBlock.Input> inputs;
 
-        private List<Fragment> fragments;
+        private final List<Fragment> fragments;
 
         private int serialNumber = -1;
 
@@ -226,13 +223,6 @@ public class StageModel {
 
         void renumberUnit(int serial) {
             this.serialNumber = serial;
-        }
-
-        int renumberFragments(int serial) {
-            for (int i = 0, n = fragments.size(); i < n; i++) {
-                fragments.set(i, fragments.get(i).renumber(serial + i));
-            }
-            return serial + fragments.size();
         }
     }
 
@@ -304,23 +294,20 @@ public class StageModel {
      */
     public static class Fragment extends Compilable.Trait<CompiledType> {
 
-        private int serialNumber;
+        private final int serialNumber;
 
-        private List<Factor> factors;
+        private final List<Factor> factors;
 
-        private List<ResourceFragment> resources;
+        private final List<ResourceFragment> resources;
 
         /**
          * インスタンスを生成する。
+         * @param serialNumber the serial number
          * @param factors 処理の最小単位の一覧
          * @param resources リソースの一覧
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
-        public Fragment(List<Factor> factors, List<ResourceFragment> resources) {
-            this(-1, factors, resources);
-        }
-
-        Fragment(int serialNumber, List<Factor> factors, List<ResourceFragment> resources) {
+        public Fragment(int serialNumber, List<Factor> factors, List<ResourceFragment> resources) {
             Precondition.checkMustNotBeNull(factors, "factors"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(resources, "resources"); //$NON-NLS-1$
             if (factors.isEmpty()) {
@@ -340,15 +327,9 @@ public class StageModel {
 
         /**
          * この処理断片のシリアル番号を返す。
-         * <p>
-         * 全ての処理断片は、ステージ内において異なるシリアル番号を持つ必要がある。
-         * </p>
          * @return この処理断片のシリアル番号
          */
         public int getSerialNumber() {
-            if (serialNumber < 0) {
-                throw new IllegalStateException();
-            }
             return serialNumber;
         }
 
@@ -419,10 +400,6 @@ public class StageModel {
             return first.isRendezvous();
         }
 
-        Fragment renumber(int number) {
-            return new Fragment(number, factors, resources);
-        }
-
         @Override
         public String toString() {
             return MessageFormat.format(
@@ -436,9 +413,9 @@ public class StageModel {
      */
     public static class Factor {
 
-        private FlowElement element;
+        private final FlowElement element;
 
-        private FlowElementProcessor processor;
+        private final FlowElementProcessor processor;
 
         /**
          * インスタンスを生成する。
@@ -499,7 +476,7 @@ public class StageModel {
      */
     public static class ResourceFragment extends Compilable.Trait<CompiledType> {
 
-        private FlowResourceDescription description;
+        private final FlowResourceDescription description;
 
         /**
          * インスタンスを生成する。
@@ -551,9 +528,9 @@ public class StageModel {
      */
     public static class Sink {
 
-        private Set<FlowBlock.Output> outputs;
+        private final Set<FlowBlock.Output> outputs;
 
-        private String name;
+        private final String name;
 
         /**
          * ステージの出力を表すインスタンスを生成する。

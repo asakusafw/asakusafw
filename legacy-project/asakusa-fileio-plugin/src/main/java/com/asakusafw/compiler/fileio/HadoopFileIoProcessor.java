@@ -85,10 +85,17 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean validateOutputs(List<OutputDescription> outputs) {
         assert outputs != null;
         boolean valid = true;
-        GenericOptionValue exporterEnabled = getExporterEnabled();
-        if (exporterEnabled == null) {
-            valid = false;
+        GenericOptionValue exporterEnabled = getEnvironment().getOptions().getGenericExtraAttribute(
+                OPTION_EXPORTER_ENABLED,
+                DEFAULT_EXPORTER_ENABLED);
+        if (exporterEnabled == GenericOptionValue.INVALID) {
+            getEnvironment().error(
+                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
+                    getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
+                    getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED),
+                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
             exporterEnabled = DEFAULT_EXPORTER_ENABLED;
+            valid = false;
         }
         boolean mr370applied = checkClassExists("org.apache.hadoop.mapreduce.lib.output.MultipleOutputs");
         for (OutputDescription output : outputs) {
@@ -148,24 +155,6 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
             return true;
         } catch (ClassNotFoundException e) {
             return false;
-        }
-    }
-
-    private GenericOptionValue getExporterEnabled() {
-        String attribute = getEnvironment().getOptions().getExtraAttribute(OPTION_EXPORTER_ENABLED);
-        if (attribute == null) {
-            attribute = DEFAULT_EXPORTER_ENABLED.getSymbol();
-        }
-        GenericOptionValue value = GenericOptionValue.fromSymbol(attribute);
-        if (value == null) {
-            getEnvironment().error(
-                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
-                    getEnvironment().getOptions().getExtraAttributeKeyName(OPTION_EXPORTER_ENABLED),
-                    attribute,
-                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
-            return null;
-        } else {
-            return value;
         }
     }
 

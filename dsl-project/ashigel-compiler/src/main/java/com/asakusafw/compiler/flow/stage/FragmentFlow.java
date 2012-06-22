@@ -143,7 +143,7 @@ public class FragmentFlow {
     }
 
     private Graph<FragmentNode> analyzeDependencies() {
-        Map<FlowElementOutput, FragmentNode> nodes = analyzeNodes();
+        Map<FlowElementOutput, List<FragmentNode>> nodes = analyzeNodes();
         Graph<FragmentNode> graph = Graphs.newInstance();
         buildFragmentGraph(nodes, graph);
         buildOutputGraph(nodes, graph);
@@ -181,26 +181,30 @@ public class FragmentFlow {
     }
 
     private void collectFragment(FragmentNode node) throws AssertionError {
+        FlowElementInput port = ((StageModel.Fragment) node.getValue()).getInputPorts().get(0);
         switch (node.getKind()) {
         case LINE:
-            lines.put(
-                    ((StageModel.Fragment) node.getValue()).getInputPorts().get(0),
-                    node);
+            assert lines.containsKey(port) == false;
+            lines.put(port, node);
             break;
         case RENDEZVOUS:
-            rendezvous.put(
-                    ((StageModel.Fragment) node.getValue()).getInputPorts().get(0).getOwner(),
-                    node);
+            assert lines.containsKey(port.getOwner()) == false;
+            rendezvous.put(port.getOwner(), node);
             break;
         default:
             throw new AssertionError(node.getKind());
         }
     }
 
-    private Map<FlowElementOutput, FragmentNode> analyzeNodes() {
-        Map<FlowElementOutput, FragmentNode> results = Maps.create();
+    private Map<FlowElementOutput, List<FragmentNode>> analyzeNodes() {
+        Set<Fragment> saw = Sets.create();
+        Map<FlowElementOutput, List<FragmentNode>> results = Maps.create();
         for (StageModel.Unit<?> unit : units) {
             for (Fragment fragment : unit.getFragments()) {
+                if (saw.contains(fragment)) {
+                    continue;
+                }
+                saw.add(fragment);
                 FragmentNode node;
                 if (fragment.isRendezvous()) {
                     node = new FragmentNode(Kind.RENDEZVOUS, fragment, names.create("rendezvous"));
@@ -208,8 +212,7 @@ public class FragmentFlow {
                     node = new FragmentNode(Kind.LINE, fragment, names.create("line"));
                 }
                 for (FlowElementOutput output : fragment.getOutputPorts()) {
-                    assert results.containsKey(output) == false;
-                    results.put(output, node);
+                    Maps.addToList(results, output, node);
                 }
             }
         }
@@ -217,34 +220,37 @@ public class FragmentFlow {
     }
 
     private void buildFragmentGraph(
-            Map<FlowElementOutput, FragmentNode> nodes,
+            Map<FlowElementOutput, List<FragmentNode>> nodes,
             Graph<FragmentNode> graph) {
         assert nodes != null;
         assert graph != null;
         Set<FragmentNode> saw = Sets.create();
-        for (Map.Entry<FlowElementOutput, FragmentNode> entry : nodes.entrySet()) {
-            FragmentNode node = entry.getValue();
-            if (saw.contains(node)) {
-                continue;
-            }
-            saw.add(node);
-            graph.addNode(node);
-            Fragment fragment = (Fragment) node.getValue();
-            for (FlowElementInput input : fragment.getInputPorts()) {
-                for (FlowElementOutput pred : input.getOpposites()) {
-                    FragmentNode source = nodes.get(pred);
-                    if (source == null) {
-                        continue;
+        for (Map.Entry<FlowElementOutput, List<FragmentNode>> entry : nodes.entrySet()) {
+            for (FragmentNode node : entry.getValue()) {
+                if (saw.contains(node)) {
+                    continue;
+                }
+                saw.add(node);
+                graph.addNode(node);
+                Fragment fragment = (Fragment) node.getValue();
+                for (FlowElementInput input : fragment.getInputPorts()) {
+                    for (FlowElementOutput pred : input.getOpposites()) {
+                        List<FragmentNode> sources = nodes.get(pred);
+                        if (sources == null) {
+                            continue;
+                        }
+                        for (FragmentNode source : sources) {
+                            source.addDownstream(pred, node);
+                            graph.addEdge(source, node);
+                        }
                     }
-                    source.addDownstream(pred, node);
-                    graph.addEdge(source, node);
                 }
             }
         }
     }
 
     private void buildOutputGraph(
-            Map<FlowElementOutput, FragmentNode> nodes,
+            Map<FlowElementOutput, List<FragmentNode>> nodes,
             Graph<FragmentNode> graph) {
         assert nodes != null;
         assert graph != null;
@@ -253,8 +259,11 @@ public class FragmentFlow {
             FragmentNode node = new FragmentNode(Kind.OUTPUT, sink, name);
             for (FlowBlock.Output output : sink.getOutputs()) {
                 FlowElementOutput target = output.getElementPort();
-                FragmentNode source = nodes.get(target);
-                if (source != null) {
+                List<FragmentNode> sources = nodes.get(target);
+                if (sources == null) {
+                    continue;
+                }
+                for (FragmentNode source : sources) {
                     source.addDownstream(target, node);
                     graph.addEdge(source, node);
                 }
@@ -263,7 +272,7 @@ public class FragmentFlow {
     }
 
     private void buildShuffleGraph(
-            Map<FlowElementOutput, FragmentNode> nodes,
+            Map<FlowElementOutput, List<FragmentNode>> nodes,
             Graph<FragmentNode> graph) {
         assert nodes != null;
         assert graph != null;
@@ -273,6 +282,7 @@ public class FragmentFlow {
         Map<FlowElementInput, FlowBlock.Input> inputMap = Maps.create();
         for (FlowBlock reduceBlock : stage.getStageBlock().getReduceBlocks()) {
             for (FlowBlock.Input blockInput : reduceBlock.getBlockInputs()) {
+                assert inputMap.containsKey(blockInput.getElementPort()) == false;
                 inputMap.put(blockInput.getElementPort(), blockInput);
             }
         }
@@ -283,18 +293,17 @@ public class FragmentFlow {
             if (blockInput == null) {
                 continue;
             }
-
-            FragmentNode node = new FragmentNode(Kind.SHUFFLE,
-                    segment,
-                    names.create("shuffle"));
+            FragmentNode node = new FragmentNode(Kind.SHUFFLE, segment, names.create("shuffle"));
             for (FlowBlock.Connection conn : blockInput.getConnections()) {
                 FlowElementOutput shuffleOut = conn.getUpstream().getElementPort();
-                FragmentNode source = nodes.get(shuffleOut);
-                if (source == null) {
+                List<FragmentNode> sources = nodes.get(shuffleOut);
+                if (sources == null) {
                     continue;
                 }
-                source.addDownstream(shuffleOut, node);
-                graph.addEdge(source, node);
+                for (FragmentNode source : sources) {
+                    source.addDownstream(shuffleOut, node);
+                    graph.addEdge(source, node);
+                }
             }
         }
     }

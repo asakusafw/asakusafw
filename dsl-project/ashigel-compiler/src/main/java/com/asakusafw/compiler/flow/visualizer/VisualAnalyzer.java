@@ -34,10 +34,18 @@ import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 
 /**
  * 各種要素を可視化のためのモデルに変換する。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class VisualAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(VisualAnalyzer.class);
+
+    private final Set<FlowElement> sawElements = Sets.create();
+
+    private VisualAnalyzer() {
+        return;
+    }
 
     /**
      * 演算子グラフを可視化モデルに変換する。
@@ -48,9 +56,13 @@ public final class VisualAnalyzer {
     public static VisualGraph convertFlowGraph(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.debug("{}の構造を可視化用に分析しています", graph);
+        VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
-            nodes.add(convertElement(element));
+            VisualNode node = analyzer.convertElement(element);
+            if (node != null) {
+                nodes.add(node);
+            }
         }
         return new VisualGraph(null, nodes);
     }
@@ -64,12 +76,13 @@ public final class VisualAnalyzer {
     public static VisualGraph convertStageGraph(StageGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.debug("{}の構造を可視化用に分析しています", graph);
+        VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
-        nodes.add(convertBlock("(source)", graph.getInput()));
+        nodes.add(analyzer.convertBlock("(source)", graph.getInput()));
         for (StageBlock stage : graph.getStages()) {
-            nodes.add(convertStage(stage));
+            nodes.add(analyzer.convertStage(stage));
         }
-        nodes.add(convertBlock("(sink)", graph.getOutput()));
+        nodes.add(analyzer.convertBlock("(sink)", graph.getOutput()));
         return new VisualGraph(null, nodes);
     }
 
@@ -82,29 +95,52 @@ public final class VisualAnalyzer {
     public static VisualGraph convertStageBlock(StageBlock stage) {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
         LOG.debug("{}の構造を可視化用に分析しています", stage);
+        VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
         for (FlowBlock head : stage.getMapBlocks()) {
             for (FlowBlock.Input input : head.getBlockInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
                     FlowElement element = conn.getUpstream().getElementPort().getOwner();
-                    nodes.add(convertElement(element));
+                    VisualNode node = analyzer.convertElement(element);
+                    if (node != null) {
+                        nodes.add(node);
+                    }
                 }
             }
         }
-        nodes.add(convertStage(stage));
+        nodes.add(analyzer.convertStage(stage));
         Set<FlowBlock> tails = stage.hasReduceBlocks() ? stage.getReduceBlocks() : stage.getMapBlocks();
         for (FlowBlock tail : tails) {
             for (FlowBlock.Output output : tail.getBlockOutputs()) {
                 for (FlowBlock.Connection conn : output.getConnections()) {
                     FlowElement element = conn.getDownstream().getElementPort().getOwner();
-                    nodes.add(convertElement(element));
+                    VisualNode node = analyzer.convertElement(element);
+                    if (node != null) {
+                        nodes.add(node);
+                    }
                 }
             }
         }
         return new VisualGraph(null, nodes);
     }
 
-    private static VisualGraph convertStage(StageBlock stage) {
+    /**
+     * Converts {@link FlowBlock} into {@link VisualGraph}.
+     * @param block target block
+     * @return converted graph
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public static VisualGraph convertFlowBlock(FlowBlock block) {
+        Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
+        LOG.debug("Visualizing a flow block: {}", block);
+        VisualAnalyzer analyzer = new VisualAnalyzer();
+        Set<VisualNode> nodes = Sets.create();
+        nodes.add(analyzer.convertBlock("block", block));
+        return new VisualGraph(null, nodes);
+    }
+
+    private VisualGraph convertStage(StageBlock stage) {
         assert stage != null;
         Set<VisualBlock> nodes = Sets.create();
         for (FlowBlock block : stage.getMapBlocks()) {
@@ -119,11 +155,14 @@ public final class VisualAnalyzer {
                 nodes);
     }
 
-    private static VisualBlock convertBlock(String label, FlowBlock block) {
+    private VisualBlock convertBlock(String label, FlowBlock block) {
         assert block != null;
         Set<VisualNode> nodes = Sets.create();
         for (FlowElement element : block.getElements()) {
-            nodes.add(convertElement(element));
+            VisualNode node = convertElement(element);
+            if (node != null) {
+                nodes.add(node);
+            }
         }
         return new VisualBlock(
                 label,
@@ -132,20 +171,24 @@ public final class VisualAnalyzer {
                 nodes);
     }
 
-    private static VisualNode convertElement(FlowElement element) {
+    private VisualNode convertElement(FlowElement element) {
         assert element != null;
+        if (sawElements.contains(element)) {
+            LOG.debug("Ignored already presented element: {}", element);
+            return null;
+        }
+        sawElements.add(element);
         if (element.getDescription().getKind() == FlowElementKind.FLOW_COMPONENT) {
             FlowPartDescription desc = (FlowPartDescription) element.getDescription();
             Set<VisualNode> nodes = Sets.create();
             for (FlowElement inner : FlowGraphUtil.collectElements(desc.getFlowGraph())) {
-                nodes.add(convertElement(inner));
+                VisualNode node = convertElement(inner);
+                if (node != null) {
+                    nodes.add(node);
+                }
             }
             return new VisualFlowPart(element, nodes);
         }
         return new VisualElement(element);
-    }
-
-    private VisualAnalyzer() {
-        return;
     }
 }

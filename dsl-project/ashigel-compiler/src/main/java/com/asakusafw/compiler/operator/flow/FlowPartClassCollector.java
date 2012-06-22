@@ -45,9 +45,9 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
  */
 public class FlowPartClassCollector {
 
-    private OperatorCompilingEnvironment environment;
+    private final OperatorCompilingEnvironment environment;
 
-    private List<FlowPartClass> collected;
+    private final List<FlowPartClass> collected;
 
     private boolean sawError;
 

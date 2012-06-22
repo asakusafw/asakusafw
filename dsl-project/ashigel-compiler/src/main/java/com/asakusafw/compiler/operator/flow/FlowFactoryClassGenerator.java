@@ -63,15 +63,15 @@ public class FlowFactoryClassGenerator {
      */
     static final String RESOLVER_FIELD_NAME = "$";
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private ImportBuilder importer;
+    private final ImportBuilder importer;
 
-    private FlowPartClass flowClass;
+    private final FlowPartClass flowClass;
 
-    private GeneratorUtil util;
+    private final GeneratorUtil util;
 
-    private OperatorCompilingEnvironment environment;
+    private final OperatorCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。

@@ -27,17 +27,17 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
  */
 public class OperatorPortDeclaration {
 
-    private Kind kind;
+    private final Kind kind;
 
-    private List<DocElement> documentation;
+    private final List<DocElement> documentation;
 
-    private String name;
+    private final String name;
 
-    private PortTypeDescription type;
+    private final PortTypeDescription type;
 
-    private Integer position;
+    private final Integer position;
 
-    private ShuffleKey shuffleKey;
+    private final ShuffleKey shuffleKey;
 
     /**
      * インスタンスを生成する。

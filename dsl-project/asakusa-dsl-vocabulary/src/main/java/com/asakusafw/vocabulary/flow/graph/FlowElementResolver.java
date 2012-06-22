@@ -24,14 +24,37 @@ import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * {@link FlowElement}の接続を解決する。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class FlowElementResolver {
 
-    private FlowElement element;
+    private final FlowElement element;
 
-    private Map<String, FlowElementInput> inputPorts;
+    private final Map<String, FlowElementInput> inputPorts;
 
-    private Map<String, FlowElementOutput> outputPorts;
+    private final Map<String, FlowElementOutput> outputPorts;
+
+    /**
+     * Creates a new instance.
+     * @param element target element.
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public FlowElementResolver(FlowElement element) {
+        if (element == null) {
+            throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
+        }
+        this.element = element;
+        this.inputPorts = new HashMap<String, FlowElementInput>();
+        this.outputPorts = new HashMap<String, FlowElementOutput>();
+        for (FlowElementInput input : element.getInputPorts()) {
+            inputPorts.put(input.getDescription().getName(), input);
+        }
+        for (FlowElementOutput output : element.getOutputPorts()) {
+            outputPorts.put(output.getDescription().getName(), output);
+        }
+    }
 
     /**
      * インスタンスを生成する。
@@ -101,11 +124,10 @@ public class FlowElementResolver {
      * 指定の名前を持つ入力ポートと、指定のソースを結合する。
      * @param name ポートの名前
      * @param source 結合するソース
-     * @return 結合結果
      * @throws NoSuchElementException ポートが発見できない場合
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
-    public PortConnection resolveInput(String name, Source<?> source) {
+    public void resolveInput(String name, Source<?> source) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -113,7 +135,7 @@ public class FlowElementResolver {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
         FlowElementInput port = getInput(name);
-        return PortConnection.connect(source.toOutputPort(), port);
+        PortConnection.connect(source.toOutputPort(), port);
     }
 
     /**
@@ -152,7 +174,7 @@ public class FlowElementResolver {
      */
     public static class OutputDriver<T> implements Source<T> {
 
-        private FlowElementOutput outputPort;
+        private final FlowElementOutput outputPort;
 
         /**
          * インスタンスを生成する。

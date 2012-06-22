@@ -26,12 +26,21 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.flow.example.NoShuffleStage;
 import com.asakusafw.compiler.flow.example.SimpleShuffleStage;
+import com.asakusafw.compiler.flow.processor.operator.MasterJoinFlowFactory;
+import com.asakusafw.compiler.flow.processor.operator.MasterJoinFlowFactory.Join;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
+import com.asakusafw.compiler.flow.testing.model.Ex2;
+import com.asakusafw.compiler.flow.testing.model.ExJoined;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.util.CompilerTester;
 import com.asakusafw.compiler.util.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.CompilerTester.TestOutput;
+import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.In;
+import com.asakusafw.vocabulary.flow.Out;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
 
 /**
  * Test for {@link FlowCompiler}.
@@ -101,5 +110,52 @@ public class FlowCompilerTest {
         assertThat(list.get(0).getCount(), is(2L));
         assertThat(list.get(1).getValue(), is(60L));
         assertThat(list.get(1).getCount(), is(3L));
+    }
+
+    /**
+     * Compiles unified resources.
+     * @throws Exception if failed
+     */
+    @Test
+    public void unifiedResources() throws Exception {
+        TestInput<Ex1> mst = tester.input(Ex1.class, "mst", DataSize.TINY);
+        TestInput<Ex1> in1 = tester.input(Ex1.class, "in1");
+        TestInput<Ex1> in2 = tester.input(Ex1.class, "in2");
+        TestOutput<ExJoined> out = tester.output(ExJoined.class, "out");
+
+        Ex1 dMst = new Ex1();
+        dMst.setSid(1);
+        dMst.setValue(10);
+        mst.add(dMst);
+
+        Ex1 dIn1 = new Ex1();
+        dIn1.setSid(2);
+        dIn1.setValue(10);
+        in1.add(dIn1);
+
+        Ex1 dIn2 = new Ex1();
+        dIn2.setSid(3);
+        dIn2.setValue(10);
+        in2.add(dIn2);
+
+        final In<Ex1> pMst = mst.flow();
+        final In<Ex1> pIn1 = in1.flow();
+        final In<Ex1> pIn2 = in2.flow();
+        final Out<ExJoined> pOut = out.flow();
+        FlowDescription flow = new FlowDescription() {
+            @Override
+            protected void describe() {
+                CoreOperatorFactory c = new CoreOperatorFactory();
+                Restructure<Ex2> r1 = c.restructure(pIn1, Ex2.class);
+                Restructure<Ex2> r2 = c.restructure(pIn2, Ex2.class);
+
+                MasterJoinFlowFactory f = new MasterJoinFlowFactory();
+                Join join = f.join(pMst, c.confluent(r1, r2));
+                c.stop(join.missed);
+                pOut.add(join.joined);
+            }
+        };
+        assertThat(tester.runFlow(flow), is(true));
+        assertThat(out.toList().size(), is(2));
     }
 }

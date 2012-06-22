@@ -15,7 +15,11 @@
  */
 package com.asakusafw.compiler.flow.plan;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,11 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.visualizer.VisualAnalyzer;
+import com.asakusafw.compiler.flow.visualizer.VisualGraph;
+import com.asakusafw.compiler.flow.visualizer.VisualGraphEmitter;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
@@ -87,6 +95,53 @@ public class FlowBlock {
     }
 
     /**
+     * Creates a merged flow blocks from other blocks.
+     * @param blocks original blocks
+     * @param inputMapping input mapping (created -&gt; original)
+     * @param outputMapping output mapping (created -&gt; original)
+     * @return the merged block
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static FlowBlock fromBlocks(
+            Collection<FlowBlock> blocks,
+            Map<FlowBlock.Input, Set<FlowBlock.Input>> inputMapping,
+            Map<FlowBlock.Output, Set<FlowBlock.Output>> outputMapping) {
+        Precondition.checkMustNotBeNull(blocks, "blocks"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(inputMapping, "inputMapping"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(outputMapping, "outputMapping"); //$NON-NLS-1$
+        FlowGraph graph = null;
+        int minSerialNumber = Integer.MAX_VALUE;
+        int reduces = 0;
+        for (FlowBlock block : blocks) {
+            if (block.detached == false) {
+                throw new IllegalArgumentException();
+            }
+            graph = graph == null ? block.source : graph;
+            minSerialNumber = Math.min(minSerialNumber, block.serialNumber);
+            reduces += block.isReduceBlock() ? 1 : 0;
+        }
+        if (reduces != 0 && reduces != blocks.size()) {
+            throw new IllegalArgumentException("Cannot merge map blocks and reduce blocks");
+        }
+        final Set<PortConnection> empty = Collections.<PortConnection>emptySet();
+        FlowBlock result = new FlowBlock(minSerialNumber, graph);
+        for (FlowBlock block : blocks) {
+            result.elements.addAll(block.elements);
+            for (FlowBlock.Input origin : block.getBlockInputs()) {
+                FlowBlock.Input mapped = result.new Input(origin.getElementPort(), empty);
+                result.blockInputs.add(mapped);
+                Maps.addToSet(inputMapping, origin, mapped);
+            }
+            for (FlowBlock.Output origin : block.getBlockOutputs()) {
+                FlowBlock.Output mapped = result.new Output(origin.getElementPort(), empty);
+                result.blockOutputs.add(mapped);
+                Maps.addToSet(outputMapping, origin, mapped);
+            }
+        }
+        return result;
+    }
+
+    /**
      * インスタンスを生成する。
      * <p>
      * 生成されるインスタンスは初期状態で{@link #detach()}されていない。
@@ -117,6 +172,16 @@ public class FlowBlock {
         this.blockInputs = toBlockInputs(inputs);
         this.blockOutputs = toBlockOutputs(outputs);
         this.elements = Sets.from(elements);
+        this.detached = false;
+    }
+
+    private FlowBlock(int serialNumber, FlowGraph source) {
+        Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
+        this.serialNumber = serialNumber;
+        this.source = source;
+        this.blockInputs = Lists.create();
+        this.blockOutputs = Lists.create();
+        this.elements = Sets.create();
         this.detached = false;
     }
 
@@ -308,28 +373,228 @@ public class FlowBlock {
             return;
         }
         LOG.debug("{}を{}からデタッチします", this, getSource());
-        Map<FlowElement, FlowElement> mapping = Maps.create();
-        Map<FlowElementInput, FlowElementInput> inputs = Maps.create();
-        Map<FlowElementOutput, FlowElementOutput> outputs = Maps.create();
-        FlowGraphUtil.deepCopy(elements, mapping, inputs, outputs);
-
-        // 要素の張り替え
-        this.elements = Sets.from(mapping.values());
-
-        // 入力の張り替え
-        for (FlowBlock.Input blockIn : blockInputs) {
-            FlowElementInput newIn = inputs.get(blockIn.getElementPort());
-            assert newIn != null;
-            blockIn.setElementPort(newIn);
-        }
-
-        // 出力の張り替え
-        for (FlowBlock.Output blockIn : blockOutputs) {
-            FlowElementOutput newIn = outputs.get(blockIn.getElementPort());
-            assert newIn != null;
-            blockIn.setElementPort(newIn);
-        }
+        Map<FlowElement, FlowElement> elementMapping = Maps.create();
+        Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
+        Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
+        FlowGraphUtil.deepCopy(elements, elementMapping, inputMapping, outputMapping);
+        this.elements = Sets.from(elementMapping.values());
+        reconnectBlockInOut(inputMapping, outputMapping);
         detached = true;
+    }
+
+    private void reconnectBlockInOut(
+            Map<FlowElementInput, FlowElementInput> inputMapping,
+            Map<FlowElementOutput, FlowElementOutput> outputMapping) {
+        assert inputMapping != null;
+        assert outputMapping != null;
+        for (FlowBlock.Input bound : blockInputs) {
+            FlowElementInput port = inputMapping.get(bound.getElementPort());
+            assert port != null;
+            bound.setElementPort(port);
+        }
+        for (FlowBlock.Output bound : blockOutputs) {
+            FlowElementOutput port = outputMapping.get(bound.getElementPort());
+            assert port != null;
+            bound.setElementPort(port);
+        }
+    }
+
+    /**
+     * Unifies elements.
+     * @since 0.4.0
+     */
+    public void unify() {
+        if (detached == false) {
+            throw new IllegalStateException();
+        }
+        if (isReduceBlock()) {
+            dump("origin");
+        }
+        Map<FlowElement, FlowElement> elementMapping = Maps.create();
+        Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
+        Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
+        FlowGraphUtil.deepCopy(elements, elementMapping, inputMapping, outputMapping);
+        unifyElements(elementMapping, inputMapping, outputMapping);
+        unifyInputs(elementMapping, inputMapping, outputMapping);
+        unifyOutputs(elementMapping, inputMapping, outputMapping);
+        if (isReduceBlock()) {
+            dump("unified");
+        }
+    }
+
+    private void unifyElements(
+            Map<FlowElement, FlowElement> elementMapping,
+            Map<FlowElementInput, FlowElementInput> inputMapping,
+            Map<FlowElementOutput, FlowElementOutput> outputMapping) {
+        assert elementMapping != null;
+        assert inputMapping != null;
+        assert outputMapping != null;
+
+        LOG.debug("Unifying elements: {}", this);
+
+        Map<Object, FlowElement> unifier = Maps.create();
+        Map<FlowElement, FlowElement> unifiedElements = Maps.create();
+        Map<FlowElementInput, FlowElementInput> unifiedInputs = Maps.create();
+        Map<FlowElementOutput, FlowElementOutput> unifiedOutputs = Maps.create();
+
+        // find originals
+        for (Map.Entry<FlowElement, FlowElement> entry : elementMapping.entrySet()) {
+            FlowElement orig = entry.getKey();
+            FlowElement dest = entry.getValue();
+            assert orig.getIdentity().equals(orig.getIdentity());
+            FlowElement unified;
+            if (unifier.containsKey(orig.getIdentity()) == false) {
+                unified = dest;
+                unifier.put(orig.getIdentity(), unified);
+            }  else {
+                unified = unifier.get(orig.getIdentity());
+                LOG.debug("Unify {} -> {}", dest, unified);
+            }
+            unifiedElements.put(dest, unified);
+            List<FlowElementInput> srcInput = orig.getInputPorts();
+            List<FlowElementInput> dstInput = dest.getInputPorts();
+            List<FlowElementInput> uniInput = unified.getInputPorts();
+            assert srcInput.size() == uniInput.size();
+            for (int i = 0, n = srcInput.size(); i < n; i++) {
+                if (inputMapping.containsKey(srcInput.get(i))) {
+                    inputMapping.put(srcInput.get(i), uniInput.get(i));
+                    unifiedInputs.put(dstInput.get(i), uniInput.get(i));
+                }
+            }
+            List<FlowElementOutput> srcOutput = orig.getOutputPorts();
+            List<FlowElementOutput> dstOutput = dest.getOutputPorts();
+            List<FlowElementOutput> uniOutput = unified.getOutputPorts();
+            assert srcOutput.size() == uniOutput.size();
+            for (int i = 0, n = srcOutput.size(); i < n; i++) {
+                if (outputMapping.containsKey(srcOutput.get(i))) {
+                    outputMapping.put(srcOutput.get(i), uniOutput.get(i));
+                    unifiedOutputs.put(dstOutput.get(i), uniOutput.get(i));
+                }
+            }
+        }
+
+        // reconnect inputs
+        for (Map.Entry<FlowElement, FlowElement> entry : elementMapping.entrySet()) {
+            FlowElement elem = entry.getValue();
+            FlowElement unified = unifiedElements.get(elem);
+            assert unified != null;
+            if (elem != unified) {
+                List<FlowElementInput> srcInput = elem.getInputPorts();
+                List<FlowElementInput> uniInput = unified.getInputPorts();
+                assert srcInput.size() == uniInput.size();
+                for (int i = 0, n = srcInput.size(); i < n; i++) {
+                    FlowElementInput srcPort = srcInput.get(i);
+                    FlowElementInput uniPort = uniInput.get(i);
+                    for (PortConnection conn : srcPort.getConnected()) {
+                        FlowElementOutput opposite = unifiedOutputs.get(conn.getUpstream());
+                        assert opposite != null;
+                        PortConnection.connect(opposite, uniPort);
+                    }
+                    srcPort.disconnectAll();
+                }
+            }
+        }
+
+        // reconnect outputs
+        for (FlowElement elem : elementMapping.values()) {
+            FlowElement unified = unifiedElements.get(elem);
+            assert unified != null;
+            if (elem != unified) {
+                List<FlowElementOutput> srcOutput = elem.getOutputPorts();
+                List<FlowElementOutput> uniOutput = unified.getOutputPorts();
+                assert srcOutput.size() == uniOutput.size();
+                for (int i = 0, n = srcOutput.size(); i < n; i++) {
+                    FlowElementOutput srcPort = srcOutput.get(i);
+                    FlowElementOutput uniPort = uniOutput.get(i);
+                    for (PortConnection conn : srcPort.getConnected()) {
+                        FlowElementInput opposite = unifiedInputs.get(conn.getDownstream());
+                        assert opposite != null;
+                        PortConnection.connect(uniPort, opposite);
+                    }
+                    srcPort.disconnectAll();
+                }
+            }
+        }
+
+        // delete unified
+        for (Map.Entry<FlowElement, FlowElement> entry : elementMapping.entrySet()) {
+            FlowElement elem = entry.getValue();
+            FlowElement unified = unifiedElements.get(elem);
+            assert unified != null;
+            entry.setValue(unified);
+        }
+
+        this.elements = Sets.from(elementMapping.values());
+    }
+
+    private void dump(String name) {
+        try {
+            FileOutputStream o = new FileOutputStream("/tmp/" + name);
+            try {
+                VisualGraph vg = VisualAnalyzer.convertFlowBlock(this);
+                VisualGraphEmitter.emit(vg, false, o);
+            } finally {
+                o.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void unifyInputs(
+            Map<FlowElement, FlowElement> elementMapping,
+            Map<FlowElementInput, FlowElementInput> inputMapping,
+            Map<FlowElementOutput, FlowElementOutput> outputMapping) {
+        assert elementMapping != null;
+        assert inputMapping != null;
+        assert outputMapping != null;
+        Map<FlowElementInput, FlowBlock.Input> map = Maps.create();
+        for (Iterator<FlowBlock.Input> iter = blockInputs.iterator(); iter.hasNext();) {
+            FlowBlock.Input blockPort = iter.next();
+            FlowElementInput elementPort = inputMapping.get(blockPort.getElementPort());
+            assert elementPort != null;
+            FlowBlock.Input unified = map.get(elementPort);
+            if (unified == null) {
+                map.put(elementPort, blockPort);
+                blockPort.setElementPort(elementPort);
+            } else {
+                LOG.debug("Input port {} will be unified", blockPort);
+                iter.remove();
+                for (FlowBlock.Connection conn : blockPort.getConnections()) {
+                    FlowBlock.Output opposite = conn.getUpstream();
+                    FlowBlock.connect(opposite, unified);
+                }
+                blockPort.disconnect();
+            }
+        }
+    }
+
+    private void unifyOutputs(
+            Map<FlowElement, FlowElement> elementMapping,
+            Map<FlowElementInput, FlowElementInput> inputMapping,
+            Map<FlowElementOutput, FlowElementOutput> outputMapping) {
+        assert elementMapping != null;
+        assert outputMapping != null;
+        assert inputMapping != null;
+        Map<FlowElementOutput, FlowBlock.Output> map = Maps.create();
+        for (Iterator<FlowBlock.Output> iter = blockOutputs.iterator(); iter.hasNext();) {
+            FlowBlock.Output blockPort = iter.next();
+            FlowElementOutput elementPort = outputMapping.get(blockPort.getElementPort());
+            assert elementPort != null;
+            FlowBlock.Output unified = map.get(elementPort);
+            if (unified == null) {
+                map.put(elementPort, blockPort);
+                blockPort.setElementPort(elementPort);
+            } else {
+                LOG.debug("Output port {} will be unified", blockPort);
+                iter.remove();
+                for (FlowBlock.Connection conn : blockPort.getConnections()) {
+                    FlowBlock.Input opposite = conn.getDownstream();
+                    FlowBlock.connect(unified, opposite);
+                }
+                blockPort.disconnect();
+            }
+        }
     }
 
     /**
@@ -361,27 +626,71 @@ public class FlowBlock {
                     "{0} was not detached",
                     this));
         }
-        LOG.debug("{}をコンパクションします", this);
+        LOG.debug("Applying compaction: {}", this);
         boolean changed = false;
-        changed |= trimDisconnectedBlockEdges();
-        changed |= trimDeadElements();
-        changed |= trimDeadBlockEdges();
+        boolean localChanged;
+        do {
+            localChanged = false;
+            changed |= mergeSameBlockEdges();
+            changed |= trimDisconnectedBlockEdges();
+            changed |= trimDeadElements();
+            changed |= trimDeadBlockEdges();
+            localChanged |= mergeIdentity();
+            changed |= localChanged;
+        } while (localChanged);
         if (changed) {
             collectGarbages();
         }
         return changed;
     }
 
+    private boolean mergeSameBlockEdges() {
+        boolean changed = false;
+        LOG.debug("Merging same block edges: {}", this);
+
+        Map<FlowElementInput, FlowBlock.Input> inputMapping = Maps.create();
+        for (FlowBlock.Input port : blockInputs) {
+            FlowBlock.Input prime = inputMapping.get(port.getElementPort());
+            if (prime != null) {
+                LOG.debug("Merging block input: {} on {}", port, this);
+                for (FlowBlock.Connection conn : port.getConnections()) {
+                    FlowBlock.connect(conn.getUpstream(), prime);
+                }
+                port.disconnect();
+                changed = true;
+            } else {
+                inputMapping.put(port.getElementPort(), port);
+            }
+        }
+
+        Map<FlowElementOutput, FlowBlock.Output> outputMapping = Maps.create();
+        for (FlowBlock.Output port : blockOutputs) {
+            FlowBlock.Output prime = outputMapping.get(port.getElementPort());
+            if (prime != null) {
+                LOG.debug("Merging block output: {} on {}", port, this);
+                for (FlowBlock.Connection conn : port.getConnections()) {
+                    FlowBlock.connect(prime, conn.getDownstream());
+                }
+                port.disconnect();
+                changed = true;
+            } else {
+                outputMapping.put(port.getElementPort(), port);
+            }
+        }
+
+        return changed;
+    }
+
     private boolean trimDisconnectedBlockEdges() {
         boolean changed = false;
-        LOG.debug("{}の接続されていない入出力を検索しています", this);
+        LOG.debug("Searching for disconnected block edges: {}", this);
 
         // 他のブロックと接続されていない入力を削除
         Iterator<FlowBlock.Input> inputs = blockInputs.iterator();
         while (inputs.hasNext()) {
             FlowBlock.Input port = inputs.next();
             if (port.getConnections().isEmpty()) {
-                LOG.debug("{}の{}は接続されていないため削除されます", this, port);
+                LOG.debug("Deleting unnecessary block edge: {} on {}", port, this);
                 inputs.remove();
                 changed = true;
             }
@@ -392,7 +701,7 @@ public class FlowBlock {
         while (outputs.hasNext()) {
             FlowBlock.Output port = outputs.next();
             if (port.getConnections().isEmpty()) {
-                LOG.debug("{}の{}は接続されていないため削除されます", this, port);
+                LOG.debug("Deleting dead block edge: {} on {}", port, this);
                 outputs.remove();
                 changed = true;
             }
@@ -402,7 +711,7 @@ public class FlowBlock {
 
     private boolean trimDeadElements() {
         boolean changed = false;
-        LOG.debug("{}の不要な演算子を検索しています", this);
+        LOG.debug("Searching for unnecessary operators: {}", this);
 
         Set<FlowElement> blockEdge = collectBlockEdges();
         Set<FlowElement> removed = Sets.create();
@@ -424,7 +733,7 @@ public class FlowBlock {
 
             if (FlowGraphUtil.isAlwaysEmpty(element)) {
                 // ひとつ以上の入力が存在し、かつすべての入力が他のいずれの要素にも結線されていない要素
-                LOG.debug("{}の{}は入力が存在しないため削除されます", this, element);
+                LOG.debug("Deleting operator without input: {} on {}", element, this);
 
                 // 後続する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getSuccessors(element));
@@ -435,7 +744,7 @@ public class FlowBlock {
                     && FlowGraphUtil.hasMandatorySideEffect(element) == false) {
                 // ひとつ以上の出力が存在し、かつすべての出力が他のいずれの要素にも結線されていない、
                 // かつat least onceの特性を持たない要素
-                LOG.debug("{}の{}は出力が存在しないため削除されます", this, element);
+                LOG.debug("Deleting operator without output: {} on {}", element, this);
 
                 // 先行する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getPredecessors(element));
@@ -450,7 +759,7 @@ public class FlowBlock {
 
     private boolean trimDeadBlockEdges() {
         boolean changed = false;
-        LOG.debug("{}の不要な入出力を検索しています", this);
+        LOG.debug("Searching for unnecessary block edges: {}", this);
 
         Set<FlowElement> inputElements = Sets.create();
         Set<FlowElement> outputElements = Sets.create();
@@ -466,7 +775,7 @@ public class FlowBlock {
             if (FlowGraphUtil.hasSuccessors(element) == false
                     && FlowGraphUtil.hasMandatorySideEffect(element) == false
                     && outputElements.contains(element) == false) {
-                LOG.debug("{}の{}は不要であるため削除されます", this, port);
+                LOG.debug("Deleting unnecessary input: {} on {}", port, this);
                 port.disconnect();
                 inputs.remove();
                 changed = true;
@@ -482,13 +791,77 @@ public class FlowBlock {
             FlowElement element = port.getElementPort().getOwner();
             if (FlowGraphUtil.hasPredecessors(element) == false
                     && inputElements.contains(element) == false) {
-                LOG.debug("{}の{}は不要であるため削除されます", this, port);
+                LOG.debug("Deleting unnecessary output: {} on {}", port, this);
                 port.disconnect();
                 outputs.remove();
                 changed = true;
             }
         }
 
+        return changed;
+    }
+
+    private boolean mergeIdentity() {
+        boolean changed = false;
+        boolean foundTarget = false;
+        Map<FlowBlock.Input, List<FlowBlock.Output>> targets =  Maps.create();
+        for (FlowBlock.Output output : blockOutputs) {
+            FlowElement element = output.getElementPort().getOwner();
+            if (element.getDescription().getKind() != FlowElementKind.PSEUD) {
+                continue;
+            }
+            if (output.getConnections().size() != 1) {
+                continue;
+            }
+            FlowBlock.Input opposite = output.getConnections().get(0).getDownstream();
+            List<FlowBlock.Output> list = targets.get(opposite);
+            if (list == null) {
+                list = new ArrayList<FlowBlock.Output>();
+                targets.put(opposite, list);
+            } else {
+                foundTarget = true;
+            }
+            list.add(output);
+        }
+        if (foundTarget == false) {
+            return changed;
+        }
+        Map<FlowElementInput, FlowBlock.Input> inputs = Maps.create();
+        for (FlowBlock.Input input : blockInputs) {
+            FlowElementInput elementInput = input.getElementPort();
+            assert inputs.containsKey(elementInput) == false;
+            inputs.put(elementInput, input);
+        }
+        for (Map.Entry<FlowBlock.Input, List<FlowBlock.Output>> entry : targets.entrySet()) {
+            List<FlowBlock.Output> upstream = entry.getValue();
+            if (upstream.size() == 1) {
+                continue;
+            }
+            FlowElement primaryElement = upstream.get(0).getElementPort().getOwner();
+            assert primaryElement.getDescription().getKind() == FlowElementKind.PSEUD;
+            assert primaryElement.getInputPorts().size() == 1;
+            FlowElementInput primaryInput = primaryElement.getInputPorts().get(0);
+            FlowBlock.Input primarySource = inputs.get(primaryInput);
+            assert primarySource != null;
+
+            for (int i = 1, n = upstream.size(); i < n; i++) {
+                FlowBlock.Output otherTarget = upstream.get(i);
+                FlowElement otherElement = otherTarget.getElementPort().getOwner();
+                LOG.debug("Unifying pseud element: {} -> {}", otherElement, primaryElement);
+
+                assert otherElement.getDescription().getKind() == FlowElementKind.PSEUD;
+                assert otherElement.getInputPorts().size() == 1;
+                FlowElementInput otherInput = otherElement.getInputPorts().get(0);
+                FlowBlock.Input otherSource = inputs.get(otherInput);
+                assert otherSource != null;
+                for (FlowBlock.Connection conn : otherSource.getConnections()) {
+                    FlowBlock.connect(conn.getUpstream(), primarySource);
+                }
+                otherSource.disconnect();
+                otherTarget.disconnect();
+                changed = true;
+            }
+        }
         return changed;
     }
 

@@ -26,6 +26,7 @@ import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttributeProvider;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
@@ -121,6 +122,7 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         /**
          * インスタンスを生成する。
          * @param environment 環境
+         * @param element target element
          * @param importer インポート
          * @param names 名前生成
          * @param desc 演算子の定義記述
@@ -131,13 +133,14 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
          */
         public Context(
                 FlowCompilingEnvironment environment,
+                FlowElementAttributeProvider element,
                 ImportBuilder importer,
                 NameGenerator names,
                 OperatorDescription desc,
                 Map<FlowElementPortDescription, Expression> inputs,
                 Map<FlowElementPortDescription, Expression> outputs,
                 Map<FlowResourceDescription, Expression> resources) {
-            super(environment, importer, names, desc, resources);
+            super(environment, element, importer, names, desc, resources);
             Precondition.checkMustNotBeNull(inputs, "inputs"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
             this.inputs = inputs;

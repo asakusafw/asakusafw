@@ -46,19 +46,19 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
  */
 public class OperatorMethodDescriptor {
 
-    private Class<? extends Annotation> annotationType;
+    private final Class<? extends Annotation> annotationType;
 
-    private List<DocElement> documentation;
+    private final List<DocElement> documentation;
 
-    private String name;
+    private final String name;
 
-    private List<OperatorPortDeclaration> inputPorts;
+    private final List<OperatorPortDeclaration> inputPorts;
 
-    private List<OperatorPortDeclaration> outputPorts;
+    private final List<OperatorPortDeclaration> outputPorts;
 
-    private List<OperatorPortDeclaration> parameters;
+    private final List<OperatorPortDeclaration> parameters;
 
-    private List<Expression> attributes;
+    private final List<Expression> attributes;
 
     /**
      * インスタンスを生成する。
@@ -155,21 +155,21 @@ public class OperatorMethodDescriptor {
      */
     public static class Builder {
 
-        private Class<? extends Annotation> annotationType;
+        private final Class<? extends Annotation> annotationType;
 
         private List<DocElement> operatorDescription;
 
-        private String name;
+        private final String name;
 
-        private List<OperatorPortDeclaration> inputPorts;
+        private final List<OperatorPortDeclaration> inputPorts;
 
-        private List<OperatorPortDeclaration> outputPorts;
+        private final List<OperatorPortDeclaration> outputPorts;
 
-        private List<OperatorPortDeclaration> parameters;
+        private final List<OperatorPortDeclaration> parameters;
 
-        private List<Expression> attributes;
+        private final List<Expression> attributes;
 
-        private Context context;
+        private final Context context;
 
         /**
          * インスタンスを生成する。

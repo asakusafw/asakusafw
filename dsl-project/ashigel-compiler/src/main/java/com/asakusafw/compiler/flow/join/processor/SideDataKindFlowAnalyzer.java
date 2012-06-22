@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
  */
 public class SideDataKindFlowAnalyzer {
 
-    private JoinResourceDescription resource;
+    private final JoinResourceDescription resource;
 
     private Expression hasMasterExpresion;
 

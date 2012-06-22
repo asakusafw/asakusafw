@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -204,7 +203,7 @@ public class SpiWorkflowProcessorRepositoryTest {
     }
 
     private Set<WorkDescription> set(WorkDescription... descriptions) {
-        return new HashSet<WorkDescription>(Arrays.asList(descriptions));
+        return Sets.from(descriptions);
     }
 
     private Set<Object> classes(Set<?> instances) {

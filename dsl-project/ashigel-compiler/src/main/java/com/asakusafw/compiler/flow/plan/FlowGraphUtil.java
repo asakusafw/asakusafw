@@ -210,13 +210,16 @@ public final class FlowGraphUtil {
         if (mapped != null) {
             return mapped;
         }
+        FlowElement copy;
         FlowElementDescription description = orig.getDescription();
         if (description.getKind() == FlowElementKind.FLOW_COMPONENT) {
             FlowPartDescription fcd = (FlowPartDescription) description;
             FlowGraph subgraph = deepCopy(fcd.getFlowGraph());
-            description = new FlowPartDescription(subgraph);
+            FlowPartDescription partCopy = new FlowPartDescription(subgraph);
+            copy = new FlowElement(partCopy, orig.getAttributeOverride());
+        } else {
+            copy = orig.copy();
         }
-        FlowElement copy = new FlowElement(description, orig.getAttributeOverride());
         elemMapping.put(orig, copy);
         return copy;
     }
@@ -233,7 +236,10 @@ public final class FlowGraphUtil {
         Iterator<T> tIter = target.iterator();
         while (sIter.hasNext()) {
             assert tIter.hasNext();
-            mapping.put(sIter.next(), tIter.next());
+            T s = sIter.next();
+            T t = tIter.next();
+            assert mapping.containsKey(s) == false;
+            mapping.put(s, t);
         }
         assert tIter.hasNext() == false;
     }
@@ -375,7 +381,7 @@ public final class FlowGraphUtil {
                 FlowElementOutput upstream = source.getUpstream();
                 for (PortConnection target : targets) {
                     FlowElementInput downstream = target.getDownstream();
-                    connectWithIdentity(upstream, downstream);
+                    connectWithIdentity(element, upstream, downstream);
                 }
             }
             disconnect(element);
@@ -824,20 +830,16 @@ public final class FlowGraphUtil {
     }
 
     private static void connectWithIdentity(
+            FlowElement element,
             FlowElementOutput upstream,
             FlowElementInput downstream) {
+        assert element != null;
         assert upstream != null;
         assert downstream != null;
-        FlowElementDescription desc = new PseudElementDescription(
-                "normalized-identity",
-                upstream.getDescription().getDataType(),
-                true,
-                true);
-        FlowElementResolver resolver = new FlowElementResolver(desc);
-
+        assert element.getDescription().getKind() == FlowElementKind.PSEUD;
+        FlowElementResolver resolver = new FlowElementResolver(element.copy());
         FlowElementInput input = resolver.getInput(PseudElementDescription.INPUT_PORT_NAME);
         FlowElementOutput output = resolver.getOutput(PseudElementDescription.OUTPUT_PORT_NAME);
-
         PortConnection.connect(upstream, input);
         PortConnection.connect(output, downstream);
     }

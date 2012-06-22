@@ -37,6 +37,7 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import com.asakusafw.runtime.core.BatchRuntime;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
 import com.asakusafw.runtime.stage.input.StageInputMapper;
@@ -50,9 +51,14 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
  * @since 0.1.0
- * @version 0.2.6
+ * @version 0.4.0
  */
 public abstract class AbstractStageClient extends BaseStageClient {
+
+    /**
+     * Method name of {@link #checkEnvironment(Job, VariableTable)}.
+     */
+    public static final String METHOD_CHECK_ENVIRONMENT = "checkEnvironment";
 
     /**
      * {@link #getStageOutputPath()}のメソッド名。
@@ -110,6 +116,15 @@ public abstract class AbstractStageClient extends BaseStageClient {
     public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull";
 
     static final Log LOG = LogFactory.getLog(AbstractStageClient.class);
+
+    /**
+     * Checks current environment.
+     * @param job target job
+     * @param variables variables
+     */
+    protected void checkEnvironment(Job job, VariableTable variables) {
+        BatchRuntime.require(0, 0);
+    }
 
     /**
      * このステージに関する設定を行う。
@@ -232,6 +247,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         }
         Job job = new Job(conf);
         VariableTable variables = getPathParser(job.getConfiguration());
+        checkEnvironment(job, variables);
         configureJobInfo(job, variables);
         configureStageInput(job, variables);
         configureStageOutput(job, variables);

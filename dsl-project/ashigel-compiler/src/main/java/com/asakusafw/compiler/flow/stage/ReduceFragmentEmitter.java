@@ -74,7 +74,7 @@ public class ReduceFragmentEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ReduceFragmentEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -130,23 +130,23 @@ public class ReduceFragmentEmitter {
 
         private static final String PROCESS_PREFIX = "process";
 
-        private FlowCompilingEnvironment environment;
+        private final FlowCompilingEnvironment environment;
 
-        private Fragment fragment;
+        private final Fragment fragment;
 
-        private ShuffleModel shuffle;
+        private final ShuffleModel shuffle;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private NameGenerator names;
+        private final NameGenerator names;
 
-        private List<FieldDeclaration> extraFields = Lists.create();
+        private final List<FieldDeclaration> extraFields = Lists.create();
 
-        private Type valueType;
+        private final Type valueType;
 
-        private FragmentConnection connection;
+        private final FragmentConnection connection;
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -309,6 +309,7 @@ public class ReduceFragmentEmitter {
             }
             return new RendezvousProcessor.Context(
                     environment,
+                    factor.getElement(),
                     importer,
                     names,
                     description,

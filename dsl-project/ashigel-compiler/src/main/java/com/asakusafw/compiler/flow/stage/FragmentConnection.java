@@ -47,15 +47,15 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
  */
 public class FragmentConnection {
 
-    private Map<FlowResourceDescription, SimpleName> resources = Maps.create();
+    private final Map<FlowResourceDescription, SimpleName> resources = Maps.create();
 
-    private Map<FlowElementOutput, SimpleName> successors = Maps.create();
+    private final Map<FlowElementOutput, SimpleName> successors = Maps.create();
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private Fragment fragment;
+    private final Fragment fragment;
 
-    private ImportBuilder importer;
+    private final ImportBuilder importer;
 
     /**
      * インスタンスを生成する。
