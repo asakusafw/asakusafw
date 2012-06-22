@@ -62,7 +62,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
         @Override
         protected Delegate initialValue() {
             throw new FailedException(
-                    "Reportの初期化は行われていません。初期化プラグインが登録されていない可能性があります。");
+                    "Report is not initialized (report plugin may be not registered)");
         }
     };
 

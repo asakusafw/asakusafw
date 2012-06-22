@@ -36,7 +36,7 @@ public class BatchContext {
     static final ThreadLocal<BatchContext> CONTEXTS = new ThreadLocal<BatchContext>() {
         @Override
         protected BatchContext initialValue() {
-            throw new IllegalStateException("文脈情報が初期化されていません");
+            throw new IllegalStateException("BatchContext is not yet initialized (internal error)");
         }
     };
 

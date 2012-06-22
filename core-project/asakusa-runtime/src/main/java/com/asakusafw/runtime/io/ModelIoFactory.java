@@ -53,7 +53,7 @@ public abstract class ModelIoFactory<T> {
      */
     public static final String MODEL_OUTPUT_CLASS_FORMAT = "{0}.io.{1}ModelOutput";
 
-    private Class<T> modelClass;
+    private final Class<T> modelClass;
 
     /**
      * インスタンスを生成する。
@@ -220,7 +220,7 @@ public abstract class ModelIoFactory<T> {
             return annotation.value();
         }
         LOG.warn(MessageFormat.format(
-                "{0}に注釈{1}が付与されていません。命名規約から{2}を検索します (deprecated)。",
+                "Data model class \"{0}\" does not have annotation \"{1}\"",
                 modelClass.getName(),
                 ModelInputLocation.class.getName(),
                 ModelInput.class.getSimpleName()));
@@ -241,7 +241,7 @@ public abstract class ModelIoFactory<T> {
             return annotation.value();
         }
         LOG.warn(MessageFormat.format(
-                "{0}に注釈{1}が付与されていません。命名規約から{2}を検索します (deprecated)。",
+                "Data model class \"{0}\" does not have annotation \"{1}\"",
                 modelClass.getName(),
                 ModelOutputLocation.class.getName(),
                 ModelOutput.class.getSimpleName()));

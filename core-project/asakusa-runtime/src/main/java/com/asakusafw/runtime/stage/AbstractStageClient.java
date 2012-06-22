@@ -425,7 +425,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         String arguments = configuration.get(PROP_ASAKUSA_BATCH_ARGS);
         if (arguments == null) {
             LOG.warn(MessageFormat.format(
-                    "バッチで利用する引数の\"{0}\"が定義されていません",
+                    "Missing configuration \"{0}\" (batch arguments)",
                     PROP_ASAKUSA_BATCH_ARGS));
         } else {
             variables.defineVariables(arguments);

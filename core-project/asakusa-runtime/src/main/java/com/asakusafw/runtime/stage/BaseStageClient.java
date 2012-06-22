@@ -64,7 +64,7 @@ public abstract class BaseStageClient extends Configured implements Tool {
         String value = getConf().get(key);
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
-                    "プロパティ\"{0}\"が設定されていません",
+                    "Missing a mandatory configuration \"{0}\"",
                     key));
         }
         return value;

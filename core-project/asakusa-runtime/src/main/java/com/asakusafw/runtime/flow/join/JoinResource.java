@@ -46,20 +46,22 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
 
     @Override
     public void setup(Configuration configuration) throws IOException, InterruptedException {
-        LOG.info(MessageFormat.format(
-                "{0}から結合表を構築します",
-                getCacheName()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Building join-table from \"{0}\" on distributed cache",
+                    getCacheName()));
+        }
         StageResourceDriver driver = new StageResourceDriver(configuration);
         try {
             List<Path> paths = driver.findCache(getCacheName());
             if (paths.isEmpty()) {
                 throw new FileNotFoundException(MessageFormat.format(
-                        "分散キャッシュ\"{0}\"が見つかりません",
+                        "Missing resource \"{0}\" in distributed cache",
                         getCacheName()));
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Building join table {0} using {1}",
+                        "Building join table \"{0}\" using \"{1}\"",
                         getCacheName(),
                         paths));
             }
@@ -67,12 +69,12 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
                 table = createTable(driver, paths);
             } catch (IOException e) {
                 throw new IOException(MessageFormat.format(
-                        "分散キャッシュ\"{0}\"からハッシュ表を作成できませんでした",
+                        "Failed to build a join table from \"{0}\"",
                         getCacheName()), e);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Built jon table {0}",
+                        "Built join-table from \"{0}\"",
                         getCacheName()));
             }
         } finally {
@@ -171,7 +173,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
             return found;
         } catch (IOException e) {
             throw new LookUpException(MessageFormat.format(
-                    "{0}に対する結合先を探す際にエラーが発生しました",
+                    "Failed to lookup join target for \"{0}\"",
                     value), e);
         }
     }

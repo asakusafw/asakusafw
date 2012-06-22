@@ -185,10 +185,10 @@ Character:
             }
             String[] kv = KEY_VALUE.split(pair);
             if (kv.length == 0) {
-                // "=" と言うケースでは空配列が返る
+                // "=" returns a empty array
                 defineVariable("", "");
             } else if (kv.length == 1 && kv[0].equals(pair) == false) {
-                // "key=" と言うケースではchopした後にキーのみが返る
+                // "key=" returns only its key
                 defineVariable(unescape(kv[0]), "");
             } else if (kv.length == 2) {
                 defineVariable(unescape(kv[0]), unescape(kv[1]));
