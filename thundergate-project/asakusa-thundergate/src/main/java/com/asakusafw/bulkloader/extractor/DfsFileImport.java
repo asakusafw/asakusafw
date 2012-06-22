@@ -44,7 +44,6 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.common.MultiThreadedCopier;
 import com.asakusafw.bulkloader.common.StreamRedirectThread;
-import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -69,10 +68,6 @@ public class DfsFileImport {
 
     private static final int COPY_BUFFER_RECORDS = 1000;
 
-    static {
-        UrlStreamHandlerFactoryRegisterer.register();
-    }
-
     private final ExecutorService executor;
 
     private final String cacheBuildCommand;
@@ -81,7 +76,8 @@ public class DfsFileImport {
      * Creates a new instance.
      */
     public DfsFileImport() {
-        this.cacheBuildCommand = ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME);
+        File cmd = ConfigurationLoader.getLocalScriptPath(Constants.PATH_LOCAL_CACHE_BUILD);
+        this.cacheBuildCommand = cmd.getAbsolutePath();
         int parallel = Integer.parseInt(ConfigurationLoader.getProperty(Constants.PROP_KEY_CACHE_BUILDER_PARALLEL));
         LOG.debugMessage("Building a cache builder with {0} threads", parallel);
         this.executor = Executors.newFixedThreadPool(parallel);
@@ -312,11 +308,6 @@ public class DfsFileImport {
         assert bean != null;
         assert location != null;
         assert info != null;
-        if (cacheBuildCommand == null) {
-            throw new IOException(MessageFormat.format(
-                    "Configuration \"{0}\" was not defined",
-                    Constants.PROP_KEY_CACHE_BUILDER_SHELL_NAME));
-        }
 
         List<String> command = new ArrayList<String>();
         command.add(cacheBuildCommand);
@@ -382,17 +373,8 @@ public class DfsFileImport {
      * @throws BulkLoaderSystemException if failed to resolve
      */
     protected URI resolveLocation(ImportBean bean, String user, String location) throws BulkLoaderSystemException {
-        URI dfsFilePath;
-        if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
-            dfsFilePath = FileNameUtil.createDfsImportURIWithWorkingDir(
-                    location,
-                    bean.getExecutionId());
-        } else {
-            dfsFilePath = FileNameUtil.createDfsImportURI(
-                    location,
-                    bean.getExecutionId(),
-                    user);
-        }
+        Configuration conf = new Configuration();
+        URI dfsFilePath = FileNameUtil.createPath(conf, location, bean.getExecutionId(), user).toUri();
         return dfsFilePath;
     }
 

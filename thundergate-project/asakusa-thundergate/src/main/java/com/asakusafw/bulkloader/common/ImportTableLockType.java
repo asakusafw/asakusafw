@@ -38,7 +38,8 @@ public enum ImportTableLockType {
     /**
      * ロック取得タイプ-ロックを取得しない。
      */
-    NONE("3");
+    NONE("3")
+    ;
 
     /**
      * ロック取得タイプ。

@@ -45,7 +45,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -98,6 +98,7 @@ echo "   Execution ID: $_OPT_EXECUTION_ID"
 echo "     Cache Path: $_OPT_CACHE_PATH"
 echo "      Data Type: $_OPT_MODEL_CLASS"
 
+export HADOOP_CLASSPATH=""
 "$HADOOP_CMD" jar \
     "$_TGC_RUNTIME_LIB" \
     "$_TGC_TOOL_LAUNCHER" \

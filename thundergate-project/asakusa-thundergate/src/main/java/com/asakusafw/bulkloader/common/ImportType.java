@@ -33,7 +33,8 @@ public enum ImportType {
     /**
      * Importer処理区分(secondary：サブ起動)。
      */
-    SECONDARY("secondary");
+    SECONDARY("secondary")
+    ;
 
     /**
      * Importer処理区分。

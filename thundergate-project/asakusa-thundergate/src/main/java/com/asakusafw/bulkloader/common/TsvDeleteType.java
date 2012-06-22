@@ -16,43 +16,48 @@
 package com.asakusafw.bulkloader.common;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * TSVファイル削除有無を表すENUM。
  * @author yuta.shirai
- *
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public enum TsvDeleteType {
     /**
      * TSVファイル削除有無-削除しない。
      */
-    FALSE("0"),
+    FALSE("FALSE", "0", "KEEP"),
 
     /**
      * TSVファイル削除有無-削除する。
      */
-    TRUE("1");
+    TRUE("TRUE", "1", "DELETE")
+    ;
 
-    /**
-     * TSVファイル削除有無。
-     */
-    private String deleteType;
+    private String symbol;
+
+    Set<String> keys;
+
+    private TsvDeleteType(String symbol, String... alternatives) {
+        this.symbol = symbol;
+        this.keys = new HashSet<String>();
+        this.keys.add(symbol);
+        Collections.addAll(this.keys, alternatives);
+    }
+
     /**
      * TSVファイル削除有無を返す。
      * @return lockType TSVファイル削除有無
      */
-    public String getDeleteType() {
-        return deleteType;
+    public String getSymbol() {
+        return symbol;
     }
-    /**
-     * コンストラクタ。
-     * @param type TSVファイル削除有無
-     */
-    private TsvDeleteType(String type) {
-        this.deleteType = type;
-    }
+
     /**
      * {@code String}に対する定数を返す。
      * @param key String
@@ -65,9 +70,11 @@ public enum TsvDeleteType {
     private static class DeleteTypeToTsvDeleteType {
         static final Map<String, TsvDeleteType> REVERSE_DICTIONARY;
         static {
-            Map<String, TsvDeleteType> map = new HashMap<String, TsvDeleteType>();
+            Map<String, TsvDeleteType> map = new TreeMap<String, TsvDeleteType>(String.CASE_INSENSITIVE_ORDER);
             for (TsvDeleteType elem : TsvDeleteType.values()) {
-                map.put(elem.getDeleteType(), elem);
+                for (String key : elem.keys) {
+                    map.put(key, elem);
+                }
             }
             REVERSE_DICTIONARY = Collections.unmodifiableMap(map);
         }

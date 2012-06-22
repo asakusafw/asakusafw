@@ -15,14 +15,14 @@
 # limitations under the License.
 #
 
-#Exporter起動コマンド
+#Extractor起動コマンド
 
 usage() {
 	cat <<EOF
-Exporterを起動します。
+Extractorを起動します。
 
 起動シェルスクリプト
-exporter.sh
+extractor.sh
 
  順  引数                             必須/任意
  -----------------------------------------------
@@ -35,10 +35,24 @@ exporter.sh
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
 if [ $# -ne 5 ]; then
   usage
   exit 1
 fi
+
+_dirname=$(dirname "$0")
+_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
 
 _TARGET_NAME="$1"
 shift
@@ -51,26 +65,34 @@ shift
 export BULKLOADER_ARGS="$1"
 shift
 
-. ~/.bulkloader_db_profile
-export BULKLOADER_HOME="$ASAKUSA_HOME"/bulkloader
+import "$_TG_ROOT/conf/env.sh"
+import "$_TG_ROOT/libexec/validate-env.sh"
+import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
 
-LOGFILE_BASENAME="exporter"
-CLASS_NAME="com.asakusafw.bulkloader.exporter.Exporter"
+_TG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_BATCH_ID/lib/jobflow-${_FLOW_ID}.jar"
+import "$_TG_ROOT/libexec/configure-classpath.sh"
 
-. "$ASAKUSA_HOME"/bulkloader/bin/set-classpath-db.sh "$_BATCH_ID" "$_FLOW_ID"
+export BULKLOADER_HOME=$ASAKUSA_HOME/bulkloader 1>&2
 
-cd "$ASAKUSA_HOME"
+LOGFILE_BASENAME="extractor"
+CLASS_NAME="com.asakusafw.bulkloader.extractor.Extractor"
+USER_NAME="$(whoami)"
 
-$JAVA_HOME/bin/java \
-    $EXPORTER_JAVA_OPTS \
-    -Dasakusa.home="$ASAKUSA_HOME" \
-    -Dlogfile.basename="$LOGFILE_BASENAME" \
-    -classpath "$BULK_LOADER_CLASSPATH" \
+export HADOOP_CLASSPATH="$_TG_CLASSPATH"
+export HADOOP_USER_CLASSPATH_FIRST=true
+HADOOP_OPTS="$HADOOP_OPTS $EXTRACTOR_JAVA_OPTS"
+HADOOP_OPTS="$HADOOP_OPTS -Dasakusa.home=$ASAKUSA_HOME"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
+
+cd
+
+"$HADOOP_CMD" \
     "$CLASS_NAME" \
     "$_TARGET_NAME" \
     "$_BATCH_ID" \
     "$_FLOW_ID" \
-    "$_EXECUTION_ID"
+    "$_EXECUTION_ID" \
+    "$USER_NAME"
 rc=$?
-
 exit $rc

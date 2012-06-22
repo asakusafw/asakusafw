@@ -48,6 +48,7 @@ import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 import com.asakusafw.thundergate.runtime.cache.ThunderGateCacheSupport;
+import com.asakusafw.thundergate.runtime.property.PathConstants;
 import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
@@ -70,13 +71,13 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(BulkLoaderIoProcessor.class);
 
-    private static final String CMD_IMPORTER = "bulkloader/bin/importer.sh";
+    private static final String CMD_IMPORTER = PathConstants.PATH_IMPORTER;
 
-    private static final String CMD_EXPORTER = "bulkloader/bin/exporter.sh";
+    private static final String CMD_EXPORTER = PathConstants.PATH_EXPORTER;
 
-    private static final String CMD_FINALIZER = "bulkloader/bin/finalizer.sh";
+    private static final String CMD_FINALIZER = PathConstants.PATH_FINALIZER;
 
-    private static final String CMD_RELEASE_CACHE_LOCK = "bulkloader/bin/release-cache-lock.sh";
+    private static final String CMD_CACHE_FINALIZER = PathConstants.PATH_CACHE_FINALIZER;
 
     private static final String CMD_ARG_PRIMARY = "primary";
 
@@ -698,7 +699,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             for (String cacheUser : cacheUsers) {
                 results.add(new Command(
                         Arrays.asList(new String[] {
-                                context.getHomePathPrefix() + CMD_RELEASE_CACHE_LOCK,
+                                context.getHomePathPrefix() + CMD_CACHE_FINALIZER,
                                 cacheUser,
                                 context.getExecutionId(),
                         }),

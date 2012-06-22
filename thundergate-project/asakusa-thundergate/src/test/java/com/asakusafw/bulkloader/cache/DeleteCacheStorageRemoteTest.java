@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
@@ -31,7 +30,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.hadoop.conf.Configuration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,10 +39,12 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.FileNameUtil;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
-import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
@@ -92,13 +92,10 @@ public class DeleteCacheStorageRemoteTest {
     public void setUp() throws Exception {
         UnitTestUtil.startUp();
         service.initialize("target", "tester");
-        service.setConf(new Configuration());
+        service.setConf(new ConfigurationProvider().newInstance());
         ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_HDFS_PROTCOL_HOST,
+                Constants.PROP_KEY_BASE_PATH,
                 folder.getRoot().getAbsoluteFile().toURI().toString());
-        ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_WORKINGDIR_USE,
-                String.valueOf(false));
     }
 
     /**
@@ -194,22 +191,21 @@ public class DeleteCacheStorageRemoteTest {
     }
 
     private URI uri(String string) {
-        // FIXME for testing
-        return new File(folder.getRoot(), "user/tester/" + string).toURI();
+        try {
+            return FileNameUtil.createPath(service.getConf(), string, "dummy", "dummy").toUri();
+        } catch (BulkLoaderSystemException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private FileList.Reader prepare(String... locations) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         FileList.Writer writer = FileList.createWriter(output, false);
         for (String location : locations) {
-            writer.openNext(new FileProtocol(FileProtocol.Kind.DELETE_CACHE, qualify(location), null)).close();
+            writer.openNext(new FileProtocol(FileProtocol.Kind.DELETE_CACHE, location, null)).close();
         }
         writer.close();
         return FileList.createReader(new ByteArrayInputStream(output.toByteArray()));
-    }
-
-    private String qualify(String location) {
-        return "/" + StageConstants.EXPR_USER + "/" + location;
     }
 
     private List<FileProtocol> collect(byte[] byteArray) throws IOException {

@@ -92,7 +92,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -139,7 +139,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -186,7 +186,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -243,7 +243,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -300,7 +300,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -357,7 +357,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.FALSE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -414,7 +414,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -470,7 +470,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -516,7 +516,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行
@@ -562,7 +562,7 @@ public class JudgeExecProcessTest {
         bean.setExportTargetTable(targetTable);
 
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+        p.setProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // 処理の実行

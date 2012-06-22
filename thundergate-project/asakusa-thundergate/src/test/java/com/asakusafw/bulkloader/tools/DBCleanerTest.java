@@ -60,6 +60,7 @@ public class DBCleanerTest {
     }
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+        UnitTestUtil.setUpEnv();
         UnitTestUtil.tearDownDB();
         UnitTestUtil.tearDownAfterClass();
     }
@@ -201,9 +202,7 @@ public class DBCleanerTest {
     public void executeTest04() throws Exception {
         Properties p = System.getProperties();
         p.setProperty(Constants.ASAKUSA_HOME, "hoge");
-
         ConfigurationLoader.setSysProp(p);
-        System.setProperties(p);
 
         // 処理の実行
         String[] args = new String[]{targetName};
@@ -216,6 +215,8 @@ public class DBCleanerTest {
         p.setProperty(Constants.ASAKUSA_HOME, "src");
         ConfigurationLoader.setSysProp(p);
         System.setProperties(p);
+
+
     }
     /**
      *

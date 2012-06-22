@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Properties;
 
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.utils.collections.Lists;
 
 
@@ -30,13 +29,6 @@ import com.asakusafw.utils.collections.Lists;
  * バルクローダーの処理に関する情報。
  */
 public class BulkLoaderScript {
-
-    /**
-     * 共通のパス接頭辞。
-     */
-    public static final String COMMON_PATH_PREFIX = "/"
-        + StageConstants.EXPR_USER
-        + "/";
 
     private final List<ImportTable> importTargetTables;
 
@@ -134,15 +126,12 @@ public class BulkLoaderScript {
 
     static String toPath(Location location) {
         assert location != null;
-        return COMMON_PATH_PREFIX + location.toPath('/');
+        return location.toPath('/');
     }
 
     static Location fromPath(String path) {
         assert path != null;
-        if (path.startsWith(COMMON_PATH_PREFIX) == false) {
-            throw new IllegalArgumentException(path);
-        }
-        return Location.fromPath(path.substring(COMMON_PATH_PREFIX.length()), '/');
+        return Location.fromPath(path, '/');
     }
 
     static List<String> toPaths(List<Location> locations) {

@@ -39,7 +39,6 @@ import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileCompType;
 import com.asakusafw.bulkloader.common.FileNameUtil;
-import com.asakusafw.bulkloader.common.UrlStreamHandlerFactoryRegisterer;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
@@ -53,10 +52,6 @@ import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
  * @author yuta.shirai
  */
 public class ExportFileSend {
-
-    static {
-        UrlStreamHandlerFactoryRegisterer.register();
-    }
 
     static final Log LOG = new Log(ExportFileSend.class);
 
@@ -89,20 +84,18 @@ public class ExportFileSend {
                 throw new BulkLoaderSystemException(e, getClass(), "TG-COLLECTOR-02001",
                         "Exporterと接続するチャネルを開けませんでした");
             }
+            Configuration conf = new Configuration();
             List<String> l = bean.getExportTargetTableList();
             for (String tableName : l) {
                 ExportTargetTableBean targetTable = bean.getExportTargetTable(tableName);
                 Class<? extends Writable> targetTableModel =
                     targetTable.getExportTargetType().asSubclass(Writable.class);
 
-                List<String> filePath;
-                if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
-                    filePath = FileNameUtil.createDfsExportURIWithWorkingDir(
-                            targetTable.getDfsFilePaths(), bean.getExecutionId());
-                } else {
-                    filePath = FileNameUtil.createDfsExportURI(
-                            targetTable.getDfsFilePaths(), user, bean.getExecutionId());
-                }
+                List<Path> filePath = FileNameUtil.createPaths(
+                        conf,
+                        targetTable.getDfsFilePaths(),
+                        bean.getExecutionId(),
+                        user);
 
                 // Export対象テーブルに対するディレクトリ数分繰り返す
                 int fileCount = filePath.size();
@@ -110,13 +103,13 @@ public class ExportFileSend {
                 for (int i = 0; i < fileCount; i++) {
                     // Exportファイルを送信
                     LOG.info("TG-COLLECTOR-02002",
-                            tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
-                    long countInFile = send(targetTableModel, filePath.get(i), writer, tableName);
+                            tableName, filePath.get(i), compType.getSymbol(), targetTableModel.toString());
+                    long countInFile = send(targetTableModel, filePath.get(i).toString(), writer, tableName);
                     if (countInFile >= 0) {
                         recordCount += countInFile;
                     }
                     LOG.info("TG-COLLECTOR-02003",
-                            tableName, filePath.get(i), compType.getCompType(), targetTableModel.toString());
+                            tableName, filePath.get(i), compType.getSymbol(), targetTableModel.toString());
                 }
 
                 LOG.info("TG-PROFILE-01004",

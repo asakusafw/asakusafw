@@ -18,7 +18,6 @@ package com.asakusafw.bulkloader.cache;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +32,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,6 +41,8 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
+import com.asakusafw.bulkloader.common.FileNameUtil;
+import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileList.Reader;
@@ -50,7 +50,7 @@ import com.asakusafw.bulkloader.transfer.FileList.Writer;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol.Kind;
 import com.asakusafw.bulkloader.transfer.StreamFileListProvider;
-import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
@@ -97,31 +97,28 @@ public class DeleteCacheStorageLocalTest {
     public void setUp() throws Exception {
         UnitTestUtil.startUp();
         remote.initialize("target", "tester");
-        remote.setConf(new Configuration());
+        remote.setConf(new ConfigurationProvider().newInstance());
         ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_HDFS_PROTCOL_HOST,
+                Constants.PROP_KEY_BASE_PATH,
                 folder.getRoot().getAbsoluteFile().toURI().toString());
-        ConfigurationLoader.getProperty().setProperty(
-                Constants.PROP_KEY_WORKINGDIR_USE,
-                String.valueOf(false));
         info1 = new LocalCacheInfo(
                 "testing1",
                 null,
                 null,
                 "__TG_TEST",
-                qualify("testing1"));
+                "testing1");
         info2 = new LocalCacheInfo(
                 "testing2",
                 null,
                 null,
                 "__TG_TEST",
-                qualify("testing2"));
+                "testing2");
         info3 = new LocalCacheInfo(
                 "testing3",
                 null,
                 null,
                 "__TG_TEST",
-                qualify("testing3"));
+                "testing3");
     }
 
     /**
@@ -197,12 +194,11 @@ public class DeleteCacheStorageLocalTest {
     }
 
     private URI uri(String string) {
-        // FIXME for testing
-        return new File(folder.getRoot(), "user/tester/" + string).toURI();
-    }
-
-    private String qualify(String location) {
-        return "/" + StageConstants.EXPR_USER + "/" + location;
+        try {
+            return FileNameUtil.createPath(remote.getConf(), string, "dummy", "dummy").toUri();
+        } catch (BulkLoaderSystemException e) {
+            throw new AssertionError(e);
+        }
     }
 
     class Mock extends DeleteCacheStorageLocal {

@@ -17,6 +17,7 @@ package com.asakusafw.bulkloader.common;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -48,7 +50,7 @@ public class ConfigurationLoaderTest {
 
     /** 読み込むプロパティファイル */
     private static List<String> propertys_db = Arrays.asList(new String[]{"bulkloader-conf-db.properties"});
-    private static List<String> propertys_hc = Arrays.asList(new String[]{"bulkloader-conf-hc.properties"});
+    private static List<String> properties_hc = Arrays.asList(new String[]{"bulkloader-conf-hc.properties"});
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -99,7 +101,7 @@ public class ConfigurationLoaderTest {
     @Test
     public void initTest02() throws Exception {
         try {
-            ConfigurationLoader.init(propertys_hc, false, true);
+            ConfigurationLoader.init(properties_hc, false, true);
         } catch (Exception e) {
             fail();
             e.printStackTrace();
@@ -249,7 +251,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParamHC01() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("export.zip-comp-type", "");
         ConfigurationLoader.setProperty(p);
@@ -261,7 +263,9 @@ public class ConfigurationLoaderTest {
             e.printStackTrace();
         }
 
-        assertEquals("0", ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_TYPE));
+        assertEquals(
+                FileCompType.STORED,
+                FileCompType.find(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_COMP_TYPE)));
 
     }
     /**
@@ -274,7 +278,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParamHC02() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("export.zip-comp-type", "2");
         ConfigurationLoader.setProperty(p);
@@ -295,9 +299,10 @@ public class ConfigurationLoaderTest {
      *
      * @throws Exception
      */
+    @Ignore("hadoop-cluster.workingdir.use is obsoleted")
     @Test
     public void checkAndSetParamHC03() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("hadoop-cluster.workingdir.use", "");
         ConfigurationLoader.setProperty(p);
@@ -320,9 +325,10 @@ public class ConfigurationLoaderTest {
      *
      * @throws Exception
      */
+    @Ignore("hdfs-protocol-host is obsoleted")
     @Test
     public void checkAndSetParamHC04() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("hdfs-protocol-host", "");
         ConfigurationLoader.setProperty(p);
@@ -345,7 +351,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParamHC05() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("export.tsv-max-size", "");
         ConfigurationLoader.setProperty(p);
@@ -368,7 +374,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParamHC06() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("export.tsv-max-size", "a");
         ConfigurationLoader.setProperty(p);
@@ -391,7 +397,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParamHC07() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("import.seq-comp-type", "");
         ConfigurationLoader.setProperty(p);
@@ -406,6 +412,7 @@ public class ConfigurationLoaderTest {
         assertEquals("NONE", ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_SEQ_FILE_COMP_TYPE));
 
     }
+
     /**
      * <p>
      * checkAndSetParamのテストケース
@@ -416,7 +423,7 @@ public class ConfigurationLoaderTest {
      */
     @Test
     public void checkAndSetParam01() throws Exception {
-        ConfigurationLoader.init(propertys_hc, false, true);
+        ConfigurationLoader.init(properties_hc, false, true);
         Properties p = ConfigurationLoader.getProperty();
         p.setProperty("log.conf-path", "");
         ConfigurationLoader.setProperty(p);
@@ -428,7 +435,9 @@ public class ConfigurationLoaderTest {
             e.printStackTrace();
         }
 
-        assertEquals("bulkloader/conf/log4j.xml", ConfigurationLoader.getProperty(Constants.PROP_KEY_LOG_CONF_PATH));
+        assertEquals(
+                new File("bulkloader/conf/log4j.xml").getCanonicalPath(),
+                ConfigurationLoader.getProperty(Constants.PROP_KEY_LOG_CONF_PATH));
 
     }
     /**
@@ -452,7 +461,9 @@ public class ConfigurationLoaderTest {
             fail();
             e.printStackTrace();
         }
-        assertEquals("0", ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_COMP_TYPE));
+        assertEquals(
+                FileCompType.STORED,
+                FileCompType.find(ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_COMP_TYPE)));
     }
     /**
      * <p>
@@ -899,11 +910,12 @@ public class ConfigurationLoaderTest {
      *
      * @throws Exception
      */
+    @Ignore(Constants.PROP_KEY_EXT_SHELL_NAME + " is obsoleted")
     @Test
     public void checkAndSetParamDB25() throws Exception {
         ConfigurationLoader.init(propertys_db, true, false);
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty("import.extractor-shell-name", "");
+        p.setProperty(Constants.PROP_KEY_EXT_SHELL_NAME, "");
         ConfigurationLoader.setProperty(p);
 
         try {
@@ -945,11 +957,12 @@ public class ConfigurationLoaderTest {
      *
      * @throws Exception
      */
+    @Ignore(Constants.PROP_KEY_COL_SHELL_NAME + " is obsoleted")
     @Test
     public void checkAndSetParamDB27() throws Exception {
         ConfigurationLoader.init(propertys_db, true, false);
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty("export.collector-shell-name", "");
+        p.setProperty(Constants.PROP_KEY_COL_SHELL_NAME, "");
         ConfigurationLoader.setProperty(p);
 
         try {
@@ -981,7 +994,9 @@ public class ConfigurationLoaderTest {
             fail();
             e.printStackTrace();
         }
-        assertEquals("1", ConfigurationLoader.getProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE));
+        assertEquals(
+                TsvDeleteType.find(Constants.PROP_DEFAULT_IMPORT_TSV_DELETE),
+                TsvDeleteType.find(ConfigurationLoader.getProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE)));
     }
     /**
      * <p>
@@ -1027,7 +1042,9 @@ public class ConfigurationLoaderTest {
             fail();
             e.printStackTrace();
         }
-        assertEquals("1", ConfigurationLoader.getProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE));
+        assertEquals(
+                TsvDeleteType.find(Constants.PROP_DEFAULT_EXPORT_TSV_DELETE),
+                TsvDeleteType.find(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXPORT_TSV_DELETE)));
     }
     /**
      * <p>

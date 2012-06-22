@@ -550,7 +550,7 @@ public class ImporterTest {
                     @Override
                     public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
                         Properties p = ConfigurationLoader.getProperty();
-                        p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.TRUE.getDeleteType());
+                        p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.TRUE.getSymbol());
                         ConfigurationLoader.setProperty(p);
                         return super.lock(bean);
                     }
@@ -593,7 +593,7 @@ public class ImporterTest {
                     @Override
                     public boolean lock(ImportBean bean) throws BulkLoaderReRunnableException {
                         Properties p = ConfigurationLoader.getProperty();
-                        p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.FALSE.getDeleteType());
+                        p.setProperty(Constants.PROP_KEY_IMPORT_TSV_DELETE, TsvDeleteType.FALSE.getSymbol());
                         ConfigurationLoader.setProperty(p);
                         return super.lock(bean);
                     }

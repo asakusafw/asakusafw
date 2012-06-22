@@ -41,10 +41,24 @@ importer.sh
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
 if [ $# -ne 7 -a $# -ne 8 ]; then
   usage
   exit 1
 fi
+
+_dirname=$(dirname "$0")
+_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
 
 _IMPORTER_CLASS="$1"
 shift
@@ -61,21 +75,28 @@ shift
 export BULKLOADER_ARGS="$1"
 shift
 
-. ~/.bulkloader_db_profile
+import "$_TG_ROOT/conf/env.sh"
+import "$_TG_ROOT/libexec/validate-env.sh"
+import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
+
+_TG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_BATCH_ID/lib/jobflow-${_FLOW_ID}.jar"
+import "$_TG_ROOT/libexec/configure-classpath.sh"
+
 export BULKLOADER_HOME="$ASAKUSA_HOME/bulkloader"
 
 LOGFILE_BASENAME="importer"
 CLASS_NAME="com.asakusafw.bulkloader.importer.Importer"
 
-. "$ASAKUSA_HOME"/bulkloader/bin/set-classpath-db.sh "$_BATCH_ID" "$_FLOW_ID"
+export HADOOP_CLASSPATH="$_TG_CLASSPATH"
+export HADOOP_USER_CLASSPATH_FIRST=true
+HADOOP_OPTS="$HADOOP_OPTS $IMPORTER_JAVA_OPTS"
+HADOOP_OPTS="$HADOOP_OPTS -Dasakusa.home=$ASAKUSA_HOME"
+HADOOP_OPTS="$HADOOP_OPTS -Dlogfile.basename=$LOGFILE_BASENAME"
+export HADOOP_OPTS
 
-cd "$ASAKUSA_HOME"
+cd
 
-$JAVA_HOME/bin/java \
-    $IMPORTER_JAVA_OPTS \
-    -Dasakusa.home="$ASAKUSA_HOME" \
-    -Dlogfile.basename="$LOGFILE_BASENAME" \
-    -classpath "$BULK_LOADER_CLASSPATH" \
+"$HADOOP_CMD" \
     "$CLASS_NAME" \
     "$_IMPORTER_CLASS" \
     "$_TARGET_NAME" \

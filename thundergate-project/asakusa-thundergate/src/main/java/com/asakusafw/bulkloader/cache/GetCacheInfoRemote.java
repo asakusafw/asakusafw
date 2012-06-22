@@ -27,7 +27,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
-import com.asakusafw.bulkloader.common.ConfigurationLoader;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -177,12 +176,7 @@ public class GetCacheInfoRemote extends Configured implements Tool {
 
     private CacheInfo getCacheInfo(String location) throws BulkLoaderSystemException {
         assert location != null;
-        URI cacheBaseUri;
-        if (Boolean.valueOf(ConfigurationLoader.getProperty(Constants.PROP_KEY_WORKINGDIR_USE))) {
-            cacheBaseUri = FileNameUtil.createDfsImportURIWithWorkingDir(location, executionId);
-        } else {
-            cacheBaseUri = FileNameUtil.createDfsImportURI(location, executionId, userName);
-        }
+        URI cacheBaseUri = FileNameUtil.createPath(getConf(), location, executionId, userName).toUri();
         try {
             CacheStorage storage = new CacheStorage(getConf(), cacheBaseUri);
             try {

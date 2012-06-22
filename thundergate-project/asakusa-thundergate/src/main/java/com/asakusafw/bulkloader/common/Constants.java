@@ -94,8 +94,21 @@ public final class Constants {
     public static final String PROP_KEY_LOG_CONF_PATH = "log.conf-path";
     /**
      * プロパティKEY HDFSのプロトコルとホスト名。
+     * @deprecated use {@link #PROP_KEY_BASE_PATH} instead
      */
+    @Deprecated
     public static final String PROP_KEY_HDFS_PROTCOL_HOST = "hdfs-protocol-host";
+
+    /**
+     * The property key prefix of remote Hadoop client's environment variables.
+     * @since 0.4.0
+     */
+    public static final String PROP_PREFIX_HC_ENV = "hadoop-cluster.env.";
+
+    /**
+     * プロパティKEY HDFSのプロトコルとホスト名。
+     */
+    public static final String PROP_KEY_BASE_PATH = "base-path";
 
     /*
      * bulkloader-conf-db.properties
@@ -118,15 +131,21 @@ public final class Constants {
     public static final String PROP_KEY_IMP_FILE_DIR = "import.tsv-create-dir";
     /**
      * プロパティKEY Extractorのシェル名。
+     * @deprecated use {@link #PROP_PREFIX_HC_ENV} and {@link #ASAKUSA_HOME} instead
      */
+    @Deprecated
     public static final String PROP_KEY_EXT_SHELL_NAME = "import.extractor-shell-name";
     /**
      * The property key of Cache info retriever executable file name.
+     * @deprecated use {@link #PROP_PREFIX_HC_ENV} and {@link #ASAKUSA_HOME} instead
      */
+    @Deprecated
     public static final String PROP_KEY_CACHE_INFO_SHELL_NAME = "import.cache-info-shell-name";
     /**
      * The property key of Cache storage cleaner file name.
+     * @deprecated use {@link #PROP_PREFIX_HC_ENV} and {@link #ASAKUSA_HOME} instead
      */
+    @Deprecated
     public static final String PROP_KEY_DELETE_CACHE_SHELL_NAME = "import.delete-cache-shell-name";
     /**
      * プロパティKEY Importファイルの圧縮有無。
@@ -150,7 +169,9 @@ public final class Constants {
     public static final String PROP_KEY_EXP_FILE_DIR = "export.tsv-create-dir";
     /**
      * プロパティKEY Collectorのシェル名。
+     * @deprecated use {@link #PROP_PREFIX_HC_ENV} and {@link #ASAKUSA_HOME} instead
      */
+    @Deprecated
     public static final String PROP_KEY_COL_SHELL_NAME = "export.collector-shell-name";
     /**
      * プロパティKEY Exportファイルの圧縮時のバッファサイズ。
@@ -233,6 +254,7 @@ public final class Constants {
      * The property key of Cache Builder executable file name.
      * @since 0.2.3
      */
+    @Deprecated
     public static final String PROP_KEY_CACHE_BUILDER_SHELL_NAME = "import.cache-build-shell-name";
     /**
      * The property key of maximim number of parallel Cache Builder.
@@ -250,7 +272,9 @@ public final class Constants {
     /**
      * プロパティKEY Extractor,Collectorのファイル入出力位置をワーキングディレクトリベースとするか。
      * trueにすると、スタンドアロンモードでも動作可能となる。開発環境ではtrueにする。
+     * @deprecated use {@link #PROP_KEY_BASE_PATH} instead
      */
+    @Deprecated
     public static final String PROP_KEY_WORKINGDIR_USE = "hadoop-cluster.workingdir.use";
 
     /*
@@ -263,7 +287,7 @@ public final class Constants {
     /**
      * プロパティデフォルト値 Importファイルの圧縮有無。
      */
-    public static final String PROP_DEFAULT_IMP_FILE_COMP_TYPE = FileCompType.STORED.getCompType();
+    public static final String PROP_DEFAULT_IMP_FILE_COMP_TYPE = FileCompType.STORED.getSymbol();
     /**
      * プロパティデフォルト値 Importファイルの圧縮時のバッファサイズ。
      */
@@ -279,7 +303,7 @@ public final class Constants {
     /**
      * プロパティデフォルト値 Exportファイルの圧縮有無。
      */
-    public static final String PROP_DEFAULT_EXP_FILE_COMP_TYPE = FileCompType.STORED.getCompType();
+    public static final String PROP_DEFAULT_EXP_FILE_COMP_TYPE = FileCompType.STORED.getSymbol();
     /**
      * プロパティデフォルト値 Exportファイルの圧縮時のバッファサイズ。
      */
@@ -307,11 +331,11 @@ public final class Constants {
     /**
      * プロパティデフォルト値 インポート処理が正常終了した場合に、Exporterで生成したインポート中間TSVファイルを削除するか。
      */
-    public static final String PROP_DEFAULT_IMPORT_TSV_DELETE = TsvDeleteType.TRUE.getDeleteType();
+    public static final String PROP_DEFAULT_IMPORT_TSV_DELETE = TsvDeleteType.TRUE.getSymbol();
     /**
      * プロパティデフォルト値 エクスポート処理が正常終了した場合に、Exporterで生成したエクスポート中間TSVファイルを削除するか。
      */
-    public static final String PROP_DEFAULT_EXPORT_TSV_DELETE = TsvDeleteType.TRUE.getDeleteType();
+    public static final String PROP_DEFAULT_EXPORT_TSV_DELETE = TsvDeleteType.TRUE.getSymbol();
     /**
      * プロパティデフォルト値 出力ファイルの圧縮有無。
      */
@@ -325,6 +349,37 @@ public final class Constants {
     /*
      * パス・ファイル名の固定値
      */
+
+    /**
+     * Relative path to the remote extractor script (from framework installation home).
+     * @since 0.4.0
+     */
+    public static final String PATH_REMOTE_EXTRACTOR = "bulkloader/libexec/extractor.sh";
+
+    /**
+     * Relative path to the remote collector script (from framework installation home).
+     * @since 0.4.0
+     */
+    public static final String PATH_REMOTE_COLLECTOR = "bulkloader/libexec/collector.sh";
+
+    /**
+     * Relative path to the fetching remote cache info script (from framework installation home).
+     * @since 0.4.0
+     */
+    public static final String PATH_REMOTE_CACHE_INFO = "bulkloader/libexec/get-cache-info.sh";
+
+    /**
+     * Relative path to the deleting remote cache contents script (from framework installation home).
+     * @since 0.4.0
+     */
+    public static final String PATH_REMOTE_CACHE_DELETE = "bulkloader/libexec/delete-cache-storage.sh";
+
+    /**
+     * Relative path to the building cache contents script (from framework installation home).
+     * @since 0.4.0
+     */
+    public static final String PATH_LOCAL_CACHE_BUILD = "bulkloader/libexec/hadoop-build-cache.sh";
+
     /**
      * DBMSの接続情報を記述したプロパティファイルの接尾辞。
      */
@@ -379,7 +434,9 @@ public final class Constants {
     public static final String DSL_PROP_EXTENSION = ".jar";
     /**
      * HDFSのパス固定値。
+     * @deprecated use {@link #PROP_KEY_BASE_PATH} instead
      */
+    @Deprecated
     public static final String HDFSFIXED_PATH = "/user";
     /**
      * HDFSのパスの変数名(ユーザー名)。

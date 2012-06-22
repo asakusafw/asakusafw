@@ -15,6 +15,7 @@
  */
 package com.asakusafw.bulkloader.common;
 
+import java.io.File;
 import java.util.List;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
@@ -137,6 +138,15 @@ public final class BulkLoaderInitializer {
         String logConfFilePath = null;
         try {
             logConfFilePath = ConfigurationLoader.getProperty(Constants.PROP_KEY_LOG_CONF_PATH);
+            if (new File(logConfFilePath).exists() == false) {
+                String home = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME);
+                if (home != null) {
+                    File file = new File(new File(home), logConfFilePath);
+                    if (file.exists()) {
+                        logConfFilePath = file.getPath();
+                    }
+                }
+            }
             LogInitializer.execute(logConfFilePath);
             return true;
         } catch (Exception e) {

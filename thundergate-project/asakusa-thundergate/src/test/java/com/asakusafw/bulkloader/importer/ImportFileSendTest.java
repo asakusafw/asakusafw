@@ -123,7 +123,7 @@ public class ImportFileSendTest {
 
         // 圧縮をなしに設定
         Properties p = ConfigurationLoader.getProperty();
-        p.setProperty(Constants.PROP_KEY_IMP_FILE_COMP_TYPE, FileCompType.STORED.getCompType());
+        p.setProperty(Constants.PROP_KEY_IMP_FILE_COMP_TYPE, FileCompType.STORED.getSymbol());
         ConfigurationLoader.setProperty(p);
 
         // テスト対象クラス実行

@@ -38,7 +38,8 @@ public enum ImportTableLockedOperation {
     /**
      * ロックを取得できなかった時の動作-エラーとする。
      */
-    ERROR("3");
+    ERROR("3")
+    ;
 
     /**
      * ロックを取得できなかった時の動作。
