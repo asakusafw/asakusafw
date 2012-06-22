@@ -2,24 +2,35 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<name>Batch Application Template (change it.)</name>
-	<groupId>${groupId}</groupId>
-	<artifactId>${artifactId}</artifactId>
-	<version>${version}</version>
+	<groupId>\${groupId}</groupId>
+	<artifactId>\${artifactId}</artifactId>
+	<version>\${version}</version>
 
 	<properties>
-		<asakusafw.version>0.4-SNAPSHOT</asakusafw.version>
+		<asakusafw.version>${project.version}</asakusafw.version>
 
-		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
-		<commons.io.version>2.3</commons.io.version>
-		<commons.lang.version>2.6</commons.lang.version>
-		<commons.logging.version>1.0.4</commons.logging.version>
-		<logback.version>1.0.3</logback.version>
-		<slf4j.version>1.6.4</slf4j.version>
-		<junit.version>4.10</junit.version>
-		<hamcrest.version>1.1</hamcrest.version>
+		<hadoop.version>${hadoop.version}</hadoop.version>
+		<commons.io.version>${commons.io.version}</commons.io.version>
+		<commons.lang.version>${commons.lang.version}</commons.lang.version>
+		<commons.logging.version>${commons.logging.version}</commons.logging.version>
+		<logback.version>${logback.version}</logback.version>
+		<slf4j.version>${slf4j.version}</slf4j.version>
+		<junit.version>${junit.version}</junit.version>
+		<hamcrest.version>${hamcrest.version}</hamcrest.version>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<asakusa.build.antfile>${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
+		<project.build.sourceEncoding>${project.build.sourceEncoding}</project.build.sourceEncoding>
+		<asakusa.build.antfile>\${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
+
+		<plugin.resources.version>${plugin.resources.version}</plugin.resources.version>
+		<plugin.compiler.version>${plugin.compiler.version}</plugin.compiler.version>
+		<plugin.surefire.version>${plugin.surefire.version}</plugin.surefire.version>
+		<plugin.source.version>${plugin.source.version}</plugin.source.version>
+		<plugin.eclipse.version>${plugin.eclipse.version}</plugin.eclipse.version>
+		<plugin.m2e.version>${plugin.m2e.version}</plugin.m2e.version>
+		<plugin.build-helper.version>${plugin.build-helper.version}</plugin.build-helper.version>
+		<plugin.antrun.version>${plugin.antrun.version}</plugin.antrun.version>
+		<plugin.properties.version>${plugin.properties.version}</plugin.properties.version>
+		<plugin.assembly.version>${plugin.assembly.version}</plugin.assembly.version>
 	</properties>
 
 	<profiles>
@@ -101,18 +112,18 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
+				<version>\${plugin.resources.version}</version>
 				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
+					<encoding>\${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>\${plugin.compiler.version}</version>
 				<configuration>
 					<fork>true</fork>
-					<encoding>${project.build.sourceEncoding}</encoding>
+					<encoding>\${project.build.sourceEncoding}</encoding>
 					<source>1.6</source>
 					<target>1.6</target>
 					<compilerArgument>-Xmaxerrs" "10000" "-XprintRounds</compilerArgument>
@@ -121,7 +132,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
+				<version>\${plugin.surefire.version}</version>
 				<configuration>
 					<argLine>-ea</argLine>
 					<includes>
@@ -133,7 +144,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
+				<version>\${plugin.source.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -146,7 +157,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
+				<version>\${plugin.eclipse.version}</version>
 				<configuration>
 					<useProjectReferences>false</useProjectReferences>
 					<downloadSources>true</downloadSources>
@@ -187,10 +198,10 @@
 							<name>.settings/org.eclipse.jdt.core.prefs</name>
 							<content>
 <![CDATA[
-encoding//src/main/java=${project.build.sourceEncoding}
-encoding//src/main/resources=${project.build.sourceEncoding}
-encoding//src/test/java=${project.build.sourceEncoding}
-encoding//src/test/resources=${project.build.sourceEncoding}
+encoding//src/main/java=\${project.build.sourceEncoding}
+encoding//src/main/resources=\${project.build.sourceEncoding}
+encoding//src/test/java=\${project.build.sourceEncoding}
+encoding//src/test/resources=\${project.build.sourceEncoding}
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
 org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.processAnnotations=enabled
@@ -211,33 +222,23 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						</file>
 						<file>
 							<name>.factorypath</name>
-							<content>
-<![CDATA[
-<factorypath>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-runtime/${asakusafw.version}/asakusa-runtime-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-dsl-vocabulary/${asakusafw.version}/asakusa-dsl-vocabulary-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/ashigel-compiler/${asakusafw.version}/ashigel-compiler-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/java-dom/${asakusafw.version}/java-dom-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/javadoc-parser/${asakusafw.version}/javadoc-parser-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/jsr269-bridge/${asakusafw.version}/jsr269-bridge-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/collections/${asakusafw.version}/collections-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/simple-graph/${asakusafw.version}/simple-graph-${asakusafw.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/commons-io/commons-io/${commons.io.version}/commons-io-${commons.io.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/commons-lang/commons-lang/${commons.lang.version}/commons-lang-${commons.lang.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-classic/${logback.version}/logback-classic-${logback.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-core/${logback.version}/logback-core-${logback.version}.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/slf4j-api/${slf4j.version}/slf4j-api-${slf4j.version}.jar" enabled="true" runInBatchMode="false"/>
-</factorypath>
-]]>
-							</content>
+							<location>eclipse/factorypath.xml</location>
 						</file>
 					</additionalConfig>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.asakusafw</groupId>
+						<artifactId>asakusa-archetype-directio</artifactId>
+						<version>\${asakusafw.version}</version>
+						<classifier>eclipse</classifier>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
+				<version>\${plugin.build-helper.version}</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -257,7 +258,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
+				<version>\${plugin.antrun.version}</version>
 				<executions>
 					<execution>
 						<id>modelgen</id>
@@ -265,7 +266,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
-								<ant antfile="${asakusa.build.antfile}">
+								<ant antfile="\${asakusa.build.antfile}">
 									<target name="generate-model" />
 								</ant>
 							</target>
@@ -280,7 +281,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						<configuration>
 							<target>
 								<property name="compile_classpath" refid="maven.test.classpath" />
-								<ant antfile="${asakusa.build.antfile}">
+								<ant antfile="\${asakusa.build.antfile}">
 									<target name="compile-batchapp" />
 								</ant>
 							</target>
@@ -297,16 +298,16 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 								<tstamp>
 									<format property="now.time" pattern="yyyyMMddHHmmss" />
 								</tstamp>
-								<move file="${env.ASAKUSA_HOME}" todir="${env.ASAKUSA_HOME}_${now.time}"
+								<move file="\${env.ASAKUSA_HOME}" todir="\${env.ASAKUSA_HOME}_\${now.time}"
 									failonerror="false" />
-								<mkdir dir="${env.ASAKUSA_HOME}" />
-								<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
-									<fileset dir="${project.build.directory}">
-										<include name="asakusafw-${asakusafw.version}-dev.tar.gz" />
+								<mkdir dir="\${env.ASAKUSA_HOME}" />
+								<untar dest="\${env.ASAKUSA_HOME}" compression="gzip">
+									<fileset dir="\${project.build.directory}">
+										<include name="asakusafw-\${asakusafw.version}-dev.tar.gz" />
 									</fileset>
 								</untar>
 								<chmod perm="755">
-									<fileset dir="${env.ASAKUSA_HOME}">
+									<fileset dir="\${env.ASAKUSA_HOME}">
 										<include name="**/*.sh" />
 									</fileset>
 								</chmod>
@@ -318,7 +319,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0-alpha-2</version>
+				<version>\${plugin.properties.version}</version>
 				<executions>
 					<execution>
 						<phase>initialize</phase>
@@ -336,12 +337,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
+				<version>\${plugin.assembly.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>com.asakusafw</groupId>
 						<artifactId>asakusa-distribution</artifactId>
-						<version>${asakusafw.version}</version>
+						<version>\${asakusafw.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -355,7 +356,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 								<descriptorRef>dev</descriptorRef>
 								<descriptorRef>prod-directio</descriptorRef>
 							</descriptorRefs>
-							<finalName>asakusafw-${asakusafw.version}</finalName>
+							<finalName>asakusafw-\${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -368,7 +369,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
+					<version>\${plugin.m2e.version}</version>
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
@@ -376,7 +377,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
 										<artifactId>properties-maven-plugin</artifactId>
-										<versionRange>1.0-alpha-2</versionRange>
+										<versionRange>\${plugin.properties.version}</versionRange>
 										<goals>
 											<goal>read-project-properties</goal>
 										</goals>
@@ -389,7 +390,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-antrun-plugin</artifactId>
-										<versionRange>1.7</versionRange>
+										<versionRange>\${plugin.antrun.version}</versionRange>
 										<goals>
 											<goal>run</goal>
 										</goals>
@@ -410,106 +411,112 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
-			<version>${hadoop.version}</version>
+			<version>\${hadoop.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-dsl-vocabulary</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-runtime</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>ashigel-compiler</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-dsl-analysis-plugin</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-test-driver</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>ashigel-compiler-bootstrap</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-dmdl</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-plugin</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-test-moderator</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-test-data-generator</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-yaess-plugin</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-distribution</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>\${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+			<version>\${logback.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>\${slf4j.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>${commons.logging.version}</version>
+			<version>\${commons.logging.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
-			<version>${hamcrest.version}</version>
+			<version>\${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
-			<version>${junit.version}</version>
+			<version>\${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

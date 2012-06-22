@@ -1,0 +1,15 @@
+<factorypath>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-runtime/${project.version}/asakusa-runtime-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/asakusa-dsl-vocabulary/${project.version}/asakusa-dsl-vocabulary-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/ashigel-compiler/${project.version}/ashigel-compiler-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/java-dom/${project.version}/java-dom-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/javadoc-parser/${project.version}/javadoc-parser-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/jsr269-bridge/${project.version}/jsr269-bridge-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/collections/${project.version}/collections-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/asakusafw/simple-graph/${project.version}/simple-graph-${project.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/commons-io/commons-io/${commons.io.version}/commons-io-${commons.io.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/commons-lang/commons-lang/${commons.lang.version}/commons-lang-${commons.lang.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-classic/${logback.version}/logback-classic-${logback.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-core/${logback.version}/logback-core-${logback.version}.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/slf4j-api/${slf4j.version}/slf4j-api-${slf4j.version}.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>
