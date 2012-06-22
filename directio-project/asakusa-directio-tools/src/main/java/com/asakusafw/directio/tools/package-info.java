@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 /**
- * テストドライバ用のクラス群。
- * <p>
- * アプリケーションテスト開発者は本パッケージで提供するクラス郡を使用してテストメソッドを記述する。
- * </p>
+ * Command Line Tools for Direct I/O.
  */
-package com.asakusafw.testdriver;
+package com.asakusafw.directio.tools;

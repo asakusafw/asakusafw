@@ -26,7 +26,7 @@ public interface ModelVerifier<T> {
      * Returns the key of the target data model.
      * <p>
      * This method must return objects which have
-     * both {@link #equals(Object)} and {@link #hashCode()}.
+     * both {@link Object#equals(Object)} and {@link Object#hashCode()}.
      * </p>
      * <p>
      * example:

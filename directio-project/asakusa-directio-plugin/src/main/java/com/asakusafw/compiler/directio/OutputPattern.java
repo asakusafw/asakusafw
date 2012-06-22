@@ -650,7 +650,7 @@ public final class OutputPattern {
 
         /**
          * Source is a property.
-         * @see DataClass.Property
+         * @see com.asakusafw.compiler.flow.DataClass.Property
          */
         PROPERTY,
 

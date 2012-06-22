@@ -21,7 +21,7 @@ import org.apache.hadoop.io.WritableComparable;
 
 /**
  * {@link WritableComparable} which is comparable in is bytes.
- * Clients must override {@link #hashCode()} and {@link #equals(Object)}.
+ * Clients must override {@link Object#hashCode()} and {@link Object#equals(Object)}.
  * @since 0.2.5
  */
 public interface WritableRawComparable extends WritableComparable<WritableRawComparable> {

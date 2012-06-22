@@ -70,6 +70,7 @@
 					<doctitle>Asakusa Framework API References (Version ${project.version})</doctitle>
 					<windowtitle>Asakusa Framework API References (Version ${project.version})</windowtitle>
 					<excludePackageNames>com.asakusafw.modelgen:com.asakusafw.testtools</excludePackageNames>
+                    <overview>asakusa-parent/src/main/javadoc/overview-summary.html</overview>
 				</configuration>
 				<executions>
 					<execution>

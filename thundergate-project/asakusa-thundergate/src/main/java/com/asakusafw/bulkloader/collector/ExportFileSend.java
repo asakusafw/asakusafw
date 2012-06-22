@@ -150,7 +150,8 @@ public class ExportFileSend {
         }
     }
     /**
-     * 指定された一時ファイルを読み込んでTSV形式で{@link FileList.Writer}に書き出す。
+     * 指定された一時ファイルを読み込んでTSV形式で
+     * {@link com.asakusafw.bulkloader.transfer.FileList.Writer}に書き出す。
      * @param <T> データモデルの型
      * @param targetTableModel Exportデータに対応するModelのクラス型
      * @param filePath Exportファイル
