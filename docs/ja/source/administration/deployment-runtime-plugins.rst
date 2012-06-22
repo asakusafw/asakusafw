@@ -38,7 +38,7 @@
 レポートAPIは実行時プラグインの仕組みを利用して実装されており、レポートAPIの実装を自由に差し替えることが可能です。
 レポートAPIは ``Report.Delegate`` [#]_ インターフェースを実装したクラスを利用して自由に実装を変更できます。
 
-レポートAPIの実装クラスは、実行時プラグインの設定に対し、 ``com.asakusafw.runtime.core.Report.Delegate`` という設定名で設定値に実装クラスの完全限定名を指定します。
+レポートAPIの実装クラスは、実行時プラグインの設定に対し、 :javadoc:`com.asakusafw.runtime.core.Report.Delegate` という設定名で設定値に実装クラスの完全限定名を指定します。
 
 Asakusa Frameworkは以下の実装クラスを組み込みで提供しています。
 
@@ -51,12 +51,12 @@ Asakusa Frameworkは以下の実装クラスを組み込みで提供していま
       - 概要
     * - ``com.asakusafw.runtime.core.Report$Default``
       - 標準出力にレポートを出力する実装。
-    * - ``com.asakusafw.runtime.report.CommonsLoggingReport``
+    * - :javadoc:`com.asakusafw.runtime.report.CommonsLoggingReport`
       - Commons Loggingを経由してレポートを出力する実装。
         Hadoop上で実行する場合、Hadoopのログの設定を変更することで出力先等を設定可能。
 
 レポートAPIの利用方法については :doc:`../dsl/user-guide` を参照してください。
 
-..  [#] ``com.asakusafw.runtime.core.Report.Delegate``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Report.Delegate`
 
 

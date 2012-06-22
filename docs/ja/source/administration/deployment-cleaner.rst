@@ -3,6 +3,8 @@
 ============================
 この文書では、 クリーニングツールのデプロイ手順について説明します。
 
+..  todo:: Needs to modify for moving legacy project and removed defalut assembly descriptor.
+
 クリーニングツールについて
 ==========================
 Asakusa Frameworkでは、ローカルファイル、及び分散ファイルシステム上のファイルをクリーニングするためのツール(Asakusa Cleaner)を提供しています。
@@ -28,7 +30,7 @@ Asakusa Frameworkでは、ローカルファイル、及び分散ファイルシ
 
 asakusafw-${asakusafw.version}-prod-cleaner.tar.gz
 
-${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion 0.2.4 を使っている場合は、 asakusafw-0.2.4-prod-cleaner.tar.gz になります。
+${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion |version| を使っている場合は、 asakusafw-|version|-prod-cleaner.tar.gz になります。
 
 クリーニングツールのデプロイ
 ----------------------------

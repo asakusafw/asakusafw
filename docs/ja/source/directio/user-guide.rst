@@ -176,7 +176,7 @@ Hadoopのファイルシステムを利用したデータソース
 ----------------------------------------------
 データソースの実装として、HadoopのファイルシステムAPI ( ``FileSystem`` [#]_ ) を利用したものを提供しています。
 
-本データソースを利用する場合、実装クラス名 ( ``com.asakusafw.directio.<DSID>`` ) には ``com.asakusafw.runtime.directio.hadoop.HadoopDataSource`` を指定します。
+本データソースを利用する場合、実装クラス名 ( ``com.asakusafw.directio.<DSID>`` ) には :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopDataSource` を指定します。
 また、利用するファイルシステムについては、Hadoopの本体側であらかじめ設定を行っておく必要があります。
 
 Direct I/Oの設定ファイルには、対象のデータソースに対してさらに以下の設定が必要です。
@@ -511,9 +511,9 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
     * - ``asakusa-directio-dmdl``
       - DMDLコンパイラプラグイン
 
-..  [#] ``com.asakusafw.runtime.directio.DataFormat``
-..  [#] ``com.asakusafw.runtime.directio.BinaryStreamFormat``
-..  [#] ``com.asakusafw.runtime.directio.hadoop.HadoopFileFormat``
+..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFormat`
+..  [#] :javadoc:`com.asakusafw.runtime.directio.BinaryStreamFormat`
+..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopFileFormat`
 ..  [#] :doc:`../dmdl/user-guide` を参照
 
 CSV形式のDataFormatの作成
@@ -775,7 +775,7 @@ Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 `
     この機能は、 `Apache Sqoop`_ 等のツールと連携することを想定して提供されています。
 
 ..  [#] ``org.apache.hadoop.io.SequenceFile``
-..  [#] ``com.asakusafw.runtime.directio.hadoop.SequenceFileFormat``
+..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.SequenceFileFormat`
 
 ..  _`Apache Sqoop` : http://sqoop.apache.org/
 
@@ -905,7 +905,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.directio.DirectFileInputDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.directio.DirectFileInputDescription`
 
 入力ファイルのベースパス
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1055,7 +1055,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
     ただし、ファイルに対するレコードがひとつも存在しない場合にはファイル自体が作成されず、古いファイルが残ってしまう場合があります。
     出力先にワイルドカードやランダムな値を利用する場合には、 ``getDeletePatterns()`` を利用してファイルを削除しておいたほうが良い場合があります。
 
-..  [#] ``com.asakusafw.vocabulary.directio.DirectFileOutputDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.directio.DirectFileOutputDescription`
 
 出力ファイルのベースパス
 ~~~~~~~~~~~~~~~~~~~~~~~~

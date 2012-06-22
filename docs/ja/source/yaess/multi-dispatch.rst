@@ -44,7 +44,7 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher``
+      - :javadoc:`com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher`
     * - ``hadoop.conf.directory``
       - 振り分け設定ファイルを配置するディレクトリ
     * - ``hadoop.conf.setup``
@@ -90,7 +90,7 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - ``com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher``
+      - :javadoc:`com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher`
     * - ``command.<プロファイル名>.conf.directory``
       - 振り分け設定ファイルを配置するディレクトリ
     * - ``command.<プロファイル名>.conf.setup``

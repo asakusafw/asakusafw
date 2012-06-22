@@ -121,7 +121,7 @@ YAESSの標準的な仕組みを利用すると、SSHを経由してリモート
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.jsch.SshHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshHadoopScriptHandler`
     * - ``hadoop.ssh.user``
       - ログイン先のユーザー名
     * - ``hadoop.ssh.host``
@@ -178,7 +178,7 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
     * - 名前
       - 値
     * - ``command.*``
-      - ``com.asakusafw.yaess.jsch.SshCommandScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshCommandScriptHandler`
     * - ``command.*.ssh.user``
       - ログイン先のユーザー名
     * - ``command.*.ssh.host``

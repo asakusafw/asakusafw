@@ -3,6 +3,8 @@
 ==============================
 この文書では、Asakusa Framework のバージョンアップに伴う、開発環境に対してのバージョン固有の移行手順について解説します。
 
+..  todo:: Need to add procedure to rebuild (batch compile).
+
 各バージョンで共通のマイグレーション手順
 ========================================
 各バージョンで共通の、開発環境のAsakusa Frameworkをバージョンする手順を示します。
@@ -13,7 +15,7 @@ pom.xmlの10行目にある「<asakusafw.version>」の値を更新したいバ�
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.2.6</asakusafw.version>
+    <asakusafw.version>0.4.0</asakusafw.version>
 
 Asakusa Frameworkの再セットアップ
 ---------------------------------

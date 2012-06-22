@@ -3,6 +3,8 @@
 ====================================
 この文書では、外部システムとの連携にThunderGateを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
 
+..  todo:: Need to modify for changing archive and so on.
+
 HadoopクラスターとDBサーバの準備
 ================================
 Asakusa Framework本体とバッチアプリケーションをデプロイするためのHadoopクラスターを用意します。また、Asakusa ThunderGate（以下「ThunderGate」）がデータの入出力を行う対象とするDBサーバを用意します。このDBサーバを本ドキュメントでは「データベースノード」とよびます。
@@ -50,7 +52,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
   asakusafw-${asakusafw-version}-prod-cleaner.tar.gz
     Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
 
-${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion 0.2.4 を使っている場合は、 asakusafw-0.2.4-prod-thundergate-hc.tar.gz などとなります。 
+${asakusafw.version}は使用しているAsakusa Frameworkのバージョンに置き換えます。例えばversion |version| を使っている場合は、 asakusafw-|version|-prod-thundergate-hc.tar.gz などとなります。 
 
 バッチアプリケーションのデプロイに必要なファイル
 ------------------------------------------------

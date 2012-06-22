@@ -3,6 +3,8 @@
 ============================================
 本書では、Asakusa FrameworkのデプロイメントアーカイブをAsakusa Frameworkのソースから生成する方法について説明します。
 
+..  todo:: Need to modify for changing repository structure and assembly descriptor.
+
 Asakusa Framework本体のデプロイメント用アーカイブはバッチアプリケーション用プロジェクトからMavenのassemblyプラグインを実行する (mvn assembly:single) ことによって生成しますが、Asakusa Framework本体のソースから生成することによって、手元で改変を加えたAsakusa Frameworkからデプロイメントアーカイブを生成したり、スナップショットビルドに対して個別のコミットからデプロイメントアーカイブを生成することが出来ます。
 
 Asakusa Frameworkのソースアーカイブを取得
@@ -11,11 +13,11 @@ Asakusa FrameworkのGitHubリポジトリ [#]_ から、Asakusa Frameworkのソ�
 
 ..  [#] https://github.com/asakusafw/asakusafw
 
-以下はwgetを使ってAsakusa Framework ver0.2.4を取得する例です。
+以下はwgetを使ってAsakusa Framework ver 0.4.0 を取得する例です。
 
 ..  code-block:: sh
 
-    wget https://github.com/asakusafw/asakusafw/zipball/0.2.4
+    wget https://github.com/asakusafw/asakusafw/zipball/0.4.0
 
 Asakusa Frameworkのビルド
 -------------------------

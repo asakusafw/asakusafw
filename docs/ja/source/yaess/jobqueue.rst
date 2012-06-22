@@ -80,7 +80,7 @@ JobQueueサーバー・コンポーネントのインストール
 ----------------------------------------------
 JobQueueサーバーに必要なコンポーネントをダウンロードします。
 
-* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.2.6.tar.gz
+* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.4.0.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてJobQueueサーバーのコンポーネントを ``$ASAKUSA_HOME`` にインストールします
 (標準の ``~/Downloads`` にダウンロードした場合の例です)。
@@ -88,9 +88,9 @@ JobQueueサーバーに必要なコンポーネントをダウンロードしま
 ..  code-block:: sh
     
     cd ~/Downloads
-    cp asakusa-jobqueue-server-0.2.6.tar.gz "$ASAKUSA_HOME"
+    cp asakusa-jobqueue-server-*.tar.gz "$ASAKUSA_HOME"
     cd "$ASAKUSA_HOME"
-    tar zxvf asakusa-jobqueue-server-0.2.6.tar.gz
+    tar zxvf asakusa-jobqueue-server-*.tar.gz
     find "$ASAKUSA_HOME" -name "*.sh" | xargs chmod u+x
 
 JobQueueサーバーの設定
@@ -235,9 +235,11 @@ JobQueueクライアントプラグインの利用方法
 このプラグインを利用するには、 ``asakusa-yaess-jobqueue`` というプラグインライブラリをYAESSに登録します。
 これは以下のURLからダウンロードできます。
 
-* http://asakusafw.s3.amazonaws.com/maven/releases/com/asakusafw/asakusa-yaess-jobqueue/0.2.6/asakusa-yaess-jobqueue-0.2.6.jar
+* http://asakusafw.s3.amazonaws.com/maven/releases/com/asakusafw/asakusa-yaess-jobqueue/0.4.0/asakusa-yaess-jobqueue-0.4.0.jar
 
 また、依存ライブラリとして以下のライブラリも必要です。
+
+..  todo:: Need to Modify for changing assembly
 
 * `HttpComponents Core <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.4`` で動作確認 )
 * `HttpComponents Client <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.3`` で動作確認 )
@@ -258,7 +260,7 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler`
     * - ``hadoop.1.url``
       - JobQueueサーバーのURL
     * - ``hadoop.1.user``

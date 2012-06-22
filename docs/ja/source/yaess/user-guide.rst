@@ -47,7 +47,7 @@ YAESS本体の設定は、構成ファイル内の ``core`` セクション内�
     * - 名前
       - 値
     * - ``core``
-      - ``com.asakusafw.yaess.basic.BasicCoreProfile``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicCoreProfile`
     * - ``core.version``
       - ``0.1``
 
@@ -71,7 +71,7 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.basic.BasicHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicHadoopScriptHandler`
     * - ``hadoop.env.HADOOP_HOME``
       - Hadoopのインストール先 [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
@@ -96,7 +96,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.jsch.SshHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshHadoopScriptHandler`
     * - ``hadoop.ssh.user``
       - ログイン先のユーザー名
     * - ``hadoop.ssh.host``
@@ -312,7 +312,7 @@ YAESSを起動したコンピューターと同一のコンピューターでコ
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - ``com.asakusafw.yaess.basic.BasicCommandScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicCommandScriptHandler`
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
@@ -330,7 +330,7 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - ``com.asakusafw.yaess.jsch.SshCommandScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshCommandScriptHandler`
     * - ``command.<プロファイル名>.ssh.user``
       - ログイン先のユーザー名
     * - ``command.<プロファイル名>.ssh.host``
@@ -438,7 +438,7 @@ YAESSはバッチを実行する際、各フェーズ内のジョブの実行順
     * - 名前
       - 値
     * - ``scheduler``
-      - ``com.asakusafw.yaess.basic.BasicJobScheduler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicJobScheduler`
 
 
 ジョブを並列実行する際のスケジューリング
@@ -452,7 +452,7 @@ YAESSはバッチを実行する際、各フェーズ内のジョブの実行順
     * - 名前
       - 値
     * - ``scheduler``
-      - ``com.asakusafw.yaess.paralleljob.ParallelJobScheduler``
+      - :javadoc:`com.asakusafw.yaess.paralleljob.ParallelJobScheduler`
     * - ``scheduler.parallel.default``
       - 同時に実行可能なジョブの個数
 
@@ -505,7 +505,7 @@ YAESSを実行中のコンピューターで、ほかのYAESSの実行を抑制�
     * - 名前
       - 値
     * - ``lock``
-      - ``com.asakusafw.yaess.basic.BasicLockProvider``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicLockProvider`
     * - ``lock.directory``
       - ロックファイルの保存先パス
 
@@ -562,7 +562,7 @@ YAESSには、実行中のバッチの進捗状況を監視したり、または
     * - 名前
       - 値
     * - ``monitor``
-      - ``com.asakusafw.yaess.basic.BasicMonitorProvider``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicMonitorProvider`
     * - ``monitor.stepUnit``
       - ログを出力する進捗の単位 (0.0 ~ 1.0)
 
@@ -591,7 +591,7 @@ YAESS本体のログ設定は `YAESSのログ設定`_ を参照してくださ�
       - 値
     * - ``monitor``
       - (なし)
-      - ``com.asakusafw.yaess.flowlog.FlowLoggerProvider``
+      - :javadoc:`com.asakusafw.yaess.flowlog.FlowLoggerProvider`
     * - ``monitor.directory``
       - (なし)
       - ファイルの出力先ディレクトリ
@@ -916,8 +916,8 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 上記のうち実行IDを除いては、 `実行計画の確認`_ のものと同様です。
 
 
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
 フェーズ単位の実行
 ------------------

@@ -116,7 +116,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 ``com.asakusafw.directio.root``
     データソースのJavaでの実装クラス名です。
     
-    Hadoopのファイルシステムを利用するには ``com.asakusafw.runtime.directio.hadoop.HadoopDataSource`` と指定します。
+    Hadoopのファイルシステムを利用するには :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopDataSource` と指定します。
 
 ``com.asakusafw.directio.root.path``
     このデータソースを配置する「論理パス」を表します。

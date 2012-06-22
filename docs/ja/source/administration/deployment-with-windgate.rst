@@ -175,7 +175,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``asakusafw-${asakusafw.version}-prod-windgate.tar.gz``
 
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
-例えばversion 0.2.4 を使っている場合、ファイル名は ``asakusafw-0.2.4-prod-windgate.tar.gz`` になります。
+例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-windgate.tar.gz になります。
 
 ..  [#] このアーカイブにはAsakusa Frameworkのコアライブラリ、WindGate、YAESS、各種Hadoopブリッジが含まれています。
 

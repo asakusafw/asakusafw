@@ -99,7 +99,7 @@ WindGateのセッションはジョブフローの先頭でインポートを行
     * - 名前
       - 値
     * - ``session``
-      - ``com.asakusafw.windgate.file.session.FileSessionProvider``
+      - :javadoc:`com.asakusafw.windgate.file.session.FileSessionProvider`
     * - ``session.directory``
       - セッション情報を保持させるディレクトリ
 
@@ -146,7 +146,7 @@ WindGateは二つのリソースの間でデータを転送するツールです
     * - 名前
       - 値
     * - ``process.basic``
-      - ``com.asakusafw.windgate.core.process.BasicProcessProvider``
+      - :javadoc:`com.asakusafw.windgate.core.process.BasicProcessProvider`
 
 この項目には、特に追加の設定はありません。
 
@@ -169,7 +169,7 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
     * - 名前
       - 値
     * - ``resource.hadoop``
-      - ``com.asakusafw.windgate.hadoopfs.HadoopFsProvider``
+      - :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider`
     * - ``resource.hadoop.compression``
       - 転送時に利用する圧縮コーデッククラス名 (省略可)
 
@@ -200,7 +200,7 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
     * - 名前
       - 値
     * - ``resource.hadoop``
-      - ``com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider``
+      - :javadoc:`com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider`
     * - ``resource.hadoop.target``
       - リモートコンピューター上の `Hadoopブリッジ`_ のインストール先
     * - ``resource.hadoop.ssh.user``
@@ -270,7 +270,7 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
     * - 名前
       - 値
     * - ``resource.local``
-      - ``com.asakusafw.windgate.stream.file.FileResourceProvider``
+      - :javadoc:`com.asakusafw.windgate.stream.file.FileResourceProvider`
     * - ``resource.local.basePath``
       - ベースパス
 
@@ -315,7 +315,7 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
     * - 名前
       - 値
     * - ``resource.jdbc``
-      - ``com.asakusafw.windgate.jdbc.JdbcResourceProvider``
+      - :javadoc:`com.asakusafw.windgate.jdbc.JdbcResourceProvider`
     * - ``resource.jdbc.driver``
       - JDBCドライバのクラス名
     * - ``resource.jdbc.url``
@@ -469,7 +469,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
       - DMDLコンパイラプラグイン
 
 
-..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport``
+..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport`
 
 
 CSV形式のDataModelStreamSupportの作成
@@ -673,7 +673,7 @@ WindGateと連携してファイルからデータをインポートする場合
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.FsImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsImporterDescription`
 
 ローカルファイルシステムを利用するエクスポーター記述
 ----------------------------------------------------
@@ -731,7 +731,7 @@ WindGateと連携してジョブフローの処理結果をローカルのファ
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.FsExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsExporterDescription`
 
 
 データベースの入出力
@@ -758,7 +758,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
     * - ``asakusa-windgate-dmdl``
       - DMDLコンパイラプラグイン
 
-..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport``
+..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
 
 DataModelJdbcSupportの自動生成
 ------------------------------
@@ -866,7 +866,7 @@ WindGateと連携してデータベースのテーブルからデータをイン
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.JdbcImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcImporterDescription`
 
 データベースを利用するエクスポーター記述
 ----------------------------------------
@@ -930,7 +930,7 @@ WindGateと連携してジョブフローの処理結果をデータベースの
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.JdbcExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcExporterDescription`
 
 WindGateと連携したテスト
 ========================

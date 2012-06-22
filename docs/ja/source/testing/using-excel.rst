@@ -16,7 +16,7 @@ DMDLでデータモデルを定義する方法は、 :doc:`../dmdl/index` を参
 コマンドラインインターフェース
 ------------------------------
 テストデータテンプレートを生成するには、 ``asakusa-test-data-generator`` の
-``com.asakusafw.testdata.generator.excel.Main`` を実行します。
+:javadoc:`com.asakusafw.testdata.generator.excel.Main` を実行します。
 指定できるオプションは次の通りです。
 
 ``-format``

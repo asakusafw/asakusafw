@@ -68,8 +68,8 @@
 
 なお、結果型を引数に指定する演算子については :doc:`../dsl/operators` を参照してください。
 
-..  [#] ``com.asakusafw.runtime.core.Result``
-..  [#] ``com.asakusafw.runtime.testing.MockResult``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
+..  [#] :javadoc:`com.asakusafw.runtime.testing.MockResult`
 
 
 演算子テストの補助
@@ -87,7 +87,7 @@
     @Rule
     public OperatorTestEnvironment resource = new OperatorTestEnvironment();
 
-..  [#] ``com.asakusafw.testdriver.OperatorTestEnvironment``
+..  [#] :javadoc:`com.asakusafw.testdriver.OperatorTestEnvironment`
 ..  [#] ``org.junit.Rule``
 
 コンテキストAPIを利用する演算子のテスト
@@ -306,10 +306,10 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
     FlowDescription flowPart = new StockJob(shipmentIn, stockIn, shipmentOut, stockOut);
     tester.runTest(flowPart);
 
-..  [#] ``com.asakusafw.testdriver.FlowPartTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.FlowPartTester`
 ..  [#] ここの名前は他の名前と重複せず、アルファベットや数字のみで構成して下さい
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
 
 ジョブフローのテスト
 ~~~~~~~~~~~~~~~~~~~~
@@ -337,7 +337,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 * 入出力を ``In`` や ``Out`` に保持しない
 * ``runTest`` メソッドにはジョブフロークラス( ``.class`` )を指定する
 
-..  [#] ``com.asakusafw.testdriver.JobFlowTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.JobFlowTester`
 
 バッチのテスト
 ~~~~~~~~~~~~~~
@@ -364,7 +364,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 * 入出力を指定する前に、それらを定義したジョブフローのID [#]_ を指定する
 * ``runTest`` メソッドにはバッチクラス( ``.class`` )を指定する
 
-..  [#] ``com.asakusafw.testdriver.BatchTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.BatchTester`
 ..  [#] 注釈 ``@JobFlow`` の ``name`` に指定した文字列を利用して下さい
 
 
@@ -490,7 +490,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
         ...
     }
 
-..  [#] ``com.asakusafw.testdriver.core.ModelVerifier``
+..  [#] :javadoc:`com.asakusafw.testdriver.core.ModelVerifier`
 
 テスト条件をJavaで拡張する
 --------------------------
@@ -546,7 +546,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 テスト条件の拡張は、主にExcelなどで表現しきれない比較を行いたい場合に利用できます。
 比較方法をすべてJavaで記述する場合には「 `テスト条件をJavaで記述する`_ 」の方法を参照してください。
 
-..  [#] ``com.asakusafw.testdriver.core.ModelTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.core.ModelTester`
 
 ..  [#] 第三引数を指定できるのは、テスト条件をパスで指定した場合のみです。
         ``ModelVerifier`` を利用する場合には指定できません。
