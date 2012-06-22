@@ -376,10 +376,6 @@ YAESSの設定についての詳細は、 :doc:`../yaess/user-guide` などを�
     リモートマシン上のWindGateやHadoopを利用する場合、 ``...env.ASAKUSA_HOME`` の値には
     リモートマシンで `Asakusa Frameworkのデプロイ`_ を行ったパスを指定してください。
 
-..  note::
-    WindGateを利用する場合、 ``command.<プロファイル名>.env.HADOOP_HOME`` など、Hadoopのインストール先に関する設定が必要です。
-    または、 `WindGateの設定`_ 時に必要な環境変数を設定してください。
-
 
 Hadoopブリッジの設定
 --------------------

@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +39,17 @@ import com.jcraft.jsch.Session;
 /**
  * A remote command execution via SSH.
  * @since 0.2.2
+ * @version 0.4.0
  */
 class JschConnection implements SshConnection {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(JschConnection.class);
 
     static final Logger LOG = LoggerFactory.getLogger(JschConnection.class);
+
+    private static final Pattern SH_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*");
+
+    private static final Pattern SH_METACHARACTERS = Pattern.compile("[\\$`\"\\\\\n]");
 
     private final Session session;
 
@@ -54,19 +62,19 @@ class JschConnection implements SshConnection {
     /**
      * Creates a new instance.
      * @param profile target profile
-     * @param command command to execute
+     * @param commandLineTokens the command line tokens
      * @throws IOException if failed to create a new connection
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public JschConnection(SshProfile profile, String command) throws IOException {
+    public JschConnection(SshProfile profile, List<String> commandLineTokens) throws IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
-        if (command == null) {
-            throw new IllegalArgumentException("command must not be null"); //$NON-NLS-1$
+        if (commandLineTokens == null) {
+            throw new IllegalArgumentException("commandLineTokens must not be null"); //$NON-NLS-1$
         }
         this.profile = profile;
-        this.command = command;
+        this.command = buildCommand(commandLineTokens, profile.getEnvironmentVariables());
         try {
             JSch jsch = new JSch();
             jsch.addIdentity(profile.getPrivateKey(), profile.getPassPhrase());
@@ -112,6 +120,47 @@ class JschConnection implements SshConnection {
                     String.valueOf(profile.getPort()),
                     command), e);
         }
+    }
+
+    private String buildCommand(List<String> commandLineTokens, Map<String, String> environmentVariables) {
+        assert commandLineTokens != null;
+        assert environmentVariables != null;
+
+        Map<String, String> env = environmentVariables;
+
+        // FIXME for bsh only
+        StringBuilder buf = new StringBuilder();
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            if (SH_NAME.matcher(entry.getKey()).matches() == false) {
+                WGLOG.warn("W30001",
+                        profile.getResourceName(),
+                        profile.getUser(),
+                        profile.getHost(),
+                        String.valueOf(profile.getPort()),
+                        entry.getKey(),
+                        entry.getValue());
+                continue;
+            }
+            if (buf.length() > 0) {
+                buf.append(' ');
+            }
+            buf.append(entry.getKey());
+            String replaced = SH_METACHARACTERS.matcher(entry.getValue()).replaceAll("\\\\$0");
+            buf.append('=');
+            buf.append('"');
+            buf.append(replaced);
+            buf.append('"');
+        }
+        for (String token : commandLineTokens) {
+            if (buf.length() > 0) {
+                buf.append(' ');
+            }
+            String replaced = SH_METACHARACTERS.matcher(token).replaceAll("\\\\$0");
+            buf.append('"');
+            buf.append(replaced);
+            buf.append('"');
+        }
+        return buf.toString();
     }
 
     @Override

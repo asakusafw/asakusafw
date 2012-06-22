@@ -16,7 +16,9 @@
 package com.asakusafw.windgate.hadoopfs.ssh;
 
 import java.text.MessageFormat;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
@@ -25,17 +27,25 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
+import com.asakusafw.windgate.core.util.PropertiesUtil;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 
 /**
  * A structured profile for {@link AbstractSshHadoopFsMirror}.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public class SshProfile {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(SshProfile.class);
 
     static final Logger LOG = LoggerFactory.getLogger(SshProfile.class);
+
+    /**
+     * The remote base target.
+     * @since 0.4.0
+     */
+    public static final String PATH_BASE_TARGET = "windgate-ssh";
 
     /**
      * The remote 'get' command path.
@@ -88,6 +98,12 @@ public class SshProfile {
      */
     public static final String KEY_COMPRESSION = "compression";
 
+    /**
+     * The key prefix of additional remote environment variables.
+     * @since 0.4.0
+     */
+    public static final String PREFIX_ENV = "env.";
+
     private final String resourceName;
 
     private final String target;
@@ -104,6 +120,8 @@ public class SshProfile {
 
     private final CompressionCodec compressionCodec;
 
+    private final Map<String, String> environmentVariables;
+
     /**
      * Creates a new instance.
      * @param name the resource name
@@ -114,6 +132,7 @@ public class SshProfile {
      * @param privateKey the path to the private key file
      * @param passPhrase the passphrase of target private key
      * @param compressionCodec the compression codec, or {@code null} if does not compress
+     * @param env environment variables
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public SshProfile(
@@ -124,7 +143,8 @@ public class SshProfile {
             int port,
             String privateKey,
             String passPhrase,
-            CompressionCodec compressionCodec) {
+            CompressionCodec compressionCodec,
+            Map<String, String> env) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -143,6 +163,9 @@ public class SshProfile {
         if (passPhrase == null) {
             throw new IllegalArgumentException("passPhrase must not be null"); //$NON-NLS-1$
         }
+        if (env == null) {
+            throw new IllegalArgumentException("env must not be null"); //$NON-NLS-1$
+        }
         this.resourceName = name;
         this.target = target;
         this.user = user;
@@ -151,6 +174,7 @@ public class SshProfile {
         this.privateKey = privateKey;
         this.passPhrase = passPhrase;
         this.compressionCodec = compressionCodec;
+        this.environmentVariables = Collections.unmodifiableMap(env);
     }
 
     /**
@@ -168,13 +192,66 @@ public class SshProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String name = profile.getName();
-        String target = extract(profile, KEY_TARGET);
+        String target = profile.getConfiguration().get(KEY_TARGET);
         String user = extract(profile, KEY_USER);
         String host = extract(profile, KEY_HOST);
-        int port;
+        int port = extractPort(profile);
+        String privateKey = extractPrivateKey(profile);
+        String passPhrase = extractPassPhrase(profile);
+        CompressionCodec compressionCodec = extractCompressionCodec(configuration, profile);
+        Map<String, String> env = extractEnv(profile);
+        if (target == null) {
+            String home = env.get("ASAKUSA_HOME");
+            if (home == null || home.isEmpty()) {
+                WGLOG.error("E10001",
+                        profile.getName(),
+                        PREFIX_ENV + "ASAKUSA_HOME",
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        PREFIX_ENV + "ASAKUSA_HOME"));
+            }
+            if (home.endsWith("/") == false) {
+                home = home + "/";
+            }
+            target = home + PATH_BASE_TARGET;
+        }
+
+        return new SshProfile(
+                name,
+                target,
+                user,
+                host,
+                port,
+                privateKey,
+                passPhrase,
+                compressionCodec,
+                env);
+    }
+
+    private static String extract(ResourceProfile profile, String configKey) {
+        assert profile != null;
+        assert configKey != null;
+        String value = profile.getConfiguration().get(configKey);
+        if (value == null) {
+            WGLOG.error("E10001",
+                    profile.getName(),
+                    configKey,
+                    null);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Resource \"{0}\" must declare \"{1}\"",
+                    profile.getName(),
+                    configKey));
+        }
+        return value.trim();
+    }
+
+    private static int extractPort(ResourceProfile profile) {
+        assert profile != null;
         String portString = extract(profile, KEY_PORT);
         try {
-            port = Integer.parseInt(portString);
+            return Integer.parseInt(portString);
         } catch (NumberFormatException e) {
             WGLOG.error("E10001",
                     profile.getName(),
@@ -186,22 +263,60 @@ public class SshProfile {
                     KEY_PORT,
                     portString));
         }
-        String privateKey = extract(profile, KEY_PRIVATE_KEY);
+    }
+
+    private static String extractPrivateKey(ResourceProfile profile) {
+        assert profile != null;
+        String raw = extract(profile, KEY_PRIVATE_KEY);
         try {
-            privateKey = profile.getContext().getContextParameters().replace(privateKey, true);
+            return profile.getContext().getContextParameters().replace(raw, true);
         } catch (IllegalArgumentException e) {
             WGLOG.error(e, "E10001",
                     profile.getName(),
                     KEY_PRIVATE_KEY,
-                    privateKey);
+                    raw);
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to resolve the private key \"{1}\": {2} (resource={0})",
                     profile.getName(),
                     KEY_PRIVATE_KEY,
-                    privateKey), e);
+                    raw), e);
         }
+    }
+
+    private static Map<String, String> extractEnv(ResourceProfile profile) {
+        assert profile != null;
+        Map<String, String> map = PropertiesUtil.createPrefixMap(profile.getConfiguration(), PREFIX_ENV);
+        Map<String, String> results = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            try {
+                String resolved =  profile.getContext().getContextParameters().replace(entry.getValue(), true);
+                results.put(entry.getKey(), resolved);
+            } catch (IllegalArgumentException e) {
+                WGLOG.error(e, "E10001",
+                        profile.getName(),
+                        PREFIX_ENV + entry.getKey(),
+                        entry.getValue());
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Failed to resolve the environment variable \"{1}\": {2} (resource={0})",
+                        profile.getName(),
+                        PREFIX_ENV + entry.getKey(),
+                        entry.getValue()), e);
+            }
+        }
+        LOG.debug("Remote Env ({}): {}", profile.getName(), results);
+        return results;
+    }
+
+    private static String extractPassPhrase(ResourceProfile profile) {
+        assert profile != null;
         String passPhrase = profile.getConfiguration().get(KEY_PASS_PHRASE);
         passPhrase = passPhrase == null ? "" : passPhrase;
+        return passPhrase;
+    }
+
+    private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
+        assert configuration != null;
+        assert profile != null;
         String compressionCodecString = profile.getConfiguration().get(KEY_COMPRESSION);
         CompressionCodec compressionCodec;
         try {
@@ -226,32 +341,7 @@ public class SshProfile {
                 profile.getName(),
                 KEY_COMPRESSION,
                 compressionCodec == null ? null : compressionCodecString);
-        return new SshProfile(
-                name,
-                target,
-                user,
-                host,
-                port,
-                privateKey,
-                passPhrase,
-                compressionCodec);
-    }
-
-    private static String extract(ResourceProfile profile, String configKey) {
-        assert profile != null;
-        assert configKey != null;
-        String value = profile.getConfiguration().get(configKey);
-        if (value == null) {
-            WGLOG.error("E10001",
-                    profile.getName(),
-                    configKey,
-                    null);
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Resource \"{0}\" must declare \"{1}\"",
-                    profile.getName(),
-                    configKey));
-        }
-        return value.trim();
+        return compressionCodec;
     }
 
     /**
@@ -351,5 +441,14 @@ public class SshProfile {
      */
     public CompressionCodec getCompressionCodec() {
         return compressionCodec;
+    }
+
+    /**
+     * Returns the additional remote environment variables.
+     * @return the remote environment variables
+     * @since 0.4.0
+     */
+    public Map<String, String> getEnvironmentVariables() {
+        return environmentVariables;
     }
 }

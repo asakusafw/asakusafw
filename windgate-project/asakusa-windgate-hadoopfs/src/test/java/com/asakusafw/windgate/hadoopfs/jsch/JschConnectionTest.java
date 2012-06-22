@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -53,6 +54,8 @@ public class JschConnectionTest {
 
     private SshProfile profile;
 
+    private File target;
+
     /**
      * Initializes the test.
      * @throws Exception if some errors were occurred
@@ -71,10 +74,10 @@ public class JschConnectionTest {
         } finally {
             in.close();
         }
-        File target = folder.newFolder("dummy-install");
-        putShell(target, SshProfile.COMMAND_GET);
-        putShell(target, SshProfile.COMMAND_PUT);
-        putShell(target, SshProfile.COMMAND_DELETE);
+        target = folder.newFolder("dummy-install");
+        putScript(target, SshProfile.COMMAND_GET);
+        putScript(target, SshProfile.COMMAND_PUT);
+        putScript(target, SshProfile.COMMAND_DELETE);
 
         p.setProperty("resource.fs.target", target.getAbsolutePath());
 
@@ -86,13 +89,18 @@ public class JschConnectionTest {
         this.profile = SshProfile.convert(new Configuration(), rp);
     }
 
-    private void putShell(File directory, String file) throws IOException {
-        InputStream in = getClass().getResourceAsStream(file);
-        assertThat(file, in, is(notNullValue()));
+    private void putScript(File directory, String sourcePath) throws IOException {
+        String targetPath = sourcePath;
+        putScript(directory, sourcePath, targetPath);
+    }
+
+    private void putScript(File directory, String sourcePath, String targetPath) throws IOException {
+        InputStream in = getClass().getResourceAsStream(sourcePath);
+        assertThat(sourcePath, in, is(notNullValue()));
         try {
-            File target = new File(directory, file);
-            target.getParentFile().mkdirs();
-            FileOutputStream output = new FileOutputStream(target);
+            File targetFile = new File(directory, targetPath);
+            targetFile.getParentFile().mkdirs();
+            FileOutputStream output = new FileOutputStream(targetFile);
             byte[] buf = new byte[256];
             while (true) {
                 int read = in.read(buf);
@@ -102,7 +110,7 @@ public class JschConnectionTest {
                 output.write(buf, 0, read);
             }
             output.close();
-            assertThat(target.getName(), target.setExecutable(true), is(true));
+            assertThat(targetFile.getName(), targetFile.setExecutable(true), is(true));
         } finally {
             in.close();
         }
@@ -116,7 +124,9 @@ public class JschConnectionTest {
     public void get() throws Exception {
         File file = folder.newFile("testing");
         put(file, "Hello, world!");
-        JschConnection conn = new JschConnection(profile, profile.getGetCommand() + " " + file.getAbsolutePath());
+        JschConnection conn = new JschConnection(
+                profile,
+                Arrays.asList(profile.getGetCommand(), file.getAbsolutePath()));
         try {
             InputStream output = conn.openStandardOutput();
             conn.connect();
@@ -137,7 +147,9 @@ public class JschConnectionTest {
     public void put() throws Exception {
         File file = folder.newFile("testing");
         file.delete();
-        JschConnection conn = new JschConnection(profile, profile.getPutCommand() + " " + file.getAbsolutePath());
+        JschConnection conn = new JschConnection(
+                profile,
+                Arrays.asList(profile.getPutCommand(), file.getAbsolutePath()));
         try {
             conn.redirectStandardOutput(System.out, true);
             OutputStream out = conn.openStandardInput();
@@ -160,7 +172,9 @@ public class JschConnectionTest {
     @Test
     public void delete() throws Exception {
         File file = folder.newFile("testing");
-        JschConnection conn = new JschConnection(profile, profile.getDeleteCommand() + " " + file.getAbsolutePath());
+        JschConnection conn = new JschConnection(
+                profile,
+                Arrays.asList(profile.getDeleteCommand(), file.getAbsolutePath()));
         try {
             conn.redirectStandardOutput(System.out, true);
             OutputStream out = conn.openStandardInput();
@@ -173,6 +187,28 @@ public class JschConnectionTest {
             conn.close();
         }
         assertThat(file.toString(), file.exists(), is(false));
+    }
+
+    /**
+     * Test for passing environment variables.
+     * @throws Exception if failed
+     */
+    @Test
+    public void env() throws Exception {
+        putScript(target, "bin/check-env.sh", SshProfile.COMMAND_GET);
+        JschConnection conn = new JschConnection(
+                profile,
+                Arrays.asList(profile.getGetCommand()));
+        try {
+            InputStream output = conn.openStandardOutput();
+            conn.connect();
+            String result = get(output);
+            assertThat(result, is("1"));
+            int exit = conn.waitForExit(10000);
+            assertThat(exit, is(0));
+        } finally {
+            conn.close();
+        }
     }
 
     private void put(File file, String content) throws IOException {

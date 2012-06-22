@@ -16,6 +16,7 @@
 package com.asakusafw.windgate.hadoopfs.jsch;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 /**
  * An implementation of {@link ResourceMirror} using Hadoop File System via JSch connection.
  * @since 0.2.2
+ * @since 0.4.0
  * @see FileProcess
  */
 public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {
@@ -49,7 +51,7 @@ public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {
     }
 
     @Override
-    protected SshConnection openConnection(SshProfile profile, String command) throws IOException {
+    protected SshConnection openConnection(SshProfile profile, List<String> command) throws IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
