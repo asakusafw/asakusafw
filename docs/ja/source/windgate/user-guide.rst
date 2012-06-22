@@ -170,14 +170,24 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
       - 値
     * - ``resource.hadoop``
       - :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider`
+    * - ``resource.hadoop.basePath``
+      - 転送先のベースパス (省略可)
     * - ``resource.hadoop.compression``
       - 転送時に利用する圧縮コーデッククラス名 (省略可)
+
+``resource.hadoop.basePath`` は転送先のベースパスで、省略時はHadoopのデフォルト設定を利用します。
+URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシステム上のパスを指定できます。
+また、``${変数名}`` という形式で環境変数を含められます。
 
 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+
+..  note::
+    通常の利用方法では、 ``resource.hadoop.basePath`` を設定する必要はありません。
+    既定値以外のファイルシステムを利用する場合などに利用することを想定しています。
 
 ..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
 

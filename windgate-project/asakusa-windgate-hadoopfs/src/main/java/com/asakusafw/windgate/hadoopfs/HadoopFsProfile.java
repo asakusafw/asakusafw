@@ -15,9 +15,13 @@
  */
 package com.asakusafw.windgate.hadoopfs;
 
+import java.io.IOException;
+import java.net.URI;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
@@ -30,6 +34,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 /**
  * A structured profile for {@link HadoopFsMirror}.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public class HadoopFsProfile {
 
@@ -38,22 +43,40 @@ public class HadoopFsProfile {
     static final Logger LOG = LoggerFactory.getLogger(HadoopFsProfile.class);
 
     /**
+     * The key of {@link #getBasePath() base path}.
+     */
+    public static final String KEY_BASE_PATH = "basePath";
+
+    /**
      * The key of {@link CompressionCodec} class name.
      */
     public static final String KEY_COMPRESSION = "compression";
 
     private final String resourceName;
 
+    private final Path basePath;
+
     private final CompressionCodec compressionCodec;
 
     /**
      * Creates a new instance.
      * @param resourceName the resource name
+     * @param basePath the base path
      * @param compressionCodec the compression codec, or {@code null} if does not compress
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public HadoopFsProfile(String resourceName, CompressionCodec compressionCodec) {
+    public HadoopFsProfile(
+            String resourceName,
+            Path basePath,
+            CompressionCodec compressionCodec) {
+        if (resourceName == null) {
+            throw new IllegalArgumentException("resourceName must not be null"); //$NON-NLS-1$
+        }
+        if (basePath == null) {
+            throw new IllegalArgumentException("basePath must not be null"); //$NON-NLS-1$
+        }
         this.resourceName = resourceName;
+        this.basePath = basePath;
         this.compressionCodec = compressionCodec;
     }
 
@@ -62,9 +85,10 @@ public class HadoopFsProfile {
      * @param configuration the current configuration
      * @param profile target profile
      * @return the converted profile
+     * @throws IOException if failed to initialize file system
      * @throws IllegalArgumentException if profile is not valid, or any parameter is {@code null}
      */
-    public static HadoopFsProfile convert(Configuration configuration, ResourceProfile profile) {
+    public static HadoopFsProfile convert(Configuration configuration, ResourceProfile profile) throws IOException {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
@@ -72,31 +96,78 @@ public class HadoopFsProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String name = profile.getName();
-        String compressionCodecString = profile.getConfiguration().get(KEY_COMPRESSION);
+        Path basePath = extractBasePath(configuration, profile);
+        CompressionCodec compressionCodec = extractCompressionCodec(configuration, profile);
+        return new HadoopFsProfile(name, basePath, compressionCodec);
+    }
+
+    private static Path extractBasePath(Configuration configuration, ResourceProfile profile) throws IOException {
+        assert configuration != null;
+        assert profile != null;
+        String raw = profile.getConfiguration().get(KEY_BASE_PATH);
+        try {
+            if (raw == null || raw.isEmpty()) {
+                FileSystem fileSystem = FileSystem.get(configuration);
+                return fileSystem.getWorkingDirectory();
+            }
+            URI uri;
+            try {
+                String resolved = profile.getContext().getContextParameters().replace(raw, true);
+                uri = URI.create(resolved);
+            } catch (IllegalArgumentException e) {
+                WGLOG.error(e, "E00001",
+                        profile.getName(),
+                        KEY_BASE_PATH,
+                        raw);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Failed to resolve the base path \"{1}\": {2} (resource={0})",
+                        profile.getName(),
+                        KEY_BASE_PATH,
+                        raw), e);
+            }
+            FileSystem fileSystem = FileSystem.get(uri, configuration);
+            return fileSystem.makeQualified(new Path(uri));
+        } catch (IOException e) {
+            WGLOG.error(e, "E00002",
+                    profile.getName(),
+                    KEY_BASE_PATH,
+                    raw == null ? "(default)" : raw);
+            throw new IOException(MessageFormat.format(
+                    "Failed to initialize the file system: {1} (resource={0})",
+                    profile.getName(),
+                    KEY_BASE_PATH,
+                    raw == null ? "(default)" : raw), e);
+        }
+    }
+
+    private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
+        assert configuration != null;
+        assert profile != null;
+        String raw = profile.getConfiguration().get(KEY_COMPRESSION);
         CompressionCodec compressionCodec;
         try {
-            if (compressionCodecString == null) {
+            if (raw == null) {
                 compressionCodec = null;
             } else {
-                Class<?> codecClass = configuration.getClassByName(compressionCodecString);
+                Class<?> codecClass = configuration.getClassByName(raw);
                 compressionCodec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, configuration);
             }
         } catch (Exception e) {
             WGLOG.error(e, "E00001",
                     profile.getName(),
                     KEY_COMPRESSION,
-                    compressionCodecString);
+                    raw);
             throw new IllegalArgumentException(MessageFormat.format(
                     "The \"{1}\" must be a valid CompressionCodec class name: {2} (resource={0})",
                     profile.getName(),
                     KEY_COMPRESSION,
-                    compressionCodecString), e);
+                    raw), e);
         }
         WGLOG.info("I00001",
                 profile.getName(),
                 KEY_COMPRESSION,
-                compressionCodec == null ? null : compressionCodecString);
-        return new HadoopFsProfile(name, compressionCodec);
+                compressionCodec == null ? null : raw);
+        return compressionCodec;
     }
 
     /**
@@ -105,6 +176,15 @@ public class HadoopFsProfile {
      */
     public String getResourceName() {
         return resourceName;
+    }
+
+    /**
+     * Returns the target base path.
+     * @return the target base path
+     * @since 0.4.0
+     */
+    public Path getBasePath() {
+        return basePath;
     }
 
     /**

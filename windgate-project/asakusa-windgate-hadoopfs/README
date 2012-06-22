@@ -2,6 +2,7 @@
 ## Hadoop File System
 resource.<name>=com.asakusafw.windgate.hadoopfs.HadoopFsProvider
 #resource.<name>.compression=org.apache.hadoop.io.compress.DefaultCodec
+#resource.<name>.basePath=hdfs://${OTHERHOST}:8020/user/asakusa
 
 ## Hadoop File System via SSH
 resource.<name>=com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider
