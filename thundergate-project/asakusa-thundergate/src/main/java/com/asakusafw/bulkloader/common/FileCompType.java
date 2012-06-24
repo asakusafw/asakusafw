@@ -37,7 +37,7 @@ public enum FileCompType {
     /**
      * ファイル圧縮有無-圧縮しない。
      */
-    STORED( "NONE", "0","STORE")
+    STORED("NONE", "0", "STORE"),
     ;
 
     private String symbol;

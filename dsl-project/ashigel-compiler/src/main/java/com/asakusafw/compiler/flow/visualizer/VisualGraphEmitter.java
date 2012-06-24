@@ -200,16 +200,21 @@ public final class VisualGraphEmitter {
             Iterator<Relation> iter = engine.relations.iterator();
             while (iter.hasNext()) {
                 Relation relation = iter.next();
+                boolean removed = false;
                 if (engine.resolve(relation.source) == false) {
                     if (partial == false) {
                         resolveFailed(relation.source);
                     }
                     iter.remove();
-                } if (engine.resolve(relation.sink) == false) {
+                    removed = true;
+                }
+                if (engine.resolve(relation.sink) == false) {
                     if (partial == false) {
                         resolveFailed(relation.sink);
                     }
-                    iter.remove();
+                    if (removed == false) {
+                        iter.remove();
+                    }
                 }
             }
             return engine.relations;

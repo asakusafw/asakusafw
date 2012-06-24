@@ -61,7 +61,7 @@ public class JobflowExecutor {
     /**
      * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
      */
-    public static final String SUBMIT_JOB_SCRIPT = "testing/bin/hadoop-execute.sh";
+    public static final String SUBMIT_JOB_SCRIPT = "testing/libexec/hadoop-execute.sh";
 
     private final TestDriverContext context;
 

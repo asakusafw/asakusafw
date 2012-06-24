@@ -46,7 +46,7 @@ public final class TestingUtils {
             try {
                 PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"));
                 w.println(message);
-                w.flush();
+                w.close();
             } finally {
                 output.close();
             }

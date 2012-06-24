@@ -154,7 +154,6 @@ Hadoopコマンドを実行する際には、次の手順でHadoopコマンド�
 ..  note::
     ``hadoop.env.<環境変数名>=${<環境変数名>}`` のように書くと、現在の環境変数を対象の環境にそのまま受け渡せます。
 
-
 Hadoopを利用する際のプロパティの設定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Hadoopを利用する際に特別なプロパティ [#]_ が必要な場合、以下の設定を追加します。
@@ -179,7 +178,7 @@ Hadoopブリッジの設定
 このディレクトリ下にはYAESSがHadoopにジョブを投入する際に利用する「Hadoopブリッジ」というツールが格納されています。
 HadoopブリッジはAsakusa Frameworkに含まれていますが、リモートの環境上には手動でインストールする必要があります。
 
-YAESSからHadoopを起動する際には、Hadoopが提供するコマンドを直接実行するのではなく、代わりに ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` というシェルスクリプトを実行します。
+YAESSからHadoopを起動する際には、Hadoopが提供するコマンドを直接実行するのではなく、代わりに ``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` というシェルスクリプトを実行します。
 この中では最終的にHadoopのコマンドを実行するのですが、その手前でAsakusa Frameworkのための設定をいくつか行っています。
 
 このシェルスクリプトの中では、 ``$ASAKUSA_HOME/yaess-hadoop/conf/env.sh`` というシェルスクリプトを内部的に実行しています。
@@ -210,7 +209,7 @@ YAESSの構成ファイル側で設定しきれない環境変数等がある場
 
 Hadoopジョブ実行への介入
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Hadoopのジョブを起動する際に、YAESSはHadoopがインストールされた環境の ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` というシェルスクリプトを実行しています。
+Hadoopのジョブを起動する際に、YAESSはHadoopがインストールされた環境の ``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` というシェルスクリプトを実行しています。
 このシェルスクリプトを実行する際に、以下の引数を指定しています。
 
 ..  list-table:: Hadoopジョブ実行時の引数一覧
@@ -236,7 +235,7 @@ Hadoopのジョブを起動する際に、YAESSはHadoopがインストールさ
 
 ..  code-block:: sh
 
-    $ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh Client bid fid eid
+    $ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh Client bid fid eid
 
 となります。
 
@@ -259,12 +258,12 @@ YAESSでは、このコマンドラインを構成するルールに対して、
 
 ..  code-block:: sh
 
-    C:\Cygwin\bin\bash.exe -r $ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh Client bid fid eid
+    C:\Cygwin\bin\bash.exe -r $ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh Client bid fid eid
 
 となります。
 
 また、それぞれの値には、 ``${変数名}`` の形式で環境変数を、 ``@[位置]`` の形式で元のコマンドラインの指定位置(0起算)のトークンを利用できます。
-このとき、 ``@[0]`` は ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` をさし、 ``@[1]`` はジョブクライアントクラス名をさし、といった具合になります。
+このとき、 ``@[0]`` は ``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` をさし、 ``@[1]`` はジョブクライアントクラス名をさし、といった具合になります。
 
 ..  attention::
     Asakusa Framework ``0.4.0`` よりクリーンアップ時の挙動が変更され、クリーンアップ時にも ``hadoop-execute.sh`` コマンドを利用するようになりました。
@@ -853,7 +852,7 @@ JSONオブジェクトのトップレベルはバッチ全体を表していて�
 
     asakusa@asakusa:~$ $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex
     Starting YAESS
-       Profile: /home/asakusa/asakusa/yaess/bin/../conf/yaess.properties
+       Profile: /home/asakusa/asakusa/yaess/conf/yaess.properties
         Script: /home/asakusa/asakusa/batchapps/ex/etc/yaess-script.properties
       Batch ID: ex
     ...

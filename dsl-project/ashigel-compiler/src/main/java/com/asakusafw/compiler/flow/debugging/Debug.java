@@ -24,10 +24,9 @@ import java.lang.annotation.Target;
  * Debug operator.
  * @since 0.4.0
  */
-@Target({})
+@Target({ })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Debug {
-
     // no elements
 }
