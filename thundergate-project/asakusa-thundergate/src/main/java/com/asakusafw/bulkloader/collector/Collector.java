@@ -23,6 +23,7 @@ import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 
 /**
@@ -52,6 +53,8 @@ public class Collector {
      */
     public static void main(String[] args) {
         SystemOutManager.changeSystemOutToSystemErr();
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(Collector.class.getClassLoader());
         Collector collector = new Collector();
         int result = collector.execute(args);
         System.exit(result);
@@ -100,14 +103,16 @@ public class Collector {
             // ExportファイルをDBサーバに送信
             LOG.info("TG-COLLECTOR-01008", targetName, batchId, jobflowId, executionId, user);
             ExportFileSend fileSend = createExportFileSend();
-            if (!fileSend.sendExportFile(bean, user)) {
-                // Exportファイルの送信に失敗
-                LOG.error("TG-COLLECTOR-01007",
-                        new Date(), targetName, batchId, jobflowId, executionId, user);
-                return Constants.EXIT_CODE_ERROR;
-            } else {
-                LOG.info("TG-COLLECTOR-01009",
-                        targetName, batchId, jobflowId, executionId, user);
+            if (RuntimeContext.get().canExecute(fileSend)) {
+                if (!fileSend.sendExportFile(bean, user)) {
+                    // Exportファイルの送信に失敗
+                    LOG.error("TG-COLLECTOR-01007",
+                            new Date(), targetName, batchId, jobflowId, executionId, user);
+                    return Constants.EXIT_CODE_ERROR;
+                } else {
+                    LOG.info("TG-COLLECTOR-01009",
+                            targetName, batchId, jobflowId, executionId, user);
+                }
             }
 
             // 正常終了

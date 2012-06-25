@@ -28,12 +28,14 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
 /**
  * Stage client for cleanup phase.
  * @since 0.2.6
+ * @version 0.4.0
  */
 public abstract class AbstractCleanupStageClient extends BaseStageClient {
 
@@ -56,7 +58,7 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
     protected abstract String getCleanupPath();
 
     @Override
-    public int run(String[] args) throws Exception {
+    protected int execute(String[] args) throws IOException, InterruptedException {
         Configuration conf = getConf();
         Path path = getPath(conf);
         FileSystem fileSystem = FileSystem.get(path.toUri(), conf);
@@ -68,18 +70,28 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
                     getExecutionId(),
                     path));
             long start = System.currentTimeMillis();
-            FileStatus stat = fileSystem.getFileStatus(path);
-            if (stat == null) {
-                throw new FileNotFoundException(path.toString());
-            }
-            LOG.info(MessageFormat.format(
-                    "Start deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
-                    getBatchId(),
-                    getFlowId(),
-                    getExecutionId(),
-                    path));
-            if (fileSystem.delete(path, true) == false) {
-                throw new IOException("FileSystem.delete() returned false");
+            if (RuntimeContext.get().isSimulation()) {
+                LOG.info(MessageFormat.format(
+                        "Skip deleting cleanup target because current execution is in simulation mode: "
+                        + "batchId={0}, flowId={1}, executionId={2}, path={3}",
+                        getBatchId(),
+                        getFlowId(),
+                        getExecutionId(),
+                        path));
+            } else {
+                FileStatus stat = fileSystem.getFileStatus(path);
+                if (stat == null) {
+                    throw new FileNotFoundException(path.toString());
+                }
+                LOG.info(MessageFormat.format(
+                        "Start deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                        getBatchId(),
+                        getFlowId(),
+                        getExecutionId(),
+                        path));
+                if (fileSystem.delete(path, true) == false) {
+                    throw new IOException("FileSystem.delete() returned false");
+                }
             }
             long end = System.currentTimeMillis();
             LOG.info(MessageFormat.format(

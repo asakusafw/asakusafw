@@ -39,7 +39,7 @@ import() {
     _SCRIPT="$1"
     if [ -e "$_SCRIPT" ]
     then
-        . "$_SCRIPT" 1>&2
+        . "$_SCRIPT"
     else
         echo "$_SCRIPT is not found" 1>&2
         exit 1
@@ -52,8 +52,7 @@ then
     exit 1
 fi
 
-_dirname=$(dirname "$0")
-_TG_ROOT="$(cd "$_dirname" ; pwd)/.."
+_TG_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 _OPT_TARGET_NAME="$1"
 _OPT_BATCH_ID="$2"

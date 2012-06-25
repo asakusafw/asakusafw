@@ -19,6 +19,8 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * 個々のジョブフローをコンパイルするコンパイラの設定。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class FlowCompilerConfiguration {
 
@@ -45,6 +47,8 @@ public class FlowCompilerConfiguration {
     private ClassLoader serviceClassLoader;
 
     private FlowCompilerOptions options;
+
+    private String buildId;
 
     /**
      * コンパイラが利用するJava DOMのファクトリーを返す。
@@ -236,5 +240,23 @@ public class FlowCompilerConfiguration {
      */
     public void setOptions(FlowCompilerOptions options) {
         this.options = options;
+    }
+
+    /**
+     * Returns the current build ID.
+     * @return current build ID, or {@code null} if not defined
+     * @since 0.4.0
+     */
+    public String getBuildId() {
+        return buildId;
+    }
+
+    /**
+     * Sets the current build ID.
+     * @param buildId build ID
+     * @since 0.4.0
+     */
+    public void setBuildId(String buildId) {
+        this.buildId = buildId;
     }
 }

@@ -35,6 +35,7 @@ then
         _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${_WG_ROOT}/lib/$f"
     done
 fi
+
 if [ "$ASAKUSA_HOME" != "" -a -d "$ASAKUSA_HOME/core/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/core/lib/")
@@ -42,6 +43,7 @@ then
         _WG_CLASSPATH="${_WG_CLASSPATH}${_WG_CLASSPATH_DELIMITER}${ASAKUSA_HOME}/core/lib/$f"
     done
 fi
+
 if [ -d "$ASAKUSA_HOME/ext/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/ext/lib/")

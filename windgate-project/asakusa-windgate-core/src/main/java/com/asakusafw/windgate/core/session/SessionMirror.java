@@ -60,4 +60,45 @@ public abstract class SessionMirror implements Closeable {
      */
     @Override
     public abstract void close() throws IOException;
+
+    /**
+     * A void implementation of {@link SessionMirror}.
+     * @since 0.4.0
+     */
+    public static final class Null extends SessionMirror {
+
+        private final String id;
+
+        /**
+         * Creates a new instance.
+         * @param id session ID
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public Null(String id) {
+            if (id == null) {
+                throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
+            }
+            this.id = id;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public void complete() {
+            return;
+        }
+
+        @Override
+        public void abort() {
+            return;
+        }
+
+        @Override
+        public void close() {
+            return;
+        }
+    }
 }

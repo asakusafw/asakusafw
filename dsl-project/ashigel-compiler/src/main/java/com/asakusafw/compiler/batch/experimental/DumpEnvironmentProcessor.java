@@ -88,12 +88,18 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
         OutputStream output = getEnvironment().openResource(PATH);
         try {
             Context context = new Context(output);
+            dumpInternal(context);
             dumpEnv(context);
             dumpSystemProperties(context);
             context.close();
         } finally {
             output.close();
         }
+    }
+
+    private void dumpInternal(Context context) {
+        context.put("core.batchId = {0}", getEnvironment().getConfiguration().getBatchId());
+        context.put("core.buildId = {0}", getEnvironment().getBuildId());
     }
 
     private void dumpEnv(Context context) {
@@ -133,7 +139,7 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     private static class Context implements Closeable {
 
-        private PrintWriter writer;
+        private final PrintWriter writer;
 
         public Context(OutputStream output) {
             assert output != null;

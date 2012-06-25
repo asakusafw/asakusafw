@@ -59,6 +59,8 @@ import com.asakusafw.utils.java.model.util.Filer;
 
 /**
  * ファイルシステム上に構成物を展開するパッケージャ。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public class FilePackager
         extends FlowCompilingEnvironment.Initialized
@@ -80,20 +82,20 @@ public class FilePackager
 
     private final Filer resourceFiler;
 
-    private final List<? extends ResourceRepository> resourceRepositories;
+    private final List<? extends ResourceRepository> fragmentRepositories;
 
     /**
      * インスタンスを生成する。
      * @param workingDirectory 作業ディレクトリ
-     * @param resourceRepositories 最終結果に含めるリソースリポジトリの一覧
+     * @param fragmentRepositories 最終結果に含めるリソースリポジトリの一覧
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public FilePackager(
             File workingDirectory,
-            List<? extends ResourceRepository> resourceRepositories) {
+            List<? extends ResourceRepository> fragmentRepositories) {
         Precondition.checkMustNotBeNull(workingDirectory, "workingDirectory"); //$NON-NLS-1$
-        Precondition.checkMustNotBeNull(resourceRepositories, "resourceRepositories"); //$NON-NLS-1$
-        this.resourceRepositories = resourceRepositories;
+        Precondition.checkMustNotBeNull(fragmentRepositories, "resourceRepositories"); //$NON-NLS-1$
+        this.fragmentRepositories = fragmentRepositories;
         this.sourceDirectory = new File(workingDirectory, SOURCE_DIRECTORY);
         this.classDirectory = new File(workingDirectory, CLASS_DIRECTORY);
         this.sourceFiler = new Filer(sourceDirectory, CHARSET);
@@ -137,8 +139,10 @@ public class FilePackager
             if (classDirectory.exists()) {
                 repos.add(new FileRepository(classDirectory));
             }
-            repos.addAll(resourceRepositories);
-            boolean exists = drain(jar, repos);
+            boolean exists = drain(
+                    jar,
+                    repos,
+                    fragmentRepositories);
             if (exists == false) {
                 LOG.warn("ビルド結果にファイルがひとつも存在しません");
                 addDummyEntry(jar);
@@ -157,11 +161,10 @@ public class FilePackager
         LOG.debug("生成されたソースプログラムをパッケージングします");
         JarOutputStream jar = new JarOutputStream(output);
         try {
-            List<ResourceRepository> repos = Lists.create();
-            if (sourceDirectory.exists()) {
-                repos.add(new FileRepository(sourceDirectory));
-            }
-            boolean exists = drain(jar, repos);
+            boolean exists = drain(
+                    jar,
+                    Collections.singletonList(new FileRepository(sourceDirectory)),
+                    Collections.<ResourceRepository>emptyList());
             if (exists == false) {
                 LOG.warn("ソースファイルがひとつも存在しません");
                 addDummyEntry(jar);
@@ -177,31 +180,44 @@ public class FilePackager
 
     private boolean drain(
             JarOutputStream jar,
-            List<ResourceRepository> repos) throws IOException {
+            Iterable<? extends ResourceRepository> main,
+            Iterable<? extends ResourceRepository> fragments) throws IOException {
         assert jar != null;
-        assert repos != null;
-        boolean added = false;
+        assert fragments != null;
         Set<Location> saw = Sets.create();
-        for (ResourceRepository repo : repos) {
-            Cursor cursor = repo.createCursor();
-            try {
-                while (cursor.next()) {
-                    Location location = cursor.getLocation();
-                    if (saw.contains(location)) {
-                        if (location.equals(FRAGMENT_MARKER_PATH) == false) {
-                            LOG.warn("{}は既に追加済みなので無視されます", location);
-                        }
-                        continue;
-                    }
-                    saw.add(location);
-                    addEntry(jar, cursor.openResource(), location);
-                    added = true;
-                }
-            } finally {
-                cursor.close();
-            }
+        for (ResourceRepository repo : main) {
+            drainRepo(repo, jar, saw, true);
         }
-        return added;
+        for (ResourceRepository repo : fragments) {
+            drainRepo(repo, jar, saw, false);
+        }
+        return saw.isEmpty() == false;
+    }
+
+    private void drainRepo(
+            ResourceRepository repo, JarOutputStream jar, Set<Location> saw,
+            boolean allowFrameworkInfo) throws IOException {
+        assert repo != null;
+        assert jar != null;
+        assert saw != null;
+        Cursor cursor = repo.createCursor();
+        try {
+            while (cursor.next()) {
+                Location location = cursor.getLocation();
+                if (allowFrameworkInfo == false && FRAMEWORK_INFO.isPrefixOf(location)) {
+                    LOG.warn("{} is a framework info", location);
+                    continue;
+                }
+                if (saw.contains(location)) {
+                    LOG.warn("{} is already added", location);
+                    continue;
+                }
+                saw.add(location);
+                addEntry(jar, cursor.openResource(), location);
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     private void addDummyEntry(JarOutputStream jar) throws IOException {
@@ -217,7 +233,7 @@ public class FilePackager
         assert jar != null;
         assert source != null;
         assert location != null;
-        LOG.trace("{}を追加しています", location);
+        LOG.trace("Adding to jar entry: {}", location);
         JarEntry entry = new JarEntry(location.toPath('/'));
         jar.putNextEntry(entry);
         try {

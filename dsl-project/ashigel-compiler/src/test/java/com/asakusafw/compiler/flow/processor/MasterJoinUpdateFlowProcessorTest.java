@@ -30,9 +30,9 @@ import com.asakusafw.compiler.flow.processor.flow.MasterJoinUpdateFlowSimple;
 import com.asakusafw.compiler.flow.processor.flow.MasterJoinUpdateFlowWithParameter;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import com.asakusafw.compiler.util.CompilerTester;
-import com.asakusafw.compiler.util.CompilerTester.TestInput;
-import com.asakusafw.compiler.util.CompilerTester.TestOutput;
+import com.asakusafw.compiler.util.tester.CompilerTester;
+import com.asakusafw.compiler.util.tester.CompilerTester.TestInput;
+import com.asakusafw.compiler.util.tester.CompilerTester.TestOutput;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 
 /**

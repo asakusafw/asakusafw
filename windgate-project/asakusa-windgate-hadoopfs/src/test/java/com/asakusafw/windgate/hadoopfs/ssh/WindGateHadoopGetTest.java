@@ -32,12 +32,23 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 
 /**
  * Test for {@link WindGateHadoopGet}.
  */
 public class WindGateHadoopGetTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     private static final Path PREFIX = new Path("target/testing/windgate");
 
@@ -88,9 +99,7 @@ public class WindGateHadoopGetTest {
         put(testing, "Hello, world!");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(buffer));
-
-        int result = new WindGateHadoopGet(conf).execute(testing.toString());
+        int result = new WindGateHadoopGet(conf).execute(buffer, testing.toString());
         assertThat(result, is(0));
 
         Map<String, String> contents = get(buffer.toByteArray());
@@ -112,9 +121,7 @@ public class WindGateHadoopGetTest {
         put(path3, "Hello3, world!");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(buffer));
-
-        int result = new WindGateHadoopGet(conf).execute(path1.toString(), path2.toString(), path3.toString());
+        int result = new WindGateHadoopGet(conf).execute(buffer, path1.toString(), path2.toString(), path3.toString());
         assertThat(result, is(0));
 
         Map<String, String> contents = get(buffer.toByteArray());
@@ -138,9 +145,7 @@ public class WindGateHadoopGetTest {
         put(path3, "Hello3, world!");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(buffer));
-
-        int result = new WindGateHadoopGet(conf).execute(new Path(PREFIX, "testing-*").toString());
+        int result = new WindGateHadoopGet(conf).execute(buffer, new Path(PREFIX, "testing-*").toString());
         assertThat(result, is(0));
 
         Map<String, String> contents = get(buffer.toByteArray());
@@ -159,9 +164,7 @@ public class WindGateHadoopGetTest {
         Path testing = new Path(PREFIX, "testing");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(buffer));
-
-        int result = new WindGateHadoopGet(conf).execute(testing.toString());
+        int result = new WindGateHadoopGet(conf).execute(buffer, testing.toString());
         assertThat(result, is(not(0)));
     }
 
@@ -172,10 +175,42 @@ public class WindGateHadoopGetTest {
     @Test
     public void empty() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(buffer));
-
-        int result = new WindGateHadoopGet(conf).execute();
+        int result = new WindGateHadoopGet(conf).execute(buffer);
         assertThat(result, is(not(0)));
+    }
+
+    /**
+     * Run as simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void simulated() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        Path testing = new Path(PREFIX, "testing");
+        put(testing, "Hello, world!");
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int result = new WindGateHadoopGet(conf).execute(buffer, testing.toString());
+        assertThat(result, is(0));
+
+        Map<String, String> contents = get(buffer.toByteArray());
+        assertThat(contents.toString(), contents.size(), is(0));
+    }
+
+    /**
+     * Attemts to get missing files in simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void missing_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        Path testing = new Path(PREFIX, "testing");
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int result = new WindGateHadoopGet(conf).execute(buffer, testing.toString());
+        assertThat(result, is(0));
     }
 
     private void put(Path path, String string) throws IOException {

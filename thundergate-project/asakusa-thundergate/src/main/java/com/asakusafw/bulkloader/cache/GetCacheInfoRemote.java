@@ -26,6 +26,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.bulkloader.collector.SystemOutManager;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
@@ -33,6 +34,7 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
@@ -77,6 +79,8 @@ public class GetCacheInfoRemote extends Configured implements Tool {
      * @throws Exception if failed to execute
      */
     public static void main(String[] args) throws Exception {
+        SystemOutManager.changeSystemOutToSystemErr();
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         GetCacheInfoRemote service = new GetCacheInfoRemote();
         service.setConf(new Configuration());
         int exitCode = service.run(args);
@@ -91,7 +95,7 @@ public class GetCacheInfoRemote extends Configured implements Tool {
         FileList.Writer out = null;
         try {
             in = FileList.createReader(System.in);
-            out = FileList.createWriter(System.out, false);
+            out = FileList.createWriter(SystemOutManager.getOut(), false);
             execute(in, out);
             out.close();
         } catch (BulkLoaderSystemException e) {
@@ -166,7 +170,9 @@ public class GetCacheInfoRemote extends Configured implements Tool {
                             info.getTableName(),
                             info.getTimestamp().getTime());
                 }
-                output.openNext(result).close();
+                if (RuntimeContext.get().isSimulation() == false) {
+                    output.openNext(result).close();
+                }
             }
         } catch (IOException e) {
             throw new BulkLoaderSystemException(e, getClass(), "TG-GETCACHE-01005",
@@ -180,8 +186,11 @@ public class GetCacheInfoRemote extends Configured implements Tool {
         try {
             CacheStorage storage = new CacheStorage(getConf(), cacheBaseUri);
             try {
-                CacheInfo info = storage.getHeadCacheInfo();
-                return info;
+                if (RuntimeContext.get().canExecute(storage)) {
+                    return storage.getHeadCacheInfo();
+                } else {
+                    return null;
+                }
             } finally {
                 IOUtils.closeQuietly(storage);
             }

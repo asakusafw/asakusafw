@@ -52,7 +52,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -70,8 +70,7 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
-_dirname=$(dirname "$0")
-_WG_ROOT="$(cd "$_dirname" ; pwd)/.."
+_WG_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_WG_ROOT/conf/env.sh"
 import "$_WG_ROOT/libexec/validate-env.sh"

@@ -24,6 +24,7 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Releases locks for cache mechanism.
@@ -46,6 +47,7 @@ public class ReleaseCacheLock {
      * @throws IllegalArgumentException if program arguments are invalid
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         if (args.length != 1 && args.length != 2) {
             LOG.error("TG-RELEASECACHELOCK-01003", Arrays.toString(args));
             System.exit(Constants.EXIT_CODE_ERROR);
@@ -88,10 +90,14 @@ public class ReleaseCacheLock {
                 LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
                 if (executionId != null) {
                     LOG.info("TG-RELEASECACHELOCK-01005", targetName, executionId);
-                    repo.releaseLock(executionId);
+                    if (RuntimeContext.get().canExecute(repo)) {
+                        repo.releaseLock(executionId);
+                    }
                 } else {
                     LOG.info("TG-RELEASECACHELOCK-01006", targetName);
-                    repo.releaseAllLock();
+                    if (RuntimeContext.get().canExecute(repo)) {
+                        repo.releaseAllLock();
+                    }
                 }
             } finally {
                 DBConnection.closeConn(connection);

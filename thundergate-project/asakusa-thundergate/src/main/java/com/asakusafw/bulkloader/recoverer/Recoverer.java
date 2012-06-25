@@ -34,6 +34,7 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.exporter.ExportDataCopy;
 import com.asakusafw.bulkloader.exporter.LockRelease;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 
 /**
@@ -82,6 +83,7 @@ public class Recoverer {
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         Recoverer recoverer = new Recoverer();
         int result = recoverer.execute(args);
         System.exit(result);
@@ -127,6 +129,12 @@ public class Recoverer {
             // 開始ログ出力
             LOG.info("TG-RECOVERER-01001",
                     new Date(), targetName, executionId);
+
+            if (RuntimeContext.get().isSimulation()) {
+                // check only DB connection
+                DBConnection.getConnection().close();
+                return Constants.EXIT_CODE_SUCCESS;
+            }
 
             // ジョブフロー実行テーブルの内容を取得する
             List<ExporterBean> beans;

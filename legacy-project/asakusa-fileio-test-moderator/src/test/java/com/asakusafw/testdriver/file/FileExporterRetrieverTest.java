@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.configuration.HadoopEnvironmentChecker;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.TestContext;
@@ -52,7 +53,7 @@ public class FileExporterRetrieverTest {
      * This test class requires Hadoop is installed.
      */
     @Rule
-    public HadoopEnvironmentChecker check = new HadoopEnvironmentChecker();
+    public HadoopEnvironmentChecker check = new HadoopEnvironmentChecker(false);
 
     private ConfigurationFactory factory;
 

@@ -28,6 +28,7 @@ import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.common.JobFlowParamLoader;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * Exporterの実行クラス。
@@ -54,6 +55,8 @@ public class Exporter {
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(Exporter.class.getClassLoader());
         Exporter exporter = new Exporter();
         int result = exporter.execute(args);
         System.exit(result);
@@ -97,6 +100,12 @@ public class Exporter {
                 LOG.error("TG-EXPORTER-01006",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
+            }
+
+            if (RuntimeContext.get().isSimulation()) {
+                // check only DB connection
+                DBConnection.getConnection().close();
+                return Constants.EXIT_CODE_SUCCESS;
             }
 
             // ジョブフロー実行IDの排他制御

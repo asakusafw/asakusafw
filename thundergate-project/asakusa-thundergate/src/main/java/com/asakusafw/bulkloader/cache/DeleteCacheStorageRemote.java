@@ -26,6 +26,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.bulkloader.collector.SystemOutManager;
 import com.asakusafw.bulkloader.common.BulkLoaderInitializer;
 import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.FileNameUtil;
@@ -33,6 +34,7 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.thundergate.runtime.cache.CacheStorage;
 
 /**
@@ -69,6 +71,8 @@ public class DeleteCacheStorageRemote extends Configured implements Tool {
      * @throws Exception if failed to execute
      */
     public static void main(String[] args) throws Exception {
+        SystemOutManager.changeSystemOutToSystemErr();
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         DeleteCacheStorageRemote service = new DeleteCacheStorageRemote();
         service.setConf(new Configuration());
         int exitCode = service.run(args);
@@ -83,7 +87,7 @@ public class DeleteCacheStorageRemote extends Configured implements Tool {
         FileList.Writer out = null;
         try {
             in = FileList.createReader(System.in);
-            out = FileList.createWriter(System.out, false);
+            out = FileList.createWriter(SystemOutManager.getOut(), false);
             execute(in, out);
             out.close();
         } catch (BulkLoaderSystemException e) {
@@ -159,7 +163,12 @@ public class DeleteCacheStorageRemote extends Configured implements Tool {
         try {
             CacheStorage storage = new CacheStorage(getConf(), cacheBaseUri);
             try {
-                boolean succeed = storage.deleteAll();
+                boolean succeed;
+                if (RuntimeContext.get().canExecute(storage)) {
+                    succeed = storage.deleteAll();
+                } else {
+                    succeed = true;
+                }
                 return succeed ? FileProtocol.Kind.RESPONSE_DELETED : FileProtocol.Kind.RESPONSE_NOT_FOUND;
             } finally {
                 IOUtils.closeQuietly(storage);

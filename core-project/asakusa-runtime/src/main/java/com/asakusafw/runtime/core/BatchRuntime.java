@@ -19,6 +19,8 @@ import java.text.MessageFormat;
 
 /**
  * ランタイムのコアクラス。
+ * @since 0.1.0
+ * @version 0.4.0
  */
 public final class BatchRuntime {
 
@@ -45,6 +47,14 @@ public final class BatchRuntime {
                     toString(VERSION_MAJOR, VERSION_MINOR),
                     toString(major, minor)));
         }
+    }
+
+    /**
+     * Returns the version label.
+     * @return the version label
+     */
+    public static String getLabel() {
+        return toString(VERSION_MAJOR, VERSION_MINOR);
     }
 
     private static String toString(int major, int minor) {

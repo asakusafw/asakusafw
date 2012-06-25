@@ -26,6 +26,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -40,6 +45,11 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

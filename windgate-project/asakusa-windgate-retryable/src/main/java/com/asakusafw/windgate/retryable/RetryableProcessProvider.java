@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.text.MessageFormat;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.process.ProcessProfile;
@@ -28,7 +29,9 @@ import com.asakusafw.windgate.core.resource.DriverFactory;
 /**
  * Retryable processes.
  * @since 0.2.4
+ * @version 0.4.0
  */
+@SimulationSupport
 public class RetryableProcessProvider extends ProcessProvider {
 
     static final WindGateLogger WGLOG = new RetryableProcessLogger(RetryableProcessProvider.class);

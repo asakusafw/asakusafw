@@ -35,8 +35,12 @@ Parameters:
 Definitions:
     -D skipFlows=<flowId>[,<flowId>[,...]]
         ignores target jobflow execution
-    -D serializeFlows=true
+    -D serializeFlows , -D serializeFlows=true
         serializes each jobflow execution (for debug)
+    -D dryRun, -D dryRun=true
+        executes each stage as simulation mode
+    -D verifyApplication=false
+        turns off verifying library consistency of each stage
 
 Examples:
     # run a batch "example.batch"
@@ -64,7 +68,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -77,8 +81,7 @@ fi
 _OPT_BATCH_ID="$1"
 shift
 
-_dirname=$(dirname "$0")
-_YS_ROOT="$(cd "$_dirname" ; pwd)/.."
+_YS_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"

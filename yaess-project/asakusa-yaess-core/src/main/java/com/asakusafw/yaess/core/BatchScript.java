@@ -31,6 +31,7 @@ import java.util.TreeMap;
 /**
  * A script describes each batch structure.
  * @since 0.2.3
+ * @version 0.4.0
  */
 public class BatchScript {
 
@@ -45,11 +46,18 @@ public class BatchScript {
     public static final String KEY_VERSION = "batch.version";
 
     /**
+     * A configuration key name of verification code.
+     */
+    public static final String KEY_VERIFICATION_CODE = "batch.buildId";
+
+    /**
      * Current version.
      */
-    public static final String VERSION = "0.1";
+    public static final String VERSION = "0.2";
 
     private final String id;
+
+    private final String buildId;
 
     private final SortedMap<String, FlowScript> flows;
 
@@ -60,13 +68,26 @@ public class BatchScript {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public BatchScript(String id, Collection<FlowScript> flows) {
-        if (id == null) {
-            throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
+        this(id, null, flows);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param batchId ID of this batch
+     * @param buildId the application verification code, or {@code null} if not defined
+     * @param flows member flows
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public BatchScript(String batchId, String buildId, Collection<FlowScript> flows) {
+        if (batchId == null) {
+            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
         if (flows == null) {
             throw new IllegalArgumentException("flows must not be null"); //$NON-NLS-1$
         }
-        this.id = id;
+        this.id = batchId;
+        this.buildId = buildId;
         SortedMap<String, FlowScript> map = new TreeMap<String, FlowScript>();
         for (FlowScript flow : flows) {
             map.put(flow.getId(), flow);
@@ -80,6 +101,14 @@ public class BatchScript {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Returns the build ID of this batch.
+     * @return the build ID, or {@code null} if not defined
+     */
+    public String getBuildId() {
+        return buildId;
     }
 
     /**
@@ -147,12 +176,13 @@ public class BatchScript {
                     version));
         }
         String batchId = properties.getProperty(KEY_ID);
+        String verificationCode = properties.getProperty(KEY_VERIFICATION_CODE);
         Set<String> flowIds = FlowScript.extractFlowIds(properties);
         List<FlowScript> flowScripts = new ArrayList<FlowScript>();
         for (String flowId : flowIds) {
             FlowScript flowScript = FlowScript.load(properties, flowId);
             flowScripts.add(flowScript);
         }
-        return new BatchScript(batchId, flowScripts);
+        return new BatchScript(batchId, verificationCode, flowScripts);
     }
 }

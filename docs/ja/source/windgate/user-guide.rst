@@ -265,10 +265,13 @@ WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリ
 また、ログの設定は ``$ASAKUSA_HOME/windgate-ssh/conf/logback.xml`` で行えます。
 WindGate本体と同様に、SLF4JとLogbackを利用しています [#]_ 。
 
-..  warning::
+..  attention::
     HadoopブリッジはSSH経由で実行され、標準入出力を利用してWindGateとデータのやり取りを行います。
-    ログを出力する際には、標準エラー出力やファイルなどに出力し、標準出力は利用しないようにしてください。
+    ブリッジのJavaプログラム内で標準出力を利用しようとした場合、標準エラー出力にリダイレクトされるようになっています。
+    そのため、ログの設定を行う際には、ログメッセージの出力先に注意してください。
+
     また、 ``$ASAKUSA_HOME/windgate-ssh/conf/env.sh`` に指定した ``HADOOP_USER_CLASSPATH_FIRST`` の設定は、ログの設定を有効にするためにも必要です。
+    特別な理由でHadoopのクラスパスを優先したい時を除き、 ``HADOOP_USER_CLASSPATH_FIRST`` の設定を変更しないようにしてください。
 
 ..  [#] `WindGateのログ設定`_ を参照
 

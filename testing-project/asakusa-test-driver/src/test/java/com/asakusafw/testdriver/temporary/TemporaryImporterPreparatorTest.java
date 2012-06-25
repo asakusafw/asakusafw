@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.compiler.testing.TemporaryInputDescription;
+import com.asakusafw.runtime.configuration.HadoopEnvironmentChecker;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
@@ -48,7 +49,7 @@ public class TemporaryImporterPreparatorTest {
      * This test class requires Hadoop is installed.
      */
     @Rule
-    public HadoopEnvironmentChecker check = new HadoopEnvironmentChecker();
+    public HadoopEnvironmentChecker check = new HadoopEnvironmentChecker(false);
 
     private ConfigurationFactory factory;
 

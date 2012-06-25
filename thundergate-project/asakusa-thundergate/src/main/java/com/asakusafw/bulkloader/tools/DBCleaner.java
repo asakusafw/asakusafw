@@ -31,6 +31,7 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.common.DBAccessUtil;
 import com.asakusafw.bulkloader.common.DBConnection;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
  * DBをクリーニングするツール。
@@ -55,6 +56,7 @@ public final class DBCleaner {
      * @param args 起動引数
      */
     public static void main(String[] args) {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
         DBCleaner cleaner = new DBCleaner();
         int result = cleaner.execute(args);
         System.exit(result);
@@ -109,6 +111,10 @@ public final class DBCleaner {
             } catch (BulkLoaderSystemException e) {
                 throw new SystemException(e.getCause(),
                         MessageFormat.format("DBConnectionの取得に失敗しました。ターゲット名：{0}", targetName));
+            }
+
+            if (RuntimeContext.get().isSimulation()) {
+                return Constants.EXIT_CODE_SUCCESS;
             }
 
             // テンポラリテーブルとエクスポートテンポラリ管理のレコードを削除

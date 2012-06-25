@@ -23,8 +23,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.ProcessScript;
 import com.asakusafw.windgate.core.ProfileContext;
@@ -35,6 +39,12 @@ import com.asakusafw.windgate.core.resource.MockSourceDriver;
  * Test for {@link BasicProcessProvider}.
  */
 public class BasicProcessProviderTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     BasicProcessProvider provider = new BasicProcessProvider();
     {
@@ -106,6 +116,60 @@ public class BasicProcessProviderTest {
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         provider.execute(factory, script);
+    }
+
+    /**
+     * Test method for {@link BasicProcessProvider#execute(com.asakusafw.windgate.core.resource.DriverFactory, ProcessScript)}.
+     * @throws IOException expected
+     */
+    @Test
+    public void execute_simulated() throws IOException {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        MockDriverFactory factory = new MockDriverFactory();
+        factory.add("testing", new MockSourceDriver<String>("source") {
+
+            @Override
+            public void prepare() throws IOException {
+                throw new AssertionError();
+            }
+
+            @Override
+            public boolean next() throws IOException {
+                throw new AssertionError();
+            }
+
+            @Override
+            public String get() throws IOException {
+                throw new AssertionError();
+            }
+
+            @Override
+            public void close() throws IOException {
+                return;
+            }
+        });
+        factory.add("testing", new MockDrainDriver<String>("drain") {
+
+            @Override
+            public void prepare() throws IOException {
+                throw new AssertionError();
+            }
+
+            @Override
+            public void put(String object) throws IOException {
+                throw new AssertionError();
+            }
+
+            @Override
+            public void close() throws IOException {
+                return;
+            }
+        });
+        ProcessScript<String> script = new ProcessScript<String>(
+                "testing", "plain", String.class, driver("source"), driver("drain"));
+
+        provider.execute(factory, script); // no exceptions
     }
 
     private DriverScript driver(String name) {

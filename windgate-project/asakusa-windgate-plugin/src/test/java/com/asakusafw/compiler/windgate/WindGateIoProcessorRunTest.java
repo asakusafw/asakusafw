@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.compiler.windgate.testing.model.Simple;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.vocabulary.flow.In;
@@ -98,7 +99,7 @@ public class WindGateIoProcessorRunTest {
         source.write(model);
         source.close();
 
-        assertThat(tester.run(info), is(true));
+        assertThat(tester.runStages(info), is(true));
 
         List<Simple> results = tester.getList(Simple.class, exporterLocation);
         assertThat(results.size(), is(3));

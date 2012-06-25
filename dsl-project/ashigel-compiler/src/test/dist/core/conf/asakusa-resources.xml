@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<!--
+Default Implementations (for Development)
+-->
+	<property>
+		<name>com.asakusafw.runtime.core.Report.Delegate</name>
+		<value>com.asakusafw.runtime.report.CommonsLoggingReport</value>
+	</property>
+	
+	<property>
+		<name>com.asakusafw.directio.root</name>
+		<value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
+	</property>
+	<property>
+		<name>com.asakusafw.directio.root.path</name>
+		<value>/</value>
+	</property>
+	<property>
+		<name>com.asakusafw.directio.root.fs.path</name>
+		<value>target/testing/directio</value>
+	</property>
+</configuration>

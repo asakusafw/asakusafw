@@ -17,6 +17,7 @@ package com.asakusafw.windgate.core;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,6 +25,8 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
 import com.asakusafw.windgate.core.session.SessionException;
@@ -36,6 +39,7 @@ import com.asakusafw.windgate.core.session.SessionProvider;
  * Aborts a session or sessions.
  * @since 0.2.2
  */
+@SimulationSupport
 public class AbortTask {
 
     static final WindGateLogger WGLOG = new WindGateCoreLogger(AbortTask.class);
@@ -104,7 +108,13 @@ public class AbortTask {
                 doAbortSingle(sessionId);
             } else {
                 int failureCount = 0;
-                for (String sid : sessionProvider.getCreatedIds()) {
+                List<String> sessionIds;
+                if (RuntimeContext.get().canExecute(sessionProvider)) {
+                    sessionIds = sessionProvider.getCreatedIds();
+                } else {
+                    sessionIds = Collections.emptyList();
+                }
+                for (String sid : sessionIds) {
                     try {
                         doAbortSingle(sid);
                     } catch (IOException e) {
@@ -137,7 +147,11 @@ public class AbortTask {
             WGLOG.info("I01001",
                     targetSessionId,
                     profile.getName());
-            session = sessionProvider.open(targetSessionId);
+            if (RuntimeContext.get().canExecute(sessionProvider)) {
+                session = sessionProvider.open(targetSessionId);
+            } else {
+                session = new SessionMirror.Null(targetSessionId);
+            }
         } catch (SessionException e) {
             if (e.getReason() == Reason.NOT_EXIST) {
                 WGLOG.info("I01002",
@@ -159,7 +173,9 @@ public class AbortTask {
                         name,
                         targetSessionId);
                 try {
-                    provider.abort(session.getId());
+                    if (RuntimeContext.get().isSimulation() == false) {
+                        provider.abort(session.getId());
+                    }
                 } catch (IOException e) {
                     failureCount++;
                     WGLOG.warn(e, "W01002",

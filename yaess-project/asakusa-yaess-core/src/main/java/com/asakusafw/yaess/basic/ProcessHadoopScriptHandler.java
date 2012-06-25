@@ -289,6 +289,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         assert script != null;
         Map<String, String> env = new HashMap<String, String>();
         env.putAll(getEnvironmentVariables(context, script));
+        env.putAll(context.getEnvironmentVariables());
         env.putAll(script.getEnvironmentVariables());
         return env;
     }

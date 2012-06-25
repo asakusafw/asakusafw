@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -34,6 +35,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
@@ -50,6 +54,12 @@ import com.asakusafw.windgate.core.vocabulary.FileProcess;
  * Test for {@link HadoopFsMirror}.
  */
 public class HadoopFsMirrorTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * A temporary folder.
@@ -199,6 +209,32 @@ public class HadoopFsMirrorTest {
             try {
                 driver.prepare();
                 test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
+            } finally {
+                driver.close();
+            }
+        } finally {
+            resource.close();
+        }
+    }
+
+    /**
+     * source in simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void source_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+
+            ProcessScript<Text> process = source("target", "testing");
+            resource.prepare(script(process));
+
+            SourceDriver<Text> driver = resource.createSource(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(driver), is(false));
             } finally {
                 driver.close();
             }
@@ -416,6 +452,36 @@ public class HadoopFsMirrorTest {
         }
     }
 
+    /**
+     * drain in simulation mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void drain_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+            ProcessScript<Text> process = drain("target", "testing");
+            resource.prepare(script(process));
+            DrainDriver<Text> driver = resource.createDrain(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(driver), is(false));
+            } finally {
+                driver.close();
+            }
+        } finally {
+            resource.close();
+        }
+        try {
+            FileStatus status = fs.getFileStatus(getPath("testing"));
+            assertThat(status, is(nullValue()));
+        } catch (IOException e) {
+            // ok.
+        }
+    }
+
     private HadoopFsProfile profile() {
         return new HadoopFsProfile("target", working, null);
     }
@@ -468,7 +534,7 @@ public class HadoopFsMirrorTest {
 
     private void test(String path, String... expects) throws IOException {
         List<String> results = new ArrayList<String>();
-        Path resolved = new Path(working, path);
+        Path resolved = getPath(path);
         ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, resolved);
         try {
             Text text = new Text();
@@ -482,7 +548,7 @@ public class HadoopFsMirrorTest {
     }
 
     private void set(String path, String... values) throws IOException {
-        Path resolved = new Path(working, path);
+        Path resolved = getPath(path);
         ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, resolved);
         try {
             for (String string : values) {
@@ -491,5 +557,10 @@ public class HadoopFsMirrorTest {
         } finally {
             output.close();
         }
+    }
+
+    private Path getPath(String path) {
+        Path resolved = new Path(working, path);
+        return resolved;
     }
 }

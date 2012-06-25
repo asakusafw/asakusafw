@@ -22,6 +22,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
@@ -32,9 +33,10 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 /**
  * An implementation of {@link ResourceMirror} using Hadoop File System via JSch connection.
  * @since 0.2.2
- * @since 0.4.0
+ * @version 0.4.0
  * @see FileProcess
  */
+@SimulationSupport
 public class JschHadoopFsMirror extends AbstractSshHadoopFsMirror {
 
     static final Logger LOG = LoggerFactory.getLogger(JschHadoopFsMirror.class);

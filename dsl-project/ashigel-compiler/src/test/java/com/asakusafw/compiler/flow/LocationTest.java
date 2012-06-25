@@ -120,4 +120,40 @@ public class LocationTest {
         Location root = Location.fromPath("root/prefix-*", '/');
         assertThat(root.toPath('/'), is("root/prefix-*"));
     }
+
+    /**
+     * same location.
+     */
+    @Test
+    public void isPrefixOf_same() {
+        assertThat(loc("a/b/c").isPrefixOf(loc("a/b/c")), is(true));
+    }
+
+    /**
+     * truth prefix location.
+     */
+    @Test
+    public void isPrefixOf_truth() {
+        assertThat(loc("a/b").isPrefixOf(loc("a/b/c")), is(true));
+    }
+
+    /**
+     * truth prefix location.
+     */
+    @Test
+    public void isPrefixOf_reverse() {
+        assertThat(loc("a/b/c").isPrefixOf(loc("a/b")), is(false));
+    }
+
+    /**
+     * truth prefix location.
+     */
+    @Test
+    public void isPrefixOf_otherRoot() {
+        assertThat(loc("x/a/b").isPrefixOf(loc("a/b/c")), is(false));
+    }
+
+    private Location loc(String path) {
+        return Location.fromPath(path, '/');
+    }
 }

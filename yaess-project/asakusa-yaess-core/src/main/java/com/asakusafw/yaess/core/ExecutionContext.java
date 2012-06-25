@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Contextual information of jobflow executions.
  * @since 0.2.3
- * @version 0.2.5
+ * @version 0.4.0
  */
 public class ExecutionContext {
 
@@ -42,6 +42,8 @@ public class ExecutionContext {
     private final ExecutionPhase phase;
 
     private final Map<String, String> arguments;
+
+    private final Map<String, String> environmentVariables;
 
     /**
      * Creates a new instance.
@@ -58,6 +60,27 @@ public class ExecutionContext {
             String executionId,
             ExecutionPhase phase,
             Map<String, String> arguments) {
+        this(batchId, flowId, executionId, phase, arguments, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param batchId current batch ID
+     * @param flowId current flow ID
+     * @param executionId current execution ID
+     * @param phase current execution phase
+     * @param arguments current argument pairs
+     * @param environmentVariables environment variables to be inherited
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public ExecutionContext(
+            String batchId,
+            String flowId,
+            String executionId,
+            ExecutionPhase phase,
+            Map<String, String> arguments,
+            Map<String, String> environmentVariables) {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
@@ -78,6 +101,7 @@ public class ExecutionContext {
         this.executionId = executionId;
         this.phase = phase;
         this.arguments = Collections.unmodifiableMap(new HashMap<String, String>(arguments));
+        this.environmentVariables = Collections.unmodifiableMap(new HashMap<String, String>(environmentVariables));
     }
 
     /**
@@ -121,6 +145,14 @@ public class ExecutionContext {
     }
 
     /**
+     * Returns current environment variables for sub processes.
+     * @return the environment variables
+     */
+    public Map<String, String> getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
+    /**
      * Returns currnt argument pairs as string format.
      * @return string format of the execution arguments
      */
@@ -147,11 +179,12 @@ public class ExecutionContext {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "Context'{'batchId={0}, flowId={1}, executionId={2}, phase={3}, arguments={4}'}'",
+                "Context'{'batchId={0}, flowId={1}, executionId={2}, phase={3}, arguments={4}, env={5}'}'",
                 batchId,
                 flowId,
                 executionId,
                 phase,
-                arguments);
+                arguments,
+                environmentVariables);
     }
 }

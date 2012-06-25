@@ -167,6 +167,7 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 
     command.* = com.asakusafw.yaess.basic.BasicCommandScriptHandler
     command.*.resource = asakusa
+    command.*.env.HADOOP_HOME = ${HADOOP_HOME}
     command.*.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
 上記の行を削除し、次の内容に変更します。
@@ -191,6 +192,8 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
       - 秘密鍵のパスフレーズ
     * - ``command.*.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
+    * - ``command.*.env.HADOOP_HOME``
+      - リモートのHadoopのインストール先
 
 以下は具体的な設定例です。
 
@@ -227,10 +230,10 @@ ThunderGateには「ターゲット名」、WindGateには「プロファイル�
     command.asakusa.ssh.privateKey = ${HOME}/.ssh/id_dsa
     command.asakusa.ssh.passPhrase =
     command.asakusa.resource = asakusa
+    command.asakusa.env.HADOOP_HOME = /usr/lib/hadoop
     command.asakusa.env.ASAKUSA_HOME = /home/asakusa/asakusa
 
 ここに追加する内容は ``command.*`` から始まる内容と同様です。
 
 プロファイルセットにあらかじめ記載された ``command.*`` という構成は、名前付きのプロファイルが見つからなかった際に利用されます。
 上記のように名前付きの構成を指定した場合、ターゲット名やプロファイル名が一致すれば名前付きの構成が優先されます。
-

@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,6 +235,7 @@ public final class DirectFlowCompiler {
         config.setRootLocation(baseLocation);
         config.setServiceClassLoader(serviceClassLoader);
         config.setOptions(flowCompilerOptions);
+        config.setBuildId(UUID.randomUUID().toString());
         return config;
     }
 

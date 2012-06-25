@@ -34,6 +34,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -48,6 +51,12 @@ import com.asakusafw.windgate.stream.StringBuilderSupport;
  * Test for {@link FileResourceMirror}.
  */
 public class FileResourceMirrorTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * Temprary folder.
@@ -239,6 +248,35 @@ public class FileResourceMirrorTest {
     }
 
     /**
+     * source in simulated mode.
+     * @throws Exception if failed
+     */
+    @Test
+    public void source_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        File file = folder.newFile("file");
+        file.delete();
+
+        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+
+            ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
+            resource.prepare(script(process));
+
+            SourceDriver<StringBuilder> driver = resource.createSource(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(driver), is(false));
+            } finally {
+                driver.close();
+            }
+        } finally {
+            resource.close();
+        }
+    }
+
+    /**
      * drain.
      * @throws Exception if failed
      */
@@ -368,6 +406,35 @@ public class FileResourceMirrorTest {
         } finally {
             resource.close();
         }
+    }
+
+    /**
+     * drain in simulated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void drain_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        File file = folder.newFile("file");
+        file.delete();
+
+        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+            ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
+            resource.prepare(script(process));
+
+            DrainDriver<StringBuilder> driver = resource.createDrain(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(driver), is(false));
+            } finally {
+                driver.close();
+            }
+        } finally {
+            resource.close();
+        }
+        assertThat(file.exists(), is(false));
     }
 
     private void put(File file, String... lines) throws IOException {

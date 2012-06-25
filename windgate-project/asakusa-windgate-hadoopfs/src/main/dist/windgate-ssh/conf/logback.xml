@@ -4,8 +4,8 @@
     class="ch.qos.logback.core.ConsoleAppender">
 
   <!--
-    **WARNING** Don't specify System.out for target element.
-      WindGate uses standard output as communication channel.
+    Please do NOT set System.out to the <target> element.
+    System.out is redirected into System.err.
   -->
    <target>System.err</target>
     <encoder>

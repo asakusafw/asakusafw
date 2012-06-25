@@ -41,18 +41,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.WindGateLogger;
 
 /**
  * Utilities for command line interfaces.
  * @since 0.2.2
+ * @version 0.4.0
  */
 public final class CommandLineUtil {
 
     static final WindGateLogger WGLOG = new WindGateBootstrapLogger(CommandLineUtil.class);
 
     static final Logger LOG = LoggerFactory.getLogger(CommandLineUtil.class);
+
+    /**
+     * Prepares runtime context.
+     */
+    public static void prepareRuntimeContext() {
+        RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
+        RuntimeContext.get().verifyApplication(WindGate.class.getClassLoader());
+        LOG.debug("Runtime context is prepared: {}", RuntimeContext.get());
+    }
 
     /**
      * Prefix of system properties used for log context.

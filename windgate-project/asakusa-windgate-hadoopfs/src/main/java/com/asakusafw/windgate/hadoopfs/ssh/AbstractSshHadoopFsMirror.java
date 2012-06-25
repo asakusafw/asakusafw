@@ -32,6 +32,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.windgate.core.DriverScript;
@@ -44,6 +45,7 @@ import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.SourceDriver;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
 import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
+import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
 import com.asakusafw.windgate.hadoopfs.temporary.ModelInputProvider;
 import com.asakusafw.windgate.hadoopfs.temporary.ModelInputSourceDriver;
 import com.asakusafw.windgate.hadoopfs.temporary.ModelOutputDrainDriver;
@@ -127,44 +129,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             FileList.Reader fileList = FileList.createReader(output);
             ModelInputProvider<T> provider = new FileListModelInputProvider<T>(
                     configuration, fileList, script.getDataClass());
-            ModelInputSourceDriver<T> result = new ModelInputSourceDriver<T>(provider, value) {
-                @Override
-                public void close() throws IOException {
-                    try {
-                        LOG.debug("Closing source driver for resource \"{}\" in process \"{}\"",
-                                getName(),
-                                script.getName());
-                        super.close();
-                        int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
-                        if (exit != 0) {
-                            WGLOG.error("E13001",
-                                    profile.getResourceName(),
-                                    script.getName(),
-                                    path);
-                            throw new IOException(MessageFormat.format(
-                                    "SSH connection returns unexpected exit code: (code={0}, process={1}:source)",
-                                    String.valueOf(exit),
-                                    script.getName()));
-                        }
-                    } catch (InterruptedException e) {
-                        WGLOG.error(e, "E13001",
-                                profile.getResourceName(),
-                                script.getName(),
-                                path);
-                        Thread.currentThread().interrupt();
-                        throw new IOException("Failed to exit remote process", e);
-                    } finally {
-                        try {
-                            connection.close();
-                        } catch (IOException e) {
-                            WGLOG.warn(e, "W13001",
-                                    profile.getResourceName(),
-                                    script.getName(),
-                                    path);
-                        }
-                    }
-                }
-            };
+            ModelInputSourceDriver<T> result = new SshSourceDriver<T>(provider, value, script, connection, path);
             succeeded = true;
             return result;
         } finally {
@@ -201,45 +166,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     script.getDataClass(),
                     fileList.openNext(FileList.createFileStatus(new Path(path.get(0)))),
                     profile.getCompressionCodec());
-            ModelOutputDrainDriver<T> result = new ModelOutputDrainDriver<T>(output) {
-                @Override
-                public void close() throws IOException {
-                    try {
-                        LOG.debug("Closing drain driver for resource \"{}\" in process \"{}\"",
-                                getName(),
-                                script.getName());
-                        super.close();
-                        fileList.close();
-                        int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
-                        if (exit != 0) {
-                            WGLOG.error("E14001",
-                                    profile.getResourceName(),
-                                    script.getName(),
-                                    path);
-                            throw new IOException(MessageFormat.format(
-                                    "SSH connection returns unexpected exit code: (code={0}, process={1}:drain)",
-                                    String.valueOf(exit),
-                                    script.getName()));
-                        }
-                    } catch (InterruptedException e) {
-                        WGLOG.error(e, "E14001",
-                                profile.getResourceName(),
-                                script.getName(),
-                                path);
-                        Thread.currentThread().interrupt();
-                        throw new IOException("Failed to exit remote process", e);
-                    } finally {
-                        try {
-                            connection.close();
-                        } catch (IOException e) {
-                            WGLOG.warn(e, "W14001",
-                                    profile.getResourceName(),
-                                    script.getName(),
-                                    path);
-                        }
-                    }
-                }
-            };
+            ModelOutputDrainDriver<T> result = new SshDrainDriver<T>(output, connection, path, fileList, script);
             succeeded = true;
             return result;
         } finally {
@@ -397,5 +324,127 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     public void close() throws IOException {
         LOG.debug("Closing Hadoop FS via SSH resource: {}",
                 getName());
+    }
+
+    @SimulationSupport
+    private final class SshSourceDriver<T> extends ModelInputSourceDriver<T> {
+
+        private final ProcessScript<T> script;
+
+        private final SshConnection connection;
+
+        private final List<String> path;
+
+        SshSourceDriver(
+                ModelInputProvider<T> provider,
+                T value,
+                ProcessScript<T> script,
+                SshConnection connection,
+                List<String> path) {
+            super(provider, value);
+            this.script = script;
+            this.connection = connection;
+            this.path = path;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                LOG.debug("Closing source driver for resource \"{}\" in process \"{}\"",
+                        getName(),
+                        script.getName());
+                super.close();
+                int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
+                if (exit != 0) {
+                    WGLOG.error("E13001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                    throw new IOException(MessageFormat.format(
+                            "SSH connection returns unexpected exit code: (code={0}, process={1}:source)",
+                            String.valueOf(exit),
+                            script.getName()));
+                }
+            } catch (InterruptedException e) {
+                WGLOG.error(e, "E13001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        path);
+                Thread.currentThread().interrupt();
+                throw new IOException("Failed to exit remote process", e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    WGLOG.warn(e, "W13001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                }
+            }
+        }
+    }
+
+    @SimulationSupport
+    private final class SshDrainDriver<T> extends ModelOutputDrainDriver<T> {
+
+        private final SshConnection connection;
+
+        private final List<String> path;
+
+        private final Writer fileList;
+
+        private final ProcessScript<T> script;
+
+        SshDrainDriver(
+                ModelOutput<T> output,
+                SshConnection connection,
+                List<String> path,
+                FileList.Writer fileList,
+                ProcessScript<T> script) {
+            super(output);
+            this.connection = connection;
+            this.path = path;
+            this.fileList = fileList;
+            this.script = script;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                LOG.debug("Closing drain driver for resource \"{}\" in process \"{}\"",
+                        getName(),
+                        script.getName());
+                super.close();
+                fileList.close();
+                int exit = connection.waitForExit(TimeUnit.SECONDS.toMillis(30));
+                if (exit != 0) {
+                    WGLOG.error("E14001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                    throw new IOException(MessageFormat.format(
+                            "SSH connection returns unexpected exit code: (code={0}, process={1}:drain)",
+                            String.valueOf(exit),
+                            script.getName()));
+                }
+            } catch (InterruptedException e) {
+                WGLOG.error(e, "E14001",
+                        profile.getResourceName(),
+                        script.getName(),
+                        path);
+                Thread.currentThread().interrupt();
+                throw new IOException("Failed to exit remote process", e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    WGLOG.warn(e, "W14001",
+                            profile.getResourceName(),
+                            script.getName(),
+                            path);
+                }
+            }
+        }
     }
 }

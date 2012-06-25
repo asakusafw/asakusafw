@@ -20,7 +20,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.external.ExternalIoAnalyzer;
@@ -32,6 +35,7 @@ import com.asakusafw.compiler.flow.plan.StagePlanner;
 import com.asakusafw.compiler.flow.stage.StageCompiler;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.visualizer.FlowVisualizer;
+import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
@@ -76,6 +80,7 @@ public class FlowCompiler {
         visualize(graph, stageGraph);
         List<StageModel> stages = compileStages(stageGraph);
         JobflowModel jobflow = compileJobflow(stageGraph, stages);
+        addApplicationInfo();
         return jobflow;
     }
 
@@ -186,6 +191,22 @@ public class FlowCompiler {
         visualizer.visualize(stageGraph);
         for (StageBlock stage : stageGraph.getStages()) {
             visualizer.visualize(stage);
+        }
+    }
+
+    private void addApplicationInfo() throws IOException {
+        Properties properties = new Properties();
+        properties.put(RuntimeContext.KEY_BATCH_ID, environment.getBatchId());
+        properties.put(RuntimeContext.KEY_FLOW_ID, environment.getFlowId());
+        properties.put(RuntimeContext.KEY_BUILD_ID, environment.getBuildId());
+        properties.put(RuntimeContext.KEY_BUILD_DATE, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        properties.put(RuntimeContext.KEY_RUNTIME_VERSION, RuntimeContext.getRuntimeVersion());
+
+        OutputStream output = environment.openResource(null, RuntimeContext.PATH_APPLICATION_INFO);
+        try {
+            properties.store(output, "Created by Asakusa DSL compiler");
+        } finally {
+            output.close();
         }
     }
 

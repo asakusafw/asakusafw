@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.mapreduce.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +34,10 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.stage.CompiledType;
-import com.asakusafw.runtime.core.BatchRuntime;
 import com.asakusafw.runtime.stage.AbstractStageClient;
 import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
-import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -194,7 +191,6 @@ public class CopierClientEmitter {
             SimpleName name = factory.newSimpleName(Naming.getClientClass());
             importer.resolvePackageMember(name);
             List<TypeBodyDeclaration> members = Lists.create();
-            members.add(createEnvironmentCheck());
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             members.add(createStageInputsMethod());
@@ -210,28 +206,6 @@ public class CopierClientEmitter {
                     t(AbstractStageClient.class),
                     Collections.<Type>emptyList(),
                     members);
-        }
-
-        private MethodDeclaration createEnvironmentCheck() {
-            SimpleName job = factory.newSimpleName("job");
-            SimpleName variables = factory.newSimpleName("variables");
-            return factory.newMethodDeclaration(
-                    null,
-                    new AttributeBuilder(factory)
-                        .annotation(importer.toType(Override.class))
-                        .Protected()
-                        .toAttributes(),
-                    importer.toType(void.class),
-                    factory.newSimpleName(AbstractStageClient.METHOD_CHECK_ENVIRONMENT),
-                    Arrays.asList(new FormalParameterDeclaration[] {
-                            factory.newFormalParameterDeclaration(importer.toType(Job.class), job),
-                            factory.newFormalParameterDeclaration(importer.toType(VariableTable.class), variables),
-                    }),
-                    Arrays.asList(new TypeBuilder(factory, importer.toType(BatchRuntime.class))
-                        .method("require",
-                                Models.toLiteral(factory, BatchRuntime.VERSION_MAJOR),
-                                Models.toLiteral(factory, BatchRuntime.VERSION_MINOR))
-                        .toStatement()));
         }
 
         private List<MethodDeclaration> createIdMethods() {

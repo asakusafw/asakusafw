@@ -38,7 +38,7 @@ import() {
     then
         . "$_SCRIPT"
     else
-        echo "$_SCRIPT is not found" 2>&1
+        echo "$_SCRIPT is not found" 1>&2
         exit 1
     fi
 }
@@ -55,8 +55,7 @@ shift
 _OPT_CLASS_NAME="$1"
 shift
 
-_dirname=$(dirname "$0")
-_TD_ROOT="$(cd "$_dirname" ; pwd)/.."
+_TD_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_TD_ROOT/conf/env.sh"
 import "$_TD_ROOT/libexec/validate-env.sh"

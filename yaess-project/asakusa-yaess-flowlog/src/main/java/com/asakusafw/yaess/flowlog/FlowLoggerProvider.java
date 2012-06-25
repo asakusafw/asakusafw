@@ -26,6 +26,7 @@ import com.asakusafw.yaess.core.ServiceProfile;
 /**
  * An implementation of {@link ExecutionMonitorProvider} to save log each jobflow.
  * @since 0.2.6
+ * @version 0.4.0
  */
 public class FlowLoggerProvider extends ExecutionMonitorProvider {
 

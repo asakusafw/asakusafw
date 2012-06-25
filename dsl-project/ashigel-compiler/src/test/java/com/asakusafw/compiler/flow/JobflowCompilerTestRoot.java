@@ -106,6 +106,7 @@ public class JobflowCompilerTestRoot {
         config.setRootLocation(Location.fromPath("com/example", '/'));
         config.setServiceClassLoader(getClass().getClassLoader());
         config.setOptions(new FlowCompilerOptions());
+        config.setBuildId("testing");
         environment = new FlowCompilingEnvironment(config);
         environment.bless();
     }

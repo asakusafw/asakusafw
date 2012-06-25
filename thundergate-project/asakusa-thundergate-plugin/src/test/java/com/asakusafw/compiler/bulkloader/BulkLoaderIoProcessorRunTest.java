@@ -31,6 +31,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.thundergate.runtime.property.PropertyLoader;
 import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
@@ -102,7 +103,7 @@ public class BulkLoaderIoProcessorRunTest {
         source.write(ex1);
         source.close();
 
-        assertThat(tester.run(info), is(true));
+        assertThat(tester.runStages(info), is(true));
 
         Location resultLocation = etable.getSources().get(0);
         assertThat(resultLocation.isPrefix(), is(true));
@@ -175,7 +176,7 @@ public class BulkLoaderIoProcessorRunTest {
         source.write(ex1);
         source.close();
 
-        assertThat(tester.run(info), is(true));
+        assertThat(tester.runStages(info), is(true));
 
         Location resultLocation = etable.getSources().get(0);
         assertThat(resultLocation.isPrefix(), is(true));

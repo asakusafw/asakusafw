@@ -97,6 +97,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         Properties properties = new Properties();
         properties.setProperty(BatchScript.KEY_ID, getBatchId());
         properties.setProperty(BatchScript.KEY_VERSION, BatchScript.VERSION);
+        properties.setProperty(BatchScript.KEY_VERIFICATION_CODE, getEnvironment().getBuildId());
 
         for (FlowScript script : scripts) {
             LOG.trace("Building YAESS Flow Script: {}", script.getId());

@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -35,7 +36,9 @@ import com.asakusafw.windgate.core.util.ProcessUtil;
 /**
  * An implementation of {@link ResourceMirror} using JDBC.
  * @since 0.2.2
+ * @version 0.4.0
  */
+@SimulationSupport
 public class JdbcResourceMirror extends ResourceMirror {
 
     static final WindGateLogger WGLOG = new JdbcLogger(JdbcResourceMirror.class);

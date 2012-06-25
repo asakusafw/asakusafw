@@ -29,6 +29,9 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -41,6 +44,12 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
  * Test for {@link JdbcResourceMirror}.
  */
 public class JdbcResourceMirrorTest {
+
+    /**
+     * Keeps runtime context.
+     */
+    @Rule
+    public final RuntimeContextKeeper rc = new RuntimeContextKeeper();
 
     /**
      * Test database.
@@ -192,6 +201,38 @@ public class JdbcResourceMirrorTest {
     }
 
     /**
+     * source test in simulated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void source_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+        h2.execute("DROP TABLE PAIR;");
+
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+
+        ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
+        GateScript script = script(process);
+
+        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+            resource.prepare(script);
+            SourceDriver<Pair> source = resource.createSource(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(source), is(false));
+            } finally {
+                source.close();
+            }
+        } finally {
+            resource.close();
+        }
+    }
+
+    /**
      * Source with invalid parameterized condition.
      * @throws Exception if failed
      */
@@ -310,6 +351,40 @@ public class JdbcResourceMirrorTest {
                 drain.close();
             }
             test("Hello1, world!", "Hello2, world!", "Hello3, world!");
+        } finally {
+            resource.close();
+        }
+    }
+
+    /**
+     * drain test in simulated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void drain_sim() throws Exception {
+        RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
+
+        h2.execute("DROP TABLE PAIR;");
+
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+        conf.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
+
+        ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
+        GateScript script = script(process);
+
+        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
+        try {
+            assertThat(RuntimeContext.get().canExecute(resource), is(true));
+            resource.prepare(script);
+            DrainDriver<Pair> drain = resource.createDrain(process);
+            try {
+                assertThat(RuntimeContext.get().canExecute(drain), is(false));
+            } finally {
+                drain.close();
+            }
         } finally {
             resource.close();
         }
