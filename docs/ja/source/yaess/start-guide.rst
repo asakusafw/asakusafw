@@ -58,7 +58,7 @@ Mavenアーキタイプを利用して作成したプロジェクトでは、さ
 
     asakusa@asakusa:~$ $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex
     Starting YAESS
-       Profile: /home/asakusa/asakusa/yaess/bin/../conf/yaess.properties
+       Profile: /home/asakusa/asakusa/yaess/conf/yaess.properties
         Script: /home/asakusa/asakusa/batchapps/ex/etc/yaess-script.properties
       Batch ID: ex
     ...

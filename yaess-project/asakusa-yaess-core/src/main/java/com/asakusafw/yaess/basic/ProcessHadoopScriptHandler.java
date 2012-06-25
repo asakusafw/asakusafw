@@ -99,7 +99,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     /**
      * The path to the Hadoop execution executable file (relative path from Asakusa home).
      */
-    public static final String PATH_EXECUTE = "yaess-hadoop/bin/hadoop-execute.sh";
+    public static final String PATH_EXECUTE = "yaess-hadoop/libexec/hadoop-execute.sh";
 
     /**
      * Variable name of batch ID.

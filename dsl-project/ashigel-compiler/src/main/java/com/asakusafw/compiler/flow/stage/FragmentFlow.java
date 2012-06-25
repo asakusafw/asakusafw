@@ -188,7 +188,7 @@ public class FragmentFlow {
             lines.put(port, node);
             break;
         case RENDEZVOUS:
-            assert lines.containsKey(port.getOwner()) == false;
+            assert rendezvous.containsKey(port.getOwner()) == false;
             rendezvous.put(port.getOwner(), node);
             break;
         default:

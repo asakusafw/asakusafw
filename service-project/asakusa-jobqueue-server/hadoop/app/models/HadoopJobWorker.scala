@@ -88,6 +88,6 @@ class HadoopJobWorker(asakusaHome: File) extends JobWorker[String, Int, HadoopJo
 
 object HadoopJobWorker {
 
-  val JobQueueHadoopScript = "/jobqueue-hadoop/bin/hadoop-execute.sh"
+  val JobQueueHadoopScript = "/jobqueue-hadoop/libexec/hadoop-execute.sh"
 
 }
