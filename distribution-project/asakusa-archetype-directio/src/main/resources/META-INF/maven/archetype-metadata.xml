@@ -17,12 +17,6 @@
 				<include>**/*.java</include>
 			</includes>
 		</fileSet>
-		<fileSet filtered="true" packaged="false" encoding="UTF-8">
-			<directory></directory>
-			<includes>
-				<include>**/*.xml</include>
-			</includes>
-		</fileSet>
 		<fileSet filtered="false" packaged="true">
 			<directory>src/test/resources</directory>
 			<includes>
@@ -37,7 +31,6 @@
 			<excludes>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xls</exclude>
-				<exclude>**/*.xml</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet filtered="true" packaged="false" encoding="UTF-8">
