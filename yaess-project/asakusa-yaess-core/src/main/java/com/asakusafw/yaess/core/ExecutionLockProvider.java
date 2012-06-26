@@ -42,13 +42,20 @@ public abstract class ExecutionLockProvider implements Service {
 
     @Override
     public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
-        configureScope(profile);
-        doConfigure(profile);
+        try {
+            configureScope(profile);
+            doConfigure(profile);
+        } catch (IllegalArgumentException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getPrefix()), e);
+        }
     }
 
     private void configureScope(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        String scopeSymbol = profile.getConfiguration().get(KEY_SCOPE);
+        String scopeSymbol = profile.getConfiguration(KEY_SCOPE, false, true);
         if (scopeSymbol == null) {
             scope = ExecutionLock.Scope.getDefault();
             LOG.debug("Lock scope is not defined, use default: {}",

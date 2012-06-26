@@ -38,9 +38,10 @@ public class JobClientProfileTest {
 
     /**
      * simple conversion.
+     * @throws Exception if failed
      */
     @Test
-    public void convert() {
+    public void convert() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -64,9 +65,10 @@ public class JobClientProfileTest {
 
     /**
      * simple conversion.
+     * @throws Exception if failed
      */
     @Test
-    public void convert_explicit() {
+    public void convert_explicit() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -102,9 +104,10 @@ public class JobClientProfileTest {
 
     /**
      * converts with resolving variabes.
+     * @throws Exception if failed
      */
     @Test
-    public void convert_resolve() {
+    public void convert_resolve() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -136,9 +139,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid timeout.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_malform_timeout() {
+    public void convert_malform_timeout() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -153,9 +157,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid timeout.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_invalid_timeout() {
+    public void convert_invalid_timeout() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -170,9 +175,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid interval.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_malform_interval() {
+    public void convert_malform_interval() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -187,9 +193,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid interval.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_invalid_interval() {
+    public void convert_invalid_interval() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -204,9 +211,10 @@ public class JobClientProfileTest {
 
     /**
      * missing client.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_missing_client() {
+    public void convert_missing_client() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -219,9 +227,10 @@ public class JobClientProfileTest {
 
     /**
      * missing client url.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_missing_client_url() {
+    public void convert_missing_client_url() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -235,9 +244,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid client key prefix.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_invalid_client_prefix() {
+    public void convert_invalid_client_prefix() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,
@@ -251,9 +261,10 @@ public class JobClientProfileTest {
 
     /**
      * invalid variables.
+     * @throws Exception if failed
      */
     @Test(expected = IllegalArgumentException.class)
-    public void convert_unresolved() {
+    public void convert_unresolved() throws Exception {
         ServiceProfile<?> original = new ServiceProfile<HadoopScriptHandler>(
                 "testing",
                 QueueHadoopScriptHandler.class,

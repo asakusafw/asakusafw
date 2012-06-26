@@ -77,12 +77,12 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
     * - ``hadoop.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
-上記のうち、 ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式 [#]_ で、YAESSを起動した環境の環境変数を含められます。
+上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
 ここでは同一環境上のHadoopを利用する設定ですので、 ``hadoop.env.HADOOP_HOME`` には ``${HADOOP_HOME}`` を、
 ``hadoop.env.ASAKUSA_HOME`` には ``${ASAKUSA_HOME}`` をそれぞれ指定すれば、現在の環境変数をそのまま利用できます。
 
 ..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
-..  [#] 現在の仕様では、 ``$ASAKUSA_HOME`` のように ``{`` と ``}`` に囲まれていない形式は利用できません。
 
 
 SSHを経由してHadoopジョブを実行する
@@ -112,7 +112,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
-上記のうち、 ``hadoop.ssh.user`` , ``hadoop.ssh.privateKey`` および  ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式で環境変数を含められます。
+上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 たとえば、 ``hadoop.ssh.privateKey`` は通常 ``${HOME}/.ssh/id_rsa`` を指定します。
 
 なお、この仕組みではSSHでの通信に JSch [#]_ を利用しています。
@@ -323,8 +323,10 @@ YAESSを起動したコンピューターと同一のコンピューターでコ
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
-上記のうち、 ``command.<プロファイル名>.env.`` から始まる項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
-ここでは同一環境上でコマンドラインジョブを実行するので、それぞれ ``${ASAKUSA_HOME}`` や ``${HADOOP_HOME}`` を指定すれば、現在の環境変数をそのまま利用できます。
+上記のうち、先頭の ``command`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
+ここでは同一環境上でコマンドラインジョブを実行するので、Asakusa FrameworkやHadoopのインストール先には、
+それぞれ ``${ASAKUSA_HOME}`` や ``${HADOOP_HOME}`` を指定することで、現在の環境変数をそのまま利用できます。
 
 ..  hint::
     ``command.<プロファイル名>.env.HADOOP_HOME`` の設定は必須ではありません。
@@ -358,8 +360,9 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
-上記のうち、 ``command.<プロファイル名>.ssh.user`` , ``command.<プロファイル名>.ssh.privateKey`` および  ``command.<プロファイル名>.env.`` からはじまる項目には ``${変数名}`` という形式で環境変数を含められます。
-たとえば、 ``hadoop.ssh.privateKey`` は通常 ``${HOME}/.ssh/id_rsa`` を指定します。
+上記のうち、先頭の ``command`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
+たとえば、 ``command.ssh.privateKey`` は通常 ``${HOME}/.ssh/id_rsa`` を指定します。
 
 なお、 `SSHを経由してHadoopジョブを実行する`_ 際と同様に、SSHでの通信に JSch を利用しています。
 

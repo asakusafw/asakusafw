@@ -175,13 +175,12 @@ public class JobClientProfile {
         assert profile != null;
         assert conf != null;
         assert key != null;
-        String value = conf.remove(key);
+        String value = profile.normalize(key, conf.remove(key), false, true);
         if (value == null) {
             return defaultValue;
         }
-        String resolved = resolve(profile, profile.getPrefix() + "." + key, value);
         try {
-            return Long.parseLong(resolved);
+            return Long.parseLong(value);
         } catch (RuntimeException e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "{0}.{1} must be an integer ({2})",

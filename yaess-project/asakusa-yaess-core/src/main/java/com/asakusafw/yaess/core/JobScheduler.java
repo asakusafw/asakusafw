@@ -16,6 +16,7 @@
 package com.asakusafw.yaess.core;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -26,7 +27,14 @@ public abstract class JobScheduler implements Service {
 
     @Override
     public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
-        doConfigure(profile);
+        try {
+            doConfigure(profile);
+        } catch (IllegalArgumentException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getPrefix()), e);
+        }
     }
 
     /**

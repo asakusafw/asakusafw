@@ -162,7 +162,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     private boolean extractBoolean(ServiceProfile<?> profile, String key, boolean defaultValue) throws IOException {
         assert profile != null;
         assert key != null;
-        String string = profile.getConfiguration().get(key);
+        String string = profile.getConfiguration(key, false, true);
         if (string == null) {
             return defaultValue;
         }

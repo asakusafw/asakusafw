@@ -202,9 +202,9 @@ public class FlowLoggerProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         Map<String, String> copy = new TreeMap<String, String>(profile.getConfiguration());
-        String dirString = extract(profile, copy, KEY_DIRECTORY, null, true);
-        String encString = extract(profile, copy, KEY_ENCODING, DEFAULT_ENCODING, true);
-        String dfString = extract(profile, copy, KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT, false);
+        String dirString = extract(profile, copy, KEY_DIRECTORY, null);
+        String encString = extract(profile, copy, KEY_ENCODING, DEFAULT_ENCODING);
+        String dfString = extract(profile, copy, KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT);
         double stepUnit = extractDouble(profile, copy, KEY_STEP_UNIT, DEFAULT_STEP_UNIT);
         boolean reportJob = extractBoolean(profile, copy, KEY_REPORT_JOB, DEFAULT_REPORT_JOB);
         boolean deleteOnSetup = extractBoolean(profile, copy, KEY_DELETE_ON_SETUP, DEFAULT_DELETE_ON_SETUP);
@@ -247,29 +247,11 @@ public class FlowLoggerProfile {
             ServiceProfile<?> profile,
             Map<String, String> copy,
             String key,
-            String defaultValue,
-            boolean resolve) {
-        String value = copy.remove(key);
+            String defaultValue) {
+        String value = profile.normalize(key, copy.remove(key), defaultValue == null, true);
         if (value == null) {
-            if (defaultValue != null) {
-                value = defaultValue;
-            } else {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "{0}.{1} must be defined",
-                        profile.getPrefix(),
-                        key));
-            }
-        }
-        if (resolve) {
-            try {
-                value = profile.getContext().getContextParameters().replace(value, true);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Failed to resolve {0}.{1} ({2})",
-                        profile.getPrefix(),
-                        key,
-                        value), e);
-            }
+            assert defaultValue != null;
+            return defaultValue;
         }
         return value;
     }
@@ -279,7 +261,7 @@ public class FlowLoggerProfile {
             Map<String, String> copy,
             String key,
             String defaultValue) {
-        String value = extract(profile, copy, key, defaultValue, false);
+        String value = extract(profile, copy, key, defaultValue);
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
@@ -296,7 +278,7 @@ public class FlowLoggerProfile {
             Map<String, String> copy,
             String key,
             String defaultValue) {
-        String value = extract(profile, copy, key, defaultValue, false);
+        String value = extract(profile, copy, key, defaultValue);
         if (value.equalsIgnoreCase("true")) {
             return true;
         } else if (value.equals("false")) {
