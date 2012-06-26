@@ -100,41 +100,40 @@ public class FileProfile {
         }
         String resourceName = profile.getName();
         ClassLoader classLoader = profile.getContext().getClassLoader();
-        String basePath = extract(profile, KEY_BASE_PATH, true);
+        String basePath = extract(profile, KEY_BASE_PATH, false);
         return new FileProfile(resourceName, classLoader, new File(basePath));
     }
 
-    private static String extract(ResourceProfile profile, String configKey, boolean resolve) {
+    private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
         assert profile != null;
         assert configKey != null;
         String value = profile.getConfiguration().get(configKey);
         if (value == null) {
-            WGLOG.error("E00001",
+            if (mandatory == false) {
+                return null;
+            } else {
+                WGLOG.error("E00001",
+                        profile.getName(),
+                        configKey,
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        configKey));
+            }
+        }
+        try {
+            return profile.getContext().getContextParameters().replace(value.trim(), true);
+        } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E00001",
                     profile.getName(),
                     configKey,
-                    null);
+                    value);
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Resource \"{0}\" must declare \"{1}\"",
+                    "Failed to resolve environment variables: {2} (resource={0}, property={1})",
                     profile.getName(),
-                    configKey));
-        }
-        value = value.trim();
-        if (resolve == false) {
-            return value;
-        } else {
-            try {
-                return profile.getContext().getContextParameters().replace(value, true);
-            } catch (IllegalArgumentException e) {
-                WGLOG.error(e, "E00001",
-                        profile.getName(),
-                        configKey,
-                        value);
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Failed to resolve \"{1}\": {2} (resource={0})",
-                        profile.getName(),
-                        configKey,
-                        value), e);
-            }
+                    configKey,
+                    value), e);
         }
     }
 }

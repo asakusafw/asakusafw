@@ -83,7 +83,7 @@ public class RetryableProcessProfile {
         }
         int retryCount = extractInt(profile, KEY_RETRY_COUNT, 1);
         String componentName = profile.getName() + '-' + KEY_COMPONENT;
-        String componentClassName = extract(profile, KEY_COMPONENT);
+        String componentClassName = extract(profile, KEY_COMPONENT, false);
         Class<? extends ProcessProvider> componentClass;
         try {
             Class<?> aClass = Class.forName(componentClassName, false, profile.getContext().getClassLoader());
@@ -118,27 +118,43 @@ public class RetryableProcessProfile {
         return new RetryableProcessProfile(component, retryCount);
     }
 
-    private static String extract(ProcessProfile profile, String configKey) {
+    private static String extract(ProcessProfile profile, String configKey, boolean mandatory) {
         assert profile != null;
         assert configKey != null;
         String value = profile.getConfiguration().get(configKey);
         if (value == null) {
-            WGLOG.error("E00001",
+            if (mandatory == false) {
+                return null;
+            } else {
+                WGLOG.error("E00001",
+                        profile.getName(),
+                        configKey,
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        configKey));
+            }
+        }
+        try {
+            return profile.getContext().getContextParameters().replace(value.trim(), true);
+        } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E00001",
                     profile.getName(),
                     configKey,
-                    null);
+                    value);
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Process \"{0}\" must declare \"{1}\"",
+                    "Failed to resolve environment variables: {2} (resource={0}, property={1})",
                     profile.getName(),
-                    configKey));
+                    configKey,
+                    value), e);
         }
-        return value.trim();
     }
 
     private static int extractInt(ProcessProfile profile, String key, int minimumValue) {
         assert profile != null;
         assert key != null;
-        String valueString = extract(profile, key);
+        String valueString = extract(profile, key, true);
         int value;
         try {
             value = Integer.parseInt(valueString.trim());

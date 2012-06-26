@@ -193,11 +193,11 @@ public class SshProfile {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
         String name = profile.getName();
-        String target = profile.getConfiguration().get(KEY_TARGET);
-        String user = extract(profile, KEY_USER);
-        String host = extract(profile, KEY_HOST);
+        String target = extract(profile, KEY_TARGET, false);
+        String user = extract(profile, KEY_USER, true);
+        String host = extract(profile, KEY_HOST, true);
         int port = extractPort(profile);
-        String privateKey = extractPrivateKey(profile);
+        String privateKey = extract(profile, KEY_PRIVATE_KEY, true);
         String passPhrase = extractPassPhrase(profile);
         CompressionCodec compressionCodec = extractCompressionCodec(configuration, profile);
         Map<String, String> env = extractEnv(profile);
@@ -231,26 +231,49 @@ public class SshProfile {
                 env);
     }
 
-    private static String extract(ResourceProfile profile, String configKey) {
+    private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
         assert profile != null;
         assert configKey != null;
         String value = profile.getConfiguration().get(configKey);
         if (value == null) {
-            WGLOG.error("E10001",
+            if (mandatory == false) {
+                return null;
+            } else {
+                WGLOG.error("E10001",
+                        profile.getName(),
+                        configKey,
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        configKey));
+            }
+        }
+        return resolve(profile, configKey, value.trim());
+    }
+
+    private static String resolve(ResourceProfile profile, String configKey, String value) {
+        assert profile != null;
+        assert configKey != null;
+        assert value != null;
+        try {
+            return profile.getContext().getContextParameters().replace(value, true);
+        } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E10001",
                     profile.getName(),
                     configKey,
-                    null);
+                    value);
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Resource \"{0}\" must declare \"{1}\"",
+                    "Failed to resolve environment variables: {2} (resource={0}, property={1})",
                     profile.getName(),
-                    configKey));
+                    configKey,
+                    value), e);
         }
-        return value.trim();
     }
 
     private static int extractPort(ResourceProfile profile) {
         assert profile != null;
-        String portString = extract(profile, KEY_PORT);
+        String portString = extract(profile, KEY_PORT, true);
         try {
             return Integer.parseInt(portString);
         } catch (NumberFormatException e) {
@@ -266,43 +289,13 @@ public class SshProfile {
         }
     }
 
-    private static String extractPrivateKey(ResourceProfile profile) {
-        assert profile != null;
-        String raw = extract(profile, KEY_PRIVATE_KEY);
-        try {
-            return profile.getContext().getContextParameters().replace(raw, true);
-        } catch (IllegalArgumentException e) {
-            WGLOG.error(e, "E10001",
-                    profile.getName(),
-                    KEY_PRIVATE_KEY,
-                    raw);
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Failed to resolve the private key \"{1}\": {2} (resource={0})",
-                    profile.getName(),
-                    KEY_PRIVATE_KEY,
-                    raw), e);
-        }
-    }
-
     private static Map<String, String> extractEnv(ResourceProfile profile) {
         assert profile != null;
         Map<String, String> map = PropertiesUtil.createPrefixMap(profile.getConfiguration(), PREFIX_ENV);
         Map<String, String> results = new HashMap<String, String>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            try {
-                String resolved =  profile.getContext().getContextParameters().replace(entry.getValue(), true);
-                results.put(entry.getKey(), resolved);
-            } catch (IllegalArgumentException e) {
-                WGLOG.error(e, "E10001",
-                        profile.getName(),
-                        PREFIX_ENV + entry.getKey(),
-                        entry.getValue());
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Failed to resolve the environment variable \"{1}\": {2} (resource={0})",
-                        profile.getName(),
-                        PREFIX_ENV + entry.getKey(),
-                        entry.getValue()), e);
-            }
+            String resolved =  resolve(profile, PREFIX_ENV + entry.getKey(), entry.getValue());
+            results.put(entry.getKey(), resolved);
         }
         LOG.debug("Remote Env ({}): {}", profile.getName(), results);
         return results;
@@ -310,7 +303,7 @@ public class SshProfile {
 
     private static String extractPassPhrase(ResourceProfile profile) {
         assert profile != null;
-        String passPhrase = profile.getConfiguration().get(KEY_PASS_PHRASE);
+        String passPhrase = extract(profile, KEY_PASS_PHRASE, false);
         passPhrase = passPhrase == null ? "" : passPhrase;
         return passPhrase;
     }
@@ -318,7 +311,7 @@ public class SshProfile {
     private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
         assert configuration != null;
         assert profile != null;
-        String compressionCodecString = profile.getConfiguration().get(KEY_COMPRESSION);
+        String compressionCodecString = extract(profile, KEY_COMPRESSION, false);
         CompressionCodec compressionCodec;
         try {
             if (compressionCodecString == null) {
