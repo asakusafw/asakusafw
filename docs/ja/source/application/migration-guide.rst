@@ -23,7 +23,7 @@ Asakusa Frameworkの再セットアップを行うため、Mavenの以下のフ�
 
 ..  code-block:: sh
 
-    mvn assembly:single antrun:run compile
+    mvn assembly:single antrun:run
 
 Eclipseを使って開発している場合は、Eclipse用クラスパス定義ファイル(.classpathなど)を更新します。
 
