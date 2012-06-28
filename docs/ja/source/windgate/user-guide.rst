@@ -129,7 +129,6 @@ WindGateは二つのリソースの間でデータを転送するツールです
 ..  note::
     ここでのセクション名が ``process.basic`` となっているのは、このプロセスが「通常の方法でデータ転送を行う」という役割を持っているためです。
     将来、キャッシュの機能などがサポートされる際には、 ``process`` セクションも増える予定です。
-    現在のところ、 `通常のデータ転送プロセス`_ のみが提供されています。
 
 ..  note::
     ここでの「プロセス」はUNIXのプロセスとは別物です。
@@ -150,6 +149,31 @@ WindGateは二つのリソースの間でデータを転送するツールです
 
 この項目には、特に追加の設定はありません。
 
+再試行可能なデータ転送プロセス
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+再試行可能なデータ転送プロセスを利用するには、 ``process.basic`` セクションに以下のように記述します。
+
+..  list-table:: 再試行可能なデータ転送プロセスの設定
+    :widths: 10 40
+    :header-rows: 1
+
+    * - 名前
+      - 値
+    * - ``process.basic``
+      - :javadoc:`com.asakusafw.windgate.retryable.RetryableProcessProvider`
+    * - ``process.basic.component``
+      - :javadoc:`com.asakusafw.windgate.core.process.BasicProcessProvider`
+    * - ``process.basic.retryCount``
+      - リトライ回数
+
+``process.basic.component`` は実際に利用するデータ転送プロセスを設定します。
+現在他に利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
+
+再試行可能なデータ転送プロセスでは、 ``process.basic.component`` に指定したデータ転送プロセスを利用し、通常の方法でデータ転送を行います。
+データ転送に失敗した場合、 ``process.retryCount`` に設定された回数を上限として、成功するまで上記プロセスを再実行します。
+
+なお、このプロセスを利用するには、プラグインライブラリに ``asakusa-windgate-retryable`` の追加が必要です。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 Hadoopクラスタの設定
 --------------------
