@@ -83,7 +83,7 @@ cd ~
 _JQ_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _JQ_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
 _JQ_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
-_JQ_RUNTIME_LIB="$_JQ_CORE_LIB_DIR/asakusa-runtime.jar"
+_JQ_RUNTIME_LIB="$_JQ_CORE_LIB_DIR/asakusa-runtime-all.jar"
 _JQ_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _JQ_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 

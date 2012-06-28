@@ -64,7 +64,7 @@ import "$_TD_ROOT/libexec/validate-env.sh"
 cd
 
 _TD_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_TD_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
+_TD_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 _TD_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 
 _TD_LIBJARS="$_OPT_APP_LIB"

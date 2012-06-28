@@ -87,6 +87,12 @@
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-runtime-all</artifactId>
+			<version>${project.version}</version>
+			<classifier>lib</classifier>
+		</dependency>
 
 
 		<!-- ThunderGate -->

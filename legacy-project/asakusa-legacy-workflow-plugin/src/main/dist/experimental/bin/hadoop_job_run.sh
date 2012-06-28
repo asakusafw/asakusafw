@@ -52,7 +52,7 @@ FLOW_JARNAME=$1
 shift
 
 TOOL_LAUNCHER_CLASSNAME="com.asakusafw.runtime.stage.ToolLauncher"
-BATCH_RUNTIME_JAR="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
+BATCH_RUNTIME_JAR="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 
 LIBJAR=$FLOW_JARNAME

@@ -128,7 +128,7 @@ public class FrameworkDeployer implements TestRule {
 
     void deployRuntimeLibrary() throws IOException {
         LOG.debug("Deploying runtime library");
-        runtimeLib = deployLibrary(ToolLauncher.class, "core/lib/asakusa-runtime.jar");
+        runtimeLib = deployLibrary(ToolLauncher.class, "core/lib/asakusa-runtime-all.jar");
     }
 
     /**

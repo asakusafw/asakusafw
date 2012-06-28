@@ -169,6 +169,7 @@
 					<excludes>
 						<exclude>com.asakusafw:asakusa-distribution</exclude>
 						<exclude>com.asakusafw:asakusa-cleaner</exclude>
+						<exclude>com.asakusafw:asakusa-runtime-all</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>

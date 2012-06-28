@@ -26,6 +26,7 @@
 	<modules>
 		<module>asakusa-runtime</module>
 		<module>asakusa-runtime-configuration</module>
+		<module>asakusa-runtime-all</module>
 	</modules>
 
 </project>
