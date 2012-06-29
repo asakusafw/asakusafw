@@ -276,18 +276,18 @@ Hadoopクライアントノードへサンプルアプリケーションをデ�
       RGST_DATETIME DATETIME       NULL,
       UPDT_DATETIME DATETIME       NULL,
       DELETE_FLAG CHAR(1)          NULL,
-      PRIMARY KEY (SID) ) type=InnoDB;
+      PRIMARY KEY (SID) ) ENGINE=InnoDB;
     DROP TABLE IF EXISTS asakusa.EX1_RL;
     CREATE TABLE asakusa.EX1_RL (
       SID BIGINT PRIMARY KEY,
       JOBFLOW_SID BIGINT NULL
-    ) type=InnoDB;
+    ) ENGINE=InnoDB;
     DROP TABLE IF EXISTS asakusa.EX1_RC;
     CREATE TABLE asakusa.EX1_RC (
       SID BIGINT PRIMARY KEY ,
       CACHE_FILE_SID VARCHAR(45) NULL ,
       CREATE_DATE DATETIME NULL
-    ) type=InnoDB;
+    ) ENGINE=InnoDB;
 
     TRUNCATE TABLE asakusa.EX1;
     INSERT INTO asakusa.EX1 (SID, VALUE, STRING, VERSION_NO, RGST_DATETIME, UPDT_DATETIME, DELETE_FLAG)
