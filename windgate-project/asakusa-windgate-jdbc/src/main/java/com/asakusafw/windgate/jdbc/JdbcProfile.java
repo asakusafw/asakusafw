@@ -21,6 +21,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -227,13 +228,11 @@ public class JdbcProfile {
         }
         String resourceName = profile.getName();
         ClassLoader classLoader = profile.getContext().getClassLoader();
-        String driver = extract(profile, KEY_DRIVER);
-        String url = extract(profile, KEY_URL);
-        String user = extract(profile, KEY_USER, null);
-        String password = extract(profile, KEY_PASSWORD, null);
-        Map<String, String> connectionProperties = PropertiesUtil.createPrefixMap(
-                profile.getConfiguration(),
-                KEY_PREFIX_PROPERTIES);
+        String driver = extract(profile, KEY_DRIVER, true);
+        String url = extract(profile, KEY_URL, true);
+        String user = extract(profile, KEY_USER, false);
+        String password = extract(profile, KEY_PASSWORD, false);
+        Map<String, String> connectionProperties = extractConnectionProperties(profile);
 
         JdbcProfile result = new JdbcProfile(
                 resourceName, classLoader, driver, url, user, password, connectionProperties);
@@ -242,7 +241,10 @@ public class JdbcProfile {
         long batchPutUnit = extractLong(profile, KEY_BATCH_PUT_UNIT, 1, DEFAULT_BATCH_PUT_UNIT);
         int connectRetryCount = extractInt(profile, KEY_CONNECT_RETRY_COUNT, 0, DEFAULT_CONNECT_RETRY_COUNT);
         int connectRetryInterval = extractInt(profile, KEY_CONNECT_RETRY_INTERVAL, 1, DEFAULT_CONNECT_RETRY_INTERVAL);
-        String truncateStatement = extract(profile, KEY_TRUNCATE_STATEMENT, DEFAULT_TRUNCATE_STATEMENT);
+        String truncateStatement = extract(profile, KEY_TRUNCATE_STATEMENT, false);
+        if (truncateStatement == null) {
+            truncateStatement = DEFAULT_TRUNCATE_STATEMENT;
+        }
         try {
             MessageFormat.format(truncateStatement, "dummy");
         } catch (IllegalArgumentException e) {
@@ -265,10 +267,23 @@ public class JdbcProfile {
         return result;
     }
 
+    private static Map<String, String> extractConnectionProperties(ResourceProfile profile) {
+        assert profile != null;
+        Map<String, String> raw = PropertiesUtil.createPrefixMap(
+                profile.getConfiguration(),
+                KEY_PREFIX_PROPERTIES);
+        Map<String, String> results = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : raw.entrySet()) {
+            String value = resolve(profile, KEY_PREFIX_PROPERTIES + entry.getKey(), entry.getValue());
+            results.put(entry.getKey(), value);
+        }
+        return results;
+    }
+
     private static int extractInt(ResourceProfile profile, String key, int minimumValue, int defaultValue) {
         assert profile != null;
         assert key != null;
-        String valueString = extract(profile, key, null);
+        String valueString = extract(profile, key, false);
         int value;
         try {
             if (valueString == null || valueString.trim().isEmpty()) {
@@ -304,7 +319,7 @@ public class JdbcProfile {
     private static long extractLong(ResourceProfile profile, String key, long minimumValue, long defaultValue) {
         assert profile != null;
         assert key != null;
-        String valueString = extract(profile, key, null);
+        String valueString = extract(profile, key, false);
         long value;
         try {
             if (valueString == null || valueString.isEmpty()) {
@@ -337,31 +352,44 @@ public class JdbcProfile {
         return value;
     }
 
-    private static String extract(ResourceProfile profile, String configKey) {
-        assert profile != null;
-        assert configKey != null;
-        String value = extract(profile, configKey, null);
-        if (value == null) {
-            WGLOG.error("E00001",
-                    profile.getName(),
-                    configKey,
-                    null);
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Resource \"{0}\" must declare \"{1}\"",
-                    profile.getName(),
-                    configKey));
-        }
-        return value.trim();
-    }
-
-    private static String extract(ResourceProfile profile, String configKey, String defaultValue) {
+    private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
         assert profile != null;
         assert configKey != null;
         String value = profile.getConfiguration().get(configKey);
         if (value == null) {
-            return defaultValue;
+            if (mandatory == false) {
+                return null;
+            } else {
+                WGLOG.error("E00001",
+                        profile.getName(),
+                        configKey,
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        configKey));
+            }
         }
-        return value.trim();
+        return resolve(profile, configKey, value.trim());
+    }
+
+    private static String resolve(ResourceProfile profile, String configKey, String value) {
+        assert profile != null;
+        assert configKey != null;
+        assert value != null;
+        try {
+            return profile.getContext().getContextParameters().replace(value, true);
+        } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E00001",
+                    profile.getName(),
+                    configKey,
+                    value);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Failed to resolve environment variables: {2} (resource={0}, property={1})",
+                    profile.getName(),
+                    configKey,
+                    value), e);
+        }
     }
 
     /**

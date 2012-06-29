@@ -104,46 +104,32 @@ public class HadoopFsProfile {
     private static Path extractBasePath(Configuration configuration, ResourceProfile profile) throws IOException {
         assert configuration != null;
         assert profile != null;
-        String raw = profile.getConfiguration().get(KEY_BASE_PATH);
+        String result = extract(profile, KEY_BASE_PATH, false);
         try {
-            if (raw == null || raw.isEmpty()) {
+            if (result == null || result.isEmpty()) {
                 FileSystem fileSystem = FileSystem.get(configuration);
                 return fileSystem.getWorkingDirectory();
             }
-            URI uri;
-            try {
-                String resolved = profile.getContext().getContextParameters().replace(raw, true);
-                uri = URI.create(resolved);
-            } catch (IllegalArgumentException e) {
-                WGLOG.error(e, "E00001",
-                        profile.getName(),
-                        KEY_BASE_PATH,
-                        raw);
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Failed to resolve the base path \"{1}\": {2} (resource={0})",
-                        profile.getName(),
-                        KEY_BASE_PATH,
-                        raw), e);
-            }
+            URI uri = URI.create(result);
             FileSystem fileSystem = FileSystem.get(uri, configuration);
             return fileSystem.makeQualified(new Path(uri));
         } catch (IOException e) {
             WGLOG.error(e, "E00002",
                     profile.getName(),
                     KEY_BASE_PATH,
-                    raw == null ? "(default)" : raw);
+                    result == null ? "(default)" : result);
             throw new IOException(MessageFormat.format(
                     "Failed to initialize the file system: {1} (resource={0})",
                     profile.getName(),
                     KEY_BASE_PATH,
-                    raw == null ? "(default)" : raw), e);
+                    result == null ? "(default)" : result), e);
         }
     }
 
     private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
         assert configuration != null;
         assert profile != null;
-        String raw = profile.getConfiguration().get(KEY_COMPRESSION);
+        String raw = extract(profile, KEY_COMPRESSION, false);
         CompressionCodec compressionCodec;
         try {
             if (raw == null) {
@@ -168,6 +154,39 @@ public class HadoopFsProfile {
                 KEY_COMPRESSION,
                 compressionCodec == null ? null : raw);
         return compressionCodec;
+    }
+
+    private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
+        assert profile != null;
+        assert configKey != null;
+        String value = profile.getConfiguration().get(configKey);
+        if (value == null) {
+            if (mandatory == false) {
+                return null;
+            } else {
+                WGLOG.error("E00001",
+                        profile.getName(),
+                        configKey,
+                        null);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Resource \"{0}\" must declare \"{1}\"",
+                        profile.getName(),
+                        configKey));
+            }
+        }
+        try {
+            return profile.getContext().getContextParameters().replace(value.trim(), true);
+        } catch (IllegalArgumentException e) {
+            WGLOG.error(e, "E00001",
+                    profile.getName(),
+                    configKey,
+                    value);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Failed to resolve environment variables: {2} (resource={0}, property={1})",
+                    profile.getName(),
+                    configKey,
+                    value), e);
+        }
     }
 
     /**

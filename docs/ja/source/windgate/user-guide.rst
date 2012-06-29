@@ -201,10 +201,11 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
 
 ``resource.hadoop.basePath`` は転送先のベースパスで、省略時はHadoopのデフォルト設定を利用します。
 URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシステム上のパスを指定できます。
-また、``${変数名}`` という形式で環境変数を含められます。
 
 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
+
+上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
@@ -252,8 +253,7 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
     * - ``resource.hadoop.env.<name>``
       - ログイン先の環境変数 ``<name>`` の値
 
-上記のうち、 ``resource.hadoop.privateKey`` や ``resource.hadoop.env.<name>`` には ``${変数名}`` という形式で環境変数を含められます。
-``resource.hadoop.env.ASAKUSA_HOME`` にも同様の形式で環境変数を含められます。
+上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 `同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
@@ -320,6 +320,8 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
 ``resource.local.basePath`` は絶対パスで指定し、WindGateはそのパス以下のみを利用します。
 また、 ``resource.local.basePath`` には ``${環境変数名}`` の形式で環境変数を指定できます。
 
+上記の設定のうち、先頭の ``resource.local`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
+
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-stream`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
@@ -379,6 +381,8 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
       - テーブルの内容を削除する際の文形式 [#]_ (省略時には ``TRUNCATE`` 文)
     * - ``resource.jdbc.properties.<キー名>``
       - コネクションプロパティの値
+
+上記の設定のうち、先頭の ``resource.jdbc`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。

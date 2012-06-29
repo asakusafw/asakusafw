@@ -189,6 +189,28 @@ public class HadoopFsProfileTest {
     }
 
     /**
+     * Converts a resource profile with compression codec.
+     * @throws Exception if failed
+     */
+    @Test
+    public void convert_compression_parameterize() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(HadoopFsProfile.KEY_COMPRESSION, "${COMPRESSION}");
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("COMPRESSION", DefaultCodec.class.getName());
+        ResourceProfile resourceProfile = new ResourceProfile(
+                "testing",
+                HadoopFsProvider.class,
+                new ProfileContext(getClass().getClassLoader(), new ParameterList(parameters)),
+                conf);
+
+        HadoopFsProfile profile = HadoopFsProfile.convert(hadoopConf, resourceProfile);
+        assertThat(profile.getResourceName(), is("testing"));
+        assertThat(profile.getCompressionCodec(), instanceOf(DefaultCodec.class));
+    }
+
+    /**
      * Attempts to convert a resource profile with invalid compression codec.
      * @throws Exception if failed
      */

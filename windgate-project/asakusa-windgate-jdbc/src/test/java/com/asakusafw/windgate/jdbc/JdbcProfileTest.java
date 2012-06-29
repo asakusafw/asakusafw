@@ -20,12 +20,15 @@ import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 
@@ -116,6 +119,64 @@ public class JdbcProfileTest {
     }
 
     /**
+     * Fully specified profile with parameterized.
+     * @throws Exception if failed
+     */
+    @Test
+    public void convert_parameterized() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(JdbcProfile.KEY_DRIVER, VariableTable.toVariable(JdbcProfile.KEY_DRIVER));
+        map.put(JdbcProfile.KEY_URL, VariableTable.toVariable(JdbcProfile.KEY_URL));
+        map.put(JdbcProfile.KEY_USER, VariableTable.toVariable(JdbcProfile.KEY_USER));
+        map.put(JdbcProfile.KEY_PASSWORD, VariableTable.toVariable(JdbcProfile.KEY_PASSWORD));
+        map.put(JdbcProfile.KEY_BATCH_GET_UNIT, VariableTable.toVariable(JdbcProfile.KEY_BATCH_GET_UNIT));
+        map.put(JdbcProfile.KEY_BATCH_PUT_UNIT, VariableTable.toVariable(JdbcProfile.KEY_BATCH_PUT_UNIT));
+        map.put(JdbcProfile.KEY_CONNECT_RETRY_COUNT, VariableTable.toVariable(JdbcProfile.KEY_CONNECT_RETRY_COUNT));
+        map.put(JdbcProfile.KEY_CONNECT_RETRY_INTERVAL, VariableTable.toVariable(JdbcProfile.KEY_CONNECT_RETRY_INTERVAL));
+        map.put(JdbcProfile.KEY_TRUNCATE_STATEMENT, VariableTable.toVariable(JdbcProfile.KEY_TRUNCATE_STATEMENT));
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello1", VariableTable.toVariable(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello1"));
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2", VariableTable.toVariable(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2"));
+        map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3", VariableTable.toVariable(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3"));
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
+        parameters.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
+        parameters.put(JdbcProfile.KEY_USER, "");
+        parameters.put(JdbcProfile.KEY_PASSWORD, "");
+        parameters.put(JdbcProfile.KEY_BATCH_GET_UNIT, "5000");
+        parameters.put(JdbcProfile.KEY_BATCH_PUT_UNIT, "10000");
+        parameters.put(JdbcProfile.KEY_CONNECT_RETRY_COUNT, "3");
+        parameters.put(JdbcProfile.KEY_CONNECT_RETRY_INTERVAL, "10");
+        parameters.put(JdbcProfile.KEY_TRUNCATE_STATEMENT, "DELETE FROM {0}");
+        parameters.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello1", "world1");
+        parameters.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2", "world2");
+        parameters.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3", "world3");
+
+        JdbcProfile profile = JdbcProfile.convert(toProfile(map, parameters));
+        assertThat(profile.getBatchGetUnit(), is(5000));
+        assertThat(profile.getBatchPutUnit(), is(10000L));
+
+        Map<String, String> extra = new HashMap<String, String>();
+        extra.put("hello1", "world1");
+        extra.put("hello2", "world2");
+        extra.put("hello3", "world3");
+        assertThat(profile.getConnectionProperties(), is(extra));
+
+        assertThat(profile.getTruncateStatement("HELLO").trim(), startsWith("DELETE"));
+
+        Connection conn = profile.openConnection();
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.execute("INSERT INTO SIMPLE (VALUE) VALUES ('Hello, world!')");
+            stmt.close();
+            conn.commit();
+        } finally {
+            conn.close();
+        }
+        assertThat(h2.count("SIMPLE"), is(1));
+    }
+
+    /**
      * Attempts to convert a profile with empty configuration.
      * @throws Exception if failed
      */
@@ -180,10 +241,14 @@ public class JdbcProfileTest {
     }
 
     private ResourceProfile toProfile(Map<String, String> map) {
+        return toProfile(map, Collections.<String, String>emptyMap());
+    }
+
+    private ResourceProfile toProfile(Map<String, String> map, Map<String, String> params) {
         return new ResourceProfile(
                 "jdbc",
                 JdbcResourceProvider.class,
-                ProfileContext.system(getClass().getClassLoader()),
+                new ProfileContext(getClass().getClassLoader(), new ParameterList(params)),
                 map);
     }
 }
