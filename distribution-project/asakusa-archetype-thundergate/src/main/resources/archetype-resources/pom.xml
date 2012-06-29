@@ -160,15 +160,16 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>\${plugin.eclipse.version}</version>
 				<configuration>
-					<useProjectReferences>false</useProjectReferences>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>false</downloadJavadocs>
 					<classpathContainers>
 						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
 					</classpathContainers>
 					<excludes>
-						<exclude>com.asakusafw:asakusa-distribution</exclude>
 						<exclude>com.asakusafw:asakusa-cleaner</exclude>
+						<exclude>com.asakusafw:asakusa-directio-tools</exclude>
+						<exclude>com.asakusafw:asakusa-distribution</exclude>
+						<exclude>com.asakusafw:asakusa-operation-tools</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
@@ -182,6 +183,7 @@
 						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
+						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-multidispatch</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
