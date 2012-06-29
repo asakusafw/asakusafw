@@ -37,6 +37,7 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
 </code></pre>
  * @param <T> the base service class
  * @since 0.2.3
+ * @version 0.4.0
  */
 public class ServiceProfile<T extends Service> {
 
@@ -103,6 +104,70 @@ public class ServiceProfile<T extends Service> {
      */
     public Map<String, String> getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Returns the target configuration.
+     * @param key the configuration key
+     * @param mandatory whether the configuration is mandatory
+     * @param resolve whether resolves the configuration
+     * @return the corresponded configuration, or {@code null} if is not defined/empty
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.4.0
+     */
+    public String getConfiguration(String key, boolean mandatory, boolean resolve) {
+        if (key == null) {
+            throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
+        }
+        String value = getConfiguration().get(key);
+        return normalize(key, value, mandatory, resolve);
+    }
+
+    /**
+     * Normalizes the configuration value.
+     * @param key the configuration key
+     * @param value the configuration value (nullable if only is not mandatory)
+     * @param mandatory whether the configuration is mandatory
+     * @param resolve whether resolves the configuration
+     * @return the normalized value, or {@code null} if is not defined/empty
+     * @throws IllegalArgumentException if some parameters were {@code null}, or failed to normalize
+     * @since 0.4.0
+     */
+    public String normalize(String key, String value, boolean mandatory, boolean resolve) {
+        if (key == null) {
+            throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
+        }
+        String string = value;
+        if (string == null) {
+            if (mandatory) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "The profile \"{0}\" must not be defined",
+                        getPrefix() + '.' + key));
+            } else {
+                return null;
+            }
+        }
+        string = string.trim();
+        if (resolve) {
+            try {
+                string = getContext().getContextParameters().replace(string, true);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Failed to resolve the profile \"{0}\": {1}",
+                        getPrefix() + '.' + key,
+                        string), e);
+            }
+        }
+        if (string.isEmpty()) {
+            if (mandatory) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "The profile \"{0}\" must not be defined",
+                        getPrefix() + '.' + key));
+            } else {
+                return null;
+            }
+        }
+        return string;
     }
 
     /**

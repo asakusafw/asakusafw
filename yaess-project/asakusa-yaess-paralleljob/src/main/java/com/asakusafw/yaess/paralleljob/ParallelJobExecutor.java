@@ -145,6 +145,14 @@ public class ParallelJobExecutor implements JobExecutor {
         for (Map.Entry<String, String> entry : segment.entrySet()) {
             String name = entry.getKey();
             String valueString = entry.getValue();
+            try {
+                valueString = variables.replace(valueString, true);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Failed to resolve the profile \"{0}\": {1}",
+                        servicePrefix + '.' + name,
+                        valueString), e);
+            }
             Integer value;
             try {
                 value = Integer.valueOf(valueString);

@@ -51,12 +51,19 @@ public abstract class ExecutionScriptHandlerBase implements Service {
     @Override
     public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
         this.prefix = profile.getPrefix();
-        configureResourceId(profile);
-        Map<String, String> desiredProperties = getDesiredProperties(profile);
-        Map<String, String> desiredEnvironmentVariables = getDesiredEnvironmentVariables(profile);
-        this.properties = Collections.unmodifiableMap(desiredProperties);
-        this.environmentVariables = Collections.unmodifiableMap(desiredEnvironmentVariables);
-        doConfigure(profile, desiredProperties, desiredEnvironmentVariables);
+        try {
+            configureResourceId(profile);
+            Map<String, String> desiredProperties = getDesiredProperties(profile);
+            Map<String, String> desiredEnvironmentVariables = getDesiredEnvironmentVariables(profile);
+            this.properties = Collections.unmodifiableMap(desiredProperties);
+            this.environmentVariables = Collections.unmodifiableMap(desiredEnvironmentVariables);
+            doConfigure(profile, desiredProperties, desiredEnvironmentVariables);
+        } catch (IllegalArgumentException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getPrefix()), e);
+        }
     }
 
     /**
@@ -69,7 +76,7 @@ public abstract class ExecutionScriptHandlerBase implements Service {
 
     private void configureResourceId(ServiceProfile<?> profile) {
         assert profile != null;
-        String override = profile.getConfiguration().get(ExecutionScriptHandler.KEY_RESOURCE);
+        String override = profile.getConfiguration(ExecutionScriptHandler.KEY_RESOURCE, false, true);
         if (override == null) {
             LOG.debug("resourceId is not override in {}",
                     profile.getPrefix());

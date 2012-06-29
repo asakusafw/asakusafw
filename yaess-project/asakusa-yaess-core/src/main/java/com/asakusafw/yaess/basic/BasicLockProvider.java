@@ -54,24 +54,7 @@ public class BasicLockProvider extends ExecutionLockProvider {
 
     private File prepareDirectory(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        String rawPath = profile.getConfiguration().get(KEY_DIRECTORY);
-        if (rawPath == null || rawPath.isEmpty()) {
-            throw new IOException(MessageFormat.format(
-                    "The profile \"{0}.{1}\" must be defined",
-                    profile.getPrefix(),
-                    KEY_DIRECTORY));
-        }
-        String path;
-        try {
-            LOG.debug("Resolving lock directory path: {}", rawPath);
-            path = profile.getContext().getContextParameters().replace(rawPath, true);
-        } catch (IllegalArgumentException e) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to resolve the profile \"{0}.{1}\": {2}",
-                    profile.getPrefix(),
-                    KEY_DIRECTORY,
-                    rawPath), e);
-        }
+        String path = profile.getConfiguration(KEY_DIRECTORY, true, true);
         File dir = new File(path);
         if (dir.isDirectory() == false && dir.mkdirs() == false) {
             throw new IOException(MessageFormat.format(

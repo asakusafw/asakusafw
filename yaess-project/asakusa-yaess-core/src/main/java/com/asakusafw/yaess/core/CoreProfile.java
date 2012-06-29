@@ -33,20 +33,20 @@ public abstract class CoreProfile implements Service {
 
     @Override
     public final void configure(ServiceProfile<?> profile) throws InterruptedException, IOException {
-        configureVersion(profile);
-        doConfigure(profile);
+        try {
+            configureVersion(profile);
+            doConfigure(profile);
+        } catch (IllegalArgumentException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getServiceClass().getName()), e);
+        }
     }
 
-    private void configureVersion(ServiceProfile<?> profile) throws IOException {
+    private void configureVersion(ServiceProfile<?> profile) {
         assert profile != null;
-        String string = profile.getConfiguration().get(KEY_VERSION);
-        if (string == null) {
-            throw new IOException(MessageFormat.format(
-                    "{0}.{1} is not defined in profile",
-                    profile.getPrefix(),
-                    KEY_VERSION));
-        }
-        this.version = string;
+        this.version = profile.getConfiguration(KEY_VERSION, true, false);
     }
 
     /**

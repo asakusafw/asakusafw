@@ -38,8 +38,9 @@ public class FlowLoggerProvider extends ExecutionMonitorProvider {
             this.logProfile = FlowLoggerProfile.convert(profile);
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to configure {0}",
-                    profile.getPrefix()), e);
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getServiceClass().getName()), e);
         }
     }
 

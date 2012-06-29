@@ -201,11 +201,11 @@ public class JschProcessExecutor implements ProcessExecutor {
         if (variables == null) {
             throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
         }
-        String user = extract(KEY_USER, servicePrefix, configuration, variables);
-        String host = extract(KEY_HOST, servicePrefix, configuration, variables);
-        String portString = configuration.get(KEY_PORT);
-        String privateKey = extract(KEY_PRIVATE_KEY, servicePrefix, configuration, variables);
-        String passPhrase = configuration.get(KEY_PASS_PHRASE);
+        String user = extract(KEY_USER, servicePrefix, configuration, variables, true);
+        String host = extract(KEY_HOST, servicePrefix, configuration, variables, true);
+        String portString = extract(KEY_PORT, servicePrefix, configuration, variables, false);
+        String privateKey = extract(KEY_PRIVATE_KEY, servicePrefix, configuration, variables, false);
+        String passPhrase = extract(KEY_PASS_PHRASE, servicePrefix, configuration, variables, false);
         Integer port = null;
         if (portString != null) {
             try {
@@ -224,16 +224,21 @@ public class JschProcessExecutor implements ProcessExecutor {
             String key,
             String prefix,
             Map<String, String> configuration,
-            VariableResolver variables) {
+            VariableResolver variables,
+            boolean mandatory) {
         assert key != null;
         assert prefix != null;
         assert configuration != null;
         assert variables != null;
         String value = configuration.get(key);
         if (value == null) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Mandatory entry \"{0}\" is not set",
-                    prefix + '.' + key));
+            if (mandatory) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Mandatory entry \"{0}\" is not set",
+                        prefix + '.' + key));
+            } else {
+                return null;
+            }
         }
         try {
             return variables.replace(value, true);

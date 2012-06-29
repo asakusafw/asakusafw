@@ -93,10 +93,18 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
     @Override
     public void configure(ServiceProfile<?> profile) throws IOException, InterruptedException {
         this.prefix = profile.getPrefix();
-        this.confDirectory = getConfDirectory(profile);
-        this.delegations = getDelegations(profile);
-        this.forceSetUp = profile.getConfiguration().get(KEY_SETUP);
-        this.forceCleanUp = profile.getConfiguration().get(KEY_CLEANUP);
+        try {
+            this.confDirectory = getConfDirectory(profile);
+            this.delegations = getDelegations(profile);
+            this.forceSetUp = profile.getConfiguration(KEY_SETUP, false, true);
+            this.forceCleanUp = profile.getConfiguration(KEY_CLEANUP, false, true);
+        } catch (IllegalArgumentException e) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to configure \"{0}\" ({1})",
+                    profile.getPrefix(),
+                    profile.getServiceClass().getName()), e);
+        }
+
         if (forceSetUp != null && delegations.containsKey(forceSetUp) == false) {
             throw new IOException(MessageFormat.format(
                     "Failed to detect setUp target: \"{2}\" in {0}.{1}",
@@ -113,24 +121,9 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         }
     }
 
-    private File getConfDirectory(ServiceProfile<?> profile) throws IOException {
+    private File getConfDirectory(ServiceProfile<?> profile) {
         assert profile != null;
-        String value = profile.getConfiguration().get(KEY_DIRECTORY);
-        if (value == null) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to detect configuration directory: {0}.{1}",
-                    profile.getPrefix(),
-                    KEY_DIRECTORY));
-        }
-        try {
-            value = profile.getContext().getContextParameters().replace(value, true);
-        } catch (IllegalArgumentException e) {
-            throw new IOException(MessageFormat.format(
-                    "Failed to resolve configuration directory: {0}.{1} = {2}",
-                    profile.getPrefix(),
-                    KEY_DIRECTORY,
-                    value), e);
-        }
+        String value = profile.getConfiguration(KEY_DIRECTORY, true, true);
         File dir = new File(value);
         if (dir.exists() == false) {
             YSLOG.info("I00001",

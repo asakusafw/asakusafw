@@ -50,7 +50,7 @@ public class BasicMonitorProvider extends ExecutionMonitorProvider {
 
     private void configureStepUnit(ServiceProfile<?> profile) throws IOException {
         assert profile != null;
-        String stepUnitString = profile.getConfiguration().get(KEY_STEP_UNIT);
+        String stepUnitString = profile.getConfiguration(KEY_STEP_UNIT, false, true);
         if (stepUnitString == null) {
             LOG.debug("{} is not defined in {}", KEY_STEP_UNIT, profile.getPrefix());
         } else {
