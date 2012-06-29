@@ -323,12 +323,12 @@ public class DBCleanerTest {
         temp1Sql.append("  `RGST_DATE` DATETIME NULL ,");
         temp1Sql.append("  `UPDT_DATE` DATETIME NULL ,");
           temp1Sql.append("`DUPLICATE_FLG` char(1) NULL ,");
-        temp1Sql.append("  PRIMARY KEY (`TEMP_SID`) ) type=InnoDB;");
+        temp1Sql.append("  PRIMARY KEY (`TEMP_SID`) ) ENGINE=InnoDB;");
 
         StringBuilder dup1Sql = new StringBuilder();
         dup1Sql.append("CREATE  TABLE `TEMP_IMPORT_TARGET1_DF` (");
         dup1Sql.append("  `TEMP_SID` BIGINT,");
-        dup1Sql.append("  PRIMARY KEY (`TEMP_SID`) ) type=InnoDB");
+        dup1Sql.append("  PRIMARY KEY (`TEMP_SID`) ) ENGINE=InnoDB");
 
         UnitTestUtil.executeUpdate(dropTemp1Sql);
         UnitTestUtil.executeUpdate(dropDup1Sql);
@@ -349,7 +349,7 @@ public class DBCleanerTest {
         temp2Sql.append("  `RGST_DATE` DATETIME NULL ,");
         temp2Sql.append("  `UPDT_DATE` DATETIME NULL ,");
         temp2Sql.append("  `DUPLICATE_FLG` char(1) NULL ,");
-        temp2Sql.append("  PRIMARY KEY (`TEMP_SID`) ) type=InnoDB");
+        temp2Sql.append("  PRIMARY KEY (`TEMP_SID`) ) ENGINE=InnoDB");
 
         UnitTestUtil.executeUpdate(dropTemp2Sql);
         UnitTestUtil.executeUpdate(temp2Sql.toString());

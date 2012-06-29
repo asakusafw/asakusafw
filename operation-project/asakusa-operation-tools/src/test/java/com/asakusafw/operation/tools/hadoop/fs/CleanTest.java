@@ -389,6 +389,8 @@ public class CleanTest {
      */
     @Test
     public void readonly_folder() throws Exception {
+        assumeAccessRestrictionAvailable();
+
         File f1 = touch("a/file1", 50);
         File f2 = touch("a/RESTRICTED/file", 50);
         File f3 = touch("a/file3", 50);
@@ -415,6 +417,8 @@ public class CleanTest {
      */
     @Test
     public void symlink_file() throws Exception {
+        assumeAccessRestrictionAvailable();
+
         File f1 = touch("a/file1", 50);
         File f2 = touch("b/file2", 50);
         File f3 = link("b/link", f1, 50);
@@ -593,5 +597,21 @@ public class CleanTest {
     private File file(String path) {
         File file = new File(folder.getRoot(), path);
         return file;
+    }
+
+    private void assumeAccessRestrictionAvailable() throws IOException {
+        File f = File.createTempFile("access-restriction-check", ".dummy");
+        f.setReadable(false, false);
+        try {
+            if (f.canRead()) {
+                System.err.println("Current context does not support access restriction.");
+                Assume.assumeTrue(false);
+            }
+        } finally {
+            f.setReadable(true, true);
+            if (f.delete() == false) {
+                System.err.printf("Failed to delete a dummy file: %s%n", f);
+            }
+        }
     }
 }
