@@ -80,7 +80,7 @@ cd
 
 _TGC_CLASS_NAME="com.asakusafw.thundergate.runtime.cache.mapreduce.CacheBuildClient"
 _TGC_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_TGC_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
+_TGC_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 _TGC_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _TGC_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 

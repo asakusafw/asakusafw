@@ -67,7 +67,7 @@ cd
 
 _DIO_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
-_DIO_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime.jar"
+_DIO_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 _DIO_CLASS_NAME="com.asakusafw.directio.tools.DirectIoDelete"
 
 import "$_DIO_ROOT/libexec/configure-libjars.sh"

@@ -837,7 +837,7 @@ DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してく�
 
     ..  code-block:: sh
     
-        hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime.jar,$ASAKUSA_HOME/batchapps/<Batch-ID>/lib/jobflow-<Flow-ID>.jar" -text "<path/to/sequence-file>"
+        hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar,$ASAKUSA_HOME/batchapps/<Batch-ID>/lib/jobflow-<Flow-ID>.jar" -text "<path/to/sequence-file>"
 
 
 ファイルを入力に利用するDSL
