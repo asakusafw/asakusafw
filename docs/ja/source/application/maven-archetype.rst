@@ -386,7 +386,7 @@ EclipseからプロジェクトをImportするには、Eclipseのメニューか
 
 ..  code-block:: sh
 
-    mvn clean compile eclipse:eclipse
+    mvn clean eclipse:eclipse
 
 Mavenプロジェクトへの変換(m2eプラグインの利用)
 ----------------------------------------------

@@ -260,10 +260,11 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				<version>\${plugin.antrun.version}</version>
 				<executions>
 					<execution>
-						<id>modelgen</id>
+						<id>asakusa-generate-sources</id>
 						<phase>generate-sources</phase>
 						<configuration>
 							<target>
+								<mkdir dir="target/generated-sources/annotations" />
 								<property name="compile_classpath" refid="maven.test.classpath" />
 								<ant antfile="\${asakusa.build.antfile}">
 									<target name="generate-thundergate-model" />
@@ -275,7 +276,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 						</goals>
 					</execution>
 					<execution>
-						<id>batch:compile:all</id>
+						<id>asakusa-package</id>
 						<phase>package</phase>
 						<configuration>
 							<target>
