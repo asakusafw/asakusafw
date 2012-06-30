@@ -363,6 +363,8 @@ public class CleanTest {
      */
     @Test
     public void inaccessible_folder() throws Exception {
+        assumeAccessRestrictionAvailable();
+
         File f1 = touch("a/file1", 50);
         File f2 = touch("a/RESTRICTED/file", 50);
         File f3 = touch("a/file3", 50);
@@ -417,8 +419,6 @@ public class CleanTest {
      */
     @Test
     public void symlink_file() throws Exception {
-        assumeAccessRestrictionAvailable();
-
         File f1 = touch("a/file1", 50);
         File f2 = touch("b/file2", 50);
         File f3 = link("b/link", f1, 50);
