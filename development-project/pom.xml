@@ -4,7 +4,13 @@
 	<name>Asakusa Framework development project</name>
 	<groupId>com.asakusafw</groupId>
 	<artifactId>asakusa-development-project</artifactId>
-	<version>0.4-SNAPSHOT</version>
+	<parent>
+		<artifactId>asakusa-parent</artifactId>
+		<groupId>com.asakusafw</groupId>
+		<version>0.4-SNAPSHOT</version>
+		<relativePath>../asakusa-parent</relativePath>
+	</parent>
+
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework development project</description>
