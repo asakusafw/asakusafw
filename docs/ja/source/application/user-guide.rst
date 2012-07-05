@@ -63,13 +63,6 @@ MySQLのインストールが完了したら、Asakusa Frameworkのモデルジ�
 ..  warning::
     このデータベースはモデルジェネレータの実行毎に再作成(DROP DATABASE/CREATE DATABASE）が行われるので、開発以外の目的では使用しないでください。
 
-ASAKUSA_USERの環境変数設定
---------------------------
-ASAKUSA_HOMEを$HOME/asakusa 以外にした場合、$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties の以下のプロパティ値の変更が必要です。
-
-    * import.extractor-shell-name=($HOMEからの相対パス)
-    * export.extractor-shell-name=($HOMEからの相対パス)
-
 スタンドアロンモード/疑似分散モードの切替
 -----------------------------------------
 開発環境では通常はHadoopのスタンドアロンモードを使用して開発しますが、
@@ -79,32 +72,7 @@ ASAKUSA_HOMEを$HOME/asakusa 以外にした場合、$ASAKUSA_HOME/bulkloader/co
 
 Hadoopのモードを切り替える
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hadoopを疑似分散モードへ切り替えます。疑似分散モードの設定方法やモードの切替手順については、以下を参照して下さい [#]_ 。
+Hadoopを疑似分散モードへ切り替えます。疑似分散モードの設定方法やモードの切替手順については、各Hadoopディストリビューションのドキュメントを参照してください (例えばCDHでは以下を参照 [#]_ )。
 
 ..  [#] https://ccp.cloudera.com/display/CDHDOC/CDH3+Deployment+in+Pseudo-Distributed+Mode
-
-ThunderGateの設定変更
-~~~~~~~~~~~~~~~~~~~~~
-ThunderGateの以下の設定ファイルを変更します。
-
-$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-hc.propertiesを編集します。
-    * 「hdfs-protocol-host」を$HADOOP_HOME/conf/core-site.xml の fs.default.name と同じ値 (デフォルト値は"hdfs://localhost:8020")に変更します。
-    * 「hadoop-cluster.workingdir.use」をfalseに変更します。
-
-..  code-block:: sh
-    
-    # Protocol and host name with HDFS(required)
-    hdfs-protocol-host=hdfs://localhost:8020
-    # Is the file I/O position made work directory (optional)
-    hadoop-cluster.workingdir.use=false
-
-疑似分散モードからスタンドアロンモードに戻す場合は、
-上記で変更した設定を元に戻し、Hadoopのデーモンを停止します。
-
-Hadoopモード切替スクリプト
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Asakusa Framework の contrib リポジトリには、HadoopとAsakusa Frameworkのモード切替を行うためのスクリプトが公開されています。
-
-..  [#] https://raw.github.com/asakusafw/asakusafw-contrib/master/quick-start/cdh3vm/bin/switch_to_pseudo.sh
-..  [#] https://raw.github.com/asakusafw/asakusafw-contrib/master/quick-start/cdh3vm/bin/switch_to_standalone.sh
 
