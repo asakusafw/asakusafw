@@ -48,11 +48,11 @@ pom.xmlの変更
 -------------
 ver0.2.6ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.6向けに変更してください。
 
-* アーキタイプ:asaksua-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-thundergate-026pom.patch <migration/asakusa-archetype-thundergate-026pom.patch>`
-* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-windgate-026pom.patch <migration/asakusa-archetype-windgate-026pom.patch>`
-* アーキタイプ:asaksua-archetype-directio (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-directio (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-directio-026pom.patch <migration/asakusa-archetype-directio-026pom.patch>`
 
 上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
@@ -85,9 +85,9 @@ pom.xmlの変更
 -------------
 ver0.2.5ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.5向けに変更してください。
 
-* アーキタイプ:asaksua-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-thundergate (ThunderGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-thundergate-025pom.patch <migration/asakusa-archetype-thundergate-025pom.patch>`
-* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-windgate-025pom.patch <migration/asakusa-archetype-windgate-025pom.patch>`
 
 上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
@@ -114,9 +114,9 @@ pom.xmlの変更
 -------------
 ver0.2.4ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.4向けに変更してください。
 
-* アーキタイプ:asaksua-archetype-batchapp (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-batchapp (ThunderGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-batchapp-024pom.patch <migration/asakusa-archetype-batchapp-024pom.patch>`
-* アーキタイプ:asaksua-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
+* アーキタイプ:asakusa-archetype-windgate (WindGateを使用したアプリケーション向け) 用パッチファイル
    * :download:`asakusa-archetype-windgate-024pom.patch <migration/asakusa-archetype-windgate-024pom.patch>`
 
 上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
