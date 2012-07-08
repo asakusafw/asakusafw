@@ -23,9 +23,6 @@ import java.math.BigDecimal;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.text.MessageFormat;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -39,7 +36,6 @@ import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
-import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.DoubleOption;
 import com.asakusafw.runtime.value.FloatOption;
@@ -51,6 +47,7 @@ import com.asakusafw.runtime.value.StringOption;
 /**
  * A simple CSV parser.
  * @since 0.2.4
+ * @version 0.4.0
  */
 public class CsvParser implements RecordParser {
 
@@ -88,9 +85,9 @@ public class CsvParser implements RecordParser {
 
     private final String trueFormat;
 
-    private final SimpleDateFormat dateFormat;
+    private final DateFormatter dateFormat;
 
-    private final SimpleDateFormat dateTimeFormat;
+    private final DateTimeFormatter dateTimeFormat;
 
     private final List<String> headerCellsFormat;
 
@@ -112,11 +109,7 @@ public class CsvParser implements RecordParser {
 
     private CsvFormatException.Status exceptionStatus = null;
 
-    private final Calendar calendarBuffer = Calendar.getInstance();
-
     private final Text textBuffer = new Text();
-
-    private final ParsePosition parsePositionBuffer = new ParsePosition(0);
 
     /**
      * Creates a new instance.
@@ -136,8 +129,8 @@ public class CsvParser implements RecordParser {
         this.path = path;
         this.separator = config.getSeparatorChar();
         this.trueFormat = config.getTrueFormat();
-        this.dateFormat = new SimpleDateFormat(config.getDateFormat());
-        this.dateTimeFormat = new SimpleDateFormat(config.getDateTimeFormat());
+        this.dateFormat = DateFormatter.newInstance(config.getDateFormat());
+        this.dateTimeFormat = DateTimeFormatter.newInstance(config.getDateTimeFormat());
         this.headerCellsFormat = config.getHeaderCells();
         this.allowLineBreakInValue = config.isLineBreakInValue();
 
@@ -707,16 +700,13 @@ public class CsvParser implements RecordParser {
     }
 
     private int toDateValue() throws CsvFormatException {
-        parsePositionBuffer.setIndex(0);
-        parsePositionBuffer.setErrorIndex(-1);
-        java.util.Date parsed = dateFormat.parse(lineBuffer.toString(), parsePositionBuffer);
-        if (parsePositionBuffer.getIndex() == 0) {
+        int result = dateFormat.parse(lineBuffer);
+        if (result < 0) {
             throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.toPattern()),
+                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.getPattern()),
                     null);
         }
-        calendarBuffer.setTime(parsed);
-        return DateUtil.getDayFromCalendar(calendarBuffer);
+        return result;
     }
 
     @SuppressWarnings("deprecation")
@@ -731,16 +721,13 @@ public class CsvParser implements RecordParser {
     }
 
     private long toDateTimeValue() throws CsvFormatException {
-        parsePositionBuffer.setIndex(0);
-        parsePositionBuffer.setErrorIndex(-1);
-        java.util.Date parsed = dateTimeFormat.parse(lineBuffer.toString(), parsePositionBuffer);
-        if (parsePositionBuffer.getIndex() == 0) {
+        long result = dateTimeFormat.parse(lineBuffer);
+        if (result < 0) {
             throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.toPattern()),
+                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.getPattern()),
                     null);
         }
-        calendarBuffer.setTime(parsed);
-        return DateUtil.getSecondFromCalendar(calendarBuffer);
+        return result;
     }
 
     private Status createStatusInLine(Reason reason, String expected) {

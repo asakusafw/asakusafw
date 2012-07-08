@@ -583,6 +583,33 @@ public class CsvParserTest {
     }
 
     /**
+     * test for date values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void date_values_direct() throws Exception {
+        dateFormat = "yyyyMMdd";
+        CsvParser parser = create(
+                "20110331,"
+                + "19710401,");
+        DateOption option = new DateOption();
+
+        assertThat(parser.next(), is(true));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new Date(2011, 3, 31)));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new Date(1971, 4, 1)));
+
+        parser.fill(option);
+        assertThat(option.isNull(), is(true));
+
+        parser.endRecord();
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
      * test for invalid date values.
      * @throws Exception if failed
      */
@@ -608,6 +635,33 @@ public class CsvParserTest {
         CsvParser parser = create(
                 "2011/03/31 23:59:59,"
                 + "1971/4/1 1:2:3,");
+        DateTimeOption option = new DateTimeOption();
+
+        assertThat(parser.next(), is(true));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new DateTime(2011, 3, 31, 23, 59, 59)));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new DateTime(1971, 4, 1, 1, 2, 3)));
+
+        parser.fill(option);
+        assertThat(option.isNull(), is(true));
+
+        parser.endRecord();
+        assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * test for date-time values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void datetime_values_direct() throws Exception {
+        dateTimeFormat = "yyyyMMddHHmmss";
+        CsvParser parser = create(
+                "20110331235959,"
+                + "19710401010203,");
         DateTimeOption option = new DateTimeOption();
 
         assertThat(parser.next(), is(true));

@@ -308,6 +308,18 @@ public class CsvEmitterTest {
     }
 
     /**
+     * test for date values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void date_values_direct() throws Exception {
+        dateFormat = "yyyyMMdd";
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+        assertRestorable(new DateOption());
+    }
+
+    /**
      * test for date-time values.
      * @throws Exception if failed
      */
@@ -332,6 +344,18 @@ public class CsvEmitterTest {
         dateTimeFormat = "yyyy-MM\rdd HH:mm:ss";
         assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
         assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+    }
+
+    /**
+     * test for date-time values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void datetime_values_direct() throws Exception {
+        dateTimeFormat = "yyyyMMddHHmmss";
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+        assertRestorable(new DateTimeOption());
     }
 
     /**

@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -33,7 +31,6 @@ import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
-import com.asakusafw.runtime.value.DateUtil;
 import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.DoubleOption;
 import com.asakusafw.runtime.value.FloatOption;
@@ -64,11 +61,11 @@ public class CsvEmitter implements RecordEmitter {
 
     private final String falseFormat;
 
-    private final SimpleDateFormat dateFormat;
+    private final DateFormatter dateFormat;
 
     private final boolean escapeDate;
 
-    private final SimpleDateFormat dateTimeFormat;
+    private final DateTimeFormatter dateTimeFormat;
 
     private final boolean escapeDateTime;
 
@@ -81,8 +78,6 @@ public class CsvEmitter implements RecordEmitter {
     private boolean open = true;
 
     private final StringBuilder lineBuffer = new StringBuilder(INITIAL_BUFFER_SIZE);
-
-    private final Calendar calendarBuffer = Calendar.getInstance();
 
     private final Pattern escapePattern;
 
@@ -105,10 +100,10 @@ public class CsvEmitter implements RecordEmitter {
         this.escapePattern = Pattern.compile("[" + ESCAPE + separator + LINE_DELIMITER + "]");
         this.trueFormat = escape(config.getTrueFormat());
         this.falseFormat = escape(config.getFalseFormat());
-        this.dateFormat = new SimpleDateFormat(config.getDateFormat());
-        this.escapeDate = hasMetaCharacter(dateFormat);
-        this.dateTimeFormat = new SimpleDateFormat(config.getDateTimeFormat());
-        this.escapeDateTime = hasMetaCharacter(dateTimeFormat);
+        this.dateFormat = DateFormatter.newInstance(config.getDateFormat());
+        this.escapeDate = hasMetaCharacter(dateFormat.getPattern());
+        this.dateTimeFormat = DateTimeFormatter.newInstance(config.getDateTimeFormat());
+        this.escapeDateTime = hasMetaCharacter(dateTimeFormat.getPattern());
         this.headerCellsFormat = config.getHeaderCells();
     }
 
@@ -122,9 +117,9 @@ public class CsvEmitter implements RecordEmitter {
         return string;
     }
 
-    private boolean hasMetaCharacter(SimpleDateFormat format) {
-        assert format != null;
-        return escapePattern.matcher(format.toPattern()).find();
+    private boolean hasMetaCharacter(String pattern) {
+        assert pattern != null;
+        return escapePattern.matcher(pattern).find();
     }
 
     @Override
@@ -222,8 +217,7 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(DateOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            DateUtil.setDayToCalendar(option.get().getElapsedDays(), calendarBuffer);
-            String string = dateFormat.format(calendarBuffer.getTime());
+            CharSequence string = dateFormat.format(option.get().getElapsedDays());
             if (escapeDate) {
                 appendEscaped(lineBuffer, string);
             } else {
@@ -236,14 +230,25 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(DateTimeOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            DateUtil.setSecondToCalendar(option.get().getElapsedSeconds(), calendarBuffer);
-            String string = dateTimeFormat.format(calendarBuffer.getTime());
+            CharSequence string = dateTimeFormat.format(option.get().getElapsedSeconds());
             if (escapeDateTime) {
                 appendEscaped(lineBuffer, string);
             } else {
                 lineBuffer.append(string);
             }
         }
+    }
+
+    private void appendEscaped(StringBuilder buffer, CharSequence string) {
+        buffer.append(ESCAPE);
+        for (int i = 0, n = string.length(); i < n; i++) {
+            char c = string.charAt(i);
+            if (c == ESCAPE) {
+                buffer.append(ESCAPE);
+            }
+            buffer.append(c);
+        }
+        buffer.append(ESCAPE);
     }
 
     private void appendEscaped(StringBuilder buffer, String string) {
