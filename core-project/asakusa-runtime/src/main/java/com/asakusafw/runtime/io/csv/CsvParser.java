@@ -724,7 +724,7 @@ public class CsvParser implements RecordParser {
         long result = dateTimeFormat.parse(lineBuffer);
         if (result < 0) {
             throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.getPattern()),
+                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateTimeFormat.getPattern()),
                     null);
         }
         return result;
