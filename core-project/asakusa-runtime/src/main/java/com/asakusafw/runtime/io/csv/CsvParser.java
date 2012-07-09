@@ -736,7 +736,7 @@ public class CsvParser implements RecordParser {
         java.util.Date parsed = dateTimeFormat.parse(lineBuffer.toString(), parsePositionBuffer);
         if (parsePositionBuffer.getIndex() == 0) {
             throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.toPattern()),
+                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateTimeFormat.toPattern()),
                     null);
         }
         calendarBuffer.setTime(parsed);
