@@ -44,16 +44,21 @@ Parameters:
 EOF
 }
 
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
 if [ $# -lt 6 ]
 then
     echo "Invalid arguments: [$@]" 1>&2
     usage
-    exit 1
-fi
-
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
     exit 1
 fi
 
@@ -71,39 +76,21 @@ _OPT_BATCH_ARGUMENTS="$1"
 shift
 
 _JQ_ROOT="$(dirname $0)/.."
-if [ -e "$_JQ_ROOT/conf/env.sh" ]
-then
-    . "$_JQ_ROOT/conf/env.sh"
-fi
+import "$_JQ_ROOT/conf/env.sh"
+import "$_JQ_ROOT/libexec/validate-env.sh"
 
 # Move to home directory
 
 cd ~
 
 _JQ_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_JQ_CORE_LIB_DIR="$ASAKUSA_HOME/core/lib"
-_JQ_EXT_LIB_DIR="$ASAKUSA_HOME/ext/lib"
-_JQ_RUNTIME_LIB="$_JQ_CORE_LIB_DIR/asakusa-runtime-all.jar"
+_JQ_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 _JQ_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 _JQ_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 
-_JQ_LIBJAR="$_JQ_APP_LIB"
-
-if [ -d "$_JQ_CORE_LIB_DIR" ]
-then
-    for f in $(ls "$_JQ_CORE_LIB_DIR")
-    do
-        _JQ_LIBJAR="$_JQ_LIBJAR,$_JQ_CORE_LIB_DIR/$f"
-    done
-fi
-
-if [ -d "$_JQ_EXT_LIB_DIR" ]
-then
-    for f in $(ls "$_JQ_EXT_LIB_DIR")
-    do
-        _JQ_LIBJAR="$_JQ_LIBJAR,$_JQ_EXT_LIB_DIR/$f"
-    done
-fi
+_JQ_LIBJARS="$_JQ_APP_LIB"
+import "$_JQ_ROOT/libexec/configure-libjars.sh"
+import "$_JQ_ROOT/libexec/configure-hadoop-cmd.sh"
 
 if [ "$HADOOP_TMP_DIR" != "" ]
 then
@@ -115,12 +102,13 @@ then
 fi
 
 echo "Starting Asakusa Hadoop:"
-echo "          JRID: $_OPT_JRID"
-echo "   App Library: $_JQ_APP_LIB"
-echo "      Batch ID: $_OPT_BATCH_ID"
-echo "       Flow ID: $_OPT_FLOW_ID"
-echo "  Execution ID: $_OPT_EXECUTION_ID"
-echo "         Class: $_OPT_CLASS_NAME"
+echo " Hadoop Command: $HADOOP_CMD"
+echo "           JRID: $_OPT_JRID"
+echo "    App Library: $_JQ_APP_LIB"
+echo "       Batch ID: $_OPT_BATCH_ID"
+echo "        Flow ID: $_OPT_FLOW_ID"
+echo "   Execution ID: $_OPT_EXECUTION_ID"
+echo "          Class: $_OPT_CLASS_NAME"
 echo " Hadoop Properties:"
 echo "   $_OPT_HADOOP_TMP_DIR"
 echo "   $_OPT_MAPRED_LOCAL_DIR"
@@ -128,12 +116,12 @@ echo "   $_OPT_MAPRED_SYSTEM_DIR"
 echo "   $_OPT_MAPREDUCE_JOBTRACKER_STAGING_ROOT_DIR"
 echo "   $_OPT_MAPRED_TEMP_DIR"
 
-"$HADOOP_HOME/bin/hadoop" jar \
+"$HADOOP_CMD" jar \
     "$_JQ_RUNTIME_LIB" \
     "$_JQ_TOOL_LAUNCHER" \
     "$_OPT_CLASS_NAME" \
     -conf "$_JQ_PLUGIN_CONF" \
-    -libjars "$_JQ_LIBJAR" \
+    -libjars "$_JQ_LIBJARS" \
     -D "com.asakusafw.user=$USER" \
     -D "com.asakusafw.executionId=$_OPT_EXECUTION_ID" \
     -D "com.asakusafw.batchArgs=$_OPT_BATCH_ARGUMENTS" \
@@ -160,7 +148,7 @@ else
     echo "     Launcher: $_JQ_TOOL_LAUNCHER"  1>&2
     echo "  Stage Class: $_OPT_CLASS_NAME" 1>&2
     echo "Configuration: -conf $_JQ_PLUGIN_CONF"  1>&2
-    echo "    Libraries: -libjars $_JQ_LIBJAR"  1>&2
+    echo "    Libraries: -libjars $_JQ_LIBJARS"  1>&2
     echo "Built-in Prop: -D com.asakusafw.user=$USER" 1>&2
     echo "Built-in Prop: -D com.asakusafw.executionId=$_OPT_EXECUTION_ID" 1>&2
     echo "Built-in Prop: -D com.asakusafw.batchArgs=$_OPT_BATCH_ARGUMENTS" 1>&2
