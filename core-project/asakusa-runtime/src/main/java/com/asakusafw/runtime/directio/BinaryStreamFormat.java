@@ -40,8 +40,8 @@ public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T>
     public abstract long getPreferredFragmentSize() throws IOException, InterruptedException;
 
     /**
-     * Returns the preffered fragment size (in bytes).
-     * @return the preffered fragment size, or {@code -1} as infinite
+     * Returns the minimum fragment size (in bytes).
+     * @return the minimum fragment size, or {@code -1} as infinite
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
