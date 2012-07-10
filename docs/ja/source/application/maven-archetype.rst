@@ -44,7 +44,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 0.2.2
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
 
-..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。
+..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
 ..  [#] Direct I/O はバージョン |version| の時点で実験的な機能として提供しています。
 
 
@@ -105,8 +105,8 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 
 作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
 
-..  list-table:: アーキタイプ [asakusa-atchetype-windgate] が作成するインストールアーカイブ一覧
-    :widths: 3 7
+..  list-table:: アーキタイプ ``asakusa-atchetype-windgate`` が作成するインストールアーカイブ一覧
+    :widths: 4 6
     :header-rows: 1
     
     * - ファイル名
@@ -115,11 +115,9 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
       - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
-    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
-      - クリーニングツールを運用環境に展開するためのアーカイブ。
 
 
-..  list-table:: アーキタイプ [asakusa-atchetype-thundergate] が作成するインストールアーカイブ一覧
+..  list-table:: アーキタイプ ``asakusa-atchetype-thundergate`` が作成するインストールアーカイブ一覧
     :widths: 4 6
     :header-rows: 1
     
@@ -127,16 +125,12 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
       - 説明
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
-    * - ``asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz``
-      - Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
-    * - ``asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz``
-      - Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
-    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
-      - クリーニングツールを運用環境に展開するためのアーカイブ。
+    * - ``asakusafw-${asakusafw-version}-prod-thundergate.tar.gz``
+      - Asakusa FrameworkをThunderGateを運用環境に展開するためのアーカイブ。
 
 
-..  list-table:: アーキタイプ [asakusa-atchetype-directio] が作成するインストールアーカイブ一覧
-    :widths: 3 7
+..  list-table:: アーキタイプ ``asakusa-atchetype-directio`` が作成するインストールアーカイブ一覧
+    :widths: 4 6
     :header-rows: 1
     
     * - ファイル名
@@ -145,8 +139,7 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-directio.tar.gz``
       - Asakusa Frameworkを運用環境に展開するためのアーカイブ。
-    * - ``asakusafw-${asakusafw.version}-prod-cleaner.tar.gz``
-      - クリーニングツールを運用環境に展開するためのアーカイブ。
+
 
 ``antrun:run`` 開発環境用のAsakusa Frameworkをインストール
 ----------------------------------------------------------
@@ -158,9 +151,9 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 
 ..  warning::
     アーキタイプ ``asakusa-archetype-thundergate`` を使用している場合、 ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。
-    このディレクトリはデフォルトの設定では ``/tmp/asakusa`` となっていますが、一部のLinuxディストリビューションではシャットダウンしたタイミングで ``/tmp`` ディレクトリがの内容が消去されるため、再起動後にこのディレクトリを再度作成する必要があります。
+    このディレクトリはデフォルトの設定では ``/tmp/thundergate-asakusa`` となっていますが、一部のLinuxディストリビューションではOSをシャットダウンしたタイミングで ``/tmp`` ディレクトリの内容が消去されるため、再起動後にこのディレクトリを再度作成する必要があります。
     
-    テンポラリディレクトリを変更する場合、 ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の以下の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
+    テンポラリディレクトリを変更する場合、 ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
     
     例えばテンポラリディレクトリを ``/var/tmp/asakusa`` に変更する場合は以下のようにします。
 
@@ -193,7 +186,6 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     |   |   |       `-- jobflow    : フローDSL(ジョブフロー)クラス
     |   |   |       `-- operator   : 演算子クラス
     |   |   |
-    |   |   `-- assembly           : ローカル環境へAsakusa Frameworkをインストールするためのスクリプト。
     |   |   `-- dmdl               : モデルクラス生成用のDMDLスクリプト。
     |   |   `-- sql                 
     |   |       `-- modelgen       : モデルクラス生成用のDDL記述SQLファイル(thundergateのみ)。
@@ -207,7 +199,6 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     |       |       `-- operator   : 演算子テストクラス
     |       |
     |       `-- resources
-    |           `-- asakusa-jdbc.properties    : Asakusa FrameworkのDB設定ファイル(thundergateのみ)
     |           `-- asakusa-resources.xml      : Asakusa Framework Core 用の定義ファイル
     |           `-- logback-test.xml           : 開発環境上のテスト時に使用されるログ設定ファイル
     |           |
@@ -356,19 +347,6 @@ Eclipseを使ったアプリケーションの開発
 =====================================
 統合開発環境(IDE)にEclipseを使用する場合、開発環境にEclipseをインストールした上で、以下の設定を行います。
 
-``eclipse:add-maven-repo`` クラスパス変数M2_REPOを設定
-------------------------------------------------------
-..  attention::
-    この手順( ``eclipse:add-maven-repo`` の実行)はEclipseにm2eプラグインが入っている場合は不要です。例えば Eclipse 3.7(Indigo) 以降のEclipse IDE for Java Developers にはm2eがあらかじめインストールされているため、この手順は不要となります。
-
-Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定します。
-
-ワークスペースをデフォルト値( ``$HOME/workspce`` )に指定して起動した場合は、以下のコマンドを実行します。
-
-..  code-block:: sh
-
-    mvn -Declipse.workspace=$HOME/workspace eclipse:add-maven-repo
-
 ``eclipse:eclipse`` プロジェクトにEclipse用定義ファイルを追加
 -------------------------------------------------------------
 アプリケーション用プロジェクトにEclipseプロジェクト用の定義ファイルを追加します。このコマンドを実行することによってEclipseからプロジェクトをインポートすることが可能になります。
@@ -381,8 +359,6 @@ Eclipseのワークスペースに対してクラスパス変数M2_REPOを設定
     mvn eclipse:eclipse
 
 EclipseからプロジェクトをImportするには、Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定します。
-
-なお、 ``eclipse:ecipse`` を実行する前にはMavenの ``compile`` フェーズを実行し、targetディレクトリ配下にAsakusa Frameworkが自動生成するソースディレクトリを生成しておく必要があります。 targetディレクトリは Mavenの ``clean`` フェーズを実行すると削除されるため、 ``clean`` を実行した後、 ``eclipse:eclipse`` を実行する場合は必ず以下のように ``compile`` フェーズを合わせて実行してください。
 
 ..  code-block:: sh
 
