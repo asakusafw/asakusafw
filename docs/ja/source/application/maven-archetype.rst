@@ -48,7 +48,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
 
 
-起動後、作成するプロジェクトに関するパラメータを対話式に入力していきます。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 

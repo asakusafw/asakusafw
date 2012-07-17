@@ -22,6 +22,10 @@ Clouderaから提供されているCloudera's Hadoop Demo VM上にAsakusa Framew
 ------------------------------
 Asakusa Frameworkのバージョンアップ時必要となる開発環境に対してのバージョン固有の移行手順について解説します。
 
+レガシーモジュール利用ガイド
+----------------------------
+Asakusa Framework のバージョンアップに伴いデフォルト構成に含まれなくなった機能であるレガシーモジュールについて説明します。
+
 開発ツールの利用
 ================
 
@@ -39,6 +43,8 @@ Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するD
     user-guide
     with-cloudera-vm
     migration-guide
+    legacy-module-guide
+
     dsl-visualization
     graphviz
 
