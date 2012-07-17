@@ -41,8 +41,6 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 0.2.5
       - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ 。
 
-..  [#] Direct I/O はバージョン |version| の時点で実験的な機能として提供しています。
-
 ``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml`` を指定して実行します 。
 
 ..  code-block:: sh

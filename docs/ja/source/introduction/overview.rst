@@ -103,14 +103,13 @@ ThunderGate
     詳しくは :doc:`../thundergate/index` を参照してください。
 
 Direct I/O
-    Asakusa Frameworkの外でHadoopやその周辺に取り込んだデータを直接読み書きする機能 [#]_ 。
+    Asakusa Frameworkの外でHadoopやその周辺に取り込んだデータを直接読み書きする機能。
 
     詳しくは :doc:`../directio/index` を参照してください。
 
 なお、これらのツールとの連携は `Asakusa DSL`_ から記述できます。
 
 ..  [#] http://www.mysql.com/
-..  [#] Direct I/OはAsakusa Frameworkのバージョン |version| の時点で実験的な機能として提供しています。
 
 自動テストサポート
 ------------------
