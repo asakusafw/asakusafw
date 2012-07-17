@@ -251,30 +251,25 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 
     mkdir -p ~/workspace
     cd ~/workspace
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
 
-コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、3 (asakusa-archetype-windgate) のWindGateと連携するアプリケーション用のテンプレートを選択します。
+コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、1 (asakusa-archetype-windgate) のWindGateと連携するアプリケーション用のテンプレートを選択します。
 
 ..  code-block:: sh
 
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
-    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 (<-3を入力)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 6 (0.2.6) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (0.4.0) を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.2-SNAPSHOT
-    2: 0.2.2
-    3: 0.2.3
-    4: 0.2.4
-    5: 0.2.5
-    6: 0.2.6
-    Choose a number: 6: 6 (<-6を入力)
+    1: 0.4-SNAPSHOT
+    2: 0.4.0
+    Choose a number: 2: 2 (<-2を入力)
 
 この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 
