@@ -263,10 +263,12 @@ public final class DirectFlowCompiler {
         List<File> results = Lists.create();
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            LOG.debug("Submodule marker found: {}", url);
+            LOG.debug("Fragment marker found: {}", url);
             File library = findLibraryFromUrl(url, path);
             if (library != null) {
-                LOG.debug("Submodule is registered: {}", library);
+                LOG.info(MessageFormat.format(
+                        "フラグメントクラスライブラリを取り込みます: {0}",
+                        library));
                 results.add(library);
             }
         }

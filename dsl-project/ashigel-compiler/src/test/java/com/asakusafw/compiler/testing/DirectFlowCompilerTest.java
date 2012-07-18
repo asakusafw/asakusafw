@@ -27,6 +27,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.zip.ZipInputStream;
 
 import org.junit.Assume;
@@ -305,6 +306,7 @@ public class DirectFlowCompilerTest {
 
         File compiled = info.getPackageFile();
         load(compiled, "com.example.Submodule");
+        find(compiled, "META-INF/other/info");
     }
 
     /**
@@ -336,6 +338,7 @@ public class DirectFlowCompilerTest {
 
         File compiled = info.getPackageFile();
         load(compiled, "com.example.Submodule");
+        find(compiled, "META-INF/other/info");
     }
 
     /**
@@ -370,6 +373,7 @@ public class DirectFlowCompilerTest {
 
         File compiled = info.getPackageFile();
         load(compiled, "com.example.Submodule");
+        find(compiled, "META-INF/other/info");
     }
 
     private Class<?> load(File file, String className) {
@@ -381,6 +385,19 @@ public class DirectFlowCompilerTest {
             // may not occur
             throw new AssertionError(e);
         } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private void find(File file, String path) {
+        try {
+            JarFile jar = new JarFile(file);
+            try {
+                assertThat(path, jar.getEntry(path), is(notNullValue()));
+            } finally {
+                jar.close();
+            }
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
