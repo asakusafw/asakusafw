@@ -14,10 +14,6 @@ Mavenアーキタイプ利用ガイド
 ------------------------
 ThunderGateを使う場合の開発環境の注意点や、Linuxディストリビューション固有に必要となる環境構築手順を説明します。
 
-ClouderaVM上に開発環境を構築する
---------------------------------
-Clouderaから提供されているCloudera's Hadoop Demo VM上にAsakusa Frameworkを導入します。
-
 開発環境マイグレーションガイド
 ------------------------------
 Asakusa Frameworkのバージョンアップ時必要となる開発環境に対してのバージョン固有の移行手順について解説します。
@@ -41,10 +37,13 @@ Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するD
 
     maven-archetype
     user-guide
-    with-cloudera-vm
     migration-guide
     legacy-module-guide
-
     dsl-visualization
-    graphviz
 
+..  toctree::
+    :hidden:
+
+    start-guide
+    with-cloudera-vm
+    graphviz
