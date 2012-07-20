@@ -99,6 +99,9 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     cd example-app
     mvn assembly:single
 
+..  attention::
+    コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
+
 作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
 
 ..  list-table:: アーキタイプ ``asakusa-atchetype-windgate`` が作成するインストールアーカイブ一覧
