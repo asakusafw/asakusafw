@@ -930,6 +930,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 ..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.BatchCompilerDriver`
 ..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver`
 
+.. _include-fragment-module:
 
 モジュールの取り込み
 ~~~~~~~~~~~~~~~~~~~~

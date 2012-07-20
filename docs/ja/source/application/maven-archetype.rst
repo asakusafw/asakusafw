@@ -335,7 +335,18 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「 ``+`` 」や「 ``-`` 」を指定します。
 また、複数のオプションを指定するには「 ``,`` 」(カンマ)でそれぞれを区切ります。
 
-指定できるバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+指定できるバッチコンパイルのオプションについては、 :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+
+モジュールの取り込み
+--------------------
+バッチコンパイルの実行時に、 :doc:`../dsl/user-guide` の :ref:`include-fragment-module` に説明されているマーカーファイルを使用する方法を使って、バッチアプリケーションを構成する外部のライブラリを取り込むことが出来ます。
+
+マーカファイルの指定によりバッチアプリケーションに取り込まれたライブラリ（フラグメントライブラリ）は、バッチコンパイル実行時に ( ``package`` フェーズ実行時に) 以下のようなログが出力されます。
+
+..  code-block:: sh
+
+     [java] 11:02:42 [main] INFO  c.a.c.testing.DirectFlowCompiler - フラグメントクラスライブラリを取り込みます: /home/asakusa/.m2/repository/example/example-model/1.0-SNAPSHOT/example-model-1.0-SNAPSHOT.jar
+     [java] 11:02:42 [main] INFO  c.a.c.testing.DirectFlowCompiler - フラグメントクラスライブラリを取り込みます: /home/asakusa/.m2/repository/example/example-utils/1.0-SNAPSHOT/example-utils-1.0-SNAPSHOT.jar
 
 .. _eclipse-configuration:
 
