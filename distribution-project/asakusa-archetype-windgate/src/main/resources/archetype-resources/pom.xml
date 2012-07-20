@@ -445,6 +445,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>ashigel-compiler-bootstrap</artifactId>
 			<version>\${asakusafw.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
@@ -456,14 +457,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-dmdl</artifactId>
 			<version>\${asakusafw.version}</version>
-			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-plugin</artifactId>
 			<version>\${asakusafw.version}</version>
-			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -482,14 +481,12 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-dmdl</artifactId>
 			<version>\${asakusafw.version}</version>
-			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-windgate-plugin</artifactId>
 			<version>\${asakusafw.version}</version>
-			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
