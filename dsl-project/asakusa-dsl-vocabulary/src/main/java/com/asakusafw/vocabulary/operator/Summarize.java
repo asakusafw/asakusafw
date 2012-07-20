@@ -93,7 +93,7 @@ public @interface Summarize {
      * 部分集約の設定。
      * @since 0.2.0
      */
-    PartialAggregation partialAggregation() default PartialAggregation.DEFAULT;
+    PartialAggregation partialAggregation() default PartialAggregation.PARTIAL;
 
     /**
      * 出力先のポート名。

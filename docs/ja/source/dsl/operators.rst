@@ -1989,8 +1989,7 @@ NULLに対する集約関数の動作
 
 ..  attention::
     基本的に、単純集計演算子では部分集約を行うべきです。
-    現在は同機能の十分で包括的なテストが完了していない関係で、
-    初期値は ``DEFAULT`` になっています。
+    初期値は ``PARTIAL`` になっています。
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
 ..  [#] コンパイラオプションの設定については :doc:`user-guide` を参照してください
