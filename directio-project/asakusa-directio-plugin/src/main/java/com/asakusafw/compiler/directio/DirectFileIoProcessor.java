@@ -229,6 +229,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                         "出力が別の出力を上書きします ({0}->{1})",
                         desc.getClass().getName(),
                         other.getClass().getName());
+                valid = false;
             } else {
                 outputPaths.put(path, output);
             }
