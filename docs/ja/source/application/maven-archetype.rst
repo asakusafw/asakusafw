@@ -382,7 +382,7 @@ m2e buildhelper connector のインストール
 m2eの拡張機能であるm2e buildhelper connectorをインストールします。
 
 1. Eclipseのメニューから [Window] -> [Preferences] -> [Maven] -> [Discovery] を選択し、ダイアログに表示される [Open Dialog] ボタンを押下します。
-2. install n2e connectors ダイアログが表示されるので、このなかから「buildhelper」のチェックをONにして [Finish] ボタンを押下します。
+2. install m2e connectors ダイアログが表示されるので、そのリストから「buildhelper」の項目のチェックをONにして [Finish] ボタンを押下します。
 3. ウィザードに従ってconnectorをインストールします。
     1. Install ダイアログでは そのまま [Next>] ボタンを押下します。
     2. Install Details ダイアログでは そのまま [Next>] ボタンを押下します。
