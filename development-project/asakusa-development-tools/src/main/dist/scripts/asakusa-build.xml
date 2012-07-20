@@ -14,7 +14,7 @@
 
 	<resourcecount property="asakusa.dmdl.file.count">
 		<fileset dir="${asakusa.dmdl.dir}" erroronmissingdir="false">
-			<include name="*.dmdl" />
+			<include name="**/*.dmdl" />
 		</fileset>
 	</resourcecount>
 
