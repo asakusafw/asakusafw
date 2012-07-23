@@ -1,0 +1,7 @@
+# Asakusa Framework Build Information
+asakusafw.version=${version}
+
+asakusafw.build.timestamp=${timestamp}
+asakusafw.build.java.version=${java.version}
+asakusafw.git.commit=${env.GIT_COMMIT}
+asakusafw.git.branch=${env.GIT_BRANCH}

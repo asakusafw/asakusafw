@@ -15,6 +15,7 @@
 			<fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
 			<lineEnding>unix</lineEnding>
+			<filtered>true</filtered>
 		</fileSet>
 	</fileSets>
 
