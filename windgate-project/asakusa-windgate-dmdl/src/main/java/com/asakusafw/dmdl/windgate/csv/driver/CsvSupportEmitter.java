@@ -658,7 +658,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     new JavadocBuilder(f)
                         .text("An abstract implementation of ")
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using Direct I/O CSV",
+                        .text(" {0} description using WindGate CSV",
                                 importer ? "importer" : "exporter")
                         .text(".")
                         .toJavadoc(),
