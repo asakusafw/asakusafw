@@ -7,10 +7,6 @@ Direct I/O スタートガイド
 
 Direct I/Oの詳しい利用方法については :doc:`user-guide` を参照してください。
 
-..  caution::
-    Direct I/O はAsakusa Frameworkのバージョン |version| において実験的な機能として提供しています。
-    今後のバージョンで利用方法や挙動の一部が変更される可能性があります。
-
 
 アプリケーションの開発準備
 ==========================
@@ -28,7 +24,7 @@ Direct I/Oを利用したバッチアプリケーションを新しく作成す�
 
 ..  code-block:: none
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
 ここでは、 ``asakusa-archetype-directio`` のテンプレートを選択します。
@@ -115,6 +111,9 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 
 ``com.asakusafw.directio.root``
     データソースのJavaでの実装クラス名です。
+
+    Direct I/Oでは、それぞれのデータソースを識別するための識別子を ``com.asakusafw.directio.<DSID>`` の形式で指定します。
+    デフォルトの設定では ``root`` というIDのデータソースが設定されていることになります [#]_ 。
     
     Hadoopのファイルシステムを利用するには :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopDataSource` と指定します。
 
@@ -162,12 +161,13 @@ URI
 ..  _`Amazon S3`: http://aws.amazon.com/s3/
 
 ..  [#] Direct I/Oに無関係の項目は、 :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定です。
+..  [#] デフォルトのデータソース識別子 ``root`` 特別なものではありません。この識別子は任意の値に変更することが出来ます。
 ..  [#] Hadoopの設定ファイル ``core-site.xml`` 内の ``fs.default.name`` に指定したファイルシステムです。
 
 
 複数データソースの利用
 ----------------------
-複数のデータソースを組み合わせて利用する場合、設定ファイルの ``com.asakusafw.directio.<データソースID>`` のうち、「データソースID」の部分を別々のものに設定します (デフォルトの設定では ``root`` というIDのデータソースが設定されています)。
+複数のデータソースを組み合わせて利用する場合、設定ファイルの ``com.asakusafw.directio.<DSID>`` のうち、 ``<DSID>`` の部分を別々のものに設定します。
 
 以下は論理パス ``data`` と ``data/master`` に対してそれぞれ ``data`` , ``master`` というIDのデータソースを指定する例です。
 
@@ -243,7 +243,7 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
     ホームディレクトリを起点としたパスと解釈されるため注意が必要です。
 
 ..  hint::
-    データソースIDは実行時のログメッセージにも利用されるため、わかりやすいものにしてください。
+    データソースの識別子(DSID)は実行時のログメッセージにも利用されるため、わかりやすいものにしてください。
 
 サンプルアプリケーションの実行
 ==============================

@@ -31,35 +31,28 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     * - アーキタイプ
       - 導入バージョン
       - 説明
-    * - ``asakusa-archetype-batchapp``
-      - 0.1.0
-      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ [#]_ 。
-    * - ``asakusa-archetype-directio``
-      - 0.2.5
-      - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ [#]_ 。
-    * - ``asakusa-archetype-thundergate``
-      - 0.2.4
-      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
     * - ``asakusa-archetype-windgate``
       - 0.2.2
       - 外部システム連携にWindGateを使用するアプリケーション用のアーキタイプ。
+    * - ``asakusa-archetype-thundergate``
+      - 0.2.4
+      - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
+    * - ``asakusa-archetype-directio``
+      - 0.2.5
+      - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ 。
 
-..  [#] ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
-..  [#] Direct I/O はバージョン |version| の時点で実験的な機能として提供しています。
-
-
-``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL「 ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml`` 」を指定して実行します。
-
-..  code-block:: sh
-
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
-
-
-起動後、作成するプロジェクトに関するパラメータを対話式に入力していきます。
+``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml`` を指定して実行します 。
 
 ..  code-block:: sh
 
-    $ mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+
+
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+
+..  code-block:: sh
+
+    $ mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
     [INFO] Scanning for projects...
     [INFO]                                                                         
     [INFO] ------------------------------------------------------------------------
@@ -67,21 +60,16 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     [INFO] ------------------------------------------------------------------------
     ...
     Choose archetype:
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-) 
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-) 
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-) 
-    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
-    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 [<-使用するアーキタイプを選択]
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
     ...
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.2-SNAPSHOT
-    2: 0.2.2
-    3: 0.2.3
-    4: 0.2.4
-    5: 0.2.5
-    6: 0.2.6
-    Choose a number: 6: 6 [使用するAsakusa Frameworkのバージョンを選択]
+    1: 0.4-SNAPSHOT
+    2: 0.4.0
+    Choose a number: 2: 2 (<-2を入力)
 
     ...
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
@@ -90,6 +78,14 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     Define value for property 'package':      [<-アプリケーションの基底パッケージ名を入力]
     ...
     Y: : Y
+
+..  Attention::
+    バージョン0.4 から、アーキタイプカタログファイルはバージョン毎(マイナーバージョン毎)に個別のファイルを提供するようになりました。旧バージョンのアーキタイプカタログを使用したい場合、以下のアーキタイプカタログURLを指定してください。 
+
+    http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+
+..  attention::
+    旧バージョンで存在していたアーキタイプ ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
 
 ``assembly:single`` Asakusa Frameworkのインストールアーカイブを生成
 -------------------------------------------------------------------
@@ -102,6 +98,9 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 
     cd example-app
     mvn assembly:single
+
+..  attention::
+    コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
 
 作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
 
@@ -339,7 +338,18 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「 ``+`` 」や「 ``-`` 」を指定します。
 また、複数のオプションを指定するには「 ``,`` 」(カンマ)でそれぞれを区切ります。
 
-指定できるバッチコンパイルのオプションについては、  :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+指定できるバッチコンパイルのオプションについては、 :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+
+モジュールの取り込み
+--------------------
+バッチコンパイルの実行時に、 :doc:`../dsl/user-guide` の :ref:`include-fragment-module` に説明されているマーカーファイルを使用する方法を使って、バッチアプリケーションを構成する外部のライブラリを取り込むことが出来ます。
+
+マーカファイルの指定によりバッチアプリケーションに取り込まれたライブラリ（フラグメントライブラリ）は、バッチコンパイル実行時に ( ``package`` フェーズ実行時に) 以下のようなログが出力されます。
+
+..  code-block:: sh
+
+     [java] 11:02:42 [main] INFO  c.a.c.testing.DirectFlowCompiler - フラグメントクラスライブラリを取り込みます: /home/asakusa/.m2/repository/example/example-model/1.0-SNAPSHOT/example-model-1.0-SNAPSHOT.jar
+     [java] 11:02:42 [main] INFO  c.a.c.testing.DirectFlowCompiler - フラグメントクラスライブラリを取り込みます: /home/asakusa/.m2/repository/example/example-utils/1.0-SNAPSHOT/example-utils-1.0-SNAPSHOT.jar
 
 .. _eclipse-configuration:
 
@@ -375,7 +385,7 @@ m2e buildhelper connector のインストール
 m2eの拡張機能であるm2e buildhelper connectorをインストールします。
 
 1. Eclipseのメニューから [Window] -> [Preferences] -> [Maven] -> [Discovery] を選択し、ダイアログに表示される [Open Dialog] ボタンを押下します。
-2. install n2e connectors ダイアログが表示されるので、このなかから「buildhelper」のチェックをONにして [Finish] ボタンを押下します。
+2. install m2e connectors ダイアログが表示されるので、そのリストから「buildhelper」の項目のチェックをONにして [Finish] ボタンを押下します。
 3. ウィザードに従ってconnectorをインストールします。
     1. Install ダイアログでは そのまま [Next>] ボタンを押下します。
     2. Install Details ダイアログでは そのまま [Next>] ボタンを押下します。

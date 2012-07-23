@@ -169,9 +169,9 @@ Javaの動作確認
 
     java -version
 
-    java version "1.6.0_29"
-    Java(TM) SE Runtime Environment (build 1.6.0_29-b11)
-    Java HotSpot(TM) Client VM (build 20.4-b02, mixed mode, sharing)
+    java version "1.6.0_33"
+    Java(TM) SE Runtime Environment (build 1.6.0_33-b03)
+    Java HotSpot(TM) Client VM (build 20.8-b03, mixed mode, sharing)
 
 Java SDKの動作確認
 ~~~~~~~~~~~~~~~~~~
@@ -180,7 +180,7 @@ Java SDKの動作確認
 
     javac -version
 
-    javac 1.6.0_29
+    javac 1.6.0_33
 
 Mavenの動作確認
 ~~~~~~~~~~~~~~~
@@ -189,12 +189,13 @@ Mavenの動作確認
 
     mvn -version
 
-    Apache Maven 3.0.3 (r1075438; 2011-02-28 09:31:09-0800)
-    Maven home: /usr/local/lib/apache-maven-3.0.3
-    Java version: 1.6.0_29, vendor: Sun Microsystems Inc.
-    Java home: /usr/lib/jvm/jdk1.6.0_29/jre
-    Default locale: en_US, platform encoding: UTF-8
-    OS name: "linux", version: "3.0.0-14-generic", arch: "i386", family: "unix"
+    Apache Maven 3.0.4 (r1232337; 2012-01-17 17:44:56+0900)
+    Maven home: /home/asakusa/asakusa-develop/maven
+    Java version: 1.6.0_33, vendor: Sun Microsystems Inc.
+    Java home: /usr/lib/jvm/jdk1.6.0_33/jre
+    Default locale: ja_JP, platform encoding: UTF-8
+    OS name: "linux", version: "3.2.0-26-generic-pae", arch: "i386", family: "unix"
+
 
 Hadoopの動作確認
 ~~~~~~~~~~~~~~~~
@@ -205,7 +206,7 @@ Hadoopの動作確認
 
     Hadoop 0.20.2-cdh3u4
     Subversion ...
-    Compiled by root on Mon May  7 14:02:54 PDT 2012
+    Compiled by jenkins on Mon May  7 13:01:39 PDT 2012
     From source with checksum a60c9795e41a3248b212344fb131c12c
 
 ..  attention::
@@ -232,9 +233,6 @@ Eclipseを起動するには、$HOME/eclipse/eclipse を実行します。ワー
 ..  attention::
     GUIのファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して ``~/.profile`` で定義した環境変数を反映させるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
 
-..  attention::
-    Eclipse 3.6以前のEclipse IDE for Java Developersを使用している場合は、Eclipseを起動する前にクラスパス変数M2_REPOを設定する必要があります。詳しくは :doc:`../application/maven-archetype` の :ref:`eclipse-configuration` を参照して下さい。
-
 Asakusa Frameworkのインストールとサンプルアプリケーションの実行
 ===============================================================
 開発環境にAsakusa Frameworkをインストールして、Asakusa Frameworkのサンプルアプリケーションを実行してみます。
@@ -251,30 +249,25 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 
     mkdir -p ~/workspace
     cd ~/workspace
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
 
-コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、3 (asakusa-archetype-windgate) のWindGateと連携するアプリケーション用のテンプレートを選択します。
+コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、1 (asakusa-archetype-windgate) のWindGateと連携するアプリケーション用のテンプレートを選択します。
 
 ..  code-block:: sh
 
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-batchapp (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    4: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml -> com.asakusafw:asakusa-archetype-directio (-)
-    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 3 (<-3を入力)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 6 (0.2.6) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (0.4.0) を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.2-SNAPSHOT
-    2: 0.2.2
-    3: 0.2.3
-    4: 0.2.4
-    5: 0.2.5
-    6: 0.2.6
-    Choose a number: 6: 6 (<-6を入力)
+    1: 0.4-SNAPSHOT
+    2: 0.4.0
+    Choose a number: 2: 2 (<-2を入力)
 
 この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 
@@ -320,6 +313,9 @@ Asakusa Frameworkを開発環境にインストールします。
     mvn assembly:single antrun:run
 
 成功すると、 ``$ASAKUSA_HOME`` (このスタートガイドでは ``$HOME/asakusa`` ) にAsakusa Frameworkがインストールされます。
+
+..  attention::
+    コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
 
 サンプルアプリケーションのビルド
 --------------------------------
