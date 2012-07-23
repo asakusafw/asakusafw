@@ -51,8 +51,9 @@
 	<repositories>
 		<repository>
 			<id>central</id>
-			<name>Maven Central repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -87,6 +88,26 @@
 	</repositories>
 
 	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>codehaus.org</id>
+			<name>Codehaus Maven Repository</name>
+			<url>http://repository.codehaus.org/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
 		<pluginRepository>
 			<id>com.asakusafw.releases</id>
 			<name>Asakusa Framework Repository</name>
