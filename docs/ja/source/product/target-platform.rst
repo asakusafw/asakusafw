@@ -4,58 +4,65 @@
 
 Asakusa Framework本体
 =====================
-Asakusa Frameworkは以下のプラットフォームで動作を検証しています。
+Asakusa Framework バージョン |version| は以下のプラットフォームで動作を検証しています。
 
-..  list-table:: 動作プラットフォーム(本体)
-    :widths: 2 5 3 
+..  list-table:: 動作検証プラットフォーム(本体)
+    :widths: 3 7
     :header-rows: 1
 
     * - 種類
-      - バージョン
-      - 備考
+      - ディストリビューション/バージョン
     * - オペレーティングシステム
       - CentOS 6.2 [#]_
-      - 
     * - Java SDK
-      - Java SE6 Update 33 [#]_
-      - 
+      - Oracle Java SE6 Update 33 [#]_
     * - Hadoop
       - CDH3 Update 4 [#]_
-      - 
     * - Hadoop
-      - Apache Hadoop 0.20.203.0 [#]_
-      - 
+      - Apache Hadoop 0.20.205.0 [#]_
     * - Hadoop
       - Apache Hadoop 1.0.3 [#]_
-      - 
+    * - Hadoop
+      - Greenplum MR 1.2 [#]_
+    * - Hadoop
+      - Amazon Elastic MapReduce (Hadoop Version: 0.20.205, AMI Version: 2.1.1, --with-supported-products: 指定なし) [#]_
 
 ..  [#] http://www.centos.org/
 ..  [#] http://www.oracle.com/technetwork/java/javase/
 ..  [#] https://ccp.cloudera.com/display/CDHDOC/CDH3+Documentation
-..  [#] http://hadoop.apache.org/common/docs/r0.20.203.0/
+..  [#] http://hadoop.apache.org/common/docs/r0.20.205.0/
 ..  [#] http://hadoop.apache.org/common/docs/r1.0.3/
+..  [#] http://www.greenplum.com/products/greenplum-mr
+..  [#] http://aws.amazon.com/jp/elasticmapreduce/ 
 
 アプリケーション開発環境
 ========================
-Asakusa Frameworkを利用したバッチアプリケーションの開発では、 `Asakusa Framework本体`_ に加えて以下のプラットフォームで動作を検証しています。
+Asakusa Frameworkを利用したバッチアプリケーションの開発環境は、 以下のプラットフォームで動作を検証しています。
 
-..  list-table:: 動作プラットフォーム(開発環境)
-    :widths: 3 7 
+..  list-table:: 動作検証プラットフォーム(開発環境)
+    :widths: 3 7
     :header-rows: 1
 
     * - 種類
-      - バージョン
+      - ディストリビューション/バージョン
     * - オペレーティングシステム
       - Ubuntu Desktop 12.04 [#]_
     * - オペレーティングシステム
-      - CentOS 6.2 [#]_
+      - CentOS 6.2
+    * - Java SDK
+      - Oracle Java SE6 Update 33
     * - ビルドツール
       - Apache Maven 3.0.4 [#]_
     * - 統合開発環境
-      - Eclipse IDE for Java Developers 3.7.2 
+      - Eclipse IDE for Java Developers 3.7.2 [#]_
+    * - Hadoop
+      - CDH3 Update 4 
+
+..  attention::
+    開発環境のHadoopにCDH3以外のHadoopディストリビューションを使う場合、いくつかの注意点や制約があります。
+    詳しくは、 :doc:`../application/user-guide` の :ref:`development-environment-with-other-cdh` を参照してください。
 
 ..  [#] http://www.ubuntu.com/
-..  [#] http://www.centos.org/
 ..  [#] http://maven.apache.org/
 ..  [#] http://eclipse.org/
 

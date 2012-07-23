@@ -23,6 +23,7 @@
 			<directoryMode>0755</directoryMode>
 		</dependencySet>
 		<dependencySet>
+			<scope>test</scope>
 			<useProjectArtifact>false</useProjectArtifact>
 			<outputDirectory>cleaner/lib</outputDirectory>
 			<includes>

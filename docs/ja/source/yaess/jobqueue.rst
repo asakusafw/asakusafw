@@ -233,21 +233,8 @@ JobQueueクライアントプラグインの利用方法
 プラグインの登録
 ----------------
 このプラグインを利用するには、 ``asakusa-yaess-jobqueue`` というプラグインライブラリをYAESSに登録します。
-これは以下のURLからダウンロードできます。
 
-* http://asakusafw.s3.amazonaws.com/maven/releases/com/asakusafw/asakusa-yaess-jobqueue/0.4.0/asakusa-yaess-jobqueue-0.4.0.jar
-
-また、依存ライブラリとして以下のライブラリも必要です。
-
-..  todo:: Need to Modify for changing assembly
-
-* `HttpComponents Core <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.4`` で動作確認 )
-* `HttpComponents Client <http://hc.apache.org/index.html>`_ ( ``Ver.4.1.3`` で動作確認 )
-* `Gson <http://code.google.com/p/google-gson/>`_ ( ``Ver.1.7.1`` で動作確認 )
-* `Commons Codec <http://commons.apache.org/codec/>`_ ( ``Ver.1.4`` で動作確認 )
-* `Commons Logging <http://commons.apache.org/logging/>`_ ( ``Ver.1.1.1`` で動作確認 )
-
-プラグインライブラリの登録方法は、 :doc:`user-guide` を参照してください。
+JobQueueクライアントプラグインは拡張モジュール ``ext-yaess-jobqueue-plugin`` として提供されています。拡張モジュールのデプロイ方法については、 :doc:`../administration/deployment-extension-module` を参照してください。
 
 JobQueueを利用したHadoopジョブの実行
 ------------------------------------

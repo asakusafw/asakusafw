@@ -56,6 +56,11 @@
 		<gson.version>2.2.1</gson.version>
 		<httpclient.version>4.2</httpclient.version>
 
+		<!-- build timestamp -->
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+
+		<!-- build configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<archetype.test.skip>true</archetype.test.skip>
 	</properties>
@@ -63,8 +68,9 @@
 	<repositories>
 		<repository>
 			<id>central</id>
-			<name>Maven Central repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -113,11 +119,42 @@
 
 	<pluginRepositories>
 		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
 			<id>codehaus.org</id>
 			<name>Codehaus Maven Repository</name>
 			<url>http://repository.codehaus.org/</url>
 			<snapshots>
 				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.releases</id>
+			<name>Asakusa Framework Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.snapshots</id>
+			<name>Asakusa Framework Snapshot Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>

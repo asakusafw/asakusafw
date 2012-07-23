@@ -204,12 +204,13 @@ public class FilePackager
         try {
             while (cursor.next()) {
                 Location location = cursor.getLocation();
-                if (allowFrameworkInfo == false && FRAMEWORK_INFO.isPrefixOf(location)) {
-                    LOG.warn("{} is a framework info", location);
+                if (allowFrameworkInfo == false
+                        && (FRAMEWORK_INFO.isPrefixOf(location) || MANIFEST_FILE.isPrefixOf(location))) {
+                    LOG.debug("Skipped adding a framework info: {}", location);
                     continue;
                 }
                 if (saw.contains(location)) {
-                    LOG.warn("{} is already added", location);
+                    LOG.warn("{} is already added to JAR", location);
                     continue;
                 }
                 saw.add(location);
