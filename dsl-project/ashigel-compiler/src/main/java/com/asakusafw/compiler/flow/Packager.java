@@ -18,6 +18,7 @@ package com.asakusafw.compiler.flow;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.jar.JarFile;
 
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -30,10 +31,22 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public interface Packager extends FlowCompilingEnvironment.Initializable {
 
     /**
-     * The location of frmework info.
+     * The location of manifest file in package.
      * @since 0.4.0
      */
-    Location FRAMEWORK_INFO = Location.fromPath("META-INF/asakusa", '/');
+    Location MANIFEST_FILE = Location.fromPath(JarFile.MANIFEST_NAME, '/');
+
+    /**
+     * The location of package meta info.
+     * @since 0.4.0
+     */
+    Location PACKAGE_META_INFO = MANIFEST_FILE.getParent();
+
+    /**
+     * The location of framework info.
+     * @since 0.4.0
+     */
+    Location FRAMEWORK_INFO = PACKAGE_META_INFO.append("asakusa");
 
     /**
      * The location of fragment marker file in each class library.
