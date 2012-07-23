@@ -230,6 +230,9 @@
 	</target>
 
 	<target name="compile-batchapp" description="Run batch compile for all batch classes">
+		<tstamp>
+			<format property="now.time" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
 		<path id="linkpath">
 			<pathelement path="${project.build.outputDirectory}" />
 		</path>
@@ -242,8 +245,11 @@
 		      fork="true"
 		      failonerror="true">
 			<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+			<jvmarg value="-Dcom.asakusafw.batchapp.build.java.version=${java.version}" />
+			<jvmarg value="-Dcom.asakusafw.batchapp.build.timestamp=${now.time}" />
 			<jvmarg value="-Dcom.asakusafw.compiler.options=${asakusa.compiler.options}" />
-			<jvmarg value="-Dcom.asakusafw.version=${asakusafw.version}" />
+			<jvmarg value="-Dcom.asakusafw.batchapp.project.version=${project.version}" />
+			<jvmarg value="-Dcom.asakusafw.framework.version=${asakusafw.version}" />
 			<jvmarg value="-ea" />
 			<arg value="-output" />
 			<arg value="${asakusa.batchc.dir}" />
