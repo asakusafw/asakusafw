@@ -343,6 +343,8 @@ Asakusa Frameworkを開発環境にインストールします。
 ..  warning::
     targetディレクトリの配下に似た名前のファイルとして ``${artifactId}-${version}.jar`` というファイル(「batchapp」が付いていないjarファイル)が同時に作成されますが、これは実行可能なアーカイブファイルではないので注意してください。
 
+.. _introduction-start-guide-deploy-app:
+
 サンプルアプリケーションのデプロイ
 ----------------------------------
 サンプルアプリケーションを実行するために、先ほどビルドしたサンプルアプリケーションを実行環境にデプロイします。
@@ -373,6 +375,8 @@ Asakusa Frameworkを開発環境にインストールします。
     rm /tmp/windgate-$USER/* -rf
     cd ~/workspace/example-app
     cp -a src/test/example-dataset/* /tmp/windgate-$USER/
+
+.. _introduction-start-guide-run-app:
 
 サンプルアプリケーションの実行
 ------------------------------

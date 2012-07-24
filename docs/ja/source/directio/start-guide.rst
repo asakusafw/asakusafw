@@ -57,22 +57,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 * データソースを配置する論理パス
 * データソースが実際に利用するファイルシステム上のパス
 
-これらの設定は、 ``$ASAKUSA_HOME`` で指定したディレクトリ以下の ``core/conf/asakusa-resources.xml`` (以下、設定ファイル)内に、以下の形式でそれぞれ記述していきます。
-
-..  code-block:: xml
-
-    <property>
-        <name>プロパティ名</property>
-        <value>値</value>
-    </property>
-
-..  note::
-    このファイルはAsakusa FrameworkがHadoopのジョブを実行する際に利用する共通の設定ファイル [#]_ です。
-    Hadoop本体の ``core-site.xml`` 等と同様の形式 [#]_ ですが、 ``${...}`` 形式での
-    システムプロパティの展開をサポートしていません。
-
-..  [#] :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定にも利用しています。
-..  [#] http://hadoop.apache.org/common/docs/r0.20.203.0/api/org/apache/hadoop/conf/Configuration.html
+これらの設定は、 ``$ASAKUSA_HOME`` で指定したディレクトリ以下の ``core/conf/asakusa-resources.xml`` (以下、設定ファイル)内に、Hadoopの設定ファイルと同様の形式でそれぞれ記述していきます。
 
 データソースのマッピング
 ------------------------
@@ -113,137 +98,44 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
     データソースのJavaでの実装クラス名です。
 
     Direct I/Oでは、それぞれのデータソースを識別するための識別子を ``com.asakusafw.directio.<DSID>`` の形式で指定します。
-    デフォルトの設定では ``root`` というIDのデータソースが設定されていることになります [#]_ 。
+    デフォルトの設定では ``root`` というIDのデータソースが設定されていることになります。
     
     Hadoopのファイルシステムを利用するには :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopDataSource` と指定します。
 
 ``com.asakusafw.directio.root.path``
     このデータソースを配置する「論理パス」を表します。
+
+    論理パスは、 ``com.asakusafw.directio.<DSID>.path`` の形式で指定します。
     DSLからはこの論理パスでデータソースを指定します。
     
     論理パスはUnixのディレクトリのような構造を取り、
     ``alpha/beta/gamma`` のように名前をスラッシュ ( ``/`` ) で区切って指定します。
     
-    特別なパスとして、ルートパスは ``/`` 一文字で指定します。
+    特別な論理パスとして、ルートパスは ``/`` 一文字で指定します [#]_ 。
 
 ``com.asakusafw.directio.root.fs.path``
-    論理パスに対するファイルシステム上のパス（ファイルシステムパス）です。
-    Direct I/Oを利用したアプリケーションでは、ここに指定されたファイルシステムパス以下のファイルを利用します。
-    
-    形式について詳しくは後述します。
+    データソースが実際に利用するファイルシステム上のパス「ファイルシステムパス」を表します。
 
-ファイルシステムパスには次の3種類の形式を指定できます。
+    ファイルシステムパスは、 ``com.asakusafw.directio.<DSID>.fs.path`` の形式で指定します。
+    Direct I/Oを利用したアプリケーションは、ここに指定されたファイルシステムパス以下のファイルを利用します。
 
-相対パス
-    Hadoopのデフォルトファイルシステム [#]_ のワーキングディレクトリからの相対パスを利用します。
-    
-    なお、デフォルトファイルシステムにローカルファイルシステムを指定している場合、
-    ワーキングディレクトリは必ずユーザーのホームディレクトリになります。
+    ファイルシステムパスには ``target/testing/directio`` のように相対パスを使用したり [#]_ 、
+    ``hdfs://localhost:8020/user/asakusa`` のように完全URIを使用することができます。
 
-絶対パス
-    Hadoopのデフォルトファイルシステム上の絶対パスを利用します。
-    
-    たとえば ``/var/log`` や ``/tmp/directio`` などです。
+    ファイルシステムパスの形式について、詳しくは :doc:`user-guide` の :ref:`directio-filesystem-path-format` を参照してください。
 
-URI
-    URIに対応するファイルシステム、ホスト、パスを利用します。
-    
-    たとえば ``file:///home/asakusa`` や ``hdfs://localhost:8020/user/asakusa`` などです。
+..  [#] Direct I/Oに無関係の項目は、 :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定です。
+..  [#] デフォルトの設定ではデータソース識別子 ``root`` にルートパスを表す論理パス ``/`` が割り当てられていますが、データソース識別子 ``root`` は特別な値ではなく、任意の値に変更することが出来ます。
+..  [#] この場合、Hadoopのデフォルトファイルシステムのワーキングディレクトリからの相対パスが利用されます。Hadoopのデフォルトファイルシステムとは、Hadoopの設定ファイル ``core-site.xml`` 内の ``fs.default.name`` に指定したファイルシステムです。また、デフォルトのワーキングディレクトリは、多くのHadoopディストリビューションではアプリケーション実行ユーザのホームディレクトリです。
 
 ..  warning::
     ファイルシステムパス以下はテスト実行時に削除されます。
-    特にスタンドアロンモードのHadoopを利用時に相対パスを指定した場合、
+    特にスタンドアロンモードのHadoopを利用時にデフォルトの設定のような相対パスを指定した場合、
     ホームディレクトリを起点としたパスと解釈されるため注意が必要です。
 
-..  attention::
-    ファイルシステム上のパスに ``s3://`` や ``s3n://`` など Amazon Simple Storage Service ( `Amazon S3`_ ) を利用する場合、上記の設定ではパフォーマンス上の問題が出るようです。 :doc:`user-guide` の「Amazon S3での設定例」も参考にしてください。
+    例えばホームディレクトリが ``/home/asakusa`` であった場合でデフォルト設定の相対パスを利用する場合、
+    テスト実行の都度 ``/home/asakusa/target/testing/directio`` ディレクトリ以下が削除されることになります。
 
-..  _`Amazon S3`: http://aws.amazon.com/s3/
-
-..  [#] Direct I/Oに無関係の項目は、 :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定です。
-..  [#] デフォルトのデータソース識別子 ``root`` 特別なものではありません。この識別子は任意の値に変更することが出来ます。
-..  [#] Hadoopの設定ファイル ``core-site.xml`` 内の ``fs.default.name`` に指定したファイルシステムです。
-
-
-複数データソースの利用
-----------------------
-複数のデータソースを組み合わせて利用する場合、設定ファイルの ``com.asakusafw.directio.<DSID>`` のうち、 ``<DSID>`` の部分を別々のものに設定します。
-
-以下は論理パス ``data`` と ``data/master`` に対してそれぞれ ``data`` , ``master`` というIDのデータソースを指定する例です。
-
-..  code-block:: xml
-
-    <?xml version="1.0" encoding="UTF-8"?>
-    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-    <configuration>
-        <!-- Default Implementations (for Development) -->
-        <property>
-            <name>com.asakusafw.runtime.core.Report.Delegate</name>
-            <value>com.asakusafw.runtime.core.Report$Default</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.data</name>
-            <value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.data.path</name>
-            <value>data</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.data.fs.path</name>
-            <value>hdfs://localhost:8020/user/directio/var</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.master</name>
-            <value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.master.path</name>
-            <value>data/master</value>
-        </property>
-        <property>
-            <name>com.asakusafw.directio.master.fs.path</name>
-            <value>hdfs://localhost:8020/user/directio/master</value>
-        </property>
-    </configuration>
-
-上記では論理パスとファイルシステムパスをそれぞれ次のように対応づけています。
-
-
-..  list-table:: 論理パスとファイルシステムパスの対応付け
-    :widths: 5 10 40
-    :header-rows: 1
-
-    * - ID
-      - 論理パス
-      - ファイルシステムパス
-
-    * - ``data``
-      - ``data``
-      - ``hdfs://localhost:8020/user/directio/var``
-
-    * - ``master``
-      - ``data/master``
-      - ``hdfs://localhost:8020/user/directio/master``
-
-上記の設定では、DSLから ``data`` というパスが指定された場合に ``data`` というデータソースを利用し、 ``data/master`` というパスが指定された場合に ``master`` というデータソースを利用します。
-
-それ以外に、 ``data/transaction`` や ``data/2012`` など、 ``data`` 以下でなおかつ ``data/master`` と無関係なパスが指定された場合にも ``data`` というデータソースを利用します。
-``master`` というデータソースも同様に、 ``data/master/item`` など、 ``data/master`` のサブパスを指定した場合にも利用されます。
-
-DSLで論理パスより長いパスを指定した場合、論理パスにマッチした残りの部分はそのままファイルシステム上のパスに利用します。
-上記の設定でDSLから ``data/2012/01`` と指定した場合、実行時には ``hdfs://localhost:8020/user/directio/var/2012/01`` というパスとして処理が行われます。
-
-なお、 ``data`` とは関係ないパス（たとえば ``var/log`` など）が指定された場合には、対応するデータソースが見つからないためエラーとなります。
-これを避けるにはデフォルト設定のように、ルートパス ( ``/`` ) に対してデータソースを配置します。
-
-..  warning::
-    (再掲) ファイルシステムパス以下はテスト実行時に削除されます。
-    特にスタンドアロンモードのHadoopを利用時に相対パスを指定した場合、
-    ホームディレクトリを起点としたパスと解釈されるため注意が必要です。
-
-..  hint::
-    データソースの識別子(DSID)は実行時のログメッセージにも利用されるため、わかりやすいものにしてください。
 
 サンプルアプリケーションの実行
 ==============================
@@ -251,7 +143,7 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
 このサンプルは :doc:`../introduction/start-guide` のサンプルアプリケーションの内容をDirect I/O向けに書きなおしたもので、DSLから以下の論理パスを利用しています。
 
 ..  list-table:: サンプルアプリケーションが利用するパス
-    :widths: 10 40
+    :widths: 3 7
     :header-rows: 1
 
     * - 論理パス
@@ -263,14 +155,16 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
     * - ``result``
       - 計算結果を出力するパス
 
-上記の論理パスに対応するデータストアをそれぞれ配置するか、またはデフォルト設定のようにルート ( ``/`` ) に対してデータストアを配置してください。
+上記の論理パスに対応するデータソースをそれぞれ配置するか、またはデフォルト設定のようにルート ( ``/`` ) に対してデータソースを配置してください。
+
+以降の説明ではデータソースの設定にデフォルト設定をそのまま利用する例を示します。
 
 サンプルアプリケーションのビルド
 --------------------------------
-データストアの設定が完了したら、サンプルアプリケーションのビルドを行います。
+データソースの設定が完了したら、サンプルアプリケーションのビルドを行います。
 
 ..  warning::
-    ビルド時に実行されるテストで、設定したデータストアの内容がクリアされます。
+    先述した通り、ビルド時に実行されるテストで設定したデータソースのファイルシステムパスの内容がクリアされます。
     対応付けたファイルシステムパスをもう一度確認し、重要なデータがないようにしてください。
 
 コマンドラインコンソールでアプリケーションプロジェクトのディレクトリに移動し、以下のコマンドを実行してください。
@@ -308,23 +202,60 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
     hadoop fs -put <サンプルアプリケーションプロジェクトのパス>/src/test/example-dataset/master target/testing/directio/master
     hadoop fs -put <サンプルアプリケーションプロジェクトのパス>/src/test/example-dataset/sales target/testing/directio/sales
 
-..  note::
-    直前に `サンプルアプリケーションのビルド`_ を実行している場合、それぞれのデータストアにはテスト時に利用したデータが残っています。
+..  attention::
+    直前に `サンプルアプリケーションのビルド`_ を実行している場合、ファイルシステムパス上にはテスト時に利用したデータが残っていることがあるため、データを配置する際にはファイルシステムパス上のデータをクリアするようにしてください。
 
 アプリケーションの実行
 ----------------------
 アプリケーション実行の手順は :doc:`../introduction/start-guide` と同様です。
-同文書の「サンプルアプリケーションのデプロイ」と「サンプルアプリケーションの実行」を参考にしてください。
 
-相違点として、結果の出力はローカルファイルシステムではなく、論理パス ``result`` 上に行われます。
-デフォルト設定の場合、以下のようなコマンドで結果を確認できます。
+ここではコマンド例のみを示します。詳しくは同文書の :ref:`introduction-start-guide-deploy-app` と :ref:`introduction-start-guide-run-app` を参考にしてください。
+
+..  code-block:: sh
+
+    cd <サンプルアプリケーションプロジェクトのパス>
+    cp target/*batchapps*.jar $ASAKUSA_HOME/batchapps
+    cd $ASAKUSA_HOME/batchapps
+    jar xf *batchapps*.jar
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
+
+:ref:`introduction-start-guide-run-app` との相違点として、結果の出力はローカルファイルシステムではなく、論理パス ``result`` 上に行われます。つまり、出力データの実体は 論理パス ``result`` に配置したデータソースが実際に利用するファイルシステム上に出力されます。
+
+アプリケーション実行結果の確認
+------------------------------
+Direct I/Oでは論理パスに配置したデータソース内のファイルやディレクトリ一覧をリストアップするコマンド ``$ASAKUSA_HOME/directio/bin/list-file.sh`` を提供しています。このコマンドを利用して、サンプルアプリケーションの出力結果を確認します。
+
+``list-file.sh`` は 第一引数にリストアップの対象とするベースパス、第二引数にベースパスからの相対パスや :ref:`directio-file-name-pattern` を指定します。ここでは、論理パス ``result`` 配下のすべてのファイルをサブディレクトリ含めてリストするようコマンドを実行してみます。
+
+..  code-block:: sh
+
+    $ASAKUSA_HOME/directio/bin/list-file.sh result "**/*"
+.. ***
+
+上記のコマンドを実行した場合、サンプルデータでは以下のような結果が表示されます。
+
+..  code-block:: sh
+     
+    Starting List Direct I/O Files:
+     Hadoop Command: /usr/lib/hadoop/bin/hadoop
+              Class: com.asakusafw.directio.tools.DirectIoList
+          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.4.0.jar,...
+          Arguments: result **/*
+    file:/home/asakusa/target/testing/directio/result/category
+    file:/home/asakusa/target/testing/directio/result/error
+    file:/home/asakusa/target/testing/directio/result/error/20110401.csv
+    file:/home/asakusa/target/testing/directio/result/category/result.csv
+
+デフォルト設定の場合、論理パス ``result`` に対応するデータソースはルートパス ``/`` に対応するデータソース ``root`` が使用されます。また、データソース ``root`` に対応するファイルシステムパスは相対パス ``target/testing/directio`` が使用されます。
+
+上記はスタンドアロンモード上のHadoop対して実行しているため、Hadoopのワーキングディレクトリであるユーザのホームディレクトリ ( 上記の例では ``/home/asakusa`` )配下の相対パスに結果が出力されています。
+
+``hadoop fs -text`` コマンドを利用して ``list-file.sh`` が出力したファイルシステムパスのファイル内容を確認します。
 
 ..  code-block:: sh
     
-    # スタンドアロンモードに対応するため、ホームディレクトリに移動しておく
-    cd ~
-    # 結果データを確認する
-    hadoop fs -text target/testing/directio/result/category/result.csv
+    hadoop fs -text file:/home/asakusa/target/testing/directio/result/category/result.csv
 
 上記のコマンドを実行した場合、サンプルデータでは以下のような結果が表示されます。
 
@@ -477,7 +408,3 @@ Direct I/O特有の部分は、 `ファイルシステム上のCSVファイル�
 
 ..  [#] 「ランダムな値」を指定した場合、レコードごとにランダムな番号を生成して宛先のファイルを振り分けます。レコード数が少ない場合、ランダムな番号が偏ってしまって、範囲にあるすべてのファイルが生成されるとは限りません。
 
-アプリケーションの実行
-----------------------
-アプリケーションのビルドや実行方法は、通常のAsakusa Frameworkのアプリケーション開発と同様です。
-:doc:`../application/start-guide` などを参照してください。
