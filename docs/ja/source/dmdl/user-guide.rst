@@ -594,7 +594,7 @@ ThunderGateとの連携
 -------------------
 ThunderGateが利用するデータベースの情報から、DMDLスクリプトを自動的に生成できます。
 
-詳しくは :doc:`with-thundergate` を参照してください。
+詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
 
 Direct I/Oとの連携
 ------------------

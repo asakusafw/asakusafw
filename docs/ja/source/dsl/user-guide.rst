@@ -461,7 +461,7 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
+詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -486,7 +486,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
+詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
     このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。

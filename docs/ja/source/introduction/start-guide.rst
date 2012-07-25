@@ -3,6 +3,8 @@ Asakusa Framework スタートガイド
 ================================
 この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
 
+.. _startguide-development-environment:
+
 開発環境の構築
 ==============
 Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。WindowsPC上で開発を行う場合、Windows上でLinuxの仮想マシンを実行し、ここで開発を行うと便利です。

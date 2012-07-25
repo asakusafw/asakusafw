@@ -427,7 +427,7 @@ WindGateはCSVのほか、さまざまな形式のファイルやデータベー
 ThunderGateと連携する
 ~~~~~~~~~~~~~~~~~~~~~
 ThunderGateと連携してデータベースのテーブルを操作する方法は、
-:doc:`with-thundergate` を参照して下さい。
+:doc:`../thundergate/with-dsl` を参照して下さい。
 
 ジョブフロークラスの作成
 ------------------------
