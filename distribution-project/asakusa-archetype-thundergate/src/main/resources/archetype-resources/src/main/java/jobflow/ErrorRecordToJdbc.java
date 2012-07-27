@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,23 @@
  */
 package ${package}.jobflow;
 
+import ${package}.modelgen.table.model.ErrorRecord;
 import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
 
 /**
- * エクスポーターの動作を定義する。
+ * エラー情報をThunderGate/Exporterでエクスポートする。
+ * エクスポート対象テーブルは {@code ERROR_RECORD}。
  */
-public abstract class DefaultDbExporterDescription extends DbExporterDescription {
+public class ErrorRecordToJdbc extends DbExporterDescription {
 
     @Override
     public String getTargetName() {
         return "asakusa";
+    }
+
+    @Override
+    public Class<?> getModelType() {
+        return ErrorRecord.class;
     }
 
 }
