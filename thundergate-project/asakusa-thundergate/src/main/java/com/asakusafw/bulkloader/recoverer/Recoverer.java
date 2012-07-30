@@ -198,12 +198,12 @@ public class Recoverer {
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
             } else if (isExistRecoveryFail) {
-                LOG.error("TG-RECOVERER-01002",
+                LOG.error("TG-RECOVERER-02001",
                         "異常終了（指定されたジョブフローインスタンスのリカバリ処理に失敗した）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistExecOthProcess) {
-                LOG.error("TG-RECOVERER-01002",
+                LOG.error("TG-RECOVERER-02001",
                         "異常終了（指定されたジョブフローインスタンスが処理中である）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
@@ -226,12 +226,12 @@ public class Recoverer {
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_SUCCESS;
             } else if (isExistRecoveryFail) {
-                LOG.error("TG-RECOVERER-01002",
+                LOG.error("TG-RECOVERER-02001",
                         "異常終了（リカバリ処理に失敗したジョブフローインスタンスが存在する）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
             } else if (isExistExecOthProcess) {
-                LOG.info("TG-RECOVERER-01002",
+                LOG.error("TG-RECOVERER-02001",
                         "異常終了（処理中のジョブフローインスタンスが存在する）",
                         new Date(), targetName, executionId);
                 return Constants.EXIT_CODE_ERROR;
