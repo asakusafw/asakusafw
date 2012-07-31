@@ -91,7 +91,8 @@ public class LocalCacheInfoRepositoryTest {
             statement.execute("CREATE TABLE __TG_TEST1 ( VALUE DATETIME ) ENGINE=InnoDB");
             statement.execute("CREATE TABLE __TG_TEST2 ( VALUE VARCHAR(200) ) ENGINE=InnoDB");
         } finally {
-            connection.close();
+            DBConnection.closeStmt(statement);
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -129,7 +130,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(restored.getTableName(), is(info.getTableName()));
             assertThat(restored.getPath(), is(info.getPath()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -163,7 +164,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(restored.getTableName(), is(info2.getTableName()));
             assertThat(restored.getPath(), is(info2.getPath()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -218,7 +219,7 @@ public class LocalCacheInfoRepositoryTest {
                     tos(updated) + " >= " + tos(future.get()),
                     updated, greaterThanOrEqualTo(future.get()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -272,7 +273,7 @@ public class LocalCacheInfoRepositoryTest {
                     tos(updated) + " <= " + tos(future.get()),
                     updated, lessThanOrEqualTo(future.get()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -299,7 +300,7 @@ public class LocalCacheInfoRepositoryTest {
 
             assertThat(repo.deleteCacheInfo("testing"), is(false));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -314,7 +315,7 @@ public class LocalCacheInfoRepositoryTest {
             LocalCacheInfoRepository repo = new LocalCacheInfoRepository(connection);
             assertThat(repo.deleteCacheInfo("testing"), is(false));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -338,7 +339,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.getCacheInfo("c"), is(notNullValue()));
             assertThat(repo.getCacheInfo("d"), is(notNullValue()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -355,7 +356,7 @@ public class LocalCacheInfoRepositoryTest {
             repo.putCacheInfo(info("b", "__TG_TEST2"));
             assertThat(repo.deleteTableCacheInfo("__TG_TEST1"), is(0));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -379,7 +380,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.getCacheInfo("c"), is(nullValue()));
             assertThat(repo.getCacheInfo("d"), is(nullValue()));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -414,7 +415,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.deleteCacheInfoCompletely("testing"), is(true));
             assertThat(repo.listDeletedCacheInfo().size(), is(0));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -440,7 +441,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.tryLock("testing", "a", "table"), is(true));
             assertThat(repo.tryLock("testing", "a", "table"), is(false));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -462,7 +463,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.tryLock("testing2", "b", "table1"), is(false));
             assertThat(repo.tryLock("testing1", "c", "table2"), is(true));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -484,7 +485,7 @@ public class LocalCacheInfoRepositoryTest {
             assertThat(repo.tryLock("testing2", "b", "table1"), is(true));
             assertThat(repo.tryLock("testing1", "c", "table2"), is(true));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 

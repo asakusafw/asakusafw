@@ -148,6 +148,18 @@ error_record = {
     @windgate.csv.field(name = "行番号")
     line_number : INT;
 
+    "売上日時"
+    @windgate.csv.field(name = "日時")
+    sales_date_time : DATETIME;
+
+    "店舗コード"
+    @windgate.csv.field(name = "店舗コード")
+    store_code : TEXT;
+
+    "商品コード"
+    @windgate.csv.field(name = "商品コード")
+    item_code : TEXT;
+
     "エラーメッセージ"
     @windgate.csv.field(name = "メッセージ")
     message : TEXT;

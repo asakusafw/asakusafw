@@ -97,7 +97,8 @@ public class ImportProtocolDecideTest {
             statement.execute("CREATE TABLE __TG_TEST1 ( VALUE DATETIME ) ENGINE=InnoDB");
             statement.execute("CREATE TABLE __TG_TEST2 ( VALUE VARCHAR(200) ) ENGINE=InnoDB");
         } finally {
-            connection.close();
+            DBConnection.closeStmt(statement);
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -198,7 +199,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -263,7 +264,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -327,7 +328,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -379,7 +380,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -469,7 +470,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -514,7 +515,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);
@@ -566,7 +567,7 @@ public class ImportProtocolDecideTest {
                     tb1.getDfsFilePath()));
 
         } finally {
-            conn.close();
+            DBConnection.closeConn(conn);
         }
 
         bean.setTargetTable(targetTable);

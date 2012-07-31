@@ -522,7 +522,7 @@ public class DfsFileImport {
             compType = CompressionType.valueOf(strCompType);
         } catch (Exception e) {
             compType = CompressionType.NONE;
-            LOG.error("TG-EXTRACTOR-02004", strCompType);
+            LOG.warn("TG-EXTRACTOR-02004", strCompType);
         }
         return compType;
     }

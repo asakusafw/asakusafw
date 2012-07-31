@@ -275,6 +275,8 @@ public class TempTableDeleteTest {
             DBConnection.rollback(conn);
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // DBの結果を検証
@@ -314,6 +316,8 @@ public class TempTableDeleteTest {
             DBConnection.rollback(conn);
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // DBの結果を検証
@@ -353,6 +357,8 @@ public class TempTableDeleteTest {
             DBConnection.rollback(conn);
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // DBの結果を検証
@@ -399,6 +405,8 @@ public class TempTableDeleteTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // 結果を検証
@@ -434,6 +442,8 @@ public class TempTableDeleteTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // 結果を検証
@@ -477,6 +487,8 @@ public class TempTableDeleteTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
 
         // 結果を検証

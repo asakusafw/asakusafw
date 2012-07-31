@@ -261,7 +261,7 @@ public class GetCacheInfoLocalTest {
         GetCacheInfoLocal service = new Mock().willFail();
         try {
             service.get(bean);
-            fail();
+            org.junit.Assert.fail();
         } catch (Exception e) {
             // ok.
         }

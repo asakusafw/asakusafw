@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.batch;
+package ${package}.jobflow;
 
-import ${package}.jobflow.ExJobFlow;
-import com.asakusafw.vocabulary.batch.Batch;
-import com.asakusafw.vocabulary.batch.BatchDescription;
+import ${package}.modelgen.table.model.CategorySummary;
+import com.asakusafw.vocabulary.bulkloader.DbExporterDescription;
 
 /**
- * サンプル：バッチクラス。
+ * カテゴリ別集計結果をThunderGate/Exporterでエクスポートする。
+ * エクスポート対象テーブルは {@code CATEGORY_SUMMARY}。
  */
-@Batch(name = "ex")
-public class ExBatch extends BatchDescription {
+public class CategorySummaryToJdbc extends DbExporterDescription {
 
     @Override
-    protected void describe() {
-        run(ExJobFlow.class).soon();
+    public String getTargetName() {
+        return "asakusa";
     }
+
+    @Override
+    public Class<?> getModelType() {
+        return CategorySummary.class;
+    }
+
 }

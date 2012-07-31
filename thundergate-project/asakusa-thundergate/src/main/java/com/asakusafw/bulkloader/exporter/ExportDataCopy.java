@@ -512,7 +512,7 @@ public class ExportDataCopy {
                 DBConnection.closeRs(rs);
                 DBConnection.closePs(stmt);
             }
-            LOG.info("TG-EXPORTER-06001",
+            LOG.error("TG-EXPORTER-06001",
                     tableName,
                     tempTableName,
                     errSid.toString());

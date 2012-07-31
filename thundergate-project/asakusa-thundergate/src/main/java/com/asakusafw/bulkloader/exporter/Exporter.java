@@ -241,7 +241,7 @@ public class Exporter {
                 return Constants.EXIT_CODE_SUCCESS;
             } else {
                 // 更新レコードのコピーが不完全な状態で異常終了
-                LOG.info("TG-EXPORTER-01015",
+                LOG.error("TG-EXPORTER-01015",
                         new Date(), targetName, batchId, jobflowId, executionId);
                 return Constants.EXIT_CODE_ERROR;
             }

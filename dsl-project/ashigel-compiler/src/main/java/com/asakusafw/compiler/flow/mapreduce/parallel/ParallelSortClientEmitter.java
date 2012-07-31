@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
@@ -230,24 +231,25 @@ public class ParallelSortClientEmitter {
                         .newObject()
                         .toExpression())
                     .toStatement());
-                // TODO add attributes
-                for (Map.Entry<String, String> entry : Collections.<String, String>emptyMap().entrySet()) {
-                    statements.add(new ExpressionBuilder(factory, attributes)
-                        .method("put",
-                                Models.toLiteral(factory, entry.getKey()),
-                                Models.toLiteral(factory, entry.getValue()))
-                        .toStatement());
-                }
-                for (Slot.Input input : slot.getSource().getInputs()) {
-                    statements.add(new ExpressionBuilder(factory, list)
-                        .method("add", new TypeBuilder(factory, t(StageInput.class))
-                            .newObject(
-                                    Models.toLiteral(factory, input.getLocation().toPath(PATH_SEPARATOR)),
-                                    factory.newClassLiteral(t(input.getFormatType())),
-                                    factory.newClassLiteral(mapperType),
-                                    attributes)
-                            .toExpression())
-                        .toStatement());
+                for (SourceInfo input : slot.getSource().getInputs()) {
+                    for (Map.Entry<String, String> entry : input.getAttributes().entrySet()) {
+                        statements.add(new ExpressionBuilder(factory, attributes)
+                            .method("put",
+                                    Models.toLiteral(factory, entry.getKey()),
+                                    Models.toLiteral(factory, entry.getValue()))
+                            .toStatement());
+                    }
+                    for (Location location : input.getLocations()) {
+                        statements.add(new ExpressionBuilder(factory, list)
+                            .method("add", new TypeBuilder(factory, t(StageInput.class))
+                                .newObject(
+                                        Models.toLiteral(factory, location.toPath(PATH_SEPARATOR)),
+                                        factory.newClassLiteral(t(input.getFormat())),
+                                        factory.newClassLiteral(mapperType),
+                                        attributes)
+                                .toExpression())
+                            .toStatement());
+                    }
                 }
             }
             statements.add(new ExpressionBuilder(factory, list)
