@@ -230,7 +230,12 @@ public class StageResourceDriver implements Closeable {
         job.getConfiguration().setStrings(
                 getLocalCacheNameKey(resourceName),
                 localNames.toArray(new String[localNames.size()]));
-        DistributedCache.createSymlink(job.getConfiguration());
+        if ((job.getConfiguration().get("mapred.job.tracker", "local").equals("local"))
+                && (job.getConfiguration().get("mapreduce.jobtracker.address", "local").equals("local"))) {
+            LOG.info("symlinks for distributed cache will not be created in standalone mode");
+        } else {
+            DistributedCache.createSymlink(job.getConfiguration());
+        }
     }
 
     private static String getLocalCacheNameKey(String resourceName) {
