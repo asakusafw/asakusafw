@@ -236,7 +236,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (value == null) {
             throw new IOException(MessageFormat.format(
                     "A mandatory attribute \"{1}\" is not defined (path={0})",
-                    extractBasePath(input),
+                    input.getPathString(),
                     key));
         }
         return value;
