@@ -28,7 +28,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,19 +176,13 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     private Slot toSlot(Output output) {
-        List<Slot.Input> inputs = Lists.create();
-        for (SourceInfo source : output.getSources()) {
-            Class<? extends InputFormat<?, ?>> format = source.getFormat();
-            for (Location location : source.getLocations()) {
-                inputs.add(new Slot.Input(location, format));
-            }
-        }
+        assert output != null;
         String name = normalize(output.getDescription().getName());
         return new Slot(
                 name,
                 output.getDescription().getDataType(),
                 Collections.<String>emptyList(),
-                inputs,
+                output.getSources(),
                 TemporaryOutputFormat.class);
     }
 

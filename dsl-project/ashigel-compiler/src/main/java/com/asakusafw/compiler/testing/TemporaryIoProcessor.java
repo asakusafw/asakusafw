@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.apache.hadoop.mapreduce.InputFormat;
-
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
@@ -208,18 +206,11 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
     private Slot toSlot(Output output, String name) {
         assert output != null;
         assert name != null;
-        List<Slot.Input> inputs = Lists.create();
-        for (SourceInfo source : output.getSources()) {
-            Class<? extends InputFormat<?, ?>> format = source.getFormat();
-            for (Location location : source.getLocations()) {
-                inputs.add(new Slot.Input(location, format));
-            }
-        }
         return new Slot(
                 name,
                 output.getDescription().getDataType(),
                 Collections.<String>emptyList(),
-                inputs,
+                output.getSources(),
                 TemporaryOutputFormat.class);
     }
 

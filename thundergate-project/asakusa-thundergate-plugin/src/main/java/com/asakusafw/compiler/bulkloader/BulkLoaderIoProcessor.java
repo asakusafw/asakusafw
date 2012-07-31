@@ -26,7 +26,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -286,19 +285,12 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Slot toSlot(Output output) {
         BulkLoadExporterDescription desc = extract(output.getDescription());
-        List<Slot.Input> inputs = Lists.create();
-        for (SourceInfo source : output.getSources()) {
-            Class<? extends InputFormat<?, ?>> format = source.getFormat();
-            for (Location location : source.getLocations()) {
-                inputs.add(new Slot.Input(location, format));
-            }
-        }
         String name = normalize(output.getDescription().getName());
         return new Slot(
                 name,
                 output.getDescription().getDataType(),
                 desc.getPrimaryKeyNames(),
-                inputs,
+                output.getSources(),
                 TemporaryOutputFormat.class);
     }
 
