@@ -18,25 +18,23 @@ package com.asakusafw.compiler.flow.mapreduce.parallel;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.apache.hadoop.mapreduce.InputFormat;
-
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 
 /**
  * ソートする出力のスロット。
  */
 public class Slot {
 
-    private String outputName;
+    private final String outputName;
 
-    private Type type;
+    private final Type type;
 
-    private List<String> propertyNames;
+    private final List<String> propertyNames;
 
-    private List<Slot.Input> inputs;
+    private final List<SourceInfo> inputs;
 
-    private Class<?> outputFormatType;
+    private final Class<?> outputFormatType;
 
     /**
      * インスタンスを生成する。
@@ -51,7 +49,7 @@ public class Slot {
             String outputName,
             Type type,
             List<String> propertyNames,
-            List<Input> inputs,
+            List<SourceInfo> inputs,
             Class<?> outputFormatType) {
         Precondition.checkMustNotBeNull(outputName, "outputName"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -93,7 +91,7 @@ public class Slot {
      * このスロットへの入力の一覧を返す。
      * @return このスロットへの入力の一覧
      */
-    public List<Slot.Input> getInputs() {
+    public List<SourceInfo> getInputs() {
         return inputs;
     }
 
@@ -103,45 +101,5 @@ public class Slot {
      */
     public Class<?> getOutputFormatType() {
         return outputFormatType;
-    }
-
-    /**
-     * スロットへの入力。
-     */
-    public static class Input {
-
-        private Location location;
-
-        private Class<? extends InputFormat<?, ?>> formatType;
-
-        /**
-         * インスタンスを生成する。
-         * @param location この入力が配置された位置
-         * @param formatType この入力のフォーマットを表す型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-         */
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        public Input(Location location, Class<? extends InputFormat> formatType) {
-            Precondition.checkMustNotBeNull(location, "location"); //$NON-NLS-1$
-            Precondition.checkMustNotBeNull(formatType, "formatType"); //$NON-NLS-1$
-            this.location = location;
-            this.formatType = (Class<? extends InputFormat<?, ?>>) formatType;
-        }
-
-        /**
-         * この入力が配置された位置を返す。
-         * @return この入力が配置された位置
-         */
-        public Location getLocation() {
-            return location;
-        }
-
-        /**
-         * この入力のフォーマットを表す型を返す。
-         * @return この入力のフォーマットを表す型
-         */
-        public Class<? extends InputFormat<?, ?>> getFormatType() {
-            return formatType;
-        }
     }
 }

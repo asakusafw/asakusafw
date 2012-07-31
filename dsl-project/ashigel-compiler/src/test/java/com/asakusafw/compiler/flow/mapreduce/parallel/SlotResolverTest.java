@@ -19,11 +19,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.asakusafw.compiler.flow.DataClass.Property;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
@@ -46,9 +48,7 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
                 "out",
                 Ex1.class,
                 Arrays.asList("sid"),
-                Arrays.asList(new Slot.Input[] {
-                        new Slot.Input(Location.fromPath("a", '/'), TemporaryInputFormat.class),
-                }),
+                Arrays.asList(input("a")),
                 TemporaryOutputFormat.class);
         List<ResolvedSlot> resolved = resolver.resolve(Arrays.asList(slot));
         assertThat(environment.hasError(), is(false));
@@ -74,25 +74,19 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
                         "out1",
                         Ex1.class,
                         Arrays.asList("sid"),
-                        Arrays.asList(new Slot.Input[] {
-                                new Slot.Input(Location.fromPath("a/1", '/'), TemporaryInputFormat.class),
-                        }),
+                        Arrays.asList(input("a/1")),
                         TemporaryOutputFormat.class),
                 new Slot(
                         "out2",
                         Ex2.class,
                         Arrays.asList("sid"),
-                        Arrays.asList(new Slot.Input[] {
-                                new Slot.Input(Location.fromPath("a/2", '/'), TemporaryInputFormat.class),
-                        }),
+                        Arrays.asList(input("a/2")),
                         TemporaryOutputFormat.class),
                 new Slot(
                         "out3",
                         Ex1.class,
                         Arrays.asList("sid"),
-                        Arrays.asList(new Slot.Input[] {
-                                new Slot.Input(Location.fromPath("a/3", '/'), TemporaryInputFormat.class),
-                        }),
+                        Arrays.asList(input("a/3")),
                         TemporaryOutputFormat.class),
         });
         List<ResolvedSlot> resolved = resolver.resolve(slots);
@@ -117,9 +111,7 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
                 "out",
                 Void.class,
                 Arrays.asList("sid"),
-                Arrays.asList(new Slot.Input[] {
-                        new Slot.Input(Location.fromPath("a", '/'), TemporaryInputFormat.class),
-                }),
+                Arrays.asList(input("a")),
                 TemporaryOutputFormat.class);
         resolver.resolve(Arrays.asList(slot));
         assertThat(environment.hasError(), is(true));
@@ -135,11 +127,13 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
                 "out",
                 Ex1.class,
                 Arrays.asList("missing"),
-                Arrays.asList(new Slot.Input[] {
-                        new Slot.Input(Location.fromPath("a", '/'), TemporaryInputFormat.class),
-                }),
+                Arrays.asList(input("a")),
                 TemporaryOutputFormat.class);
         resolver.resolve(Arrays.asList(slot));
         assertThat(environment.hasError(), is(true));
+    }
+
+    private SourceInfo input(String path) {
+        return new SourceInfo(Collections.singleton(Location.fromPath(path, '/')), TemporaryInputFormat.class);
     }
 }
