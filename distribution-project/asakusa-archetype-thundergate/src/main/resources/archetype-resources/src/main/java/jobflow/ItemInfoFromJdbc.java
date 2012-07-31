@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,28 @@
  */
 package ${package}.jobflow;
 
-import ${package}.modelgen.table.model.Ex1;
+import ${package}.modelgen.table.model.ItemInfo;
+import com.asakusafw.vocabulary.bulkloader.DbImporterDescription;
 
 /**
- * インポーターの動作を定義する。
+ * 商品マスタをThunderGate/Importerからインポートする。
+ * インポート対象テーブルは {@code ITEM_INFO}。
  */
-public class Ex1FromDb extends DefaultDbImporterDescription {
+public class ItemInfoFromJdbc extends DbImporterDescription {
+
+    @Override
+    public String getTargetName() {
+        return "asakusa";
+    }
 
     @Override
     public Class<?> getModelType() {
-        return Ex1.class;
+        return ItemInfo.class;
+    }
+
+    @Override
+    public LockType getLockType() {
+        return LockType.CHECK;
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.jobflow;
+package ${package}.batch;
 
-import ${package}.modelgen.table.model.Ex1;
+import ${package}.jobflow.CategorySummaryJob;
+import com.asakusafw.vocabulary.batch.Batch;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * エクスポーターの動作を定義する。
+ * 売上の集計を計算する。
  */
-public class Ex1ToDb extends DefaultDbExporterDescription {
+@Batch(name = "example.summarizeSales")
+public class SummarizeBatch extends BatchDescription {
 
     @Override
-    public Class<?> getModelType() {
-        return Ex1.class;
+    protected void describe() {
+        run(CategorySummaryJob.class).soon();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 package ${package}.jobflow;
 
+import ${package}.modelgen.table.model.StoreInfo;
 import com.asakusafw.vocabulary.bulkloader.DbImporterDescription;
 
 /**
- * インポーターの動作を定義する。
+ * 店舗マスタをThunderGate/Importerからインポートする。
+ * インポート対象テーブルは {@code STORE_INFO}。
  */
-public abstract class DefaultDbImporterDescription extends DbImporterDescription {
+public class StoreInfoFromJdbc extends DbImporterDescription {
 
     @Override
     public String getTargetName() {
@@ -28,7 +30,18 @@ public abstract class DefaultDbImporterDescription extends DbImporterDescription
     }
 
     @Override
+    public Class<?> getModelType() {
+        return StoreInfo.class;
+    }
+
+    @Override
     public LockType getLockType() {
-        return LockType.TABLE;
+        return LockType.CHECK;
+    }
+
+    @Override
+    public DataSize getDataSize() {
+        // 店舗マスタは小さい前提
+        return DataSize.TINY;
     }
 }
