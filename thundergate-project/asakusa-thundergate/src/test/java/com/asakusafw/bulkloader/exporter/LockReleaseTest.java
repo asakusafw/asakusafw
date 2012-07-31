@@ -244,9 +244,9 @@ public class LockReleaseTest {
                 fail(util.getCauseMessage());
             }
         } finally {
-            conn.rollback();
-            stmt.close();
-            conn.close();
+            DBConnection.rollback(conn);
+            DBConnection.closePs(stmt);
+            DBConnection.closeConn(conn);
         }
     }
     /**

@@ -48,9 +48,7 @@ import com.asakusafw.bulkloader.transfer.FileList;
 
 
 /**
- * <p>
- * </p>
- *
+ * ThunderGate単体テスト用のユーティリティクラス。
  * @author akira.kawaguchi
  *
  */
@@ -294,6 +292,7 @@ public class UnitTestUtil {
                 return false;
             }
         } finally {
+            DBConnection.closeRs(rs);
             DBConnection.closePs(stmt);
             DBConnection.closeConn(conn);
         }
@@ -328,6 +327,7 @@ public class UnitTestUtil {
                 return false;
             }
         } finally {
+            DBConnection.closeRs(rs);
             DBConnection.closePs(stmt);
             DBConnection.closeConn(conn);
         }

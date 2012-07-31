@@ -70,10 +70,11 @@ public class DBConnectionTest {
      */
     @Test
     public void getConnectionTest01() throws Exception {
+        Connection conn = null;
         try {
             BulkLoaderInitializer.initDBServer(jobflowId, executionId, Arrays.asList(new String[]{"bulkloader-conf-db.properties"}), targetName);
             UnitTestUtil.startUp();
-            Connection conn = DBConnection.getConnection();
+            conn = DBConnection.getConnection();
             DBConnection.closePs(null);
             DBConnection.closeRs(null);
             DBConnection.closeConn(null);
@@ -81,6 +82,8 @@ public class DBConnectionTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
     }
     /**
@@ -92,17 +95,21 @@ public class DBConnectionTest {
      */
     @Test
     public void getConnectionTest02() throws Exception {
+        Connection conn = null;
         try {
             BulkLoaderInitializer.initDBServer(jobflowId, executionId, Arrays.asList(new String[]{"bulkloader-conf-db.properties"}), targetName);
             Properties p = ConfigurationLoader.getProperty();
             p.setProperty(Constants.PROP_KEY_NAME_DB_PRAM, "src/test/dist/bulkloader/conf/db-param.properties");
             ConfigurationLoader.setProperty(p);
-            Connection conn = DBConnection.getConnection();
+            conn = DBConnection.getConnection();
             DBConnection.closeConn(conn);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
+
     }
     /**
      * <p>
@@ -112,7 +119,8 @@ public class DBConnectionTest {
      * @throws Exception
      */
     @Test
-    public void getConnectionTest031() throws Exception {
+    public void getConnectionTest03() throws Exception {
+        Connection conn = null;
         try {
             String appHome = System.getProperty(Constants.THUNDER_GATE_HOME);
             String propDir = appHome + "/conf/db-param.properties";
@@ -121,11 +129,13 @@ public class DBConnectionTest {
             Properties p = ConfigurationLoader.getProperty();
             p.setProperty(Constants.PROP_KEY_NAME_DB_PRAM, propDir);
             ConfigurationLoader.setProperty(p);
-            Connection conn = DBConnection.getConnection();
+            conn = DBConnection.getConnection();
             DBConnection.closeConn(conn);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        } finally {
+            DBConnection.closeConn(conn);
         }
     }
     /**
@@ -137,18 +147,22 @@ public class DBConnectionTest {
      */
     @Test
     public void getConnectionTest04() throws Exception {
+        Connection conn = null;
         try {
             BulkLoaderInitializer.initDBServer(jobflowId, executionId, Arrays.asList(new String[]{"bulkloader-conf-db.properties"}), targetName);
             Properties p = ConfigurationLoader.getProperty();
             p.setProperty(Constants.PROP_KEY_DB_USER, "n");
             p.setProperty(Constants.PROP_KEY_DB_PASSWORD, "n");
             ConfigurationLoader.setProperty(p);
-            DBConnection.getConnection();
+            conn = DBConnection.getConnection();
             fail();
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(e instanceof BulkLoaderSystemException);
             assertTrue(e.getCause() instanceof SQLException);
+        } finally {
+            DBConnection.closeConn(conn);
         }
+
     }
 }

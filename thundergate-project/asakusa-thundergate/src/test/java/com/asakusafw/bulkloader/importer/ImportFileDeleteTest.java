@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -242,7 +243,13 @@ public class ImportFileDeleteTest {
             ImportFileDelete delete = new ImportFileDelete();
             delete.deleteFile(bean);
         } finally {
-            fos.close();
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    //nop
+                }
+            }
         }
 
         // 実行結果の検証

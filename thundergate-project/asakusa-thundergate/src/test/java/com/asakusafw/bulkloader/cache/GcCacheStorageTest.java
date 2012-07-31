@@ -112,7 +112,8 @@ public class GcCacheStorageTest {
             repo.putCacheInfo(INFO2);
             repo.putCacheInfo(INFO3);
         } finally {
-            connection.close();
+            DBConnection.closeStmt(statement);
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -156,7 +157,7 @@ public class GcCacheStorageTest {
             assertThat(code, is(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(0));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -180,7 +181,7 @@ public class GcCacheStorageTest {
             assertThat(code, is(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(0));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -204,7 +205,7 @@ public class GcCacheStorageTest {
             assertThat(code, not(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(1));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -227,7 +228,7 @@ public class GcCacheStorageTest {
             assertThat(code, not(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(1));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -252,7 +253,7 @@ public class GcCacheStorageTest {
             assertThat(code, not(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(1));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -280,7 +281,7 @@ public class GcCacheStorageTest {
             assertThat(code, not(Constants.EXIT_CODE_SUCCESS));
             assertThat(repo.listDeletedCacheInfo().size(), is(1));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
@@ -312,7 +313,7 @@ public class GcCacheStorageTest {
 
             assertThat(code, is(Constants.EXIT_CODE_ERROR));
         } finally {
-            connection.close();
+            DBConnection.closeConn(connection);
         }
     }
 
