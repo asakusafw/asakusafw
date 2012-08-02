@@ -18,8 +18,8 @@ Asakusa Frameworkが提供するMavenアーキタイプ [#]_ を使ってアプ�
 
 ..  [#] http://maven.apache.org/guides/introduction/introduction-to-archetypes.html
 
-``archetype:generate`` アプリケーション開発用プロジェクトを生成
----------------------------------------------------------------
+アプリケーション開発用プロジェクトの生成
+----------------------------------------
 Asakusa Frameworkが公開しているMavenアーキタイプカタログを指定してアプリケーション開発用プロジェクトを作成します。
 
 現時点でAsakusa Frameworkが提供するアーキタイプには以下のものがあります。
@@ -87,8 +87,8 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 ..  attention::
     旧バージョンで存在していたアーキタイプ ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
 
-``assembly:single`` Asakusa Frameworkのインストールアーカイブを生成
--------------------------------------------------------------------
+Asakusa Frameworkのデプロイメントアーカイブ生成
+-----------------------------------------------
 アーキタイプから作成したプロジェクトのpom.xmlに対して ``assembly:single`` ゴールを実行すると、
 Asakusa Framework本体のインストール用アーカイブがプロジェクトの ``target`` ディレクトリ直下に作成されます。
 これらのファイルを使用して開発環境、および運用環境にAsakusa Frameworkをインストールします。
@@ -102,9 +102,9 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
 ..  attention::
     コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
 
-作成されるインストールアーカイブは、アーキタイプによって異なります。アーキタイプ毎に生成されるインストールアーカイブを以下に示します。
+作成されるデプロイメントアーカイブは、アーキタイプによって異なります。アーキタイプ毎に標準で生成されるデプロイメントアーカイブを以下に示します。
 
-..  list-table:: アーキタイプ ``asakusa-atchetype-windgate`` が作成するインストールアーカイブ一覧
+..  list-table:: アーキタイプ ``asakusa-atchetype-windgate`` が作成するデプロイメントアーカイブ一覧
     :widths: 4 6
     :header-rows: 1
     
@@ -113,10 +113,10 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
 
 
-..  list-table:: アーキタイプ ``asakusa-atchetype-thundergate`` が作成するインストールアーカイブ一覧
+..  list-table:: アーキタイプ ``asakusa-atchetype-thundergate`` が作成するデプロイメントアーカイブ一覧
     :widths: 4 6
     :header-rows: 1
     
@@ -125,10 +125,10 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-prod-thundergate.tar.gz``
-      - Asakusa FrameworkをThunderGateを運用環境に展開するためのアーカイブ。
+      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-thundergate` を参照してください。
 
 
-..  list-table:: アーキタイプ ``asakusa-atchetype-directio`` が作成するインストールアーカイブ一覧
+..  list-table:: アーキタイプ ``asakusa-atchetype-directio`` が作成するデプロイメントアーカイブ一覧
     :widths: 4 6
     :header-rows: 1
     
@@ -137,12 +137,18 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-directio.tar.gz``
-      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。
+      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-directio` を参照してください。
+
+拡張モジュール用のデプロイメントアーカイブを生成する
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Asakusa Frameworkではアーキタイプで標準で生成されるデプロイメントアーカイブのほかに、設定を追加することで生成することが可能となる拡張モジュールを提供しています。
+
+拡張モジュールの利用については、 :doc:`../administration/deployment-extension-module` を参照してください。
 
 
-``antrun:run`` 開発環境用のAsakusa Frameworkをインストール
-----------------------------------------------------------
-``antrun:run`` ゴールは、 ``assembly:single`` ゴールで作成した開発環境用のAsakusa Frameworkのインストールアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkをインストールします。
+開発環境に対するAsakusa Frameworkのインストール
+-----------------------------------------------
+``antrun:run`` ゴールは、 ``assembly:single`` ゴールで作成した開発環境用のAsakusa Frameworkのデプロイメントアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkをインストールします。
 
 ..  code-block:: sh
 
@@ -162,81 +168,173 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
         * ``export.tsv-create-dir=/var/tmp/asakusa/exporter``
     
     * テンポラリディレクトリの作成
+
+        ..  code-block:: sh
     
-        * mkdir -p -m 777 /var/tmp/asakusa/importer
-        * mkdir -p -m 777 /var/tmp/asakusa/exporter
+            mkdir -p -m 777 /var/tmp/asakusa/importer
+            mkdir -p -m 777 /var/tmp/asakusa/exporter
 
 
 プロジェクトのディレクトリ構成
 ==============================
-アーキタイプから生成されたプロジェクト構成は以下の通りです [#]_ 。
+アーキタイプから作成したプロジェクトのディレクトリ構成について説明します。
 
-..  code-block:: sh
-     
-    project
-    |-- pom.xml
-    |-- build.properties
-    `-- src
-    |   |-- main
-    |   |   `-- java
-    |   |   |   `-- ${package}
-    |   |   |       `-- batch      : バッチDSLクラス
-    |   |   |       `-- flowpart   : フローDSL(フロー部品)クラス
-    |   |   |       `-- jobflow    : フローDSL(ジョブフロー)クラス
-    |   |   |       `-- operator   : 演算子クラス
-    |   |   |
-    |   |   `-- dmdl               : モデルクラス生成用のDMDLスクリプト。
-    |   |   `-- sql                 
-    |   |       `-- modelgen       : モデルクラス生成用のDDL記述SQLファイル(thundergateのみ)。
-    |   |   
-    |   `-- test
-    |       `-- java
-    |       |   `-- ${package}
-    |       |       `-- batch      : バッチDSLテストクラス
-    |       |       `-- flowpart   : フローDSL(フロー部品)テストクラス
-    |       |       `-- jobflow    : フローDSL(ジョブフロー)テストクラス
-    |       |       `-- operator   : 演算子テストクラス
-    |       |
-    |       `-- resources
-    |           `-- asakusa-resources.xml      : Asakusa Framework Core 用の定義ファイル
-    |           `-- logback-test.xml           : 開発環境上のテスト時に使用されるログ設定ファイル
-    |           |
-    |           `-- ${package}
-    |               `-- batch      : バッチDSL用テストデータ
-    |               `-- flowpart   : フローDSL(フロー部品)テストデータ
-    |               `-- jobflow    : フローDSL(ジョブフロー)テストデータ
-    |
-    `-- target (Mavenが標準でtarget配下に出力するファイルの説明は省略)
-       |-- ${artifactid}-${version}.jar         : packageフェーズの実行によりjarファイル。Asakusa Frameworkでは使用しません。
-       |-- ${artifactid}-${version}-sources.jar : packageフェーズの実行によりjarファイル。Asakusa Frameworkでは使用しません。
-       |-- batchc       : DSLコンパイラによるバッチコンパイル結果の出力ディレクトリ。packageフェーズの実行により生成される。
-       |-- batchcwork   : DSLコンパイラによるバッチコンパイルのワークディレクトリ。packageフェーズの実行により生成される。
-       |-- dmdl         : モデルクラス生成用のDDL記述SQLファイルから生成されるDMDLスクリプト(thundergateのみ)。
-       |-- excel        : テストデータ定義シート生成用のディレクトリ。generate-sourcesフェーズの実行により生成される。
-       |-- excel_v01    : Asakusa0.1形式のテストデータ定義シート生成用のディレクトリ。デフォルトの設定では出力されない。
-       |-- sql          : Thndergate用のDDL作成用ディレクトリ。generate-sourcesフェーズの実行により生成される(thundergateのみ)。
-       |-- testdriver   : Asakusa Frameworkのテストドライバが使用するワークディレクトリ。
-       |-- generated-sources
-           `-- annotations
-           |    `-- ${package}
-           |        `-- flowpart   : 注釈プロセッサによって生成される演算子ファクトリクラス
-           |        `-- operator   : 注釈プロセッサによって生成される演算子ファクトリと実装クラス
-           `-- modelgen
-                `-- ${package}
-                    `-- modelgen
-                       `-- dmdl
-                       |  `-- csv   : CSV形式を使用する場合に生成されるジョブフロークラス (directio/windgateのみ)
-                       |  `-- jdbc  : WindGate/JDBCを使用する場合に生成されるジョブフロークラス (windgateのみ)
-                       |  `-- io    : DMDLを元に作成されるデータモデルの入出力ドライバクラス
-                       |  `-- model : DMDLを元に作成されるデータモデルクラス
-                       `-- table (thundergateのみ)
-                       |  `-- model   : テーブル構造を元に作成されるデータモデルクラス
-                       |  `-- io      : テーブル構造を元に作成されるデータモデルの入出力ドライバクラス
-                       `-- view (thudergateのみ)
-                          `-- model   : ビュー情報を元に作成されるデータモデルクラス
-                          `-- io      : ビュー情報を元に作成されるデータモデルの入出力ドライバクラス
+プロジェクト全体構成
+--------------------
+アーキタイプから作成したプロジェクトディレクトリの直下には、以下のディレクトリ/ファイルが含まれます。
 
-..  [#] 一部のパッケージやファイルは、アーキタイプの種類やバージョンによっては作成されません。
+..  list-table::  プロジェクト全体構成
+    :widths: 3 7
+    :header-rows: 1
+    
+    * - ファイル/ディレクトリ
+      - 説明
+    * - ``src``
+      - プロジェクトのソースディレクトリ
+    * - ``target``
+      - プロジェクトのビルドディレクトリ
+    * - ``pom.xml``
+      - プロジェクトの様々な構成や設定を定義するファイル
+    * - ``build.properties``
+      - プロジェクトのビルド設定を定義するファイル [#]_ 
+
+このうち、アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。
+``target`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
+
+``target`` ディレクトリ配下のファイルはビルドの度に初期化、再作成されるため
+``taget`` ディレクトリ配下のファイルは直接編集しないようにしてください。
+
+..  [#] 詳しくは後述の `ビルド定義ファイル`_ を参照してください。
+
+
+ソースディレクトリ構成
+----------------------
+プロジェクトのソースディレクトリ (``src``) は大きくアプリケーション本体のコードを配置する ``src/main`` ディレクトリと、アプリケーションのテスト用のコードを配置する ``src/test`` ディレクトリに分かれます。
+
+それぞれのディレクトリ/ファイルの構成を以下に示します。なお、表中の ``${package}`` 部分はプロジェクト作成時に指定した基底パッケージ名に対応したディレクトリが作成されます。
+
+..  list-table:: ソースディレクトリ構成: ``src/main``
+    :widths: 5 5
+    :header-rows: 1
+    
+    * - ファイル/ディレクトリ
+      - 説明
+    * - ``src/main/dmdl``
+      - DMDLスクリプトディレクトリ
+    * - ``src/main/java/${package}/batch``
+      - バッチDSLのソースディレクトリ
+    * - ``src/main/java/${package}/flowpart``
+      - フローDSL(フロー部品)のソースディレクトリ
+    * - ``src/main/java/${package}/jobflow``
+      - フローDSL(ジョブフロー)のソースディレクトリ
+    * - ``src/main/java/${package}/operator``
+      - 演算子DSLのソースディレクトリ
+    * - ``src/main/resources``
+      - プロジェクトのリソースディレクトリ [#]_
+    * - ``src/main/sql/modelgen``
+      - DDLスクリプトディレクトリ [#]_
+
+..  [#] アーキタイプの標準構成では空になっています。
+..  [#] ThunderGate用アーキタイプから生成したプロジェクトのみ存在します。
+
+..  list-table:: ソースディレクトリ構成: ``src/test``
+    :widths: 5 5
+    :header-rows: 1
+    
+    * - ファイル/ディレクトリ
+      - 説明
+    * - ``src/test/java/${package}/batch``
+      - バッチDSLのテスト用ソースディレクトリ
+    * - ``src/test/java/${package}/flowpart``
+      - フローDSL(フロー部品)のテスト用ソースディレクトリ
+    * - ``src/test/java/${package}/jobflow``
+      - フローDSL(ジョブフロー)のテスト用ソースディレクトリ
+    * - ``src/test/java/${package}/operator``
+      - 演算子DSLのテスト用ソースディレクトリ
+    * - ``src/test/resources/logback-test.xml``
+      - ビルド/テスト実行時に使用されるログ定義ファイル
+    * - ``src/test/resources/asakusa-resources.xml``
+      - テスト実行時に使用されるランタイムモジュール用定義ファイル
+    * - ``src/test/resources/${package}/batch``
+      - バッチDSLのテストデータ用ディレクトリ
+    * - ``src/test/resources/${package}/flowpart``
+      - フローDSL(フロー部品)のテストデータ用ディレクトリ
+    * - ``src/test/resources/${package}/jobflow``
+      - フローDSL(ジョブフロー)のテストデータ用ディレクトリ
+    * - ``src/test/example-dataset``
+      - サンプルアプリケーション実行用のサンプルデータディレクトリ [#]_
+    * - ``src/test/example-scripts``
+      - サンプルアプリケーション実行用のサンプルスクリプトディレクトリ [#]_
+
+..  [#] :doc:`../introduction/start-guide` などの説明で利用するサンプルデータが含まれます。
+..  [#] サンプルアプリケーションのデプロイ/実行例を示したスクリプトが含まれます。一部のアーキタイプでは環境依存の実装や環境の初期化処理が含まれるため、実行前に必ずスクリプトの内容を確認してください。
+
+..  note::
+     上記ディレクトリはMavenの設定により変更可能です。詳しくはMavenのドキュメントを参照してください。また、一部のディレクトリやファイルは 後述する `ビルド定義ファイル`_ の設定により変更可能です。
+
+ビルドディレクトリ構成
+----------------------
+プロジェクトのビルドディレクトリ (``target``) はMavenの各フェーズの実行に対応したビルド成果物が作成されます。
+
+ビルドディレクトリのディレクトリ/ファイルの構成を以下に示します [#]_ 。なお、表中の ``${artifactid}``, ``${version}`` 部分はプロジェクト作成時に指定したプロジェクト名, バージョンに対応した文字列が使用されます。
+
+..  list-table:: ビルドディレクトリ構成
+    :widths: 4 2 4
+    :header-rows: 1
+    
+    * - ファイル/ディレクトリ
+      - 生成フェーズ [#]_
+      - 説明
+    * - ``${artifactid}-batchapps-${version}.jar``
+      - ``package``
+      - Asakusa Frameworkバッチアプリケーション用アーカイブ [#]_
+    * - ``${artifactid}-${version}.jar``
+      - ``package``
+      - Mavenにより生成される標準のjarアーカイブ [#]_
+    * - ``${artifactid}-${version}-sources.jar``
+      - ``package``
+      - Mavenにより生成される標準のソースアーカイブ
+    * - ``batchc``
+      - ``package``
+      - Batch DSLコンパイラが生成するバッチコンパイル結果の出力ディレクトリ
+    * - ``batchcwork``
+      - ``package``
+      - Batch DSLコンパイラのワークディレクトリ
+    * - ``dmdl``
+      - ``generate-sources``
+      - DMDLジェネレータが生成するDMDLスクリプトディレクトリ [#]_
+    * - ``excel``
+      - ``generate-sources``
+      - テストデータジェネレータが生成するテストデータ定義シート用ディレクトリ [#]_
+    * - ``sql``
+      - ``generate-sources``
+      - 管理テーブル用DDL用のディレクトリ [#]_
+    * - ``testdriver``
+      - ``test``
+      - テストドライバが使用するワークディレクトリ
+    * - ``generated-sources/annotations/${package}/flowpart``
+      - ``compile``
+      - Operator DSLコンパイラが生成するフロー演算子
+    * - ``generated-sources/annotations/${package}/operator``
+      - ``compile``
+      - Opretor DSLコンパイラが生成する演算子ファクトリと演算子実装クラス
+    * - ``generated-sources/modelgen/${package}/modelgen``
+      - ``generate-sources``
+      - DMDLコンパイラによって生成されるデータモデルクラス用ディレクトリ
+
+..  [#] ここで示すディレクトリ以外にも、実行するMavenのプラグインによって様々なディレクトリが生成されます。これらの詳細についてはMavenプラグインのドキュメントなどを参照してください。
+..  [#] ファイル/ディレクトリを生成するMavenのフェーズ
+..  [#] バッチコンパイルやバッチアプリケーションアーカイブについては、後述の `バッチコンパイルとバッチアプリケーションアーカイブの生成`_ を参照してください。
+..  [#] Asakusa Frameworkで作成したアプリケーション実行では利用しません。詳しくは後述の `バッチコンパイルとバッチアプリケーションアーカイブの生成`_ を参照してください。
+..  [#] ThunderGate用アーキタイプから生成したプロジェクトのみ生成されます。詳しくは ThunderGate の各ドキュメントを参照してください。
+..  [#] テストデータ定義シートについては 後述の `テストデータ定義シートの生成`_ を参照してください。
+..  [#] ThunderGate用アーキタイプから生成したプロジェクトのみ生成されます。詳しくは ThunderGate の各ドキュメントを参照してください。
+
+..  note::
+    各種コンパイラやジェネレータについて詳しくは、 :doc:`../dmdl/index` や :doc:`../dsl/index`, :doc:`../testing/index` などのドキュメントを参照してください。
+..  note::
+     上記ディレクトリはMavenの設定により変更可能です。詳しくはMavenのドキュメントを参照してください。また、一部のディレクトリやファイルは 後述する `ビルド定義ファイル`_ の設定により変更可能です。
+
 
 データモデルクラスの生成
 ========================
@@ -257,8 +355,8 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 
 ..  [#] このディレクトリはプロジェクトの設定ファイル ``build.properties`` によって変更することが出来ます。詳しくは後述の `ビルド定義ファイル`_ を参照してください。
 
-``generate-sources`` モデルクラスの生成とテストデータ定義シートの生成
----------------------------------------------------------------------
+データモデルクラスの生成
+------------------------
 アーキタイプから作成したプロジェクトのpom.xmlに対して ``generate-sources`` フェーズを実行するとDMDLコンパイラが起動し、
 ``target/generated-sources/modelgen`` ディレクトリ以下にデータモデルに関するJavaソースファイルが生成されます。
 
@@ -266,11 +364,13 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 
     mvn clean generate-sources
 
-モデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります (例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、モデルクラスのパッケージ名は ``com.example.mogelgen`` になります）。このパッケージ名は、後述するビルド定義ファイルにて変更することが出来ます。
+データモデルクラスに使われるJavaパッケージ名は、デフォルトではアーキタイプ生成時に指定したパッケージ名の末尾に ``.modelgen`` を付加したパッケージになります。例えばアーキタイプ生成時に指定したパッケージが ``com.example`` の場合、データモデルクラスのパッケージ名は ``com.example.mogelgen`` になります [#]_ 。
 
-また、 ``generate-sources`` フェーズを実行すると、以下のファイルも合わせて生成されます。
+..  [#] パッケージ名は、後述する `ビルド定義ファイル`_ の設定により変更することが出来ます。
 
-* テストドライバを使ったテストで使用するテストデータ定義シートが ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel` を参照して下さい。
+テストデータ定義シートの生成
+----------------------------
+``generate-sources`` フェーズを実行すると、データモデルクラスの生成のほか、テストドライバを利用するテストで使用する テストデータ定義シート が ``target/excel`` 配下に生成されます。テストデータ定義シートについては、 :doc:`../testing/using-excel` を参照して下さい。
 
 .. _maven-archetype-batch-compile:
 
@@ -282,8 +382,8 @@ Asakusa DSLで記述したバッチアプリケーションをHadoopクラスタ
 DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を参照してください。
 
 
-``package`` バッチコンパイルの実行
-----------------------------------
+バッチコンパイルの実行
+----------------------
 アーキタイプから作成したプロジェクトのpom.xmlに対して ``package`` フェーズを実行するとバッチコンパイルが実行されます。
 
 ..  code-block:: sh
@@ -305,13 +405,14 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 ..  attention::
     バッチコンパイルの最中にJavaのソースファイルのコンパイル時に以下の警告が表示されることがあります。
+    
+    ..  code-block:: sh
+
+         [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
+         シンボル: クラス ExOperatorFactory
+
     これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
     最終的にコンパイルが成功していれば問題ありません。
-
-..  code-block:: sh
-
-    [WARNING] ... src/main/java/example/flowpart/ExFlowPart.java:[20,23] シンボルを見つけられません。
-    シンボル: クラス ExOperatorFactory
 
 .. _batch-compile-option-with-pom:
 
@@ -340,8 +441,8 @@ Eclipseを使ったアプリケーションの開発
 =====================================
 統合開発環境(IDE)にEclipseを使用する場合、開発環境にEclipseをインストールした上で、以下の設定を行います。
 
-``eclipse:eclipse`` プロジェクトにEclipse用定義ファイルを追加
--------------------------------------------------------------
+プロジェクトにEclipse用定義ファイルを追加する
+---------------------------------------------
 アプリケーション用プロジェクトにEclipseプロジェクト用の定義ファイルを追加します。このコマンドを実行することによってEclipseからプロジェクトをインポートすることが可能になります。
 
 例えば、バッチアプリケーション用プロジェクト「example-app」のEclipse定義ファイルを作成するには、プロジェクトのディレクトリに移動し、以下のコマンドを実行します。
@@ -431,20 +532,17 @@ Asakusaの拡張ライブラリディレクトリへjarファイルを配置
 ==================
 アーキタイプから作成したプロジェクトの ``build.properties`` はプロジェクトのビルドや各種ツールの動作を設定します。設定項目について以下に説明します。
 
-項目値が択一式の項目については、デフォルト値を **太字** で示しています。
-
----------------------
-
 General Settings
+----------------
 
-  asakusa.database.enabled
+  ``asakusa.database.enabled``
     *(asakusa-archetype-thundergateのみ)*
 
-    ( **true** or false ) このプロパティをfalseにすると、Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
+    ( ``true`` or ``false`` ) このプロパティをfalseにすると、Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
     
     モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用せずにモデル生成を行うことが可能になります。
 
-  asakusa.database.target
+  ``asakusa.database.target``
     *(asakusa-archetype-thundergateのみ)*
 
     Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースを使用する場合に、データベース定義ファイルを特定するためのターゲット名を指定します。
@@ -453,132 +551,127 @@ General Settings
     
     通常はこの値を変更する必要はありませんが、ThnderGateのインポータ/エクスポータ記述でターゲット名を変更している場合にはターゲット名に合わせて変更します。また、１つの開発環境で複数のアプリケーションプロジェクトに対して作業している場合に、それぞれのプロジェクトでデータベースを分けておきたい場合に個別の値を指定すると便利です。
     
-    なお、インポータ/エクスポータ記述で複数のデータソースを指定している場合は、本ターゲット名は使用しているデータソース名のうちいずれか１つのデータソースを使用し、データベース定義ファイルはターゲット分の定義ファイルを$ASAKUSA_HOME/bulkloader/conf配下に配置します。その上で、定義ファイル内に記述するすべてのデータベース設定をすべて同じ内容にしてください（Asakusa Framework 0.2時点ではAsakusa Frameworkのテストツールが複数データソースに対応していないため）。
-
----------------------
+    なお、インポータ/エクスポータ記述で複数のデータソースを指定している場合は、本ターゲット名は使用しているデータソース名のうちいずれか１つのデータソースを使用し、データベース定義ファイルはターゲット分の定義ファイルを$ASAKUSA_HOME/bulkloader/conf配下に配置します。その上で、定義ファイル内に記述するすべてのデータベース設定をすべて同じ内容にしてください（バージョン |version| ではAsakusa Frameworkのテストツールが複数データソースに対応していないため）。
 
 Batch Compile Settings
+----------------------
 
-  asakusa.package.default
+  ``asakusa.package.default``
     バッチコンパイル時に生成されるHadoopのジョブ、及びMapReduce関連クラスのJavaパッケージを指定します。デフォルト値はアーキタイプ生成時に指定した ``package`` の値に ``.batchapp`` を付与した値になります。
 
-  asakusa.batchc.dir
+  ``asakusa.batchc.dir``
     バッチコンパイル時に生成されるHadoopのジョブ、及びMapReduce関連クラスの出力ディレクトリを指定します。 ``package`` フェーズを実行した時に生成されるjarファイルは、このディレクトリ配下のソースをアーカイブしたものになります。
 
-  asakusa.compilerwork.dir
+  ``asakusa.compilerwork.dir``
     バッチコンパイル時にコンパイラが使用するワークディレクトリを指定します。
 
-  asakusa.hadoopwork.dir
+  ``asakusa.hadoopwork.dir``
     Asakusa Frameworkがジョブフローの実行毎にデータを配置するHadoopファイルシステム上のディレクトリを、ユーザのホームディレクトリからの相対パスで指定します。
     
     パスに文字列 ``${execution_id}`` が含まれる場合、ワークフローエンジンから指定されたexecution_idによって置換されます。デフォルト値はexecution_idが指定されているため、ジョブフローの実行毎にファイルシステム上は異なるディレクトリが使用されることになります。
 
----------------------
-
 Model Generator Settings
+------------------------
 
-  asakusa.modelgen.package
-    モデルジェネレータによるモデル生成時にモデルクラスに付与されるJavaパッケージを指定します。デフォルト値は、アーキタイプ生成時に指定した ``package`` の値に ``.modelgen`` を付与した値になります。
+  ``asakusa.modelgen.package``
+    モデルジェネレータによるモデル生成時にデータモデルクラスに付与されるJavaパッケージを指定します。デフォルト値は、アーキタイプ生成時に指定した ``package`` の値に ``.modelgen`` を付与した値になります。
 
-  asakusa.modelgen.includes
+  ``asakusa.modelgen.includes``
     ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象とするモデル名を正規表現の書式で指定します。
     
-  asakusa.modelgen.excludes
+  ``asakusa.modelgen.excludes``
     ``generate-sources`` フェーズ実行時にモデルジェネレータ、およびテストデータ定義シート生成ツールが生成対象外とするモデル名を正規表現の書式で指定します。デフォルト値はThunderGateが使用する管理テーブルを生成対象外とするよう指定されています。特に理由が無い限り、デフォルト値で指定されている値は削除しないようにして下さい。
 
-  asakusa.modelgen.sid.column
+  ``asakusa.modelgen.sid.column``
     *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルのシステムIDカラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-sid`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
-  asakusa.modelgen.timestamp.column
+  ``asakusa.modelgen.timestamp.column``
     *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの更新日時カラム名を指定します。この値はThunderGate用のデータベースノード用プロパティファイル(bulkloader-conf-db.properties)のプロパティ ``table.sys-column-updt-date`` と同じ値を指定してください。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
-  asakusa.modelgen.delete.column
+  ``asakusa.modelgen.delete.column``
     *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの論理削除フラグカラム名を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
-  asakusa.modelgen.delete.value
+  ``asakusa.modelgen.delete.value``
     *(asakusa-archetype-thundergateのみ)*
 
     ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値を指定します。この項目はThunderGateキャッシュを使用する場合にのみ必要です。
 
-  asakusa.modelgen.output
-    モデルジェネレータが生成するモデルクラス用Javaソースの出力ディレクトリを指定します。アーキタイプが提供するEclipseの設定情報と対応しているため、特に理由が無い限りはデフォルト値を変更しないようにしてください。この値を変更する場合、合わせてpom.xmlの修正も必要となります。
+  ``asakusa.modelgen.output``
+    モデルジェネレータが生成するデータモデルクラス用Javaソースの出力ディレクトリを指定します。アーキタイプが提供するEclipseの設定情報と対応しているため、特に理由が無い限りはデフォルト値を変更しないようにしてください。この値を変更する場合、合わせてpom.xmlの修正も必要となります。
 
-  asakusa.dmdl.encoding
+  ``asakusa.dmdl.encoding``
     DMDLスクリプトが使用する文字エンコーディングを指定します。
 
-  asakusa.dmdl.dir
+  ``asakusa.dmdl.dir``
     DMDLスクリプトを配置するディレクトリを指定します。
 
----------------------
-
 ThunderGate Settings
+--------------------
 
-  asakusa.bulkloader.tables
+  ``asakusa.bulkloader.tables``
     *(asakusa-archetype-thundergateのみ)*
 
-    ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプト（後述の「asakusa.bulkloader.genddl」で指定したファイル）に含める対象テーブルを指定します。このプロパティにインポート、及びエクスポート対象テーブルのみを指定することで、余分な管理テーブルの生成を抑止することが出来ます。開発時にはデフォルト（コメントアウト）の状態で特に問題ありません。
+    ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプト（後述の ``asakusa.bulkloader.genddl`` で指定したファイル）に含める対象テーブルを指定します。このプロパティにインポート、及びエクスポート対象テーブルのみを指定することで、余分な管理テーブルの生成を抑止することが出来ます。開発時にはデフォルト（コメントアウト）の状態で特に問題ありません。
 
-  asakusa.bulkloader.genddl
+  ``asakusa.bulkloader.genddl``
     *(asakusa-archetype-thundergateのみ)*
 
     ``generate-sources`` フェーズ実行時に生成されるThunderGate管理テーブル用DDLスクリプトのファイルパスを指定します。
 
-  asakusa.dmdl.fromddl.output
+  ``asakusa.dmdl.fromddl.output``
     *(asakusa-archetype-thundergateのみ)*
 
     ``generate-sources`` フェーズ実行時にモデル定義情報となるDDLスクリプトから生成するDMDLスクリプトの出力先を指定します。
 
----------------------
-
 TestDriver Settings
+-------------------
 
-  asakusa.testdatasheet.generate
-    ( **true** or false ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
+  ``asakusa.testdatasheet.generate``
+    ( ``true`` or ``false`` ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
 
-  asakusa.testdatasheet.format
+  ``asakusa.testdatasheet.format``
     ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートのフォーマットを指定します。以下の値を指定することが出来ます。
-      * DATA: テストデータ定義シートにテストデータの入力データ用シートのみを含めます。
-      * RULE: テストデータ定義シートにテストデータの検証ルール用シートのみを含めます。
-      * INOUT: テストデータ定義シートにテストデータの入力データ用シートと出力（期待値）用シートを含めます。
-      * INSPECT: テストデータ定義シートにテストデータの出力（期待値）用シートと検証ルール用シートのみを含めます。
-      * **ALL**: テストデータ定義シートに入力データ用シート、出力（期待値）用シート、検証ルール用シートを含めます。
+      * ``DATA``: テストデータ定義シートにテストデータの入力データ用シートのみを含めます。
+      * ``RULE``: テストデータ定義シートにテストデータの検証ルール用シートのみを含めます。
+      * ``INOUT``: テストデータ定義シートにテストデータの入力データ用シートと出力（期待値）用シートを含めます。
+      * ``INSPECT``: テストデータ定義シートにテストデータの出力（期待値）用シートと検証ルール用シートのみを含めます。
+      * ``ALL``: テストデータ定義シートに入力データ用シート、出力（期待値）用シート、検証ルール用シートを含めます。
 
-  asakusa.testdatasheet.output
+  ``asakusa.testdatasheet.output``
     ``generate-sources`` フェーズ実行時に生成されるテストデータ定義シートの出力ディレクトリを指定します。
 
-  asakusa.testdriver.compilerwork.dir
+  ``asakusa.testdriver.compilerwork.dir``
     テストドライバの実行時にテストドライバの内部で実行されるバッチコンパイルに対してコンパイラが使用するワークディレクトリを指定します。 
     
     ``asakusa.compilerwork.dir`` と同じ働きですが、この項目はテストドライバの実行時にのみ使われます。
 
-  asakusa.testdriver.hadoopwork.dir
+  ``asakusa.testdriver.hadoopwork.dir``
     テストドライバの実行時にテストドライバの内部で使用される、ジョブフローの実行毎にデータを配置するHadoopファイルシステム上のディレクトリを、ユーザのホームディレクトリからの相対パスで指定します。Hadoopのスタンドアロンモード使用時には、OS上のユーザのホームディレクトリが使用されます。
 
     ``asakusa.hadoopwork.dir`` と同じ働きですが、この項目はテストドライバの実行時にのみ使われます。
 
----------------------
-
 TestDriver Settings (for Asakusa 0.1 asakusa-test-tools)
+--------------------------------------------------------
 
-  asakusa.testdatasheet.v01.generate
+  ``asakusa.testdatasheet.v01.generate``
     *(asakusa-archetype-thundergateのみ)*
 
-    ( true or **false** ) Asakusa Framework 0.1 仕様のテストデータ定義シートを出力するかを設定します（デフォルトは出力しない）。 このプロパティをtrueにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートが ``target/excel_v01`` ディレクトリ配下に出力されるようになります。
+    ( ``true`` or ``false`` ) Asakusa Framework 0.1 仕様のテストデータ定義シートを出力するかを設定します（デフォルトは出力しない）。 このプロパティをtrueにすると、 ``generate-sources`` フェーズ実行時にテストデータ定義シートが ``target/excel_v01`` ディレクトリ配下に出力されるようになります。
 
-  asakusa.testdriver.testdata.dir
+  ``asakusa.testdriver.testdata.dir``
     *(asakusa-archetype-thundergateのみ)*
 
     テストドライバの実行時に、テストドライバが参照するテストデータ定義シートの配置ディレクトリを指定します。
     
     このプロパティは、テストドライバAPIのうち、Asakusa Framework 0.1 から存在する ``*TestDriver`` というクラスの実行時のみ使用されます。Asakusa Framework 0.2 から追加された ``*Tester`` 系のテストドライバAPIは、この値を使用せず、テストドライバ実行時のクラスパスからテストデータ定義シートを参照するようになっています。
 
-  asakusa.excelgen.tables
+  ``asakusa.excelgen.tables``
     *(asakusa-archetype-thundergateのみ)*
 
     Asakusa Framework 0.1 仕様のテストデータ定義シート生成ツールをMavenコマンドから実行 ( ``mvn exec:java -Dexec.mainClass=com.asakusafw.testtools.templategen.Main`` )した場合に、テストデータシート生成ツールが生成の対象とするテーブルをスペース区切りで指定します。
