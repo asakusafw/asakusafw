@@ -1,7 +1,6 @@
 ===========================
 Mavenアーキタイプ利用ガイド
 ===========================
-
 この文書では、Asakusa Frameworkが提供しているMavenアーキタイプを使って、アプリケーション開発用のテンプレートからプロジェクトを作成し、アプリケーション開発環境を準備する手順を説明します。
 
 また、作成したプロジェクト上でAsakusa Frameworkが提供するモデル生成ツールやバッチコンパイラを使用する方法、およびこれらのツールに関する設定方法を説明します。
@@ -18,11 +17,9 @@ Asakusa Frameworkが提供するMavenアーキタイプ [#]_ を使ってアプ�
 
 ..  [#] http://maven.apache.org/guides/introduction/introduction-to-archetypes.html
 
-アプリケーション開発用プロジェクトの生成
-----------------------------------------
-Asakusa Frameworkが公開しているMavenアーキタイプカタログを指定してアプリケーション開発用プロジェクトを作成します。
-
-現時点でAsakusa Frameworkが提供するアーキタイプには以下のものがあります。
+Asakusa Frameworkが提供するMavenアーキタイプ
+--------------------------------------------
+現時点でAsakusa Frameworkが提供するアーキタイプの一覧を以下に示します。
 
 ..  list-table:: Asakusa Framework アーキタイプ一覧
     :widths: 3 1 6
@@ -39,16 +36,33 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
       - 外部システム連携にThunderGateを使用するアプリケーション用のアーキタイプ。
     * - ``asakusa-archetype-directio``
       - 0.2.5
-      - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ 。
+      - 外部システム連携を利用せず、Direct I/Oを使用するアプリケーション用のアーキタイプ。
 
-``archetype:generate`` は引数にAsakusa Frameworkが提供するカタログのURL ``http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml`` を指定して実行します 。
+..  attention::
+    旧バージョンで存在していたアーキタイプ ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
+
+.. _archetype-catalog:
+
+アーキタイプカタログによるアーキタイプとバージョンの選択
+--------------------------------------------------------
+Asakusa Frameworkが公開しているMavenアーキタイプカタログを指定してアプリケーション開発用プロジェクトを作成します。
+
+Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを定義したアーキタイプカタログを以下のURLで公開しています。
+
+* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+
+..  Attention::
+    バージョン0.4 から、アーキタイプカタログファイルはバージョン毎(マイナーバージョン毎)に個別のファイルを提供するようになりました。過去バージョンのアーキタイプカタログを使用したい場合、以下のアーキタイプカタログURLを指定してください。 
+
+    * http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
+
+アーキタイプカタログからプロジェクトを作成するには上記のアーキタイプカタログを指定してMavenアーキタイププラグインを実行します。
 
 ..  code-block:: sh
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
 
-
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
@@ -71,28 +85,43 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
     2: 0.4.0
     Choose a number: 2: 2 (<-2を入力)
 
-    ...
+..  [#] Mavenアーキタイププラグインはアーキタイプカタログを利用して対話式にプロジェクトを作成するほかに、パラメータを指定して1コマンドでプロジェクトを作成することも出来ます。詳しくは、Mavenアーキタイププラグインのドキュメントなどを参照してください。
+
+    * http://maven.apache.org/archetype/maven-archetype-plugin/generate-mojo.html
+
+プロジェクト情報の入力
+----------------------
+アーキタイプの種類とバージョンを選択したら、続けてプロジェクト情報を入力していきます。
+
+..  code-block:: sh
+
     Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
     Define value for property 'artifactId': : [<-アプリケーションのプロジェクト名を入力] 
     Define value for property 'version':      [<-アプリケーションの初期バージョンを入力]
     Define value for property 'package':      [<-アプリケーションの基底パッケージ名を入力]
-    ...
+
+プロジェクト情報を確認後、 ``Y`` を入力してプロジェクトを作成します。
+
+..  code-block:: sh
+
+    Confirm properties configuration:
+    groupId: ...
+    artifactId: ...
+    version: ...
+    package: ...
     Y: : Y
 
-..  Attention::
-    バージョン0.4 から、アーキタイプカタログファイルはバージョン毎(マイナーバージョン毎)に個別のファイルを提供するようになりました。旧バージョンのアーキタイプカタログを使用したい場合、以下のアーキタイプカタログURLを指定してください。 
+プロジェクトの作成が成功すると、 ``BUILD SUCCESS`` が表示され、
+カレントディレクトリ配下にプロジェクトディレクトリが作成されます。
 
-    http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
-
-..  attention::
-    旧バージョンで存在していたアーキタイプ ``asakusa-archetype-batchapp`` はバージョン0.2.4で ``asakusa-archetype-thundergate`` に変更されました。バージョン0.2.4以降はこのアーキタイプは使用できません。
 
 Asakusa Frameworkのデプロイメントアーカイブ生成
------------------------------------------------
-アーキタイプから作成したプロジェクトのpom.xmlに対して ``assembly:single`` ゴールを実行すると、
+===============================================
+アーキタイプから作成したプロジェクトのpom.xmlに対してMavenの ``assembly:single`` ゴールを実行すると、
 Asakusa Framework本体のインストール用アーカイブがプロジェクトの ``target`` ディレクトリ直下に作成されます。
 これらのファイルを使用して開発環境、および運用環境にAsakusa Frameworkをインストールします。
-以下は アプリケーションプロジェクト名を example-app と指定した場合の実行例を以下に示します。
+
+以下はアプリケーションプロジェクト名を ``example-app`` という名前で作成した場合の実行例を以下に示します。
 
 ..  code-block:: sh
 
@@ -140,15 +169,15 @@ Asakusa Framework本体のインストール用アーカイブがプロジェク
       - Asakusa Frameworkを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-directio` を参照してください。
 
 拡張モジュール用のデプロイメントアーカイブを生成する
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------
 Asakusa Frameworkではアーキタイプで標準で生成されるデプロイメントアーカイブのほかに、設定を追加することで生成することが可能となる拡張モジュールを提供しています。
 
 拡張モジュールの利用については、 :doc:`../administration/deployment-extension-module` を参照してください。
 
 
-開発環境に対するAsakusa Frameworkのインストール
------------------------------------------------
-``antrun:run`` ゴールは、 ``assembly:single`` ゴールで作成した開発環境用のAsakusa Frameworkのデプロイメントアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkをインストールします。
+Asakusa Frameworkのインストール
+===============================
+アーキタイプから作成したプロジェクトのpom.xmlに対してMavenの ``antrun:run`` ゴールを実行すると、先述の `Asakusa Frameworkのデプロイメントアーカイブ生成`_  で作成した開発環境用のAsakusa Frameworkのデプロイメントアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkがインストールされます。
 
 ..  code-block:: sh
 
