@@ -222,7 +222,7 @@ public class ShufflePartitionerEmitter {
                                 .field(ShuffleEmiterUtil.getPropertyName(segment, term))
                                 .toExpression());
                     cases.add(new ExpressionBuilder(factory, result)
-                        .assignFrom(InfixOperator.PLUS,
+                        .assignFrom(
                                 new ExpressionBuilder(factory, result)
                                     .apply(InfixOperator.TIMES, v(31))
                                     .apply(InfixOperator.PLUS, hash)
