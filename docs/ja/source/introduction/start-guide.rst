@@ -3,6 +3,8 @@ Asakusa Framework スタートガイド
 ================================
 この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
 
+なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` の :ref:`target-platform-development-environment` を確認してください。
+
 .. _startguide-development-environment:
 
 開発環境の構築

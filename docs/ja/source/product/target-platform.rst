@@ -35,6 +35,8 @@ Asakusa Framework バージョン |version| は以下のプラットフォーム
 ..  [#] http://www.greenplum.com/products/greenplum-mr
 ..  [#] http://aws.amazon.com/jp/elasticmapreduce/ 
 
+.. _target-platform-development-environment:
+
 アプリケーション開発環境
 ========================
 Asakusa Frameworkを利用したバッチアプリケーションの開発環境は、 以下のプラットフォームで動作を検証しています。
