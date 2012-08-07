@@ -273,7 +273,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     2: 0.4.0
     Choose a number: 2: 2 (<-2を入力)
 
-この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに「com.example」、アーティファクトID（アプリケーションプロジェクト名）に「example-app」を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
+この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。ここでは、グループIDに ``com.example`` 、アーティファクトID（アプリケーションプロジェクト名）に ``example-app`` を指定します。後の項目はそのままEnterキーを入力します。最後に確認をうながされるので、そのままEnterキーを入力します。
 
 ..  code-block:: sh
 
@@ -289,7 +289,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     package: com.example
     Y: : [<-そのままEnterキーを入力]
 
-入力が終わるとプロジェクトの作成が始まります。成功した場合、画面に以下のように「BUILD SUCCESS」と表示されます。
+入力が終わるとプロジェクトの作成が始まります。成功した場合、画面に以下のように ``BUILD SUCCESS`` と表示されます。
 
 ..  code-block:: sh
 
@@ -301,7 +301,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     ...
 
 ..  note::
-    以降の手順についても、Mavenのコマンド実行後に処理が成功したかを確認するには「BUILD SUCCESS」が表示されていることを確認してください。
+    以降の手順についても、Mavenのコマンド実行後に処理が成功したかを確認するには ``BUILD SUCCESS`` が表示されていることを確認してください。
 
 これでアプリケーションプロジェクトが作成されました。
 
@@ -371,7 +371,7 @@ Asakusa Frameworkを開発環境にインストールします。
 --------------------------
 カテゴリー別売上金額集計バッチは、売上トランザクションデータと、商品マスタ、店舗マスタを入力として、エラーチェックを行った後、商品マスタのカテゴリ毎に集計するアプリケーションです。入力データの取得と出力データの生成はそれぞれCSVファイルに対して行うようになっています。
 
-このバッチは入力データを /tmp/windgate-$USER ($USERはOSユーザ名に置き換え) ディレクトリから取得するようになっています。プロジェクトにはあらかじめ ``src/test/example-dataset`` ディレクトリ以下にテストデータが用意されているので、これらのファイルを  ``/tmp/windgate-$USER`` 配下にコピーします。
+このバッチは入力データを ``/tmp/windgate-$USER`` ( ``$USER`` はOSユーザ名に置き換え ) ディレクトリから取得するようになっています。プロジェクトにはあらかじめ ``src/test/example-dataset`` ディレクトリ以下にテストデータが用意されているので、これらのファイルを  ``/tmp/windgate-$USER`` 配下にコピーします。
 
 ..  code-block:: sh
 
@@ -398,7 +398,7 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 
     $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
 
-バッチの実行が成功すると、コマンドの標準出力の最終行に「Finished: SUCCESS」と出力されます。
+バッチの実行が成功すると、コマンドの標準出力の最終行に ``Finished: SUCCESS`` と出力されます。
 
 ..  code-block:: sh
 
@@ -407,21 +407,30 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
     2011/12/08 16:54:38 DEBUG [JobflowExecutor-example.summarizeSales] Completing jobflow "byCategory": example.summarizeSales
     Finished: SUCCESS
 
-カテゴリー別売上金額集計バッチはバッチの実行結果として、ディレクトリ /tmp/windgate-$USER/result に集計データがCSVファイルとして出力されます。CSVファイルの中身を確認すると、売上データがカテゴリー毎に集計されている状態で出力されています。
+
+..  [#] より詳しく言えば、このバッチでは ``/tmp/windgate-$USER/sales/<売上日時>.csv`` という名前のCSVファイルを読み出し、
+    ``/tmp/windgate-$USER/result/category-<売上日時>.csv`` という名前のCSVファイルを作成します。
+    なお、サンプルのデータセットには ``sales/2011-04-01.csv`` が含まれています。
+
+サンプルアプリケーション実行結果の確認
+--------------------------------------
+カテゴリー別売上金額集計バッチはバッチの実行結果として、ディレクトリ ``/tmp/windgate-$USER/result`` にカテゴリー別売上金額の集計データとエラーチェックに該当したエラーレコードがCSVファイルとして出力されます。
+
 下記は結果の例です (結果の順序は実行のたびに変わるかもしれません)。
 
 ..  code-block:: sh
 
     cat /tmp/windgate-$USER/result/category-2011-04-01.csv
-
     カテゴリコード,販売数量,売上合計
     1300,12,1596
     1401,15,1470
     1600,28,5400
 
-..  [#] より詳しく言えば、このバッチでは ``/tmp/windgate-$USER/sales/<売上日時>.csv`` という名前のCSVファイルを読み出し、
-    ``/tmp/windgate-$USER/result/category-<売上日時>.csv`` という名前のCSVファイルを作成します。
-    なお、サンプルのデータセットには ``sales/2011-04-01.csv`` が含まれています。
+    cat /tmp/windgate-$USER/result/error-2011-04-01.csv
+    ファイル名,行番号,日時,店舗コード,商品コード,メッセージ
+    /tmp/windgate-asakusa/sales/2011-04-01.csv,33,2011-04-01 19:00:00,9999,4922010001000,店舗不明
+    /tmp/windgate-asakusa/sales/2011-04-01.csv,35,1990-01-01 10:40:00,0001,4922010001000,商品不明
+    /tmp/windgate-asakusa/sales/2011-04-01.csv,34,2011-04-01 10:00:00,0001,9999999999999,商品不明
 
 Eclipseへアプリケーションプロジェクトをインポート
 -------------------------------------------------
@@ -435,7 +444,7 @@ Eclipseへアプリケーションプロジェクトをインポート
     cd ~/workspace/example-app
     mvn eclipse:eclipse
 
-これでEclipseからプロジェクトをImport出来る状態になりました。Eclipseのメニューから [File] -> [Import] -> [General] -> [Existing Projects into Workspace] を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
+これでEclipseからプロジェクトをインポート出来る状態になりました。Eclipseのメニューから ``[File]`` -> ``[Import]`` -> ``[General]`` -> ``[Existing Projects into Workspace]`` を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
 
 Next Step:アプリケーションの開発を行う
 ======================================
