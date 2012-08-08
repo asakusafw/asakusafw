@@ -9,14 +9,15 @@ ThunderGateは「オンラインシステムのRDBMSとHadoopの連携」を念�
 * ジョブフロー内でのロングランニングトランザクションをサポート
 * 変更差分のみをインポートするキャッシュ機能をサポート
 * MySQL向けに最適化を実施
-* :doc:`テーブルメタデータからのデータモデル自動生成 <../dmdl/with-thundergate>`
+* テーブルメタデータからのデータモデル自動生成
 
 ただし、ThunderGateでサポートしているプラットフォームや構成に制約があります。
-RDBMSと連携する汎用的なツールは、 :doc:`../windgate/index` も参照してください。
 
 * 現在はMySQLのみ対応
 * データベースサーバー上での実行が必要
 * ThunderGate用の管理テーブルや管理カラムが必要
+
+RDBMSと連携する汎用的なツールは、 :doc:`../windgate/index` も参照してください。
 
 関連するドキュメント
 ====================
@@ -24,6 +25,10 @@ RDBMSと連携する汎用的なツールは、 :doc:`../windgate/index` も参�
 ..  toctree::
     :maxdepth: 1
 
+    start-guide
     user-guide
+    with-dmdl
+    with-dsl
+    with-testing
     cache
 

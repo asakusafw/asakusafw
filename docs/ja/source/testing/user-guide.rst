@@ -25,7 +25,7 @@
                 actual, is(ShipmentStatus.COMPLETED));
     }
 
-..  [#] このクラスは「演算子実装クラス」と呼ばれ、Opeerator DSLコンパイラが自動的に生成します。
+..  [#] このクラスは「演算子実装クラス」と呼ばれ、Operator DSLコンパイラが自動的に生成します。
     詳しくは :doc:`../dsl/start-guide` を参照してください。
 
 

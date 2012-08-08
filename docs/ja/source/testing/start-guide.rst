@@ -31,7 +31,7 @@
     フレームワークAPIについては :doc:`../dsl/user-guide` を、
     そのテスト方法については :doc:`user-guide` をそれぞれ参照してください。
 
-..  [#] このクラスは「演算子実装クラス」と呼ばれ、Opeerator DSLコンパイラが自動的に生成します。
+..  [#] このクラスは「演算子実装クラス」と呼ばれ、Operator DSLコンパイラが自動的に生成します。
     詳しくは :doc:`../dsl/start-guide` を参照してください。
 
 結果型を利用する演算子のテスト
@@ -151,7 +151,7 @@ DMDLに利用方法は :doc:`../dmdl/start-guide` を参照してください。
 
 ..  note::
     ThunderGateを利用する場合、DMDLの記述自体をデータベースのテーブル情報から生成できます。
-    詳しくは :doc:`../dmdl/with-thundergate` を参照してください。
+    詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
 
 入力、期待データの作成
 ~~~~~~~~~~~~~~~~~~~~~~

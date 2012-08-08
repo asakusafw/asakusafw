@@ -36,5 +36,4 @@ DMDLコンパイラは外部システムとの連係情報を自動的に生成�
 
     start-guide
     user-guide
-    with-thundergate
     developer-guide

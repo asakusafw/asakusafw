@@ -99,15 +99,21 @@ JobQueueサーバーの動作に必要な設定を行います。
 ``${ASAKUSA_HOME}/jobqueue/conf/jobqueue.properties`` をエディタで開き、修正を行なってください。
 
 ..  list-table:: JobQueueサーバーの設定
-    :widths: 10 15
+    :widths: 2 8
     :header-rows: 1
     
     * - 名前
       - 値
     * - ``core.worker``
-      - 同時実行可能なジョブのスロット数
+      - 同時実行可能なジョブのスロット数。YAESSの並列実行の設定などに応じて設定を行います。
     * - ``hadoop.log.dir``
-      - Hadoopジョブ実行時のログ出力先
+      - Hadoopジョブ実行時のログ出力先。
+        
+        ここで指定したログディレクトリ配下に,JobQueueサーバがYAESSのJobQueueクライアントプラグインからジョブリクエストを受け付ける単位で生成される JRID(Job Request ID)の値でディレクトリが作成され、そのディレクトリ配下に ``stdout`` と ``stderr`` というファイル名で、Hadoopジョブが出力した標準出力、標準エラー出力の内容を出力します。
+
+        なお、JRIDはJobQueueクライアントプラグインやJobQueueサーバのログに出力されます。これらのログから ``hadoop.log.dir`` のログを特定し、問題分析の際に使用することができます。
+        
+        このディレクトリ配下のディレクトリ/ファイルは自動的には削除されないため、必要に応じてクリーニングを行なってください。
 
 Hadoopジョブの設定
 ------------------
@@ -115,7 +121,7 @@ JobQueueサーバーがキックするHadoopジョブに関する環境変数の
 ``${ASAKUSA_HOME}/jobqueue-hadoop/conf/env.sh`` をエディタで開き、修正を行なってください。
 
 ..  list-table:: Hadoopジョブの設定
-    :widths: 10 40
+    :widths: 2 8
     :header-rows: 1
     
     * - 名前
@@ -126,6 +132,9 @@ JobQueueサーバーがキックするHadoopジョブに関する環境変数の
       - ジョブの実行ごとに指定のディレクトリ以下にHadoopのテンポラリ領域を作成します。
 
         省略された場合は、Hadoopのデフォルトのテンポラリ領域を使用し、全てのジョブで共有します。
+
+        このディレクトリはHadoopのジョブ実行毎にJRIDを持つサブディレクトリが作成され、このディレクトリ配下にジョブ実行時のワークファイルが作成されます。
+        ジョブ実行時のワークファイルはジョブが正常に終了した場合に自動的に削除しますが、ジョブが異常終了した場合には障害解析のため保持するようになっています。
 
 以下は ``${ASAKUSA_HOME}/jobqueue-hadoop/conf/env.sh`` の例です。
 
@@ -145,11 +154,12 @@ JobQueueサーバーのデプロイ
 Tomcatにデプロイするには、 ``jobqueue.war`` ファイルを ``${CATALINA_HOME}/webapps`` にコピーするか、
 次のようなコンテキスト設定ファイルで ``jobqueue.war`` ファイルのパスを指定してください。
 
-例) ``${CATALINA_HOME}/conf/Catalina/localhost/jobqueue.xml`` 
+例) ``${CATALINA_HOME}/conf/Catalina/localhost/jobqueue.xml``
+    (環境変数 ``$ASAKUSA_HOME`` が ``/home/asakusa/asakusa`` の場合)
 
 ..  code-block:: xml
     
-    <Context docBase="${ASAKUSA_HOME}/webapps/jobqueue.war" />
+    <Context docBase="/home/asakusa/asakusa/webapps/jobqueue.war" />
 
 環境変数の設定
 --------------
@@ -269,6 +279,8 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
 省略した場合、タイムアウトは ``10000`` 、問い合わせ間隔は ``1000`` をそれぞれ既定値として利用します。
 
 上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
+また、JobQueueを使用する場合 ( :javadoc:`com.asakusafw.yaess.jobqueue.QueueHadoopScriptHandler` を使用する場合)、 ``hadoop.env`` から始まるプロパティを使用した環境変数の引渡しの仕組みは使用出来ません。このため、デフォルトのYAESSプロファイルセットで設定されている ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.HADOOP_HOME`` を設定している場合は、これらのプロパティを削除してください。
 
 ラウンドロビン方式でのHadoopジョブの実行
 ----------------------------------------
