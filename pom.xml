@@ -4,7 +4,7 @@
 	<name>Asakusa Framework Aggregator POM</name>
 	<groupId>com.asakusafw</groupId>
 	<artifactId>asakusa-root-project</artifactId>
-	<version>0.4.0-RC3</version>
+	<version>0.4.0-RC4</version>
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework Aggregator POM</description>
