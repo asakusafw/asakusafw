@@ -39,7 +39,6 @@ Batch DSLはデータフローを組み合わせて複雑なバッチ処理の�
 
     start-guide
     user-guide
-    with-thundergate
     operators
     generic-dataflow
     developer-guide

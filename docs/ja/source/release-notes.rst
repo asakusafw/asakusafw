@@ -331,7 +331,7 @@ Jul 27, 2011
 Enhancements
 ------------
 * [ :issue:`38` ] - Supports CLOB for property type
-    * See: :doc:`dmdl/with-thundergate`
+    * See: :doc:`thundergate/with-dmdl`
 * [ :issue:`41` ] - Support new operator "Extract"
     * See: :doc:`dsl/operators`
 * [ :issue:`50` ] - Support new operator "Restructure"
@@ -362,7 +362,7 @@ Enhancements
 * [ :issue:`19` ] - TestDriver enhancement for loosely-coupled architecture
     * See: :doc:`testing/index`
 * [ :issue:`23` ] - Floating point number support
-    * See: :doc:`dmdl/with-thundergate`
+    * See: :doc:`thundergate/with-dmdl`
 * [ :issue:`32` ] - CoGroup/GroupSort for very large group
     * See: :doc:`dsl/operators`
 * [ :issue:`36` ] - ThunderGate should show # of imported/exporting records

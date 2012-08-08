@@ -3,59 +3,49 @@
 ============================================
 本書では、Asakusa FrameworkのデプロイメントアーカイブをAsakusa Frameworkのソースから生成する方法について説明します。
 
-..  todo:: Need to modify for changing repository structure and assembly descriptor.
-
-Asakusa Framework本体のデプロイメント用アーカイブはバッチアプリケーション用プロジェクトからMavenのassemblyプラグインを実行する (mvn assembly:single) ことによって生成しますが、Asakusa Framework本体のソースから生成することによって、手元で改変を加えたAsakusa Frameworkからデプロイメントアーカイブを生成したり、スナップショットビルドに対して個別のコミットからデプロイメントアーカイブを生成することが出来ます。
+Asakusa Frameworkのデプロイメント用アーカイブはAsakusa Frameworkが提供するアーキタイプ( :doc:`../application/maven-archetype` を参照) から作成したプロジェクト上でMavenのassemblyプラグインを実行する ( ``mvn assembly:single`` ) ことで生成しますが、Asakusa Framework本体のソースから生成することによって、手元で改変を加えたAsakusa Frameworkからデプロイメントアーカイブを生成したり、開発用ブランチのコミットからデプロイメントアーカイブを生成することが出来ます。
 
 Asakusa Frameworkのソースアーカイブを取得
 -----------------------------------------
-Asakusa FrameworkのGitHubリポジトリ [#]_ から、Asakusa Frameworkのソースアーカイブを取得します。
+Asakusa FrameworkのGitHubリポジトリから、Asakusa Frameworkのソースアーカイブを取得します。
 
-..  [#] https://github.com/asakusafw/asakusafw
+GitHubからソースをダウンロードする方法はGitHubのドキュメントなどを参照してください。例として、GitHubの以下のURL [#]_  をブラウザなどで開き、zipファイルのリンクからソースアーカイブをダウンロードすることができます。
 
-以下はwgetを使ってAsakusa Framework ver 0.4.0 を取得する例です。
-
-..  code-block:: sh
-
-    wget https://github.com/asakusafw/asakusafw/zipball/0.4.0
+..  [#] https://github.com/asakusafw/asakusafw/tags
 
 Asakusa Frameworkのビルド
 -------------------------
-アーカイブを展開し、アーカイブに含まれるプロジェクト「asakusa-aggregator」のpom.xmlに対してinstallフェーズを実行し、Asakusa Frameworkの全モジュールをビルドします。
+ダウンロードしたソースアーカイブからAsakusa Frameworkをビルドします [#]_ 。
 
-以下の例に沿ってビルドを実施して下さい。「BUILD SUCCESS」が出力されることを確認してください。
+ダウンロードしたソースアーカイブを展開し、解凍したディレクトリ直下に含まれる ``pom.xml`` に対して ``install`` フェーズを実行し、Asakusa Frameworkの全モジュールをビルドします。
+
+以下手順例です。
 
 ..  code-block:: sh
 
-    unzip asakusafw-asakusafw-*.zip
-    cd asakusafw-asakusafw-*/asakusa-aggregator
+    unzip ~/Downloads/asakusafw-asakusafw-*.zip
+    cd asakusafw-asakusafw-*
     mvn clean install -Dmaven.test.skip=true
 
-Asakusa Frameworkのデプロイアーカイブ生成
------------------------------------------
-アーカイブに含まれるプロジェクト「asakusa-distribution」のpom.xmlに対してassebmbly:singleゴールを実行し、Hadoopクラスターにデプロイするアーカイブファイルを作成します。
+..  [#] ビルドするマシンには Java, 及び Maven が使用できる必要があります。Java, Mavenのインストールについては、 :doc:`../introduction/start-guide` などを参照してください。
 
-以下の例に沿ってビルドを実施して下さい。「BUILD SUCCESS」が出力されることを確認してください。
+
+Asakusa Frameworkのデプロイメントアーカイブ生成
+-----------------------------------------------
+アーカイブに含まれるプロジェクト ``asakusa-distribution`` の ``pom.xml`` に対してMavenの ``assembly:single`` ゴールを実行し、Asakusa Frameworkのデプロイメントアーカイブファイルを作成します。
+
+以下手順例です。
 
 ..  code-block:: sh
 
-    cd ../asakusa-distribution
+    cd distribution-project/asakusa-distribution/
     mvn clean assembly:single
 
-デプロイアーカイブの確認
-------------------------
-「asakusa-distribution」のtagetディレクトリ配下に、以下のファイルが作成されていることを確認します。
+ビルドが成功すると、 ``target`` ディレクトリ配下に各種のデプロイメントアーカイブが作成されます。デプロイメントアーカイブについては、以下のドキュメントなどを参照してください。
 
-  asakusafw-${asakusafw-version}-dev.tar.gz
-    Asakusa Frameworkを開発環境に展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-windgate.tar.gz
-    Asakusa FrameworkをWindGateと使用する場合における、Asakusa Frameworkを運用環境に展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-prod-thundergate-hc.tar.gz
-    Asakusa FrameworkをThunderGateと使用する場合における、HadoopクラスターのHadoopクライアントノードに展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-prod-thundergate-db.tar.gz
-    Asakusa FrameworkをThunderGateと使用する場合における、データベースノードに展開するためのアーカイブ。
-  asakusafw-${asakusafw-version}-directio.tar.gz
-    Asakusa FrameworkをDirect I/Oと使用する場合における、Asakusa Frameworkを運用環境に展開するためのアーカイブ。
-  asakusafw-${asakusafw.version}-prod-cleaner.tar.gz
-    Asakusa Frameworkが提供するクリーニングツールのデプロイに使用するアーカイブ
+* :doc:`../application/maven-archetype`
+* :doc:`../administration/deployment-with-windgate`
+* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-with-directio`
+* :doc:`../administration/deployment-extension-module`
 

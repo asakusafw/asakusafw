@@ -5,7 +5,7 @@ Asakusa DSLとThunderGateの連携
 この文書では、ThunderGateと連携してデータベースを操作するバッチアプリケーションを
 Asakusa DSLで記述する方法について紹介します。
 
-ThunderGateについての情報は、 :doc:`../thundergate/user-guide` を参照して下さい。
+ThunderGateについての情報は、 :doc:`user-guide` を参照して下さい。
 
 基本的な連携の方法
 ==================
@@ -25,7 +25,7 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
 ``String getTargetName()``
     インポータが使用するターゲット名（データソースを表す識別子）を戻り値に指定します。
     インポータは実行時に $ASAKUSA_HOME/bulkloader/conf 配下に配置した[ターゲット名]-jdbc.properties に記述されたデータベース接続情報定義ファイルを使用してデータベースに対するアクセスを行います。
-    このファイルの内容については :doc:`../thundergate/user-guide` を参照して下さい。
+    このファイルの内容については :doc:`user-guide` を参照して下さい。
 
 ``Class<?> getModelType()``
     インポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
@@ -41,7 +41,7 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
 
     ここには ``${変数名}`` の形式で、バッチ起動時の引数やあらかじめ宣言された変数を利用できます。
     利用可能な変数はコンテキストAPIで参照できるものと同様です。
-    詳しくは :doc:`user-guide` を参照してください。
+    詳しくは :doc:`../dsl/user-guide` を参照してください。
 
 ``DataSize getDataSize()``
     インポートするデータのおおよそのサイズを指定します。
@@ -91,8 +91,9 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
     }
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbImporterDescription`
-..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` を利用して下さい
+..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` [#]_ を利用して下さい
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType`
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription`
 
 データベースのテーブルにエクスポートする
 ----------------------------------------
@@ -121,6 +122,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbExporterDescription`
 ..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbExporterDescription`` の代わりに ``BulkLoadExporterDescription`` [#]_ を利用して下さい
+..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription`
 
 補助インポータ
 ==============
@@ -176,6 +178,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 
         // 補助インポータはgetLockType()をオーバーライドできない。
     }
+..  **
 
 
 以下は補助インポータを利用する場合の注意点です。
@@ -193,6 +196,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 ..  [#] これとは逆の「補助エクスポータ」のような仕組みは現在提供していません
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.SecondaryImporterDescription`
 
+.. _thundergate-dup-check:
 
 重複チェック機能
 ================
@@ -230,7 +234,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
 つまり、正常テーブルにない情報をエラーテーブルに設定したい場合 [#]_ には、この方法は利用できません。
 この場合には `正常テーブルとエラーテーブルの構造が大きく異なる場合`_ を参照して下さい。
 
-重複チェックを行うには ``DbExporterDescription`` の代わりに ``DupCheckDbExporterDescription`` を継承したエクスポータ記述を作成します。
+重複チェックを行うには ``DbExporterDescription`` の代わりに ``DupCheckDbExporterDescription`` [#]_ を継承したエクスポータ記述を作成します。
 
 ..  code-block:: java
 
@@ -274,6 +278,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
             return "999";
         }
     }
+..  **
 
 それぞれのオーバーライドしたメソッドでは、以下のように設定します。
 
