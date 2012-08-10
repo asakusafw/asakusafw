@@ -1,17 +1,15 @@
 --- pom.xml
 +++ pom.xml
-@@ -7,27 +7,36 @@
- 	<version>1.0-SNAPSHOT</version>
- 
+@@ -9,25 +9,34 @@
  	<properties>
--		<asakusafw.version>0.2.6</asakusafw.version>
-+		<asakusafw.version>0.4.0</asakusafw.version>
+ 		<asakusafw.version>0.4-SNAPSHOT</asakusafw.version>
  
- 		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
+-		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
 -		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
 -		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
 -		<ashigeru.util.version>0.1.0</ashigeru.util.version>
 -		<commons.io.version>2.0.1</commons.io.version>
++		<hadoop.version>0.20.2-cdh3u5</hadoop.version>
 +		<mysql.jdbc.version>5.1.20</mysql.jdbc.version>
 +		<commons.io.version>2.3</commons.io.version>
  		<commons.lang.version>2.6</commons.lang.version>
