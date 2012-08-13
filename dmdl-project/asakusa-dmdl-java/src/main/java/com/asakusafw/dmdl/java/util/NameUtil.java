@@ -41,6 +41,7 @@ public final class NameUtil {
         StringBuilder buf = new StringBuilder();
         buf.append(simples.removeFirst());
         for (String simpleName : simples) {
+            buf.append(".");
             buf.append(simpleName);
         }
         return buf.toString();

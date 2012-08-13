@@ -110,6 +110,19 @@ public class ConcreteModelEmitterTest extends GeneratorTesterRoot {
         assertThat(object.get("value"), eq(100));
     }
 
+    /**
+     * change own namespace.
+     */
+    @Test
+    public void namespace_complex() {
+        ModelLoader loader = generate();
+        loader.setNamespace("com.example.complexNamespace");
+        ModelWrapper object = loader.newModel("Simple");
+
+        object.set("value", 100);
+        assertThat(object.get("value"), eq(100));
+    }
+
     private Matcher<Object> eq(final Object value) {
         return is(value);
     }
