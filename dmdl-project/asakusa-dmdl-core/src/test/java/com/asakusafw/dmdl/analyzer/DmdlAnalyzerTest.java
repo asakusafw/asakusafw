@@ -306,6 +306,14 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
     }
 
     /**
+     * grouping properties in each term has inconsistent type but both are unified.
+     */
+    @Test
+    public void invalid_inconsistent_group_type_unified() {
+        shouldSemanticError();
+    }
+
+    /**
      * duplicate joined property in same term.
      */
     @Test
