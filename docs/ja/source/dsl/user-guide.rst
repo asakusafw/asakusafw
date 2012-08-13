@@ -37,7 +37,7 @@ Asakusa Frameworkを利用したバッチ処理の設計については、 `Asak
 DSLコンパイラ
 -------------
 Asakusa DSLで記述したプログラムは、Asakusa Frameworkに付属の
-Ashigelコンパイラを使ってMapReduceのプログラムに変換します。
+Asakusa DSLコンパイラを使ってMapReduceのプログラムに変換します。
 このコンパイラは2種類のコンパイラから構成されています。
 
 `Operator DSLコンパイラ`_
@@ -142,10 +142,12 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 
 ..  [#] この名前衝突の判定はアンダースコア、大文字、小文字を無視します。
 
+.. _dsl-key-annotation:
+
 キー注釈
 ~~~~~~~~
 データモデルのグループ化条件やソート条件を記載するには、
-演算子の仕様に従って注釈 ``Key`` をメソッド引数などに指定します。
+演算子の仕様に従って注釈 ``Key``  [#]_ をメソッド引数などに指定します。
 この注釈には、それぞれ下記のような要素を記載できます。
 
 ..  list-table:: ``@Key`` の要素
@@ -162,7 +164,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
       - ``group = "name"``
     * - ``order``
       - 順序付けに利用するプロパティ名と、順序の一覧。
-        フィールド名の後に"ASC"や"DESC"で順序を指定する。
+        フィールド名の後に ``ASC`` や ``DESC`` で順序を指定する。
         指定しない場合の整列順序は実装依存。
       - ``order = "age ASC"``
 
@@ -221,6 +223,8 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 
 キーの指定が必要な演算子については、 :doc:`operators` を参照してください。
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.model.Key`
+
 演算子の多相化
 ~~~~~~~~~~~~~~
 演算子メソッドは入出力するデータモデルに、クラス型以外にもインターフェース型を指定できます。
@@ -250,7 +254,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
     上記の理由で、 `Flow DSL`_ や `Batch DSL`_ からこれらのAPIを利用できません。
 
 ..  attention::
-    実装上の理由で、現在 (0.2.0) はCombinerの内部からフレームワークAPIを利用できません。
+    実装上の理由で、現時点のバージョン |version| ではCombinerの内部からフレームワークAPIを利用できません。
     これは、畳み込み演算子 ( ``@Fold`` ) を利用し、かつ `Batch DSLコンパイラ`_ の
     コンパイルオプションなどでCombinerの利用を可能にしている場合に問題が発生します。
 
@@ -465,7 +469,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    インポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  hint::
@@ -490,7 +494,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    エクスポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  note::
@@ -602,7 +606,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 
 フロー記述メソッド
 ~~~~~~~~~~~~~~~~~~
-データフローでの処理容は、 ``FlowDescription`` クラスの ``describe`` メソッドをオーバーライドして記述します。
+データフローでの処理内容は、 ``FlowDescription`` クラスの ``describe`` メソッドをオーバーライドして記述します。
 ここでは、コンストラクタで受け取った入出力と、 `Operator DSL`_ で記述した演算子を組み合わせて
 データ処理の流れを記述します。
 
@@ -638,7 +642,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     }
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    フロー記述メソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  note::
@@ -822,7 +826,7 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 
     package com.example.batch;
 
-    import com.asakusafw.vocabulary.flow.*;
+    import com.asakusafw.vocabulary.batch.*;
 
     @Batch(name = "example")
     public class ExampleBatch extends BatchDescription {
@@ -859,7 +863,7 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 それらの処理が全て完了後に実行されるジョブフローを表します。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    バッチ記述メソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 Batch DSLコンパイラ
@@ -1064,10 +1068,6 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     余計な待ち合わせが発生してしまう点です。
     Hadoopクラスタが十分に大きく、ワークフローエンジンが
     並列のジョブ投入をサポートしている場合は、このオプションは見直すべきでしょう。
-
-    現在のところ、組み込みで提供している `ワークフロー記述`_ は
-    各ジョブを直列化して実行しています。
-    そのため、このオプションの既定値は「有効」となっています。
 
 ..  note::
     ``hashJoinForTiny`` は、Hadoopの *DistributedCache* の仕組みを利用しています。
