@@ -17,7 +17,7 @@ Asakusa Framework バージョン |version| は以下のプラットフォーム
     * - Java SDK
       - Oracle Java SE6 Update 33 [#]_
     * - Hadoop
-      - CDH3 Update 4 [#]_
+      - CDH3 Update 5 [#]_
     * - Hadoop
       - Apache Hadoop 0.20.205.0 [#]_
     * - Hadoop
@@ -58,7 +58,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - 統合開発環境
       - Eclipse IDE for Java Developers 3.7.2 [#]_
     * - Hadoop
-      - CDH3 Update 4 
+      - CDH3 Update 5
 
 ..  attention::
     開発環境のHadoopにCDH3以外のHadoopディストリビューションを使う場合、いくつかの注意点や制約があります。
