@@ -37,7 +37,7 @@
 		<plugin.assembly.version>2.3</plugin.assembly.version>
 
 		<!-- artifact versions -->
-		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
+		<hadoop.version>0.20.2-cdh3u5</hadoop.version>
 		<mysql.jdbc.version>5.1.20</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.configuration.version>1.8</commons.configuration.version>
