@@ -67,7 +67,7 @@ Terminal上で実行中のシェルに対してAsakusa Framework用の環境変�
 
 #. Asakusa TestDriverがアプリケーションの処理対象データがMySQLのテーブルに登録する。
 #. Asakusa ThunderGateがMySQLのテーブルがHadoopのHDFS上に配置する。
-#. Ashigel CompilerがAsakusa DSLからMapReduceプログラム（ジョブ）を生成し、MapReduceジョブがHadoop上で実行される。
+#. Asakusa DSLコンパイラがAsakusa DSLからMapReduceプログラム（ジョブ）を生成し、MapReduceジョブがHadoop上で実行される。
 #. Asakusa ThunderGateがMapReduceジョブの処理結果をMySQLのテーブルに登録する。
 #. Asakusa TestDriverがMySQLに登録されたアプリケーションの実行結果を事前に作成したテスト期待値と突合せ、テストの成否を出力する。
 
