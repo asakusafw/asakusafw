@@ -99,9 +99,9 @@ public class SessionException extends IOException {
         NOT_EXIST("The specified session does not exist yet"),
 
         /**
-         * The specified session was already acquired yet.
+         * The specified session was already acquired.
          */
-        ACQUIRED("The specified session was already acquired yet"),
+        ACQUIRED("The specified session was already acquired"),
 
         /**
          * The specified session was broken.
