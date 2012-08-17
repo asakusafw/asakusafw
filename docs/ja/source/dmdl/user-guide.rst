@@ -56,20 +56,26 @@ DMDLでは4種類のデータモデルを記述できます。
 * 最初の文字と最後の文字にアンダースコアを使えない
 * アンダースコアを2つ以上続けて使えない
 
-..  attention::
-    名前に含まれる各単語はアルファベットから始め、Javaの **予約語を利用しない** ことを推奨しています。
+また、以下の条件を満たすことを強く推奨しています。
+
+* 名前にはJavaの予約語を利用しない
+* 名前に含まれる各単語はアルファベットから始める(数字や記号から始めない) [#]_
+
+以下に名前の指定例を示します。
 
 * よい例
 
-  * hello
-  * good_model_name
-  * better1
+  * `hello`
+  * `good_model_name`
+  * `better1`
 
 * 悪い例
 
-  * helloWorld
-  * BAD_PROPERTY_NAME
-  * worse_0
+  * `helloWorld`
+  * `BAD_PROPERTY_NAME`
+  * `worse_0`
+
+..  [#] 名前の各単語を数字から始めた場合、ある条件下でテストドライバの一部機能に問題が発生することが報告されています。
 
 プロパティの型
 ~~~~~~~~~~~~~~
@@ -81,27 +87,27 @@ DMDLでは4種類のデータモデルを記述できます。
 
     * - 型の名前
       - 対応するJavaの型
-    * - INT
+    * - ``INT``
       - 32bit符号付き整数
-    * - LONG
+    * - ``LONG``
       - 64bit符号付き整数
-    * - FLOAT
+    * - ``FLOAT``
       - 単精度浮動小数点
-    * - DOUBLE
+    * - ``DOUBLE``
       - 倍精度浮動小数点
-    * - TEXT
+    * - ``TEXT``
       - 文字列
-    * - DECIMAL
+    * - ``DECIMAL``
       - 10進数
-    * - DATE
+    * - ``DATE``
       - 日付
-    * - DATETIME
+    * - ``DATETIME``
       - 日時
-    * - BOOLEAN
+    * - ``BOOLEAN``
       - 論理値
-    * - BYTE
+    * - ``BYTE``
       - 8bit符号付き整数
-    * - SHORT
+    * - ``SHORT``
       - 16bit符号付き整数
 
 データモデルを合成する
@@ -192,7 +198,7 @@ Asakusa DSLの「マスタ結合演算子」で利用した際に結合条件な
 
 上記の形式で定義した結合モデルは、それぞれの対象モデルに定義された全てのプロパティを持ち、それぞれの結合キーを順に等価比較して結合するような構造を表します。
 
-たとえば、次のような結合モデル ``item_order`` を定義できます。
+たとえば、次のような結合モデル `item_order` を定義できます。
 
 ..  code-block:: none
 
@@ -208,7 +214,9 @@ Asakusa DSLの「マスタ結合演算子」で利用した際に結合条件な
     };
     joined item_order = item % code, id + order % item_code, item_id;
 
-定義された結合モデルは、 ``item`` と ``order`` が定義する全てのプロパティを持ち、 ``item.code = order.item_code`` かつ ``item.id = order.item_id`` という条件で結合可能であることを表す構造になります。
+定義された結合モデルは、 `item` と `order` が定義する全てのプロパティを持ち、 ``item.code = order.item_code`` かつ ``item.id = order.item_id`` という条件で結合可能であることを表す構造になります。
+
+この結合モデル定義の形式は記述が簡潔ですが、対象モデル間に同一のプロパティ名が含まれている場合は利用出来ません。また、不要なプロパティもすべて含むデータモデルが生成されることに注意が必要です。これらの問題を回避するためには、以下に示す `プロパティのマッピング`_ を利用して結合モデルを定義します。
 
 プロパティのマッピング
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -221,7 +229,7 @@ Asakusa DSLの「マスタ結合演算子」で利用した際に結合条件な
         <プロパティのマッピング1>
     } % <結合キー1> + <対象モデル2> -> {
         <プロパティのマッピング2>
-    }% <結合キー2>;
+    } % <結合キー2>;
 
 プロパティのマッピングは、 ``<元のプロパティ名> -> <マッピング後のプロパティ名> ;`` の形式でいくつでも書けます。
 また、マッピングを記述しなかったプロパティについては、結合後のデータモデルから除外されます。
@@ -248,10 +256,10 @@ Asakusa DSLの「マスタ結合演算子」で利用した際に結合条件な
         price -> price;
     } % code + order -> {
         item_code -> code;
-        amount -> total
+        amount -> total;
     } % code;
 
-上記の例で、 ``item_order`` にはそれぞれ ``code`` , ``price`` , ``total`` という3つのプロパティが定義されます。それぞれのプロパティには、順に結合前の ``order.code`` , ``item.price`` , ``order.amount`` の値がマッピングされます。なお、 ``order.datetime`` は結合時に捨てられます。
+上記の例で、 `item_order` にはそれぞれ `code` , `price` , `total` という3つのプロパティが定義されます。それぞれのプロパティには、順に結合前の `item.code` ( = `order.item_code` ) , `item.price` , `order.amount` の値がマッピングされます。なお、 `order.datetime` は結合時に捨てられます。
 
 ..  hint::
     結合キーに指定されたプロパティは、他の結合キーに指定されたプロパティと同じ名前にできます。
@@ -302,7 +310,7 @@ Asakusa DSLの「単純集計演算子」で利用した際にグループ化条
     グループ化キーは **集計結果の** プロパティ名を指定する必要があります。
     また、グループ化キーに指定するプロパティは、 ``any`` という集約関数のみを指定できます。
 
-たとえば、次のような集計モデル ``item_order`` を定義できます。
+たとえば、次のような集計モデル `item_order` を定義できます。
 
 ..  code-block:: none
 
@@ -317,9 +325,9 @@ Asakusa DSLの「単純集計演算子」で利用した際にグループ化条
         count item_code -> count;
     } % code;
 
-上記の例で、 ``order_summary`` にはそれぞれ ``code`` , ``total`` , ``count`` という3つのプロパティが定義されます。
-集計は ``order.item_code`` ごとに行われ、
-それぞれのプロパティには、順に ``order.item_code`` の値 , ``order.price`` の合計 , 集計した個数がマッピングされます。
+上記の例で、 `order_summary` にはそれぞれ `code` , `total` , `count` という3つのプロパティが定義されます。
+集計は `order.item_code` ごとに行われ、
+それぞれのプロパティには、順に `order.item_code` の値 , `order.price` の合計 , 集計した個数がマッピングされます。
 
 ..  note::
     レコードの個数を計測する ``count`` には、グループ化キーになるプロパティを指定すれば、グループの個数を正しく計測できます。
@@ -334,15 +342,15 @@ Asakusa DSLの「単純集計演算子」で利用した際にグループ化条
 
     * - 集約関数
       - 性質
-    * - any
+    * - ``any``
       - グループ化した中のいずれか一つの値を利用する
-    * - sum
+    * - ``sum``
       - グループ化した中の値の合計を利用する
-    * - max
+    * - ``max``
       - グループ化した中の最大値を利用する
-    * - min
+    * - ``min``
       - グループ化した中の最小値を利用する
-    * - count
+    * - ``count``
       - グループ化した中の個数を利用する
 
 射影モデルを定義する
@@ -350,6 +358,9 @@ Asakusa DSLの「単純集計演算子」で利用した際にグループ化条
 
 射影モデルは、他のモデルの一部を投影するデータモデルです。
 射影モデル自体は実体のデータを持たず、他のデータモデルから「射影」として切り出した際のデータ構造を表します。
+
+射影モデルは、Asakusa DSLの :doc:`../dsl/generic-dataflow` 機能と組み合わせて利用します。
+多相データフローは、Asakusa DSLで複数のデータモデルに対する共通の処理をまとめて定義するための記述方法です。 詳しくは :doc:`../dsl/generic-dataflow` を参照してください。
 
 射影モデルを定義するには、 ``projective`` というキーワードに続けてレコードモデルと同じ方法でプロパティを定義します。
 
@@ -374,15 +385,60 @@ Asakusa DSLの「単純集計演算子」で利用した際にグループ化条
 
 射影モデルを合成してレコードモデルを定義した場合、通常のデータモデルを合成した際と同様に、全てのプロパティが定義するレコードモデルに取り込まれます。
 
+..  code-block:: none
+
+    projective proj_model = {
+        value : INT;
+    };
+
+上記のように記述した場合、 `proj_model` に対応するJavaのデータモデルクラスは生成されず、代わりに同様のプロパティを持つインターフェースが生成されます。このインターフェースを実装( ``implements`` )するデータモデルクラスを生成するには、次のようにデータモデル定義の右辺にこの射影モデルを利用します。
+
+..  code-block:: none
+
+    conc_model = proj_model + {
+        other : INT;
+    };
+
+射影モデルをデータモデル定義の右辺に利用した場合、その射影モデルが定義するプロパティは、左辺のデータモデルにも自動的に追加されます。さらに、左辺のデータモデルは右辺に利用したすべての射影モデルをインターフェースとして実装します。
+
 また、射影モデルに別の射影モデルを登録することもできます。他の射影を持つ射影モデルをデータモデルに登録した場合、データモデルには関係する全ての射影がとりこまれます。
 
-たとえば、以下の例で ``record`` は、 ``sub_proj`` , ``super_proj`` がどちらも射影として登録されます。
+たとえば、以下の例で `record` は、 `sub_proj` , `super_proj` がどちらも射影として登録されます。
 
 ..  code-block:: none
 
     projective super_proj = { a : INT; };
     projective sub_proj = super_proj + { b : INT; };
     record = sub_proj;
+
+コメントの挿入
+==============
+DMDLスクリプトにコメントを挿入するには、以下のように記述します。
+
+* ``--`` または ``//`` 以下に続く文字列は改行されるまでコメントとみなされます。
+* ``/*`` と ``*/`` で囲まれたブロックはコメントとみなされます。これは複数行にわたり有効です。
+
+以下コメントの使用例です。
+
+..  code-block:: none
+
+    item = {
+        code : LONG; -- XYZコード体系で表現される商品コード
+        id : TEXT;
+    //  name : TEXT;
+    };
+
+    /*
+    order = {
+        item_code : LONG;
+        item_id : TEXT;
+        name : TEXT;
+    };
+    */
+..  **
+
+上記では `item` の `code` プロパティの追加説明にコメントを使用しています。また、 `name` はコメントアウトされているため無効になっています。 `order` はモデル定義の全体がコメントアウトされ無効になっています。
+
 
 DMDLコンパイラの実行
 ====================
@@ -425,7 +481,7 @@ DMDLコンパイラは、DMDLで定義されたデータモデルごとに、
 データモデル名
     DMDLスクリプトで定義したデータモデル名を、CamelCaseの形式 [#]_ に変換したもの。
 
-..  [#] 例: hello_world -> HelloWorld
+..  [#] 例: `hello_world` -> `HelloWorld`
 
 プロパティの対応付け
 --------------------
@@ -450,28 +506,28 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
 
     * - 型の名前
       - 対応する型 (Option)
-    * - INT
-      - int (IntOption)
-    * - LONG
-      - long (LongOption)
-    * - FLOAT
-      - float (FloatOption)
-    * - DOUBLE
-      - double (DoubleOption)
-    * - TEXT
-      - Text [#]_ (StringOption)
-    * - DECIMAL
-      - BigDecimal (DecimalOption)
-    * - DATE
-      - Date [#]_ (DateOption)
-    * - DATETIME
-      - DateTime [#]_ (DateTimeOption)
-    * - BOOLEAN
-      - boolean (BooleanOption)
-    * - BYTE
-      - byte (ByteOption)
-    * - SHORT
-      - short (ShortOption)
+    * - ``INT``
+      - ``int (IntOption)``
+    * - ``LONG``
+      - ``long (LongOption)``
+    * - ``FLOAT``
+      - ``float (FloatOption)``
+    * - ``DOUBLE``
+      - ``double (DoubleOption)``
+    * - ``TEXT``
+      - ``Text (StringOption)`` [#]_
+    * - ``DECIMAL``
+      - ``BigDecimal (DecimalOption)``
+    * - ``DATE``
+      - ``Date (DateOption)`` [#]_
+    * - ``DATETIME``
+      - ``DateTime (DateTimeOption)`` [#]_
+    * - ``BOOLEAN``
+      - ``boolean (BooleanOption)``
+    * - ``BYTE``
+      - ``byte (ByteOption)``
+    * - ``SHORT``
+      - ``short (ShortOption)``
 
 ..  [#] ``org.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
 ..  [#] :javadoc:`com.asakusafw.runtime.value.Date`
@@ -535,7 +591,7 @@ DMDLコンパイラが生成するプログラムを拡張できます。
 ..  code-block:: none
 
     "名前空間付きのモデル"
-    @namespace(value = com.example.your_namespace)
+    @namespace(value = com.example.your.namespace)
     example = { ... };
 
 ..  note::
@@ -555,11 +611,25 @@ DMDLコンパイラが生成するプログラムを拡張できます。
 射影モデルが持つプロパティをすべて持つモデルに ``@auto_projection`` 属性を指定した場合、
 そのデータモデルには対象の射影が自動的に登録されます。
 
+..  code-block:: none
+
+    projective foo = {
+        value1 : INT;
+        value2 : LONG;
+    };
+    @auto_projection
+    bar = {
+        value1 : INT;
+        value2 : LONG;
+        value3 : DOUBLE;
+    };
+
+上記のように記述した場合、 `bar` には自動的に `foo` が射影として登録されます。
+
 通常の場合、データモデルに登録される射影は、レコードモデルや射影モデルのプロパティ定義に
 直接指定された射影モデルのみです。
 現在のところ、結合モデルや集計モデルに射影を登録するには、
 この自動射影を利用する方法のみが提供されています。
-
 
 DMDLコンパイラプラグインの利用
 ==============================

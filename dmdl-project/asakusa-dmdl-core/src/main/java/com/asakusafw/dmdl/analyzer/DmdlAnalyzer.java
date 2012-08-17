@@ -15,7 +15,9 @@
  */
 package com.asakusafw.dmdl.analyzer;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -524,32 +526,52 @@ public class DmdlAnalyzer {
         }
 
         boolean green = true;
-        List<PropertySymbol> first = iter.next().getGrouping();
+        ReduceTerm<T> first = iter.next();
+        List<PropertyDeclaration> firstSources = resolveGroupingSources(first);
         while (iter.hasNext()) {
-            ReduceTerm<T> term = iter.next();
-            List<PropertySymbol> next = term.getGrouping();
-            if (first.size() != next.size()) {
+            ReduceTerm<T> next = iter.next();
+            if (first.getGrouping().size() != next.getGrouping().size()) {
                 report(new Diagnostic(
                         Level.ERROR,
-                        term.getOriginalAst(),
+                        next.getOriginalAst(),
                         "Each term in model \"{0}\" must have the same number of grouping properties",
                         model.getName()));
                 return false;
             }
-            for (int i = 0, n = first.size(); i < n; i++) {
-                PropertySymbol left = first.get(i);
-                PropertySymbol right = next.get(i);
-                if (left.findDeclaration().getType().isSame(right.findDeclaration().getType()) == false) {
+            List<PropertyDeclaration> nextSources = resolveGroupingSources(next);
+            assert firstSources.size() == nextSources.size();
+            for (int i = 0, n = firstSources.size(); i < n; i++) {
+                PropertyDeclaration left = firstSources.get(i);
+                PropertyDeclaration right = nextSources.get(i);
+                if (left.getType().isSame(right.getType()) == false) {
+                    PropertySymbol rightSymbol = next.getGrouping().get(i);
                     report(new Diagnostic(
                             Level.ERROR,
-                            right.getOriginalAst(),
+                            rightSymbol.getOriginalAst(),
                             "Type mismatch in grouping property \"{0}\"",
-                            right.getName()));
+                            rightSymbol.getName()));
                     green = false;
                 }
             }
         }
         return green;
+    }
+
+    private List<PropertyDeclaration> resolveGroupingSources(ReduceTerm<?> term) {
+        assert term != null;
+        Map<PropertySymbol, PropertySymbol> rmap = new HashMap<PropertySymbol, PropertySymbol>();
+        for (MappingFactor entry : term.getMappings()) {
+            rmap.put(entry.getTarget(), entry.getSource());
+        }
+        List<PropertyDeclaration> results = new ArrayList<PropertyDeclaration>();
+        for (PropertySymbol prop : term.getGrouping()) {
+            PropertySymbol source = rmap.get(prop);
+            if (source == null) {
+                source = prop;
+            }
+            results.add(source.findDeclaration());
+        }
+        return results;
     }
 
     private void resolveAttributes() {

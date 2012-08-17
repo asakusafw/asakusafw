@@ -15,8 +15,6 @@
  */
 package com.asakusafw.compiler.flow.plan;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,9 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.compiler.flow.visualizer.VisualAnalyzer;
-import com.asakusafw.compiler.flow.visualizer.VisualGraph;
-import com.asakusafw.compiler.flow.visualizer.VisualGraphEmitter;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
@@ -407,9 +402,6 @@ public class FlowBlock {
         if (detached == false) {
             throw new IllegalStateException();
         }
-        if (isReduceBlock()) {
-            dump("origin");
-        }
         Map<FlowElement, FlowElement> elementMapping = Maps.create();
         Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
         Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
@@ -417,9 +409,6 @@ public class FlowBlock {
         unifyElements(elementMapping, inputMapping, outputMapping);
         unifyInputs(elementMapping, inputMapping, outputMapping);
         unifyOutputs(elementMapping, inputMapping, outputMapping);
-        if (isReduceBlock()) {
-            dump("unified");
-        }
     }
 
     private void unifyElements(
@@ -525,20 +514,6 @@ public class FlowBlock {
         }
 
         this.elements = Sets.from(elementMapping.values());
-    }
-
-    private void dump(String name) {
-        try {
-            FileOutputStream o = new FileOutputStream("/tmp/" + name);
-            try {
-                VisualGraph vg = VisualAnalyzer.convertFlowBlock(this);
-                VisualGraphEmitter.emit(vg, false, o);
-            } finally {
-                o.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void unifyInputs(

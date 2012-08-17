@@ -414,6 +414,9 @@ public class StageAnalyzer {
         }
 
         Set<FlowElement> results = Sets.create();
+        for (FlowBlock.Input blockInput : block.getBlockInputs()) {
+            results.add(blockInput.getElementPort().getOwner());
+        }
         for (FlowElement element : block.getElements()) {
 
             // 入力を取らない、または複数の入力を取る要素はフラグメントの先頭になる

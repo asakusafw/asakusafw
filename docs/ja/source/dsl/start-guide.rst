@@ -56,15 +56,16 @@ Asakusa Frameworkでは、Hadoop MapReduceフレームワークを直接利用�
 
 なお、上記の「注釈型」はOperator DSLで演算子のプログラムを記述する際に、
 プログラムに対して付与しなければならない演算子注釈の型を表しています。
-これらの注釈は、いずれも ``com.asakusafw.vocabulary.operator`` パッケージに宣言されています。
+これらの注釈は、いずれも ``com.asakusafw.vocabulary.operator`` パッケージ [#]_ に宣言されています。
 
 利用可能な全ての演算子については、 :doc:`operators` を参照して下さい。
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.package-summary`
 
 演算子クラスを作成する
 ----------------------
 それぞれの演算子は、演算子注釈を指定したJavaのメソッドとして宣言します。
-ここではまず、演算子を作成するためのクラスを宣言します。このクラスは、以下のようにJavaの抽象 (abstract) クラスとして宣言します [#]_ 。
+ここではまず、演算子を作成するためのクラスを宣言します。このクラスは、以下のようにJavaの抽象 ( ``abstract`` ) クラスとして宣言します [#]_ 。
 
 ..  code-block:: java
 
@@ -82,7 +83,7 @@ Asakusa Frameworkでは、Hadoop MapReduceフレームワークを直接利用�
 演算子メソッドの作成
 --------------------
 演算子クラスには、演算子注釈を指定したJavaのメソッドを宣言します。
-フレームワークが提供する全ての演算子注釈は、パッケージ ``com.asakusafw.vocabulary.operator`` 以下に配置されています。
+Asakusa Frameworkが提供する全ての演算子注釈は、パッケージ ``com.asakusafw.vocabulary.operator`` [1]_ 以下に配置されています。
 
 演算子の種類によって演算子メソッドの構成は変わります。
 たとえば、メソッドを抽象メソッドとして宣言して、コンパイラが実装コードを自動的に生成するものなどもあります。
@@ -111,7 +112,8 @@ Asakusa Frameworkでは、Hadoop MapReduceフレームワークを直接利用�
 -----------------
 Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便利なAPIを用意しています。
 演算子の中では前項のようにできることに制限がありますが、フレームワークAPIを併用することでその制限のいくつかを緩和できる可能性があります。
-フレームワークAPIにはレポートとバッチ設定情報の2種類がコアとして用意されており、利用方法については :doc:`user-guide` を参照して下さい。
+
+フレームワークAPIにはレポートとバッチ設定情報の2種類がコアAPIとして用意されています。APIの利用方法については :doc:`user-guide` を参照して下さい。
 
 演算子の実装例
 --------------
@@ -121,7 +123,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 更新演算子の実装例
 ~~~~~~~~~~~~~~~~~~
 更新演算子は、 ``Update`` 注釈を付与したメソッドを宣言します。
-以下は、 ``Hoge`` クラスのモデルオブジェクトのプロパティvalueを100に変更するような、更新演算子の例です。
+以下は、 `Hoge` クラスのモデルオブジェクトのプロパティ `value` を `100` に変更するような、更新演算子の例です。
 
 ..  code-block:: java
 
@@ -142,7 +144,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 マスタ結合演算子の実装例
 ~~~~~~~~~~~~~~~~~~~~~~~~
 マスタ結合演算子は、 ``MasterJoin`` 注釈を付与したメソッドを宣言します。
-以下は、 ``HogeTrn`` のモデルオブジェクトに、マスタである ``HogeMst`` を結合するような、マスタ結合演算子の例です。
+以下は、 `HogeTrn` のモデルオブジェクトに、マスタである `HogeMst` を結合するような、マスタ結合演算子の例です。
 
 ..  code-block:: java
 
@@ -172,11 +174,24 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 マスタつき更新演算子は、 ``MasterJoinUpdate`` 注釈を付与したメソッドを宣言します。
 また、非等価結合を含む場合には、さらに補助演算子として ``MasterSelection`` 注釈を付与したメソッドを宣言し、
 ``MasterJoinUpdate`` 注釈からそのメソッドを指定して下さい。
-以下は、 ``HogeTrn`` のモデルオブジェクトに、マスタである ``ItemMst`` の項目を一部追記するような、マスタつき更新演算子の例です。
+以下は、 `HogeTrn` のモデルオブジェクトに、マスタである `ItemMst` の項目を一部追記するような、マスタつき更新演算子の例です。
 
 ..  code-block:: java
 
     public abstract class ExampleOperator {
+
+        /**
+         * マスタの価格をトランザクションデータに設定する。
+         * @param master マスタデータ
+         * @param tx 変更するトランザクションデータ
+         */
+        @MasterJoinUpdate(selection = "selectItemMst")
+        public void updateWithMaster(
+                @Key(group = "id") ItemMst master,
+                @Key(group = "itemId") HogeTrn tx) {
+            tx.setPrice(master.getPrice());
+        }
+
         /**
          * 有効なマスタを選択する。
          * @param masters 選択対象のマスタデータ一覧
@@ -193,30 +208,17 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
             }
             return null;
         }
-..  **
-
-        /**
-         * マスタの価格をトランザクションデータに設定する。
-         * @param master マスタデータ
-         * @param tx 変更するトランザクションデータ
-         */
-        @MasterJoinUpdate(selection = "selectItemMst")
-        public void updateWithMaster(
-                @Key(group = "id") ItemMst master,
-                @Key(group = "itemId") HogeTrn tx) {
-            tx.setPrice(master.getPrice());
-        }
     }
 ..  **
 
 マスタつき更新演算子は、結合条件をメソッドの引数に対する ``Key`` 注釈で記述します。
 このとき、要素 ``group`` に指定する値は、等価結合に用いるプロパティの名前です。
-同時に、非等価結合の部分を ``selectItemMst`` メソッドに記述して、 ``MasterJoinUpdate`` 注釈の要素 ``selection`` から指定しています。
+同時に、非等価結合の部分を `selectItemMst` メソッドに記述して、 ``MasterJoinUpdate`` 注釈の要素 ``selection`` から指定しています。
 
 単純集計演算子の実装例
 ~~~~~~~~~~~~~~~~~~~~~~
 単純集計演算子は、 ``Summarize`` 注釈を付与した抽象メソッドを宣言します。
-以下は、 ``Hoge`` クラスのモデルオブジェクトを集計し、 ``HogeTotal`` クラスのモデルオブジェクトに格納する例です。
+以下は、 `Hoge` クラスのモデルオブジェクトを集計し、 `HogeTotal` クラスのモデルオブジェクトに格納する例です。
 
 ..  code-block:: java
 
@@ -234,18 +236,17 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
     }
 ..  **
 
-なお、この演算子は集計モデルである ``HogeTotal`` を作成した際の情報を元に、自動的に ``Hoge`` を集計するプログラムを生成します。
+なお、この演算子は集計モデルである `HogeTotal` を作成した際の情報を元に、自動的に `Hoge` を集計するプログラムを生成します。
 そのため、抽象( ``abstract`` )メソッドとして宣言し、戻り値は必ず集計モデル [#]_ でなければなりません。
 
 ..  [#] 集計モデルについては :doc:`../dmdl/user-guide` を参照してください。
 
-
 グループ整列演算子の実装例
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 グループ整列演算子は、 ``GroupSort`` 注釈を付与したメソッドを宣言します。
-以下は、 ``Hoge`` クラスのモデルオブジェクトをプロパティ ``name`` でグループ化し、
-さらにプロパティ ``age`` の昇順で並べたリストを引数に受け取ったのちに、
-そのリストの先頭と末尾の要素をそれぞれ別の出力 ``first, last`` に渡すような例です。
+以下は、 `Hoge` クラスのモデルオブジェクトをプロパティ `name` でグループ化し、
+さらにプロパティ `age` の昇順で並べたリストを引数に受け取ったのちに、
+そのリストの先頭と末尾の要素をそれぞれ別の出力 `first, last` に渡すような例です。
 
 ..  code-block:: java
 
@@ -253,7 +254,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 
         /**
          * レコードHogeを名前ごとに年齢の若い順に並べ、先頭と末尾だけをそれぞれ結果に流す。
-         * @param joined グループごとのリスト
+         * @param hogeList グループごとのリスト
          * @param first グループごとの先頭要素
          * @param last グループごとの末尾要素
          */
@@ -270,8 +271,53 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 ..  **
 
 メソッドの引数に指定している ``Result`` は、この演算子の出力を表しています。
-また、注釈 ``Key`` の要素 ``order`` は、要素の整列順序を表しています。
+また、注釈 ``Key`` の要素 `order` は、要素の整列順序を表しています。
 
+分岐演算子の実装例
+~~~~~~~~~~~~~~~~~~
+更新演算子は、 ``Branch`` 注釈を付与したメソッドを宣言します。
+以下は、 `Hoge` クラスのモデルオブジェクトのプロパティ `value` の値に応じて
+それぞれの出力にレコードを振り分けるような例です。
+
+..  code-block:: java
+
+    public abstract class ExampleOperator {
+
+        /**
+         * レコードの状態ごとに処理を分岐する。
+         * @param hoge 対象のレコード
+         * @return 分岐先を表すオブジェクト
+         */
+        @Branch
+        public Status select(Hoge hoge) {
+            int value = hoge.getPrice();
+            if (value <= 100) {
+                return Status.OK;
+            }
+            else {
+                return Status.NG;
+            }
+        }
+    
+        /**
+         * レコードの状態。
+         */
+        public enum Status {
+            /**
+             * 成功。
+             */
+            OK,
+    
+            /**
+             * 失敗。
+             */
+            NG,
+        }
+        ....
+    }
+..  **
+
+分岐演算子は出力先を示した列挙型と組み合わせて使用します。個々のレコードに対して条件判定を行い、分岐先の出力先を示す列挙型を戻り値として返します。
 
 演算子のテスト
 --------------
@@ -288,18 +334,21 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 
 * ``<プロジェクトのルート>/target/generated-sources/annotations``
 
-または、mvnコマンドを利用してJavaコンパイラを実行すると、注釈プロセッサを起動できます。これはMavenの ``compile`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
+または、mvnコマンドを利用してJavaコンパイラを実行すると、注釈プロセッサを起動できます。これはMavenの ``compile`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します [#]_ 。
 
 ..  code-block:: sh
 
-    mvn compile
+    mvn clean compile
 
-その他、 ``mvn package`` や ``mvn install`` などでも自動的に注釈プロセッサが起動します。
+その他、 ``mvn clean package`` や ``mvn clean install`` などでも自動的に注釈プロセッサが起動します。
 
 注釈プロセッサによって、演算子を組み合わせてフローを構築するためのファクトリークラス(演算子ファクトリクラス)と、
 演算子クラスの実装を提供する実装クラスの2つが自動的に生成されます。
 そのとき、演算子ファクトリクラスは、元の演算子クラスの末尾に ``Factory`` を付与した名前のクラスで、
 実装クラスは同様に ``Impl`` を付与した名前のクラスとなります。
+
+..  [#] クリーンビルドを行う際に、演算子の依存関係の問題で一時的にJavaのコンパイルエラーのメッセージが表示される場合があります。
+        Javaコンパイルのフェーズを正常終了できた場合、これらのメッセージが出ても特に問題はありません。
 
 データフローを記述する
 ======================
@@ -328,7 +377,7 @@ CSVフォーマットを定義する
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 WindGateがローカルファイルシステム上のCSVファイルを読み書きできるように、それぞれのデータモデルに対するCSVフォーマットを定義します。
 
-「 `データモデルクラスを作成する`_ 」で作成したデータモデルの手前に、次のように ``@windgate.csv`` という属性をつけてください。
+`データモデルクラスを作成する`_ 作成したデータモデルの手前に、次のように ``@windgate.csv`` という属性をつけてください。
 この作業により、対象のデータモデルと同じ形式のCSVファイルをWindGateが入出力に利用できるようになります。
 
 ..  code-block:: none
@@ -352,7 +401,7 @@ WindGateからインポートする
 WindGateからデータをインポートしてジョブフローで処理するには、 ``FsImporterDescription`` [#]_ や ``JdbcImporterDescription`` [#]_ など、
 ``WindGateImporterDescription`` [#]_ のサブクラスを継承したクラスを作成し、必要なメソッドを実装します。
 
-「 `CSVフォーマットを定義する`_ 」で生成された ``Abstract<データモデル名>ImporterDescription`` はそれらの骨格実装を行ったクラスで、
+`CSVフォーマットを定義する`_ で生成された ``Abstract<データモデル名>ImporterDescription`` はそれらの骨格実装を行ったクラスで、
 このクラスを継承して以下のメソッドをオーバーライドするだけでインポート処理を記述できます。
 
 ``String getProfileName()``
@@ -367,7 +416,7 @@ WindGateからデータをインポートしてジョブフローで処理する
 ``DataSize getDataSize()``
     このインポータが取り込むデータサイズの分類を指定します。
 
-以下は ``Document`` というデータモデルを宣言した場合の実装例です。
+以下は `Document` というデータモデルを宣言した場合の実装例です。
 
 ..  code-block:: java
 
@@ -422,9 +471,9 @@ WindGateにエクスポートする
         }
     }
 
-..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsImporterDescription`
-..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcImporterDescription`
-..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.WindGateImporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsExporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcExporterDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.WindGateExporterDescription`
 
 WindGateと連携する
 ~~~~~~~~~~~~~~~~~~
@@ -435,6 +484,11 @@ ThunderGateと連携する
 ~~~~~~~~~~~~~~~~~~~~~
 ThunderGateと連携してデータベースのテーブルを操作する方法は、
 :doc:`../thundergate/with-dsl` を参照して下さい。
+
+Direct I/Oを利用する
+~~~~~~~~~~~~~~~~~~~~
+Direct I/Oを利用してHadoopが管理するデータソースを入出力に利用する方法は、
+:doc:`../directio/user-guide` を参照してください。
 
 ジョブフロークラスの作成
 ------------------------
@@ -454,7 +508,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 なお、それぞれのジョブフロークラスは、末尾の名前が ``jobflow`` であるようなパッケージに配置することを推奨しています。
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
-..  [#] その他、publicなトップレベルクラスであり、具象クラスである(abstractを指定しない)、型引数を宣言しない、 ``FlowDescription`` 以外の親クラスや親インターフェースを指定しない、などの制約があります。
+..  [#] その他、publicなトップレベルクラスであり、具象クラスである(  ``abstract`` を指定しない)、型引数を宣言しない、 ``FlowDescription`` 以外の親クラスや親インターフェースを指定しない、などの制約があります。
 ..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
 コンストラクタの作成
@@ -486,9 +540,11 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
     @JobFlow(name = "example")
     public class ExampleJobFlow extends FlowDescription {
+
         In<Hoge> in;
         Out<Hoge> out;
-        public ExampleFlowPart(
+
+        public ExampleJobFlow(
                 @Import(name = "hoge", description = HogeFromCsv.class)
                 In<Hoge> in,
                 @Export(name = "hoge", description = HogeIntoCsv.class)
@@ -547,6 +603,8 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 コンストラクタに指定した ``In`` オブジェクトを、演算子ファクトリのメソッドの引数に渡すと、ジョブフローに入力されたデータを、その演算子で処理することができます。
 このとき、入力されるデータの種類と、演算子に入力できるデータの種類は一致していなければなりません。
 
+以下は、データモデル `Hoge` に対して更新演算子として定義した演算子メソッド `edit` を実行する例です。
+
 ..  code-block:: java
 
     In<Hoge> in;
@@ -554,7 +612,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
     @Override
     public void describe() {
         ExampleOperatorFactory example = new ExampleOperatorFactory();
-        Update update = example.update(in);
+        Edit edit = example.edit(in);
     }
 
 演算子と演算子を接続する
@@ -564,6 +622,9 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 演算子の出力を別の演算子の入力に接続することで、複雑なデータの流れを表現できます。
 
+以下は、上記例で演算子メソッド `edit` を実行したデータモデル `Hoge` にして、
+分岐演算子として定義した演算子メソッド `select` を実行する例です。
+
 ..  code-block:: java
 
     In<Hoge> in;
@@ -571,17 +632,21 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
     @Override
     public void describe() {
         ExampleOperatorFactory example = new ExampleOperatorFactory();
-        Update update = example.update(in);
-        Branch branch = example.branch(update.out);
+        Edit edit = example.edit(in);
+        Select select = example.select(edit.out);
     }
 
 演算子と出力を接続する
 ~~~~~~~~~~~~~~~~~~~~~~
 ジョブフローの結果を出力する際には、コンストラクタに指定された ``Out`` オブジェクトの ``add()`` メソッドの引数に、それぞれの演算子の出力を渡します。
-こうすることで、その演算子の出力結果がそのままフロー部品の出力結果となります。このとき、両者の出力は同じデータの種類でなければなりません。
+こうすることで、その演算子の出力結果がそのままジョブフローの出力結果となります。このとき、両者の出力は同じデータの種類でなければなりません。
 
-なお、それぞれの演算子の出力は、いずれかの演算子への入力、またはフロー部品からの出力と接続されている必要があります。
+なお、それぞれの演算子の出力は、いずれかの演算子への入力、またはジョブフローからの出力と接続されている必要があります。
 不要な演算子の出力がある場合、 ``CoreOperatorFactory.stop()`` メソッド利用してその出力を利用しないことを明示的にコンパイラに指示する必要があります。
+
+以下の例では、上記例で演算子メソッド `select` を実行したデータモデル `Hoge` にして、
+分岐先の出力 `ok` をジョブフローの出力結果として出力しています。
+また、分岐先の出力 `ng` は出力せず、ジョブフロー内でデータを破棄しています。
 
 ..  code-block:: java
 
@@ -592,10 +657,10 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
     public void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
         ExampleOperatorFactory example = new ExampleOperatorFactory();
-        Update update = example.update(in);
-        Branch branch = example.branch(update.out);
-        out.add(branch.ok);
-        core.stop(branch.ng);
+        Edit edit = example.edit(in);
+        Select select = example.select(edit.out);
+        out.add(select.ok);
+        core.stop(select.ng);
     }
 
 ジョブフローの実装例
@@ -603,19 +668,20 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 ジョブフローの実装例を示します。
 
 この実装例では、これまでの説明と同様にWindGateを利用してCSVデータを読み書きします。
-ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ を参照してください。
+ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ [#]_ を参照してください。
 
 ..  [#] https://github.com/asakusafw/asakusafw-examples
+..  [#] なお、このサンプルプロジェクトのコードは :doc:`../introduction/start-guide` に従って作成したプロジェクトのサンプルアプリケーションとして含まれるコードと同様です。
 
 インポート処理の実装例
 ~~~~~~~~~~~~~~~~~~~~~~
 ``example-csv`` のバッチ処理では、以下の3種類のデータをインポートしています。
 
-* 店舗情報マスタ ( ``StoreInfoFromCsv`` )
-* 商品情報マスタ ( ``ItemInfoFromCsv`` )
-* 売上明細データ ( ``SalesDetailFromCsv`` )
+* 店舗情報マスタ ( `StoreInfoFromCsv` )
+* 商品情報マスタ ( `ItemInfoFromCsv` )
+* 売上明細データ ( `SalesDetailFromCsv` )
 
-まず、店舗情報のマスタデータである ``<ベースディレクトリ>/master/store_info.csv`` にあるCSVファイルを読み出す例  ( ``StoreInfoFromCsv`` ) です。
+まず、店舗情報のマスタデータである `<ベースディレクトリ>/master/store_info.csv` にあるCSVファイルを読み出す例  ( `StoreInfoFromCsv` ) です。
 この ``<ベースディレクトリ>`` の部分はWindGateの設定で、既定では ``/tmp/windgate-<ログインユーザ名>`` を利用します。
 
 ..  code-block:: java
@@ -645,13 +711,13 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 `WindGateからインポートする`_ 際の手順に従い、自動生成されたクラスを継承して必要なメソッドを実装しています。
 
 このとき、 ``getDataSize()`` メソッドは ``DataSize.TINY`` という値を返しています。
-``.../store_info.csv`` は店舗情報のマスタデータを表すもので、それほど大きくないという前提です。
+`.../store_info.csv` は店舗情報のマスタデータを表すもので、それほど大きくないという前提です。
 
 ..  note::
     データサイズに ``DataSize.TINY`` を指定することで、いくつかの最適化が有効になります。
     詳しくは :doc:`user-guide` を参照してください。
 
-次に、商品情報のマスタデータとして ``<ベースディレクトリ>/master/item_info.csv`` にあるCSVファイルを読み出す例  ( ``ItemInfoFromCsv`` ) です。
+次に、商品情報のマスタデータとして `<ベースディレクトリ>/master/item_info.csv` にあるCSVファイルを読み出す例  ( `ItemInfoFromCsv` ) です。
 
 ..  code-block:: java
 
@@ -679,8 +745,8 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 先ほどの例と異なり、 ``getDataSize()`` メソッドは ``DataSize.LARGE`` という値を返しています。
 
-さらに、売上明細データとして ``<ベースディレクトリ>/sales/<日付>.csv`` にあるCSVファイルを読み出す例  ( ``SalesDetailFromCsv`` ) です。
-``<日付>`` の部分はバッチ処理を開始する際に ``date`` という名前の引数で指定できるようにしています。
+さらに、売上明細データとして `<ベースディレクトリ>/sales/<日付>.csv` にあるCSVファイルを読み出す例  ( `SalesDetailFromCsv` ) です。
+``<日付>`` の部分はバッチ処理を開始する際に `date` という名前の引数で指定できるようにしています。
 
 ..  code-block:: java
 
@@ -712,12 +778,12 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 ``example-csv`` のバッチ処理では、以下の2種類のデータをエクスポートしています。
 
-* カテゴリ別売上集計 ( ``CategorySummaryToCsv`` )
-* エラー情報 ( ``ErrorRecordToCsv`` )
+* カテゴリ別売上集計 ( `CategorySummaryToCsv` )
+* エラー情報 ( `ErrorRecordToCsv` )
 
 
-カテゴリ別売上集計を ``<ベースディレクトリ>/result/category-<日付>.csv`` にCSV形式で書き出す例 ( ``CategorySummaryToCsv`` ) です。
-``<日付>`` の部分は売上明細データをインポートする際と同様に、バッチ処理を開始する際の ``date`` で指定された文字列を利用します。
+カテゴリ別売上集計を `<ベースディレクトリ>/result/category-<日付>.csv` にCSV形式で書き出す例 ( `CategorySummaryToCsv` ) です。
+``<日付>`` の部分は売上明細データをインポートする際と同様に、バッチ処理を開始する際の `date` で指定された文字列を利用します。
 
 ..  code-block:: java
 
@@ -740,7 +806,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
 上記は、 `WindGateにエクスポートする`_ 際の手順に従い、自動生成されたクラスを継承して必要なメソッドを実装しています。
 
-エラー情報もカテゴリ別売上集計と同様の形で ``<ベースディレクトリ>/result/error-<日付>.csv`` にCSV形式で書き出します ( ``ErrorRecordToCsv`` )。
+エラー情報もカテゴリ別売上集計と同様の形で `<ベースディレクトリ>/result/error-<日付>.csv` にCSV形式で書き出します ( `ErrorRecordToCsv` )。
 
 ..  code-block:: java
 
@@ -848,7 +914,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
             errorRecord.add(unknownItem.out);
         }
     }
-
+..  **
 
 ジョブフローのテスト
 --------------------
@@ -870,7 +936,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 
     package com.example.batch;
 
-    import com.asakusafw.vocabulary.flow.*;
+    import com.asakusafw.vocabulary.batch.*;
 
     @Batch(name = "example")
     public class ExampleBatch extends BatchDescription {
@@ -880,7 +946,7 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 なお、それぞれのバッチクラスは、末尾の名前が ``batch`` であるようなパッケージに配置することを推奨しています。
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.batch.BatchDescription`
-..  [#] その他、publicなトップレベルクラスであり、具象クラスである(abstractを指定しない)、型引数を宣言しない、明示的な親クラスや親インターフェースを指定しない、明示的なコンストラクタを宣言しない、などの制約があります。
+..  [#] その他、publicなトップレベルクラスであり、具象クラスである( ``abstract`` を指定しない)、型引数を宣言しない、明示的な親クラスや親インターフェースを指定しない、明示的なコンストラクタを宣言しない、などの制約があります。
 ..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
 
 バッチメソッドの作成
@@ -939,17 +1005,14 @@ ThunderGateと連携してデータベースのテーブルを操作する方法
 バッチアプリケーションを生成する
 ================================
 
-Asakusa DSLからバッチアプリケーションを生成するには、mvnコマンドを利用してAsakusa DSLコンパイラを実行します [#]_ 。
+Asakusa DSLからバッチアプリケーションを生成するには、 ``mvn`` コマンドを利用してAsakusa DSLコンパイラを実行します。
 これはMavenの ``package`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
 
 ..  code-block:: sh
 
-    mvn package
+    mvn clean package
 
-その他、 ``mvn install`` などでも自動的にコンパイラが起動します。
-
-..  [#] クリーンビルドを行う際に、演算子の依存関係の問題で一時的にJavaのコンパイルエラーのメッセージが表示される場合があります。
-        Javaコンパイルのフェーズを正常終了できた場合、これらのメッセージが出ても特に問題はありません。
+その他、 ``mvn clean install`` などでも自動的にコンパイラが起動します。
 
 バッチアプリケーションを実行する
 ================================
