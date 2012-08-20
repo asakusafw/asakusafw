@@ -1,0 +1,15 @@
+{
+    "sid": 1,
+    "shipped_date": "2010-12-01 12:00:00",
+    "item_code": 1
+}
+{
+    "sid": 2,
+    "shipped_date": "2010-12-01 12:00:00",
+    "item_code": 2
+}
+{
+    "sid": 3,
+    "shipped_date": "2010-12-01 12:02:00",
+    "item_code": 2
+}
