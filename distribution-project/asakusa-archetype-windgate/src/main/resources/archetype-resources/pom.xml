@@ -195,14 +195,14 @@
 						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-runtime</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-test-moderator
-						</exclude>
+						<exclude>com.asakusafw:asakusa-thundergate-test-moderator</exclude>
 						<exclude>com.asakusafw:asakusa-thundergate-vocabulary</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-hadoopfs</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-jdbc</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>
