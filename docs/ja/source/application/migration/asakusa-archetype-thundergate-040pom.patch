@@ -162,15 +162,18 @@
  						<exclude>com.asakusafw:asakusa-thundergate</exclude>
  						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
  						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
-@@ -151,6 +205,7 @@
+@@ -149,8 +203,10 @@
+ 						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-test-moderator</exclude>
  						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
++						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 +						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-multidispatch</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
-@@ -187,33 +242,23 @@
+@@ -187,33 +243,23 @@
  						</file>
  						<file>
  							<name>.factorypath</name>
@@ -214,7 +217,7 @@
  				<executions>
  					<execution>
  						<id>add-source</id>
-@@ -233,13 +278,14 @@
+@@ -233,13 +279,14 @@
  			<plugin>
  				<groupId>org.apache.maven.plugins</groupId>
  				<artifactId>maven-antrun-plugin</artifactId>
@@ -231,7 +234,7 @@
  								<property name="compile_classpath" refid="maven.test.classpath" />
  								<ant antfile="${asakusa.build.antfile}">
  									<target name="generate-thundergate-model" />
-@@ -251,7 +297,7 @@
+@@ -251,7 +298,7 @@
  						</goals>
  					</execution>
  					<execution>
@@ -240,7 +243,7 @@
  						<phase>package</phase>
  						<configuration>
  							<target>
-@@ -298,7 +344,7 @@
+@@ -298,7 +345,7 @@
  			<plugin>
  				<groupId>org.codehaus.mojo</groupId>
  				<artifactId>properties-maven-plugin</artifactId>
@@ -249,7 +252,7 @@
  				<executions>
  					<execution>
  						<phase>initialize</phase>
-@@ -316,7 +362,14 @@
+@@ -316,7 +363,14 @@
  			<plugin>
  				<groupId>org.apache.maven.plugins</groupId>
  				<artifactId>maven-assembly-plugin</artifactId>
@@ -265,7 +268,7 @@
  				<executions>
  					<execution>
  						<id>default-cli</id>
-@@ -324,12 +377,10 @@
+@@ -324,12 +378,10 @@
  							<goal>single</goal>
  						</goals>
  						<configuration>
@@ -282,7 +285,7 @@
  							<finalName>asakusafw-${asakusafw.version}</finalName>
  						</configuration>
  					</execution>
-@@ -343,7 +394,7 @@
+@@ -343,7 +395,7 @@
  				<plugin>
  					<groupId>org.eclipse.m2e</groupId>
  					<artifactId>lifecycle-mapping</artifactId>
@@ -291,7 +294,7 @@
  					<configuration>
  						<lifecycleMappingMetadata>
  							<pluginExecutions>
-@@ -351,7 +402,7 @@
+@@ -351,7 +403,7 @@
  									<pluginExecutionFilter>
  										<groupId>org.codehaus.mojo</groupId>
  										<artifactId>properties-maven-plugin</artifactId>
@@ -300,7 +303,7 @@
  										<goals>
  											<goal>read-project-properties</goal>
  										</goals>
-@@ -364,7 +415,7 @@
+@@ -364,7 +416,7 @@
  									<pluginExecutionFilter>
  										<groupId>org.apache.maven.plugins</groupId>
  										<artifactId>maven-antrun-plugin</artifactId>
@@ -309,7 +312,7 @@
  										<goals>
  											<goal>run</goal>
  										</goals>
-@@ -410,7 +461,7 @@
+@@ -410,7 +462,7 @@
  		</dependency>
  		<dependency>
  			<groupId>com.asakusafw</groupId>
@@ -318,7 +321,7 @@
  			<version>${asakusafw.version}</version>
  			<scope>test</scope>
  		</dependency>
-@@ -437,14 +488,12 @@
+@@ -437,14 +489,12 @@
  			<groupId>com.asakusafw</groupId>
  			<artifactId>asakusa-directio-dmdl</artifactId>
  			<version>${asakusafw.version}</version>
@@ -333,7 +336,7 @@
  			<optional>true</optional>
  		</dependency>
  		<dependency>
-@@ -468,34 +517,6 @@
+@@ -468,34 +518,6 @@
  		</dependency>
  		<dependency>
  			<groupId>com.asakusafw</groupId>
@@ -368,7 +371,7 @@
  			<artifactId>asakusa-thundergate</artifactId>
  			<version>${asakusafw.version}</version>
  			<scope>test</scope>
-@@ -521,6 +542,12 @@
+@@ -521,6 +543,12 @@
  			<version>${asakusafw.version}</version>
  		</dependency>
  		<dependency>
@@ -381,7 +384,7 @@
  			<groupId>mysql</groupId>
  			<artifactId>mysql-connector-java</artifactId>
  			<version>${mysql.jdbc.version}</version>
-@@ -534,6 +561,12 @@
+@@ -534,6 +562,12 @@
  			<optional>true</optional>
  		</dependency>
  		<dependency>

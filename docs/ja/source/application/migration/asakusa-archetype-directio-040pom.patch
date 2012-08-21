@@ -160,15 +160,18 @@
  						<exclude>com.asakusafw:asakusa-thundergate</exclude>
  						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
  						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
-@@ -154,6 +208,7 @@
+@@ -152,8 +206,10 @@
+ 						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-test-moderator</exclude>
  						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
++						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 +						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-multidispatch</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
-@@ -191,33 +246,23 @@
+@@ -191,33 +247,23 @@
  						</file>
  						<file>
  							<name>.factorypath</name>
@@ -212,7 +215,7 @@
  				<executions>
  					<execution>
  						<id>add-source</id>
-@@ -237,13 +282,14 @@
+@@ -237,13 +283,14 @@
  			<plugin>
  				<groupId>org.apache.maven.plugins</groupId>
  				<artifactId>maven-antrun-plugin</artifactId>
@@ -229,7 +232,7 @@
  								<property name="compile_classpath" refid="maven.test.classpath" />
  								<ant antfile="${asakusa.build.antfile}">
  									<target name="generate-model" />
-@@ -255,7 +301,7 @@
+@@ -255,7 +302,7 @@
  						</goals>
  					</execution>
  					<execution>
@@ -238,7 +241,7 @@
  						<phase>package</phase>
  						<configuration>
  							<target>
-@@ -298,7 +344,7 @@
+@@ -298,7 +345,7 @@
  			<plugin>
  				<groupId>org.codehaus.mojo</groupId>
  				<artifactId>properties-maven-plugin</artifactId>
@@ -247,7 +250,7 @@
  				<executions>
  					<execution>
  						<phase>initialize</phase>
-@@ -316,7 +362,14 @@
+@@ -316,7 +363,14 @@
  			<plugin>
  				<groupId>org.apache.maven.plugins</groupId>
  				<artifactId>maven-assembly-plugin</artifactId>
@@ -263,7 +266,7 @@
  				<executions>
  					<execution>
  						<id>default-cli</id>
-@@ -324,11 +377,10 @@
+@@ -324,11 +378,10 @@
  							<goal>single</goal>
  						</goals>
  						<configuration>
@@ -279,7 +282,7 @@
  							<finalName>asakusafw-${asakusafw.version}</finalName>
  						</configuration>
  					</execution>
-@@ -342,7 +394,7 @@
+@@ -342,7 +395,7 @@
  				<plugin>
  					<groupId>org.eclipse.m2e</groupId>
  					<artifactId>lifecycle-mapping</artifactId>
@@ -288,7 +291,7 @@
  					<configuration>
  						<lifecycleMappingMetadata>
  							<pluginExecutions>
-@@ -350,7 +402,7 @@
+@@ -350,7 +403,7 @@
  									<pluginExecutionFilter>
  										<groupId>org.codehaus.mojo</groupId>
  										<artifactId>properties-maven-plugin</artifactId>
@@ -297,7 +300,7 @@
  										<goals>
  											<goal>read-project-properties</goal>
  										</goals>
-@@ -363,7 +415,7 @@
+@@ -363,7 +416,7 @@
  									<pluginExecutionFilter>
  										<groupId>org.apache.maven.plugins</groupId>
  										<artifactId>maven-antrun-plugin</artifactId>
@@ -306,7 +309,7 @@
  										<goals>
  											<goal>run</goal>
  										</goals>
-@@ -412,23 +464,11 @@
+@@ -412,23 +465,11 @@
  			<artifactId>asakusa-test-driver</artifactId>
  			<version>${asakusafw.version}</version>
  			<scope>test</scope>
@@ -330,7 +333,7 @@
  			<optional>true</optional>
  		</dependency>
  		<dependency>
-@@ -441,14 +481,12 @@
+@@ -441,14 +482,12 @@
  			<groupId>com.asakusafw</groupId>
  			<artifactId>asakusa-directio-dmdl</artifactId>
  			<version>${asakusafw.version}</version>
@@ -345,7 +348,7 @@
  			<optional>true</optional>
  		</dependency>
  		<dependency>
-@@ -459,44 +497,35 @@
+@@ -459,44 +498,35 @@
  		</dependency>
  		<dependency>
  			<groupId>com.asakusafw</groupId>
