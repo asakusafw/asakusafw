@@ -15,23 +15,23 @@ Asakusa DSLをバッチコンパイルして生成したバッチアプリケー
 
     * - ファイル名
       - 説明
-    * - batch/compiled-structure.txt
+    * - ``batch/compiled-structure.txt``
       - バッチコンパイルした結果のバッチ構造を示すテキストファイル
-    * - batch/compiled-structure.dot
+    * - ``batch/compiled-structure.dot``
       - バッチコンパイルした結果のバッチ構造を示すdotファイル
-    * - batch/compiled-merged-structure.dot
+    * - ``batch/compiled-merged-structure.dot``
       - バッチコンパイルした結果のバッチ構造を示すdotファイル。同一の演算子を単一のノードとして表現する。
-    * - batch/original-structure.txt
+    * - ``batch/original-structure.txt``
       - バッチコンパイル前のバッチ構造を示すテキストファイル
-    * - batch/original-structure.dot
+    * - ``batch/original-structure.dot``
       - バッチコンパイル前のバッチ構造を示すdotファイル
-    * - batch/original-merged-structure.txt
+    * - ``batch/original-merged-structure.txt``
       - バッチコンパイル前のバッチ構造を示すテキストファイル。同一の演算子を単一のノードとして表現する。
-    * - jobflow/<フローID>/flowgraph.dot
+    * - ``jobflow/<フローID>/flowgraph.dot``
       - フローの入出力を示すdotファイル
-    * - jobflow/<フローID>/stagegraph.dot
+    * - ``jobflow/<フローID>/stagegraph.dot``
       - ステージ全体の構造を示すdotファイル
-    * - jobflow/<フローID>/stageblock-XX.dot
+    * - ``jobflow/<フローID>/stageblock-XX.dot``
       - 各ステージ単位の構造を示すdotファイル
 
 
