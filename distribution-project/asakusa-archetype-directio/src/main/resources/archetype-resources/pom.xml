@@ -206,6 +206,7 @@
 						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-test-moderator</exclude>
 						<exclude>com.asakusafw:asakusa-windgate-vocabulary</exclude>
+						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>

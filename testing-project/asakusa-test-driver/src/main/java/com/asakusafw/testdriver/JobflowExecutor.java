@@ -90,7 +90,7 @@ public class JobflowExecutor {
     public void cleanWorkingDirectory() throws IOException {
         Configuration conf = configurations.newInstance();
         FileSystem fs = FileSystem.get(conf);
-        Path path = new Path(fs.getHomeDirectory(), context.getClusterWorkDir());
+        Path path = new Path(context.getClusterWorkDir());
         LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
         fs.delete(path, true);
     }
