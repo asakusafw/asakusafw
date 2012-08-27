@@ -351,34 +351,40 @@ public final class Constants {
      */
 
     /**
+     * Root path of ThunderGate install directory.
+     * @since 0.4.0
+     */
+    public static final String PATH_REMOTE_ROOT = "bulkloader/";
+
+    /**
      * Relative path to the remote extractor script (from framework installation home).
      * @since 0.4.0
      */
-    public static final String PATH_REMOTE_EXTRACTOR = "bulkloader/libexec/extractor.sh";
+    public static final String PATH_REMOTE_EXTRACTOR = "libexec/extractor.sh";
 
     /**
      * Relative path to the remote collector script (from framework installation home).
      * @since 0.4.0
      */
-    public static final String PATH_REMOTE_COLLECTOR = "bulkloader/libexec/collector.sh";
+    public static final String PATH_REMOTE_COLLECTOR = "libexec/collector.sh";
 
     /**
      * Relative path to the fetching remote cache info script (from framework installation home).
      * @since 0.4.0
      */
-    public static final String PATH_REMOTE_CACHE_INFO = "bulkloader/libexec/get-cache-info.sh";
+    public static final String PATH_REMOTE_CACHE_INFO = "libexec/get-cache-info.sh";
 
     /**
      * Relative path to the deleting remote cache contents script (from framework installation home).
      * @since 0.4.0
      */
-    public static final String PATH_REMOTE_CACHE_DELETE = "bulkloader/libexec/delete-cache-storage.sh";
+    public static final String PATH_REMOTE_CACHE_DELETE = "libexec/delete-cache-storage.sh";
 
     /**
      * Relative path to the building cache contents script (from framework installation home).
      * @since 0.4.0
      */
-    public static final String PATH_LOCAL_CACHE_BUILD = "bulkloader/libexec/hadoop-build-cache.sh";
+    public static final String PATH_LOCAL_CACHE_BUILD = "libexec/hadoop-build-cache.sh";
 
     /**
      * DBMSの接続情報を記述したプロパティファイルの接尾辞。
