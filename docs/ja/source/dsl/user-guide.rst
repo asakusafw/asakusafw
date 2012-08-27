@@ -340,6 +340,8 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
     このAPIで通知したレポートを何らかの形で拾い上げて利用者に通知してくれるかもしれません。
     標準的な実装である :doc:`YAESS <../yaess/index>` では特に何も行っていません。
 
+.. _dsl-userguide-operator-dsl-compiler:
+
 Operator DSLコンパイラ
 ----------------------
 Operator DSLコンパイラは作成した `演算子クラス`_ をコンパイルして
