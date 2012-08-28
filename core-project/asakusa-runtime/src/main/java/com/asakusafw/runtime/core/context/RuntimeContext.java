@@ -365,11 +365,12 @@ public final class RuntimeContext {
         } else {
             throw new InconsistentApplicationException(MessageFormat.format(
                     "Inconsistent application, please check your deployed application: "
-                    + "url=\"{0}\", batchId=\"{1}\", expected=\"{2}\", actual=\"{3}\"",
+                    + "url=\"{0}\", batchId=\"{1}\", caller=\"{2}\", callee=\"{3}\", hostname=\"{4}\"",
                     url,
                     batchId,
                     buildId,
-                    targetBuildId));
+                    targetBuildId,
+                    getHostName()));
         }
     }
 
@@ -394,11 +395,12 @@ public final class RuntimeContext {
         } else {
             throw new InconsistentApplicationException(MessageFormat.format(
                     "Inconsistent runtime version, please check your deployed framework: "
-                    + "url=\"{0}\", batchId=\"{1}\", expected=\"{2}\", actual=\"{3}\"",
+                    + "url=\"{0}\", batchId=\"{1}\", caller=\"{2}\", callee=\"{3}\", hostname=\"{4}\"",
                     url,
                     batchId,
                     BatchRuntime.getLabel(),
-                    runtimeVersion));
+                    runtimeVersion,
+                    getHostName()));
         }
     }
 
@@ -419,6 +421,15 @@ public final class RuntimeContext {
             return null;
         }
         return trimmed;
+    }
+
+    private String getHostName() {
+        String hostname = System.getenv("HOSTNAME");
+        if (hostname == null) {
+            hostname = System.getenv("SSH_CONNECTION");
+        }
+        return hostname;
+
     }
 
     @Override
