@@ -2,4 +2,6 @@
 DMDL開発者ガイド
 ================
 
-未整備
+この文書では、DMDLおよびDMDLコンパイラの拡張方法について紹介します。
+
+..  todo:: DMDL > Developer Guide

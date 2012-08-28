@@ -25,7 +25,7 @@ Asakusa Framework バージョン |version| は以下のプラットフォーム
     * - Hadoop
       - Greenplum MR 1.2 [#]_
     * - Hadoop
-      - Amazon Elastic MapReduce (Hadoop Version: 0.20.205, AMI Version: 2.1.1, --with-supported-products: 指定なし) [#]_
+      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.2) [#]_
 
 ..  [#] http://www.centos.org/
 ..  [#] http://www.oracle.com/technetwork/java/javase/
