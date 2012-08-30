@@ -61,7 +61,7 @@ Asakusa Frameworkでは、Map Reduceジョブを実行する際に複数の入�
 
 
 ..  list-table:: 入力スプリットの結合
-    :widths: 30 10 10
+    :widths: 5 2 3
     :header-rows: 1
 
     * - 設定名

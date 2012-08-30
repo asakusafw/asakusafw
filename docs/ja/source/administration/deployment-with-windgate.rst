@@ -26,7 +26,7 @@
 それぞれのマシンに機能を割り当て、それを実現するモジュールを配置していく形になります。
 
   Hadoopクライアントモジュール
-    Hadoopのジョブ起動や、HDFSへアクセスを行うためのモジュールです [#]_ 。
+    Hadoopのジョブ起動や、HDFSなどのHadoopファイルシステムへアクセスを行うためのモジュールです。
 
     Hadoopのマスターノードやスレーブノード上にクライアントモジュールを配置することもできます。
 
@@ -44,8 +44,6 @@
 ひとつのマシン上に複数のモジュールを配置することもできます。
 モジュールが異なるマシン上に存在する場合、SSHやJDBC、RPCなどの適切なプロトコルを利用して処理を行います。
 
-..  [#] Hadoopクライアントモジュールは、さらにジョブの起動を行うモジュールとHDFSにアクセスするモジュールの2つに細分化することもできます。
-    この文書では、簡単のためこれらをまとめてHadoopクライアントモジュールと呼んでいます。
 ..  [#] 外部システム連携モジュールはシステム上に複数用意することもできます。
 
 コンポーネント
@@ -71,7 +69,7 @@
     Hadoopクライアントモジュールが利用します。
 
     外部システム連携モジュールとHadoopクライアントモジュールが同じマシン上に配置されている場合、WindGate Hadoopブリッジは不要です。
-    この場合、WindGateはHadoopブリッジを経由せず、HDFSに直接アクセスします。
+    この場合、WindGateはHadoopブリッジを経由せず、Hadoopファイルシステムに直接アクセスします。
 
   YAESS
     :doc:`YAESS <../yaess/index>` 本体です。
@@ -102,8 +100,9 @@ WindGateをローカルのCSVファイルと連携する構成における、シ
     Hadoopクライアントモジュールと外部システム連携モジュールが同一のマシン上に存在するため、WindGate Hadoopブリッジは不要です。
 
 ..  attention::
-    この例では、外部システムがCSVファイルを生成、または取り込みし、
-    Hadoopクライアントモジュールとの受け渡しはAsakusa Frameworkとは別の仕組みで行うという前提です。
+    WindGateはローカルファイル上のCSVファイルに対する入出力の仕組みを提供します。
+    WindGateのCSV機能を利用する外部システムは、WindGate(外部システム連携モジュール)がデプロイされている
+    マシン上に対して処理対象となるCSVファイルを配置したり、取り込む仕組みを用意する必要があります。
 
 WindGate/RDBMSによるHadoopブリッジを使った構成例
 ------------------------------------------------
@@ -162,13 +161,13 @@ Asakusa Frameworkのインストールアーカイブの作成
 -----------------------------------------------
 Asakusa Frameworkのインストールアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します。
+Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します [#]_ 。
 
 ..  code-block:: sh
 
     mvn assembly:single
 
-このコマンドを実行すると、プロジェクトの target ディレクトリ配下にいくつかのファイルが生成されます。
+このコマンドを実行すると、プロジェクトの ``target`` ディレクトリ配下にいくつかのファイルが生成されます。
 このうち以下のファイルが今回利用するアーカイブ [#]_ です。
 
 ``asakusafw-${asakusafw.version}-prod-windgate.tar.gz``
@@ -176,6 +175,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
 例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-windgate.tar.gz になります。
 
+..  [#] 詳しくは、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] このアーカイブにはAsakusa Frameworkのコアライブラリ、WindGate、YAESS、各種Hadoopブリッジが含まれています。
 
 
@@ -397,7 +397,7 @@ WindGateのHadoopブリッジについては :doc:`../windgate/user-guide` な�
 YAESSのHadoopブリッジについては :doc:`../yaess/user-guide` などを参考にしてください。
 
 ..  note::
-    WindGateが直接HDFSを参照する ( ``resource.hadoop=com.asakusafw.windgate.hadoopfs.HadoopFsProvider`` ) 場合、
+    WindGateが直接Hadoopファイルシステムを参照する ( ``resource.hadoop=com.asakusafw.windgate.hadoopfs.HadoopFsProvider`` ) 場合、
     WindGateのHadoopブリッジに関する設定は不要です。
 
 

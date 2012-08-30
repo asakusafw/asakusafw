@@ -626,7 +626,7 @@ public final class ConfigurationLoader {
         if (remoteHome.endsWith("/") == false) {
             remoteHome = remoteHome + "/";
         }
-        return remoteHome + relativePath;
+        return remoteHome + Constants.PATH_REMOTE_ROOT + relativePath;
     }
 
     /**

@@ -307,7 +307,7 @@ public class CacheBuildTest {
 
     private void execute(String subcommand) throws IOException, InterruptedException {
         FileListProvider provider = execute(
-                Constants.PATH_LOCAL_CACHE_BUILD,
+                Constants.PATH_REMOTE_ROOT + Constants.PATH_LOCAL_CACHE_BUILD,
                 subcommand,
                 "tbatch",
                 "tflow",
