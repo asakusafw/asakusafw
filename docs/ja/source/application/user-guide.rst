@@ -12,9 +12,11 @@
 
 Hadoopのモードを切り替える
 --------------------------
-Hadoopを疑似分散モードへ切り替えます。疑似分散モードの設定方法やモードの切替手順については、各Hadoopディストリビューションのドキュメントを参照してください (例えばCDHでは以下を参照 [#]_ )。
+Hadoopを疑似分散モードへ切り替えます。疑似分散モードの設定方法やモードの切替手順については、各Hadoopディストリビューションのドキュメントを参照してください [#]_ 。
 
-..  [#] https://ccp.cloudera.com/display/CDHDOC/CDH3+Deployment+in+Pseudo-Distributed+Mode
+..  [#] 例えばCDH3では次のドキュメントなどを参照してください。
+
+    https://ccp.cloudera.com/display/CDHDOC/CDH3+Deployment+in+Pseudo-Distributed+Mode
 
 .. _development-environment-with-other-cdh:
 

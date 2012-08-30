@@ -4,7 +4,7 @@ Direct I/O コマンドラインツールユーザーガイド
 
 このドキュメントでは、Direct I/Oに関するコマンドラインツールの利用方法について紹介します。
 
-これらのツールはAsakusa Frameworkをインストールしたパスの ``directio/bin`` ディレクトリ内に格納されています。
+これらのツールは ``$ASAKUSA_HOME/directio/bin`` ディレクトリ内に格納されています。
 また、いずれのツールもAsakusa FrameworkのDirect I/Oに関する設定情報を利用します。
 これらの設定方法については :doc:`user-guide` を参照してください。
 
@@ -165,18 +165,18 @@ Direct I/O コマンドラインツールユーザーガイド
 このコマンドを実行すると、以下の情報を表示します。
 
 ..  list-table:: 表示されるトランザクションの情報
-    :widths: 10 25
+    :widths: 4 6
     :header-rows: 1
 
     * - セクション
       - 内容
-    * - Date
+    * - ``Date``
       - トランザクションを開始した日時
-    * - Execution ID
+    * - ``Execution ID``
       - 対象のジョブフローの実行ID
-    * - Status
+    * - ``Status``
       - トランザクションの状態
-    * - Comments
+    * - ``Comments``
       - 補助的な情報
 
 コミットの適用
@@ -203,7 +203,7 @@ Direct I/O コマンドラインツールユーザーガイド
 
 コミットの破棄
 --------------
-``$ASAKUSA_HOME/directio/bin/apply-transaction.sh`` コマンドを利用すると、Direct I/Oで行われた任意のトランザクションを破棄できます。
+``$ASAKUSA_HOME/directio/bin/abort-transaction.sh`` コマンドを利用すると、Direct I/Oで行われた任意のトランザクションを破棄できます。
 
 以下の形式で指定します。
 

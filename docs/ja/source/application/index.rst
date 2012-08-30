@@ -12,7 +12,7 @@ Mavenアーキタイプ利用ガイド
 
 開発環境構築ユーザガイド
 ------------------------
-ThunderGateを使う場合の開発環境の注意点や、Linuxディストリビューション固有に必要となる環境構築手順を説明します。
+開発環境の構築に関して、Hadoopなどのプラットフォームに関する固有の設定や注意点に関するトピックを説明します。
 
 開発環境マイグレーションガイド
 ------------------------------
@@ -41,9 +41,3 @@ Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するD
     legacy-module-guide
     dsl-visualization
 
-..  toctree::
-    :hidden:
-
-    start-guide
-    with-cloudera-vm
-    graphviz

@@ -297,14 +297,14 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 1 (バージョン 0.4.0) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (バージョン 0.4.0) を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.4.0
-    2: 0.4-SNAPSHOT
-    Choose a number: 2: 1 (<-1を入力)
+    1: 0.4-SNAPSHOT
+    2: 0.4.0
+    Choose a number: 2: 2 (<-2を入力)
 
 ..  attention::
     ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。

@@ -21,12 +21,15 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブ [#]_ に
 
 
 ..  list-table:: Asakusa Framework 拡張モジュール一覧
-    :widths: 3 1 6
+    :widths: 35 15 50
     :header-rows: 1
     
     * - 拡張モジュールID
       - 導入バージョン
       - 説明
+    * - ``ext-windgate-retryable-plugin``
+      - 0.4.0
+      - :ref:`windgate-userguide-retryable-plugin` を利用するためのWindGateプラグイン
     * - ``ext-yaess-jobqueue-plugin``
       - 0.4.0
       - :doc:`../yaess/jobqueue` 用のクライアントプラグイン

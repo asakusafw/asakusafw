@@ -137,7 +137,7 @@
  				<executions>
  					<execution>
  						<id>attach-sources</id>
-@@ -126,17 +178,19 @@
+@@ -126,31 +178,34 @@
  			<plugin>
  				<groupId>org.apache.maven.plugins</groupId>
  				<artifactId>maven-eclipse-plugin</artifactId>
@@ -160,8 +160,17 @@
  						<exclude>com.asakusafw:asakusa-thundergate</exclude>
  						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
  						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
-@@ -151,6 +205,7 @@
+ 						<exclude>com.asakusafw:asakusa-thundergate-runtime</exclude>
+-						<exclude>com.asakusafw:asakusa-thundergate-test-moderator
+-						</exclude>
++						<exclude>com.asakusafw:asakusa-thundergate-test-moderator</exclude>
+ 						<exclude>com.asakusafw:asakusa-thundergate-vocabulary</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-hadoopfs</exclude>
+ 						<exclude>com.asakusafw:asakusa-windgate-jdbc</exclude>
  						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
++						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
  						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
 +						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>

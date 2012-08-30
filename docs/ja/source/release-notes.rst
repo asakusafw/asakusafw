@@ -4,10 +4,7 @@ Asakusa Framework リリースノート
 
 Release 0.4.0
 =============
-TBA
-
-..  todo:: Release Date
-..  todo:: Add documents and link to related page to following issues.
+Aug 30, 2012
 
 Enhancements
 ------------
@@ -49,6 +46,12 @@ Enhancements
     * See: :doc:`windgate/user-guide`
 * [ :issue:`219` ] - YAESS profile should allow to specify environment variables more properties
     * See: :doc:`yaess/user-guide`
+* [ :issue:`222` ] - Performance tuning of CSV Parser
+* [ :issue:`226` ] - Add version information in ASAKUSA_HOME
+* [ :issue:`227` ] - Add build timestamp in application build log
+* [ :issue:`232` ] - Improve sample application includes archetype
+* [ :issue:`240` ] - Supports CDH3u5
+    * See: :doc:`product/target-platform`
 
 ..  attention::
     Direct I/O is now generally available.
@@ -60,6 +63,17 @@ Bug fixes
 * [ :issue:`211` ] - Unexpected exception thrown when log directory lost permission.
 * [ :issue:`217` ] - Maven eclipse plugin may not create source directory for generating annotation processing
 * [ :issue:`221` ] - Remove unnecessary eclipse configuration from archetype pom.xml
+* [ :issue:`223` ] - Incorrect error message of CSV Parser
+* [ :issue:`224` ] - Compiler does not stop when overwriting output error at batch compile
+* [ :issue:`229` ] - Some of the test method of ThunderGate does not close JDBC resource
+* [ :issue:`233` ] - Incorrect log level of ThunderGate
+* [ :issue:`234` ] - BridgeInputFormat may cause StackOverFlowError with inconsistent framework environment
+* [ :issue:`235` ] - BasePath not found error when connecting flow from Direct I/O input to WindGate output directly
+* [ :issue:`236` ] - Redundant warning log for creating symlink on standalone mode
+* [ :issue:`237` ] - Partitioners hash algorithm is not strong.
+* [ :issue:`238` ] - DMDL Compiler generates DataModel Class incorrectly with hierarchical namespace attributes
+* [ :issue:`239` ] - DMDL Compiler does not detect inconsistent type of join keys.
+* [ :issue:`242` ] - TestDriver resolves working directory with user home directory
 
 Revisions
 ---------
@@ -67,13 +81,13 @@ Revisions
     * See: :doc:`application/maven-archetype`
 * [ :issue:`207` ] - Legacy TestDriver should not use experimental shell script
 * [ :issue:`220` ] - Rename asakusa-runtime.jar
+* [ :issue:`225` ] - Changes default value of PartialAggregation parameter in Summarize operator
 
 Others
 ------
 * [ :issue:`70` ] - Need more detailed and easy-to-see documentation for logging and related maintainance
     * See: :doc:`windgate/log-table`
     * See: :doc:`yaess/log-table`
-* [ :issue:`88` ] - \.sql file for Oracle Database in WindGate example 
 * [ :issue:`180` ] - WindGate log table document
     * See: :doc:`windgate/log-table`
 * [ :issue:`181` ] - 0.4.0 Documentation

@@ -26,9 +26,9 @@
 それぞれのマシンに機能を割り当て、それを実現するモジュールを配置していく形になります。
 
   Hadoopクライアントモジュール
-    Hadoopのジョブ起動や、HDFSへアクセスを行うためのモジュールです [#]_ 。
+    Hadoopのジョブ起動や、HDFSへアクセスを行うためのモジュールです。
     
-    このモジュールには :doc:`ThunderGate <../thundergate/index>` のエクストラクタ、コレクタを配置し、HDFSにAPI経由でアクセスします。
+    このモジュールには :doc:`ThunderGate <../thundergate/index>` のエクストラクタ、コレクタを配置し、HadoopファイルシステムにAPI経由でアクセスします。
 
   外部システム連携モジュール
     外部システムとHadoopクラスター間でデータをやり取りするためのモジュールです。
@@ -45,8 +45,6 @@
 ひとつのマシン上に複数のモジュールを配置することもできます。
 モジュールが異なるマシン上に存在する場合、SSH、RPCなどの適切なプロトコルを利用して処理を行います。
 
-..  [#] Hadoopクライアントモジュールは、さらにジョブの起動を行うモジュールとHDFSにアクセスするモジュールの2つに細分化することもできます。
-    この文書では、簡単のためこれらをまとめてHadoopクライアントモジュールと呼んでいます。
 
 コンポーネント
 --------------
@@ -172,7 +170,7 @@ Asakusa Frameworkのインストールアーカイブの作成
 -----------------------------------------------
 Asakusa Frameworkのインストールアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します。
+Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します [#]_ 。
 
 ..  code-block:: sh
 
@@ -186,6 +184,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
 例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-thundergate.tar.gz になります。
 
+..  [#] 詳しくは、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] このアーカイブにはAsakusa Frameworkのコアライブラリ、ThunderGate、YAESS、各種Hadoopブリッジが含まれています。
 
 
