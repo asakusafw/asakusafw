@@ -30,8 +30,9 @@ Operator DSLで作成する演算子はデータフローの「部品」であ�
 
 なお、Operator DSLでは上記のグループを作成するために、 ``Key`` [#]_ という注釈を多用します。
 これは、グループ化のための方法や、グループ内での整列順序を指定するためのものです。
+詳しくは :doc:`user-guide` の :ref:`dsl-key-annotation` を参照してください。
 
-..  [#] ``com.asakusafw.vocabulary.model.Key``
+..  [#] :javadoc:`com.asakusafw.vocabulary.model.Key`
 
 演算子の分類
 ------------
@@ -69,19 +70,19 @@ Flow DSLでコア演算子を利用する場合、
 一般的に ``CoreOperatorFactory`` [#]_ というファクトリクラスが提供するメソッドを使用します。
 また、上記ファクトリクラスと同名のクラスメソッド群を持つ ``CoreOperators`` [#]_ も利用可能です。
 
-..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperatorFactory``
-..  [#] ``com.asakusafw.vocabulary.flow.util.CoreOperators``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.util.CoreOperatorFactory`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.util.CoreOperators`
 
 演算子の性能特性
 ----------------
-いくつかの演算子は、Map Reduceプログラムに変換する際に
+いくつかの演算子は、MapReduceプログラムに変換する際に
 「Reduceの先頭に強制的に配置される」という特性を持っています (Reduce系演算子)。
 このようなReduce系演算子を多用した場合、
-生成されるアプリケーションのMap Reduceの段数が増えるため、
+生成されるアプリケーションのMapReduceの段数が増えるため、
 性能に多大な影響を及ぼす場合があります。
 
 複数のレコードや、グループを入力に取る演算子は、基本的にReduce系の演算子です。
-そうでなく、単一のレコードを入力に取る演算子は、Map Reduceアプリケーションの
+そうでなく、単一のレコードを入力に取る演算子は、MapReduceアプリケーションの
 任意の位置に配置され、Reduce系演算子に比べて性能与える影響が小さくなります (Map系演算子)。
 
 なお、Reduce系演算子の中には、コンパイラの最適化によって
@@ -97,7 +98,7 @@ Map系の演算子に変換される場合もあります。
 コア演算子は次のような表で表記します。
 
 ..  list-table:: コア演算子の表記
-    :widths: 4 20
+    :widths: 3 7
     :header-rows: 1
 
     * - 項目
@@ -120,7 +121,7 @@ Map系の演算子に変換される場合もあります。
 ユーザー演算子は次のような表で表記します。
 
 ..  list-table:: ユーザー演算子の表記
-    :widths: 4 20
+    :widths: 3 7
     :header-rows: 1
 
     * - 項目
@@ -145,14 +146,14 @@ Map系の演算子に変換される場合もあります。
       - この演算子に型引数を指定可能かどうか [#]_
 
 ..  [#] 本体の実装が不要なユーザー演算子は、抽象メソッドとして宣言します
-..  [#] :doc:`generic-dataflow` を参照
+..  [#] 型引数は多相演算子で使用します。詳しくは :doc:`generic-dataflow` を参照してください。
 
 入出力の表記
 ~~~~~~~~~~~~
 それぞれの入出力は、次のような項目を表記します。
 
 ..  list-table:: 入出力の表記
-    :widths: 4 20
+    :widths: 3 7
     :header-rows: 1
 
     * - 項目
@@ -173,7 +174,7 @@ Map系の演算子に変換される場合もあります。
 演算子メソッドの形式は、次のような項目を表記します。
 
 ..  list-table:: 演算子メソッドの表記
-    :widths: 4 20
+    :widths: 3 7
     :header-rows: 1
 
     * - 項目
@@ -210,7 +211,7 @@ Map系の演算子に変換される場合もあります。
     Javaの対応する型
 
 ..  [#] ``java.util.List``
-..  [#] ``com.asakusafw.runtime.core.Result``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
 
 フロー制御演算子
 ================
@@ -222,7 +223,7 @@ Map系の演算子に変換される場合もあります。
 「条件に応じて出力先を変える」などの用途に利用できます。
 
 ..  list-table:: 分岐演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -232,7 +233,7 @@ Map系の演算子に変換される場合もあります。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Branch``
+      - ``Branch`` [#]_ 
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -247,7 +248,7 @@ Map系の演算子に変換される場合もあります。
       - 指定可能
 
 ..  list-table:: 分岐演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -266,12 +267,15 @@ Map系の演算子に変換される場合もあります。
       - inと同様
       - 任意の個数を指定可
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Branch`
+
+
 分岐演算子の実装
 ~~~~~~~~~~~~~~~~
 分岐演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 分岐演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 1 3
     :header-rows: 1
 
     * - 分類
@@ -306,7 +310,7 @@ Map系の演算子に変換される場合もあります。
 
 ..  code-block:: java
 
-    public abstract class <Operator-Class> {
+    public abstract class OperatorClass {
         ...
 
         /**
@@ -348,6 +352,7 @@ Map系の演算子に変換される場合もあります。
 
         ...
     }
+..  **
 
 合流演算子
 ----------
@@ -355,7 +360,7 @@ Map系の演算子に変換される場合もあります。
 `分岐演算子`_ の逆の動作を行い、SQLの ``UNION`` のように動きます。
 
 ..  list-table:: 合流演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -374,7 +379,7 @@ Map系の演算子に変換される場合もあります。
       - 1
 
 ..  list-table:: 合流演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 2 2 4
     :header-rows: 1
 
     * - 分類
@@ -415,7 +420,7 @@ Flow DSLからは次のように利用します。
 レコードを入力にとって、同じ内容のレコードを複数の出力にそれぞれ出力する演算子です。
 
 ..  list-table:: 複製演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -434,7 +439,7 @@ Flow DSLからは次のように利用します。
       - 任意
 
 ..  list-table:: 複製演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -484,7 +489,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 レコードの型そのものを変更したい場合には、 `変換演算子`_ を利用します。
 
 ..  list-table:: 更新演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -494,7 +499,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Update``
+      - ``Update`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -509,7 +514,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
       - 指定可能
 
 ..  list-table:: 更新演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 2
     :header-rows: 1
 
     * - 分類
@@ -528,12 +533,15 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
       - inと同様
       - 
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Update`
+
+
 更新演算子の実装
 ~~~~~~~~~~~~~~~~
 更新演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 更新演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 2
     :header-rows: 1
 
     * - 分類
@@ -571,7 +579,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
     public void edit(Hoge hoge) {
         hoge.setValue(100);
     }
-
+..  **
 
 変換演算子
 ----------
@@ -579,7 +587,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 主に「レコードから別のレコードを作成する」という目的で利用します。
 
 ..  list-table:: 変換演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -589,7 +597,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Convert``
+      - ``Convert`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -604,7 +612,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
       - 指定可能
 
 ..  list-table:: 変換演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -628,10 +636,12 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
       - inと同様
       - 変換前のデータ
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Convert`
+
+
 ..  note::
-    0.1.xではレコードから不要なプロパティを除去したり、
-    新たなプロパティを追加する際にもこの変換演算子を利用していました。
-    現在、そのような単純な用途では `射影演算子`_ や `拡張演算子`_ 、 `再構築演算子`_ の利用を推奨しています。
+    レコードから不要なプロパティを除去したり、新たなプロパティを追加する場合は
+    `射影演算子`_ や `拡張演算子`_ 、 `再構築演算子`_ の利用を推奨しています。
 
 
 変換演算子の実装
@@ -639,7 +649,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 変換演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 変換演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -683,6 +693,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
         foo.setValue(hoge.getValue());
         return foo;
     }
+..  **
 
 拡張演算子
 ----------
@@ -690,7 +701,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
 計算のために一時的にプロパティを追加したい場合などに利用することを想定しています。
 
 ..  list-table:: 拡張演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -709,7 +720,7 @@ Flow DSLからは演算子からの出力を複数回利用すると、複製演
       - 1
 
 ..  list-table:: 拡張演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 2
     :header-rows: 1
 
     * - 分類
@@ -758,7 +769,7 @@ Flow DSLからは次のように利用します。
 計算のために一時的に導入していたプロパティなどを除去したり、出力前に適切な型に変換することを想定としています。
 
 ..  list-table:: 射影演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -777,7 +788,7 @@ Flow DSLからは次のように利用します。
       - 1
 
 ..  list-table:: 射影演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 2
     :header-rows: 1
 
     * - 分類
@@ -827,7 +838,7 @@ Flow DSLからは次のように利用します。
 元の型と移し替える先の型のうち、両者に共通するプロパティのみをコピーします。
 
 ..  list-table:: 再構築演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -846,7 +857,7 @@ Flow DSLからは次のように利用します。
       - 1
 
 ..  list-table:: 再構築演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -897,7 +908,7 @@ Flow DSLからは次のように利用します。
 主に「レコードを分解して別のレコードを作成する」という目的で利用します。
 
 ..  list-table:: 抽出演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -907,7 +918,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.2.1
     * - 演算子注釈
-      - ``Extract``
+      - ``Extract`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -922,7 +933,7 @@ Flow DSLからは次のように利用します。
       - 指定可能
 
 ..  list-table:: 抽出演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 2
     :header-rows: 1
 
     * - 分類
@@ -941,12 +952,15 @@ Flow DSLからは次のように利用します。
       - 任意
       - 任意個数を指定可
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Extract`
+
+
 抽出演算子の実装
 ~~~~~~~~~~~~~~~~
 抽出演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 抽出演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -1004,6 +1018,7 @@ Flow DSLからは次のように利用します。
         b.setValue(hoge.getB1());
         bResult.add(b);
     }
+..  **
 
 結合演算子
 ==========
@@ -1024,7 +1039,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``MasterCheck``
+      - ``MasterCheck`` [#]_
     * - 本体の実装
       - 不要
     * - 性能特性
@@ -1041,7 +1056,7 @@ Flow DSLからは次のように利用します。
       - マスタ選択を利用可能
 
 ..  list-table:: マスタ確認演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 2 2 2 4
     :header-rows: 1
 
     * - 分類
@@ -1070,6 +1085,7 @@ Flow DSLからは次のように利用します。
       - txと同様
       - マスタが見つからなかったもの
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.MasterCheck`
 ..  [#] 最適化によりMapになる場合もあります
 
 マスタ確認演算子の実装
@@ -1077,7 +1093,7 @@ Flow DSLからは次のように利用します。
 マスタ確認演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: マスタ確認演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1118,6 +1134,7 @@ Flow DSLからは次のように利用します。
     public abstract boolean exists(
             @Key(group = "id") HogeMst master,
             @Key(group = "masterId") HogeTrn tx);
+..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
 非等価結合条件を記述すことも可能です。
@@ -1140,7 +1157,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``MasterJoin``
+      - ``MasterJoin`` [#]_
     * - 本体の実装
       - 不要
     * - 性能特性
@@ -1157,7 +1174,7 @@ Flow DSLからは次のように利用します。
       - マスタ選択を利用可能
 
 ..  list-table:: マスタ結合演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 3
     :header-rows: 1
 
     * - 分類
@@ -1186,15 +1203,16 @@ Flow DSLからは次のように利用します。
       - txと同様
       - マスタが見つからなかったもの
 
+..  [#] 結合モデルについては :doc:`../dmdl/user-guide` を参照してください。
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.MasterJoin`
 ..  [#] 最適化によりMapになる場合もあります
-..  [#] :doc:`../dmdl/user-guide`
 
 マスタ結合演算子の実装
 ~~~~~~~~~~~~~~~~~~~~~~
 マスタ結合演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: マスタ結合演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1237,6 +1255,7 @@ Flow DSLからは次のように利用します。
      */
     @MasterJoin
     public abstract Hoge join(HogeMst master, HogeTrn tx);
+..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
 非等価結合条件を記述すことも可能です。
@@ -1258,7 +1277,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``MasterBranch``
+      - ``MasterBranch`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -1275,7 +1294,7 @@ Flow DSLからは次のように利用します。
       - マスタ選択を利用可能
 
 ..  list-table:: マスタ分岐の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1299,6 +1318,7 @@ Flow DSLからは次のように利用します。
       - txと同様
       - 任意の個数を指定可
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.MasterBranch`
 ..  [#] 最適化によりMapになる場合もあります
 
 マスタ分岐演算子の実装
@@ -1306,7 +1326,7 @@ Flow DSLからは次のように利用します。
 マスタ分岐演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: マスタ分岐演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1352,7 +1372,7 @@ Flow DSLからは次のように利用します。
 
 ..  code-block:: java
 
-    public abstract class <Operator-Class> {
+    public abstract class OperatorClass {
         ...
 
         /**
@@ -1400,6 +1420,7 @@ Flow DSLからは次のように利用します。
 
         ...
     }
+..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
 非等価結合条件を記述すことも可能です。
@@ -1421,7 +1442,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``MasterJoinUpdate``
+      - ``MasterJoinUpdate`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -1438,7 +1459,7 @@ Flow DSLからは次のように利用します。
       - マスタ選択を利用可能
 
 ..  list-table:: マスタつき更新演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 2
     :header-rows: 1
 
     * - 分類
@@ -1467,6 +1488,7 @@ Flow DSLからは次のように利用します。
       - txと同様
       - マスタが見つからなかったもの
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.MasterJoinUpdate`
 ..  [#] 最適化によりMapになる場合もあります
 
 マスタつき更新演算子の実装
@@ -1474,7 +1496,7 @@ Flow DSLからは次のように利用します。
 マスタつき更新演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: マスタつき更新演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1522,6 +1544,7 @@ Flow DSLからは次のように利用します。
             @Key(group = "itemId") HogeTrn tx) {
         tx.setPrice(master.getPrice());
     }
+..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
 非等価結合条件を記述すことも可能です。
@@ -1533,7 +1556,7 @@ Flow DSLからは次のように利用します。
 非常に複雑な操作を表現できますが、コンパイラの最適化を適用しにくかったり、グループごとの大きさに制限があるなどの問題もあります。
 
 ..  list-table:: グループ結合演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -1543,7 +1566,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``CoGroup``
+      - ``CoGroup`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -1560,7 +1583,7 @@ Flow DSLからは次のように利用します。
       - 
 
 ..  list-table:: グループ結合演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 5
     :header-rows: 1
 
     * - 分類
@@ -1579,12 +1602,15 @@ Flow DSLからは次のように利用します。
       - 任意
       - 任意の個数
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.CoGroup`
+
+
 グループ結合演算子の実装
 ~~~~~~~~~~~~~~~~~~~~~~~~
 グループ結合演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: グループ結合演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1656,6 +1682,8 @@ Flow DSLからは次のように利用します。
             }
         }
     }
+..  **
+
 
 巨大な入力グループへの対応
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1670,7 +1698,7 @@ Flow DSLからは次のように利用します。
 ``InputBuffer.ESCAPE`` を指定した場合、巨大な入力データを取り扱えるようになる代わりに、
 演算子メソッドの引数に指定したListに多大な制約がかかります。
 
-* それぞれのListからはひとつずつしかオブジェクトを取り出せなくなる。
+* それぞれの ``List`` からはひとつずつしかオブジェクトを取り出せなくなる。
 * 2つ以上オブジェクトを取り出した場合、最後に取り出したオブジェクト以外はまったく別の内容に変更されている可能性がある。
 * リストから取り出したオブジェクトを変更しても、リストの別の要素にアクセスしただけで変更したオブジェクトの内容が失われる可能性がある。
 
@@ -1727,7 +1755,7 @@ Flow DSLからは次のように利用します。
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.processor.InputBuffer.ESCAPE``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.InputBuffer`
 
 分割演算子
 ----------
@@ -1735,7 +1763,7 @@ Flow DSLからは次のように利用します。
 この演算子への入力は、結合モデルである必要があります。
 
 ..  list-table:: 分割演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -1745,7 +1773,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Split``
+      - ``Split`` [#]_
     * - 本体の実装
       - 不要
     * - 性能特性
@@ -1762,7 +1790,7 @@ Flow DSLからは次のように利用します。
       - 
 
 ..  list-table:: 分割演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths:  1 1 1 1 3
     :header-rows: 1
 
     * - 分類
@@ -1786,12 +1814,15 @@ Flow DSLからは次のように利用します。
       - 特殊
       - 結合モデルの右項の型
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Split`
+
+
 分割演算子の実装
 ~~~~~~~~~~~~~~~~
 分割演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 分割演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 1 1 1 1 3
     :header-rows: 1
 
     * - 分類
@@ -1840,6 +1871,8 @@ Flow DSLからは次のように利用します。
             HogeFoo joined,
             Result<Hoge> hoge,
             Result<Foo> foo);
+..  **
+
 
 集計演算子
 ==========
@@ -1852,7 +1885,7 @@ Flow DSLからは次のように利用します。
 また、グループ化条件や集計方法は集計モデルに指定したものを利用します。
 
 ..  list-table:: 単純集計演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -1862,7 +1895,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Summarize``
+      - ``Summarize`` [#]_
     * - 本体の実装
       - 不要
     * - 性能特性
@@ -1879,7 +1912,7 @@ Flow DSLからは次のように利用します。
       - 
 
 ..  list-table:: 単純集計演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 2 2 1 3
     :header-rows: 1
 
     * - 分類
@@ -1898,28 +1931,30 @@ Flow DSLからは次のように利用します。
       - 任意
       - 集計結果、集計モデルの型
 
-..  [#] :doc:`../dmdl/user-guide`
+..  [#] 集計モデルについては :doc:`../dmdl/user-guide` を参照してください。
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Summarize`
 
-NULLに対する集約関数の動作
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-単純集計演算子を利用して集約するフィールドにNULLが含まれている場合、
+
+NULL値に対する集約関数の動作
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+単純集計演算子を利用して集約するフィールドに ``null`` が含まれている場合、
 それぞれ以下のように動作します。
 
-..  list-table:: NULLに対する集約関数の動作
+..  list-table:: nullに対する集約関数の動作
     :widths: 3 7
     :header-rows: 1
 
     * - 集約関数
       - NULL値が含まれる場合の動作
-    * - any
+    * - ``any``
       - NULL値も他の値と同様に取り扱う
-    * - sum
+    * - ``sum``
       - ``NullPointerException`` をスローする
-    * - max
+    * - ``max``
       - ``NullPointerException`` をスローする
-    * - min
+    * - ``min``
       - ``NullPointerException`` をスローする
-    * - count
+    * - ``count``
       - NULL値も他の値と同様に取り扱う
 
 単純集計演算子の実装
@@ -1927,7 +1962,7 @@ NULLに対する集約関数の動作
 単純集計演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 単純集計演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -1963,6 +1998,7 @@ NULLに対する集約関数の動作
      */
     @Summarize
     public abstract HogeTotal summarize(Hoge hoge);
+..  **
 
 部分集約
 ~~~~~~~~
@@ -1970,7 +2006,7 @@ NULLに対する集約関数の動作
 この要素には ``PartialAggregation`` [#]_ を指定でき、指定した値ごとに次のような動作をします。
 
 ..  list-table:: 部分集約の設定
-    :widths: 4 10
+    :widths: 3 7
     :header-rows: 1
 
     * - 指定する値
@@ -1989,10 +2025,9 @@ NULLに対する集約関数の動作
 
 ..  attention::
     基本的に、単純集計演算子では部分集約を行うべきです。
-    現在は同機能の十分で包括的なテストが完了していない関係で、
-    初期値は ``DEFAULT`` になっています。
+    初期値は ``PARTIAL`` になっています。
 
-..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
 ..  [#] コンパイラオプションの設定については :doc:`user-guide` を参照してください
 
 畳み込み演算子
@@ -2001,7 +2036,7 @@ NULLに対する集約関数の動作
 畳み込みの前後でレコードの型は一致していなければならず、また畳み込みの順序は規定されません。
 
 ..  list-table:: 畳み込み演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2011,7 +2046,7 @@ NULLに対する集約関数の動作
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Fold``
+      - ``Fold`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -2028,7 +2063,7 @@ NULLに対する集約関数の動作
       - 
 
 ..  list-table:: 畳み込み演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -2047,12 +2082,15 @@ NULLに対する集約関数の動作
       - inと同様
       - 畳みこみ結果
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Fold`
+
+
 畳み込み演算子の実装
 ~~~~~~~~~~~~~~~~~~~~
 畳み込み演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: 畳み込み演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -2110,6 +2148,7 @@ NULLに対する集約関数の動作
         // @Summarizeを手動で行うイメージで、leftに次々とrightを加える
         left.setValue(left.getValue() + right.getValue());
     }
+..  **
 
 畳み込み演算子でも `部分集約`_ の指定が可能です。
 集約の指定方法は `単純集計演算子`_ と同様です。
@@ -2125,7 +2164,7 @@ NULLに対する集約関数の動作
 この演算子は、 `グループ結合演算子`_ を単一の入力に対して行うものです。
 
 ..  list-table:: グループ整列演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2135,7 +2174,7 @@ NULLに対する集約関数の動作
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``GroupSort``
+      - ``GroupSort`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -2152,7 +2191,7 @@ NULLに対する集約関数の動作
       - 
 
 ..  list-table:: グループ整列演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -2171,12 +2210,15 @@ NULLに対する集約関数の動作
       - 任意
       - 任意個数を指定可
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.GroupSort`
+
+
 グループ整列演算子の実装
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 グループ整列演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: グループ整列演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 2
     :header-rows: 1
 
     * - 分類
@@ -2213,7 +2255,7 @@ NULLに対する集約関数の動作
 
     /**
      * レコードHogeを名前ごとに年齢の若い順に並べ、先頭と末尾だけをそれぞれ結果に流す。
-     * @param joined グループごとのリスト
+     * @param hogeList グループごとのリスト
      * @param first グループごとの先頭要素
      * @param last グループごとの末尾要素
      */
@@ -2225,6 +2267,7 @@ NULLに対する集約関数の動作
         first.add(hogeList.get(0));
         last.add(hogeList.get(hogeList.size() - 1));
     }
+..  **
 
 なお、グループ整列演算子で巨大な入力グループを取り扱いたい場合、
 `グループ結合演算子`_ と同様に演算子注釈の ``inputBuffer`` 要素を指定します。
@@ -2241,7 +2284,7 @@ Flow DSLで定義したフロー部品を演算子として利用します。
 この演算子の入出力は、元となったフロー部品の入出力と一致します。
 
 ..  list-table:: フロー演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2276,7 +2319,7 @@ Flow DSLで定義したフロー部品を演算子として利用します。
     通常は明示的に指定する必要はありません。
 
 ..  list-table:: チェックポイント演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2295,7 +2338,7 @@ Flow DSLで定義したフロー部品を演算子として利用します。
       - 1
 
 ..  list-table:: チェックポイント演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -2315,8 +2358,8 @@ Flow DSLで定義したフロー部品を演算子として利用します。
       - 
 
 ..  note::
-    現在の実装では、チェックポイント演算子の前後でMap Reduceジョブが区切られます。
-    Map Reduceジョブの終わりでは、分散ファイルシステム上にジョブの結果が一時的に出力されます。
+    現在の実装では、チェックポイント演算子の前後でMapReduceジョブが区切られます。
+    MapReduceジョブの終わりでは、分散ファイルシステム上にジョブの結果が一時的に出力されます。
     そのため、チェックポイント以降にノードに不具合が発生した場合にも、
     チェックポイント以前の情報は多くの場合復旧可能です。
 
@@ -2343,7 +2386,7 @@ Flow DSLからは次のように利用します。
 ログには以下のレベルがあります。
 
 ..  list-table:: ログのレベル
-    :widths: 4 10
+    :widths: 3 7
     :header-rows: 1
 
     * - レベル
@@ -2360,7 +2403,7 @@ Flow DSLからは次のように利用します。
 このうち、 ``DEBUG`` はコンパイラの設定で有効または無効を切り替えられます。
 
 ..  list-table:: ロギング演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2370,7 +2413,7 @@ Flow DSLからは次のように利用します。
     * - 導入
       - 0.1
     * - 演算子注釈
-      - ``Logging``
+      - ``Logging`` [#]_
     * - 本体の実装
       - 必要
     * - 性能特性
@@ -2387,7 +2430,7 @@ Flow DSLからは次のように利用します。
       - 
 
 ..  list-table:: ロギング演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -2406,12 +2449,15 @@ Flow DSLからは次のように利用します。
       - inと同様
       - 
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Logging`
+
+
 ロギング演算子の実装
 ~~~~~~~~~~~~~~~~~~~~
 ロギング演算子の演算子メソッドには次のような情報を指定します。
 
 ..  list-table:: ロギング演算子の実装
-    :widths: 2 2 3 2 10
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -2438,7 +2484,8 @@ Flow DSLからは次のように利用します。
 メソッドの戻り値で返した文字列がログとして出力されます。
 また、ログはシステムに規定された方法で処理されます [#]_ 。
 
-ロギング演算子の演算子注釈は、 ``Logging.Level`` を指定することでログのレベルを指定できます。
+ロギング演算子の演算子注釈は、 ``Logging.Level`` [#]_ を指定することでログのレベルを指定できます。
+この属性を指定しない場合は ``INFO`` レベルが使用されます。
 レベルについては `ロギング演算子`_ を参照して下さい。
 
 以下は実装例です。
@@ -2453,10 +2500,11 @@ Flow DSLからは次のように利用します。
     public String error(Hoge hoge) {
         return MessageFormat.format("hoge = {0}", hoge.getValueOption());
     }
-
+..  **
 
 ..  [#] ログの処理方法は、内部的には ``Report API`` に処理を移譲しています。
     同APIについては :doc:`user-guide` を参照して下さい。
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Logging.Level`
 
 空演算子
 --------
@@ -2464,7 +2512,7 @@ Flow DSLからは次のように利用します。
 `フロー演算子`_ の利用しない入力に接続することを想定しています。
 
 ..  list-table:: 空演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2483,7 +2531,7 @@ Flow DSLからは次のように利用します。
       - 1
 
 ..  list-table:: 空演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -2521,7 +2569,7 @@ Flow DSLからは次のように利用します。
 
 
 ..  list-table:: 停止演算子の概要
-    :widths: 4 6
+    :widths: 5 5
     :header-rows: 1
 
     * - 項目
@@ -2540,7 +2588,7 @@ Flow DSLからは次のように利用します。
       - 0
 
 ..  list-table:: 停止演算子の入出力
-    :widths: 2 2 2 2 8
+    :widths: 1 1 1 1 1
     :header-rows: 1
 
     * - 分類
@@ -2590,12 +2638,12 @@ Flow DSLからは次のように利用します。
 
 それぞれの演算子注釈には共通して ``selection`` という注釈要素を指定可能です。
 この要素にメソッド名を指定し、同じ演算子クラス内に指定したメソッド名で、
-注釈 ``MasterSelection`` を付与したパブリックメソッドを宣言します。
+注釈 ``MasterSelection`` [#]_ を付与したパブリックメソッドを宣言します。
 
 このメソッドは次のように宣言します。
 
 ..  list-table:: マスタ選択の実装
-    :widths: 2 2 3 2 10
+    :widths: 2 2 2 2 3
     :header-rows: 1
 
     * - 分類
@@ -2659,6 +2707,7 @@ Flow DSLからは次のように利用します。
         }
         return null;
     }
+..  **
 
     /**
      * マスタの価格をトランザクションデータに設定する。
@@ -2671,6 +2720,9 @@ Flow DSLからは次のように利用します。
             @Key(group = "itemId") HogeTrn tx) {
         tx.setPrice(master.getPrice());
     }
+..  **
+
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.MasterSelection`
 
 
 多重化抑制
@@ -2681,7 +2733,7 @@ Flow DSLからは次のように利用します。
 このため、同じデータに対して処理が複数回実行される場合があり、
 毎回異なる結果を出力するような演算子では期待した結果が得られない場合があります。
 
-多重化を抑制する場合には、次のように注釈 ``Volatile`` を演算子メソッドに指定します。
+多重化を抑制する場合には、次のように注釈 ``Volatile`` [#]_ を演算子メソッドに指定します。
 
 ..  code-block:: java
 
@@ -2699,6 +2751,7 @@ Flow DSLからは次のように利用します。
             return Status.BIG;
         }
     }
+..  **
 
 上記の場合、レコードはそれぞれ ``SMALL`` か ``BIG`` の
 いずれかのみに出力されるのが通常です。
@@ -2712,6 +2765,9 @@ Flow DSLからは次のように利用します。
 * 実行時の時刻などを利用する
 * 入力の個数を計測する
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Volatile`
+
+
 除去抑制
 --------
 除去抑制は演算子メソッドに追加で指定する注釈で、
@@ -2721,7 +2777,7 @@ Flow DSLからは次のように利用します。
 このため、副作用のみを期待するような演算子を配置しても、期待した動作を行いません。
 
 
-除去を抑制する場合には、次のように注釈 ``Sticky`` を演算子メソッドに指定します。
+除去を抑制する場合には、次のように注釈 ``Sticky`` [#]_ を演算子メソッドに指定します。
 
 ..  code-block:: java
 
@@ -2734,6 +2790,7 @@ Flow DSLからは次のように利用します。
     public void raise(Hoge hoge) {
         throw new IllegalStateException();
     }
+..  **
 
 上記の更新演算子は直後に `停止演算子`_ によって出力を抑制され、
 ジョブフローの出力に接続されていないものとします。
@@ -2742,3 +2799,6 @@ Flow DSLからは次のように利用します。
 
 上記のように除去抑制が指定されている場合にはこの演算子は消去されず、
 この演算子の入力にデータが流れた瞬間に例外がスローされます。
+
+..  [#] :javadoc:`com.asakusafw.vocabulary.operator.Sticky`
+

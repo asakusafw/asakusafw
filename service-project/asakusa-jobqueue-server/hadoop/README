@@ -1,0 +1,9 @@
+Asakusa JobQueue Server for Hadoop Jobs
+
+A JobQueue implementation to manage Asakusa Hadoop Jobs.
+
+== jobqueue.properties
+
+core.worker = 4
+
+hadoop.log.dir = /tmp/hadoop-${USER}/logs

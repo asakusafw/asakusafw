@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Asakusa Framework Aggregator POM</name>
+	<groupId>com.asakusafw</groupId>
+	<artifactId>asakusa-root-project</artifactId>
+	<version>0.4-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<description>Asakusa Framework Aggregator POM</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<inceptionYear>2011</inceptionYear>
+	<organization>
+		<name>Asakusa Framework Team</name>
+		<url>http://asakusafw.com</url>
+	</organization>
+
+	<modules>
+		<module>asakusa-parent</module>
+		<module>utils-project</module>
+		<module>core-project</module>
+		<module>dsl-project</module>
+		<module>dmdl-project</module>
+		<module>testing-project</module>
+		<module>directio-project</module>
+		<module>windgate-project</module>
+		<module>thundergate-project</module>
+		<module>yaess-project</module>
+		<module>operation-project</module>
+		<module>development-project</module>
+		<module>legacy-project</module>
+		<module>distribution-project</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<charset>UTF-8</charset>
+					<docencoding>UTF-8</docencoding>
+					<locale>en</locale>
+					<doctitle>Asakusa Framework API References (Version ${project.version})</doctitle>
+					<windowtitle>Asakusa Framework API References (Version ${project.version})</windowtitle>
+					<excludePackageNames>com.asakusafw.modelgen:com.asakusafw.testtools</excludePackageNames>
+                    <overview>asakusa-parent/src/main/javadoc/overview-summary.html</overview>
+				</configuration>
+				<executions>
+					<execution>
+						<id>non-aggregate</id>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

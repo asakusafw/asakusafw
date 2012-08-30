@@ -1,0 +1,26 @@
+YAESS Script Handlers via JSch.
+
+==
+# <position> = 0, 1, 2, ...
+# <prefix command token> can contain "@[position],"
+# this will be replaced as original command tokens (0-origin position)
+hadoop = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
+hadoop.ssh.user=asakusa
+hadoop.ssh.host=localhost
+hadoop.ssh.port=22
+hadoop.ssh.privateKey=${HOME}/.ssh/id_dsa
+hadoop.ssh.passPhrase=
+hadoop.env.ASAKUSA_HOME = $<remote ASAKUSA_HOME>
+hadoop.command.<position> = $<prefix command token>
+hadoop.cleanup = true|false
+hadoop.env.<key> = $<extra remote environment variables>
+
+command.<profile-name> = com.asakusafw.yaess.jsch.SshCommandScriptHandler
+command.<profile-name>.ssh.user=asakusa
+command.<profile-name>.ssh.host=localhost
+command.<profile-name>.ssh.port=22
+command.<profile-name>.ssh.privateKey=${HOME}/.ssh/id_dsa
+command.<profile-name>.ssh.passPhrase=
+command.<profile-name>.env.ASAKUSA_HOME = $<remote ASAKUSA_HOME>
+command.<profile-name>.command.<position> = $<prefix command token>
+command.<profile-name>.env.<key> = $<extra remote environment variables>

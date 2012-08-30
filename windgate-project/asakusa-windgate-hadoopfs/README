@@ -1,0 +1,16 @@
+
+## Hadoop File System
+resource.<name>=com.asakusafw.windgate.hadoopfs.HadoopFsProvider
+#resource.<name>.compression=org.apache.hadoop.io.compress.DefaultCodec
+#resource.<name>.basePath=hdfs://${OTHERHOST}:8020/user/asakusa
+
+## Hadoop File System via SSH
+resource.<name>=com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider
+resource.<name>.target=/home/asakusa/asakusa/windgate-ssh
+resource.<name>.user=asakusa
+resource.<name>.host=localhost
+resource.<name>.port=22
+resource.<name>.privateKey=${HOME}/.ssh/id_rsa
+resource.<name>.passPhrase=
+resource.<name>.env.<key>=$<value>
+#resource.<name>.compression=org.apache.hadoop.io.compress.DefaultCodec

@@ -1,7 +1,6 @@
 ====================================
 アプリケーションテストスタートガイド
 ====================================
-
 この文書では :doc:`../introduction/start-guide` の構成で、バッチアプリケーションをテストする方法について簡単に紹介します。
 テストのより詳しい情報は :doc:`user-guide` を参照して下さい。
 
@@ -26,12 +25,13 @@
                 actual, is(ShipmentStatus.COMPLETED));
     }
 
-..  warning::
-    上記の手順だけではフレームワークAPIを利用した演算子メソッドをテストできません。
+..  attention::
+    フレームワークAPIを利用した演算子メソッドをテストする場合は、
+    追加の手順が必要となります。
     フレームワークAPIについては :doc:`../dsl/user-guide` を、
     そのテスト方法については :doc:`user-guide` をそれぞれ参照してください。
 
-..  [#] このクラスは「演算子実装クラス」と呼ばれ、Opeerator DSLコンパイラが自動的に生成します。
+..  [#] このクラスは「演算子実装クラス」と呼ばれ、Operator DSLコンパイラが自動的に生成します。
     詳しくは :doc:`../dsl/start-guide` を参照してください。
 
 結果型を利用する演算子のテスト
@@ -73,8 +73,8 @@
 
 なお、結果型を引数に指定する演算子については :doc:`../dsl/operators` を参照してください。
 
-..  [#] ``com.asakusafw.runtime.core.Result``
-..  [#] ``com.asakusafw.runtime.testing.MockResult``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
+..  [#] :javadoc:`com.asakusafw.runtime.testing.MockResult`
 
 
 データフローのテスト
@@ -135,7 +135,7 @@ Asakusa Frameworkはこの一連の処理を自動的に行う
 
         比較条件シートの例
 
-テストデータのテンプレートを生成するには、mvnコマンドを利用して生成ツールを実行します。
+テストデータのテンプレートを生成するには、 ``mvn`` コマンドを利用して生成ツールを実行します。
 これはMavenの ``generate-sources`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
 
 ..  code-block:: sh
@@ -147,11 +147,11 @@ Asakusa Frameworkはこの一連の処理を自動的に行う
 このファイルには、上記の3種類のシートが含められます。
 
 なお、このテンプレートはDMDLで記述されたデータモデルを元に作成しています。
-DMDLに利用方法は :doc:`../dmdl/start-guide` を参照してください。
+DMDLの利用方法は :doc:`../dmdl/start-guide` を参照してください。
 
 ..  note::
     ThunderGateを利用する場合、DMDLの記述自体をデータベースのテーブル情報から生成できます。
-    詳しくは :doc:`../dmdl/with-thundergate` を参照してください。
+    詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
 
 入力、期待データの作成
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -182,7 +182,7 @@ Excelファイルのテストデータテンプレートを利用する場合、
 生成したExcelファイルの ``rule`` という名前のシートで指定できます。
 
 レコードのキーを指定する場合には、対象プロパティの「値の比較」という項目に ``検査キー[Key]`` を選択します。
-キーとならないプロパティは、「値の比較」や「NULLの比較」をそれぞれ選択してください。
+キーとならないプロパティは、「値の比較」や「NULLの比較」にそれぞれ比較の条件を選択してください。
 プロパティを比較しない場合には、「値の比較」に ``検査対象外[-]`` を、「NULLの比較」に ``通常比較[-]`` を
 それぞれ選択します。
 
@@ -252,7 +252,7 @@ Excelファイルのテストデータテンプレートを利用する場合、
 ルートパッケージ (無名パッケージ) からの相対パスを指定できます。
 たとえば、 ``/com/example/data.xls#hoge`` と指定すると
 ``com.example`` パッケージの ``data.xls`` ファイルを利用します。
-様々なテストから共通で利用する場合
+様々なテストから共通で利用する入力データは、この形式で指定するとよいでしょう。
 
 上記の一連の結果を、 ``In<データモデル型>`` [#]_ の変数に保持します。
 
@@ -292,10 +292,10 @@ Excelファイルのテストデータテンプレートを利用する場合、
     FlowDescription flowPart = new StockJob(shipmentIn, stockIn, shipmentOut, stockOut);
     tester.runTest(flowPart);
 
-..  [#] ``com.asakusafw.testdriver.FlowPartTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.FlowPartTester`
 ..  [#] ここの名前は他の名前と重複せず、アルファベットや数字のみで構成して下さい
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
 
 ジョブフローのテスト
 ~~~~~~~~~~~~~~~~~~~~
@@ -323,7 +323,7 @@ Excelファイルのテストデータテンプレートを利用する場合、
 * 入出力を ``In`` や ``Out`` に保持しない
 * ``runTest`` メソッドにはジョブフロークラス( ``.class`` )を指定する
 
-..  [#] ``com.asakusafw.testdriver.JobFlowTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.JobFlowTester`
 
 バッチのテスト
 ~~~~~~~~~~~~~~
@@ -347,8 +347,8 @@ Excelファイルのテストデータテンプレートを利用する場合、
 
 利用方法は `ジョブフローのテスト`_ とほぼ同様ですが、以下の点が異なります。
 
-* 入出力を指定する前に、それらを定義したジョブフローのID [#]_ を指定する
+* 入出力を指定する前に、 ``jobflow`` メソッドを経由して入出力を利用するジョブフローのID [#]_ を指定する
 * ``runTest`` メソッドにはバッチクラス( ``.class`` )を指定する
 
-..  [#] ``com.asakusafw.testdriver.BatchTester``
+..  [#] :javadoc:`com.asakusafw.testdriver.BatchTester`
 ..  [#] 注釈 ``@JobFlow`` の ``name`` に指定した文字列を利用して下さい

@@ -1,7 +1,6 @@
 ======================
 WindGateユーザーガイド
 ======================
-
 この文書では、WindGateの利用方法について紹介します。
 WindGateの導入方法については :doc:`../administration/deployment-with-windgate` を参照してください。
 
@@ -18,7 +17,7 @@ WindGateのプロファイルは、 ``$ASAKUSA_HOME/windgate/profile/<プロフ�
 それぞれの構成ファイルには、Javaの一般的なプロパティファイルの文法で、主に下記のセクションを記述します。
 
 ..  list-table:: プロパティファイルの項目
-    :widths: 10 60
+    :widths: 3 7
     :header-rows: 1
 
     * - セクション名
@@ -46,7 +45,7 @@ WindGate本体の設定は、構成ファイル内の ``core`` セクション�
 
 同時に実行するデータ転送の設定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-WindGateは、一度の処理で複数のリソースペア間でのデータ転送を行います。
+WindGateは、一度の処理で複数のリソース間でのデータ転送を行います。
 それぞれのデータ転送を同時に実行するには、次の設定を追加します。
 
 ..  list-table:: 同時に実行するデータ転送の設定
@@ -99,7 +98,7 @@ WindGateのセッションはジョブフローの先頭でインポートを行
     * - 名前
       - 値
     * - ``session``
-      - ``com.asakusafw.windgate.file.session.FileSessionProvider``
+      - :javadoc:`com.asakusafw.windgate.file.session.FileSessionProvider`
     * - ``session.directory``
       - セッション情報を保持させるディレクトリ
 
@@ -121,15 +120,14 @@ WindGateのセッションはジョブフローの先頭でインポートを行
 WindGateは二つのリソースの間でデータを転送するツールです。
 この転送時に二つのリソースを仲立ちするのが「プロセス」で、入力元からデータを取り出して、出力先にそのデータを書き出す処理を行います。
 
-また、WindGateは一度の処理内で、複数のリソースペア間のデータ転送を行います。
-入力と出力のリソースペアごとにプロセスが作成され、同時に実行するプロセスの個数は `同時に実行するデータ転送の設定`_ で指定できます。
+また、WindGateは一度の処理内で、複数のリソース間のデータ転送を行います。
+入力と出力の対になるリソース間ごとにプロセスが作成され、同時に実行するプロセスの個数は `同時に実行するデータ転送の設定`_ で指定できます。
 
 プロセスの設定は、構成ファイル内の ``process.basic`` セクション内に記述します。
 
 ..  note::
     ここでのセクション名が ``process.basic`` となっているのは、このプロセスが「通常の方法でデータ転送を行う」という役割を持っているためです。
     将来、キャッシュの機能などがサポートされる際には、 ``process`` セクションも増える予定です。
-    現在のところ、 `通常のデータ転送プロセス`_ のみが提供されています。
 
 ..  note::
     ここでの「プロセス」はUNIXのプロセスとは別物です。
@@ -146,10 +144,37 @@ WindGateは二つのリソースの間でデータを転送するツールです
     * - 名前
       - 値
     * - ``process.basic``
-      - ``com.asakusafw.windgate.core.process.BasicProcessProvider``
+      - :javadoc:`com.asakusafw.windgate.core.process.BasicProcessProvider`
 
 この項目には、特に追加の設定はありません。
 
+.. _windgate-userguide-retryable-plugin:
+
+再試行可能なデータ転送プロセス
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+再試行可能なデータ転送プロセスを利用するには、 ``process.basic`` セクションに以下のように記述します。
+
+..  list-table:: 再試行可能なデータ転送プロセスの設定
+    :widths: 10 40
+    :header-rows: 1
+
+    * - 名前
+      - 値
+    * - ``process.basic``
+      - :javadoc:`com.asakusafw.windgate.retryable.RetryableProcessProvider`
+    * - ``process.basic.component``
+      - :javadoc:`com.asakusafw.windgate.core.process.BasicProcessProvider`
+    * - ``process.basic.retryCount``
+      - リトライ回数
+
+``process.basic.component`` は実際に利用するデータ転送プロセスを設定します。
+現在他に利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
+
+再試行可能なデータ転送プロセスでは、 ``process.basic.component`` に指定したデータ転送プロセスを利用し、通常の方法でデータ転送を行います。
+データ転送に失敗した場合、 ``process.retryCount`` に設定された回数を上限として、成功するまで上記プロセスを再実行します。
+
+なお、このプロセスを利用するには、プラグインライブラリに ``asakusa-windgate-retryable`` の追加が必要です。
+詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
 Hadoopクラスタの設定
 --------------------
@@ -169,24 +194,35 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
     * - 名前
       - 値
     * - ``resource.hadoop``
-      - ``com.asakusafw.windgate.hadoopfs.HadoopFsProvider``
+      - :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider`
+    * - ``resource.hadoop.basePath``
+      - 転送先のベースパス (省略可)
     * - ``resource.hadoop.compression``
       - 転送時に利用する圧縮コーデッククラス名 (省略可)
+
+``resource.hadoop.basePath`` は転送先のベースパスで、省略時はHadoopのデフォルト設定を利用します。
+URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシステム上のパスを指定できます。
 
 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
+上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
+
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
-..  attention::
-    このリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
-    WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
-    
-    なお、WindGateの本体は、環境変数に ``HADOOP_HOME`` が設定されている場合に ``$HADOOP_HOME/bin/hadoop`` コマンドを経由して起動します。
-    環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
+..  note::
+    通常の利用方法では、 ``resource.hadoop.basePath`` を設定する必要はありません。
+    既定値以外のファイルシステムを利用する場合などに利用することを想定しています。
 
 ..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+
+Hadoopを利用する際の環境変数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Hadoopクラスタと通信するリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
+WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
+
+環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
 
 SSH経由でリモートのHadoopを利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -200,24 +236,25 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
     * - 名前
       - 値
     * - ``resource.hadoop``
-      - ``com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider``
-    * - ``resource.hadoop.target``
-      - リモートコンピューター上の `Hadoopブリッジ`_ のインストール先
-    * - ``resource.hadoop.ssh.user``
+      - :javadoc:`com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider`
+    * - ``resource.hadoop.user``
       - ログイン先のユーザー名
-    * - ``resource.hadoop.ssh.host``
+    * - ``resource.hadoop.host``
       - SSHのリモートホスト名
-    * - ``resource.hadoop.ssh.port``
+    * - ``resource.hadoop.port``
       - SSHのリモートポート番号
-    * - ``resource.hadoop.ssh.privateKey``
+    * - ``resource.hadoop.privateKey``
       - ローカルの秘密鍵の位置
-    * - ``resource.hadoop.ssh.passPhrase``
+    * - ``resource.hadoop.passPhrase``
       - 秘密鍵のパスフレーズ
     * - ``resource.hadoop.compression``
       - 転送時に利用する圧縮コーデッククラス名 (省略可)
+    * - ``resource.hadoop.env.ASAKUSA_HOME``
+      - ログイン先の Asakusa Framework のインストール先
+    * - ``resource.hadoop.env.<name>``
+      - ログイン先の環境変数 ``<name>`` の値
 
-上記のうち、 ``resource.hadoop.ssh.privateKey`` には ``${変数名}`` という形式で環境変数を含められます。
-この項目には通常、 ``${HOME}/.ssh/id_rsa`` を指定します。
+上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 `同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
 この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
@@ -226,24 +263,41 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 および ``windgate/lib`` ディレクトリに JSch [#]_ の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
+リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です (SequenceFileの設定などを利用します)。
+必要な環境変数については `Hadoopを利用する際の環境変数`_ を参照してください。
+
+..  attention::
+    Asakusa Framework ``0.2.x`` 以前の設定項目 ``resource.hadoop.target`` はバージョン ``0.4.0`` より非推奨になりました。
+    代わりに ``resource.hadoop.env.ASAKUSA_HOME`` にログイン先の Asakusa Framework のインストール先を指定してください。
+
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 
 Hadoopブリッジ
 ^^^^^^^^^^^^^^
-WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリッジとよぶツールを経由します。
-このツールは通常 ``$ASAKUSA_HOME/windgate-ssh`` というディレクトリにインストールされているため、これをリモートコンピューター上にコピーして利用します。
-また、プロファイルの ``resource.hadoop.target`` にはインストール先のディレクトリ名をフルパスで指定してください。
+WindGateからSSHを経由してHadoopにアクセスする際に、HadoopブリッジとよぶAsakusa Frameworkのツールを経由します。
+このツールは通常 ``$ASAKUSA_HOME/windgate-ssh`` というディレクトリにインストールされていて、リモートコンピューターのAsakusa Frameworkにも同様のディレクトリが必要です。
+また、プロファイルの ``resource.hadoop.env.ASAKUSA_HOME`` には、リモートコンピューターのAsakusa Frameworkのインストール先をフルパスで指定してください。
 
-このツールの内部では、リモートコンピューター上の ``$HADOOP_HOME/bin/hadoop`` コマンドを利用してHadoopクラスタの操作を行います。
-環境変数 ``HADOOP_HOME`` は ``windgate-ssh/conf/env.sh`` 内で設定してください。
+このツールの内部では、以下の順序で ``hadoop`` コマンドを検索し、そのコマンドでHadoopクラスタの操作を行います。
 
-また、ログの設定は ``windgate-ssh/conf/logback.xml`` で行えます。
+* 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を ``hadoop`` コマンドとみなして利用します。
+* 環境変数 ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを利用します。
+* ``hadoop`` コマンドのパスが通っている場合、それを利用します。
+
+上記のうち、必要な環境変数をプロファイル内の ``resource.hadoop.env.<name>`` や、 リモート環境上の ``windgate-ssh/conf/env.sh`` ファイル内で設定してください。
+結果としてコマンドが見つからなかった場合にはエラーになります。
+
+また、ログの設定は ``$ASAKUSA_HOME/windgate-ssh/conf/logback.xml`` で行えます。
 WindGate本体と同様に、SLF4JとLogbackを利用しています [#]_ 。
 
-..  warning::
+..  attention::
     HadoopブリッジはSSH経由で実行され、標準入出力を利用してWindGateとデータのやり取りを行います。
-    ログを出力する際には、標準エラー出力やファイルなどに出力し、標準出力は利用しないようにしてください。
-    また、 ``windgate-ssh/conf/env.sh`` に指定した ``HADOOP_USER_CLASSPATH_FIRST`` の設定は、ログの設定を有効にするためにも必要です。
+    ブリッジのJavaプログラム内で標準出力を利用しようとした場合、標準エラー出力にリダイレクトされるようになっています。
+    そのため、ログの設定を行う際には、ログメッセージの出力先に注意してください。
+    通常はログ出力先に標準出力を設定しないようにしてください。
+
+    また、 ``$ASAKUSA_HOME/windgate-ssh/conf/env.sh`` に指定した ``HADOOP_USER_CLASSPATH_FIRST`` の設定は、ログの設定を有効にするためにも必要です。
+    特別な理由でHadoopのクラスパスを優先したい時を除き、 ``HADOOP_USER_CLASSPATH_FIRST`` の設定を変更しないようにしてください。
 
 ..  [#] `WindGateのログ設定`_ を参照
 
@@ -261,12 +315,14 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
     * - 名前
       - 値
     * - ``resource.local``
-      - ``com.asakusafw.windgate.stream.file.FileResourceProvider``
+      - :javadoc:`com.asakusafw.windgate.stream.file.FileResourceProvider`
     * - ``resource.local.basePath``
       - ベースパス
 
 ``resource.local.basePath`` は絶対パスで指定し、WindGateはそのパス以下のみを利用します。
 また、 ``resource.local.basePath`` には ``${環境変数名}`` の形式で環境変数を指定できます。
+
+上記の設定のうち、先頭の ``resource.local`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-stream`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
@@ -306,7 +362,7 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
     * - 名前
       - 値
     * - ``resource.jdbc``
-      - ``com.asakusafw.windgate.jdbc.JdbcResourceProvider``
+      - :javadoc:`com.asakusafw.windgate.jdbc.JdbcResourceProvider`
     * - ``resource.jdbc.driver``
       - JDBCドライバのクラス名
     * - ``resource.jdbc.url``
@@ -327,6 +383,8 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
       - テーブルの内容を削除する際の文形式 [#]_ (省略時には ``TRUNCATE`` 文)
     * - ``resource.jdbc.properties.<キー名>``
       - コネクションプロパティの値
+
+上記の設定のうち、先頭の ``resource.jdbc`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
@@ -360,8 +418,6 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環�
       - 備考
     * - ``ASAKUSA_HOME``
       - Asakusaのインストール先パス。
-    * - ``HADOOP_HOME``
-      - Hadoopのインストール先パス [#]_ 。
     * - ``HADOOP_USER_CLASSPATH_FIRST``
       - `WindGateのログ設定`_ 時にHadoopのログ機構を利用しないための設定。 ``true`` を指定する。
 
@@ -376,20 +432,29 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環�
 
     * - 名前
       - 備考
+    * - ``HADOOP_CMD``
+      - 利用する ``hadoop`` コマンドのパス。
+    * - ``HADOOP_HOME``
+      - Hadoopのインストール先パス。
     * - ``WINDGATE_OPTS``
       - WindGateを実行するJava VMの追加オプション。
 
-..  [#] 環境変数 ``$HADOOP_HOME`` が設定されている場合、WindGateは ``$HADOOP_HOME/bin/hadoop`` コマンドを利用してアプリケーションを起動します。
-    逆に ``$HADOOP_HOME`` が設定されていない場合、 ``java`` コマンドを利用してアプリケーションを起動します。
-    前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は ``$ASAKUSA_HOME/windgate/lib`` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
+なお、WindGateの本体は、以下の規約に従って起動します (上にあるものほど優先度が高いです)。
 
-    特別な理由がない限り、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内で ``HADOOP_HOME`` を設定しておくのがよいでしょう。
-    または、 :doc:`YAESS <../yaess/index>` を利用して外部から ``HADOOP_HOME`` を設定することも可能です。
+* 環境変数に ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` コマンドを経由して起動します。
+* 環境変数に ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを経由して起動します。
+* ``hadoop`` コマンドのパスが通っている場合、 ``hadoop`` コマンドを経由して起動します。
+* ``java`` コマンドから直接起動します [#]_ 。
 
+このため、 ``HADOOP_CMD`` と ``HADOOP_HOME`` の両方を指定した場合、 ``HADOOP_CMD`` の設定を優先します。
 
 ..  [#] :doc:`YAESS <../yaess/index>` を経由してWindGateを実行する場合、WindGateで利用する環境変数 ``ASAKUSA_HOME`` はYAESS側の設定で行えます。
     詳しくは :doc:`../yaess/user-guide` を参照してください。
+..  [#] ``hadoop`` コマンドが見つからない場合、WindGateは代わりに ``java`` コマンドを利用してアプリケーションを起動します。
+    前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は ``$ASAKUSA_HOME/windgate/lib`` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
 
+    特別な理由がない限り、 ``$ASAKUSA_HOME/windgate/conf/env.sh`` 内で ``HADOOP_CMD`` や ``HADOOP_HOME`` を設定しておくのがよいでしょう。
+    または、 :doc:`YAESS <../yaess/index>` を利用して外部から環境変数を設定することも可能です。
 
 WindGateのログ設定
 ~~~~~~~~~~~~~~~~~~
@@ -419,11 +484,15 @@ Logback以外のログの仕組みを利用する場合、 ``$ASAKUSA_HOME/windg
 
 プラグインライブラリの管理
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-WindGateの様々な機能は、プラグイン機構を利用して実現しています [#]_ 。
+WindGateの様々な機能は、プラグイン機構を利用して実現しています。
 それぞれのプラグイン、およびプラグインが利用する依存ライブラリは、 ``$ASAKUSA_HOME/windgate/plugin`` ディレクトリ直下に配置してください。
 
-..  [#] たとえば、WindGateはHadoopクラスタにアクセスする際にもプラグインが必要です。
-    標準的なものは導入時に自動的にプラグインが追加されますが、必要に応じてプラグインやライブラリを配置してください。
+たとえば、WindGateはHadoopクラスタにアクセスする際にもプラグインが必要です。
+標準的なものはWindGate導入時に自動的にプラグインが追加されますが、
+その他のプラグインは拡張モジュールとして提供されるため、
+必要に応じて拡張モジュールを導入してください。
+
+拡張モジュールの一覧やその導入方法については、 :doc:`../administration/deployment-extension-module` を参照してください。
 
 
 ローカルファイルシステムの入出力
@@ -433,7 +502,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 また、データモデルとバイトストリームをマッピングする ``DataModelStreamSupport`` [#]_ の実装クラスを作成します。
 この実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
 
-なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
+なお、以降の機能を利用するには次のライブラリやプラグインが必要です [#]_ 。
 
 ..  list-table:: WindGateで利用するライブラリ等
     :widths: 50 50
@@ -451,8 +520,8 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
       - DMDLコンパイラプラグイン
 
 
-..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport``
-
+..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport`
+..  [#] :doc:`../application/maven-archetype` の手順に従って、アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがデフォルトで利用可能になっています。
 
 CSV形式のDataModelStreamSupportの作成
 -------------------------------------
@@ -473,9 +542,6 @@ CSV形式 [#]_ に対応した ``DataModelStreamSupport`` の実装クラスを�
 このクラスは ``DataModelStreamSupport`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
 
 また、 単純な `ローカルファイルシステムを利用するインポーター記述`_ と `ローカルファイルシステムを利用するエクスポーター記述`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvImporterDescription`` 、後者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvExporterDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
-
-この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-windgate-dmdl`` を追加する必要があります。
-DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
 
 ..  [#] ここでのCSV形式は、RFC 4180 (http://www.ietf.org/rfc/rfc4180.txt) で提唱されている形式を拡張したものです。
     文字セットをASCIIの範囲外にも拡張したり、CRLF以外にもCRのみやLFのみも改行と見なしたり、ダブルクウォート文字の取り扱いを緩くしたりなどの拡張を加えています。
@@ -655,7 +721,7 @@ WindGateと連携してファイルからデータをインポートする場合
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.FsImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsImporterDescription`
 
 ローカルファイルシステムを利用するエクスポーター記述
 ----------------------------------------------------
@@ -713,7 +779,7 @@ WindGateと連携してジョブフローの処理結果をローカルのファ
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.FsExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.FsExporterDescription`
 
 
 データベースの入出力
@@ -723,7 +789,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 また、データモデルと ``PreparedStatement`` , ``ResultSet`` をマッピングする ``DataModelJdbcSupport`` [#]_ の実装クラスを作成します。
 この実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
 
-なお、以降の機能を利用するには次のライブラリやプラグインが必要です。
+なお、以降の機能を利用するには次のライブラリやプラグインが必要です [#]_ 。
 
 ..  list-table:: WindGateで利用するライブラリ等
     :widths: 50 50
@@ -740,7 +806,8 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
     * - ``asakusa-windgate-dmdl``
       - DMDLコンパイラプラグイン
 
-..  [#] ``com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport``
+..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
+..  [#] :doc:`../application/maven-archetype` の手順に従って、アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがデフォルトで利用可能になっています。
 
 DataModelJdbcSupportの自動生成
 ------------------------------
@@ -765,13 +832,6 @@ DataModelJdbcSupportの自動生成
 このクラスは ``DataModelJdbcSupport`` を実装し、 ``@windgate.jdbc.column`` で指定したカラムが利用可能です。
 
 また、 ``@windgate.jdbc.table`` を指定した場合、単純な `データベースを利用するインポーター記述`_ と `データベースを利用するエクスポーター記述`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcImporterDescription`` 、後者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcExporterDescription`` というクラス名で生成します。この自動生成されたインポーター/エクスポーター記述の骨格は指定されたテーブルのすべてのカラムを利用します。必要に応じて継承して利用してください。
-
-この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-windgate-dmdl`` を追加する必要があります。
-DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
-
-..  note::
-    Asakusa Framework 0.2.3 までの ``@windgate.column`` 属性も利用可能です。
-    0.2.4 以降では ``@windgate.jdbc.column`` の利用を推奨します。
 
 ..  [#] ``@windgate.jdbc.table`` の指定は必須ではありません。
 
@@ -808,7 +868,7 @@ WindGateと連携してデータベースのテーブルからデータをイン
 ``String getCondition()``
     インポーターが利用する抽出条件をSQLの条件式で指定します（省略可能）。
 
-    指定する文字列はMySQL形式の ``WHERE`` 以降の文字列（ ``WHERE`` の部分は不要）である必要があります。
+    指定する文字列はSQL文の ``WHERE`` 句以降の文字列（ ``WHERE`` の部分は不要）である必要があります。
     省略時にはテーブル全体を入力の対象にとります。
 
     ここには ``${変数名}`` の形式で、バッチ起動時の引数やあらかじめ宣言された変数を利用できます。
@@ -848,7 +908,7 @@ WindGateと連携してデータベースのテーブルからデータをイン
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.JdbcImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcImporterDescription`
 
 データベースを利用するエクスポーター記述
 ----------------------------------------
@@ -912,7 +972,7 @@ WindGateと連携してジョブフローの処理結果をデータベースの
         }
     }
 
-..  [#] ``com.asakusafw.vocabulary.windgate.JdbcExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcExporterDescription`
 
 WindGateと連携したテスト
 ========================
@@ -921,5 +981,6 @@ WindGateを利用したジョブフローやバッチのテストは、Asakusa F
 
 ..  attention::
     テストドライバは、テストのたびにWindGateのプラグイン用のClassLoaderを作成し、プラグインライブラリをクラスパスに通します。
+
     クラスロードに関する問題が発生した場合には、テストを実行する際のクラスパスにそれらのライブラリを含めてください。
 

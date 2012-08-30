@@ -4,7 +4,7 @@
 	<name>Asakusa Framework Parent POM</name>
 	<groupId>com.asakusafw</groupId>
 	<artifactId>asakusa-parent</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework Parent POM</description>
@@ -24,24 +24,43 @@
 	</organization>
 
 	<properties>
-		<hadoop.version>0.20.2-cdh3u4</hadoop.version>
-		<mysql.jdbc.version>5.1.16</mysql.jdbc.version>
-		<ashigeru.lang.version>0.1.0</ashigeru.lang.version>
-		<ashigeru.util.version>0.1.0</ashigeru.util.version>
+		<!-- plugin versions -->
+		<plugin.resources.version>2.5</plugin.resources.version>
+		<plugin.compiler.version>2.5.1</plugin.compiler.version>
+		<plugin.surefire.version>2.12</plugin.surefire.version>
+		<plugin.source.version>2.1.2</plugin.source.version>
+		<plugin.eclipse.version>2.9</plugin.eclipse.version>
+		<plugin.m2e.version>1.0.0</plugin.m2e.version>
+		<plugin.build-helper.version>1.7</plugin.build-helper.version>
+		<plugin.antrun.version>1.7</plugin.antrun.version>
+		<plugin.properties.version>1.0-alpha-2</plugin.properties.version>
+		<plugin.assembly.version>2.3</plugin.assembly.version>
+
+		<!-- artifact versions -->
+		<hadoop.version>0.20.2-cdh3u5</hadoop.version>
+		<mysql.jdbc.version>5.1.20</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
-		<commons.configuration.version>1.6</commons.configuration.version>
-		<commons.io.version>2.0.1</commons.io.version>
+		<commons.configuration.version>1.8</commons.configuration.version>
+		<commons.io.version>2.3</commons.io.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.logging.version>1.0.4</commons.logging.version>
-		<logback.version>0.9.28</logback.version>
-		<slf4j.version>1.6.1</slf4j.version>
+		<logback.version>1.0.3</logback.version>
+		<slf4j.version>1.6.6</slf4j.version>
 		<log4j.version>1.2.15</log4j.version>
-		<poi.version>3.6</poi.version>
-		<jsch.version>0.1.45</jsch.version>
-		<junit.version>4.8.2</junit.version>
+		<poi.version>3.8</poi.version>
+		<jsch.version>0.1.48</jsch.version>
+		<junit.version>4.10</junit.version>
 		<hamcrest.version>1.1</hamcrest.version>
 		<guava.version>r09-jarjar</guava.version>
+		<h2.version>1.3.166</h2.version>
+		<gson.version>2.2.1</gson.version>
+		<httpclient.version>4.2</httpclient.version>
 
+		<!-- build timestamp -->
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+
+		<!-- build configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<archetype.test.skip>true</archetype.test.skip>
 	</properties>
@@ -49,8 +68,9 @@
 	<repositories>
 		<repository>
 			<id>central</id>
-			<name>Maven Central repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -99,6 +119,18 @@
 
 	<pluginRepositories>
 		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
 			<id>codehaus.org</id>
 			<name>Codehaus Maven Repository</name>
 			<url>http://repository.codehaus.org/</url>
@@ -106,8 +138,27 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-
+		<pluginRepository>
+			<id>com.asakusafw.releases</id>
+			<name>Asakusa Framework Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.snapshots</id>
+			<name>Asakusa Framework Snapshot Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
 	</pluginRepositories>
+
 	<build>
 		<extensions>
 			<extension>
@@ -118,7 +169,7 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-7</version>
+				<version>2.2</version>
 			</extension>
 			<extension>
 				<groupId>org.springframework.build.aws</groupId>
@@ -165,15 +216,16 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.5</version>
+					<version>${plugin.resources.version}</version>
 					<configuration>
 						<encoding>UTF-8</encoding>
+						<escapeString>\</escapeString>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>${plugin.compiler.version}</version>
 					<configuration>
 						<fork>true</fork>
 						<encoding>UTF-8</encoding>
@@ -185,7 +237,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.8</version>
+					<version>${plugin.surefire.version}</version>
 					<configuration>
 						<argLine>-ea</argLine>
 						<includes>
@@ -204,7 +256,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.1.2</version>
+					<version>${plugin.source.version}</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -216,8 +268,13 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.8</version>
+					<version>${plugin.eclipse.version}</version>
 					<configuration>
 						<downloadSources>true</downloadSources>
 						<downloadJavadocs>false</downloadJavadocs>
@@ -240,7 +297,7 @@ encoding/<project>=UTF-8
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.0-beta-3</version>
+					<version>3.1</version>
 					<configuration>
 						<locales>ja</locales>
 						<inputEncoding>UTF-8</inputEncoding>
@@ -250,12 +307,12 @@ encoding/<project>=UTF-8
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.2.1</version>
+					<version>${plugin.assembly.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -265,7 +322,7 @@ encoding/<project>=UTF-8
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.6</version>
+					<version>${plugin.antrun.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>com.mycila.maven-license-plugin</groupId>
@@ -274,7 +331,7 @@ encoding/<project>=UTF-8
 					<configuration>
 						<aggregate>true</aggregate>
 						<strictCheck>true</strictCheck>
-						<header>../asakusa-parent/src/main/conf/source-header.txt</header>
+						<header>../../asakusa-parent/src/main/conf/source-header.txt</header>
 						<includes>
 							<include>src/**/*.java</include>
 							<include>src/**/*.flex</include>
@@ -291,11 +348,11 @@ encoding/<project>=UTF-8
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>2.3.3</version>
+					<version>2.5</version>
 					<configuration>
 						<xmlOutput>true</xmlOutput>
 						<findbugsXmlOutput>true</findbugsXmlOutput>
-						<excludeFilterFile>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFilterFile>
+						<excludeFilterFile>../../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFilterFile>
 						<sourceEncoding>UTF-8</sourceEncoding>
 						<outputEncoding>UTF-8</outputEncoding>
 					</configuration>
@@ -303,9 +360,9 @@ encoding/<project>=UTF-8
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.8</version>
+					<version>2.9.1</version>
 					<configuration>
-						<configLocation>../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
+						<configLocation>../../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -316,7 +373,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>2.8.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
@@ -341,19 +398,19 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.8</version>
+				<version>2.9.1</version>
 				<configuration>
-					<configLocation>../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
+					<configLocation>../../asakusa-parent/src/main/conf/asakusa_cs.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.3</version>
+				<version>2.5</version>
 				<configuration>
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
-					<excludeFileFilter>../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFileFilter>
+					<excludeFileFilter>../../asakusa-parent/src/main/conf/asakusa_fb_exclude.xml</excludeFileFilter>
 					<sourceEncoding>UTF-8</sourceEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
@@ -361,7 +418,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5.1</version>
 				<configuration>
 					<formats>
 						<format>xml</format>
@@ -377,7 +434,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.8</version>
+				<version>2.12</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -389,7 +446,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>2.4</version>
 				<configuration>
 					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -430,6 +487,11 @@ encoding/<project>=UTF-8
 				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jul-to-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
@@ -443,36 +505,6 @@ encoding/<project>=UTF-8
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-library</artifactId>
 				<version>${hamcrest.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>java-dom</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>javadoc-parser</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>jsr269-bridge</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.lang.java</groupId>
-				<artifactId>jsr199-testing</artifactId>
-				<version>${ashigeru.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.util</groupId>
-				<artifactId>collection</artifactId>
-				<version>${ashigeru.util.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ashigeru.util</groupId>
-				<artifactId>simple-graph</artifactId>
-				<version>${ashigeru.util.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>mysql</groupId>

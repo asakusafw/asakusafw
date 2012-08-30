@@ -4,10 +4,6 @@
 
 この文書では、ジョブのデータ入出力にDirect I/Oを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
 
-..  caution::
-    Direct I/O はAsakusa Frameworkのバージョン |version| において実験的な機能として提供しています。
-    今後のバージョンで利用方法や挙動の一部が変更される可能性があります。
-
 用語の定義
 ==========
 本書では、マシン構成に関しての用語を以下のように定義します。
@@ -139,7 +135,7 @@ Asakusa Frameworkのインストールアーカイブの作成
 -----------------------------------------------
 Asakusa Frameworkのインストールアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します。
+Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します [#]_ 。
 
 ..  code-block:: sh
 
@@ -153,6 +149,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
 例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-directio.tar.gz になります。
 
+..  [#] 詳しくは、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] このアーカイブには (Direct I/Oを含む) Asakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
 
 
@@ -193,7 +190,7 @@ Asakusa Frameworkのデプロイ先を環境変数 ``$ASAKUSA_HOME`` とした�
     *ASAKUSA_USER* から利用可能な位置にデプロイしてください。
 
 
-..  [#] 各モジュールを同一マシン上の異なるOSのユーザ名に割り当てる場合、ユーザごとにそれぞれのコンポーネントをデプロイしてください。
+..  [#] 各モジュールを同一マシン上の異なるOSのユーザ名に割り当てる場合、ユーザごとにAsakusa Frameworkをデプロイしてください。
 
 
 Asakusa Framework追加ライブラリのデプロイ

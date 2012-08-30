@@ -1,0 +1,4 @@
+@directio.sequence_file
+simple = {
+    value : TEXT;
+};

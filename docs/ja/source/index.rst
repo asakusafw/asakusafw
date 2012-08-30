@@ -12,18 +12,68 @@ Asakusa Frameworkの適用事例などについてはコミュニティサイト
 
 Asakusa Framework入門
 =====================
-
-..  toctree::
-    :maxdepth: 2
-
-    introduction/index
+* :doc:`introduction/index`
 
 ドキュメント
 ============
+* :doc:`dmdl/index`
+* :doc:`dsl/index`
+* :doc:`testing/index`
+* :doc:`windgate/index`
+* :doc:`thundergate/index`
+* :doc:`directio/index`
+* :doc:`yaess/index`
+* :doc:`application/index`
+* :doc:`administration/index`
+
+プロダクトについて
+==================
+* :doc:`release-notes`
+* :doc:`product/target-platform`
+* :doc:`product/road-map`
+* :doc:`product/license`
+* :doc:`document/index`
+
+リソース
+========
+* `ソースリポジトリ (GitHub)`_
+* `サンプルプログラム集 (GitHub)`_
+* `課題管理 (GitHub)`_
+* `ビルドサーバ(Jenkins)`_
+* `APIリファレンス`_
+* `ePub版のダウンロード`_
+
+..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
+..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
+..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
+..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
+..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/index.html
+..  _`ePub版のダウンロード`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/ja/epub/AsakusaFramework.epub
+
+関連プロダクト
+==============
+* `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_
+
+..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+
+コミュニティ
+============
+* `コミュニティサイト`_
+
+..  _`コミュニティサイト`: http://asakusafw.com
+
+----
+
+サイトマップ
+============
 
 ..  toctree::
-    :maxdepth: 1
+    :maxdepth: 3
+    :titlesonly:
 
+    self
+    release-notes
+    introduction/index
     dmdl/index
     dsl/index
     testing/index
@@ -33,34 +83,5 @@ Asakusa Framework入門
     yaess/index
     application/index
     administration/index
-
-プロダクトについて
-==================
-* :doc:`release-notes`
-* :doc:`product/target-platform`
-* :doc:`product/road-map`
-* :doc:`product/license`
-
-リソース
-========
-* `ソースリポジトリ (GitHub)`_
-* `サンプルプログラム集 (GitHub)`_
-* `課題管理 (GitHub)`_
-* `ビルドサーバ(Jenkins)`_
-* `APIリファレンス`_
-* :doc:`document/index`
-* :doc:`site-map`
-
-..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
-..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
-..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
-..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
-..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.2/release/api/index.html
-
-コミュニティ
-============
-* `コミュニティサイト`_
-* `メーリングリスト (Google Groups)`_
-
-..  _`コミュニティサイト`: http://asakusafw.com
-..  _`メーリングリスト (Google Groups)`: http://groups.google.com/a/asakusafw.com/group/users
+    product/index
+    document/index

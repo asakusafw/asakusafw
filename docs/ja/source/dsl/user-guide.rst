@@ -37,7 +37,7 @@ Asakusa Frameworkを利用したバッチ処理の設計については、 `Asak
 DSLコンパイラ
 -------------
 Asakusa DSLで記述したプログラムは、Asakusa Frameworkに付属の
-Ashigelコンパイラを使ってMap Reduceのプログラムに変換します。
+Asakusa DSLコンパイラを使ってMapReduceのプログラムに変換します。
 このコンパイラは2種類のコンパイラから構成されています。
 
 `Operator DSLコンパイラ`_
@@ -45,13 +45,14 @@ Ashigelコンパイラを使ってMap Reduceのプログラムに変換します
     Javaの注釈プロセッサとして提供している。
 
 `Batch DSLコンパイラ`_
-    `Batch DSL`_ をコンパイルして、Map Reduceのプログラムを生成するコンパイラ。
+    `Batch DSL`_ をコンパイルして、MapReduceのプログラムを生成するコンパイラ。
     コマンドラインインターフェースを提供している。
 
 なお、DSLが3層であるのに対し、コンパイラは2層のみに対応しています。
 直接のコンパイルを行わない `Flow DSL`_ についても、テスト時には
 単体でコンパイルして実行を行えるようになっています。
 
+.. _dsl-userguide-operator-dsl:
 
 Operator DSL
 ============
@@ -131,6 +132,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
         }
         ...
     }
+..  **
 
 ..  note::
     現在はJavaをホストに演算子の宣言を行っていますが、一部の演算子の生産性に難があるため
@@ -141,14 +143,16 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 
 ..  [#] この名前衝突の判定はアンダースコア、大文字、小文字を無視します。
 
+.. _dsl-key-annotation:
+
 キー注釈
 ~~~~~~~~
 データモデルのグループ化条件やソート条件を記載するには、
-演算子の仕様に従って注釈 ``Key`` をメソッド引数などに指定します。
+演算子の仕様に従って注釈 ``Key``  [#]_ をメソッド引数などに指定します。
 この注釈には、それぞれ下記のような要素を記載できます。
 
 ..  list-table:: ``@Key`` の要素
-    :widths: 4 10 10
+    :widths: 1 5 2
     :header-rows: 1
 
     * - 要素名
@@ -161,7 +165,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
       - ``group = "name"``
     * - ``order``
       - 順序付けに利用するプロパティ名と、順序の一覧。
-        フィールド名の後に"ASC"や"DESC"で順序を指定する。
+        フィールド名の後に ``ASC`` や ``DESC`` で順序を指定する。
         指定しない場合の整列順序は実装依存。
       - ``order = "age ASC"``
 
@@ -220,6 +224,8 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 
 キーの指定が必要な演算子については、 :doc:`operators` を参照してください。
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.model.Key`
+
 演算子の多相化
 ~~~~~~~~~~~~~~
 演算子メソッドは入出力するデータモデルに、クラス型以外にもインターフェース型を指定できます。
@@ -249,9 +255,11 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
     上記の理由で、 `Flow DSL`_ や `Batch DSL`_ からこれらのAPIを利用できません。
 
 ..  attention::
-    実装上の理由で、現在 (0.2.0) はCombinerの内部からフレームワークAPIを利用できません。
+    実装上の理由で、現時点のバージョン |version| ではCombinerの内部からフレームワークAPIを利用できません。
     これは、畳み込み演算子 ( ``@Fold`` ) を利用し、かつ `Batch DSLコンパイラ`_ の
     コンパイルオプションなどでCombinerの利用を可能にしている場合に問題が発生します。
+
+.. _dsl-context-api:
 
 コンテキストAPI
 ~~~~~~~~~~~~~~~
@@ -262,7 +270,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 このAPIは ``BatchContext`` [#]_ クラスのメソッドから利用します。
 
 ..  list-table:: コンテキストAPIのメソッド
-    :widths: 5 20
+    :widths: 3 7
     :header-rows: 1
 
     * - メソッド名
@@ -273,7 +281,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 また、バッチ引数以外にもあらかじめ宣言された変数を利用できます。
 
 ..  list-table:: あらかじめ宣言された変数
-    :widths: 5 20
+    :widths: 2 8
     :header-rows: 1
 
     * - 変数名
@@ -291,7 +299,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
         同一のバッチIDやフローIDに対しても、ジョブフローの実行のたびに変化する。
         同一ジョブフローの実行中は必ず同じ値で、トランザクションを識別するために利用できる。
 
-..  [#] ``com.asakusafw.runtime.core.BatchContext``
+..  [#] :javadoc:`com.asakusafw.runtime.core.BatchContext`
 
 レポートAPI
 ~~~~~~~~~~~
@@ -301,22 +309,22 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 このAPIは ``Report`` [#]_ のクラスメソッドから利用します。
 
 ..  list-table:: レポートAPIのメソッド
-    :widths: 5 20
+    :widths: 3 7
     :header-rows: 1
 
     * - メソッド名
       - 概要
-    * - error
+    * - ``error``
       - 「エラー」レベルのレポート
-    * - warn
+    * - ``warn``
       - 「警告」レベルのレポート
-    * - info
+    * - ``info``
       - 「情報」レベルのレポート
 
 致命的な状況に対するレポートの仕組みも用意していますが、このレポートによって処理の流れに影響が出ることはありません。
 エラーによって処理を強制終了させたい場合などでは、ランタイム例外を演算子メソッドからスローするなどの方法が必要です。
 
-..  [#] ``com.asakusafw.runtime.core.Report``
+..  [#] :javadoc:`com.asakusafw.runtime.core.Report`
 
 ..  attention::
     特定のデータに対してレポートのみを行い、その結果を最終的に出力しない場合、
@@ -331,6 +339,8 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
     連携するワークフローエンジンによっては、
     このAPIで通知したレポートを何らかの形で拾い上げて利用者に通知してくれるかもしれません。
     標準的な実装である :doc:`YAESS <../yaess/index>` では特に何も行っていません。
+
+.. _dsl-userguide-operator-dsl-compiler:
 
 Operator DSLコンパイラ
 ----------------------
@@ -423,6 +433,7 @@ Operator DSLコンパイラは、 `フロー部品`_ に対する演算子 (フ�
 
 なお、フロー演算子については :doc:`operators` を参照してください。
 
+.. _dsl-userguide-flow-dsl:
 
 Flow DSL
 ========
@@ -461,10 +472,10 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
+詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    インポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  hint::
@@ -478,7 +489,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     これらは、 `Operator DSLコンパイラ`_ のコンパイラプラグインを追加することで、
     新しいデータソースを利用できるようになります。
 
-..  [#] ``com.asakusafw.vocabulary.external.ImporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.external.ImporterDescription`
 
 エクスポータ記述
 ~~~~~~~~~~~~~~~~
@@ -486,10 +497,10 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
 Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`with-thundergate` , :doc:`../directio/index` をそれぞれ参照してください。
+詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    エクスポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  note::
@@ -497,7 +508,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     実装クラスとなります。インポータ記述と同様に、このインターフェースだけを実装しても
     データソースを利用することはできません。
 
-..  [#] ``com.asakusafw.vocabulary.external.ExporterDescription``
+..  [#] :javadoc:`com.asakusafw.vocabulary.external.ExporterDescription`
 
 ジョブフロークラス
 ~~~~~~~~~~~~~~~~~~
@@ -528,15 +539,15 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.FlowDescription``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
 ジョブフローコンストラクタ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 ジョブフローの入出力は、ジョブフロークラスのコンストラクタで宣言します。
 これには次のような制約があります。
 
-* publicとして宣言されている
+* ``public`` として宣言されている
 * 型引数を宣言していない
 * ``In`` [#]_ 型の仮引数を一つ以上宣言し、それぞれ型引数にデータモデル型を指定する
 * ``Out`` [#]_ 型の仮引数を一つ以上宣言し、それぞれ型引数にデータモデル型を指定する
@@ -592,15 +603,16 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
         this.shipmentOut = shipmentOut;
         this.stockOut = stockOut;
     }
+..  **
 
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
-..  [#] ``com.asakusafw.vocabulary.flow.Import``
-..  [#] ``com.asakusafw.vocabulary.flow.Export``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Import`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Export`
 
 フロー記述メソッド
 ~~~~~~~~~~~~~~~~~~
-データフローでの処理容は、 ``FlowDescription`` クラスの ``describe`` メソッドをオーバーライドして記述します。
+データフローでの処理内容は、 ``FlowDescription`` クラスの ``describe`` メソッドをオーバーライドして記述します。
 ここでは、コンストラクタで受け取った入出力と、 `Operator DSL`_ で記述した演算子を組み合わせて
 データ処理の流れを記述します。
 
@@ -636,7 +648,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
     }
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    フロー記述メソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 ..  note::
@@ -707,8 +719,8 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.flow.FlowDescription``
-..  [#] ``com.asakusafw.vocabulary.flow.FlowPart``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.FlowPart`
 
 
 フロー部品コンストラクタ
@@ -753,9 +765,10 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
         this.shipmentOut = shipmentOut;
         this.stockOut = stockOut;
     }
+..  **
 
-..  [#] ``com.asakusafw.vocabulary.flow.In``
-..  [#] ``com.asakusafw.vocabulary.flow.Out``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.In`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.Out`
 
 フロー部品のフロー記述
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -773,6 +786,7 @@ Asakusa Frameworkでは、通常Flow DSLのプログラムを直接コンパイ�
 これはジョブフローやフロー部品に、他のフロー部品を組み込むための演算子です。
 フロー演算子については、 :doc:`operators` を参照してください。
 
+.. _dsl-userguide-batch-dsl:
 
 Batch DSL
 =========
@@ -819,15 +833,15 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 
     package com.example.batch;
 
-    import com.asakusafw.vocabulary.flow.*;
+    import com.asakusafw.vocabulary.batch.*;
 
     @Batch(name = "example")
     public class ExampleBatch extends BatchDescription {
 
     }
 
-..  [#] ``com.asakusafw.vocabulary.batch.BatchDescription``
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.BatchDescription`
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
 
 
 バッチ記述メソッド
@@ -856,21 +870,20 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 それらの処理が全て完了後に実行されるジョブフローを表します。
 
 ..  caution::
-    このメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
+    バッチ記述メソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
     そのため、 `フレームワークAPI`_ はこの中では利用できません。
 
 Batch DSLコンパイラ
 -------------------
 Batch DSLコンパイラは、バッチクラスから次のものを生成します。
 
-* 外部入出力を行うための設定情報など
-* データフロー処理を行うMap Reduceプログラム群
+* `外部入出力を行うための設定情報`_ など
+* `データフロー処理を行うMapReduceプログラム群`_ 
 * 上記の一連の流れを規定する `ワークフロー記述`_
 
 コマンドラインインターフェース
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-単一のバッチクラスをコンパイルする場合には、
-``BatchCompilerDriver`` [#]_ クラスを実行します。
+単一のバッチクラスをコンパイルする場合には、コンパイラとバッチクラスのクラスライブラリをクラスパスに含めた状態で、 ``BatchCompilerDriver`` [#]_ クラスを実行します。
 以下の引数を指定します。
 
 ``-class <クラス名>``
@@ -909,8 +922,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     そこにジョブフローの中間データを出力します。
     パスにバッチIDやフローIDを含めておくことで、障害時の追跡が多少楽になる可能性があります。
 
-ディレクトリに含まれるすべてのバッチクラスをコンパイルする場合は、
-``AllBatchCompilerDriver`` [#]_ クラスを実行します。
+ディレクトリに含まれるすべてのバッチクラスをコンパイルする場合は、コンパイラとバッチクラスのクラスライブラリをクラスパスに含めた状態で、 ``AllBatchCompilerDriver`` [#]_ クラスを実行します。
 このプログラムに指定可能な引数のうち、以下は ``BatchCompilerDriver`` の引数と同様です。
 
 * ``-output``
@@ -920,6 +932,8 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 * ``-link``
 * ``-plugin``
 
+以下は ``AllBatchCompilerDriver`` に特有の引数です。
+
 ``-scanpath <クラスパス>``
     コンパイル対象のバッチを含むクラスライブラリ。
     ここに含まれるクラスのうち、 `バッチクラス`_ として適格なもののみがコンパイルされる。
@@ -927,8 +941,119 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     指定された場合、コンパイルエラーが発生しても続けて次のバッチをコンパイルする。
     指定がない場合は、コンパイルエラーを見つけた時点でコンパイルを中断する。
 
-..  [#] ``com.asakusafw.compiler.bootstrap.BatchCompilerDriver``
-..  [#] ``com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver``
+..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.BatchCompilerDriver`
+..  [#] :javadoc:`com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver`
+
+.. _include-fragment-module:
+
+モジュールの取り込み
+~~~~~~~~~~~~~~~~~~~~
+バッチをコンパイルすると、バッチに含まれるジョブフローごとに以下の内容をすべて含むJARファイルを生成します。
+
+* 対象のジョブフローを記述するFlow DSLのコンパイル結果
+
+    * Flow DSLコンパイラ、Javaコンパイラの順に実行し、Javaコンパイラの結果 ( ``*.class`` 等) が含まれる
+    * Javaコンパイラを実行する前のソースコードは ``jobflow-<flow ID>-sources.jar`` に生成される
+    * 対象のジョブフローに関係のないFlow DSLのコンパイル結果は含まれない
+
+* ``-link`` オプションで指定されたクラスライブラリ
+
+    * ディレクトリやJARファイルなどのパスを指定
+
+* ``META-INF/asakusa/fragment`` というファイルが含まれたクラスパス内のクラスライブラリ
+
+    * コンパイラを実行する際のJavaクラスパスか、コンパイラプラグインパス ( ``-plugin`` ) に含める
+
+なお、ジョブフローの実行には、Flow DSLのコンパイル結果の他に以下のようなクラスが必要です。
+
+* データモデルクラス
+* 演算子クラス
+* 上記が利用する依存ライブラリ
+
+コンパイラの ``-link`` オプションを利用せずにモジュールの取り込みを行いたい場合、
+取り込まれる側のクラスライブラリ内に ``META-INF/asakusa/fragment`` というファイル (以下、マーカーファイル) を含めた上で、
+コンパイラのクラスパスに上記クラスライブラリを追加してください。
+
+``BatchCompilerDriver`` や ``AllBatchCompilerDriver`` は、コンパイル時にクラスパス内のすべてのクラスライブラリから上記マーカーファイルを検索します。
+そして、同ファイルを含むすべてのクラスライブラリの内容を、それぞれのジョブフローのJARファイル内にコピーします。
+
+..  hint::
+    マーカーファイルによる取り込みは :doc:`テストドライバ <../testing/index>` を利用する際にも有効です。
+    この場合、テストドライバを起動した際のクラスパスに含められたクラスライブラリから、マーカーファイルを検索します。
+
+    なお、テストドライバを実行する際に、起点となるジョブフローやバッチを含むクラスライブラリは自動的に取り込まれます。
+
+..  hint::
+    MavenやEclipseでの開発を行う際にバッチアプリケーションを構成するアーティファクトやプロジェクトを分割する場合、マーカーファイルの方法を利用したほうが統一的に取り扱えて安全です。
+
+..  note::
+    マーカーファイルの機能は、主に以下の用途を想定して作成しています。
+
+    * 複数のプロジェクトでデータモデルの定義を共有する
+    * 複数のプロジェクトでビジネスロジックを共有する
+    * 外部入出力を含むジョブフローとそれ以外の部分を分離する
+    * 一部の単体テストケースを分離して管理する
+
+..  warning::
+    マーカーファイルを含むクラスライブラリを取り込む際、同じパスのファイルが複数含められていると正しく動作しません。
+
+
+.. _compiled-batch-application-components:
+
+Batch DSLコンパイラが生成するバッチアプリケーション
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Batch DSLコンパイラが生成するバッチアプリケーションには以下のものが含まれます。
+
+外部入出力を行うための設定情報
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Batch DSLコンパイラはコンパイル対象のバッチアプリケーションの
+ジョブフロー記述の情報などから、
+WindGateやThunderGateがデータの入出力を行うための設定情報を生成します。
+
+この設定情報はバッチアプリケーション実行時に
+WindGateやThunderGateが参照し、その設定内容に応じて入出力データを決定したり、
+入出力時に行われる制御（排他制御など）を行います。
+
+データフロー処理を行うMapReduceプログラム群
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Batch DSLコンパイラはバッチアプリケーションに含まれる
+Operator DSLやFlow DSLの内容から、
+Hadoop上で実行されるMapReduceプログラム群を生成します。
+
+生成されるMapReduceプログラムは基本的に複数のMapReduceジョブから構成されます。
+DSLコンパイラではバッチアプリケーションを構成するMapReduceの単位を「ステージ」と呼びます。
+
+Batch DSLコンパイラが生成したMapReduceプログラム群の
+ステージ全体の構造や各ステージの構造を把握したい場合は、
+:doc:`../application/dsl-visualization` で説明する方法で
+グラフ構造を可視化することができます。
+
+..  attention::
+    現在のAsakusa Frameworkでは、Batch DSLコンパイラは
+    同一のDSLソースコードに対してもコンパイルの度に異なるステージ構造を持った
+    バッチアプリケーションを生成することがあります。
+
+..  hint:: 
+    各ステージにはステージを一意に識別する「ステージID」が振られます。
+    ステージIDは ``stageXXXX`` (XXXXは数値) という形式をもちます。
+    ステージIDはYAESSを経由したバッチアプリケーション実行時にログとして出力されるほか、
+    :doc:`../application/dsl-visualization` で生成するステージグラフに出力されます。
+
+コンパイラの最適化方法の指定により、生成されるステージの構造が変化することがあります。
+詳しくは後述の `コンパイルオプション`_ を参照してください。
+
+
+ワークフロー記述
+^^^^^^^^^^^^^^^^
+ワークフロー記述は、コンパイルされたバッチを実行する際に
+入出力やMapReduceジョブの実行順序を記述したものです。
+これはワークフローエンジンごとに生成される記述で、
+対応するコンパイラプラグインをコンパイル時に指定します。
+
+標準では、Batch DSLコンパイラはYAESSというジョブ実行ツールのための
+ワークフロー記述である「YAESSスクリプト」を生成します。
+YAESSについては :doc:`../yaess/index` を参照してください。
+
 
 .. _batch-compile-options:
 
@@ -943,9 +1068,8 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 現在は以下の項目を利用できます。
 指定しない項目は既定値を利用します。
 
-
 ..  list-table:: コンパイルオプションの項目
-    :widths: 4 4 15
+    :widths: 2 1 7
     :header-rows: 1
 
     * - 項目名
@@ -987,12 +1111,15 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
         このオプションが有効であれば、そのようなロギング演算子をコンパイル後も保持する。
         無効であれば、コンパイル時にそれらの演算子を除去する。
 
+上記の他に、 ``X`` から始まるいくつかの `コンパイラスイッチ`_ も存在します。
+コンパイラスイッチもコンパイルオプションと同じシステムプロパティを利用します。
+
 ..  note::
     ``compressFlowPart`` の既定値は0.2から「有効」に変更しました。
-    チェックポイント演算子はMap Reduceの単位 (ステージ) に区切りをいれる演算子で、
+    チェックポイント演算子はMapReduceの単位 (ステージ) に区切りをいれる演算子で、
     元は「フロー部品のテスト時とできるだけ同じ構造にしたほうが良い」という
     前提でこのオプションを無効化していました。
-    しかし、あまりにMap Reduceの回数が増えてしまい、処理効率が著しく低下するため、
+    しかし、あまりにMapReduceの回数が増えてしまい、処理効率が著しく低下するため、
     0.2よりこの規定値が見直されることになりました。
 
 ..  note::
@@ -1007,10 +1134,6 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
     Hadoopクラスタが十分に大きく、ワークフローエンジンが
     並列のジョブ投入をサポートしている場合は、このオプションは見直すべきでしょう。
 
-    現在のところ、組み込みで提供している `ワークフロー記述`_ は
-    各ジョブを直列化して実行しています。
-    そのため、このオプションの既定値は「有効」となっています。
-
 ..  note::
     ``hashJoinForTiny`` は、Hadoopの *DistributedCache* の仕組みを利用しています。
     ハッシュ表での結合を行う場合、入力データをHadoopクラスタの全てのノードに配布します。
@@ -1018,7 +1141,7 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 
     現在の標準的な結合戦略はShuffle+Sortを利用したマージ結合であるため、
     これは結合操作を行うたびにReduceフェーズが必要になってしまいます。
-    結果としてMap Reduceのステージ数が増大してしまいますが、
+    結果としてMapReduceのステージ数が増大してしまいますが、
     ハッシュ表を利用する場合には全てのノードのメモリ上に表を構築しているため、
     Reduce処理が不要になり、ステージ数を削減できるという利点があります。
 
@@ -1027,15 +1150,38 @@ Batch DSLコンパイラは、バッチクラスから次のものを生成し�
 
 ..  [#] :doc:`../application/maven-archetype` に従ってアプリケーションプロジェクトを作成した場合は、pom.xmlのプロファイルに定義されているプロパティ ``asakusa.compiler.options`` に値を設定します。詳しくは :ref:`batch-compile-option-with-pom` を参照してください。
 ..  [#] :doc:`operators` の単純集計演算子や畳み込み演算子を参照
-..  [#] ``com.asakusafw.vocabulary.flow.processor.PartialAggregation``
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
 
-ワークフロー記述
-~~~~~~~~~~~~~~~~
-ワークフロー記述は、コンパイルされたバッチを実行する際に
-入出力やMap Reduceジョブの実行順序を記述したものです。
-これはワークフローエンジンごとに生成される記述で、
-対応するコンパイラプラグインをコンパイル時に指定します。
 
-標準では、YAESSというジョブ実行ツールのためのワークフロー情報を生成しています。
-YAESSについては :doc:`../yaess/index` を参照してください。
+コンパイラスイッチ
+~~~~~~~~~~~~~~~~~~
+コンパイラスイッチはコンパイラの内部的な挙動を操作するためのオプションで、
+`コンパイルオプション`_ と同様に ``com.asakusafw.compiler.options`` に指定します。
+
+..  attention::
+    通常の場合、コンパイラスイッチを指定する必要はありません。
+    コンパイル時にコンパイラから推奨される場合がありますので、その際に利用を検討してください。
+
+すべてのコンパイラスイッチは ``X<項目名>=<値>`` の形式で設定します。
+以下は変更可能なコンパイラスイッチの一覧です。
+
+..  list-table:: コンパイラスイッチの項目
+    :widths: 2 1 7
+    :header-rows: 1
+
+    * - 項目名
+      - 既定値
+      - 概要
+    * - ``MAPREDUCE-370``
+      - ``DISABLED``
+      - 利用中のHadoopにパッチ ``MAPREDUCE-370`` が適用済みかどうか。
+        ``ENABLED`` の場合は適用済みと仮定し、 ``DISABLED`` の場合は未適用と仮定する。
+
+    * - ``compressFlowBlockGroup``
+      - ``ENABLED``
+      - `コンパイルオプション`_ の ``compressConcurrentStage`` を適用した際、ステージ内のMapperとReducerを併合するかどうか。
+        ``ENABLED`` の場合は併合し、 ``DISABLED`` の場合は併合しない。
+
+..  note::
+    コンパイルオプションは項目名を間違えた場合にエラーとなりますが、コンパイラスイッチは項目名を間違えると単に設定が無視されます。
 

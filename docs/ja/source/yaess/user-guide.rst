@@ -3,56 +3,152 @@ YAESSユーザーガイド
 ===================
 
 この文書では、YAESSの利用方法について紹介します。
-YAESSの導入方法については :doc:`../administration/deployment-with-windgate` のYAESSに関する項目を参照してください。
+YAESSの導入方法については、各デプロイメントガイドのYAESSに関する項目を参照してください。
+
+* :doc:`../administration/deployment-with-windgate` 
+* :doc:`../administration/deployment-with-thundergate` 
+* :doc:`../administration/deployment-with-directio` 
+
+.. _yaess-batch-structure:
+
+Asakusa Frameworkのバッチ構造
+=============================
+YAESSを利用し、その機能を適切に設定するためには
+Asakusa Frameworkのバッチ構造を理解しておく必要があります。
+そのため、以下ではまずAsakusa Frameworkのバッチ構造について説明します。
+
+バッチの構成要素
+----------------
+Asakusa Frameworkのバッチは次のような構造を持ちます。
+
+..  list-table:: バッチの構造
+    :widths: 4 6
+    :header-rows: 1
+
+    * - 名前
+      - 値
+    * - バッチ
+      - バッチ全体
+    * - ジョブフロー
+      - バッチ内のトランザクション単位
+    * - `フェーズ`_
+      - フロー内の処理内容の段階 
+    * - `ジョブ`_
+      - フェーズ内の個々の実行単位
+
+フェーズ
+~~~~~~~~
+バッチの構成要素のうち、フェーズには以下のようなものがあります。
+
+..  list-table:: フェーズ一覧
+    :widths: 2 8
+    :header-rows: 1
+
+    * - 名前
+      - 処理内容
+    * - ``setup``
+      - ジョブフローの実行環境をセットアップする [#]_
+    * - ``initialize``
+      - ジョブフローの処理内容を初期化する [#]_
+    * - ``import``
+      - ジョブフローの処理に必要なデータを外部システムからインポートする
+    * - ``prologue``
+      - インポートしたデータを本処理用に加工する
+    * - ``main``
+      - Hadoopジョブなどの本処理を行う
+    * - ``epilogue``
+      - 本処理の結果をエクスポート用に加工する
+    * - ``export``
+      - ジョブフローの処理結果を外部システムにエクスポートする
+    * - ``finalize``
+      - ジョブフローの処理内容を完了またはロールバックさせる
+    * - ``cleanup``
+      - ジョブフローの実行環境をクリーンアップする [#]_
+
+..  note::
+    上記の処理内容はあくまで概要で、これに即した処理が行われるとは限りません。
+
+..  [#] バージョン |version| 時点では使用していません。
+..  [#] バージョン |version| 時点では使用していません。
+..  [#] ジョブフローが途中で失敗した場合、 ``cleanup`` フェーズは実行されません。これは失敗した原因を分析するために、ジョブフローが出力した中間ファイルなどを保持しておくためです。
+
+ジョブ
+~~~~~~
+バッチの構成要素のうち、ジョブには以下のようなものがあります。
+
+..  list-table:: ジョブ一覧
+    :widths: 2 8
+    :header-rows: 1
+
+    * - 名前
+      - 処理内容
+    * - Hadoopジョブ
+      - HadoopのMapReduceジョブを実行する。1つのHadoopジョブで1つのMapReduceジョブ(ステージ)が実行される。
+    * - コマンドラインジョブ
+      - Hadoopジョブ以外のジョブの総称。ThunderGateやWindGateのインポート処理やエクスポート処理などを実行する。
+
+バッチの構成要素間の関係
+------------------------
+バッチの各要素は、以下の関係を持っています。
+
+* バッチは複数のジョブフローで構成され、 :ref:`dsl-userguide-batch-dsl` の定義にしたがった実行順序の依存関係を持つ
+* 各ジョブフローは各フェーズを上から順に実行する (DSLの定義内容によっては、フェーズの一部がスキップされる) 。
+* 各フェーズは複数のジョブで構成され、 :ref:`dsl-userguide-flow-dsl` の定義などにしたがった実行順序の依存関係を持つ
+* ジョブが実行する各処理は、 :ref:`dsl-userguide-flow-dsl` や :ref:`dsl-userguide-operator-dsl` の定義などによって決定される。
+
+以下は、上記の内容を俯瞰する図です。
+
+..  figure:: batch-structure.png
+
 
 プロファイルセット
 ==================
-YAESSはHadoopクラスタや複数の外部システムなどを組み合わせた複雑な環境上で、Asakusaのバッチを実行するために設計されています。
-それぞれの環境に対するジョブ起動方法の設定や、YAESSそのものの設定をまとめて「プロファイルセット」と呼んでいます。
+YAESSはHadoopクラスタや複数の外部システムなどを組み合わせた複雑な環境上で
+Asakusa Frameworkのバッチを実行するために設計されています。
+YAESSでは、それぞれの環境に対するジョブ起動方法の設定や、YAESSそのものの設定を「プロファイルセット」と呼んでいます。
 
-このプロファイルセットは、 ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` (以降、「構成ファイル」)でまとめて管理されています。
+このプロファイルセットは、 ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` (以降、「構成ファイル」)で管理されています。
 このファイルはJavaの一般的なプロパティファイルの文法で、主に下記のセクションから成り立っています。
 
 ..  list-table:: プロパティファイルの項目
-    :widths: 10 60
+    :widths: 2 8
     :header-rows: 1
 
     * - セクション
       - 内容
     * - ``core``
-      - YAESS内部用の設定。通常は変更しない。
+      - `YAESS本体の設定`_ (通常は変更しない)
     * - ``hadoop``
-      - Hadoopに関するジョブの実行方法に関する設定
+      - `Hadoopジョブの実行`_ に関する設定
     * - ``command``
-      - Hadoop以外のジョブの実行方法に関する設定
-    * - ``lock``
-      - バッチ実行時のロックに関する設定
-    * - ``monitor``
-      - バッチ実行時の監視に関する設定
+      - `コマンドラインジョブの実行`_ に関する設定
     * - ``scheduler``
-      - バッチに含まれるジョブのスケジューリングに関する設定
+      - `ジョブのスケジューリング`_ に関する設定
+    * - ``lock``
+      - `バッチ実行のロック`_ に関する設定
+    * - ``monitor``
+      - `バッチ実行のモニタ`_ に関する設定
 
 プロパティファイルのそれぞれのセクションには、該当するセクション名から始まるキーと、それに対応する値が記述されています。
-この文書では、主に ``hadoop`` と ``command`` セクションについて紹介します。
-
 
 YAESS本体の設定
 ---------------
 YAESS本体の設定は、構成ファイル内の ``core`` セクション内に記述します。
 
 ..  list-table:: YAESS本体の設定
-    :widths: 10 15
+    :widths: 3 7
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``core``
-      - ``com.asakusafw.yaess.basic.BasicCoreProfile``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicCoreProfile`
     * - ``core.version``
       - ``0.1``
 
 上記の値は変更しないようにしてください。
 
+.. _yaess-profile-hadoop-section:
 
 Hadoopジョブの実行
 ------------------
@@ -65,24 +161,26 @@ YAESS上でHadoopに関する設定を行うには、構成ファイル内の ``
 YAESSを起動したコンピューターと同一のコンピューターにインストールされたHadoopを利用する場合、構成ファイルの ``hadoop`` セクションに以下の内容を設定します。
 
 ..  list-table:: 同一環境上のHadoopを実行する際の設定
-    :widths: 10 15
+    :widths: 4 6
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.basic.BasicHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicHadoopScriptHandler`
     * - ``hadoop.env.HADOOP_HOME``
-      - Hadoopのインストール先
+      - Hadoopのインストール先 [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
-上記のうち、 ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式 [#]_ で、YAESSを起動した環境の環境変数を含められます。
+上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
 ここでは同一環境上のHadoopを利用する設定ですので、 ``hadoop.env.HADOOP_HOME`` には ``${HADOOP_HOME}`` を、
 ``hadoop.env.ASAKUSA_HOME`` には ``${ASAKUSA_HOME}`` をそれぞれ指定すれば、現在の環境変数をそのまま利用できます。
 
-..  [#] 現在の仕様では、 ``$ASAKUSA_HOME`` のように ``{`` と ``}`` に囲まれていない形式は利用できません。
+..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 
+.. _yaess-profile-hadoop-section-ssh:
 
 SSHを経由してHadoopジョブを実行する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,7 +193,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
     * - 名前
       - 値
     * - ``hadoop``
-      - ``com.asakusafw.yaess.jsch.SshHadoopScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshHadoopScriptHandler`
     * - ``hadoop.ssh.user``
       - ログイン先のユーザー名
     * - ``hadoop.ssh.host``
@@ -107,15 +205,15 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
     * - ``hadoop.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
     * - ``hadoop.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先
+      - リモートのHadoopのインストール先 [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
-上記のうち、 ``hadoop.ssh.user`` , ``hadoop.ssh.privateKey`` および  ``hadoop.env.`` から始まる項目には ``${変数名}`` という形式で環境変数を含められます。
-たとえば、 ``hadoop.ssh.privateKey`` は通常 ``${HOME}/.ssh/id_rsa`` を指定します。
+上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
 なお、この仕組みではSSHでの通信に JSch [#]_ を利用しています。
 
+..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 ..  [#] http://www.jcraft.com/jsch/
 
 
@@ -136,10 +234,24 @@ Hadoopを利用する際に特別な環境変数が必要な場合、以下の�
 
 ..  note::
     ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.ASAKUSA_HOME`` は上記の一部です。
-    ただし、これらの環境変数はHadoopの実行に必要であるため、常に指定するようにしてください。
+    このうち、 ``ASAKUSA_HOME`` はHadoopの実行に必要であるため、常に指定するようにしてください。
+
+    ``HADOOP_HOME`` は代わりに ``HADOOP_CMD`` を指定することも可能です。
+    詳しくは `Hadoopコマンドの検索方法`_ を参照してください。
 
 ..  note::
     ``hadoop.env.<環境変数名>=${<環境変数名>}`` のように書くと、現在の環境変数を対象の環境にそのまま受け渡せます。
+
+Hadoopコマンドの検索方法
+~~~~~~~~~~~~~~~~~~~~~~~~
+Hadoopを起動する際には、起動する対象の ``hadoop`` コマンドの配置場所を環境変数を利用して指定する必要があります。
+Hadoopのジョブや :doc:`WindGate <../windgate/index>` などを実行する際には、次の手順で ``hadoop`` コマンドを検索します。
+
+* 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を ``hadoop`` コマンドとみなして利用します。
+* 環境変数 ``HADOOP_HOME`` が設定されている場合、 ``$HADOOP_HOME/bin/hadoop`` コマンドを利用します。
+* ``hadoop`` コマンドのパス ( 環境変数 ``PATH`` ) が通っている場合、それを利用します。
+
+上記の手順でHadoopコマンドが見つからない場合、対象処理の実行に失敗します。
 
 
 Hadoopを利用する際のプロパティの設定
@@ -162,12 +274,15 @@ Hadoopを利用する際に特別なプロパティ [#]_ が必要な場合、�
 
 Hadoopブリッジの設定
 ~~~~~~~~~~~~~~~~~~~~
-`同一環境上のHadoopジョブを実行する`_ 場合や、 `SSHを経由してHadoopジョブを実行する`_ 場合には、Hadoopがインストールされた環境上に ``$ASAKUSA_HOME/yaess-hadoop`` というディレクトリが必要です。
-このディレクトリ下にはYAESSがHadoopにジョブを投入する際に利用する「Hadoopブリッジ」というツールが格納されています。
-HadoopブリッジはAsakusa Frameworkに含まれていますが、リモートの環境上には手動でインストールする必要があります。
+`同一環境上のHadoopジョブを実行する`_ 場合や、 `SSHを経由してHadoopジョブを実行する`_ 場合には、
+Hadoopがインストールされた環境上に「Hadoopブリッジ」が必要です。
 
-YAESSからHadoopを起動する際には、Hadoopが提供するコマンドを直接実行するのではなく、代わりに ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` というシェルスクリプトを実行します。
-この中では最終的にHadoopのコマンドを実行するのですが、その手前でAsakusa Frameworkのための設定をいくつか行っています。
+Hadoopブリッジは Asakusa Frameworkの ``$ASAKUSA_HOME/yaess-hadoop`` というディレクトリに含まれており、
+これにはYAESSがHadoopにジョブを投入する際に利用するツールが格納されています。
+
+YAESSからHadoopを起動する際には、Hadoopが提供するコマンドを直接実行するのではなく、代わりに 
+``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` というシェルスクリプトを実行します。
+このシェルスクリプトは、最終的にHadoopのコマンドを実行するのですが、その手前でAsakusa Frameworkのための設定をいくつか行っています。
 
 このシェルスクリプトの中では、 ``$ASAKUSA_HOME/yaess-hadoop/conf/env.sh`` というシェルスクリプトを内部的に実行しています。
 これは ``hadoop-execute.sh`` と同一プロセス内で実行され、ここで環境変数を設定するとHadoop実行時の環境変数を設定できます。
@@ -178,47 +293,31 @@ YAESSの構成ファイル側で設定しきれない環境変数等がある場
 ジョブフロー中間ファイルのクリーンアップ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ジョブフローの実行が完了すると、その実行中に生成された中間ファイルは通常の場合に不要となります。
-以下の設定を行うことで、ジョブフローの完了時 [#]_ にそれらの中間ファイルを削除できます。
+以下の設定を行うことで、ジョブフローの完了時 [#]_ にクリーンアップを行うかどうかを指定できます。
 
-..  list-table:: ジョブフローのワーキングディレクトリの設定
-    :widths: 10 20
+..  list-table:: ジョブフローのクリーンアップの設定
+    :widths: 10 40
     :header-rows: 1
 
     * - 名前
       - 値
-    * - ``hadoop.workingDirectory``
-      - ジョブフローごとの中間ファイルのディレクトリパス
+    * - ``hadoop.cleanup``
+      - ``true`` でクリーンアップを行う、 ``false`` で行わない
 
-通常この値には ``target/hadoopwork/${execution_id}`` を指定します。
-バッチアプリケーションのコンパイル時に指定した「クラスターワーキングディレクトリ」の値を指定してください。
-
-なお、 ``hadoop.workingDirectory`` 内では以下の変数のみを利用できます。
-
-..  list-table:: パスに利用可能な変数の一覧
-    :widths: 10 15
-    :header-rows: 1
-
-    * - 変数
-      - 値
-    * - ``${batch_id}``
-      - バッチID
-    * - ``${flow_id}``
-      - フローID
-    * - ``${execution_id}``
-      - 実行ID
-
+なお、 ``hadoop.cleanup`` が未指定の場合、クリーンアップを行う
+( ``true`` が指定されたのと同じ )よう動作します [#]_ 。
 
 ..  [#] 実際には、これは ``cleanup`` フェーズ内で行われます。
         そのため、ジョブフローの途中で異常終了した場合には、クリーンアップは行われません。
-
+..  [#] デフォルトの構成ファイルは ``hadoop.cleanup`` が未指定のため、クリーンアップが行われます。
 
 Hadoopジョブ実行への介入
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Hadoopのジョブを起動する際に、YAESSはHadoopがインストールされた環境の ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` というシェルスクリプトを実行しています。
+Hadoopのジョブを起動する際に、YAESSはHadoopがインストールされた環境の ``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` というシェルスクリプトを実行しています。
 このシェルスクリプトを実行する際に、以下の引数を指定しています。
 
 ..  list-table:: Hadoopジョブ実行時の引数一覧
-    :widths: 5 30
+    :widths: 2 8
     :header-rows: 1
 
     * - 位置
@@ -236,13 +335,11 @@ Hadoopのジョブを起動する際に、YAESSはHadoopがインストールさ
     * - 以降
       - その他のHadoopへの引数一覧
 
-つまり、ジョブクライアントクラス名が ``Client`` , バッチIDが ``bid`` , フローIDが ``fid`` , 実行IDが ``eid`` である場合、ジョブ実行時のコマンドは
+つまり、ジョブクライアントクラス名が ``Client`` , バッチIDが ``bid`` , フローIDが ``fid`` , 実行IDが ``eid`` である場合、ジョブ実行時のコマンドは、以下のようになります。
 
 ..  code-block:: sh
 
-    $ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh Client bid fid eid
-
-となります。
+    $ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh Client bid fid eid
 
 YAESSでは、このコマンドラインを構成するルールに対して、以下の設定で介入できます。
 
@@ -259,87 +356,45 @@ YAESSでは、このコマンドラインを構成するルールに対して、
     * - ``hadoop.command.<n>``
       - ``n + 1`` 番目に挿入されるトークン
 
-つまり、 ``hadoop.command.0`` に ``C:\\Cygwin\\bin\\bash.exe`` , ``hadoop.command.1`` に ``-r`` と指定した場合、先ほどの例は
+つまり、 ``hadoop.command.0`` に ``C:\\Cygwin\\bin\\bash.exe`` [#]_  , ``hadoop.command.1`` に ``-r`` と指定した場合、先ほどの例は、以下のようになります。
 
 ..  code-block:: sh
 
-    C:\Cygwin\bin\bash.exe -r $ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh Client bid fid eid
-
-となります。
+    C:\Cygwin\bin\bash.exe -r $ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh Client bid fid eid
 
 また、それぞれの値には、 ``${変数名}`` の形式で環境変数を、 ``@[位置]`` の形式で元のコマンドラインの指定位置(0起算)のトークンを利用できます。
-このとき、 ``@[0]`` は ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-execute.sh`` をさし、 ``@[1]`` はジョブクライアントクラス名をさし、といった具合になります。
+このとき、 ``@[0]`` は ``$ASAKUSA_HOME/yaess-hadoop/libexec/hadoop-execute.sh`` をさし、 ``@[1]`` はジョブクライアントクラス名をさし、といった具合になります。
+
+..  attention::
+    Asakusa Framework ``0.4.0`` よりクリーンアップ時の挙動が変更され、クリーンアップ時にも ``hadoop-execute.sh`` コマンドを利用するようになりました。
+
+..  [#] ``*.properties`` ファイルではバックスラッシュ ``\`` がエスケープ文字となるため、 ``\\`` のように2つつなげて書く必要があります。
 
 
-クリーンアップ実行への介入
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-`Hadoopジョブ実行への介入`_ と同様に、 `ジョブフロー中間ファイルのクリーンアップ`_ 実行時のコマンドに対しても介入を行えます。
-クリーンアップを行う際には、YAESSはHadoopがインストールされた環境の ``$ASAKUSA_HOME/yaess-hadoop/bin/hadoop-cleanup.sh`` というシェルスクリプトを実行しています。
-このシェルスクリプトを実行する際に、以下の引数を指定しています。
-
-..  list-table:: Hadoopジョブ実行時の引数一覧
-    :widths: 5 20
-    :header-rows: 1
-
-    * - 位置
-      - 内容
-    * - 1
-      - ``hadoop.workingDirectory`` の内容
-    * - 2
-      - バッチID
-    * - 3
-      - フローID
-    * - 4
-      - 実行ID
-    * - 5
-      - バッチ実行引数 (文字列形式)
-    * - 以降
-      - その他のHadoopへの引数一覧
-
-このコマンドラインを構成するルールに介入するには、以下のように設定を行います。
-YAESSでは、このコマンドラインを構成するルールに対して、以下の設定で介入できます。
-
-..  list-table:: コマンドライン介入の設定 (クリーンアップ)
-    :widths: 10 20
-    :header-rows: 1
-
-    * - 名前
-      - 値
-    * - ``hadoop.cleanup.0``
-      - 先頭に挿入されるトークン
-    * - ``hadoop.cleanup.1``
-      - 2番目に挿入されるトークン
-    * - ``hadoop.cleanup.<n>``
-      - ``n + 1`` 番目に挿入されるトークン
-
-``hadoop.command.<n>`` と同様に、 ``${変数名}`` や、 ``@[位置]`` も利用できます。
-
+.. _yaess-profile-command-section:
 
 コマンドラインジョブの実行
 --------------------------
 ThunderGateやWindGateなどのHadoop以外のジョブについては、YAESSでは「コマンドラインジョブ」と総称しています。
-コマンドラインジョブにはHadoopのジョブと異なり、「プロファイル」という概念があります。
+YAESS上でコマンドラインジョブの設定を行うには、構成ファイル内の ``command`` セクションの内容を編集します。
 
-これは、それぞれのジョブが「どの環境で実行されるか」ということをあらわすもので [#]_ 、
+コマンドラインジョブにはHadoopのジョブと異なり、「プロファイル」という概念があります。
+これは、それぞれのジョブが「どの環境で実行されるか」ということをあらわすもので、
 ThunderGateでは「ターゲット名」、WindGateでは「プロファイル名」で指定したものが利用されます。
 
-YAESS上でコマンドラインジョブの設定を行うには、構成ファイル内の ``command`` セクションの内容を編集します。
-さらに、プロファイルごとに ``command.<プロファイル名>`` のサブセクションを作成し、その中に各種設定を記述します。
-
-..  [#] 現在のAsakusa Frameworkは、Hadoopクラスターがひとつしかないという前提で動作します。
-    そのため、こちらには特定のプロファイルという概念が存在しません。
-
+``command`` セクションでは、プロファイルごとに ``command.<プロファイル名>``
+という形式でサブセクションを作成し、その中にプロファイル固有の設定を記述することができます。
 
 プロファイルの引き当て
 ~~~~~~~~~~~~~~~~~~~~~~
-構成ファイル内に ``command.<プロファイル名>`` というサブセクションを記載した場合、
+``command.<プロファイル名>`` というサブセクションを記載した場合、
 ``<プロファイル名>`` の部分に指定した文字列と同じプロファイルを利用するコマンドラインジョブは、
 そのサブセクションの構成を利用して実行します。
 
 プロファイルに対応するサブセクションが存在しない場合、そのコマンドラインジョブは
 ``command.*`` というサブセクションに記載した構成を利用して実行します。
 
-例として、ThunderGateを利用する際にターゲット名に ``asakusa`` を指定した場合、
+例として、ThunderGateを利用する際にターゲット名に `asakusa` を指定した場合、
 ``command.asakusa`` というサブセクションで設定した内容が適用されます。
 そのサブセクションがない場合には、 ``command.*`` というサブセクションの内容が適用されます。
 
@@ -347,36 +402,46 @@ YAESS上でコマンドラインジョブの設定を行うには、構成ファ
     上記のいずれのサブセクションも存在しない場合、YAESSはエラーとなります。
 
 
-同一環境上でコマンドラインジョブを実行する
+同一環境上のコマンドラインジョブを実行する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 YAESSを起動したコンピューターと同一のコンピューターでコマンドラインジョブを実行するには、構成ファイルの ``command.<プロファイル名>`` セクションに以下の内容を設定します。
 
 ..  list-table:: 同一環境上でコマンドラインを実行する際の設定
-    :widths: 10 15
+    :widths: 5 5
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - ``com.asakusafw.yaess.basic.BasicCommandScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicCommandScriptHandler`
+    * - ``command.<プロファイル名>.env.HADOOP_HOME``
+      - Hadoopのインストール先
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
-上記のうち、 ``command.<プロファイル名>.env.ASAKUSA_HOME`` には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
-ここでは同一環境上でコマンドラインジョブを実行するので、 ``${ASAKUSA_HOME}`` を指定すれば、現在の環境変数をそのまま利用できます。
+上記のうち、先頭の ``command`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
+
+ここでは同一環境上でコマンドラインジョブを実行するので、Asakusa FrameworkやHadoopのインストール先には、
+それぞれ ``${ASAKUSA_HOME}`` や ``${HADOOP_HOME}`` を指定することで、現在の環境変数をそのまま利用できます。
+
+..  hint::
+    ``command.<プロファイル名>.env.HADOOP_HOME`` の設定は必須ではありません。
+    詳しくは `コマンドラインジョブを実行する際の環境変数の設定`_ を参照してください。
+
+.. _yaess-profile-command-section-ssh:
 
 SSHを経由してコマンドラインジョブを実行する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 YAESSからSSHを経由し、リモートコンピューター上でコマンドラインジョブを実行するには、構成ファイルの ``command.<プロファイル名>`` セクションに以下の内容を設定します。
 
 ..  list-table:: SSHを経由してコマンドラインを実行する際の設定
-    :widths: 10 15
+    :widths: 5 5
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - ``com.asakusafw.yaess.jsch.SshCommandScriptHandler``
+      - :javadoc:`com.asakusafw.yaess.jsch.SshCommandScriptHandler`
     * - ``command.<プロファイル名>.ssh.user``
       - ログイン先のユーザー名
     * - ``command.<プロファイル名>.ssh.host``
@@ -387,20 +452,26 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
       - ローカルの秘密鍵の位置
     * - ``command.<プロファイル名>.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
+    * - ``command.<プロファイル名>.env.HADOOP_HOME``
+      - リモートのHadoopのインストール先
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
-上記のうち、 ``command.<プロファイル名>.ssh.user`` , ``command.<プロファイル名>.ssh.privateKey`` および  ``command.<プロファイル名>.env.ASAKUSA_HOME`` には ``${変数名}`` という形式で環境変数を含められます。
-たとえば、 ``hadoop.ssh.privateKey`` は通常 ``${HOME}/.ssh/id_rsa`` を指定します。
+上記のうち、先頭の ``command`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
 なお、 `SSHを経由してHadoopジョブを実行する`_ 際と同様に、SSHでの通信に JSch を利用しています。
+
+..  hint::
+    ``command.<プロファイル名>.env.HADOOP_HOME`` の設定は必須ではありません。
+    詳しくは `コマンドラインジョブを実行する際の環境変数の設定`_ を参照してください。
+
 
 コマンドラインジョブを実行する際の環境変数の設定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 コマンドラインジョブを実行する際に環境変数が必要な場合、以下の設定を追加します。
 
 ..  list-table:: コマンドラインジョブを実行する際の環境変数の設定
-    :widths: 10 15
+    :widths: 5 5
     :header-rows: 1
 
     * - 名前
@@ -411,9 +482,13 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
 ここで指定する値には、 ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
 ..  note::
-    ``command.<プロファイル名>.env.ASAKUSA_HOME`` は上記の一部です。
-    ただし、これらの環境変数はコマンドラインジョブの実行に必要であるため、常に指定するようにしてください。
+    ``command.<プロファイル名>.env.ASAKUSA_HOME`` などは上記の一部です。
+    ただし、環境変数 ``ASAKUSA_HOME`` はコマンドラインジョブの実行に必要であるため、常に指定するようにしてください。
 
+    また、Asakusa Frameworkが提供するほとんどのコマンドは ``hadoop`` コマンドを内部で利用しているため、上記で環境変数 ``HADOOP_HOME`` などを明示的に設定しておくことを推奨します。
+    Hadoopの位置を知らせる方法は環境変数 ``HADOOP_HOME`` を設定する代わりに ``HADOOP_CMD`` や ``PATH`` に適切な値を指定するなどがあります。
+
+    詳しくは `Hadoopコマンドの検索方法`_ を参照してください。
 
 
 コマンドラインジョブ実行への介入
@@ -435,13 +510,12 @@ YAESSがコマンドラインジョブを実行する際には、そのジョブ
       - ``n + 1`` 番目に挿入されるトークン
 
 たとえば、もとのコマンドラインが ``/bin/echo`` , ``hello`` で、
-``command.<プロファイル名>.command.0`` に ``C:\\Cygwin\\bin\\bash.exe`` , ``command.<プロファイル名>.command.1`` に ``-r`` と指定した場合、実際に実行されるコマンドは
+``command.<プロファイル名>.command.0`` に ``C:\\Cygwin\\bin\\bash.exe`` , ``command.<プロファイル名>.command.1`` に ``-r`` と指定した場合、実際に実行されるコマンドは以下のようになります。
 
 ..  code-block:: sh
 
     C:\Cygwin\bin\bash.exe -r /bin/echo hello
 
-となります。
 
 また、それぞれの値には、 ``${変数名}`` の形式で環境変数を、 ``@[位置]`` の形式で元のコマンドラインの指定位置(0起算)のトークンをそれぞれ利用できます。
 このとき、 ``@[0]`` はコマンドラインの実行可能ファイルパスをさし、 ``@[1]`` はコマンドラインの最初の引数といった具合になります。
@@ -451,26 +525,15 @@ YAESSがコマンドラインジョブを実行する際には、そのジョブ
 
 ジョブのスケジューリング
 ------------------------
-Asakusa Frameworkのバッチは次のような構造をしています。
+YAESSはバッチを実行する際、バッチが構成するジョブの実行順序等を、構成ファイルの ``schedule`` セクションで指定できます。
 
-..  list-table:: バッチの構造
-    :widths: 10 20
-    :header-rows: 1
+ジョブのスケジューリングを説明するために、 `Asakusa Frameworkのバッチ構造`_ で説明したバッチ構造の俯瞰図を再掲します。
 
-    * - 名前
-      - 値
-    * - バッチ
-      - バッチ全体
-    * - フロー
-      - バッチ内のトランザクション単位
-    * - フェーズ
-      - フロー内の処理内容の段階
-    * - ジョブ
-      - フェーズ内の個々の実行単位
+..  figure:: batch-structure.png
 
-それぞれのフェーズには複数のジョブが定義されていて、またそれぞれのジョブには実行順序の依存関係があります。
-YAESSはバッチを実行する際、各フェーズ内のジョブの実行順序等を、構成ファイルの ``schedule`` セクションで指定できます。
+上図では、バッチは3つのジョブフローから構成されています。1つめのジョブフローの終了後に実行される2つのジョブフローは依存関係がないため、並列で実行することが可能な構造を持っています。また、 ``import`` フェーズは2つのジョブから構成されていますが、これらも依存関係がないため、並列で実行することが可能です。 ``main`` フェーズについても一部で並列で実行可能な箇所が存在します。
 
+ジョブのスケジューリングはこのような構造を持つバッチに対して、ジョブ実行時にどのような実行順序で実行するかを設定します。
 
 もっとも単純なスケジューリング
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,13 +541,13 @@ YAESSはバッチを実行する際、各フェーズ内のジョブの実行順
 構成ファイルの ``schedule`` セクションに以下の内容を指定します。
 
 ..  list-table:: 単純なジョブのスケジューリングを行う際の設定
-    :widths: 10 15
+    :widths: 3 7
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``scheduler``
-      - ``com.asakusafw.yaess.basic.BasicJobScheduler``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicJobScheduler`
 
 
 ジョブを並列実行する際のスケジューリング
@@ -492,21 +555,27 @@ YAESSはバッチを実行する際、各フェーズ内のジョブの実行順
 依存関係を考慮しながら複数のジョブを同時に実行する場合、構成ファイルの ``schedule`` セクションに以下の内容を指定します。
 
 ..  list-table:: ジョブを並列実行する際の設定
-    :widths: 10 15
+    :widths: 3 7
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``scheduler``
-      - ``com.asakusafw.yaess.paralleljob.ParallelJobScheduler``
+      - :javadoc:`com.asakusafw.yaess.paralleljob.ParallelJobScheduler`
     * - ``scheduler.parallel.default``
       - 同時に実行可能なジョブの個数
 
 また、ジョブの種類ごとに同時に動作させるジョブの個数を設定することも可能です。
-この場合、構成ファイルに以下の内容を追加します。
+
+YAESSでは、スケジュールを指定するジョブを「リソース」という単位で識別します。
+各種ジョブの定義にリソースを示すプロパティを追加しておき、
+スケジュールの設定では、そのリソースに対して同時に実行するジョブの個数などの
+スケジュール設定を行います。
+
+リソース単位でスケジュール設定の指定を行う場合、構成ファイルに以下の内容を追加します。
 
 ..  list-table:: 種類ごとにジョブを並列実行する際の設定
-    :widths: 10 15
+    :widths: 5 5
     :header-rows: 1
 
     * - 名前
@@ -526,6 +595,8 @@ YAESSはバッチを実行する際、各フェーズ内のジョブの実行順
     つまり、 ``default`` という名前のリソース名はYAESS内で特別扱いされています。
     通常はこの名前をリソース名に使用しないでください。
 
+..  note::
+    上記ではHadoopジョブの実行とコマンドラインジョブの実行にそれぞれリソースを1つずつ割り当てる設定方法を説明していますが、 :doc:`multi-dispatch` で説明する ``asakusa-yaess-multidispatch`` を使うことで、例えばHadoopジョブの実行の中で複数のリソースを設定し、それぞれ個別のスケジュール設定を行う、といった使い方も可能になっています。
 
 ..  [#] `Hadoopジョブの実行`_ を参照
 ..  [#] `コマンドラインジョブの実行`_ を参照
@@ -545,13 +616,13 @@ YAESS上でHadoopに関する設定を行うには、構成ファイル内の ``
 YAESSを実行中のコンピューターで、ほかのYAESSの実行を抑制するには、構成ファイルの ``lock`` セクションに以下の内容を指定します。
 
 ..  list-table:: 同一環境上のバッチ実行を抑制する際の設定
-    :widths: 10 15
+    :widths: 2 8
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``lock``
-      - ``com.asakusafw.yaess.basic.BasicLockProvider``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicLockProvider`
     * - ``lock.directory``
       - ロックファイルの保存先パス
 
@@ -599,7 +670,7 @@ YAESSには、実行中のバッチの進捗状況を監視したり、または
 
 進捗ログを出力するモニタ
 ~~~~~~~~~~~~~~~~~~~~~~~~
-バッチ内のそれぞれのフェーズ [#]_ の進捗状況をログに出力するには、構成ファイルの ``monitor`` セクションに以下の内容を設定します。
+バッチ内のそれぞれのフェーズの進捗状況をログに出力するには、構成ファイルの ``monitor`` セクションに以下の内容を設定します。
 
 ..  list-table:: 進捗ログを出力するモニタを利用する際の設定
     :widths: 10 15
@@ -608,7 +679,7 @@ YAESSには、実行中のバッチの進捗状況を監視したり、または
     * - 名前
       - 値
     * - ``monitor``
-      - ``com.asakusafw.yaess.basic.BasicMonitorProvider``
+      - :javadoc:`com.asakusafw.yaess.basic.BasicMonitorProvider`
     * - ``monitor.stepUnit``
       - ログを出力する進捗の単位 (0.0 ~ 1.0)
 
@@ -618,8 +689,6 @@ YAESSには、実行中のバッチの進捗状況を監視したり、または
 
 このモニタは、YAESS本体のログ設定を利用してログを出力しています。
 YAESS本体のログ設定は `YAESSのログ設定`_ を参照してください。
-
-..  [#] `ジョブのスケジューリング`_ を参照
 
 ジョブフローごとに進捗状況を個別ファイルに出力するモニタ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -637,7 +706,7 @@ YAESS本体のログ設定は `YAESSのログ設定`_ を参照してくださ�
       - 値
     * - ``monitor``
       - (なし)
-      - ``com.asakusafw.yaess.flowlog.FlowLoggerProvider``
+      - :javadoc:`com.asakusafw.yaess.flowlog.FlowLoggerProvider`
     * - ``monitor.directory``
       - (なし)
       - ファイルの出力先ディレクトリ
@@ -685,7 +754,7 @@ YAESS本体のログ設定は `YAESSのログ設定`_ を参照してくださ�
 上記のうち、 ``monitor.directory`` には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
 ..  hint::
-    ``CLEANUP`` フェーズはジョブフローが途中で失敗した際には実行されません。
+    ``cleanup`` フェーズはジョブフローが途中で失敗した際には実行されません。
     そのため、ジョブフロー内で任意のエラーが発生した場合、設定によらず ``<出力先ディレクトリ>/<バッチID>/logs/<フローID>`` というファイルが残った状態になります。
     それぞれのジョブフローがどこまで進んだかを把握したい場合、このモニタが有効です。
 
@@ -718,11 +787,11 @@ YAESS本体のログ設定は `YAESSのログ設定`_ を参照してくださ�
 ..  [#] ``java.text.SimpleDateFormat``
 
 その他のYAESSの設定
--------------------
+===================
 構成ファイルのほかにも、いくつかYAESSの実行に関する設定があります。
 
 YAESSの環境変数設定
-~~~~~~~~~~~~~~~~~~~
+-------------------
 YAESSの実行に特別な環境変数を利用する場合、 ``$ASAKUSA_HOME/yaess/conf/env.sh`` 内でエクスポートして定義できます。
 
 YAESSを利用する場合、以下の環境変数が必要です。
@@ -752,7 +821,7 @@ YAESSを利用する場合、以下の環境変数が必要です。
 
 
 YAESSのログ設定
-~~~~~~~~~~~~~~~
+---------------
 YAESSは内部のログ表示に ``SLF4J`` [#]_ 、およびバックエンドに ``Logback`` [#]_ を利用しています。
 ログの設定を変更するには、 ``$ASAKUSA_HOME/yaess/conf/logback.xml`` を編集してください。
 
@@ -778,41 +847,59 @@ Logback以外のログの仕組みを利用する場合、 ``$ASAKUSA_HOME/yaess
 ..  [#] http://www.slf4j.org/
 ..  [#] http://logback.qos.ch/
 
+
 プラグインライブラリの管理
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 YAESSのいくつかの機能を利用するには、追加のプラグインライブラリが必要になる場合があります 。
 そのような機能を利用する場合、必要なライブラリを ``$ASAKUSA_HOME/yaess/plugin`` ディレクトリ直下に配置してください。
 
-..  note::
-    各セクションに直接指定するクラス名が ``com.asakusafw.yaess.basic.Basic`` から始まるものについては、追加のプラグインライブラリは不要です。
+標準的なプラグインはYAESS導入時に自動的にプラグインが追加されますが、その他のプラグインは拡張モジュールとして提供されるため、必要に応じて拡張モジュールを導入してください。
+
+拡張モジュールの一覧やその導入方法については、 :doc:`../administration/deployment-extension-module` を参照してください。
+
 
 YAESSによるバッチの実行
 =======================
 YAESSの `プロファイルセット`_ を作成し終えたら、それを利用してバッチアプリケーションを実行します。
 
-バッチアプリケーションの配備
-----------------------------
-YAESSを利用してバッチアプリケーションを実行する場合、YAESSを実行する環境上に同アプリケーションを配備する必要があります。
-アプリケーションの配備方法は、 :doc:`../administration/deployment-with-windgate` の「開発環境で作成したバッチアプリケーションのデプロイと動作確認」を参照してください。
+バッチアプリケーションのデプロイ
+--------------------------------
+YAESSを利用してバッチアプリケーションを実行する場合、YAESSを実行する環境上に同アプリケーションをデプロイする必要があります。
+
+アプリケーションのデプロイ方法は、各デプロイメントガイドの「バッチアプリケーションのデプロイ」を参照してください。
+
+* :doc:`../administration/deployment-with-windgate` 
+* :doc:`../administration/deployment-with-thundergate` 
+* :doc:`../administration/deployment-with-directio` 
+
 
 実行計画の確認
 --------------
-通常、バッチは複数のジョブフローと、さらに複数のフェーズから構成されています。
-バッチがどのような構成になっているかを調べる場合、 ``$ASAKUSA_HOME/yaess/bin/yaess-explain.sh <YAESSスクリプトのパス>`` と入力します。
+バッチアプリケーション用のデプロイメントアーカイブには、
+バッチアプリケーション毎にYAESS用のワークフロー記述として
+YAESSスクリプト ( ``<バッチID>/etc/yaess-script.properties`` )というファイルが含まれます。
+YAESSはYAESSスクリプトの定義内容に基づいてバッチアプリケーションを実行します。
+
+YAESSスクリプトはバッチ全体のワークフローの構造をYAESS向けに表しています。
+YAESSスクリプトの内容を確認するには、コマンドラインから
+``$ASAKUSA_HOME/yaess/bin/yaess-explain.sh <YAESSスクリプトのパス>``
+と入力します。
 
 なお、YAESSスクリプトのパスは、通常 ``$ASAKUSA_HOME/batchapps/<バッチID>/etc/yaess-script.properties`` です。
 また、アプリケーションの配置前であれば、 ``<コンパイラの出力先ディレクトリ>/<バッチID>/etc/yaess-script.properties`` を指定してください。
 
 このコマンドは、バッチの構造をフェーズの単位まで分解して、JSON形式で表示します。
+通常、バッチは複数のジョブフローと、さらに複数のフェーズから構成されています。
+
 以下はコマンドの出力結果の例です。
 
 ..  code-block:: javascript
 
     {
-      "id": "ex",
+      "id": "example.summarizeSales",
       "jobflows": [
         {
-          "id": "ex",
+          "id": "byCategory",
           "blockers": [],
           "phases": [
             "setup",
@@ -853,71 +940,31 @@ JSONオブジェクトのトップレベルはバッチ全体を表していて�
     * - ``blockers``
       - このジョブフローの実行の前提となるジョブフローのID一覧
     * - ``phases``
-      - このジョブフローに含まれるフェーズ一覧
-
-さらに、それぞれのフェーズ ( ``phases`` ) には以下のようなものがあります。
-
-..  list-table:: 実行計画の構造 (フェーズ)
-    :widths: 10 60
-    :header-rows: 1
-
-    * - 名前
-      - 処理内容
-    * - ``setup``
-      - ジョブフローの実行環境をセットアップする [#]_
-    * - ``initialize``
-      - ジョブフローの処理内容を初期化する
-    * - ``import``
-      - ジョブフローの処理に必要なデータを外部システムからインポートする
-    * - ``prologue``
-      - インポートしたデータを本処理用に加工する
-    * - ``main``
-      - Hadoopジョブなどの本処理を行う
-    * - ``epilogue``
-      - 本処理の結果をエクスポート用に加工する
-    * - ``export``
-      - ジョブフローの処理結果を外部システムにエクスポートする
-    * - ``finalize``
-      - ジョブフローの処理内容を完了またはロールバックさせる
-    * - ``cleanup``
-      - ジョブフローの実行環境をクリーンアップアップする
-
-以上のフェーズがジョブフロー内で上から順に行われる可能性があり、実行計画には実際に行うフェーズのみが表示されます。
-
-
-..  note::
-    上記のフェーズ一覧と処理内容はあくまで概要で、これに即した処理が行われるとは限りません。
-
-..  [#] 今のところ利用されていません
+      - このジョブフローに含まれるフェーズ一覧。
 
 
 バッチ全体の実行
 ----------------
 バッチアプリケーション全体を実行するには、コマンドラインから ``$ASAKUSA_HOME/yaess/bin/yaess-batch.sh <バッチID>`` と入力します。
+また、バッチに起動引数を指定する場合、コマンドラインの末尾に ``-A <変数名>=<値>`` のように記述します。
 
 ..  code-block:: sh
 
-    asakusa@asakusa:~$ $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex
-    Starting YAESS
-       Profile: /home/asakusa/asakusa/yaess/bin/../conf/yaess.properties
-        Script: /home/asakusa/asakusa/batchapps/ex/etc/yaess-script.properties
-      Batch ID: ex
-    ...
-    Finished: SUCCESS
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
 
 出力の最後に ``Finished: SUCCESS`` と表示されればバッチ処理は成功です。
-このバッチ処理の結果はコマンドの終了コードでも確認できます。
+なお、バッチ処理の結果はコマンドの終了コードでも確認できます。
 YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以外の場合は ``0`` でない終了コードを返します。
-
-また、バッチに起動引数を指定する場合、コマンドラインの末尾に ``-A <変数名>=<値>`` のように記述します。
-複数の起動引数を指定する場合には、スペース区切りで繰り返します。
-
-以下はコマンドラインの例です。
 
 ..  code-block:: sh
 
-    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A date=2011-03-31 -A code=123
+    Starting YAESS
+         Profile: /home/asakusa/asakusa/yaess/conf/yaess.properties
+          Script: /home/asakusa/asakusa/batchapps/example.summarizeSales/etc/yaess-script.properties
+        Batch ID: example.summarizeSales
+    ...
 
+    Finished: SUCCESS
 
 なお、各ジョブフローの ``initialize`` フェーズから ``finalize`` フェーズまでに例外が発生した場合、
 YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチの実行を異常終了させます。
@@ -926,7 +973,7 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 
 ジョブフローのスキップ
 ~~~~~~~~~~~~~~~~~~~~~~
-一部のジョブフローの実行を省略してバッチを実行したい場合、
+バッチに含まれる一部のジョブフローの実行を省略してバッチを実行したい場合、
 コマンドライン引数の末尾に ``-D skipFlows=<フローID>`` のように、省略したいジョブフローのフローIDを指定します。
 複数のジョブフローを省略する場合、カンマ区切りで  ``-D skipFlows=<フローID>,<フローID>,...`` のようにそれぞれ指定します。
 
@@ -940,9 +987,10 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 ..  hint::
     上記の機能は、バッチの途中で一部のジョブフローの処理が失敗した際に、途中からバッチを実行する際に利用できます。
 
+
 ジョブフロー単位の実行
 ----------------------
-バッチをジョブフロー単位で部分的に実行するには、コマンドラインから ``$ASAKUSA_HOME/yaess/bin/yaess-flow.sh <バッチID> <フローID> <フェーズ名> <実行ID>`` と入力します。
+バッチをジョブフロー単位で部分的に実行するには、コマンドラインから ``$ASAKUSA_HOME/yaess/bin/yaess-flow.sh <バッチID> <フローID> <実行ID>`` と入力します。
 また、 `バッチ全体の実行`_ と同様に、 ``-A <変数名>=<値>`` という形式で引数をいくつも指定できます。
 
 それぞれの値は次のような意味を持ちます。
@@ -961,9 +1009,9 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 
 上記のうち実行IDを除いては、 `実行計画の確認`_ のものと同様です。
 
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
+..  [#] :javadoc:`com.asakusafw.vocabulary.flow.JobFlow`
 
-..  [#] ``com.asakusafw.vocabulary.batch.Batch``
-..  [#] ``com.asakusafw.vocabulary.flow.JobFlow``
 
 フェーズ単位の実行
 ------------------
@@ -979,9 +1027,7 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
     ジョブフローのID。
     Asakusa DSL内で ``@JobFlow(name = "...")`` として指定した名前を利用する。
 フェーズ名
-    ジョブフロー内のフェーズ名。
-    バッチ全体を実行する場合には上記をジョブフローごとに順番に実行する。
-    ジョブフローの途中で処理が失敗した場合には、 ``finalize`` を実行してから終了する。
+    ジョブフロー内のフェーズ名 [#]_ 。
 実行ID
     ジョブフローの実行ごとのID。
     ワーキングディレクトリの特定や、ロングランニングトランザクションのIDとして利用する。
@@ -997,5 +1043,51 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 ..  attention::
     フェーズ単位でバッチを実行する場合、 `同一環境上のバッチ実行を抑制するロック`_ が実行のたびに取得され、実行終了時に開放されます。
     実行と実行の間にほかのバッチに割り込まれてしまう可能性がありますので、これより上位の仕組みでの排他制御が必要になるかもしれません。
+
+..  [#] ``yaess-phase.sh`` で指定できるフェーズは1つのみです。複数のフェーズを部分的に実行したい場合は、 ``yaess-phase.sh`` に異なるフェーズを指定して複数回実行してください。
+
+
+その他の実行に関する機能
+------------------------
+
+シミュレーションモード
+~~~~~~~~~~~~~~~~~~~~~~
+実際の処理を実行せず、環境構成や設定の確認のみを行いたい場合、コマンドライン引数の末尾に ``-D dryRun`` と指定します。
+
+以下はコマンドラインの例です。
+
+..  code-block:: sh
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A code=123 -D dryRun
+
+シミュレーションモードでは、HadoopやWindGateをシミュレーションモードで実行します。
+シミュレーションモードの動作はそれぞれ異なりますが、基本的には設定や引数を確認した後、データの入出力を行わずに終了します。
+
+..  note::
+    引数 ``-D dryRun`` は ``-D dryRun=true`` の省略記法です。
+    いずれの場合でも、 ``-D`` と ``dryRun`` は離して入力してください。
+
+
+アプリケーションの検証
+~~~~~~~~~~~~~~~~~~~~~~
+バッチアプリケーションをYAESSで実行すると、HadoopやWindGateなどそれぞれの環境においてアプリケーションライブラリの検証を行います。
+
+以下の内容についての検証が行われます。
+
+* YAESSを起動した際のアプリケーションと、各環境で実行しようとしているアプリケーションのライブラリが一致するか
+* 各環境で実行しようとしているアプリケーションと、その環境にインストールされたランタイムライブラリのバージョンが一致するか
+
+..  hint::
+    アプリケーションの検証では、ジョブフローのJARファイルに含まれる ``META-INF/asakusa/application.properties`` というファイルの情報を利用します。
+
+アプリケーションの検証に失敗した場合、 ``InconsistentApplicationException`` [#]_ という例外がスローされてプログラムが終了します。
+
+上記の検証を利用しない場合、コマンドライン引数の末尾に ``-D verifyApplication=false`` と指定します。
+上記の指定がない場合、常にアプリケーションの検証を行います。
+
+..  attention::
+    アプリケーションの検証は常に有効にしておくことを強く推奨します。現在のAsakusa Frameworkでは、同一のAsakusa DSLのソースコードに対してもバッチコンパイルの結果生成されるバッチアプリケーションの実行計画は不定です。実行計画が異なるアプリケーションを異なる環境に配置して実行した場合、予期しない動作をする可能性が高いです。
+
+..  [#] :javadoc:`com.asakusafw.runtime.core.context.InconsistentApplicationException`
 
 

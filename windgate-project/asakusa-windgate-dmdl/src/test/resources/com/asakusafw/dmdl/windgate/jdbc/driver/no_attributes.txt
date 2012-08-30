@@ -1,0 +1,5 @@
+no_attributes = {
+    a : TEXT;
+    b : TEXT;
+    c : TEXT;
+};

@@ -1,8 +1,113 @@
-:orphan:
-
 ================================
 Asakusa Framework リリースノート
 ================================
+
+Release 0.4.0
+=============
+Aug 30, 2012
+
+Enhancements
+------------
+* [ :issue:`78` ] - \*Tester should provide the way to define precision accuracy
+    * See: :doc:`testing/user-guide`
+* [ :issue:`115` ] - Manage assembly descriptor as part of Maven artifact.
+* [ :issue:`128` ] - Retryable Processes for WindGate
+    * See: :doc:`windgate/user-guide`
+* [ :issue:`160` ] - Optimize execution plan for eliminating duplication of Operator
+    * See: :doc:`dsl/user-guide`
+* [ :issue:`179` ] - Batch application submodule mechanism 
+    * See: :doc:`dsl/user-guide`
+* [ :issue:`185` ] - Generate Input/Output Description for Direct I/O SequenceFile format
+    * See: :doc:`directio/user-guide`
+* [ :issue:`195` ] - support Apache Hadoop 1.0.x
+    * See: :doc:`product/target-platform`
+* [ :issue:`197` ] - Command line tools for operation
+    * See: :doc:`administration/utility-tool-user-guide`
+* [ :issue:`201` ] - Direct I/O output optimization
+    * See: :doc:`directio/user-guide`
+* [ :issue:`202` ] - Direct I/O cleaning DSL/CLI
+    * See: :doc:`directio/user-guide`
+    * See: :doc:`directio/tools-guide`
+* [ :issue:`204` ] - Revise cleanup in YAESS
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`208` ] - Direct I/O sequence file compression
+    * See: :doc:`directio/user-guide`
+* [ :issue:`209` ] - Logging improvement for YAESS
+    * See: :doc:`yaess/log-table`
+* [ :issue:`210` ] - Detects difference in build version of batch application at runtime
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`212` ] - Logging improvement for Asakusa Runtime
+* [ :issue:`213` ] - Enables WindGate to pass environment variables to remote processes via SSH
+    * See: :doc:`windgate/user-guide`
+* [ :issue:`214` ] - WindGate hadoop/direct basePath
+    * See: :doc:`windgate/user-guide`
+* [ :issue:`215` ] - Thundergate should use Hadoop configuration and classpath
+* [ :issue:`218` ] - WindGate profile should allow to specify environment variables more properties
+    * See: :doc:`windgate/user-guide`
+* [ :issue:`219` ] - YAESS profile should allow to specify environment variables more properties
+    * See: :doc:`yaess/user-guide`
+* [ :issue:`222` ] - Performance tuning of CSV Parser
+* [ :issue:`226` ] - Add version information in ASAKUSA_HOME
+* [ :issue:`227` ] - Add build timestamp in application build log
+* [ :issue:`232` ] - Improve sample application includes archetype
+* [ :issue:`240` ] - Supports CDH3u5
+    * See: :doc:`product/target-platform`
+
+..  attention::
+    Direct I/O is now generally available.
+
+Bug fixes
+---------
+* [ :issue:`194` ] - WindGate log seems not correct
+* [ :issue:`196` ] - Cleaner should use Hadoop libraries provided environment
+* [ :issue:`211` ] - Unexpected exception thrown when log directory lost permission.
+* [ :issue:`217` ] - Maven eclipse plugin may not create source directory for generating annotation processing
+* [ :issue:`221` ] - Remove unnecessary eclipse configuration from archetype pom.xml
+* [ :issue:`223` ] - Incorrect error message of CSV Parser
+* [ :issue:`224` ] - Compiler does not stop when overwriting output error at batch compile
+* [ :issue:`229` ] - Some of the test method of ThunderGate does not close JDBC resource
+* [ :issue:`233` ] - Incorrect log level of ThunderGate
+* [ :issue:`234` ] - BridgeInputFormat may cause StackOverFlowError with inconsistent framework environment
+* [ :issue:`235` ] - BasePath not found error when connecting flow from Direct I/O input to WindGate output directly
+* [ :issue:`236` ] - Redundant warning log for creating symlink on standalone mode
+* [ :issue:`237` ] - Partitioners hash algorithm is not strong.
+* [ :issue:`238` ] - DMDL Compiler generates DataModel Class incorrectly with hierarchical namespace attributes
+* [ :issue:`239` ] - DMDL Compiler does not detect inconsistent type of join keys.
+* [ :issue:`242` ] - TestDriver resolves working directory with user home directory
+
+Revisions
+---------
+* [ :issue:`198` ] - Changes archetype composition
+    * See: :doc:`application/maven-archetype`
+* [ :issue:`207` ] - Legacy TestDriver should not use experimental shell script
+* [ :issue:`220` ] - Rename asakusa-runtime.jar
+* [ :issue:`225` ] - Changes default value of PartialAggregation parameter in Summarize operator
+
+Others
+------
+* [ :issue:`70` ] - Need more detailed and easy-to-see documentation for logging and related maintainance
+    * See: :doc:`windgate/log-table`
+    * See: :doc:`yaess/log-table`
+* [ :issue:`180` ] - WindGate log table document
+    * See: :doc:`windgate/log-table`
+* [ :issue:`181` ] - 0.4.0 Documentation
+* [ :issue:`189` ] - Refoctoring for release 0.4.0
+* [ :issue:`190` ] - Repackage javalang-tools
+* [ :issue:`191` ] - Introduce hierarchical project structure to repository
+* [ :issue:`192` ] - Update Maven plugins to recent versions
+* [ :issue:`193` ] - Update dependency libraries to recent versions
+* [ :issue:`199` ] - Clean project structure and project dependency for legacy classes
+* [ :issue:`200` ] - Refactor assembly scripts
+* [ :issue:`203` ] - Relocate each distribution fragments into suitable project
+* [ :issue:`205` ] - Migrate JobQueue sorurces from asakusafw-sandbox repository
+    * See: :doc:`yaess/jobqueue`
+* [ :issue:`206` ] - 0.4.0 Javadoc
+    * See: `Asakusa Framework API References (Version 0.4.0)`_
+* [ :issue:`216` ] - Refoctoring Maven archetype for release 0.4.0
+
+..  _`Asakusa Framework API References (Version 0.4.0)`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/index.html
+
+----
 
 Release 0.2.6
 =============
@@ -240,7 +345,7 @@ Jul 27, 2011
 Enhancements
 ------------
 * [ :issue:`38` ] - Supports CLOB for property type
-    * See: :doc:`dmdl/with-thundergate`
+    * See: :doc:`thundergate/with-dmdl`
 * [ :issue:`41` ] - Support new operator "Extract"
     * See: :doc:`dsl/operators`
 * [ :issue:`50` ] - Support new operator "Restructure"
@@ -271,7 +376,7 @@ Enhancements
 * [ :issue:`19` ] - TestDriver enhancement for loosely-coupled architecture
     * See: :doc:`testing/index`
 * [ :issue:`23` ] - Floating point number support
-    * See: :doc:`dmdl/with-thundergate`
+    * See: :doc:`thundergate/with-dmdl`
 * [ :issue:`32` ] - CoGroup/GroupSort for very large group
     * See: :doc:`dsl/operators`
 * [ :issue:`36` ] - ThunderGate should show # of imported/exporting records

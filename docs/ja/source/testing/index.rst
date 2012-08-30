@@ -25,7 +25,6 @@ Asakusa Frameworkにはテストドライバという開発用のJavaライブ�
 
     start-guide
     user-guide
-    with-thundergate
     using-excel
     using-json
     developer-guide

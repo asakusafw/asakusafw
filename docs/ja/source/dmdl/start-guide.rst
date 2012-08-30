@@ -34,7 +34,7 @@ DMDLスクリプトを作成する
 * プロパティの型は、プロパティ名の右側にコロンをはさんで大文字で指定する
 * データモデルやプロパティの末尾にはセミコロンを指定する
 
-データモデル内に複数のプロパティを定義するには、 `{` と `}` の間に続けて指定します。
+データモデル内に複数のプロパティを定義するには、 ``{`` と ``}`` の間にプロパティを続けて指定します。
 
 ..  code-block:: none
 
@@ -44,7 +44,7 @@ DMDLスクリプトを作成する
         third : DOUBLE;
     };
 
-複数のデータモデルを定義するには、DMDLスクリプト内に続けて記述します。
+複数のデータモデルを定義するには、DMDLスクリプト内にデータモデルを続けて記述します [#]_ 。
 
 ..  code-block:: none
 
@@ -58,6 +58,9 @@ DMDLスクリプトを作成する
         other : DATE;
     };
 
+..  [#] DMDLスクリプトファイルを複数用意し、それぞれのファイルにデータモデルクラスを定義することも可能です。
+
+
 利用可能なプロパティの種類
 --------------------------
 
@@ -69,28 +72,28 @@ DMDLスクリプトを作成する
 
     * - 型の名前
       - 対応するJavaの型
-    * - INT
-      - IntOption
-    * - LONG
-      - LongOption
-    * - FLOAT
-      - FloatOption
-    * - DOUBLE
-      - DoubleOption
-    * - TEXT
-      - StringOption
-    * - DECIMAL
-      - DecimalOption
-    * - DATE
-      - DateOption
-    * - DATETIME
-      - DateTimeOption
-    * - BOOLEAN
-      - BooleanOption
-    * - BYTE
-      - ByteOption
-    * - SHORT
-      - ShortOption
+    * - ``INT``
+      - ``IntOption``
+    * - ``LONG``
+      - ``LongOption``
+    * - ``FLOAT``
+      - ``FloatOption``
+    * - ``DOUBLE``
+      - ``DoubleOption``
+    * - ``TEXT``
+      - ``StringOption``
+    * - ``DECIMAL``
+      - ``DecimalOption``
+    * - ``DATE``
+      - ``DateOption``
+    * - ``DATETIME``
+      - ``DateTimeOption``
+    * - ``BOOLEAN``
+      - ``BooleanOption``
+    * - ``BYTE``
+      - ``ByteOption``
+    * - ``SHORT``
+      - ``ShortOption``
 
 複数のデータモデルを合成する
 ----------------------------
@@ -132,7 +135,8 @@ DMDLでは、定義した複数のデータモデルを組み合わせて新し�
         extra : TEXT;
     };
 
-上記のextendedでは、originで定義したプロパティvalueに加えて、新たにextraというプロパティを定義しています。このextendedは以下のような構造になります。
+上記の `extended` では、 `origin` で定義したプロパティ `value` に加えて、新たに `extra` というプロパティを定義しています。
+この `extended` は以下のような構造になります。
 
 ..  code-block:: none
 
@@ -143,34 +147,6 @@ DMDLでは、定義した複数のデータモデルを組み合わせて新し�
 
 このようにDMDLでは、他のデータモデルの定義や新たなプロパティの定義を組み合わせて、複雑なデータモデルを定義できます。
 
-射影モデルを利用する
---------------------
-
-Asakusa Framework 0.2で導入されたジェネリックデータフローを利用する場合、通常のデータモデルクラスのほかに、データモデルの一部を投影する「射影モデル」を利用します。DMDLを利用してこの射影モデルを記述するには、次のようにデータモデル定義の先頭に「projective」というキーワードを挿入します。
-
-..  code-block:: none
-
-    projective proj_model = {
-        value : INT;
-    };
-
-上記のように記述した場合、proj_modelに対応するJavaのデータモデルクラスは生成されず、代わりに同様のプロパティを持つインターフェースが生成されます。このインターフェースを実装(implements)するデータモデルクラスを生成するには、次のようにデータモデル定義の右辺にこの射影モデルを利用します。
-
-..  code-block:: none
-
-    conc_model = proj_model + {
-        other : INT;
-    };
-
-射影モデルをデータモデル定義の右辺に利用した場合、その射影モデルが定義するプロパティは、左辺のデータモデルにも自動的に追加されます。さらに、左辺のデータモデルは右辺に利用したすべての射影モデルをインターフェースとして実装します。
-また、射影モデル自体を入れ子にすることも可能です。
-
-..  code-block:: none
-
-    projective super_proj = { a : INT; };
-    projective sub_proj = super_proj + { b : INT; };
-
-この場合、sub_projが生成するインターフェースは、super_projが生成するインターフェースのサブタイプになります。
 
 Javaモデルクラスを生成する
 ==========================
@@ -178,7 +154,9 @@ Javaモデルクラスを生成する
 DMDLコンパイラの起動
 --------------------
 
-DMDLスクリプトに記述したデータモデルからJavaのデータモデルクラスを生成するには、mvnコマンドを利用してDMDLコンパイラを実行します。これはMavenの ``generate-sources`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
+DMDLスクリプトに記述したデータモデルからJavaのデータモデルクラスを生成するには、 ``mvn`` コマンドを利用してDMDLコンパイラを実行します。
+
+DMDLコンパイラはMavenの ``generate-sources`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
 
 ..  code-block:: sh
 
@@ -196,7 +174,7 @@ ThunderGateとの連携
 ThunderGateを利用するプロジェクト構成の場合、DMDLコンパイラの実行前にThunderGateが利用するデータベースの情報を分析して、
 データベース内に定義されたテーブルやビューの情報を元に、対応するデータモデルの定義を記述するDMDLを自動的に生成します。
 
-ThunderGateとの連携について、詳しくは :doc:`with-thundergate` を参照してください。
+ThunderGateとの連携について、詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
 
 Direct I/Oとの連携
 ------------------

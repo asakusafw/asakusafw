@@ -31,3 +31,5 @@ DBMS固有の機能に依存せず、標準SQL/JDBCインターフェースの�
 
     start-guide
     user-guide
+    log-table
+    developer-guide
