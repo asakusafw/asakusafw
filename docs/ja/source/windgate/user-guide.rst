@@ -168,7 +168,7 @@ WindGateは二つのリソースの間でデータを転送するツールです
       - リトライ回数
 
 ``process.basic.component`` は実際に利用するデータ転送プロセスを設定します。
-現在他に利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
+現在利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
 
 再試行可能なデータ転送プロセスでは、 ``process.basic.component`` に指定したデータ転送プロセスを利用し、通常の方法でデータ転送を行います。
 データ転送に失敗した場合、 ``process.retryCount`` に設定された回数を上限として、成功するまで上記プロセスを再実行します。
