@@ -114,7 +114,7 @@ public class HadoopDataSourceProfileTest {
         HadoopDataSourceProfile result = HadoopDataSourceProfile.convert(profile, conf);
 
         FileSystem defaultFs = FileSystem.get(conf);
-        Path path = new Path(defaultFs.getWorkingDirectory(), "relative").makeQualified(defaultFs);
+        Path path = defaultFs.makeQualified(new Path(defaultFs.getWorkingDirectory(), "relative"));
         assertThat(result.getFileSystem().getCanonicalServiceName(), is(defaultFs.getCanonicalServiceName()));
         assertThat(result.getFileSystemPath(), is(path));
     }

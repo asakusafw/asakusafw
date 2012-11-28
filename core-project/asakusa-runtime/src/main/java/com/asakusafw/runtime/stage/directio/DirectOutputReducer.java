@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
@@ -49,7 +50,7 @@ public final class DirectOutputReducer extends Reducer<
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        this.recordCounter = context.getCounter(org.apache.hadoop.mapred.Task.Counter.REDUCE_OUTPUT_RECORDS);
+        this.recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
         this.repository = HadoopDataSourceUtil.loadRepository(context.getConfiguration());
         String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
         this.variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
