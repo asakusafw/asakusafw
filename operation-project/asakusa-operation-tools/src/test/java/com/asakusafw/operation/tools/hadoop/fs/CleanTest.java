@@ -501,9 +501,8 @@ public class CleanTest {
         Assume.assumeThat(f1.delete(), is(true));
 
         Clean c = createService(100);
-        int exit = c.run(args(0, "-r", path("*")));
+        c.run(args(0, "-r", path("*")));
 
-        assertThat(exit, is(not(0)));
         assertThat(f2.toString(), f2.exists(), is(false));
     }
 
@@ -520,9 +519,8 @@ public class CleanTest {
         f3.renameTo(f1);
 
         Clean c = createService(100);
-        int exit = c.run(args(0, "-r", path("*")));
+        c.run(args(0, "-r", path("*")));
 
-        assertThat(exit, is(not(0)));
         assertThat(f2.toString(), f2.exists(), is(false));
     }
 
