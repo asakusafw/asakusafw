@@ -37,6 +37,6 @@ public final class FileSystemCompatibility {
         if (status == null) {
             throw new IllegalArgumentException("status must not be null"); //$NON-NLS-1$
         }
-        return status.isDir();
+        return status.isDirectory();
     }
 }

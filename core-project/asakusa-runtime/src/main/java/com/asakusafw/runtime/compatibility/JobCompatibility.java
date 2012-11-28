@@ -18,7 +18,6 @@ package com.asakusafw.runtime.compatibility;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapred.Task;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobID;
@@ -27,8 +26,13 @@ import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.TaskCounter;
 import org.apache.hadoop.mapreduce.TaskID;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
+import org.apache.hadoop.mapreduce.TaskType;
+import org.apache.hadoop.mapreduce.counters.GenericCounter;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import org.apache.hadoop.mapreduce.task.TaskInputOutputContextImpl;
 import org.apache.hadoop.util.Progressable;
 
 /**
@@ -52,7 +56,7 @@ public final class JobCompatibility {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        return new Job(conf);
+        return Job.getInstance(conf);
     }
 
     /**
@@ -69,7 +73,7 @@ public final class JobCompatibility {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
         }
-        return new TaskAttemptContext(conf, id);
+        return new TaskAttemptContextImpl(conf, id);
     }
 
     /**
@@ -93,7 +97,7 @@ public final class JobCompatibility {
         if (progressable == null) {
             return newTaskAttemptContext(conf, id);
         }
-        return new TaskAttemptContext(conf, id) {
+        return new TaskAttemptContextImpl(conf, id) {
             @Override
             public void progress() {
                 progressable.progress();
@@ -120,7 +124,7 @@ public final class JobCompatibility {
         if (jobId == null) {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
-        return new TaskID(jobId, true, 0);
+        return new TaskID(jobId, TaskType.JOB_SETUP, 0);
     }
 
     /**
@@ -146,10 +150,10 @@ public final class JobCompatibility {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        if (context.getTaskAttemptID().isMap()) {
-            return context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS);
+        if (context.getTaskAttemptID().getTaskType() == TaskType.MAP) {
+            return context.getCounter(TaskCounter.MAP_OUTPUT_RECORDS);
         } else {
-            return context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS);
+            return context.getCounter(TaskCounter.REDUCE_OUTPUT_RECORDS);
         }
     }
 
@@ -162,7 +166,7 @@ public final class JobCompatibility {
      * @since 0.5.0
      */
     public abstract static class TaskInputOutputContextStub<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
-            extends TaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
+            extends TaskInputOutputContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
 
         /**
          * Creates a new dummy instance.
@@ -222,7 +226,7 @@ public final class JobCompatibility {
 
         @Override
         public Counter getCounter(String group, String name) {
-            return new Counter() {
+            return new GenericCounter() {
                 // empty
             };
         }

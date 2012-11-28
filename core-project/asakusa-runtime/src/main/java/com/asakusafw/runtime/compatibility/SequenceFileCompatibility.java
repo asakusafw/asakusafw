@@ -15,15 +15,11 @@
  */
 package com.asakusafw.runtime.compatibility;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FilterFileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PositionedReadable;
 import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.SequenceFile;
@@ -57,43 +53,10 @@ public final class SequenceFileCompatibility {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        FileStatus status = new FileStatus(length, false, 0, length, 0, new Path("dummy:///"));
-        Path path = status.getPath();
         return new SequenceFile.Reader(
-                new InputStreamFileSystem(status, in),
-                path,
-                conf);
-    }
-
-    private static class InputStreamFileSystem extends FilterFileSystem {
-
-        private final FileStatus status;
-
-        private final InputStream input;
-
-        InputStreamFileSystem(FileStatus status, InputStream input) {
-            assert status != null;
-            assert input != null;
-            this.status = status;
-            this.input = input;
-        }
-
-        @Override
-        public FSDataInputStream open(Path f) throws IOException {
-            return open(f, 4096);
-        }
-
-        @Override
-        public FSDataInputStream open(Path f, int bufferSize) throws IOException {
-            return new FSDataInputStream(
-                    new WrappedInputStream(
-                            new BufferedInputStream(input, bufferSize)));
-        }
-
-        @Override
-        public FileStatus getFileStatus(Path f) throws IOException {
-            return status;
-        }
+                conf,
+                SequenceFile.Reader.stream(new FSDataInputStream(new WrappedInputStream(in))),
+                SequenceFile.Reader.length(length));
     }
 
     private static class WrappedInputStream extends InputStream implements Seekable, PositionedReadable {
