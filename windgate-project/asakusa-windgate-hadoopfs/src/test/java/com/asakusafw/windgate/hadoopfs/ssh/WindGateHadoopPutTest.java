@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -230,7 +231,12 @@ public class WindGateHadoopPutTest {
     }
 
     private Map<String, String> get() throws IOException {
-        FileStatus[] files = fs.listStatus(PREFIX);
+        FileStatus[] files;
+        try {
+            files = fs.listStatus(PREFIX);
+        } catch (FileNotFoundException e) {
+            files = null;
+        }
         if (files == null) {
             return Collections.emptyMap();
         }
