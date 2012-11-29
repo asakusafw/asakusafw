@@ -93,7 +93,7 @@ public class FrameworkDeployer implements TestRule {
         };
     }
 
-    void createDirs() {
+    void createDirs() throws IOException {
         home = folder.newFolder("home");
         work = folder.newFolder("work");
     }

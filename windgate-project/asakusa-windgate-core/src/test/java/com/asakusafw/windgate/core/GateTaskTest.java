@@ -15,7 +15,7 @@
  */
 package com.asakusafw.windgate.core;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.EOFException;
@@ -206,7 +206,7 @@ public class GateTaskTest {
         assertThat(out.exists(), is(false));
     }
 
-    private GateProfile profile() {
+    private GateProfile profile() throws IOException {
         CoreProfile core = new CoreProfile(2);
         SessionProfile session = new SessionProfile(
                 FileSessionProvider.class,

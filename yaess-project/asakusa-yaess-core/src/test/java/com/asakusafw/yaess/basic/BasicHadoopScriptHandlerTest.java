@@ -176,9 +176,9 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
         execute(script, handler);
 
         List<String> results = getOutput(shell);
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("script=SCRIPT")));
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("handler=HANDLER")));
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("override=SCRIPT")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("script=SCRIPT")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("handler=HANDLER")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("override=SCRIPT")));
     }
 
     /**

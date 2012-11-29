@@ -254,9 +254,10 @@ public class ConfigurationProviderTest {
 
     /**
      * search for confdir from PATH using symlink.
+     * @throws IOException IOException
      */
     @Test
-    public void symlink() {
+    public void symlink() throws IOException {
         File cmd = putExec("hadoop/bin/hadoop");
         putConf("hadoop/etc/hadoop/core-site.xml");
 
