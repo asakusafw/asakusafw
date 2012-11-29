@@ -299,11 +299,11 @@ JDBC接続設定ファイルは、ターゲットに対するJDBC接続設定を
     * - ``hadoop-cluster.env.ASAKUSA_HOME``
       - 
       - HadoopクライアントマシンのAsakusa Frameworkのインストールパス
-    * - ``hadoop-cluster.env.HADOOP_HOME``
+    * - ``hadoop-cluster.env.HADOOP_CMD``
       - 
-      - HadoopクライアントマシンのHadoopのインストールパス [#]_
+      - Hadoopクライアントマシンが利用する ``hadoop`` コマンドのパス。 [#]_
 
-..  [#] オプション項目です。HADOOP_HOMEが不要なHadoopディストリビューションを使用している場合は設定しないでください。
+..  [#] オプション項目です。HADOOP_CMDが不要なHadoopディストリビューションを使用している場合は設定しないでください。
 
 
 インポート設定 (データベースノード)

@@ -16,7 +16,7 @@
 
 # common options
 #export JAVA_HOME=
-#export HADOOP_HOME="/usr/lib/hadoop"
+#export HADOOP_CMD="/usr/bin/hadoop"
 
 # for DB server side options
 #export IMPORTER_JAVA_OPTS=

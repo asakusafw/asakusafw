@@ -228,7 +228,7 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     # ローカル環境向けサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.default.resource = hadoop-local
-    hadoop.default.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.default.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
     
     command.*.default = com.asakusafw.yaess.basic.BasicCommandScriptHandler
@@ -242,7 +242,7 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     hadoop.remote.ssh.port=22
     hadoop.remote.ssh.privateKey=${HOME}/.ssh/id_dsa
     hadoop.remote.resource = hadoop-remote
-    hadoop.remote.env.HADOOP_HOME = /usr/lib/hadoop
+    hadoop.remote.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.remote.env.ASAKUSA_HOME = /home/asakusa/asakusafw
     
     command.*.remote = com.asakusafw.yaess.jsch.SshCommandScriptHandler
@@ -290,21 +290,21 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     # デフォルト設定を利用するサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.default.resource = hadoop
-    hadoop.default.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.default.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
     
     # 別の設定を利用するサブハンドラ (reduce4)
     hadoop.reduce4 = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.reduce4.resource = hadoop
     hadoop.reduce4.prop.mapred.reduce.tasks = 4
-    hadoop.reduce4.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.reduce4.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.reduce4.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
     
     # 別の設定を利用するサブハンドラ (reduce8)
     hadoop.reduce8 = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.reduce8.resource = hadoop
     hadoop.reduce8.prop.mapred.reduce.tasks = 8
-    hadoop.reduce8.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.reduce8.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.reduce8.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
 
