@@ -49,7 +49,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
+			<artifactId>${hadoop.artifact.id}</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
