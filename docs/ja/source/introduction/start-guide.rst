@@ -286,24 +286,24 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 
     mkdir -p ~/workspace
     cd ~/workspace
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、WindGateと連携するアプリケーション用のテンプレートである 1 ( ``asakusa-archetype-windgate`` ) を選択します。
 
 ..  code-block:: sh
 
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (バージョン 0.4.0) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (バージョン 0.5.0) を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.4-SNAPSHOT
-    2: 0.4.0
+    1: 0.5-SNAPSHOT
+    2: 0.5.0
     Choose a number: 2: 2 (<-2を入力)
 
 ..  attention::
