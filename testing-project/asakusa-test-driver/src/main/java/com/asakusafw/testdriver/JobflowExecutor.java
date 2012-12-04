@@ -91,8 +91,14 @@ public class JobflowExecutor {
         Configuration conf = configurations.newInstance();
         FileSystem fs = FileSystem.get(conf);
         Path path = new Path(context.getClusterWorkDir());
-        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
-        fs.delete(path, true);
+        Path fullPath = fs.makeQualified(path);
+        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", fullPath);
+        boolean deleted = fs.delete(fullPath, true);
+        if (deleted) {
+            LOG.debug("クラスタワークディレクトリを削除しました。Path: {}", fullPath);
+        } else {
+            LOG.debug("クラスタワークディレクトリを削除できませんでした。Path: {}", fullPath);
+        }
     }
 
     /**
