@@ -448,7 +448,15 @@ public final class HadoopDataSourceUtil {
         }
         Path dir = getTransactionInfoDir(conf);
         FileSystem fs = dir.getFileSystem(conf);
-        FileStatus[] statusArray = fs.listStatus(dir);
+        FileStatus[] statusArray;
+        try {
+            statusArray = fs.listStatus(dir);
+        } catch (FileNotFoundException e) {
+            statusArray = null;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Target file is not found: {0}", dir), e);
+            }
+        }
         if (statusArray == null || statusArray.length == 0) {
             return Collections.emptyList();
         }
@@ -642,8 +650,18 @@ public final class HadoopDataSourceUtil {
                 paths.add(path);
                 results.add(next);
                 if (next.isDir()) {
-                    FileStatus[] children = fs.listStatus(path);
-                    Collections.addAll(work, children);
+                    FileStatus[] children;
+                    try {
+                        children = fs.listStatus(path);
+                    } catch (FileNotFoundException e) {
+                        children = null;
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(MessageFormat.format("Target file is not found: {0}", path), e);
+                        }
+                    }
+                    if (children != null) {
+                        Collections.addAll(work, children);
+                    }
                 }
             }
         }

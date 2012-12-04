@@ -15,6 +15,7 @@
  */
 package com.asakusafw.cleaner.main;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -346,7 +347,12 @@ public class HDFSCleaner extends Configured implements Tool {
      * @throws IOException
      */
     private FileStatus[] getListStatus(FileSystem fs, Path path) throws IOException {
-        FileStatus[] status = fs.listStatus(path);
+        FileStatus[] status;
+        try {
+            status = fs.listStatus(path);
+        } catch (FileNotFoundException e) {
+            status = null;
+        }
         if (status == null) {
             status = new FileStatus[0];
         }
