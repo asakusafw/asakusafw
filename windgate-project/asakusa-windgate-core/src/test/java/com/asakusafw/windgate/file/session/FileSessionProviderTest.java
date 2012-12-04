@@ -15,9 +15,8 @@
  */
 package com.asakusafw.windgate.file.session;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 import java.io.File;
 import java.io.IOException;

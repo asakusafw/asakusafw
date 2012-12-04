@@ -28,9 +28,10 @@ public class SpiDataModelAdapterTest extends SpiTestRoot {
 
     /**
      * Test method for {@link SpiDataModelAdapter#get(java.lang.Class)}.
+     * @throws Exception if failed
      */
     @Test
-    public void getDefinition() {
+    public void getDefinition() throws Exception {
         ClassLoader cl = register(DataModelAdapter.class, MockDataModelAdapter.class);
         DataModelAdapter adapter = new SpiDataModelAdapter(cl);
         assertThat(adapter.get(String.class), instanceOf(ValueDefinition.class));

@@ -17,7 +17,7 @@ package com.asakusafw.windgate.core;
 
 import static com.asakusafw.windgate.core.DriverScript.*;
 import static com.asakusafw.windgate.core.ProcessScript.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Properties;

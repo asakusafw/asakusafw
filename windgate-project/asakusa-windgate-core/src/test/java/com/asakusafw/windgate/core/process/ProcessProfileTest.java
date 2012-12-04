@@ -15,7 +15,7 @@
  */
 package com.asakusafw.windgate.core.process;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Collection;

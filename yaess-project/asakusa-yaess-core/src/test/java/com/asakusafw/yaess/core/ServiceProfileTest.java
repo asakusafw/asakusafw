@@ -115,7 +115,7 @@ public class ServiceProfileTest {
         ClassLoader cl = getClass().getClassLoader();
         ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
         Service instance = service.newInstance();
-        assertThat(instance, is(MockService.class));
+        assertThat(instance, instanceOf(MockService.class));
 
         MockService mock = (MockService) instance;
         assertThat(mock.serviceProfile.getPrefix(), is("mock1"));

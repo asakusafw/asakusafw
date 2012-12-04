@@ -163,6 +163,30 @@ public abstract class DmdlTesterRoot {
     }
 
     /**
+     * Returns a matcher which tests whether RHS is in LHS.
+     * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
+     * @param matcher RHS
+     * @return the matcher
+     */
+    protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {
+        return new BaseMatcher<Iterable<T>>() {
+            @Override
+            public boolean matches(Object item) {
+                for (Object o : (Iterable<?>) item) {
+                    if (matcher.matches(o)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has ").appendDescriptionOf(matcher);
+            }
+        };
+    }
+
+    /**
      * Resolves context script.
      * @return the resolved
      */

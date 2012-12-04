@@ -15,7 +15,7 @@
  */
 package com.asakusafw.windgate.file.resource;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
