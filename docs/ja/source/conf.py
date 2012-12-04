@@ -36,7 +36,7 @@ extlinks = {
     'issue': ('https://github.com/asakusafw/asakusafw/issues/%s', '#')
 }
 javadoclinks = {
-    'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/%s.html', "")
+    'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/api/%s.html', "")
 }
 # ------------------------------------------------------------------------------
 

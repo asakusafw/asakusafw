@@ -49,7 +49,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 
 Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを定義したアーキタイプカタログを以下のURLで公開しています。
 
-* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 ..  Attention::
     バージョン0.4 から、アーキタイプカタログファイルはバージョン毎(マイナーバージョン毎)に個別のファイルを提供するようになりました。過去バージョンのアーキタイプカタログを使用したい場合、以下のアーキタイプカタログURLを指定してください。 
@@ -60,23 +60,23 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
 ..  code-block:: sh
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.5.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
     ...
     Choose archetype:
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
     ...
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.4-SNAPSHOT
-    2: 0.4.0
+    1: 0.5-SNAPSHOT
+    2: 0.5.0
     Choose a number: 2: 2 (<-2を入力)
 
 ..  attention::

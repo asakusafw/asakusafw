@@ -25,7 +25,7 @@ Direct I/Oを利用したバッチアプリケーションを新しく作成す�
 
 ..  code-block:: sh
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
 ここでは、 ``asakusa-archetype-directio`` のテンプレートを選択します。
@@ -242,7 +242,7 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
     Starting List Direct I/O Files:
      Hadoop Command: /usr/lib/hadoop/bin/hadoop
               Class: com.asakusafw.directio.tools.DirectIoList
-          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.4.0.jar,...
+          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.5.0.jar,...
           Arguments: result **/*
     file:/home/asakusa/target/testing/directio/result/category
     file:/home/asakusa/target/testing/directio/result/error
