@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -161,6 +162,52 @@ public class ConfigurationProviderTest {
     }
 
     /**
+     * search for confdir from HADOOP_CMD.
+     */
+    @Test
+    public void newInstance_cmd() {
+        File cmd = putExec("bin/hadoop");
+        create("conf/hadoop-env.sh");
+        putConf("conf/core-site.xml");
+
+        Map<String, String> envp = new HashMap<String, String>();
+        envp.put("HADOOP_CMD", cmd.getAbsolutePath());
+
+        Configuration conf = new ConfigurationProvider(envp).newInstance();
+        assertThat(isLoaded(conf), is(true));
+    }
+
+    /**
+     * search for confdir from HADOOP_CMD but no conf/hadoop-env_sh.
+     */
+    @Test
+    public void newInstance_cmd_no_env_sh() {
+        File cmd = putExec("bin/hadoop");
+        putConf("conf/core-site.xml");
+
+        Map<String, String> envp = new HashMap<String, String>();
+        envp.put("HADOOP_CMD", cmd.getAbsolutePath());
+
+        Configuration conf = new ConfigurationProvider(envp).newInstance();
+        assertThat(isLoaded(conf), is(false));
+    }
+
+    /**
+     * search for confdir from HADOOP_CMD.
+     */
+    @Test
+    public void newInstance_cmd_etc() {
+        File cmd = putExec("bin/hadoop");
+        putConf("etc/hadoop/core-site.xml");
+
+        Map<String, String> envp = new HashMap<String, String>();
+        envp.put("HADOOP_CMD", cmd.getAbsolutePath());
+
+        Configuration conf = new ConfigurationProvider(envp).newInstance();
+        assertThat(isLoaded(conf), is(true));
+    }
+
+    /**
      * search for confdir from HADOOP_HOME.
      */
     @Test
@@ -291,6 +338,56 @@ public class ConfigurationProviderTest {
         assertThat(file.toString(), file.getParentFile().getName(), is("path"));
     }
 
+    /**
+     * search for confdir auto.
+     * @throws Exception if failed
+     */
+    @Test
+    public void newInstance_auto() throws Exception {
+        File cmd = putExec("testcmd");
+        File site = putConf("auto/core-site.xml");
+
+        PrintWriter writer = new PrintWriter(cmd);
+        try {
+            writer.printf("#/bin/sh\n");
+            writer.printf("if [ $# -eq 0 ]\n");
+            writer.printf("then\n");
+            writer.printf("  exit 0\n");
+            writer.printf("elif [ $# -ne 2 ]\n");
+            writer.printf("then\n");
+            writer.printf("  exit 1\n");
+            writer.printf("else\n");
+            writer.printf("  if [ \"$1\" != '%s' ]\n", ConfigurationDetecter.class.getName());
+            writer.printf("  then\n");
+            writer.printf("    exit 1\n");
+            writer.printf("  fi\n");
+            writer.printf("  echo -n '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
+            writer.printf("  exit 0\n");
+            writer.printf("fi\n");
+        } finally {
+            writer.close();
+        }
+        try {
+            Process proc = new ProcessBuilder(cmd.getAbsolutePath()).start();
+            try {
+                int exitCode = proc.waitFor();
+                Assume.assumeThat(exitCode, is(0));
+            } finally {
+                proc.destroy();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to execute bash script");
+            e.printStackTrace(System.out);
+            Assume.assumeNoException(e);
+        }
+
+        Map<String, String> envp = new HashMap<String, String>();
+        envp.put("HADOOP_CMD", cmd.getAbsolutePath());
+
+        Configuration conf = new ConfigurationProvider(envp).newInstance();
+        assertThat(isLoaded(conf), is(true));
+    }
+
     private File putExec(String path) {
         File file = create(path);
         file.setExecutable(true);
@@ -309,7 +406,7 @@ public class ConfigurationProviderTest {
         return file;
     }
 
-    private void putConf(String path) {
+    private File putConf(String path) {
         Configuration c = new Configuration(false);
         c.set("testing.conf", "added");
         File file = create(path);
@@ -323,6 +420,7 @@ public class ConfigurationProviderTest {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+        return file;
     }
 
     private boolean isLoaded(Configuration c) {
