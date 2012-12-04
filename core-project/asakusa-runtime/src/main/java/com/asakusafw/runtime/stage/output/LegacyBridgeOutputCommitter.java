@@ -27,8 +27,9 @@ import org.apache.hadoop.mapreduce.JobStatus;
 import org.apache.hadoop.mapreduce.JobStatus.State;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
-import org.apache.hadoop.mapreduce.TaskID;
 import org.apache.hadoop.util.Progressable;
+
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 
 /**
  * Bridge implementation between
@@ -119,16 +120,7 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
                     jobContext.getJobID(),
                     progressable));
         }
-        return new org.apache.hadoop.mapreduce.TaskAttemptContext(
-                jobContext.getConfiguration(),
-                new TaskAttemptID(new TaskID(jobContext.getJobID(), true, 0), 0)) {
-            @Override
-            public void progress() {
-                if (progressable != null) {
-                    progressable.progress();
-                }
-                super.progress();
-            }
-        };
+        TaskAttemptID id = JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(jobContext.getJobID()));
+        return JobCompatibility.newTaskAttemptContext(jobContext.getConfiguration(), id, progressable);
     }
 }

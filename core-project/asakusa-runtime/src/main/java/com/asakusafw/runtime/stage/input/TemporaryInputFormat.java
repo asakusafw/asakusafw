@@ -32,6 +32,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.StageInput;
 
 /**
@@ -72,7 +73,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         for (StageInput input : inputList) {
             paths.add(new Path(input.getPathString()));
         }
-        Job job = new Job(context.getConfiguration());
+        Job job = JobCompatibility.newJob(context.getConfiguration());
         setInputPaths(job, paths);
         return bridge.getSplits(job);
     }

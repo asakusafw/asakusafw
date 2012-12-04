@@ -15,7 +15,6 @@
  */
 package com.asakusafw.runtime.io.sequencefile;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,16 +23,13 @@ import java.text.MessageFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FilterFileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PositionedReadable;
-import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.compress.CompressionCodec;
+
+import com.asakusafw.runtime.compatibility.SequenceFileCompatibility;
 
 /**
  * Accessors for {@link SequenceFile}.
@@ -70,10 +66,7 @@ public final class SequenceFileUtil {
                     "Creating sequence file reader for {0}",
                     status.getPath()));
         }
-        return new SequenceFile.Reader(
-                new InputStreamFileSystem(status, in),
-                status.getPath(),
-                conf);
+        return SequenceFileCompatibility.openReader(in, status.getLen(), conf);
     }
 
     /**
@@ -95,16 +88,7 @@ public final class SequenceFileUtil {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        FileStatus status = new FileStatus(length, false, 0, length, 0, new Path("dummy:///"));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Creating sequence file reader for {0}",
-                    status.getPath()));
-        }
-        return new SequenceFile.Reader(
-                new InputStreamFileSystem(status, in),
-                status.getPath(),
-                conf);
+        return SequenceFileCompatibility.openReader(in, length, conf);
     }
 
     /**
@@ -150,149 +134,5 @@ public final class SequenceFileUtil {
 
     private SequenceFileUtil() {
         return;
-    }
-
-    private static class InputStreamFileSystem extends FilterFileSystem {
-
-        private final FileStatus status;
-
-        private final InputStream input;
-
-        InputStreamFileSystem(FileStatus status, InputStream input) {
-            assert status != null;
-            assert input != null;
-            this.status = status;
-            this.input = input;
-        }
-
-        @Override
-        public FSDataInputStream open(Path f) throws IOException {
-            return open(f, 4096);
-        }
-
-        @Override
-        public FSDataInputStream open(Path f, int bufferSize) throws IOException {
-            return new FSDataInputStream(
-                    new WrappedInputStream(
-                            new BufferedInputStream(input, bufferSize)));
-        }
-
-        @Override
-        public FileStatus getFileStatus(Path f) throws IOException {
-            return status;
-        }
-    }
-
-    private static class WrappedInputStream extends InputStream implements Seekable, PositionedReadable {
-
-        private final InputStream input;
-
-        private long current;
-
-        WrappedInputStream(InputStream input) {
-            assert input != null;
-            this.input = input;
-            this.current = 0L;
-        }
-
-        @Override
-        public int read(long position, byte[] buffer, int offset, int length) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void readFully(long position, byte[] buffer, int offset, int length) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void readFully(long position, byte[] buffer) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void seek(long pos) throws IOException {
-            if (pos < current) {
-                throw new UnsupportedOperationException();
-            }
-            while (pos > current) {
-                skip0(pos - current);
-            }
-        }
-
-        @Override
-        public long getPos() throws IOException {
-            return current;
-        }
-
-        @Override
-        public boolean seekToNewSource(long targetPos) throws IOException {
-            return false;
-        }
-
-        @Override
-        public int read() throws IOException {
-            int result = input.read();
-            if (result >= 0) {
-                current++;
-            }
-            return result;
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            int result = input.read(b);
-            if (result >= 0) {
-                current += result;
-            }
-            return result;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            int result = input.read(b, off, len);
-            if (result >= 0) {
-                current += result;
-            }
-            return result;
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            return skip0(n);
-        }
-
-        private long skip0(long n) throws IOException {
-            long result = input.skip(n);
-            if (result >= 0) {
-                current += result;
-            }
-            return result;
-        }
-
-        @Override
-        public int available() throws IOException {
-            return input.available();
-        }
-
-        @Override
-        public void close() throws IOException {
-            input.close();
-        }
-
-        @Override
-        public boolean markSupported() {
-            return false;
-        }
-
-        @Override
-        public synchronized void mark(int readlimit) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public synchronized void reset() throws IOException {
-            throw new UnsupportedOperationException();
-        }
     }
 }

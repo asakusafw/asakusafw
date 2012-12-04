@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
@@ -242,7 +243,7 @@ public class WindGateHadoopPutTest {
         }
         Map<String, String> results = new HashMap<String, String>();
         for (FileStatus status : files) {
-            if (status.isDir()) {
+            if (FileSystemCompatibility.isDirectory(status)) {
                 continue;
             }
             InputStream f = fs.open(status.getPath());

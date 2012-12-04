@@ -38,6 +38,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
@@ -92,7 +93,7 @@ public class StageInputFormat extends InputFormat {
         Map<FormatAndMapper, List<StageInput>> paths = getPaths(context);
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
             instantiateFormats(context, paths.keySet());
-        Job temporaryJob = new Job(context.getConfiguration());
+        Job temporaryJob = JobCompatibility.newJob(context.getConfiguration());
         List<StageInputSplit> results = new ArrayList<StageInputSplit>();
         for (Map.Entry<FormatAndMapper, List<StageInput>> entry : paths.entrySet()) {
             FormatAndMapper formatAndMapper = entry.getKey();
