@@ -61,7 +61,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
+			<artifactId>${hadoop.artifact.id}</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
