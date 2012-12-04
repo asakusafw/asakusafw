@@ -168,17 +168,14 @@ YAESSを起動したコンピューターと同一のコンピューターにイ
       - 値
     * - ``hadoop``
       - :javadoc:`com.asakusafw.yaess.basic.BasicHadoopScriptHandler`
-    * - ``hadoop.env.HADOOP_HOME``
-      - Hadoopのインストール先 [#]_
+    * - ``hadoop.env.HADOOP_CMD``
+      - ``hadoop`` コマンドのパス [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
 上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
-ここでは同一環境上のHadoopを利用する設定ですので、 ``hadoop.env.HADOOP_HOME`` には ``${HADOOP_HOME}`` を、
-``hadoop.env.ASAKUSA_HOME`` には ``${ASAKUSA_HOME}`` をそれぞれ指定すれば、現在の環境変数をそのまま利用できます。
-
-..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
+..  [#] この項目はオプションです。また、Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 
 .. _yaess-profile-hadoop-section-ssh:
 
@@ -204,8 +201,8 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
       - ローカルの秘密鍵の位置
     * - ``hadoop.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
-    * - ``hadoop.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先 [#]_
+    * - ``hadoop.env.HADOOP_CMD``
+      - リモートの ``hadoop`` コマンドのパス [#]_
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
@@ -213,7 +210,7 @@ YAESSからSSHを経由してリモートコンピューター上のHadoopを利
 
 なお、この仕組みではSSHでの通信に JSch [#]_ を利用しています。
 
-..  [#] Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
+..  [#] この項目はオプションです。また、Hadoopのインストール先は別の設定方法もあります。詳しくは `Hadoopを利用する際の環境変数の設定`_ を参照してください
 ..  [#] http://www.jcraft.com/jsch/
 
 
@@ -233,10 +230,10 @@ Hadoopを利用する際に特別な環境変数が必要な場合、以下の�
 ここで指定する値には、 ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
 ..  note::
-    ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.ASAKUSA_HOME`` は上記の一部です。
-    このうち、 ``ASAKUSA_HOME`` はHadoopの実行に必要であるため、常に指定するようにしてください。
+    ``hadoop.env.HADOOP_CMD`` や ``hadoop.env.ASAKUSA_HOME`` は上記の一部です。
+    このうち、 ``ASAKUSA_HOME`` はAsakusa Frameworkの実行に必要であるため、常に指定するようにしてください。
 
-    ``HADOOP_HOME`` は代わりに ``HADOOP_CMD`` を指定することも可能です。
+    ``HADOOP_CMD`` は代わりに ``HADOOP_HOME`` を指定することも可能です。
     詳しくは `Hadoopコマンドの検索方法`_ を参照してください。
 
 ..  note::
@@ -414,18 +411,15 @@ YAESSを起動したコンピューターと同一のコンピューターでコ
       - 値
     * - ``command.<プロファイル名>``
       - :javadoc:`com.asakusafw.yaess.basic.BasicCommandScriptHandler`
-    * - ``command.<プロファイル名>.env.HADOOP_HOME``
-      - Hadoopのインストール先
+    * - ``command.<プロファイル名>.env.HADOOP_CMD``
+      - ``hadoop`` コマンドのパス
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - Asakusa Frameworkのインストール先
 
 上記のうち、先頭の ``command`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
 
-ここでは同一環境上でコマンドラインジョブを実行するので、Asakusa FrameworkやHadoopのインストール先には、
-それぞれ ``${ASAKUSA_HOME}`` や ``${HADOOP_HOME}`` を指定することで、現在の環境変数をそのまま利用できます。
-
 ..  hint::
-    ``command.<プロファイル名>.env.HADOOP_HOME`` の設定は必須ではありません。
+    ``command.<プロファイル名>.env.HADOOP_CMD`` の設定は必須ではありません。
     詳しくは `コマンドラインジョブを実行する際の環境変数の設定`_ を参照してください。
 
 .. _yaess-profile-command-section-ssh:
@@ -452,8 +446,8 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
       - ローカルの秘密鍵の位置
     * - ``command.<プロファイル名>.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
-    * - ``command.<プロファイル名>.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先
+    * - ``command.<プロファイル名>.env.HADOOP_CMD``
+      - リモートの ``hadoop`` コマンドのパス
     * - ``command.<プロファイル名>.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
@@ -462,7 +456,7 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
 なお、 `SSHを経由してHadoopジョブを実行する`_ 際と同様に、SSHでの通信に JSch を利用しています。
 
 ..  hint::
-    ``command.<プロファイル名>.env.HADOOP_HOME`` の設定は必須ではありません。
+    ``command.<プロファイル名>.env.HADOOP_CMD`` の設定は必須ではありません。
     詳しくは `コマンドラインジョブを実行する際の環境変数の設定`_ を参照してください。
 
 
@@ -485,8 +479,8 @@ YAESSからSSHを経由し、リモートコンピューター上でコマンド
     ``command.<プロファイル名>.env.ASAKUSA_HOME`` などは上記の一部です。
     ただし、環境変数 ``ASAKUSA_HOME`` はコマンドラインジョブの実行に必要であるため、常に指定するようにしてください。
 
-    また、Asakusa Frameworkが提供するほとんどのコマンドは ``hadoop`` コマンドを内部で利用しているため、上記で環境変数 ``HADOOP_HOME`` などを明示的に設定しておくことを推奨します。
-    Hadoopの位置を知らせる方法は環境変数 ``HADOOP_HOME`` を設定する代わりに ``HADOOP_CMD`` や ``PATH`` に適切な値を指定するなどがあります。
+    また、Asakusa Frameworkが提供するほとんどのコマンドは ``hadoop`` コマンドを内部で利用しているため、上記で環境変数 ``HADOOP_CMD`` などを明示的に設定しておくことを推奨します。
+    Hadoopの位置を知らせる方法は環境変数 ``HADOOP_CMD`` を設定する代わりに ``HADOOP_HOME`` や ``PATH`` に適切な値を指定するなどがあります。
 
     詳しくは `Hadoopコマンドの検索方法`_ を参照してください。
 

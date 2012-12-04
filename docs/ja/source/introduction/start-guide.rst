@@ -176,9 +176,8 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
 ..  code-block:: sh
 
     export JAVA_HOME=/usr/lib/jvm/jdk-6
-    export HADOOP_HOME=/usr/lib/hadoop
     export ASAKUSA_HOME=$HOME/asakusa
-    export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATH
+    export PATH=$JAVA_HOME/bin:$PATH
 
 ``~/.profile`` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
 

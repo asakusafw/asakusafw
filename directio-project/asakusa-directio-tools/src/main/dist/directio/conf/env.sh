@@ -15,4 +15,4 @@
 #
 
 # Set your Hadoop installation path (optional)
-#export HADOOP_HOME="/usr/lib/hadoop"
+#export HADOOP_CMD="/usr/bin/hadoop"

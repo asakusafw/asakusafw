@@ -44,11 +44,10 @@ Asakusa Frameworkでは、ローカルファイル、及び分散ファイルシ
 ..  code-block:: sh
 
     export JAVA_HOME=/usr/java/default
-    export HADOOP_HOME=/usr/lib/hadoop
 
 3. ``$ASAKUSA_HOME/cleaner/conf/clean-hdfs-conf.properties`` を編集し、クリーニングの設定を行います。
 
-* ``hdfs-protocol-host`` は ``$HADOOP_HOME/conf/core-site.xml`` のプロパティ ``fs.default.name`` と同じ値に変更します 。
+* ``hdfs-protocol-host`` は ``core-site.xml`` のプロパティ ``fs.default.name`` と同じ値に変更します 。
 
 ..  code-block:: properties
 

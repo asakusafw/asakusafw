@@ -231,9 +231,9 @@ Direct I/O コマンドラインツールユーザーガイド
 ==============================
 上記で紹介したコマンドラインツールは、実行前に ``$ASAKUSA_HOME/directio/conf/env.sh`` を読み込んで必要な環境変数の設定などを行います。
 
-以下は同ファイルの内容を改変し、環境変数 ``HADOOP_HOME`` を設定する例です。
+以下は同ファイルの内容を改変し、環境変数 ``HADOOP_CMD`` を設定する例です。
 
 ..  code-block:: sh
 
-    export HADOOP_HOME=/usr/lib/hadoop
+    export HADOOP_CMD=/usr/bin/hadoop
 
