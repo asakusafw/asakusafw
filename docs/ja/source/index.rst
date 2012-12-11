@@ -6,8 +6,5 @@ Asakusa Framework Sandbox
     :maxdepth: 1
 
     windgate/index
+    administration/index
 
-ToDo
-====
-
-.. todolist::
