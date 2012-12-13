@@ -4,7 +4,7 @@
 	<name>Asakusa Framework Sandbox Aggregator POM</name>
 	<groupId>com.asakusafw.sandbox</groupId>
 	<artifactId>asakusa-sandbox-aggregator</artifactId>
-	<version>0.4.0</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework Sandbox Aggregator POM</description>
