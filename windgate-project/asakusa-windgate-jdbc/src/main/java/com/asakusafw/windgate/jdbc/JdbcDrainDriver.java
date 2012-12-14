@@ -148,6 +148,8 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             LOG.debug("Executing SQL: {}", sql);
             truncater.execute(sql);
             LOG.debug("Executed SQL: {}", sql);
+            connection.commit();
+            LOG.debug("Committed {}", sql);
         } finally {
             truncater.close();
         }
