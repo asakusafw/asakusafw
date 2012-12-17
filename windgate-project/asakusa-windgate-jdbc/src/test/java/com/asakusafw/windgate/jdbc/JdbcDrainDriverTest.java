@@ -179,6 +179,38 @@ public class JdbcDrainDriverTest {
     }
 
     /**
+     * do truncate before put using delete phrase.
+     * @throws Exception if failed
+     */
+    @Test
+    public void truncate_with_delete() throws Exception {
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
+        Connection conn = h2.open();
+        conn.setAutoCommit(false);
+        try {
+            JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
+                    new PairSupport(),
+                    "PAIR",
+                    Arrays.asList("KEY", "VALUE"),
+                    null);
+            JdbcProfile profile = profile();
+            profile.setTruncateStatement("DELETE FROM {0}");
+            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile, script, conn, true);
+            driver.prepare();
+            test(new String[]{});
+
+            driver.put(new Pair(2, "Other"));
+            driver.close();
+
+            test("Other");
+        } finally {
+            conn.close();
+        }
+    }
+
+
+    /**
      * Suppresses doing truncate before put.
      * @throws Exception if failed
      */
