@@ -57,6 +57,33 @@ Eclipseを使って開発している場合は、Eclipse用定義ファイルを
 
 なお、複数バージョンをまたいだマイグレーションを行う場合 (例えば バージョン 0.2.3 から 0.2.6 へバージョンアップを行う場合)、中間のバージョンの手順 (ここの例では 0.2.4, および 0.2.5) も確認し、パッチ適用手順などが提供されていた場合は、必ずそのパッチを順次適用するようにしてください。
 
+0.5.0 へのマイグレーション
+--------------------------
+
+pom.xmlの変更
+~~~~~~~~~~~~~
+バージョン0.5.0ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.5.0向けに変更してください。
+
+* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-thundergate-050pom.patch <migration/asakusa-archetype-thundergate-050pom.patch>`
+* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-windgate-050pom.patch <migration/asakusa-archetype-windgate-050pom.patch>`
+* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
+   * :download:`asakusa-archetype-directio-050pom.patch <migration/asakusa-archetype-directio-050pom.patch>`
+
+上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+
+..  code-block:: sh
+
+    cd app-project
+    patch < /tmp/asakusa-archetype-windgate-050pom.patch
+
+pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.4.0のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
+
+``hadoop.version`` の変更
+~~~~~~~~~~~~~~~~~~~~~~~~~
+バージョン0.5.0では Apache Hadoop 1.1.1 がデフォルトで依存するHadoopのライブラリバージョンとなりました。
+
 0.4.0 へのマイグレーション
 --------------------------
 
