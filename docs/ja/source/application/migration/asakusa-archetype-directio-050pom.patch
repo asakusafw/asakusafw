@@ -1,0 +1,55 @@
+--- pom.xml
++++ pom.xml
+@@ -9,14 +9,15 @@
+ 	<properties>
+ 		<asakusafw.version>0.5-SNAPSHOT</asakusafw.version>
+ 
+-		<hadoop.version>0.20.2-cdh3u5</hadoop.version>
++		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
++		<hadoop.version>1.1.1</hadoop.version>
+ 		<commons.io.version>2.3</commons.io.version>
+ 		<commons.lang.version>2.6</commons.lang.version>
+ 		<commons.logging.version>1.0.4</commons.logging.version>
+ 		<logback.version>1.0.3</logback.version>
+ 		<slf4j.version>1.6.6</slf4j.version>
+-		<junit.version>4.10</junit.version>
+-		<hamcrest.version>1.1</hamcrest.version>
++		<junit.version>4.11</junit.version>
++		<hamcrest.version>1.3</hamcrest.version>
+ 
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 		<asakusa.build.antfile>${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
+@@ -436,9 +437,23 @@
+ 	<dependencies>
+ 		<dependency>
+ 			<groupId>org.apache.hadoop</groupId>
+-			<artifactId>hadoop-core</artifactId>
++			<artifactId>${hadoop.artifact.id}</artifactId>
+ 			<version>${hadoop.version}</version>
+ 			<scope>provided</scope>
++			<exclusions>
++				<exclusion>
++					<groupId>junit</groupId>
++					<artifactId>junit</artifactId>
++				</exclusion>
++				<exclusion>
++					<groupId>org.mockito</groupId>
++					<artifactId>mockito-all</artifactId>
++				</exclusion>
++				<exclusion>
++					<groupId>org.slf4j</groupId>
++					<artifactId>slf4j-log4j12</artifactId>
++				</exclusion>
++			</exclusions>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>com.asakusafw</groupId>
+@@ -540,7 +555,7 @@
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>junit</groupId>
+-			<artifactId>junit-dep</artifactId>
++			<artifactId>junit</artifactId>
+ 			<version>${junit.version}</version>
+ 			<scope>test</scope>
+ 		</dependency>
