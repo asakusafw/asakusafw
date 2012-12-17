@@ -18,6 +18,7 @@ package com.asakusafw.windgate.retryable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.text.MessageFormat;
+import java.util.concurrent.TimeUnit;
 
 import com.asakusafw.runtime.core.context.SimulationSupport;
 import com.asakusafw.windgate.core.ProcessScript;
@@ -29,7 +30,7 @@ import com.asakusafw.windgate.core.resource.DriverFactory;
 /**
  * Retryable processes.
  * @since 0.2.4
- * @version 0.4.0
+ * @version 0.5.0
  */
 @SimulationSupport
 public class RetryableProcessProvider extends ProcessProvider {
@@ -87,6 +88,18 @@ public class RetryableProcessProvider extends ProcessProvider {
                                 script.getDrainScript().getResourceName(),
                                 maxAttempts);
                         throw e;
+                    }
+                }
+                if (processProfile.getRetryInterval() > 0) {
+                    try {
+                        Thread.sleep(TimeUnit.SECONDS.toMillis(
+                                processProfile.getRetryInterval()));
+                    } catch (InterruptedException e) {
+                        WGLOG.error(e, "E01002",
+                                script.getName(),
+                                script.getSourceScript().getResourceName(),
+                                script.getDrainScript().getResourceName());
+                        throw (IOException) new InterruptedIOException().initCause(e);
                     }
                 }
             }

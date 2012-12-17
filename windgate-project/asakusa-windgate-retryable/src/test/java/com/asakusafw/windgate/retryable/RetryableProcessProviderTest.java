@@ -119,6 +119,22 @@ public class RetryableProcessProviderTest {
     }
 
     /**
+     * retry with interval.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_retry_interval() throws Exception {
+        ProcessProfile profile = profile(2, 1, Action.EXCEPTION, Action.EXCEPTION, Action.SUCCESS);
+        ProcessProvider provider = profile.createProvider();
+
+        long start = System.currentTimeMillis();
+        provider.execute(factory(), script());
+        long end = System.currentTimeMillis();
+
+        assertThat(end - start, is(greaterThan(1200L)));
+    }
+
+    /**
      * normal run as simulation mode.
      * @throws Exception if failed
      */
@@ -162,8 +178,13 @@ public class RetryableProcessProviderTest {
     }
 
     private ProcessProfile profile(int retryCount, Action... actions) {
+        return profile(retryCount, 0L, actions);
+    }
+
+    private ProcessProfile profile(int retryCount, long retryInterval, Action... actions) {
         Map<String, String> conf = new HashMap<String, String>();
         conf.put(RetryableProcessProfile.KEY_RETRY_COUNT, String.valueOf(retryCount));
+        conf.put(RetryableProcessProfile.KEY_RETRY_INTERVAL, String.valueOf(retryInterval));
         conf.put(RetryableProcessProfile.KEY_COMPONENT, Mock.class.getName());
         if (actions.length > 0) {
             StringBuilder buf = new StringBuilder();
