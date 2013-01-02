@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.junit.After;
 import org.junit.Assume;
@@ -258,6 +259,8 @@ public class ConfigurationProviderTest {
      */
     @Test
     public void symlink() throws IOException {
+        Assume.assumeThat(SystemUtils.IS_OS_WINDOWS, is(false));
+
         File cmd = putExec("hadoop/bin/hadoop");
         putConf("hadoop/etc/hadoop/core-site.xml");
 

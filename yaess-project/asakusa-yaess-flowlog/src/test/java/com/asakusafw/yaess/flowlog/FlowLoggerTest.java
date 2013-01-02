@@ -197,12 +197,16 @@ public class FlowLoggerTest {
         assertThat(log.isFile(), is(true));
         String pattern = phase.toString();
         Scanner scanner = new Scanner(log, "UTF-8");
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (found == false && count >= last) {
-                found = line.indexOf(pattern) >= 0;
+        try {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (found == false && count >= last) {
+                    found = line.indexOf(pattern) >= 0;
+                }
+                count++;
             }
-            count++;
+        } finally {
+            scanner.close();
         }
         assertThat(pattern, found, is(true));
         assertThat(count, greaterThan(last));

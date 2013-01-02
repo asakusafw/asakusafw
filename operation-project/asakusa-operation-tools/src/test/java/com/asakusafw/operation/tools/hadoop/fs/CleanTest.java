@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Assume;
 import org.junit.Rule;
@@ -543,6 +544,7 @@ public class CleanTest {
     }
 
     private File link(String path, File target, int day) throws IOException {
+        Assume.assumeFalse("In Windows, tests with symlink are skipped", SystemUtils.IS_OS_WINDOWS);
         File link = file(path);
         link.getParentFile().mkdirs();
         try {
@@ -550,12 +552,12 @@ public class CleanTest {
                 .command("ln", "-s", target.getCanonicalPath(), link.getAbsolutePath())
                 .redirectErrorStream(true)
                 .start();
-        try {
-            int exit = process.waitFor();
-            Assume.assumeThat(exit, is(0));
-        } finally {
-            process.destroy();
-        }
+            try {
+                int exit = process.waitFor();
+                Assume.assumeThat(exit, is(0));
+            } finally {
+                process.destroy();
+            }
         } catch (Exception e) {
             Assume.assumeNoException(e);
         }
