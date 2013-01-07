@@ -50,13 +50,13 @@ import com.asakusafw.utils.java.model.util.Models;
  */
 public class ModelEmitterTest {
 
-    private ModelFactory f = Models.getModelFactory();
+    private final ModelFactory f = Models.getModelFactory();
 
     private PackageDeclaration packageDecl = null;
 
-    private List<ImportDeclaration> importDecls = new ArrayList<ImportDeclaration>();
+    private final List<ImportDeclaration> importDecls = new ArrayList<ImportDeclaration>();
 
-    private VolatileCompiler compiler = new VolatileCompiler();
+    private final VolatileCompiler compiler = new VolatileCompiler();
 
     /**
      * テストを破棄する。
@@ -391,7 +391,7 @@ public class ModelEmitterTest {
      * 名前参照。
      */
     @Test
-    public void ExpressionNamme() {
+    public void ExpressionName() {
         assertToString(
             fromExpr("Hello",
                 Models.toName(f, "Math.PI")),
@@ -540,6 +540,40 @@ public class ModelEmitterTest {
                     Arrays.asList(new Expression[] {}))),
             "Hello",
             "java.lang.Object");
+    }
+
+    /**
+     * A method invocation.
+     */
+    @Test
+    public void MethodInvocation() {
+        assertToString(
+            fromExpr("Hello",
+                f.newMethodInvocationExpression(
+                        f.newLiteral("\"Hello, world!\""),
+                        Arrays.asList(new Type[] {}),
+                        f.newSimpleName("toString"),
+                        Arrays.asList(new Expression[] {}))),
+            "Hello",
+            "Hello, world!");
+    }
+
+    /**
+     * A method invocation whose receiver object has cast.
+     */
+    @Test
+    public void MethodInvocation_cast_object() {
+        assertToString(
+            fromExpr("Hello",
+                f.newMethodInvocationExpression(
+                        f.newCastExpression(
+                                f.newNamedType(f.newSimpleName("Integer")),
+                                f.newLiteral("1")),
+                        Arrays.asList(new Type[] {}),
+                        f.newSimpleName("toString"),
+                        Arrays.asList(new Expression[] {}))),
+            "Hello",
+            "1");
     }
 
     /**
