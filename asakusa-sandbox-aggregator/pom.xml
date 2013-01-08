@@ -26,6 +26,7 @@
 	<modules>
 		<module>../asakusa-sandbox-parent</module>
 		<module>../asakusa-windgate-dmdl-ext</module>
+		<module>../asakusa-directio-dmdl-ext</module>
 	</modules>
 
 	<build>

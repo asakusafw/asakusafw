@@ -6,5 +6,6 @@ Asakusa Framework Sandbox
     :maxdepth: 1
 
     windgate/index
+    directio/index
     administration/index
 
