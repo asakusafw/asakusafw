@@ -1705,7 +1705,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         Util.notContainNull(arguments, "arguments"); //$NON-NLS-1$
         MethodInvocationExpressionImpl result = new MethodInvocationExpressionImpl();
-        result.setQualifier(qualifier);
+        result.setQualifier(parenthesize(qualifier, ExpressionPriority.PRIMARY));
         result.setTypeArguments(typeArguments);
         result.setName(name);
         result.setArguments(arguments);
