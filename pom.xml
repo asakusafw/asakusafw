@@ -24,6 +24,7 @@
 	</organization>
 
 	<modules>
+		<module>build-tools</module>
 		<module>asakusa-parent</module>
 		<module>utils-project</module>
 		<module>core-project</module>
@@ -70,7 +71,7 @@
 					<doctitle>Asakusa Framework API References (Version ${project.version})</doctitle>
 					<windowtitle>Asakusa Framework API References (Version ${project.version})</windowtitle>
 					<excludePackageNames>com.asakusafw.modelgen:com.asakusafw.testtools</excludePackageNames>
-                    <overview>asakusa-parent/src/main/javadoc/overview-summary.html</overview>
+                    <overview>build-tools/src/main/javadoc/overview-summary.html</overview>
 				</configuration>
 				<executions>
 					<execution>
