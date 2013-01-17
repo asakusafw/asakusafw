@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>${project.version}</version>
+			<version>${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
