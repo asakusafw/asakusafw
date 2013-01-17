@@ -83,9 +83,39 @@ TSV形式の設定
         ...
     };
 
+..  attention::
+    Direct I/O のCSV連携で提供している「ヘッダの設定」機能 ( ``@directio.csv.field`` 属性を指定して1行目にヘッダ行を追加する機能) や 「ファイル情報の取得」機能 ( ``@directio.csv.file_name`` 属性などを指定して ファイル名などのファイル情報を利用する機能) はTSV連携では提供していません。
+    
+    また、CSV連携で提供している「個別プロパティの除外」 機能 ( ``@directio.csv.ignore`` 属性を指定して取り扱わないDMDLプロパティを指定する機能) はTSV連携では提供していません。
+
+データモデルクラスの生成
+~~~~~~~~~~~~~~~~~~~~~~~~
+データモデルクラスの生成は通常のDMDLで提供する方法と同様に、Mavenの ``generate-sources`` フェーズを実行して生成します。
+
+..  code-block:: sh
+
+    mvn generate-sources
+
 Asakusa DSLの記述
 =================
-Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述については、CSVファイル連携を使った場合と同じです。
+Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述については、基本的な流れはCSVファイル連携を使った場合と同様です。Direct I/OのCSVファイルによる連携の基本的な流れについては、 `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。また、より詳細な情報は `Direct I/O ユーザガイド`_ を参照してください。
+
+以下ではAsakusa DSLの記述に関して、Direct I/OのCSVファイル連携とTSVファイル連携で異なる部分についてのみ説明します。
+
+ファイルシステム上のTSVファイルを入力に利用する
+-----------------------------------------------
+TSVファイルをインポートしてHadoopの処理を行う場合、 `データモデルクラスの生成`_ で生成した ``<パッケージ名>.tsv.Abstract<データモデル名>TsvInputDescription`` クラスのサブクラスを作成して必要な情報を記述します。
+
+サブクラスの基本的な実装方法については `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。
+
+ファイルシステム上にTSVファイルを出力する
+-----------------------------------------
+ジョブフローの処理結果をTSVファイルにエクスポートする場合、 `データモデルクラスの生成`_ で生成した ``<パッケージ名>.tsv.Abstract<データモデル名>TsvOutputDescription`` クラスのサブクラスを作成して必要な情報を記述します。
+
+サブクラスの基本的な実装方法については `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。
+
+..  _`Direct I/O スタートガイド - Asakusa DSLの記述`: http://asakusafw.s3.amazonaws.com/documents/latest/develop/ja/html/directio/start-guide.html#asakusa-dsl
+..  _`Direct I/O ユーザガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/develop/ja/html/directio/user-guide.html
 
 TSVファイルフォーマット仕様
 ===========================
@@ -110,7 +140,6 @@ TSVフォーマット詳細
     * エスケープ文字そのもの、改行(LF)、タブ文字をデータとして扱う場合は「\\」を前に付加してエスケープします。
 * 引用文字は使用しません。
 * 最終レコードにも(LF)が必要です。
-* エンコーディングはUTF-8を使用します。
 * NULL値は「\\n」で表します。
 * 空文字はフィールド区切り文字間に何も文字を入れないことで表現します。
 * 指数表記は使用しません。
