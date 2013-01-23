@@ -18,10 +18,9 @@ package com.asakusafw.compiler.operator;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.util.GeneratorUtil;
+import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
@@ -29,11 +28,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
-import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
  * 演算子クラスの派生生成物の情報を構築するジェネレータ。
+ * @since 0.1.0
+ * @version 0.5.0
  */
 public abstract class OperatorClassGenerator {
 
@@ -95,12 +95,7 @@ public abstract class OperatorClassGenerator {
         importer.resolvePackageMember(name);
         return factory.newClassDeclaration(
                 createJavadoc(),
-                new AttributeBuilder(factory)
-                    .annotation(util.t(Generated.class), util.v("{0}:{1}",
-                            getClass().getSimpleName(),
-                            OperatorCompiler.VERSION))
-                    .Public()
-                    .toAttributes(),
+                getAttribuets(),
                 name,
                 Collections.<TypeParameterDeclaration>emptyList(),
                 getSuperClass(),
@@ -113,6 +108,13 @@ public abstract class OperatorClassGenerator {
      * @return 生成する型の名前
      */
     protected abstract SimpleName getClassName();
+
+    /**
+     * 生成する型の属性一覧を返す。
+     * @return 生成する型の属性一覧
+     * @since 0.5.0
+     */
+    protected abstract List<? extends Attribute> getAttribuets();
 
     /**
      * 生成する型のスーパータイプを返す。

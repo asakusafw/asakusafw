@@ -52,6 +52,7 @@ import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
 
 /**
  * フロー部品クラスから演算子ファクトリークラスのJava DOMを構築する。
@@ -114,6 +115,8 @@ public class FlowFactoryClassGenerator {
                     .annotation(util.t(Generated.class), util.v("{0}:{1}",
                             FlowOperatorCompiler.class.getSimpleName(),
                             FlowOperatorCompiler.VERSION))
+                    .annotation(util.t(OperatorFactory.class),
+                            factory.newClassLiteral(util.t(flowClass.getElement())))
                     .Public()
                     .toAttributes(),
                 name,
