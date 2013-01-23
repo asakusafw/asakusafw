@@ -50,6 +50,7 @@ import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
  * 演算子ファクトリークラスの情報を構築するジェネレータ。
@@ -456,20 +457,28 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         javadoc.inline(descriptor.getDocumentation());
         List<FormalParameterDeclaration> parameters = Lists.create();
         List<Expression> arguments = Lists.create();
+        List<Expression> inputMetaData = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
             parameters.add(factory.newFormalParameterDeclaration(
                     util.toSourceType(var.getType().getRepresentation()),
                     name));
+            inputMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
+        List<Expression> outputMetaData = Lists.create();
+        for (OperatorPortDeclaration var : descriptor.getOutputPorts()) {
+            outputMetaData.add(util.toMetaData(var, -1));
+        }
+        List<Expression> parameterMetaData = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getParameters()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
             parameters.add(factory.newFormalParameterDeclaration(
                     util.t(var.getType().getRepresentation()),
                     name));
+            parameterMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
         javadoc.returns().text("生成した演算子オブジェクト");
@@ -486,6 +495,10 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         return factory.newMethodDeclaration(
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
+                    .annotation(util.t(OperatorInfo.class),
+                            "input", factory.newArrayInitializer(inputMetaData),
+                            "output", factory.newArrayInitializer(outputMetaData),
+                            "parameter", factory.newArrayInitializer(parameterMetaData))
                     .Public()
                     .toAttributes(),
                 util.toTypeParameters(context.element),
