@@ -28,6 +28,7 @@ import com.asakusafw.dmdl.util.AnalyzeTask;
 /**
  * Generates test templates from input DMDL scripts.
  * @since 0.2.0
+ * @version 0.5.0
  */
 public class GenerateTask {
 
@@ -69,11 +70,13 @@ public class GenerateTask {
      * @throws IOException if failed to process DMDL scripts, or failed to generate templates
      */
     public void process() throws IOException {
+        LOG.info("テンプレートの生成を開始しています");
         DmdlSemantics semantics = analyze();
         for (ModelDeclaration model : semantics.getDeclaredModels()) {
             LOG.info("テンプレートを生成しています: {}", model.getName().identifier);
             generator.generate(model);
         }
+        LOG.info("テンプレートの生成を終了しました");
     }
 
     private DmdlSemantics analyze() throws IOException {
