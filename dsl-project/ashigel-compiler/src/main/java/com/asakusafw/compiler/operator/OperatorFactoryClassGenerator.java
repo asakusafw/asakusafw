@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Generated;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
@@ -26,6 +27,7 @@ import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.operator.OperatorProcessor.Context;
 import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -50,6 +52,7 @@ import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
 
 /**
  * 演算子ファクトリークラスの情報を構築するジェネレータ。
@@ -92,6 +95,18 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     @Override
     protected SimpleName getClassName() {
         return util.getFactoryName(operatorClass.getElement());
+    }
+
+    @Override
+    protected List<? extends Attribute> getAttribuets() {
+        return new AttributeBuilder(factory)
+            .annotation(util.t(Generated.class), util.v("{0}:{1}",
+                    getClass().getSimpleName(),
+                    OperatorCompiler.VERSION))
+            .annotation(util.t(OperatorFactory.class),
+                    factory.newClassLiteral(util.t(operatorClass.getElement())))
+            .Public()
+            .toAttributes();
     }
 
     @Override
