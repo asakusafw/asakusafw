@@ -121,6 +121,9 @@ public class FlowPartTester extends TestDriverBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
+        // 環境の検証
+        driverContext.validateEnvironment();
+
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);
 

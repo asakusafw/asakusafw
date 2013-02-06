@@ -123,6 +123,9 @@ public class BatchTester extends TestDriverBase {
             }
         }
 
+        // 環境の検証
+        driverContext.validateEnvironment();
+
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
