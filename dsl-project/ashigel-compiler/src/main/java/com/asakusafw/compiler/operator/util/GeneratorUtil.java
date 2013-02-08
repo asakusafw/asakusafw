@@ -23,14 +23,20 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
+import com.asakusafw.compiler.operator.OperatorPortDeclaration;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
+import com.asakusafw.utils.java.model.syntax.AnnotationElement;
+import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
@@ -39,9 +45,12 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
  * JavaのDOMを構築する際のユーティリティ。
+ * @since 0.1.0
+ * @version 0.5.0
  */
 public class GeneratorUtil {
 
@@ -210,7 +219,7 @@ public class GeneratorUtil {
     /**
      * Returns the representation for type parameter declarations of the executable element.
      * @param element target element
-     * @return the corresponded represention
+     * @return the corresponded representation
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public List<TypeParameterDeclaration> toTypeParameters(ExecutableElement element) {
@@ -221,7 +230,7 @@ public class GeneratorUtil {
     /**
      * Returns the representation for type parameter declarations of the type element.
      * @param element target element
-     * @return the corresponded represention
+     * @return the corresponded representation
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public List<TypeParameterDeclaration> toTypeParameters(TypeElement element) {
@@ -247,7 +256,7 @@ public class GeneratorUtil {
     /**
      * Returns the representation for type variables of the executable element.
      * @param element target element
-     * @return the corresponded represention
+     * @return the corresponded representation
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public List<Type> toTypeVariables(ExecutableElement element) {
@@ -258,7 +267,7 @@ public class GeneratorUtil {
     /**
      * Returns the representation for type variables of the type element.
      * @param element target element
-     * @return the corresponded represention
+     * @return the corresponded representation
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public List<Type> toTypeVariables(TypeElement element) {
@@ -273,5 +282,83 @@ public class GeneratorUtil {
             results.add(factory.newNamedType(name));
         }
         return results;
+    }
+
+    /**
+     * Converts {@link OperatorPortDeclaration} into a member of {@link OperatorInfo}.
+     * @param var target port declaration
+     * @param position the factory parameter position
+     * @return related meta-data
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public Expression toMetaData(OperatorPortDeclaration var, int position) {
+        Precondition.checkMustNotBeNull(var, "var"); //$NON-NLS-1$
+        NamedType type;
+        TypeMirror representation = var.getType().getRepresentation();
+        List<AnnotationElement> members = Lists.create();
+        members.add(factory.newAnnotationElement(
+                factory.newSimpleName("name"),
+                Models.toLiteral(factory, var.getName())));
+        members.add(factory.newAnnotationElement(
+                factory.newSimpleName("type"),
+                factory.newClassLiteral(t(environment.getErasure(representation)))));
+        if (var.getKind() == OperatorPortDeclaration.Kind.INPUT) {
+            type = (NamedType) t(OperatorInfo.Input.class);
+            members.add(factory.newAnnotationElement(
+                    factory.newSimpleName("position"),
+                    Models.toLiteral(factory, position)));
+            String typeVariable = getTypeVariableName(representation);
+            if (typeVariable != null) {
+                members.add(factory.newAnnotationElement(
+                        factory.newSimpleName("typeVariable"),
+                        Models.toLiteral(factory, typeVariable)));
+            }
+        } else if (var.getKind() == OperatorPortDeclaration.Kind.OUTPUT) {
+            type = (NamedType) t(OperatorInfo.Output.class);
+            String typeVariable = getTypeVariableName(representation);
+            if (typeVariable != null) {
+                members.add(factory.newAnnotationElement(
+                        factory.newSimpleName("typeVariable"),
+                        Models.toLiteral(factory, typeVariable)));
+            }
+        } else if (var.getKind() == OperatorPortDeclaration.Kind.CONSTANT) {
+            type = (NamedType) t(OperatorInfo.Parameter.class);
+            members.add(factory.newAnnotationElement(
+                    factory.newSimpleName("position"),
+                    Models.toLiteral(factory, position)));
+            String typeVariable = getTypeVariableNameInClass(representation);
+            if (typeVariable != null) {
+                members.add(factory.newAnnotationElement(
+                        factory.newSimpleName("typeVariable"),
+                        Models.toLiteral(factory, typeVariable)));
+            }
+        } else {
+            throw new AssertionError(var);
+        }
+        return factory.newNormalAnnotation(
+                type,
+                members);
+    }
+
+    private String getTypeVariableName(TypeMirror representation) {
+        if (representation.getKind() == TypeKind.TYPEVAR) {
+            return ((TypeVariable) representation).asElement().getSimpleName().toString();
+        }
+        return null;
+    }
+
+    private String getTypeVariableNameInClass(TypeMirror representation) {
+        if (representation.getKind() != TypeKind.DECLARED) {
+            return null;
+        }
+        List<? extends TypeMirror> typeArgs = ((DeclaredType) representation).getTypeArguments();
+        if (typeArgs.size() != 1) {
+            return null;
+        }
+        DeclaredType raw = (DeclaredType) environment.getErasure(representation);
+        if (environment.getTypeUtils().isSameType(raw, environment.getDeclaredType(Class.class)) == false) {
+            return null;
+        }
+        return getTypeVariableName(typeArgs.get(0));
     }
 }
