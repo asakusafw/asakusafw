@@ -31,6 +31,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.SystemUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -133,6 +134,7 @@ public class BasicScriptHandlerTestRoot {
      * @throws IOException if failed
      */
     protected File putScript(String source, File file) throws IOException {
+        Assume.assumeThat("Windows does not supported", SystemUtils.IS_OS_WINDOWS, is(false));
         LOG.debug("Deploy script: {} -> {}", source, file);
         InputStream in = getClass().getResourceAsStream(source);
         assertThat(source, in, is(notNullValue()));

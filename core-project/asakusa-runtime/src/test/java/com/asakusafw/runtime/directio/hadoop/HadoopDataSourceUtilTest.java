@@ -510,6 +510,9 @@ public class HadoopDataSourceUtilTest {
                 while (r.startsWith(File.separator)) {
                     r = r.substring(1);
                 }
+                if (File.separatorChar != '/') {
+                    r = r.replace(File.separatorChar, '/');
+                }
                 normalized.add(r);
             } catch (IOException e) {
                 throw new AssertionError(e);
