@@ -6,7 +6,7 @@
  
 -		<hadoop.version>0.20.2-cdh3u5</hadoop.version>
 +		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
-+		<hadoop.version>1.1.1</hadoop.version>
++		<hadoop.version>1.1.2</hadoop.version>
  		<mysql.jdbc.version>5.1.20</mysql.jdbc.version>
  		<commons.io.version>2.3</commons.io.version>
  		<commons.lang.version>2.6</commons.lang.version>
