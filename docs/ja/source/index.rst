@@ -3,7 +3,8 @@ Asakusa Framework Sandbox
 =========================
 
 ..  toctree::
-    :maxdepth: 1
+    :maxdepth: 3
+    :titlesonly:
 
     windgate/index
     directio/index
