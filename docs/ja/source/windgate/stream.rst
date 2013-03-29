@@ -24,7 +24,7 @@ WindGateのTSVファイル連携を使用するためには、WindGate用アー�
 		<dependency>
 			<groupId>com.asakusafw.sandbox</groupId>
 			<artifactId>asakusa-windgate-dmdl-ext</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 			<scope>compile</scope>
 		</dependency>
 

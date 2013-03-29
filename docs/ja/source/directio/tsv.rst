@@ -24,7 +24,7 @@ Direct I/OのTSVファイル連携を使用するためには、 ``pom.xml`` に
 		<dependency>
 			<groupId>com.asakusafw.sandbox</groupId>
 			<artifactId>asakusa-directio-dmdl-ext</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>${asakusafw.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
