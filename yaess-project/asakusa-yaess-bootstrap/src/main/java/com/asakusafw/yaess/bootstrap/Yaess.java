@@ -312,6 +312,10 @@ public final class Yaess {
             builder.append(mode);
             builder.append(", batchId=");
             builder.append(batchId);
+            builder.append(", arguments=");
+            builder.append(arguments);
+            builder.append(", definitions=");
+            builder.append(definitions);
             if (flowId != null) {
                 builder.append(", flowId=");
                 builder.append(flowId);
