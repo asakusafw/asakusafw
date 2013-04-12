@@ -1176,11 +1176,14 @@ YAESSについては :doc:`../yaess/index` を参照してください。
       - ``DISABLED``
       - 利用中のHadoopにパッチ ``MAPREDUCE-370`` が適用済みかどうか。
         ``ENABLED`` の場合は適用済みと仮定し、 ``DISABLED`` の場合は未適用と仮定する。
-
     * - ``compressFlowBlockGroup``
       - ``ENABLED``
       - `コンパイルオプション`_ の ``compressConcurrentStage`` を適用した際、ステージ内のMapperとReducerを併合するかどうか。
         ``ENABLED`` の場合は併合し、 ``DISABLED`` の場合は併合しない。
+    * - ``packaging``
+      - ``ENABLED``
+      - アプリケーションのパッケージングを行うかどうか。
+        ``ENABLED`` の場合は生成したJavaのコンパイルやJARファイルの生成を行い、 ``DISABLED`` の場合はそれらをスキップする。
 
 ..  note::
     コンパイルオプションは項目名を間違えた場合にエラーとなりますが、コンパイラスイッチは項目名を間違えると単に設定が無視されます。

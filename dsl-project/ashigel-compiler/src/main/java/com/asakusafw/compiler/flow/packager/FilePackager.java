@@ -51,6 +51,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.Packager;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -60,7 +61,7 @@ import com.asakusafw.utils.java.model.util.Filer;
 /**
  * ファイルシステム上に構成物を展開するパッケージャ。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.5.0
  */
 public class FilePackager
         extends FlowCompilingEnvironment.Initialized
@@ -69,6 +70,12 @@ public class FilePackager
     static final Logger LOG = LoggerFactory.getLogger(FilePackager.class);
 
     private static final Charset CHARSET = Charset.forName("UTF-8");
+
+    /**
+     * The option name of whether or not packaging is enabled.
+     * @since 0.5.0
+     */
+    public static final String KEY_OPTION_PACKAGING = "packaging";
 
     private static final String SOURCE_DIRECTORY = "src";
 
@@ -131,6 +138,9 @@ public class FilePackager
 
     @Override
     public void build(OutputStream output) throws IOException {
+        if (skipCompile()) {
+            return;
+        }
         compile();
         JarOutputStream jar = new JarOutputStream(output);
         try {
@@ -158,6 +168,9 @@ public class FilePackager
 
     @Override
     public void packageSources(OutputStream output) throws IOException {
+        if (skipCompile()) {
+            return;
+        }
         LOG.debug("生成されたソースプログラムをパッケージングします");
         JarOutputStream jar = new JarOutputStream(output);
         try {
@@ -347,5 +360,19 @@ public class FilePackager
             }
         }
         return sourceFiles;
+    }
+
+    private boolean skipCompile() {
+        GenericOptionValue option = getEnvironment().getOptions()
+                .getGenericExtraAttribute(KEY_OPTION_PACKAGING, GenericOptionValue.ENABLED);
+        if (option == GenericOptionValue.INVALID) {
+            getEnvironment().error(
+                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
+                    getEnvironment().getOptions().getExtraAttributeKeyName(KEY_OPTION_PACKAGING),
+                    getEnvironment().getOptions().getExtraAttribute(KEY_OPTION_PACKAGING),
+                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
+            option = GenericOptionValue.AUTO;
+        }
+        return option == GenericOptionValue.DISABLED;
     }
 }
