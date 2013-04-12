@@ -338,6 +338,41 @@ public class YaessTest {
     }
 
     /**
+     * Executes flow With Arguments.
+     * @throws Exception if failed
+     */
+    @Test
+    public void execute_flow_with_args() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+        File profile = builder.getProfile();
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<String>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-flow", "right");
+        Collections.addAll(arguments, "-execution", "texec");
+        Collections.addAll(arguments, "-A", "a=b");
+        Collections.addAll(arguments, "-A", "c=d");
+        Collections.addAll(arguments, "-D", "skipFlows=testing");
+        Collections.addAll(arguments, "-D", "verifyApplication=false");
+
+        int exit = Yaess.execute(arguments.toArray(new String[arguments.size()]));
+        assertThat(exit, is(0));
+
+        List<Record> records = SerialExecutionTracker.get(builder.trackingId);
+        assertThat(flow(records, "testing").size(), is(0));
+        assertThat(flow(records, "left").size(), is(0));
+        assertThat(flow(records, "right").size(), is(greaterThan(0)));
+        assertThat(flow(records, "last").size(), is(0));
+
+        List<Record> flow = flow(records, "right");
+        assertThat(flow.get(0).context.getExecutionId(), is("texec"));
+    }
+
+
+    /**
      * Executes flow.
      * @throws Exception if failed
      */
