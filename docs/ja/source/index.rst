@@ -29,6 +29,7 @@ Asakusa Framework入門
 プロダクトについて
 ==================
 * :doc:`release-notes`
+* :doc:`changelogs`
 * :doc:`product/target-platform`
 * :doc:`product/road-map`
 * :doc:`product/license`
@@ -53,8 +54,10 @@ Asakusa Framework入門
 関連プロダクト
 ==============
 * `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_
+* `Asakusa Framework Sandbox`_
 
 ..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+..  _`Asakusa Framework Sandbox`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/index.html
 
 コミュニティ
 ============
@@ -73,6 +76,7 @@ Asakusa Framework入門
 
     self
     release-notes
+    changelogs
     introduction/index
     dmdl/index
     dsl/index

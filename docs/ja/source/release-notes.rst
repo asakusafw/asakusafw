@@ -1,428 +1,160 @@
-================================
-Asakusa Framework リリースノート
-================================
+==============
+リリースノート
+==============
+Asakusa Frameworkのリリースノートです。
+
+すべての変更点一覧は :doc:`changelogs` も参照してください。
+
+Release 0.5.0
+=============
+May 9, 2013
+
+`Asakusa Framework 0.5.0 documentation`_
+
+..  _`Asakusa Framework 0.5.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/ja/html/index.html
+
+本リリースはAsakusa Frameworkの開発版リリースです。
+主な変更内容は以下の通りです。
+
+* 試験的にCDH4に対応 [#]_ 。またいくつかの動作検証プラットフォームの追加。
+* フレームワーク本体とバッチアプリケーションの構成情報を分離し、バッチアプリケーションの構成定義をシンプル化。
+* 今後のAsakusa Frameworkの拡張のベースとなるFramework本体に対する多くのリファインメント。
+* その他、多くの細かな機能改善、およびバグフィックス。
+
+..  [#] CDH4上でAsakusa Frameworkを利用するためのドキュメントを、 Sandboxプロジェクトに公開しています。
+
+* `Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`_
+
+..  _`Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-cdh4.html
 
 Release 0.4.0
 =============
 Aug 30, 2012
 
-Enhancements
-------------
-* [ :issue:`78` ] - \*Tester should provide the way to define precision accuracy
-    * See: :doc:`testing/user-guide`
-* [ :issue:`115` ] - Manage assembly descriptor as part of Maven artifact.
-* [ :issue:`128` ] - Retryable Processes for WindGate
-    * See: :doc:`windgate/user-guide`
-* [ :issue:`160` ] - Optimize execution plan for eliminating duplication of Operator
-    * See: :doc:`dsl/user-guide`
-* [ :issue:`179` ] - Batch application submodule mechanism 
-    * See: :doc:`dsl/user-guide`
-* [ :issue:`185` ] - Generate Input/Output Description for Direct I/O SequenceFile format
-    * See: :doc:`directio/user-guide`
-* [ :issue:`195` ] - support Apache Hadoop 1.0.x
-    * See: :doc:`product/target-platform`
-* [ :issue:`197` ] - Command line tools for operation
-    * See: :doc:`administration/utility-tool-user-guide`
-* [ :issue:`201` ] - Direct I/O output optimization
-    * See: :doc:`directio/user-guide`
-* [ :issue:`202` ] - Direct I/O cleaning DSL/CLI
-    * See: :doc:`directio/user-guide`
-    * See: :doc:`directio/tools-guide`
-* [ :issue:`204` ] - Revise cleanup in YAESS
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`208` ] - Direct I/O sequence file compression
-    * See: :doc:`directio/user-guide`
-* [ :issue:`209` ] - Logging improvement for YAESS
-    * See: :doc:`yaess/log-table`
-* [ :issue:`210` ] - Detects difference in build version of batch application at runtime
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`212` ] - Logging improvement for Asakusa Runtime
-* [ :issue:`213` ] - Enables WindGate to pass environment variables to remote processes via SSH
-    * See: :doc:`windgate/user-guide`
-* [ :issue:`214` ] - WindGate hadoop/direct basePath
-    * See: :doc:`windgate/user-guide`
-* [ :issue:`215` ] - Thundergate should use Hadoop configuration and classpath
-* [ :issue:`218` ] - WindGate profile should allow to specify environment variables more properties
-    * See: :doc:`windgate/user-guide`
-* [ :issue:`219` ] - YAESS profile should allow to specify environment variables more properties
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`222` ] - Performance tuning of CSV Parser
-* [ :issue:`226` ] - Add version information in ASAKUSA_HOME
-* [ :issue:`227` ] - Add build timestamp in application build log
-* [ :issue:`232` ] - Improve sample application includes archetype
-* [ :issue:`240` ] - Supports CDH3u5
-    * See: :doc:`product/target-platform`
+`Asakusa Framework 0.4.0 documentation`_
 
-..  attention::
-    Direct I/O is now generally available.
+..  _`Asakusa Framework 0.4.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/ja/html/index.html
 
-Bug fixes
----------
-* [ :issue:`194` ] - WindGate log seems not correct
-* [ :issue:`196` ] - Cleaner should use Hadoop libraries provided environment
-* [ :issue:`211` ] - Unexpected exception thrown when log directory lost permission.
-* [ :issue:`217` ] - Maven eclipse plugin may not create source directory for generating annotation processing
-* [ :issue:`221` ] - Remove unnecessary eclipse configuration from archetype pom.xml
-* [ :issue:`223` ] - Incorrect error message of CSV Parser
-* [ :issue:`224` ] - Compiler does not stop when overwriting output error at batch compile
-* [ :issue:`229` ] - Some of the test method of ThunderGate does not close JDBC resource
-* [ :issue:`233` ] - Incorrect log level of ThunderGate
-* [ :issue:`234` ] - BridgeInputFormat may cause StackOverFlowError with inconsistent framework environment
-* [ :issue:`235` ] - BasePath not found error when connecting flow from Direct I/O input to WindGate output directly
-* [ :issue:`236` ] - Redundant warning log for creating symlink on standalone mode
-* [ :issue:`237` ] - Partitioners hash algorithm is not strong.
-* [ :issue:`238` ] - DMDL Compiler generates DataModel Class incorrectly with hierarchical namespace attributes
-* [ :issue:`239` ] - DMDL Compiler does not detect inconsistent type of join keys.
-* [ :issue:`242` ] - TestDriver resolves working directory with user home directory
+本リリースはAsakusa Frameworkの安定版リリースです。
+主な変更内容は以下の通りです。
 
-Revisions
----------
-* [ :issue:`198` ] - Changes archetype composition
-    * See: :doc:`application/maven-archetype`
-* [ :issue:`207` ] - Legacy TestDriver should not use experimental shell script
-* [ :issue:`220` ] - Rename asakusa-runtime.jar
-* [ :issue:`225` ] - Changes default value of PartialAggregation parameter in Summarize operator
-
-Others
-------
-* [ :issue:`70` ] - Need more detailed and easy-to-see documentation for logging and related maintainance
-    * See: :doc:`windgate/log-table`
-    * See: :doc:`yaess/log-table`
-* [ :issue:`180` ] - WindGate log table document
-    * See: :doc:`windgate/log-table`
-* [ :issue:`181` ] - 0.4.0 Documentation
-* [ :issue:`189` ] - Refoctoring for release 0.4.0
-* [ :issue:`190` ] - Repackage javalang-tools
-* [ :issue:`191` ] - Introduce hierarchical project structure to repository
-* [ :issue:`192` ] - Update Maven plugins to recent versions
-* [ :issue:`193` ] - Update dependency libraries to recent versions
-* [ :issue:`199` ] - Clean project structure and project dependency for legacy classes
-* [ :issue:`200` ] - Refactor assembly scripts
-* [ :issue:`203` ] - Relocate each distribution fragments into suitable project
-* [ :issue:`205` ] - Migrate JobQueue sorurces from asakusafw-sandbox repository
-    * See: :doc:`yaess/jobqueue`
-* [ :issue:`206` ] - 0.4.0 Javadoc
-    * See: `Asakusa Framework API References (Version 0.4.0)`_
-* [ :issue:`216` ] - Refoctoring Maven archetype for release 0.4.0
-
-..  _`Asakusa Framework API References (Version 0.4.0)`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/index.html
-
-----
+* [Direct I/O] ワイルドカード指定の出力機能などを追加し、試験的機能から正式機能として昇格。
+* [Asakusa DSL] コンパイラ最適化のチューニングおよびバグフィックス。
+* [YAESS] シミュレーションモードの実行やデプロイモジュールのバージョン検証機能などを追加。
+* 動作検証プラットフォームの追加。
+* 広範囲にわたるドキュメントの拡充と改善、および多くのドキュメントバグのフィックス。
+* その他、多くの細かな機能改善、およびバグフィックス。
 
 Release 0.2.6
 =============
 May 31, 2012
 
-Enhancements
-------------
-* [ :issue:`84` ] - WindGate logging improvement
-* [ :issue:`138` ] - Provide command script building cache for ThunderGate
-    * See: :doc:`thundergate/cache`
-* [ :issue:`139` ] - Specified index at duplication check for Exporter
-* [ :issue:`143` ] - Specify the number of divisions to the output file of Direct I/O
-    * See: :doc:`directio/user-guide`
-* [ :issue:`145` ] - YAESS script for executing per JobFlow.
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`147` ] - Generate Asakusa DSL analysis files at batch compile
-    * See: :doc:`application/dsl-visualization`
-* [ :issue:`148` ] - CoreOperators for eliminating to use CoreOperatorFactory
-    * See: :doc:`dsl/operators`
-* [ :issue:`149` ] - Run tests of archetypes in the integration-test phase of Maven.
-* [ :issue:`150` ] - Report API implementation using Commons Logging.
-    * See: :doc:`administration/deployment-runtime-plugins`
-* [ :issue:`152` ] - Combines input splits
-    * See: :doc:`administration/configure-hadoop-parameters`
-* [ :issue:`153` ] - Multi-cluster support for YAESS
-    * See: :doc:`yaess/multi-dispatch`
-* [ :issue:`154` ] - Simple job queue for YAESS (experimental)
-    * See: `Asakusa Framework Sandbox: YAESS JobQueue`_
-* [ :issue:`155` ] - Skip specifing jobflows on yaess-batch.
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`156` ] - Write execution history per jobflow on YAESS.
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`157` ] - Specify Java command-line option on YAESS
-    * See: :doc:`yaess/user-guide`
-* [ :issue:`159` ] - Logging Improvement for YAESS
-    * See: :doc:`yaess/log-table`
-* [ :issue:`162` ] - support CDH3u3
-* [ :issue:`163` ] - Add exit code for retryable abend to ThunderGate
-* [ :issue:`164` ] - ThunderGate loads configuration properties with asakusa-resources.xml
-* [ :issue:`165` ] - Direct I/O supports SequenceFile format
-    * See: :doc:`directio/user-guide`
-* [ :issue:`166` ] - Optimize execution plan for reducing output file size
-* [ :issue:`171` ] - Add default YAESS plugins to deployment archive.
-    * See: :doc:`administration/deployment-with-directio`
-    * See: :doc:`administration/deployment-with-windgate`
-* [ :issue:`172` ] - Align log code in each log record
-* [ :issue:`173` ] - support CDH3u4
-* [ :issue:`176` ] - Select defalut hadoop mode of ThunderGate configuration installing to local
-* [ :issue:`184` ] - YAESS command option running JobFlow serialized forcibly (experimental)
+`Asakusa Framework 0.2.6 documentation`_
 
-..  attention::
-    Direct I/O is still an experimental feature.
+..  _`Asakusa Framework 0.2.6 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.2/release/ja/html/index.html
 
-..  _`Asakusa Framework Sandbox: YAESS JobQueue`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/yaess/jobqueue.html
+本リリースではYAESS マルチディスパッチ機能が追加されました。
 
-Bug fixes
----------
-* [ :issue:`140` ] - NPE when running DMDL Genarator without encoding option
-* [ :issue:`141` ] - Code example for generated DMDL is wrong
-* [ :issue:`144` ] - Failed with NPE when Direct I/O outputs with specifing date format
-* [ :issue:`146` ] - Misleading description about batch compiler option
-* [ :issue:`151` ] - Cause message which include exception is not shown when running WindGate with Postgresql
-* [ :issue:`158` ] - Improper use of IOException on logging YAESS.
-* [ :issue:`161` ] - Eliminates unnecessary output files in map task
-* [ :issue:`167` ] - Batch application with distributed cache may not work on standalone mode
-* [ :issue:`168` ] - Invalid script message to finalizer.sh and recoverer.sh
-* [ :issue:`170` ] - Legacy TestDriver does not guarantee ordering to load test data sheet files.
-* [ :issue:`175` ] - Multipart upload of S3 with Direct I/O does not work.
-* [ :issue:`177` ] - File will not be split if @directio.csv.file_name is used
-* [ :issue:`178` ] - The jar file without the necessity that the recoverer of ThunderGate reads is read
-* [ :issue:`182` ] - build-cache.sh failed at reading import DSL property.
-* [ :issue:`183` ] - DbImporterDescription has wrong description of JavaDoc.
+これによりバッチやジョブフローなどを異なる複数のHadoopクラスタに振り分けて実行したり、それぞれ異なる設定で起動したりできるようになります。
 
-Others
-------
-* [ :issue:`142` ] - 0.2.6 Documentation
-* [ :issue:`169` ] - Refoctoring for release 0.2.6
+* :doc:`yaess/multi-dispatch`
 
-----
+その他、多数の機能改善やバグフィックスが行われています。 
 
 Release 0.2.5
 =============
 Jan 31, 2012
 
-Enhancements
-------------
-* [ :issue:`131` ] - Direct I/O - direct data access facility from Hadoop cluster
-    * See: :doc:`directio/index`
-* [ :issue:`134` ] - Original Apache Hadoop Support
-    * See: :doc:`product/target-platform`
-* [ :issue:`135` ] - Add pom.xml default settings of archetype for using Eclipse m2e plugin.
+本リリースでは試験的な機能として「Direct I/O」が追加されました。
+これは、Hadoopクラスターから直接バッチの入出力データを
+読み書きするための機構です。
 
-..  attention::
-    Direct I/O is still an experimental feature.
+* :doc:`directio/index`
 
-Bug fixes
----------
-* [ :issue:`137` ] - "Reduce output records" counter is wrong
+また、本バージョンでは対応プラットフォームの拡張として、
+従来のバージョンで対応していた
+HadoopディストリビューションであるCDH3に加えて、
+Apache Hadoop 0.20.203.0での動作検証が行われ、
+この環境で動作するための変更が行われています。
 
-Others
-------
-* [ :issue:`129` ] - 0.2.5 Documentation
-* [ :issue:`130` ] - Refoctoring for release 0.2.5
-
-----
+その他、細かな機能改善やバグフィックスが行われています。
 
 Release 0.2.4
 =============
 Dec 19, 2011
 
-Enhancements
-------------
+本リリースからWindGateがGA (Generally Available) となりました。
+WindGateにはローカルのCSVに対するデータ入出力を行う機能が追加となっています。
 
-* [ :issue:`59` ] - Assembly support for batch project
-* [ :issue:`82` ] - WindGate Documentaion
-* [ :issue:`83` ] - WindGate performance improvement (still working)
-* [ :issue:`87` ] - Difficult to distinguish <h2> and <h3> in documents
-* [ :issue:`111` ] - WindGate for CSV files in local file system
-* [ :issue:`112` ] - JdbcImporter/ExporterDescription should be auto generated
-* [ :issue:`113` ] - Test driver should refer WindGate plug-ins
-* [ :issue:`117` ] - JDBC Connection Properties should be configurable on WindGate
-* [ :issue:`120` ] - WindGate should accept Java VM options
-* [ :issue:`121` ] - The script files for build should externalize from application project
-* [ :issue:`128` ] - Retryable Processes for WindGate (still working - Retryable Processes is still an experimental feature in this version) .
+また、本リリースではドキュメントの構成を見直し、
+内容を大幅に拡充しました。
+特に「Asakusa Framework入門」の追加、および
+WindGateやYAESSに関する記述が多く追加されています。
 
-..  attention::
-    WindGate is now generally available.
+* :doc:`introduction/index`
 
-Revisions
----------
-* [ :issue:`105` ] - Shoud there be existed a copy constructor at DecimalOption
-* [ :issue:`114` ] - Change default configuration of archetype for WindGate for using local file (CSV) .
-* [ :issue:`116` ] - Deployment archive for WindGate should be included files for running Hadoop on local.
-* [ :issue:`123` ] - Archetype for ThunderGate should rename archetype ID.
-* [ :issue:`126` ] - Deployment archive for WindGate should be included jsch for WindGate plugin
+旧バージョンを使っている開発環境を0.2.4に移行するには
+マイグレーション作業が必要となります。
+詳しくは以下のマイグレーションガイドを参照してください。
 
-Bug fixes
----------
-* [ :issue:`118` ] - ThunderGate raises unknown error if cache lock was conflicted
-* [ :issue:`119` ] - ThunderGate recoverer and release cache lock have same job ID
-* [ :issue:`124` ] - asakusa-resources.xml has incorrect default configuration.
-* [ :issue:`125` ] - Show DMDL compiler usage when model generator failed.
-* [ :issue:`127` ] - WindGate HadoopFS/SSH sometimes does not return exit status
+* :doc:`application/migration-guide`
 
-Others
-------
-* [ :issue:`106` ] - 0.2.4 Documentation
-
-----
-
+その他、細かな機能改善やバグフィックスが行われています。
 
 Release 0.2.3
 =============
 Nov 16, 2011
 
-Enhancements
-------------
-* [ :issue:`60` ] - Test driver message is not easy to understand
-* [ :issue:`67` ] - Support fine grain verification on TestDriver
-* [ :issue:`81` ] - support CDH3u1 
-* [ :issue:`86` ] - Pluggable compare for \*Tester
-* [ :issue:`91` ] - Enabled to dump all actual data when running testdriver.
-    * See: :doc:`testing/user-guide`
-* [ :issue:`92` ] - Difference report on \*Tester
-    * See: :doc:`testing/user-guide`
-* [ :issue:`93` ] - YAESS - Portable Workflow Processor
-    * See: :doc:`yaess/index`
-* [ :issue:`96` ] - Skip each phase of TestDriver execution.
-    * See: :doc:`testing/user-guide`
-* [ :issue:`98` ] - Cache for ThunderGate
-    * See: :doc:`thundergate/cache`
-* [ :issue:`99` ] - support CDH3u2
-* [ :issue:`102` ] - Simplify test driver internal APIs
+本リリースでは、様々な環境に合わせて実行方法をカスタマイズ
+することが可能なバッチ実行ツール「YAESS」と
+ThunderGateの差分インポート機能を実現する
+「ThunderGateキャッシュ」機能が追加されました。
 
-..  attention::
-    WindGate is still an experimental feature.
+* :doc:`yaess/index`
+* :doc:`thundergate/cache`
 
-Bug fixes
----------
-* [ :issue:`85` ] - FileExporterDescription failed to output to multiple files
-* [ :issue:`90` ] - typo in documents
-* [ :issue:`95` ] - Extractor returns invalid return code
-* [ :issue:`100` ] - Test driver fails with IllegalArgumentException if batch argument value for Context API includes space character
-* [ :issue:`101` ] - "execution_id" is not available in BatchContext
-* [ :issue:`103` ] - WindGate stays running after OutOfMemoryError is occurred
-* [ :issue:`104` ] - dbcleaner.sh does not include in prod-db tarball.
+今回のリリースでは、旧バージョンを使っている開発環境を
+0.2.3に移行するためにマイグレーション作業が必要となります。
+詳しくは以下のマイグレーションガイドを参照してください。
 
-Others
-------
-* [ :issue:`89` ] - 0.2.3 Documentation
+* :doc:`application/migration-guide`
 
-----
-
+その他、細かな機能改善やバグフィックスが行われています。
 
 Release 0.2.2
 =============
 Sep 29, 2011
 
-Enhancements
-------------
-* [ :issue:`61` ] - ThunderGate log messages improvement
-* [ :issue:`63` ] - Reduce dependency of MultipleOutputs
-* [ :issue:`64` ] - Enable to input expect data from database table.
-* [ :issue:`69` ] - WindGate
-    * See: :doc:`windgate/index`
-* [ :issue:`74` ] - Write framework version to build.log at batch compile
+本リリースではExperimental Featureとして「WindGate」が追加されました。
 
-..  attention::
-    WindGate is still an experimental feature.
+WindGateはThunderGateと同様にバッチに対するデータの外部入出力を行うモジュールですが、
+様々なプラットフォームに対応するよう設計され、ThunderGateに対してポータビリティが高いことが特徴です。
 
-Bug fixes
----------
-* [ :issue:`53` ] - Batch compile error message on importer type unmatch seems strange
-* [ :issue:`57` ] - Correct messages
-* [ :issue:`58` ] - Error message when jobflow output missing is difficult to understand
-* [ :issue:`65` ] - Redundant assert log message with date type.
-* [ :issue:`71` ] - FlowPartTester#setOptimaze seems does not work
-* [ :issue:`72` ] - Invalid summarize operation if grouping key is also used for aggregation
-* [ :issue:`73` ] - Raised internal error if grouping key is an empty string
-* [ :issue:`75` ] - It is cause error using excel file in jar as tester input
-* [ :issue:`76` ] - It is difficult to understand message \*Tester test failed
-* [ :issue:`77` ] - Exponent notation is not suitable \*Tester test message when DecimalOption assertion failed
-* [ :issue:`80` ] - Failed to compile operator by using reserved keywords in Java for Enum constant
+* :doc:`windgate/index`
 
-Others
-------
-* [ :issue:`54` ] - 0.2.2 Documentation
-
-----
+その他、バグフィックスや細かい機能改善が行われています。
 
 Release 0.2.1
 =============
 Jul 27, 2011
 
-Enhancements
-------------
-* [ :issue:`38` ] - Supports CLOB for property type
-    * See: :doc:`thundergate/with-dmdl`
-* [ :issue:`41` ] - Support new operator "Extract"
-    * See: :doc:`dsl/operators`
-* [ :issue:`50` ] - Support new operator "Restructure"
-    * See: :doc:`dsl/operators`
-
-Bug fixes
----------
-* [ :issue:`49` ] - Failed to synthesize record models with same property
-* [ :issue:`51` ] - Repository url of pom.xml defines https unnecessarily
-
-Others
-------
-* [ :issue:`52` ] - 0.2.1 Documentation
-
-----
+* Extract演算子の追加
+* Restructure演算子の追加
+* ThunderGateのCLOBサポート
+* その他バグフィックス
 
 Release 0.2.0
 =============
 Jun 29, 2011
 
-Enhancements
-------------
-* [ :issue:`10` ] - support CDH3u0
-* [ :issue:`17` ] - New data model generator
-    * See: :doc:`dmdl/index`
-* [ :issue:`18` ] - Generic operators support
-    * See: :doc:`dsl/generic-dataflow`
-* [ :issue:`19` ] - TestDriver enhancement for loosely-coupled architecture
-    * See: :doc:`testing/index`
-* [ :issue:`23` ] - Floating point number support
-    * See: :doc:`thundergate/with-dmdl`
-* [ :issue:`32` ] - CoGroup/GroupSort for very large group
-    * See: :doc:`dsl/operators`
-* [ :issue:`36` ] - ThunderGate should show # of imported/exporting records
+* DMDLの導入
+* テストドライバの大幅な改善
+* その他多くのバグフィックス
 
-Revisions
----------
-* [ :issue:`26` ] - modelgen should be bound to generate-sources phase (not process-resources phase).
-* [ :issue:`40` ] - Enable compiler option "compressFlowPart" default value
-
-Bug fixes
----------
-* [ :issue:`3` ] - 'mvn test' fails if X window system is not available
-* [ :issue:`4` ] - testtools.properties does not use on a project generated with archetype
-* [ :issue:`5` ] - system property and environment variables "NS\_" -> "ASAKUSA\_" corresponding leakage of renaming
-* [ :issue:`6` ] - The argument of FlowPartTestDriver#createIn should use <T> instead of <?>
-* [ :issue:`7` ] - ThunderGate does not work on Ubuntu for using source command in shell scripts
-* [ :issue:`8` ] - some asakusa-runtime tests fail because of the Windows NewLine Code
-* [ :issue:`9` ] - empty cells are treaded as an invaid value in the Test Data Definition Sheet
-* [ :issue:`11` ] - The cache file table on ThunderGate is unnecessary
-* [ :issue:`12` ] - the unnecessary property of ThunderGate configration
-* [ :issue:`13` ] - ThunderGate setup DDL must be modified when specified non default database name
-* [ :issue:`14` ] - Cleaner does not check errors to get FileSystem
-* [ :issue:`15` ] - Inefficient process of getting FileSystem in HDFSCleaner
-* [ :issue:`16` ] - output.directory should be defined in build.properties instead of testtools.properties
-* [ :issue:`20` ] - Build failed when mvn clean install
-* [ :issue:`21` ] - Failed to create join tables from distributed cache
-* [ :issue:`22` ] - the NOTICE file typo
-* [ :issue:`24` ] - TestUtilsTest.testNormal failed in rare cases
-* [ :issue:`27` ] - the logback-test.xml used old format.
-* [ :issue:`28` ] - missing classpath exclude definition of pom.xml generated from archetype.
-* [ :issue:`29` ] - stage planner does not expand nested flow parts
-* [ :issue:`30` ] - bash dependency problems for some shell scripts
-* [ :issue:`31` ] - Failed to "side data join" if input is not a SequenceFile
-* [ :issue:`44` ] - Javac hides direct cause of compilation errors
-* [ :issue:`46` ] - cleanHDFS.sh/cleanLocalFS.sh does not work.
-* [ :issue:`47` ] - ThunderGate closes standard error stream unexpectedly
-
-Others
-------
-* [ :issue:`25` ] - 0.2.0 Documentation
-
-----
 
 Release 0.1.0
 =============
 Mar 30, 2011
 
-* The first release of Asakusa Framework.
+* 初版リリース
 

@@ -135,13 +135,13 @@ Asakusa Frameworkのインストールアーカイブの作成
 -----------------------------------------------
 Asakusa Frameworkのインストールアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、アプリケーション開発プロジェクトからMavenの以下のコマンドを実行して生成します [#]_ 。
+Asakusa Frameworkのインストールアーカイブは、Framework Organizer [#]_ に対してMavenの以下のコマンドを実行して生成します。
 
 ..  code-block:: sh
 
-    mvn assembly:single
+    mvn package
 
-このコマンドを実行すると、プロジェクトの target ディレクトリ配下にいくつかのファイルが生成されます。
+このコマンドを実行すると、Framework Organizerの ``target`` ディレクトリ配下にいくつかのファイルが生成されます。
 このうち以下のファイルが今回利用するアーカイブ [#]_ です。
 
 ``asakusafw-${asakusafw.version}-prod-directio.tar.gz``
@@ -149,7 +149,7 @@ Asakusa Frameworkのインストールアーカイブは、アプリケーショ
 ``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
 例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-directio.tar.gz になります。
 
-..  [#] 詳しくは、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] 詳しくは、 :doc:`framework-organizer` を参照してください。
 ..  [#] このアーカイブには (Direct I/Oを含む) Asakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
 
 

@@ -18,6 +18,10 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 -----------------------------------
 外部システムとの連携をAsakusa Frameworkの外部で行う構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
 
+Framework Organizer利用ガイド
+-----------------------------
+Asakusa Frameworkの構成ツールであるFramework Organizerの利用方法について説明します。
+
 拡張モジュールのデプロイ
 ------------------------
 Asakusa Frameworkの拡張モジュールのデプロイ方法について説明します。
@@ -55,6 +59,7 @@ Asakusa Framework のバージョンアップに伴う、運用環境に対し�
     deployment-with-windgate
     deployment-with-thundergate
     deployment-with-directio
+    framework-organizer
     deployment-extension-module
     deployment-runtime-plugins
     configure-hadoop-parameters
