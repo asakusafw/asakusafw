@@ -11,13 +11,7 @@
 
 		<hadoop.artifact.id>${hadoop.artifact.id}</hadoop.artifact.id>
 		<hadoop.version>${hadoop.version}</hadoop.version>
-		<commons.io.version>${commons.io.version}</commons.io.version>
-		<commons.lang.version>${commons.lang.version}</commons.lang.version>
-		<commons.logging.version>${commons.logging.version}</commons.logging.version>
 		<logback.version>${logback.version}</logback.version>
-		<slf4j.version>${slf4j.version}</slf4j.version>
-		<junit.version>${junit.version}</junit.version>
-		<hamcrest.version>${hamcrest.version}</hamcrest.version>
 
 		<project.build.sourceEncoding>${project.build.sourceEncoding}</project.build.sourceEncoding>
 		<asakusa.build.antfile>\${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
@@ -31,7 +25,6 @@
 		<plugin.build-helper.version>${plugin.build-helper.version}</plugin.build-helper.version>
 		<plugin.antrun.version>${plugin.antrun.version}</plugin.antrun.version>
 		<plugin.properties.version>${plugin.properties.version}</plugin.properties.version>
-		<plugin.assembly.version>${plugin.assembly.version}</plugin.assembly.version>
 	</properties>
 
 	<profiles>
@@ -186,35 +179,6 @@
 					<classpathContainers>
 						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
 					</classpathContainers>
-					<excludes>
-						<exclude>com.asakusafw:asakusa-cleaner</exclude>
-						<exclude>com.asakusafw:asakusa-directio-tools</exclude>
-						<exclude>com.asakusafw:asakusa-distribution</exclude>
-						<exclude>com.asakusafw:asakusa-operation-tools</exclude>
-						<exclude>com.asakusafw:asakusa-runtime-all</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-dmdl</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-plugin</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-runtime</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-test-moderator</exclude>
-						<exclude>com.asakusafw:asakusa-thundergate-vocabulary</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-bootstrap</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-dmdl</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-hadoopfs</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-jdbc</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-stream</exclude>
-						<exclude>com.asakusafw:asakusa-windgate-retryable</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-bootstrap</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-flowlog</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-jobqueue</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-jsch</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-multidispatch</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-paralleljob</exclude>
-						<exclude>com.asakusafw:asakusa-yaess-tools</exclude>
-						<exclude>mysql:mysql-connector-java</exclude>
-						<exclude>com.asakusafw:ashigel-compiler-bootstrap</exclude>
-						<exclude>org.eclipse.jdt:core</exclude>
-					</excludes>
 					<additionalConfig>
 						<file>
 							<name>.settings/org.eclipse.jdt.core.prefs</name>
@@ -313,30 +277,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<goal>run</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>default-cli</id>
-						<configuration>
-							<target>
-								<property name="compile_classpath" refid="maven.test.classpath" />
-								<tstamp>
-									<format property="now.time" pattern="yyyyMMddHHmmss" />
-								</tstamp>
-								<move file="\${env.ASAKUSA_HOME}" todir="\${env.ASAKUSA_HOME}_\${now.time}"
-									failonerror="false" />
-								<mkdir dir="\${env.ASAKUSA_HOME}" />
-								<untar dest="\${env.ASAKUSA_HOME}" compression="gzip">
-									<fileset dir="\${project.build.directory}">
-										<include name="asakusafw-\${asakusafw.version}-dev.tar.gz" />
-									</fileset>
-								</untar>
-								<chmod perm="755">
-									<fileset dir="\${env.ASAKUSA_HOME}">
-										<include name="**/*.sh" />
-									</fileset>
-								</chmod>
-							</target>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -353,33 +293,6 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 							<files>
 								<file>build.properties</file>
 							</files>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>\${plugin.assembly.version}</version>
-				<dependencies>
-					<dependency>
-						<groupId>com.asakusafw</groupId>
-						<artifactId>asakusa-distribution</artifactId>
-						<version>\${asakusafw.version}</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>dev</descriptorRef>
-								<descriptorRef>prod-windgate</descriptorRef>
-							</descriptorRefs>
-							<finalName>asakusafw-\${asakusafw.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -452,132 +365,25 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dsl-vocabulary</artifactId>
-			<version>\${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-runtime</artifactId>
-			<version>\${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>ashigel-compiler</artifactId>
-			<version>\${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dsl-analysis-plugin</artifactId>
-			<version>\${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-test-driver</artifactId>
-			<version>\${asakusafw.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>ashigel-compiler-bootstrap</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-dmdl</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-plugin</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-test-moderator</artifactId>
-			<version>\${asakusafw.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-windgate-vocabulary</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-windgate-dmdl</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-windgate-plugin</artifactId>
-			<version>\${asakusafw.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-windgate-test-moderator</artifactId>
-			<version>\${asakusafw.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-test-data-generator</artifactId>
-			<version>\${asakusafw.version}</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-yaess-plugin</artifactId>
-			<version>\${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-distribution</artifactId>
-			<version>\${asakusafw.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>\${logback.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-			<version>\${slf4j.version}</version>
-			<optional>true</optional>
+			<groupId>com.asakusafw.sdk</groupId>
+			<artifactId>asakusa-sdk-core</artifactId>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>\${commons.logging.version}</version>
-			<scope>provided</scope>
+			<groupId>com.asakusafw.sdk</groupId>
+			<artifactId>asakusa-sdk-directio</artifactId>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>\${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>\${junit.version}</version>
-			<scope>test</scope>
+			<groupId>com.asakusafw.sdk</groupId>
+			<artifactId>asakusa-sdk-windgate</artifactId>
+			<version>\${asakusafw.version}</version>
 		</dependency>
 	</dependencies>
 

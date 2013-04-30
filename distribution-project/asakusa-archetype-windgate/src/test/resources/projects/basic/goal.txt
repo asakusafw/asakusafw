@@ -1,1 +1,1 @@
-assembly:single antrun:run package
+package
