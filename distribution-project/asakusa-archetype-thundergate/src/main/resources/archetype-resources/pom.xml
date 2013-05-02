@@ -11,6 +11,7 @@
 
 		<hadoop.artifact.id>${hadoop.artifact.id}</hadoop.artifact.id>
 		<hadoop.version>${hadoop.version}</hadoop.version>
+		<slf4j.version>${slf4j.version}</slf4j.version>
 		<logback.version>${logback.version}</logback.version>
 
 		<mysql.jdbc.version>${mysql.jdbc.version}</mysql.jdbc.version>
@@ -366,6 +367,11 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>\${slf4j.version}</version>
+			</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
