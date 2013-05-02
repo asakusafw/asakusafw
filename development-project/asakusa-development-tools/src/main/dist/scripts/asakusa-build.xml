@@ -91,7 +91,7 @@
 		     classpath="${compile_classpath}">
 
 			<transaction>
-                DROP DATABASE ${database.name}
+                DROP DATABASE IF EXISTS ${database.name}
             </transaction>
 			<transaction>
                 CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8;
@@ -271,47 +271,15 @@
 		</jar>
 	</target>
 
-	<target name="install-framework">
-		<tstamp>
-			<format property="now.time" pattern="yyyyMMddHHmmss" />
-		</tstamp>
-		<move file="${env.ASAKUSA_HOME}" todir="${env.ASAKUSA_HOME}_${now.time}" failonerror="false" />
-		<mkdir dir="${env.ASAKUSA_HOME}" />
-
-		<untar dest="${env.ASAKUSA_HOME}" compression="gzip">
-			<fileset dir="${project.build.directory}">
-				<include name="asakusafw-${asakusafw.version}-dev.tar.gz" />
-			</fileset>
-		</untar>
-
-		<chmod perm="755">
-			<fileset dir="${env.ASAKUSA_HOME}">
-				<include name="**/*.sh" />
-			</fileset>
-		</chmod>
+	<target name="post-install-framework">
+		<antcall target="install-framework-thundergate" />
 	</target>
-
-	<target name="install-framework-thundergate">
+	
+	<target name="install-framework-thundergate" if="thundergate.target">
 		<copy file="${env.ASAKUSA_HOME}/bulkloader/conf/[targetname]-jdbc.properties"
-		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
-
+		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/${thundergate.target}-jdbc.properties" />
 		<mkdir dir="/tmp/thundergate-${env.USER}" />
 		<chmod perm="777" file="/tmp/thundergate-${env.USER}" type="dir" />
-
-		<antcall target="thundergate-create-table" />
-	</target>
-
-	<target name="thundergate-create-table" if="asakusa.build.database.enabled">
-		<property file="${env.ASAKUSA_HOME}/bulkloader/conf/${asakusa.database.target}-jdbc.properties" />
-		<sql driver="${jdbc.driver}"
-		     url="${jdbc.url}"
-		     userid="${jdbc.user}"
-		     password="${jdbc.password}"
-		     classpath="${compile_classpath}">
-			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/drop_table.sql" />
-			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/create_table.sql" />
-			<transaction src="${env.ASAKUSA_HOME}/bulkloader/sql/insert_import_table_lock.sql" />
-		</sql>
 	</target>
 
 </project>

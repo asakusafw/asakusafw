@@ -38,6 +38,7 @@
 		<module>operation-project</module>
 		<module>development-project</module>
 		<module>legacy-project</module>
+		<module>sdk-project</module>
 		<module>distribution-project</module>
 	</modules>
 
