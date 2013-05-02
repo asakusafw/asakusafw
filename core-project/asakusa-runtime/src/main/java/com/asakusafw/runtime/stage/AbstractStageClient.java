@@ -52,7 +52,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.5.0
  */
 public abstract class AbstractStageClient extends BaseStageClient {
 
@@ -275,13 +275,13 @@ public abstract class AbstractStageClient extends BaseStageClient {
 
     private void configureJobInfo(Job job, VariableTable variables) {
         Class<?> clientClass = getClass();
-        String definitionId = getDefinitionId();
+        String operationId = getOperationId();
 
         LOG.info(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
         job.setJarByClass(clientClass);
 
-        LOG.info(MessageFormat.format("Hadoop Job Name: {0}", definitionId));
-        job.setJobName(definitionId);
+        LOG.info(MessageFormat.format("Hadoop Job Name: {0}", operationId));
+        job.setJobName(operationId);
     }
 
     private void configureStageInput(Job job, VariableTable variables) {

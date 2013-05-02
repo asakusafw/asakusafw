@@ -400,6 +400,11 @@ public class ParallelJobSchedulerTest {
         }
 
         @Override
+        public String getTrackingId(ExecutionContext context) {
+            return computeTrackingId(context);
+        }
+
+        @Override
         public Set<String> getBlockerIds() {
             return blockers;
         }
