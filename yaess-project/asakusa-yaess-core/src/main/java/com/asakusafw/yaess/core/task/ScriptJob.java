@@ -75,6 +75,11 @@ public class ScriptJob<T extends ExecutionScript> extends Job {
     }
 
     @Override
+    public String getTrackingId(ExecutionContext context) {
+        return computeTrackingId(context, script);
+    }
+
+    @Override
     public Set<String> getBlockerIds() {
         return script.getBlockerIds();
     }

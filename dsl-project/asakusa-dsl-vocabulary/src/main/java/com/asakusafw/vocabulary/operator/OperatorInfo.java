@@ -32,6 +32,11 @@ import java.lang.annotation.Target;
 public @interface OperatorInfo {
 
     /**
+     * Kind of this operator.
+     */
+    Class<?> kind();
+
+    /**
      * A list of inputs for the target operator.
      */
     Input[] input();
@@ -50,6 +55,9 @@ public @interface OperatorInfo {
      * Operator input.
      * @since 0.5.0
      */
+    @Target({ })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
     public @interface Input {
 
         /**
@@ -79,6 +87,9 @@ public @interface OperatorInfo {
      * Operator output.
      * @since 0.5.0
      */
+    @Target({ })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
     public @interface Output {
 
         /**
@@ -103,6 +114,9 @@ public @interface OperatorInfo {
      * Operator parameter.
      * @since 0.5.0
      */
+    @Target({ })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
     public @interface Parameter {
 
         /**

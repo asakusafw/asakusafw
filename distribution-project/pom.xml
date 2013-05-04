@@ -31,6 +31,7 @@
 
 	<modules>
 		<module>asakusa-distribution</module>
+		<module>asakusa-archetype-framework-organizer</module>
 		<module>asakusa-archetype-directio</module>
 		<module>asakusa-archetype-windgate</module>
 		<module>asakusa-archetype-thundergate</module>

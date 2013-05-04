@@ -101,6 +101,19 @@ public abstract class BaseStageClient extends Configured implements Tool {
         return StageConstants.getDefinitionId(batchId, flowId, stageId);
     }
 
+    /**
+     * Returns the job operation ID which this client will invoke.
+     * @return the job operation ID
+     * @since 0.5.0
+     */
+    protected String getOperationId() {
+        String trackingId = getConf().get(PROP_TRACKING_ID);
+        if (trackingId != null) {
+            return trackingId;
+        }
+        return getDefinitionId();
+    }
+
     @Override
     public final int run(String[] args) throws Exception {
         RuntimeContext.set(RuntimeContext.DEFAULT.apply(System.getenv()));
