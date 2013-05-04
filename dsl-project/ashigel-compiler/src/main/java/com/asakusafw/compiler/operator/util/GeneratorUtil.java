@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.operator.util;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,17 +35,22 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.AnnotationElement;
 import com.asakusafw.utils.java.model.syntax.Expression;
+import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
+import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.Models;
+import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
+import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.KeyInfo;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
@@ -282,6 +288,50 @@ public class GeneratorUtil {
             results.add(factory.newNamedType(name));
         }
         return results;
+    }
+
+    /**
+     * Converts {@link OperatorPortDeclaration} into an operator factory method parameter.
+     * @param var target port declaration
+     * @param name the actual parameter name
+     * @return related parameter declaration
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public FormalParameterDeclaration toFactoryMethodInput(OperatorPortDeclaration var, SimpleName name) {
+        Precondition.checkMustNotBeNull(var, "var"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
+        AttributeBuilder attributes = new AttributeBuilder(factory);
+        ShuffleKey key = var.getShuffleKey();
+        if (key != null) {
+            List<Expression> group = new ArrayList<Expression>();
+            for (String entry : key.getGroupProperties()) {
+                group.addAll(new AttributeBuilder(factory)
+                        .annotation(t(KeyInfo.Group.class), "expression", Models.toLiteral(factory, entry))
+                        .toAnnotations());
+            }
+            List<Expression> order = new ArrayList<Expression>();
+            for (ShuffleKey.Order entry : key.getOrderings()) {
+                order.addAll(new AttributeBuilder(factory)
+                        .annotation(
+                                t(KeyInfo.Order.class),
+                                "direction", new TypeBuilder(factory, t(KeyInfo.Direction.class))
+                                        .field(entry.getDirection().name())
+                                        .toExpression(),
+                                "expression", Models.toLiteral(factory, entry.getProperty()))
+                        .toAnnotations());
+            }
+
+            attributes.annotation(
+                    t(KeyInfo.class),
+                    "group", factory.newArrayInitializer(group),
+                    "order", factory.newArrayInitializer(order));
+        }
+        return factory.newFormalParameterDeclaration(
+                attributes.toAttributes(),
+                toSourceType(var.getType().getRepresentation()),
+                false,
+                name,
+                0);
     }
 
     /**
