@@ -101,11 +101,9 @@
 					<execution>
 						<id>default-cli</id>
 						<configuration>
-								<target>
-								<condition property="asakusa.home.exists">
-									<available file="\${env.ASAKUSA_HOME}" type="dir" />
-								</condition>
-								<fail unless="${asakusa.home.exists}" message="ASAKUSA_HOME is not defined" />
+							<target>
+								<property environment="env" />
+								<fail unless="env.ASAKUSA_HOME" message="ASAKUSA_HOME is not defined" />
 								<tstamp>
 									<format property="now.time" pattern="yyyyMMddHHmmss" />
 								</tstamp>
