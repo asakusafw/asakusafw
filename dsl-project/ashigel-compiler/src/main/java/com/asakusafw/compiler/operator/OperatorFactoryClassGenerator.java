@@ -394,7 +394,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         Expression type;
         switch (var.getType().getKind()) {
         case DIRECT:
-            type = factory.newClassLiteral(util.t(var.getType().getDirect()));
+            type = factory.newClassLiteral(util.t(environment.getErasure(var.getType().getDirect())));
             break;
         case REFERENCE:
             type = factory.newSimpleName(var.getType().getReference());
@@ -476,9 +476,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
-            parameters.add(factory.newFormalParameterDeclaration(
-                    util.toSourceType(var.getType().getRepresentation()),
-                    name));
+            parameters.add(util.toFactoryMethodInput(var, name));
             inputMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
@@ -511,6 +509,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
                     .annotation(util.t(OperatorInfo.class),
+                            "kind", factory.newClassLiteral(util.t(descriptor.getAnnotationType())),
                             "input", factory.newArrayInitializer(inputMetaData),
                             "output", factory.newArrayInitializer(outputMetaData),
                             "parameter", factory.newArrayInitializer(parameterMetaData))
