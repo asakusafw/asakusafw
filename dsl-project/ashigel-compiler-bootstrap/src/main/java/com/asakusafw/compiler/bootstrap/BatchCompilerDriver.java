@@ -142,6 +142,9 @@ public final class BatchCompilerDriver {
         List<URL> pluginLocations = Lists.create();
         if (plugin != null) {
             for (String s : plugin.split(File.pathSeparator)) {
+                if (s.trim().isEmpty()) {
+                    continue;
+                }
                 try {
                     File file = new File(s);
                     if (file.exists() == false) {
