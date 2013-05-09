@@ -9,4 +9,5 @@ AWS (Amazon Web Services) 上での利用
     :maxdepth: 1
 
     asakusa-on-emr.rst
+    asakusa-on-cdh4.rst
 
