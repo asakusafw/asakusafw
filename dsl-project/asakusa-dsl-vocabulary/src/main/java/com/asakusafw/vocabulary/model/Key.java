@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public @interface Key {
      * </p>
      * <p>
      * 同様に、プロパティ名の直後に空白文字を挿入し、さらに文字列{@code DESC}を指定すると、
-     * それらのプロパティの昇順に整列される。
+     * それらのプロパティの降順に整列される。
      * </p>
      * <p>
      * 厳密には、それぞれの要素には下記のような言語{@code Order}に含まれる文字列を指定できる。

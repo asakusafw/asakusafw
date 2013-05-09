@@ -9,7 +9,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブ [#]_ に
 
 拡張モジュールを実行環境にデプロイすることで、Asakusa Frameworkの拡張機能やレガシーモジュールを利用することが出来ます。
 
-..  [#] 標準のデプロイメントアーカイブとは、アプリケーションプロジェクト上で ``mvn assembly:single`` を実行することで ``target`` ディレクトリ配下に作成されるデプロイメントアーカイブファイルです。詳しくは :doc:`deployment-with-windgate` や :doc:`deployment-with-directio` などを参照してください。
+..  [#] 標準のデプロイメントアーカイブとは、Framework Organizerの標準構成で作成されるデプロイメントアーカイブファイルです。詳しくは :doc:`framework-organizer` を参照してください。
 
 ..  [#] レガシーモジュールについては、 :doc:`../application/legacy-module-guide` を参照
 
@@ -51,9 +51,9 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブ [#]_ に
 
 拡張モジュール用のデプロイメントアーカイブを生成する
 ----------------------------------------------------
-アプリケーションプロジェクト上で、拡張モジュール用のデプロイメントアーカイブを生成します。
+Framework Organizer [#]_ 上で、拡張モジュール用のデプロイメントアーカイブを生成します。
 
-まずアプリケーションプロジェクトの ``pom.xml`` に対して、 ``maven-assemby-plugin`` のプラグインの定義にデプロイメントアーカイブ生成用の設定を追加します。先述の :ref:`extention-module-list` から利用する拡張モジュールの拡張モジュールIDを確認し、その拡張モジュールIDを ``maven-assemby-plugin`` の設定 ``plugin/executions/execution/configuration/descriptorRefs/descriptorRef`` 要素の値として設定します。
+まずFramework Organizerの ``pom.xml`` に対して、 ``maven-assembly-plugin`` のプラグインの定義にデプロイメントアーカイブ生成用の設定を追加します。先述の :ref:`extention-module-list` から利用する拡張モジュールの拡張モジュールIDを確認し、その拡張モジュールIDを ``maven-assembly-plugin`` の設定 ``plugin/executions/execution/configuration/descriptorRefs/descriptorRef`` 要素の値として設定します。
 
 以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` に拡張モジュール ``ext-yaess-jobqueue-plugin`` を追加する ``pom.xml`` の設定例です。
 
@@ -90,10 +90,11 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブ [#]_ に
             </plugin>
 
 
-上記の設定を追加後、アプリケーションプロジェクトに対して ``mvn assembly:single`` を実行します。アプリケーションプロジェクトの ``target`` ディレクトリ配下に標準で生成されるデプロイアーカイブに加えて拡張モジュール用のデプロイアーカイブが生成されます。
+上記の設定を追加後、Framework Organizerに対して ``mvn package`` を実行します。Framework Organizerの ``target`` ディレクトリ配下に標準で生成されるデプロイアーカイブに加えて拡張モジュール用のデプロイアーカイブが生成されます。
 
-上記の例では、 ``target`` ディレクトリ配下に拡張モジュール ``ext-yaess-jobqueue-plugin`` に対応するデプロイメントアーカイブ ``asakusafe-{asakusafw.version}-ext-yaess-jobqueue-plugin.tar.gz`` [#]_ が生成されます。
+上記の例では、 ``target`` ディレクトリ配下に拡張モジュール ``ext-yaess-jobqueue-plugin`` に対応するデプロイメントアーカイブ ``asakusafw-{asakusafw.version}-ext-yaess-jobqueue-plugin.tar.gz`` [#]_ が生成されます。
 
+..  [#] Framework Organizerについては、 :doc:`framework-organizer` を参照してください。
 ..  [#] ファイル名の ``${asakusafw.version}`` 部分は実際には使用しているAsakusa Frameworkのバージョンに置き換えます。例えばバージョン |version| を使用している場合は、 asakusafw-|version|-ext-yaess-jobqueue-plugin.tar.gz になります。
 
 拡張モジュール用のデプロイメントアーカイブを実行環境にデプロイする

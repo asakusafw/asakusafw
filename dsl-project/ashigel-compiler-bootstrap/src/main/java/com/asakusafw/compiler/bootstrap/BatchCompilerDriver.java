@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,6 +142,9 @@ public final class BatchCompilerDriver {
         List<URL> pluginLocations = Lists.create();
         if (plugin != null) {
             for (String s : plugin.split(File.pathSeparator)) {
+                if (s.trim().isEmpty()) {
+                    continue;
+                }
                 try {
                     File file = new File(s);
                     if (file.exists() == false) {
