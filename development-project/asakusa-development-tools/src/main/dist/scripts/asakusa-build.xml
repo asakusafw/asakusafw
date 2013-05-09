@@ -35,6 +35,14 @@
 		</and>
 	</condition>
 
+	<path id="compiler-ext-plugins">
+		<fileset dir="${env.ASAKUSA_HOME}/compiler/plugin" includes="*.jar" erroronmissingdir="false" />
+	</path>
+
+	<path id="dmdl-ext-plugins">
+		<fileset dir="${env.ASAKUSA_HOME}/dmdl/plugin" includes="*.jar" erroronmissingdir="false" />
+	</path>
+
 	<target name="generate-model"
 	        description="Generate data model classes form DMDL scripts."
 	        unless="asakusa.dmdl.not.exists">
@@ -60,6 +68,8 @@
 			<arg value="${asakusa.dmdl.encoding}" />
 			<arg value="-targetencoding" />
 			<arg value="${project.build.sourceEncoding}" />
+			<arg value="-plugin" />
+			<arg pathref="dmdl-ext-plugins" />
 		</java>
 		<antcall target="generate-testbook" />
 	</target>
@@ -184,6 +194,8 @@
 			<arg value="${asakusa.dmdl.encoding}" />
 			<arg value="-targetencoding" />
 			<arg value="${project.build.sourceEncoding}" />
+			<arg value="-plugin" />
+			<arg pathref="dmdl-ext-plugins" />
 		</java>
 
 		<java classname="com.asakusafw.testdata.generator.excel.Main"
@@ -200,6 +212,8 @@
 			<arg path="${asakusa.dmdl.dir}:${asakusa.dmdl.fromddl.output}" />
 			<arg value="-encoding" />
 			<arg value="${asakusa.dmdl.encoding}" />
+			<arg value="-plugin" />
+			<arg pathref="dmdl-ext-plugins" />
 		</java>
 
 		<sql driver="${jdbc.driver}"
@@ -226,6 +240,8 @@
 			<arg path="${asakusa.dmdl.dir}" />
 			<arg value="-encoding" />
 			<arg value="${asakusa.dmdl.encoding}" />
+			<arg value="-plugin" />
+			<arg pathref="dmdl-ext-plugins" />
 		</java>
 	</target>
 
@@ -264,6 +280,8 @@
 			<arg value="-scanpath" />
 			<arg value="${project.build.outputDirectory}" />
 			<arg value="-skiperror" />
+			<arg value="-plugin" />
+			<arg pathref="compiler-ext-plugins" />
 		</java>
 
 		<jar destfile="target/${project.artifactId}-batchapps-${project.version}.jar">
@@ -283,4 +301,3 @@
 	</target>
 
 </project>
-
