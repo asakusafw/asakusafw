@@ -2,7 +2,7 @@
 Amazon EMR上でAsakusa Frameworkを利用する
 =========================================
 
-* 対象バージョン: 0.4.0以降
+* 対象バージョン: Asakusa Framework ``0.4.0`` 以降
 
 この文書は、 `Amazon Web Services`_ (AWS) が提供する
 クラウド環境上のHadoopサービス `Amazon Elastic MapReduce`_ (Amazon EMR) 上で
