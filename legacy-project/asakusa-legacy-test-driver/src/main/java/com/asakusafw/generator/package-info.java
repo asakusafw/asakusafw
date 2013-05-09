@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Framework系の自動生成ツールのラッパークラス郡
+ * Framework系の自動生成ツールのラッパークラス群
  * <p>
  * ビルドスクリプトから呼び出されることを想定する。
  * </p>

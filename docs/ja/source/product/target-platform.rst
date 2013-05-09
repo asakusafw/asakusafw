@@ -19,19 +19,24 @@ Asakusa Framework バージョン |version| は以下のプラットフォーム
     * - Hadoop
       - CDH3 Update 5 [#]_
     * - Hadoop
-      - Apache Hadoop 0.20.205.0 [#]_
+      - CDH4.2.1 (Experimental) [#]_
     * - Hadoop
       - Apache Hadoop 1.0.3 [#]_
     * - Hadoop
+      - Apache Hadoop 1.1.2 [#]_
+    * - Hadoop
       - Greenplum MR 1.2 [#]_
     * - Hadoop
-      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.2) [#]_
+      - Greenplum MR 2.1
+    * - Hadoop
+      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.3) [#]_
 
 ..  [#] http://www.centos.org/
 ..  [#] http://www.oracle.com/technetwork/java/javase/
-..  [#] https://ccp.cloudera.com/display/CDHDOC/CDH3+Documentation
-..  [#] http://hadoop.apache.org/common/docs/r0.20.205.0/
+..  [#] http://www.cloudera.com/content/support/en/documentation.html
+..  [#] Asakusa Framework バージョン |version| では、CDH4は試験的な対応です。
 ..  [#] http://hadoop.apache.org/common/docs/r1.0.3/
+..  [#] http://hadoop.apache.org/common/docs/r1.1.2/
 ..  [#] http://www.greenplum.com/products/greenplum-mr
 ..  [#] http://aws.amazon.com/jp/elasticmapreduce/ 
 
@@ -54,15 +59,13 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Java SDK
       - Oracle Java SE6 Update 33
     * - ビルドツール
-      - Apache Maven 3.0.4 [#]_
+      - Apache Maven 3.0.5 [#]_
     * - 統合開発環境
       - Eclipse IDE for Java Developers 3.7.2 [#]_
     * - Hadoop
       - CDH3 Update 5
-
-..  attention::
-    開発環境のHadoopにCDH3以外のHadoopディストリビューションを使う場合、いくつかの注意点や制約があります。
-    詳しくは、 :doc:`../application/user-guide` の :ref:`development-environment-with-other-cdh` を参照してください。
+    * - Hadoop
+      - Apache Hadoop 1.1.2
 
 ..  [#] http://www.ubuntu.com/
 ..  [#] http://maven.apache.org/
@@ -100,6 +103,6 @@ ThunderGate
     * - DBMS
       - MySQL Server 5.5.25 [#]_
     * - JDBC Driver
-      - MySQL Connector/J 5.1.20
+      - MySQL Connector/J 5.1.25
 
 ..  [#] http://www-jp.mysql.com/

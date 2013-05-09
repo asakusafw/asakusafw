@@ -18,17 +18,21 @@ pom.xmlの10行目にある ``<asakusafw.version>`` の値を更新したいバ�
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.4.0</asakusafw.version>
+    <asakusafw.version>0.5.0</asakusafw.version>
 
 アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :doc:`../application/maven-archetype` の :ref:`archetype-catalog` を参照してください。
 
-Asakusa Frameworkのセットアップ
--------------------------------
-指定したバージョンのAsakusa Frameworkのセットアップを行うため、Mavenの以下のゴールを実行します。
+Asakusa Frameworkの再インストール
+---------------------------------
+アップデートするバージョンのAsakusa Frameworkを開発環境に再インストールします。
+
+Asakusa Frameworkを再インストールするには、Framework Organizer [#]_ に対してMavenの以下のコマンドを実行して生成します。
 
 ..  code-block:: sh
+    
+    mvn package antrun:run
 
-    mvn assembly:single antrun:run
+..  [#] 詳しくは、 :doc:`../administration/framework-organizer` を参照してください。
 
 アプリケーションのバッチコンパイル
 ----------------------------------

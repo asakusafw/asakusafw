@@ -14,7 +14,7 @@ Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。W
 このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
 
 ..  _`VMWare Player`: http://www.vmware.com/jp/products/desktop_virtualization/player/overview 
-..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix-cd 
+..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
 
 ..  tip::
     開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである `Jinrikisha`_ (人力車) を利用する方法もあります。
@@ -39,7 +39,7 @@ Ubuntu Desktop のインストール
 -----------------------------
 Ubuntu Desktopをダウンロードし、インストールを行います。
 
-Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/download/ja-remix-cd) からisoファイル(CDイメージ)をダウンロードします。
+Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/download/ja-remix) からisoファイル(CDイメージ)をダウンロードします。
 
 ダウンロードが完了したらVMWare Playerを起動し、以下の手順に従ってUbuntu Desktopをインストールします。
 
@@ -83,32 +83,15 @@ Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストー�
     chmod +x jdk-*
     ./jdk-*
 
-インストールに成功すると以下のような画面が表示されるので、 ``Enter`` キーを押下します。
+インストールに成功すると以下のような画面が表示されます。
 
 ..  code-block:: sh
 
+    Unpacking...
+    Checksumming...
+    Extracting...
     ...
     ...
-    Java(TM) SE Development Kit 6 successfully installed.
-
-    Product Registration is FREE and includes many benefits:
-    * Notification of new versions, patches, and updates
-    * Special offers on Oracle products, services and training
-    * Access to early releases and documentation
-
-    Product and system data will be collected. If your configuration
-    supports a browser, the JDK Product Registration form will
-    be presented. If you do not register, none of this information
-    will be saved. You may also register your JDK later by
-    opening the register.html file (located in the JDK installation
-    directory) in a browser.
-
-    For more information on what data Registration collects and 
-    how it is managed and used, see:
-    http://java.sun.com/javase/registration/JDKRegistrationPrivacy.html
-
-    Press Enter to continue.....
-    (Enterキーを押す)
 
     Done.
 
@@ -132,7 +115,7 @@ Asakusa Frameworkの開発環境に必要なビルドツールであるMavenを�
 
 Mavenのダウンロードサイト (http://maven.apache.org/download.html) から Maven3 のtarball ``apache-maven-3.X.X-bin.tar.gz`` ( ``XX`` はバージョン番号 ) をダウンロードします。
 
-ダウンロードが完了したら、以下の例を参考にしてMavenをインストールします
+ダウンロードが完了したら、以下の例を参考にしてMavenをインストールします。
 
 ..  code-block:: sh
 
@@ -149,23 +132,23 @@ Mavenのダウンロードサイト (http://maven.apache.org/download.html) か�
 
 Hadoopのインストール
 --------------------
-Clouderaから提供されているHadoopのディストリビューションである `Cloudera's Distribution including Apache Hadoop Version 3 (CDH3)`_ をインストールします。
+`Apache Hadoop`_ をインストールします。
 
-CDH3のインストール方法はOS毎に提供されているインストールパッケージを使う方法や、tarballを展開する方法などがありますが、ここではtarballを展開する方法でインストールします。
+Apache Hadoopのインストール方法はOS毎に提供されているインストールパッケージを使う方法や、tarballを展開する方法などがありますが、ここではtarballを展開する方法でインストールします。
 
-CDH3のtarballのダウンロードサイト (https://ccp.cloudera.com/display/SUPPORT/CDH3+Downloadable+Tarballs) から Hadoop本体のコンポーネントのtarball ``hadoop-0.20.2-cdh3uX.tar.gz`` ( ``X`` はUpdate番号 ) をダウンロードします。
+Apache Hadoopのダウンロードサイト (http://www.apache.org/dyn/closer.cgi/hadoop/common/) から Hadoop本体のコンポーネントのtarball ``hadoop-1.1.X.tar.gz`` ( ``X`` はバージョン番号 )  をダウンロードします。
 
-ダウンロードが完了したら、以下の例を参考にしてCDH3をインストールします
+ダウンロードが完了したら、以下の例を参考にしてApache Hadoopをインストールします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf hadoop-0.20.2-*.tar.gz
-    sudo chown -R root:root hadoop-0.20.2-*/
-    sudo mv hadoop-0.20.2-*/ /usr/lib
-    sudo ln -s /usr/lib/hadoop-0.20.2-* /usr/lib/hadoop
+    tar xf hadoop-*.tar.gz
+    sudo chown -R root:root hadoop-*/
+    sudo mv hadoop-*/ /usr/lib
+    sudo ln -s /usr/lib/hadoop-* /usr/lib/hadoop
 
-..  _`Cloudera's Distribution including Apache Hadoop Version 3 (CDH3)`: https://ccp.cloudera.com/display/CDHDOC/CDH3+Documentation
+..  _`Apache Hadoop`: http://hadoop.apache.org/
 
 環境変数の設定
 --------------
@@ -177,13 +160,35 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
 
     export JAVA_HOME=/usr/lib/jvm/jdk-6
     export ASAKUSA_HOME=$HOME/asakusa
-    export PATH=$JAVA_HOME/bin:$PATH
+    export PATH=$JAVA_HOME/bin:$PATH:/usr/lib/hadoop/bin
 
 ``~/.profile`` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
 
 ..  code-block:: sh
 
     . ~/.profile
+
+Asakusa Frameworkのインストール
+-------------------------------
+Asakusa Frameworkをインストールします。
+
+Asakusa Frameworkを開発環境にインストールするには、Asakusa Frameworkの構成ツールである Framework Organizer を利用します。
+
+このツールはMavenを使ってAsakusa Frameworkのインストールアーカイブを生成し、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkを展開します。
+
+Framework Organizer は以下からダウンロードします。
+
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.0.tar.gz
+
+ダウンロードが完了したら、以下の例を参考にしてAsakusa Frameworkをインストールします。
+インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
+
+..  code-block:: sh
+     
+    cd ~/Downloads
+    tar xf asakusafw-organizer-*.tar.gz
+    cd asakusafw-organizer
+    mvn package antrun:run
 
 インストールソフトウェアの動作確認
 ----------------------------------
@@ -199,9 +204,9 @@ Javaの動作確認
 
     java -version
 
-    java version "1.6.0_33"
-    Java(TM) SE Runtime Environment (build 1.6.0_33-b04)
-    Java HotSpot(TM) Server VM (build 20.8-b03, mixed mode)
+    java version "1.6.0_45"
+    Java(TM) SE Runtime Environment (build 1.6.0_45-b06)
+    Java HotSpot(TM) Client VM (build 20.45-b01, mixed mode, sharing)
 
 Java SDKの動作確認
 ~~~~~~~~~~~~~~~~~~
@@ -210,7 +215,7 @@ Java SDKの動作確認
 
     javac -version
 
-    javac 1.6.0_33
+    javac 1.6.0_45
 
 Mavenの動作確認
 ~~~~~~~~~~~~~~~
@@ -219,10 +224,10 @@ Mavenの動作確認
 
     mvn -version
 
-    Apache Maven 3.0.4 (r1232337; 2012-01-17 17:44:56+0900)
-    Maven home: /usr/local/lib/apache-maven-3.0.4
-    Java version: 1.6.0_33, vendor: Sun Microsystems Inc.
-    Java home: /usr/lib/jvm/jdk1.6.0_33/jre
+    Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 22:51:28+0900)
+    Maven home: /usr/local/lib/apache-maven-3.0.5
+    Java version: 1.6.0_45, vendor: Sun Microsystems Inc.
+    Java home: /usr/lib/jvm/jdk1.6.0_45/jre
     Default locale: ja_JP, platform encoding: UTF-8
     OS name: "linux", version: "3.2.0-24-generic-pae", arch: "i386", family: "unix"
 
@@ -234,13 +239,25 @@ Hadoopの動作確認
 
     hadoop version
 
-    Hadoop 0.20.2-cdh3u5
+    Hadoop 1.1.2
     Subversion ...
-    Compiled by root on Mon Aug  6 20:21:18 PDT 2012
-    From source with checksum 32e743fc1528087177062231df2d5171
+    Compiled by hortonfo on Thu Jan 31 02:03:24 UTC 2013
+    From source with checksum c720ddcf4b926991de7467d253a79b8b
 
 ..  attention::
     Hadoopのみバージョンを確認するためのコマンドが ``hadoop version`` となっていて、 ``version`` の前にハイフンが不要です。
+
+Asakusa Frameworkのインストール確認
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+..  code-block:: sh
+    
+    cat $ASAKUSA_HOME/VERSION
+    
+    asakusafw.version=0.5.0
+    
+    asakusafw.build.timestamp=...
+    asakusafw.build.java.version=1.6.0_...
 
 Eclipseのインストール
 ---------------------
@@ -269,15 +286,15 @@ Eclipseを起動するには、 ``$HOME/eclipse/eclipse`` を実行します。�
 
 Eclipse起動時にワークスペースを指定するダイアログが表示されるので、デフォルトの ``$HOME/workspace`` をそのまま指定します。
 
-Asakusa Frameworkのインストールとサンプルアプリケーションの実行
-===============================================================
-開発環境にAsakusa Frameworkをインストールして、Asakusa Frameworkのサンプルアプリケーションを実行してみます。
+サンプルアプリケーションの導入と実行
+====================================
+開発環境上で Asakusa Framework のサンプルアプリケーションを実行してみます。
 
 アプリケーション開発プロジェクトの作成
 --------------------------------------
 まず、Asakusa Frameworkのバッチアプリケーションを開発、及び管理する単位となる「プロジェクト」を作成します。
 
-Asakusa Frameworkでは、プロジェクトのテンプレートを提供しており、このテンプレートにサンプルアプリケーションも含まれています。また、このテンプレートに含まれるスクリプトを使ってAsakusa Frameworkを開発環境にインストールすることができます。
+Asakusa Frameworkでは、プロジェクトのテンプレートを提供しており、このテンプレートにサンプルアプリケーションも含まれています。
 
 プロジェクトのテンプレートはMavenのアーキタイプという仕組みで提供されています。Mavenのアーキタイプからプロジェクトを作成するには、以下のコマンドを実行します（Mavenがライブラリをダウンロードするため、実行に時間がかかります)。
 
@@ -345,22 +362,6 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 ..  note::
     以降の手順についても、Mavenのコマンド実行後に処理が成功したかを確認するには ``BUILD SUCCESS`` が表示されていることを確認してください。
 
-
-Asakusa Frameworkのインストール
--------------------------------
-Asakusa Frameworkを開発環境にインストールします。
-
-先ほど作成したアプリケーションプロジェクトから、Mavenの以下のコマンドを使ってAsakusa Frameworkをローカルにインストールすることができます（Mavenがライブラリをダウンロードするため、実行に時間がかかります)。
-
-..  code-block:: sh
-
-    cd ~/workspace/example-app
-    mvn assembly:single antrun:run
-
-成功すると、 ``$ASAKUSA_HOME`` (このスタートガイドでは ``$HOME/asakusa`` ) にAsakusa Frameworkがインストールされます。
-
-..  attention::
-    コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
 
 サンプルアプリケーションのビルド
 --------------------------------
@@ -442,8 +443,8 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 ..  code-block:: sh
 
     ...
-    2011/12/08 16:54:38 INFO  [JobflowExecutor-example.summarizeSales] END PHASE - example.summarizeSales|byCategory|CLEANUP@cc5c8cfd-604b-4652-a387-b2ea4d463943
-    2011/12/08 16:54:38 DEBUG [JobflowExecutor-example.summarizeSales] Completing jobflow "byCategory": example.summarizeSales
+    2013/04/22 13:50:35 INFO  [YS-CORE-I01999] Finishing batch "example.summarizeSales": batchId=example.summarizeSales, elapsed=12,712ms
+    2013/04/22 13:50:35 INFO  [YS-BOOTSTRAP-I00999] Exiting YAESS: code=0, elapsed=12,798ms
     Finished: SUCCESS
 
 
