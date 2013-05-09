@@ -9,7 +9,7 @@ import org.codehaus.plexus.archiver.tar.TarArchiver
 object JobQueueBuildSettings {
 
   val appName = "asakusa-jobqueue"
-  val appVersion = "0.5.0-RC3"
+  val appVersion = "0.5.0"
 
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := "com.asakusafw",
