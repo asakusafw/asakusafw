@@ -1,0 +1,6 @@
+Asakusa Framework Maven Archetype for Framework Organizer
+
+Asakusa Frameworkのデプロイメントアーカイブの生成と
+ローカルマシンに対するAsakusa Frameworkのインストールを行う
+Framework Organizer用プロジェクトを作成するアーキタイプ。
+

@@ -49,7 +49,7 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 
 Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを定義したアーキタイプカタログを以下のURLで公開しています。
 
-* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 ..  Attention::
     バージョン0.4 から、アーキタイプカタログファイルはバージョン毎(マイナーバージョン毎)に個別のファイルを提供するようになりました。過去バージョンのアーキタイプカタログを使用したい場合、以下のアーキタイプカタログURLを指定してください。 
@@ -60,23 +60,23 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
 ..  code-block:: sh
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.4.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.5.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
     ...
     Choose archetype:
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
     ...
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.4-SNAPSHOT
-    2: 0.4.0
+    1: 0.5-SNAPSHOT
+    2: 0.5.0
     Choose a number: 2: 2 (<-2を入力)
 
 ..  attention::
@@ -110,95 +110,6 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
 プロジェクトの作成が成功すると、 ``BUILD SUCCESS`` が表示され、
 カレントディレクトリ配下にプロジェクトディレクトリが作成されます。
-
-
-Asakusa Frameworkのデプロイメントアーカイブ生成
-===============================================
-アーキタイプから作成したプロジェクトのpom.xmlに対してMavenの ``assembly:single`` ゴールを実行すると、
-Asakusa Framework本体のインストール用アーカイブがプロジェクトの ``target`` ディレクトリ直下に作成されます。
-これらのファイルを使用して開発環境、および運用環境にAsakusa Frameworkをインストールします。
-
-以下はアプリケーションプロジェクト名を ``example-app`` という名前で作成した場合の実行例を以下に示します。
-
-..  code-block:: sh
-
-    cd example-app
-    mvn assembly:single
-
-..  attention::
-    コマンド実行時、標準出力に ``[INFO] xxx already added, skipping`` というログが多く出力されますが、動作には問題ありません。
-
-作成されるデプロイメントアーカイブは、アーキタイプによって異なります。アーキタイプ毎に標準で生成されるデプロイメントアーカイブを以下に示します。
-
-..  list-table:: アーキタイプ ``asakusa-atchetype-windgate`` が作成するデプロイメントアーカイブ一覧
-    :widths: 4 6
-    :header-rows: 1
-    
-    * - ファイル名
-      - 説明
-    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
-      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
-    * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
-
-
-..  list-table:: アーキタイプ ``asakusa-atchetype-thundergate`` が作成するデプロイメントアーカイブ一覧
-    :widths: 4 6
-    :header-rows: 1
-    
-    * - ファイル名
-      - 説明
-    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
-      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
-    * - ``asakusafw-${asakusafw-version}-prod-thundergate.tar.gz``
-      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-thundergate` を参照してください。
-
-
-..  list-table:: アーキタイプ ``asakusa-atchetype-directio`` が作成するデプロイメントアーカイブ一覧
-    :widths: 4 6
-    :header-rows: 1
-    
-    * - ファイル名
-      - 説明
-    * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
-      - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
-    * - ``asakusafw-${asakusafw-version}-directio.tar.gz``
-      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-directio` を参照してください。
-
-拡張モジュール用のデプロイメントアーカイブを生成する
-----------------------------------------------------
-Asakusa Frameworkではアーキタイプで標準で生成されるデプロイメントアーカイブのほかに、設定を追加することで生成することが可能となる拡張モジュールを提供しています。
-
-拡張モジュールの利用については、 :doc:`../administration/deployment-extension-module` を参照してください。
-
-
-Asakusa Frameworkのインストール
-===============================
-アーキタイプから作成したプロジェクトのpom.xmlに対してMavenの ``antrun:run`` ゴールを実行すると、先述の `Asakusa Frameworkのデプロイメントアーカイブ生成`_  で作成した開発環境用のAsakusa Frameworkのデプロイメントアーカイブを使用して、 ``$ASAKUSA_HOME`` 配下にAsakusa Frameworkがインストールされます。
-
-..  code-block:: sh
-
-    mvn antrun:run
-
-..  warning::
-    アーキタイプ ``asakusa-archetype-thundergate`` を使用している場合、 ``antrun:run`` を実行すると、Asakusa ThunderGateが使用するテンポラリディレクトリが作成されます。
-    このディレクトリはデフォルトの設定では ``/tmp/thundergate-asakusa`` となっていますが、一部のLinuxディストリビューションではOSをシャットダウンしたタイミングで ``/tmp`` ディレクトリの内容が消去されるため、再起動後にこのディレクトリを再度作成する必要があります。
-    
-    テンポラリディレクトリを変更する場合、 ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の設定値を変更した上で、設定値に対応したテンポラリディレクトリを作成し、このディレクトリのパーミッションを777に変更します。
-    
-    例えばテンポラリディレクトリを ``/var/tmp/asakusa`` に変更する場合は以下のようにします。
-
-    * ``$ASAKUSA_HOME/bulkloader/conf/bulkloader-conf-db.properties`` の変更
-    
-        * ``import.tsv-create-dir=/var/tmp/asakusa/importer``
-        * ``export.tsv-create-dir=/var/tmp/asakusa/exporter``
-    
-    * テンポラリディレクトリの作成
-
-        ..  code-block:: sh
-    
-            mkdir -p -m 777 /var/tmp/asakusa/importer
-            mkdir -p -m 777 /var/tmp/asakusa/exporter
 
 
 プロジェクトのディレクトリ構成
@@ -566,14 +477,14 @@ General Settings
   ``asakusa.database.enabled``
     *(asakusa-archetype-thundergateのみ)*
 
-    ( ``true`` or ``false`` ) このプロパティをfalseにすると、Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
+    ( ``true`` or ``false`` ) このプロパティをfalseにすると、モデル生成処理 ( ``generate-sources`` ) でデータベースに対する処理を行わなくなります。
     
     モデルの定義をDMDLのみで行う場合は、このオプションをfalseにするとデータベースを使用せずにモデル生成を行うことが可能になります。
 
   ``asakusa.database.target``
     *(asakusa-archetype-thundergateのみ)*
 
-    Asakusa Frameworkの開発環境へのインストール( ``antrun:run`` )、及びモデル生成処理 ( ``generate-sources`` ) でデータベースを使用する場合に、データベース定義ファイルを特定するためのターゲット名を指定します。
+    モデル生成処理 ( ``generate-sources`` ) でデータベースを使用する場合に、データベース定義ファイルを特定するためのターゲット名を指定します。
     
     開発環境で使用するデータベース定義ファイルは、ローカルにインストールしたAsakusa FrameworkのThunderGate用データベース定義ファイル ( ``$ASAKUSA_HOME/bulkloader/conf/${asakusa.database.target}-jdbc.properties`` )を使用します。開発環境へのインストール時に本プロパティの設定値を使って左記ディレクトリにデータベース定義ファイルを生成します。
     

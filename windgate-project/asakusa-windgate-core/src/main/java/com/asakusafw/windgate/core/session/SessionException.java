@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,14 +94,14 @@ public class SessionException extends IOException {
         ALREADY_EXIST("The specified session already exists"),
 
         /**
-         * The specified session does not exist yet.
+         * The specified session does not exist.
          */
-        NOT_EXIST("The specified session does not exist yet"),
+        NOT_EXIST("The specified session does not exist"),
 
         /**
-         * The specified session was already acquired yet.
+         * The specified session was already acquired.
          */
-        ACQUIRED("The specified session was already acquired yet"),
+        ACQUIRED("The specified session was already acquired"),
 
         /**
          * The specified session was broken.

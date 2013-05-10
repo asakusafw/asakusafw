@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<version>0.5-SNAPSHOT</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
@@ -180,8 +180,12 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
+			<artifactId>${hadoop.artifact.id}</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -194,7 +198,7 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit-dep</artifactId>
+			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

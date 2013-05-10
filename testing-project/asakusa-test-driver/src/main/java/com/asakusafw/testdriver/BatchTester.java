@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,6 +122,9 @@ public class BatchTester extends TestDriverBase {
                         flowId));
             }
         }
+
+        // 環境の検証
+        driverContext.validateEnvironment();
 
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         JobflowExecutor executor = new JobflowExecutor(driverContext);

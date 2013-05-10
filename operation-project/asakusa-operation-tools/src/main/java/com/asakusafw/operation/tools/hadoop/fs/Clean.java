@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -385,19 +385,6 @@ public class Clean extends Configured implements Tool {
         private boolean isSymlink0(FileSystem fs, FileStatus file) throws IOException {
             assert fs != null;
             assert file != null;
-            if (FILE_STATUS_IS_SYMLINK != null) {
-                try {
-                    return Boolean.TRUE.equals(FILE_STATUS_IS_SYMLINK.invoke(file));
-                } catch (Exception e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(MessageFormat.format(
-                                "Failed to invoke {0}({1})",
-                                FILE_STATUS_IS_SYMLINK.getName(),
-                                file.getPath()), e);
-                    }
-                    return false;
-                }
-            }
             URI uri = file.getPath().toUri();
             if (uri.getScheme() == null) {
                 uri = fs.makeQualified(file.getPath()).toUri();
@@ -405,6 +392,7 @@ public class Clean extends Configured implements Tool {
                     return false;
                 }
             }
+            // NOTE: It seems that Hadoop 2.0 LocalFileSystem still does not support symlink.
             if (uri.getScheme().equals("file")) {
                 File f = new File(uri);
                 File c = f.getCanonicalFile();
@@ -417,6 +405,18 @@ public class Clean extends Configured implements Tool {
                 File p = f.getParentFile().getCanonicalFile();
                 if (p.equals(c.getParentFile()) == false) {
                     return true;
+                }
+            } else if (FILE_STATUS_IS_SYMLINK != null) {
+                try {
+                    return Boolean.TRUE.equals(FILE_STATUS_IS_SYMLINK.invoke(file));
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to invoke {0}({1})",
+                                FILE_STATUS_IS_SYMLINK.getName(),
+                                file.getPath()), e);
+                    }
+                    return false;
                 }
             }
             return false;

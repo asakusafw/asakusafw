@@ -74,24 +74,13 @@ ThunderGateを利用したバッチアプリケーションを新しく作成す
 
 ..  code-block:: none
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
 ここでは、 ``asakusa-archetype-thundergate`` のテンプレートを選択します。
 
 以降、質問に順に答えていきアプリケーション開発プロジェクトを作成します。
 成功すると、アプリケーションのプロジェクト名 ( ``artifactId`` ) で指定した名前のディレクトリが作成されます。
-
-Asakusa Frameworkのインストール
--------------------------------
-次に、Asakusa Framework本体をインストールします。
-コマンドラインコンソールから先ほど作成したアプリケーションプロジェクトのディレクトリに移動し、以下のコマンドを実行します。
-
-..  code-block:: none
-
-    mvn assembly:single antrun:run
-
-以降では、このサンプルアプリケーションをビルドおよび実行する前に、ThunderGateの設定方法を簡単に紹介します。ThunderGateの設定に関するより詳しい情報は :doc:`user-guide` を参照して下さい。
 
 JDBC接続設定
 ------------

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * フロー部品の定義記述。
+ * @since 0.1.0
+ * @version 0.5.0
  */
 public class FlowPartDescription implements FlowElementDescription {
 
@@ -39,11 +42,13 @@ public class FlowPartDescription implements FlowElementDescription {
         ATTRIBUTES = Collections.unmodifiableMap(map);
     }
 
-    private FlowGraph flowGraph;
+    private final FlowGraph flowGraph;
 
-    private List<FlowElementPortDescription> inputPorts;
+    private final List<FlowElementPortDescription> inputPorts;
 
-    private List<FlowElementPortDescription> outputPorts;
+    private final List<FlowElementPortDescription> outputPorts;
+
+    private final List<Parameter> parameters;
 
     private String name;
 
@@ -53,14 +58,29 @@ public class FlowPartDescription implements FlowElementDescription {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public FlowPartDescription(FlowGraph flowGraph) {
+        this(flowGraph, Collections.<Parameter>emptyList());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param flowGraph the flow-graph which represents this flow-part structure
+     * @param parameters the parameters for this flow-part
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.0
+     */
+    public FlowPartDescription(FlowGraph flowGraph, List<? extends Parameter> parameters) {
         if (flowGraph == null) {
             throw new IllegalArgumentException("flowGraph must not be null"); //$NON-NLS-1$
+        }
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters must not be null"); //$NON-NLS-1$
         }
         this.flowGraph = flowGraph;
         List<FlowElementPortDescription> inputs = new ArrayList<FlowElementPortDescription>();
         List<FlowElementPortDescription> outputs = new ArrayList<FlowElementPortDescription>();
         this.inputPorts = Collections.unmodifiableList(inputs);
         this.outputPorts = Collections.unmodifiableList(outputs);
+        this.parameters = Collections.unmodifiableList(new ArrayList<Parameter>(parameters));
 
         for (FlowIn<?> in : flowGraph.getFlowInputs()) {
             inputs.add(new FlowElementPortDescription(
@@ -82,6 +102,15 @@ public class FlowPartDescription implements FlowElementDescription {
      */
     public FlowGraph getFlowGraph() {
         return flowGraph;
+    }
+
+    /**
+     * Returns the parameters for this flow-part.
+     * @return the parameters
+     * @since 0.5.0
+     */
+    public List<Parameter> getParameters() {
+        return parameters;
     }
 
     @Override
@@ -166,15 +195,84 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     /**
+     * Represents a parameter and its argument for flow-part.
+     * @since 0.5.0
+     */
+    public static class Parameter {
+
+        private final String name;
+
+        private final Type type;
+
+        private final Object value;
+
+        /**
+         * Creates a new instance.
+         * @param name the parameter name
+         * @param type the parameter type
+         * @param value the argument value (nullable)
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public Parameter(String name, Type type, Object value) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (type == null) {
+                throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+            }
+            this.name = name;
+            this.type = type;
+            this.value = value;
+        }
+
+        /**
+         * Returns the parameter name.
+         * @return the parameter name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Returns the parameter type.
+         * @return the parameter type
+         */
+        public Type getType() {
+            return type;
+        }
+
+        /**
+         * Returns the argument value.
+         * @return the argument value (nullable)
+         */
+        public Object getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format(
+                    "{0}[{1}]={2}",
+                    getName(),
+                    getType(),
+                    getValue());
+        }
+    }
+
+    /**
      * この要素を構築するビルダー。
+     * @since 0.1.0
+     * @version 0.5.0
      */
     public static class Builder {
 
-        private Class<? extends FlowDescription> declaring;
+        private final Class<? extends FlowDescription> declaring;
 
-        private List<FlowIn<?>> flowInputs;
+        private final List<FlowIn<?>> flowInputs;
 
-        private List<FlowOut<?>> flowOutputs;
+        private final List<FlowOut<?>> flowOutputs;
+
+        private final List<Parameter> parameters;
 
         /**
          * インスタンスを生成する。
@@ -188,6 +286,7 @@ public class FlowPartDescription implements FlowElementDescription {
             this.declaring = declaring;
             this.flowInputs = new ArrayList<FlowIn<?>>();
             this.flowOutputs = new ArrayList<FlowOut<?>>();
+            this.parameters = new ArrayList<Parameter>();
         }
 
         /**
@@ -273,6 +372,27 @@ public class FlowPartDescription implements FlowElementDescription {
                     typeReference.toOutputPort().getDescription().getDataType()));
             flowOutputs.add(out);
             return out;
+        }
+
+        /**
+         * Adds a parameter and its argument value for this flow-part
+         * @param parameterName the parameter name
+         * @param parameterType the parameter value
+         * @param argument the actual parameter argument, or {@code null} if the argument is just {@code null}
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         * @since 0.5.0
+         */
+        public void addParameter(
+                String parameterName,
+                Type parameterType,
+                Object argument) {
+            if (parameterName == null) {
+                throw new IllegalArgumentException("parameterName must not be null"); //$NON-NLS-1$
+            }
+            if (parameterType == null) {
+                throw new IllegalArgumentException("parameterType must not be null"); //$NON-NLS-1$
+            }
+            parameters.add(new Parameter(parameterName, parameterType, argument));
         }
 
         /**

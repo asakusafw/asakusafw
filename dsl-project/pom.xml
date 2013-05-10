@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<version>0.5-SNAPSHOT</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
@@ -31,6 +31,7 @@
 
 	<modules>
 		<module>asakusa-dsl-analysis-plugin</module>
+		<module>asakusa-dsl-batch-spec-plugin</module>
 		<module>asakusa-dsl-vocabulary</module>
 		<module>ashigel-compiler</module>
 		<module>ashigel-compiler-bootstrap</module>

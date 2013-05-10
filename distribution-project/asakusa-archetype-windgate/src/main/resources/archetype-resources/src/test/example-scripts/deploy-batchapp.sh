@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Copyright 2011-2012 Asakusa Framework Team.
+# Copyright 2011-2013 Asakusa Framework Team.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if [ "$ASAKUSA_HOME" = "" ]
-then
-    echo '$ASAKUSA_HOME'" is not defined" 1>&2
-    exit 1
-fi
 
 if [ ! -r "target/batchc/example.summarizeSales" ]
 then

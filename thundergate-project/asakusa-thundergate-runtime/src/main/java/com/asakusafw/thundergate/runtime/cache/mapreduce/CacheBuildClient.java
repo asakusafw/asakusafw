@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
@@ -120,7 +121,7 @@ public class CacheBuildClient extends Configured implements Tool {
     }
 
     private void update() throws IOException, InterruptedException {
-        Job job = new Job(getConf());
+        Job job = JobCompatibility.newJob(getConf());
         job.setJobName("TGC-UPDATE-" + storage.getPatchDirectory());
 
         List<StageInput> inputList = new ArrayList<StageInput>();
@@ -187,7 +188,7 @@ public class CacheBuildClient extends Configured implements Tool {
     }
 
     private void create() throws InterruptedException, IOException {
-        Job job = new Job(getConf());
+        Job job = JobCompatibility.newJob(getConf());
         job.setJobName("TGC-CREATE-" + storage.getPatchDirectory());
 
         List<StageInput> inputList = new ArrayList<StageInput>();

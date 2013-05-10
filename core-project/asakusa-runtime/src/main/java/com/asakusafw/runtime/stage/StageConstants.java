@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Constants for each stage.
  * @since 0.2.5
+ * @version 0.5.0
  */
 public final class StageConstants {
 
@@ -44,6 +45,12 @@ public final class StageConstants {
      * The property key name of flow ID.
      */
     public static final String PROP_FLOW_ID = "com.asakusafw.flowId";
+
+    /**
+     * The property key name of tracking ID.
+     * @since 0.5.0
+     */
+    public static final String PROP_TRACKING_ID = "com.asakusafw.trackingId";
 
     /**
      * 環境変数表のプロパティキー。

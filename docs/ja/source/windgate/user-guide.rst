@@ -166,12 +166,16 @@ WindGateは二つのリソースの間でデータを転送するツールです
       - :javadoc:`com.asakusafw.windgate.core.process.BasicProcessProvider`
     * - ``process.basic.retryCount``
       - リトライ回数
+    * - ``process.basic.retryInterval``
+      - 再試行までの待機時間 (秒)
 
 ``process.basic.component`` は実際に利用するデータ転送プロセスを設定します。
-現在他に利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
+現在利用可能なプロセスは `通常のデータ転送プロセス`_ のみであるため、ここには ``com.asakusafw.windgate.core.process.BasicProcessProvider`` を指定します。
 
 再試行可能なデータ転送プロセスでは、 ``process.basic.component`` に指定したデータ転送プロセスを利用し、通常の方法でデータ転送を行います。
-データ転送に失敗した場合、 ``process.retryCount`` に設定された回数を上限として、成功するまで上記プロセスを再実行します。
+データ転送に失敗した場合、 ``process.basic.retryCount`` に設定された回数を上限として、成功するまで上記プロセスを再実行します。
+また、 ``process.basic.retryInterval`` が指定されている場合、その時間だけ待機後にプロセスが再実行されます。
+``process.basic.retryInterval`` が指定されていない場合は即座に再実行します。
 
 なお、このプロセスを利用するには、プラグインライブラリに ``asakusa-windgate-retryable`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
@@ -807,7 +811,8 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
       - DMDLコンパイラプラグイン
 
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
-..  [#] :doc:`../application/maven-archetype` の手順に従って、アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがデフォルトで利用可能になっています。
+..  [#] アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/maven-archetype` や :doc:`../application/sdk-artifact` を参照してください。
+
 
 DataModelJdbcSupportの自動生成
 ------------------------------

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,10 @@ import com.asakusafw.yaess.core.ExecutionScript;
 import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
+import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.ServiceProfile;
 import com.asakusafw.yaess.core.YaessLogger;
+import com.asakusafw.yaess.core.util.HadoopScriptUtil;
 
 /**
  * An abstract implementations of process-based {@link HadoopScriptHandler}.
@@ -70,7 +72,7 @@ hadoop.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 hadoop.prop.&lt;key&gt; = $&lt;extra Hadoop properties&gt;
 </code></pre>
  * @since 0.2.3
- * @version 0.4.0
+ * @version 0.5.0
  */
 public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerBase implements HadoopScriptHandler {
 
@@ -79,10 +81,10 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
     static final Logger LOG = LoggerFactory.getLogger(ProcessHadoopScriptHandler.class);
 
     /**
-     * This is a copy from asakusa-runtime.
+     * The class name of cleanup stage client.
      * @since 0.4.0
      */
-    public static final String CLEANUP_STAGE_CLASS = "com.asakusafw.runtime.stage.CleanupStageClient";
+    public static final String CLEANUP_STAGE_CLASS = HadoopScriptUtil.CLEANUP_STAGE_CLASS;
 
     /**
      * (sub) key name of working directory.
@@ -255,7 +257,8 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             command = ProcessUtil.buildCommand(commandPrefix, original, Collections.<String>emptyList());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to build command: {6} (batch={0}, flow={1}, phase={2}, stage={4}, execution={3})",
+                    "Failed to build command: "
+                    + "{6} (batch={0}, flow={1}, phase={2}, stage={4}, execution={3})",
                     context.getBatchId(),
                     context.getFlowId(),
                     context.getPhase(),
@@ -326,6 +329,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         Map<String, String> props = new TreeMap<String, String>();
         props.putAll(getProperties(context, script));
         props.putAll(script.getHadoopProperties());
+        props.put(HadoopScriptUtil.PROP_TRACKING_ID, Job.computeTrackingId(context, script));
         return props;
     }
 

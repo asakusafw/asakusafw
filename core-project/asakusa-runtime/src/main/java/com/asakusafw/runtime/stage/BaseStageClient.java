@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,19 @@ public abstract class BaseStageClient extends Configured implements Tool {
         String flowId = getFlowId();
         String stageId = getStageId();
         return StageConstants.getDefinitionId(batchId, flowId, stageId);
+    }
+
+    /**
+     * Returns the job operation ID which this client will invoke.
+     * @return the job operation ID
+     * @since 0.5.0
+     */
+    protected String getOperationId() {
+        String trackingId = getConf().get(PROP_TRACKING_ID);
+        if (trackingId != null) {
+            return trackingId;
+        }
+        return getDefinitionId();
     }
 
     @Override

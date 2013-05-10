@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.SystemUtils;
+import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,7 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.utils.collections.Maps;
@@ -36,6 +39,7 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
+ * @version 0.5.0
  */
 public class TestDriverContext implements TestContext {
 
@@ -105,6 +109,36 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Validates current test environment.
+     * @throws AssertionError if current test environment is invalid
+     * @since 0.5.0
+     */
+    public void validateEnvironment() {
+        if (getFrameworkHomePath0() == null) {
+            raiseInvalid(MessageFormat.format(
+                    "環境変数\"{0}\"が未設定です",
+                    ENV_FRAMEWORK_PATH));
+        }
+        if (ConfigurationProvider.findHadoopCommand() == null) {
+            raiseInvalid(MessageFormat.format(
+                    "コマンド\"{0}\"を検出できませんでした",
+                    "hadoop"));
+        }
+    }
+
+    private void raiseInvalid(String message) {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            LOG.warn(message);
+            LOG.info(MessageFormat.format(
+                    "この環境では現在のテストを実行できないため、スキップします: {0}",
+                    callerClass.getName()));
+            Assume.assumeTrue(false);
+        } else {
+            throw new AssertionError(message);
+        }
+    }
+
+    /**
      * Sets the path to the framework installed location.
      * @param frameworkHomePath the path to the framework install location, or {@code null} to reset location
      */
@@ -118,12 +152,20 @@ public class TestDriverContext implements TestContext {
      * @throws IllegalStateException if neither the framework home path nor the environmental variable were set
      */
     public File getFrameworkHomePath() {
+        File result = getFrameworkHomePath0();
+        if (result == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "環境変数{0}が未設定です",
+                    ENV_FRAMEWORK_PATH));
+        }
+        return result;
+    }
+
+    private File getFrameworkHomePath0() {
         if (frameworkHomePath == null) {
             String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
             if (defaultHomePath == null) {
-                throw new IllegalStateException(MessageFormat.format(
-                        "環境変数{0}が未設定です",
-                        ENV_FRAMEWORK_PATH));
+                return null;
             }
             return new File(defaultHomePath);
         }

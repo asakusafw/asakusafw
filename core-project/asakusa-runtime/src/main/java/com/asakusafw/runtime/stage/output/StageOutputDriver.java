@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.Task;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -43,6 +42,7 @@ import org.apache.hadoop.mapreduce.TaskInputOutputContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.runtime.stage.StageOutput;
@@ -185,11 +185,7 @@ public class StageOutputDriver {
         assert name != null;
         try {
             List<Counter> results = new ArrayList<Counter>();
-            if (context.getTaskAttemptID().isMap()) {
-                results.add(context.getCounter(Task.Counter.MAP_OUTPUT_RECORDS));
-            } else {
-                results.add(context.getCounter(Task.Counter.REDUCE_OUTPUT_RECORDS));
-            }
+            results.add(JobCompatibility.getTaskOutputRecordCounter(context));
             results.add(context.getCounter(COUNTER_GROUP, name));
             return results;
         } catch (RuntimeException e) {
@@ -223,11 +219,11 @@ public class StageOutputDriver {
         assert keyClass != null;
         assert valueClass != null;
         assert counters != null;
-        Job job = new Job(context.getConfiguration());
+        Job job = JobCompatibility.newJob(context.getConfiguration());
         job.setOutputFormatClass(formatClass);
         job.setOutputKeyClass(keyClass);
         job.setOutputValueClass(valueClass);
-        TaskAttemptContext localContext = new TaskAttemptContext(
+        TaskAttemptContext localContext = JobCompatibility.newTaskAttemptContext(
                 job.getConfiguration(),
                 context.getTaskAttemptID());
         if (FileOutputFormat.class.isAssignableFrom(formatClass)) {
@@ -261,10 +257,11 @@ public class StageOutputDriver {
      * @param job current job
      * @param outputPath base output path
      * @param outputList each output information
+     * @throws IOException if failed to configure the output specification
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.5
      */
-    public static void set(Job job, String outputPath, Collection<StageOutput> outputList) {
+    public static void set(Job job, String outputPath, Collection<StageOutput> outputList) throws IOException {
         if (job == null) {
             throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
         }

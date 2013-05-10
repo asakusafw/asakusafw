@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class JobClientProfileTest {
         assertThat(profile.getPollingInterval(), is(JobClientProfile.DEFAULT_POLLING_INTERVAL));
         List<JobClient> clients = profile.getClients();
         assertThat(clients.size(), is(1));
-        assertThat(clients.get(0), is(HttpJobClient.class));
+        assertThat(clients.get(0), instanceOf(HttpJobClient.class));
 
         HttpJobClient c0 = (HttpJobClient) clients.get(0);
         assertThat(c0.getBaseUri(), is("http://www.example.com/jobqueue/"));
@@ -90,8 +90,8 @@ public class JobClientProfileTest {
         assertThat(profile.getPollingInterval(), is(JobClientProfile.DEFAULT_POLLING_INTERVAL + 2));
         List<JobClient> clients = profile.getClients();
         assertThat(clients.size(), is(2));
-        assertThat(clients.get(0), is(HttpJobClient.class));
-        assertThat(clients.get(1), is(HttpJobClient.class));
+        assertThat(clients.get(0), instanceOf(HttpJobClient.class));
+        assertThat(clients.get(1), instanceOf(HttpJobClient.class));
 
         HttpJobClient c0 = (HttpJobClient) clients.get(0);
         assertThat(c0.getBaseUri(), is("http://www.example.com/jobqueue/1/"));
@@ -130,7 +130,7 @@ public class JobClientProfileTest {
         assertThat(profile.getPollingInterval(), is(567L));
         List<JobClient> clients = profile.getClients();
         assertThat(clients.size(), is(1));
-        assertThat(clients.get(0), is(HttpJobClient.class));
+        assertThat(clients.get(0), instanceOf(HttpJobClient.class));
 
         HttpJobClient c0 = (HttpJobClient) clients.get(0);
         assertThat(c0.getBaseUri(), is("http://www.example.com/jq/"));

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package com.asakusafw.compiler.operator;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Generated;
 import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
@@ -57,6 +59,16 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     @Override
     protected SimpleName getClassName() {
         return util.getImplementorName(operatorClass.getElement());
+    }
+
+    @Override
+    protected List<? extends Attribute> getAttribuets() {
+        return new AttributeBuilder(factory)
+            .annotation(util.t(Generated.class), util.v("{0}:{1}",
+                    getClass().getSimpleName(),
+                    OperatorCompiler.VERSION))
+            .Public()
+            .toAttributes();
     }
 
     @Override

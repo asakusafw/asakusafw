@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
@@ -488,7 +489,7 @@ public class HadoopDataSourceUtilTest {
         List<FileStatus> all = HadoopDataSourceUtil.search(getTempFileSystem(), getBase(), FilePattern.compile("**"));
         List<FileStatus> files = new ArrayList<FileStatus>();
         for (FileStatus stat : all) {
-            if (stat.isDir() == false) {
+            if (FileSystemCompatibility.isDirectory(stat) == false) {
                 files.add(stat);
             }
         }
@@ -508,6 +509,9 @@ public class HadoopDataSourceUtilTest {
                 String r = f.substring(b.length());
                 while (r.startsWith(File.separator)) {
                     r = r.substring(1);
+                }
+                if (File.separatorChar != '/') {
+                    r = r.replace(File.separatorChar, '/');
                 }
                 normalized.add(r);
             } catch (IOException e) {

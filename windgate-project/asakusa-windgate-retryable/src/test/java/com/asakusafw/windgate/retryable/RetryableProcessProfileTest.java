@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ public class RetryableProcessProfileTest {
                 KEY_RETRY_COUNT, "1",
                 KEY_COMPONENT, DummyProcess.class.getName());
         RetryableProcessProfile result = RetryableProcessProfile.convert(profile);
+        assertThat(result.getRetryCount(), is(1));
+        assertThat(result.getRetryInterval(), is(DEFAULT_RETRY_INTERVAL));
         assertThat(result.getComponent(), instanceOf(DummyProcess.class));
         ProcessProfile inner = ((DummyProcess) result.getComponent()).inner;
         assertThat(inner.getName(), is(not(profile.getName())));
@@ -60,11 +62,14 @@ public class RetryableProcessProfileTest {
     public void convert_options() throws Exception {
         ProcessProfile profile = profile(
                 KEY_RETRY_COUNT, "10",
+                KEY_RETRY_INTERVAL, "1000",
                 KEY_COMPONENT, DummyProcess.class.getName(),
                 PREFIX_COMPONENT + "hello1", "world1",
                 PREFIX_COMPONENT + "hello2", "world2",
                 PREFIX_COMPONENT + "hello3", "world3");
         RetryableProcessProfile result = RetryableProcessProfile.convert(profile);
+        assertThat(result.getRetryCount(), is(10));
+        assertThat(result.getRetryInterval(), is(1000L));
         assertThat(result.getComponent(), instanceOf(DummyProcess.class));
         ProcessProfile inner = ((DummyProcess) result.getComponent()).inner;
         assertThat(inner.getName(), is(not(profile.getName())));
@@ -115,6 +120,40 @@ public class RetryableProcessProfileTest {
     public void convert_count_illegal() throws Exception {
         ProcessProfile profile = profile(
                 KEY_RETRY_COUNT, "0",
+                KEY_COMPONENT, DummyProcess.class.getName());
+        try {
+            RetryableProcessProfile.convert(profile);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // ok.
+        }
+    }
+
+    /**
+     * Attempts to convert profile with invalid retry interval.
+     * @throws Exception if failed
+     */
+    @Test
+    public void convert_interval_invalid() throws Exception {
+        ProcessProfile profile = profile(
+                KEY_RETRY_INTERVAL, "__UNKNOWN__",
+                KEY_COMPONENT, DummyProcess.class.getName());
+        try {
+            RetryableProcessProfile.convert(profile);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // ok.
+        }
+    }
+
+    /**
+     * Attempts to convert profile with invalid retry interval.
+     * @throws Exception if failed
+     */
+    @Test
+    public void convert_interval_illeval() throws Exception {
+        ProcessProfile profile = profile(
+                KEY_RETRY_INTERVAL, "-1",
                 KEY_COMPONENT, DummyProcess.class.getName());
         try {
             RetryableProcessProfile.convert(profile);

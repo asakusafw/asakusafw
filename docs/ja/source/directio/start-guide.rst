@@ -25,22 +25,13 @@ Direct I/Oを利用したバッチアプリケーションを新しく作成す�
 
 ..  code-block:: sh
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.4.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
 ここでは、 ``asakusa-archetype-directio`` のテンプレートを選択します。
 
 以降、質問に順に答えていきアプリケーション開発プロジェクトを作成します。
 成功すると、アプリケーションのプロジェクト名 ( ``artifactId`` ) で指定した名前のディレクトリが作成されます。
-
-Asakusa Frameworkのインストール
--------------------------------
-次に、Asakusa Framework本体をインストールします。
-コマンドラインコンソールから先ほど作成したアプリケーションプロジェクトのディレクトリに移動し、以下のコマンドを実行します。
-
-..  code-block:: sh
-
-    mvn assembly:single antrun:run
 
 以降では、このサンプルアプリケーションをビルドおよび実行する前に、Direct I/Oの設定方法を紹介します。
 
@@ -63,9 +54,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 
 データソースのマッピング
 ------------------------
-`Asakusa Frameworkのインストール`_ の手順を行った場合、 ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` にはデフォルトの設定ファイルが作成されます。
-
-これは以下のような内容になっています。
+``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` にはデフォルトの設定ファイルが作成されています。これは以下のような内容になっています。
 
 ..  code-block:: xml
 
@@ -242,7 +231,7 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
     Starting List Direct I/O Files:
      Hadoop Command: /usr/lib/hadoop/bin/hadoop
               Class: com.asakusafw.directio.tools.DirectIoList
-          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.4.0.jar,...
+          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.5.0.jar,...
           Arguments: result **/*
     file:/home/asakusa/target/testing/directio/result/category
     file:/home/asakusa/target/testing/directio/result/error

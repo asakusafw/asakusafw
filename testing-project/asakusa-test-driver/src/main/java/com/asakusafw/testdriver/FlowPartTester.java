@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,9 @@ public class FlowPartTester extends TestDriverBase {
                 }),
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
+
+        // 環境の検証
+        driverContext.validateEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);

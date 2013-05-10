@@ -264,7 +264,7 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 コンテキストAPI
 ~~~~~~~~~~~~~~~
 コンテキストAPIは、バッチ起動時の引数を演算子内で利用するための仕組みを提供します。
-バッチ起動時には文字列のキー名と値のペアを複数指定でき、
+バッチ起動時には文字列のキー名と値のペア (バッチ引数) を複数指定でき、
 コンテキストAPIを利用するとキー名に対応する値を演算子の中から参照できます。
 
 このAPIは ``BatchContext`` [#]_ クラスのメソッドから利用します。
@@ -843,6 +843,98 @@ Batch DSLで記述する内容は、主に「ジョブフローの実行順序�
 ..  [#] :javadoc:`com.asakusafw.vocabulary.batch.BatchDescription`
 ..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch`
 
+バッチ注釈
+~~~~~~~~~~
+バッチクラスに指定した注釈 ``@Batch`` には、 ``name`` 以外にも様々な属性を指定できます。
+
+..  list-table:: ``@Batch`` の属性
+    :widths: 2 3 2 8
+    :header-rows: 1
+
+    * - 属性名
+      - 型
+      - 既定値
+      - 概要
+    * - ``name``
+      - 文字列
+      - なし
+      - バッチの名前 (Batch ID)
+    * - ``comment``
+      - 文字列
+      - ``""`` (空)
+      - バッチのコメント
+    * - ``parameters``
+      - ``Parameter[]`` の配列
+      - ``{}`` (空)
+      - 利用可能なバッチ引数 [#]_ の一覧 (形式は後述)
+    * - ``strict``
+      - ``boolean``
+      - ``false``
+      - ``true`` を指定した場合に ``parameters`` に指定した引数以外を利用できなくなる
+
+上記のうち ``parameters`` を指定すると、このバッチで利用可能なバッチ引数の詳細を指定できます。
+さらに ``strict`` に ``true`` を指定すると、 ``parameters`` 以外のバッチ引数を指定できなくなります。
+
+この ``parameters`` では注釈 ``@Parameters`` [#]_ を利用して個々のバッチ引数を指定します。
+
+..  list-table:: ``@Parameters`` の属性
+    :widths: 2 2 2 8
+    :header-rows: 1
+
+    * - 属性名
+      - 型
+      - 既定値
+      - 概要
+    * - ``key``
+      - 文字列
+      - なし
+      - バッチ引数のキー
+    * - ``comment``
+      - 文字列
+      - ``""`` (空)
+      - バッチ引数のコメント
+    * - ``required``
+      - ``boolean``
+      - ``true``
+      - ``true`` ならば必須引数、 ``false`` ならば省略可能
+    * - ``pattern``
+      - 文字列
+      - ``".*"`` (すべて)
+      - バッチ引数の値に指定可能な文字列を表す正規表現
+
+上記のうち、 ``pattern`` には ``java.util.regex.Pattern`` 形式の正規表現を指定できます。
+この ``pattern`` が省略された場合には、バッチ引数の値に全ての文字列を利用できます。
+
+..  attention::
+    現時点のバージョン |version| では実行時に上記のチェックを行いません。
+    近い将来、これらのチェック機能を提供する予定です。
+
+    また、コンパイル時に外部から参照可能な形でこれらの情報を出力しており、現在でも外部ツールからは利用可能です。
+
+以下は、 ``@Batch`` を記述するサンプルです。
+
+..  code-block:: java
+
+    package com.example.batch;
+
+    import com.asakusafw.vocabulary.batch.*;
+    import com.asakusafw.vocabulary.batch.Batch.*;
+
+    @Batch(
+        name = "com.example",
+        comment = "サンプル用のバッチ",
+        parameters = {
+            @Parameter(key = "date", comment = "業務日付", pattern = "\\d{4}-\\d{2}-\\d{2}"),
+            @Parameter(key = "memo", comment = "実行メモ", required = false)
+        },
+        strict = true
+    )
+    public class ExampleBatch extends BatchDescription {
+
+    }
+
+..  [#] `コンテキストAPI`_ を参照
+..  [#] :javadoc:`com.asakusafw.vocabulary.batch.Batch.Parameter`
 
 バッチ記述メソッド
 ~~~~~~~~~~~~~~~~~~
@@ -1176,11 +1268,14 @@ YAESSについては :doc:`../yaess/index` を参照してください。
       - ``DISABLED``
       - 利用中のHadoopにパッチ ``MAPREDUCE-370`` が適用済みかどうか。
         ``ENABLED`` の場合は適用済みと仮定し、 ``DISABLED`` の場合は未適用と仮定する。
-
     * - ``compressFlowBlockGroup``
       - ``ENABLED``
       - `コンパイルオプション`_ の ``compressConcurrentStage`` を適用した際、ステージ内のMapperとReducerを併合するかどうか。
         ``ENABLED`` の場合は併合し、 ``DISABLED`` の場合は併合しない。
+    * - ``packaging``
+      - ``ENABLED``
+      - アプリケーションのパッケージングを行うかどうか。
+        ``ENABLED`` の場合は生成したJavaのコンパイルやJARファイルの生成を行い、 ``DISABLED`` の場合はそれらをスキップする。
 
 ..  note::
     コンパイルオプションは項目名を間違えた場合にエラーとなりますが、コンパイラスイッチは項目名を間違えると単に設定が無視されます。

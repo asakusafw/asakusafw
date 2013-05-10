@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,8 +76,8 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
 
         ProjectionsTrait trait = simple.getTrait(ProjectionsTrait.class);
         assertThat(trait, not(nullValue()));
-        assertThat(trait.getProjections(), hasItem(model("a")));
-        assertThat(trait.getProjections(), hasItem(model("b")));
+        assertThat(trait.getProjections(), has(model("a")));
+        assertThat(trait.getProjections(), has(model("b")));
     }
 
     /**
@@ -107,15 +107,15 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
 
         ReduceTerm<AstJoin> aTerm = trait.getTerms().get(0);
         assertThat(aTerm.getSource(), is(model("a")));
-        assertThat(aTerm.getGrouping(), hasItem(property("sid")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.ANY, "sid", "sid")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.ANY, "value", "a_value")));
+        assertThat(aTerm.getGrouping(), has(property("sid")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.ANY, "sid", "sid")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.ANY, "value", "a_value")));
 
         ReduceTerm<AstJoin> bTerm = trait.getTerms().get(1);
         assertThat(bTerm.getSource(), is(model("b")));
-        assertThat(bTerm.getGrouping(), hasItem(property("sid")));
-        assertThat(bTerm.getMappings(), hasItem(mapping(PropertyMappingKind.ANY, "sid", "sid")));
-        assertThat(bTerm.getMappings(), hasItem(mapping(PropertyMappingKind.ANY, "value", "b_value")));
+        assertThat(bTerm.getGrouping(), has(property("sid")));
+        assertThat(bTerm.getMappings(), has(mapping(PropertyMappingKind.ANY, "sid", "sid")));
+        assertThat(bTerm.getMappings(), has(mapping(PropertyMappingKind.ANY, "value", "b_value")));
     }
 
     /**
@@ -153,12 +153,12 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
 
         ReduceTerm<AstSummarize> aTerm = trait.getTerms().get(0);
         assertThat(aTerm.getSource(), is(model("a")));
-        assertThat(aTerm.getGrouping(), hasItem(property("key")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.ANY, "value_a", "key")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.SUM, "value_b", "sum")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.COUNT, "value_a", "count")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.MAX, "value_c", "max")));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.MIN, "value_c", "min")));
+        assertThat(aTerm.getGrouping(), has(property("key")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.ANY, "value_a", "key")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.SUM, "value_b", "sum")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.COUNT, "value_a", "count")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.MAX, "value_c", "max")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.MIN, "value_c", "min")));
     }
 
     /**
@@ -181,7 +181,7 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
         ReduceTerm<AstSummarize> aTerm = trait.getTerms().get(0);
         assertThat(aTerm.getSource(), is(model("simple")));
         assertThat(aTerm.getGrouping().size(), is(0));
-        assertThat(aTerm.getMappings(), hasItem(mapping(PropertyMappingKind.COUNT, "sid", "count")));
+        assertThat(aTerm.getMappings(), has(mapping(PropertyMappingKind.COUNT, "sid", "count")));
     }
 
     /**

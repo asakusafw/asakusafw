@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
@@ -51,7 +52,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.5.0
  */
 public abstract class AbstractStageClient extends BaseStageClient {
 
@@ -231,7 +232,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        Job job = new Job(conf);
+        Job job = JobCompatibility.newJob(conf);
         VariableTable variables = getPathParser(job.getConfiguration());
         configureJobInfo(job, variables);
         configureStageInput(job, variables);
@@ -274,13 +275,13 @@ public abstract class AbstractStageClient extends BaseStageClient {
 
     private void configureJobInfo(Job job, VariableTable variables) {
         Class<?> clientClass = getClass();
-        String definitionId = getDefinitionId();
+        String operationId = getOperationId();
 
         LOG.info(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
         job.setJarByClass(clientClass);
 
-        LOG.info(MessageFormat.format("Hadoop Job Name: {0}", definitionId));
-        job.setJobName(definitionId);
+        LOG.info(MessageFormat.format("Hadoop Job Name: {0}", operationId));
+        job.setJobName(operationId);
     }
 
     private void configureStageInput(Job job, VariableTable variables) {
@@ -371,7 +372,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         }
     }
 
-    private void configureStageOutput(Job job, VariableTable variables) {
+    private void configureStageOutput(Job job, VariableTable variables) throws IOException {
         String outputPath = variables.parse(getStageOutputPath());
         List<StageOutput> outputList = new ArrayList<StageOutput>();
         for (StageOutput output : getStageOutputs()) {

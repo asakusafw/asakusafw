@@ -1,0 +1,171 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Asakusa Framework Organizer</name>
+	<groupId>\${groupId}</groupId>
+	<artifactId>\${artifactId}</artifactId>
+	<version>\${version}</version>
+
+	<properties>
+		<asakusafw.version>${project.version}</asakusafw.version>
+		
+		<!--<thundergate.target>asakusa</thundergate.target>-->
+
+		<asakusa.build.antfile>\${env.ASAKUSA_HOME}/scripts/asakusa-build.xml</asakusa.build.antfile>
+		<plugin.antrun.version>${plugin.antrun.version}</plugin.antrun.version>
+		<plugin.assembly.version>${plugin.assembly.version}</plugin.assembly.version>
+	</properties>
+
+	<packaging>pom</packaging>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>com.asakusafw.releases</id>
+			<name>Asakusa Framework Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>com.asakusafw.snapshots</id>
+			<name>Asakusa Framework Snapshot Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>codehaus.org</id>
+			<name>Codehaus Maven Repository</name>
+			<url>http://repository.codehaus.org/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.releases</id>
+			<name>Asakusa Framework Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>com.asakusafw.snapshots</id>
+			<name>Asakusa Framework Snapshot Repository</name>
+			<url>http://asakusafw.s3.amazonaws.com/maven/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>\${plugin.antrun.version}</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<target>
+								<property environment="env" />
+								<fail unless="env.ASAKUSA_HOME" message="ASAKUSA_HOME is not defined" />
+								<tstamp>
+									<format property="now.time" pattern="yyyyMMddHHmmss" />
+								</tstamp>
+								<move file="\${env.ASAKUSA_HOME}" todir="\${env.ASAKUSA_HOME}_\${now.time}"
+									failonerror="false" />
+								<mkdir dir="\${env.ASAKUSA_HOME}" />
+								<untar dest="\${env.ASAKUSA_HOME}" compression="gzip">
+									<fileset dir="\${project.build.directory}">
+										<include name="asakusafw-\${asakusafw.version}-dev.tar.gz" />
+									</fileset>
+								</untar>
+								<chmod perm="755">
+									<fileset dir="\${env.ASAKUSA_HOME}">
+										<include name="**/*.sh" />
+									</fileset>
+								</chmod>
+								<ant antfile="\${asakusa.build.antfile}">
+									<target name="post-install-framework" />
+								</ant>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>\${plugin.assembly.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.asakusafw</groupId>
+						<artifactId>asakusa-distribution</artifactId>
+						<version>\${asakusafw.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>dev</descriptorRef>
+								<descriptorRef>prod-windgate</descriptorRef>
+							</descriptorRefs>
+							<finalName>asakusafw-\${asakusafw.version}</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-distribution</artifactId>
+			<version>\${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

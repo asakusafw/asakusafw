@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,21 @@
 package com.asakusafw.runtime.util.hadoop;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -33,6 +41,7 @@ import org.apache.hadoop.conf.Configuration;
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.4.0
+ * @version 0.5.0
  */
 public class ConfigurationProvider {
 
@@ -40,19 +49,29 @@ public class ConfigurationProvider {
 
     private static final String ENV_HADOOP_CONF = "HADOOP_CONF";
 
+    private static final String ENV_HADOOP_CMD = "HADOOP_CMD";
+
     private static final String ENV_HADOOP_HOME = "HADOOP_HOME";
+
+    private static final String ENV_HADOOP_CLASSPATH = "HADOOP_CLASSPATH";
 
     private static final String PATH_HADOOP_COMMAND_FILE = "hadoop";
 
     private static final String PATH_HADOOP_COMMAND = "bin/hadoop";
 
-    private static final String PATH_CONF_DIR_0 = "conf";
+    private static final String PATH_CONF_DIR_TARBALL = "conf";
 
-    private static final String PATH_CONF_DIR_0_TESTER = "conf/hadoop-env.sh";
+    private static final String PATH_CONF_DIR_TARBALL_TESTER = "conf/hadoop-env.sh";
 
-    private static final String PATH_CONF_DIR_1 = "etc/hadoop";
+    private static final String PATH_CONF_DIR_PACKAGE = "etc/hadoop";
+
+    private static final String CLASS_EXTENSION = ".class";
+
+    private static final String PATH_SUBPROC_OUTPUT = "result";
 
     static final Log LOG = LogFactory.getLog(ConfigurationProvider.class);
+
+    private final static Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
 
     private final ClassLoader loader;
 
@@ -80,7 +99,7 @@ public class ConfigurationProvider {
         File conf = getConfigurationDirectory(envp);
         if (conf == null || conf.isDirectory() == false) {
             LOG.warn(MessageFormat.format(
-                    "Failed to load default Hadoop configurations (${0} is not a valid installation path)",
+                    "Failed to load default Hadoop configurations ({0} is not a valid installation path)",
                     conf));
             return null;
         }
@@ -88,7 +107,7 @@ public class ConfigurationProvider {
             return conf.toURI().toURL();
         } catch (MalformedURLException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to load default Hadoop configurations (${0} is unrecognized to convert URL)",
+                    "Failed to load default Hadoop configurations ({0} is unrecognized to convert URL)",
                     conf), e);
             return null;
         }
@@ -133,14 +152,26 @@ public class ConfigurationProvider {
                     "Hadoop command: {0}",
                     command));
         }
-        File home = getHadoopInstallationPath(command);
-        if (home == null) {
-            return null;
+        File conf;
+        conf = getHadoopConfigurationDirectoryByRelative(command);
+        if (conf != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Found implicit Hadoop confdir (from hadoop command path): {0}",
+                        conf));
+            }
+            return conf;
         }
-        if (new File(home, PATH_CONF_DIR_0_TESTER).exists()) {
-            return new File(home, PATH_CONF_DIR_0);
+        conf = getHadoopConfigurationDirectoryByCommand(command, envp);
+        if (conf != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Found implicit Hadoop confdir (from hadoop command execution): {0}",
+                        conf));
+            }
+            return conf;
         }
-        return new File(home, PATH_CONF_DIR_1);
+        return null;
     }
 
     /**
@@ -152,7 +183,11 @@ public class ConfigurationProvider {
     }
 
     static File findHadoopCommand(Map<String, String> envp) {
-        File command = null;
+        assert envp != null;
+        File command = getExplicitHadoopCommand(envp);
+        if (command != null) {
+            return command;
+        }
         File home = getExplicitHadoopDirectory(envp);
         if (home != null && home.isDirectory()) {
             command = new File(home, PATH_HADOOP_COMMAND);
@@ -163,6 +198,24 @@ public class ConfigurationProvider {
             return null;
         }
         return command;
+    }
+
+    private static File getExplicitHadoopCommand(Map<String, String> envp) {
+        assert envp != null;
+        String commandString = envp.get(ENV_HADOOP_CMD);
+        if (commandString == null || commandString.isEmpty()) {
+            LOG.debug(MessageFormat.format(
+                    "Missed explicit Hadoop home command path: {0}",
+                    ENV_HADOOP_CMD));
+            return null;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Found explicit Hadoop command path: {0}={1}",
+                    ENV_HADOOP_CMD,
+                    commandString));
+        }
+        return new File(commandString);
     }
 
     private static File getExplicitHadoopDirectory(Map<String, String> envp) {
@@ -181,6 +234,20 @@ public class ConfigurationProvider {
         }
         File home = new File(homeString);
         return home;
+    }
+
+    private static File getHadoopConfigurationDirectoryByRelative(File command) {
+        assert command != null;
+        File home = getHadoopInstallationPath(command);
+        if (home != null) {
+            if (new File(home, PATH_CONF_DIR_TARBALL_TESTER).exists()) {
+                return new File(home, PATH_CONF_DIR_TARBALL);
+            }
+            if (new File(home, PATH_CONF_DIR_PACKAGE).isDirectory()) {
+                return new File(home, PATH_CONF_DIR_PACKAGE);
+            }
+        }
+        return null;
     }
 
     private static File getHadoopInstallationPath(File command) {
@@ -225,6 +292,160 @@ public class ConfigurationProvider {
             }
         }
         return null;
+    }
+
+    private static File getHadoopConfigurationDirectoryByCommand(File command, Map<String, String> envp) {
+        assert command != null;
+        assert envp != null;
+        synchronized (CACHE_HADOOP_CMD_CONF) {
+            if (CACHE_HADOOP_CMD_CONF.containsKey(command)) {
+                return CACHE_HADOOP_CMD_CONF.get(command);
+            }
+        }
+        File conf;
+        try {
+            File dir = File.createTempFile("asakusa-runtime", ".tmp");
+            try {
+                if (dir.delete() == false) {
+                    LOG.warn(MessageFormat.format("Failed to delete temporary file: {0}", dir));
+                }
+                if (dir.mkdirs() == false) {
+                    LOG.warn(MessageFormat.format("Failed to create temporary directory: {0}", dir));
+                }
+                conf = detectHadoopConfigurationDirectory(command, dir, envp);
+            } finally {
+                if (dir.exists() && delete(dir) == false) {
+                    LOG.error(MessageFormat.format("Failed to delete temporary directory: {0}", dir));
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to detect Hadoop configuration directory", e);
+            conf = null;
+        }
+        synchronized (CACHE_HADOOP_CMD_CONF) {
+            if (CACHE_HADOOP_CMD_CONF.get(command) == null) {
+                CACHE_HADOOP_CMD_CONF.put(command, conf);
+            }
+        }
+        return conf;
+    }
+
+    private static File detectHadoopConfigurationDirectory(
+            File command,
+            File temporary,
+            Map<String, String> envp) throws IOException {
+        assert command != null;
+        assert temporary != null;
+        assert envp != null;
+
+        prepareClasspath(temporary, ConfigurationDetecter.class);
+        File resultOutput = new File(temporary, PATH_SUBPROC_OUTPUT);
+
+        List<String> arguments = new ArrayList<String>();
+        arguments.add(command.getAbsolutePath());
+        arguments.add(ConfigurationDetecter.class.getName());
+        arguments.add(resultOutput.getAbsolutePath());
+
+        ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        processBuilder.environment().clear();
+        processBuilder.environment().putAll(envp);
+        processBuilder.environment().put(ENV_HADOOP_CLASSPATH, temporary.getPath());
+
+        Process process = processBuilder.start();
+        try {
+            Thread redirectOut = redirect(process.getInputStream(), System.out);
+            Thread redirectErr = redirect(process.getErrorStream(), System.err);
+            try {
+                int exit = process.waitFor();
+                redirectOut.join();
+                redirectErr.join();
+                if (exit != 0) {
+                    throw new IOException(MessageFormat.format(
+                            "Failed to execute Hadoop command (exitcode={1}): {0}",
+                            arguments,
+                            String.valueOf(exit)));
+                }
+            } catch (InterruptedException e) {
+                throw (IOException) new InterruptedIOException(MessageFormat.format(
+                        "Failed to execute Hadoop command (interrupted): {0}",
+                        arguments)).initCause(e);
+            }
+        } finally {
+            process.destroy();
+        }
+        if (resultOutput.isFile() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to restore Hadoop configuration path: {0}",
+                    resultOutput));
+        }
+        File path = ConfigurationDetecter.read(resultOutput);
+        return path;
+    }
+
+    private static void prepareClasspath(File temporary, Class<?> aClass) throws IOException {
+        assert temporary != null;
+        assert aClass != null;
+        File current = temporary;
+        String name = aClass.getName();
+        int start = 0;
+        while (true) {
+            int index = name.indexOf('.', start);
+            if (index < 0) {
+                break;
+            }
+            current = new File(current, name.substring(start, index));
+            if (current.mkdirs() == false && current.isDirectory() == false) {
+                LOG.warn(MessageFormat.format("Failed to create a directory: {0}", current));
+            }
+            start = index + 1;
+        }
+        File target = new File(current, name.substring(start) + CLASS_EXTENSION);
+
+        String path = name.replace('.', '/') + CLASS_EXTENSION;
+        InputStream in = aClass.getClassLoader().getResourceAsStream(path);
+        if (in == null) {
+            throw new FileNotFoundException(MessageFormat.format(
+                    "A class file binary does not found in classpath: {0}",
+                    path));
+        }
+        try {
+            OutputStream out = new FileOutputStream(target);
+            try {
+                byte[] buf = new byte[1024];
+                while (true) {
+                    int read = in.read(buf);
+                    if (read < 0) {
+                        break;
+                    }
+                    out.write(buf, 0, read);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    private static Thread redirect(InputStream in, OutputStream out) {
+        Thread t = new Thread(new StreamRedirectTask(in, out));
+        t.setDaemon(true);
+        t.start();
+        return t;
+    }
+
+    private static boolean delete(File file) {
+        assert file != null;
+        if (file.isDirectory()) {
+            boolean rest = false;
+            for (File child : file.listFiles()) {
+                rest |= delete(child) == false;
+            }
+            if (rest) {
+                return false;
+            }
+        }
+        return file.delete() || file.exists() == false;
     }
 
     private ClassLoader getBaseClassLoader() {
@@ -274,5 +495,45 @@ public class ConfigurationProvider {
      */
     protected void configure(Configuration configuration) {
         return;
+    }
+
+    private static class StreamRedirectTask implements Runnable {
+
+        private final InputStream input;
+
+        private final OutputStream output;
+
+        StreamRedirectTask(InputStream input, OutputStream output) {
+            assert input != null;
+            assert output != null;
+            this.input = input;
+            this.output = output;
+        }
+
+        @Override
+        public void run() {
+            boolean outputFailed = false;
+            try {
+                InputStream in = input;
+                OutputStream out = output;
+                byte[] buf = new byte[256];
+                while (true) {
+                    int read = in.read(buf);
+                    if (read == -1) {
+                        break;
+                    }
+                    if (outputFailed == false) {
+                        try {
+                            out.write(buf, 0, read);
+                        } catch (IOException e) {
+                            outputFailed = true;
+                            LOG.warn(MessageFormat.format("Failed to redirect stdout of subprocess", e));
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                LOG.warn(MessageFormat.format("Failed to redirect stdio of subprocess", e));
+            }
+        }
     }
 }

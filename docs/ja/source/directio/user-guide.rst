@@ -436,7 +436,7 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
         <value>false</value>
     </property>
     <property>
-        <name>com.asakusafw.output.system.dir/name>
+        <name>com.asakusafw.output.system.dir</name>
         <value>s3://example/var/system</value>
     </property>
     <property>
@@ -624,7 +624,7 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.BinaryStreamFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopFileFormat`
 ..  [#] :doc:`../dmdl/user-guide` を参照
-..  [#] バージョン |version| ではすべてのアーキタイプでこれらのライブラリやプラグインがデフォルトで利用できるよう設定されています。
+..  [#] バージョン |version| ではすべてのアーキタイプでこれらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで設定されています。詳しくは :doc:`../application/maven-archetype` や :doc:`../application/sdk-artifact` を参照してください。
 
 CSV形式のDataFormatの作成
 -------------------------

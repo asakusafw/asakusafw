@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,6 +312,10 @@ public final class Yaess {
             builder.append(mode);
             builder.append(", batchId=");
             builder.append(batchId);
+            builder.append(", arguments=");
+            builder.append(arguments);
+            builder.append(", definitions=");
+            builder.append(definitions);
             if (flowId != null) {
                 builder.append(", flowId=");
                 builder.append(flowId);

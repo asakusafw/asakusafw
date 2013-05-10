@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,16 +35,25 @@ public abstract class SpiTestRoot {
      * Temporary Folder.
      */
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new TemporaryFolder() {
+        @Override
+        protected void before() throws Throwable {
+            super.before();
+            classpath = newFolder();
+        }
+    };
+
+    File classpath;
 
     /**
      * Creates META-INF/services/API.
      * @param api API class
      * @param services service classes
      * @return service class loader
+     * @throws IOException if failed
      */
-    public ClassLoader register(Class<?> api, Class<?>... services) {
-        File classpath = temporaryFolder.newFolder("classpath");
+    public ClassLoader register(Class<?> api, Class<?>... services) throws IOException {
+        assert classpath != null;
         try {
             File serviceFolder = new File(classpath, "META-INF/services");
             serviceFolder.mkdirs();

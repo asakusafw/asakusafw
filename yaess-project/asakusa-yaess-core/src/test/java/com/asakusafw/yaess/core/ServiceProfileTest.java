@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ public class ServiceProfileTest {
         ClassLoader cl = getClass().getClassLoader();
         ServiceProfile<Service> service = ServiceProfile.load(prop, "mock1", Service.class, ProfileContext.system(cl));
         Service instance = service.newInstance();
-        assertThat(instance, is(MockService.class));
+        assertThat(instance, instanceOf(MockService.class));
 
         MockService mock = (MockService) instance;
         assertThat(mock.serviceProfile.getPrefix(), is("mock1"));

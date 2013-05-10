@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,38 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                 folder.newFolder(),
                 Arrays.<ResourceRepository>asList());
         packager.initialize(environment);
+        CompilationUnit cu = getErroneousSource();
+        emit(packager, cu);
+        try {
+            build(entries, packager);
+            fail();
+        } catch (IOException e) {
+            assertThat(environment.hasError(), is(true));
+        }
+    }
 
+    /**
+     * Skipping packaging.
+     * @throws Exception if failed
+     */
+    @Test
+    public void skip_packaging() throws Exception {
+        environment.getOptions().putExtraAttribute(FilePackager.KEY_OPTION_PACKAGING, "false");
+        Set<String> entries = Sets.create();
+
+        FilePackager packager = new FilePackager(
+                folder.newFolder(),
+                Arrays.<ResourceRepository>asList());
+        packager.initialize(environment);
+
+        CompilationUnit cu = getErroneousSource();
+
+        emit(packager, cu);
+        build(entries, packager);
+        assertThat(environment.hasError(), is(false));
+    }
+
+    private CompilationUnit getErroneousSource() {
         ModelFactory f = Models.getModelFactory();
         CompilationUnit cu = f.newCompilationUnit(
                 f.newPackageDeclaration(Models.toName(f, "com.example")),
@@ -151,14 +182,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                         Collections.<Type>emptyList(),
                         Collections.<TypeBodyDeclaration>emptyList())),
                 Collections.<Comment>emptyList());
-
-        emit(packager, cu);
-        try {
-            build(entries, packager);
-            fail();
-        } catch (IOException e) {
-            assertThat(environment.hasError(), is(true));
-        }
+        return cu;
     }
 
     private void build(Set<String> entries, FilePackager packager)

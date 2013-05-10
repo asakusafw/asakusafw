@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,11 +73,7 @@ public class QueueHadoopScriptHandlerTest {
         assertThat(js.getMainClassName(), is(script.getClassName()));
         assertThat(js.getArguments(), is(context.getArguments()));
 
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(map("s", "service"));
-        properties.putAll(script.getHadoopProperties());
-
-        assertThat(js.getProperties(), is(properties));
+        assertThat(js.getProperties(), hasEntry("s", "service"));
         assertThat(js.getEnvironmentVariables(), is(script.getEnvironmentVariables()));
     }
 
@@ -273,10 +269,7 @@ public class QueueHadoopScriptHandlerTest {
         assertThat(js.getMainClassName(), is(QueueHadoopScriptHandler.CLEANUP_STAGE_CLASS));
         assertThat(js.getArguments(), is(context.getArguments()));
 
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(map("s", "service"));
-
-        assertThat(js.getProperties(), is(properties));
+        assertThat(js.getProperties(), hasEntry("s", "service"));
     }
 
     QueueHadoopScriptHandler create() {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,6 +158,30 @@ public abstract class DmdlTesterRoot {
                         "{0}.{1}",
                         modelName,
                         name));
+            }
+        };
+    }
+
+    /**
+     * Returns a matcher which tests whether RHS is in LHS.
+     * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
+     * @param matcher RHS
+     * @return the matcher
+     */
+    protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {
+        return new BaseMatcher<Iterable<T>>() {
+            @Override
+            public boolean matches(Object item) {
+                for (Object o : (Iterable<?>) item) {
+                    if (matcher.matches(o)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has ").appendDescriptionOf(matcher);
             }
         };
     }

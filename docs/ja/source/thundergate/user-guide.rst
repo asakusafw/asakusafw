@@ -299,11 +299,11 @@ JDBC接続設定ファイルは、ターゲットに対するJDBC接続設定を
     * - ``hadoop-cluster.env.ASAKUSA_HOME``
       - 
       - HadoopクライアントマシンのAsakusa Frameworkのインストールパス
-    * - ``hadoop-cluster.env.HADOOP_HOME``
+    * - ``hadoop-cluster.env.HADOOP_CMD``
       - 
-      - HadoopクライアントマシンのHadoopのインストールパス [#]_
+      - Hadoopクライアントマシンが利用する ``hadoop`` コマンドのパス。 [#]_
 
-..  [#] オプション項目です。HADOOP_HOMEが不要なHadoopディストリビューションを使用している場合は設定しないでください。
+..  [#] オプション項目です。HADOOP_CMDが不要なHadoopディストリビューションを使用している場合は設定しないでください。
 
 
 インポート設定 (データベースノード)
@@ -679,7 +679,7 @@ ThunderGateはテーブルの定義情報からDMDLを生成する「DMDLジェ�
 
 管理カラムの更新
 ~~~~~~~~~~~~~~~~
-管理カラムの値は、ThunderGateと連携するバッチアプリケーションとオンラインアプリケーションの排他制御に利用することを想定しています。
+管理カラムの値は、ThunderGateと連携するバッチアプリケーションとオンラインアプリケーションの排他制御に利用することを想定しています [#]_ 。
 ThunderGateはジョブフローの実行時に、エクスポート対象となる業務テーブルの管理カラムに対して以下の通りに更新を行います。
 
 ..  list-table:: 管理カラムの更新
@@ -867,6 +867,37 @@ ThunderGateが利用する、ThunderGateの動作を制御するテーブルで�
 アプリケーションの開発
 ======================
 以降ではアプリケーションの開発における、ThunderGate特有の部分について紹介します。
+
+なお、以降の機能を利用するには次のライブラリやプラグインが必要です [#]_ 。
+
+..  list-table:: ThunderGateで利用するライブラリ等
+    :widths: 50 50
+    :header-rows: 1
+
+    * - ライブラリ
+      - 概要
+    * - ``asakusa-thundergate-vocabulary``
+      - DSL用のクラス群
+    * - ``asakusa-thundergate-plugin``
+      - DSLコンパイラプラグイン
+    * - ``asakusa-thundergate-test-moderator``
+      - テストドライバプラグイン
+    * - ``asakusa-thundergate-dmdl``
+      - DMDLコンパイラプラグイン
+
+..  [#] アーキタイプ ``asakusa-archetype-thundergate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/maven-archetype` や :doc:`../application/sdk-artifact` を参照してください。
+
+また、またテーブルやビューのDDLスクリプトからDMDLスクリプトを生成する機能を使う場合は、
+以下のライブラリも必要です。
+
+..  list-table:: ThunderGateのDDL-DMDL連携機能で利用するライブラリ等
+    :widths: 50 50
+    :header-rows: 1
+
+    * - ライブラリ
+      - 概要
+    * - ``asakusa-regacy-test-driver``
+      - レガシーテストドライバプラグイン
 
 データモデルクラスの生成
 ------------------------

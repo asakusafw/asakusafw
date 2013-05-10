@@ -29,6 +29,7 @@ Asakusa Framework入門
 プロダクトについて
 ==================
 * :doc:`release-notes`
+* :doc:`changelogs`
 * :doc:`product/target-platform`
 * :doc:`product/road-map`
 * :doc:`product/license`
@@ -47,14 +48,16 @@ Asakusa Framework入門
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 ..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
 ..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
-..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/index.html
-..  _`ePub版のダウンロード`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/ja/epub/AsakusaFramework.epub
+..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/api/index.html
+..  _`ePub版のダウンロード`: http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/ja/epub/AsakusaFramework.epub
 
 関連プロダクト
 ==============
 * `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_
+* `Asakusa Framework Sandbox`_
 
 ..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+..  _`Asakusa Framework Sandbox`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/index.html
 
 コミュニティ
 ============
@@ -73,6 +76,7 @@ Asakusa Framework入門
 
     self
     release-notes
+    changelogs
     introduction/index
     dmdl/index
     dsl/index

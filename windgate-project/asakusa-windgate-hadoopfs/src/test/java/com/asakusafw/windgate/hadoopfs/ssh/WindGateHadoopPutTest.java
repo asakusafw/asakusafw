@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +37,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
@@ -230,13 +232,18 @@ public class WindGateHadoopPutTest {
     }
 
     private Map<String, String> get() throws IOException {
-        FileStatus[] files = fs.listStatus(PREFIX);
+        FileStatus[] files;
+        try {
+            files = fs.listStatus(PREFIX);
+        } catch (FileNotFoundException e) {
+            files = null;
+        }
         if (files == null) {
             return Collections.emptyMap();
         }
         Map<String, String> results = new HashMap<String, String>();
         for (FileStatus status : files) {
-            if (status.isDir()) {
+            if (FileSystemCompatibility.isDirectory(status)) {
                 continue;
             }
             InputStream f = fs.open(status.getPath());

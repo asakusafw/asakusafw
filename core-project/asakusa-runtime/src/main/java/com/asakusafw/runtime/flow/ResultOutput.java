@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskInputOutputContext;
 
 import com.asakusafw.runtime.core.Result;
 
@@ -32,7 +33,7 @@ import com.asakusafw.runtime.core.Result;
  * 結果を出力する。
  * @param <T> 結果の型
  * @since 0.1.0
- * @since 0.2.5
+ * @version 0.5.0
  */
 public class ResultOutput<T> implements Result<T> {
 
@@ -88,6 +89,22 @@ public class ResultOutput<T> implements Result<T> {
         this.context = context;
         this.writer = writer;
         this.counters = counters;
+    }
+
+    /**
+     * Writes a key and value into current context.
+     * @param context current context
+     * @param key the key object (nullable)
+     * @param value the value object (nullable)
+     * @throws Result.OutputException if failed to write the objects
+     * @since 0.5.0
+     */
+    public static <K, V> void write(TaskInputOutputContext<?, ?, ? super K, ? super V> context, K key, V value) {
+        try {
+            context.write(key, value);
+        } catch (Exception e) {
+            throw new Result.OutputException(e);
+        }
     }
 
     @Override

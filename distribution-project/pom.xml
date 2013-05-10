@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<version>0.5-SNAPSHOT</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
@@ -31,6 +31,7 @@
 
 	<modules>
 		<module>asakusa-distribution</module>
+		<module>asakusa-archetype-framework-organizer</module>
 		<module>asakusa-archetype-directio</module>
 		<module>asakusa-archetype-windgate</module>
 		<module>asakusa-archetype-thundergate</module>

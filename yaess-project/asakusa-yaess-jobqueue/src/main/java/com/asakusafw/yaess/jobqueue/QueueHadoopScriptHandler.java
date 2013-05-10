@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,10 @@ import com.asakusafw.yaess.core.ExecutionScript;
 import com.asakusafw.yaess.core.ExecutionScriptHandlerBase;
 import com.asakusafw.yaess.core.HadoopScript;
 import com.asakusafw.yaess.core.HadoopScriptHandler;
+import com.asakusafw.yaess.core.Job;
 import com.asakusafw.yaess.core.ServiceProfile;
 import com.asakusafw.yaess.core.YaessLogger;
+import com.asakusafw.yaess.core.util.HadoopScriptUtil;
 import com.asakusafw.yaess.jobqueue.client.JobClient;
 import com.asakusafw.yaess.jobqueue.client.JobId;
 import com.asakusafw.yaess.jobqueue.client.JobScript;
@@ -329,6 +331,7 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
         Map<String, String> props = new HashMap<String, String>();
         props.putAll(getProperties(context, script));
         props.putAll(script.getHadoopProperties());
+        props.put(HadoopScriptUtil.PROP_TRACKING_ID, Job.computeTrackingId(context, script));
         result.setProperties(props);
 
         Map<String, String> env = new HashMap<String, String>();

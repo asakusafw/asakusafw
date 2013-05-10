@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,10 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.SystemUtils;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -130,6 +134,7 @@ public class BasicScriptHandlerTestRoot {
      * @throws IOException if failed
      */
     protected File putScript(String source, File file) throws IOException {
+        Assume.assumeThat("Windows does not supported", SystemUtils.IS_OS_WINDOWS, is(false));
         LOG.debug("Deploy script: {} -> {}", source, file);
         InputStream in = getClass().getResourceAsStream(source);
         assertThat(source, in, is(notNullValue()));
@@ -187,5 +192,29 @@ public class BasicScriptHandlerTestRoot {
         } finally {
             output.close();
         }
+    }
+
+    /**
+     * Returns a matcher which tests whether RHS is in LHS.
+     * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
+     * @param matcher RHS
+     * @return the matcher
+     */
+    protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {
+        return new BaseMatcher<Iterable<T>>() {
+            @Override
+            public boolean matches(Object item) {
+                for (Object o : (Iterable<?>) item) {
+                    if (matcher.matches(o)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has ").appendDescriptionOf(matcher);
+            }
+        };
     }
 }

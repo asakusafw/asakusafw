@@ -2,5 +2,6 @@
 ## Retryable Process
 process.<name>=com.asakusafw.windgate.retryable.RetryableProcessProvider
 process.<name>.retryCount=<retry count>
+process.<name>.retryInterval=<interval in ms>
 process.<name>.component=<component process provider>
 process.<name>.component.<key>=<component profile value>

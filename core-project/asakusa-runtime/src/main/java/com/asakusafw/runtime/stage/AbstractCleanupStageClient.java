@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,10 +64,11 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
         FileSystem fileSystem = FileSystem.get(path.toUri(), conf);
         try {
             LOG.info(MessageFormat.format(
-                    "Searching for cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                    "Searching for cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
                     getBatchId(),
                     getFlowId(),
                     getExecutionId(),
+                    getOperationId(),
                     path));
             long start = System.currentTimeMillis();
             if (RuntimeContext.get().isSimulation()) {
@@ -84,10 +85,11 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
                     throw new FileNotFoundException(path.toString());
                 }
                 LOG.info(MessageFormat.format(
-                        "Start deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                        "Start deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
                         getBatchId(),
                         getFlowId(),
                         getExecutionId(),
+                        getOperationId(),
                         path));
                 if (fileSystem.delete(path, true) == false) {
                     throw new IOException("FileSystem.delete() returned false");
@@ -95,27 +97,30 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
             }
             long end = System.currentTimeMillis();
             LOG.info(MessageFormat.format(
-                    "Finish deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                    "Finish deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
                     getBatchId(),
                     getFlowId(),
                     getExecutionId(),
+                    getOperationId(),
                     path,
                     end - start));
             return 0;
         } catch (FileNotFoundException e) {
             LOG.warn(MessageFormat.format(
-                    "Cleanup target is missing: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                    "Cleanup target is missing: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
                     getBatchId(),
                     getFlowId(),
                     getExecutionId(),
+                    getOperationId(),
                     path));
             return 0;
         } catch (IOException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to delete cleanup target: batchId={0}, flowId={1}, executionId={2}, path={3}",
+                    "Failed to delete cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
                     getBatchId(),
                     getFlowId(),
                     getExecutionId(),
+                    getOperationId(),
                     path), e);
             return 1;
         } finally {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,8 +91,14 @@ public class JobflowExecutor {
         Configuration conf = configurations.newInstance();
         FileSystem fs = FileSystem.get(conf);
         Path path = new Path(context.getClusterWorkDir());
-        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", path);
-        fs.delete(path, true);
+        Path fullPath = fs.makeQualified(path);
+        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", fullPath);
+        boolean deleted = fs.delete(fullPath, true);
+        if (deleted) {
+            LOG.debug("クラスタワークディレクトリを削除しました。Path: {}", fullPath);
+        } else {
+            LOG.debug("クラスタワークディレクトリを削除できませんでした。Path: {}", fullPath);
+        }
     }
 
     /**

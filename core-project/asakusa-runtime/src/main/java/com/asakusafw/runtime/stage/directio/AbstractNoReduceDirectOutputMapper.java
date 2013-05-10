@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
@@ -148,8 +149,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends Mapper<
                 }
                 output.close();
             }
-            org.apache.hadoop.mapreduce.Counter recordCounter = context.getCounter(
-                    org.apache.hadoop.mapred.Task.Counter.MAP_OUTPUT_RECORDS);
+            org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
             recordCounter.increment(records);
             context.getCounter(COUNTER_GROUP, id + ".files").increment(1);
             context.getCounter(COUNTER_GROUP, id + ".records").increment(records);

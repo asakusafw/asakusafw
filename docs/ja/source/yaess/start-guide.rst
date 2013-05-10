@@ -106,7 +106,7 @@ Hadoopのジョブを発行するような環境構成を作成できます。
 
     hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.resource = hadoop-master
-    hadoop.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
 これをリモートのHadoopを実行するよう変更するため、以下のプロパティの内容に変更してください [#]_ 。
@@ -129,8 +129,8 @@ Hadoopのジョブを発行するような環境構成を作成できます。
       - ローカルの秘密鍵の位置
     * - ``hadoop.ssh.passPhrase``
       - 秘密鍵のパスフレーズ
-    * - ``hadoop.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先
+    * - ``hadoop.env.HADOOP_CMD``
+      - リモートの ``hadoop`` コマンドのパス
     * - ``hadoop.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
 
@@ -145,7 +145,7 @@ Hadoopのジョブを発行するような環境構成を作成できます。
     hadoop.ssh.privateKey = ${HOME}/.ssh/id_dsa
     hadoop.ssh.passPhrase = 
     hadoop.resource = hadoop-master
-    hadoop.env.HADOOP_HOME = /usr/lib/hadoop
+    hadoop.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.env.ASAKUSA_HOME = /opt/hadoop/asakusa
 
 ..  [#] リモートコンピュータでは、実際には ``$ASAKUSA_HOME/yaess-hadoop`` のみを利用します。
@@ -165,7 +165,7 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 
     command.* = com.asakusafw.yaess.basic.BasicCommandScriptHandler
     command.*.resource = asakusa
-    command.*.env.HADOOP_HOME = ${HADOOP_HOME}
+    command.*.env.HADOOP_CMD = /usr/bin/hadoop
     command.*.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
 これを、次の内容に変更します。
@@ -190,8 +190,8 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
       - 秘密鍵のパスフレーズ
     * - ``command.*.env.ASAKUSA_HOME``
       - リモートのAsakusa Frameworkのインストール先
-    * - ``command.*.env.HADOOP_HOME``
-      - リモートのHadoopのインストール先
+    * - ``command.*.env.HADOOP_CMD``
+      - リモートの ``hadoop`` コマンドのパス
 
 以下は設定例です。
 
@@ -227,7 +227,7 @@ ThunderGateには「ターゲット名」、WindGateには「プロファイル�
     command.asakusa.ssh.privateKey = ${HOME}/.ssh/id_dsa
     command.asakusa.ssh.passPhrase =
     command.asakusa.resource = asakusa
-    command.asakusa.env.HADOOP_HOME = /usr/lib/hadoop
+    command.asakusa.env.HADOOP_CMD = /usr/bin/hadoop
     command.asakusa.env.ASAKUSA_HOME = /home/asakusa/asakusa
 
 ここに追加する内容は ``command.*`` から始まる内容と同様です。

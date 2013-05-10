@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,11 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.mortbay.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 
@@ -74,7 +73,7 @@ final class FileDeployer {
         assert destination != null;
         assert output != null;
         LOG.debug("Opening {} using {}", destination, output.getClass().getName());
-        Job job = new Job(configuration);
+        Job job = JobCompatibility.newJob(configuration);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(definition.getModelClass());
         final File temporaryDir = File.createTempFile("asakusa", ".tempdir");
@@ -84,7 +83,9 @@ final class FileDeployer {
         LOG.debug("Using staging deploy target: {}", temporaryDir);
         URI uri = temporaryDir.toURI();
         FileOutputFormat.setOutputPath(job, new Path(uri));
-        TaskAttemptContext context = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
+        TaskAttemptContext context = JobCompatibility.newTaskAttemptContext(
+                job.getConfiguration(),
+                JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(JobCompatibility.newJobId())));
         FileOutputFormatDriver<V> result = new FileOutputFormatDriver<V>(context, output, NullWritable.get()) {
             @Override
             public void close() throws IOException {
@@ -133,7 +134,7 @@ final class FileDeployer {
             }
         }
         if (target.delete() == false) {
-            Log.warn("Failed to delete temporary resource: {}", target);
+            LOG.warn("Failed to delete temporary resource: {}", target);
         }
     }
 }

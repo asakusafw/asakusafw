@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,13 @@ import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.FlowPart;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
  * フロー部品クラスから演算子ファクトリークラスのJava DOMを構築する。
@@ -114,6 +117,8 @@ public class FlowFactoryClassGenerator {
                     .annotation(util.t(Generated.class), util.v("{0}:{1}",
                             FlowOperatorCompiler.class.getSimpleName(),
                             FlowOperatorCompiler.VERSION))
+                    .annotation(util.t(OperatorFactory.class),
+                            factory.newClassLiteral(util.t(flowClass.getElement())))
                     .Public()
                     .toAttributes(),
                 name,
@@ -350,17 +355,7 @@ public class FlowFactoryClassGenerator {
         }
         for (OperatorPortDeclaration var : flowClass.getOutputPorts()) {
             SimpleName name = names.create(var.getName());
-            Expression type;
-            switch (var.getType().getKind()) {
-            case DIRECT:
-                type = factory.newClassLiteral(util.t(var.getType().getDirect()));
-                break;
-            case REFERENCE:
-                type = factory.newSimpleName(var.getType().getReference());
-                break;
-            default:
-                throw new AssertionError(var.getType().getKind());
-            }
+            Expression type = toExpression(var);
             assert type != null;
             statements.add(new ExpressionBuilder(factory, builderName)
                 .method("addOutput", util.v(var.getName()), type)
@@ -370,7 +365,14 @@ public class FlowFactoryClassGenerator {
             arguments[var.getParameterPosition()] = name;
         }
         for (OperatorPortDeclaration var : flowClass.getParameters()) {
+            Expression type = toExpression(var);
             SimpleName name = factory.newSimpleName(var.getName());
+            statements.add(new ExpressionBuilder(factory, builderName)
+                .method("addParameter",
+                    util.v(var.getName()),
+                    type,
+                    name)
+                .toStatement());
             arguments[var.getParameterPosition()] = name;
         }
         SimpleName descName = names.create("desc");
@@ -404,26 +406,47 @@ public class FlowFactoryClassGenerator {
         return statements;
     }
 
+    private Expression toExpression(OperatorPortDeclaration var) throws AssertionError {
+        Expression type;
+        switch (var.getType().getKind()) {
+        case DIRECT:
+            type = factory.newClassLiteral(util.t(environment.getErasure(var.getType().getDirect())));
+            break;
+        case REFERENCE:
+            type = factory.newSimpleName(var.getType().getReference());
+            break;
+        default:
+            throw new AssertionError(var.getType().getKind());
+        }
+        return type;
+    }
+
     private MethodDeclaration createFactoryMethod(NamedType objectType) {
         assert objectType != null;
         JavadocBuilder javadoc = new JavadocBuilder(factory);
         javadoc.inline(flowClass.getDocumentation());
         List<FormalParameterDeclaration> parameters = Lists.create();
         List<Expression> arguments = Lists.create();
+        List<Expression> inputMetaData = Lists.create();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
-            parameters.add(factory.newFormalParameterDeclaration(
-                    util.toSourceType(var.getType().getRepresentation()),
-                    name));
+            parameters.add(util.toFactoryMethodInput(var, name));
+            inputMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
+        List<Expression> outputMetaData = Lists.create();
+        for (OperatorPortDeclaration var : flowClass.getOutputPorts()) {
+            outputMetaData.add(util.toMetaData(var, -1));
+        }
+        List<Expression> parameterMetaData = Lists.create();
         for (OperatorPortDeclaration var : flowClass.getParameters()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
             parameters.add(factory.newFormalParameterDeclaration(
                     util.t(var.getType().getRepresentation()),
                     name));
+            parameterMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
         Type type = getType(objectType);
@@ -432,6 +455,11 @@ public class FlowFactoryClassGenerator {
         return factory.newMethodDeclaration(
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
+                    .annotation(util.t(OperatorInfo.class),
+                            "kind", factory.newClassLiteral(util.t(FlowPart.class)),
+                            "input", factory.newArrayInitializer(inputMetaData),
+                            "output", factory.newArrayInitializer(outputMetaData),
+                            "parameter", factory.newArrayInitializer(parameterMetaData))
                     .Public()
                     .toAttributes(),
                 util.toTypeParameters(flowClass.getElement()),

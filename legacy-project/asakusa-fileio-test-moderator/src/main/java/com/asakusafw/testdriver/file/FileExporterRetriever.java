@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.testdriver.core.BaseExporterRetriever;
@@ -122,10 +122,12 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
         VariableTable variables = createVariables(context);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();
-        Job job = new Job(conf);
+        Job job = JobCompatibility.newJob(conf);
         String resolved = variables.parse(description.getPathPrefix(), false);
         FileInputFormat.setInputPaths(job, new Path(resolved));
-        TaskAttemptContext taskContext = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID());
+        TaskAttemptContext taskContext = JobCompatibility.newTaskAttemptContext(
+                job.getConfiguration(),
+                JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(JobCompatibility.newJobId())));
         FileInputFormat<?, V> format = getOpposite(conf, description.getOutputFormat());
         FileInputFormatDriver<V> result = new FileInputFormatDriver<V>(definition, taskContext, format);
         return result;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,7 @@ package com.asakusafw.compiler.flow.mock;
 
 import java.io.IOException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.StatusReporter;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
-import org.apache.hadoop.mapreduce.TaskInputOutputContext;
-
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.Result;
 
 /**
@@ -31,7 +26,7 @@ import com.asakusafw.runtime.core.Result;
  * @param <VALUEOUT> 値の型
  */
 public class MockOutput<KEYOUT, VALUEOUT> extends
-        TaskInputOutputContext<Object, Object, KEYOUT, VALUEOUT> {
+        JobCompatibility.TaskInputOutputContextStub<Object, Object, KEYOUT, VALUEOUT> {
 
     private final Result<? super KEYOUT> keyOut;
 
@@ -57,12 +52,6 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
      * @param valueOut 値の出力先
      */
     public MockOutput(Result<? super KEYOUT> keyOut, Result<? super VALUEOUT> valueOut) {
-        super(
-                new Configuration(false),
-                new TaskAttemptID(),
-                null,
-                null,
-                new MockStatusReporter());
         this.keyOut = keyOut;
         this.valueOut = valueOut;
     }
@@ -86,34 +75,5 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
     @Override
     public Object getCurrentValue() throws IOException, InterruptedException {
         throw new UnsupportedOperationException();
-    }
-
-    private static final class MockStatusReporter extends StatusReporter {
-
-        MockStatusReporter() {
-            return;
-        }
-
-        @Override
-        public Counter getCounter(Enum<?> name) {
-            return getCounter(name.getDeclaringClass().getName(), name.name());
-        }
-
-        @Override
-        public Counter getCounter(String group, String name) {
-            return new Counter() {
-                // empty
-            };
-        }
-
-        @Override
-        public void progress() {
-            return;
-        }
-
-        @Override
-        public void setStatus(String status) {
-            return;
-        }
     }
 }

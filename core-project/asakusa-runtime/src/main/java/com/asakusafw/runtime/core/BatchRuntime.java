@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 /**
  * ランタイムのコアクラス。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.4.1
  */
 public final class BatchRuntime {
 
@@ -32,7 +32,7 @@ public final class BatchRuntime {
     /**
      * Minor version.
      */
-    public static final int VERSION_MINOR = 0;
+    public static final int VERSION_MINOR = 1;
 
     /**
      * バージョンチェックを行い、互換性がなければ例外をスローする。

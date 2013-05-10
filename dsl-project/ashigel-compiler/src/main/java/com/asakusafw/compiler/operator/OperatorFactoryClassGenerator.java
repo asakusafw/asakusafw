@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Generated;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
@@ -26,6 +27,7 @@ import com.asakusafw.compiler.common.JavaName;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.operator.OperatorProcessor.Context;
 import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -50,6 +52,8 @@ import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
  * 演算子ファクトリークラスの情報を構築するジェネレータ。
@@ -92,6 +96,18 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     @Override
     protected SimpleName getClassName() {
         return util.getFactoryName(operatorClass.getElement());
+    }
+
+    @Override
+    protected List<? extends Attribute> getAttribuets() {
+        return new AttributeBuilder(factory)
+            .annotation(util.t(Generated.class), util.v("{0}:{1}",
+                    getClass().getSimpleName(),
+                    OperatorCompiler.VERSION))
+            .annotation(util.t(OperatorFactory.class),
+                    factory.newClassLiteral(util.t(operatorClass.getElement())))
+            .Public()
+            .toAttributes();
     }
 
     @Override
@@ -378,7 +394,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         Expression type;
         switch (var.getType().getKind()) {
         case DIRECT:
-            type = factory.newClassLiteral(util.t(var.getType().getDirect()));
+            type = factory.newClassLiteral(util.t(environment.getErasure(var.getType().getDirect())));
             break;
         case REFERENCE:
             type = factory.newSimpleName(var.getType().getReference());
@@ -456,20 +472,26 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         javadoc.inline(descriptor.getDocumentation());
         List<FormalParameterDeclaration> parameters = Lists.create();
         List<Expression> arguments = Lists.create();
+        List<Expression> inputMetaData = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
-            parameters.add(factory.newFormalParameterDeclaration(
-                    util.toSourceType(var.getType().getRepresentation()),
-                    name));
+            parameters.add(util.toFactoryMethodInput(var, name));
+            inputMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
+        List<Expression> outputMetaData = Lists.create();
+        for (OperatorPortDeclaration var : descriptor.getOutputPorts()) {
+            outputMetaData.add(util.toMetaData(var, -1));
+        }
+        List<Expression> parameterMetaData = Lists.create();
         for (OperatorPortDeclaration var : descriptor.getParameters()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
             parameters.add(factory.newFormalParameterDeclaration(
                     util.t(var.getType().getRepresentation()),
                     name));
+            parameterMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
         javadoc.returns().text("生成した演算子オブジェクト");
@@ -486,6 +508,11 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         return factory.newMethodDeclaration(
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
+                    .annotation(util.t(OperatorInfo.class),
+                            "kind", factory.newClassLiteral(util.t(descriptor.getAnnotationType())),
+                            "input", factory.newArrayInitializer(inputMetaData),
+                            "output", factory.newArrayInitializer(outputMetaData),
+                            "parameter", factory.newArrayInitializer(parameterMetaData))
                     .Public()
                     .toAttributes(),
                 util.toTypeParameters(context.element),

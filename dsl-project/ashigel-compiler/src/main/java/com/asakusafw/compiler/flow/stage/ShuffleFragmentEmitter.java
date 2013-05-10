@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import com.asakusafw.compiler.flow.LinePartProcessor.Context;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -418,26 +419,18 @@ public class ShuffleFragmentEmitter {
                         shuffleInput)
                 .toStatement());
 
-            SimpleName exception = names.create("exception");
-            results.add(factory.newTryStatement(
-                    factory.newBlock(
-                            new ExpressionBuilder(factory, factory.newThis())
-                                .field(collector)
-                                .method("write",
-                                        new ExpressionBuilder(factory, factory.newThis())
-                                            .field(keyModel)
-                                            .toExpression(),
-                                        new ExpressionBuilder(factory, factory.newThis())
-                                            .field(valueModel)
-                                            .toExpression())
-                                .toStatement()),
-                    Collections.singletonList(factory.newCatchClause(
-                            factory.newFormalParameterDeclaration(t(Exception.class), exception),
-                            factory.newBlock(
-                                    new TypeBuilder(factory, t(Result.OutputException.class))
-                                        .newObject(exception)
-                                        .toThrowStatement()))),
-                    null));
+            results.add(new TypeBuilder(factory, t(ResultOutput.class))
+                .method("write",
+                        new ExpressionBuilder(factory, factory.newThis())
+                            .field(collector)
+                            .toExpression(),
+                        new ExpressionBuilder(factory, factory.newThis())
+                            .field(keyModel)
+                            .toExpression(),
+                        new ExpressionBuilder(factory, factory.newThis())
+                            .field(valueModel)
+                            .toExpression())
+                .toStatement());
             return results;
         }
 

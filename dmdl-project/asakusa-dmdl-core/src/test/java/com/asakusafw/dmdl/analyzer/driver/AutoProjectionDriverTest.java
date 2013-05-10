@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
-        assertThat(projections, hasItem(model("p1")));
+        assertThat(projections, has(model("p1")));
     }
 
     /**
@@ -69,7 +69,7 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
-        assertThat(projections, hasItem(model("p1")));
+        assertThat(projections, has(model("p1")));
     }
 
     /**
@@ -122,8 +122,8 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(2));
-        assertThat(projections, hasItem(model("p1")));
-        assertThat(projections, hasItem(model("p2")));
+        assertThat(projections, has(model("p1")));
+        assertThat(projections, has(model("p2")));
     }
 
     /**
@@ -137,7 +137,7 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
-        assertThat(projections, hasItem(model("total")));
+        assertThat(projections, has(model("total")));
     }
 
     /**

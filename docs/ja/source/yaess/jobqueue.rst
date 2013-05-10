@@ -99,7 +99,7 @@ JobQueueサーバー・コンポーネントのインストール
 ----------------------------------------------
 JobQueueサーバーに必要なコンポーネントをダウンロードします。
 
-* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.4.0.tar.gz
+* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.5.0.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてJobQueueサーバーのコンポーネントを ``$ASAKUSA_HOME`` にインストールします
 (標準の ``~/Downloads`` にダウンロードした場合の例です)。
@@ -163,8 +163,8 @@ JobQueueサーバーがキックするHadoopジョブに関する環境変数の
     export HADOOP_TMP_DIR="/tmp/hadoop-${USER}"
 
 ..  note::
-    
-    Tomcat起動時に ``HADOOP_HOME`` 環境変数を設定しない場合には、ここで設定する必要があります。
+    使用するHadoopを明示的に指定する場合、ここで環境変数 ``HADOOP_CMD`` や ``HADOOP_HOME`` 設定する必要があります。
+    ``hadoop`` コマンドのパスが通っている場合、 ``hadoop`` コマンドを経由してHadoopを起動します。
 
 JobQueueサーバーのデプロイ
 --------------------------
@@ -189,7 +189,6 @@ Tomcat起動時に、JobQueueサーバーの利用に必要となる環境変数
 ..  code-block:: sh
     
     export JAVA_HOME=/usr/lib/jvm/jdk-6
-    export HADOOP_HOME=/usr/lib/hadoop
     export ASAKUSA_HOME=$HOME/asakusa
     export CATALINA_OPTS='-DapplyEvolutions.default=true'
 
@@ -309,7 +308,7 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
 ..  warning::
     JobQueueクライアントプラグイン用のHadoopジョブハンドラプラグインを指定した場合は、 ``hadoop.env`` から始まるプロパティを使用した環境変数の引渡しの仕組みは使用出来ません。
     
-    このため、デフォルトのYAESSの構成ファイルで設定されている ``hadoop.env.HADOOP_HOME`` や ``hadoop.env.HADOOP_HOME`` を設定している場合は、これらのプロパティを削除してください。
+    このため、デフォルトのYAESSの構成ファイルで設定されている ``hadoop.env.HADOOP_CMD`` や ``hadoop.env.ASAKUSA_HOME`` を設定している場合は、これらのプロパティを削除してください。
 
 冗長構成用の設定
 ----------------
@@ -356,7 +355,7 @@ JobQueueを利用してHadoopジョブを実行する場合、構成ファイル
     # デフォルト設定を利用するサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.default.resource = hadoop-default
-    hadoop.default.env.HADOOP_HOME = ${HADOOP_HOME}
+    hadoop.default.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
     
     #JobQueueを利用するサブハンドラ (jobqueue)

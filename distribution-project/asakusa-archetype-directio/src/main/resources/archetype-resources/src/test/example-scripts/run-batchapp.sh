@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 #
-# Copyright 2011-2012 Asakusa Framework Team.
+# Copyright 2011-2013 Asakusa Framework Team.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-$ASAKUSA_HOME/directio/bin/list-file.sh "/" "**"
-$ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
-$ASAKUSA_HOME/directio/bin/list-file.sh "/" "**"
 
 cd $HOME
 hadoop fs -text target/testing/directio/result/category/result.csv

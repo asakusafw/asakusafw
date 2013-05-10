@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Asakusa Framework Team.
+ * Copyright 2011-2013 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,9 +142,9 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
         execute(script, handler);
 
         List<String> results = getOutput(shell);
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("script=SCRIPT")));
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("handler=HANDLER")));
-        assertThat(results, hasItem(equalToIgnoringWhiteSpace("override=SCRIPT")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("script=SCRIPT")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("handler=HANDLER")));
+        assertThat(results, has(equalToIgnoringWhiteSpace("override=SCRIPT")));
     }
 
     /**
