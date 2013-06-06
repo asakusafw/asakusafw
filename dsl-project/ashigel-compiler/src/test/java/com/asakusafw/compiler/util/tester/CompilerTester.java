@@ -84,7 +84,7 @@ public class CompilerTester implements TestRule {
     protected final HadoopDriver hadoopDriver;
 
     /**
-     * Deployes framework.
+     * Deploys framework.
      */
     protected final FrameworkDeployer frameworkDeployer;
 

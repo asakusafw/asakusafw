@@ -17,6 +17,7 @@ package com.asakusafw.utils.java.model.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.AnnotationElement;
@@ -35,6 +36,8 @@ import com.asakusafw.utils.java.model.syntax.Type;
  * このクラスのオブジェクトは、自身を破壊的に変更して修飾子等を構築する。
  * 特定の状態のビルダーを再利用する場合、{@link #copy()}を利用すること。
  * </p>
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public class AttributeBuilder {
 
@@ -283,6 +286,31 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
         return annotation(Models.toType(f, type), value);
+    }
+
+    /**
+     * Adds the specified annotation.
+     * @param type the target annotation type
+     * @param elements the element name-value pairs
+     * @return this
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public AttributeBuilder annotation(Type type, Map<? extends String, ? extends Expression> elements) {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        if (type.getModelKind() != ModelKind.NAMED_TYPE) {
+            throw new IllegalArgumentException("type must be a simple named-type"); //$NON-NLS-1$
+        }
+        if (elements == null) {
+            throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
+        }
+        List<AnnotationElement> elems = new ArrayList<AnnotationElement>();
+        for (Map.Entry<? extends String, ? extends Expression> entry : elements.entrySet()) {
+            elems.add(f.newAnnotationElement(f.newSimpleName(entry.getKey()), entry.getValue()));
+        }
+        return annotation(f.newNormalAnnotation((NamedType) type, elems));
     }
 
     /**

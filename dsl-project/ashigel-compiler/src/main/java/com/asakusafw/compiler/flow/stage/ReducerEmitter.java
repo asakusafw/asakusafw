@@ -18,7 +18,9 @@ package com.asakusafw.compiler.flow.stage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedReducer;
 import com.asakusafw.runtime.flow.SegmentedWritable;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -100,6 +103,10 @@ public class ReducerEmitter {
 
     private static class Engine {
 
+        private final FlowCompilingEnvironment environment;
+
+        private final StageModel model;
+
         private final ShuffleModel shuffle;
 
         private final ModelFactory factory;
@@ -115,6 +122,8 @@ public class ReducerEmitter {
         Engine(FlowCompilingEnvironment environment, StageModel model) {
             assert environment != null;
             assert model != null;
+            this.environment = environment;
+            this.model = model;
             this.shuffle = model.getShuffleModel();
             this.factory = environment.getModelFactory();
             Name packageName = environment.getStagePackageName(
@@ -153,6 +162,7 @@ public class ReducerEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .annotation(t(SuppressWarnings.class), v("deprecation"))
                         .Public()
                         .Final()
@@ -168,6 +178,15 @@ public class ReducerEmitter {
                                     t(NullWritable.class)))),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
+            results.put("stageUnitId", Models.toLiteral(factory, "r"));
+            return results;
         }
 
         private MethodDeclaration createSetup() {

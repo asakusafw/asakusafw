@@ -18,7 +18,9 @@ package com.asakusafw.compiler.flow.mapreduce.parallel;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.collector.SlotSorter;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -54,7 +57,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 /**
  * parallel reduceを行うレデューサークラスを出力ごとに生成する。
  * @since 0.1.0
- * @version 0.2.4
+ * @version 0.5.1
  */
 final class ParallelSortReducerEmitter {
 
@@ -98,6 +101,8 @@ final class ParallelSortReducerEmitter {
 
         private final FlowCompilingEnvironment environment;
 
+        private final String moduleId;
+
         private final ModelFactory factory;
 
         private final ImportBuilder importer;
@@ -108,6 +113,7 @@ final class ParallelSortReducerEmitter {
             assert slots != null;
             this.slots = slots;
             this.environment = envinronment;
+            this.moduleId = moduleId;
             this.factory = envinronment.getModelFactory();
             this.importer = new ImportBuilder(
                     factory,
@@ -132,6 +138,7 @@ final class ParallelSortReducerEmitter {
                         .text("エピローグ用のレデューサー。")
                         .toJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .toAttributes(),
                     name,
@@ -139,6 +146,14 @@ final class ParallelSortReducerEmitter {
                     importer.toType(SlotSorter.class),
                     Collections.<Type>emptyList(),
                     Arrays.asList(createSlotNames(), createSlotObjects()));
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            return results;
         }
 
         private MethodDeclaration createSlotNames() {

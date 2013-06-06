@@ -21,12 +21,15 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.ReducerWithRuntimeResource;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
  * スロットごとに出力を振り分ける{@link Reducer}の骨格。
+ * @since 0.1.0
+ * @version 0.5.1
  */
-public abstract class SlotSorter extends Reducer<
+public abstract class SlotSorter extends ReducerWithRuntimeResource<
         SortableSlot, WritableSlot,
         Object, Object> {
 

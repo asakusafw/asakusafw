@@ -25,6 +25,7 @@ import java.util.ServiceLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 
 import com.asakusafw.runtime.core.HadoopConfiguration;
 import com.asakusafw.runtime.core.ResourceConfiguration;
@@ -33,7 +34,7 @@ import com.asakusafw.runtime.core.RuntimeResource;
 /**
  * 実行時リソースのライフサイクルを管理する。
  */
-public class RuntimeResourceManager {
+public class RuntimeResourceManager extends Configured {
 
     static final Log LOG = LogFactory.getLog(RuntimeResourceManager.class);
 
@@ -58,6 +59,7 @@ public class RuntimeResourceManager {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public RuntimeResourceManager(Configuration configuration) {
+        super(configuration);
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }

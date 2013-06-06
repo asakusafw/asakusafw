@@ -46,7 +46,7 @@ public class TestDriverContext implements TestContext {
     static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
 
     /**
-     * The system property key of runtime workig directory.
+     * The system property key of runtime working directory.
      * This working directory must be a relative path from the default working directory.
      */
     public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir";
@@ -248,7 +248,7 @@ public class TestDriverContext implements TestContext {
 
     /**
      * Returns the caller class.
-     * This is ordinally used for detect test dataset on the classpath.
+     * This is ordinary used for detect test dataset on the classpath.
      * @return the caller class
      */
     public Class<?> getCallerClass() {
