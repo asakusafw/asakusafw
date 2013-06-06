@@ -15,7 +15,12 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -118,6 +123,26 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * with normal field.
+     */
+    @Test
+    public void normal_field() {
+        add("com.example.NormalField");
+        add("com.example.NormalFieldEnum");
+        ClassLoader loader = start(new BranchOperatorProcessor());
+
+        Object factory = create(loader, "com.example.NormalFieldFactory");
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        Object branch = invoke(factory, "example", in);
+
+        Set<String> fieldNames = new HashSet<String>();
+        for (Field field : branch.getClass().getFields()) {
+            fieldNames.add(field.getName());
+        }
+        assertThat(fieldNames, containsInAnyOrder("low", "middle", "high"));
+    }
+
+    /**
      * 空の列挙。
      */
     @Test
@@ -134,6 +159,15 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     public void notEnum() {
         add("com.example.NotEnum");
         add("com.example.EmptyEnum");
+        error(new BranchOperatorProcessor());
+    }
+
+    /**
+     * With a not public enum.
+     */
+    @Test
+    public void notPublicEnum() {
+        add("com.example.NotPublicEnum");
         error(new BranchOperatorProcessor());
     }
 
