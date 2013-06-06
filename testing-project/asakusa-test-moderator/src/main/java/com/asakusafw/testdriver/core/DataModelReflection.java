@@ -16,16 +16,33 @@
 package com.asakusafw.testdriver.core;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.asakusafw.runtime.value.Date;
+import com.asakusafw.runtime.value.DateTime;
+
 /**
  * A data-model representation in record form.
  * @since 0.2.0
+ * @version 0.5.1
  */
 public class DataModelReflection implements Serializable {
+
+    private static final char[] ASCII_SPECIAL_ESCAPE = new char[0x80];
+    static {
+        ASCII_SPECIAL_ESCAPE['"'] = '"';
+        ASCII_SPECIAL_ESCAPE['\b'] = 'b';
+        ASCII_SPECIAL_ESCAPE['\t'] = 't';
+        ASCII_SPECIAL_ESCAPE['\n'] = 'n';
+        ASCII_SPECIAL_ESCAPE['\f'] = 'f';
+        ASCII_SPECIAL_ESCAPE['\r'] = 'r';
+        ASCII_SPECIAL_ESCAPE['\\'] = '\\';
+    }
 
     private static final long serialVersionUID = -7083466307911956679L;
 
@@ -111,8 +128,59 @@ public class DataModelReflection implements Serializable {
 
     @Override
     public String toString() {
-        return MessageFormat.format(
-                "{0}",
-                properties);
+        StringBuilder buf = new StringBuilder();
+        buf.append('{');
+        if (properties.isEmpty() == false) {
+            for (Map.Entry<PropertyName, ?> entry : properties.entrySet()) {
+                buf.append(entry.getKey());
+                buf.append('=');
+                buf.append(toStringRepresentation(entry.getValue()));
+                buf.append(',');
+                buf.append(' ');
+            }
+            buf.delete(buf.length() - 2, buf.length());
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+    /**
+     * Returns formatted string representation of values.
+     * @param value original value
+     * @return formatted string representation
+     * @since 0.5.1
+     */
+    public static String toStringRepresentation(Object value) {
+        if (value instanceof String) {
+            return toStringLiteral((String) value);
+        } else if (value instanceof Calendar) {
+            Calendar c = (Calendar) value;
+            if (c.isSet(Calendar.HOUR_OF_DAY)) {
+                return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
+            } else {
+                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
+            }
+        } else if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).toPlainString();
+        }
+        return String.valueOf(value);
+    }
+
+    private static String toStringLiteral(String value) {
+        assert value != null;
+        StringBuilder buf = new StringBuilder();
+        buf.append('"');
+        for (char c : value.toCharArray()) {
+            if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
+                buf.append('\\');
+                buf.append(ASCII_SPECIAL_ESCAPE[c]);
+            } else if (Character.isISOControl(c) || !Character.isDefined(c)) {
+                buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
+            } else {
+                buf.append(c);
+            }
+        }
+        buf.append('"');
+        return buf.toString();
     }
 }
