@@ -21,6 +21,8 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 
 /**
  * テストドライバの基底クラス。
+ * @since 0.2.0
+ * @version 0.5.1
  */
 public abstract class TestDriverBase {
 
@@ -129,6 +131,19 @@ public abstract class TestDriverBase {
      */
     public void setFrameworkHomePath(File frameworkHomePath) {
         driverContext.setFrameworkHomePath(frameworkHomePath);
+    }
+
+
+    /**
+     * 外部ライブラリを格納するディレクトリのパスを設定する。
+     * <p>
+     * この値が未設定の場合、 {@link TestDriverContext#EXTERNAL_LIBRARIES_PATH} で指定されたパスを利用する。
+     * </p>
+     * @param librariesPath 外部ライブラリを格納するディレクトリのパス
+     * @since 0.5.1
+     */
+    public void setLibrariesPath(File librariesPath) {
+        driverContext.setLibrariesPath(librariesPath);
     }
 
     /**

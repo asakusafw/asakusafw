@@ -42,6 +42,7 @@ then
         fi
     done
 fi
+
 if [ "$ASAKUSA_HOME" != "" -a -d "$ASAKUSA_HOME/core/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/core/lib/")
@@ -54,6 +55,24 @@ then
         fi
     done
 fi
+
+if [ "$_OPT_BATCH_ID" != "" -a -d "$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib" ]
+then
+    _OPT_LIBRARIES_PATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib"
+    for f in $(ls "$_OPT_LIBRARIES_PATH")
+    do
+        if [ -f "$_OPT_LIBRARIES_PATH/$f" ]
+        then
+            if [ "$_TG_CLASSPATH" = "" ]
+            then
+                _TG_CLASSPATH="$_OPT_LIBRARIES_PATH/$f"
+            else
+                _TG_CLASSPATH="$_TG_CLASSPATH,$_OPT_LIBRARIES_PATH/$f"
+            fi
+        fi
+    done
+fi
+
 if [ "$ASAKUSA_HOME" != "" -a -d "$ASAKUSA_HOME/ext/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/ext/lib/")
