@@ -45,12 +45,12 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.csv.field";
+    public static final String TARGET_NAME = "windgate.csv.field"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "name";
+    public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {
@@ -80,7 +80,7 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
         environment.report(new Diagnostic(
                 Level.ERROR,
                 attribute,
-                "Other @windgate.csv.* is already declared in {0}.{1}",
+                Messages.getString("CsvFieldDriver.diagnosticDuplicateAttribute"), //$NON-NLS-1$
                 declaration.getOwner().getName().identifier,
                 declaration.getName().identifier));
         return false;
@@ -108,7 +108,7 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
         environment.report(new Diagnostic(
                 Level.ERROR,
                 attribute,
-                "Invalid type for @{2} ({0}.{1}), must be one of {3}",
+                Messages.getString("CsvFieldDriver.diagnosticInvalidTypeElement"), //$NON-NLS-1$
                 declaration.getOwner().getName().identifier,
                 declaration.getName().identifier,
                 attribute.name.toString(),

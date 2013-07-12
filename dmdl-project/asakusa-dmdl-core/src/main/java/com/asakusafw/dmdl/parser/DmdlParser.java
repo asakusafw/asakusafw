@@ -48,7 +48,7 @@ public class DmdlParser {
         if (source == null) {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Parsing DMDL: {}", identifier);
+        LOG.debug("Parsing DMDL: {}", identifier); //$NON-NLS-1$
         JjDmdlParser parser = new JjDmdlParser(source);
         try {
             return parser.parse(identifier);
@@ -56,7 +56,7 @@ public class DmdlParser {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
                         MessageFormat.format(
-                                "Parse faild: uri={0}, token={1}, stack={2}",
+                                "Parse faild: uri={0}, token={1}, stack={2}", //$NON-NLS-1$
                                 identifier,
                                 e.currentToken,
                                 Arrays.toString(parser.getFrames())),
@@ -80,7 +80,7 @@ public class DmdlParser {
         }
         JjDmdlParser parser = new JjDmdlParser(new StringReader(token));
         try {
-            return parser.parseLiteral(new URI("token"));
+            return parser.parseLiteral(new URI("token")); //$NON-NLS-1$
         } catch (ParseException e) {
             throw new DmdlSyntaxException(e, parser);
         } catch (URISyntaxException e) {

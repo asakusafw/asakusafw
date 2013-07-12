@@ -57,11 +57,11 @@ public class AstDescription extends AbstractAstNode {
      * @throws IllegalStateException if this is not a quated string
      */
     public String getText() {
-        if (token.length() >= 2 && token.startsWith("\"") && token.endsWith("\"")) {
+        if (token.length() >= 2 && token.startsWith("\"") && token.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
             return EscapeDecoder.scan(token.substring(1, token.length() - 1));
         }
         throw new IllegalStateException(MessageFormat.format(
-                "Invalid string value: {0}",
+                "Invalid string value: {0}", //$NON-NLS-1$
                 token));
     }
 

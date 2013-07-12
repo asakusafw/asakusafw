@@ -134,7 +134,7 @@ public class ModelDeclaration implements Declaration {
         }
         if (findPropertyDeclaration(propertyName.identifier) != null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Property \"{0}\" is already declared in the model \"{1}\"",
+                    "Property \"{0}\" is already declared in the model \"{1}\"", //$NON-NLS-1$
                     propertyName,
                     getName()));
         }
@@ -214,7 +214,7 @@ public class ModelDeclaration implements Declaration {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0} {1}",
+                "{0} {1}", //$NON-NLS-1$
                 originalAst.kind,
                 name);
     }

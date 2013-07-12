@@ -109,7 +109,7 @@ public class BasicType implements Type {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}",
+                "{0}", //$NON-NLS-1$
                 kind.name());
     }
 }
