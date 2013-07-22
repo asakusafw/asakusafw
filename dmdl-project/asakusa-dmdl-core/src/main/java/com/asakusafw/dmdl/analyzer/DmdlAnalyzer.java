@@ -224,9 +224,9 @@ public class DmdlAnalyzer {
                         term.reference.name));
                 continue;
             }
-            resolveJoinProperties(model, source, term);
+            Map<String, PropertyDeclaration> properties = resolveJoinProperties(model, source, term);
             List<MappingFactor> mappings = resolveMapping(model, source, term.mapping);
-            List<PropertySymbol> grouping = resolveGrouping(model, term.grouping);
+            List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
             results.add(new ReduceTerm<AstJoin>(term, source, mappings, grouping));
         }
         if (checkJoinTerms(model, results)) {
@@ -234,7 +234,7 @@ public class DmdlAnalyzer {
         }
     }
 
-    private void resolveJoinProperties(
+    private Map<String, PropertyDeclaration> resolveJoinProperties(
             ModelDeclaration model,
             ModelSymbol sourceModel,
             AstJoin term) {
@@ -251,18 +251,21 @@ public class DmdlAnalyzer {
         }
         ModelDeclaration sourceDecl = sourceModel.findDeclaration();
         assert sourceDecl != null;
+        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
         if (term.mapping == null) {
             for (PropertyDeclaration prop : sourceDecl.getDeclaredProperties()) {
                 PropertyDeclaration declared = model.findPropertyDeclaration(prop.getName().identifier);
                 if (declared != null) {
                     LOG.debug("property {} is duplicated", prop.getSymbol());
+                    results.put(declared.getName().identifier, declared);
                 } else {
-                    model.declareProperty(
+                    declared = model.declareProperty(
                             sourceModel.getName(),
                             prop.getName(),
                             prop.getType(),
                             prop.getDescription(),
                             prop.getAttributes());
+                    results.put(declared.getName().identifier, declared);
                 }
             }
         } else {
@@ -290,16 +293,19 @@ public class DmdlAnalyzer {
                 PropertyDeclaration declared = model.findPropertyDeclaration(property.target.identifier);
                 if (declared != null) {
                     LOG.debug("property {} is duplicated", property.target);
+                    results.put(declared.getName().identifier, declared);
                 } else {
-                    model.declareProperty(
+                    declared = model.declareProperty(
                             property,
                             property.target,
                             sourceProp.getType(),
                             property.description,
                             property.attributes);
+                    results.put(declared.getName().identifier, declared);
                 }
             }
         }
+        return results;
     }
 
     private List<MappingFactor> resolveMapping(ModelDeclaration model, ModelSymbol source, AstModelMapping mapping) {
@@ -383,9 +389,9 @@ public class DmdlAnalyzer {
                         term.reference.name));
                 continue;
             }
-            resolveSummarizeProperties(model, source, term);
+            Map<String, PropertyDeclaration> properties = resolveSummarizeProperties(model, source, term);
             List<MappingFactor> foldings = resolveFolding(model, source, term.folding);
-            List<PropertySymbol> grouping = resolveGrouping(model, term.grouping);
+            List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
             results.add(new ReduceTerm<AstSummarize>(term, source, foldings, grouping));
         }
         if (checkSummarizeTerms(model, results)) {
@@ -393,7 +399,8 @@ public class DmdlAnalyzer {
         }
     }
 
-    private void resolveSummarizeProperties(ModelDeclaration model, ModelSymbol source, AstSummarize term) {
+    private Map<String, PropertyDeclaration> resolveSummarizeProperties(
+            ModelDeclaration model, ModelSymbol source, AstSummarize term) {
         assert model != null;
         assert source != null;
         assert term != null;
@@ -401,6 +408,7 @@ public class DmdlAnalyzer {
 
         ModelDeclaration decl = source.findDeclaration();
         assert decl != null;
+        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
         for (AstPropertyFolding property : term.folding.properties) {
             PropertyDeclaration original = decl.findPropertyDeclaration(property.source.identifier);
             if (original == null) {
@@ -441,13 +449,15 @@ public class DmdlAnalyzer {
                         property.target.identifier));
                 continue;
             }
-            model.declareProperty(
+            PropertyDeclaration result = model.declareProperty(
                     property,
                     property.target,
                     resolved,
                     property.description,
                     property.attributes);
+            results.put(result.getName().identifier, result);
         }
+        return results;
     }
 
     private List<MappingFactor> resolveFolding(ModelDeclaration model, ModelSymbol source, AstModelFolding folding) {
@@ -491,18 +501,17 @@ public class DmdlAnalyzer {
         }
     }
 
-    private List<PropertySymbol> resolveGrouping(ModelDeclaration model, AstGrouping grouping) {
+    private List<PropertySymbol> resolveGrouping(
+            ModelDeclaration model,
+            Map<String, PropertyDeclaration> properties,
+            AstGrouping grouping) {
         assert model != null;
         if (grouping == null) {
             return Collections.emptyList();
         } else {
-            Map<String, PropertySymbol> map = Maps.create();
-            for (PropertyDeclaration p : model.getDeclaredProperties()) {
-                map.put(p.getName().identifier, p.getSymbol());
-            }
             List<PropertySymbol> results = Lists.create();
             for (AstSimpleName name : grouping.properties) {
-                PropertySymbol property = map.get(name.identifier);
+                PropertyDeclaration property = properties.get(name.identifier);
                 if (property == null) {
                     report(new Diagnostic(
                             Level.ERROR,
