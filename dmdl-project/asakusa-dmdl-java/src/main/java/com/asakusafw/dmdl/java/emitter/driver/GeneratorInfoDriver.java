@@ -32,7 +32,7 @@ import com.asakusafw.utils.java.model.util.Models;
  */
 public class GeneratorInfoDriver extends JavaDataModelDriver {
 
-    private static final String GENERATOR_IDENTIFIER = "DMDL";
+    private static final String GENERATOR_IDENTIFIER = "DMDL"; //$NON-NLS-1$
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) {

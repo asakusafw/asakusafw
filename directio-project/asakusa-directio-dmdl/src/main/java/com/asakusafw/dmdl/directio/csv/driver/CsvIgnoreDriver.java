@@ -33,7 +33,7 @@ public class CsvIgnoreDriver  extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.csv.ignore";
+    public static final String TARGET_NAME = "directio.csv.ignore"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

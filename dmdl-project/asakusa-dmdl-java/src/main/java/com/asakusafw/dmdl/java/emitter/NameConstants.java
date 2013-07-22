@@ -28,17 +28,17 @@ public final class NameConstants {
      * This used if <code>&#64;namespace</code> was not specified for any models.
      * </p>
      */
-    public static final String DEFAULT_NAMESPACE = "dmdl";
+    public static final String DEFAULT_NAMESPACE = "dmdl"; //$NON-NLS-1$
 
     /**
      * The package name fragment for data models.
      */
-    public static final String CATEGORY_DATA_MODEL = "model";
+    public static final String CATEGORY_DATA_MODEL = "model"; //$NON-NLS-1$
 
     /**
      * The package name fragment for data model input/output.
      */
-    public static final String CATEGORY_IO = "io";
+    public static final String CATEGORY_IO = "io"; //$NON-NLS-1$
 
     /**
      * The simple class name pattern for data models.
@@ -46,7 +46,7 @@ public final class NameConstants {
      * This pattern is written in {@link MessageFormat#format(String, Object...)}
      * </p>
      */
-    public static final String PATTERN_DATA_MODEL = "{0}";
+    public static final String PATTERN_DATA_MODEL = "{0}"; //$NON-NLS-1$
 
     private NameConstants() {
         return;

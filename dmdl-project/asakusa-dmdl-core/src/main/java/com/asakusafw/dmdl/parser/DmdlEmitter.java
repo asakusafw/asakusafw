@@ -54,21 +54,21 @@ public final class DmdlEmitter {
 
         @Override
         public Void visitAttribute(Context context, AstAttribute node) {
-            context.print("@");
+            context.print("@"); //$NON-NLS-1$
             node.name.accept(context, this);
             if (node.elements.isEmpty() == false) {
-                context.println("(");
+                context.println("("); //$NON-NLS-1$
                 context.enter();
                 for (int i = 0, n = node.elements.size(); i < n; i++) {
                     node.elements.get(i).accept(context, this);
                     if (i != n - 1) {
-                        context.println(",");
+                        context.println(","); //$NON-NLS-1$
                     } else {
                         context.println();
                     }
                 }
                 context.exit();
-                context.print(")");
+                context.print(")"); //$NON-NLS-1$
             }
             return null;
         }
@@ -76,48 +76,48 @@ public final class DmdlEmitter {
         @Override
         public Void visitAttributeElement(Context context, AstAttributeElement node) {
             node.name.accept(context, this);
-            context.print(" = ");
+            context.print(" = "); //$NON-NLS-1$
             node.value.accept(context, this);
             return null;
         }
 
         @Override
         public Void visitAttributeValueArray(Context context, AstAttributeValueArray node) {
-            context.println("'{'");
+            context.println("'{'"); //$NON-NLS-1$
             context.enter();
             for (int i = 0, n = node.elements.size(); i < n; i++) {
                 node.elements.get(i).accept(context, this);
                 if (i != n - 1) {
-                    context.println(",");
+                    context.println(","); //$NON-NLS-1$
                 } else {
                     context.println();
                 }
             }
             context.exit();
-            context.print("'}'");
+            context.print("'}'"); //$NON-NLS-1$
             return null;
         }
 
         @Override
         public Void visitBasicType(Context context, AstBasicType node) {
-            context.print("{0}", node.kind.name());
+            context.print("{0}", node.kind.name()); //$NON-NLS-1$
             return null;
         }
 
         @Override
         public Void visitDescription(Context context, AstDescription node) {
-            context.print("{0}", node.token);
+            context.print("{0}", node.token); //$NON-NLS-1$
             return null;
         }
 
         @Override
         public Void visitGrouping(Context context, AstGrouping node) {
-            context.print("% ");
+            context.print("% "); //$NON-NLS-1$
             Iterator<AstSimpleName> iter = node.properties.iterator();
             if (iter.hasNext()) {
                 iter.next().accept(context, this);
                 while (iter.hasNext()) {
-                    context.print(", ");
+                    context.print(", "); //$NON-NLS-1$
                     iter.next().accept(context, this);
                 }
             }
@@ -128,11 +128,11 @@ public final class DmdlEmitter {
         public Void visitJoin(Context context, AstJoin node) {
             node.reference.accept(context, this);
             if (node.mapping != null) {
-                context.print(" ");
+                context.print(" "); //$NON-NLS-1$
                 node.mapping.accept(context, this);
             }
             if (node.grouping != null) {
-                context.print(" ");
+                context.print(" "); //$NON-NLS-1$
                 node.grouping.accept(context, this);
             }
             return null;
@@ -140,7 +140,7 @@ public final class DmdlEmitter {
 
         @Override
         public Void visitLiteral(Context context, AstLiteral node) {
-            context.print("{0}", node.token);
+            context.print("{0}", node.token); //$NON-NLS-1$
             return null;
         }
 
@@ -158,47 +158,47 @@ public final class DmdlEmitter {
             }
             switch (node.kind) {
             case JOINED:
-                context.print("joined ");
+                context.print("joined "); //$NON-NLS-1$
                 break;
             case PROJECTIVE:
-                context.print("projective ");
+                context.print("projective "); //$NON-NLS-1$
                 break;
             case SUMMARIZED:
-                context.print("summarized ");
+                context.print("summarized "); //$NON-NLS-1$
                 break;
             default:
                 break;
             }
             node.name.accept(context, this);
-            context.print(" = ");
+            context.print(" = "); //$NON-NLS-1$
             node.expression.accept(context, this);
-            context.print(";");
+            context.print(";"); //$NON-NLS-1$
             return null;
         }
 
         @Override
         public Void visitModelFolding(Context context, AstModelFolding node) {
-            context.println("{0}", "=> {");
+            context.println("{0}", "=> {"); //$NON-NLS-1$ //$NON-NLS-2$
             context.enter();
             for (AstPropertyFolding property : node.properties) {
                 property.accept(context, this);
                 context.println();
             }
             context.exit();
-            context.print("{0}", "}");
+            context.print("{0}", "}"); //$NON-NLS-1$ //$NON-NLS-2$
             return null;
         }
 
         @Override
         public Void visitModelMapping(Context context, AstModelMapping node) {
-            context.println("{0}", "-> {");
+            context.println("{0}", "-> {"); //$NON-NLS-1$ //$NON-NLS-2$
             context.enter();
             for (AstPropertyMapping property : node.properties) {
                 property.accept(context, this);
                 context.println();
             }
             context.exit();
-            context.print("{0}", "}");
+            context.print("{0}", "}"); //$NON-NLS-1$ //$NON-NLS-2$
             return null;
         }
 
@@ -219,9 +219,9 @@ public final class DmdlEmitter {
                 context.println();
             }
             node.name.accept(context, this);
-            context.print(" : ");
+            context.print(" : "); //$NON-NLS-1$
             node.type.accept(context, this);
-            context.print(";");
+            context.print(";"); //$NON-NLS-1$
             return null;
         }
 
@@ -236,11 +236,11 @@ public final class DmdlEmitter {
                 context.println();
             }
             node.aggregator.accept(context, this);
-            context.print(" ");
+            context.print(" "); //$NON-NLS-1$
             node.source.accept(context, this);
-            context.print(" -> ");
+            context.print(" -> "); //$NON-NLS-1$
             node.target.accept(context, this);
-            context.print(";");
+            context.print(";"); //$NON-NLS-1$
             return null;
         }
 
@@ -255,22 +255,22 @@ public final class DmdlEmitter {
                 context.println();
             }
             node.source.accept(context, this);
-            context.print(" -> ");
+            context.print(" -> "); //$NON-NLS-1$
             node.target.accept(context, this);
-            context.print(";");
+            context.print(";"); //$NON-NLS-1$
             return null;
         }
 
         @Override
         public Void visitRecordDefinition(Context context, AstRecordDefinition node) {
-            context.println("'{'");
+            context.println("'{'"); //$NON-NLS-1$
             context.enter();
             for (AstPropertyDefinition property : node.properties) {
                 property.accept(context, this);
                 context.println();
             }
             context.exit();
-            context.print("'}'");
+            context.print("'}'"); //$NON-NLS-1$
             return null;
         }
 
@@ -283,7 +283,7 @@ public final class DmdlEmitter {
         @Override
         public Void visitSequenceType(Context context, AstSequenceType node) {
             node.elementType.accept(context, this);
-            context.print("*");
+            context.print("*"); //$NON-NLS-1$
             return null;
         }
 
@@ -304,10 +304,10 @@ public final class DmdlEmitter {
         @Override
         public Void visitSummarize(Context context, AstSummarize node) {
             node.reference.accept(context, this);
-            context.print(" ");
+            context.print(" "); //$NON-NLS-1$
             node.folding.accept(context, this);
             if (node.grouping != null) {
-                context.print(" ");
+                context.print(" "); //$NON-NLS-1$
                 node.grouping.accept(context, this);
             }
             return null;
@@ -319,7 +319,7 @@ public final class DmdlEmitter {
             assert iter.hasNext();
             iter.next().accept(context, this);
             while (iter.hasNext()) {
-                context.print(" + ");
+                context.print(" + "); //$NON-NLS-1$
                 iter.next().accept(context, this);
             }
             return null;
@@ -327,7 +327,7 @@ public final class DmdlEmitter {
 
         @Override
         public Void visitSimpleName(Context context, AstSimpleName node) {
-            context.print("{0}", node.identifier);
+            context.print("{0}", node.identifier); //$NON-NLS-1$
             return null;
         }
 
@@ -342,7 +342,7 @@ public final class DmdlEmitter {
             assert current instanceof AstSimpleName;
             current.accept(context, this);
             for (AstSimpleName segment : names) {
-                context.print(".");
+                context.print("."); //$NON-NLS-1$
                 segment.accept(context, this);
             }
             return null;
@@ -372,7 +372,7 @@ public final class DmdlEmitter {
             }
             if (headOfLine) {
                 for (int i = 0; i < indent; i++) {
-                    writer.print("    ");
+                    writer.print("    "); //$NON-NLS-1$
                 }
                 headOfLine = false;
             }

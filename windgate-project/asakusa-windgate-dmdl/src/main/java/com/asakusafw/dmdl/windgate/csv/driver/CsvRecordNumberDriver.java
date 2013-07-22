@@ -34,7 +34,7 @@ public class CsvRecordNumberDriver  extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.csv.record_number";
+    public static final String TARGET_NAME = "windgate.csv.record_number"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

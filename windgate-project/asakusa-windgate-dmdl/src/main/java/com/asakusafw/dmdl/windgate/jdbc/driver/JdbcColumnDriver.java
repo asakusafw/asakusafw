@@ -38,12 +38,12 @@ public class JdbcColumnDriver extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.jdbc.column";
+    public static final String TARGET_NAME = "windgate.jdbc.column"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "name";
+    public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

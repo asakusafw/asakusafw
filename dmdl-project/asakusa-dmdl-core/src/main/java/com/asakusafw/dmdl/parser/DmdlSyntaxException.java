@@ -68,13 +68,13 @@ public class DmdlSyntaxException extends Exception {
         ParseFrame[] frames = parser.getFrames();
         if (frames.length == 0) {
             return MessageFormat.format(
-                    "Invalid DMDL Script {0}: {1}",
+                    Messages.getString("DmdlSyntaxException.errorUnknownSyntaxError"), //$NON-NLS-1$
                     parser.getSourceFile(),
                     getReason(exception, parser));
         } else {
             ParseFrame top = frames[0];
             return MessageFormat.format(
-                    "Invalid DMDL Script {0} in the grammar: {1} (in \"{2}\")",
+                    Messages.getString("DmdlSyntaxException.errorGrammerSyntaxError"), //$NON-NLS-1$
                     parser.getSourceFile(),
                     getReason(exception, parser),
                     top.getRuleName());
@@ -87,7 +87,7 @@ public class DmdlSyntaxException extends Exception {
         Token token = parser.getToken(1);
         if (token.kind == UNEXPECTED) {
             return MessageFormat.format(
-                    "invalid token: \"{0}\"",
+                    Messages.getString("DmdlSyntaxException.reasonInvalidToken"), //$NON-NLS-1$
                     token.image);
         }
         for (int[] sequence : exception.expectedTokenSequences) {
@@ -98,12 +98,23 @@ public class DmdlSyntaxException extends Exception {
             int next = sequence[0];
             if (next == END_OF_DECLARATION) {
                 return MessageFormat.format(
-                        "missing {0}?",
+                        Messages.getString("DmdlSyntaxException.reasonMayMissingToken"), //$NON-NLS-1$
                         exception.tokenImage[END_OF_DECLARATION]);
             }
         }
+        if (exception.expectedTokenSequences.length == 1) {
+            int[] sequece = exception.expectedTokenSequences[0];
+            if (sequece.length != 0 && 0 <= sequece[0] && sequece[0] < tokenImage.length) {
+                String image = tokenImage[sequece[0]];
+                if (image.startsWith("\"") && image.endsWith("\"")) {
+                    return MessageFormat.format(
+                            Messages.getString("DmdlSyntaxException.reasonMayMissingToken"), //$NON-NLS-1$
+                            image);
+                }
+            }
+        }
         if (token.kind == EOF) {
-            return "unexpected EOF";
+            return Messages.getString("DmdlSyntaxException.reasonUnexpectedEof"); //$NON-NLS-1$
         }
         if (token.image == null || token.image.isEmpty()) {
             return exception.tokenImage[token.kind];
