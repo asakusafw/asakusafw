@@ -27,6 +27,23 @@ then
     done
 fi
 
+if [ "$_OPT_BATCH_ID" != "" -a -d "$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib" ]
+then
+    _OPT_LIBRARIES_PATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib"
+    for f in $(ls "$_OPT_LIBRARIES_PATH")
+    do
+        if [ -f "$_OPT_LIBRARIES_PATH/$f" ]
+        then
+            if [ "$_TGC_LIBJARS" = "" ]
+            then
+                _TGC_LIBJARS="$_OPT_LIBRARIES_PATH/$f"
+            else
+                _TGC_LIBJARS="$_TGC_LIBJARS,$_OPT_LIBRARIES_PATH/$f"
+            fi
+        fi
+    done
+fi
+
 if [ -d "$ASAKUSA_HOME/ext/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/ext/lib")
