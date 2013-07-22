@@ -46,7 +46,7 @@ public class BranchOperatorProcessor extends AbstractOperatorProcessor {
         }
         List<VariableElement> constants = Collections.emptyList();
         if (a.getReturnType().isEnum() == false) {
-            a.error("分岐演算子は戻り値に列挙型を指定する必要があります");
+            a.error("分岐演算子は戻り値にpublicで宣言された列挙型を指定する必要があります");
         } else {
             constants = a.getReturnType().getEnumConstants();
             if (constants.isEmpty()) {

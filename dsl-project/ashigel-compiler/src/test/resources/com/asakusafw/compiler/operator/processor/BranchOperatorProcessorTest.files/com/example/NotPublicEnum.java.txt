@@ -1,0 +1,39 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NotPublicEnum {
+
+    enum ExampleEnum {
+    
+        /**
+         * 高い。
+         */
+        HIGH,
+    
+        /**
+         * 中間。
+         */
+        MIDDLE,
+    
+        /**
+         * 低い。
+         */
+        LOW,
+    }
+
+    @Branch
+    public ExampleEnum example(MockHoge hoge) {
+        if (hoge.getValue() > 100) {
+            return ExampleEnum.HIGH;
+        }
+        else if (hoge.getValue() > 50) {
+            return ExampleEnum.MIDDLE;
+        }
+        return ExampleEnum.LOW;
+    }
+}
