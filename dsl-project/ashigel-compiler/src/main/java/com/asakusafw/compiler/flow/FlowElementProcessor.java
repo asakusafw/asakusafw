@@ -74,6 +74,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
 
     /**
      * 処理の文脈の基底となるクラス。
+     * @since 0.1.0
+     * @version 0.5.1
      */
     public abstract static class AbstractProcessorContext implements FlowElementAttributeProvider {
 
@@ -283,12 +285,25 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
          */
         public Expression createField(java.lang.reflect.Type type, String name) {
+            return createField(type, name, null);
+        }
+
+        /**
+         * Put a new field declaration into the current context.
+         * @param type field type
+         * @param name field name
+         * @param init field initialization expression (nullable)
+         * @return an expression to access the created field
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         * @since 0.5.1
+         */
+        public Expression createField(java.lang.reflect.Type type, String name, Expression init) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
             return addField(
                     importer.toType(type),
                     name,
-                    null);
+                    init);
         }
 
         /**

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.runtime.report;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
@@ -26,6 +27,7 @@ import com.asakusafw.runtime.core.Report.Level;
 /**
  * Report API via Commons Logging.
  * @since 0.2.6
+ * @version 0.5.1
  */
 public class CommonsLoggingReport extends Report.Delegate {
 
@@ -48,4 +50,16 @@ public class CommonsLoggingReport extends Report.Delegate {
         }
     }
 
+    @Override
+    protected void report(Level level, String message, Throwable throwable) throws IOException {
+        if (level == Level.ERROR) {
+            LOG.error(message, throwable);
+        } else if (level == Level.WARN) {
+            LOG.warn(message, throwable);
+        } else if (level == Level.INFO) {
+            LOG.info(message, throwable);
+        } else {
+            LOG.fatal(MessageFormat.format("Unknown level \"{0}\": {1}", level, message), throwable);
+        }
+    }
 }

@@ -27,13 +27,15 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @param <VALUEIN> 入力する値の種類
  * @param <KEYOUT> 出力するキーの種類
  * @param <VALUEOUT> 出力する値の種類
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public abstract class SegmentedReducer<
         KEYIN extends SegmentedWritable,
         VALUEIN extends SegmentedWritable,
         KEYOUT extends Writable,
         VALUEOUT extends Writable>
-        extends Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
+        extends ReducerWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
 
     /**
      * {@link #getRendezvous(SegmentedWritable)}のメソッド名。

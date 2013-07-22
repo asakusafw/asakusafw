@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
@@ -30,6 +29,7 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
@@ -38,8 +38,9 @@ import com.asakusafw.runtime.util.VariableTable;
  * Mapper which directly creates file for direct output.
  * @param <T> target data type
  * @since 0.4.0
+ * @version 0.5.1
  */
-public abstract class AbstractNoReduceDirectOutputMapper<T> extends Mapper<
+public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRuntimeResource<
         Object, T,
         Object, Object> {
 
@@ -88,7 +89,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends Mapper<
     }
 
     @Override
-    public void run(Context context) throws IOException, InterruptedException {
+    protected void runInternal(Context context) throws IOException, InterruptedException {
         if (context.nextKeyValue() == false) {
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(

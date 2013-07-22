@@ -18,7 +18,9 @@ package com.asakusafw.compiler.flow.mapreduce.parallel;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +34,11 @@ import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.collector.SlotDirectMapper;
 import com.asakusafw.runtime.stage.collector.SlotDistributor;
 import com.asakusafw.runtime.stage.collector.SortableSlot;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -55,7 +59,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 /**
  * parallel reduceを行うマッパークラスを出力ごとに生成する。
  * @since 0.1.0
- * @version 0.2.4
+ * @version 0.5.1
  */
 final class ParallelSortMapperEmitter {
 
@@ -108,6 +112,10 @@ final class ParallelSortMapperEmitter {
 
         private final ResolvedSlot slot;
 
+        private final FlowCompilingEnvironment environment;
+
+        private final String moduleId;
+
         private final ModelFactory factory;
 
         private final ImportBuilder importer;
@@ -116,6 +124,8 @@ final class ParallelSortMapperEmitter {
             assert envinronment != null;
             assert moduleId != null;
             assert slot != null;
+            this.environment = envinronment;
+            this.moduleId = moduleId;
             this.slot = slot;
             this.factory = envinronment.getModelFactory();
             Name packageName = Models.append(
@@ -145,6 +155,7 @@ final class ParallelSortMapperEmitter {
                         .text("Mapper for output \"{0}\" in epilogue phase.", slot.getSource().getOutputName())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .toAttributes(),
                     name,
@@ -152,6 +163,14 @@ final class ParallelSortMapperEmitter {
                     importer.toType(SlotDirectMapper.class),
                     Collections.<Type>emptyList(),
                     Collections.singletonList(createOutputName()));
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            return results;
         }
 
         private MethodDeclaration createOutputName() {

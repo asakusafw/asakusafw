@@ -17,7 +17,9 @@ package com.asakusafw.compiler.flow.mapreduce.copy;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +30,11 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.preparator.PreparatorMapper;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -50,6 +54,7 @@ import com.asakusafw.utils.java.model.util.Models;
 /**
  * Generates copier mappers.
  * @since 0.2.5
+ * @version 0.5.1
  */
 final class CopierMapperEmitter {
 
@@ -96,6 +101,12 @@ final class CopierMapperEmitter {
 
     private static class Engine {
 
+        private final FlowCompilingEnvironment environment;
+
+        private final String moduleId;
+
+        private final boolean prologue;
+
         private final CopyDescription slot;
 
         private final ModelFactory factory;
@@ -106,6 +117,9 @@ final class CopierMapperEmitter {
             assert envinronment != null;
             assert moduleId != null;
             assert slot != null;
+            this.environment = envinronment;
+            this.moduleId = moduleId;
+            this.prologue = prologue;
             this.slot = slot;
             this.factory = envinronment.getModelFactory();
             Name packageName = Models.append(
@@ -137,6 +151,7 @@ final class CopierMapperEmitter {
                         .text("Mapper for input \"{0}\" in prologue phase.", slot.getName())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .toAttributes(),
                     name,
@@ -146,6 +161,18 @@ final class CopierMapperEmitter {
                             importer.toType(slot.getDataModel().getType())),
                     Collections.<Type>emptyList(),
                     Collections.singletonList(createOutputName()));
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            if (prologue) {
+                results.put("stageId", Models.toLiteral(factory, Naming.getPrologueName(moduleId)));
+            } else {
+                results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            }
+            return results;
         }
 
         private MethodDeclaration createOutputName() {

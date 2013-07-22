@@ -24,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +33,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
 import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
@@ -44,7 +42,6 @@ import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -85,6 +82,11 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     static final String OPT_END = "end";
 
     static final String OPT_ONESHOT = "oneshot";
+
+    @Override
+    public String getId() {
+        return MODULE_NAME;
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -148,7 +150,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         if (context.getOutputs().isEmpty()) {
             return Collections.emptyList();
         }
@@ -172,7 +174,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 resolved,
                 getEnvironment().getEpilogueLocation(MODULE_NAME));
 
-        return Collections.singletonList(stage);
+        return Collections.singletonList(new ExternalIoStage(getId(), stage, context.getOutputContext()));
     }
 
     private Slot toSlot(Output output) {
@@ -365,21 +367,47 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public ExternalIoCommandProvider createCommandProvider(IoContext context) {
-        Set<String> importers = Sets.create();
+        Map<String, IoContextBuilder> importers = Maps.create();
         for (Input input : context.getInputs()) {
             WindGateImporterDescription desc = extract(input.getDescription());
-            importers.add(desc.getProfileName());
+            add(importers, desc.getProfileName(), input);
         }
-        Set<String> exporters = Sets.create();
+        Map<String, IoContextBuilder> exporters = Maps.create();
         for (Output output : context.getOutputs()) {
             WindGateExporterDescription desc = extract(output.getDescription());
-            exporters.add(desc.getProfileName());
+            add(exporters, desc.getProfileName(), output);
         }
         return new CommandProvider(
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId(),
-                importers,
-                exporters);
+                build(importers),
+                build(exporters));
+    }
+
+    private void add(Map<String, IoContextBuilder> targets, String target, Input input) {
+        IoContextBuilder builder = targets.get(target);
+        if (builder == null) {
+            builder = new IoContextBuilder();
+            targets.put(target, builder);
+        }
+        builder.addInput(input);
+    }
+
+    private void add(Map<String, IoContextBuilder> targets, String target, Output output) {
+        IoContextBuilder builder = targets.get(target);
+        if (builder == null) {
+            builder = new IoContextBuilder();
+            targets.put(target, builder);
+        }
+        builder.addOutput(output);
+    }
+
+    private Map<String, IoContext> build(Map<String, IoContextBuilder> builders) {
+        Map<String, IoContext> results = new TreeMap<String, IoContext>();
+        for (Map.Entry<String, IoContextBuilder> entry : builders.entrySet()) {
+            results.put(entry.getKey(), entry.getValue().build());
+        }
+        return results;
     }
 
     static ExternalIoCommandProvider findRelated(List<ExternalIoCommandProvider> commands) {
@@ -412,19 +440,20 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
         private final String flowId;
 
-        private final Set<String> importers;
+        private final Map<String, IoContext> importers;
 
-        private final Set<String> exporters;
+        private final Map<String, IoContext> exporters;
 
-        CommandProvider(String batchId, String flowId, Set<String> importers, Set<String> exporters) {
+        CommandProvider(
+                String batchId, String flowId, Map<String, IoContext> importers, Map<String, IoContext> exporters) {
             assert batchId != null;
             assert flowId != null;
             assert importers != null;
             assert exporters != null;
             this.batchId = batchId;
             this.flowId = flowId;
-            this.importers = new TreeSet<String>(importers);
-            this.exporters = new TreeSet<String>(exporters);
+            this.importers = new TreeMap<String, IoContext>(importers);
+            this.exporters = new TreeMap<String, IoContext>(exporters);
         }
 
         @Override
@@ -435,11 +464,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         @Override
         public List<Command> getImportCommand(CommandContext context) {
             List<Command> results = Lists.create();
-            for (String profile : importers) {
+            for (Map.Entry<String, IoContext> entry : importers.entrySet()) {
+                String profile = entry.getKey();
                 List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_PROCESS);
                 commands.add(profile);
-                if (exporters.contains(profile)) {
+                if (exporters.containsKey(profile)) {
                     commands.add(OPT_BEGIN);
                 } else {
                     commands.add(OPT_ONESHOT);
@@ -450,10 +480,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 commands.add(context.getExecutionId());
                 commands.add(context.getVariableList());
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        entry.getValue().getInputContext()));
             }
             return results;
         }
@@ -461,11 +493,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         @Override
         public List<Command> getExportCommand(CommandContext context) {
             List<Command> results = Lists.create();
-            for (String profile : exporters) {
+            for (Map.Entry<String, IoContext> entry : exporters.entrySet()) {
+                String profile = entry.getKey();
                 List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_PROCESS);
                 commands.add(profile);
-                if (importers.contains(profile)) {
+                if (importers.containsKey(profile)) {
                     commands.add(OPT_END);
                 } else {
                     commands.add(OPT_ONESHOT);
@@ -476,21 +509,28 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 commands.add(context.getExecutionId());
                 commands.add(context.getVariableList());
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        entry.getValue().getOutputContext()));
             }
             return results;
         }
 
         @Override
         public List<Command> getFinalizeCommand(CommandContext context) {
-            SortedSet<String> union = new TreeSet<String>();
-            union.addAll(importers);
-            union.addAll(exporters);
+            Map<String, IoContextBuilder> union = new TreeMap<String, IoContextBuilder>();
+            for (Map.Entry<String, IoContext> entry : importers.entrySet()) {
+                add(union, entry.getKey(), entry.getValue());
+            }
+            for (Map.Entry<String, IoContext> entry : exporters.entrySet()) {
+                add(union, entry.getKey(), entry.getValue());
+            }
             List<Command> results = Lists.create();
-            for (String profile : union) {
+            for (Map.Entry<String, IoContextBuilder> entry : union.entrySet()) {
+                String profile = entry.getKey();
                 List<String> commands = Lists.create();
                 commands.add(context.getHomePathPrefix() + CMD_FINALIZE);
                 commands.add(profile);
@@ -498,12 +538,28 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 commands.add(flowId);
                 commands.add(context.getExecutionId());
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        entry.getValue().build()));
             }
             return results;
+        }
+
+        private void add(Map<String, IoContextBuilder> union, String key, IoContext value) {
+            IoContextBuilder builder = union.get(key);
+            if (builder == null) {
+                builder = new IoContextBuilder();
+                union.put(key, builder);
+            }
+            for (Input input : value.getInputs()) {
+                builder.addInput(input);
+            }
+            for (Output output : value.getOutputs()) {
+                builder.addOutput(output);
+            }
         }
 
         private Map<String, String> getEnvironment(CommandContext context) {

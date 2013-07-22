@@ -18,10 +18,11 @@ package com.asakusafw.compiler.flow.stage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,8 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -106,6 +109,10 @@ public class MapperEmitter {
 
     private static class Engine {
 
+        private final FlowCompilingEnvironment environment;
+
+        private final StageModel model;
+
         private final StageModel.MapUnit unit;
 
         private final ModelFactory factory;
@@ -126,8 +133,11 @@ public class MapperEmitter {
                 FlowCompilingEnvironment environment,
                 StageModel model,
                 StageModel.MapUnit unit) {
+            assert environment != null;
             assert model != null;
             assert unit != null;
+            this.environment = environment;
+            this.model = model;
             this.unit = unit;
             this.factory = environment.getModelFactory();
             Name packageName = environment.getStagePackageName(
@@ -177,6 +187,7 @@ public class MapperEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .annotation(t(SuppressWarnings.class), v("deprecation"))
                         .Public()
                         .Final()
@@ -184,7 +195,7 @@ public class MapperEmitter {
                     name,
                     Collections.<TypeParameterDeclaration>emptyList(),
                     importer.resolve(factory.newParameterizedType(
-                            Models.toType(factory, Mapper.class),
+                            Models.toType(factory, MapperWithRuntimeResource.class),
                             Arrays.asList(
                                     t(NullWritable.class),
                                     inputType,
@@ -192,6 +203,15 @@ public class MapperEmitter {
                                     fragments.getShuffleValueType()))),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
+            results.put("stageUnitId", Models.toLiteral(factory, "m" + unit.getSerialNumber()));
+            return results;
         }
 
         private FieldDeclaration createCache() {
@@ -276,7 +296,7 @@ public class MapperEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("run"),
+                    factory.newSimpleName("runInternal"),
                     Collections.singletonList(factory.newFormalParameterDeclaration(
                             factory.newNamedType(factory.newSimpleName("Context")),
                             context)),

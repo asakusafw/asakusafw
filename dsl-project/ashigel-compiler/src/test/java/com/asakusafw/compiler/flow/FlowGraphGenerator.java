@@ -57,11 +57,11 @@ public class FlowGraphGenerator {
 
     private static final Class<String> TYPE = String.class;
 
-    private List<FlowIn<?>> flowInputs = Lists.create();
+    private final List<FlowIn<?>> flowInputs = Lists.create();
 
-    private List<FlowOut<?>> flowOutputs = Lists.create();
+    private final List<FlowOut<?>> flowOutputs = Lists.create();
 
-    private Map<String, FlowElement> elements = Maps.create();
+    private final Map<String, FlowElement> elements = Maps.create();
 
     /**
      * 入力要素を追加する。
@@ -100,13 +100,30 @@ public class FlowGraphGenerator {
             String inputList,
             String outputList,
             FlowElementAttribute... attributes) {
+        Class<String> type = TYPE;
+        return defineOperator(type, name, inputList, outputList, attributes);
+    }
+
+    /**
+     * Defines a new operator and registers into this generator.
+     * @param type target operator type
+     * @param name target name
+     * @param inputList target input names
+     * @param outputList target output names
+     * @param attributes operator attributes
+     * @return the defined element
+     */
+    public FlowElement defineOperator(
+            Class<?> type, String name,
+            String inputList, String outputList,
+            FlowElementAttribute... attributes) {
         List<FlowElementPortDescription> inputs = parsePorts(PortDirection.INPUT, inputList);
         List<FlowElementPortDescription> outputs = parsePorts(PortDirection.OUTPUT, outputList);
         FlowElementDescription desc = new OperatorDescription(
                 new OperatorDescription.Declaration(
                         Identity.class,
-                        TYPE,
-                        TYPE,
+                        type,
+                        type,
                         name,
                         Collections.<Class<?>>emptyList()),
                 inputs,

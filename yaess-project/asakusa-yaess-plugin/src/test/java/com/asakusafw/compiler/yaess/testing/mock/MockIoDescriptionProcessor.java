@@ -25,6 +25,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -38,6 +39,11 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  * Mock implementation for {@link ExternalIoDescriptionProcessor}.
  */
 public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
+
+    @Override
+    public String getId() {
+        return "mock";
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -62,19 +68,20 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
         ModelFactory f = getEnvironment().getModelFactory();
-        return Arrays.asList(new CompiledStage(
+        return Arrays.asList(new ExternalIoStage(getId(), new CompiledStage(
                 Models.toName(f, "com.example.MockPrologue"),
-                "prologue"));
+                "prologue"),
+                context.getInputContext()));
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         ModelFactory f = getEnvironment().getModelFactory();
-        return Arrays.asList(new CompiledStage(
+        return Arrays.asList(new ExternalIoStage(getId(), new CompiledStage(
                 Models.toName(f, "com.example.MockEpilogue"),
-                "epilogue"));
+                "epilogue"), context.getOutputContext()));
     }
 
     @Override
@@ -94,36 +101,36 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
         @Override
         public List<Command> getInitializeCommand(CommandContext context) {
             return Arrays.asList(new Command[] {
-                    new Command(Arrays.asList(new String[] {
+                    new Command("initialize", Arrays.asList(new String[] {
                             "initialize",
-                    }), "mock", null, Collections.<String, String>emptyMap())
+                    }), "mock", null, Collections.<String, String>emptyMap(), IoContext.EMPTY)
             });
         }
 
         @Override
         public List<Command> getImportCommand(CommandContext context) {
             return Arrays.asList(new Command[] {
-                    new Command(Arrays.asList(new String[] {
+                    new Command("import", Arrays.asList(new String[] {
                             "import",
-                    }), "mock", "mock", Collections.<String, String>emptyMap())
+                    }), "mock", "mock", Collections.<String, String>emptyMap(), IoContext.EMPTY)
             });
         }
 
         @Override
         public List<Command> getExportCommand(CommandContext context) {
             return Arrays.asList(new Command[] {
-                    new Command(Arrays.asList(new String[] {
+                    new Command("export", Arrays.asList(new String[] {
                             "export",
-                    }), "mock", "mock", Collections.<String, String>emptyMap())
+                    }), "mock", "mock", Collections.<String, String>emptyMap(), IoContext.EMPTY)
             });
         }
 
         @Override
         public List<Command> getFinalizeCommand(CommandContext context) {
             return Arrays.asList(new Command[] {
-                    new Command(Arrays.asList(new String[] {
+                    new Command("finalize", Arrays.asList(new String[] {
                             "finalize",
-                    }), "mock", null, Collections.<String, String>emptyMap())
+                    }), "mock", null, Collections.<String, String>emptyMap(), IoContext.EMPTY)
             });
         }
     }

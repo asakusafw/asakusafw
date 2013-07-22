@@ -41,6 +41,8 @@ public void updateWithReport(Hoge hoge) {
     }
 }
 </code></pre>
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public final class Report {
 
@@ -100,6 +102,25 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     }
 
     /**
+     * ジョブフロー全体の終了状態に影響のない「情報」レポートを通知する。
+     * <p>
+     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
+     * </p>
+     * @param message 通知するメッセージ
+     * @param throwable 例外情報 (省略可能)
+     * @throws Report.FailedException レポートの通知に失敗した場合
+     * @see Report
+     * @since 0.5.1
+     */
+    public static void info(String message, Throwable throwable) {
+        try {
+            DELEGATE.get().report(Level.INFO, message, throwable);
+        } catch (IOException e) {
+            throw new FailedException(e);
+        }
+    }
+
+    /**
      * ジョブフロー全体の終了状態を警告状態以上にする「警告」レポートを通知する。
      * <p>
      * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
@@ -111,6 +132,25 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     public static void warn(String message) {
         try {
             DELEGATE.get().report(Level.WARN, message);
+        } catch (IOException e) {
+            throw new FailedException(e);
+        }
+    }
+
+    /**
+     * ジョブフロー全体の終了状態を警告状態以上にする「警告」レポートを通知する。
+     * <p>
+     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
+     * </p>
+     * @param message 通知するメッセージ
+     * @param throwable 例外情報 (省略可能)
+     * @throws Report.FailedException レポートの通知に失敗した場合
+     * @see Report
+     * @since 0.5.1
+     */
+    public static void warn(String message, Throwable throwable) {
+        try {
+            DELEGATE.get().report(Level.WARN, message, throwable);
         } catch (IOException e) {
             throw new FailedException(e);
         }
@@ -132,6 +172,29 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     public static void error(String message) {
         try {
             DELEGATE.get().report(Level.ERROR, message);
+        } catch (IOException e) {
+            throw new FailedException(e);
+        }
+    }
+
+    /**
+     * ジョブフロー全体の終了状態を異常状態にする「エラー」レポートを通知する。
+     * <p>
+     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
+     * </p>
+     * <p>
+     * このレポート通知を行った後も、処理は継続される。
+     * 処理を即座に終了させる場合には、演算子内で適切な例外をスローすること。
+     * </p>
+     * @param message 通知するメッセージ
+     * @param throwable 例外情報 (省略可能)
+     * @throws Report.FailedException レポートの通知に失敗した場合
+     * @see Report
+     * @since 0.5.1
+     */
+    public static void error(String message, Throwable throwable) {
+        try {
+            DELEGATE.get().report(Level.ERROR, message, throwable);
         } catch (IOException e) {
             throw new FailedException(e);
         }
@@ -186,6 +249,8 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
 
     /**
      * {@link Report}クラスの実体。
+     * @since 0.1.0
+     * @version 0.5.1
      */
     public abstract static class Delegate implements RuntimeResource {
 
@@ -206,6 +271,18 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
          * @throws IOException レポートの通知に失敗した場合
          */
         protected abstract void report(Level level, String message) throws IOException;
+
+        /**
+         * Notifies a report.
+         * @param level report level
+         * @param message report message
+         * @param throwable optional exception info (nullable)
+         * @throws IOException if failed to notify this report by I/O error
+         * @since 0.5.1
+         */
+        protected void report(Level level, String message, Throwable throwable) throws IOException {
+            report(level, message);
+        }
     }
 
     /**
@@ -266,12 +343,13 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
 
     /**
      * {@link Report.Delegate}の標準的な実装。
+     * @since
+     * @version 0.5.1
      */
     public static class Default extends Delegate {
 
         @Override
         protected void report(Level level, String message) {
-
             switch (level) {
             case INFO:
                 System.out.println(message);
@@ -283,6 +361,30 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
             case ERROR:
                 System.err.println(message);
                 new Exception("Error").printStackTrace();
+                break;
+            default:
+                throw new AssertionError(MessageFormat.format(
+                        "[{0}] {1}",
+                        level,
+                        message));
+            }
+        }
+
+        @Override
+        protected void report(Level level, String message, Throwable throwable) {
+            switch (level) {
+            case INFO:
+                System.out.println(message);
+                if (throwable != null) {
+                    throwable.printStackTrace(System.out);
+                }
+                break;
+            case WARN:
+            case ERROR:
+                System.err.println(message);
+                if (throwable != null) {
+                    throwable.printStackTrace(System.err);
+                }
                 break;
             default:
                 throw new AssertionError(MessageFormat.format(

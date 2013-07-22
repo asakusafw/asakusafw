@@ -301,6 +301,8 @@ Javaの公開メソッドに演算子注釈と呼ばれる注釈を指定した�
 
 ..  [#] :javadoc:`com.asakusafw.runtime.core.BatchContext`
 
+.. _dsl-report-api:
+
 レポートAPI
 ~~~~~~~~~~~
 レポートAPIは、バッチ実行時に発生したエラーや警告などをレポートする仕組みを提供します。
