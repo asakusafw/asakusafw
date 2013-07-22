@@ -38,7 +38,7 @@ public abstract class ModelAttributeDriver extends AttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     declaration.getOriginalAst(),
-                    "@{0} is only for data models",
+                    Messages.getString("ModelAttributeDriver.diagnosticInvalidAttribute"), //$NON-NLS-1$
                     getTargetName()));
             return;
         }

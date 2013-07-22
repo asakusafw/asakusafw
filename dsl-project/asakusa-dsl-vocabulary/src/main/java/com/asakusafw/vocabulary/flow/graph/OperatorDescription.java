@@ -31,8 +31,12 @@ import com.asakusafw.vocabulary.flow.Source;
 
 /**
  * フローから利用される演算子の定義を表現する。
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public class OperatorDescription implements FlowElementDescription {
+
+    private final FlowElementDescription origin;
 
     private final Declaration declaration;
 
@@ -65,6 +69,29 @@ public class OperatorDescription implements FlowElementDescription {
             List<FlowResourceDescription> resources,
             List<Parameter> parameters,
             List<FlowElementAttribute> attributes) {
+        this(null, declaration, inputPorts, outputPorts, resources, parameters, attributes);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param origin the original description (nullable)
+     * @param declaration the original method declaration information
+     * @param inputPorts input port descriptions
+     * @param outputPorts output port descriptions
+     * @param resources related resource descriptions
+     * @param parameters parameters and their arguments
+     * @param attributes attributes for this operator
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public OperatorDescription(
+            FlowElementDescription origin,
+            Declaration declaration,
+            List<FlowElementPortDescription> inputPorts,
+            List<FlowElementPortDescription> outputPorts,
+            List<FlowResourceDescription> resources,
+            List<Parameter> parameters,
+            List<FlowElementAttribute> attributes) {
         if (declaration == null) {
             throw new IllegalArgumentException("declaration must not be null"); //$NON-NLS-1$
         }
@@ -83,6 +110,7 @@ public class OperatorDescription implements FlowElementDescription {
         if (attributes == null) {
             throw new IllegalArgumentException("attributes must not be null"); //$NON-NLS-1$
         }
+        this.origin = origin == null ? this : origin;
         this.declaration = declaration;
         this.inputPorts = Collections.unmodifiableList(new ArrayList<FlowElementPortDescription>(inputPorts));
         this.outputPorts = Collections.unmodifiableList(new ArrayList<FlowElementPortDescription>(outputPorts));
@@ -97,6 +125,11 @@ public class OperatorDescription implements FlowElementDescription {
     @Override
     public FlowElementKind getKind() {
         return FlowElementKind.OPERATOR;
+    }
+
+    @Override
+    public FlowElementDescription getOrigin() {
+        return origin;
     }
 
     /**
@@ -358,8 +391,12 @@ public class OperatorDescription implements FlowElementDescription {
 
     /**
      * この要素を構築するビルダー。
+     * @since 0.1.0
+     * @version 0.5.1
      */
     public static class Builder {
+
+        private FlowElementDescription origin;
 
         private final Class<? extends Annotation> annotationType;
 
@@ -430,6 +467,14 @@ public class OperatorDescription implements FlowElementDescription {
             this.implementing = implementorClass;
             this.name = methodName;
             return this;
+        }
+
+        /**
+         * Sets the original description for the building description.
+         * @param origin the original description, or {@code null} if the building one is the origin
+         */
+        public void setOrigin(FlowElementDescription origin) {
+            this.origin = origin;
         }
 
         /**
@@ -626,6 +671,7 @@ public class OperatorDescription implements FlowElementDescription {
          */
         public OperatorDescription toDescription() {
             return new OperatorDescription(
+                    origin,
                     new Declaration(
                             annotationType,
                             declaring,

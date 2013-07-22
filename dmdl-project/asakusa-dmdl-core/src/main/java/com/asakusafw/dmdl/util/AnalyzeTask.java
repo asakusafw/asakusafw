@@ -77,28 +77,28 @@ public class AnalyzeTask {
         }
         DmdlAnalyzer analyzer = parse(repository);
         try {
-            LOG.info("モデルの内容を解析します");
+            LOG.info(Messages.getString("AnalyzeTask.monitorResolveStarting")); //$NON-NLS-1$
             return analyzer.resolve();
         } catch (DmdlSemanticException e) {
-            LOG.error("モデルの解析に失敗しました", e);
+            LOG.error(Messages.getString("AnalyzeTask.monitorResolveFailed"), e); //$NON-NLS-1$
             for (Diagnostic diagnostic : e.getDiagnostics()) {
                 switch (diagnostic.level) {
                 case INFO:
-                    LOG.info("{} ({})", diagnostic.message, diagnostic.region);
+                    LOG.info("{} ({})", diagnostic.message, diagnostic.region); //$NON-NLS-1$
                     break;
                 case WARN:
-                    LOG.warn("{} ({})", diagnostic.message, diagnostic.region);
+                    LOG.warn("{} ({})", diagnostic.message, diagnostic.region); //$NON-NLS-1$
                     break;
                 case ERROR:
-                    LOG.error("{} ({})", diagnostic.message, diagnostic.region);
+                    LOG.error("{} ({})", diagnostic.message, diagnostic.region); //$NON-NLS-1$
                     break;
                 default:
-                    LOG.warn("[INTERNAL ERROR] Unknown Diagnostic Kind: {}", diagnostic);
+                    LOG.warn(Messages.getString("AnalyzeTask.monitorUnknownDiagnostic"), diagnostic); //$NON-NLS-1$
                     break;
                 }
             }
             throw new IOException(MessageFormat.format(
-                    "モデル構造の解析中にエラーが発生したため、{0}を中止します",
+                    Messages.getString("AnalyzeTask.errorResolve"), //$NON-NLS-1$
                     processName));
         }
     }
@@ -115,35 +115,35 @@ public class AnalyzeTask {
         try {
             while (cursor.next()) {
                 URI name = cursor.getIdentifier();
-                LOG.info("DMDLスクリプトを解析します: {}", name);
+                LOG.info(Messages.getString("AnalyzeTask.monitorParseStarting"), name); //$NON-NLS-1$
                 Reader resource = cursor.openResource();
                 try {
                     AstScript script = parser.parse(resource, name);
                     for (AstModelDefinition<?> model : script.models) {
-                        LOG.info("モデルを追加します: {}", model.name);
+                        LOG.info(Messages.getString("AnalyzeTask.monitorFoundModel"), model.name); //$NON-NLS-1$
                         analyzer.addModel(model);
                         count++;
                     }
                 } catch (DmdlSyntaxException e) {
                     LOG.error(MessageFormat.format(
-                            "{0}の解析に失敗しました",
+                            Messages.getString("AnalyzeTask.monitorParseFailed"), //$NON-NLS-1$
                             name), e);
                     green = false;
                 } finally {
                     resource.close();
                 }
             }
-            LOG.info("{}個のモデルが定義されています", count);
+            LOG.info(Messages.getString("AnalyzeTask.monitorCountModel"), count); //$NON-NLS-1$
         } finally {
             cursor.close();
         }
         if (green == false) {
             throw new IOException(MessageFormat.format(
-                    "DMDLスクリプトの解析中にエラーが発生したため、{0}を中止します",
+                    Messages.getString("AnalyzeTask.errorParse"), //$NON-NLS-1$
                     processName));
         }
         if (count == 0) {
-            throw new IOException("入力がありません");
+            throw new IOException(Messages.getString("AnalyzeTask.errorMissingModels")); //$NON-NLS-1$
         }
         return analyzer;
     }

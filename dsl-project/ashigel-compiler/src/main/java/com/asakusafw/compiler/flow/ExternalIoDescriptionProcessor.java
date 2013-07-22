@@ -17,6 +17,7 @@ package com.asakusafw.compiler.flow;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,8 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.OutputFormat;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
+import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -42,8 +44,17 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  * {@link ExporterDescription}は、常に{@link #getImporterDescriptionType()}
  * が返すクラスのサブクラスであることが保証される。
  * </p>
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnvironment.Initialized {
+
+    /**
+     * Returns the ID of this processor.
+     * @return the processor ID
+     * @since 0.5.1
+     */
+    public abstract String getId();
 
     /**
      * このプロセッサが対象とする{@link ImporterDescription}の種類を返す。
@@ -87,7 +98,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      * @return 前処理を実行するクライアントプログラムの一覧
      * @throws IOException プログラムの出力に失敗した場合
      */
-    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
         return Collections.emptyList();
     }
 
@@ -100,7 +111,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      * @return 後処理を実行するクライアントプログラムの一覧
      * @throws IOException プログラムの出力に失敗した場合
      */
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         return Collections.emptyList();
     }
 
@@ -127,8 +138,17 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
 
     /**
      * IOに関する文脈情報。
+     * @since 0.1.0
+     * @version 0.5.1
      */
     public static class IoContext {
+
+        /**
+         * An empty instance.
+         * @since 0.5.1
+         */
+        public static final IoContext EMPTY =
+                new IoContext(Collections.<Input>emptyList(), Collections.<Output>emptyList());
 
         private final List<Input> inputs;
 
@@ -159,6 +179,61 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          */
         public List<Output> getOutputs() {
             return outputs;
+        }
+
+        /**
+         * Returns a new instance which only has inputs' information.
+         * @return the created instance
+         */
+        public IoContext getInputContext() {
+            return new IoContext(inputs, Collections.<Output>emptyList());
+        }
+
+        /**
+         * Returns a new instance which only has outputs' information.
+         * @return the created instance
+         */
+        public IoContext getOutputContext() {
+            return new IoContext(Collections.<Input>emptyList(), outputs);
+        }
+    }
+
+    /**
+     * A builder for {@link IoContext}.
+     * @since 0.5.1
+     */
+    public static class IoContextBuilder {
+
+        private final Set<Input> inputs = new LinkedHashSet<Input>();
+
+        private final Set<Output> outputs = new LinkedHashSet<Output>();
+
+        /**
+         * Adds a new output.
+         * @param input the input information
+         * @return this
+         */
+        public IoContextBuilder addInput(Input input) {
+            inputs.add(input);
+            return this;
+        }
+
+        /**
+         * Adds a new output.
+         * @param output the output information
+         * @return this
+         */
+        public IoContextBuilder addOutput(Output output) {
+            outputs.add(output);
+            return this;
+        }
+
+        /**
+         * Creates a new instance.
+         * @return the created instance
+         */
+        public IoContext build() {
+            return new IoContext(Lists.from(inputs), Lists.from(outputs));
         }
     }
 

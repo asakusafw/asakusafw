@@ -74,7 +74,7 @@ public class Diagnostic {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}@{1}:{2}",
+                "{0}@{1}:{2}", //$NON-NLS-1$
                 level,
                 region,
                 message);

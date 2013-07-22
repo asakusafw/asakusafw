@@ -39,6 +39,11 @@ public class LoggingFilter extends FlowCompilingEnvironment.Initialized implemen
     static final Logger LOG = LoggerFactory.getLogger(LoggingFilter.class);
 
     @Override
+    public Phase getPhase() {
+        return Phase.EARLY_OPTIMIZE;
+    }
+
+    @Override
     public boolean rewrite(FlowGraph graph) throws RewriteException {
         if (getEnvironment().getOptions().isEnableDebugLogging()) {
             LOG.info("デバッグ用のロギング演算子は有効です");

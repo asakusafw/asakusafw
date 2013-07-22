@@ -217,15 +217,42 @@ public class JobflowExecutor {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
         if (context.isSkipRunJobflow() == false) {
-            File destDir = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
-            FileUtils.copyFileToDirectory(info.getPackageFile(), destDir);
-
+            deployApplication(info);
             CommandContext commands = context.getCommandContext();
             Map<String, String> dPropMap = createHadoopProperties(commands);
             TestExecutionPlan plan = createExecutionPlan(info, commands, dPropMap);
             executePlan(plan, info.getPackageFile());
         } else {
             LOG.info("フローの実行をスキップしました");
+        }
+    }
+
+    private void deployApplication(JobflowInfo info) throws IOException {
+        LOG.debug("Deploying application library: {}", info.getPackageFile());
+        File jobflowDest = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
+        FileUtils.copyFileToDirectory(info.getPackageFile(), jobflowDest);
+
+        File dependenciesDest = context.getLibrariesPackageLocation(info.getJobflow().getBatchId());
+        if (dependenciesDest.exists()) {
+            LOG.debug("Cleaning up dependency libraries: {}", dependenciesDest);
+            FileUtils.deleteDirectory(dependenciesDest);
+        }
+
+        File dependencies = context.getLibrariesPath();
+        if (dependencies.exists()) {
+            LOG.debug("Deplogying dependency libraries: {} -> {}", dependencies, dependenciesDest);
+            if (dependenciesDest.mkdirs() == false && dependenciesDest.isDirectory() == false) {
+                LOG.warn(MessageFormat.format(
+                        "フォルダの作成に失敗しました: {0}",
+                        dependenciesDest.getAbsolutePath()));
+            }
+            for (File file : dependencies.listFiles()) {
+                if (file.isFile() == false) {
+                    continue;
+                }
+                LOG.debug("Copying a library: {} -> {}", file, dependenciesDest);
+                FileUtils.copyFileToDirectory(file, dependenciesDest);
+            }
         }
     }
 
@@ -305,6 +332,8 @@ public class JobflowExecutor {
         // 各Hadoopジョブを実行した都度、hadoopコマンドの戻り値の検証を行う。
         for (Job job : jobs) {
             HadoopJobInfo jobElement = new HadoopJobInfo(
+                    context.getCurrentBatchId(),
+                    context.getCurrentFlowId(),
                     job.getExecutionId(),
                     jobflowPackageFile.getAbsolutePath(),
                     job.getClassName(),
@@ -330,6 +359,7 @@ public class JobflowExecutor {
         command.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
         command.add(hadoopJobInfo.getJarName());
         command.add(hadoopJobInfo.getClassName());
+        command.add(hadoopJobInfo.getBatchId());
 
         Map<String, String> dPropMap = hadoopJobInfo.getDPropMap();
         if (dPropMap != null) {
@@ -345,7 +375,7 @@ public class JobflowExecutor {
             throw new AssertionError(MessageFormat.format(
                     "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command={2})",
                     exitValue,
-                    hadoopJobInfo.getJobFlowId(),
+                    hadoopJobInfo.getExecutionId(),
                     command));
         }
     }

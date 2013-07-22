@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
 import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
@@ -84,13 +86,18 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final String MODULE_NAME = "bulkloader";
 
-    private static final String MODULE_NAME_PREFIX = "bulkloader.";
+    private static final String MODULE_NAME_PREFIX = MODULE_NAME + ".";
 
     private static final String CACHE_FEATURE_PREFIX = "bulkloader-cache.";
 
     private static final Location CACHE_HEAD_CONTENTS = new Location(null, CacheStorage.HEAD_DIRECTORY_NAME)
         .append(TemporaryOutputFormat.DEFAULT_FILE_NAME)
         .asPrefix();
+
+    @Override
+    public String getId() {
+        return MODULE_NAME;
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -259,7 +266,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         if (context.getOutputs().isEmpty()) {
             return Collections.emptyList();
         }
@@ -280,7 +287,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 resolved,
                 getEnvironment().getEpilogueLocation(MODULE_NAME));
 
-        return Collections.singletonList(stage);
+        return Collections.singletonList(new ExternalIoStage(getId(), stage, context.getOutputContext()));
     }
 
     private Slot toSlot(Output output) {
@@ -529,8 +536,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
     @Override
     public ExternalIoCommandProvider createCommandProvider(IoContext context) {
         String primary = null;
-        Set<String> targets = new TreeSet<String>();
-        Set<String> cacheUsers = new TreeSet<String>();
+        Map<String, IoContextBuilder> targets = new TreeMap<String, IoContextBuilder>();
+        Map<String, IoContextBuilder> caches = new TreeMap<String, IoContextBuilder>();
         for (Input input : context.getInputs()) {
             BulkLoadImporterDescription desc = extract(input.getDescription());
             String target = desc.getTargetName();
@@ -538,9 +545,9 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                 assert primary == null || primary.equals(target);
                 primary = target;
             }
-            targets.add(target);
+            add(targets, target, input);
             if (isCacheEnabled(input.getDescription())) {
-                cacheUsers.add(target);
+                add(caches, target, input);
             }
         }
         for (Output output : context.getOutputs()) {
@@ -548,17 +555,40 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
             String target = desc.getTargetName();
             assert primary == null || primary.equals(target);
             primary = target;
-            targets.add(target);
-        }
-        if (primary != null) {
-            targets.remove(primary);
+            add(targets, target, output);
         }
         return new CommandProvider(
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId(),
                 primary,
-                Lists.from(targets),
-                Lists.from(cacheUsers));
+                build(targets),
+                build(caches));
+    }
+
+    private void add(Map<String, IoContextBuilder> targets, String target, Input input) {
+        IoContextBuilder builder = targets.get(target);
+        if (builder == null) {
+            builder = new IoContextBuilder();
+            targets.put(target, builder);
+        }
+        builder.addInput(input);
+    }
+
+    private void add(Map<String, IoContextBuilder> targets, String target, Output output) {
+        IoContextBuilder builder = targets.get(target);
+        if (builder == null) {
+            builder = new IoContextBuilder();
+            targets.put(target, builder);
+        }
+        builder.addOutput(output);
+    }
+
+    private Map<String, IoContext> build(Map<String, IoContextBuilder> builders) {
+        Map<String, IoContext> results = new TreeMap<String, IoContext>();
+        for (Map.Entry<String, IoContextBuilder> entry : builders.entrySet()) {
+            results.put(entry.getKey(), entry.getValue().build());
+        }
+        return results;
     }
 
     static ExternalIoCommandProvider findRelated(List<ExternalIoCommandProvider> commands) {
@@ -588,25 +618,26 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
         private final String primary;
 
-        private final List<String> secondaries;
+        private final Map<String, IoContext> targets;
 
-        private final List<String> cacheUsers;
+        private final Map<String, IoContext> cacheEntries;
 
         CommandProvider(
                 String batchId,
                 String flowId,
                 String primary,
-                List<String> secondaries,
-                List<String> cacheUsers) {
+                Map<String, IoContext> targets,
+                Map<String, IoContext> cacheEntries) {
             assert batchId != null;
             assert flowId != null;
-            assert secondaries != null;
-            assert cacheUsers != null;
+            assert targets != null;
+            assert cacheEntries != null;
+            assert primary == null || targets.containsKey(primary);
             this.batchId = batchId;
             this.flowId = flowId;
             this.primary = primary;
-            this.secondaries = Lists.from(secondaries);
-            this.cacheUsers = Lists.from(cacheUsers);
+            this.targets = Maps.from(targets);
+            this.cacheEntries = Maps.from(cacheEntries);
         }
 
         @Override
@@ -618,7 +649,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         public List<Command> getImportCommand(CommandContext context) {
             List<Command> results = Lists.create();
             if (primary != null) {
+                IoContext io = targets.get(primary);
+                assert io != null;
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         Arrays.asList(new String[] {
                                 context.getHomePathPrefix() + CMD_IMPORTER,
                                 CMD_ARG_PRIMARY,
@@ -631,10 +665,16 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                         }),
                         MODULE_NAME_PREFIX + primary,
                         getProfileName(primary),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        io.getInputContext()));
             }
-            for (String secondary : secondaries) {
+            for (Map.Entry<String, IoContext> entry : targets.entrySet()) {
+                if (primary != null && entry.getKey().equals(primary)) {
+                    continue;
+                }
+                String secondary = entry.getKey();
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         Arrays.asList(new String[] {
                                 context.getHomePathPrefix() + CMD_IMPORTER,
                                 CMD_ARG_SECONDARY,
@@ -647,7 +687,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                         }),
                         MODULE_NAME_PREFIX + secondary,
                         getProfileName(secondary),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        entry.getValue().getInputContext()));
             }
             return results;
         }
@@ -656,7 +697,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         public List<Command> getExportCommand(CommandContext context) {
             List<Command> results = Lists.create();
             if (primary != null) {
+                IoContext io = targets.get(primary);
+                assert io != null;
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                             Arrays.asList(new String[] {
                                     context.getHomePathPrefix() + CMD_EXPORTER,
                                     primary,
@@ -667,7 +711,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                             }),
                             MODULE_NAME_PREFIX + primary,
                             getProfileName(primary),
-                            getEnvironment(context)));
+                            getEnvironment(context),
+                            io.getOutputContext()));
             }
             return results;
         }
@@ -676,7 +721,10 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
         public List<Command> getFinalizeCommand(CommandContext context) {
             List<Command> results = Lists.create();
             if (primary != null) {
+                IoContext io = targets.get(primary);
+                assert io != null;
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         Arrays.asList(new String[] {
                                 context.getHomePathPrefix() + CMD_FINALIZER,
                                 primary,
@@ -686,10 +734,13 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                         }),
                         MODULE_NAME_PREFIX + primary,
                         getProfileName(primary),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        io));
             }
-            for (String cacheUser : cacheUsers) {
+            for (Map.Entry<String, IoContext> entry : cacheEntries.entrySet()) {
+                String cacheUser = entry.getKey();
                 results.add(new Command(
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
                         Arrays.asList(new String[] {
                                 context.getHomePathPrefix() + CMD_CACHE_FINALIZER,
                                 cacheUser,
@@ -697,7 +748,8 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
                         }),
                         CACHE_FEATURE_PREFIX + cacheUser,
                         getProfileName(cacheUser),
-                        getEnvironment(context)));
+                        getEnvironment(context),
+                        entry.getValue()));
             }
             return results;
         }

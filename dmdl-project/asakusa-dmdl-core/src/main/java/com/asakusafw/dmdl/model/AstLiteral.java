@@ -102,11 +102,11 @@ public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
      */
     public String toStringValue() {
         checkKind(LiteralKind.STRING);
-        if (token.length() >= 2 && token.startsWith("\"") && token.endsWith("\"")) {
+        if (token.length() >= 2 && token.startsWith("\"") && token.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
             return EscapeDecoder.scan(token.substring(1, token.length() - 1));
         }
         throw new IllegalStateException(MessageFormat.format(
-                "Invalid string value: {0}",
+                "Invalid string value: {0}", //$NON-NLS-1$
                 token));
     }
 
@@ -137,14 +137,14 @@ public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
      */
     public boolean toBooleanValue() {
         checkKind(LiteralKind.BOOLEAN);
-        return token.equals("TRUE");
+        return token.equals("TRUE"); //$NON-NLS-1$
     }
 
     private void checkKind(LiteralKind expected) {
         assert expected != null;
         if (kind != expected) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Inconsistent literal kind: {0}",
+                    "Inconsistent literal kind: {0}", //$NON-NLS-1$
                     token));
         }
     }

@@ -38,7 +38,7 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     declaration.getOriginalAst(),
-                    "@{0} is only for properties",
+                    Messages.getString("PropertyAttributeDriver.diagnosticInvalidAttribute"), //$NON-NLS-1$
                     getTargetName()));
             return;
         }

@@ -126,8 +126,8 @@ public class JobflowCompiler {
         fillEmptyList(exports, imports.keySet());
 
         List<ExternalIoCommandProvider> commands = Lists.create();
-        List<CompiledStage> prologues = Lists.create();
-        List<CompiledStage> epilogues = Lists.create();
+        List<ExternalIoStage> prologues = Lists.create();
+        List<ExternalIoStage> epilogues = Lists.create();
         for (Map.Entry<ExternalIoDescriptionProcessor, List<Import>> entry : imports.entrySet()) {
             ExternalIoDescriptionProcessor proc = entry.getKey();
             List<Import> importGroup = entry.getValue();

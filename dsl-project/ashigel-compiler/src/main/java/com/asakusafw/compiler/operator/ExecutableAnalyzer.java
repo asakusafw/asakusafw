@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -586,7 +587,7 @@ public class ExecutableAnalyzer {
             if (element == null) {
                 return false;
             }
-            if (element.getKind() == ElementKind.ENUM) {
+            if (element.getKind() == ElementKind.ENUM && element.getModifiers().contains(Modifier.PUBLIC)) {
                 return true;
             }
             return false;
@@ -615,11 +616,31 @@ public class ExecutableAnalyzer {
             TypeElement decl = (TypeElement) element;
             List<VariableElement> results = Lists.create();
             for (Element member : decl.getEnclosedElements()) {
-                if (member.getKind() == ElementKind.ENUM_CONSTANT) {
+                if (isEnumConstant(member)) {
                     results.add((VariableElement) member);
                 }
             }
             return results;
+        }
+
+        private boolean isEnumConstant(Element member) {
+            if (member.getKind() != ElementKind.ENUM_CONSTANT) {
+                return false;
+            }
+            // for Eclipse APT bug
+            Set<Modifier> modifiers = member.getModifiers();
+            if (modifiers.contains(Modifier.PUBLIC) == false
+                    || modifiers.contains(Modifier.STATIC) == false
+                    || modifiers.contains(Modifier.FINAL) == false) {
+                return false;
+            }
+            VariableElement variable = (VariableElement) member;
+            TypeMirror constantType = variable.asType();
+            if (constantType.getKind() != TypeKind.DECLARED) {
+                return false;
+            }
+            Types types = environment.getTypeUtils();
+            return types.isSameType(constantType, type);
         }
 
         /**

@@ -24,8 +24,17 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
  * {@link FlowGraph}を書き換えるエンジンのインターフェース。
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializable {
+
+    /**
+     * Returns the phase when the compiler activates this rewriter.
+     * @return the activating phase
+     * @since 0.5.1
+     */
+    Phase getPhase();
 
     /**
      * このエンジンを利用して指定のグラフを書き換える。
@@ -44,6 +53,33 @@ public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializabl
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     Name resolve(FlowResourceDescription resource) throws RewriteException;
+
+    /**
+     * Represents a rewrite phase.
+     * @since 0.5.1
+     */
+    public enum Phase {
+
+        /**
+         * Rewrite flow-graph for debugging.
+         */
+        EARLY_DEBUG,
+
+        /**
+         * Rewrite flow-graph for debugging.
+         */
+        LATER_DEBUG,
+
+        /**
+         * Rewrite flow-graph for optimization.
+         */
+        EARLY_OPTIMIZE,
+
+        /**
+         * Rewrite flow-graph for optimization.
+         */
+        LATER_OPTIMIZE,
+    }
 
     /**
      * 書き換えに失敗したことを表す例外。

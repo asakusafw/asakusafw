@@ -101,7 +101,7 @@ public class DmdlAnalyzer {
             report(new Diagnostic(
                     Diagnostic.Level.ERROR,
                     definition.name,
-                    "The model \"{0}\" is duplicated.",
+                    Messages.getString("DmdlAnalyzer.diagnosticModelDuplicated"), //$NON-NLS-1$
                     definition.name.identifier));
         } else {
             world.declareModel(
@@ -115,7 +115,7 @@ public class DmdlAnalyzer {
 
     private void computeDependencies(AstModelDefinition<?> definition) {
         assert definition != null;
-        LOG.debug("Computing dependencies: {}", definition.name);
+        LOG.debug("Computing dependencies: {}", definition.name); //$NON-NLS-1$
         Set<AstSimpleName> references = Sets.create();
         definition.expression.accept(references, ModelSymbolCollector.INSTANCE);
         modelDependencies.addNode(definition.name.identifier);
@@ -141,20 +141,20 @@ public class DmdlAnalyzer {
     private void checkDiagnostics() throws DmdlSemanticException {
         if (context.getWorld().hasError()) {
             throw new DmdlSemanticException(
-                    "DMDL analysis was stopped by error",
+                    Messages.getString("DmdlAnalyzer.errorSemantics"), //$NON-NLS-1$
                     context.getWorld().getDiagnostics());
         }
     }
 
     private void resolveSymbols() {
-        LOG.debug("Resolving symbols");
+        LOG.debug("Resolving symbols"); //$NON-NLS-1$
         Set<Set<String>> circuits = Graphs.findCircuit(modelDependencies);
         if (circuits.isEmpty() == false) {
             for (Set<String> loop : circuits) {
                 report(new Diagnostic(
                         Level.ERROR,
                         (Region) null,
-                        "A cycle exists in model dependencies: {0}",
+                        Messages.getString("DmdlAnalyzer.diagnosticCyclicDependencies"), //$NON-NLS-1$
                         loop));
             }
             return;
@@ -174,7 +174,7 @@ public class DmdlAnalyzer {
     private void resolveModelSymbol(ModelDeclaration model) {
         assert model != null;
         AstModelDefinition<?> definition = model.getOriginalAst();
-        LOG.debug("Resolving model definition: {}", definition.name);
+        LOG.debug("Resolving model definition: {}", definition.name); //$NON-NLS-1$
         switch (definition.kind) {
         case RECORD:
             resolveRecord(model, definition.asRecord().expression);
@@ -198,11 +198,11 @@ public class DmdlAnalyzer {
             AstExpression<AstRecord> expression) {
         assert model != null;
         assert expression != null;
-        LOG.debug("Resolving record: {}", model.getName());
+        LOG.debug("Resolving record: {}", model.getName()); //$NON-NLS-1$
         RecordExpressionResolver resolver = new RecordExpressionResolver();
         expression.accept(model, resolver);
         ProjectionsTrait projections = new ProjectionsTrait(expression, resolver.projections);
-        LOG.debug("Record {} has projections: {}", model.getName(), projections.getProjections());
+        LOG.debug("Record {} has projections: {}", model.getName(), projections.getProjections()); //$NON-NLS-1$
         model.putTrait(ProjectionsTrait.class, projections);
     }
 
@@ -211,22 +211,22 @@ public class DmdlAnalyzer {
             AstExpression<AstJoin> expression) {
         assert model != null;
         assert expression != null;
-        LOG.debug("Resolving joined: {}", model.getName());
+        LOG.debug("Resolving joined: {}", model.getName()); //$NON-NLS-1$
         List<ReduceTerm<AstJoin>> results = Lists.create();
         for (AstJoin term : extract(expression)) {
-            LOG.debug("Resolving joined term: {} -> {}", model.getName(), term.reference.name);
+            LOG.debug("Resolving joined term: {} -> {}", model.getName(), term.reference.name); //$NON-NLS-1$
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
             if (source.findDeclaration() == null) {
                 report(new Diagnostic(
                         Level.ERROR,
                         term.reference,
-                        "{0} is not defined",
+                        Messages.getString("DmdlAnalyzer.diagnosticMissingJoinModel"), //$NON-NLS-1$
                         term.reference.name));
                 continue;
             }
-            resolveJoinProperties(model, source, term);
+            Map<String, PropertyDeclaration> properties = resolveJoinProperties(model, source, term);
             List<MappingFactor> mappings = resolveMapping(model, source, term.mapping);
-            List<PropertySymbol> grouping = resolveGrouping(model, term.grouping);
+            List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
             results.add(new ReduceTerm<AstJoin>(term, source, mappings, grouping));
         }
         if (checkJoinTerms(model, results)) {
@@ -234,14 +234,14 @@ public class DmdlAnalyzer {
         }
     }
 
-    private void resolveJoinProperties(
+    private Map<String, PropertyDeclaration> resolveJoinProperties(
             ModelDeclaration model,
             ModelSymbol sourceModel,
             AstJoin term) {
         assert model != null;
         assert sourceModel != null;
         assert term != null;
-        LOG.debug("processing model mapping: {}", term.mapping);
+        LOG.debug("processing model mapping: {}", term.mapping); //$NON-NLS-1$
 
         Set<String> groupingPropertyNames = Sets.create();
         if (term.grouping != null) {
@@ -251,18 +251,21 @@ public class DmdlAnalyzer {
         }
         ModelDeclaration sourceDecl = sourceModel.findDeclaration();
         assert sourceDecl != null;
+        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
         if (term.mapping == null) {
             for (PropertyDeclaration prop : sourceDecl.getDeclaredProperties()) {
                 PropertyDeclaration declared = model.findPropertyDeclaration(prop.getName().identifier);
                 if (declared != null) {
-                    LOG.debug("property {} is duplicated", prop.getSymbol());
+                    LOG.debug("property {} is duplicated", prop.getSymbol()); //$NON-NLS-1$
+                    results.put(declared.getName().identifier, declared);
                 } else {
-                    model.declareProperty(
+                    declared = model.declareProperty(
                             sourceModel.getName(),
                             prop.getName(),
                             prop.getType(),
                             prop.getDescription(),
                             prop.getAttributes());
+                    results.put(declared.getName().identifier, declared);
                 }
             }
         } else {
@@ -272,7 +275,7 @@ public class DmdlAnalyzer {
                     report(new Diagnostic(
                             Level.ERROR,
                             property,
-                            "Property \"{0}\" is already defined in this join term",
+                            Messages.getString("DmdlAnalyzer.diagnosticDuplicatedJoinMappingProperty"), //$NON-NLS-1$
                             property.target.identifier));
                     continue;
                 }
@@ -282,24 +285,27 @@ public class DmdlAnalyzer {
                     report(new Diagnostic(
                             Level.ERROR,
                             sourceModel.getName(),
-                            "Property \"{0}\" is not defined in \"{1}\"",
+                            Messages.getString("DmdlAnalyzer.diagnosticMissingJoinProperty"), //$NON-NLS-1$
                             property.source.identifier,
                             sourceModel.getName().identifier));
                     continue;
                 }
                 PropertyDeclaration declared = model.findPropertyDeclaration(property.target.identifier);
                 if (declared != null) {
-                    LOG.debug("property {} is duplicated", property.target);
+                    LOG.debug("property {} is duplicated", property.target); //$NON-NLS-1$
+                    results.put(declared.getName().identifier, declared);
                 } else {
-                    model.declareProperty(
+                    declared = model.declareProperty(
                             property,
                             property.target,
                             sourceProp.getType(),
                             property.description,
                             property.attributes);
+                    results.put(declared.getName().identifier, declared);
                 }
             }
         }
+        return results;
     }
 
     private List<MappingFactor> resolveMapping(ModelDeclaration model, ModelSymbol source, AstModelMapping mapping) {
@@ -356,7 +362,7 @@ public class DmdlAnalyzer {
                     report(new Diagnostic(
                             Level.ERROR,
                             term.getOriginalAst(),
-                            "Property \"{0}\" is already defined by other join terms",
+                            Messages.getString("DmdlAnalyzer.diagnosticDuplicatedJoinGroupingProperty"), //$NON-NLS-1$
                             target.getName().identifier));
                     green = false;
                 }
@@ -370,22 +376,22 @@ public class DmdlAnalyzer {
             AstExpression<AstSummarize> expression) {
         assert model != null;
         assert expression != null;
-        LOG.debug("Resolving summarized: {}", model.getName());
+        LOG.debug("Resolving summarized: {}", model.getName()); //$NON-NLS-1$
         List<ReduceTerm<AstSummarize>> results = Lists.create();
         for (AstSummarize term : extract(expression)) {
-            LOG.debug("Resolving summarized term: {} -> {}", model.getName(), term.reference.name);
+            LOG.debug("Resolving summarized term: {} -> {}", model.getName(), term.reference.name); //$NON-NLS-1$
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
             if (source.findDeclaration() == null) {
                 report(new Diagnostic(
                         Level.ERROR,
                         term.reference,
-                        "{0} is not defined",
+                        Messages.getString("DmdlAnalyzer.diagnosticMissingSummarizeModel"), //$NON-NLS-1$
                         term.reference.name));
                 continue;
             }
-            resolveSummarizeProperties(model, source, term);
+            Map<String, PropertyDeclaration> properties = resolveSummarizeProperties(model, source, term);
             List<MappingFactor> foldings = resolveFolding(model, source, term.folding);
-            List<PropertySymbol> grouping = resolveGrouping(model, term.grouping);
+            List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
             results.add(new ReduceTerm<AstSummarize>(term, source, foldings, grouping));
         }
         if (checkSummarizeTerms(model, results)) {
@@ -393,21 +399,23 @@ public class DmdlAnalyzer {
         }
     }
 
-    private void resolveSummarizeProperties(ModelDeclaration model, ModelSymbol source, AstSummarize term) {
+    private Map<String, PropertyDeclaration> resolveSummarizeProperties(
+            ModelDeclaration model, ModelSymbol source, AstSummarize term) {
         assert model != null;
         assert source != null;
         assert term != null;
-        LOG.debug("processing model folding: {}", term.folding);
+        LOG.debug("processing model folding: {}", term.folding); //$NON-NLS-1$
 
         ModelDeclaration decl = source.findDeclaration();
         assert decl != null;
+        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
         for (AstPropertyFolding property : term.folding.properties) {
             PropertyDeclaration original = decl.findPropertyDeclaration(property.source.identifier);
             if (original == null) {
                 report(new Diagnostic(
                         Level.ERROR,
                         source.getName(),
-                        "Property \"{0}\" is not defined in \"{1}\"",
+                        Messages.getString("DmdlAnalyzer.diagnosticMissingSummarizeFoldingProperty"), //$NON-NLS-1$
                         property.source.identifier,
                         source.getName().identifier));
                 continue;
@@ -417,7 +425,7 @@ public class DmdlAnalyzer {
                 report(new Diagnostic(
                         Level.ERROR,
                         property.aggregator,
-                        "Aggregate function \"{0}\" is not defined",
+                        Messages.getString("DmdlAnalyzer.diagnosticMissingSummarizeAggregateFunction"), //$NON-NLS-1$
                         property.aggregator.toString()));
                 continue;
             }
@@ -426,7 +434,7 @@ public class DmdlAnalyzer {
                 report(new Diagnostic(
                         Level.ERROR,
                         property,
-                        "Failed to apply \"{0}\" to \"{1} : {2}\"",
+                        Messages.getString("DmdlAnalyzer.diagnosticInconsistentSummarizeAggregateFunction"), //$NON-NLS-1$
                         property.aggregator.toString(),
                         property.source.identifier,
                         original.getType()));
@@ -437,17 +445,19 @@ public class DmdlAnalyzer {
                 report(new Diagnostic(
                         Level.ERROR,
                         property.target,
-                        "Property \"{0}\" is already defined by other summarize terms",
+                        Messages.getString("DmdlAnalyzer.diagnosticDuplicatedSummarizeProperty"), //$NON-NLS-1$
                         property.target.identifier));
                 continue;
             }
-            model.declareProperty(
+            PropertyDeclaration result = model.declareProperty(
                     property,
                     property.target,
                     resolved,
                     property.description,
                     property.attributes);
+            results.put(result.getName().identifier, result);
         }
+        return results;
     }
 
     private List<MappingFactor> resolveFolding(ModelDeclaration model, ModelSymbol source, AstModelFolding folding) {
@@ -491,23 +501,22 @@ public class DmdlAnalyzer {
         }
     }
 
-    private List<PropertySymbol> resolveGrouping(ModelDeclaration model, AstGrouping grouping) {
+    private List<PropertySymbol> resolveGrouping(
+            ModelDeclaration model,
+            Map<String, PropertyDeclaration> properties,
+            AstGrouping grouping) {
         assert model != null;
         if (grouping == null) {
             return Collections.emptyList();
         } else {
-            Map<String, PropertySymbol> map = Maps.create();
-            for (PropertyDeclaration p : model.getDeclaredProperties()) {
-                map.put(p.getName().identifier, p.getSymbol());
-            }
             List<PropertySymbol> results = Lists.create();
             for (AstSimpleName name : grouping.properties) {
-                PropertySymbol property = map.get(name.identifier);
+                PropertyDeclaration property = properties.get(name.identifier);
                 if (property == null) {
                     report(new Diagnostic(
                             Level.ERROR,
                             name,
-                            "Property \"{0}\" is not defined",
+                            Messages.getString("DmdlAnalyzer.diagnosticMissingSummarizeGroupingProperty"), //$NON-NLS-1$
                             name.identifier));
                     continue;
                 }
@@ -534,7 +543,7 @@ public class DmdlAnalyzer {
                 report(new Diagnostic(
                         Level.ERROR,
                         next.getOriginalAst(),
-                        "Each term in model \"{0}\" must have the same number of grouping properties",
+                        Messages.getString("DmdlAnalyzer.diagnosticInconsistentNumberGroupingProperties"), //$NON-NLS-1$
                         model.getName()));
                 return false;
             }
@@ -548,7 +557,7 @@ public class DmdlAnalyzer {
                     report(new Diagnostic(
                             Level.ERROR,
                             rightSymbol.getOriginalAst(),
-                            "Type mismatch in grouping property \"{0}\"",
+                            Messages.getString("DmdlAnalyzer.diagnosticInconsistentTypeGroupingProperty"), //$NON-NLS-1$
                             rightSymbol.getName()));
                     green = false;
                 }
@@ -576,7 +585,7 @@ public class DmdlAnalyzer {
 
     private void resolveAttributes() {
         for (ModelDeclaration model : context.getWorld().getDeclaredModels()) {
-            LOG.debug("Resolving attributes: {}", model.getName());
+            LOG.debug("Resolving attributes: {}", model.getName()); //$NON-NLS-1$
             resolveAttributes(model);
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 resolveAttributes(property);
@@ -588,17 +597,17 @@ public class DmdlAnalyzer {
         assert declaration != null;
         for (AstAttribute attribute : declaration.getAttributes()) {
             String name = attribute.name.toString();
-            LOG.debug("Resolving attribute: {} -> {}", declaration.getName(), name);
+            LOG.debug("Resolving attribute: {} -> {}", declaration.getName(), name); //$NON-NLS-1$
             AttributeDriver driver = context.findAttributeDriver(attribute);
             if (driver == null) {
                 report(new Diagnostic(
                         Level.ERROR,
                         attribute.name,
-                        "Cannot apply the attribute \"{0}\"",
+                        Messages.getString("DmdlAnalyzer.diagnosticUnknownAttribute"), //$NON-NLS-1$
                         name));
                 continue;
             }
-            LOG.debug("Processing attribute: {} -> {}", name, driver);
+            LOG.debug("Processing attribute: {} -> {}", name, driver); //$NON-NLS-1$
             driver.process(context.getWorld(), declaration, attribute);
         }
     }
@@ -638,25 +647,25 @@ public class DmdlAnalyzer {
 
         @Override
         public Void visitModelReference(ModelDeclaration model, AstModelReference node) {
-            LOG.debug("processing model reference: {}", node);
+            LOG.debug("processing model reference: {}", node); //$NON-NLS-1$
             ModelDeclaration decl = context.getWorld().findModelDeclaration(node.name.identifier);
             if (decl == null) {
                 report(new Diagnostic(
                         Level.ERROR,
                         node.name,
-                        "Model \"{0}\" is not found",
+                        Messages.getString("DmdlAnalyzer.diagnosticMissingModel"), //$NON-NLS-1$
                         node.name.identifier));
                 return null;
             }
             for (PropertyDeclaration property : decl.getDeclaredProperties()) {
                 PropertyDeclaration other = model.findPropertyDeclaration(property.getName().identifier);
                 if (other != null) {
-                    LOG.debug("property {} is duplicated", property.getSymbol());
+                    LOG.debug("property {} is duplicated", property.getSymbol()); //$NON-NLS-1$
                     if (property.getType().isSame(other.getType()) == false) {
                         report(new Diagnostic(
                                 Level.ERROR,
                                 node,
-                                "{0} is already defined in {1} with the different type",
+                                Messages.getString("DmdlAnalyzer.diagnosticInconsistentTypeProperty"), //$NON-NLS-1$
                                 property.getName(),
                                 model.getName()));
                     }
@@ -677,14 +686,14 @@ public class DmdlAnalyzer {
 
         @Override
         public Void visitRecordDefinition(ModelDeclaration model, AstRecordDefinition node) {
-            LOG.debug("processing record definition: {}", node);
+            LOG.debug("processing record definition: {}", node); //$NON-NLS-1$
             Set<String> sawPropertyName = Sets.create();
             for (AstPropertyDefinition property : node.properties) {
                 if (sawPropertyName.contains(property.name.identifier)) {
                     report(new Diagnostic(
                             Level.ERROR,
                             property.name,
-                            "Property \"{0}\" is already declared",
+                            Messages.getString("DmdlAnalyzer.diagnosticDuplicatedProperty"), //$NON-NLS-1$
                             property.name.identifier));
                 }
                 sawPropertyName.add(property.name.identifier);
@@ -693,19 +702,19 @@ public class DmdlAnalyzer {
                     report(new Diagnostic(
                             Level.ERROR,
                             property.type,
-                            "Failed to resolve type \"{0}\"",
+                            Messages.getString("DmdlAnalyzer.diagnosticUnknownTypeProperty"), //$NON-NLS-1$
                             property.type.toString()));
                     continue;
                 }
 
                 PropertyDeclaration other = model.findPropertyDeclaration(property.name.identifier);
                 if (other != null) {
-                    LOG.debug("property {} is duplicated", property.name);
+                    LOG.debug("property {} is duplicated", property.name); //$NON-NLS-1$
                     if (type.equals(other.getType()) == false) {
                         report(new Diagnostic(
                                 Level.ERROR,
                                 property.name,
-                                "{0} is already defined in {1} with the different type",
+                                Messages.getString("DmdlAnalyzer.diagnosticInconsistentTypeRepordProperty"), //$NON-NLS-1$
                                 property.name,
                                 model.getName()));
                     }

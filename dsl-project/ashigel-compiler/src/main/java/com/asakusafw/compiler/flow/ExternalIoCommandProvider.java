@@ -20,8 +20,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.IoContext;
 import com.asakusafw.runtime.util.VariableTable;
 
 /**
@@ -166,8 +168,12 @@ public class ExternalIoCommandProvider implements Serializable {
 
     /**
      * 各種コマンドを表す。
+     * @since 0.1.0
+     * @version 0.5.1
      */
     public static class Command {
+
+        private final String id;
 
         private final List<String> commandLine;
 
@@ -177,6 +183,8 @@ public class ExternalIoCommandProvider implements Serializable {
 
         private final Map<String, String> environment;
 
+        private final IoContext context;
+
         /**
          * インスタンスを生成する。
          * @param commandLine コマンドラインを構成するセグメント一覧
@@ -184,18 +192,54 @@ public class ExternalIoCommandProvider implements Serializable {
          * @param profileName この機能を利用するロールプロファイルのID、規定の場合は{@code null}
          * @param environment 環境変数の一覧
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * @deprecated Use {@link IoContext} instead
          */
+        @Deprecated
         public Command(
                 List<String> commandLine,
                 String moduleName,
                 String profileName,
                 Map<String, String> environment) {
+            this(UUID.randomUUID().toString(), commandLine, moduleName, profileName, environment, IoContext.EMPTY);
+        }
+
+        /**
+         * Creates a new instance.
+         * @param id the command ID
+         * @param commandLine the command line tokens
+         * @param moduleName target module ID
+         * @param profileName target profile ID, or {@code null} for the default profile
+         * @param environment target environment variables
+         * @param context I/O information for target command
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         * @since 0.5.1
+         */
+        public Command(
+                String id,
+                List<String> commandLine,
+                String moduleName,
+                String profileName,
+                Map<String, String> environment,
+                IoContext context) {
+            Precondition.checkMustNotBeNull(id, "id"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(commandLine, "commandLine"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(moduleName, "moduleName"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
+            this.id = id;
             this.commandLine = commandLine;
             this.moduleName = moduleName;
             this.profileName = profileName;
             this.environment = environment;
+            this.context = context;
+        }
+
+        /**
+         * Returns the command ID.
+         * @return the ID
+         * @since 0.5.1
+         */
+        public String getId() {
+            return id;
         }
 
         /**
@@ -252,6 +296,15 @@ public class ExternalIoCommandProvider implements Serializable {
          */
         public Map<String, String> getEnvironment() {
             return environment;
+        }
+
+        /**
+         * Returns I/O context for this command.
+         * @return the I/O context
+         * @since 0.5.1
+         */
+        public IoContext getContext() {
+            return context;
         }
     }
 }

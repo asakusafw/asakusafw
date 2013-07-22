@@ -24,8 +24,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.configuration.FrameworkDeployer;
+import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.jobflow.SimpleJobflow;
 import com.asakusafw.testdriver.testing.model.Simple;
+import com.asakusafw.testdriver.testing.operator.SimpleOperator;
 
 /**
  * Test for {@link JobFlowTester}.
@@ -47,6 +49,46 @@ public class JobFlowTesterTest {
         tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * input tracing.
+     */
+    @Test
+    public void trace_in() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.addInputTrace(SimpleFlowPart.class, "in");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * output tracing.
+     */
+    @Test
+    public void trace_out() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.addOutputTrace(SimpleFlowPart.class, "out");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * input/output tracing.
+     */
+    @Test
+    public void trace_both() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.input("simple", Simple.class).prepare("data/simple-in.json");
+        tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.addInputTrace(SimpleFlowPart.class, "in");
+        tester.addOutputTrace(SimpleFlowPart.class, "out");
         tester.runTest(SimpleJobflow.class);
     }
 
@@ -277,5 +319,49 @@ public class JobFlowTesterTest {
         JobFlowTester tester = new JobFlowTester(getClass());
         tester.setFrameworkHomePath(framework.getHome());
         tester.output("simple", Simple.class).verify("data/simple-out.json", "INVALID");
+    }
+
+    /**
+     * Attempts to trace invalid operator class.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_trace_operator_class() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.addInputTrace(Simple.class, "setValue", "model");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to trace invalid operator method.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_trace_operator_method() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.addInputTrace(SimpleOperator.class, "UNKNOWN", "model");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to trace invalid input.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_trace_input() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.addInputTrace(SimpleOperator.class, "setValue", "UNKNOWN");
+        tester.runTest(SimpleJobflow.class);
+    }
+
+    /**
+     * Attempts to trace invalid output.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void invalid_trace_output() {
+        JobFlowTester tester = new JobFlowTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        tester.addOutputTrace(SimpleOperator.class, "setValue", "UNKNOWN");
+        tester.runTest(SimpleJobflow.class);
     }
 }

@@ -67,7 +67,7 @@ public class CsvFormatTrait implements Trait<CsvFormatTrait> {
      */
     public static class Configuration {
 
-        private String charsetName = "UTF-8";
+        private String charsetName = "UTF-8"; //$NON-NLS-1$
 
         private boolean allowLinefeed = false;
 

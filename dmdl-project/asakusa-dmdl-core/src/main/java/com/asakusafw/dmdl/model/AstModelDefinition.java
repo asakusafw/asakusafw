@@ -135,7 +135,7 @@ public class AstModelDefinition<T extends AstTerm<T>> extends AbstractAstNode {
             return cast;
         }
         throw new IllegalStateException(MessageFormat.format(
-                "Failed to cast {0} into {1} ({2})",
+                "Failed to cast {0} into {1} ({2})", //$NON-NLS-1$
                 name,
                 target,
                 kind));

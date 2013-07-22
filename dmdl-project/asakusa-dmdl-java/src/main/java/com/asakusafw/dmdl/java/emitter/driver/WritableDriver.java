@@ -65,12 +65,12 @@ public class WritableDriver extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        SimpleName parameter = context.createVariableName("out");
+        SimpleName parameter = context.createVariableName("out"); //$NON-NLS-1$
         List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             SimpleName fieldName = context.getFieldName(property);
             statements.add(new ExpressionBuilder(f, fieldName)
-                .method("write", parameter)
+                .method("write", parameter) //$NON-NLS-1$
                 .toStatement());
         }
         return f.newMethodDeclaration(
@@ -81,7 +81,7 @@ public class WritableDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 Collections.<TypeParameterDeclaration>emptyList(),
                 Models.toType(f, void.class),
-                f.newSimpleName("write"),
+                f.newSimpleName("write"), //$NON-NLS-1$
                 Collections.singletonList(f.newFormalParameterDeclaration(
                         context.resolve(DataOutput.class),
                         parameter)),
@@ -94,12 +94,12 @@ public class WritableDriver extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        SimpleName parameter = context.createVariableName("in");
+        SimpleName parameter = context.createVariableName("in"); //$NON-NLS-1$
         List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             SimpleName fieldName = context.getFieldName(property);
             statements.add(new ExpressionBuilder(f, fieldName)
-                .method("readFields", parameter)
+                .method("readFields", parameter) //$NON-NLS-1$
                 .toStatement());
         }
         return f.newMethodDeclaration(
@@ -110,7 +110,7 @@ public class WritableDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 Collections.<TypeParameterDeclaration>emptyList(),
                 Models.toType(f, void.class),
-                f.newSimpleName("readFields"),
+                f.newSimpleName("readFields"), //$NON-NLS-1$
                 Arrays.asList(f.newFormalParameterDeclaration(
                         context.resolve(DataInput.class),
                         parameter)),

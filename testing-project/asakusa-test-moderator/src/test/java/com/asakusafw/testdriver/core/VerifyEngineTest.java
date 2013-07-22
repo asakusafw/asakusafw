@@ -18,7 +18,11 @@ package com.asakusafw.testdriver.core;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Test;
@@ -77,6 +81,38 @@ public class VerifyEngineTest {
         assertThat(d2.size(), is(1));
     }
 
+    /**
+     * duplicated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void duplicate() throws Exception {
+        VerifyEngine engine = new VerifyEngine(new Rule());
+        engine.addExpected(source("hello:world"));
+
+        List<Difference> d1 = engine.inspectInput(source("hello:world1", "hello:world2"));
+        assertThat(d1.size(), is(greaterThan(0)));
+
+        List<Difference> d2 = engine.inspectRest();
+        assertThat(d2.size(), is(0));
+    }
+
+    /**
+     * duplicated.
+     * @throws Exception if failed
+     */
+    @Test
+    public void duplicate_calendar() throws Exception {
+        VerifyEngine engine = new VerifyEngine(new CalendarRule());
+        engine.addExpected(CalendarRule.calendars("2013-01-01"));
+
+        List<Difference> d1 = engine.inspectInput(CalendarRule.calendars("2013-01-01", "2013-01-02"));
+        assertThat(d1.size(), is(greaterThan(0)));
+
+        List<Difference> d2 = engine.inspectRest();
+        assertThat(d2.size(), is(0));
+    }
+
     DataModelSource source(String... values) {
         return new IteratorDataModelSource(
                 ValueDefinition.of(String.class),
@@ -102,6 +138,42 @@ public class VerifyEngineTest {
             String ex = def.toObject(expected).split(":", 2)[1];
             String ac = def.toObject(actual).split(":", 2)[1];
             return ex.equals(ac) ? null : "mismatch";
+        }
+    }
+
+    static class CalendarRule implements VerifyRule {
+
+        private static final DataModelDefinition<Calendar> DEF = ValueDefinition.of(Calendar.class);
+
+        @Override
+        public Object getKey(DataModelReflection target) {
+            Calendar calendar = DEF.toObject(target);
+            return calendar.get(Calendar.YEAR);
+        }
+
+        @Override
+        public Object verify(DataModelReflection expected, DataModelReflection actual) {
+            if (expected == null || actual == null) {
+                return "invalid";
+            }
+            return expected.equals(actual) ? null : "mismatch";
+        }
+
+        static DataModelSource calendars(String... values) {
+            List<Calendar> calendars = new ArrayList<Calendar>();
+            for (String value : values) {
+                try {
+                    java.util.Date date = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendars.add(calendar);
+                } catch (ParseException e) {
+                    throw new AssertionError(e);
+                }
+            }
+            return new IteratorDataModelSource(
+                    DEF,
+                    calendars.iterator());
         }
     }
 }

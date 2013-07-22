@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ResolvedSlot;
 import com.asakusafw.compiler.flow.mapreduce.parallel.Slot;
@@ -51,6 +52,11 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
     private static final Pattern VALID_OUTPUT_NAME = Pattern.compile("[0-9A-Za-z]+");
 
     private static final String MODULE_NAME = "temporary";
+
+    @Override
+    public String getId() {
+        return MODULE_NAME;
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -112,9 +118,9 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         Set<String> saw = Sets.create();
-        List<CompiledStage> results = Lists.create();
+        List<ExternalIoStage> results = Lists.create();
         for (Map.Entry<Location, List<Slot>> entry : groupByOutputLocation(context).entrySet()) {
             List<Slot> slots = entry.getValue();
             List<ResolvedSlot> resolved = new SlotResolver(getEnvironment()).resolve(slots);
@@ -127,7 +133,8 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
                     moduleId,
                     resolved,
                     entry.getKey());
-            results.add(stage);
+            // TODO not sure
+            results.add(new ExternalIoStage(getId(), stage, context.getOutputContext()));
         }
         return results;
     }

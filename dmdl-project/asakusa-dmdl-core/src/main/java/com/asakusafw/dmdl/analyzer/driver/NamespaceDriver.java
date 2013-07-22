@@ -41,12 +41,12 @@ public class NamespaceDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "namespace";
+    public static final String TARGET_NAME = "namespace"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "value";
+    public static final String ELEMENT_NAME = "value"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {
@@ -76,7 +76,7 @@ public class NamespaceDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     attribute.name,
-                    "@{0} must declare an element \"{1}=...\"",
+                    Messages.getString("NamespaceDriver.diagnosticMissingElement"), //$NON-NLS-1$
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;
@@ -84,7 +84,7 @@ public class NamespaceDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     nameElement,
-                    "@{0}.{1} must be a name",
+                    Messages.getString("NamespaceDriver.diagnosticInvalidNameElement"), //$NON-NLS-1$
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;

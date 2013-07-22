@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.flow.graph;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,14 +25,16 @@ import java.util.Set;
  * <p>
  * DSL利用者はこのクラスのオブジェクトを直接操作すべきでない。
  * </p>
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public abstract class FlowElementPort {
 
-    private FlowElement owner;
+    private final FlowElement owner;
 
-    private FlowElementPortDescription description;
+    private final FlowElementPortDescription description;
 
-    private Set<PortConnection> connected;
+    private final Set<PortConnection> connected;
 
     /**
      * インスタンスを生成する。
@@ -76,6 +79,13 @@ public abstract class FlowElementPort {
     public Set<PortConnection> getConnected() {
         return Collections.unmodifiableSet(connected);
     }
+
+    /**
+     * Removes all connections for this port.
+     * @return connected opposites
+     * @since 0.5.1
+     */
+    public abstract Collection<? extends FlowElementPort> disconnectAll();
 
     /**
      * このポートに指定の接続を追加する。
