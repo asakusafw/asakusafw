@@ -104,16 +104,19 @@ public class JobFlowTester extends TestDriverBase {
         LOG.info("ジョブフローをコンパイルしています: {}", jobFlowDescriptionClass.getName());
         JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
         assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
-        JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
 
-        String batchId = "bid";
-        String flowId = jobFlowClass.getConfig().name();
+        // コンパイル環境の検証
+        driverContext.validateCompileEnvironment();
+
+        JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
 
         FlowGraph flowGraph = jobFlowClass.getGraph();
+        String batchId = "bid";
+        String flowId = jobFlowClass.getConfig().name();
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
                 flowGraph,
                 batchId,
@@ -128,7 +131,7 @@ public class JobFlowTester extends TestDriverBase {
                 driverContext.getOptions());
 
         // 環境の検証
-        driverContext.validateEnvironment();
+        driverContext.validateExecutionEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);
