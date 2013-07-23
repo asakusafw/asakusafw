@@ -93,6 +93,9 @@ public class BatchTester extends TestDriverBase {
         BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
         assertFalse(batchDriver.getDiagnostics().toString(), batchDriver.hasError());
 
+        // コンパイル環境の検証
+        driverContext.validateCompileEnvironment();
+
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
@@ -124,7 +127,7 @@ public class BatchTester extends TestDriverBase {
         }
 
         // 環境の検証
-        driverContext.validateEnvironment();
+        driverContext.validateExecutionEnvironment();
 
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         JobflowExecutor executor = new JobflowExecutor(driverContext);

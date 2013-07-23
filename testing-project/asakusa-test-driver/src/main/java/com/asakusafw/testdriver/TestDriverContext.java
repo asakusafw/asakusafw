@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.tools.ToolProvider;
+
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Assume;
 import org.slf4j.Logger;
@@ -118,11 +120,24 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * Validates current test environment.
+     * Validates current compiler environment.
      * @throws AssertionError if current test environment is invalid
-     * @since 0.5.0
+     * @since 0.5.1
      */
-    public void validateEnvironment() {
+    public void validateCompileEnvironment() {
+        if (ToolProvider.getSystemJavaCompiler() == null) {
+            // validates runtime environment first
+            validateExecutionEnvironment();
+            throw new AssertionError("この環境ではJavaコンパイラを利用できません（JDKを利用してテストを実行してください）");
+        }
+    }
+
+    /**
+     * Validates current test execution environment.
+     * @throws AssertionError if current test environment is invalid
+     * @since 0.5.1
+     */
+    public void validateExecutionEnvironment() {
         if (getFrameworkHomePath0() == null) {
             raiseInvalid(MessageFormat.format(
                     "環境変数\"{0}\"が未設定です",
@@ -133,6 +148,15 @@ public class TestDriverContext implements TestContext {
                     "コマンド\"{0}\"を検出できませんでした",
                     "hadoop"));
         }
+    }
+
+    /**
+     * Validates current test environment.
+     * @throws AssertionError if current test environment is invalid
+     * @since 0.5.0
+     */
+    public void validateEnvironment() {
+        validateExecutionEnvironment();
     }
 
     private void raiseInvalid(String message) {
