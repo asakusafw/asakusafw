@@ -26,6 +26,7 @@ Enhancements
 * [ :issue:`274` ] - YAESS start log should output command line arguments completely
 * [ :issue:`275` ] - Verifying Asakusa DSL
     * See: :doc:`dsl/user-guide`
+* [ :issue:`276` ] - MapReduce Job Name should include Execution ID
 * [ :issue:`277` ] - Simplifies application project configuration
     * See: :doc:`administration/framework-organizer`
 * [ :issue:`279` ] - Keep flowpart parameters information for visualization capability
