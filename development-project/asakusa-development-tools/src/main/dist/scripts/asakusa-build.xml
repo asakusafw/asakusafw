@@ -36,11 +36,11 @@
 	</condition>
 
 	<path id="compiler-ext-plugins">
-		<fileset dir="${env.ASAKUSA_HOME}/compiler/plugin" includes="*.jar" erroronmissingdir="false" />
+		<fileset dir="${env.ASAKUSA_HOME}/compiler/plugin" includes="**/*.jar" erroronmissingdir="false" />
 	</path>
 
 	<path id="dmdl-ext-plugins">
-		<fileset dir="${env.ASAKUSA_HOME}/dmdl/plugin" includes="*.jar" erroronmissingdir="false" />
+		<fileset dir="${env.ASAKUSA_HOME}/dmdl/plugin" includes="**/*.jar" erroronmissingdir="false" />
 	</path>
 
 	<target name="generate-model"
@@ -291,13 +291,23 @@
 
 	<target name="post-install-framework">
 		<antcall target="install-framework-thundergate" />
+
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<antcall target="install-framework-on-windows" />
 	</target>
-	
+
 	<target name="install-framework-thundergate" if="thundergate.target">
 		<copy file="${env.ASAKUSA_HOME}/bulkloader/conf/[targetname]-jdbc.properties"
 		      tofile="${env.ASAKUSA_HOME}/bulkloader/conf/${thundergate.target}-jdbc.properties" />
 		<mkdir dir="/tmp/thundergate-${env.USER}" />
 		<chmod perm="777" file="/tmp/thundergate-${env.USER}" type="dir" />
+	</target>
+
+	<target name="install-framework-on-windows" if="isWindows">
+		<touch file="${env.ASAKUSA_HOME}/dmdl/plugin/dummy/dummy.jar" mkdirs="true" />
+		<touch file="${env.ASAKUSA_HOME}/compiler/plugin/dummy/dummy.jar" mkdirs="true" />
 	</target>
 
 </project>
