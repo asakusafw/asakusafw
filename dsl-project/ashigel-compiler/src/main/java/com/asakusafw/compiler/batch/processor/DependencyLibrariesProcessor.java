@@ -44,7 +44,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
     /**
      * The library directory path in the target project.
      */
-    public static final String LIBRARY_DIRECTORY_PATH = "src/main/lib";
+    public static final String LIBRARY_DIRECTORY_PATH = "src/main/libs";
 
     /**
      * The output directory path in the final artifact.

@@ -170,7 +170,7 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
       - プロジェクトのリソースディレクトリ [#]_
     * - ``src/main/sql/modelgen``
       - DDLスクリプトディレクトリ [#]_
-    * - ``src/main/lib``
+    * - ``src/main/libs``
       - プロジェクトの依存ライブラリディレクトリ [#]_
 
 ..  [#] アーキタイプの標準構成では空になっています。
@@ -465,12 +465,12 @@ MavenのDependencyプラグイン [#]_ を利用して依存ライブラリを�
 -----------------------------------------------------------
 アプリケーション開発プロジェクトの「依存ライブラリディレクトリ」配下に配置すると、バッチアプリケーションアーカイブに自動的に含まれるようになります。
 
-``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``src/main/lib`` ディレクトリに配置します。
+``target/dependency`` にコピーしたjarファイルから必要なものを選んで ``src/main/libs`` ディレクトリに配置します。
 
 ..  code-block:: sh
 
-    mkdir src/main/lib
-    cp target/dependency/joda-time-2.1.jar src/main/lib
+    mkdir src/main/libs
+    cp target/dependency/joda-time-2.1.jar src/main/libs
 
 Asakusaの拡張ライブラリディレクトリへjarファイルを配置
 ------------------------------------------------------
