@@ -18,7 +18,7 @@ pom.xmlの10行目にある ``<asakusafw.version>`` の値を更新したいバ�
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.5.0</asakusafw.version>
+    <asakusafw.version>0.5.1</asakusafw.version>
 
 アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :doc:`../application/maven-archetype` の :ref:`archetype-catalog` を参照してください。
 
