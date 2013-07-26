@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.5.1-RC3</version>
+		<version>0.5.1</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
