@@ -24,20 +24,32 @@ public enum LiteralKind {
     /**
      * Represents string literals.
      */
-    STRING,
+    STRING(Messages.getString("LiteralKind.string")), //$NON-NLS-1$
 
     /**
      * Represents integral literals.
      */
-    INTEGER,
+    INTEGER(Messages.getString("LiteralKind.integer")), //$NON-NLS-1$
 
     /**
      * Represents decimal literals.
      */
-    DECIMAL,
+    DECIMAL(Messages.getString("LiteralKind.decimal")), //$NON-NLS-1$
 
     /**
      * Represents boolean literals.
      */
-    BOOLEAN,
+    BOOLEAN(Messages.getString("LiteralKind.boolean")), //$NON-NLS-1$
+    ;
+
+    private String description;
+
+    private LiteralKind(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return description;
+    }
 }

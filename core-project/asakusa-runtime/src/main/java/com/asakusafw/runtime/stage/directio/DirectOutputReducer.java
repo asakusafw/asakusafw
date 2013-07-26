@@ -18,7 +18,6 @@ package com.asakusafw.runtime.stage.directio;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configurable;
-import org.apache.hadoop.mapreduce.Reducer;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.Counter;
@@ -27,6 +26,7 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
+import com.asakusafw.runtime.flow.ReducerWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.util.Union;
 import com.asakusafw.runtime.stage.StageConstants;
@@ -36,7 +36,7 @@ import com.asakusafw.runtime.util.VariableTable;
  * Reducer for direct output.
  * @since 0.2.5
  */
-public final class DirectOutputReducer extends Reducer<
+public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         AbstractDirectOutputKey, AbstractDirectOutputValue,
         Object, Object> {
 

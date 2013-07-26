@@ -17,6 +17,7 @@ package com.asakusafw.compiler.flow.plan;
 
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +62,7 @@ import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Project;
 import com.asakusafw.vocabulary.operator.Restructure;
 import com.asakusafw.vocabulary.operator.Split;
+import com.asakusafw.vocabulary.operator.Trace;
 
 /**
  * 演算子グラフの実行計画を立案する。
@@ -70,6 +72,17 @@ public class StagePlanner {
     static final String KEY_COMPRESS_FLOW_BLOCK_GROUP = "compressFlowBlockGroup";
 
     static final GenericOptionValue DEFAULT_COMPRESS_FLOW_BLOCK_GROUP = GenericOptionValue.ENABLED;
+
+    static final Comparator<FlowGraphRewriter> REWRITER_COMPARATOR = new Comparator<FlowGraphRewriter>() {
+        @Override
+        public int compare(FlowGraphRewriter o1, FlowGraphRewriter o2) {
+            int phaseDiff = o1.getPhase().compareTo(o2.getPhase());
+            if (phaseDiff != 0) {
+                return phaseDiff;
+            }
+            return o1.getClass().getName().compareTo(o2.getClass().getName());
+        }
+    };
 
     static final Logger LOG = LoggerFactory.getLogger(StagePlanner.class);
 
@@ -92,8 +105,15 @@ public class StagePlanner {
             FlowCompilerOptions options) {
         Precondition.checkMustNotBeNull(rewriters, "rewriters"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
-        this.rewriters = rewriters;
+        this.rewriters = sortRewriters(rewriters);
         this.options = options;
+    }
+
+    private List<? extends FlowGraphRewriter> sortRewriters(List<? extends FlowGraphRewriter> rw) {
+        // for rewriting stability, we sort rewriters
+        List<FlowGraphRewriter> results = new ArrayList<FlowGraphRewriter>(rw);
+        Collections.sort(results, REWRITER_COMPARATOR);
+        return results;
     }
 
     /**
@@ -156,7 +176,7 @@ public class StagePlanner {
         LOG.debug("{}に出現する副作用のある演算子を処理します", graph);
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             if (FlowGraphUtil.hasGlobalSideEffect(element)) {
-                LOG.debug("{}には副作用があるため、直後にチェックポイントが挿入されます", graph);
+                LOG.debug("{}には副作用があるため、直後にチェックポイントが挿入されます", element);
                 for (FlowElementOutput output : element.getOutputPorts()) {
                     FlowGraphUtil.insertCheckpoint(output);
                 }
@@ -877,6 +897,7 @@ public class StagePlanner {
                     || kind == SideDataCheck.class
                     || kind == SideDataBranch.class
                     || kind == Logging.class
+                    || kind == Trace.class
                     || kind == Debug.class) {
                 return true;
             }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import com.asakusafw.runtime.stage.directio.AbstractNoReduceDirectOutputMapper;
 import com.asakusafw.runtime.stage.directio.DirectOutputReducer;
 import com.asakusafw.runtime.stage.directio.DirectOutputSpec;
 import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -331,7 +333,10 @@ public class StageEmitter {
         }
     }
 
-    private Name emitWithClass(String classNameString, Class<?> baseClass, Name argumentClassName) throws IOException {
+    private Name emitWithClass(
+            String classNameString,
+            Class<?> baseClass,
+            Name argumentClassName) throws IOException {
         assert classNameString != null;
         assert baseClass != null;
         assert argumentClassName != null;
@@ -371,6 +376,7 @@ public class StageEmitter {
                 new JavadocBuilder(f)
                     .toJavadoc(),
                 new AttributeBuilder(f)
+                    .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
                     .Public()
                     .Final()
                     .toAttributes(),
@@ -391,6 +397,15 @@ public class StageEmitter {
             .newQualifiedName(packageName, simpleName);
         LOG.debug("epilogue of \"{}\" will use {}", moduleId, name);
         return name;
+    }
+
+    private Map<String, Expression> createTraceLocationElements() {
+        ModelFactory factory = environment.getModelFactory();
+        Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+        results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+        results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+        results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+        return results;
     }
 
     private Name emitClient(
@@ -520,6 +535,7 @@ public class StageEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -528,6 +544,14 @@ public class StageEmitter {
                     t(AbstractStageClient.class),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            return results;
         }
 
         private List<MethodDeclaration> createIdMethods() {

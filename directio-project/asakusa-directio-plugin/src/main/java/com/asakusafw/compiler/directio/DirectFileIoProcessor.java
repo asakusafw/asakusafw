@@ -37,6 +37,7 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
 import com.asakusafw.runtime.directio.DataFormat;
@@ -73,6 +74,11 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private static final String MODULE_NAME = "directio";
 
     private static final Class<? extends InputFormat<?, ?>> INPUT_FORMAT = BridgeInputFormat.class;
+
+    @Override
+    public String getId() {
+        return MODULE_NAME;
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -352,7 +358,8 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
+        IoContextBuilder builder = new IoContextBuilder();
         List<CopyDescription> targets = Lists.create();
         for (Input input : context.getInputs()) {
             InputDescription description = input.getDescription();
@@ -364,6 +371,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                         getEnvironment().getDataClasses().load(description.getDataType()),
                         getOriginalInputInfo(description),
                         TemporaryOutputFormat.class));
+                builder.addInput(input);
             }
         }
         if (targets.isEmpty()) {
@@ -374,11 +382,11 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 MODULE_NAME,
                 targets,
                 getEnvironment().getPrologueLocation(MODULE_NAME));
-        return Collections.singletonList(stage);
+        return Collections.singletonList(new ExternalIoStage(getId(), stage, builder.build()));
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         ModelFactory f = getEnvironment().getModelFactory();
         NamingClassEmitter namingEmitter = new NamingClassEmitter(getEnvironment(), MODULE_NAME);
         OrderingClassEmitter orderingEmitter = new OrderingClassEmitter(getEnvironment(), MODULE_NAME);
@@ -428,7 +436,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         }
         StageEmitter stageEmitter = new StageEmitter(getEnvironment(), MODULE_NAME);
         CompiledStage result = stageEmitter.emit(slots, getEnvironment().getEpilogueLocation(MODULE_NAME));
-        return Collections.singletonList(result);
+        return Collections.singletonList(new ExternalIoStage(getId(), result, context.getOutputContext()));
     }
 
     private boolean isCacheTarget(ImporterDescription desc) {

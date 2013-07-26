@@ -62,6 +62,8 @@ do
     LIBJAR="$LIBJAR","$i"
 done
 
+# FIXME support <batch-archive>/usr/lib
+
 if [ -d "$ASAKUSA_HOME/ext/lib" ]
 then
     EXTLIBCNT=$(ls -1 "$ASAKUSA_HOME/ext/lib" | wc -l)

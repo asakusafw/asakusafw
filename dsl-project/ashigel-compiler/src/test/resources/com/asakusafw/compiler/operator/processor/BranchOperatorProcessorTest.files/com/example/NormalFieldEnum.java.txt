@@ -1,0 +1,23 @@
+package com.example;
+
+public enum NormalFieldEnum {
+
+    /**
+     * High.
+     */
+    HIGH,
+
+    /**
+     * Middle
+     */
+    MIDDLE,
+
+    /**
+     * Low
+     */
+    LOW,
+    
+    ;
+
+    public final String VALUE = name();
+}

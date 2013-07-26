@@ -18,6 +18,7 @@ package com.asakusafw.compiler.flow.join;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +71,11 @@ import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 public class JoinRewriter extends FlowCompilingEnvironment.Initialized implements FlowGraphRewriter {
 
     static final Logger LOG = LoggerFactory.getLogger(JoinRewriter.class);
+
+    @Override
+    public Phase getPhase() {
+        return Phase.LATER_OPTIMIZE;
+    }
 
     @Override
     public boolean rewrite(FlowGraph graph) throws RewriteException {
@@ -227,8 +233,14 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
             }
         }
 
+        Collection<FlowElementOutput> originalUpstreams = master.getOpposites();
         FlowGraphUtil.disconnect(element);
-        return false;
+        for (FlowElementOutput output : originalUpstreams) {
+            if (output.getConnected().isEmpty()) {
+                FlowGraphUtil.stop(output);
+            }
+        }
+        return true;
     }
 
     private FlowResourceDescription createResource(
@@ -290,6 +302,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         assert desc != null;
         assert operatorType != null;
         OperatorDescription.Builder builder = new OperatorDescription.Builder(operatorType);
+        builder.setOrigin(desc.getOrigin());
         builder.declare(
                 desc.getDeclaration().getDeclaring(),
                 desc.getDeclaration().getImplementing(),

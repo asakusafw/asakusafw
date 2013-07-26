@@ -5,6 +5,22 @@ Asakusa Frameworkのリリースノートです。
 
 すべての変更点一覧は :doc:`changelogs` も参照してください。
 
+Release 0.5.1
+=============
+Jul 26, 2013
+
+`Asakusa Framework 0.5.1 documentation`_
+
+..  _`Asakusa Framework 0.5.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.1/release/ja/html/index.html
+
+本リリースはAsakusa Frameworkの開発版リリースです。
+主な変更内容は以下の通りです。
+
+* テストドライバに演算子のトレースログを出力する機構を追加。
+* アプリケーション依存ライブラリの管理方法を改善。
+* DMDLコンパイラの日本語メッセージリソースを追加。
+* その他、多くの細かな機能改善、およびバグフィックス。
+
 Release 0.5.0
 =============
 May 9, 2013

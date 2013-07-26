@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.collector.SortableSlot;
 import com.asakusafw.runtime.stage.collector.WritableSlot;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -66,7 +68,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 /**
  * parallel sortを行うステージクライアントクラスを生成する。
  * @since 0.1.0
- * @version 0.2.4
+ * @version 0.5.1
  */
 public class ParallelSortClientEmitter {
 
@@ -180,6 +182,7 @@ public class ParallelSortClientEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -188,6 +191,14 @@ public class ParallelSortClientEmitter {
                     t(AbstractStageClient.class),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            return results;
         }
 
         private List<MethodDeclaration> createIdMethods() {

@@ -31,12 +31,15 @@ import com.asakusafw.utils.java.model.syntax.Model;
  */
 abstract class ModelRoot implements Model {
 
-    private final Map<Class<?>, Object> traits = new WeakHashMap<Class<?>, Object>();
+    private Map<Class<?>, Object> traits;
 
     @Override
     public <T> T findModelTrait(Class<T> traitClass) {
         if (traitClass == null) {
             throw new IllegalArgumentException("traitClass must not be null"); //$NON-NLS-1$
+        }
+        if (traits == null) {
+            return null;
         }
         Object adapter = traits.get(traitClass);
         if (adapter == null) {
@@ -51,9 +54,14 @@ abstract class ModelRoot implements Model {
             throw new IllegalArgumentException("traitClass must not be null"); //$NON-NLS-1$
         }
         if (traitObject == null) {
-            traits.remove(traitClass);
+            if (traits != null) {
+                traits.remove(traitClass);
+            }
         } else {
             assert traitClass.isInstance(traitObject);
+            if (traits == null) {
+                traits = new WeakHashMap<Class<?>, Object>(4, 0.75f);
+            }
             traits.put(traitClass, traitObject);
         }
     }

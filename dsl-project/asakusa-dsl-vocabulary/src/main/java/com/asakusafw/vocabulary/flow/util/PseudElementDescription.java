@@ -116,6 +116,11 @@ public class PseudElementDescription implements FlowElementDescription {
     }
 
     @Override
+    public FlowElementDescription getOrigin() {
+        return this;
+    }
+
+    @Override
     public String getName() {
         return name;
     }

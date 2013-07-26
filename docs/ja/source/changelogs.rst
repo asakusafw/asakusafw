@@ -2,6 +2,35 @@
 Changelogs
 ==========
 
+Release 0.5.1
+=============
+Jul 26, 2013
+
+Enhancements
+------------
+* [ :issue:`282` ] - Error message improvement in DMDL
+* [ :issue:`287` ] - Manages application dependency libraries per project
+    * See: :doc:`application/maven-archetype`
+* [ :issue:`289` ] - Japanese message resources of DMDL Compiler
+* [ :issue:`291` ] - Dataflow tracing on TestDriver
+    * See: :doc:`testing/user-guide`
+* [ :issue:`292` ] - Reduce memory usage of Java DOM library
+* [ :issue:`294` ] - Skips tests not found JDK on Windows
+
+Bug fixes
+---------
+* [ :issue:`284` ] - Tester assertion seems strange in case of verify key duplication
+* [ :issue:`285` ] - Value of emum counted port at @MasterBranch operator
+* [ :issue:`286` ] - Delete a wrong sentence.
+* [ :issue:`288` ] - The useIncrementalCompilation option should disable on archetype default configuration.
+* [ :issue:`295` ] - Regression: Failed to compile DMDL script on Windows.
+* [ :issue:`295` ] - Dependency for hadoop on dmdl-java should have provided scope
+
+Others
+------
+* [ :issue:`290` ] - 0.5.1 Documentation
+* [ :issue:`293` ] - Update Maven plugins to recent versions (0.5.1)
+
 Release 0.5.0
 =============
 May 9, 2013
@@ -26,6 +55,7 @@ Enhancements
 * [ :issue:`274` ] - YAESS start log should output command line arguments completely
 * [ :issue:`275` ] - Verifying Asakusa DSL
     * See: :doc:`dsl/user-guide`
+* [ :issue:`276` ] - MapReduce Job Name should include Execution ID
 * [ :issue:`277` ] - Simplifies application project configuration
     * See: :doc:`administration/framework-organizer`
 * [ :issue:`279` ] - Keep flowpart parameters information for visualization capability

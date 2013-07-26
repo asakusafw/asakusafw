@@ -290,6 +290,14 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
     }
 
     /**
+     * duplicate mapped property in same term.
+     */
+    @Test
+    public void invalid_unbound_join_key() {
+        shouldSemanticError();
+    }
+
+    /**
      * number of properties in each grouping is inconsistent.
      */
     @Test

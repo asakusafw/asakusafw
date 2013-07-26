@@ -17,9 +17,9 @@ package com.asakusafw.runtime.stage.directio;
 
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.model.DataModel;
 
 /**
@@ -27,8 +27,9 @@ import com.asakusafw.runtime.model.DataModel;
  * This writes output for {@link DirectOutputReducer}.
  * @param <T> target data type
  * @since 0.2.5
+ * @version 0.5.1
  */
-public abstract class AbstractDirectOutputMapper<T extends DataModel<T>> extends Mapper<
+public abstract class AbstractDirectOutputMapper<T extends DataModel<T>> extends MapperWithRuntimeResource<
         Object, T,
         AbstractDirectOutputKey, AbstractDirectOutputValue> {
 

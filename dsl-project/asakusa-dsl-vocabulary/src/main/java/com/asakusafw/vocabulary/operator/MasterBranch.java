@@ -47,6 +47,7 @@ import com.asakusafw.vocabulary.model.Key;
  * <ul>
  * <li> 返戻型には分岐先を表現する列挙型を指定する
  *   <ul>
+ *   <li> その列挙型は、{@code public} として宣言されている </li>
  *   <li> その列挙型は、一つ以上の列挙定数を持つ </li>
  *   </ul>
  * </li>
@@ -129,6 +130,8 @@ public abstract class &lt;Operator-Class&gt; {
  * @see MasterJoin
  * @see Branch
  * @see MasterSelection
+ * @since 0.1.0
+ * @version 0.5.1
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

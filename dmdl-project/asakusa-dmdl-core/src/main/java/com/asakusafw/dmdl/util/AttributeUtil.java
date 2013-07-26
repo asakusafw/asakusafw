@@ -77,13 +77,13 @@ public final class AttributeUtil {
             return Collections.emptyList();
         }
         List<Diagnostic> results = Lists.create();
-        for (AstAttributeElement element : attribute.elements) {
+        for (AstAttributeElement element : elements) {
             results.add(new Diagnostic(
                     Level.ERROR,
                     element.name,
-                    "No such element \"{0}\" in attribute \"{1}\"",
-                    element.name,
-                    attribute.name));
+                    Messages.getString("AttributeUtil.diagnosticUnknownElement"), //$NON-NLS-1$
+                    attribute.name,
+                    element.name));
         }
         return results;
     }
@@ -123,7 +123,7 @@ public final class AttributeUtil {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         attribute.name,
-                        "@{0} must declare an element \"{1}=...\"",
+                        Messages.getString("AttributeUtil.diagnosticMissingElement"), //$NON-NLS-1$
                         attribute.name.toString(),
                         elementName));
             }
@@ -132,7 +132,7 @@ public final class AttributeUtil {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     target,
-                    "@{0}({1}) must be a string literal",
+                    Messages.getString("AttributeUtil.diagnosticNotLiteral"), //$NON-NLS-1$
                     attribute.name.toString(),
                     elementName));
             return null;
@@ -142,7 +142,7 @@ public final class AttributeUtil {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         target,
-                        "@{0}({1}) must be a string literal",
+                        Messages.getString("AttributeUtil.diagnosticNotStringLiteral"), //$NON-NLS-1$
                         attribute.name.toString(),
                         elementName));
                 return null;

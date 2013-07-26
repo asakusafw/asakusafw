@@ -78,7 +78,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
 ``jobflow/<フローID>/stagegraph.dot`` は、ジョブフローが持つステージ全体の構造 [#]_ を示すグラフを提供します。
 
 ..  figure:: analysis-examples/stagegraph.png
-    :scale: 50%
+    :width: 100%
 
 ステージ全体の構造のうち、特定のステージのみのグラフを参照したい場合は、 ``jobflow/<フローID>/stageblock-XX.dot`` を参照します。
 
@@ -89,7 +89,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
 ``jobflow/<フローID>/flowgraph.dot`` は、ジョブフローの入出力、及びジョブフローに含まれる演算子間の入出力の関係を示すグラフを提供します。
 
 ..  figure:: analysis-examples/flowgraph.png
-    :scale: 50%
+    :width: 100%
 
 バッチ構造を示すテキストファイルの出力例
 ========================================

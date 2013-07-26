@@ -331,7 +331,7 @@ public final class EmitContext {
                 return resolve(Text.class);
             default:
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Unsupported basic type: {0}",
+                        "Unsupported basic type: {0}", //$NON-NLS-1$
                         bt.getKind()));
             }
         }
@@ -375,7 +375,7 @@ public final class EmitContext {
                 return resolve(StringOption.class);
             default:
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Unsupported basic type: {0}",
+                        "Unsupported basic type: {0}", //$NON-NLS-1$
                         bt.getKind()));
             }
         }
@@ -410,9 +410,9 @@ public final class EmitContext {
         }
         JavaName name = JavaName.of(property.getName());
         if (isBoolean(property)) {
-            name.addFirst("is");
+            name.addFirst("is"); //$NON-NLS-1$
         } else {
-            name.addFirst("get");
+            name.addFirst("get"); //$NON-NLS-1$
         }
         return factory.newSimpleName(name.toMemberName());
     }
@@ -437,7 +437,7 @@ public final class EmitContext {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
         JavaName name = JavaName.of(property.getName());
-        name.addFirst("set");
+        name.addFirst("set"); //$NON-NLS-1$
         return factory.newSimpleName(name.toMemberName());
     }
 
@@ -452,8 +452,8 @@ public final class EmitContext {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
         JavaName name = JavaName.of(property.getName());
-        name.addFirst("get");
-        name.addLast("Option");
+        name.addFirst("get"); //$NON-NLS-1$
+        name.addLast("Option"); //$NON-NLS-1$
         return factory.newSimpleName(name.toMemberName());
     }
 
@@ -468,8 +468,8 @@ public final class EmitContext {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
         JavaName name = JavaName.of(property.getName());
-        name.addFirst("set");
-        name.addLast("Option");
+        name.addFirst("set"); //$NON-NLS-1$
+        name.addLast("Option"); //$NON-NLS-1$
         return factory.newSimpleName(name.toMemberName());
     }
 

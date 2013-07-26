@@ -67,15 +67,15 @@ public final class CommandLineUtils {
         if (localeNameOrNull == null || localeNameOrNull.isEmpty()) {
             return Locale.getDefault();
         }
-        String[] segments = localeNameOrNull.trim().split("_", 3);
+        String[] segments = localeNameOrNull.trim().split("_", 3); //$NON-NLS-1$
         if (segments.length == 0 || segments[0].isEmpty()) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid locale name: {0}",
+                    "Invalid locale name: {0}", //$NON-NLS-1$
                     localeNameOrNull));
         }
         String language = segments[0];
-        String country = segments.length > 1 ? segments[1] : "";
-        String variant = segments.length > 2 ? segments[2] : "";
+        String country = segments.length > 1 ? segments[1] : ""; //$NON-NLS-1$
+        String variant = segments.length > 2 ? segments[2] : ""; //$NON-NLS-1$
         assert segments.length <= 3;
         return new Locale(language, country, variant);
     }
@@ -127,10 +127,10 @@ public final class CommandLineUtils {
                 repositories.add(new DmdlSourceDirectory(
                         file,
                         cs,
-                        Pattern.compile(".*\\.dmdl"),
-                        Pattern.compile("^\\..*")));
+                        Pattern.compile(".*\\.dmdl"), //$NON-NLS-1$
+                        Pattern.compile("^\\..*"))); //$NON-NLS-1$
             } else {
-                LOG.warn("{}がありません", file);
+                LOG.warn(MessageFormat.format(Messages.getString("CommandLineUtils.warnMissingFile"), file)); //$NON-NLS-1$
             }
         }
         if (repositories.size() == 1) {
@@ -160,7 +160,7 @@ public final class CommandLineUtils {
                 pluginLocations.add(url);
             } catch (IOException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to load plugin \"{0}\"",
+                        Messages.getString("CommandLineUtils.warnInvalidPlugIn"), //$NON-NLS-1$
                         file),
                         e);
             }

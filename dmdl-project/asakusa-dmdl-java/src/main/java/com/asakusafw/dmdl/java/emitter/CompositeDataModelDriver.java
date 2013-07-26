@@ -60,7 +60,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
         ServiceLoader<JavaDataModelDriver> loader =
             ServiceLoader.load(JavaDataModelDriver.class, serviceClassLoader);
         for (JavaDataModelDriver driver : loader) {
-            LOG.debug("Activating Java data model driver: {}", driver.getClass().getName());
+            LOG.debug("Activating Java data model driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             results.add(driver);
         }
         Collections.sort(results, new Comparator<Object>() {

@@ -55,6 +55,7 @@ public final class FlowElementOutput extends FlowElementPort {
      * このポートに接続されている全ての入力ポートに対し、その接続を解除する。
      * @return 解除した出力ポートの一覧
      */
+    @Override
     public Collection<FlowElementInput> disconnectAll() {
         Collection<FlowElementInput> results = new ArrayList<FlowElementInput>();
         for (PortConnection conn : new ArrayList<PortConnection>(getConnected())) {
