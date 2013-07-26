@@ -233,8 +233,7 @@ Asakusa Frameworkのデプロイ先を環境変数 ``$ASAKUSA_HOME`` とした�
 
 Asakusa Framework追加ライブラリのデプロイ
 -----------------------------------------
-Asakusaバッチアプリケーションで利用するライブラリや、Asakusa Frameworkを拡張する :doc:`実行時プラグイン <deployment-runtime-plugins>` が存在する場合、
-これらのクラスライブラリアーカイブを以下のモジュールに追加でデプロイします。
+Asakusaバッチアプリケーションで利用する共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの） [#]_ や、Asakusa Frameworkを拡張する :doc:`実行時プラグイン <deployment-runtime-plugins>` が存在する場合、これらのクラスライブラリアーカイブを以下のモジュールに追加でデプロイします。
 
 ..  list-table:: Asakusa Framework追加ライブラリのデプロイが必要なモジュール
     :widths: 10 10
@@ -252,6 +251,9 @@ Asakusaバッチアプリケーションで利用するライブラリや、Asak
 追加ライブラリのデプロイ先は ``$ASAKUSA_HOME/ext/lib/`` の直下です。
 実行時プラグインの設定は `Asakusa Framework実行時プラグインの設定`_ を参照してください。
 
+..  [#] Asakusa Framework バージョン ``0.5.1`` から、バッチアプリケーションのコンパイル時に規定のディレクトリに追加ライブラリを配置しておくことで、バッチアプリケーションアーカイブに共通ライブラリを含める機能が追加されました。この機能を使って共通ライブラリを管理する場合は、本手順で説明するデプロイ手順は不要です。
+
+    詳しくは、 :doc:`../application/maven-archetype` の :ref:`application-dependency-library` を参照してください。
 
 Asakusa Framework実行時プラグインの設定
 ---------------------------------------
