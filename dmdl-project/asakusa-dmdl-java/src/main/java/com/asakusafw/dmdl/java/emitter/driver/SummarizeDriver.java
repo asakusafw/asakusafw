@@ -57,7 +57,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         SummarizeTrait trait = model.getTrait(SummarizeTrait.class);
         if (trait == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Internal Error: summarized model {0} has no SummarizeTrait",
+                    "Internal Error: summarized model {0} has no SummarizeTrait", //$NON-NLS-1$
                     model.getName()));
         }
 
@@ -69,14 +69,14 @@ public class SummarizeDriver extends JavaDataModelDriver {
             Annotation shuffle = toKey(context, term);
             eTerms.addAll(new AttributeBuilder(f)
                 .annotation(context.resolve(Summarized.Term.class),
-                        "source", source,
-                        "foldings", mappings,
-                        "shuffle", shuffle)
+                        "source", source, //$NON-NLS-1$
+                        "foldings", mappings, //$NON-NLS-1$
+                        "shuffle", shuffle) //$NON-NLS-1$
                 .toAnnotations());
         }
         return new AttributeBuilder(f)
             .annotation(context.resolve(Summarized.class),
-                    "term", eTerms.get(0))
+                    "term", eTerms.get(0)) //$NON-NLS-1$
             .toAnnotations();
     }
 
@@ -93,9 +93,9 @@ public class SummarizeDriver extends JavaDataModelDriver {
             String target = context.getFieldName(factor.getTarget().findDeclaration()).getToken();
             eachFolding.addAll(new AttributeBuilder(f)
                 .annotation(context.resolve(Summarized.Folding.class),
-                        "aggregator", aggregator,
-                        "source", Models.toLiteral(f, source),
-                        "destination", Models.toLiteral(f, target))
+                        "aggregator", aggregator, //$NON-NLS-1$
+                        "source", Models.toLiteral(f, source), //$NON-NLS-1$
+                        "destination", Models.toLiteral(f, target)) //$NON-NLS-1$
                 .toAnnotations());
         }
         return f.newArrayInitializer(eachFolding);
@@ -136,7 +136,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         }
         return new AttributeBuilder(f)
             .annotation(context.resolve(Key.class),
-                    "group", f.newArrayInitializer(properties))
+                    "group", f.newArrayInitializer(properties)) //$NON-NLS-1$
             .toAnnotations()
             .get(0);
     }

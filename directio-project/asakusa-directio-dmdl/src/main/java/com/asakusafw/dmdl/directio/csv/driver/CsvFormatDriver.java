@@ -65,42 +65,42 @@ public class CsvFormatDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.csv";
+    public static final String TARGET_NAME = "directio.csv"; //$NON-NLS-1$
 
     /**
      * The element name of charset name.
      */
-    public static final String ELEMENT_CHARSET_NAME = "charset";
+    public static final String ELEMENT_CHARSET_NAME = "charset"; //$NON-NLS-1$
 
     /**
      * The element name of whether header is required.
      */
-    public static final String ELEMENT_HAS_HEADER_NAME = "has_header";
+    public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
 
     /**
      * The element name of whether value can contain linefeed.
      */
-    public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed";
+    public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed"; //$NON-NLS-1$
 
     /**
      * The element name of {@code true} representation.
      */
-    public static final String ELEMENT_TRUE_NAME = "true";
+    public static final String ELEMENT_TRUE_NAME = "true"; //$NON-NLS-1$
 
     /**
      * The element name of {@code false} representation.
      */
-    public static final String ELEMENT_FALSE_NAME = "false";
+    public static final String ELEMENT_FALSE_NAME = "false"; //$NON-NLS-1$
 
     /**
      * The element name of {@link Date} representation.
      */
-    public static final String ELEMENT_DATE_NAME = "date";
+    public static final String ELEMENT_DATE_NAME = "date"; //$NON-NLS-1$
 
     /**
      * The element name of {@link DateTime} representation.
      */
-    public static final String ELEMENT_DATE_TIME_NAME = "datetime";
+    public static final String ELEMENT_DATE_TIME_NAME = "datetime"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {
@@ -163,7 +163,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     stringLiteral,
-                    "@{0}({1}) must not be empty",
+                    Messages.getString("CsvFormatDriver.diagnosticEmptyElement"), //$NON-NLS-1$
                     TARGET_NAME,
                     name));
             return false;
@@ -186,7 +186,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     stringLiteral,
-                    "@{0}({1}) must be a valid SimpleDateFormat pattern",
+                    Messages.getString("CsvFormatDriver.diagnosticInvalidDateFormat"), //$NON-NLS-1$
                     TARGET_NAME,
                     name));
             return false;
@@ -210,9 +210,10 @@ public class CsvFormatDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     element,
-                    "@{0}({1}) must be a string literal",
+                    Messages.getString("CsvFormatDriver.diagnosticInvalidLiteralKind"), //$NON-NLS-1$
                     TARGET_NAME,
-                    elementName));
+                    elementName,
+                    kind));
             return null;
         } else {
             AstLiteral literal = (AstLiteral) element.value;
@@ -220,9 +221,10 @@ public class CsvFormatDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         element,
-                        "@{0}({1}) must be a string literal",
+                        Messages.getString("CsvFormatDriver.diagnosticInvalidLiteralKind"), //$NON-NLS-1$
                         TARGET_NAME,
-                        elementName));
+                        elementName,
+                        kind));
                 return null;
             }
             return literal;

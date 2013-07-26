@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.StageResource;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -157,6 +159,7 @@ public class StageClientEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -165,6 +168,14 @@ public class StageClientEmitter {
                     t(AbstractStageClient.class),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stage.getNumber())));
+            return results;
         }
 
         private List<MethodDeclaration> createIdMethods() {

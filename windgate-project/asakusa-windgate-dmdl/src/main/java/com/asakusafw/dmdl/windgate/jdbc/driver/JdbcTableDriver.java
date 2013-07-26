@@ -38,12 +38,12 @@ public class JdbcTableDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.jdbc.table";
+    public static final String TARGET_NAME = "windgate.jdbc.table"; //$NON-NLS-1$
 
     /**
      * The element name of {@code name}.
      */
-    public static final String ELEMENT_NAME = "name";
+    public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

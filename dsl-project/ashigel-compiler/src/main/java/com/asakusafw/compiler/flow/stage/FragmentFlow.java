@@ -37,7 +37,6 @@ import com.asakusafw.compiler.flow.stage.StageModel.Sink;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
-import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.flow.VoidResult;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 import com.asakusafw.utils.collections.Lists;
@@ -81,8 +80,6 @@ public class FragmentFlow {
 
     private final ShuffleModel shuffle;
 
-    private final SimpleName resourceManager;
-
     private final SimpleName stageOutputs;
 
     private final Map<FlowElementInput, FragmentNode> lines = Maps.create();
@@ -125,12 +122,7 @@ public class FragmentFlow {
         this.resources = createResources();
         this.dependencies = analyzeDependencies();
         resolveDependencies();
-        this.resourceManager = createRuntimeResourceManager();
         this.stageOutputs = createStageOutputs();
-    }
-
-    private SimpleName createRuntimeResourceManager() {
-        return names.create("runtimeResourceManager");
     }
 
     private SimpleName createStageOutputs() {
@@ -314,7 +306,6 @@ public class FragmentFlow {
      */
     public List<FieldDeclaration> createFields() {
         List<FieldDeclaration> results = Lists.create();
-        results.add(createResourceManagerField());
         if (stageOutputs != null) {
             results.add(createStageOutputsField());
         }
@@ -340,18 +331,6 @@ public class FragmentFlow {
                     .toAttributes(),
                 importer.toType(resource.getCompiled().getQualifiedName()),
                 name,
-                null);
-        return field;
-    }
-
-    private FieldDeclaration createResourceManagerField() {
-        FieldDeclaration field = factory.newFieldDeclaration(
-                null,
-                new AttributeBuilder(factory)
-                    .Private()
-                    .toAttributes(),
-                importer.toType(RuntimeResourceManager.class),
-                resourceManager,
                 null);
         return field;
     }
@@ -391,8 +370,6 @@ public class FragmentFlow {
     public List<Statement> createSetup(Expression context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         List<Statement> results = Lists.create();
-        results.addAll(setupResourceManager(context));
-
         if (stageOutputs != null) {
             results.addAll(setupStageOutputs(context));
         }
@@ -443,24 +420,6 @@ public class FragmentFlow {
                 throw new AssertionError(node);
             }
         }
-        return results;
-    }
-
-    private List<Statement> setupResourceManager(Expression context) {
-        assert context != null;
-        List<Statement> results = Lists.create();
-        results.add(new ExpressionBuilder(factory, factory.newThis())
-            .field(resourceManager)
-            .assignFrom(new TypeBuilder(factory, importer.toType(RuntimeResourceManager.class))
-                .newObject(new ExpressionBuilder(factory, context)
-                    .method("getConfiguration")
-                    .toExpression())
-                .toExpression())
-            .toStatement());
-        results.add(new ExpressionBuilder(factory, factory.newThis())
-            .field(resourceManager)
-            .method("setup")
-            .toStatement());
         return results;
     }
 
@@ -662,7 +621,6 @@ public class FragmentFlow {
     public List<Statement> createCleanup(SimpleName context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         List<Statement> results = Lists.create();
-        results.addAll(cleanResourceManager(context));
         if (stageOutputs != null) {
             results.addAll(cleanStageOutputs(context));
         }
@@ -697,20 +655,6 @@ public class FragmentFlow {
                 .assignFrom(Models.toNullLiteral(factory))
                 .toStatement());
         }
-        return results;
-    }
-
-    private List<Statement> cleanResourceManager(SimpleName context) {
-        assert context != null;
-        List<Statement> results = Lists.create();
-        results.add(new ExpressionBuilder(factory, factory.newThis())
-            .field(resourceManager)
-            .method("cleanup")
-            .toStatement());
-        results.add(new ExpressionBuilder(factory, factory.newThis())
-            .field(resourceManager)
-            .assignFrom(Models.toNullLiteral(factory))
-            .toStatement());
         return results;
     }
 

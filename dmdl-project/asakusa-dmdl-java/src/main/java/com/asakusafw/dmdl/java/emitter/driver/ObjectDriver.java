@@ -59,33 +59,33 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert model != null;
         ModelFactory f = context.getModelFactory();
         List<Statement> statements = Lists.create();
-        SimpleName buffer = context.createVariableName("result");
+        SimpleName buffer = context.createVariableName("result"); //$NON-NLS-1$
         statements.add(new TypeBuilder(f, context.resolve(StringBuilder.class))
             .newObject()
             .toLocalVariableDeclaration(context.resolve(StringBuilder.class), buffer));
         statements.add(new ExpressionBuilder(f, buffer)
-            .method("append", Models.toLiteral(f, "{"))
+            .method("append", Models.toLiteral(f, "{")) //$NON-NLS-1$ //$NON-NLS-2$
             .toStatement());
         statements.add(new ExpressionBuilder(f, buffer)
-            .method("append", Models.toLiteral(f, "class=" + model.getName().identifier))
+            .method("append", Models.toLiteral(f, "class=" + model.getName().identifier)) //$NON-NLS-1$ //$NON-NLS-2$
             .toStatement());
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, buffer)
-                .method("append", Models.toLiteral(f, MessageFormat.format(
-                        ", {0}=",
+                .method("append", Models.toLiteral(f, MessageFormat.format( //$NON-NLS-1$
+                        ", {0}=", //$NON-NLS-1$
                         context.getFieldName(property))))
                 .toStatement());
             statements.add(new ExpressionBuilder(f, buffer)
-                .method("append", new ExpressionBuilder(f, f.newThis())
+                .method("append", new ExpressionBuilder(f, f.newThis()) //$NON-NLS-1$
                     .field(context.getFieldName(property))
                     .toExpression())
                 .toStatement());
         }
         statements.add(new ExpressionBuilder(f, buffer)
-            .method("append", Models.toLiteral(f, "}"))
+            .method("append", Models.toLiteral(f, "}")) //$NON-NLS-1$ //$NON-NLS-2$
             .toStatement());
         statements.add(new ExpressionBuilder(f, buffer)
-            .method("toString")
+            .method("toString") //$NON-NLS-1$
             .toReturnStatement());
         return f.newMethodDeclaration(
                 null,
@@ -94,7 +94,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                     .Public()
                     .toAttributes(),
                 context.resolve(String.class),
-                f.newSimpleName("toString"),
+                f.newSimpleName("toString"), //$NON-NLS-1$
                 Collections.<FormalParameterDeclaration>emptyList(),
                 statements);
     }
@@ -104,8 +104,8 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert model != null;
         ModelFactory f = context.getModelFactory();
         List<Statement> statements = Lists.create();
-        SimpleName prime = context.createVariableName("prime");
-        SimpleName result = context.createVariableName("result");
+        SimpleName prime = context.createVariableName("prime"); //$NON-NLS-1$
+        SimpleName result = context.createVariableName("result"); //$NON-NLS-1$
         statements.add(new ExpressionBuilder(f, Models.toLiteral(f, 31))
             .toLocalVariableDeclaration(Models.toType(f, int.class), prime));
         statements.add(new ExpressionBuilder(f, Models.toLiteral(f, 1))
@@ -116,7 +116,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                 .assignFrom(new ExpressionBuilder(f, prime)
                     .apply(InfixOperator.TIMES, result)
                     .apply(InfixOperator.PLUS, new ExpressionBuilder(f, field)
-                        .method("hashCode")
+                        .method("hashCode") //$NON-NLS-1$
                         .toExpression())
                     .toExpression())
                 .toStatement());
@@ -130,7 +130,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                     .Public()
                     .toAttributes(),
                 Models.toType(f, int.class),
-                f.newSimpleName("hashCode"),
+                f.newSimpleName("hashCode"), //$NON-NLS-1$
                 Collections.<FormalParameterDeclaration>emptyList(),
                 statements);
     }
@@ -140,7 +140,7 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert model != null;
         ModelFactory f = context.getModelFactory();
         List<Statement> statements = Lists.create();
-        SimpleName obj = context.createVariableName("obj");
+        SimpleName obj = context.createVariableName("obj"); //$NON-NLS-1$
         statements.add(f.newIfStatement(
                 new ExpressionBuilder(f, f.newThis())
                     .apply(InfixOperator.EQUALS, obj)
@@ -153,13 +153,13 @@ public class ObjectDriver extends JavaDataModelDriver {
                 f.newBlock(f.newReturnStatement(Models.toLiteral(f, false)))));
         statements.add(f.newIfStatement(
                 new ExpressionBuilder(f, f.newThis())
-                    .method("getClass")
+                    .method("getClass") //$NON-NLS-1$
                     .apply(InfixOperator.NOT_EQUALS, new ExpressionBuilder(f, obj)
-                        .method("getClass")
+                        .method("getClass") //$NON-NLS-1$
                         .toExpression())
                     .toExpression(),
                 f.newBlock(f.newReturnStatement(Models.toLiteral(f, false)))));
-        SimpleName other = context.createVariableName("other");
+        SimpleName other = context.createVariableName("other"); //$NON-NLS-1$
         Type self = context.resolve(context.getQualifiedTypeName());
         statements.add(new ExpressionBuilder(f, obj)
             .castTo(self)
@@ -169,7 +169,7 @@ public class ObjectDriver extends JavaDataModelDriver {
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, f.newThis())
                         .field(field)
-                        .method("equals", new ExpressionBuilder(f, other)
+                        .method("equals", new ExpressionBuilder(f, other) //$NON-NLS-1$
                             .field(field)
                             .toExpression())
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
@@ -185,7 +185,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                     .Public()
                     .toAttributes(),
                 Models.toType(f, boolean.class),
-                f.newSimpleName("equals"),
+                f.newSimpleName("equals"), //$NON-NLS-1$
                 Collections.singletonList(f.newFormalParameterDeclaration(
                         context.resolve(Object.class),
                         obj)),

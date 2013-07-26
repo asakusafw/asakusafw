@@ -34,7 +34,7 @@ public class CsvLineNumberDriver  extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.csv.line_number";
+    public static final String TARGET_NAME = "directio.csv.line_number"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

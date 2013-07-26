@@ -17,8 +17,7 @@ package com.asakusafw.runtime.configuration;
 
 import java.text.MessageFormat;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;

@@ -24,6 +24,8 @@ import org.apache.hadoop.mapreduce.Reducer;
  * {@link SegmentedWritable}をキーとして、セグメントごとの処理を行う{@code Combiner}の骨格実装。
  * @param <KEY> キーの種類
  * @param <VALUE> 値の種類
+ * @since 0.1.0
+ * @version 0.5.1
  */
 public abstract class SegmentedCombiner<
         KEY extends SegmentedWritable,

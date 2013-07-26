@@ -16,13 +16,31 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.trace.io.TraceSettingSerializer;
+import com.asakusafw.trace.model.TraceSetting;
+import com.asakusafw.trace.model.TraceSetting.Mode;
+import com.asakusafw.trace.model.Tracepoint;
+import com.asakusafw.trace.model.Tracepoint.PortKind;
+import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
  * テストドライバの基底クラス。
+ * @since 0.2.0
+ * @version 0.5.1
  */
 public abstract class TestDriverBase {
+
+    private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create";
 
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
     protected TestDriverContext driverContext;
@@ -131,6 +149,19 @@ public abstract class TestDriverBase {
         driverContext.setFrameworkHomePath(frameworkHomePath);
     }
 
+
+    /**
+     * 外部ライブラリを格納するディレクトリのパスを設定する。
+     * <p>
+     * この値が未設定の場合、 {@link TestDriverContext#EXTERNAL_LIBRARIES_PATH} で指定されたパスを利用する。
+     * </p>
+     * @param librariesPath 外部ライブラリを格納するディレクトリのパス
+     * @since 0.5.1
+     */
+    public void setLibrariesPath(File librariesPath) {
+        driverContext.setLibrariesPath(librariesPath);
+    }
+
     /**
      * 入力データのクリーニング(truncate)をスキップするかを設定する。
      *
@@ -191,4 +222,138 @@ public abstract class TestDriverBase {
         driverContext.setSkipVerify(skip);
     }
 
+    /**
+     * Adds a new tracepoint to the target operator input.
+     * @param operatorClass target operator class
+     * @param methodName target operator method name
+     * @param portName target operator input port name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public void addInputTrace(Class<?> operatorClass, String methodName, String portName) {
+        if (operatorClass == null) {
+            throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
+        }
+        if (methodName == null) {
+            throw new IllegalArgumentException("methodName must not be null"); //$NON-NLS-1$
+        }
+        if (portName == null) {
+            throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+        }
+        TraceSetting setting = createTraceSetting(
+                operatorClass, methodName,
+                PortKind.INPUT, portName,
+                Collections.<String, String>emptyMap());
+        appendTrace(setting);
+    }
+
+    /**
+     * Adds a new tracepoint to the target operator output.
+     * @param operatorClass target operator class
+     * @param methodName target operator method name
+     * @param portName target operator input port name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public void addOutputTrace(Class<?> operatorClass, String methodName, String portName) {
+        if (operatorClass == null) {
+            throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
+        }
+        if (methodName == null) {
+            throw new IllegalArgumentException("methodName must not be null"); //$NON-NLS-1$
+        }
+        if (portName == null) {
+            throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+        }
+        TraceSetting setting = createTraceSetting(
+                operatorClass, methodName,
+                PortKind.OUTPUT, portName,
+                Collections.<String, String>emptyMap());
+        appendTrace(setting);
+    }
+
+    /**
+     * Adds a new tracepoint to the target operator input.
+     * @param flowpartClass target flow-part class
+     * @param portName target operator input port name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public void addInputTrace(Class<? extends FlowDescription> flowpartClass, String portName) {
+        if (flowpartClass == null) {
+            throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
+        }
+        if (portName == null) {
+            throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+        }
+        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "The \"flowpartClass\" must be a flow-part: {0}",
+                    flowpartClass.getName()));
+        }
+        TraceSetting setting = createTraceSetting(
+                flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
+                PortKind.INPUT, portName,
+                Collections.<String, String>emptyMap());
+        appendTrace(setting);
+    }
+
+    /**
+     * Adds a new tracepoint to the target operator output.
+     * @param flowpartClass target flow-part class
+     * @param portName target operator input port name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public void addOutputTrace(Class<? extends FlowDescription> flowpartClass, String portName) {
+        if (flowpartClass == null) {
+            throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
+        }
+        if (portName == null) {
+            throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
+        }
+        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "The \"flowpartClass\" must be a flow-part: {0}",
+                    flowpartClass.getName()));
+        }
+        TraceSetting setting = createTraceSetting(
+                flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
+                PortKind.OUTPUT, portName,
+                Collections.<String, String>emptyMap());
+        appendTrace(setting);
+    }
+
+    private void appendTrace(TraceSetting setting) {
+        assert setting != null;
+        String optionValue = driverContext.getOptions().getExtraAttribute(TracepointWeaveRewriter.KEY_COMPILER_OPTION);
+        optionValue = appendTraceSetting(optionValue, setting);
+        driverContext.getOptions().putExtraAttribute(TracepointWeaveRewriter.KEY_COMPILER_OPTION, optionValue);
+    }
+
+    private String appendTraceSetting(String option, TraceSetting setting) {
+        List<TraceSetting> settings = new ArrayList<TraceSetting>();
+        if (option != null) {
+            Collection<? extends TraceSetting> loaded = TraceSettingSerializer.deserialize(option);
+            settings.addAll(loaded);
+        }
+        settings.add(setting);
+        return TraceSettingSerializer.serialize(settings);
+    }
+
+    static TraceSetting createTraceSetting(
+            Class<?> operatorClass,
+            String methodName,
+            PortKind portKind,
+            String portName,
+            Map<String, String> attributes) {
+        assert operatorClass != null;
+        assert methodName != null;
+        assert portKind != null;
+        assert portName != null;
+        assert attributes != null;
+        return new TraceSetting(
+                new Tracepoint(operatorClass.getName(), methodName, portKind, portName),
+                Mode.STRICT, attributes);
+    }
 }

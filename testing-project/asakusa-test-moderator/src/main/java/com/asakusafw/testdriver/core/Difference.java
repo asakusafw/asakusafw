@@ -15,32 +15,13 @@
  */
 package com.asakusafw.testdriver.core;
 
-import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import com.asakusafw.runtime.value.Date;
-import com.asakusafw.runtime.value.DateTime;
 
 /**
  * Describes about a pair of the expected data and the actual data.
  * @since 0.2.0
  */
 public class Difference {
-
-    private static final char[] ASCII_SPECIAL_ESCAPE = new char[0x80];
-    static {
-        ASCII_SPECIAL_ESCAPE['"'] = '"';
-        ASCII_SPECIAL_ESCAPE['\b'] = 'b';
-        ASCII_SPECIAL_ESCAPE['\t'] = 't';
-        ASCII_SPECIAL_ESCAPE['\n'] = 'n';
-        ASCII_SPECIAL_ESCAPE['\f'] = 'f';
-        ASCII_SPECIAL_ESCAPE['\r'] = 'r';
-        ASCII_SPECIAL_ESCAPE['\\'] = '\\';
-    }
 
     private final DataModelReflection expected;
 
@@ -88,61 +69,18 @@ public class Difference {
     public String toString() {
         return MessageFormat.format(
                 "{2}: expected <{0}>, but was <{1}>",
-                formatMap(getExpected()),
-                formatMap(getActual()),
+                getExpected(),
+                getActual(),
                 getDiagnostic());
     }
 
     /**
      * return formatted value.
-     *
+     * This method is equivalent to {@link DataModelReflection#toStringRepresentation(Object)}.
      * @param value target value.
      * @return formatted value.
      */
     public static String format(Object value) {
-        if (value instanceof String) {
-            return toStringLiteral((String) value);
-        } else if (value instanceof Calendar) {
-            Calendar c = (Calendar) value;
-            if (c.isSet(Calendar.HOUR_OF_DAY)) {
-                return new SimpleDateFormat(DateTime.FORMAT).format(c.getTime());
-            } else {
-                return new SimpleDateFormat(Date.FORMAT).format(c.getTime());
-            }
-        } else if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).toPlainString();
-        }
-        return String.valueOf(value);
-    }
-
-    private static String toStringLiteral(String value) {
-        assert value != null;
-        StringBuilder buf = new StringBuilder();
-        buf.append('"');
-        for (char c : value.toCharArray()) {
-            if (c <= 0x7f && ASCII_SPECIAL_ESCAPE[c] != 0) {
-                buf.append('\\');
-                buf.append(ASCII_SPECIAL_ESCAPE[c]);
-            } else if (Character.isISOControl(c) || !Character.isDefined(c)) {
-                buf.append(String.format("\\u%04x", (int) c)); //$NON-NLS-1$
-            } else {
-                buf.append(c);
-            }
-        }
-        buf.append('"');
-        return buf.toString();
-    }
-
-    private static Map<Object, String> formatMap(DataModelReflection reflection) {
-        if (reflection == null) {
-            return null;
-        } else {
-            Map<?, ?> map = reflection.properties;
-            Map<Object, String> results = new LinkedHashMap<Object, String>();
-            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                results.put(entry.getKey(), format(entry.getValue()));
-            }
-            return results;
-        }
+        return DataModelReflection.toStringRepresentation(value);
     }
 }

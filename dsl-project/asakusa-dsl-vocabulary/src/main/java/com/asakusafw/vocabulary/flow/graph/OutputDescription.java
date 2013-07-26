@@ -43,11 +43,11 @@ public class OutputDescription implements FlowElementDescription {
         ATTRIBUTES = Collections.unmodifiableMap(map);
     }
 
-    private String name;
+    private final String name;
 
-    private FlowElementPortDescription port;
+    private final FlowElementPortDescription port;
 
-    private ExporterDescription exporterDescription;
+    private final ExporterDescription exporterDescription;
 
     /**
      * インスタンスを生成する。
@@ -109,6 +109,11 @@ public class OutputDescription implements FlowElementDescription {
     @Override
     public FlowElementKind getKind() {
         return FlowElementKind.OUTPUT;
+    }
+
+    @Override
+    public FlowElementDescription getOrigin() {
+        return this;
     }
 
     /**

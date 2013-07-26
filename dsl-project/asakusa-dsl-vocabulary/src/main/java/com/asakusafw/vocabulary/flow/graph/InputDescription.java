@@ -43,11 +43,11 @@ public class InputDescription implements FlowElementDescription {
         ATTRIBUTES = Collections.unmodifiableMap(map);
     }
 
-    private String name;
+    private final String name;
 
-    private FlowElementPortDescription port;
+    private final FlowElementPortDescription port;
 
-    private ImporterDescription importerDescription;
+    private final ImporterDescription importerDescription;
 
     /**
      * インスタンスを生成する。
@@ -117,6 +117,11 @@ public class InputDescription implements FlowElementDescription {
     @Override
     public FlowElementKind getKind() {
         return FlowElementKind.INPUT;
+    }
+
+    @Override
+    public FlowElementDescription getOrigin() {
+        return this;
     }
 
     /**

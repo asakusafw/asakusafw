@@ -20,13 +20,15 @@ usage() {
 Asakusa TestDriver Hadoop Kick-script
 
 Usage:
-    $0 jar-file class-name [direct-arguments...]
+    $0 jar-file class-name batch-id [direct-arguments...]
 
 Parameters:
     jar-file
         Full path of execution library
     class-name
         Fully qualified class name of program entry
+    batch-id
+        batch ID of current execution
     direct-arguments...
         Direct arguments for Hadoop
 EOF
@@ -43,7 +45,7 @@ import() {
     fi
 }
 
-if [ $# -lt 2 ]
+if [ $# -lt 3 ]
 then
     echo "$@" 1>&2
     usage
@@ -53,6 +55,8 @@ fi
 _OPT_APP_LIB="$1"
 shift
 _OPT_CLASS_NAME="$1"
+shift
+_OPT_BATCH_ID="$1"
 shift
 
 _TD_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
@@ -77,6 +81,7 @@ Starting TestDriver Hadoop Job:
     App Library: $_OPT_APP_LIB
    Execution ID: $_OPT_EXECUTION_ID
           Class: $_OPT_CLASS_NAME
+  All Libraries: $_TD_LIBJARS
   Defined Props: $TD_HADOOP_PROPERTIES
     Extra Props: $*
 __EOF__

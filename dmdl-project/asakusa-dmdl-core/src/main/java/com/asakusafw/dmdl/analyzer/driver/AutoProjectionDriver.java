@@ -47,7 +47,7 @@ public class AutoProjectionDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "auto_projection";
+    public static final String TARGET_NAME = "auto_projection"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

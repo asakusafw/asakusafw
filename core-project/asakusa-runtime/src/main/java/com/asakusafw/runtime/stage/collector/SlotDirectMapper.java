@@ -18,16 +18,16 @@ package com.asakusafw.runtime.stage.collector;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.Mapper;
-
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
  * The skeletal implementation to output values directly.
  * @since 0.2.4
+ * @version 0.5.1
  */
-public abstract class SlotDirectMapper extends Mapper<
+public abstract class SlotDirectMapper extends MapperWithRuntimeResource<
         Object, Writable,
         SortableSlot, WritableSlot> {
 

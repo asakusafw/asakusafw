@@ -74,8 +74,8 @@ public final class Region implements Serializable {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}/{1}:{2}-{3}:{4}",
-                sourceFile == null ? "(unknown source)" : sourceFile,
+                "{0}/{1}:{2}-{3}:{4}", //$NON-NLS-1$
+                sourceFile == null ? Messages.getString("Region.unknownSource") : sourceFile, //$NON-NLS-1$
                 beginLine, beginColumn,
                 endLine, endColumn);
     }

@@ -119,6 +119,11 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     @Override
+    public FlowElementDescription getOrigin() {
+        return this;
+    }
+
+    @Override
     public String getName() {
         if (name == null) {
             return flowGraph.getDescription().getSimpleName();

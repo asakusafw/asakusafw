@@ -114,7 +114,7 @@ public class Context {
         assert drivers != null;
         List<TypeDriver> results = Lists.create();
         for (TypeDriver driver : drivers) {
-            LOG.debug("Activating type driver: {}", driver.getClass().getName());
+            LOG.debug("Activating type driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             results.add(driver);
         }
         return results;
@@ -125,7 +125,7 @@ public class Context {
         assert flatDrivers != null;
         Map<String, List<AttributeDriver>> group = Maps.create();
         for (AttributeDriver driver : flatDrivers) {
-            LOG.debug("Activating attribute driver: {}", driver.getClass().getName());
+            LOG.debug("Activating attribute driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             String target = driver.getTargetName();
             Maps.addToList(group, target, driver);
         }
@@ -133,7 +133,7 @@ public class Context {
         Map<String, AttributeDriver> results = Maps.create();
         for (Map.Entry<String, List<AttributeDriver>> entry : group.entrySet()) {
             String target = entry.getKey();
-            LOG.debug("Enabling attribute: {}", target);
+            LOG.debug("Enabling attribute: {}", target); //$NON-NLS-1$
             List<AttributeDriver> targetDrivers = entry.getValue();
             AttributeDriver singular;
             if (targetDrivers.size() == 1) {

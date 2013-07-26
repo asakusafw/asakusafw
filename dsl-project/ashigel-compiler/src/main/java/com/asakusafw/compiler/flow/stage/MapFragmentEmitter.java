@@ -18,7 +18,9 @@ package com.asakusafw.compiler.flow.stage;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,7 @@ import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -118,6 +121,8 @@ public class MapFragmentEmitter {
 
         private final FlowCompilingEnvironment environment;
 
+        private final StageBlock stageBlock;
+
         private final Fragment fragment;
 
         private final ModelFactory factory;
@@ -138,6 +143,7 @@ public class MapFragmentEmitter {
             assert stageBlock != null;
             assert fragment != null;
             this.environment = environment;
+            this.stageBlock = stageBlock;
             this.fragment = fragment;
             this.factory = environment.getModelFactory();
             Name packageName = environment.getStagePackageName(stageBlock.getStageNumber());
@@ -173,6 +179,7 @@ public class MapFragmentEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .annotation(t(SuppressWarnings.class), v("deprecation"))
                         .Public()
                         .Final()
@@ -185,6 +192,15 @@ public class MapFragmentEmitter {
                                     t(Result.class),
                                     Collections.singletonList(inputType)))),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
+            results.put("fragmentId", Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
+            return results;
         }
 
         private MethodDeclaration createBody() {

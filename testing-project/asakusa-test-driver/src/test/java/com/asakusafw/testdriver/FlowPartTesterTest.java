@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.configuration.FrameworkDeployer;
+import com.asakusafw.testdriver.testing.flowpart.DependencyFlowPart;
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -327,5 +328,18 @@ public class FlowPartTesterTest {
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
+    }
+
+    /**
+     * Using dependency libraries.
+     */
+    @Test
+    public void dependency_libraries() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setLibrariesPath(new File("src/test/lib"));
+        tester.setFrameworkHomePath(framework.getHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new DependencyFlowPart(in, out));
     }
 }
