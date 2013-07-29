@@ -36,7 +36,7 @@ public class SequenceFileFormatDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.sequence_file";
+    public static final String TARGET_NAME = "directio.sequence_file"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

@@ -21,11 +21,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.tools.ToolProvider;
+
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.compiler.batch.processor.DependencyLibrariesProcessor;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
@@ -39,14 +42,14 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.5.0
+ * @version 0.5.1
  */
 public class TestDriverContext implements TestContext {
 
     static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
 
     /**
-     * The system property key of runtime workig directory.
+     * The system property key of runtime working directory.
      * This working directory must be a relative path from the default working directory.
      */
     public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir";
@@ -61,6 +64,12 @@ public class TestDriverContext implements TestContext {
      */
     public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
 
+    /**
+     * The path to the external dependency libraries folder (relative from working directory).
+     * @since 0.5.1
+     */
+    public static final String EXTERNAL_LIBRARIES_PATH = DependencyLibrariesProcessor.LIBRARY_DIRECTORY_PATH;
+
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
@@ -70,6 +79,8 @@ public class TestDriverContext implements TestContext {
     private final Map<String, String> extraConfigurations;
     private final Map<String, String> batchArgs;
     private final FlowCompilerOptions options;
+
+    private volatile File librariesPath;
 
     private volatile String currentBatchId;
 
@@ -109,11 +120,24 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * Validates current test environment.
+     * Validates current compiler environment.
      * @throws AssertionError if current test environment is invalid
-     * @since 0.5.0
+     * @since 0.5.1
      */
-    public void validateEnvironment() {
+    public void validateCompileEnvironment() {
+        if (ToolProvider.getSystemJavaCompiler() == null) {
+            // validates runtime environment first
+            validateExecutionEnvironment();
+            throw new AssertionError("この環境ではJavaコンパイラを利用できません（JDKを利用してテストを実行してください）");
+        }
+    }
+
+    /**
+     * Validates current test execution environment.
+     * @throws AssertionError if current test environment is invalid
+     * @since 0.5.1
+     */
+    public void validateExecutionEnvironment() {
         if (getFrameworkHomePath0() == null) {
             raiseInvalid(MessageFormat.format(
                     "環境変数\"{0}\"が未設定です",
@@ -124,6 +148,15 @@ public class TestDriverContext implements TestContext {
                     "コマンド\"{0}\"を検出できませんでした",
                     "hadoop"));
         }
+    }
+
+    /**
+     * Validates current test environment.
+     * @throws AssertionError if current test environment is invalid
+     * @since 0.5.0
+     */
+    public void validateEnvironment() {
+        validateExecutionEnvironment();
     }
 
     private void raiseInvalid(String message) {
@@ -191,6 +224,24 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Returns the path to the external libraries (*.jar) deployment directory.
+     * @param batchId target batch ID
+     * @return the path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #setLibrariesPath(File)
+     * @since 0.5.1
+     */
+    public File getLibrariesPackageLocation(String batchId) {
+        if (batchId == null) {
+            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
+        }
+        File apps = new File(getFrameworkHomePath(), "batchapps");
+        File batch = new File(apps, batchId);
+        File lib = new File(batch, DependencyLibrariesProcessor.OUTPUT_DIRECTORY_PATH);
+        return lib;
+    }
+
+    /**
      * Returns the command context for this attempt.
      * @return the command context
      */
@@ -247,8 +298,31 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Returns the path to the dependency libraries path.
+     * The dependency library files are in the target folder directly.
+     * @return the librariesPath the libraries path
+     * @since 0.5.1
+     */
+    public File getLibrariesPath() {
+        if (librariesPath == null) {
+            return new File(EXTERNAL_LIBRARIES_PATH);
+        }
+        return librariesPath;
+    }
+
+    /**
+     * Sets the path to the external dependency libraries folder.
+     * @param librariesPath the libraries folder path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.1
+     */
+    public void setLibrariesPath(File librariesPath) {
+        this.librariesPath = librariesPath;
+    }
+
+    /**
      * Returns the caller class.
-     * This is ordinally used for detect test dataset on the classpath.
+     * This is ordinary used for detect test dataset on the classpath.
      * @return the caller class
      */
     public Class<?> getCallerClass() {

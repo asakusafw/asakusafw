@@ -15,6 +15,7 @@
  */
 package com.asakusafw.utils.collections;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +52,7 @@ public final class Maps {
     }
 
     /**
-     * Returns a freezed map.
+     * Returns a frozen map.
      * The returned map is not modifiable.
      * @param <K> the key type
      * @param <V> the value type
@@ -125,6 +126,87 @@ public final class Maps {
     }
 
     /**
+     * Adds the all values to the list which is in the map with the key.
+     * If the map does not contains the key, this first put a new list into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param source the source map
+     * @since 0.5.1
+     */
+    public static <K, V> void addAllToList(Map<? super K, List<V>> map, Map<? extends K, ? extends V> source) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+        }
+        for (Map.Entry<? extends K, ? extends V> entry : source.entrySet()) {
+            K key = entry.getKey();
+            List<V> list = map.get(key);
+            if (list == null) {
+                list = Lists.create();
+                map.put(key, list);
+            }
+            list.add(entry.getValue());
+        }
+    }
+
+    /**
+     * Merges the values into the list which is in the map with the key.
+     * If the map does not contains the key, this first put a new list into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param key the key of target list
+     * @param values the values to merge into target list
+     * @since 0.5.1
+     */
+    public static <K, V> void mergeIntoList(Map<? super K, List<V>> map, K key, Collection<? extends V> values) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (values == null) {
+            throw new IllegalArgumentException("values must not be null"); //$NON-NLS-1$
+        }
+        List<V> list = map.get(key);
+        if (list == null) {
+            list = Lists.create();
+            map.put(key, list);
+        }
+        list.addAll(values);
+    }
+
+    /**
+     * Merges the all values into the list which is in the map with the key.
+     * If the map does not contains the key, this first put a new list into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param source the source map
+     * @since 0.5.1
+     */
+    public static <K, V> void mergeAllIntoList(
+            Map<? super K, List<V>> map,
+            Map<? extends K, ? extends Collection<? extends V>> source) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+        }
+        for (Map.Entry<? extends K, ? extends Collection<? extends V>> entry : source.entrySet()) {
+            K key = entry.getKey();
+            List<V> list = map.get(key);
+            if (list == null) {
+                list = Lists.create();
+                map.put(key, list);
+            }
+            list.addAll(entry.getValue());
+        }
+    }
+
+    /**
      * Add the value to the set which is in the map with the key.
      * If the map does not contains the key, this first put a new set into the map.
      * @param <K> the key type
@@ -143,6 +225,87 @@ public final class Maps {
             map.put(key, set);
         }
         set.add(value);
+    }
+
+    /**
+     * Adds the all values to the set which is in the map with the key.
+     * If the map does not contains the key, this first put a new set into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param source the source map
+     * @since 0.5.1
+     */
+    public static <K, V> void addAllToSet(Map<? super K, Set<V>> map, Map<? extends K, ? extends V> source) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+        }
+        for (Map.Entry<? extends K, ? extends V> entry : source.entrySet()) {
+            K key = entry.getKey();
+            Set<V> set = map.get(key);
+            if (set == null) {
+                set = Sets.create();
+                map.put(key, set);
+            }
+            set.add(entry.getValue());
+        }
+    }
+
+    /**
+     * Merges the values into the set which is in the map with the key.
+     * If the map does not contains the key, this first put a new set into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param key the key of target set
+     * @param values the values to merge into target set
+     * @since 0.5.1
+     */
+    public static <K, V> void mergeIntoSet(Map<? super K, Set<V>> map, K key, Collection<? extends V> values) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (values == null) {
+            throw new IllegalArgumentException("values must not be null"); //$NON-NLS-1$
+        }
+        Set<V> set = map.get(key);
+        if (set == null) {
+            set = Sets.create();
+            map.put(key, set);
+        }
+        set.addAll(values);
+    }
+
+    /**
+     * Merges the all values into the set which is in the map with the key.
+     * If the map does not contains the key, this first put a new set into the map.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map target map
+     * @param source the source map
+     * @since 0.5.1
+     */
+    public static <K, V> void mergeAllIntoSet(
+            Map<? super K, Set<V>> map,
+            Map<? extends K, ? extends Collection<? extends V>> source) {
+        if (map == null) {
+            throw new IllegalArgumentException("map must not be null"); //$NON-NLS-1$
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+        }
+        for (Map.Entry<? extends K, ? extends Collection<? extends V>> entry : source.entrySet()) {
+            K key = entry.getKey();
+            Set<V> set = map.get(key);
+            if (set == null) {
+                set = Sets.create();
+                map.put(key, set);
+            }
+            set.addAll(entry.getValue());
+        }
     }
 
     private Maps() {

@@ -20,11 +20,15 @@ import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
+
 /**
  * {@link SlotSorter}にオブジェクトを配布する{@link Mapper}の骨格。
  * @param <T> 配布する{@link Writable}の種類
+ * @since 0.1.0
+ * @version 0.5.1
  */
-public abstract class SlotDistributor<T extends Writable> extends Mapper<
+public abstract class SlotDistributor<T extends Writable> extends MapperWithRuntimeResource<
         Object, T,
         SortableSlot, WritableSlot> {
 

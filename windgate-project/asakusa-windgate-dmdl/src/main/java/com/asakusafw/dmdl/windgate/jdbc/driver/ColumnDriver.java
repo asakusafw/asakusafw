@@ -38,12 +38,12 @@ public class ColumnDriver extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.column";
+    public static final String TARGET_NAME = "windgate.column"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "value";
+    public static final String ELEMENT_NAME = "value"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

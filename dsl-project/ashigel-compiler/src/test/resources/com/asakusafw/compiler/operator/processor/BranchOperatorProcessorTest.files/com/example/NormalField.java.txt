@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class NormalField {
+
+    @Branch
+    public NormalFieldEnum example(MockHoge hoge) {
+        if (hoge.getValue() > 100) {
+            return NormalFieldEnum.HIGH;
+        }
+        else if (hoge.getValue() > 50) {
+            return NormalFieldEnum.MIDDLE;
+        }
+        return NormalFieldEnum.LOW;
+    }
+}

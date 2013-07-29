@@ -34,6 +34,8 @@
 		<module>asakusa-test-data-provider</module>
 		<module>asakusa-test-driver</module>
 		<module>asakusa-test-moderator</module>
+		<module>asakusa-test-trace-model</module>
+		<module>asakusa-test-trace-plugin</module>
 	</modules>
 
 </project>

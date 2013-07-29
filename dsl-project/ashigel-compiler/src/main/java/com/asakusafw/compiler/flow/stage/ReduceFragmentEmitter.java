@@ -18,6 +18,7 @@ package com.asakusafw.compiler.flow.stage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
+import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Comment;
@@ -132,6 +134,8 @@ public class ReduceFragmentEmitter {
 
         private final FlowCompilingEnvironment environment;
 
+        private final StageBlock stageBlock;
+
         private final Fragment fragment;
 
         private final ShuffleModel shuffle;
@@ -158,6 +162,7 @@ public class ReduceFragmentEmitter {
             assert fragment != null;
             assert shuffle != null;
             this.environment = environment;
+            this.stageBlock = stageBlock;
             this.fragment = fragment;
             this.shuffle = shuffle;
             this.factory = environment.getModelFactory();
@@ -198,6 +203,7 @@ public class ReduceFragmentEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
+                        .annotation(t(TraceLocation.class), createTraceLocationElements())
                         .annotation(t(SuppressWarnings.class), v("deprecation"))
                         .Public()
                         .Final()
@@ -209,6 +215,15 @@ public class ReduceFragmentEmitter {
                             Arrays.asList(valueType)),
                     Collections.<Type>emptyList(),
                     members);
+        }
+
+        private Map<String, Expression> createTraceLocationElements() {
+            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
+            results.put("fragmentId", Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
+            return results;
         }
 
         private MethodDeclaration createBegin(List<Statement> statements) {

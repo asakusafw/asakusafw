@@ -29,6 +29,7 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
+import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
 import com.asakusafw.compiler.flow.mapreduce.parallel.ParallelSortClientEmitter;
@@ -63,6 +64,11 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
     public static final String OPTION_EXPORTER_ENABLED = "MAPREDUCE-370";
 
     private static final GenericOptionValue DEFAULT_EXPORTER_ENABLED = GenericOptionValue.AUTO;
+
+    @Override
+    public String getId() {
+        return MODULE_NAME;
+    }
 
     @Override
     public Class<? extends ImporterDescription> getImporterDescriptionType() {
@@ -208,7 +214,7 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     @Override
-    public List<CompiledStage> emitPrologue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
         List<CopyDescription> targets = Lists.create();
         for (Input input : context.getInputs()) {
             InputDescription description = input.getDescription();
@@ -229,13 +235,13 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
                 MODULE_NAME,
                 targets,
                 getEnvironment().getPrologueLocation(MODULE_NAME));
-        return Collections.singletonList(stage);
+        return Collections.singletonList(new ExternalIoStage(getId(), stage, context.getInputContext()));
     }
 
     @Override
-    public List<CompiledStage> emitEpilogue(IoContext context) throws IOException {
+    public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         Set<String> saw = Sets.create();
-        List<CompiledStage> results = Lists.create();
+        List<ExternalIoStage> results = Lists.create();
         for (Map.Entry<Location, List<Slot>> entry : groupByOutputLocation(context).entrySet()) {
             List<Slot> slots = entry.getValue();
             List<ResolvedSlot> resolved = new SlotResolver(getEnvironment()).resolve(slots);
@@ -245,7 +251,8 @@ public class HadoopFileIoProcessor extends ExternalIoDescriptionProcessor {
             ParallelSortClientEmitter emitter = new ParallelSortClientEmitter(getEnvironment());
             String moduleId = generateModuleName(saw, entry.getKey());
             CompiledStage stage = emitter.emit(moduleId, resolved, entry.getKey());
-            results.add(stage);
+            // TODO not sure
+            results.add(new ExternalIoStage(getId(), stage, context.getOutputContext()));
         }
         return results;
     }

@@ -233,16 +233,10 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         assert provider != null;
         assert commands != null;
         List<ExecutionScript> scripts = Lists.create();
-        String prefix = provider.getName();
-        int index = 0;
         for (Command command : commands) {
-            String id = String.format("%s%s%04d",
-                    prefix,
-                    '.',
-                    index++);
             String profile = command.getProfileName();
             scripts.add(new CommandScript(
-                    id,
+                    command.getId(),
                     Collections.<String>emptySet(),
                     profile == null ? CommandScript.DEFAULT_PROFILE_NAME : profile,
                     command.getModuleName(),

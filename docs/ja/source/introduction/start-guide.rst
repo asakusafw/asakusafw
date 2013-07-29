@@ -178,7 +178,7 @@ Asakusa Frameworkを開発環境にインストールするには、Asakusa Fram
 
 Framework Organizer は以下からダウンロードします。
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.0.tar.gz
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.1.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてAsakusa Frameworkをインストールします。
 インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
@@ -254,7 +254,7 @@ Asakusa Frameworkのインストール確認
     
     cat $ASAKUSA_HOME/VERSION
     
-    asakusafw.version=0.5.0
+    asakusafw.version=0.5.1
     
     asakusafw.build.timestamp=...
     asakusafw.build.java.version=1.6.0_...
@@ -313,14 +313,15 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 2 (バージョン 0.5.0) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 3 (バージョン 0.5.1) を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
     1: 0.5-SNAPSHOT
     2: 0.5.0
-    Choose a number: 2: 2 (<-2を入力)
+    3: 0.5.1
+    Choose a number: 3: 3 (<-3を入力)
 
 ..  attention::
     ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。

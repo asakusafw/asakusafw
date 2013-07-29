@@ -309,6 +309,7 @@ public class FilePackager
             Collections.addAll(arguments,
                     "-d",
                     classDirectory.getCanonicalFile().toString());
+            Collections.addAll(arguments, "-proc:none");
             Collections.addAll(arguments, "-Xlint:all");
 
             StringWriter errors = new StringWriter();

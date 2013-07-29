@@ -17,17 +17,17 @@ package com.asakusafw.runtime.stage.preparator;
 
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Mapper;
-
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
  * The skeletal implementation to output values directly.
  * @param <T>
  * @since 0.2.5
+ * @version 0.5.1
  */
-public abstract class PreparatorMapper<T> extends Mapper<
+public abstract class PreparatorMapper<T> extends MapperWithRuntimeResource<
         Object, T,
         Object, T> {
 

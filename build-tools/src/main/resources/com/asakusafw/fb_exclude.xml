@@ -11,6 +11,9 @@
   <Match>
     <Bug pattern="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" />
   </Match>
+  <Match>
+    <Bug pattern="SE_BAD_FIELD" />
+  </Match>
   <Match class="com.asakusafw.testtools.TestDataHolder">
     <Or>
       <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
@@ -29,6 +32,16 @@
   <Match class="com.asakusafw.bulkloader.exporter.ExportFileLoad">
     <Or>
       <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+    </Or>
+  </Match>
+  <Match class="com.asakusafw.runtime.flow.MapperWithRuntimeResource">
+    <Or>
+      <Bug pattern="URF_UNREAD_FIELD" />
+    </Or>
+  </Match>
+  <Match class="com.asakusafw.runtime.flow.ReducerWithRuntimeResource">
+    <Or>
+      <Bug pattern="URF_UNREAD_FIELD" />
     </Or>
   </Match>
 </FindBugsFilter>

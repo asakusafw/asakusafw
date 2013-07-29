@@ -34,7 +34,7 @@ public class CsvFileNameDriver  extends PropertyAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.csv.file_name";
+    public static final String TARGET_NAME = "directio.csv.file_name"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

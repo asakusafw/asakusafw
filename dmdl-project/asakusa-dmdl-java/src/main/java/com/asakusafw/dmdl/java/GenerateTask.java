@@ -70,16 +70,16 @@ public class GenerateTask {
         DmdlSemantics semantics = analyze();
         JavaModelClassGenerator generator = new JavaModelClassGenerator(semantics, conf, driver);
         Collection<ModelDeclaration> models = semantics.getDeclaredModels();
-        LOG.info("{}個のモデルからJavaデータモデルクラスを生成します", models.size());
+        LOG.info(Messages.getString("GenerateTask.monitorGenerateStarting"), models.size()); //$NON-NLS-1$
         for (ModelDeclaration model : models) {
-            LOG.info("データモデルクラスを生成しています: {}", model.getName());
+            LOG.info(Messages.getString("GenerateTask.monitorGenerateModel"), model.getName()); //$NON-NLS-1$
             generator.emit(model);
         }
-        LOG.info("データモデルクラスの生成が完了しました");
+        LOG.info(Messages.getString("GenerateTask.monitorGenerateFinishing")); //$NON-NLS-1$
     }
 
     private DmdlSemantics analyze() throws IOException {
-        AnalyzeTask analyzer = new AnalyzeTask("データモデルクラスの生成", conf.getServiceClassLoader());
+        AnalyzeTask analyzer = new AnalyzeTask(Messages.getString("GenerateTask.name"), conf.getServiceClassLoader()); //$NON-NLS-1$
         return analyzer.process(conf.getSource());
     }
 }

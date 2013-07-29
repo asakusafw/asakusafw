@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * フロー要素の定義記述。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.5.1
  */
 public interface FlowElementDescription extends FlowElementAttributeProvider {
 
@@ -29,6 +29,13 @@ public interface FlowElementDescription extends FlowElementAttributeProvider {
      * @return この要素の種類
      */
     FlowElementKind getKind();
+
+    /**
+     * Returns the original description.
+     * @return the origin the original description
+     * @since 0.5.1
+     */
+    FlowElementDescription getOrigin();
 
     /**
      * この要素の名前を返す。

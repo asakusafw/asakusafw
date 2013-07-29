@@ -54,7 +54,7 @@ public class JoinDriver extends JavaDataModelDriver {
         JoinTrait trait = model.getTrait(JoinTrait.class);
         if (trait == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Internal Error: joined model {0} has no JoinTrait",
+                    "Internal Error: joined model {0} has no JoinTrait", //$NON-NLS-1$
                     model.getName()));
         }
 
@@ -66,14 +66,14 @@ public class JoinDriver extends JavaDataModelDriver {
             Annotation shuffle = toKey(context, term);
             eTerms.addAll(new AttributeBuilder(f)
                 .annotation(context.resolve(Joined.Term.class),
-                        "source", source,
-                        "mappings", mappings,
-                        "shuffle", shuffle)
+                        "source", source, //$NON-NLS-1$
+                        "mappings", mappings, //$NON-NLS-1$
+                        "shuffle", shuffle) //$NON-NLS-1$
                 .toAnnotations());
         }
         return new AttributeBuilder(f)
             .annotation(context.resolve(Joined.class),
-                    "terms", f.newArrayInitializer(eTerms))
+                    "terms", f.newArrayInitializer(eTerms)) //$NON-NLS-1$
             .toAnnotations();
     }
 
@@ -87,8 +87,8 @@ public class JoinDriver extends JavaDataModelDriver {
             String target = context.getFieldName(factor.getTarget().findDeclaration()).getToken();
             eachMapping.addAll(new AttributeBuilder(f)
                 .annotation(context.resolve(Joined.Mapping.class),
-                        "source", Models.toLiteral(f, source),
-                        "destination", Models.toLiteral(f, target))
+                        "source", Models.toLiteral(f, source), //$NON-NLS-1$
+                        "destination", Models.toLiteral(f, target)) //$NON-NLS-1$
                 .toAnnotations());
         }
         return f.newArrayInitializer(eachMapping);
@@ -111,7 +111,7 @@ public class JoinDriver extends JavaDataModelDriver {
         }
         return new AttributeBuilder(f)
             .annotation(context.resolve(Key.class),
-                    "group", f.newArrayInitializer(properties))
+                    "group", f.newArrayInitializer(properties)) //$NON-NLS-1$
             .toAnnotations()
             .get(0);
     }

@@ -100,14 +100,18 @@ public class FlowPartTester extends TestDriverBase {
 
         // フローコンパイラの実行
         LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
-        String batchId = "testing";
-        String flowId = "flowpart";
+        FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
+
+        // コンパイル環境の検証
+        driverContext.validateCompileEnvironment();
+
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
         if (compileWorkDir.exists()) {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
+        String batchId = "testing";
+        String flowId = "flowpart";
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
                 flowGraph,
                 batchId,
@@ -122,7 +126,7 @@ public class FlowPartTester extends TestDriverBase {
                 driverContext.getOptions());
 
         // 環境の検証
-        driverContext.validateEnvironment();
+        driverContext.validateExecutionEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);

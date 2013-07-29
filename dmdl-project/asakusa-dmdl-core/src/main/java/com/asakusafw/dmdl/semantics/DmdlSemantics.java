@@ -63,7 +63,7 @@ public class DmdlSemantics {
         }
         if (declaredModels.containsKey(modelName.identifier)) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Model \"{0}\" is already declared in this session",
+                    "Model \"{0}\" is already declared in this session", //$NON-NLS-1$
                     modelName));
         }
         ModelDeclaration declared = new ModelDeclaration(

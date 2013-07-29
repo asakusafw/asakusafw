@@ -130,7 +130,7 @@ public class PropertyDeclaration implements Declaration {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}.{1} : {2}",
+                "{0}.{1} : {2}", //$NON-NLS-1$
                 owner,
                 name,
                 type);

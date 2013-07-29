@@ -1,0 +1,7 @@
+a = {
+    key : INT;
+};
+b = {
+    value : INT;
+};
+joined c = a % key + b % key;
