@@ -260,9 +260,9 @@ public class DateTime implements Comparable<DateTime> {
         ;
 
         /**
-         * 指定の文字列をこのフォーマットで解析し、0000/01/01 00:00:00からの経過秒数を返す。
+         * 指定の文字列をこのフォーマットで解析し、0001/01/01 00:00:00からの経過秒数を返す。
          * @param timeString 対象の文字列
-         * @return 0000/01/01 00:00:00からの経過秒数
+         * @return 0001/01/01 00:00:00からの経過秒数
          * @throws IllegalArgumentException 引数に不正な文字列が指定された場合
          */
         public abstract long parse(String timeString);
