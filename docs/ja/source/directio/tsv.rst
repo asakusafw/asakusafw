@@ -71,6 +71,13 @@ TSV形式の設定
       - 文字列
       - ``"UTF-8"``
       - ファイルの文字エンコーディング
+    * - ``compression``
+      - 文字列
+      - なし
+      - ファイルの圧縮コーデック
+
+``compression`` には、 ``"gzip"`` または ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
+この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
 以下はDMDLスクリプトの記述例です。
 
@@ -84,9 +91,40 @@ TSV形式の設定
     };
 
 ..  attention::
-    Direct I/O のCSV連携で提供している「ヘッダの設定」機能 ( ``@directio.csv.field`` 属性を指定して1行目にヘッダ行を追加する機能) や 「ファイル情報の取得」機能 ( ``@directio.csv.file_name`` 属性などを指定して ファイル名などのファイル情報を利用する機能) はTSV連携では提供していません。
-    
-    また、CSV連携で提供している「個別プロパティの除外」 機能 ( ``@directio.csv.ignore`` 属性を指定して取り扱わないDMDLプロパティを指定する機能) はTSV連携では提供していません。
+    Direct I/O のCSV連携で提供しているヘッダの設定機能 ( ``@directio.csv.field`` )はTSV連携では提供していません。
+
+..  warning::
+    ``compression`` を指定した場合、ファイルの分割読み出しが行えなくなります。
+
+..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+
+ファイル情報の取得
+~~~~~~~~~~~~~~~~~~
+解析中のTSVファイルに関する属性を取得する場合、以下の属性をプロパティに指定します。
+
+..  list-table:: ファイル情報の取得に関する属性
+    :widths: 4 2 4
+    :header-rows: 1
+
+    * - 属性
+      - 型
+      - 内容
+    * - ``@directio.tsv.file_name``
+      - ``TEXT``
+      - ファイル名
+
+上記の属性が指定されたプロパティは、TSVのフィールドから除外されます。
+
+..  attention::
+    Direct I/O のCSV連携で提供している、行番号・レコード番号の取得機能 ( ``@directio.csv.line_number`` , ``@directio.csv.record_number`` )はTSV連携では提供していません。
+
+..  attention::
+    これらの属性はTSVの解析時のみ有効です。
+    TSVを書き出す際には無視されます。
+
+TSVから除外するプロパティ
+~~~~~~~~~~~~~~~~~~~~~~~~~
+特定のプロパティをCSVのフィールドとして取り扱いたくない場合、プロパティに ``@directio.tsv.ignore`` を指定します。
 
 データモデルクラスの生成
 ~~~~~~~~~~~~~~~~~~~~~~~~
