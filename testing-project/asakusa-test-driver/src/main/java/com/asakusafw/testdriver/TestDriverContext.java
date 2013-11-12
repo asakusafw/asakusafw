@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Map;
@@ -42,7 +43,7 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.5.1
+ * @version 0.5.2
  */
 public class TestDriverContext implements TestContext {
 
@@ -70,7 +71,6 @@ public class TestDriverContext implements TestContext {
      */
     public static final String EXTERNAL_LIBRARIES_PATH = DependencyLibrariesProcessor.LIBRARY_DIRECTORY_PATH;
 
-    private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     private volatile File frameworkHomePath;
@@ -87,6 +87,10 @@ public class TestDriverContext implements TestContext {
     private volatile String currentFlowId;
 
     private volatile String currentExecutionId;
+
+    private volatile File explicitCompilerWorkingDirectory;
+
+    private volatile File generatedCompilerWorkingDirectory;
 
     private boolean skipCleanInput;
     private boolean skipCleanOutput;
@@ -262,6 +266,15 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Sets the compiler working directory.
+     * @param path the compiler working directory
+     * @since 0.5.2
+     */
+    public void setCompilerWorkingDirectory(File path) {
+        this.explicitCompilerWorkingDirectory = path;
+    }
+
+    /**
      * Returns the current user name in OS.
      * @return the current user name
      */
@@ -278,9 +291,30 @@ public class TestDriverContext implements TestContext {
     public String getCompileWorkBaseDir() {
         String dir = System.getProperty(KEY_COMPILER_WORKING_DIRECTORY);
         if (dir == null) {
-            return COMPILERWORK_DIR_DEFAULT;
+            if (explicitCompilerWorkingDirectory != null) {
+                return explicitCompilerWorkingDirectory.getAbsolutePath();
+            }
+            if (generatedCompilerWorkingDirectory == null) {
+                generatedCompilerWorkingDirectory = createTempDirPath();
+                LOG.debug("Created a temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
+            }
+            return generatedCompilerWorkingDirectory.getAbsolutePath();
         }
         return dir;
+    }
+
+    private File createTempDirPath() {
+        try {
+            File file = File.createTempFile("asakusa", ".tmp");
+            if (file.delete() == false) {
+                throw new AssertionError(MessageFormat.format(
+                        "テスト用のテンポラリディレクトリの作成に失敗しました: {0}",
+                        file));
+            }
+            return file;
+        } catch (IOException e) {
+            throw (AssertionError) new AssertionError("テスト用のテンポラリディレクトリの作成に失敗しました").initCause(e);
+        }
     }
 
     /**
@@ -584,12 +618,42 @@ public class TestDriverContext implements TestContext {
         return skipVerify;
     }
 
-
     /**
      * Sets whether this test skips to verify the testing result (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipVerify(boolean skip) {
         this.skipVerify = skip;
+    }
+
+    /**
+     * Removes all temporary resources generated in this context.
+     * @since 0.5.2
+     */
+    public void cleanUpTemporaryResources() {
+        if (generatedCompilerWorkingDirectory != null) {
+            LOG.debug("Deleting temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
+            removeAll(generatedCompilerWorkingDirectory);
+            this.generatedCompilerWorkingDirectory = null;
+        }
+    }
+
+    private boolean removeAll(File path) {
+        assert path != null;
+        boolean deleted = true;
+        if (path.isDirectory()) {
+            for (File child : path.listFiles()) {
+                deleted &= removeAll(child);
+            }
+        }
+        if (deleted) {
+            if (path.delete() == false) {
+                LOG.warn(MessageFormat.format(
+                        "テスト用のテンポラリファイルの削除に失敗しました: {0}",
+                        path.getAbsolutePath()));
+                deleted = false;
+            }
+        }
+        return deleted;
     }
 }
