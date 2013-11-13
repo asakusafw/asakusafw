@@ -424,10 +424,6 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
         <value>s3://example/var/spool</value>
     </property>
     <property>
-        <name>com.asakusafw.directio.s3.fragment.min</name>
-        <value>-1</value>
-    </property>
-    <property>
         <name>com.asakusafw.directio.s3.output.staging</name>
         <value>false</value>
     </property>
@@ -444,12 +440,8 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
         <value>/mnt/asakusa-directio</value>
     </property>
 
-2012年1月現在、Hadoopのファイルシステムを経由してS3を利用する場合、入力データの分割や出力ファイルの移動にコストがかかるようです。
+2013年11月現在、Hadoopのファイルシステムを経由してS3を利用する場合、出力ファイルの移動にコストがかかるようです。
 このため、上記の設定では主に次のようなことを行っています。
-
-* 入力データの分割を行わない ( ``...fragment.min = -1`` )
-
-  * 一部の実装では、巨大な入力データを途中から読み出す際にウェイトが発生するようです。
 
 * 試行領域をローカルファイルシステム上に作成する ( ``...output.streaming = false`` )
 
@@ -462,6 +454,19 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
 
 ..  attention::
     上記の例はステージ領域をスキップするよう設定していますが、この設定によりトランザクション処理が行えなくなる点に注意してください。
+
+..  attention::
+    HadoopやAmazon EMRの古いバージョンなどの一部の実装では、Hadoopのファイルシステムを経由してS3を利用する場合に入力データの分割にコストがかかる（巨大な入力データを途中から読み出す際にウェイトが発生する）ようです。
+    
+    このような環境では、入力データの分割を行わない ( ``...fragment.min = -1`` ) ように設定することを推奨します。以下設定例です。
+
+    ..  code-block:: xml
+    
+        <property>
+            <name>com.asakusafw.directio.s3.fragment.min</name>
+            <value>-1</value>
+        </property>
+
 
 複数のデータソースを利用する設定例
 ----------------------------------
