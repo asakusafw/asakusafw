@@ -147,6 +147,8 @@ public class JobFlowTestDriver extends TestDriverTestToolsBase {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            driverContext.cleanUpTemporaryResources();
         }
     }
 
