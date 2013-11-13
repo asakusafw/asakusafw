@@ -16,9 +16,15 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.tools.ToolProvider;
@@ -42,11 +48,13 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.5.1
+ * @version 0.5.2
  */
 public class TestDriverContext implements TestContext {
 
     static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
+
+    static final ResourceBundle INFORMATION = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
 
     /**
      * The system property key of runtime working directory.
@@ -60,6 +68,13 @@ public class TestDriverContext implements TestContext {
     public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir";
 
     /**
+     * The system property key of ignoring environment checking.
+     * @see #validateExecutionEnvironment()
+     * @since 0.5.2
+     */
+    public static final String KEY_FORCE_EXEC = "asakusa.testdriver.exec.force";
+
+    /**
      * Environmental variable: the framework home path.
      */
     public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
@@ -70,7 +85,20 @@ public class TestDriverContext implements TestContext {
      */
     public static final String EXTERNAL_LIBRARIES_PATH = DependencyLibrariesProcessor.LIBRARY_DIRECTORY_PATH;
 
+    /**
+     * The path to the framework version file (relative from the framework home path).
+     * @since 0.5.2
+     */
+    public static final String FRAMEWORK_VERSION_PATH = "VERSION";
+
+    /**
+     * The entry key of the test-runtime framework version.
+     * @since 0.5.2
+     */
+    public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version";
+
     private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
+
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     private volatile File frameworkHomePath;
@@ -133,11 +161,75 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Returns the development environment version.
+     * @return the development environment version
+     * @throws IllegalStateException if the version is not defined
+     * @since 0.5.2
+     */
+    public String getDevelopmentEnvironmentVersion() {
+        try {
+            String version = INFORMATION.getString(KEY_FRAMEWORK_VERSION);
+            return version;
+        } catch (MissingResourceException e) {
+            throw new IllegalStateException(
+                    MessageFormat.format(
+                            "この開発環境のバージョンが不明です ({e})",
+                            KEY_COMPILER_WORKING_DIRECTORY), e);
+        }
+    }
+
+    /**
+     * Returns the runtime environment version.
+     * @return the runtime environment version, or {@code null} if it is not defined
+     * @since 0.5.2
+     */
+    public String getRuntimeEnvironmentVersion() {
+        File path = getFrameworkHomePath0();
+        if (path == null) {
+            return null;
+        }
+        File version = new File(path, KEY_FRAMEWORK_VERSION);
+        if (version.isFile() == false) {
+            LOG.warn(MessageFormat.format(
+                    "テスト実行環境にバージョン情報が見つかりませんでした：{0}",
+                    version.getAbsolutePath()));
+            return null;
+        }
+        Properties p = new Properties();
+        try {
+            InputStream in = new FileInputStream(version);
+            try {
+                p.load(in);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            LOG.warn(MessageFormat.format(
+                    "テスト実行環境のバージョン情報を読み出せませんでした：{0}",
+                    version.getAbsolutePath()), e);
+            return null;
+        }
+        String value = p.getProperty(KEY_FRAMEWORK_VERSION);
+        if (value == null) {
+            LOG.warn(MessageFormat.format(
+                    "テスト実行環境のバージョン情報が欠落しています：{0} ({1})",
+                    version.getAbsolutePath(),
+                    KEY_FRAMEWORK_VERSION));
+            return null;
+        }
+        return value;
+    }
+
+    /**
      * Validates current test execution environment.
      * @throws AssertionError if current test environment is invalid
      * @since 0.5.1
      */
     public void validateExecutionEnvironment() {
+        if (requiresValidateExecutionEnvironment() == false) {
+            LOG.debug("skipping test execution environment validation");
+            return;
+        }
         if (getFrameworkHomePath0() == null) {
             raiseInvalid(MessageFormat.format(
                     "環境変数\"{0}\"が未設定です",
@@ -148,6 +240,28 @@ public class TestDriverContext implements TestContext {
                     "コマンド\"{0}\"を検出できませんでした",
                     "hadoop"));
         }
+        String runtime = getRuntimeEnvironmentVersion();
+        if (runtime == null) {
+            LOG.debug("Runtime environment version is missing");
+        } else {
+            String develop = getDevelopmentEnvironmentVersion();
+            if (develop.equals(runtime) == false) {
+                raiseInvalid(MessageFormat.format(
+                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
+                        develop,
+                        runtime));
+            }
+        }
+    }
+
+    private boolean requiresValidateExecutionEnvironment() {
+        String value = System.getProperty(KEY_FORCE_EXEC);
+        if (value != null) {
+            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
