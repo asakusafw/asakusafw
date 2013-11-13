@@ -62,15 +62,15 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * 0001/01/01 00:00:00 からの経過日数を返す。
-     * @return 0001/01/01 00:00:00 からの経過日数(0起算)
+     * 0001/01/01 00:00:00 からの経過秒数を返す。
+     * @return 0001/01/01 00:00:00 からの経過秒数(0起算)
      */
     public long getElapsedSeconds() {
         return elapsedSeconds;
     }
 
     /**
-     * 0001/01/01 00:00:00 からの経過日数を変更する。
+     * 0001/01/01 00:00:00 からの経過秒数を変更する。
      * @param elapsed 設定する経過秒数 (0起算)
      */
     public void setElapsedSeconds(long elapsed) {
