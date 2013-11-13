@@ -132,8 +132,8 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
 
     static void error(Throwable info) throws IOException, InterruptedException {
         TraceDriverLifecycleManager instance = INSTANCES.get();
-        TraceAction action = instance == null ?
-                new TraceErrorReportAction() : instance.factory.createErrorTraceAction(instance.conf);
+        TraceAction action = instance == null
+                ? new TraceErrorReportAction() : instance.factory.createErrorTraceAction(instance.conf);
         try {
             action.trace(info);
         } finally {

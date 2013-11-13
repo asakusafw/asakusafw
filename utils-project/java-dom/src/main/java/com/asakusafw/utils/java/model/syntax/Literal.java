@@ -31,7 +31,11 @@ public interface Literal
 
     /**
      * このリテラルを構成する字句を返す。
-     * <p> 整数のリテラルは基本的に負の値を表現しないが、{@link Integer#MIN_VALUE}と{@link Long#MIN_VALUE}だけは例外的に表現する。この場合、文字列の先頭には{@code -}が含まれる。 </p>
+     * <p>
+     * 整数のリテラルは基本的に負の値を表現しないが、
+     * {@link Integer#MIN_VALUE}と{@link Long#MIN_VALUE}だけは例外的に表現する。
+     * この場合、文字列の先頭には{@code -}が含まれる。
+     * </p>
      * @return
      *     このリテラルを構成する字句
      */

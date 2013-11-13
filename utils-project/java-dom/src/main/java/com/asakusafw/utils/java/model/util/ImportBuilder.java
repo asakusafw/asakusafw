@@ -255,8 +255,8 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitArrayType(ArrayType elem, Void _) {
-            Type component = elem.getComponentType().accept(this, _);
+        public Type visitArrayType(ArrayType elem, Void context) {
+            Type component = elem.getComponentType().accept(this, null);
             if (elem.getComponentType().equals(component)) {
                 return elem;
             }
@@ -264,12 +264,12 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitBasicType(BasicType elem, Void _) {
+        public Type visitBasicType(BasicType elem, Void context) {
             return elem;
         }
 
         @Override
-        public Type visitNamedType(NamedType elem, Void _) {
+        public Type visitNamedType(NamedType elem, Void context) {
             Name name = elem.getName();
 
             if (name.getModelKind() == ModelKind.SIMPLE_NAME) {
@@ -347,11 +347,11 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitParameterizedType(ParameterizedType elem, Void _) {
-            Type nonparameterized = elem.getType().accept(this, _);
+        public Type visitParameterizedType(ParameterizedType elem, Void context) {
+            Type nonparameterized = elem.getType().accept(this, null);
             List<Type> arguments = new ArrayList<Type>();
             for (Type t : elem.getTypeArguments()) {
-                arguments.add(t.accept(this, _));
+                arguments.add(t.accept(this, null));
             }
             if (nonparameterized.equals(elem.getType())
                     && arguments.equals(elem.getTypeArguments())) {
@@ -361,8 +361,8 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitQualifiedType(QualifiedType elem, Void _) {
-            Type qualifier = elem.getQualifier().accept(this, _);
+        public Type visitQualifiedType(QualifiedType elem, Void context) {
+            Type qualifier = elem.getQualifier().accept(this, null);
             if (qualifier.equals(elem.getQualifier())) {
                 return elem;
             }
@@ -370,11 +370,11 @@ public class ImportBuilder {
         }
 
         @Override
-        public Type visitWildcard(Wildcard elem, Void _) {
+        public Type visitWildcard(Wildcard elem, Void context) {
             if (elem.getBoundKind() == WildcardBoundKind.UNBOUNDED) {
                 return elem;
             }
-            Type bound = elem.getTypeBound().accept(this, _);
+            Type bound = elem.getTypeBound().accept(this, null);
             if (bound.equals(elem.getTypeBound())) {
                 return elem;
             }
