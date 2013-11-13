@@ -37,6 +37,7 @@ The attributed declaration can have:
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
 </ul>
  * @since 0.5.0
+ * @version 0.5.2
  */
 public class TsvFormatDriver extends ModelAttributeDriver {
 
@@ -49,6 +50,12 @@ public class TsvFormatDriver extends ModelAttributeDriver {
      * The element name of charset name.
      */
     public static final String ELEMENT_CHARSET_NAME = "charset";
+
+    /**
+     * The element name of codec name.
+     * @since 0.5.2
+     */
+    public static final String ELEMENT_CODEC_NAME = "compression";
 
     @Override
     public String getTargetName() {
@@ -69,11 +76,15 @@ public class TsvFormatDriver extends ModelAttributeDriver {
             AstAttribute attribute,
             Map<String, AstAttributeElement> elements) {
         AstLiteral charset = take(environment, elements, ELEMENT_CHARSET_NAME, LiteralKind.STRING);
+        AstLiteral codec = take(environment, elements, ELEMENT_CODEC_NAME, LiteralKind.STRING);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
 
         Configuration result = new Configuration();
         if (charset != null && checkNotEmpty(environment, ELEMENT_CHARSET_NAME, charset)) {
             result.setCharsetName(charset.toStringValue());
+        }
+        if (codec != null && checkNotEmpty(environment, ELEMENT_CODEC_NAME, codec)) {
+            result.setCodecName(codec.toStringValue());
         }
         return result;
     }

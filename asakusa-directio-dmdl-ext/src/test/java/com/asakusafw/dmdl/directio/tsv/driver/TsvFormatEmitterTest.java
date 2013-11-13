@@ -31,6 +31,7 @@ import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
+import com.asakusafw.runtime.value.StringOption;
 
 /**
  * Test for {@link TsvFormatEmitter}.
@@ -72,7 +73,7 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
                 0, size(output));
         assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(buffer));
+        assertThat(buffer, is(model.unwrap()));
         assertThat(reader.readTo(buffer), is(false));
     }
 
@@ -118,6 +119,94 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(all.unwrap()));
         assertThat(reader.readTo(buffer), is(false));
+    }
+
+    /**
+     * With compression.
+     * @throws Exception if failed
+     */
+    @Test
+    public void compression() throws Exception {
+        ModelLoader loaded = generateJava("compression");
+        ModelWrapper model = loaded.newModel("Compression");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "CompressionTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        Object buffer = loaded.newModel("Compression").unwrap();
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output));
+        assertThat(reader.readTo(buffer), is(true));
+        assertThat(buffer, is(model.unwrap()));
+        assertThat(reader.readTo(buffer), is(false));
+    }
+
+    /**
+     * With ignoring field.
+     * @throws Exception if failed
+     */
+    @Test
+    public void ignore() throws Exception {
+        ModelLoader loaded = generateJava("ignore");
+        ModelWrapper model = loaded.newModel("Ignore");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "IgnoreTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        Object buffer = loaded.newModel("Ignore").unwrap();
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output));
+        assertThat(reader.readTo(buffer), is(true));
+        assertThat(buffer, is(model.unwrap()));
+        assertThat(reader.readTo(buffer), is(false));
+    }
+
+    /**
+     * With file name.
+     * @throws Exception if failed
+     */
+    @Test
+    public void file_name() throws Exception {
+        ModelLoader loaded = generateJava("file_name");
+        ModelWrapper model = loaded.newModel("FileName");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "FileNameTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello.tsv", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        ModelWrapper buffer = loaded.newModel("FileName");
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello.tsv", in(output),
+                0, size(output));
+        assertThat(reader.readTo(buffer.unwrap()), is(true));
+        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
+        assertThat(buffer.getOption("path"), is((Object) new StringOption("hello.tsv")));
+        assertThat(reader.readTo(buffer.unwrap()), is(false));
     }
 
     @SuppressWarnings("unchecked")

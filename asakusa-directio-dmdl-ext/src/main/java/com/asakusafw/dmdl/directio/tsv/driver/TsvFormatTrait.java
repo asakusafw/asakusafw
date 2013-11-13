@@ -62,10 +62,13 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
     /**
      * The TSV format configuration.
      * @since 0.5.0
+     * @version 0.5.2
      */
     public static class Configuration {
 
         private String charsetName = DEFAULT_CHARSET.name();
+
+        private String codecName = null;
 
         /**
          * Returns the charset name.
@@ -81,6 +84,24 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
          */
         public void setCharsetName(String charsetName) {
             this.charsetName = charsetName;
+        }
+
+        /**
+         * Returns the codec name.
+         * @return the codec name, or {@code null} if no codecs are specified
+         * @since 0.5.2
+         */
+        public String getCodecName() {
+            return codecName;
+        }
+
+        /**
+         * Sets the codec name.
+         * @param codecName the codec name, or {@code null} to reset it
+         * @since 0.5.2
+         */
+        public void setCodecName(String codecName) {
+            this.codecName = codecName;
         }
     }
 }

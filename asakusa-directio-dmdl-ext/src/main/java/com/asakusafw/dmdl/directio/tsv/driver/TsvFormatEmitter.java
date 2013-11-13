@@ -23,11 +23,14 @@ import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.directio.tsv.driver.TsvFieldTrait.Kind;
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFormatTrait.Configuration;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
@@ -41,6 +44,7 @@ import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvEmitter;
 import com.asakusafw.runtime.io.TsvParser;
+import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -166,7 +170,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
     static boolean isValueField(PropertyDeclaration property) {
         assert property != null;
-        return true;
+        return TsvFieldTrait.getKind(property, Kind.VALUE) == Kind.VALUE;
     }
 
     private static final class FormatGenerator {
@@ -174,6 +178,16 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         private static final String NAME_READER = "RecordReader";
 
         private static final String NAME_WRITER = "RecordWriter";
+
+        private static final Map<String, String> CODEC_SHORT_NAMES;
+        static {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec");
+            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec");
+            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec");
+            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec");
+            CODEC_SHORT_NAMES = map;
+        }
 
         private final EmitContext context;
 
@@ -271,7 +285,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             boolean fastMode = isFastMode();
             Expression value = fastMode
                 ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression()
-                : Models.toLiteral(f, -1);
+                : Models.toLiteral(f, -1L);
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -285,7 +299,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private boolean isFastMode() {
-            return true;
+            return conf.getCodecName() == null;
         }
 
         private MethodDeclaration createCreateReader() {
@@ -316,15 +330,21 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     context.resolve(InputStream.class),
                     fragmentInput,
                     null));
-            statements.add(new ExpressionBuilder(f, fragmentInput)
-                .assignFrom(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
-                    .newObject(
-                            stream,
-                            Models.toLiteral(f, '\n'),
-                            fragmentSize,
-                            isNotHead)
-                    .toExpression())
-                .toStatement());
+            if (isFastMode()) {
+                statements.add(new ExpressionBuilder(f, fragmentInput)
+                    .assignFrom(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
+                        .newObject(
+                                blessInputStream(stream),
+                                Models.toLiteral(f, '\n'),
+                                fragmentSize,
+                                isNotHead)
+                        .toExpression())
+                    .toStatement());
+            } else {
+                statements.add(new ExpressionBuilder(f, fragmentInput)
+                    .assignFrom(blessInputStream(stream))
+                    .toStatement());
+            }
 
             SimpleName parser = f.newSimpleName("parser");
             statements.add(new TypeBuilder(f, context.resolve(TsvParser.class))
@@ -333,8 +353,15 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toExpression())
                 .toLocalVariableDeclaration(context.resolve(TsvParser.class), parser));
 
+            List<Expression> arguments = Lists.create();
+            arguments.add(parser);
+            if (hasFileName()) {
+                arguments.add(new TypeBuilder(f, context.resolve(StringOption.class))
+                        .newObject(path)
+                        .toExpression());
+            }
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_READER)))
-                .newObject(parser)
+                .newObject(arguments)
                 .toReturnStatement());
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
@@ -376,7 +403,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             SimpleName emitter = f.newSimpleName("emitter");
             statements.add(new TypeBuilder(f, context.resolve(TsvEmitter.class))
                 .newObject(new TypeBuilder(f, context.resolve(OutputStreamWriter.class))
-                        .newObject(stream, Models.toLiteral(f, conf.getCharsetName()))
+                        .newObject(blessOutputStream(stream), Models.toLiteral(f, conf.getCharsetName()))
                         .toExpression())
                 .toLocalVariableDeclaration(context.resolve(TsvEmitter.class), emitter));
 
@@ -411,6 +438,46 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             return decl;
         }
 
+        private Expression blessInputStream(SimpleName stream) {
+            Expression codec = createCompressionCodec();
+            if (codec == null) {
+                return stream;
+            }
+            return new ExpressionBuilder(f, codec)
+                .method("createInputStream", stream)
+                .toExpression();
+        }
+
+        private Expression blessOutputStream(SimpleName stream) {
+            Expression codec = createCompressionCodec();
+            if (codec == null) {
+                return stream;
+            }
+            return new ExpressionBuilder(f, codec)
+                .method("createOutputStream", stream)
+                .toExpression();
+        }
+
+        private Expression createCompressionCodec() {
+            String codecName = conf.getCodecName();
+            if (codecName == null) {
+                return null;
+            }
+            if (CODEC_SHORT_NAMES.containsKey(codecName)) {
+                codecName = CODEC_SHORT_NAMES.get(codecName);
+            }
+            assert codecName != null;
+            return new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils")))
+                .method("newInstance",
+                        new TypeBuilder(f, context.resolve(Models.toName(f, codecName)))
+                            .dotClass()
+                            .toExpression(),
+                        new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.conf.Configuration")))
+                            .newObject(Models.toLiteral(f, false))
+                            .toExpression())
+                .toExpression();
+        }
+
         private Statement createNullCheck(SimpleName parameter) {
             assert parameter != null;
             return f.newIfStatement(
@@ -426,16 +493,24 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser");
+            SimpleName path = f.newSimpleName("path");
+
             List<TypeBodyDeclaration> members = Lists.create();
-            members.add(createPrivateField(TsvParser.class, parser));
             List<ExpressionStatement> constructorStatements = Lists.create();
+            List<FormalParameterDeclaration> constructorParameters = Lists.create();
+            members.add(createPrivateField(TsvParser.class, parser));
+            constructorParameters.add(f.newFormalParameterDeclaration(context.resolve(TsvParser.class), parser));
             constructorStatements.add(mapField(parser));
+            if (hasFileName()) {
+                members.add(createPrivateField(StringOption.class, path));
+                constructorParameters.add(f.newFormalParameterDeclaration(context.resolve(StringOption.class), path));
+                constructorStatements.add(mapField(path));
+            }
             members.add(f.newConstructorDeclaration(
                     null,
                     new AttributeBuilder(f).toAttributes(),
                     f.newSimpleName(NAME_READER),
-                    Arrays.asList(
-                            f.newFormalParameterDeclaration(context.resolve(TsvParser.class), parser)),
+                    constructorParameters,
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object");
@@ -448,11 +523,23 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
                         .toReturnStatement())));
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                statements.add(new ExpressionBuilder(f, parser)
-                    .method("fill", new ExpressionBuilder(f, object)
-                        .method(context.getOptionGetterName(property))
-                        .toExpression())
-                    .toStatement());
+                switch (TsvFieldTrait.getKind(property, Kind.VALUE)) {
+                case VALUE:
+                    statements.add(new ExpressionBuilder(f, parser)
+                        .method("fill", new ExpressionBuilder(f, object)
+                            .method(context.getOptionGetterName(property))
+                            .toExpression())
+                        .toStatement());
+                    break;
+                case FILE_NAME:
+                    statements.add(new ExpressionBuilder(f, object)
+                        .method(context.getOptionSetterName(property), path)
+                        .toStatement());
+                    break;
+                default:
+                    // ignored
+                    break;
+                }
             }
             statements.add(new ExpressionBuilder(f, parser)
                 .method("endRecord")
@@ -571,6 +658,15 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                             context.resolve(ModelOutput.class),
                             context.resolve(model.getSymbol()))),
                     members);
+        }
+
+        private boolean hasFileName() {
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                if (TsvFieldTrait.getKind(property, Kind.VALUE) == Kind.FILE_NAME) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private ExpressionStatement mapField(SimpleName name) {
