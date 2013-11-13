@@ -26,6 +26,7 @@ import com.asakusafw.runtime.value.DateTime;
 /**
  * Attributes for CSV supported data models.
  * @since 0.2.5
+ * @version 0.5.2
  */
 public class CsvFormatTrait implements Trait<CsvFormatTrait> {
 
@@ -80,6 +81,8 @@ public class CsvFormatTrait implements Trait<CsvFormatTrait> {
         private String dateFormat = CsvConfiguration.DEFAULT_DATE_FORMAT;
 
         private String dateTimeFormat = CsvConfiguration.DEFAULT_DATE_TIME_FORMAT;
+
+        private String codecName = null;
 
         /**
          * Returns the charset name.
@@ -191,6 +194,24 @@ public class CsvFormatTrait implements Trait<CsvFormatTrait> {
          */
         public void setAllowLinefeed(boolean allow) {
             this.allowLinefeed = allow;
+        }
+
+        /**
+         * Returns the codec name.
+         * @return the codec name, or {@code null} if no codecs are specified
+         * @since 0.5.2
+         */
+        public String getCodecName() {
+            return codecName;
+        }
+
+        /**
+         * Sets the codec name.
+         * @param codecName the codec name, or {@code null} to reset it
+         * @since 0.5.2
+         */
+        public void setCodecName(String codecName) {
+            this.codecName = codecName;
         }
     }
 }

@@ -697,8 +697,15 @@ CSV形式の設定
       - 文字列
       - ``"yyyy-MM-dd HH:mm:ss"``
       - ``DATETIME`` 型の表現形式
+    * - ``compression``
+      - 文字列
+      - なし
+      - ファイルの圧縮形式
 
 なお、 ``date`` および ``datetime`` には ``SimpleDateFormat`` [#]_ の形式で日付や時刻を指定します。
+
+また、 ``compression`` には、 ``"gzip"`` または ``CompressionCodec`` [#]_ のサブタイプのクラス名を指定します [#]_ 。
+ここで指定した圧縮形式で対象のファイルが読み書きされるようになりますが、代わりに `入力データの分割`_ が行われなくなります。
 
 ..  attention::
     デフォルトでは ``allow_linefeed`` には ``FALSE`` が設定されていて、文字列の内部などに改行文字 LF を含められないようになっています。
@@ -717,13 +724,15 @@ CSV形式の設定
         false = "0",
         date = "yyyy/MM/dd",
         datetime = "yyyy/MM/dd HH:mm:ss",
+        compression = "gzip",
     )
     model = {
         ...
     };
 
 ..  [#] ``java.text.SimpleDateFormat``
-
+..  [#] ``org.apache.hadoop.io.compress.CompressionCodec``
+..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
 
 ヘッダの設定
 ~~~~~~~~~~~~
@@ -794,6 +803,7 @@ CSV形式の注意点
 * 1レコードが10MBを超える場合、正しく解析できません
 * 以下のいずれかが指定された場合、 `入力データの分割`_ は行われなくなります
 
+  * ``@directio.csv( compression = ... )``
   * ``@directio.csv( allow_linefeed = TRUE )``
   * ``@directio.csv.line_number``
   * ``@directio.csv.record_number``
