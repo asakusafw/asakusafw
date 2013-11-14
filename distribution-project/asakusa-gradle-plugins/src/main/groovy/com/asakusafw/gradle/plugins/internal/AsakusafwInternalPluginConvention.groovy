@@ -3,15 +3,10 @@ package com.asakusafw.gradle.plugins.internal
 import org.gradle.api.*
 
 class AsakusafwInternalPluginConvention {
-    final Project project
-
     DependencyConfiguration dep;
 
-    AsakusafwInternalPluginConvention(final Project project) {
-        this.project = project
-
-        dep = new DependencyConfiguration(project)
-
+    AsakusafwInternalPluginConvention() {
+        dep = new DependencyConfiguration()
     }
     /**
      * Internal dependency settings
