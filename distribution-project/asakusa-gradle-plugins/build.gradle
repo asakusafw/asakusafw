@@ -63,18 +63,18 @@ def archetypeWorkDir = "${buildDir}/archetype-work"
 task generateTemplates << {
     delete outDir
     copy {
-        from "src/templates"
+        from ("src/templates") {
+            include '**/build.gradle'
+            expand ([
+                repProjectVersion: version,
+                repConventionAsakusafwVersion: '${asakusafw.asakusafwVersion}',
+                repMavenRepoType: version.text().endsWith("SNAPSHOT") ? 'snapshots' : 'releases',
+            ])
+        }
+        from ("src/templates") {
+            exclude '**/build.gradle'
+        }
         into outDir
-        exclude '**/.*'
-        expand ([
-            repProjectVersion: version,
-            repConventionAsakusafwVersion: '${asakusafw.asakusafwVersion}',
-            repMavenRepoType: version.text().endsWith("SNAPSHOT") ? 'snapshots' : 'releases',
-        ])
-    }
-    exec {
-        commandLine = ['gradle', 'wrapper']
-        workingDir = outTemplateProjectDir
     }
 
     mkdir "${outTemplateProjectDir}/src/main/java"
