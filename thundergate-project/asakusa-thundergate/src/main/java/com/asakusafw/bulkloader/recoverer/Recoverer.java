@@ -17,6 +17,7 @@ package com.asakusafw.bulkloader.recoverer;
 
 import java.sql.Connection;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -140,7 +141,10 @@ public class Recoverer {
             List<ExporterBean> beans;
             try {
                 beans = selectRunningJobFlow(executionId);
-                if (beans != null && beans.size() > 0) {
+                if (beans == null) {
+                    beans = Collections.emptyList();
+                }
+                if (beans.size() > 0) {
                     isExistJobFlowInstance = true;
                 }
             } catch (BulkLoaderSystemException e) {
@@ -152,7 +156,7 @@ public class Recoverer {
 
             // ジョブフロー実行テーブルのレコード毎にリカバリ処理を行う
             if (isExistJobFlowInstance) {
-                assert beans != null && beans.size() >= 1;
+                assert beans.size() >= 1;
                 for (ExporterBean bean : beans) {
                     LOG.info("TG-RECOVERER-01016",
                             targetName,

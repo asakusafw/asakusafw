@@ -18,7 +18,7 @@ package com.asakusafw.dmdl.spi;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-class Messages {
+final class Messages {
 
     private static final String BUNDLE_NAME = "com.asakusafw.dmdl.spi.messages"; //$NON-NLS-1$
 

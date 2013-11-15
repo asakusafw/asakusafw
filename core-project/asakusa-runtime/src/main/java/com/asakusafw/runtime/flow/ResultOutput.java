@@ -96,6 +96,8 @@ public class ResultOutput<T> implements Result<T> {
      * @param context current context
      * @param key the key object (nullable)
      * @param value the value object (nullable)
+     * @param <K> type of key object
+     * @param <V> type of value object
      * @throws Result.OutputException if failed to write the objects
      * @since 0.5.0
      */

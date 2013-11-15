@@ -55,7 +55,7 @@ public class TraceSettingAttribute implements FlowElementAttribute {
     }
 
     /**
-     * Returns the serial number of the tracepoint target
+     * Returns the serial number of the tracepoint target.
      * @return the serial number
      */
     public int getSerialNumber() {

@@ -71,7 +71,7 @@ public class ConfigurationProvider {
 
     static final Log LOG = LogFactory.getLog(ConfigurationProvider.class);
 
-    private final static Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
+    private static final Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
 
     private final ClassLoader loader;
 
