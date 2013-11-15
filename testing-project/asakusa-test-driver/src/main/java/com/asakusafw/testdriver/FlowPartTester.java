@@ -35,6 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * フロー部品用のテストドライバクラス。
  * @since 0.2.0
+ * @version 0.5.2
  */
 public class FlowPartTester extends TestDriverBase {
 
@@ -89,7 +90,11 @@ public class FlowPartTester extends TestDriverBase {
      */
     public void runTest(FlowDescription flowDescription) {
         try {
-            runTestInternal(flowDescription);
+            try {
+                runTestInternal(flowDescription);
+            } finally {
+                driverContext.cleanUpTemporaryResources();
+            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

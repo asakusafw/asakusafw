@@ -133,6 +133,8 @@ public class FlowPartTestDriver extends TestDriverTestToolsBase {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            driverContext.cleanUpTemporaryResources();
         }
     }
 

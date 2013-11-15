@@ -68,7 +68,9 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
             return;
         }
 
-        File outputDirectory = new File(getEnvironment().getConfiguration().getOutputDirectory(), OUTPUT_DIRECTORY_PATH);
+        File outputDirectory = new File(
+                getEnvironment().getConfiguration().getOutputDirectory(),
+                OUTPUT_DIRECTORY_PATH);
         if (outputDirectory.mkdirs() == false && outputDirectory.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
                     "Failed to create library output: {0}",

@@ -28,9 +28,26 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
-import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.model.*;
+import com.asakusafw.dmdl.model.AstAttribute;
+import com.asakusafw.dmdl.model.AstExpression;
+import com.asakusafw.dmdl.model.AstGrouping;
+import com.asakusafw.dmdl.model.AstJoin;
+import com.asakusafw.dmdl.model.AstModelDefinition;
+import com.asakusafw.dmdl.model.AstModelFolding;
+import com.asakusafw.dmdl.model.AstModelMapping;
+import com.asakusafw.dmdl.model.AstModelReference;
+import com.asakusafw.dmdl.model.AstName;
 import com.asakusafw.dmdl.model.AstNode.AbstractVisitor;
+import com.asakusafw.dmdl.model.AstPropertyDefinition;
+import com.asakusafw.dmdl.model.AstPropertyFolding;
+import com.asakusafw.dmdl.model.AstPropertyMapping;
+import com.asakusafw.dmdl.model.AstRecord;
+import com.asakusafw.dmdl.model.AstRecordDefinition;
+import com.asakusafw.dmdl.model.AstSimpleName;
+import com.asakusafw.dmdl.model.AstSummarize;
+import com.asakusafw.dmdl.model.AstTerm;
+import com.asakusafw.dmdl.model.AstUnionExpression;
+import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
@@ -151,11 +168,19 @@ public class DmdlAnalyzer {
         Set<Set<String>> circuits = Graphs.findCircuit(modelDependencies);
         if (circuits.isEmpty() == false) {
             for (Set<String> loop : circuits) {
-                report(new Diagnostic(
-                        Level.ERROR,
-                        (Region) null,
-                        Messages.getString("DmdlAnalyzer.diagnosticCyclicDependencies"), //$NON-NLS-1$
-                        loop));
+                for (String modelName : loop) {
+                    AstSimpleName node = null;
+                    ModelDeclaration md = context.getWorld().findModelDeclaration(modelName);
+                    if (md != null) {
+                        node = md.getName();
+                    }
+                    report(new Diagnostic(
+                            Level.ERROR,
+                            node,
+                            Messages.getString("DmdlAnalyzer.diagnosticCyclicDependencies"), //$NON-NLS-1$
+                            modelName,
+                            loop));
+                }
             }
             return;
         }

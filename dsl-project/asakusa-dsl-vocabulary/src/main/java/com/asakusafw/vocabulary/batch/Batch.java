@@ -72,7 +72,7 @@ NamePart: one of
      * @since 0.5.0
      * @see #strict()
      */
-    Parameter[] parameters() default {};
+    Parameter[] parameters() default { };
 
     /**
      * {@link #parameters()}で指定していない引数を利用できるかどうか。
