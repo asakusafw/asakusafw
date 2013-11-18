@@ -33,23 +33,21 @@ class EclipsePluginEnhancement {
     }
 
     private void configureDependencies() {
-        project.afterEvaluate {
-            project.dependencies {
-                compileOperator "com.asakusafw:asakusa-runtime:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:asakusa-dsl-vocabulary:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:ashigel-compiler:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:java-dom:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:javadoc-parser:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:jsr269-bridge:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:collections:${project.asakusafw.asakusafwVersion}"
-                compileOperator "com.asakusafw:simple-graph:${project.asakusafw.asakusafwVersion}"
-                compileOperator "commons-io:commons-io:${project.asakusafwInternal.dep.commonsIoVersion}"
-                compileOperator "commons-lang:commons-lang:${project.asakusafwInternal.dep.commonsLangVersion}"
-                compileOperator "ch.qos.logback:logback-classic:${project.asakusafwInternal.dep.logbackVersion}"
-                compileOperator "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}"
-                compileOperator "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}"
+        project.dependencies {
+            compileOperator "com.asakusafw:asakusa-runtime:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:asakusa-dsl-vocabulary:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:ashigel-compiler:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:java-dom:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:javadoc-parser:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:jsr269-bridge:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:collections:${project.asakusafw.asakusafwVersion}"
+            compileOperator "com.asakusafw:simple-graph:${project.asakusafw.asakusafwVersion}"
+            compileOperator "commons-io:commons-io:${project.asakusafwInternal.dep.commonsIoVersion}"
+            compileOperator "commons-lang:commons-lang:${project.asakusafwInternal.dep.commonsLangVersion}"
+            compileOperator "ch.qos.logback:logback-classic:${project.asakusafwInternal.dep.logbackVersion}"
+            compileOperator "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}"
+            compileOperator "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}"
             }
-        }
     }
 
     private void configureEclipsePlugin() {
@@ -62,9 +60,10 @@ class EclipsePluginEnhancement {
     private void extendEclipseClasspath() {
         project.eclipse.classpath {
             file.whenMerged { classpath ->
-                classpath.entries.findAll { it.path.contains('JRE_CONTAINER') }.each {
-                    it.path += '/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6'
+                classpath.entries.findAll { it.path.contains('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
+                    it.path = 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6'
                 }
+                classpath.entries.unique()
             }
             plusConfigurations += project.configurations.provided
             noExportConfigurations += project.configurations.provided
