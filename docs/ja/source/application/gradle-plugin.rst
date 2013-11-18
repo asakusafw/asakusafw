@@ -19,6 +19,20 @@ Asakusa Gradle Plugin利用ガイド
 
 Asakusa Gradle Plugin は、Asakusa Framework用の `Gradle <http://www.gradle.org/>`_ 拡張プラグインです。このプラグインを利用することで、Gradleを利用してAsakusa Framework を使ったアプリケーションの開発やデプロイを行うことができます。
 
+利用環境
+--------
+Asakusa Gradle Plugin を利用するにはJava(JDK)、およびHadoopがインストールされている必要があります。 これらの導入方法については、 :doc:`../introduction/start-guide` の :ref:`startguide-development-environment` などを参考にしてください。
+
+..  note::
+    このドキュメントには Maven や Asakusa Frameworkのインストール手順も含まれますが、Asakusa Gradle Plugin の利用にはこれらの手順の実施は不要です。
+    
+..  note::
+    `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_ を使って構築した環境でも Asakusa Gradle Plugin を利用することができます。現在のバージョンの Jinrikisha に含まれるサンプルアプリケーションは従来のMavenベースのビルド環境を持つプロジェクト構成になっています。
+ 
+..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+
+なお、Gradleのインストールについては、 本書では `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_  と呼ばれるGradleを利用するためのコマンドを使う方法を推奨しています。この方法に沿ってGradleを利用する場合は前もってGradleをインストールする必要はありません。詳しくは後述の `Asakusa Gradle Pluginの導入`_ を参考にしてください。
+
 Gradleについて
 --------------
 
@@ -28,6 +42,7 @@ Gradleに関する詳しい情報は、以下のドキュメントなどを参�
 
 *  `Gradle Documentation <http://www.gradle.org/documentation>`_  (Gradleの公式ドキュメントサイト)
 *  `Gradle 日本語ドキュメント <http://gradle.monochromeroad.com/docs/>`_  (公式ドキュメントの翻訳サイト)
+
 
 Asakusa Gradle Pluginの導入
 ===========================
@@ -39,7 +54,7 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 
 1)は、Asakusa Gradle Pluginの利用設定が行われたビルドスクリプト、及び標準的なプロジェクトレイアウトを含むプロジェクトテンプレートを利用する方法です。Asakusa Gradle Pluginを使った標準的なアプリケーション開発環境を導入するにはこのテンプレートを使うと便利です。
 
-このプロジェクトテンプレートには  `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_  と呼ばれるGradleを利用するコマンドが含まれます。このコマンドを利用することで、前もってGradleをインストールすることなく、すぐにこのプロジェクト上で開発を始めることができます。
+このプロジェクトテンプレートには  `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_  と呼ばれるGradleを利用するコマンドが含まれます。このコマンドを利用することで、Gradle自体の導入設定は不要となり、すぐにこのプロジェクト上で開発を始めることができます。
 
 2)は、テンプレートを使用せずフルスクラッチでビルドスクリプトの定義やプロジェクトレイアウトを作成する方法です。この方法はGradleやAsakusa Gradle Pluginの利用に精通している必要がありますが、プロジェクトテンプレートに対して多くのカスタマイズが必要となる場合はこちらの方法を検討してください。
 
@@ -72,7 +87,7 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf asakusa-example-project-0.5.2.tar.gz
+    tar xf asakusa-example-project-*.tar.gz
     mv asakusa-example-project ~/workspace/example-app
 
 プロジェクトレイアウト
@@ -282,7 +297,12 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
 
 ここでは、Asakusa Frameworkの開発の流れに沿ってAsakusa Gradle Plugin の基本的な使い方を紹介します。
 
-以降の説明では、ターミナル上でカレントディレクトリをプロジェクトテンプレートを配置したディレクトリに設定されてあることを前提とします。
+以降の説明では、ターミナル上のカレントディレクトリがサンプルアプリケーションを配置したディレクトリに設定されていることを前提とします。
+
+..  code-block:: sh
+
+    cd ~/workspace/example-app
+
 
 開発用のAsakusa Frameworkインストール
 -------------------------------------
@@ -299,22 +319,6 @@ Asakusa Frameworkを開発環境にインストールするには、インスト
 
 ..  note::
     開発環境では、Asakusa DSLを使ってアプリケーションを記述するだけであればAsakusa Frameworkのインストールは不要ですが、テストドライバを使ってFlow DSL、Batch DSLのテストを行う場合や、YAESSを使ってローカル環境でバッチアプリケーションを実行する場合など、Hadoopを実際に動作させる機能については、Asakusa Frameworkをインストールする必要があります。
-
-Eclipse定義ファイルの作成
--------------------------
-
-アプリケーション開発用の統合開発環境(IDE)にEclipseを使用する場合、開発環境にEclipseをインストールした上で、プロジェクトに対してEclipseプロジェクト用の定義ファイルを追加します。
-
-Eclipseプロジェクト用の定義ファイルを作成するには、 ``eclipse`` タスクを実行します。
-
-..  code-block:: sh
-
-    ./gradlew eclipse
-
-このコマンドを実行することによってプロジェクトディレクトリに対して ``.project`` , ``.classpath`` , ``.factorypath`` などのいくつかのEclipse用の定義ファイルが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
-
-..  tip::
-    Eclipseからプロジェクトをインポートするには、Eclipseのメニューから  ``[File]``  ->  ``[Import]``  ->  ``[General]``  ->  ``[Existing Projects into Workspace]``  を選択し、プロジェクトディレクトリを指定します。
 
 データモデルクラスの生成
 ------------------------
@@ -388,7 +392,7 @@ Asakusa DSLコンパイラを実行するには、 ``compileBatchapp`` タスク
 
 バッチアプリケーションアーカイブファイルは運用環境上の ``$ASAKUSA_HOME/batchapps`` 配下にこのjarファイルを展開してデプロイします。より詳しくは、 :doc:`../administration/index` のデプロイメントガイドなどを参照してください。
 
-..  [#] YAESSを使ったアプリケーションの実行方法については、 :doc:`../yaess/index` などを参照してください。
+..  [#] サンプルアプリケーションの実行方法については、 :doc:`../directio/start-guide` などを参照してください。
 
 ..  [#] より正確には、このファイルはGradleのアーカイブタスクのネーミングルールに従います。詳しくはGradleのドキュメントを参照してください。
 
@@ -462,6 +466,24 @@ build
     ./gradlew clean build
 
 ..  [#] 正確には、ライフサイクルタスクはGradleが標準で提供する Java プラグインによって定義されています。詳しくは Gradle のドキュメントを参照してください。
+
+Eclipse定義ファイルの作成
+-------------------------
+
+アプリケーション開発用の統合開発環境(IDE)にEclipseを使用する場合、開発環境にEclipseをインストールした上で、プロジェクトに対してEclipseプロジェクト用の定義ファイルを追加します。
+
+Eclipseプロジェクト用の定義ファイルを作成するには、 ``eclipse`` タスクを実行します。
+
+..  code-block:: sh
+
+    ./gradlew compileJava eclipse
+
+EclipseにJavaソースディレクトリを正しく認識させるためには、 ``eclipse`` タスクを実行する時点で、プロジェクトで使用するすべてのJavaソースディレクトリが存在している必要があります。 Asakusa Gradle Plugin では `Javaソースファイルのコンパイル`_ で説明した ``compileJava`` タスクを実行することで必要なソースディレクトリが生成されるので、上記の例では ``compileJava`` タスクを事前に実行しています。
+
+このコマンドを実行することによってプロジェクトディレクトリに対して ``.project`` , ``.classpath`` , ``.factorypath`` などのいくつかのEclipse用の定義ファイルが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
+
+..  tip::
+    Eclipseからプロジェクトをインポートするには、Eclipseのメニューから  ``[File]``  ->  ``[Import]``  ->  ``[General]``  ->  ``[Existing Projects into Workspace]``  を選択し、プロジェクトディレクトリを指定します。
 
 Asakusa Frameworkのデプロイメントアーカイブ生成
 -----------------------------------------------
@@ -616,7 +638,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
      45     }
      46 
      47     // Additional dependencies
-     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVers    ion}"
+     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVersion}"
      49 }
     
 
@@ -683,7 +705,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
      45     }
      46 
      47     // Additional dependencies
-     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVers    ion}"
+     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVersion}"
      49 }
 
 上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である  `Direct I/O TSV <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_  を利用するための設定を追加しています。
@@ -1202,7 +1224,7 @@ MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレ
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf asakusa-project-template-0.5.2.tar.gz
+    tar xf asakusa-project-template-*.tar.gz
     cp -r asakusa-project-template/* ~/workspace/migrate-app
 
 プロジェクト定義のマイグレーション
@@ -1253,10 +1275,21 @@ Gradleではこれらのプロパティについてビルドスクリプト上�
 
 その他の項目については、 ``build.properties`` をデフォルト値のまま利用している場合は移行作業は不要です。変更しているものがある場合はBatch Application Plugin上の規約プロパティを確認し、設定を反映してください。
 
+Asakusa Frameworkの再インストール
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+開発環境のAsakusa Frameworkを再インストールします。
+
+..  code-block:: sh
+
+    ./gradlew installAsakusafw
+
 マイグレーションしたビルド設定の確認
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-各設定ファイルのマイグレーションが完了したら、フルビルドを行いビルドが成功することを確認してください。また、Eclipseを利用している場合はビルドディレクトリが変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
+プロジェクトのフルビルドを行い、ビルドが成功することを確認してください。
+
+Eclipseを利用している場合はビルドディレクトリが変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
 
 ..  code-block:: sh
 

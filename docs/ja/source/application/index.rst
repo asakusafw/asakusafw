@@ -29,7 +29,7 @@ Mavenアーキタイプ利用ガイド
 ---------------------------
 アプリケーション開発用プロジェクトのテンプレートとなるMavenアーキタイプについて説明します。
 
-Asakusa Gradle Plugin利用ガイド ( *試験的機能* )
+Asakusa Gradle Plugin利用ガイド (Experimental)
 -------------------------------------------------
 GradleにAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加する Asakusa Gradle Plugin について説明します。
 
