@@ -2,9 +2,46 @@
 Changelogs
 ==========
 
+Release 0.5.2
+=============
+Nov 20, 2013
+
+Enhancements
+------------
+* [ :issue:`300` ] - Region is null when a cycle exists in model dependencies
+* [ :issue:`301` ] - New Build System based on Gradle
+    * See: :doc:`application/gradle-plugin`
+* [ :issue:`305` ] - Direct I/O-CSV supports compression and decompression
+    * See: :doc:`directio/user-guide`
+* [ :issue:`309` ] - TestDriver should clean compiler working directory after finishing runTest.
+* [ Sandbox ] - Direct I/O-TSV supports compression and decompression
+    * See: `Direct I/OのTSVファイル連携 <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_
+
+Bug fixes
+---------
+* [ :issue:`297` ] - "true","false","null" has leaked from the check of SimpleName
+* [ :issue:`298` ] - Fix documentation bugs
+* [ :issue:`299` ] - Fix documentation bugs
+* [ :issue:`302` ] - YS-CORE-I01003 shows incorrect flowId
+* [ :issue:`303` ] - TestDriver fails when installed framework version is older than project framework version.
+* [ :issue:`304` ] - StageInputRecordReader throws NPE when closing unprepared RecordReader.
+* [ :issue:`307` ] - Port name of MasterJoinUpdate has wrong in operator reference
+
+Others
+------
+* [ :issue:`306` ] - Bumps up default dependency hadoop version
+    * See: :doc:`product/target-platform`
+* [ :issue:`308` ] - Updates document for using Direct I/O with splittable configuration on S3
+    * See: :doc:`directio/user-guide`
+* [ :issue:`310` ] - 0.5.2 Documentation
+* [ :issue:`311` ] - 0.5.2 Refactoring
+
 Release 0.5.1
 =============
 Jul 26, 2013
+
+Others
+------
 
 Enhancements
 ------------
@@ -24,7 +61,7 @@ Bug fixes
 * [ :issue:`286` ] - Delete a wrong sentence.
 * [ :issue:`288` ] - The useIncrementalCompilation option should disable on archetype default configuration.
 * [ :issue:`295` ] - Regression: Failed to compile DMDL script on Windows.
-* [ :issue:`295` ] - Dependency for hadoop on dmdl-java should have provided scope
+* [ :issue:`296` ] - Dependency for hadoop on dmdl-java should have provided scope
 
 Others
 ------

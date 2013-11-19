@@ -123,7 +123,7 @@ class AsakusafwPlugin implements Plugin<Project> {
                     '-targetencoding',
                     project.asakusafw.javac.sourceEncoding
                 ]
-                if (dmdlPluginPath) {
+                if (dmdlPluginPath.size()) {
                     args += [
                         '-plugin',
                         dmdlPluginPath
@@ -182,7 +182,7 @@ class AsakusafwPlugin implements Plugin<Project> {
                     project.sourceSets.main.output.classesDir,
                     '-skiperror',
                 ]
-                if (compilerPluginPath) {
+                if (compilerPluginPath.size()) {
                     args += [
                         '-plugin',
                         compilerPluginPath

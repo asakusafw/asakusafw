@@ -5,6 +5,22 @@ Asakusa Frameworkのリリースノートです。
 
 すべての変更点一覧は :doc:`changelogs` も参照してください。
 
+Release 0.5.2
+=============
+Nov 20, 2013
+
+`Asakusa Framework 0.5.2 documentation`_
+
+..  _`Asakusa Framework 0.5.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.2/release/ja/html/index.html
+
+本リリースはAsakusa Frameworkの開発版リリースです。
+主な変更内容は以下の通りです。
+
+* 試験的機能として、Gradleベースの新ビルドシステムを提供
+   * 詳しくは、 :doc:`application/gradle-plugin` を参照してください。
+* Direct I/O CSV, Direct I/O TSV(Sandbox) に入出力データの圧縮/解凍機能を追加
+* その他、多くの細かな機能改善、およびバグフィックス。
+
 Release 0.5.1
 =============
 Jul 26, 2013
