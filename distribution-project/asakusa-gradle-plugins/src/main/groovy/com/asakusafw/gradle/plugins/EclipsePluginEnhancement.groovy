@@ -103,7 +103,7 @@ class EclipsePluginEnhancement {
         project.file('.settings/org.eclipse.jdt.apt.core.prefs').text = """\
             |eclipse.preferences.version=1
             |org.eclipse.jdt.apt.aptEnabled=true
-            |org.eclipse.jdt.apt.genSrcDir=${project.relativePath(project.asakusafw.javac.annotationSourceDirectory)}
+            |org.eclipse.jdt.apt.genSrcDir=${project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('\\', '/')}
             |org.eclipse.jdt.apt.reconcileEnabled=true
             |""" .stripMargin()
     }
