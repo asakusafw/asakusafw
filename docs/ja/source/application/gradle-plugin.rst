@@ -1181,10 +1181,69 @@ Asakusa Framework の現在バージョン |version| におけるAsakusa Gradle 
 Asakusa Gradle Plugin マイグレーションガイド
 ============================================
 
-ここでは、従来のAsakusa Frameworkが提供するMavenベースのビルドシステムからAsakusa Gradle Pluginを使ったビルドシステムに移行するための手順を説明します。
+ここでは、Asakusa Gradle Plugin のバージョンアップ手順や、 従来のAsakusa Frameworkが提供するMavenベースのビルドシステムからAsakusa Gradle Pluginを使ったビルドシステムに移行するための手順を説明します。
 
-アプリケーションプロジェクトのマイグレーション
-----------------------------------------------
+なお、Asakusa Frameworkのマイグレーション情報については、 :doc:`migration-guide` も参考にしてください。
+
+Asakusa Gradle Pluginのバージョンアップ
+---------------------------------------
+
+ここではプロジェクトテンプレートで提供されるビルドスクリプトを例に、Asakusa Gradle Plugin をバージョンアップする基本的な手順を説明します。
+
+Asakusa Gradle Plugin をバージョンアップするには、ビルドスクリプト内のAsakusa Gradle Plugin のバージョン指定と、Asakusa Frameworkのバージョン指定をそれぞれ変更したのち、開発環境の再セットアップを行います。
+
+Asakusa Gradle Pluginのバージョン指定
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ビルドスクリプト内のAsakusa Gradle Pluginのバージョン ``buildscript/dependencies/classpath@version`` を変更します。プロジェクトテンプレートで提供されるビルドスクリプトでは、6行目の ``version`` の値を変更します。
+
+..  code-block:: groovy
+
+      1 buildscript {
+      2     repositories {
+      3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
+      4     }
+      5     dependencies {
+      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.2'
+      7     }
+      8 }
+
+Asakusa Frameworkのバージョン指定
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ビルドスクリプト内のAsakusa Frameworkのバージョン ``asakusafw/asakusafwVersion`` を変更します。プロジェクトテンプレートで提供されるビルドスクリプトでは、15行目の ``asakusafwVersion`` の値を変更します。
+
+..  code-block:: groovy
+
+     14 asakusafw {
+     15     asakusafwVersion = '0.5.2'
+     16 
+     17     modelgen {
+     18         modelgenSourcePackage 'com.example.modelgen'
+
+Asakusa Frameworkの再インストール
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+開発環境のAsakusa Frameworkを再インストールします。
+
+..  code-block:: sh
+
+    ./gradlew installAsakusafw
+
+マイグレーションしたビルド設定の確認
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+プロジェクトのフルビルドを行い、ビルドが成功することを確認してください。
+
+Eclipseを利用している場合はクラスパス設定が変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
+
+..  code-block:: sh
+
+    ./gradlew cleanEclipse clean build eclipse
+
+
+Mavenプロジェクトのマイグレーション
+-----------------------------------
 
 :doc:`../introduction/start-guide` や :doc:`../application/maven-archetype` で記載されている手順に従って構築したMavenベースのビルド定義を持つアプリケーションプロジェクトでAsakusa Gradle Pluginを使うには、まずこのプロジェクトにAsakusa Gradle Plugin用のビルドスクリプトを配置します。
 
@@ -1289,7 +1348,7 @@ Asakusa Frameworkの再インストール
 
 プロジェクトのフルビルドを行い、ビルドが成功することを確認してください。
 
-Eclipseを利用している場合はビルドディレクトリが変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
+Eclipseを利用している場合はクラスパス設定が変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
 
 ..  code-block:: sh
 
