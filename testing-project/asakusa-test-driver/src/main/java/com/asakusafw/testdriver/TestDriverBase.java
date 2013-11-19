@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * テストドライバの基底クラス。
  * @since 0.2.0
- * @version 0.5.1
+ * @version 0.5.2
  */
 public abstract class TestDriverBase {
 
@@ -160,6 +160,22 @@ public abstract class TestDriverBase {
      */
     public void setLibrariesPath(File librariesPath) {
         driverContext.setLibrariesPath(librariesPath);
+    }
+
+    /**
+     * このテストで利用するDSLコンパイラの作業ディレクトリを設定する。
+     * <p>
+     * ワーキングディレクトリが設定されていない場合、テストドライバは一時的なディレクトリを作成し、
+     * テスト終了時に作成したディレクトリを自動的に削除する。
+     * </p>
+     * <p>
+     * 通常この設定を行う必要はないが、コンパイラが生成したプログラムなどを分析する場合などに設定されることを想定している。
+     * </p>
+     * @param path 設定するコンパイラの作業ディレクトリ
+     * @since 0.5.2
+     */
+    public void setCompilerWorkingDirectory(File path) {
+        driverContext.setCompilerWorkingDirectory(path);
     }
 
     /**

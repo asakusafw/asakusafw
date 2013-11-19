@@ -6,6 +6,7 @@
     false = "F",
     date = "yyyy/MM/dd",
     datetime = "yyyy/MM/dd+HH:mm:ss",
+    compression = "gzip",
 )
 model = {
     text_value : TEXT;

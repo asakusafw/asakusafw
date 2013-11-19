@@ -173,6 +173,10 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
             }
             start = matcher.end();
         }
+        if (start == 0) {
+            // failed to infer
+            return null;
+        }
         buf.append(inputFormatName.substring(start));
         return buf.toString();
     }

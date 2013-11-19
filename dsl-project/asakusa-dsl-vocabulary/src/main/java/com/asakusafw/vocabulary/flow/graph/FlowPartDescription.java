@@ -380,7 +380,7 @@ public class FlowPartDescription implements FlowElementDescription {
         }
 
         /**
-         * Adds a parameter and its argument value for this flow-part
+         * Adds a parameter and its argument value for this flow-part.
          * @param parameterName the parameter name
          * @param parameterType the parameter value
          * @param argument the actual parameter argument, or {@code null} if the argument is just {@code null}

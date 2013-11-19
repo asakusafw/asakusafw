@@ -75,8 +75,8 @@ public class TraceFlowProcessor extends LinePartProcessor {
 
         // port direction
         arguments.add(new TypeBuilder(f, context.convert(PortDirection.class))
-                .field(tracepoint.getPortKind() == PortKind.INPUT ?
-                        PortDirection.INPUT.name() : PortDirection.OUTPUT.name())
+                .field(tracepoint.getPortKind() == PortKind.INPUT
+                        ? PortDirection.INPUT.name() : PortDirection.OUTPUT.name())
                 .toExpression());
 
         // port name

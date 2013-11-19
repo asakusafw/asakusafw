@@ -124,7 +124,7 @@ public class JavadocConverter {
         }
 
         @Override
-        public DocElement visitBlock(IrDocBlock elem, Void _) {
+        public DocElement visitBlock(IrDocBlock elem, Void context) {
             String tag = elem.getTag();
             List<DocElement> elements = new ArrayList<DocElement>();
             for (IrDocFragment f : elem.getFragments()) {
@@ -136,31 +136,31 @@ public class JavadocConverter {
         }
 
         @Override
-        public DocElement visitText(IrDocText elem, Void _) {
+        public DocElement visitText(IrDocText elem, Void context) {
             return factory.newDocText(elem.getContent());
         }
 
         @Override
-        public DocElement visitSimpleName(IrDocSimpleName elem, Void _) {
+        public DocElement visitSimpleName(IrDocSimpleName elem, Void context) {
             return factory.newSimpleName(elem.getIdentifier());
         }
 
         @Override
-        public DocElement visitQualifiedName(IrDocQualifiedName elem, Void _) {
+        public DocElement visitQualifiedName(IrDocQualifiedName elem, Void context) {
             Name qualifier = (Name) elem.getQualifier().accept(this, null);
             SimpleName simple = (SimpleName) elem.getName().accept(this, null);
             return factory.newQualifiedName(qualifier, simple);
         }
 
         @Override
-        public DocElement visitField(IrDocField elem, Void _) {
+        public DocElement visitField(IrDocField elem, Void context) {
             Type type = declaring(elem.getDeclaringType());
             SimpleName name = (SimpleName) elem.getName().accept(this, null);
             return factory.newDocField(type, name);
         }
 
         @Override
-        public DocElement visitMethod(IrDocMethod elem, Void _) {
+        public DocElement visitMethod(IrDocMethod elem, Void context) {
             Type type = declaring(elem.getDeclaringType());
             SimpleName name = (SimpleName) elem.getName().accept(this, null);
             List<DocMethodParameter> params = new ArrayList<DocMethodParameter>();
@@ -185,7 +185,7 @@ public class JavadocConverter {
         }
 
         @Override
-        public DocElement visitNamedType(IrDocNamedType elem, Void _) {
+        public DocElement visitNamedType(IrDocNamedType elem, Void context) {
             Name name = (Name) elem.getName().accept(this, null);
             return factory.newNamedType(name);
         }

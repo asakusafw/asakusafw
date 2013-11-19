@@ -23,7 +23,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,6 +183,16 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         private static final String METHOD_CONFIG = "getConfiguration";
 
         private static final String FIELD_PATH_NAME = "pathText";
+
+        private static final Map<String, String> CODEC_SHORT_NAMES;
+        static {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec");
+            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec");
+            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec");
+            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec");
+            CODEC_SHORT_NAMES = map;
+        }
 
         private final EmitContext context;
 
@@ -360,6 +372,9 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             if (conf.isAllowLinefeed()) {
                 return false;
             }
+            if (conf.getCodecName() != null) {
+                return false;
+            }
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
                 case VALUE:
@@ -401,15 +416,21 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     context.resolve(InputStream.class),
                     fragmentInput,
                     null));
-            statements.add(new ExpressionBuilder(f, fragmentInput)
-                .assignFrom(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
-                    .newObject(
-                            stream,
-                            Models.toLiteral(f, '\n'),
-                            fragmentSize,
-                            isNotHead)
-                    .toExpression())
-                .toStatement());
+            if (isFastMode()) {
+                statements.add(new ExpressionBuilder(f, fragmentInput)
+                    .assignFrom(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
+                        .newObject(
+                                blessInputStream(stream),
+                                Models.toLiteral(f, '\n'),
+                                fragmentSize,
+                                isNotHead)
+                        .toExpression())
+                    .toStatement());
+            } else {
+                statements.add(new ExpressionBuilder(f, fragmentInput)
+                    .assignFrom(blessInputStream(stream))
+                    .toStatement());
+            }
 
             SimpleName parser = f.newSimpleName("parser");
             statements.add(new TypeBuilder(f, context.resolve(CsvParser.class))
@@ -462,7 +483,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
 
             SimpleName emitter = f.newSimpleName("emitter");
             statements.add(new TypeBuilder(f, context.resolve(CsvEmitter.class))
-                .newObject(stream, path, new ExpressionBuilder(f, f.newThis())
+                .newObject(blessOutputStream(stream), path, new ExpressionBuilder(f, f.newThis())
                     .method(METHOD_CONFIG, Models.toLiteral(f, true))
                     .toExpression())
                 .toLocalVariableDeclaration(context.resolve(CsvEmitter.class), emitter));
@@ -496,6 +517,46 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(statements));
             return decl;
+        }
+
+        private Expression blessInputStream(SimpleName stream) {
+            Expression codec = createCompressionCodec();
+            if (codec == null) {
+                return stream;
+            }
+            return new ExpressionBuilder(f, codec)
+                .method("createInputStream", stream)
+                .toExpression();
+        }
+
+        private Expression blessOutputStream(SimpleName stream) {
+            Expression codec = createCompressionCodec();
+            if (codec == null) {
+                return stream;
+            }
+            return new ExpressionBuilder(f, codec)
+                .method("createOutputStream", stream)
+                .toExpression();
+        }
+
+        private Expression createCompressionCodec() {
+            String codecName = conf.getCodecName();
+            if (codecName == null) {
+                return null;
+            }
+            if (CODEC_SHORT_NAMES.containsKey(codecName)) {
+                codecName = CODEC_SHORT_NAMES.get(codecName);
+            }
+            assert codecName != null;
+            return new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils")))
+                .method("newInstance",
+                        new TypeBuilder(f, context.resolve(Models.toName(f, codecName)))
+                            .dotClass()
+                            .toExpression(),
+                        new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.conf.Configuration")))
+                            .newObject(Models.toLiteral(f, false))
+                            .toExpression())
+                .toExpression();
         }
 
         private Statement createNullCheck(SimpleName parameter) {
