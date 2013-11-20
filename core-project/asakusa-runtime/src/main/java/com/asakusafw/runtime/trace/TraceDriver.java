@@ -23,7 +23,7 @@ import com.asakusafw.runtime.core.Result;
  * Manages {@link TraceAction} object.
  * @since 0.5.1
  */
-public class TraceDriver {
+public final class TraceDriver {
 
     private final TraceAction action;
 

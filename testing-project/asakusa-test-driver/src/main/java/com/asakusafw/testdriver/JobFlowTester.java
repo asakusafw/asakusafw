@@ -38,6 +38,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * ジョブフロー用のテストドライバクラス。
+ * @since 0.2.0
+ * @version 0.5.2
  */
 public class JobFlowTester extends TestDriverBase {
 
@@ -91,7 +93,11 @@ public class JobFlowTester extends TestDriverBase {
      */
     public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) {
         try {
-            runTestInternal(jobFlowDescriptionClass);
+            try {
+                runTestInternal(jobFlowDescriptionClass);
+            } finally {
+                driverContext.cleanUpTemporaryResources();
+            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

@@ -193,6 +193,10 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
             }
             start = matcher.end();
         }
+        if (start == 0) {
+            // failed to infer
+            return null;
+        }
         buf.append(outputFormatName.substring(start));
         return buf.toString();
     }

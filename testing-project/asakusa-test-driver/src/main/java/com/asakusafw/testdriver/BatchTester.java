@@ -39,6 +39,8 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
  * バッチ用のテストドライバクラス。
+ * @since 0.2.0
+ * @version 0.5.2
  */
 public class BatchTester extends TestDriverBase {
 
@@ -77,7 +79,11 @@ public class BatchTester extends TestDriverBase {
      */
     public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {
         try {
-            runTestInternal(batchDescriptionClass);
+            try {
+                runTestInternal(batchDescriptionClass);
+            } finally {
+                driverContext.cleanUpTemporaryResources();
+            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

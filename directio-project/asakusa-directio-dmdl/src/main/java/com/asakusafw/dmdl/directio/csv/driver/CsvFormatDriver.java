@@ -57,8 +57,10 @@ The attributed declaration can have:
     with {@code datetime=[string-literal]} as {@link DateTime} format
     (default: {@link CsvConfiguration#DEFAULT_DATE_TIME_FORMAT})
 </li>
+<li> with {@code compression=[string-literal]} as compression name (default: plain) </li>
 </ul>
  * @since 0.2.5
+ * @version 0.5.2
  */
 public class CsvFormatDriver extends ModelAttributeDriver {
 
@@ -81,6 +83,12 @@ public class CsvFormatDriver extends ModelAttributeDriver {
      * The element name of whether value can contain linefeed.
      */
     public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed"; //$NON-NLS-1$
+
+    /**
+     * The element name of codec name.
+     * @since 0.5.2
+     */
+    public static final String ELEMENT_CODEC_NAME = "compression";
 
     /**
      * The element name of {@code true} representation.
@@ -127,6 +135,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
         AstLiteral falseRep = take(environment, elements, ELEMENT_FALSE_NAME, LiteralKind.STRING);
         AstLiteral dateFormat = take(environment, elements, ELEMENT_DATE_NAME, LiteralKind.STRING);
         AstLiteral dateTimeFormat = take(environment, elements, ELEMENT_DATE_TIME_NAME, LiteralKind.STRING);
+        AstLiteral codec = take(environment, elements, ELEMENT_CODEC_NAME, LiteralKind.STRING);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
 
         Configuration result = new Configuration();
@@ -150,6 +159,9 @@ public class CsvFormatDriver extends ModelAttributeDriver {
         }
         if (dateTimeFormat != null && checkDateFormat(environment, ELEMENT_DATE_TIME_NAME, dateTimeFormat)) {
             result.setDateTimeFormat(dateTimeFormat.toStringValue());
+        }
+        if (codec != null && checkNotEmpty(environment, ELEMENT_CODEC_NAME, codec)) {
+            result.setCodecName(codec.toStringValue());
         }
         return result;
     }

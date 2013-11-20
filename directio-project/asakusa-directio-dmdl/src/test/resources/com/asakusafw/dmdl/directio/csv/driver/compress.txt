@@ -1,0 +1,6 @@
+@directio.csv(
+    compression = "gzip"
+)
+compress = {
+    value : TEXT;
+};

@@ -34,9 +34,9 @@ public final class TraceSettingSerializer {
         GSON = new GsonBuilder().create();
     }
 
-    private static final Type TYPE = new TypeToken<Collection<TraceSetting>>() {
+    private static final Type TYPE = (new TypeToken<Collection<TraceSetting>>() {
         // no members;
-    }.getType();
+    }).getType();
 
     private TraceSettingSerializer() {
         return;

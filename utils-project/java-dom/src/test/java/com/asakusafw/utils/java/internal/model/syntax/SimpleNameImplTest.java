@@ -93,4 +93,31 @@ public class SimpleNameImplTest {
         SimpleNameImpl name = new SimpleNameImpl();
         name.setToken("void");
     }
+
+    /**
+     * リテラル true。
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void booleanLiteralTrue() {
+        SimpleNameImpl name = new SimpleNameImpl();
+        name.setToken("true");
+    }
+
+    /**
+     * リテラル false。
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void booleanLiteralFalse() {
+        SimpleNameImpl name = new SimpleNameImpl();
+        name.setToken("false");
+    }
+
+    /**
+     * リテラル null。
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void nullLiteral() {
+        SimpleNameImpl name = new SimpleNameImpl();
+        name.setToken("null");
+    }
 }
