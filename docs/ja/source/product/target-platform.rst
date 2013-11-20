@@ -23,20 +23,20 @@ Asakusa Framework バージョン |version| は以下のプラットフォーム
     * - Hadoop
       - Apache Hadoop 1.0.3 [#]_
     * - Hadoop
-      - Apache Hadoop 1.1.2 [#]_
+      - Apache Hadoop 1.2.1 [#]_
     * - Hadoop
       - Greenplum MR 1.2 [#]_
     * - Hadoop
       - Greenplum MR 2.1
     * - Hadoop
-      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.3) [#]_
+      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.4) [#]_
 
 ..  [#] http://www.centos.org/
 ..  [#] http://www.oracle.com/technetwork/java/javase/
 ..  [#] http://www.cloudera.com/content/support/en/documentation.html
 ..  [#] Asakusa Framework バージョン |version| では、CDH4は試験的な対応です。
 ..  [#] http://hadoop.apache.org/common/docs/r1.0.3/
-..  [#] http://hadoop.apache.org/common/docs/r1.1.2/
+..  [#] http://hadoop.apache.org/common/docs/r1.2.1/
 ..  [#] http://www.greenplum.com/products/greenplum-mr
 ..  [#] http://aws.amazon.com/jp/elasticmapreduce/ 
 
@@ -65,7 +65,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Hadoop
       - CDH3 Update 5
     * - Hadoop
-      - Apache Hadoop 1.1.2
+      - Apache Hadoop 1.2.1
 
 ..  [#] http://www.ubuntu.com/
 ..  [#] http://maven.apache.org/

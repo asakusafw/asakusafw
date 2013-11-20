@@ -33,7 +33,7 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
 
     private static final Set<String> RESERVED;
     static {
-        // see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.9
+        // see http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.8
         Set<String> set = new HashSet<String>();
         set.add("abstract");
         set.add("continue");
@@ -85,6 +85,9 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
         set.add("native");
         set.add("super");
         set.add("while");
+        set.add("true");
+        set.add("false");
+        set.add("null");
         RESERVED = Collections.unmodifiableSet(set);
     }
 

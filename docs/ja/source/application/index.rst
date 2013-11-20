@@ -29,6 +29,10 @@ Mavenアーキタイプ利用ガイド
 ---------------------------
 アプリケーション開発用プロジェクトのテンプレートとなるMavenアーキタイプについて説明します。
 
+Asakusa Gradle Plugin利用ガイド (Experimental)
+-------------------------------------------------
+GradleにAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加する Asakusa Gradle Plugin について説明します。
+
 SDKアーティファクト利用ガイド
 -----------------------------
 アプリケーション開発用プロジェクト用の依存性定義を行うためのSDKアーティファクトについて説明します。
@@ -53,6 +57,7 @@ Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するD
     migration-guide
     development-environment-restriction
     maven-archetype
+    gradle-plugin
     sdk-artifact
     legacy-module-guide
     dsl-visualization

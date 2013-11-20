@@ -136,7 +136,7 @@ Hadoopのインストール
 
 Apache Hadoopのインストール方法はOS毎に提供されているインストールパッケージを使う方法や、tarballを展開する方法などがありますが、ここではtarballを展開する方法でインストールします。
 
-Apache Hadoopのダウンロードサイト (http://www.apache.org/dyn/closer.cgi/hadoop/common/) から Hadoop本体のコンポーネントのtarball ``hadoop-1.1.X.tar.gz`` ( ``X`` はバージョン番号 )  をダウンロードします。
+Apache Hadoopのダウンロードサイト (http://www.apache.org/dyn/closer.cgi/hadoop/common/) から Hadoop本体のコンポーネントのtarball ``hadoop-1.2.X.tar.gz`` ( ``X`` はバージョン番号 )  をダウンロードします。
 
 ダウンロードが完了したら、以下の例を参考にしてApache Hadoopをインストールします。
 
@@ -178,7 +178,7 @@ Asakusa Frameworkを開発環境にインストールするには、Asakusa Fram
 
 Framework Organizer は以下からダウンロードします。
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.1.tar.gz
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.2.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてAsakusa Frameworkをインストールします。
 インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
@@ -205,8 +205,7 @@ Javaの動作確認
     java -version
 
     java version "1.6.0_45"
-    Java(TM) SE Runtime Environment (build 1.6.0_45-b06)
-    Java HotSpot(TM) Client VM (build 20.45-b01, mixed mode, sharing)
+    ...
 
 Java SDKの動作確認
 ~~~~~~~~~~~~~~~~~~
@@ -225,11 +224,7 @@ Mavenの動作確認
     mvn -version
 
     Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 22:51:28+0900)
-    Maven home: /usr/local/lib/apache-maven-3.0.5
-    Java version: 1.6.0_45, vendor: Sun Microsystems Inc.
-    Java home: /usr/lib/jvm/jdk1.6.0_45/jre
-    Default locale: ja_JP, platform encoding: UTF-8
-    OS name: "linux", version: "3.2.0-24-generic-pae", arch: "i386", family: "unix"
+    ...
 
 
 Hadoopの動作確認
@@ -239,10 +234,8 @@ Hadoopの動作確認
 
     hadoop version
 
-    Hadoop 1.1.2
-    Subversion ...
-    Compiled by hortonfo on Thu Jan 31 02:03:24 UTC 2013
-    From source with checksum c720ddcf4b926991de7467d253a79b8b
+    Hadoop 1.2.1
+    ...
 
 ..  attention::
     Hadoopのみバージョンを確認するためのコマンドが ``hadoop version`` となっていて、 ``version`` の前にハイフンが不要です。
@@ -254,7 +247,7 @@ Asakusa Frameworkのインストール確認
     
     cat $ASAKUSA_HOME/VERSION
     
-    asakusafw.version=0.5.1
+    asakusafw.version=0.5.2
     
     asakusafw.build.timestamp=...
     asakusafw.build.java.version=1.6.0_...
@@ -313,7 +306,7 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 3 (バージョン 0.5.1) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは 3 (バージョン 0.5.2) を選択します。
 
 ..  code-block:: sh
 
@@ -321,7 +314,8 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
     1: 0.5-SNAPSHOT
     2: 0.5.0
     3: 0.5.1
-    Choose a number: 3: 3 (<-3を入力)
+    4: 0.5.2
+    Choose a number: 4: 4 (<-4を入力)
 
 ..  attention::
     ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。

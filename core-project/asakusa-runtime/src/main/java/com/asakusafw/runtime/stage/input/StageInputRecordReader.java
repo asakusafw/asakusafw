@@ -138,6 +138,8 @@ public class StageInputRecordReader extends RecordReader {
 
     @Override
     public void close() throws IOException {
-        current.close();
+        if (current != null) {
+            current.close();
+        }
     }
 }

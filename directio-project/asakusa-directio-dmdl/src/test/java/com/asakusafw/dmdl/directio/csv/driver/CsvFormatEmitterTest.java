@@ -23,10 +23,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
@@ -53,6 +56,8 @@ import com.asakusafw.utils.collections.Lists;
  */
 public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
+    private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
+
     /**
      * Initializes the test.
      * @throws Exception if some errors were occurred
@@ -77,18 +82,20 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
 
-        model.set("value", new Text("Hello, world!"));
+        model.set("value", new Text("hello-world"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
         writer.write(model.unwrap());
         writer.close();
 
+        assertThat(scan(output.toByteArray()), is(Arrays.asList("hello-world")));
+
         Object buffer = loaded.newModel("Simple").unwrap();
         ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
                 0, size(output));
         assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(buffer));
+        assertThat(buffer, is(model.unwrap()));
         assertThat(reader.readTo(buffer), is(false));
     }
 
@@ -156,11 +163,44 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         writer.write(model.unwrap());
         writer.close();
 
-        String[][] results = parse(5, new String(output.toByteArray(), "ISO-2022-jp"));
+        String[][] results = parse(5, new String(dump(new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))), "ISO-2022-jp"));
         assertThat(results, is(new String[][] {
                 {"text_value", "true_value", "false_value", "date_value", "date_time_value"},
                 {"\u3042\u3044\u3046\u3048\u304a", "T", "F", "2011/10/11", "2011/01/02+13:14:15"},
         }));
+    }
+
+    /**
+     * With compression.
+     * @throws Exception if failed
+     */
+    @Test
+    public void compression() throws Exception {
+        ModelLoader loaded = generateJava("compress");
+        ModelWrapper model = loaded.newModel("Compress");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("csv", "CompressCsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+
+        model.set("value", new Text("hello"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        assertThat(
+                scan(dump(new GZIPInputStream(new ByteArrayInputStream(output.toByteArray())))),
+                is(Arrays.asList("hello")));
+
+        Object buffer = loaded.newModel("Compress").unwrap();
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output));
+        assertThat(reader.readTo(buffer), is(true));
+        assertThat(buffer, is(model.unwrap()));
+        assertThat(reader.readTo(buffer), is(false));
     }
 
     /**
@@ -395,6 +435,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                     InputStream reIn = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
                     InputStream copy = new DelimiterRangeInputStream(reIn, '\n', length, offset > 0);
                     System.out.println(copy.read());
+                    copy.close();
                     throw new IOException(MessageFormat.format(
                             "attempt={0}, f-offset={1}, f-size={2}, total={3}: [[{4}]]",
                             attempt,
@@ -523,5 +564,36 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
     private long size(ByteArrayOutputStream output) {
         return output.size();
+    }
+
+    private byte[] dump(InputStream input) throws IOException {
+        try {
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            while (true) {
+                int read = input.read(buf);
+                if (read < 0) {
+                    break;
+                }
+                output.write(buf, 0, read);
+            }
+            output.close();
+            return output.toByteArray();
+        } finally {
+            input.close();
+        }
+    }
+
+    private List<String> scan(byte[] bytes) {
+        Scanner scanner = new Scanner(new ByteArrayInputStream(bytes), DEFAULT_ENCODING.name());
+        try {
+            List<String> results = Lists.create();
+            while (scanner.hasNextLine()) {
+                results.add(scanner.nextLine());
+            }
+            return results;
+        } finally {
+            scanner.close();
+        }
     }
 }
