@@ -61,7 +61,7 @@ class EclipsePluginEnhancement {
         project.eclipse.classpath {
             file.whenMerged { classpath ->
                 classpath.entries.findAll { it.path.contains('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
-                    it.path = 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6'
+                    it.path = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${project.asakusafw.javac.sourceCompatibility}"
                 }
                 classpath.entries.unique()
             }
