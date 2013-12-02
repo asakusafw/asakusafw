@@ -62,7 +62,8 @@ public class DmdlParser {
                                 Arrays.toString(parser.getFrames())),
                         e);
             }
-            throw new DmdlSyntaxException(e, parser);
+            SyntaxErrorAnalyzer analyzer = new SyntaxErrorAnalyzer(parser, e);
+            throw new DmdlSyntaxException(analyzer.analyze(), e);
         }
     }
 
@@ -82,7 +83,8 @@ public class DmdlParser {
         try {
             return parser.parseLiteral(new URI("token")); //$NON-NLS-1$
         } catch (ParseException e) {
-            throw new DmdlSyntaxException(e, parser);
+            SyntaxErrorAnalyzer analyzer = new SyntaxErrorAnalyzer(parser, e);
+            throw new DmdlSyntaxException(analyzer.analyze(), e);
         } catch (URISyntaxException e) {
             // may not occur
             throw new AssertionError(e);

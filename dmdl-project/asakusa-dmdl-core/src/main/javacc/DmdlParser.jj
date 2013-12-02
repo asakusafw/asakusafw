@@ -39,6 +39,7 @@ import com.asakusafw.dmdl.model.*;
 /**
  * An implementation of the DMDL Script Parser.
  * @since 0.2.0
+ * @version 0.5.3
  */
 class JjDmdlParser {
 
@@ -317,8 +318,8 @@ TOKEN :
 */
 TOKEN :
 {   "@"
-|   "="
-|   ","
+|   <BIND: "=">
+|   <PROPERTY_SEPARATOR: ",">
 |   "."
 |   "+"
 |   "*"
@@ -366,9 +367,11 @@ TOKEN :
 
 // erroneous token
 TOKEN :
-{   <UNEXPECTED
+{   <INVALID_IDENTIFIER_LIKE
+    : ["A"-"Z", "a"-"z", "_", "-"] (["0"-"9", "A"-"Z", "a"-"z", "_", "-"])*
+    >
+|   <UNEXPECTED
     : (~[])
-    | ["A"-"Z"] (["0"-"9", "A"-"Z", "a"-"z", "_"])*
     >
 }
 
@@ -673,13 +676,6 @@ private AstModelDefinition<?> ModelDefinition() :
     attributes = AttributeList()
     (
         LOOKAHEAD(2)
-        name = Name()
-        "="
-        rhs = RecordExpression()
-        {
-            kind = ModelDefinitionKind.RECORD;
-        }
-    |
         <PROJECTIVE>
         name = Name()
         "="
@@ -688,6 +684,7 @@ private AstModelDefinition<?> ModelDefinition() :
             kind = ModelDefinitionKind.PROJECTIVE;
         }
     |
+        LOOKAHEAD(2)
         <JOINED>
         name = Name()
         "="
@@ -696,12 +693,20 @@ private AstModelDefinition<?> ModelDefinition() :
             kind = ModelDefinitionKind.JOINED;
         }
     |
+        LOOKAHEAD(2)
         <SUMMARIZED>
         name = Name()
         "="
         rhs = SummarizeExpression()
         {
             kind = ModelDefinitionKind.SUMMARIZED;
+        }
+    |
+        name = Name()
+        "="
+        rhs = RecordExpression()
+        {
+            kind = ModelDefinitionKind.RECORD;
         }
     )
     <END_OF_DECLARATION>
