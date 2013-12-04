@@ -69,9 +69,10 @@ class AsakusafwPlugin implements Plugin<Project> {
     private void configureJavaTaskProperties() {
         project.afterEvaluate {
             [project.compileJava, project.compileTestJava].each {
-            it.options.compilerArgs = ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000', '-XprintRounds']
-            it.options.encoding = project.asakusafw.javac.sourceEncoding
+                it.options.encoding = project.asakusafw.javac.sourceEncoding
             }
+            project.compileJava.options.compilerArgs = ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000', '-XprintRounds']
+
         }
     }
 
