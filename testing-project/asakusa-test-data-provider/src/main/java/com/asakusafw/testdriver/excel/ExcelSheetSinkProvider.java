@@ -50,7 +50,7 @@ public class ExcelSheetSinkProvider implements DataModelSinkProvider {
             return null;
         }
         File file = new File(sink);
-        if (file.getName().endsWith(".xls") == false) {
+        if (Util.isHssf(file.getPath()) == false && Util.isXssf(file.getPath()) == false) {
             return null;
         }
         LOG.info("Excelシートをデータシンクに利用します: {}", sink);

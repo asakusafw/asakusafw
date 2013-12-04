@@ -15,50 +15,50 @@
  */
 package com.asakusafw.testdata.generator.excel;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Keeps cell styles.
  * @since 0.2.0
+ * @version 0.5.3
  */
 public class WorkbookInfo {
 
-    final HSSFWorkbook workbook;
+    final Workbook workbook;
 
-    private final HSSFCellStyle commonStyle;
+    private final CellStyle commonStyle;
 
-    final HSSFCellStyle titleStyle;
+    final CellStyle titleStyle;
 
-    final HSSFCellStyle lockedStyle;
+    final CellStyle lockedStyle;
 
-    final HSSFCellStyle optionsStyle;
+    final CellStyle optionsStyle;
 
-    final HSSFCellStyle dataStyle;
+    final CellStyle dataStyle;
 
-    final HSSFCellStyle dateDataStyle;
+    final CellStyle dateDataStyle;
 
-    final HSSFCellStyle timeDataStyle;
+    final CellStyle timeDataStyle;
 
-    final HSSFCellStyle datetimeDataStyle;
+    final CellStyle datetimeDataStyle;
 
     /**
      * Creates a new instance.
      * @param workbook target workbook
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public WorkbookInfo(HSSFWorkbook workbook) {
+    public WorkbookInfo(Workbook workbook) {
         if (workbook == null) {
             throw new IllegalArgumentException("workbook must not be null"); //$NON-NLS-1$
         }
         this.workbook = workbook;
 
-        HSSFFont font = workbook.createFont();
+        Font font = workbook.createFont();
         // font.setFontName("ＭＳ ゴシック");
 
         commonStyle = workbook.createCellStyle();
