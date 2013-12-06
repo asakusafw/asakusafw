@@ -86,6 +86,7 @@ class EclipsePluginEnhancement {
         project.eclipseJdt.doLast {
             generateFactorypath()
             generateAptPref()
+            generateAsakusafwProjectPref()
         }
     }
 
@@ -108,12 +109,26 @@ class EclipsePluginEnhancement {
             |""" .stripMargin()
     }
 
+    private void generateAsakusafwProjectPref() {
+        project.file('.settings/com.asakusafw.asakusafw.prefs').withWriter('UTF-8') { out ->
+            project.asakusafw.conventionProperties.each { key, value ->
+                if (key.endsWith('Directory')) {
+                    value = project.relativePath(value).replace('\\', '/')
+                }
+                out.writeLine("${key}=${value}")
+            }
+        }
+    }
+
     private void extendCleanEclipseJdtTask() {
         project.cleanEclipseJdt.doLast {
             project.delete(project.file('.factorypath'))
             project.delete(project.file('.settings/org.eclipse.jdt.apt.core.prefs'))
+            project.delete(project.file('.settings/com.asakusafw.asakusafw.prefs'))
         }
     }
+
+
 
 }
 
