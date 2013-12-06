@@ -51,10 +51,24 @@ class EclipsePluginEnhancement {
     }
 
     private void configureEclipsePlugin() {
+        extendEclipseProjectTask()
         extendEclipseClasspath()
         extendEclipseJdtConfiguration()
         extendEclipseJdtTask()
+        extendCleanEclipseProjectTask()
         extendCleanEclipseJdtTask()
+    }
+
+    private void extendEclipseProjectTask() {
+        generateResourcePref()
+    }
+
+    private void generateResourcePref() {
+        project.mkdir('.settings')
+        project.file('.settings/org.eclipse.core.resources.prefs').text = """\
+            |eclipse.preferences.version=1
+            |encoding/<project>=UTF-8
+            |""" .stripMargin()
     }
 
     private void extendEclipseClasspath() {
@@ -74,10 +88,6 @@ class EclipsePluginEnhancement {
 
     private void extendEclipseJdtConfiguration() {
         project.eclipse.jdt.file.withProperties { props ->
-            props.setProperty('encoding//src/main/java', project.compileJava.options.encoding)
-            props.setProperty('encoding//src/main/resources', project.compileJava.options.encoding)
-            props.setProperty('encoding//src/test/java', project.compileTestJava.options.encoding)
-            props.setProperty('encoding//src/test/resources', project.compileTestJava.options.encoding)
             props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
         }
     }
@@ -106,6 +116,12 @@ class EclipsePluginEnhancement {
             |org.eclipse.jdt.apt.genSrcDir=${project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('\\', '/')}
             |org.eclipse.jdt.apt.reconcileEnabled=true
             |""" .stripMargin()
+    }
+
+    private void extendCleanEclipseProjectTask() {
+        project.cleanEclipseProject.doLast {
+            project.delete(project.file('.settings/org.eclipse.core.resources.prefs'))
+        }
     }
 
     private void extendCleanEclipseJdtTask() {
