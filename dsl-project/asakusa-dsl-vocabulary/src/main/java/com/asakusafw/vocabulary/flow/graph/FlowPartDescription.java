@@ -199,6 +199,11 @@ public class FlowPartDescription implements FlowElementDescription {
         return attributeClass.cast(attribute);
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Represents a parameter and its argument for flow-part.
      * @since 0.5.0

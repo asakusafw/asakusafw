@@ -1024,8 +1024,8 @@ public class StagePlanner {
                 error(
                         graph,
                         Collections.singletonList(element),
-                        "{0}の入力{1}は結線されていません",
-                        element.getDescription().getName(),
+                        "{0}の入力{1}が他の演算子からの出力、もしくはジョブフローの入力に接続されていません",
+                        element.getDescription(),
                         port.getDescription().getName());
                 sawError = true;
             }
@@ -1037,8 +1037,8 @@ public class StagePlanner {
                     error(
                             graph,
                             Collections.singletonList(element),
-                            "{0}の出力{1}は結線されていません",
-                            element.getDescription().getName(),
+                            "{0}の出力{1}が他の演算子への入力、もしくはジョブフローの出力に接続されていません",
+                            element.getDescription(),
                             port.getDescription().getName());
                     sawError = true;
                 } else {
@@ -1135,10 +1135,9 @@ public class StagePlanner {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{1} ({2})",
-                    graph,
+                    "{0} (at {1})",
                     message,
-                    context);
+                    graph.getDescription().getName());
         }
     }
 
