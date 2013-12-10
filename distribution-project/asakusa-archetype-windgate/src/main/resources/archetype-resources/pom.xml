@@ -183,13 +183,18 @@
 					</classpathContainers>
 					<additionalConfig>
 						<file>
+							<name>.settings/org.eclipse.core.resources.prefs</name>
+							<content>
+<![CDATA[
+eclipse.preferences.version=1
+encoding/<project>=UTF-8
+]]>
+							</content>
+						</file>
+						<file>
 							<name>.settings/org.eclipse.jdt.core.prefs</name>
 							<content>
 <![CDATA[
-encoding//src/main/java=\${project.build.sourceEncoding}
-encoding//src/main/resources=\${project.build.sourceEncoding}
-encoding//src/test/java=\${project.build.sourceEncoding}
-encoding//src/test/resources=\${project.build.sourceEncoding}
 org.eclipse.jdt.core.compiler.processAnnotations=enabled
 ]]>
 							</content>
