@@ -33,6 +33,7 @@ import javax.tools.Diagnostic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.compiler.operator.OperatorCompiler;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerOptions;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
@@ -42,6 +43,8 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
  * フロー部品をもとにした演算子ファクトリーを生成する。
+ * @since 0.1.0
+ * @version 0.5.3
  */
 public class FlowOperatorCompiler implements Processor {
 
@@ -76,7 +79,7 @@ public class FlowOperatorCompiler implements Processor {
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_6;
+        return OperatorCompiler.computeSupportedVersion();
     }
 
     @Override

@@ -192,10 +192,7 @@ encoding//src/main/java=\${project.build.sourceEncoding}
 encoding//src/main/resources=\${project.build.sourceEncoding}
 encoding//src/test/java=\${project.build.sourceEncoding}
 encoding//src/test/resources=\${project.build.sourceEncoding}
-org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.processAnnotations=enabled
-org.eclipse.jdt.core.compiler.source=1.6
 ]]>
 							</content>
 						</file>
