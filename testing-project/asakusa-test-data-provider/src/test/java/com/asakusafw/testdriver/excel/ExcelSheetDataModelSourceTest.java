@@ -26,8 +26,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -48,6 +48,19 @@ public class ExcelSheetDataModelSourceTest {
     @Test
     public void simple() throws Exception {
         ExcelSheetDataModelSource source = open("simple.xls");
+        Simple simple = next(source);
+        assertThat(simple.number, is(100));
+        assertThat(simple.text, is("Hello, world!"));
+        end(source);
+    }
+
+    /**
+     * using xlsx.
+     * @throws Exception if occur
+     */
+    @Test
+    public void xssf() throws Exception {
+        ExcelSheetDataModelSource source = open("simple.xlsx");
         Simple simple = next(source);
         assertThat(simple.number, is(100));
         assertThat(simple.text, is("Hello, world!"));
@@ -560,7 +573,7 @@ public class ExcelSheetDataModelSourceTest {
         }
         InputStream in = resource.openStream();
         try {
-            HSSFWorkbook book = new HSSFWorkbook(in);
+            Workbook book = Util.openWorkbookFor(file, in);
             Sheet sheet = book.getSheetAt(0);
             return new ExcelSheetDataModelSource(SIMPLE, uri, sheet);
         } finally {

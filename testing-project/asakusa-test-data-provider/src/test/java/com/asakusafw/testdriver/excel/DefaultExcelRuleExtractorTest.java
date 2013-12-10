@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
@@ -43,6 +42,17 @@ public class DefaultExcelRuleExtractorTest {
     public void supports() throws Exception {
         ExcelRuleExtractor extractor = new DefaultExcelRuleExtractor();
         Sheet sheet = sheet("simple.xls");
+        assertThat(extractor.supports(sheet), is(true));
+    }
+
+    /**
+     * using xlsx.
+     * @throws Exception if occur
+     */
+    @Test
+    public void xssf() throws Exception {
+        ExcelRuleExtractor extractor = new DefaultExcelRuleExtractor();
+        Sheet sheet = sheet("simple.xlsx");
         assertThat(extractor.supports(sheet), is(true));
     }
 
@@ -352,7 +362,7 @@ public class DefaultExcelRuleExtractorTest {
         InputStream in = getClass().getResourceAsStream("rule/" + name);
         assertThat(name, in, not(nullValue()));
         try {
-            Workbook book = new HSSFWorkbook(in);
+            Workbook book = Util.openWorkbookFor(name, in);
             return book.getSheetAt(0);
         } catch (IOException e) {
             throw new AssertionError(e);

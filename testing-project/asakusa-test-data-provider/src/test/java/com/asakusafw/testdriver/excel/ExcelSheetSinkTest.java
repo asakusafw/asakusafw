@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -66,6 +65,15 @@ public class ExcelSheetSinkTest {
     @Test
     public void simple() throws Exception {
         verify("simple.xls");
+    }
+
+    /**
+     * using xslx.
+     * @throws Exception if occur
+     */
+    @Test
+    public void xssf() throws Exception {
+        verify("simple.xlsx", ".xlsx");
     }
 
     /**
@@ -268,7 +276,7 @@ public class ExcelSheetSinkTest {
 
         InputStream in = new FileInputStream(file);
         try {
-            Workbook workbook = new HSSFWorkbook(in);
+            Workbook workbook = Util.openWorkbookFor(file.getPath(), in);
             Sheet sheet = workbook.getSheetAt(0);
             Row title = sheet.getRow(0);
             assertThat(title.getLastCellNum(), is((short) 255));
@@ -283,8 +291,12 @@ public class ExcelSheetSinkTest {
     }
 
     private void verify(String file) throws IOException {
+        verify(file, ".xls");
+    }
+
+    private void verify(String file, String extension) throws IOException {
         Set<DataModelReflection> expected = collect(open(file));
-        File temp = folder.newFile("temp.xls");
+        File temp = folder.newFile("temp" + extension);
         ExcelSheetSinkFactory factory = new ExcelSheetSinkFactory(temp);
         DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
         try {
@@ -322,7 +334,7 @@ public class ExcelSheetSinkTest {
         return open(resource);
     }
 
-    private ExcelSheetDataModelSource open(URL resource) throws AssertionError, IOException {
+    private ExcelSheetDataModelSource open(URL resource) throws IOException {
         URI uri;
         try {
             uri = resource.toURI();
@@ -331,7 +343,7 @@ public class ExcelSheetSinkTest {
         }
         InputStream in = resource.openStream();
         try {
-            HSSFWorkbook book = new HSSFWorkbook(in);
+            Workbook book = Util.openWorkbookFor(resource.getFile(), in);
             Sheet sheet = book.getSheetAt(0);
             return new ExcelSheetDataModelSource(SIMPLE, uri, sheet);
         } finally {
