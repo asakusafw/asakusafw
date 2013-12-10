@@ -15,18 +15,26 @@
  */
 package com.asakusafw.vocabulary.flow.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.PortDirection;
+import com.asakusafw.vocabulary.operator.Checkpoint;
+import com.asakusafw.vocabulary.operator.Confluent;
+import com.asakusafw.vocabulary.operator.Empty;
+import com.asakusafw.vocabulary.operator.Stop;
 
 
 /**
@@ -155,5 +163,29 @@ public class PseudElementDescription implements FlowElementDescription {
         }
         Object attribute = attributes.get(attributeClass);
         return attributeClass.cast(attribute);
+    }
+
+    @Override
+    public String toString() {
+        Class<? extends Annotation> annotation = analyzePseud();
+        return MessageFormat.format(
+                "{0}#{1}(@{2})",
+                CoreOperatorFactory.class.getSimpleName(),
+                annotation.getSimpleName().toLowerCase(Locale.ENGLISH),
+                annotation.getSimpleName());
+    }
+
+    private Class<? extends Annotation> analyzePseud() {
+        if (getInputPorts().isEmpty()) {
+            return Empty.class;
+        }
+        if (getOutputPorts().isEmpty()) {
+            return Stop.class;
+        }
+        FlowBoundary boundary = getAttribute(FlowBoundary.class);
+        if (boundary == FlowBoundary.STAGE) {
+            return Checkpoint.class;
+        }
+        return Confluent.class;
     }
 }

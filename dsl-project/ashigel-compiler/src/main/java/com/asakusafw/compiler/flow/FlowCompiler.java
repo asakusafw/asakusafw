@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.external.ExternalIoAnalyzer;
 import com.asakusafw.compiler.flow.jobflow.JobflowCompiler;
@@ -32,6 +35,7 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.plan.StagePlanner;
+import com.asakusafw.compiler.flow.plan.StagePlanner.Diagnostic;
 import com.asakusafw.compiler.flow.stage.StageCompiler;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.compiler.flow.visualizer.FlowVisualizer;
@@ -42,6 +46,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  * 演算子グラフをコンパイルする。
  */
 public class FlowCompiler {
+
+    static final Logger LOG = LoggerFactory.getLogger(FlowCompiler.class);
 
     private final FlowCompilerConfiguration configuration;
 
@@ -176,9 +182,10 @@ public class FlowCompiler {
                 configuration.getOptions());
         StageGraph plan = planner.plan(flowGraph);
         if (plan == null) {
-            throw new IOException(MessageFormat.format(
-                    "実行計画の作成に失敗しました ({0})",
-                    planner.getDiagnostics()));
+            for (Diagnostic diagnostic : planner.getDiagnostics()) {
+                LOG.error(diagnostic.toString());
+            }
+            throw new IOException("実行計画の作成に失敗しました");
         }
         return plan;
     }
