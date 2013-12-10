@@ -159,9 +159,10 @@ public class OutputDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'name={1}, type={2}'}'",
-                getClass().getSimpleName(),
-                name,
-                port.getDataType());
+                "{0}'{'name={1}'}'",
+                exporterDescription != null
+                    ? exporterDescription.getClass().getSimpleName()
+                    : "フロー出力",
+                name);
     }
 }

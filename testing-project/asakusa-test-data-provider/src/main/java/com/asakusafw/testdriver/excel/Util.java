@@ -25,14 +25,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Common utilities for this package.
  * @since 0.2.0
+ * @version 0.5.3
  */
 final class Util {
 
@@ -40,14 +43,16 @@ final class Util {
 
     private static final Pattern FRAGMENT = Pattern.compile(":(\\d+)|([^:].*)");
 
-    private static final String EXTENSION = ".xls";
+    private static final String HSSF_EXTENSION = ".xls";
+
+    private static final String XSSF_EXTENSION = ".xlsx";
 
     private static final String FRAGMENT_FIRST_SHEET = ":0";
 
     static Sheet extract(URI source) throws IOException {
         assert source != null;
         String path = source.getSchemeSpecificPart();
-        if (path == null || path.endsWith(EXTENSION) == false) {
+        if (isHssf(path) == false && isXssf(path) == false) {
             LOG.debug("Not a Excel workbook: {}", source);
             return null;
         }
@@ -69,7 +74,8 @@ final class Util {
         Workbook book;
         try {
             InputStream bin = new BufferedInputStream(in);
-            book = new HSSFWorkbook(bin);
+            book = openWorkbookFor(path, bin);
+            bin.close();
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
                     "Excelファイルの展開に失敗しました: {0}",
@@ -104,6 +110,50 @@ final class Util {
             }
             return sheet;
         }
+    }
+
+    static Workbook openWorkbookFor(String path, InputStream input) throws IOException {
+        if (isHssf(path)) {
+            return new HSSFWorkbook(input);
+        } else if (isXssf(path)) {
+            return new XSSFWorkbook(input);
+        } else {
+            return new HSSFWorkbook(input);
+        }
+    }
+
+    static Workbook createEmptyWorkbookFor(String path) {
+        if (isHssf(path)) {
+            return new HSSFWorkbook();
+        } else if (isXssf(path)) {
+            return new XSSFWorkbook();
+        } else {
+            return new HSSFWorkbook();
+        }
+    }
+
+    static SpreadsheetVersion getSpreadsheetVersionFor(String path) {
+        if (isHssf(path)) {
+            return SpreadsheetVersion.EXCEL97;
+        } else if (isXssf(path)) {
+            return SpreadsheetVersion.EXCEL2007;
+        } else {
+            return SpreadsheetVersion.EXCEL97;
+        }
+    }
+
+    static boolean isXssf(String path) {
+        if (path == null) {
+            return false;
+        }
+        return path.endsWith(XSSF_EXTENSION);
+    }
+
+    static boolean isHssf(String path) {
+        if (path == null) {
+            return false;
+        }
+        return path.endsWith(HSSF_EXTENSION);
     }
 
     static String buildText(String symbol, String title) {

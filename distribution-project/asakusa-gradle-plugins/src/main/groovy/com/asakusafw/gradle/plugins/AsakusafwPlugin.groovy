@@ -4,6 +4,8 @@ import org.gradle.api.*
 import org.gradle.api.plugins.*
 import org.gradle.api.tasks.bundling.*
 
+import com.asakusafw.gradle.tasks.*
+
 class AsakusafwPlugin implements Plugin<Project> {
 
     public static final String ASAKUSAFW_BUILD_GROUP = 'Asakusa Framework Build'
@@ -69,9 +71,10 @@ class AsakusafwPlugin implements Plugin<Project> {
     private void configureJavaTaskProperties() {
         project.afterEvaluate {
             [project.compileJava, project.compileTestJava].each {
-            it.options.compilerArgs = ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000', '-XprintRounds']
-            it.options.encoding = project.asakusafw.javac.sourceEncoding
+                it.options.encoding = project.asakusafw.javac.sourceEncoding
             }
+            project.compileJava.options.compilerArgs = ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000', '-XprintRounds']
+
         }
     }
 
@@ -100,39 +103,12 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private void defineCompileDMDLTask() {
-        def compileDMDL = project.task('compileDMDL') << {
-            def dmdlPluginPath = ant.path {
-                fileset(dir:"${System.env.ASAKUSA_HOME}/dmdl/plugin", includes: '**/*.jar', erroronmissingdir: false)
-            }
-            project.javaexec {
-                main = 'com.asakusafw.dmdl.java.Main'
-                classpath = project.sourceSets.main.compileClasspath
-                maxHeapSize = project.asakusafw.maxHeapSize
-                jvmArgs = [
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}"
-                ]
-                args = [
-                    '-output',
-                    project.asakusafw.modelgen.modelgenSourceDirectory,
-                    '-package',
-                    project.asakusafw.modelgen.modelgenSourcePackage,
-                    '-source',
-                    project.asakusafw.dmdl.dmdlSourceDirectory,
-                    '-sourceencoding',
-                    project.asakusafw.dmdl.dmdlEncoding,
-                    '-targetencoding',
-                    project.asakusafw.javac.sourceEncoding
-                ]
-                if (dmdlPluginPath.size()) {
-                    args += [
-                        '-plugin',
-                        dmdlPluginPath
-                    ]
-                }
-            }
+        project.task('compileDMDL', type: CompileDmdlTask) {
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Compiles the DMDL scripts with DMDL Compiler.'
+            source project.asakusafw.dmdl.dmdlSourceDirectory
+            outputs.dir project.asakusafw.modelgen.modelgenSourceDirectory
         }
-        compileDMDL.setGroup(ASAKUSAFW_BUILD_GROUP)
-        compileDMDL.setDescription('Compiles the DMDL scripts with DMDL Compiler.')
     }
 
     private extendCompileJavaTask() {
@@ -144,66 +120,22 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private defineCompileBatchappTask() {
-        def compileBatchapp = project.task('compileBatchapp') << {
-            def compilerPluginPath = ant.path {
-                fileset(dir:"${System.env.ASAKUSA_HOME}/compiler/plugin", includes: '**/*.jar', erroronmissingdir: false)
-            }
-            def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss")
-            def javaVersion = System.properties['java.version']
-
-            project.delete(project.asakusafw.compiler.compiledSourceDirectory)
-            project.mkdir(project.asakusafw.compiler.compiledSourceDirectory)
-
-            project.javaexec {
-                main = 'com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver'
-                classpath = project.sourceSets.main.runtimeClasspath + project.configurations.provided
-                maxHeapSize = project.asakusafw.maxHeapSize
-                enableAssertions = true
-                jvmArgs = [
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}",
-                    "-Dcom.asakusafw.compiler.options=${project.asakusafw.compiler.compilerOptions}",
-                    "-Dcom.asakusafw.batchapp.build.timestamp=${timestamp}",
-                    "-Dcom.asakusafw.batchapp.build.java.version=${javaVersion}",
-                    "-Dcom.asakusafw.framework.version=${project.asakusafw.asakusafwVersion}",
-                    "-Dcom.asakusafw.batchapp.project.version=${project.version}",
-                ]
-                args = [
-                    '-output',
-                    project.asakusafw.compiler.compiledSourceDirectory,
-                    '-package',
-                    project.asakusafw.compiler.compiledSourcePackage,
-                    '-compilerwork',
-                    project.asakusafw.compiler.compilerWorkDirectory,
-                    '-hadoopwork',
-                    project.asakusafw.compiler.hadoopWorkDirectory,
-                    '-link',
-                    project.sourceSets.main.output.classesDir,
-                    '-scanpath',
-                    project.sourceSets.main.output.classesDir,
-                    '-skiperror',
-                ]
-                if (compilerPluginPath.size()) {
-                    args += [
-                        '-plugin',
-                        compilerPluginPath
-                    ]
-                }
-            }
+        project.task('compileBatchapp', type: CompileBatchappTask, dependsOn: ['compileJava', 'processResources']) {
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Compiles the Asakusa DSL java source with Asakusa DSL Compiler.'
+            onlyIf { dependsOnTaskDidWork() }
         }
-        compileBatchapp.setGroup(ASAKUSAFW_BUILD_GROUP)
-        compileBatchapp.setDescription('Compiles the Asakusa DSL java source with Asakusa DSL Compiler.')
-        compileBatchapp.dependsOn(project.classes)
     }
 
     private defineJarBatchappTask() {
-        def jarBatchapp = project.task('jarBatchapp', type: Jar) {
+        project.task('jarBatchapp', type: Jar, dependsOn: 'compileBatchapp') {
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Assembles a jar archive containing compiled batch applications.'
             from project.asakusafw.compiler.compiledSourceDirectory
             destinationDir project.buildDir
             appendix 'batchapps'
+            onlyIf { dependsOnTaskDidWork() }
         }
-        jarBatchapp.setGroup(ASAKUSAFW_BUILD_GROUP)
-        jarBatchapp.setDescription('Assembles a jar archive containing compiled batch applications.')
-        jarBatchapp.dependsOn(project.compileBatchapp)
     }
 
     private extendAssembleTask() {
@@ -211,28 +143,12 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private defineGenerateTestbookTask() {
-        def generateTestbook = project.task('generateTestbook') << {
-            project.javaexec {
-                main = 'com.asakusafw.testdata.generator.excel.Main'
-                classpath = project.sourceSets.main.compileClasspath
-                maxHeapSize = project.asakusafw.maxHeapSize
-                jvmArgs = [
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}"
-                ]
-                args = [
-                    '-format',
-                    project.asakusafw.testtools.testDataSheetFormat,
-                    '-output',
-                    project.asakusafw.testtools.testDataSheetDirectory,
-                    '-source',
-                    project.asakusafw.dmdl.dmdlSourceDirectory,
-                    '-encoding',
-                    project.asakusafw.dmdl.dmdlEncoding,
-                ]
-            }
+        project.task('generateTestbook', type: GenerateTestbookTask) {
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Generates the template Excel books for TestDriver.'
+            source project.asakusafw.dmdl.dmdlSourceDirectory
+            outputs.dir project.asakusafw.testtools.testDataSheetDirectory
         }
-        generateTestbook.setGroup(ASAKUSAFW_BUILD_TOOL_GROUP)
-        generateTestbook.setDescription('Generates the template Excel books for TestDriver.')
     }
 
     private void applySubPlugins() {

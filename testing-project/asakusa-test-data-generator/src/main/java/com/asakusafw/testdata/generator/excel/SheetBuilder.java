@@ -15,13 +15,14 @@
  */
 package com.asakusafw.testdata.generator.excel;
 
-import org.apache.poi.hssf.usermodel.DVConstraint;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDataValidation;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import com.asakusafw.testdriver.excel.ValueConditionKind;
 /**
  * Appends test data/rule sheets to the workbook.
  * @since 0.2.0
+ * @version 0.5.3
  */
 public class SheetBuilder {
 
@@ -44,11 +46,11 @@ public class SheetBuilder {
 
     private static final int MINIMUM_COLUMN_WIDTH = 2560;
 
-    private static final int MAX_COLUMN_INDEX = 255;
-
     private final WorkbookInfo info;
 
     private final ModelDeclaration model;
+
+    private final SpreadsheetVersion version;
 
     private String sawDataSheet;
 
@@ -57,10 +59,11 @@ public class SheetBuilder {
     /**
      * Creates a new instance.
      * @param workbook target workbook to build sheets
+     * @param version the spreadsheet version of the target workbook
      * @param model target model
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public SheetBuilder(HSSFWorkbook workbook, ModelDeclaration model) {
+    public SheetBuilder(Workbook workbook, SpreadsheetVersion version, ModelDeclaration model) {
         if (workbook == null) {
             throw new IllegalArgumentException("workbook must not be null"); //$NON-NLS-1$
         }
@@ -68,6 +71,7 @@ public class SheetBuilder {
             throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
         }
         this.info = new WorkbookInfo(workbook);
+        this.version = version;
         this.model = model;
     }
 
@@ -84,20 +88,20 @@ public class SheetBuilder {
             copy(sawDataSheet, name);
             return;
         }
-        HSSFSheet sheet = info.workbook.createSheet(name);
-        HSSFRow titleRow = sheet.createRow(0);
-        HSSFRow valueRow = sheet.createRow(1);
+        Sheet sheet = info.workbook.createSheet(name);
+        Row titleRow = sheet.createRow(0);
+        Row valueRow = sheet.createRow(1);
         int index = 0;
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
-            if (index > MAX_COLUMN_INDEX) {
-                LOG.warn("データシートに追加できるプロパティ数は{}までです: {}", MAX_COLUMN_INDEX, model.getName());
+            if (index >= version.getMaxColumns()) {
+                LOG.warn("データシートに追加できるプロパティ数は{}までです: {}", version.getMaxColumns(), model.getName());
                 break;
             }
-            HSSFCell title = titleRow.createCell(index);
+            Cell title = titleRow.createCell(index);
             title.setCellStyle(info.titleStyle);
             title.setCellValue(property.getName().identifier);
 
-            HSSFCell value = valueRow.createCell(index);
+            Cell value = valueRow.createCell(index);
             value.setCellStyle(info.dataStyle);
             if (property.getType() instanceof BasicType) {
                 BasicType type = (BasicType) property.getType();
@@ -118,7 +122,7 @@ public class SheetBuilder {
         sawDataSheet = name;
     }
 
-    private void adjustDataWidth(HSSFSheet sheet) {
+    private void adjustDataWidth(Sheet sheet) {
         assert sheet != null;
         int lastColumn = sheet.getRow(0).getLastCellNum();
         adjustColumnWidth(sheet, lastColumn);
@@ -137,7 +141,7 @@ public class SheetBuilder {
             copy(sawRuleSheet, name);
             return;
         }
-        HSSFSheet sheet = info.workbook.createSheet(name);
+        Sheet sheet = info.workbook.createSheet(name);
         fillRuleTitles(sheet);
         fillRuleFormat(sheet);
         fillRuleTotalCondition(sheet);
@@ -146,23 +150,23 @@ public class SheetBuilder {
         sawRuleSheet = name;
     }
 
-    private void fillRuleTitles(HSSFSheet sheet) {
+    private void fillRuleTitles(Sheet sheet) {
         assert sheet != null;
         for (RuleSheetFormat title : RuleSheetFormat.values()) {
             setTitle(sheet, title);
         }
     }
 
-    private void fillRuleFormat(HSSFSheet sheet) {
+    private void fillRuleFormat(Sheet sheet) {
         assert sheet != null;
-        HSSFCell value = getCell(sheet, RuleSheetFormat.FORMAT, 0, 1);
+        Cell value = getCell(sheet, RuleSheetFormat.FORMAT, 0, 1);
         value.setCellStyle(info.lockedStyle);
         value.setCellValue(RuleSheetFormat.FORMAT_VERSION);
     }
 
-    private void fillRuleTotalCondition(HSSFSheet sheet) {
+    private void fillRuleTotalCondition(Sheet sheet) {
         assert sheet != null;
-        HSSFCell value = getCell(sheet, RuleSheetFormat.TOTAL_CONDITION, 0, 1);
+        Cell value = getCell(sheet, RuleSheetFormat.TOTAL_CONDITION, 0, 1);
         value.setCellStyle(info.optionsStyle);
         String[] options = TotalConditionKind.getOptions();
         value.setCellValue(options[0]);
@@ -171,22 +175,22 @@ public class SheetBuilder {
                 value.getRowIndex(), value.getColumnIndex());
     }
 
-    private void setTitle(HSSFSheet sheet, RuleSheetFormat item) {
+    private void setTitle(Sheet sheet, RuleSheetFormat item) {
         assert sheet != null;
         assert item != null;
-        HSSFCell cell = getCell(sheet, item.getRowIndex(), item.getColumnIndex());
+        Cell cell = getCell(sheet, item.getRowIndex(), item.getColumnIndex());
         cell.setCellStyle(info.titleStyle);
         cell.setCellValue(item.getTitle());
     }
 
-    private void fillRulePropertyConditions(HSSFSheet sheet) {
+    private void fillRulePropertyConditions(Sheet sheet) {
         int index = 1;
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
-            HSSFCell name = getCell(sheet, RuleSheetFormat.PROPERTY_NAME, index, 0);
+            Cell name = getCell(sheet, RuleSheetFormat.PROPERTY_NAME, index, 0);
             name.setCellStyle(info.lockedStyle);
             name.setCellValue(property.getName().identifier);
 
-            HSSFCell value = getCell(sheet, RuleSheetFormat.VALUE_CONDITION, index, 0);
+            Cell value = getCell(sheet, RuleSheetFormat.VALUE_CONDITION, index, 0);
             value.setCellStyle(info.optionsStyle);
             if (index == 1) {
                 value.setCellValue(ValueConditionKind.KEY.getText());
@@ -194,11 +198,11 @@ public class SheetBuilder {
                 value.setCellValue(ValueConditionKind.ANY.getText());
             }
 
-            HSSFCell nullity = getCell(sheet, RuleSheetFormat.NULLITY_CONDITION, index, 0);
+            Cell nullity = getCell(sheet, RuleSheetFormat.NULLITY_CONDITION, index, 0);
             nullity.setCellStyle(info.optionsStyle);
             nullity.setCellValue(NullityConditionKind.NORMAL.getText());
 
-            HSSFCell comments = getCell(sheet, RuleSheetFormat.COMMENTS, index, 0);
+            Cell comments = getCell(sheet, RuleSheetFormat.COMMENTS, index, 0);
             comments.setCellStyle(info.dataStyle);
             comments.setCellValue(property.getDescription() == null
                     ? property.getType().toString() : property.getDescription().getText());
@@ -218,7 +222,7 @@ public class SheetBuilder {
                 end, RuleSheetFormat.NULLITY_CONDITION.getColumnIndex());
     }
 
-    private void adjustRuleWidth(HSSFSheet sheet) {
+    private void adjustRuleWidth(Sheet sheet) {
         assert sheet != null;
         int lastColumn = 0;
         for (RuleSheetFormat format : RuleSheetFormat.values()) {
@@ -227,7 +231,7 @@ public class SheetBuilder {
         adjustColumnWidth(sheet, lastColumn);
     }
 
-    private void adjustColumnWidth(HSSFSheet sheet, int lastColumn) {
+    private void adjustColumnWidth(Sheet sheet, int lastColumn) {
         assert sheet != null;
         for (int i = 0; i <= lastColumn; i++) {
             sheet.autoSizeColumn(i);
@@ -238,19 +242,19 @@ public class SheetBuilder {
         }
     }
 
-    private HSSFCell getCell(HSSFSheet sheet, RuleSheetFormat item, int rowOffset, int columnOffset) {
+    private Cell getCell(Sheet sheet, RuleSheetFormat item, int rowOffset, int columnOffset) {
         assert sheet != null;
         assert item != null;
         return getCell(sheet, item.getRowIndex() + rowOffset, item.getColumnIndex() + columnOffset);
     }
 
-    private HSSFCell getCell(HSSFSheet sheet, int rowIndex, int columnIndex) {
+    private Cell getCell(Sheet sheet, int rowIndex, int columnIndex) {
         assert sheet != null;
-        HSSFRow row = sheet.getRow(rowIndex);
+        Row row = sheet.getRow(rowIndex);
         if (row == null) {
             row = sheet.createRow(rowIndex);
         }
-        HSSFCell cell = row.getCell(columnIndex, Row.CREATE_NULL_AS_BLANK);
+        Cell cell = row.getCell(columnIndex, Row.CREATE_NULL_AS_BLANK);
         return cell;
     }
 
@@ -267,28 +271,28 @@ public class SheetBuilder {
         if (newName == null) {
             throw new IllegalArgumentException("newName must not be null"); //$NON-NLS-1$
         }
-        HSSFWorkbook workbook = info.workbook;
+        Workbook workbook = info.workbook;
         int oldIndex = workbook.getSheetIndex(oldName);
         if (oldIndex < 0) {
             throw new IllegalArgumentException();
         }
-        HSSFSheet newSheet = workbook.cloneSheet(oldIndex);
+        Sheet newSheet = workbook.cloneSheet(oldIndex);
         int newIndex = workbook.getSheetIndex(newSheet);
         workbook.setSheetName(newIndex, newName);
     }
 
     private void setExplicitListConstraint(
-            HSSFSheet sheet,
+            Sheet sheet,
             String[] list,
             int firstRow, int firstCol,
             int lastRow, int lastCol) {
         assert sheet != null;
         assert list != null;
+        DataValidationHelper helper = sheet.getDataValidationHelper();
         CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, firstCol, lastCol);
-        DVConstraint constraint = DVConstraint.createExplicitListConstraint(list);
-        HSSFDataValidation validation = new HSSFDataValidation(addressList, constraint);
+        DataValidationConstraint constraint = helper.createExplicitListConstraint(list);
+        DataValidation validation = helper.createValidation(constraint, addressList);
         validation.setEmptyCellAllowed(true);
-        validation.setSuppressDropDownArrow(false);
         sheet.addValidationData(validation);
     }
 }

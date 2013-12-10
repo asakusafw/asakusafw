@@ -208,7 +208,7 @@ public class OutputPatternTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void resource_invalid_format() {
-        OutputPattern.compileResourcePattern("{dateValue:XYM}", dataClass);
+        OutputPattern.compileResourcePattern("{dateValue:yyyy-MM-ddTHH:mm:ssz}", dataClass);
     }
 
     /**

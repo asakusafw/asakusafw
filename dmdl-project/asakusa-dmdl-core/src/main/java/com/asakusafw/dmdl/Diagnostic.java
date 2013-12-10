@@ -21,6 +21,8 @@ import com.asakusafw.dmdl.model.AstNode;
 
 /**
  * Diagnostics of DMDL compiler.
+ * @since 0.2.0
+ * @version 0.5.3
  */
 public class Diagnostic {
 
@@ -38,6 +40,26 @@ public class Diagnostic {
      * Corresponded region, or {@code null} if unknown.
      */
     public final Region region;
+
+    /**
+     * Creates and returns a new instance.
+     * @param level the level of this
+     * @param region the corresponded region, or {@code null} if unknown
+     * @param message the message
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.5.3
+     */
+    public Diagnostic(Diagnostic.Level level, Region region, String message) {
+        if (level == null) {
+            throw new IllegalArgumentException("level must not be null"); //$NON-NLS-1$
+        }
+        if (message == null) {
+            throw new IllegalArgumentException("message must not be null"); //$NON-NLS-1$
+        }
+        this.level = level;
+        this.message = message;
+        this.region = region;
+    }
 
     /**
      * Creates and returns a new instance.
