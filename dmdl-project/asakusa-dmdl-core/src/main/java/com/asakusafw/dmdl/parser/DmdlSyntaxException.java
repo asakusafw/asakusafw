@@ -15,30 +15,28 @@
  */
 package com.asakusafw.dmdl.parser;
 
-import static com.asakusafw.dmdl.parser.JjDmdlParserConstants.*;
-
-import java.text.MessageFormat;
-
+import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Region;
-import com.asakusafw.dmdl.parser.JjDmdlParser.ParseFrame;
 
 /**
  * DMDL Syntax Error.
+ * @since 0.2.0
+ * @version 0.5.3
  */
 public class DmdlSyntaxException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private final Region region;
+    private final Diagnostic diagnostic;
 
     /**
-     * Creates and returns a new instance.
-     * @param exception original {@link ParseException}
-     * @param parser the parser which failed to parse
+     * Creates a new instance.
+     * @param diagnostic the source diagnostic
+     * @param cause the original cause
      */
-    public DmdlSyntaxException(ParseException exception, JjDmdlParser parser) {
-        super(buildMessage(exception, parser), exception);
-        this.region = computeRegion(exception, parser);
+    public DmdlSyntaxException(Diagnostic diagnostic, Throwable cause) {
+        super(diagnostic.message, cause);
+        this.diagnostic = diagnostic;
     }
 
     /**
@@ -46,80 +44,6 @@ public class DmdlSyntaxException extends Exception {
      * @return the region, or {@code null} if not known
      */
     public Region getRegion() {
-        return region;
-    }
-
-    private Region computeRegion(ParseException exception, JjDmdlParser parser) {
-        assert exception != null;
-        assert parser != null;
-        Token token = parser.getToken(1);
-        if (token != null && token.kind != EOF) {
-            return new Region(
-                    parser.getSourceFile(),
-                    token.beginLine, token.beginColumn,
-                    token.endLine, token.endColumn);
-        }
-        return null;
-    }
-
-    private static String buildMessage(ParseException exception, JjDmdlParser parser) {
-        assert exception != null;
-        assert parser != null;
-        ParseFrame[] frames = parser.getFrames();
-        if (frames.length == 0) {
-            return MessageFormat.format(
-                    Messages.getString("DmdlSyntaxException.errorUnknownSyntaxError"), //$NON-NLS-1$
-                    parser.getSourceFile(),
-                    getReason(exception, parser));
-        } else {
-            ParseFrame top = frames[0];
-            return MessageFormat.format(
-                    Messages.getString("DmdlSyntaxException.errorGrammerSyntaxError"), //$NON-NLS-1$
-                    parser.getSourceFile(),
-                    getReason(exception, parser),
-                    top.getRuleName());
-        }
-    }
-
-    private static String getReason(ParseException exception, JjDmdlParser parser) {
-        assert exception != null;
-        assert parser != null;
-        Token token = parser.getToken(1);
-        if (token.kind == UNEXPECTED) {
-            return MessageFormat.format(
-                    Messages.getString("DmdlSyntaxException.reasonInvalidToken"), //$NON-NLS-1$
-                    token.image);
-        }
-        for (int[] sequence : exception.expectedTokenSequences) {
-            // may not occur
-            if (sequence.length == 0) {
-                continue;
-            }
-            int next = sequence[0];
-            if (next == END_OF_DECLARATION) {
-                return MessageFormat.format(
-                        Messages.getString("DmdlSyntaxException.reasonMayMissingToken"), //$NON-NLS-1$
-                        exception.tokenImage[END_OF_DECLARATION]);
-            }
-        }
-        if (exception.expectedTokenSequences.length == 1) {
-            int[] sequece = exception.expectedTokenSequences[0];
-            if (sequece.length != 0 && 0 <= sequece[0] && sequece[0] < tokenImage.length) {
-                String image = tokenImage[sequece[0]];
-                if (image.startsWith("\"") && image.endsWith("\"")) {
-                    return MessageFormat.format(
-                            Messages.getString("DmdlSyntaxException.reasonMayMissingToken"), //$NON-NLS-1$
-                            image);
-                }
-            }
-        }
-        if (token.kind == EOF) {
-            return Messages.getString("DmdlSyntaxException.reasonUnexpectedEof"); //$NON-NLS-1$
-        }
-        if (token.image == null || token.image.isEmpty()) {
-            return exception.tokenImage[token.kind];
-        } else {
-            return token.image;
-        }
+        return diagnostic.region;
     }
 }

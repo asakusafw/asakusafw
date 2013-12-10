@@ -18,15 +18,20 @@ package com.asakusafw.testdata.generator.excel;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
@@ -39,7 +44,7 @@ import com.asakusafw.dmdl.util.AnalyzeTask;
 import com.asakusafw.testdriver.excel.RuleSheetFormat;
 
 /**
- * @since 0.2.0
+ * A common test root for this package.
  */
 public class ExcelTesterRoot {
 
@@ -84,7 +89,7 @@ public class ExcelTesterRoot {
      * @param sheet the sheet
      * @param model target model
      */
-    protected void checkDataSheet(HSSFSheet sheet, ModelDeclaration model) {
+    protected void checkDataSheet(Sheet sheet, ModelDeclaration model) {
         int index = 0;
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             assertThat(cell(sheet, 0, index++), is(property.getName().identifier));
@@ -96,7 +101,7 @@ public class ExcelTesterRoot {
      * @param sheet the sheet
      * @param model target model
      */
-    protected void checkRuleSheet(HSSFSheet sheet, ModelDeclaration model) {
+    protected void checkRuleSheet(Sheet sheet, ModelDeclaration model) {
         assertThat(sheet, not(nullValue()));
         for (RuleSheetFormat format : RuleSheetFormat.values()) {
             assertThat(format.name(), cell(sheet, format, 0, 0), is(format.getTitle()));
@@ -120,7 +125,7 @@ public class ExcelTesterRoot {
      * @param colOffset column offset from the format
      * @return cell string
      */
-    protected String cell(HSSFSheet sheet, RuleSheetFormat format, int rowOffset, int colOffset) {
+    protected String cell(Sheet sheet, RuleSheetFormat format, int rowOffset, int colOffset) {
         return cell(sheet, format.getRowIndex() + rowOffset, format.getColumnIndex() + colOffset);
     }
 
@@ -131,14 +136,35 @@ public class ExcelTesterRoot {
      * @param columnIndex column index
      * @return cell string
      */
-    protected String cell(HSSFSheet sheet, int rowIndex, int columnIndex) {
-        HSSFRow row = sheet.getRow(rowIndex);
+    protected String cell(Sheet sheet, int rowIndex, int columnIndex) {
+        Row row = sheet.getRow(rowIndex);
         assertThat(row, not(nullValue()));
-        HSSFCell cell = row.getCell(columnIndex);
+        Cell cell = row.getCell(columnIndex);
         if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
             return null;
         }
         assertThat(cell.getCellType(), is(Cell.CELL_TYPE_STRING));
         return cell.getStringCellValue();
+    }
+
+    /**
+     * Opens the workbook.
+     * @param file the target workbook
+     * @return the opened workbook
+     * @throws IOException if failed
+     */
+    protected Workbook openWorkbook(File file) throws IOException {
+        InputStream in = new FileInputStream(file);
+        try {
+            if (file.getName().endsWith(".xls")) {
+                return new HSSFWorkbook(in);
+            } else if (file.getName().endsWith(".xlsx")) {
+                return new XSSFWorkbook(in);
+            } else {
+                throw new IOException(file.getPath());
+            }
+        } finally {
+            in.close();
+        }
     }
 }

@@ -449,7 +449,9 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Project.class);
-            builder.declare(Project.class, Project.class, "toString");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "project");
+            builder.declareParameter(Source.class);
+            builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();
@@ -483,7 +485,9 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Extend.class);
-            builder.declare(Extend.class, Extend.class, "toString");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "extend");
+            builder.declareParameter(Source.class);
+            builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();
@@ -517,7 +521,9 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Restructure.class);
-            builder.declare(Restructure.class, Restructure.class, "toString");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "restructure");
+            builder.declareParameter(Source.class);
+            builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);
             builder.addOutput(OUTPUT_PORT_NAME, targetClass);
             this.resolver = builder.toResolver();

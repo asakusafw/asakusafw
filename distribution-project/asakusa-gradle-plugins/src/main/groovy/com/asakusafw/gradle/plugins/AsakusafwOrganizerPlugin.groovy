@@ -284,15 +284,18 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             asakusaDistCustom.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
             asakusaDistCustom.setDescription('Assembles a tar archive containing custom framework configuration files.')
 
-            def attachAssembleDev = project.task('attachAssembleDev', dependsOn: [
-                    'attachBatchapps',
+            def devDependsTasks = [
                     'attachComponentCore',
                     'attachComponentDirectIo',
                     'attachComponentYaess',
                     'attachComponentWindGate',
                     'attachComponentDevelopment',
                     'attachComponentOperation'
-            ])
+            ]
+            if (project.plugins.hasPlugin('asakusafw')) {
+                devDependsTasks += 'attachBatchapps'
+            }
+            def attachAssembleDev = project.task('attachAssembleDev', dependsOn: devDependsTasks)
             attachAssembleDev.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
             attachAssembleDev.setDescription('Attachs application development environment files to assembly.')
 

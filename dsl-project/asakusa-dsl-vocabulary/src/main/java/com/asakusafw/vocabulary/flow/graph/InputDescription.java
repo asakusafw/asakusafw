@@ -159,9 +159,10 @@ public class InputDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'name={1}, type={2}'}'",
-                getClass().getSimpleName(),
-                name,
-                port.getDataType());
+                "{0}'{'name={1}'}'",
+                importerDescription != null
+                    ? importerDescription.getClass().getSimpleName()
+                    : "フロー入力",
+                name);
     }
 }

@@ -97,8 +97,6 @@ public class TestDriverContext implements TestContext {
      */
     public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version";
 
-    private static final String COMPILERWORK_DIR_DEFAULT = "target/testdriver/batchcwork";
-
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     private volatile File frameworkHomePath;
@@ -192,7 +190,7 @@ public class TestDriverContext implements TestContext {
         if (path == null) {
             return null;
         }
-        File version = new File(path, KEY_FRAMEWORK_VERSION);
+        File version = new File(path, FRAMEWORK_VERSION_PATH);
         if (version.isFile() == false) {
             LOG.warn(MessageFormat.format(
                     "テスト実行環境にバージョン情報が見つかりませんでした：{0}",
