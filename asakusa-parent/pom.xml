@@ -76,14 +76,6 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>repository.cloudera.com</id>
-			<name>Cloudera Maven Repository</name>
-			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>com.asakusafw.releases</id>
 			<name>Asakusa Framework Repository</name>
 			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
@@ -100,6 +92,14 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>repository.cloudera.com</id>
+			<name>Cloudera Maven Repository</name>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+			<snapshots>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
