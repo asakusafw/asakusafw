@@ -202,9 +202,10 @@ public class OperatorDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}{1}",
-                getDeclaration(),
-                getParameters());
+                "{0}#{1}(@{2})",
+                getDeclaration().getDeclaring().getSimpleName(),
+                getDeclaration().getName(),
+                getDeclaration().getAnnotationType().getSimpleName());
     }
 
     /**

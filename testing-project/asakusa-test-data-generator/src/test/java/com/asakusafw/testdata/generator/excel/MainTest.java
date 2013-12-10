@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 /**
@@ -52,7 +51,27 @@ public class MainTest extends ExcelTesterRoot {
         int exit = Main.start(args.toArray(new String[args.size()]));
         assertThat(exit, is(0));
 
-        HSSFWorkbook book = open(output, "simple");
+        Workbook book = open(output, "simple");
+        assertThat(cell(book.getSheetAt(0), 0, 0), is("value"));
+    }
+
+    /**
+     * using xlsx.
+     * @throws Exception if occur
+     */
+    @Test
+    public void xssf() throws Exception {
+        File output = folder.newFolder("output");
+        File source = folder.newFolder("source");
+        deploy("simple.dmdl", source);
+        List<String> args = new ArrayList<String>();
+        Collections.addAll(args, "-output", output.getAbsolutePath());
+        Collections.addAll(args, "-source", source.getAbsolutePath());
+        Collections.addAll(args, "-format", WorkbookFormat.DATAX.name());
+        int exit = Main.start(args.toArray(new String[args.size()]));
+        assertThat(exit, is(0));
+
+        Workbook book = open(output, "simple");
         assertThat(cell(book.getSheetAt(0), 0, 0), is("value"));
     }
 
@@ -155,7 +174,7 @@ public class MainTest extends ExcelTesterRoot {
         }
     }
 
-    private HSSFWorkbook open(File dir, String prefix) throws IOException {
+    private Workbook open(File dir, String prefix) throws IOException {
         File file = null;
         for (File f : dir.listFiles()) {
             if (f.isFile() && f.getName().startsWith(prefix)) {
@@ -164,11 +183,6 @@ public class MainTest extends ExcelTesterRoot {
             }
         }
         assertThat(prefix, file, not(nullValue()));
-        InputStream in = new FileInputStream(file);
-        try {
-            return new HSSFWorkbook(in);
-        } finally {
-            in.close();
-        }
+        return openWorkbook(file);
     }
 }

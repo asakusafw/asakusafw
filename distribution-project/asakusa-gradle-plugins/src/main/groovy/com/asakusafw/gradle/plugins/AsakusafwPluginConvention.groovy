@@ -273,6 +273,28 @@ class AsakusafwPluginConvention {
 
     }
 
+    def getConventionProperties() {
+        def commonPrefix = 'com.asaksuafw.asakusafw.'
+        def convention = [:]
+
+        convention.put(commonPrefix + 'asakusafwVersion', asakusafwVersion)
+        convention.put(commonPrefix + 'maxHeapSize', maxHeapSize)
+        convention.put(commonPrefix + 'logbackConf', logbackConf)
+
+        convention.putAll(asMap(dmdl, commonPrefix + 'dmdl.'))
+        convention.putAll(asMap(modelgen, commonPrefix + 'modelgen.'))
+        convention.putAll(asMap(javac, commonPrefix + 'javac.'))
+        convention.putAll(asMap(compiler, commonPrefix + 'compiler.'))
+        convention.putAll(asMap(testtools, commonPrefix + 'testtools.'))
+
+        return convention
+    }
+
+    def asMap(Object obj, String keyPrefix) {
+        obj.class.declaredFields.findAll{ !it.synthetic }.collectEntries {
+            [keyPrefix + it.name, obj[it.name]]
+        }
+    }
 }
 
 

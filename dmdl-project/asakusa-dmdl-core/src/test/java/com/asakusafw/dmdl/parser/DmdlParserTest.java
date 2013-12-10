@@ -478,6 +478,46 @@ public class DmdlParserTest extends DmdlTesterRoot {
     }
 
     /**
+     * with invalid name.
+     */
+    @Test
+    public void invalid_name() {
+        shouldSyntaxError();
+    }
+
+    /**
+     * with invalid name.
+     */
+    @Test
+    public void invalid_name_separator() {
+        shouldSyntaxError();
+    }
+
+    /**
+     * with invalid type name.
+     */
+    @Test
+    public void invalid_type_name() {
+        shouldSyntaxError();
+    }
+
+    /**
+     * with invalid separator character.
+     */
+    @Test
+    public void invalid_separator() {
+        shouldSyntaxError();
+    }
+
+    /**
+     * with invalid name.
+     */
+    @Test
+    public void invalid_missing_eq() {
+        shouldSyntaxError();
+    }
+
+    /**
      * record definition must be followed semicolon.
      */
     @Test

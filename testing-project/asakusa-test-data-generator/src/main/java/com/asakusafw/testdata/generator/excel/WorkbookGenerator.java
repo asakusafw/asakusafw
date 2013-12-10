@@ -22,6 +22,9 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +34,7 @@ import com.asakusafw.testdata.generator.TemplateGenerator;
 /**
  * Generates Excel workbooks for testing each data model.
  * @since 0.2.0
- * @version 0.5.0
+ * @version 0.5.3
  */
 public class WorkbookGenerator implements TemplateGenerator {
 
@@ -74,8 +77,8 @@ public class WorkbookGenerator implements TemplateGenerator {
                     "出力先のディレクトリを生成できませんでした: {0}",
                     output));
         }
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        Workbook workbook = createWorkbook();
+        SheetBuilder builder = new SheetBuilder(workbook, format.getVersion(), model);
         for (SheetFormat sheet : format.getSheets()) {
             switch (sheet.getKind()) {
             case DATA:
@@ -105,6 +108,33 @@ public class WorkbookGenerator implements TemplateGenerator {
         LOG.info(MessageFormat.format(
                 "Excelワークブックを生成しました: {0}",
                 file.getAbsolutePath()));
+    }
+
+    private Workbook createWorkbook() throws IOException {
+        return createEmptyWorkbook(format.getVersion());
+    }
+
+    /**
+     * Creates a new empty workbook for the target version.
+     * @param version the target version
+     * @return the created workbook
+     * @throws IOException if failed to create the workbook
+     * @since 0.5.3
+     */
+    public static Workbook createEmptyWorkbook(SpreadsheetVersion version) throws IOException {
+        if (version == null) {
+            throw new IllegalArgumentException("version must not be null"); //$NON-NLS-1$
+        }
+        switch (version) {
+        case EXCEL97:
+            return new HSSFWorkbook();
+        case EXCEL2007:
+            return new XSSFWorkbook();
+        default:
+            throw new IOException(MessageFormat.format(
+                    "サポートしていないExcelワークブックの形式です: {0}",
+                    version));
+        }
     }
 
     @Override

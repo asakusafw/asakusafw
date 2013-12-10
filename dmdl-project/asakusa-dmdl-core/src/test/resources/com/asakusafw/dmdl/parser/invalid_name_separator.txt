@@ -1,0 +1,3 @@
+invalid-name-separator = {
+    a : INT;
+};
