@@ -279,7 +279,7 @@ public class ExcelSheetSinkTest {
             Workbook workbook = Util.openWorkbookFor(file.getPath(), in);
             Sheet sheet = workbook.getSheetAt(0);
             Row title = sheet.getRow(0);
-            assertThat(title.getLastCellNum(), is((short) 255));
+            assertThat(title.getLastCellNum(), is((short) 256));
 
             Row content = sheet.getRow(1);
             for (int i = 0; i < title.getLastCellNum(); i++) {
