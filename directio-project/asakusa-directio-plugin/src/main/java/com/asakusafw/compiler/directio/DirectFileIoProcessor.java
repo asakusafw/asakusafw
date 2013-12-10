@@ -224,17 +224,21 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 }
                 DirectFileInputDescription other = extract(entry.getValue());
                 getEnvironment().error(
-                        "出力が別の入力を上書きします ({0}->{1})",
+                        "入出力のベースパスが衝突しています: {0}[{1}] -> {2}[{3}]",
                         desc.getClass().getName(),
-                        other.getClass().getName());
+                        desc.getBasePath(),
+                        other.getClass().getName(),
+                        other.getBasePath());
                 valid = false;
             }
             if (outputPaths.containsKey(path)) {
                 DirectFileOutputDescription other = extract(outputPaths.get(path));
                 getEnvironment().error(
-                        "出力が別の出力を上書きします ({0}->{1})",
+                        "2つの出力のベースパスが重複しています: {0}[{1}] <-> {2}[{3}]",
                         desc.getClass().getName(),
-                        other.getClass().getName());
+                        desc.getBasePath(),
+                        other.getClass().getName(),
+                        other.getBasePath());
                 valid = false;
             } else {
                 outputPaths.put(path, output);
@@ -249,9 +253,11 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 }
                 DirectFileOutputDescription other = extract(entry.getValue());
                 getEnvironment().error(
-                        "出力が別の出力を上書きします ({0}->{1})",
+                        "2つの出力のベースパスが衝突しています: {0}[{1}] -> {2}[{3}]",
                         desc.getClass().getName(),
-                        other.getClass().getName());
+                        desc.getBasePath(),
+                        other.getClass().getName(),
+                        other.getBasePath());
                 valid = false;
             }
         }
