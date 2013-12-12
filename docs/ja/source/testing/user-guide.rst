@@ -408,7 +408,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
     Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
         .verify("shipment.xls#output", "shipment.xls#rule")
-        .dumpActual("target/dump/difference.html");
+        .dumpDifference("target/dump/difference.html");
 
 「 `出力結果を保存する`_ 」と同様に、出力先にはファイルパスや ``File`` オブジェクトを指定できます。
 ファイルパスで相対パスを指定した場合、テストを実行したワーキングディレクトリからの相対パス上に結果が出力されます。
