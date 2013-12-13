@@ -987,6 +987,15 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
 
 ..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
 
+Eclipse Pluginの拡張
+~~~~~~~~~~~~~~~~~~~~
+Batch Application Plugin は Gradleが提供するEclipse Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
+
+* OperatorDSLコンパイラを実行するためのAnnotation Processorの設定
+* Javaのバージョンやエンコーディングに関する設定
+
+また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
+
 Framework Organizer Plugin
 --------------------------
 
