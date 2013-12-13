@@ -95,13 +95,14 @@ pom.xml を変更する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``mvn`` コマンドのパラメータで指定する場合、 ``-D`` オプションに続いてプロパティキーとその値を指定します。
 
-以下は、Asakusa Framework のバージョン ``0.5.2`` で試験的に提供している、CDH4で利用するためのAsakusa Frameworkバージョンを指定する例です。
+以下は、Asakusa Framework のバージョン ``0.5.2`` で試験的に提供している、Hadoop2系で利用するためのAsakusa Frameworkバージョンを指定する例です [#]_ 。
 
 ..  code-block:: sh
      
     cd asakusafw-organizer
     mvn package -Dasakusafw.version=0.5.2-hadoop2
 
+..  [#] Hadoop2系でAsakusa Frameworkを利用する方法について詳しくは :doc:`deployment-hadoop2` を参照してください。
 
 生成するデプロイメントアーカイブを指定する
 ------------------------------------------
