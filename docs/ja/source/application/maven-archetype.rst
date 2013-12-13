@@ -401,10 +401,6 @@ Eclipseを使ったアプリケーションの開発
 
 EclipseからプロジェクトをImportするには、Eclipseのメニューから ``[File]`` -> ``[Import]`` -> ``[General]`` -> ``[Existing Projects into Workspace]`` を選択し、プロジェクトディレクトリを指定します。
 
-..  code-block:: sh
-
-    mvn clean eclipse:eclipse
-
 Mavenプロジェクトへの変換(m2eプラグインの利用)
 ----------------------------------------------
 m2eプラグインを使ってアプリケーション用プロジェクトをMavenプロジェクトに変換すると、Eclipse上からMavenを実行することが可能になるなど、いくつか便利な機能を使用できます。
