@@ -29,7 +29,7 @@ Framework Organizerのインストール
 =================================
 Framework Organizer は以下からダウンロードします。
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.2.tar.gz
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.3.tar.gz
 
 ダウンロードが完了したら、任意のディレクトリでFramework Organizerを展開します。
 
@@ -80,14 +80,14 @@ Asakusa Frameworkのバージョン指定はFramework Organizerの ``pom.xml`` �
 pom.xml を変更する
 ~~~~~~~~~~~~~~~~~~
 ``pom.xml`` を編集する場合、 ``properties`` 要素のサブ要素として指定されている ``asakusafw.version`` の内容を変更します。
-以下は、 ``asakusafw.version`` に Asakusa Frameworkのバージョン ``0.5.2`` を指定する例です。
+以下は、 ``asakusafw.version`` に Asakusa Frameworkのバージョン ``0.5.3`` を指定する例です。
 
 ..  code-block:: xml
    
     ...
      
 	<properties>
-		<asakusafw.version>0.5.2</asakusafw.version>
+		<asakusafw.version>0.5.3</asakusafw.version>
 	
     ...
 
@@ -95,12 +95,12 @@ pom.xml を変更する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``mvn`` コマンドのパラメータで指定する場合、 ``-D`` オプションに続いてプロパティキーとその値を指定します。
 
-以下は、Asakusa Framework のバージョン ``0.5.2`` で試験的に提供している、Hadoop2系で利用するためのAsakusa Frameworkバージョンを指定する例です [#]_ 。
+以下は、Asakusa Framework のバージョン ``0.5.3`` で試験的に提供している、Hadoop2系で利用するためのAsakusa Frameworkバージョンを指定する例です [#]_ 。
 
 ..  code-block:: sh
      
     cd asakusafw-organizer
-    mvn package -Dasakusafw.version=0.5.2-hadoop2
+    mvn package -Dasakusafw.version=0.5.3-hadoop2
 
 ..  [#] Hadoop2系でAsakusa Frameworkを利用する方法について詳しくは :doc:`deployment-hadoop2` を参照してください。
 
@@ -213,7 +213,7 @@ Asakusa Frameworkのバージョンを指定してインストールする
 ..  code-block:: sh
     
     cd asakusafw-organizer
-    mvn antrun:run -Dasakusafw.version=0.5.2-hadoop2
+    mvn antrun:run -Dasakusafw.version=0.5.3-hadoop2
 
 コマンドパラメータでバージョンを指定する場合も、
 デプロイメントアーカイブの生成とAsakusa Frameworkのインストールを同時に行うことができます。
@@ -221,7 +221,7 @@ Asakusa Frameworkのバージョンを指定してインストールする
 ..  code-block:: sh
     
     cd asakusafw-organizer
-    mvn package antrun:run -Dasakusafw.version=0.5.2-hadoop2
+    mvn package antrun:run -Dasakusafw.version=0.5.3-hadoop2
 
 
 ThunderGateを利用する場合の追加設定

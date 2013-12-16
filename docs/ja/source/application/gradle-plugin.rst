@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.5.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.5.2.tar.gz>`_ 
+* `asakusa-project-template-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.5.3.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.5.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.5.2.tar.gz>`_ 
+* `asakusa-example-project-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.5.3.tar.gz>`_ 
 
 プロジェクトの配置
 ------------------
@@ -143,7 +143,7 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
       3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
       4     }
       5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.2'
+      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
       7     }
       8 }
       9 
@@ -152,7 +152,7 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
      12 apply plugin: 'eclipse'
      13 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.2'
+     15     asakusafwVersion = '0.5.3'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'
@@ -338,7 +338,7 @@ DMDLスクリプトから演算子の実装で使用するデータモデルク�
 ..  code-block:: groovy
 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.2'
+     15     asakusafwVersion = '0.5.3'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'
@@ -367,7 +367,7 @@ Javaソースファイルをコンパイルするには、 ``compileJava`` タ�
 
 ..  [#] EclipseなどのIDE上で作業する際に、IDEの自動ビルド機能を有効にしている場合は、ここで示すJavaソースファイルのコンパイルはソースファイルの編集や保存などのタイミングで自動的に行われます。
 
-..  [#] Gradleにはclassesタスクの他にも、より細かい単位でソースファイルをコンパイルするためのタスクがいくつか提供されています。詳しくは Gradle のドキュメントを参照してください。
+..  [#] Gradleには ``compileJava`` タスクの他にも、より細かい単位でソースファイルをコンパイルするためのタスクがいくつか提供されています。詳しくは Gradle のドキュメントを参照してください。
 
 バッチコンパイルとバッチアプリケーションアーカイブの生成
 --------------------------------------------------------
@@ -602,7 +602,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
       9     }
      10 
      11     dependencies {
-     12         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.2'
+     12         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
      13     }
      14 }
      15 
@@ -610,7 +610,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
      17 apply plugin: 'asakusafw-organizer'
      18 
      19 asakusafw {
-     20     asakusafwVersion = '0.5.2'
+     20     asakusafwVersion = '0.5.3'
      21 
      22     modelgen {
      23         modelgenSourcePackage "com.example.modelgen"
@@ -672,7 +672,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
 ..  code-block:: groovy
 
      19 asakusafw {
-     20     asakusafwVersion = '0.5.2'
+     20     asakusafwVersion = '0.5.3'
      21 
      22     modelgen {
      23         modelgenSourcePackage "com.example.modelgen"
@@ -1160,7 +1160,7 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 ..  code-block:: groovy
 
     asakusafw {
-        asakusafwVersion = '0.5.2'
+        asakusafwVersion = '0.5.3'
         ....
     }
     
@@ -1213,7 +1213,7 @@ Asakusa Gradle Pluginのバージョン指定
       3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
       4     }
       5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.2'
+      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
       7     }
       8 }
 
@@ -1225,7 +1225,7 @@ Asakusa Frameworkのバージョン指定
 ..  code-block:: groovy
 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.2'
+     15     asakusafwVersion = '0.5.3'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'
