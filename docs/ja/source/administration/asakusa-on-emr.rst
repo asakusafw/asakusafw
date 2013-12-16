@@ -2,7 +2,7 @@
 Amazon EMR上でAsakusa Frameworkを利用する
 =========================================
 
-* 対象バージョン: Asakusa Framework ``0.4.0`` 以降
+* 対象バージョン: Asakusa Framework ``0.5.0`` 以降
 
 この文書は、 `Amazon Web Services`_ (AWS) が提供する
 クラウド環境上のHadoopサービス `Amazon Elastic MapReduce`_ (Amazon EMR) 上で
@@ -44,16 +44,14 @@ EMRやS3を利用するための環境を準備します。
 
 1. AWSへのサインアップ
 2. EMR操作用クライアントマシンの環境構築
-3. Amazon S3へのサインアップとバケットの作成
+3. Amazon S3 バケットの作成
 
 これらの準備が整っていない場合、以下に示すドキュメントなどを参考にして、EMRを利用するための環境を準備してください。
 
 * AWSへのサインアップ
    * `アカウント作成の流れ | アマゾン ウェブ サービス（AWS 日本語）`_
-* EMR操作用クライアントマシンの環境構築
-   * `Amazon Elastic MapReduce 入門ガイド`_ の `サインアップとコマンドラインインターフェイスのインストール`_
-* Amazon S3へのサインアップとバケットの作成
-   * `Amazon Simple Storage Service 入門ガイド`_ の `Amazon S3 にサインアップ`_ 、および `バケットの作成`_
+* EMR操作用クライアントマシンの環境構築とAmazon S3 バケットの作成
+   * `Amazon Elastic MapReduce 開発者ガイド`_ の `Amazon EMR コマンドラインインターフェイスのインストール`_
 
 この文書では、以下の環境が用意されたものとして以降の説明を進めます。
 
@@ -67,11 +65,8 @@ EMRやS3を利用するための環境を準備します。
     http://s3tools.org/repositories#note-deb
 
 ..  _`アカウント作成の流れ | アマゾン ウェブ サービス（AWS 日本語）`: http://aws.amazon.com/jp/register-flow/
-..  _`Amazon Elastic MapReduce 入門ガイド`: http://docs.amazonwebservices.com/ja_jp/ElasticMapReduce/latest/GettingStartedGuide/Welcome.html
-..  _`サインアップとコマンドラインインターフェイスのインストール`: http://docs.amazonwebservices.com/ja_jp/ElasticMapReduce/latest/GettingStartedGuide/SignUp.html
-..  _`Amazon Simple Storage Service 入門ガイド`: http://docs.amazonwebservices.com/ja_jp/AmazonS3/latest/gsg/GetStartedWithS3.html 
-..  _`Amazon S3 にサインアップ`: http://docs.amazonwebservices.com/ja_jp/AmazonS3/latest/gsg/SigningUpforS3.html
-..  _`バケットの作成`: http://docs.amazonwebservices.com/ja_jp/AmazonS3/latest/gsg/CreatingABucket.html
+..  _`Amazon Elastic MapReduce 開発者ガイド`: http://docs.aws.amazon.com/ja_jp/ElasticMapReduce/latest/DeveloperGuide/
+..  _`Amazon EMR コマンドラインインターフェイスのインストール`: http://docs.aws.amazon.com/ja_jp/ElasticMapReduce/latest/DeveloperGuide/emr-cli-install.html
 ..  _`s3cmd`: http://s3tools.org/s3cmd
 
 Asakusa Framework実行環境のデプロイ
@@ -101,7 +96,7 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 以下、これらの手順ごとの作業について説明します。
 以降の手順は、Asakusa Frameworkの開発環境（EMR操作用クライアントマシン）で行うものとします。
 
-また、Asakusa Frameworkのバージョンは ``0.4.0`` を用いて説明します。
+また、Asakusa Frameworkのバージョンは ``0.5.3`` を用いて説明します。
 
 ..  hint::
     バッチアプリケーションの実行とEMRの起動/停止を連動させる使い方も可能です。この場合、EMR起動時のコマンド実行パラメータに指定したバッチアプリケーションの実行が完了するとEMRが自動的に停止します。
@@ -110,26 +105,32 @@ Asakusa Framework本体をS3に配置する
 -----------------------------------
 Asakusa Framework本体のアーカイブファイルをS3に配置します。
 
-Asakusa Framework本体のアーカイブファイルを作成するには、サンプルアプリケーションプロジェクト上で、Mavenの ``assembly:single`` ゴールを実行します。 ``assembly:single`` ゴールを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``asakusafw-0.4.0-prod-directio.tar.gz`` というアーカイブファイルが作成されます。
+Asakusa Framework本体のアーカイブファイルを作成するには、Framework OrganizerでDirect I/O用のデプロイメントアーカイブを出力するように指定 [#]_ した後、Mavenの ``package`` ゴールを実行します。Framework Organizerの利用手順について詳しくは、 `Framework Organizer利用ガイド`_ を参照してください。
 
-このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/asakusafw`` 配下に配置するものとします。
+``package`` ゴールを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``asakusafw-0.5.3-prod-directio.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/asakusafw`` 配下に配置するものとします。
 
 以下にAsakusa Framework本体をS3に配置する例を示します。
 
 ..  code-block:: sh
 
-    cd <サンプルアプリケーションプロジェクトのパス>
-    mvn assembly:single
-    s3cmd --rr put target/asakusafw-0.4.0-prod-directio.tar.gz s3://<sample-bucket>/asakusafw/
+    cd <Framework Organizerのパス>
+    mvn package
+    s3cmd --rr put target/asakusafw-0.5.3-prod-directio.tar.gz s3://<sample-bucket>/asakusafw/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+
+..  _`Framework Organizer利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/framework-organizer.html
+
+..  [#] Framework OrganizerでDirect I/O用のデプロイメントアーカイブを出力するように指定する方法は、 `Framework Organizer利用ガイド`_ の 「生成するデプロイメントアーカイブを指定する」を参照してください。
+    
+    なお、Framework Organizerのデフォルトの設定ではWindGate用のデプロイメントアーカイブのみが出力されるよう設定されていますが、このアーカイブにはDirect I/O用のライブラリも含まれるので、これを利用することもできます。その場合、本書の説明例とファイル名が異なるので注意してください。
 
 バッチアプリケーションをS3に配置する
 ------------------------------------
 サンプルアプリケーションのデプロイメントアーカイブファイルをS3に配置します。
 
-サンプルアプリケーションのデプロイメントアーカイブファイルは、Mavenの ``package`` フェーズを実行します。 ``package`` フェーズを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``${artifactId}-batchapp-${version}.jar`` [#]_ というアーカイブファイルが作成されます。
+サンプルアプリケーションのデプロイメントアーカイブファイルは、Mavenの ``package`` フェーズを実行します。 ``package`` フェーズを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``${artifactId}-batchapps-${version}.jar`` [#]_ というアーカイブファイルが作成されます。
 
 このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/batchapps`` 配下に配置するものとします。
 
@@ -139,7 +140,7 @@ Asakusa Framework本体のアーカイブファイルを作成するには、サ
 
     cd <サンプルアプリケーションプロジェクトのパス>
     mvn clean package
-    s3cmd --rr put target/${artifactId}-batchapp-${version}.jar s3://<sample-bucket>/batchapps/
+    s3cmd --rr put target/${artifactId}-batchapps-${version}.jar s3://<sample-bucket>/batchapps/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
@@ -195,7 +196,7 @@ EMRの起動時に指定することでそのシェルスクリプトを自動�
     :language: sh
 
 ..  attention::
-    上記例を参考にスクリプトファイルを作成する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。また、Asakusa Frameworkのバージョンやバッチアプリケーションのプロジェクト名、バージョンは使用する値にそれぞれ置き換えてください。
+    上記例を参考にスクリプトファイルを作成する際は、必ずスクリプトの先頭で定義しているバケット名 ``<sample-bucket>``、及びAsakusa Framework本体のアーカイブファイル名( ``_asakusafw_filename`` の値)、アプリケーションのデプロイメントアーカイブファイル名 ( ``_asakusafw_filename`` の値)、を実際に使用するバケット名やファイル名に置き換えてください。
 
 以下にブートストラップアクション用スクリプトファイルをS3に配置する例を示します。スクリプトファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名やバッチアプリケーションに関する設定などを適切に設定したものとします。
 
@@ -250,11 +251,11 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
 
     elastic-mapreduce --create --alive \
      --name asakusa-batch \
-     --hadoop-version 1.0.3 \
-     --ami-version 2.2 \
+     --ami-version 2.4.2 \
      --enable-debugging \
-     --master-instance-type m1.small \
-     --slave-instance-type m1.small \
+     --log-uri s3://<sample-bucket>/emr-logs \
+     --master-instance-type m1.large \
+     --slave-instance-type m1.large \
      --num-instances 2 \
      --bootstrap-action s3://elasticmapreduce/bootstrap-actions/run-if \
      --args "instance.isMaster=true,s3n://<sample-bucket>/bootstrap-actions/bootstrap-deploy-asakusa.sh"
@@ -262,16 +263,37 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
 
-オプションの詳細についてはEMRのドキュメントなどを参照してください。ここでは本ドキュメントの説明で重要となるパラメータに絞って説明します。
+``elastic-mapreduce`` コマンドのオプション詳細についてはEMRのドキュメントなどを参照してください。ここでは本ドキュメントの説明で重要となるパラメータに絞って説明します。
 
-まず、最終行の ``--args`` から始まる行では、ブートストラップアクションのスクリプトパスを指定していますが、これは S3上のスクリプトパスをバケット名付きのフルパスで指定する必要があります。このため、バケット名（上記例では ``<sample-bucket>`` ）を利用する環境のバケット名に置き換えてください。
+``--ami-version``
+  EMRクラスターのマシンイメージのバージョンです。利用可能なバージョンについては EMR Developer Guide の `Choose a Machine Image`_ [#]_ などを参照してください。
 
-次に、EMRで利用するEC2インスタンスのタイプとノード数を調整します。まずインスタンスタイプは ``--master-instance-type``, ``--slave-instance-type`` オプションでマスターノードとスレーブノードのインスタンスタイプをそれぞれ指定します。
+..  attention::
+    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。Asakusa FrameworkをHadoop2系で利用するには、Hadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。詳しくは、 `Hadoop2系の運用環境でAsakusa Frameworkを利用する`_ を参照してください。
 
-また、 ``--num-instances`` に起動するノード数を指定します。 ノード数を ``2`` と指定した場合は最小構成で、マスターノードとスレーブノードがそれぞれ 1台ずつ、という意味になります。
+``--enable-debugging`` , ``--log-uri``
+  EMRでは、各ノードのEMRやHadoopのログを非同期で収集してS3にコピーする機能が提供されています。 ``--enable-debugging`` オプションを指定するとのログ収集機能が有効になり、 ``--log-uri`` で指定したS3バケットのキー配下にログが出力されるようになります。
+  
+``--master-instance-type``, ``--slave-instance-type``
+  EMRクラスターのEC2インスタンスタイプです。  
+
+``--num-instances``
+  EMRクラスターのインスタンス数を指定します。
 
 ..  hint::
-    初期構築時のデプロイの確認などで試しに実行する段階では、EC2インスタンスはスモールインスタンス( ``m1.small`` )などの低コストで利用できるインスタンスタイプを使用して、ノード数も最小構成(ノード数 ``2`` )で確認するのがよいでしょう。
+    初期構築時のデプロイの確認などで試しに実行する段階では、EC2インスタンスタイプは低コストで利用できるインスタンスタイプを使用して、ノード数も最小構成(ノード数 ``2`` )で確認するのがよいでしょう。
+
+..  attention::
+    AMIバージョンの ``3.0.0`` 以降ではインスタンスタイプに ``m1.small`` を利用することができないようです。 EMR Developer Guideの `Hadoop 2.2.0 New Features`_ にこの制約に関する記述があります。
+
+``--bootstrap-action`` , ``--args``
+  EMRクラスターの起動時に実行するブートストラップアクションを指定します。上記の例では、マスターインスタンスに対してAsakusa Frameworkの実行環境一式をセットアップするブートストラップアクション用スクリプトを指定しています。
+
+..  _`Choose a Machine Image`: http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-plan-ami.html
+..  _`Hadoop2系の運用環境でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/deployment-hadoop2.html
+..  _`Hadoop 2.2.0 New Features`: http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-hadoop-2.2.0-features.html
+
+..  [#] 日本語版のEMR Developer Guideは最新のバージョン情報が反映されていないことがあるようなので、ここでは英語版へのリンクを記載しています。
 
 ジョブフローID
 --------------
@@ -310,20 +332,20 @@ EMRのジョブフローやステップの状態を確認するには、 ``elast
     elastic-mapreduce --list --active
 
 ..  [#] EMRが管理するステータスの意味やその種類については、EMRの以下のドキュメントなどを参照してください。
-    　　http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    　　http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
 
 バッチアプリケーションの実行
 ============================
 EMR環境にデプロイしたAsakusa Frameworkのバッチアプリケーションを実行します。
 
-バッチアプリケーションの実行の流れは、以下のようになるでしょう。
+バッチアプリケーションの実行の流れは、以下のようになります。
 
 1. 入力データをS3に配置
 2. ステップの実行
 3. ステップの実行ステータス確認
 4. 出力データをS3から取得
 
-以下、これらの手順ごとの作業について説明します。
+以下、これらの手順について説明します。
 
 入力データをS3に配置
 --------------------
@@ -365,13 +387,16 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 
 オプションの詳細についてはEMRのドキュメントなどを参照してください。ここでは本ドキュメントの説明で重要となるパラメータに絞って説明します。
 
-まず、 ``--args`` から始まる行では、ステップのスクリプトパスを指定していますが、これは S3上のスクリプトパスをバケット名付きのフルパスで指定する必要があります。このため、バケット名（上記例では ``<sample-bucket>`` ）を利用する環境のバケット名に置き換えてください。
+``--jar``, ``--args``
+  このステップで実行するjarファイルを指定します。ここではEMRが提供するScript Runnerと呼ばれる、マスターインスタンス上のシェルスクリプトをステップとして実行するためのjarファイルを指定し、引数にYAESSを実行するためのシェルスクリプトとYAESSバッチ実行コマンドの引数を指定しています。 
+  
+  ``--args`` で指定する ``step-yaess-batch.sh`` 以降の文字列は、 ``yaess-batch.sh`` に与える引数をカンマ区切りで指定します。 ここでは、 ``example.summarizeSales`` がバッチID、 ``-A,date=2011-04-01`` の部分がバッチ引数になります。
 
-``--args`` で指定する ``step-yaess-batch.sh`` 以降の文字列は、 ``yaess-batch.sh`` に与える引数をカンマ区切りで指定します。 ここでは、 ``example.summarizeSales`` がバッチID、 ``-A,date=2011-04-01`` の部分がバッチ引数になります。
+``--step-name``
+  実行するステップに任意の名前を指定することが出来ます。これは後述する `ステップの実行ステータス確認`_ で説明する手順でステップを絞り込むためのパラメータとして利用することが出来ます。
 
-次に、 ``--jobflow`` で指定するジョブフローIDは、EMR起動時に出力されたジョブフローIDを指定してください。
-
-また、 ``step-name`` は 実行するステップに任意の名前を指定することが出来ます。これは後述する `ステップの実行ステータス確認`_ で説明する手順でステップを絞り込むためのパラメータとして利用することが出来ます。
+``--jobflow``
+  ステップを実行するジョブフローを特定するジョブフローIDを指定します。 `EMRの起動`_ 時に出力されたジョブフローIDを指定してください。
 
 ステップの実行ステータス確認
 ----------------------------
@@ -390,7 +415,7 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 先述の `ステップの実行`_ で一意となるステップ名を指定することで、 ``grep`` で行を特定できるようにします。抽出した行のステータス部分の文字列のみを抜き出し、この値に応じて以降の処理を決定します。
 
 ..  [#] EMRが取り得るステータスの意味やその種類については、EMRの以下のドキュメントなどを参照してください。
-    　　http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    　　http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
 
 出力データをS3から取得
 ----------------------
@@ -445,7 +470,7 @@ EMRやHadoopの各種ログは、EMRの各ノードの ``/mnt/var/log`` 配下�
 
 また、EMRでは、各ノードのEMRやHadoopのログを非同期で収集してS3にコピーする機能が提供されています。詳しくは、EMRの以下のドキュメントなどを参照して下さい。
 
-http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/DebuggingOverview.html
+http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-plan-debugging.html
 
 タイムゾーンを変更する
 ----------------------
@@ -476,7 +501,7 @@ Apache Hadoopやその他のHadoopディストリビューションと同様に�
 
 HadoopのWebUIを参照するには、ブラウザに対してSSHポートフォワードの設定を行いSSHのポートを経由する方法や、セキュリティグループの設定を変更する [#]_ などの方法があります。詳しくは、EMRの以下のドキュメントなどを参照してください。
 
-http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/UsingtheHadoopUserInterface.html
+http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingtheHadoopUserInterface.html
 
 ..  [#] プロダクション環境など機密性が高い環境では、セキュリティグループを変更する方法は望ましくないでしょう。
 

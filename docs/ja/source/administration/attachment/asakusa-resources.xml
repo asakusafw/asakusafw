@@ -22,10 +22,6 @@
     </property>
 
     <property>
-        <name>com.asakusafw.directio.root.fragment.min</name>
-        <value>-1</value>
-    </property>
-    <property>
          <name>com.asakusafw.directio.root.output.staging</name>
          <value>false</value>
      </property>
