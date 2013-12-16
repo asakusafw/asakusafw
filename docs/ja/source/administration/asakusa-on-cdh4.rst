@@ -2,6 +2,18 @@
 CDH4上でAsakusa Frameworkを利用する
 ===================================
 
+..  warning::
+    Asakusa Framework バージョン ``0.5.3`` 以降、
+    CDH4を含むHadoop2系の環境でAsakusa Frameworkを利用するためのドキュメントは、
+    Asakusa Frameworkのドキュメント
+    `Hadoop2系の運用環境でAsakusa Frameworkを利用する`_
+    に統合されました。
+     
+    このページの内容は古くなっている可能性があるため、上記のドキュメントを参照してください。
+    またこのページは将来削除される予定です。
+
+..  _`Hadoop2系の運用環境でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/deployment-hadoop2.html
+
 * 対象バージョン: Asakusa Framework ``0.5.0`` 以降
 
 この文書は、 `Cloudera`_ が提供する
