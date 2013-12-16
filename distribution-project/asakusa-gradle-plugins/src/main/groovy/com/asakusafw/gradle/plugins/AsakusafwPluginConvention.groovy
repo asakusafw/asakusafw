@@ -265,7 +265,7 @@ class AsakusafwPluginConvention {
     class TestToolsConfiguration {
 
         /**
-         * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL)
+         * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL|DATAX|RULEX|INOUTX|INSPECTX|ALLX)
          * [Migration from Maven-Archetype] build.properties: asakusa.testdatasheet.format
          */
         String testDataSheetFormat

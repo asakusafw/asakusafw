@@ -979,13 +979,14 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
     * -  ``testtools.testDataSheetFormat`` 
       - String
       -  ``ALL`` 
-      - テストデータ定義シートのフォーマット( ``DATA`` | ``RULE`` | ``INOUT`` | ``INSPECT`` | ``ALL`` )
+      - テストデータ定義シートのフォーマット [#]_
     * -  ``testtools.testDataSheetDirectory`` 
       - String
       -  ``${project.buildDir}/excel`` 
       - テストデータ定義シートの出力先
 
 ..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
+..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
