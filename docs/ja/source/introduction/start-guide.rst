@@ -3,7 +3,7 @@ Asakusa Framework スタートガイド
 ================================
 この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
 
-なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` の :ref:`target-platform-development-environment` を確認してください。
+なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` を確認してください。
 
 .. _startguide-development-environment:
 
@@ -13,7 +13,7 @@ Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。W
 
 このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
 
-..  _`VMWare Player`: http://www.vmware.com/jp/products/desktop_virtualization/player/overview 
+..  _`VMWare Player`: http://www.vmware.com/jp/products/player/
 ..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
 
 ..  tip::
