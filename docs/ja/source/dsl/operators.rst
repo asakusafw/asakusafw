@@ -1747,7 +1747,7 @@ Flow DSLからは次のように利用します。
 ..  code-block:: java
 
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
-    public void invalid(List<Hoge> list, Result<Hoge> result) {
+    public void valid(List<Hoge> list, Result<Hoge> result) {
         for (Hoge hoge : list) {
             hoge.setValue(100);
             result.add(hoge);
