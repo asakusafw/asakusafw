@@ -151,6 +151,35 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * simple testing.
+     * @throws Exception if failed
+     */
+    @Test
+    public void header() throws Exception {
+        ModelLoader loaded = generateJava("header");
+        ModelWrapper model = loaded.newModel("Header");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "HeaderTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+
+        model.set("key", 100);
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        Object buffer = loaded.newModel("Header").unwrap();
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output), 0, size(output));
+        assertThat(reader.readTo(buffer), is(true));
+        assertThat(buffer, is(model.unwrap()));
+        assertThat(reader.readTo(buffer), is(false));
+    }
+
+    /**
      * With ignoring field.
      * @throws Exception if failed
      */

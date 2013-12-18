@@ -46,7 +46,7 @@ public class TsvIgnoreDriver  extends PropertyAttributeDriver {
         if (TsvFieldTrait.checkConflict(environment, declaration, attribute)) {
             declaration.putTrait(
                     TsvFieldTrait.class,
-                    new TsvFieldTrait(attribute, Kind.IGNORE));
+                    new TsvFieldTrait(attribute, Kind.IGNORE, null));
         }
     }
 }

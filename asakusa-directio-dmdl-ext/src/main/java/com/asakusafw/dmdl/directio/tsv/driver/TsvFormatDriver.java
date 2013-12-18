@@ -35,6 +35,8 @@ import com.asakusafw.dmdl.util.AttributeUtil;
 The attributed declaration can have:
 <ul>
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
+<li> with {@code has_header=TRUE|FALSE} as whether header is required (default: FALSE) </li>
+<li> with {@code compression=[string-literal]} as compression name (default: plain) </li>
 </ul>
  * @since 0.5.0
  * @version 0.5.2
@@ -57,6 +59,12 @@ public class TsvFormatDriver extends ModelAttributeDriver {
      */
     public static final String ELEMENT_CODEC_NAME = "compression";
 
+    /**
+     * The element name of whether header is required.
+     * @since 0.5.3
+     */
+    public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
+
     @Override
     public String getTargetName() {
         return TARGET_NAME;
@@ -76,12 +84,16 @@ public class TsvFormatDriver extends ModelAttributeDriver {
             AstAttribute attribute,
             Map<String, AstAttributeElement> elements) {
         AstLiteral charset = take(environment, elements, ELEMENT_CHARSET_NAME, LiteralKind.STRING);
+        AstLiteral header = take(environment, elements, ELEMENT_HAS_HEADER_NAME, LiteralKind.BOOLEAN);
         AstLiteral codec = take(environment, elements, ELEMENT_CODEC_NAME, LiteralKind.STRING);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
 
         Configuration result = new Configuration();
         if (charset != null && checkNotEmpty(environment, ELEMENT_CHARSET_NAME, charset)) {
             result.setCharsetName(charset.toStringValue());
+        }
+        if (header != null) {
+            result.setEnableHeader(header.toBooleanValue());
         }
         if (codec != null && checkNotEmpty(environment, ELEMENT_CODEC_NAME, codec)) {
             result.setCodecName(codec.toStringValue());

@@ -48,7 +48,7 @@ public class TsvFileNameDriver  extends PropertyAttributeDriver {
         if (TsvFieldTrait.checkConflict(environment, declaration, attribute)) {
             declaration.putTrait(
                     TsvFieldTrait.class,
-                    new TsvFieldTrait(attribute, Kind.FILE_NAME));
+                    new TsvFieldTrait(attribute, Kind.FILE_NAME, null));
         }
     }
 }
