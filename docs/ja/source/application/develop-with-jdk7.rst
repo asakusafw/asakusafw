@@ -40,13 +40,24 @@ Asakusa Frameworkのバージョン |version| では、Asakusa Frameworkのア�
 EclipseのJRE用クラスパスコンテナ
   Eclipseがプロジェクトに対して使用するJDKのバージョンを指定します。Asakusa Frameworkのバージョン |version| ではこの値が ``JavaSE-1.6`` に設定されています [#]_ 。
 
+..  attention::
+    JDK7のみがインストールされている開発環境でEclipseを使用する場合などにおいて、Eclipseの ``Problems`` ビューに以下の警告が出力されることがあります。
+    
+    .. code-block:: none
+       
+       Build path specifies execution environment JavaSE-1.6. There are no JREs installed in the workspace that are strictly compatible with this environment. 
+    
+    これは、プロジェクト側の設定では ``JavaSE-1.6`` が指定されているが、Eclipse側で厳密に一致するJavaのバージョンがインストールされていないと認識するためです。後述するJDK7向け設定を行うとこの警告は消えますが、設定を変えずに警告を非表示にする場合は、EclipseのPreferences画面から以下の設定を行います。
+    
+    * ``[Java]`` -> ``[Compiler]`` -> ``[Building]`` -> ``[Build path problems]`` の ``No strictly compatible JRE for execution environment available:`` を ``Ignore`` に変更
+
 ..  [#] Asakusa Gradle Pluginではソースコードのバージョンに対応するEclipseのJRE用クラスパスコンテナの設定が生成されます。
 
 デフォルト設定でJDK7を利用する場合の注意点
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-上記で説明したデフォルト設定のままでもJDK7を利用することはできますが、JDK7から追加になった言語機能やAPIを利用したアプリケーションのソースコードはビルドツールやIDE上ではコンパイルエラーとなります。
+上記で説明したデフォルト設定のままでもJDK7を利用することはできますが、JDK7から追加になった言語機能やAPIは利用できません。デフォルト設定のままこれらの機能を利用してビルドした場合、アプリケーションのソースコードはビルドツールやIDE上ではコンパイルエラーとなります。
 
-これらの機能を利用する場合、以下に示す手順でアプリケーションプロジェクトの設定を変更します。
+JDK7から追加になった言語機能やAPIを利用する場合、以下に示す手順でアプリケーションプロジェクトの設定を変更します。
 
 MavenプロジェクトのJDK7向け設定
 -------------------------------
