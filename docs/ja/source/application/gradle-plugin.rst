@@ -114,7 +114,7 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
     * -  ``build`` 
       - プロジェクトのビルドディレクトリ（ビルド時に生成）
     * -  ``gradle`` 
-      - Gradleラッパー (Gradle Version: 1.8)
+      - Gradleラッパー (Gradle Version: 1.10)
     * -  ``gradlew`` 
       - Gradleラッパーコマンド (Unix)
     * -  ``gradlew.bat`` 
