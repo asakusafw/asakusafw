@@ -813,7 +813,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 説明
     * -  ``compileDMDL`` 
       -  ``-`` 
-      - Task
+      - SourceTask
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
       -  ``classes`` 
@@ -825,7 +825,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - バッチアプリケーションアーカイブを生成する
     * -  ``generateTestbook`` 
       -  ``-`` 
-      - Task
+      - SourceTask
       - テストデータ定義シートを生成する
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
