@@ -3,7 +3,7 @@ Asakusa Framework スタートガイド
 ================================
 この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
 
-なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` の :ref:`target-platform-development-environment` を確認してください。
+なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` を確認してください。
 
 .. _startguide-development-environment:
 
@@ -13,15 +13,15 @@ Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。W
 
 このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
 
-..  _`VMWare Player`: http://www.vmware.com/jp/products/desktop_virtualization/player/overview 
+..  _`VMWare Player`: http://www.vmware.com/jp/products/player/
 ..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
 
 ..  tip::
     開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである `Jinrikisha`_ (人力車) を利用する方法もあります。
     
-    `Jinrikisha`_ を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメント (http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html) に従って開発環境を構築することができます。
+    `Jinrikisha`_ を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
     
-    `Jinrikisha`_ ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に、Jinrikishaのドキュメントに従って開発環境を構築することを推奨します。
+    なお、 `Jinrikisha`_ ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に、 `Jinrikisha`_ のドキュメントに従って開発環境を構築することを推奨します。
 
 ..  _`Jinrikisha`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
 
@@ -73,7 +73,7 @@ Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、Java SE 6 の インストールアーカイブ ``jdk-6uXX-linux-i586.bin`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
+ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.bin`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
 
 ダウンロードしたインストールアーカイブを実行します。
 
@@ -100,13 +100,13 @@ Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストー�
 ..  code-block:: sh
     
     sudo mkdir /usr/lib/jvm
-    sudo chown -R root:root jdk1.6.0_*/
-    sudo mv jdk1.6.0_*/ /usr/lib/jvm
+    sudo chown -R root:root jdk1.7.0_*/
+    sudo mv jdk1.7.0_*/ /usr/lib/jvm
     
     cd /usr/lib/jvm
-    sudo ln -s jdk1.6.0_* jdk-6
+    sudo ln -s jdk1.7.0_* java-7-oracle
 
-..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-6uXX-linux-x64.bin`` )や、RPM版のファイル( ``jdk-6uXX-linux-i586-rpm.bin`` ) をダウンロードしないよう注意してください。
+..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.bin`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586-rpm.bin`` ) をダウンロードしないよう注意してください。
 
 
 Mavenのインストール
@@ -158,7 +158,7 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
 
 ..  code-block:: sh
 
-    export JAVA_HOME=/usr/lib/jvm/jdk-6
+    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
     export ASAKUSA_HOME=$HOME/asakusa
     export PATH=$JAVA_HOME/bin:$PATH:/usr/lib/hadoop/bin
 
@@ -204,7 +204,7 @@ Javaの動作確認
 
     java -version
 
-    java version "1.6.0_45"
+    java version "1.7.0_45"
     ...
 
 Java SDKの動作確認
@@ -214,7 +214,7 @@ Java SDKの動作確認
 
     javac -version
 
-    javac 1.6.0_45
+    javac 1.7.0_45
 
 Mavenの動作確認
 ~~~~~~~~~~~~~~~

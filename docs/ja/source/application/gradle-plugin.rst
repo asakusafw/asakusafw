@@ -813,7 +813,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 説明
     * -  ``compileDMDL`` 
       -  ``-`` 
-      - Task
+      - SourceTask
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
       -  ``classes`` 
@@ -825,7 +825,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - バッチアプリケーションアーカイブを生成する
     * -  ``generateTestbook`` 
       -  ``-`` 
-      - Task
+      - SourceTask
       - テストデータ定義シートを生成する
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
@@ -941,7 +941,7 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       -  ``UTF-8`` 
       - プロジェクトのソースファイルのエンコーディング
     * -  ``javac.sourceCompatibility`` 
-      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6
+      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6 [#]_
       -  ``1.6`` 
       - Javaソースのコンパイル時に使用するJavaバージョン互換性
     * -  ``javac.targetCompatibility`` 
@@ -986,6 +986,7 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       - テストデータ定義シートの出力先
 
 ..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
+..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
 Eclipse Pluginの拡張

@@ -2,107 +2,164 @@
 対応プラットフォーム
 ====================
 
-Asakusa Framework本体
-=====================
-Asakusa Framework バージョン |version| は以下のプラットフォームで動作を検証しています。
+Hadoopディストリビューション
+============================
+Asakusa Framework は、以下のHadoopディストリビューションと組み合わせた運用環境で動作を検証しています。
 
-..  list-table:: 動作検証プラットフォーム(本体)
-    :widths: 3 7
+..  list-table:: 動作検証プラットフォーム(Hadoopディストリビューション)
     :header-rows: 1
 
-    * - 種類
-      - ディストリビューション/バージョン
-    * - オペレーティングシステム
-      - CentOS 6.2 [#]_
-    * - Java SDK
-      - Oracle Java SE6 Update 33 [#]_
-    * - Hadoop
-      - CDH3 Update 5 [#]_
-    * - Hadoop
-      - CDH4.2.1 (Experimental) [#]_
-    * - Hadoop
-      - Apache Hadoop 1.0.3 [#]_
-    * - Hadoop
-      - Apache Hadoop 1.2.1 [#]_
-    * - Hadoop
-      - Greenplum MR 1.2 [#]_
-    * - Hadoop
-      - Greenplum MR 2.1
-    * - Hadoop
-      - Amazon Elastic MapReduce (Hadoop Version: 1.0.3, AMI Version: 2.4) [#]_
+    * - Distribution
+      - Version
+      - OS
+      - JDK
+      - 検証バージョン [1]_
+    * - Apache Hadoop
+      - 1.2.1
+      - CentOS 6 (6.2)
+      - JDK 6 (1.6.0_31)
+      - |version|
+    * - Apache Hadoop
+      - 2.2.0
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2 [2]_
+    * - CDH3
+      - Update 5 (u5)
+      - CentOS 6 (6.2)
+      - JDK 6 (1.6.0_31)
+      - |version|
+    * - CDH4
+      - 4.5.0
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2 [2]_
+    * - MapR
+      - 3.0.2 (M3/M5/M7)
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|
+    * - Amazon EMR [3]_
+      - Hadoop 1.0.3
+      - AMI 2.4.2
+      - JDK 7 (1.7.0_40)
+      - |version|
+    * - Amazon EMR
+      - Hadoop 2.2.0
+      - AMI 3.0.2
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2 [2]_
+    * - Amazon EMR
+      - MapR 3.0.2 (M3/M5/M7)
+      - AMI 2.4.2
+      - JDK 7 (1.7.0_40)
+      - |version|
 
-..  [#] http://www.centos.org/
-..  [#] http://www.oracle.com/technetwork/java/javase/
-..  [#] http://www.cloudera.com/content/support/en/documentation.html
-..  [#] Asakusa Framework バージョン |version| では、CDH4は試験的な対応です。
-..  [#] http://hadoop.apache.org/common/docs/r1.0.3/
-..  [#] http://hadoop.apache.org/common/docs/r1.2.1/
-..  [#] http://www.greenplum.com/products/greenplum-mr
-..  [#] http://aws.amazon.com/jp/elasticmapreduce/ 
+..  [1] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
+..  [2] 検証バージョンに ``-hadoop2`` と記載されている行に対応するHadoopディストリビューションでは、Hadoop2系向けのAsakusa Frameworkバージョンが必要です。詳しくは :doc:`../administration/deployment-hadoop2` を参照してください。
 
-.. _target-platform-development-environment:
+..  attention::
+    Asakusa Frameworkの現在のバージョン |version| では、Hadoop2系の対応は試験的機能として提供されています。
+
+..  [3] Amazon EMR上で利用するための情報を、 `Amazon EMR上でAsakusa Frameworkを利用する`_ (Asakusa Framework Sandbox) に公開しています。
+
+..  _`Amazon EMR上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-emr.html
 
 アプリケーション開発環境
 ========================
 Asakusa Frameworkを利用したバッチアプリケーションの開発環境は、 以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(開発環境)
-    :widths: 3 7
+    :widths:  4 6
     :header-rows: 1
 
     * - 種類
-      - ディストリビューション/バージョン
-    * - オペレーティングシステム
-      - Ubuntu Desktop 12.04 [#]_
-    * - オペレーティングシステム
+      - Product/Version
+    * - OS
+      - Ubuntu Desktop 12.04
+    * - OS
       - CentOS 6.2
-    * - Java SDK
-      - Oracle Java SE6 Update 33
+    * - Java
+      - JDK 6 (1.6.0_45)
+    * - Java
+      - JDK 7 (1.7.0_45) [#]_
     * - ビルドツール
-      - Apache Maven 3.0.5 [#]_
-    * - 統合開発環境
-      - Eclipse IDE for Java Developers 3.7.2 [#]_
-    * - Hadoop
-      - CDH3 Update 5
+      - Apache Maven 3.0.5
+    * - ビルドツール
+      - Gradle 1.10 [#]_
+    * - IDE
+      - Eclipse IDE for Java Developers 3.7.2
+    * - IDE
+      - Eclipse IDE for Java Developers 4.3.1
     * - Hadoop
       - Apache Hadoop 1.2.1
 
-..  [#] http://www.ubuntu.com/
-..  [#] http://maven.apache.org/
-..  [#] http://eclipse.org/
+..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
+..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 
 WindGate
 ========
 :doc:`WindGate <../windgate/index>` は以下のプラットフォームで動作を検証しています。
 
-..  list-table:: 動作プラットフォーム(WindGate/JDBC [#]_ )
-    :widths: 3 7
+..  list-table:: 動作検証プラットフォーム(WindGate/JDBC [#]_ )
+    :widths: 4 6
     :header-rows: 1
 
     * - 種類
-      - バージョン
+      - Product/Version
     * - DBMS
-      - PostgreSQL 9.1.4 [#]_
+      - PostgreSQL 9.1.4
     * - JDBC Driver
-      - PostgreSQL JDBC Driver 9.1 Build 901 [#]_
+      - PostgreSQL JDBC Driver 9.1 Build 901
 
-..  [#] データベースを利用しない場合には不要です
-..  [#] http://www.postgresql.org/
-..  [#] http://jdbc.postgresql.org/
+..  [#] データベースを利用しない場合(例えば WindGate/CSV のみを使う場合)には不要です
 
 ThunderGate
 ===========
 :doc:`ThunderGate <../thundergate/index>` は以下のプラットフォームで動作を検証しています。
 
-..  list-table:: 動作プラットフォーム(ThunderGate)
-    :widths: 3 7
+..  list-table:: 動作検証プラットフォーム(ThunderGate)
+    :widths: 4 6
     :header-rows: 1
 
     * - 種類
-      - バージョン
+      - Product/Version
     * - DBMS
-      - MySQL Server 5.5.25 [#]_
+      - MySQL Server 5.5.25
     * - JDBC Driver
       - MySQL Connector/J 5.1.25
 
-..  [#] http://www-jp.mysql.com/
+リンク
+======
+対応プラットフォームのリンク集です。
+
+..  list-table::
+    :widths: 2 8
+    :header-rows: 1
+
+    * - Product
+      - Link
+    * - Apache Hadoop
+      - http://hadoop.apache.org/
+    * - Cloudera CDH
+      - http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
+    * - MapR
+      - http://www.mapr.com/
+    * - Amazon EMR
+      - http://aws.amazon.com/elasticmapreduce/
+    * - CentOS
+      - http://www.centos.org/
+    * - Ubuntu
+      - http://www.ubuntu.com/
+    * - JDK (Java SE)
+      - http://www.oracle.com/technetwork/java/javase/index.html
+    * - Apache Maven
+      - http://maven.apache.org/
+    * - Gradle
+      - http://www.gradle.org/
+    * - Eclipse
+      - http://www.eclipse.org/
+    * - PostgreSQL
+      - http://www.postgresql.org/
+    * - MySQL
+      - http://www.mysql.com/

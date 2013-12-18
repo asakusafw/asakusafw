@@ -145,7 +145,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
     システムプロパティの展開をサポートしていません。
 
 ..  [#] :doc:`実行時プラグイン <../administration/deployment-runtime-plugins>` の設定にも利用しています。
-..  [#] http://hadoop.apache.org/common/docs/r0.20.205.0/api/org/apache/hadoop/conf/Configuration.html
+..  [#] http://hadoop.apache.org/docs/r1.2.1/api/org/apache/hadoop/conf/Configuration.html
 
 データソースの追加
 ------------------
