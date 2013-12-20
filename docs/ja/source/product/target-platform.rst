@@ -36,8 +36,8 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - |version|-hadoop2 [2]_
     * - MapR
       - 3.0.2 (M3/M5/M7)
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
+      - Ubuntu 12.04
+      - JDK 6 (1.6.0_32)
       - |version|
     * - Amazon EMR [3]_
       - Hadoop 1.0.3
