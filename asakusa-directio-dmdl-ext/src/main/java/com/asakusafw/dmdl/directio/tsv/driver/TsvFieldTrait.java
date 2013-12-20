@@ -31,6 +31,7 @@ import com.asakusafw.dmdl.semantics.type.BasicType;
 /**
  * Attributes for TSV fields.
  * @since 0.5.2
+ * @version 0.5.3
  */
 public class TsvFieldTrait implements Trait<TsvFieldTrait> {
 
@@ -38,23 +39,45 @@ public class TsvFieldTrait implements Trait<TsvFieldTrait> {
 
     private final Kind kind;
 
+    private final String name;
+
     /**
      * Creates a new instance.
      * @param originalAst the original AST, or {@code null} if this is an ad-hoc element
      * @param kind the field kind
+     * @param name the explicit field name (nullable)
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public TsvFieldTrait(AstNode originalAst, Kind kind) {
+    public TsvFieldTrait(AstNode originalAst, Kind kind, String name) {
         if (kind == null) {
             throw new IllegalArgumentException("kind must not be null"); //$NON-NLS-1$
         }
         this.originalAst = originalAst;
         this.kind = kind;
+        this.name = name;
     }
 
     @Override
     public AstNode getOriginalAst() {
         return originalAst;
+    }
+
+    /**
+     * Returns the TSV field name of the property.
+     * If the field name is not declared explicitly in the property, this returns the property name.
+     * @param property target property
+     * @return the field name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static String getFieldName(PropertyDeclaration property) {
+        if (property == null) {
+            throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
+        }
+        TsvFieldTrait trait = property.getTrait(TsvFieldTrait.class);
+        if (trait != null && trait.name != null) {
+            return trait.name;
+        }
+        return property.getName().identifier;
     }
 
     /**

@@ -69,6 +69,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 /**
  * Emits {@link BinaryStreamFormat} implementations.
  * @since 0.2.5
+ * @version 0.5.3
  */
 public class TsvFormatEmitter extends JavaDataModelDriver {
 
@@ -175,6 +176,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
     private static final class FormatGenerator {
 
+        private static final String NAME_ADD_HEADER = "addHeader";
+
+        private static final String NAME_SKIP_HEADER = "skipHeader";
+
         private static final String NAME_READER = "RecordReader";
 
         private static final String NAME_WRITER = "RecordWriter";
@@ -242,6 +247,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             results.add(createGetMinimumFragmentSize());
             results.add(createCreateReader());
             results.add(createCreateWriter());
+            if (conf.isEnableHeader()) {
+                results.add(createAddHeader());
+                results.add(createSkipHeader());
+            }
             results.add(createReaderClass());
             results.add(createWriterClass());
             return results;
@@ -346,6 +355,16 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     .toStatement());
             }
 
+            if (conf.isEnableHeader()) {
+                statements.add(f.newIfStatement(
+                        new ExpressionBuilder(f, offset)
+                            .apply(InfixOperator.EQUALS, Models.toLiteral(f, 0L))
+                            .toExpression(),
+                        f.newBlock(new ExpressionBuilder(f, f.newThis())
+                                .method(NAME_SKIP_HEADER, fragmentInput)
+                                .toStatement())));
+            }
+
             SimpleName parser = f.newSimpleName("parser");
             statements.add(new TypeBuilder(f, context.resolve(TsvParser.class))
                 .newObject(new TypeBuilder(f, context.resolve(InputStreamReader.class))
@@ -407,6 +426,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toExpression())
                 .toLocalVariableDeclaration(context.resolve(TsvEmitter.class), emitter));
 
+            if (conf.isEnableHeader()) {
+                statements.add(new ExpressionBuilder(f, f.newThis())
+                                .method(NAME_ADD_HEADER, emitter)
+                                .toStatement());
+            }
+
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_WRITER)))
                 .newObject(emitter)
                 .toReturnStatement());
@@ -435,6 +460,81 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(statements));
+            return decl;
+        }
+
+        private MethodDeclaration createAddHeader() {
+            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName buf = f.newSimpleName("buf");
+            List<Statement> statements = Lists.create();
+            statements.add(new TypeBuilder(f, context.resolve(StringOption.class))
+                    .newObject()
+                    .toLocalVariableDeclaration(context.resolve(StringOption.class), buf));
+
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                switch (TsvFieldTrait.getKind(property, Kind.VALUE)) {
+                case VALUE:
+                    statements.add(new ExpressionBuilder(f, buf)
+                            .method("modify", Models.toLiteral(f, TsvFieldTrait.getFieldName(property)))
+                            .toStatement());
+                    statements.add(new ExpressionBuilder(f, emitter)
+                        .method("emit", buf)
+                        .toStatement());
+                    break;
+                default:
+                    // ignored
+                    break;
+                }
+            }
+            statements.add(new ExpressionBuilder(f, emitter)
+                .method("endRecord")
+                .toStatement());
+            MethodDeclaration decl = f.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .annotation(context.resolve(Deprecated.class))
+                        .Private()
+                        .toAttributes(),
+                    Collections.<TypeParameterDeclaration>emptyList(),
+                    context.resolve(void.class),
+                    f.newSimpleName(NAME_ADD_HEADER),
+                    Arrays.asList(f.newFormalParameterDeclaration(context.resolve(TsvEmitter.class), emitter)),
+                    0,
+                    Arrays.asList(context.resolve(IOException.class)),
+                    f.newBlock(statements));
+            return decl;
+        }
+
+        private MethodDeclaration createSkipHeader() {
+            SimpleName input = f.newSimpleName("stream");
+            List<Statement> body = Lists.create();
+
+            SimpleName c = f.newSimpleName("c");
+            body.add(new ExpressionBuilder(f, input)
+                    .method("read")
+                    .toLocalVariableDeclaration(context.resolve(int.class), c));
+            body.add(f.newIfStatement(
+                    new ExpressionBuilder(f, c)
+                        .apply(InfixOperator.LESS, Models.toLiteral(f, 0))
+                        .toExpression(),
+                    f.newBlock(f.newBreakStatement())));
+            body.add(f.newIfStatement(
+                    new ExpressionBuilder(f, c)
+                        .apply(InfixOperator.EQUALS, Models.toLiteral(f, '\n'))
+                        .toExpression(),
+                    f.newBlock(f.newBreakStatement())));
+            MethodDeclaration decl = f.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .Private()
+                        .toAttributes(),
+                    Collections.<TypeParameterDeclaration>emptyList(),
+                    context.resolve(void.class),
+                    f.newSimpleName(NAME_SKIP_HEADER),
+                    Arrays.asList(f.newFormalParameterDeclaration(context.resolve(InputStream.class), input)),
+                    0,
+                    Arrays.asList(context.resolve(IOException.class)),
+                    f.newBlock(f.newWhileStatement(Models.toLiteral(f, true), f.newBlock(body))));
             return decl;
         }
 

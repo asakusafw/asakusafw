@@ -70,6 +70,8 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
 
         private String codecName = null;
 
+        private boolean enableHeader = false;
+
         /**
          * Returns the charset name.
          * @return the charset name (default: UTF-8)
@@ -102,6 +104,22 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
          */
         public void setCodecName(String codecName) {
             this.codecName = codecName;
+        }
+
+        /**
+         * Returns whether the header is required.
+         * @return {@code true} if header is required, otherwise {@code false} (default: false)
+         */
+        public boolean isEnableHeader() {
+            return enableHeader;
+        }
+
+        /**
+         * Configures whether the header is required.
+         * @param enableHeader {@code true} to require header, otherwise {@code false}
+         */
+        public void setEnableHeader(boolean enableHeader) {
+            this.enableHeader = enableHeader;
         }
     }
 }

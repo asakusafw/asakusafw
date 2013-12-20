@@ -71,6 +71,10 @@ TSV形式の設定
       - 文字列
       - ``"UTF-8"``
       - ファイルの文字エンコーディング
+    * - ``has_header``
+      - 論理値
+      - ``FALSE``
+      - ``TRUE`` に設定すると、読み込み時に先頭行をスキップし、書き込み時にモデルの定義内容に応じたヘッダ行を生成する。
     * - ``compression``
       - 文字列
       - なし
@@ -85,18 +89,44 @@ TSV形式の設定
 
     @directio.tsv(
         charset = "ISO-2022-JP",
+        has_header = TRUE,
     )
     model = {
         ...
     };
 
-..  attention::
-    Direct I/O のCSV連携で提供しているヘッダの設定機能 ( ``@directio.csv.field`` )はTSV連携では提供していません。
-
 ..  warning::
     ``compression`` を指定した場合、ファイルの分割読み出しが行えなくなります。
 
 ..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+
+ヘッダの設定
+~~~~~~~~~~~~
+`TSV形式の設定`_ でヘッダを有効にしている場合、出力の一行目にプロパティ名が表示されます。
+ここで表示される内容を変更するには、それぞれのプロパティに ``@directio.tsv.field`` 属性を指定し、さらに ``name`` 要素でフィールド名を指定します。
+
+以下はヘッダの内容の付加したDMDLスクリプトの記述例です。
+
+..  code-block:: none
+
+    @directio.tsv
+    document = {
+        "the name of this document"
+        @directio.tsv.field(name = "題名")
+        name : TEXT;
+
+        "the content of this document"
+        @directio.tsv.field(name = "内容")
+        content : TEXT;
+    };
+
+..  attention::
+    ヘッダの内容に対する検証は行いません。 Asakusa Frameworkが標準で提供している
+    CSV形式 [#]_ のフォーマットではヘッダ行に対する検証を行ない、
+    モデル定義に対してヘッダの内容が一文字でも異なる場合ヘッダ行として扱われませんが、
+    TSV形式ではヘッダの設定を有効にした場合、常に先頭行に対してデータの読み込みをスキップします。
+
+..  [#] CSV形式の詳細については、 `CSV形式のDataFormatの作成 <http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/user-guide.html#csvdataformat>`_ を参照してください。
 
 ファイル情報の取得
 ~~~~~~~~~~~~~~~~~~
