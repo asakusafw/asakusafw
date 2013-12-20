@@ -81,7 +81,7 @@ TSV形式の設定
       - ファイルの圧縮コーデック
 
 ``compression`` には、 ``"gzip"`` または ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
-この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
+ここで指定した圧縮形式で対象のファイルが読み書きされるようになりますが、代わりにファイルの分割読み出しが行われなくなります。
 
 以下はDMDLスクリプトの記述例です。
 
@@ -90,13 +90,11 @@ TSV形式の設定
     @directio.tsv(
         charset = "ISO-2022-JP",
         has_header = TRUE,
+        compression = "gzip",
     )
     model = {
         ...
     };
-
-..  warning::
-    ``compression`` を指定した場合、ファイルの分割読み出しが行えなくなります。
 
 ..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
 
