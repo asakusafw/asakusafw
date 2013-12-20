@@ -211,7 +211,7 @@ Map系の演算子に変換される場合もあります。
     Javaの対応する型
 
 ..  [#] ``java.util.List``
-..  [#] :javadoc:`com.asakusafw.runtime.core.Result`
+..  [#] :javadoc:`com.asakusafw.runtime.core.Result` 演算子の出力となるモデルオブジェクトを保持します。 ``add`` メソッドにより複数のオブジェクトを追加することができます。
 
 フロー制御演算子
 ================
@@ -1136,7 +1136,7 @@ Flow DSLからは次のように利用します。
 ..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
-非等価結合条件を記述すことも可能です。
+非等価結合条件を記述することも可能です。
 詳しくは `マスタ選択`_ を参照して下さい。
 
 マスタ結合演算子
@@ -1257,7 +1257,7 @@ Flow DSLからは次のように利用します。
 ..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
-非等価結合条件を記述すことも可能です。
+非等価結合条件を記述することも可能です。
 詳しくは `マスタ選択`_ を参照して下さい。
 
 マスタ分岐演算子
@@ -1422,7 +1422,7 @@ Flow DSLからは次のように利用します。
 ..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
-非等価結合条件を記述すことも可能です。
+非等価結合条件を記述することも可能です。
 詳しくは `マスタ選択`_ を参照して下さい。
 
 マスタつき更新演算子
@@ -1546,7 +1546,7 @@ Flow DSLからは次のように利用します。
 ..  **
 
 また、この演算子注釈に ``selection`` を指定することで、
-非等価結合条件を記述すことも可能です。
+非等価結合条件を記述することも可能です。
 詳しくは `マスタ選択`_ を参照して下さい。
 
 グループ結合演算子
@@ -1734,7 +1734,7 @@ Flow DSLからは次のように利用します。
     Hoge b = new Hoge();
 
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
-    public void invalid(List<Hoge> list, Result<Hoge> result) {
+    public void valid(List<Hoge> list, Result<Hoge> result) {
         a.copyFrom(list.get(0));
         b.copyFrom(list.get(1));
         b.setValue(100);
@@ -1747,7 +1747,7 @@ Flow DSLからは次のように利用します。
 ..  code-block:: java
 
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
-    public void invalid(List<Hoge> list, Result<Hoge> result) {
+    public void valid(List<Hoge> list, Result<Hoge> result) {
         for (Hoge hoge : list) {
             hoge.setValue(100);
             result.add(hoge);
@@ -2265,6 +2265,25 @@ NULL値に対する集約関数の動作
             Result<Hoge> last) {
         first.add(hogeList.get(0));
         last.add(hogeList.get(hogeList.size() - 1));
+    }
+..  **
+
+``Result`` インターフェースには複数件の結果を追加することもできます。
+
+..  code-block:: java
+
+    /**
+     * レコードHogeを名前ごとに年齢の若い順に並べ、先頭の3件を結果に流す
+     * @param hogeList グループごとのリスト
+     * @param top3 グループごとの先頭3件の要素
+     */
+    @GroupSort
+    public void topThree(
+            @Key(group = "name", order = "age ASC") List<Hoge> hogeList,
+            Result<Hoge> top3) {
+        for (int i = 0; i < 3; i++) {
+            top3.add(hogeList.get(i));
+        }
     }
 ..  **
 

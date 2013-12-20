@@ -388,7 +388,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
     EclipseなどのIDEを利用している場合、ファイルが出力された後にワークスペースの表示更新やリフレッシュなどを行うまで、出力されたファイルが見えない場合があります。
 
 また、出力先に指定したファイル名の拡張子に応じた形式で出力が行われます。
-標準ではExcelシートを出力する ``.xls`` を指定できます。
+標準ではExcelシートを出力する ``.xls`` または ``.xlsx`` を指定できます。
 
 この操作は、 ``verify()`` と組み合わせて利用することもできます。
 
@@ -408,7 +408,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
     Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
         .verify("shipment.xls#output", "shipment.xls#rule")
-        .dumpActual("target/dump/difference.html");
+        .dumpDifference("target/dump/difference.html");
 
 「 `出力結果を保存する`_ 」と同様に、出力先にはファイルパスや ``File`` オブジェクトを指定できます。
 ファイルパスで相対パスを指定した場合、テストを実行したワーキングディレクトリからの相対パス上に結果が出力されます。
