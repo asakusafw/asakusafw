@@ -87,14 +87,14 @@ WindGate/CSVによるシンプルな構成例
 ----------------------------------
 WindGateをローカルのCSVファイルと連携する構成における、シンプルな構成例を以下に示します。
 
-..  figure:: deployment-with-windgate-figure1.png
+..  figure:: images/deployment-with-windgate-figure1.png
 
 上記の構成では、Hadoopクライアントモジュール、外部システム連携モジュール、バッチ起動モジュールをそれぞれ同じマシン（Hadoopクライアントマシン）上に配置しています。
 各モジュール間の通信はマシン内で行われ、HadoopクライアントモジュールはHadoop APIを介してHadoopクラスター上のサービスにアクセスします。
 
 下図は、この構成でHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-windgate-figure2.png
+..  figure:: images/deployment-with-windgate-figure2.png
 
 ..  note::
     Hadoopクライアントモジュールと外部システム連携モジュールが同一のマシン上に存在するため、WindGate Hadoopブリッジは不要です。
@@ -108,7 +108,7 @@ WindGate/RDBMSによるHadoopブリッジを使った構成例
 ------------------------------------------------
 WindGateをRDBMSと連携し、かつHadoopクライアントモジュールと外部システム連携モジュールが異なる場合の構成例を以下に示します。
 
-..  figure:: deployment-with-windgate-figure3.png
+..  figure:: images/deployment-with-windgate-figure3.png
 
 上記の構成では、前述のHadoopクライアントマシンのほかに、ゲートウェイマシンを導入しています。
 ゲートウェイマシンはデータベースとJDBCを利用して通信し、Hadoopクライアントマシン上の各種HadoopブリッジとはSSHを利用して通信しています。
@@ -119,11 +119,11 @@ WindGateをRDBMSと連携し、かつHadoopクライアントモジュールと�
 
 下図は、この構成でゲートウェイマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-windgate-figure4.png
+..  figure:: images/deployment-with-windgate-figure4.png
 
 同様に、下図はHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-windgate-figure5.png
+..  figure:: images/deployment-with-windgate-figure5.png
 
 ..  note::
     この構成の利点は、ゲートウェイマシンとHadoopクライアントマシンに異なるセキュリティレベルを設定できる点です。
