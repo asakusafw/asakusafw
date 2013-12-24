@@ -62,7 +62,7 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.5.2`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.5.3`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
@@ -78,8 +78,9 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
     1: 0.5-SNAPSHOT
     2: 0.5.0
     3: 0.5.1
-    3: 0.5.2
-    Choose a number: 4: 4 (<-4を入力)
+    4: 0.5.2
+    5: 0.5.3
+    Choose a number: 5: 5 (<-5を入力)
 
 ..  attention::
     ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。
@@ -400,10 +401,6 @@ Eclipseを使ったアプリケーションの開発
 
 EclipseからプロジェクトをImportするには、Eclipseのメニューから ``[File]`` -> ``[Import]`` -> ``[General]`` -> ``[Existing Projects into Workspace]`` を選択し、プロジェクトディレクトリを指定します。
 
-..  code-block:: sh
-
-    mvn clean eclipse:eclipse
-
 Mavenプロジェクトへの変換(m2eプラグインの利用)
 ----------------------------------------------
 m2eプラグインを使ってアプリケーション用プロジェクトをMavenプロジェクトに変換すると、Eclipse上からMavenを実行することが可能になるなど、いくつか便利な機能を使用できます。
@@ -596,12 +593,7 @@ TestDriver Settings
     ( ``true`` or ``false`` ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータテンプレートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
 
   ``asakusa.testdatasheet.format``
-    ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートのフォーマットを指定します。以下の値を指定することが出来ます。
-      * ``DATA``: テストデータテンプレートにテストデータの入力データ用シートのみを含めます。
-      * ``RULE``: テストデータテンプレートにテストデータの検証ルール用シートのみを含めます。
-      * ``INOUT``: テストデータテンプレートにテストデータの入力データ用シートと出力（期待値）用シートを含めます。
-      * ``INSPECT``: テストデータテンプレートにテストデータの出力（期待値）用シートと検証ルール用シートのみを含めます。
-      * ``ALL``: テストデータテンプレートに入力データ用シート、出力（期待値）用シート、検証ルール用シートを含めます。
+    ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートのフォーマットを指定します。指定可能な値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
   ``asakusa.testdatasheet.output``
     ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートの出力ディレクトリを指定します。

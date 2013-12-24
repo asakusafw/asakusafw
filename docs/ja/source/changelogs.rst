@@ -2,6 +2,52 @@
 Changelogs
 ==========
 
+Release 0.5.3
+=============
+Dec 24, 2013
+
+Enhancements
+------------
+* [ :issue:`312` ] - Improvement of error message for invalid DMDL property name
+* [ :issue:`313` ] - (Experimental) Supports Apache Hadoop 2.2.0
+    * See: :doc:`product/target-platform`
+    * See: :doc:`administration/deployment-hadoop2`
+* [ :issue:`314` ] - Supports JDK 7
+    * See: :doc:`product/target-platform`
+    * See: :doc:`application/develop-with-jdk7`
+* [ :issue:`315` ] - Supports latest version of MapR
+    * See: :doc:`product/target-platform`
+* [ :issue:`316` ] - Skips task execution if the input resource does not exist. [Gradle Plugin]
+* [ :issue:`319` ] - Generates asakusafw project prefs on eclipse task. [Gradle Plugin]
+    * See: :doc:`application/gradle-plugin`
+* [ :issue:`321` ] - Changes archetype pom.xml repos order to avoid unnecessary access.
+* [ :issue:`324` ] - TestDriver supports more than 256 columns in excel data template
+    * See: [ :issue:`335` ]
+* [ :issue:`327` ] - Unreadable error message when compiling Flow DSL with non-wired operateor
+* [ :issue:`330` ] - Unreadable error message when Direct I/O may override another model output.
+* [ :issue:`335` ] - (Experimental) Supports Excel 2007 (\*.xlsx) format on TestDriver
+    * See: :doc:`testing/using-excel`
+* [ :issue:`336` ] - Simplifies default log format settings on template project
+* [ sandbox ] - Direct I/O-TSV supports data header
+    * See: `Direct I/OのTSVファイル連携 <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_
+
+Bug fixes
+---------
+* [ :issue:`303` ] - (Reopened issue) TestDriver fails when installed framework version is older than project framework version.
+* [ :issue:`317` ] - Fails standalone use of framework organizer plugin [Gradle Plugin]
+* [ :issue:`318` ] - Fails compileTestJava task when main SourceSet file does not exist. [Gradle Plugin]
+* [ :issue:`322` ] - Eclipse project encoding should set all the resources instead of individual source folder.
+
+Others
+------
+* [ :issue:`320` ] - Bumps up default Gradle version.
+* [ :issue:`323` ] - 0.5.3 Documents
+* [ :issue:`329` ] - runtime.core.Result tend to misunderstand that cannot add multiple objects
+* [ :issue:`337` ] - Fix typo
+* [ :issue:`338` ] - Fix a valid CoGroup operator method
+* [ sandbox ] - Revised documents using on Amazon EMR
+    * See: `Amazon EMR上でAsakusa Frameworkを利用する <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-emr.html>`_
+
 Release 0.5.2
 =============
 Nov 20, 2013

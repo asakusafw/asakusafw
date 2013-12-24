@@ -18,91 +18,125 @@ package com.asakusafw.testdata.generator.excel;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.testdriver.excel.RuleSheetFormat;
 
 /**
  * Test for {@link SheetBuilderTest}.
- * @since 0.2.0
  */
+@RunWith(Parameterized.class)
 public class SheetBuilderTest extends ExcelTesterRoot {
+
+    private final SpreadsheetVersion version;
+
+    /**
+     * Returns test parameter sets.
+     * @return test parameter sets
+     */
+    @Parameters
+    public static List<Object[]> parameters() {
+        return Arrays.asList(new Object[][] {
+                { SpreadsheetVersion.EXCEL97 },
+                { SpreadsheetVersion.EXCEL2007 },
+        });
+    }
+
+    /**
+     * Creates a new instance.
+     * @param version the spreadsheet version
+     */
+    public SheetBuilderTest(SpreadsheetVersion version) {
+        this.version = version;
+    }
 
     /**
      * simple data.
+     * @throws Exception if failed
      */
     @Test
-    public void data_simple() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
+    public void data_simple() throws Exception {
+        Workbook workbook = WorkbookGenerator.createEmptyWorkbook(version);
         ModelDeclaration model = load("simple.dmdl", "simple");
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        SheetBuilder builder = new SheetBuilder(workbook, version, model);
         builder.addData("MODEL");
 
-        HSSFSheet sheet = workbook.getSheet("MODEL");
+        Sheet sheet = workbook.getSheet("MODEL");
         assertThat(sheet, not(nullValue()));
         assertThat(cell(sheet, 0, 0), is("value"));
     }
 
     /**
      * copy a data sheet.
+     * @throws Exception if failed
      */
     @Test
-    public void data_copy() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
+    public void data_copy() throws Exception {
+        Workbook workbook = WorkbookGenerator.createEmptyWorkbook(version);
         ModelDeclaration model = load("simple.dmdl", "simple");
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        SheetBuilder builder = new SheetBuilder(workbook, version, model);
         builder.addData("MODEL");
         builder.addData("COPY");
 
-        HSSFSheet sheet = workbook.getSheet("COPY");
+        Sheet sheet = workbook.getSheet("COPY");
         assertThat(sheet, not(nullValue()));
         assertThat(cell(sheet, 0, 0), is("value"));
     }
 
     /**
      * primitives.
+     * @throws Exception if failed
      */
     @Test
-    public void data_primitives() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
+    public void data_primitives() throws Exception {
+        Workbook workbook = WorkbookGenerator.createEmptyWorkbook(version);
         ModelDeclaration model = load("basic_type.dmdl", "simple");
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        SheetBuilder builder = new SheetBuilder(workbook, version, model);
         builder.addData("PRIMITIVES");
 
-        HSSFSheet sheet = workbook.getSheet("PRIMITIVES");
+        Sheet sheet = workbook.getSheet("PRIMITIVES");
         assertThat(sheet, not(nullValue()));
         checkDataSheet(sheet, model);
     }
 
     /**
      * check rule.
+     * @throws Exception if failed
      */
     @Test
-    public void rule() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
+    public void rule() throws Exception {
+        Workbook workbook = WorkbookGenerator.createEmptyWorkbook(version);
         ModelDeclaration model = load("basic_type.dmdl", "simple");
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        SheetBuilder builder = new SheetBuilder(workbook, version, model);
         builder.addRule("RULE");
 
-        HSSFSheet sheet = workbook.getSheet("RULE");
+        Sheet sheet = workbook.getSheet("RULE");
         checkRuleSheet(sheet, model);
     }
 
     /**
      * copy a rule sheet.
+     * @throws Exception if failed
      */
     @Test
-    public void rule_copy() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
+    public void rule_copy() throws Exception {
+        Workbook workbook = WorkbookGenerator.createEmptyWorkbook(version);
         ModelDeclaration model = load("simple.dmdl", "simple");
-        SheetBuilder builder = new SheetBuilder(workbook, model);
+        SheetBuilder builder = new SheetBuilder(workbook, version, model);
         builder.addRule("MODEL");
         builder.addRule("COPY");
 
-        HSSFSheet sheet = workbook.getSheet("COPY");
+        Sheet sheet = workbook.getSheet("COPY");
         assertThat(sheet, not(nullValue()));
         for (RuleSheetFormat format : RuleSheetFormat.values()) {
             assertThat(format.name(), cell(sheet, format, 0, 0), is(format.getTitle()));

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
@@ -35,10 +35,9 @@ import com.asakusafw.testdriver.core.TestContext;
 /**
  * An implementation of {@link DataModelSinkFactory} to create an Excel sheet.
  * @since 0.2.3
+ * @version 0.5.3
  */
 public class ExcelSheetSinkFactory extends DataModelSinkFactory {
-
-    private static final int MAX_COLUMN_SIZE = 255;
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetSinkFactory.class);
 
@@ -76,11 +75,13 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        if (definition.getProperties().size() > MAX_COLUMN_SIZE) {
+
+        SpreadsheetVersion version = Util.getSpreadsheetVersionFor(output.getPath());
+        if (definition.getProperties().size() > version.getMaxColumns()) {
             LOG.warn("The data model \"{}\" has > {} properties, so several properties will be omitted to generate {}.",
                     new Object[] {
                         definition.getModelClass().getName(),
-                        MAX_COLUMN_SIZE,
+                        version.getMaxColumns(),
                         output,
                     }
             );
@@ -91,9 +92,9 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                     "Failed to create an output directory for {0}",
                     output));
         }
-        final Workbook workbook = new HSSFWorkbook();
+        final Workbook workbook = Util.createEmptyWorkbookFor(output.getPath());
         Sheet sheet = workbook.createSheet("results");
-        return new ExcelSheetSink(definition, sheet, MAX_COLUMN_SIZE) {
+        return new ExcelSheetSink(definition, sheet, version.getMaxColumns()) {
             private boolean closed = false;
             @Override
             public void close() throws IOException {

@@ -3,52 +3,56 @@
 ==============
 Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなどの各種サーバにデプロイし、実行するための手順などについて説明します。
 
-運用環境の構築
-==============
+デプロイモジュールの管理
+========================
 
-デプロイメントガイド for WindGate
----------------------------------
-外部システムとの連携にWindGateを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
+Asakusa Frameworkのデプロイモジュールの作成や設定は、 :doc:`framework-organizer` を参照してください。
 
-デプロイメントガイド for ThunderGate
-------------------------------------
-外部システムとの連携にThunderGateを用いる構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
+また、 :doc:`../application/gradle-plugin` で説明しているGradleプラグインを利用している場合、 Framework Organizer の機能はこのプラグインに統合されているのでプラグインのドキュメントを参照してください。
 
-デプロイメントガイド for Direct I/O
------------------------------------
-外部システムとの連携をAsakusa Frameworkの外部で行う構成における、Asakusa Frameworkとバッチアプリケーションを運用環境にデプロイする手順について解説します。
+運用環境へのデプロイ
+====================
 
-Framework Organizer利用ガイド
------------------------------
-Asakusa Frameworkの構成ツールであるFramework Organizerの利用方法について説明します。
+Asakusa Frameworkが提供する外部システム連携の各モジュールごとに運用環境のデプロイ方法を示したドキュメントです。
 
-拡張モジュールのデプロイ
+* :doc:`deployment-with-windgate`
+* :doc:`deployment-with-thundergate`
+* :doc:`deployment-with-directio`
+* :doc:`configure-hadoop-parameters`
+* :doc:`migration-guide`
+
+追加モジュールのデプロイ
+========================
+
+Asakusa Frameworkが提供する追加モジュールを運用環境にデプロイする方法を示したドキュメントです。
+
+* :doc:`deployment-extension-module`
+* :doc:`deployment-runtime-plugins`
+* :doc:`deployment-cleaner`
+
+運用ツールの利用
+================
+
+Asakusa Frameworkが提供する運用ツールに関するドキュメントです。
+
+* :doc:`utility-tool-user-guide`
+
+プラットフォーム関連
+====================
+
+特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
+
+* :doc:`deployment-hadoop2`
+
+クラウドプラットフォーム
 ------------------------
-Asakusa Frameworkの拡張モジュールのデプロイ方法について説明します。
 
-実行時プラグインのデプロイ
---------------------------
-Asakusa Frameworkの実行時プラグインのデプロイ方法について説明します。
+* `Amazon EMR上でAsakusa Frameworkを利用する`_ (Asakusa Framework Sandbox Document)
 
-Hadoopパラメータの設定
-----------------------
-Asakusa Framework特有のHadoopパラメータについて説明します。
+その他
+======
 
-ユーティリティツールユーザガイド
---------------------------------
-Asakusa Frameworkが提供するコマンドラインツールの利用方法について説明します。
-
-クリーニングツールのデプロイ
-----------------------------
-クリーニングツールのデプロイ手順について説明します。
-
-デプロイメントアーカイブをソースから生成する
---------------------------------------------
-Asakusa FrameworkのデプロイメントアーカイブをAsakusa Frameworkのソースから生成する方法について説明します。
-
-運用環境マイグレーションガイド
-------------------------------
-Asakusa Framework のバージョンアップに伴う、運用環境に対してのバージョン固有の移行手順について解説します。
+* :doc:`generate-deployment-archive-from-source`
 
 関連するドキュメント
 ====================
@@ -56,15 +60,17 @@ Asakusa Framework のバージョンアップに伴う、運用環境に対し�
 ..  toctree::
     :maxdepth: 1
 
+    framework-organizer
     deployment-with-windgate
     deployment-with-thundergate
     deployment-with-directio
-    framework-organizer
+    configure-hadoop-parameters
+    migration-guide
     deployment-extension-module
     deployment-runtime-plugins
-    configure-hadoop-parameters
-    utility-tool-user-guide
     deployment-cleaner
+    utility-tool-user-guide
+    deployment-hadoop2
     generate-deployment-archive-from-source
-    migration-guide
 
+..  _`Amazon EMR上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-emr.html

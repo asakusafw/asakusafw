@@ -53,6 +53,8 @@ import com.asakusafw.utils.java.model.util.Models;
  * 同クラスを{@code META-INF/services/}下に指定のインターフェースに対する
  * サービスとして登録しておくことで、このプロセッサから自動的に参照する。
  * </p>
+ * @since 0.1.0
+ * @version 0.5.3
  */
 public class OperatorCompiler implements Processor {
 
@@ -151,9 +153,18 @@ public class OperatorCompiler implements Processor {
         return Collections.emptySet();
     }
 
+    /**
+     * Returns the current supported source version.
+     * @return the supported version
+     * @since 0.5.3
+     */
+    public static SourceVersion computeSupportedVersion() {
+        return SourceVersion.latestSupported();
+    }
+
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_6;
+        return computeSupportedVersion();
     }
 
     @Override

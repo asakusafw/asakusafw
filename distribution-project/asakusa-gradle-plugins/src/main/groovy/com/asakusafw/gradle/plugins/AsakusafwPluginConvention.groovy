@@ -1,8 +1,26 @@
+/*
+ * Copyright 2011-2013 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.asakusafw.gradle.plugins
 
 import org.gradle.api.*
 import org.gradle.util.ConfigureUtil
 
+/**
+ * Convention class for {@link AsakusafwPlugin}.
+ */
 class AsakusafwPluginConvention {
     final Project project
 
@@ -247,7 +265,7 @@ class AsakusafwPluginConvention {
     class TestToolsConfiguration {
 
         /**
-         * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL)
+         * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL|DATAX|RULEX|INOUTX|INSPECTX|ALLX)
          * [Migration from Maven-Archetype] build.properties: asakusa.testdatasheet.format
          */
         String testDataSheetFormat
@@ -273,6 +291,28 @@ class AsakusafwPluginConvention {
 
     }
 
+    def getConventionProperties() {
+        def commonPrefix = 'com.asaksuafw.asakusafw.'
+        def convention = [:]
+
+        convention.put(commonPrefix + 'asakusafwVersion', asakusafwVersion)
+        convention.put(commonPrefix + 'maxHeapSize', maxHeapSize)
+        convention.put(commonPrefix + 'logbackConf', logbackConf)
+
+        convention.putAll(asMap(dmdl, commonPrefix + 'dmdl.'))
+        convention.putAll(asMap(modelgen, commonPrefix + 'modelgen.'))
+        convention.putAll(asMap(javac, commonPrefix + 'javac.'))
+        convention.putAll(asMap(compiler, commonPrefix + 'compiler.'))
+        convention.putAll(asMap(testtools, commonPrefix + 'testtools.'))
+
+        return convention
+    }
+
+    def asMap(Object obj, String keyPrefix) {
+        obj.class.declaredFields.findAll{ !it.synthetic }.collectEntries {
+            [keyPrefix + it.name, obj[it.name]]
+        }
+    }
 }
 
 

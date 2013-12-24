@@ -89,7 +89,7 @@ ThunderGateによる標準的な構成例
 -------------------------------
 ThunderGateを利用した構成例を以下に示します。
 
-..  figure:: deployment-with-thundergate-constitution.png
+..  figure:: images/deployment-with-thundergate-constitution.png
 
 上記の構成はバッチ実行モジュールがデータベースノード上に配置されていますが、これは独立したマシンに配置することも可能です。その他のモジュール構成については、ThunderGateは基本的に上記の構成のみを想定しています。
 
@@ -100,11 +100,11 @@ ThunderGateを利用した構成例を以下に示します。
 
 下図は、この構成でデータベースノードが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-thundergate-dbnode.png
+..  figure:: images/deployment-with-thundergate-dbnode.png
 
 同様に、下図はHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-thundergate-client.png
+..  figure:: images/deployment-with-thundergate-client.png
 
 ..  note::
     この構成の利点は、データベースノードとHadoopクライアントマシンに異なるセキュリティレベルを設定できる点です。

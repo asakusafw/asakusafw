@@ -1,8 +1,26 @@
+/*
+ * Copyright 2011-2013 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.asakusafw.gradle.plugins
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.*
 
+/**
+ * Enhancements Gradle Eclipse Plugin for Asakusa Framework.
+ */
 class EclipsePluginEnhancement {
 
     private Project project
@@ -51,17 +69,31 @@ class EclipsePluginEnhancement {
     }
 
     private void configureEclipsePlugin() {
+        extendEclipseProjectTask()
         extendEclipseClasspath()
         extendEclipseJdtConfiguration()
         extendEclipseJdtTask()
+        extendCleanEclipseProjectTask()
         extendCleanEclipseJdtTask()
+    }
+
+    private void extendEclipseProjectTask() {
+        generateResourcePref()
+    }
+
+    private void generateResourcePref() {
+        project.mkdir('.settings')
+        project.file('.settings/org.eclipse.core.resources.prefs').text = """\
+            |eclipse.preferences.version=1
+            |encoding/<project>=UTF-8
+            |""" .stripMargin()
     }
 
     private void extendEclipseClasspath() {
         project.eclipse.classpath {
             file.whenMerged { classpath ->
                 classpath.entries.findAll { it.path.contains('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
-                    it.path = 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6'
+                    it.path = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${project.asakusafw.javac.sourceCompatibility}"
                 }
                 classpath.entries.unique()
             }
@@ -74,10 +106,6 @@ class EclipsePluginEnhancement {
 
     private void extendEclipseJdtConfiguration() {
         project.eclipse.jdt.file.withProperties { props ->
-            props.setProperty('encoding//src/main/java', project.compileJava.options.encoding)
-            props.setProperty('encoding//src/main/resources', project.compileJava.options.encoding)
-            props.setProperty('encoding//src/test/java', project.compileTestJava.options.encoding)
-            props.setProperty('encoding//src/test/resources', project.compileTestJava.options.encoding)
             props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
         }
     }
@@ -86,6 +114,7 @@ class EclipsePluginEnhancement {
         project.eclipseJdt.doLast {
             generateFactorypath()
             generateAptPref()
+            generateAsakusafwProjectPref()
         }
     }
 
@@ -108,12 +137,29 @@ class EclipsePluginEnhancement {
             |""" .stripMargin()
     }
 
+    private void generateAsakusafwProjectPref() {
+        project.file('.settings/com.asakusafw.asakusafw.prefs').withWriter('UTF-8') { out ->
+            project.asakusafw.conventionProperties.each { key, value ->
+                if (key.endsWith('Directory')) {
+                    value = project.relativePath(value).replace('\\', '/')
+                }
+                out.writeLine("${key}=${value}")
+            }
+        }
+    }
+
+    private void extendCleanEclipseProjectTask() {
+        project.cleanEclipseProject.doLast {
+            project.delete(project.file('.settings/org.eclipse.core.resources.prefs'))
+        }
+    }
+
     private void extendCleanEclipseJdtTask() {
         project.cleanEclipseJdt.doLast {
             project.delete(project.file('.factorypath'))
             project.delete(project.file('.settings/org.eclipse.jdt.apt.core.prefs'))
+            project.delete(project.file('.settings/com.asakusafw.asakusafw.prefs'))
         }
     }
-
 }
 

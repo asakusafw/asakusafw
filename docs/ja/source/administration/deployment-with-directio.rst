@@ -75,31 +75,31 @@ Direct I/Oを用いた場合のシステム構成について、いくつか例�
 ----------------
 Direct I/Oを利用したシンプルな構成例を以下に示します。
 
-..  figure:: deployment-with-directio-simple.png
+..  figure:: images/deployment-with-directio-simple.png
 
 上記の構成では、Hadoopクライアントモジュールとバッチ起動モジュールをそれぞれ同じマシン（Hadoopクライアントマシン）上に配置しています。
 各モジュール間の通信は単一のマシン内で行われ、HadoopクライアントモジュールはHadoop APIを介してHadoopクラスター上のサービスにアクセスします。
 
 下図は、この構成でHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-directio-components.png
+..  figure:: images/deployment-with-directio-components.png
 
 バッチ起動を外部から行う場合の構成例
 ------------------------------------
 バッチの起動を行う「ゲートウェイマシン」をHadoopクライアントマシンとは別に用意した場合の構成例を以下に示します。
 
-..  figure:: deployment-with-directio-remote.png
+..  figure:: images/deployment-with-directio-remote.png
 
 ゲートウェイマシンはHadoopクライアントマシン上の各種HadoopブリッジとSSHを利用して通信します。
 そのため、あらかじめゲートウェイマシンからHadoopクライアントマシンにSSH経由（公開鍵認証）でアクセスできるようにしておく必要があります。
 
 下図は、この構成でゲートウェイマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-directio-gateway.png
+..  figure:: images/deployment-with-directio-gateway.png
 
 同様に、下図はHadoopクライアントマシンが利用するコンポーネントの一覧です。
 
-..  figure:: deployment-with-directio-client.png
+..  figure:: images/deployment-with-directio-client.png
 
 ..  note::
     この構成の利点は、ゲートウェイマシンとHadoopクライアントマシンに異なるセキュリティレベルを設定できる点です。

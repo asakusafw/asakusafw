@@ -1,8 +1,26 @@
+/*
+ * Copyright 2011-2013 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.asakusafw.gradle.plugins
 
 import org.gradle.api.*
 import org.gradle.api.tasks.bundling.*
 
+/**
+ * Gradle plugin for assembling and Installing Asakusa Framework.
+ */
 class AsakusafwOrganizerPlugin  implements Plugin<Project> {
 
     public static final String ASAKUSAFW_ORGANIZER_GROUP = 'Asakusa Framework Organizer'
@@ -284,15 +302,18 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             asakusaDistCustom.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
             asakusaDistCustom.setDescription('Assembles a tar archive containing custom framework configuration files.')
 
-            def attachAssembleDev = project.task('attachAssembleDev', dependsOn: [
-                    'attachBatchapps',
+            def devDependsTasks = [
                     'attachComponentCore',
                     'attachComponentDirectIo',
                     'attachComponentYaess',
                     'attachComponentWindGate',
                     'attachComponentDevelopment',
                     'attachComponentOperation'
-            ])
+            ]
+            if (project.plugins.hasPlugin('asakusafw')) {
+                devDependsTasks += 'attachBatchapps'
+            }
+            def attachAssembleDev = project.task('attachAssembleDev', dependsOn: devDependsTasks)
             attachAssembleDev.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
             attachAssembleDev.setDescription('Attachs application development environment files to assembly.')
 

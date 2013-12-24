@@ -39,6 +39,8 @@ import com.asakusafw.testdata.generator.TemplateGenerator;
 
 /**
  * Excel test template generator Command Line Interface.
+ * @since 0.2.0
+ * @version 0.5.3
  */
 public final class Main {
 
@@ -115,11 +117,16 @@ public final class Main {
                     OPTIONS,
                     true);
             System.out.printf("output formats (specify in \"-%s\"):%n", OPT_FORMAT.getOpt());
-            System.out.printf(" %8s - %s%n", WorkbookFormat.DATA, "only data sheet");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.RULE, "only rule sheet");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, "input/output data sheet");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, "expected data and its rule sheets");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, "input/output data and rule sheets");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.DATA, "only data sheet (Excel97)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.RULE, "only rule sheet (Excel97)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, "input/output data sheet (Excel97)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, "expected data and its rule sheets (Excel97)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, "input/output data and rule sheets (Excel97)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.DATAX, "only data sheet (Excel2007)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.RULEX, "only rule sheet (Excel2007)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUTX, "input/output data sheet (Excel2007)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECTX, "expected data and its rule sheets (Excel2007)");
+            System.out.printf(" %8s - %s%n", WorkbookFormat.ALLX, "input/output data and rule sheets (Excel2007)");
             e.printStackTrace(System.out);
             return 1;
         }
