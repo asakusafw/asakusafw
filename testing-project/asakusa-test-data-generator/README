@@ -12,7 +12,7 @@ Excel test data template generator.
 Excel Test Template Generator
 ===
 usage: java -classpath ... com.asakusafw.testdata.generator.excel.Main ...
- -format <one-of-[DATA, RULE, INOUT, INSPECT, ALL]>   output format
+ -format <one-of-[DATA, RULE, INOUT, INSPECT, ALL, DATAX, RULEX, INOUTX, INSPECTX, ALLX]>
  -output </path/to/output>                            output directory location
  -source <source-file.dmdl:/path/to/source>           source file or source directory paths
  -encoding <source-encoding>                          input DMDL charset encoding (optional)
@@ -23,6 +23,11 @@ output formats (specify in "-format"):
     INOUT - input/output data sheet
   INSPECT - expected data and its rule sheets
       ALL - input/output data and rule sheets
+    DATAX - only data sheet (Excel 2007 file format)
+    RULEX - only rule sheet (Excel 2007 file format)
+   INOUTX - input/output data sheet (Excel 2007 file format)
+ INSPECTX - expected data and its rule sheets (Excel 2007 file format)
+     ALLX - input/output data and rule sheets (Excel 2007 file format)
 
 example:
 java ...Main -format ALL -output /tmp/excel -source /tmp/dmdl

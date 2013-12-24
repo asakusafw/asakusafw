@@ -5,6 +5,33 @@ Asakusa Frameworkのリリースノートです。
 
 すべての変更点一覧は :doc:`changelogs` も参照してください。
 
+Release 0.5.3
+=============
+Dec 24, 2013
+
+`Asakusa Framework 0.5.3 documentation`_
+
+..  _`Asakusa Framework 0.5.3 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.3/release/ja/html/index.html
+
+本リリースはAsakusa Frameworkの開発版リリースです。
+主な変更内容は以下の通りです。
+
+* Apache Hadoop 2.2.0 に試験的に対応
+
+ * Hadoop2系の利用については、 :doc:`administration/deployment-hadoop2` を参照してください。
+
+* JDK 7に対応
+
+ * 開発環境におけるJDK 7の利用については、 :doc:`application/develop-with-jdk7` を参照してください。
+
+* Hadoopディストリビューション、アプリケーション開発環境の動作検証プラットフォームをアップデート
+
+ * :doc:`product/target-platform` を参照してください。
+
+* DMDLコンパイラ, DSLコンパイラ, Direct I/O実行時のエラーメッセージを改善
+* TestDriverのExcel 2007形式によるテストデータ定義に試験的に対応。
+* その他、多くの細かな機能改善、およびバグフィックス
+
 Release 0.5.2
 =============
 Nov 20, 2013
