@@ -135,7 +135,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 ..  code-block:: xml
 
     <property>
-        <name>プロパティ名</property>
+        <name>プロパティ名</name>
         <value>値</value>
     </property>
 
