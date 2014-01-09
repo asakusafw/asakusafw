@@ -33,6 +33,7 @@ class GenerateTestbookTask extends SourceTask {
             classpath = project.sourceSets.main.compileClasspath
             maxHeapSize = project.asakusafw.maxHeapSize
             jvmArgs = [
+                    "-Djava.awt.headless=true",
                     "-Dlogback.configurationFile=${project.asakusafw.logbackConf}"
             ]
             args = [
