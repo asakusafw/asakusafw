@@ -102,6 +102,18 @@ class EclipsePluginEnhancement {
             plusConfigurations += project.configurations.embedded
             noExportConfigurations += project.configurations.embedded
         }
+        project.eclipseClasspath.doFirst {
+            makeGeneratedSourceDir()
+        }
+    }
+
+    private void makeGeneratedSourceDir() {
+        if (!project.file(project.asakusafw.modelgen.modelgenSourceDirectory).exists()) {
+            project.mkdir(project.asakusafw.modelgen.modelgenSourceDirectory)
+        }
+        if (!project.file(project.asakusafw.javac.annotationSourceDirectory).exists()) {
+            project.mkdir(project.asakusafw.javac.annotationSourceDirectory)
+        }
     }
 
     private void extendEclipseJdtConfiguration() {

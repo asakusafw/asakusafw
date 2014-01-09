@@ -476,14 +476,13 @@ Eclipseプロジェクト用の定義ファイルを作成するには、 ``ecli
 
 ..  code-block:: sh
 
-    ./gradlew compileJava eclipse
+    ./gradlew eclipse
 
-EclipseにJavaソースディレクトリを正しく認識させるためには、 ``eclipse`` タスクを実行する時点で、プロジェクトで使用するすべてのJavaソースディレクトリが存在している必要があります。 Asakusa Gradle Plugin では `Javaソースファイルのコンパイル`_ で説明した ``compileJava`` タスクを実行することで必要なソースディレクトリが生成されるので、上記の例では ``compileJava`` タスクを事前に実行しています。
-
-このコマンドを実行することによってプロジェクトディレクトリに対して ``.project`` , ``.classpath`` , ``.factorypath`` などのいくつかのEclipse用の定義ファイルが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
+このコマンドを実行することによって、プロジェクトディレクトリに対してEclipseプロジェクト用の定義ファイルやEclipse上のクラスパスに対応したソースディレクトリなどが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
 
 ..  tip::
     Eclipseからプロジェクトをインポートするには、Eclipseのメニューから  ``[File]``  ->  ``[Import]``  ->  ``[General]``  ->  ``[Existing Projects into Workspace]``  を選択し、プロジェクトディレクトリを指定します。
+
 
 Asakusa Frameworkのデプロイメントアーカイブ生成
 -----------------------------------------------
