@@ -1,3 +1,5 @@
+defaultTasks 'clean', 'build', 'install', 'assembleTemplates'
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
@@ -140,4 +142,6 @@ task assembleTemplates {
     dependsOn assembleTemplateProject, assembleExampleProject
 }
 
-defaultTasks 'clean', 'build', 'install', 'assembleTemplates'
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}

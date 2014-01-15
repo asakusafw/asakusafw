@@ -109,18 +109,18 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 
     * - ファイル/ディレクトリ
       - 説明
+    * -  ``build.gradle`` 
+      - Gradleビルドスクリプト
     * -  ``src`` 
       - プロジェクトのソースディレクトリ
     * -  ``build`` 
       - プロジェクトのビルドディレクトリ（ビルド時に生成）
-    * -  ``gradle`` 
-      - Gradleラッパー (Gradle Version: 1.10)
     * -  ``gradlew`` 
       - Gradleラッパーコマンド (Unix)
     * -  ``gradlew.bat`` 
       - Gradleラッパーコマンド (Windows)
-    * -  ``build.gradle`` 
-      - ビルドスクリプト
+    * -  ``.buildtools``
+      - Gradleラッパーライブラリ (Gradle Version: 1.10)
 
 アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。  ``build`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
 
