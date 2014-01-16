@@ -28,17 +28,17 @@ asakusafw {
 }
 
 asakusafwOrganizer {
-    asakusafwVersion = "${repConventionAsakusafwVersion}"
+    asakusafwVersion = ${repConventionAsakusafwVersion}
 }
 
 dependencies {
-    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: "${repConventionAsakusafwVersion}"
-    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: "${repConventionAsakusafwVersion}"
-    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: "${repConventionAsakusafwVersion}"
+    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: ${repConventionAsakusafwVersion}
+    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: ${repConventionAsakusafwVersion}
+    compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: ${repConventionAsakusafwVersion}
 
     provided (group: 'org.apache.hadoop', name: 'hadoop-client', version: '1.2.1') {
-        exclude(module: 'junit')
-        exclude(module: 'mockito-all')
-        exclude(module: 'slf4j-log4j12')
+        exclude module: 'junit'
+        exclude module: 'mockito-all'
+        exclude module: 'slf4j-log4j12'
     }
 }
