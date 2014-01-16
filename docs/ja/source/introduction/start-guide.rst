@@ -73,40 +73,20 @@ Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.bin`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
+ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.tar.gz`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
 
-ダウンロードしたインストールアーカイブを実行します。
+ダウンロードが完了したら、以下の例を参考にしてJDKをインストールします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
-    chmod +x jdk-*
-    ./jdk-*
-
-インストールに成功すると以下のような画面が表示されます。
-
-..  code-block:: sh
-
-    Unpacking...
-    Checksumming...
-    Extracting...
-    ...
-    ...
-
-    Done.
-
-作成されたJavaのディレクトリに対して適切なオーナーの指定やディレクトリ配置を行います。
-
-..  code-block:: sh
-    
-    sudo mkdir /usr/lib/jvm
+    tar xf jdk-7u*-linux-i586.tar.gz
     sudo chown -R root:root jdk1.7.0_*/
+    sudo mkdir /usr/lib/jvm
     sudo mv jdk1.7.0_*/ /usr/lib/jvm
-    
-    cd /usr/lib/jvm
-    sudo ln -s jdk1.7.0_* java-7-oracle
+    sudo ln -s /usr/lib/jvm/jdk1.7.0_* /usr/lib/jvm/java-7-oracle
 
-..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.bin`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586-rpm.bin`` ) をダウンロードしないよう注意してください。
+..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.tar.gz`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586.rpm`` ) をダウンロードしないよう注意してください。
 
 
 Mavenのインストール
