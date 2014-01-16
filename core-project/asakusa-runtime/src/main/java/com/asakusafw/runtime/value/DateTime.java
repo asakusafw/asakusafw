@@ -38,7 +38,7 @@ public class DateTime implements Comparable<DateTime> {
 
     /**
      * インスタンスを生成する。
-     * @param elapsedSeconds 0001/01/01 00:00:00 からの経過日数(0起算)
+     * @param elapsedSeconds 0001/01/01 00:00:00 からの経過秒数(0起算)
      */
     public DateTime(long elapsedSeconds) {
         this.elapsedSeconds = elapsedSeconds;
