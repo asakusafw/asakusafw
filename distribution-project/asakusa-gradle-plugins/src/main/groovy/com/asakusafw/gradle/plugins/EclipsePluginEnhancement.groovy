@@ -139,6 +139,7 @@ class EclipsePluginEnhancement {
 
     private void generateAsakusafwProjectPref() {
         project.file('.settings/com.asakusafw.asakusafw.prefs').withWriter('UTF-8') { out ->
+            out.writeLine('eclipse.preferences.version=1')
             project.asakusafw.conventionProperties.each { key, value ->
                 if (key.endsWith('Directory')) {
                     value = project.relativePath(value).replace('\\', '/')
