@@ -234,7 +234,7 @@ class AsakusafwPluginConvention {
             compiledSourceDirectory = "${project.buildDir}/batchc"
             compilerOptions = ''
             compilerWorkDirectory = "${project.buildDir}/batchcwork"
-            hadoopWorkDirectory = "${project.buildDir}/hadoopwork/" + '${execution_id}'
+            hadoopWorkDirectory = "target/hadoopwork/" + '${execution_id}'
         }
 
         def compiledSourcePackage(String compiledSourcePackage) {
