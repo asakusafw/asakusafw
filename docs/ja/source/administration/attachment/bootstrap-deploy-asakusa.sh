@@ -3,7 +3,7 @@ set -e
 
 ### Change it ###
 _bucket=<sample-bucket>
-_asakusafw_filename="asakusafw-0.5.3-prod-directio.tar.gz"
+_asakusafw_filename="asakusafw-0.6.0-prod-directio.tar.gz"
 _batchapp_filename="example-app-batchapps-1.0-SNAPSHOT.jar"
 ### Change it (END) ###
 

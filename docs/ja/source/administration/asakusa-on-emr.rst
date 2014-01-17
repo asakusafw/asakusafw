@@ -2,7 +2,7 @@
 Amazon EMR上でAsakusa Frameworkを利用する
 =========================================
 
-* 対象バージョン: Asakusa Framework ``0.5.0`` 以降
+* 対象バージョン: Asakusa Framework ``0.6.0`` 以降
 
 この文書は、 `Amazon Web Services`_ (AWS) が提供する
 クラウド環境上のHadoopサービス `Amazon Elastic MapReduce`_ (Amazon EMR) 上で
@@ -96,7 +96,7 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 以下、これらの手順ごとの作業について説明します。
 以降の手順は、Asakusa Frameworkの開発環境（EMR操作用クライアントマシン）で行うものとします。
 
-また、Asakusa Frameworkのバージョンは ``0.5.3`` を用いて説明します。
+また、Asakusa Frameworkのバージョンは ``0.6.0`` を用いて説明します。
 
 ..  hint::
     バッチアプリケーションの実行とEMRの起動/停止を連動させる使い方も可能です。この場合、EMR起動時のコマンド実行パラメータに指定したバッチアプリケーションの実行が完了するとEMRが自動的に停止します。
@@ -107,7 +107,7 @@ Asakusa Framework本体のアーカイブファイルをS3に配置します。
 
 Asakusa Framework本体のアーカイブファイルを作成するには、Framework OrganizerでDirect I/O用のデプロイメントアーカイブを出力するように指定 [#]_ した後、Mavenの ``package`` ゴールを実行します。Framework Organizerの利用手順について詳しくは、 `Framework Organizer利用ガイド`_ を参照してください。
 
-``package`` ゴールを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``asakusafw-0.5.3-prod-directio.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/asakusafw`` 配下に配置するものとします。
+``package`` ゴールを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``asakusafw-0.6.0-prod-directio.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/asakusafw`` 配下に配置するものとします。
 
 以下にAsakusa Framework本体をS3に配置する例を示します。
 
@@ -115,7 +115,7 @@ Asakusa Framework本体のアーカイブファイルを作成するには、Fra
 
     cd <Framework Organizerのパス>
     mvn package
-    s3cmd --rr put target/asakusafw-0.5.3-prod-directio.tar.gz s3://<sample-bucket>/asakusafw/
+    s3cmd --rr put target/asakusafw-0.6.0-prod-directio.tar.gz s3://<sample-bucket>/asakusafw/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
