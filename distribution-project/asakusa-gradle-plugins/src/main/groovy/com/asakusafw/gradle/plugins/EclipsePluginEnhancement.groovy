@@ -78,7 +78,9 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseProjectTask() {
-        generateResourcePref()
+        project.eclipseProject.doLast {
+            generateResourcePref()
+        }
     }
 
     private void generateResourcePref() {
