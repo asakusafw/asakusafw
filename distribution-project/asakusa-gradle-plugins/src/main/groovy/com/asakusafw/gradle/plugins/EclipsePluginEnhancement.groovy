@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,9 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseProjectTask() {
-        generateResourcePref()
+        project.eclipseProject.doLast {
+            generateResourcePref()
+        }
     }
 
     private void generateResourcePref() {
@@ -101,6 +103,18 @@ class EclipsePluginEnhancement {
             noExportConfigurations += project.configurations.provided
             plusConfigurations += project.configurations.embedded
             noExportConfigurations += project.configurations.embedded
+        }
+        project.eclipseClasspath.doFirst {
+            makeGeneratedSourceDir()
+        }
+    }
+
+    private void makeGeneratedSourceDir() {
+        if (!project.file(project.asakusafw.modelgen.modelgenSourceDirectory).exists()) {
+            project.mkdir(project.asakusafw.modelgen.modelgenSourceDirectory)
+        }
+        if (!project.file(project.asakusafw.javac.annotationSourceDirectory).exists()) {
+            project.mkdir(project.asakusafw.javac.annotationSourceDirectory)
         }
     }
 
@@ -139,6 +153,7 @@ class EclipsePluginEnhancement {
 
     private void generateAsakusafwProjectPref() {
         project.file('.settings/com.asakusafw.asakusafw.prefs').withWriter('UTF-8') { out ->
+            out.writeLine('eclipse.preferences.version=1')
             project.asakusafw.conventionProperties.each { key, value ->
                 if (key.endsWith('Directory')) {
                     value = project.relativePath(value).replace('\\', '/')

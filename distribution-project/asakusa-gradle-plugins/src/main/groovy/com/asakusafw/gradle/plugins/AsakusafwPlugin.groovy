@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import com.asakusafw.gradle.tasks.*
 class AsakusafwPlugin implements Plugin<Project> {
 
     public static final String ASAKUSAFW_BUILD_GROUP = 'Asakusa Framework Build'
-    public static final String ASAKUSAFW_BUILD_TOOL_GROUP = 'Asakusa Framework Build Tool'
 
     private Project project
     private AntBuilder ant

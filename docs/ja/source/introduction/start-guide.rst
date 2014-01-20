@@ -73,40 +73,20 @@ Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.bin`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
+ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.tar.gz`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
 
-ダウンロードしたインストールアーカイブを実行します。
+ダウンロードが完了したら、以下の例を参考にしてJDKをインストールします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
-    chmod +x jdk-*
-    ./jdk-*
-
-インストールに成功すると以下のような画面が表示されます。
-
-..  code-block:: sh
-
-    Unpacking...
-    Checksumming...
-    Extracting...
-    ...
-    ...
-
-    Done.
-
-作成されたJavaのディレクトリに対して適切なオーナーの指定やディレクトリ配置を行います。
-
-..  code-block:: sh
-    
-    sudo mkdir /usr/lib/jvm
+    tar xf jdk-7u*-linux-i586.tar.gz
     sudo chown -R root:root jdk1.7.0_*/
+    sudo mkdir /usr/lib/jvm
     sudo mv jdk1.7.0_*/ /usr/lib/jvm
-    
-    cd /usr/lib/jvm
-    sudo ln -s jdk1.7.0_* java-7-oracle
+    sudo ln -s /usr/lib/jvm/jdk1.7.0_* /usr/lib/jvm/java-7-oracle
 
-..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.bin`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586-rpm.bin`` ) をダウンロードしないよう注意してください。
+..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.tar.gz`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586.rpm`` ) をダウンロードしないよう注意してください。
 
 
 Mavenのインストール
@@ -178,7 +158,7 @@ Asakusa Frameworkを開発環境にインストールするには、Asakusa Fram
 
 Framework Organizer は以下からダウンロードします。
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.3.tar.gz
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.6.0.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてAsakusa Frameworkをインストールします。
 インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
@@ -247,7 +227,7 @@ Asakusa Frameworkのインストール確認
     
     cat $ASAKUSA_HOME/VERSION
     
-    asakusafw.version=0.5.3
+    asakusafw.version=0.6.0
     
     asakusafw.build.timestamp=...
     asakusafw.build.java.version=1.6.0_...
@@ -295,28 +275,25 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 
     mkdir -p ~/workspace
     cd ~/workspace
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、WindGateと連携するアプリケーション用のテンプレートである 1 ( ``asakusa-archetype-windgate`` ) を選択します。
 
 ..  code-block:: sh
 
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 3 (バージョン 0.5.3) を選択します。
+次に、Asakusa Frameworkのバージョンを選択します。ここでは バージョン 0.6.0 を選択します。
 
 ..  code-block:: sh
 
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.5-SNAPSHOT
-    2: 0.5.0
-    3: 0.5.1
-    4: 0.5.2
-    5: 0.5.3
-    Choose a number: 5: 5 (<-5を入力)
+    1: 0.6-SNAPSHOT
+    2: 0.6.0
+    Choose a number: 2: 2 (<-2を入力)
 
 ..  attention::
     ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。

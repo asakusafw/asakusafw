@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.5.3.tar.gz>`_ 
+* `asakusa-project-template-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.0.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.5.3.tar.gz>`_ 
+* `asakusa-example-project-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.0.tar.gz>`_ 
 
 プロジェクトの配置
 ------------------
@@ -109,18 +109,18 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 
     * - ファイル/ディレクトリ
       - 説明
+    * -  ``build.gradle`` 
+      - Gradleビルドスクリプト
     * -  ``src`` 
       - プロジェクトのソースディレクトリ
     * -  ``build`` 
       - プロジェクトのビルドディレクトリ（ビルド時に生成）
-    * -  ``gradle`` 
-      - Gradleラッパー (Gradle Version: 1.10)
     * -  ``gradlew`` 
       - Gradleラッパーコマンド (Unix)
     * -  ``gradlew.bat`` 
       - Gradleラッパーコマンド (Windows)
-    * -  ``build.gradle`` 
-      - ビルドスクリプト
+    * -  ``.buildtools``
+      - Gradleラッパーライブラリ (Gradle Version: 1.10)
 
 アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。  ``build`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
 
@@ -143,7 +143,7 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
       3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
       4     }
       5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
+      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.6.0'
       7     }
       8 }
       9 
@@ -152,7 +152,7 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
      12 apply plugin: 'eclipse'
      13 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
+     15     asakusafwVersion = '0.6.0'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'
@@ -338,7 +338,7 @@ DMDLスクリプトから演算子の実装で使用するデータモデルク�
 ..  code-block:: groovy
 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
+     15     asakusafwVersion = '0.6.0'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'
@@ -476,14 +476,13 @@ Eclipseプロジェクト用の定義ファイルを作成するには、 ``ecli
 
 ..  code-block:: sh
 
-    ./gradlew compileJava eclipse
+    ./gradlew eclipse
 
-EclipseにJavaソースディレクトリを正しく認識させるためには、 ``eclipse`` タスクを実行する時点で、プロジェクトで使用するすべてのJavaソースディレクトリが存在している必要があります。 Asakusa Gradle Plugin では `Javaソースファイルのコンパイル`_ で説明した ``compileJava`` タスクを実行することで必要なソースディレクトリが生成されるので、上記の例では ``compileJava`` タスクを事前に実行しています。
-
-このコマンドを実行することによってプロジェクトディレクトリに対して ``.project`` , ``.classpath`` , ``.factorypath`` などのいくつかのEclipse用の定義ファイルが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
+このコマンドを実行することによって、プロジェクトディレクトリに対してEclipseプロジェクト用の定義ファイルやEclipse上のクラスパスに対応したソースディレクトリなどが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
 
 ..  tip::
     Eclipseからプロジェクトをインポートするには、Eclipseのメニューから  ``[File]``  ->  ``[Import]``  ->  ``[General]``  ->  ``[Existing Projects into Workspace]``  を選択し、プロジェクトディレクトリを指定します。
+
 
 Asakusa Frameworkのデプロイメントアーカイブ生成
 -----------------------------------------------
@@ -602,7 +601,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
       9     }
      10 
      11     dependencies {
-     12         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
+     12         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.6.0'
      13     }
      14 }
      15 
@@ -610,7 +609,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
      17 apply plugin: 'asakusafw-organizer'
      18 
      19 asakusafw {
-     20     asakusafwVersion = '0.5.3'
+     20     asakusafwVersion = '0.6.0'
      21 
      22     modelgen {
      23         modelgenSourcePackage "com.example.modelgen"
@@ -672,7 +671,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
 ..  code-block:: groovy
 
      19 asakusafw {
-     20     asakusafwVersion = '0.5.3'
+     20     asakusafwVersion = '0.6.0'
      21 
      22     modelgen {
      23         modelgenSourcePackage "com.example.modelgen"
@@ -1162,7 +1161,7 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 ..  code-block:: groovy
 
     asakusafw {
-        asakusafwVersion = '0.5.3'
+        asakusafwVersion = '0.6.0'
         ....
     }
     
@@ -1215,7 +1214,7 @@ Asakusa Gradle Pluginのバージョン指定
       3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
       4     }
       5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
+      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.6.0'
       7     }
       8 }
 
@@ -1227,7 +1226,7 @@ Asakusa Frameworkのバージョン指定
 ..  code-block:: groovy
 
      14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
+     15     asakusafwVersion = '0.6.0'
      16 
      17     modelgen {
      18         modelgenSourcePackage 'com.example.modelgen'

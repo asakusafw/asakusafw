@@ -1,3 +1,5 @@
+defaultTasks 'clean', 'build', 'install', 'assembleTemplates'
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
@@ -67,7 +69,7 @@ task generateTemplates << {
             include '**/build.gradle'
             expand ([
                 repProjectVersion: version,
-                repConventionAsakusafwVersion: '${asakusafw.asakusafwVersion}',
+                repConventionAsakusafwVersion: 'asakusafw.asakusafwVersion',
                 repMavenRepoType: version.text().endsWith("SNAPSHOT") ? 'snapshots' : 'releases',
             ])
         }
@@ -140,4 +142,6 @@ task assembleTemplates {
     dependsOn assembleTemplateProject, assembleExampleProject
 }
 
-defaultTasks 'clean', 'build', 'install', 'assembleTemplates'
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
