@@ -27,7 +27,6 @@ import com.asakusafw.gradle.tasks.*
 class AsakusafwPlugin implements Plugin<Project> {
 
     public static final String ASAKUSAFW_BUILD_GROUP = 'Asakusa Framework Build'
-    public static final String ASAKUSAFW_BUILD_TOOL_GROUP = 'Asakusa Framework Build Tool'
 
     private Project project
     private AntBuilder ant
