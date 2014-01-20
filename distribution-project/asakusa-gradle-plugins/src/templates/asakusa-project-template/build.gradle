@@ -8,8 +8,8 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
-    jarFile = file('.buildtools/gradlew.jar')
+    gradleVersion '1.10'
+    jarFile file('.buildtools/gradlew.jar')
 }
 
 apply plugin: 'asakusafw'
@@ -17,7 +17,7 @@ apply plugin: 'asakusafw-organizer'
 apply plugin: 'eclipse'
 
 asakusafw {
-    asakusafwVersion = '${repProjectVersion}'
+    asakusafwVersion '${repProjectVersion}'
 
     modelgen {
         modelgenSourcePackage 'com.example.modelgen'
@@ -28,7 +28,7 @@ asakusafw {
 }
 
 asakusafwOrganizer {
-    asakusafwVersion = ${repConventionAsakusafwVersion}
+    asakusafwVersion ${repConventionAsakusafwVersion}
 }
 
 dependencies {
