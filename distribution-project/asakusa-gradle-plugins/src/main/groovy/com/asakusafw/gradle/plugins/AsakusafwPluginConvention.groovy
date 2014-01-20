@@ -22,6 +22,11 @@ import org.gradle.util.ConfigureUtil
  * Convention class for {@link AsakusafwPlugin}.
  */
 class AsakusafwPluginConvention {
+    /**
+     * Schema version of this convention.
+     */
+    static final CONVENTION_SCHEMA_VERSION = '1.0.0'
+
     final Project project
 
     /**
@@ -295,6 +300,7 @@ class AsakusafwPluginConvention {
         def commonPrefix = 'com.asaksuafw.asakusafw.'
         def convention = [:]
 
+        convention.put(commonPrefix + 'conventionSchemaVersion', CONVENTION_SCHEMA_VERSION)
         convention.put(commonPrefix + 'asakusafwVersion', asakusafwVersion)
         convention.put(commonPrefix + 'maxHeapSize', maxHeapSize)
         convention.put(commonPrefix + 'logbackConf', logbackConf)
