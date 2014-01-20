@@ -308,7 +308,7 @@ class AsakusafwPluginConvention {
         return convention
     }
 
-    def asMap(Object obj, String keyPrefix) {
+    static def asMap(Object obj, String keyPrefix) {
         obj.class.declaredFields.findAll{ !it.synthetic }.collectEntries {
             [keyPrefix + it.name, obj[it.name]]
         }
