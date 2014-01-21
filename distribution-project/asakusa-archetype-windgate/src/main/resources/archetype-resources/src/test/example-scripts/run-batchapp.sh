@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+$ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
+
 cat /tmp/windgate-$USER/result/category-2011-04-01.csv
 cat /tmp/windgate-$USER/result/error-2011-04-01.csv
 

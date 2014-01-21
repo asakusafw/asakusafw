@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+$ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
+
 cd $HOME
 hadoop fs -text target/testing/directio/result/category/result.csv
 hadoop fs -text target/testing/directio/result/error/2011-04-01.csv
