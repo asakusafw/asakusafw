@@ -314,7 +314,7 @@ DMDLファイルは複数配置することが出来ます。上記ディレク�
 ------------------------------
 ``generate-sources`` フェーズを実行すると、データモデルクラスの生成のほか、テストドライバを利用するテストで使用する テストデータテンプレート が ``target/excel`` 配下に生成されます。テストデータテンプレートについては、 :doc:`../testing/using-excel` を参照して下さい。
 
-.. _maven-archetype-batch-compile:
+.. _batch-compile-maven-archetype:
 
 
 バッチコンパイルとバッチアプリケーションアーカイブの生成
@@ -336,9 +336,9 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
 
+* :doc:`../administration/deployment-with-directio`
 * :doc:`../administration/deployment-with-windgate`
 * :doc:`../administration/deployment-with-thundergate`
-* :doc:`../administration/deployment-with-directio`
 
 ..  warning::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。
@@ -423,7 +423,7 @@ Eclipseのパッケージエクスプローラーからアプリケーション�
 
 これでMavenプロジェクトへの変換が行われました。アプリケーション用プロジェクトに対してMavenを実行する場合は、アプリケーション用プロジェクトを右クリックして ``[Run As]`` を選択するとサブメニューに ``[Maven build...]`` など、いくつかのMaven実行用メニューが表示されるのでこれを選択してください。
 
-.. _application-dependency-library:
+.. _dependency-library-maven-archetype:
 
 アプリケーション用依存ライブラリの追加
 ======================================
@@ -624,4 +624,61 @@ TestDriver Settings (for Asakusa 0.1 asakusa-test-tools)
     *(asakusa-archetype-thundergateのみ)*
 
     Asakusa Framework 0.1 仕様のテストデータテンプレート生成ツールをMavenコマンドから実行 ( ``mvn exec:java -Dexec.mainClass=com.asakusafw.testtools.templategen.Main`` )した場合に、テストデータシート生成ツールが生成の対象とするテーブルをスペース区切りで指定します。
+
+Mavenアーキタイプ マイグレーションガイド
+========================================
+ここでは、Asakusa Frameworkのバージョンアップに伴い、Mavenアーキタイプを使って構築した開発環境のマイグレーション手順について解説します。
+
+.. _vup-maven-archetype:
+
+Mavenアーキタイプで構築した開発環境のバージョンアップ
+-----------------------------------------------------
+Mavenアーキタイプで構築したAsakusa Framework開発環境をバージョンアップする手順例を説明します。Asakusa Frameworkの各バージョン固有のマイグレーション情報については :doc:`migration-guide` に説明があるので、こちらも必ず確認してください。
+
+Asakusa Frameworkの再インストール
+---------------------------------
+アップデートするバージョンのAsakusa Frameworkを開発環境に再インストールします。
+
+Asakusa Frameworkを再インストールするには、更新したいバージョンの Framework Organizer [#]_ をダウンロードした後、Mavenの以下のコマンドを実行します。
+
+..  code-block:: sh
     
+    mvn package antrun:run
+
+..  [#] 詳しくは、 :doc:`../administration/framework-organizer` を参照してください。
+
+..  attention::
+    これまで使用していたバージョンの Framework Organizer の pom.xml に対して設定を追加・変更していた場合は、その設定を新しいバージョンの Framework Organizer にも反映する必要があります。
+
+Asakusa Frameworkのバージョン指定
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+アプリケーションプロジェクトのpom.xmlの10行目にある ``<asakusafw.version>`` の値を更新したいバージョンに書き換えます。
+
+..  code-block:: sh
+
+    <asakusafw.version>0.6.0</asakusafw.version>
+
+..  note::
+    アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。
+
+アプリケーションのバッチコンパイル
+----------------------------------
+指定したバージョンのAsakusa Frameworkでバッチアプリケーションをバッチコンパイルします。
+
+..  code-block:: sh
+
+    mvn clean package
+
+..  attention::
+    基本的にAsakusa Frameworkのマイグレーションを行う場合、合わせてバッチアプリケーションの再コンパイルが必要です。運用環境のAsakusa Frameworkをマイグレーションする場合は、これに合わせて該当バージョンでバッチコンパイルを行ったアプリケーションアーカイブを再デプロイしてください。
+
+
+Eclipse定義ファイルの更新
+-------------------------
+Eclipseを使って開発している場合は、Eclipse用定義ファイルを更新します。
+
+..  code-block:: sh
+
+    mvn eclipse:eclipse
+
+

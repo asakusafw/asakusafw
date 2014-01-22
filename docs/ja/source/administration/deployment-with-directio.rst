@@ -111,7 +111,7 @@ Direct I/Oを利用したシンプルな構成例を以下に示します。
 運用環境の構築を以下の流れで説明します。
 
 1. Hadoopクラスターの構築
-2. Asakusa Frameworkのインストールアーカイブの作成
+2. Asakusa Frameworkのデプロイメントアーカイブの作成
 3. Asakusa Frameworkのデプロイ
 4. Asakusa Framework追加ライブラリのデプロイ
 5. Asakusa Framework実行時プラグインの設定
@@ -131,31 +131,35 @@ Hadoopクラスターの構築が完了したら、Hadoopクライアントモ�
 *ASAKUSA_USER* からHadoopが提供しているサンプルアプリケーションのジョブをhadoopコマンドを使って実行し、ジョブが正常に実行されることを確認して下さい。
 
 
-Asakusa Frameworkのインストールアーカイブの作成
------------------------------------------------
-Asakusa Frameworkのインストールアーカイブを用意します。
+Asakusa Frameworkのデプロイメントアーカイブの作成
+-------------------------------------------------
+Asakusa Frameworkのデプロイメントアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、Framework Organizer [#]_ に対してMavenの以下のコマンドを実行して生成します。
+Asakusa Frameworkのデプロイメントアーカイブの作成や設定は、
+使用している開発環境に応じた以下のドキュメントを参照してください。
 
-..  code-block:: sh
+* Gradleを使った開発環境
+   * :doc:`../application/gradle-plugin` - :ref:`deployment-archive-gradle-plugin`
+* Mavenを使った開発環境
+   * :doc:`framework-organizer` - :ref:`deployment-archive-maven-archetype`
 
-    mvn package
+デプロイメントアーカイブのファイル名
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Asakusa Frameworkのデプロイメントアーカイブのファイル名は ``asakusafw-`` から始まるtarファイルですが、
+そのファイル名は使用しているビルド環境や構成によって異なります。
+    
+例えば、Gradleを使った開発環境でAsaksa Framework バージョン ``0.6.0`` を使っている場合、
+ファイル名は以下のようになります。
 
-このコマンドを実行すると、Framework Organizerの ``target`` ディレクトリ配下にいくつかのファイルが生成されます。
-このうち以下のファイルが今回利用するアーカイブ [#]_ です。
+* ``asakusafw-0.6.0.tar.gz``
 
-``asakusafw-${asakusafw.version}-prod-directio.tar.gz``
+以降本書では、Asakusa Frameworkのデプロイメントアーカイブ名を使った操作手順例では
+デプロイメントアーカイブのファイル名を ``asakusafw-*.tar.gz`` と表記します。
 
-``${asakusafw.version}`` は使用しているAsakusa Frameworkのバージョンです。
-例えばversion |version| を使っている場合、ファイル名は asakusafw-|version|-prod-directio.tar.gz になります。
-
-..  [#] 詳しくは、 :doc:`framework-organizer` を参照してください。
-..  [#] このアーカイブには (Direct I/Oを含む) Asakusa Frameworkのコアライブラリ、YAESS、Hadoopブリッジが含まれています。
-
-
+    
 Asakusa Frameworkのデプロイ
 ---------------------------
-作成したインストールアーカイブを利用し、Asakusa Frameworkを以下それぞれのモジュールを配置するマシン上にデプロイします。
+作成したデプロイメントアーカイブを利用し、Asakusa Frameworkを以下それぞれのモジュールを配置するマシン上にデプロイします。
 
 ..  list-table:: Asakusa Frameworkのデプロイが必要なモジュール
     :widths: 10 10
@@ -172,16 +176,15 @@ Asakusa Frameworkは上記すべてのモジュールから利用しているた
 一台のマシンに複数のモジュールを配置している場合は、マシンごとに1セットだけデプロイします [#]_ 。
 
 Asakusa Frameworkのデプロイ先を環境変数 ``$ASAKUSA_HOME`` とした場合、 ``$ASAKUSA_HOME`` ディレクトリを作成し、
-``$ASAKUSA_HOME`` 直下にAsakusa Framework用のインストールアーカイブ( ``asakusafw-${asakusafw.version}-prod-directio.tar.gz`` )を展開します。
+``$ASAKUSA_HOME`` 直下にAsakusa Frameworkのデプロイメントアーカイブ( ``asakusafw-*.tar.gz`` )を展開します。
 展開後、 ``$ASAKUSA_HOME`` 配下の ``*.sh`` に実行権限を追加します。
 
 ..  code-block:: sh
 
-    # ASAKUSA_HOME="(デプロイ先)"
     mkdir -p "$ASAKUSA_HOME"
-    cp asakusafw-*-prod-directio.tar.gz "$ASAKUSA_HOME"
+    cp asakusafw-*.tar.gz "$ASAKUSA_HOME"
     cd "$ASAKUSA_HOME"
-    tar -xzf asakusafw-*-prod-directio.tar.gz
+    tar -xzf asakusafw-*.tar.gz
     find "$ASAKUSA_HOME" -name "*.sh" | xargs chmod u+x
 
 
@@ -195,7 +198,7 @@ Asakusa Frameworkのデプロイ先を環境変数 ``$ASAKUSA_HOME`` とした�
 
 Asakusa Framework追加ライブラリのデプロイ
 -----------------------------------------
-Asakusaバッチアプリケーションで利用する共通ライブラリ（Hadoopによって提供されているライブラリ以外のもの） [#]_ や、Asakusa Frameworkを拡張する :doc:`実行時プラグイン <deployment-runtime-plugins>` が存在する場合、これらのクラスライブラリアーカイブを以下のモジュールに追加でデプロイします。
+Asakusaバッチアプリケーションで利用する共通ライブラリ(Hadoopによって提供されているライブラリ以外のもの)が存在する場合、これらのクラスライブラリアーカイブを以下のモジュールに追加でデプロイします。
 
 ..  list-table:: Asakusa Framework追加ライブラリのデプロイが必要なモジュール
     :widths: 10 10
@@ -208,12 +211,13 @@ Asakusaバッチアプリケーションで利用する共通ライブラリ（H
     * - バッチ起動モジュール
       - 
 
-追加ライブラリのデプロイ先は ``$ASAKUSA_HOME/ext/lib/`` の直下です。
-実行時プラグインの設定は `Asakusa Framework実行時プラグインの設定`_ を参照してください。
+追加ライブラリの作成や設定は、
+使用している開発環境に応じた以下のドキュメントを参照してください。
 
-..  [#] Asakusa Framework バージョン ``0.5.1`` から、バッチアプリケーションのコンパイル時に規定のディレクトリに追加ライブラリを配置しておくことで、バッチアプリケーションアーカイブに共通ライブラリを含める機能が追加されました。この機能を使って共通ライブラリを管理する場合は、本手順で説明するデプロイ手順は不要です。
-
-    詳しくは、 :doc:`../application/maven-archetype` の :ref:`application-dependency-library` を参照してください。
+* Gradleを使った開発環境
+   * :doc:`../application/gradle-plugin` - :ref:`dependency-library-gradle-plugin`
+* Mavenを使った開発環境
+   * :doc:`../application/maven-archetype` の :ref:`dependency-library-maven-archetype`
 
 Asakusa Framework実行時プラグインの設定
 ---------------------------------------
@@ -269,7 +273,7 @@ YAESSプラグインライブラリのデプロイ
       - ○
 
 ..  note::
-    Asakusa Frameworkのインストールアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
+    Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
     あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
 
     * ``asakusa-yaess-paralleljob`` : ジョブを並列実行のためのプラグイン
@@ -324,10 +328,17 @@ YAESSのHadoopブリッジについては :doc:`../yaess/user-guide` などを�
 バッチアプリケーションのデプロイ
 --------------------------------
 開発したバッチアプリケーションデプロイするには、
-あらかじめデプロイ対象のアプリケーションアーカイブを作成しておきます。
-このアプリケーションアーカイブの作成方法は、 :doc:`../application/maven-archetype` を参照してください。 
+あらかじめデプロイ対象のバッチアプリケーションアーカイブを作成しておきます。
 
-作成したアプリケーションアーカイブを利用して、それぞれのバッチアプリケーションを以下のモジュールを配置したマシン上にデプロイします。
+バッチアプリケーションアーカイブの作成は、
+使用している開発環境に応じた以下のドキュメントを参照してください。
+
+* Gradleを使った開発環境
+   * :doc:`../application/gradle-plugin` - :ref:`batch-compile-gradle-plugin`
+* Mavenを使った開発環境
+   * :doc:`../application/maven-archetype` の :ref:`batch-compile-maven-archetype`
+
+作成したバッチアプリケーションアーカイブを利用して、それぞれのバッチアプリケーションを以下のモジュールを配置したマシン上にデプロイします。
 
 ..  list-table:: バッチアプリケーションのデプロイが必要なモジュール
     :widths: 10 10
@@ -340,26 +351,25 @@ YAESSのHadoopブリッジについては :doc:`../yaess/user-guide` などを�
     * - バッチ起動モジュール
       - ○
 
-バッチアプリケーションは ``$ASAKUSA_HOME/batchapps/`` ディレクトリ直下にアプリケーションアーカイブを配置し、そこでJARファイルとして展開します。
+バッチアプリケーションアーカイブは ``$ASAKUSA_HOME/batchapps/`` ディレクトリ直下にJARファイルを展開して配置します。
 
 ..  warning::
     デプロイ対象とするjarファイルを間違えないよう注意してください。
-    デプロイ対象ファイルは ``${artifactId}-batchapps-{version}.jar`` のようにアーティファクトIDの後に **batchapps** が付くjarファイルです。
+    デプロイ対象ファイルは ``${baseName}-batchapps-${version}.jar`` のようにファイル名に **batchapps** が付くjarファイルです。
 
+..  note::
     アプリケーションのビルドとデプロイについては、 :doc:`../introduction/start-guide` の「サンプルアプリケーションのビルド」「サンプルアプリケーションのデプロイ」も参考にしてください。
 
-以下は ``/tmp/asakusa-app/example-app-batchapps-1.0.0.jar`` にアプリケーションアーカイブがある前提で、
+以下は ``/tmp/asakusa-app/example-app-batchapps.jar`` にアプリケーションアーカイブがある前提で、
 それに含まれるバッチアプリケーションをデプロイする例です。
 
 ..  code-block:: sh
 
-    #ASAKUSA_HOME=(Asakusa Frameworkデプロイ先のパス)
-    cp /tmp/asakusa-app/example-app-batchapps-1.0.0.jar "$ASAKUSA_HOME/batchapps"
+    cp /tmp/asakusa-app/example-app-batchapps.jar "$ASAKUSA_HOME/batchapps"
     cd "$ASAKUSA_HOME/batchapps"
-    jar -xf example-app-batchapps-1.0.0.jar
-    rm -f example-app-batchapps-1.0.0.jar
+    jar -xf example-app-batchapps.jar
+    rm -f example-app-batchapps.jar
     rm -fr META-INF
-
 
 ..  note::
     ``$ASAKUSA_HOME/batchapps`` ディレクトリ直下にはバッチIDを示すディレクトリのみを配置するとよいでしょう。

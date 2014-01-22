@@ -42,6 +42,8 @@ Framework Organizer は以下からダウンロードします。
     ``$ASAKUSA_HOME`` は Asakusa Framework本体を再インストールする都度初期化されるため、
     意図せず Framework Organizerの構成情報を失う可能性があります。
 
+.. _deployment-archive-maven-archetype:
+
 Asakusa Frameworkのデプロイメントアーカイブ生成
 ===============================================
 Framework Organizerに含まれる ``pom.xml`` に対してMavenの ``package`` ゴールを実行すると、
