@@ -25,7 +25,7 @@
 
 	<properties>
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
-		<hadoop.version>1.1.2</hadoop.version>
+		<hadoop.version>1.2.1</hadoop.version>
 		<logback.version>1.0.12</logback.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<junit.version>4.11</junit.version>
@@ -396,7 +396,7 @@ encoding/<project>=UTF-8
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
-				<artifactId>junit-dep</artifactId>
+				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
 			</dependency>
 			<dependency>
