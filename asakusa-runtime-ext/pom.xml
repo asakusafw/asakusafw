@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Asakusa Runtime Extended Plug-ins</name>
+	<groupId>com.asakusafw.sandbox</groupId>
+	<artifactId>asakusa-runtime-ext</artifactId>
+	<parent>
+		<artifactId>asakusa-sandbox-parent</artifactId>
+		<groupId>com.asakusafw.sandbox</groupId>
+		<version>0.6-SNAPSHOT</version>
+		<relativePath>../asakusa-sandbox-parent</relativePath>
+	</parent>
+
+	<description>Asakusa Core Runtime Libraries Extended Plug-ins</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
+
+	<properties>
+		<asakusafw.version>${project.version}</asakusafw.version>
+		<commons.logging.version>1.1.1</commons.logging.version>
+	</properties>
+
+	<packaging>jar</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-runtime</artifactId>
+			<version>${asakusafw.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>${hadoop.artifact.id}</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
