@@ -906,7 +906,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       - DSLコンパイラのワーキングディレクトリ
     * -  ``hadoopWorkDirectory`` 
       - String
-      -  ``${project.buildDir}/hadoopwork/${execution_id}`` 
+      -  ``target/hadoopwork/${execution_id}`` 
       - DSLコンパイラが生成するアプリケーション(Hadoopジョブ)が使用するHadoop上のワーキングディレクトリ
 
 ..  [#] これらのプロパティは規約オブジェクト ``CompilerConfiguration`` が提供します。
