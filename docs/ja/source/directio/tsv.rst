@@ -4,31 +4,50 @@ Direct I/OのTSVファイル連携
 
 この文書では、Direct I/Oを使ってTSVフォーマットのファイルをインポート/エクスポートするための拡張機能の使い方について説明します。
 
-TSVファイル連携用のPOM設定
-==========================
-Direct I/OのTSVファイル連携を使用するためには、 ``pom.xml`` に以下の依存性定義を追加します。
+Mavenアーティファクト
+=====================
+Direct I/OのTSVファイル連携モジュールはAsakusa FrameworkのMavenリポジトリに
+グループID ``com.asakusafw.sandbox`` を持つMavenアーティファクトとして登録されています。
 
-..  list-table:: TSVファイル連携で使用するMavenアーティファクト
+..  list-table:: Direct I/OのTSVファイル連携で使用するMavenアーティファクト
     :widths: 5 5 
     :header-rows: 1
 
     * - グループID
       - アーティファクトID
-    * - com.asakusafw.sandbox
-      - asakusa-directio-dmdl-ext
+    * - ``com.asakusafw.sandbox``
+      - ``asakusa-directio-dmdl-ext``
+
+TSVファイル連携モジュールの利用方法
+===================================
+
+Gradleプロジェクト
+------------------
+GradleプロジェクトでTSVファイル連携モジュールを使用する場合は
+``build.gradle`` の ``dependencies`` ブロック内に ``compile`` 依存関係(コンフィグレーション)に対して
+依存定義を追加します。
+
+..  code-block:: groovy
+
+    dependencies {
+        ...
+        compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: asakusafw.asakusafwVersion
+
+Mavenプロジェクト
+=================
+MavenプロジェクトでTSVファイル連携モジュールを使用する場合は
+Direct I/O用アーキタイプ ``asakusa-archetype-directio`` から作成したプロジェクトの ``pom.xml`` に以下の依存性定義を追加します。
 
 ..  code-block:: xml
 
 	<dependencies>
-    ...
+        ...
 		<dependency>
 			<groupId>com.asakusafw.sandbox</groupId>
 			<artifactId>asakusa-directio-dmdl-ext</artifactId>
 			<version>${asakusafw.version}</version>
 			<scope>compile</scope>
 		</dependency>
-
-``pom.xml`` を編集したら、 このプロジェクトに対して（ ``pom.xml`` が存在するディレクトリ上で） ``mvn eclipse:eclipse`` を実行してEclipse用のクラスパス定義を更新します。
 
 モデルクラスの生成
 ==================
