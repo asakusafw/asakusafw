@@ -43,7 +43,7 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
 
     @Override
     protected void doInitialize() {
-        LOG.info("データモデルクラスのプラグインを読み出します");
+        LOG.debug("データモデルクラスのプラグインを読み出します");
         List<DataClassRepository> results = Lists.create();
         ServiceLoader<DataClassRepository> services = ServiceLoader.load(
                 DataClassRepository.class,

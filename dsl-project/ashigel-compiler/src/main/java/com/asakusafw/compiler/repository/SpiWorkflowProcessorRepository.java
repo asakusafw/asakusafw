@@ -48,7 +48,7 @@ public class SpiWorkflowProcessorRepository
 
     @Override
     protected void doInitialize() {
-        LOG.info("ワークフロー処理のプラグインを読み出します");
+        LOG.debug("ワークフロー処理のプラグインを読み出します");
         Iterable<? extends WorkflowProcessor> services = loadServices();
         List<WorkflowProcessor> procs = Lists.create();
         for (WorkflowProcessor proc : services) {

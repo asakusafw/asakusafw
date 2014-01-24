@@ -86,7 +86,7 @@ public class ShuffleAnalyzer {
      */
     public ShuffleModel analyze(StageBlock block) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.info("{}で行われるシャッフルフェーズについて分析します", block);
+        LOG.debug("{}で行われるシャッフルフェーズについて分析します", block);
 
         if (block.hasReduceBlocks() == false) {
             LOG.debug("{}ではシャッフルが行われません", block);
