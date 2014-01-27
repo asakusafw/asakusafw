@@ -18,7 +18,7 @@
     <!-- Change it. -->
     <property>
         <name>com.asakusafw.directio.root.fs.path</name>
-        <value>s3://<sample-bucket>/app-data</value>
+        <value>s3://[sample-bucket]/app-data</value>
     </property>
 
     <property>

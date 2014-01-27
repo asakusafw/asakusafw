@@ -22,19 +22,22 @@ AWSが提供するストレージサービスである `Amazon Simple Storage Se
 
 はじめに
 ========
-この本書では、Asakusa Frameworkの開発環境で作成した
+この文書では、
 Direct I/Oを利用したサンプルアプリケーションを
 EMR上で実行するまでの手順を説明します。
 
-サンプルアプリケーションは、
-Direct I/O用アーキタイプから作成したプロジェクトに含まれるサンプルプログラム
-（カテゴリー別売上金額集計バッチ）を利用します。
-
-Asakusa Frameworkの開発環境上でDirect I/O向けのサンプルアプリケーションを
+本書では、
+`Asakusa Framework スタートガイド`_ の説明で使用した
+サンプルアプリケーションプロジェクトを利用します。
+Asakusa Frameworkの開発環境上でサンプルアプリケーションを
 ビルド及び実行するまでの手順については、
-Asakusa Frameworkのドキュメント `Direct I/O スタートガイド`_ を参照して下さい。
+`Asakusa Framework スタートガイド`_ を参照してください。
 
-..  _`Direct I/O スタートガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/start-guide.html
+また、Direct I/O を使ったアプリケーションの開発方法については、
+`データの直接入出力 - Direct I/O`_ などを参照して下さい。
+
+..  _`Asakusa Framework スタートガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/introduction/index.html
+..  _`データの直接入出力 - Direct I/O`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/index.html
 
 AWS利用環境の準備
 =================
@@ -56,7 +59,7 @@ EMRやS3を利用するための環境を準備します。
 この文書では、以下の環境が用意されたものとして以降の説明を進めます。
 
 * Asakusa Framework開発環境（Linuxマシン）上にEMR操作用クライアントマシンの環境構築を行った。
-* サンプルアプリケーションを実行するための各種データ入出力用のS3バケットとして ``<sample-bucket>`` を作成した [#]_ 。
+* サンプルアプリケーションを実行するための各種データ入出力用のS3バケットとして ``[sample-bucket]`` を作成した [#]_ 。
 
 また、以降の手順では開発環境からS3にファイルを配置、およびS3からファイルを取得する手順がいくつか出てきますが、この文書では `s3cmd`_ というツールを使ってS3上のファイルを扱う例を示します [#]_ 。
 
@@ -77,7 +80,7 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 バッチアプリケーションを実行するには様々な方法がありますが、
 ここでは以下の方針でデプロイと実行を行うものとします。
 
-* Asakusa Framework本体とバッチアプリケーションをあらかじめS3に配置しておく。
+* Asakusa FrameworkとバッチアプリケーションをあらかじめS3に配置しておく。
 * EMRの起動と停止はEMR操作用クライアントからコマンドで指定する。
 * EMRの起動時に、S3に配置したAsakusa FrameworkとバッチアプリケーションをEMRのHadoopクラスタにインストールする。
    * インストールはEMRのブートストラップアクションを利用して自動的に行う。
@@ -87,7 +90,7 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 この方針では、フレームワーク、アプリケーション、入力データ、その他必要なスクリプト等のすべてをS3上に配置します。
 具体的には、以下の作業が必要です。
 
-1. Asakusa Framework本体をS3に配置する
+1. Asakusa FrameworkをS3に配置する
 2. バッチアプリケーションをS3に配置する
 3. Asakusa Frameworkの設定ファイルをS3に配置する
 4. ブートストラップアクション用スクリプトをS3に配置する
@@ -101,57 +104,56 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 ..  hint::
     バッチアプリケーションの実行とEMRの起動/停止を連動させる使い方も可能です。この場合、EMR起動時のコマンド実行パラメータに指定したバッチアプリケーションの実行が完了するとEMRが自動的に停止します。
 
-Asakusa Framework本体をS3に配置する
------------------------------------
-Asakusa Framework本体のアーカイブファイルをS3に配置します。
+Asakusa FrameworkをS3に配置する
+-------------------------------
+Asakusa FrameworkのデプロイメントアーカイブをS3に配置します。
 
-Asakusa Framework本体のアーカイブファイルを作成するには、Framework OrganizerでDirect I/O用のデプロイメントアーカイブを出力するように指定 [#]_ した後、Mavenの ``package`` ゴールを実行します。Framework Organizerの利用手順について詳しくは、 `Framework Organizer利用ガイド`_ を参照してください。
+Asakusa Frameworkのデプロイメントアーカイブを作成するには、Asakusa Gradle Pluginを利用するプロジェクト上で、Gradleの ``assembleAsakusafw`` タスクを実行します。詳しくは、 `Asakusa Gradle Plugin利用ガイド`_ の `Asakusa Frameworkのデプロイメントアーカイブ生成`_ を参照してください。
 
-``package`` ゴールを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``asakusafw-0.6.0-prod-directio.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/asakusafw`` 配下に配置するものとします。
+``assembleAsakusafw`` タスクを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
 
-以下にAsakusa Framework本体をS3に配置する例を示します。
+以下にAsakusa FrameworkのデプロイメントアーカイブをS3に配置する例を示します。
 
 ..  code-block:: sh
 
-    cd <Framework Organizerのパス>
-    mvn package
-    s3cmd --rr put target/asakusafw-0.6.0-prod-directio.tar.gz s3://<sample-bucket>/asakusafw/
+    cd <プロジェクトのパス>
+    ./gradlew assembleAsakusafw
+    s3cmd --rr put build/asakusafw-0.6.0.tar.gz s3://[sample-bucket]/asakusafw/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
-..  _`Framework Organizer利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/framework-organizer.html
-
-..  [#] Framework OrganizerでDirect I/O用のデプロイメントアーカイブを出力するように指定する方法は、 `Framework Organizer利用ガイド`_ の 「生成するデプロイメントアーカイブを指定する」を参照してください。
-    
-    なお、Framework Organizerのデフォルトの設定ではWindGate用のデプロイメントアーカイブのみが出力されるよう設定されていますが、このアーカイブにはDirect I/O用のライブラリも含まれるので、これを利用することもできます。その場合、本書の説明例とファイル名が異なるので注意してください。
+..  _`Asakusa Gradle Plugin利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html
+..  _`Asakusa Frameworkのデプロイメントアーカイブ生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#deployment-archive-gradle-plugin
 
 バッチアプリケーションをS3に配置する
 ------------------------------------
-サンプルアプリケーションのデプロイメントアーカイブファイルをS3に配置します。
+アプリケーションのバッチアプリケーションアーカイブをS3に配置します。
 
-サンプルアプリケーションのデプロイメントアーカイブファイルは、Mavenの ``package`` フェーズを実行します。 ``package`` フェーズを実行すると、プロジェクトの ``target`` ディレクトリ配下に ``${artifactId}-batchapps-${version}.jar`` [#]_ というアーカイブファイルが作成されます。
+バッチアプリケーションアーカイブを作成するには、Asakusa Gradle Pluginを利用するプロジェクト上で、Gradleの  ``jarBatchapp`` タスクを実行します。 詳しくは、 `Asakusa Gradle Plugin利用ガイド`_ の `バッチコンパイルとバッチアプリケーションアーカイブの生成`_ を参照してください。
 
-このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/batchapps`` 配下に配置するものとします。
+``jarBatchapp`` タスクを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``${baseName}-batchapps-${version}.jar`` [#]_ というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/batchapps/`` 配下に配置するものとします。
 
-以下にバッチアプリケーションをS3に配置する例を示します。
+以下にバッチアプリケーションアーカイブをS3に配置する例を示します。
 
 ..  code-block:: sh
 
-    cd <サンプルアプリケーションプロジェクトのパス>
-    mvn clean package
-    s3cmd --rr put target/${artifactId}-batchapps-${version}.jar s3://<sample-bucket>/batchapps/
+    cd <プロジェクトのパス>
+    ./gradlew clean jarBatchapp
+    s3cmd --rr put build/*-batchapps*.jar s3://[sample-bucket]/batchapps/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
-..  [#] アーカイブファイルの ``${artifactId}`` や ``${version}`` の部分は、プロジェクト作成時に指定したプロジェクト名、バージョンがそれぞれ使用されます。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
+..  [#] アーカイブファイルの ``${baseName}`` や ``${version}`` の部分はビルドスクリプトで設定が可能です。サンプルアプリケーションのデフォルト設定では ``${baseName}`` はプロジェクトディレクトリ名が使用され、 ``${version}`` は付与されません。
 
+..  _`バッチコンパイルとバッチアプリケーションアーカイブの生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#batch-compile-gradle-plugin
 
 Asakusa Frameworkの設定ファイルをS3に配置する
 ---------------------------------------------
-サンプルアプリケーション用のAsakusa Framework設定ファイルをS3に配置します。
+EMR上でS3に対してデータの入出力を行うためのAsakusa Framework設定ファイルをS3に配置します。
 
-サンプルアプリケーションでは Direct I/O を使って任意のS3バケットからCSVファイルを読み込み、処理の結果をS3バケットにCSVファイルとして出力します。
+本書で説明するAsakusa Frameworkの構成では、実行するアプリケーションはDirect I/Oを使って
+S3バケットから入力ファイルを読み込み、処理の結果もS3バケットに出力ファイルを生成します。
 ここでは、Direct I/O が読み書きを行うS3 バケットのディレクトリパスを
 設定ファイル ``asakusa-resources.xml`` に記述します。
 
@@ -163,22 +165,21 @@ Asakusa Frameworkの設定ファイルをS3に配置する
     :language: xml
 
 ..  attention::
-    上記例を参考に設定ファイルを作成する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考に設定ファイルを作成する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
-上記の設定例では、プロパティ ``com.asakusafw.directio.root.fs.path`` に対して、S3のバケット ``s3://<sample-bucket>/app-data`` の配下をCSVの入出力ディレクトリとして使用するよう設定しています。この設定例をベースに環境構築を行う場合、必ず上記プロパティのバケット名を実際に使用するバケット名に置き換えて使用してください。
+上記の設定例では、プロパティ ``com.asakusafw.directio.root.fs.path`` に対して、S3のバケット ``s3://[sample-bucket]/app-data`` の配下をアプリケーションの入出力ディレクトリとして使用するよう設定しています。
 
-設定ファイルの内容を変更後、S3の ``s3://<sample-bucket>/conf/`` ディレクトリの配下に ``asakusa-resources.xml`` という名前で配置してください。
-このファイルは、EMRの起動時に ``$ASAKUSA_HOME/conf/asakusa-resources.xml`` として配置されます。
+この設定ファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/conf/`` 配下に配置するものとします。
 
 以下にAsakusa Frameworkの設定ファイルをS3に配置する例を示します。設定ファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名などを適切に設定したものとします。
 
 ..  code-block:: sh
 
     cd $HOME/Downloads
-    s3cmd --rr put asakusa-resources.xml s3://<sample-bucket>/conf/
+    s3cmd --rr put asakusa-resources.xml s3://[sample-bucket]/conf/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
 ブートストラップアクション用スクリプトをS3に配置する
 ----------------------------------------------------
@@ -196,17 +197,17 @@ EMRの起動時に指定することでそのシェルスクリプトを自動�
     :language: sh
 
 ..  attention::
-    上記例を参考にスクリプトファイルを作成する際は、必ずスクリプトの先頭で定義しているバケット名 ``<sample-bucket>``、及びAsakusa Framework本体のアーカイブファイル名( ``_asakusafw_filename`` の値)、アプリケーションのデプロイメントアーカイブファイル名 ( ``_asakusafw_filename`` の値)、を実際に使用するバケット名やファイル名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
-以下にブートストラップアクション用スクリプトファイルをS3に配置する例を示します。スクリプトファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名やバッチアプリケーションに関する設定などを適切に設定したものとします。
+以下にブートストラップアクション用スクリプトファイルをS3に配置する例を示します。スクリプトファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名などを適切に設定したものとします。
 
 ..  code-block:: sh
 
     cd $HOME/Downloads
-    s3cmd --rr put bootstrap-deploy-asakusa.sh s3://<sample-bucket>/bootstrap-actions/
+    s3cmd --rr put bootstrap-deploy-asakusa.sh s3://[sample-bucket]/bootstrap-actions/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
 ステップ用スクリプトをS3に配置する
 ----------------------------------
@@ -225,17 +226,17 @@ EMRではステップの実行に紐づく実際の処理をいくつかの方�
 ..  literalinclude:: attachment/step-yaess-batch.sh
     :language: sh
     
-このスクリプトをS3バケット上の任意のディレクトリに配置します。ここでは ``<sample-bucket>/steps`` 配下に配置するものとします。
+このスクリプトをS3バケット上の任意のディレクトリに配置します。ここでは ``[sample-bucket]/steps`` 配下に配置するものとします。
 
-以下にステップ用スクリプトファイルをS3に配置する例を示します。スクリプトファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置したものとします。
+以下にステップ用スクリプトファイルをS3に配置する例を示します。スクリプトファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名などを適切に設定したものとします。
 
 ..  code-block:: sh
 
     cd $HOME/Downloads
-    s3cmd --rr put step-yaess-batch.sh s3://<sample-bucket>/steps/
+    s3cmd --rr put step-yaess-batch.sh s3://[sample-bucket]/steps/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
 EMRの起動と停止
 ===============
@@ -253,15 +254,15 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
      --name asakusa-batch \
      --ami-version 2.4.2 \
      --enable-debugging \
-     --log-uri s3://<sample-bucket>/emr-logs \
+     --log-uri s3://[sample-bucket]/emr-logs \
      --master-instance-type m1.large \
      --slave-instance-type m1.large \
      --num-instances 2 \
      --bootstrap-action s3://elasticmapreduce/bootstrap-actions/run-if \
-     --args "instance.isMaster=true,s3n://<sample-bucket>/bootstrap-actions/bootstrap-deploy-asakusa.sh"
+     --args "instance.isMaster=true,s3n://[sample-bucket]/bootstrap-actions/bootstrap-deploy-asakusa.sh"
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
 ``elastic-mapreduce`` コマンドのオプション詳細についてはEMRのドキュメントなどを参照してください。ここでは本ドキュメントの説明で重要となるパラメータに絞って説明します。
 
@@ -349,24 +350,26 @@ EMR環境にデプロイしたAsakusa Frameworkのバッチアプリケーショ
 
 入力データをS3に配置
 --------------------
-サンプルアプリケーションは Direct I/O を使って任意のS3バケットから入力データとなるCSVファイルを読み込みます。
+入力データをS3に配置します。ここでは、Direct I/O を使って任意のS3バケットから入力データとなるCSVファイルを読み込むサンプルアプリケーションを例に説明します。
 
-このCSVファイルは、先述の `Asakusa Frameworkの設定ファイルをS3に配置する`_ で説明した設定に従って、
+サンプルアプリケーションは、先述の `Asakusa Frameworkの設定ファイルをS3に配置する`_ で説明した設定に対応した
 S3のディレクトリから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
-仕様に基づいてCSVファイルを読み込みます。
+仕様に基づいてCSVファイルを配置します。
 
-例えば、  ``asakusa-resources`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://<sample-bucket>/app-data`` であった場合は、 入力データは ``s3://<sample-bucket>/app-data/master/item_info.csv`` や ``s3://<sample-bucket>/app-data/sales/2011-04-01.csv`` といったようなパス名で配置することができます。
+例えば、  ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 入力データは ``s3://[sample-bucket]/app-data/master/item_info.csv`` や ``s3://[sample-bucket]/app-data/sales/2011-04-01.csv`` といったようなパス名で配置することができます。
 
 以下は、サンプルアプリケーションに付属しているサンプルデータをS3に配置する例です。
 
 ..  code-block:: sh
 
-    cd <サンプルアプリケーションプロジェクトのパス>
-    s3cmd -r --rr put src/test/example-dataset/master/ s3://<sample-bucket>/app-data/master/
-    s3cmd -r --rr put src/test/example-dataset/sales/ s3://<sample-bucket>/app-data/sales/
+    cd <プロジェクトのパス>
+    s3cmd -r --rr put src/test/example-dataset/master/ s3://[sample-bucket]/app-data/master/
+    s3cmd -r --rr put src/test/example-dataset/sales/ s3://[sample-bucket]/app-data/sales/
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
+
+..  _`Direct I/O スタートガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/start-guide.html
 
 ステップの実行
 --------------
@@ -378,12 +381,12 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 
     elastic-mapreduce \
      --jar s3://elasticmapreduce/libs/script-runner/script-runner.jar \
-     --args "s3n://<sample-bucket>/steps/step-yaess-batch.sh,example.summarizeSales,-A,date=2011-04-01" \
+     --args "s3n://[sample-bucket]/steps/step-yaess-batch.sh,example.summarizeSales,-A,date=2011-04-01" \
      --step-name "test-step" \
      --jobflow j-XXXXXXXXXXX
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。また、ジョブフローIDをEMR起動時に出力されたジョブフローIDに置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。また、ジョブフローIDをEMR起動時に出力されたジョブフローIDに置き換えてください。
 
 オプションの詳細についてはEMRのドキュメントなどを参照してください。ここでは本ドキュメントの説明で重要となるパラメータに絞って説明します。
 
@@ -419,19 +422,23 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 
 出力データをS3から取得
 ----------------------
-サンプルアプリケーションは Direct I/O を使って任意のS3バケットに処理の結果をCSVファイルとして出力します
+出力データをS3から取得します。ここでは、 `入力データをS3に配置`_ と同様にサンプルアプリケーションを例に説明します。
 
-これらの設定に関しては `入力データをS3に配置`_ と同様です。例えば、 ``asakusa-resources`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://<sample-bucket>/app-data`` であった場合は、 出力データは ``s3://<sample-bucket>/app-data/result/category/result.csv`` といったようなパスに出力されます。
+サンプルアプリケーションは、先述の `Asakusa Frameworkの設定ファイルをS3に配置する`_ で説明した設定に対応した
+S3のディレクトリから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
+仕様に基づいてCSVファイルを生成します。
+
+例えば、 ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 出力データは ``s3://[sample-bucket]/app-data/result/category/result.csv`` といったようなパスに出力されます。
 
 以下は、S3に出力された処理結果のCSVファイルをローカルの ``/tmp`` ディレクトリに配置して、CSVファイルの内容を確認する例です。
 
 ..  code-block:: sh
 
-    s3cmd get s3://<sample-bucket>/app-data/result/category/result.csv /tmp
+    s3cmd get s3://[sample-bucket]/app-data/result/category/result.csv /tmp
     cat /tmp/result.csv
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 ..  warning::
     S3から出力データを取得後、EMRを使用しないのであれば忘れずにEMRを停止してください。
     EMRインスタンスを稼働し続けると、その分課金が発生し続けます。
@@ -489,11 +496,11 @@ EMRインスタンスでデフォルトで指定されるタイムゾーンはJS
 
     elastic-mapreduce --create --alive \
      ...
-     --bootstrap-action s3://<sample-bucket>/bootstrap-actions/set-timezone.sh \
+     --bootstrap-action s3://[sample-bucket]/bootstrap-actions/set-timezone.sh \
      ...
 
 ..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``<sample-bucket>`` を実際に使用するバケット名に置き換えてください。
+    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
 HadoopのWebUIを参照する
 ------------------------
