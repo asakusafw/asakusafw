@@ -46,10 +46,10 @@ public class LoggingFilter extends FlowCompilingEnvironment.Initialized implemen
     @Override
     public boolean rewrite(FlowGraph graph) throws RewriteException {
         if (getEnvironment().getOptions().isEnableDebugLogging()) {
-            LOG.info("デバッグ用のロギング演算子は有効です");
+            LOG.debug("デバッグ用のロギング演算子は有効です");
             return false;
         }
-        LOG.info("デバッグ用のロギング演算子を削除しています");
+        LOG.debug("デバッグ用のロギング演算子を削除しています");
         return rewriteGraph(graph);
     }
 

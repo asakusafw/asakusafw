@@ -43,6 +43,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import com.asakusafw.runtime.stage.StageInput;
@@ -50,7 +51,7 @@ import com.asakusafw.runtime.stage.StageInput;
 /**
  * ステージ入力を設定するためのドライバ。
  * @since 0.1.0
- * @version 0.2.5
+ * @version 0.6.0
  */
 public final class StageInputDriver {
 
@@ -93,6 +94,35 @@ public final class StageInputDriver {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Failed to store input information: {0}",
                     KEY), e);
+        }
+    }
+
+    /**
+     * Returns the estimated input data-size.
+     * @param context the current job context
+     * @return the estimated input data-size in bytes
+     * @throws InterruptedException if interrupted while
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.6.0
+     */
+    public static long estimateInputSize(JobContext context) throws InterruptedException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        try {
+            long results = 0L;
+            List<StageInputSplit> splits = StageInputFormat.computeSplits(context);
+            for (StageInputSplit split : splits) {
+                long size = split.getLength();
+                if (size < 0L) {
+                    return -1L;
+                }
+                results += size;
+            }
+            return results;
+        } catch (IOException e) {
+            LOG.warn("Failed to estimate the input data size", e);
+            return -1L;
         }
     }
 

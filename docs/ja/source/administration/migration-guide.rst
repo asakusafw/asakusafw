@@ -18,9 +18,9 @@ Asakusa Frameworkのバージョンアップに伴う機能追加や変更につ
 --------------------
 運用環境のマイグレーションは、基本的にはマイグレーション対象バージョンで環境全体を再度デプロイします。運用環境のデプロイについては、以下のドキュメントを参照してください。
 
+* :doc:`deployment-with-directio`
 * :doc:`deployment-with-windgate`
 * :doc:`deployment-with-thundergate`
-* :doc:`deployment-with-directio`
 
 ..  attention::
     Asakusa Frameworkのマイグレーションを行う際には、基本的には合わせてマイグレーション対象バージョンでバッチコンパイルを行ったバッチアプリケーションをデプロイする必要があります。

@@ -110,11 +110,11 @@ Asakusa Frameworkではデータフローの一部を共通化して、データ
 ======================
 Asakusa Frameworkを使ったバッチアプリケーションの実装の流れを見ていきます。
 
-アプリケーションプロジェクトの作成
-----------------------------------
-開発環境にバッチアプリケーションのソースコード一式を作成・管理するためのプロジェクトを作成します。
+アプリケーションプロジェクトの作成とビルド
+------------------------------------------
+バッチアプリケーションのソースコード一式を作成・管理するためのプロジェクトを作成します。
 
-:doc:`../application/maven-archetype` には、アプリケーション開発用プロジェクトを作成するための内容が記載されています。
+:doc:`../application/gradle-plugin` には、アプリケーションプロジェクトの作成やビルドに関する内容が記載されています。
 
 データモデル定義DSLの記述
 -------------------------
@@ -142,21 +142,22 @@ TestDriverを利用したテストは、テストセットとして、JUnitな�
 
 外部システム連携
 ----------------
-Asakusa DSLのうジョブフローについては、外部システムとの連携についての定義を行います。また、アプリケーションのテストを行う際に、外部システム連携の構成によっては外部システム連携モジュールに適切な設定を行う必要があります。
+Asakusa DSLのジョブフローについては、外部システムとの連携についての定義を行います。また、アプリケーションのテストを行う際に、外部システム連携の構成によっては外部システム連携モジュールに適切な設定を行う必要があります。
 
-:doc:`../windgate/start-guide` には、WindGateを使ったデフォルトの構成（ローカルファイルのCSVに対してデータ入出力を行う構成）でAsakusa Frameworkを使用した場合の説明が記載されています。
+外部システム連携モジュールの利用方法については、以下のドキュメントを参照してください。
 
-WindGateをDBMSと連携して使用する場合は、 :doc:`../windgate/user-guide` を参照してください。また、ThunderGateを使用する場合は、 :doc:`../thundergate/user-guide` を、Direct I/Oを利用する場合は、 :doc:`../directio/user-guide` をそれぞれ参照してください。
+* :doc:`../directio/start-guide`
+* :doc:`../windgate/start-guide`
+* :doc:`../thundergate/start-guide`
 
 運用環境の構築とアプリケーションの実行
 ======================================
 開発したバッチアプリケーションを運用環境（Hadoopクラスター、及び外部システムとの連携）で実行する準備を行います。
+運用環境の構築については、以下のドキュメントを参照してください。
 
-:doc:`../administration/deployment-with-windgate` には、Asakusa FrameworkとWindGateの運用環境構築手順が説明されています。
-
-:doc:`../administration/deployment-with-thundergate` には、Asakusa FrameworkとThunderGateの運用環境構築手順が説明されています。
-
-:doc:`../administration/deployment-with-directio` には、Asakusa FrameworkとDirect I/Oの運用環境構築手順が説明されています。
+* :doc:`../administration/deployment-with-directio`
+* :doc:`../administration/deployment-with-windgate`
+* :doc:`../administration/deployment-with-thundergate`
 
 運用環境の構築が完了したら、バッチアプリケーションを実行してみましょう。
 

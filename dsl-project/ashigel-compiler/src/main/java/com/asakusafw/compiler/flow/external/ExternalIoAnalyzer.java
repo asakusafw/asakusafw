@@ -65,7 +65,7 @@ public class ExternalIoAnalyzer {
      */
     public boolean validate(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.info("{}の入出力を検証しています", graph.getDescription().getName());
+        LOG.debug("{}の入出力を検証しています", graph.getDescription().getName());
         List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs = Lists.create();
         List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs = Lists.create();
 

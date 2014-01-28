@@ -84,9 +84,9 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Java
       - JDK 7 (1.7.0_45) [#]_
     * - ビルドツール
-      - Apache Maven 3.0.5
-    * - ビルドツール
       - Gradle 1.10 [#]_
+    * - ビルドツール
+      - Apache Maven 3.0.5 [#]_
     * - IDE
       - Eclipse IDE for Java Developers 3.7.2
     * - IDE
@@ -96,6 +96,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 
 ..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
+..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 
 WindGate
 ========
@@ -153,10 +154,10 @@ ThunderGate
       - http://www.ubuntu.com/
     * - JDK (Java SE)
       - http://www.oracle.com/technetwork/java/javase/index.html
-    * - Apache Maven
-      - http://maven.apache.org/
     * - Gradle
       - http://www.gradle.org/
+    * - Apache Maven
+      - http://maven.apache.org/
     * - Eclipse
       - http://www.eclipse.org/
     * - PostgreSQL
