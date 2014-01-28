@@ -1217,7 +1217,7 @@ Eclipseを利用している場合は、Eclipse用定義ファイルを更新し
 Mavenプロジェクトのマイグレーション
 -----------------------------------
 
-ここでは、 :doc:`../application/maven-archetype` や Asakusa Framework バージョン ``0.6.0`` 以前の :doc:`../introduction/start-guide` 及び `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_  で記載されている手順に従って構築した開発環境やMavenベースのアプリケーションプロジェクトをAsakusa Gradle Pluginを使った環境にマイグレーションする手順を説明します。
+ここでは、 :doc:`../application/maven-archetype` や Asakusa Framework バージョン ``0.6.0`` 以前の :doc:`../introduction/start-guide` 及び `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_  で記載されている手順に従って構築した開発環境やMavenベースのアプリケーションプロジェクト(以下「Mavenプロジェクト」と表記)をAsakusa Gradle Pluginを使った環境にマイグレーションする手順を説明します。
 
 ..  note::
     プロジェクトのソースディレクトリに含まれるアプリケーションのソースコード(Asakusa DSL, DMDL, テストコードなど)についてはマイグレーション作業は不要で、そのまま利用することが出来ます。
@@ -1230,11 +1230,23 @@ Mavenプロジェクトのマイグレーション
 プロジェクトテンプレートの適用
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Asakusa Gradle Pluginの導入`_  で説明したAsakusa Gradle Pluginのプロジェクトテンプレートに含まれるファイル一式をアプリケーションプロジェクトに適用します。
+`Asakusa Gradle Pluginの導入`_  で説明したAsakusa Gradle Pluginのプロジェクトテンプレートに含まれるファイル一式をMavenプロジェクトに適用します。
 
-事前に確認すべき点として、MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルに対しては、従来の設定をそのまま利用したい場合にはテンプレート適用前にファイルを退避して、テンプレート適用後にこれを反映する必要があります。
+以下は、ダウンロードしたプロジェクトテンプレートを ``$HOME/workspace/migrate-app`` に適用する例です。
 
-MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルの一覧を以下に示します [#]_ 。
+..  code-block:: sh
+
+    cd ~/Downloads
+    tar xf asakusa-project-template-*.tar.gz
+    cd asakusa-project-template
+    cp -r build.gradle gradlew gradlew.bat .buildtools ~/workspace/migrate-app
+
+プロジェクト初期設定ファイルの適用
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるプロジェクトの初期設定ファイルに対しては、以下のファイル内容を確認し、必要に応じてMavenプロジェクトに適用します。
+
+MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルの一覧を以下に示します。
 
 ..  list-table:: 
     :widths: 234 218
@@ -1247,26 +1259,19 @@ MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレ
     * -  ``src/test/resources/logback-test.xml`` 
       - ビルド/テスト実行時に使用されるログ定義ファイル
 
-..  [#] これらのファイルをデフォルト設定のまま利用している場合は、プロジェクトテンプレートの内容で上書きしてください。
-
-以下は、ダウンロードしたプロジェクトテンプレートを ``$HOME/workspace/migrate-app`` に適用する例です。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf asakusa-project-template-*.tar.gz
-    cp -r asakusa-project-template/* ~/workspace/migrate-app
+..  tip::
+    Mavenプロジェクトで上記の設定ファイルをデフォルト設定のまま利用している場合は、Asakusa Gradle Pluginのプロジェクトテンプレートの内容で上書きすることを推奨します。
 
 プロジェクト定義のマイグレーション
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-従来のMavenのプロジェクト定義( ``pom.xml`` )の内容をGradleのビルドスクリプト( ``build.gradle`` )に反映します。
+Mavenプロジェクトのプロジェクト定義( ``pom.xml`` )の内容をGradleのビルドスクリプト( ``build.gradle`` )に反映します。
 
 ``pom.xml`` の代表的なカスタマイズ内容として、アプリケーションで利用するライブラリ追加による依存関係の設定があります。これは ``pom.xml`` 上では ``dependencies`` 配下に定義していました。
 
 Gradle、およびAsakusa Gradle Pluginでは従来のMavenベースの依存関係の管理から一部機能が変更になっているため、  `ビルド設定のカスタマイズ`_  の内容をよく確認した上でアプリケーションに対して適切な設定を行ってください。
 
-その他に確認すべき点は、  `標準プロジェクトプロパティ`_  の内容です。これに相当する内容はMavenアーキタイプでプロジェクトを作成する際に入力した内容が ``pom.xml`` のトップレベルの階層に定義されています。以下、この箇所に該当する ``pom.xml`` の設定例です。
+その他に確認すべき点は、  `標準プロジェクトプロパティ`_  の内容です。これに相当する内容はMavenアーキタイプからプロジェクトを作成する際に入力した内容が ``pom.xml`` のトップレベルの階層に定義されています。以下、この箇所に該当する ``pom.xml`` の設定例です。
 
 ..  code-block:: xml
          
@@ -1332,12 +1337,12 @@ Eclipseを利用している場合は、Eclipse用定義ファイルを更新し
 Mavenビルド用ファイルの削除
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-従来のMavenベースのビルドシステムで利用していたファイルは、そのままプロジェクト上に残しても問題ありません。MavenベースのビルドシステムとGradleのビルドシステムを併用することもできます。
+Mavenプロジェクトのビルドで利用していたファイルは、そのままプロジェクト上に残しても問題ありません。MavenとGradleを併用することも可能です。
 
-..  note::
-    MavenベースのビルドシステムとGradleのビルドシステムの併用は設定を多重で持つことや、IDEとの連携時に注意が必要であるなどデメリットも多いことに注意してください。
+..  tip::
+    MavenとGradleの併用は設定を多重で持つことや、IDEとの連携時に注意が必要であるなどデメリットも多いことに注意してください。
 
-Mavenベースのビルドシステムで利用していたファイルを削除したい場合は、プロジェクト配下の以下のファイル、ディレクトリを削除してください。
+Mavenプロジェクトのビルドで利用していたファイルを削除したい場合は、プロジェクト配下の以下のファイル、ディレクトリを削除してください。
 
 *  ``pom.xml`` 
 *  ``build.properties`` 
