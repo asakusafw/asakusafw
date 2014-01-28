@@ -65,7 +65,7 @@ class EclipsePluginEnhancement {
             compileOperator "ch.qos.logback:logback-classic:${project.asakusafwInternal.dep.logbackVersion}"
             compileOperator "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}"
             compileOperator "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}"
-            }
+        }
     }
 
     private void configureEclipsePlugin() {

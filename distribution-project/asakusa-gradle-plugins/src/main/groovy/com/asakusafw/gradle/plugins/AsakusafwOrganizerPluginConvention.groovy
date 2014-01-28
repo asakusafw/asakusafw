@@ -30,7 +30,7 @@ class AsakusafwOrganizerPluginConvention {
     String asakusafwVersion
 
     /**
-     * Working dicrectory of Framework Organizer.
+     * Working directory of Framework Organizer.
      */
     String assembleDir
 
