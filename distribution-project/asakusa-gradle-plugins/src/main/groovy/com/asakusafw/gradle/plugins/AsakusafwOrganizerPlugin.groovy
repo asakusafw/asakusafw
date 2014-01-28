@@ -196,7 +196,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachBatchapps.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachBatchapps.setDescription('Attachs batch application files to assembly.')
+            attachBatchapps.setDescription('Attaches batch application files to assembly.')
 
             def attachComponentCore = project.task('attachComponentCore') << {
                 unpackDists project.configurations.asakusafwCoreDist
@@ -207,7 +207,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachComponentCore.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentCore.setDescription('Attachs framework core component files to assembly.')
+            attachComponentCore.setDescription('Attaches framework core component files to assembly.')
 
             def attachComponentDirectIo = project.task('attachComponentDirectIo') << {
                 unpackDists project.configurations.asakusafwDirectIoDist
@@ -217,7 +217,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachComponentDirectIo.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentDirectIo.setDescription('Attachs Direct I/O component files to assembly.')
+            attachComponentDirectIo.setDescription('Attaches Direct I/O component files to assembly.')
 
             def attachComponentYaess = project.task('attachComponentYaess') << {
                 unpackDists project.configurations.asakusafwYaessDist
@@ -235,7 +235,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachComponentYaess.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentYaess.setDescription('Attachs YAESS component files to assembly.')
+            attachComponentYaess.setDescription('Attaches YAESS component files to assembly.')
 
             def attachComponentWindGate = project.task('attachComponentWindGate') << {
                 unpackDists project.configurations.asakusafwWindGateDist
@@ -253,14 +253,14 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachComponentWindGate.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentWindGate.setDescription('Attachs WindGate component files to assembly.')
+            attachComponentWindGate.setDescription('Attaches WindGate component files to assembly.')
 
 
             def attachComponentDevelopment = project.task('attachComponentDevelopment') << {
                 unpackDists project.configurations.asakusafwDevelopmentDist
             }
             attachComponentDevelopment.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentDevelopment.setDescription('Attachs developent tool files to assembly.')
+            attachComponentDevelopment.setDescription('Attaches developent tool files to assembly.')
 
             def attachComponentOperation = project.task('attachComponentOperation') << {
                 unpackDists project.configurations.asakusafwOperationDist
@@ -270,7 +270,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachComponentOperation.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachComponentOperation.setDescription('Attachs operation tool files to assembly.')
+            attachComponentOperation.setDescription('Attaches operation tool files to assembly.')
 
             def attachExtensionYaessJobQueue = project.task('attachExtensionYaessJobQueue') << {
                 project.copy {
@@ -279,7 +279,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachExtensionYaessJobQueue.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachExtensionYaessJobQueue.setDescription('Attachs YaessJobQueue files to assembly.')
+            attachExtensionYaessJobQueue.setDescription('Attaches YaessJobQueue files to assembly.')
 
             def attachExtensionWindGateRetryable = project.task('attachExtensionWindGateRetryable') << {
                 project.copy {
@@ -288,7 +288,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 }
             }
             attachExtensionWindGateRetryable.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachExtensionWindGateRetryable.setDescription('Attachs WindGateRetryable files to assembly.')
+            attachExtensionWindGateRetryable.setDescription('Attaches WindGateRetryable files to assembly.')
 
             def asakusaDistCustom = project.task('assembleCustomAsakusafw', type: Tar) {
                 from project.asakusafwOrganizer.assembleDir
@@ -300,7 +300,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 t.name.startsWith('attach')
             })
             asakusaDistCustom.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            asakusaDistCustom.setDescription('Assembles a tar archive containing custom framework configuration files.')
+            asakusaDistCustom.setDescription('Assembles a tarball containing custom framework configuration files.')
 
             def devDependsTasks = [
                     'attachComponentCore',
@@ -315,7 +315,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             }
             def attachAssembleDev = project.task('attachAssembleDev', dependsOn: devDependsTasks)
             attachAssembleDev.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachAssembleDev.setDescription('Attachs application development environment files to assembly.')
+            attachAssembleDev.setDescription('Attaches application development environment files to assembly.')
 
 
             def installAsakusafw = project.task('installAsakusafw', dependsOn: 'attachAssembleDev') << {
@@ -345,7 +345,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 archiveName "asakusafw-${project.asakusafwOrganizer.asakusafwVersion}-dev.tar.gz"
             }
             assembleDevAsakusafw.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            assembleDevAsakusafw.setDescription('Assembles a tar archive containing framework files for development.')
+            assembleDevAsakusafw.setDescription('Assembles a tarball containing framework files for development.')
 
             def attachAssemble = project.task('attachAssemble', dependsOn: [
                     'attachComponentCore',
@@ -355,7 +355,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                     'attachComponentOperation'
             ])
             attachAssemble.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            attachAssemble.setDescription('Attachs framework files to assembly with default configuration.')
+            attachAssemble.setDescription('Attaches framework files to assembly with default configuration.')
 
             def assembleAsakusafw = project.task('assembleAsakusafw', dependsOn: 'attachAssemble', type: Tar) {
                 from project.asakusafwOrganizer.assembleDir
@@ -364,9 +364,9 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 archiveName "asakusafw-${project.asakusafwOrganizer.asakusafwVersion}.tar.gz"
             }
             assembleAsakusafw.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
-            assembleAsakusafw.setDescription('Assembles a tar archive containing framework files for deployment.')
+            assembleAsakusafw.setDescription('Assembles a tarball containing framework files for deployment.')
 
-            project.tasks.addRule('Pattern: attachConf<Target>: Attachs asakusafw custom distribution files to assembly.') { String taskName ->
+            project.tasks.addRule('Pattern: attachConf<Target>: Attaches asakusafw custom distribution files to assembly.') { String taskName ->
                 if (taskName.startsWith('attachConf')) {
                     def task = project.task(taskName) {
                         ext.distTarget = (taskName - 'attachConf').toLowerCase()
