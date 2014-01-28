@@ -122,8 +122,13 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('compileDMDL', type: CompileDmdlTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Compiles the DMDL scripts with DMDL Compiler.'
-            source project.asakusafw.dmdl.dmdlSourceDirectory
-            outputs.dir project.asakusafw.modelgen.modelgenSourceDirectory
+            source { project.asakusafw.dmdl.dmdlSourceDirectory }
+            inputs.properties ([
+                    package: { project.asakusafw.modelgen.modelgenSourcePackage },
+                    sourceencoding: { project.asakusafw.dmdl.dmdlEncoding },
+                    targetencoding: { project.asakusafw.javac.sourceEncoding }
+                    ])
+            outputs.dir { project.asakusafw.modelgen.modelgenSourceDirectory }
         }
     }
 
@@ -147,7 +152,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('jarBatchapp', type: Jar, dependsOn: 'compileBatchapp') {
             group ASAKUSAFW_BUILD_GROUP
             description 'Assembles a jar archive containing compiled batch applications.'
-            from project.asakusafw.compiler.compiledSourceDirectory
+            from { project.asakusafw.compiler.compiledSourceDirectory }
             destinationDir project.buildDir
             appendix 'batchapps'
             onlyIf { dependsOnTaskDidWork() }
@@ -162,8 +167,12 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('generateTestbook', type: GenerateTestbookTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Generates the template Excel books for TestDriver.'
-            source project.asakusafw.dmdl.dmdlSourceDirectory
-            outputs.dir project.asakusafw.testtools.testDataSheetDirectory
+            source { project.asakusafw.dmdl.dmdlSourceDirectory }
+            inputs.properties ([
+                    format: { project.asakusafw.testtools.testDataSheetFormat },
+                    encoding: { project.asakusafw.dmdl.dmdlEncoding }
+            ])
+            outputs.dir { project.asakusafw.testtools.testDataSheetDirectory }
         }
     }
 
