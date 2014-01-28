@@ -90,8 +90,7 @@ class AsakusafwPlugin implements Plugin<Project> {
             [project.compileJava, project.compileTestJava].each {
                 it.options.encoding = project.asakusafw.javac.sourceEncoding
             }
-            project.compileJava.options.compilerArgs = ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000', '-XprintRounds']
-
+            project.compileJava.options.compilerArgs += ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000']
         }
     }
 
