@@ -161,7 +161,7 @@
     演算子メソッドに対する操作は必ず ``reload`` メソッドの呼出し後に記述してください。
 
 ..  [#] 実行時プラグインについては、 :doc:`../administration/deployment-runtime-plugins` を参照してください。
-..  [#] :doc:`../application/maven-archetype` の手順に従って作成したプロジェクトでは ``src/test/resources/asakusa-resources.xml`` が配置されるため、デフォルトの状態ではこのファイルが利用されます。
+..  [#] :doc:`../application/gradle-plugin` の手順に従って作成したプロジェクトでは ``src/test/resources/asakusa-resources.xml`` が配置されるため、デフォルトの状態ではこのファイルが利用されます。
 
 
 データフローのテスト
@@ -378,7 +378,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 ..  code-block:: java
 
     Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
-        .dumpActual("target/dump/actual.xls")
+        .dumpActual("build/dump/actual.xls")
         .verify("shipment.xls#output", "shipment.xls#rule");
 
 出力先には、ファイルパスや ``File`` [#]_ オブジェクトを指定できます。
@@ -395,7 +395,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 ..  code-block:: java
 
     Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
-        .dumpActual("target/dump/actual.xls")
+        .dumpActual("build/dump/actual.xls")
         .verify("shipment.xls#output", "shipment.xls#rule");
 
 ..  [#] ``java.io.File``
@@ -408,7 +408,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 
     Out<Shipment> shipmentOut = tester.output("shipment", Shipment.class)
         .verify("shipment.xls#output", "shipment.xls#rule")
-        .dumpDifference("target/dump/difference.html");
+        .dumpDifference("build/dump/difference.html");
 
 「 `出力結果を保存する`_ 」と同様に、出力先にはファイルパスや ``File`` オブジェクトを指定できます。
 ファイルパスで相対パスを指定した場合、テストを実行したワーキングディレクトリからの相対パス上に結果が出力されます。
@@ -756,5 +756,5 @@ Hadoopの設定
     ``reload`` は不要です。
 
 ..  [#] :doc:`../administration/deployment-runtime-plugins` を参照
-..  [#] :doc:`../application/maven-archetype` の手順に従って作成したプロジェクトでは ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` が配置されるため、デフォルトの状態ではこのファイルが利用されます。デフォルトの状態では演算子のテストで使用される実行時プラグイン設定ファイルと異なるファイルが利用されることに注意してください。
+..  [#] :doc:`../application/gradle-plugin` の手順に従って作成したプロジェクトでは ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` が配置されるため、デフォルトの状態ではこのファイルが利用されます。デフォルトの状態では演算子のテストで使用される実行時プラグイン設定ファイルと異なるファイルが利用されることに注意してください。
 

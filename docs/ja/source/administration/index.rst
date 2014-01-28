@@ -3,21 +3,14 @@
 ==============
 Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなどの各種サーバにデプロイし、実行するための手順などについて説明します。
 
-デプロイモジュールの管理
-========================
-
-Asakusa Frameworkのデプロイモジュールの作成や設定は、 :doc:`framework-organizer` を参照してください。
-
-また、 :doc:`../application/gradle-plugin` で説明しているGradleプラグインを利用している場合、 Framework Organizer の機能はこのプラグインに統合されているのでプラグインのドキュメントを参照してください。
-
-運用環境へのデプロイ
-====================
+運用環境のデプロイ
+==================
 
 Asakusa Frameworkが提供する外部システム連携の各モジュールごとに運用環境のデプロイ方法を示したドキュメントです。
 
+* :doc:`deployment-with-directio`
 * :doc:`deployment-with-windgate`
 * :doc:`deployment-with-thundergate`
-* :doc:`deployment-with-directio`
 * :doc:`configure-hadoop-parameters`
 * :doc:`migration-guide`
 
@@ -60,10 +53,10 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 ..  toctree::
     :maxdepth: 1
 
-    framework-organizer
+    deployment-with-directio
     deployment-with-windgate
     deployment-with-thundergate
-    deployment-with-directio
+    framework-organizer
     configure-hadoop-parameters
     migration-guide
     deployment-extension-module

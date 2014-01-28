@@ -19,9 +19,9 @@ Asakusa Framework入門
 * :doc:`dmdl/index`
 * :doc:`dsl/index`
 * :doc:`testing/index`
+* :doc:`directio/index`
 * :doc:`windgate/index`
 * :doc:`thundergate/index`
-* :doc:`directio/index`
 * :doc:`yaess/index`
 * :doc:`application/index`
 * :doc:`administration/index`

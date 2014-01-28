@@ -153,21 +153,26 @@ Javaモデルクラスを生成する
 
 DMDLコンパイラの起動
 --------------------
+DMDLスクリプトに記述したデータモデルからJavaのデータモデルクラスを生成するには、Gradleを利用してDMDLコンパイラを実行します。
 
-DMDLスクリプトに記述したデータモデルからJavaのデータモデルクラスを生成するには、 ``mvn`` コマンドを利用してDMDLコンパイラを実行します。
-
-DMDLコンパイラはMavenの ``generate-sources`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
+これはGradleの ``compileDMDL`` タスクで起動するので、プロジェクト内で以下のようにコマンドを実行します。
 
 ..  code-block:: sh
 
-    mvn generate-sources
+    ./gradlew compileDMDL
 
-その他、 ``mvn package`` や ``mvn install`` などでも自動的にDMDLコンパイラが起動します。
+その他、 ``./gradlew assemble`` や ``./gradlew build`` などでも自動的にDMDLコンパイラが起動します。
+
+Direct I/Oとの連携
+------------------
+:doc:`../introduction/start-guide` の構成では、Direct I/Oと連携したバッチアプリケーションを作成できます。
+
+Direct I/Oを利用するプロジェクト構成の場合、Direct I/Oに関するデータ変換を行うプログラムをDMDLから自動生成できます。
+詳しい情報は :doc:`../directio/index` を参照してください。
 
 WindGateとの連携
 ----------------
-:doc:`../introduction/start-guide` の構成では、WindGateと連携したバッチアプリケーションを作成できます。
-詳しい情報は :doc:`../windgate/index` を参照してください。
+WindGateとの連携について、詳しい情報は :doc:`../windgate/index` を参照してください。
 
 ThunderGateとの連携
 -------------------
@@ -176,8 +181,4 @@ ThunderGateを利用するプロジェクト構成の場合、DMDLコンパイ�
 
 ThunderGateとの連携について、詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
 
-Direct I/Oとの連携
-------------------
-Direct I/Oを利用するプロジェクト構成の場合、Direct I/Oに関するデータ変換を行うプログラムをDMDLから自動生成できます。
-詳しい情報は :doc:`../directio/index` を参照してください。
 

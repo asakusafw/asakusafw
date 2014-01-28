@@ -6,7 +6,7 @@ YAESSスタートガイド
 
 開発環境でのYAESSの実行
 =======================
-:doc:`../introduction/start-guide` や :doc:`../application/maven-archetype` の手順で作成されたプロジェクトでは、バッチアプリケーションのビルド構成に、あらかじめYAESSと連携するための設定が含まれています。
+:doc:`../introduction/start-guide` や :doc:`../application/gradle-plugin` 、:doc:`../application/maven-archetype` の手順で作成されたプロジェクトでは、バッチアプリケーションのビルド構成に、あらかじめYAESSと連携するための設定が含まれています。
 
 バッチの実行
 ------------
@@ -37,7 +37,7 @@ YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以�
 
 ワークフロー記述
 ----------------
-Asakusa DSLで記述したバッチアプリケーションをバッチコンパイル ( ``mvn clean package`` ) すると、
+Asakusa DSLで記述したバッチアプリケーションをバッチコンパイル ( ``./gradlew compileBatchapp`` ) すると、
 バッチアプリケーションにはYAESS用のワークフロー記述として
 YAESSスクリプト ( ``<バッチID>/etc/yaess-script.properties`` )というファイルが含まれます。
 YAESSはYAESSスクリプトの定義内容に基づいてバッチアプリケーションを実行します。

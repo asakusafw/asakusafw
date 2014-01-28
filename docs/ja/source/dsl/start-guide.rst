@@ -334,13 +334,15 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 
 * ``<プロジェクトのルート>/target/generated-sources/annotations``
 
-または、mvnコマンドを利用してJavaコンパイラを実行すると、注釈プロセッサを起動できます。これはMavenの ``compile`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します [#]_ 。
+または、Gradleを利用してJavaコンパイラを実行すると、注釈プロセッサを起動できます。
+
+これはGradleの ``compileJava`` タスクで起動するので、プロジェクト内で以下のようにコマンドを実行します [#]_ 。
 
 ..  code-block:: sh
 
-    mvn clean compile
+    ./gradlew compileJava
 
-その他、 ``mvn clean package`` や ``mvn clean install`` などでも自動的に注釈プロセッサが起動します。
+その他、 ``./gradlew assemble`` や ``./gradlew build`` などでも自動的に注釈プロセッサが起動します。
 
 注釈プロセッサによって、演算子を組み合わせてフローを構築するためのファクトリークラス(演算子ファクトリクラス)と、
 演算子クラスの実装を提供する実装クラスの2つが自動的に生成されます。
@@ -366,9 +368,9 @@ Asakusa DSLでは、外部入力をソースにデータを処理して外部出
 
 現在のところ、Asakusa Frameworkでは3種類の外部入出力を提供しています。
 
+* :doc:`Direct I/O <../directio/index>` を利用してHadoopから参照可能なデータソースを直接入出力に利用する
 * :doc:`WindGate <../windgate/index>` と連携してローカルファイルシステムやリレーショナルデータベースのテーブル情報を入出力に利用する
 * :doc:`ThunderGate <../thundergate/index>` と連携してリレーショナルデータベースのテーブル情報を入出力に利用する
-* :doc:`Direct I/O <../directio/index>` を利用してHadoopから参照可能なデータソースを直接入出力に利用する
 
 以降では、サンプルとしてWindGateを利用して、
 ローカルファイルシステム上のCSVファイルを外部入出力に利用します。
@@ -475,6 +477,11 @@ WindGateにエクスポートする
 ..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.JdbcExporterDescription`
 ..  [#] :javadoc:`com.asakusafw.vocabulary.windgate.WindGateExporterDescription`
 
+Direct I/Oを利用する
+~~~~~~~~~~~~~~~~~~~~
+Direct I/Oを利用してHadoopが管理するデータソースを入出力に利用する方法は、
+:doc:`../directio/user-guide` を参照してください。
+
 WindGateと連携する
 ~~~~~~~~~~~~~~~~~~
 WindGateはCSVのほか、さまざまな形式のファイルやデータベースと連携できます。
@@ -484,11 +491,6 @@ ThunderGateと連携する
 ~~~~~~~~~~~~~~~~~~~~~
 ThunderGateと連携してデータベースのテーブルを操作する方法は、
 :doc:`../thundergate/with-dsl` を参照して下さい。
-
-Direct I/Oを利用する
-~~~~~~~~~~~~~~~~~~~~
-Direct I/Oを利用してHadoopが管理するデータソースを入出力に利用する方法は、
-:doc:`../directio/user-guide` を参照してください。
 
 ジョブフロークラスの作成
 ------------------------
@@ -668,10 +670,9 @@ Direct I/Oを利用してHadoopが管理するデータソースを入出力に�
 ジョブフローの実装例を示します。
 
 この実装例では、これまでの説明と同様にWindGateを利用してCSVデータを読み書きします。
-ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ [#]_ を参照してください。
+ここで紹介する例の完全なコードは、サンプルプロジェクト ``example-csv`` [#]_ を参照してください。
 
 ..  [#] https://github.com/asakusafw/asakusafw-examples
-..  [#] なお、このサンプルプロジェクトのコードは :doc:`../introduction/start-guide` に従って作成したプロジェクトのサンプルアプリケーションとして含まれるコードと同様です。
 
 インポート処理の実装例
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1004,15 +1005,15 @@ Direct I/Oを利用してHadoopが管理するデータソースを入出力に�
 
 バッチアプリケーションを生成する
 ================================
+Asakusa DSLからバッチアプリケーションを生成するには、 Gradle利用してAsakusa DSLコンパイラを実行します。
 
-Asakusa DSLからバッチアプリケーションを生成するには、 ``mvn`` コマンドを利用してAsakusa DSLコンパイラを実行します。
-これはMavenの ``package`` フェーズで自動的に起動しますので、プロジェクト内で以下のようにコマンドを実行します。
+これはGradleの ``compileBatchapp`` タスクで起動するので、プロジェクト内で以下のようにコマンドを実行します。
 
 ..  code-block:: sh
 
-    mvn clean package
+    ./gradlew compileBatchapp
 
-その他、 ``mvn clean install`` などでも自動的にコンパイラが起動します。
+その他、 ``./gradlew assemble`` や ``./gradlew build`` などでも自動的にコンパイラが起動します。
 
 バッチアプリケーションを実行する
 ================================
