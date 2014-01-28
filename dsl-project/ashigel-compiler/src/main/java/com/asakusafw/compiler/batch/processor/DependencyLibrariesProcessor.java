@@ -77,7 +77,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                     outputDirectory.getAbsolutePath()));
         }
 
-        LOG.info("Copying library files: {}", libraryDirectory);
+        LOG.debug("Copying library files: {}", libraryDirectory);
         for (File file : libraryDirectory.listFiles()) {
             if (file.isDirectory()) {
                 LOG.warn(MessageFormat.format(

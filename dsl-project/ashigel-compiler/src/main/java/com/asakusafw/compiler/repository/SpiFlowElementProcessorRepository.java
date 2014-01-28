@@ -50,7 +50,7 @@ public class SpiFlowElementProcessorRepository
 
     @Override
     protected void doInitialize() {
-        LOG.info("フロー要素プロセッサのプラグインを読み出します");
+        LOG.debug("フロー要素プロセッサのプラグインを読み出します");
         this.emptyProcessor = new LinePartProcessor.Nop();
         this.lines = Maps.create();
         this.rendezvouses = Maps.create();

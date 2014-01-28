@@ -176,11 +176,11 @@ public class JobflowCompiler {
     }
 
     private void reportSummary(JobflowModel jobflow) {
-        LOG.info("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId());
-        LOG.info("Imports: {}", jobflow.getImports().size());
-        LOG.info("Exports: {}", jobflow.getExports().size());
-        LOG.info("Stages : {}", jobflow.getStages().size());
         if (LOG.isDebugEnabled()) {
+            LOG.debug("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId());
+            LOG.debug("Imports: {}", jobflow.getImports().size());
+            LOG.debug("Exports: {}", jobflow.getExports().size());
+            LOG.debug("Stages : {}", jobflow.getStages().size());
             LOG.debug("Details:");
             for (Import stage : jobflow.getImports()) {
                 LOG.debug("====");

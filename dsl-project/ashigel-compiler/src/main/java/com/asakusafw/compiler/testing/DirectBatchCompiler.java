@@ -128,7 +128,9 @@ public final class DirectBatchCompiler {
 
     private static void clean(File localWorkingDirectory) {
         assert localWorkingDirectory != null;
-        LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+        if (localWorkingDirectory.exists()) {
+            LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+        }
         delete(localWorkingDirectory);
     }
 

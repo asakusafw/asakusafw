@@ -38,7 +38,7 @@ public class SpiFlowGraphRewriterRepository
 
     @Override
     protected void doInitialize() {
-        LOG.info("グラフ書き換えプラグインを読み出します");
+        LOG.debug("グラフ書き換えプラグインを読み出します");
         this.rewriters = Lists.create();
         ServiceLoader<FlowGraphRewriter> services = ServiceLoader.load(
                 FlowGraphRewriter.class,

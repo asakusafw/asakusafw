@@ -128,7 +128,7 @@ public class StagePlanner {
         if (validate(graph) == false) {
             return null;
         }
-        LOG.info("{}の実行計画を計算中", graph);
+        LOG.debug("{}の実行計画を計算中", graph);
         LOG.debug("フロー部品の圧縮: {}", options.isCompressFlowPart());
         LOG.debug("並行ステージの圧縮: {}", options.isCompressConcurrentStage());
 

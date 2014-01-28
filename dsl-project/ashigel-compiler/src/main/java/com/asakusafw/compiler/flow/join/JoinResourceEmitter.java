@@ -96,7 +96,7 @@ public final class JoinResourceEmitter {
     }
 
     private Name emit() throws IOException {
-        LOG.info("{}のリソースに対するプログラムを生成します", resource);
+        LOG.debug("{}のリソースに対するプログラムを生成します", resource);
         CompilationUnit source = generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
