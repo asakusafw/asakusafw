@@ -155,7 +155,7 @@ public abstract class DriverInputBase<T> {
      */
     public URI toUri(String path) throws URISyntaxException {
         // FIXME for invalid characters
-        URI uri = URI.create(path);
+        URI uri = URI.create(path.replace('\\', '/'));
         if (uri.getScheme() != null) {
             return uri;
         }

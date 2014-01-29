@@ -336,6 +336,7 @@ public class FlowPartTesterTest {
     @Test
     public void dependency_libraries() {
         FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setJobExecutorFactory(null);
         tester.setLibrariesPath(new File("src/test/lib"));
         tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");

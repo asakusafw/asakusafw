@@ -15,13 +15,8 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -53,21 +48,19 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 /**
  * Prepares and executes jobflows.
  * @since 0.2.0
+ * @version 0.6.0
  */
 public class JobflowExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(JobflowExecutor.class);
-
-    /**
-     * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
-     */
-    public static final String SUBMIT_JOB_SCRIPT = "testing/libexec/hadoop-execute.sh";
 
     private final TestDriverContext context;
 
     private final TestModerator moderator;
 
     private final ConfigurationFactory configurations;
+
+    private final JobExecutor jobExecutor;
 
     /**
      * Creates a new instance.
@@ -80,6 +73,7 @@ public class JobflowExecutor {
         }
         this.context = context;
         this.moderator = new TestModerator(context.getRepository(), context);
+        this.jobExecutor = context.getJobExecutor();
         this.configurations = ConfigurationFactory.getDefault();
     }
 
@@ -315,6 +309,16 @@ public class JobflowExecutor {
     private void executePlan(TestExecutionPlan plan, File jobflowPackageFile) throws IOException {
         assert plan != null;
         assert jobflowPackageFile != null;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Executing plan: home={}, batchId={}, flowId={}, execId={}, args={}, executor={}", new Object[] {
+                    context.getFrameworkHomePath(),
+                    context.getCurrentBatchId(),
+                    context.getCurrentFlowId(),
+                    context.getCurrentExecutionId(),
+                    context.getBatchArgs(),
+                    jobExecutor.getClass().getName(),
+            });
+        }
         try {
             runJobFlowCommands(plan.getInitializers());
             runJobFlowCommands(plan.getImporters());
@@ -328,55 +332,15 @@ public class JobflowExecutor {
     private void runJobflowJobs(File jobflowPackageFile, List<Job> jobs) throws IOException {
         assert jobflowPackageFile != null;
         assert jobs != null;
-        // DSLコンパイラが生成したHadoopジョブの各ステージを順番に実行する。
-        // 各Hadoopジョブを実行した都度、hadoopコマンドの戻り値の検証を行う。
         for (Job job : jobs) {
-            HadoopJobInfo jobElement = new HadoopJobInfo(
-                    context.getCurrentBatchId(),
-                    context.getCurrentFlowId(),
-                    job.getExecutionId(),
-                    jobflowPackageFile.getAbsolutePath(),
-                    job.getClassName(),
-                    job.getProperties());
-            runHadoopJob(jobElement);
+            jobExecutor.execute(job, getEnvironmentVariables());
         }
     }
 
     private void runJobFlowCommands(List<TestExecutionPlan.Command> cmdList) throws IOException {
         assert cmdList != null;
-        // DSLコンパイラが生成したコマンドを順番に実行する。
-        // 各コマンドを実行した都度、終了コードの検証を行う。
         for (TestExecutionPlan.Command command : cmdList) {
-            List<String> cmdToken = command.getCommandTokens();
-            String[] cmd = cmdToken.toArray(new String[cmdToken.size()]);
-            runShellAndAssert(cmd, getEnvironmentVariables());
-        }
-    }
-
-    private void runHadoopJob(HadoopJobInfo hadoopJobInfo) throws IOException {
-        assert hadoopJobInfo != null;
-        List<String> command = Lists.create();
-        command.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
-        command.add(hadoopJobInfo.getJarName());
-        command.add(hadoopJobInfo.getClassName());
-        command.add(hadoopJobInfo.getBatchId());
-
-        Map<String, String> dPropMap = hadoopJobInfo.getDPropMap();
-        if (dPropMap != null) {
-            for (Map.Entry<String, String> entry : dPropMap.entrySet()) {
-                command.add("-D");
-                command.add(entry.getKey() + "=" + entry.getValue());
-            }
-        }
-
-        int exitValue = runShell(command.toArray(new String[command.size()]), getEnvironmentVariables());
-        if (exitValue != 0) {
-            // 異常終了
-            throw new AssertionError(MessageFormat.format(
-                    "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command={2})",
-                    exitValue,
-                    hadoopJobInfo.getExecutionId(),
-                    command));
+            jobExecutor.execute(command, getEnvironmentVariables());
         }
     }
 
@@ -384,84 +348,6 @@ public class JobflowExecutor {
         Map<String, String> variables = Maps.create();
         variables.put(TestDriverContext.ENV_FRAMEWORK_PATH, context.getFrameworkHomePath().getAbsolutePath());
         return variables;
-    }
-
-    /**
-     * Runs the specified command.
-     * @param shellCmd command tokens
-     * @param environmentVariables variables
-     * @return the exit code
-     * @throws IOException if failed to create/destroy a process
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public int runShell(
-            String[] shellCmd,
-            Map<String, String> environmentVariables) throws IOException {
-        if (shellCmd == null) {
-            throw new IllegalArgumentException("shellCmd must not be null"); //$NON-NLS-1$
-        }
-        if (environmentVariables == null) {
-            throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
-        }
-        LOG.info("[COMMAND] {}", toStringShellCmdArray(shellCmd));
-
-        ProcessBuilder builder = new ProcessBuilder(shellCmd);
-        builder.redirectErrorStream(true);
-        builder.environment().putAll(environmentVariables);
-        builder.directory(new File(System.getProperty("user.home", ".")));
-
-        int exitCode;
-        Process process = null;
-        InputStream is = null;
-        try {
-            process = builder.start();
-            is = process.getInputStream();
-            InputStreamThread it = new InputStreamThread(is);
-
-            it.start();
-            exitCode = process.waitFor();
-            it.join();
-        } catch (InterruptedException e) {
-            throw new IOException(MessageFormat.format(
-                    "コマンドの実行中に割り込みが指定されました: {0}",
-                    toStringShellCmdArray(shellCmd)), e);
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-                if (process != null) {
-                    process.getOutputStream().close();
-                    process.getErrorStream().close();
-                    process.destroy();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return exitCode;
-    }
-
-    private void runShellAndAssert(String[] shellCmd, Map<String, String> variables) throws IOException {
-        assert shellCmd != null;
-        assert variables != null;
-        int exitCode = runShell(shellCmd, variables);
-        if (exitCode != 0) {
-            throw new AssertionError(MessageFormat.format(
-                    "コマンドの実行に失敗しました (exitCode={0}, command=\"{1}\")",
-                    exitCode,
-                    toStringShellCmdArray(shellCmd)));
-        }
-    }
-
-    private String toStringShellCmdArray(String[] shellCmd) {
-        assert shellCmd != null;
-        StringBuilder sb = new StringBuilder();
-        for (String cmd : shellCmd) {
-            sb.append(cmd).append(" ");
-        }
-        return sb.toString().trim();
     }
 
     /**
@@ -536,58 +422,6 @@ public class JobflowExecutor {
             }
         } else {
             LOG.info("実行結果の検証をスキップしました");
-        }
-    }
-}
-
-/**
- * InputStreamを読み込むスレッド。
- */
-class InputStreamThread extends Thread {
-
-    private BufferedReader br;
-
-    private final List<String> list = Lists.create();
-
-    /**
-     * コンストラクタ。
-     *
-     * @param is
-     *            入力ストリーム
-     */
-    public InputStreamThread(InputStream is) {
-        br = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));
-    }
-
-    /**
-     * コンストラクタ。
-     *
-     * @param is
-     *            入力ストリーム
-     * @param charset
-     *            Readerに渡すcharset
-     */
-    public InputStreamThread(InputStream is, String charset) {
-        try {
-            br = new BufferedReader(new InputStreamReader(is, charset));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void run() {
-        for (;;) {
-            try {
-                String line = br.readLine();
-                if (line == null) {
-                    break;
-                }
-                list.add(line);
-                System.out.println(line);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }
