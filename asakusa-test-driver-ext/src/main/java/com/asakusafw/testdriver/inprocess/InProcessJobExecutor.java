@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.inprocess;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.apache.hadoop.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.testdriver.DefaultJobExecutor;
 import com.asakusafw.testdriver.JobExecutor;
@@ -117,7 +119,7 @@ public class InProcessJobExecutor extends JobExecutor {
         }
     }
 
-    private List<String> computeHadoopJobArguments(Job job) {
+    private List<String> computeHadoopJobArguments(Job job) throws IOException {
         assert job != null;
         List<String> arguments = new ArrayList<String>();
         computeHadoopLibjars(arguments);
@@ -125,20 +127,16 @@ public class InProcessJobExecutor extends JobExecutor {
         return arguments;
     }
 
-    private void computeHadoopLibjars(List<String> arguments) {
+    private void computeHadoopLibjars(List<String> arguments) throws IOException {
         assert arguments != null;
+        arguments.add("-libjars");
         StringBuilder libjars = new StringBuilder();
         File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        if (packagePath.isDirectory()) {
-            for (File file : packagePath.listFiles()) {
-                if (file.isFile() && file.getName().endsWith(".jar")) {
-                    if (libjars.length() != 0) {
-                        libjars.append(',');
-                    }
-                    libjars.append(file.toURI());
-                }
-            }
+        File packageFile = new File(packagePath, Naming.getJobflowClassPackageName(context.getCurrentFlowId()));
+        if (packageFile.isFile() == false) {
+            throw new FileNotFoundException(packageFile.getAbsolutePath());
         }
+        libjars.append(packageFile.toURI());
         File librariesPath = context.getLibrariesPackageLocation(context.getCurrentBatchId());
         if (librariesPath.isDirectory()) {
             for (File file : librariesPath.listFiles()) {
@@ -150,10 +148,7 @@ public class InProcessJobExecutor extends JobExecutor {
                 }
             }
         }
-        if (libjars.length() != 0) {
-            arguments.add("-libjars");
-            arguments.add(libjars.toString());
-        }
+        arguments.add(libjars.toString());
     }
 
     private void computeAsakusaResources(List<String> arguments) {
