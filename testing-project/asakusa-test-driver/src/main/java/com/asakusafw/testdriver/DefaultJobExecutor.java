@@ -31,6 +31,7 @@ import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.utils.collections.Lists;
 
@@ -141,12 +142,11 @@ public class DefaultJobExecutor extends JobExecutor {
 
     private String findPackage() throws IOException {
         File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        if (packagePath.isDirectory()) {
-            for (File file : packagePath.listFiles()) {
-                return file.getAbsolutePath();
-            }
+        File packageFile = new File(packagePath, Naming.getJobflowClassPackageName(context.getCurrentFlowId()));
+        if (packageFile.isFile()) {
+            return packageFile.getAbsolutePath();
         }
-        throw new FileNotFoundException(packagePath.getAbsolutePath());
+        throw new FileNotFoundException(packageFile.getAbsolutePath());
     }
 
     @Override
