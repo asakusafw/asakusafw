@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -29,8 +30,6 @@ import java.util.TreeMap;
 
 import javax.tools.ToolProvider;
 
-import org.apache.commons.lang.SystemUtils;
-import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,6 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.utils.collections.Maps;
@@ -48,13 +46,28 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.6.0
  */
 public class TestDriverContext implements TestContext {
 
     static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
 
-    static final ResourceBundle INFORMATION = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
+    static final ResourceBundle INFORMATION;
+    static {
+        ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
+        } catch (MissingResourceException e) {
+            LOG.warn("Missing framework information resource", e);
+            bundle = new ListResourceBundle() {
+                @Override
+                protected Object[][] getContents() {
+                    return new Object[0][];
+                }
+            };
+        }
+        INFORMATION = bundle;
+    }
 
     /**
      * The system property key of runtime working directory.
@@ -97,6 +110,13 @@ public class TestDriverContext implements TestContext {
      */
     public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version";
 
+    /**
+     * The system property key of {@link JobExecutorFactory}'s implementation class name.
+     * @see #setJobExecutorFactory(JobExecutorFactory)
+     * @since 0.6.0
+     */
+    public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory";
+
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     private volatile File frameworkHomePath;
@@ -117,6 +137,8 @@ public class TestDriverContext implements TestContext {
     private volatile File explicitCompilerWorkingDirectory;
 
     private volatile File generatedCompilerWorkingDirectory;
+
+    private volatile JobExecutorFactory jobExecutorFactory;
 
     private boolean skipCleanInput;
     private boolean skipCleanOutput;
@@ -186,7 +208,7 @@ public class TestDriverContext implements TestContext {
      * @since 0.5.2
      */
     public String getRuntimeEnvironmentVersion() {
-        File path = getFrameworkHomePath0();
+        File path = getFrameworkHomePathOrNull();
         if (path == null) {
             return null;
         }
@@ -228,42 +250,7 @@ public class TestDriverContext implements TestContext {
      * @since 0.5.1
      */
     public void validateExecutionEnvironment() {
-        if (requiresValidateExecutionEnvironment() == false) {
-            LOG.debug("skipping test execution environment validation");
-            return;
-        }
-        if (getFrameworkHomePath0() == null) {
-            raiseInvalid(MessageFormat.format(
-                    "環境変数\"{0}\"が未設定です",
-                    ENV_FRAMEWORK_PATH));
-        }
-        if (ConfigurationProvider.findHadoopCommand() == null) {
-            raiseInvalid(MessageFormat.format(
-                    "コマンド\"{0}\"を検出できませんでした",
-                    "hadoop"));
-        }
-        String runtime = getRuntimeEnvironmentVersion();
-        if (runtime == null) {
-            LOG.debug("Runtime environment version is missing");
-        } else {
-            String develop = getDevelopmentEnvironmentVersion();
-            if (develop.equals(runtime) == false) {
-                raiseInvalid(MessageFormat.format(
-                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
-                        develop,
-                        runtime));
-            }
-        }
-    }
-
-    private boolean requiresValidateExecutionEnvironment() {
-        String value = System.getProperty(KEY_FORCE_EXEC);
-        if (value != null) {
-            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
-                return false;
-            }
-        }
-        return true;
+        getJobExecutor().validateEnvironment();
     }
 
     /**
@@ -273,18 +260,6 @@ public class TestDriverContext implements TestContext {
      */
     public void validateEnvironment() {
         validateExecutionEnvironment();
-    }
-
-    private void raiseInvalid(String message) {
-        if (SystemUtils.IS_OS_WINDOWS) {
-            LOG.warn(message);
-            LOG.info(MessageFormat.format(
-                    "この環境では現在のテストを実行できないため、スキップします: {0}",
-                    callerClass.getName()));
-            Assume.assumeTrue(false);
-        } else {
-            throw new AssertionError(message);
-        }
     }
 
     /**
@@ -301,7 +276,7 @@ public class TestDriverContext implements TestContext {
      * @throws IllegalStateException if neither the framework home path nor the environmental variable were set
      */
     public File getFrameworkHomePath() {
-        File result = getFrameworkHomePath0();
+        File result = getFrameworkHomePathOrNull();
         if (result == null) {
             throw new IllegalStateException(MessageFormat.format(
                     "環境変数{0}が未設定です",
@@ -310,7 +285,11 @@ public class TestDriverContext implements TestContext {
         return result;
     }
 
-    private File getFrameworkHomePath0() {
+    /**
+     * Returns the framework home path.
+     * @return the path, default path from environmental variable {@code ASAKUSA_HOME}, or {@code null}
+     */
+    public File getFrameworkHomePathOrNull() {
         if (frameworkHomePath == null) {
             String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
             if (defaultHomePath == null) {
@@ -391,7 +370,7 @@ public class TestDriverContext implements TestContext {
      * @return the current user name
      */
     public String getOsUser() {
-        String user = System.getenv("USER");
+        String user = System.getProperty("user.name", System.getenv("USER"));
         return user;
     }
 
@@ -748,6 +727,42 @@ public class TestDriverContext implements TestContext {
             removeAll(generatedCompilerWorkingDirectory);
             this.generatedCompilerWorkingDirectory = null;
         }
+    }
+
+    /**
+     * Sets the {@link JobExecutorFactory} for executing jobs in this context.
+     * @param factory the factory, or {@code null} to use a default implementation
+     * @since 0.6.0
+     * @see #getJobExecutor()
+     */
+    public void setJobExecutorFactory(JobExecutorFactory factory) {
+        if (factory == null) {
+            this.jobExecutorFactory = new DefaultJobExecutorFactory();
+        } else {
+            this.jobExecutorFactory = factory;
+        }
+    }
+
+    /**
+     * Returns the {@link JobExecutor} for executes jobs in this context.
+     * @return the {@link JobExecutor} instance
+     * @since 0.6.0
+     */
+    public JobExecutor getJobExecutor() {
+        if (jobExecutorFactory != null) {
+            return jobExecutorFactory.newInstance(this);
+        }
+        String className = System.getProperty(KEY_JOB_EXECUTOR_FACTORY, DefaultJobExecutorFactory.class.getName());
+        try {
+            Class<?> aClass = Class.forName(className, false, getClassLoader());
+            this.jobExecutorFactory = aClass.asSubclass(JobExecutorFactory.class).newInstance();
+        } catch (Exception e) {
+            throw (AssertionError) new AssertionError(MessageFormat.format(
+                    "Failed to create job executor factory from \"{0}\": {1}",
+                    KEY_JOB_EXECUTOR_FACTORY,
+                    className)).initCause(e);
+        }
+        return jobExecutorFactory.newInstance(this);
     }
 
     private boolean removeAll(File path) {

@@ -270,7 +270,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      * @since 0.2.3
      */
     protected URI toOutputUri(String path) {
-        URI uri = URI.create(path);
+        URI uri = URI.create(path.replace('\\', '/'));
         if (uri.getScheme() != null) {
             return uri;
         }
