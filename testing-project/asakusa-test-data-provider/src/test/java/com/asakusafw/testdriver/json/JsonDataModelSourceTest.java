@@ -86,6 +86,20 @@ public class JsonDataModelSourceTest {
         source.next();
     }
 
+    /**
+     * empty file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void empty_file() throws Exception {
+        JsonDataModelSource source = open("empty");
+        try {
+            assertThat(source.next(), is(nullValue()));
+        } finally {
+            source.close();
+        }
+    }
+
     private JsonDataModelSource open(String name) {
         URL resource = getClass().getResource(name + ".json");
         assertThat(name, resource, not(nullValue()));
