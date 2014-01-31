@@ -55,6 +55,7 @@ public class ConfigurationFactory extends ConfigurationProvider {
      */
     public ConfigurationFactory(URL defaultConfigPath) {
         super(defaultConfigPath);
+        this.preferences = Preferences.getDefault();
     }
 
     /**
@@ -64,7 +65,6 @@ public class ConfigurationFactory extends ConfigurationProvider {
      * @since 0.6.0
      */
     public ConfigurationFactory(Preferences preferences) {
-        super(preferences.defaultConfigPath);
         this.preferences = preferences;
     }
 
@@ -96,8 +96,6 @@ public class ConfigurationFactory extends ConfigurationProvider {
 
         String localFileSystemClassName;
 
-        URL defaultConfigPath;
-
         /**
          * Sets a implementation class name of {@link LocalFileSystem}.
          * @param className the class name
@@ -114,7 +112,6 @@ public class ConfigurationFactory extends ConfigurationProvider {
             Preferences prefs = new Preferences();
             prefs.localFileSystemClassName =
                     System.getProperty(KEY_LOCAL_FILE_SYSTEM, AsakusaTestLocalFileSystem.class.getName());
-            prefs.defaultConfigPath = null;
             return prefs;
         }
     }
