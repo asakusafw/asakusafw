@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.tools.ToolProvider;
@@ -120,11 +122,18 @@ public class TestDriverContext implements TestContext {
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
     private volatile File frameworkHomePath;
+
     private final Class<?> callerClass;
+
     private final TestToolRepository repository;
+
     private final Map<String, String> extraConfigurations;
+
     private final Map<String, String> batchArgs;
+
     private final FlowCompilerOptions options;
+
+    private final Set<TestExecutionPhase> skipPhases;
 
     private volatile File librariesPath;
 
@@ -139,13 +148,6 @@ public class TestDriverContext implements TestContext {
     private volatile File generatedCompilerWorkingDirectory;
 
     private volatile JobExecutorFactory jobExecutorFactory;
-
-    private boolean skipCleanInput;
-    private boolean skipCleanOutput;
-    private boolean skipPrepareInput;
-    private boolean skipPrepareOutput;
-    private boolean skipRunJobflow;
-    private boolean skipVerify;
 
     /**
      * Creates a new instance.
@@ -162,6 +164,7 @@ public class TestDriverContext implements TestContext {
         this.batchArgs = new TreeMap<String, String>();
         this.options = new FlowCompilerOptions();
         configureOptions();
+        this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
     }
 
     private void configureOptions() {
@@ -553,7 +556,6 @@ public class TestDriverContext implements TestContext {
         return callerClass.getClassLoader();
     }
 
-
     /**
      * Returns the current batch ID.
      * @return the current batch ID, or {@code null} if not set
@@ -563,7 +565,6 @@ public class TestDriverContext implements TestContext {
         return currentBatchId;
     }
 
-
     /**
      * Configures the current batch ID.
      * @param currentBatchId the ID
@@ -571,7 +572,6 @@ public class TestDriverContext implements TestContext {
     public void setCurrentBatchId(String currentBatchId) {
         this.currentBatchId = currentBatchId;
     }
-
 
     /**
      * Returns the current flow ID.
@@ -582,7 +582,6 @@ public class TestDriverContext implements TestContext {
         return currentFlowId;
     }
 
-
     /**
      * Configures the current flow ID.
      * @param currentFlowId the ID
@@ -590,7 +589,6 @@ public class TestDriverContext implements TestContext {
     public void setCurrentFlowId(String currentFlowId) {
         this.currentFlowId = currentFlowId;
     }
-
 
     /**
      * Returns the current execution ID.
@@ -601,7 +599,6 @@ public class TestDriverContext implements TestContext {
         return currentExecutionId;
     }
 
-
     /**
      * Returns the current execution ID.
      * @param currentExecutionId the ID
@@ -610,103 +607,92 @@ public class TestDriverContext implements TestContext {
         this.currentExecutionId = currentExecutionId;
     }
 
-
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanInput() {
-        return skipCleanInput;
+        return skipPhases.contains(TestExecutionPhase.CLEAN_INPUT);
     }
-
 
     /**
      * Sets whether this test skips to cleanup input data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipCleanInput(boolean skip) {
-        this.skipCleanInput = skip;
+        setSkipPhase(TestExecutionPhase.CLEAN_INPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanOutput() {
-        return skipCleanOutput;
+        return skipPhases.contains(TestExecutionPhase.CLEAN_OUTPUT);
     }
-
 
     /**
      * Sets whether this test skips to cleanup output data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipCleanOutput(boolean skip) {
-        this.skipCleanOutput = skip;
+        setSkipPhase(TestExecutionPhase.CLEAN_OUTPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareInput() {
-        return skipPrepareInput;
+        return skipPhases.contains(TestExecutionPhase.PREPARE_INPUT);
     }
-
 
     /**
      * Sets whether this test skips to prepare input data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipPrepareInput(boolean skip) {
-        this.skipPrepareInput = skip;
+        setSkipPhase(TestExecutionPhase.PREPARE_INPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to prepare output data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareOutput() {
-        return skipPrepareOutput;
+        return skipPhases.contains(TestExecutionPhase.PREPARE_OUTPUT);
     }
-
 
     /**
      * Sets whether this test skips to prepare output data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipPrepareOutput(boolean skip) {
-        this.skipPrepareOutput = skip;
+        setSkipPhase(TestExecutionPhase.PREPARE_OUTPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to execute jobflows.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipRunJobflow() {
-        return skipRunJobflow;
+        return skipPhases.contains(TestExecutionPhase.EXECUTE);
     }
-
 
     /**
      * Sets whether this test skips to execute jobflows (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipRunJobflow(boolean skip) {
-        this.skipRunJobflow = skip;
+        setSkipPhase(TestExecutionPhase.EXECUTE, skip);
     }
-
 
     /**
      * Returns whether this test skips to verify the testing result.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipVerify() {
-        return skipVerify;
+        return skipPhases.contains(TestExecutionPhase.VERIFY);
     }
 
     /**
@@ -714,7 +700,16 @@ public class TestDriverContext implements TestContext {
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipVerify(boolean skip) {
-        this.skipVerify = skip;
+        setSkipPhase(TestExecutionPhase.VERIFY, skip);
+    }
+
+    private void setSkipPhase(TestExecutionPhase phase, boolean skip) {
+        assert phase != null;
+        if (skip) {
+            skipPhases.remove(phase);
+        } else {
+            skipPhases.add(phase);
+        }
     }
 
     /**
@@ -782,5 +777,42 @@ public class TestDriverContext implements TestContext {
             }
         }
         return deleted;
+    }
+
+    /**
+     * Represents each phase in test execution.
+     * @since 0.6.0
+     */
+    public enum TestExecutionPhase {
+
+        /**
+         * Cleaning input.
+         */
+        CLEAN_INPUT,
+
+        /**
+         * Cleaning output.
+         */
+        CLEAN_OUTPUT,
+
+        /**
+         * Preparing input.
+         */
+        PREPARE_INPUT,
+
+        /**
+         * Preparing output.
+         */
+        PREPARE_OUTPUT,
+
+        /**
+         * Performing execution.
+         */
+        EXECUTE,
+
+        /**
+         * Performing verification.
+         */
+        VERIFY,
     }
 }

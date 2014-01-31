@@ -34,6 +34,7 @@ import com.asakusafw.runtime.configuration.HadoopEnvironmentChecker;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+import com.asakusafw.testdriver.MockTextDefinition;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Sets;

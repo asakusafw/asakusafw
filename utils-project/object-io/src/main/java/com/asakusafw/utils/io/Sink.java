@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
+package com.asakusafw.utils.io;
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Job;
-
 /**
- * Configures a {@link Job} in stages.
+ * An abstract super interface of object sinks.
+ * @param <T> object type
  * @since 0.6.0
  */
-public abstract class StageConfigurator {
+public interface Sink<T> extends Flushable, Closeable {
 
     /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
+     * Puts an object to this sink.
+     * @param object the target object
+     * @throws IOException if failed to put the object by I/O error
+     * @throws InterruptedException if interrupted while putting the object
      */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
+    void put(T object) throws IOException, InterruptedException;
 }

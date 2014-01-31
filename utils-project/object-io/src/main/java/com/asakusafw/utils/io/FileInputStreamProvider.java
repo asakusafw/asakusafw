@@ -13,23 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
+package com.asakusafw.utils.io;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Job;
-
 /**
- * Configures a {@link Job} in stages.
+ * Provides {@link FileInputStream}.
  * @since 0.6.0
  */
-public abstract class StageConfigurator {
+public class FileInputStreamProvider implements Provider<FileInputStream> {
+
+    private final File file;
 
     /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
+     * Creates a new instance.
+     * @param file the source file
      */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
+    public FileInputStreamProvider(File file) {
+        this.file = file;
+    }
+
+    @Override
+    public FileInputStream open() throws IOException, InterruptedException {
+        return new FileInputStream(file);
+    }
+
+    @Override
+    public void close() throws IOException {
+        return;
+    }
+
+    @Override
+    public String toString() {
+        return file.getPath();
+    }
 }

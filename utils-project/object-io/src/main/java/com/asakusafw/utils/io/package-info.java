@@ -13,23 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
-
-import java.io.IOException;
-
-import org.apache.hadoop.mapreduce.Job;
-
 /**
- * Configures a {@link Job} in stages.
- * @since 0.6.0
+ * Simple Object I/O APIs.
  */
-public abstract class StageConfigurator {
-
-    /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
-     */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
-}
+package com.asakusafw.utils.io;

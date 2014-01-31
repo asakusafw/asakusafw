@@ -387,7 +387,7 @@ public class JobflowExecutor {
                             info.getJobflow().getFlowId()));
                 }
                 if (output.getResultSink() != null) {
-                    LOG.debug("出力{}を保存しています: {}", output.getName(), output.getVerifier());
+                    LOG.debug("出力{}を保存しています: {}", output.getName(), output.getResultSink());
                     moderator.save(output.getModelType(), description, output.getResultSink());
                 }
                 if (output.getVerifier() != null) {
