@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -81,6 +82,13 @@ public class TestDriverContext implements TestContext {
     public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir";
 
     /**
+     * The system property key of the default framework installation path.
+     * This property will overwrite environment variables.
+     * @since 0.6.0
+     */
+    public static final String KEY_FRAMEWORK_PATH = "asakusa.testdriver.framework";
+
+    /**
      * The system property key of ignoring environment checking.
      * @see #validateExecutionEnvironment()
      * @since 0.5.2
@@ -124,6 +132,8 @@ public class TestDriverContext implements TestContext {
     private final TestToolRepository repository;
     private final Map<String, String> extraConfigurations;
     private final Map<String, String> batchArgs;
+    private final Map<String, String> environmentVariables;
+
     private final FlowCompilerOptions options;
 
     private volatile File librariesPath;
@@ -160,6 +170,7 @@ public class TestDriverContext implements TestContext {
         this.repository = new TestToolRepository(contextClass.getClassLoader());
         this.extraConfigurations = new TreeMap<String, String>();
         this.batchArgs = new TreeMap<String, String>();
+        this.environmentVariables = new HashMap<String, String>(System.getenv());
         this.options = new FlowCompilerOptions();
         configureOptions();
     }
@@ -291,11 +302,15 @@ public class TestDriverContext implements TestContext {
      */
     public File getFrameworkHomePathOrNull() {
         if (frameworkHomePath == null) {
-            String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
-            if (defaultHomePath == null) {
-                return null;
+            String homePath = System.getProperty(KEY_FRAMEWORK_PATH);
+            if (homePath != null) {
+                return new File(homePath);
             }
-            return new File(defaultHomePath);
+            String defaultHomePath = getEnvironmentVariables0().get(ENV_FRAMEWORK_PATH);
+            if (defaultHomePath != null) {
+                return new File(defaultHomePath);
+            }
+            return null;
         }
         return frameworkHomePath;
     }
@@ -370,7 +385,8 @@ public class TestDriverContext implements TestContext {
      * @return the current user name
      */
     public String getOsUser() {
-        String user = System.getProperty("user.name", System.getenv("USER"));
+        Map<String, String> envp = getEnvironmentVariables0();
+        String user = System.getProperty("user.name", envp.get("USER"));
         return user;
     }
 
@@ -522,7 +538,16 @@ public class TestDriverContext implements TestContext {
 
     @Override
     public Map<String, String> getEnvironmentVariables() {
-        return System.getenv();
+        File home = getFrameworkHomePathOrNull();
+        Map<String, String> envp = getEnvironmentVariables0();
+        if (home != null) {
+            envp.put(ENV_FRAMEWORK_PATH, home.getAbsolutePath());
+        }
+        return envp;
+    }
+
+    private Map<String, String> getEnvironmentVariables0() {
+        return environmentVariables;
     }
 
     @Override

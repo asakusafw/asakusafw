@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
-import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Lists;
 
 /**
@@ -50,6 +50,8 @@ public class DefaultJobExecutor extends JobExecutor {
 
     private final TestDriverContext context;
 
+    private final ConfigurationFactory configurations;
+
     /**
      * Creates a new instance.
      * @param context the current test context
@@ -59,12 +61,17 @@ public class DefaultJobExecutor extends JobExecutor {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         this.context = context;
+        this.configurations = ConfigurationFactory.getDefault();
     }
 
     /**
-     * Validates current test execution environment.
-     * @throws AssertionError if current test environment is invalid
+     * Returns the current {@link ConfigurationFactory}.
+     * @return the configuration factory
      */
+    protected ConfigurationFactory getConfigurations() {
+        return configurations;
+    }
+
     @Override
     public void validateEnvironment() {
         if (requiresValidateExecutionEnvironment() == false) {
@@ -76,7 +83,7 @@ public class DefaultJobExecutor extends JobExecutor {
                     "環境変数\"{0}\"が未設定です",
                     TestDriverContext.ENV_FRAMEWORK_PATH));
         }
-        if (ConfigurationProvider.findHadoopCommand() == null) {
+        if (configurations.getHadoopCommand() == null) {
             raiseInvalid(MessageFormat.format(
                     "コマンド\"{0}\"を検出できませんでした",
                     "hadoop"));
@@ -163,28 +170,18 @@ public class DefaultJobExecutor extends JobExecutor {
         }
     }
 
-    /**
-     * Runs the specified command.
-     * @param commandLine command line tokens
-     * @param environmentVariables variables
-     * @return the exit code
-     * @throws IOException if failed to create/destroy a process
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public static int runCommand(
+    private int runCommand(
             List<String> commandLine,
             Map<String, String> environmentVariables) throws IOException {
-        if (commandLine == null) {
-            throw new IllegalArgumentException("commandLine must not be null"); //$NON-NLS-1$
-        }
-        if (environmentVariables == null) {
-            throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
-        }
         LOG.info("[COMMAND] {}", toCommandLineString(commandLine));
 
         ProcessBuilder builder = new ProcessBuilder(commandLine);
         builder.redirectErrorStream(true);
         builder.environment().putAll(environmentVariables);
+        File hadoopCommand = configurations.getHadoopCommand();
+        if (hadoopCommand != null) {
+            builder.environment().put("HADOOP_CMD", hadoopCommand.getAbsolutePath());
+        }
         builder.directory(new File(System.getProperty("user.home", ".")));
 
         int exitCode;
