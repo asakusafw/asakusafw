@@ -170,8 +170,15 @@ public class FrameworkDeployer implements TestRule {
         }
         String protocol = resource.getProtocol();
         if (protocol.equals("file")) {
-            File file = new File(resource.getPath());
-            return toClassPathRoot(aClass, file);
+            try {
+                File file = new File(resource.toURI());
+                return toClassPathRoot(aClass, file);
+            } catch (URISyntaxException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to locate the library path (cannot convert to local file): {0}",
+                        resource), e);
+                return null;
+            }
         }
         if (protocol.equals("jar")) {
             String path = resource.getPath();
