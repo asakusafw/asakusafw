@@ -196,14 +196,16 @@ Asakusa Frameworkはこの一連の処理を自動的に行うテストドライ
 ここでは、これらをまとめて「テストデータ」と呼ぶことにします。
 
 テストドライバはテストデータをさまざまな形式で記述できます。
-Asakusa Frameworkが標準でサポートしているのは以下の2種類です。
+Asakusa Frameworkが標準でサポートしているのは以下の3種類です。
 
 * :doc:`using-excel`
 * :doc:`using-json`
+* `Javaオブジェクトによるテストデータ定義`_
 
 テストデータの配置
 ~~~~~~~~~~~~~~~~~~
-作成したテストデータは、それを利用するテストと同じパッケージか、
+:doc:`using-excel` や :doc:`using-json` で作成したテストデータは、
+それを利用するテストと同じパッケージか、
 そのサブパッケージ上に配置します。
 
 複数のテストから利用されるテストデータは、
@@ -212,7 +214,9 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 テストの実行
 ------------
 `テストデータの作成`_ を完了したら、それぞれのデータフローをテストします。
-ここでは、テストハーネスに `JUnit`_ を利用した場合のテスト方法を紹介します。
+
+ここでは、テストハーネスに `JUnit`_ を利用し、
+テストデータに :doc:`using-excel` を利用した場合のテスト方法を紹介します。
 いずれの場合も、テスト対象のクラスに対応するテストクラスを作成してください。
 
 ..  _`JUnit`: http://www.junit.org/
@@ -420,8 +424,37 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
     この操作は、 ``verify()`` と組み合わせて指定してください。 ``verify()`` の指定がない場合、比較結果の保存は行われません。
     また、比較結果に差異がない場合には比較結果は保存されません。
 
+Javaオブジェクトによるテストデータ定義
+--------------------------------------
+ここではテストデータをJavaで記述する方法について紹介します。
+
+入力データと期待データをJavaで記述する
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+入力データや期待データをJavaで定義するには、
+`テストの実行`_ で紹介したテストドライバAPIの
+``input.prepare()`` メソッドや ``output.verify()`` メソッドで
+テスト対象となるデータモデル型のデータモデルオブジェクトを保持する
+コレクションを指定します。
+
+..  code-block:: java
+
+    List<Shipment> shipments = new ArrayList<Shipment>();
+
+    Shipment ship1 = new Shipment();
+    ship1.setItemCode(1001);
+    ship1.setShippedDate(DateTime.valueOf("20110102000000", Format.SIMPLE));
+    shipments.add(ship1)
+
+    Shipment ship2 = new Shipment();
+    ship2.setItemCode(1002);
+    ship2.setShippedDate(DateTime.valueOf("20110103000000", Format.SIMPLE));
+    shipments.add(ship2)
+
+    In<Shipment> shipmentIn = tester.input("shipment", Shipment.class)
+        .prepare(shipments);
+
 テスト条件をJavaで記述する
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 テスト条件は期待データと実際の結果を突き合わせるための
 ルールを示したもので、Javaで直接記述することも可能です。
 
@@ -496,7 +529,7 @@ Asakusa Frameworkが標準でサポートしているのは以下の2種類で�
 ..  [#] :javadoc:`com.asakusafw.testdriver.core.ModelVerifier`
 
 テスト条件をJavaで拡張する
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 「 `テスト条件をJavaで記述する`_ 」という他に、Excelなどで記述したテスト条件をJavaで拡張することもできます。
 
 テスト条件をJavaで拡張するには、 ``ModelTester`` [#]_ インターフェースを実装したクラスを作成します。
