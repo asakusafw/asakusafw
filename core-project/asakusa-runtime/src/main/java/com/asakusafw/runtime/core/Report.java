@@ -343,7 +343,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
 
     /**
      * {@link Report.Delegate}の標準的な実装。
-     * @since
+     * @since 0.1.0
      * @version 0.5.1
      */
     public static class Default extends Delegate {

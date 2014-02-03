@@ -42,24 +42,24 @@ public class ConfigurationFactory extends ConfigurationProvider {
      * The system property key of {@link LocalFileSystem} implementation class name.
      * @since 0.6.0
      */
-    public static String KEY_LOCAL_FILE_SYSTEM = "asakusa.testdriver.fs";
+    public static final String KEY_LOCAL_FILE_SYSTEM = "asakusa.testdriver.fs";
 
     /**
      * The system property key of Hadoop configuration path.
      * @since 0.6.0
      */
-    public static String KEY_EXPLICIT_HADOOP_CONF = "asakusa.testdriver.hadoop.conf";
+    public static final String KEY_EXPLICIT_HADOOP_CONF = "asakusa.testdriver.hadoop.conf";
 
     /**
      * The system property key of Hadoop command path.
      * @since 0.6.0
      */
-    public static String KEY_EXPLICIT_HADOOP_COMMAND = "asakusa.testdriver.hadoop.command";
+    public static final String KEY_EXPLICIT_HADOOP_COMMAND = "asakusa.testdriver.hadoop.command";
 
     /**
      * The default value of {@link LocalFileSystem} implementation class name.
      */
-    static String DEFAULT_LOCAL_FILE_SYSTEM = AsakusaTestLocalFileSystem.class.getName();
+    static final String DEFAULT_LOCAL_FILE_SYSTEM = AsakusaTestLocalFileSystem.class.getName();
 
     private final Preferences preferences;
 

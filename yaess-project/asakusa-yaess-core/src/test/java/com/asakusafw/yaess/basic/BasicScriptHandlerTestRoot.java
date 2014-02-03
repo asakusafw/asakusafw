@@ -103,6 +103,7 @@ public class BasicScriptHandlerTestRoot {
         while (scanner.hasNextLine()) {
             results.add(scanner.nextLine());
         }
+        scanner.close();
         return results;
     }
 
@@ -198,6 +199,7 @@ public class BasicScriptHandlerTestRoot {
      * Returns a matcher which tests whether RHS is in LHS.
      * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
      * @param matcher RHS
+     * @param <T> the test target data type
      * @return the matcher
      */
     protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {

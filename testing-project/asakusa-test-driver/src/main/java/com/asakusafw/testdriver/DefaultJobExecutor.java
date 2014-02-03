@@ -125,7 +125,9 @@ public class DefaultJobExecutor extends JobExecutor {
     }
 
     @Override
-    public void execute(TestExecutionPlan.Job job, Map<String, String> environmentVariables) throws IOException {
+    public void execute(
+            TestExecutionPlan.Job job,
+            Map<String, String> environmentVariables) throws IOException {
         assert job != null;
         assert environmentVariables != null;
         List<String> commandLine = Lists.create();
@@ -157,7 +159,9 @@ public class DefaultJobExecutor extends JobExecutor {
     }
 
     @Override
-    public void execute(TestExecutionPlan.Command command, Map<String, String> environmentVariables) throws IOException {
+    public void execute(
+            TestExecutionPlan.Command command,
+            Map<String, String> environmentVariables) throws IOException {
         assert command != null;
         assert environmentVariables != null;
         int exitCode = runCommand(command.getCommandTokens(), environmentVariables);

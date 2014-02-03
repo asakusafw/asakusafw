@@ -33,6 +33,7 @@ public final class Sources {
     /**
      * Wraps {@link Iterator} object.
      * @param iterator the iterator object
+     * @param <T> the element type
      * @return the {@link Source} which provides elements in the iterator
      */
     public static <T> Source<T> wrap(final Iterator<? extends T> iterator) {
@@ -65,6 +66,7 @@ public final class Sources {
     /**
      * Concatenates a list of sources.
      * @param sources the list of sources
+     * @param <T> the element type
      * @return the concatenated source
      */
     public static <T> Source<T> concat(final List<? extends Source<? extends T>> sources) {
