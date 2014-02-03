@@ -57,7 +57,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 /**
  * フロー部品やジョブフローを直接コンパイルして、JARのパッケージを作成する。
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.6.0
  */
 public final class DirectFlowCompiler {
 
@@ -296,16 +296,24 @@ public final class DirectFlowCompiler {
         assert resourcePath != null;
         String protocol = resource.getProtocol();
         if (protocol.equals("file")) {
-            File file = new File(resource.getPath());
-            return toClassPathRoot(file, resourcePath);
+            try {
+                File file = new File(resource.toURI());
+                return toClassPathRoot(file, resourcePath);
+            } catch (URISyntaxException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to locate the library path (cannot convert to local file): {0}",
+                        resource), e);
+                return null;
+            }
         }
         if (protocol.equals("jar")) {
             String path = resource.getPath();
             return toClassPathRoot(path, resourcePath);
         } else {
-            LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
+            LOG.warn(MessageFormat.format(
+                    "Failed to locate the library path (unsupported protocol {0}): {1}",
                     resource,
-                    resourcePath);
+                    resourcePath));
             return null;
         }
     }
