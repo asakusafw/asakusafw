@@ -15,27 +15,24 @@
  */
 package com.asakusafw.testdriver;
 
+import org.apache.hadoop.io.Text;
+
 /**
- * ジョブフローのテスト入力データオブジェクト。
- * @since 0.2.0
- * @version 0.6.0
- * @param <T> モデルクラス
+ * Mock implementation of {@link FlowDriverInput}.
  */
-public class JobFlowDriverInput<T> extends FlowDriverInput<T, JobFlowDriverInput<T>> {
+public class MockFlowDriverInput extends FlowDriverInput<Text, MockFlowDriverInput> {
 
     /**
-     * コンストラクタ。
-     *
-     * @param driverContext テストドライバコンテキスト。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
+     * Creates a new instance.
+     * @param callerClass the current context class
+     * @param testTools the test tools
      */
-    public JobFlowDriverInput(TestDriverContext driverContext, String name, Class<T> modelType) {
-        super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);
+    public MockFlowDriverInput(Class<?> callerClass, MockTestDataToolProvider testTools) {
+        super(callerClass, testTools, "mock", Text.class);
     }
 
     @Override
-    protected JobFlowDriverInput<T> getThis() {
+    protected MockFlowDriverInput getThis() {
         return this;
     }
 }

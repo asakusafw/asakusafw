@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
+package com.asakusafw.utils.io;
 
 import java.io.IOException;
-
-import org.apache.hadoop.mapreduce.Job;
+import java.util.NoSuchElementException;
 
 /**
- * Configures a {@link Job} in stages.
+ * Represents an empty source.
+ * @param <T> object type
  * @since 0.6.0
  */
-public abstract class StageConfigurator {
+public class EmptySource<T> implements Source<T> {
 
-    /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
-     */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
+    @Override
+    public void close() {
+        return;
+    }
+
+    @Override
+    public boolean next() throws IOException, InterruptedException {
+        return false;
+    }
+
+    @Override
+    public T get() throws IOException, InterruptedException {
+        throw new NoSuchElementException();
+    }
 }

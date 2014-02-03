@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
+package com.asakusafw.utils.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Job;
-
 /**
- * Configures a {@link Job} in stages.
+ * An abstract super interface which provides I/O resources.
+ * @param <T> resource type which this provides
  * @since 0.6.0
  */
-public abstract class StageConfigurator {
+public interface Provider<T> extends Closeable {
 
     /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
+     * Returns a new resource.
+     * @return the provided resource
+     * @throws IOException if failed to provide a new resource
+     * @throws InterruptedException if interrupted while preparing the resource
      */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
+    T open() throws IOException, InterruptedException;
 }

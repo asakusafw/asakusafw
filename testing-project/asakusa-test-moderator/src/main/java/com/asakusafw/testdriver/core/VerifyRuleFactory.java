@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.stage;
+package com.asakusafw.testdriver.core;
 
 import java.io.IOException;
 
-import org.apache.hadoop.mapreduce.Job;
-
 /**
- * Configures a {@link Job} in stages.
+ * An abstract factory class of {@link VerifyRule}.
  * @since 0.6.0
  */
-public abstract class StageConfigurator {
+public abstract class VerifyRuleFactory {
 
     /**
-     * Configures the target job.
-     * @param job the target {@link Job} object
-     * @throws IOException if failed to configure the job
-     * @throws InterruptedException if interrupted while configuring {@link Job} object
+     * Creates a new {@link VerifyRule} object.
+     * @param <T> type of data model
+     * @param definition the data model definition
+     * @param context current verification context
+     * @return the created {@link VerifyRule}
+     * @throws IOException if failed to create a {@link VerifyRule} from the source
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public abstract void configure(Job job) throws IOException, InterruptedException;
+    public abstract <T> VerifyRule createRule(
+            DataModelDefinition<T> definition,
+            VerifyContext context) throws IOException;
 }
