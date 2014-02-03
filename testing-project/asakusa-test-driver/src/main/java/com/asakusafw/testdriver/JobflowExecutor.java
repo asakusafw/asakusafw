@@ -215,6 +215,7 @@ public class JobflowExecutor {
             CommandContext commands = context.getCommandContext();
             Map<String, String> dPropMap = createHadoopProperties(commands);
             TestExecutionPlan plan = createExecutionPlan(info, commands, dPropMap);
+            validatePlan(plan);
             executePlan(plan, info.getPackageFile());
         } else {
             LOG.info("フローの実行をスキップしました");
@@ -306,6 +307,10 @@ public class JobflowExecutor {
         return results;
     }
 
+    private void validatePlan(TestExecutionPlan plan) {
+        jobExecutor.validatePlan(plan);
+    }
+
     private void executePlan(TestExecutionPlan plan, File jobflowPackageFile) throws IOException {
         assert plan != null;
         assert jobflowPackageFile != null;
@@ -345,8 +350,7 @@ public class JobflowExecutor {
     }
 
     private Map<String, String> getEnvironmentVariables() {
-        Map<String, String> variables = Maps.create();
-        variables.put(TestDriverContext.ENV_FRAMEWORK_PATH, context.getFrameworkHomePath().getAbsolutePath());
+        Map<String, String> variables = Maps.from(context.getEnvironmentVariables());
         return variables;
     }
 

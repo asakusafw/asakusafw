@@ -25,9 +25,20 @@ public abstract class JobExecutor {
 
     /**
      * Validates the target job execution environment.
-     * @throws AssertionError if current the execution environment is invalid
+     * @throws AssertionError if the current execution environment is invalid
      */
-    public abstract void validateEnvironment();
+    public void validateEnvironment() {
+        return;
+    }
+
+    /**
+     * Validates the target test execution plan for this executor.
+     * @param plan the target execution plan
+     * @throws AssertionError if the target plan is invalid for the environment
+     */
+    public void validatePlan(TestExecutionPlan plan) {
+        return;
+    }
 
     /**
      * Executes a Hadoop job.
