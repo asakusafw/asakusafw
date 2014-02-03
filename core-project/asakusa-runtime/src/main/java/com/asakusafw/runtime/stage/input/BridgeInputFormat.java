@@ -132,13 +132,25 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             dataSource.findInputFragments(dataType, format, path.componentPath, path.pattern);
         if (fragments.isEmpty()) {
             String id = repo.getRelatedId(group.containerPath);
+            String containerPath = repo.getContainerPath(group.containerPath);
             throw new IOException(MessageFormat.format(
-                    "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\")",
+                    "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
                     id,
-                    path.originalBasePath,
-                    path.pattern));
+                    getBasePath(containerPath, path),
+                    path.pattern,
+                    format.getSupportedType().getName()));
         }
         return fragments;
+    }
+
+    private String getBasePath(String containerPath, InputPath input) {
+        if (containerPath.isEmpty()) {
+            return input.componentPath;
+        }
+        if (input.componentPath.isEmpty()) {
+            return containerPath;
+        }
+        return String.format("%s/%s", containerPath, input.componentPath);
     }
 
     private Map<DirectInputGroup, List<InputPath>> extractInputList(
@@ -154,8 +166,8 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         Map<DirectInputGroup, List<InputPath>> results = new HashMap<DirectInputGroup, List<InputPath>>();
         for (StageInput input : inputList) {
-            String fullBasePath = extractBasePath(input);
-            String basePath = variables.parse(repo.getComponentPath(fullBasePath));
+            String fullBasePath = variables.parse(extractBasePath(input));
+            String basePath = repo.getComponentPath(fullBasePath);
             FilePattern pattern = extractSearchPattern(context, variables, input);
             Class<?> dataClass = extractDataClass(context, input);
             Class<? extends DataFormat<?>> formatClass = extractFormatClass(context, input);
@@ -165,7 +177,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                 paths = new ArrayList<InputPath>();
                 results.put(group, paths);
             }
-            paths.add(new InputPath(fullBasePath, basePath, pattern));
+            paths.add(new InputPath(basePath, pattern));
         }
         return results;
     }
@@ -347,17 +359,13 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
     private static class InputPath {
 
-        final String originalBasePath;
-
         final String componentPath;
 
         final FilePattern pattern;
 
-        InputPath(String originalBasePath, String componentPath, FilePattern pattern) {
-            assert originalBasePath != null;
+        InputPath(String componentPath, FilePattern pattern) {
             assert componentPath != null;
             assert pattern != null;
-            this.originalBasePath = originalBasePath;
             this.componentPath = componentPath;
             this.pattern = pattern;
         }
