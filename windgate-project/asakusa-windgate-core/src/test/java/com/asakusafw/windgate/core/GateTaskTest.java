@@ -74,13 +74,18 @@ public class GateTaskTest {
         File out = folder.newFile("out");
         put(in, "aaa", "bbb", "ccc");
 
-        new GateTask(
+        GateTask task = new GateTask(
                 profile(),
                 script(p("testing", "fs1", in, "fs2", out)),
                 "testing",
                 true,
                 true,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            task.execute();
+        } finally {
+            task.close();
+        }
 
         List<String> results = get(out);
         assertThat(results, is(Arrays.asList("aaa", "bbb", "ccc")));
@@ -99,7 +104,7 @@ public class GateTaskTest {
         put(in1, "aaa", "bbb", "ccc");
         put(in2, "ddd", "eee", "fff");
 
-        new GateTask(
+        GateTask task = new GateTask(
                 profile(),
                 script(
                         p("testing1", "fs1", in1, "fs1", out1),
@@ -107,7 +112,12 @@ public class GateTaskTest {
                 "testing",
                 true,
                 true,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            task.execute();
+        } finally {
+            task.close();
+        }
 
         assertThat(get(out1), is(Arrays.asList("aaa", "bbb", "ccc")));
         assertThat(get(out2), is(Arrays.asList("ddd", "eee", "fff")));
@@ -126,22 +136,32 @@ public class GateTaskTest {
 
         GateProfile profile = profile();
         GateScript importer = script(p("testing", "fs1", in, "fs2", temp));
-        new GateTask(
+        GateTask t1 = new GateTask(
                 profile,
                 importer,
                 "testing",
                 true,
                 false,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            t1.execute();
+        } finally {
+            t1.close();
+        }
 
         GateScript exporter = script(p("testing", "fs2", temp, "fs1", out));
-        new GateTask(
+        GateTask t2 = new GateTask(
                 profile,
                 exporter,
                 "testing",
                 false,
                 true,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            t2.execute();
+        } finally {
+            t2.close();
+        }
 
         List<String> results = get(out);
         assertThat(results, is(Arrays.asList("aaa", "bbb", "ccc")));
@@ -155,13 +175,18 @@ public class GateTaskTest {
     public void execute_missing_session() throws Exception {
         File in = folder.newFile("in");
         File out = folder.newFile("out");
-        new GateTask(
+        GateTask task = new GateTask(
                 profile(),
                 script(p("testing", "fs1", in, "fs2", out)),
                 "testing",
                 false,
                 false,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            task.execute();
+        } finally {
+            task.close();
+        }
     }
 
     /**
@@ -173,13 +198,18 @@ public class GateTaskTest {
         File in = folder.newFile("in");
         File out = folder.newFile("out");
         in.delete();
-        new GateTask(
+        GateTask task = new GateTask(
                 profile(),
                 script(p("testing", "fs1", in, "fs2", out)),
                 "testing",
                 true,
                 true,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            task.execute();
+        } finally {
+            task.close();
+        }
     }
 
     /**
@@ -195,13 +225,18 @@ public class GateTaskTest {
         out.delete();
         put(in, "aaa", "bbb", "ccc");
 
-        new GateTask(
+        GateTask task = new GateTask(
                 profile(),
                 script(p("testing", "void", "fs1", in, "fs2", out)),
                 "testing",
                 true,
                 true,
-                new ParameterList()).execute();
+                new ParameterList());
+        try {
+            task.execute();
+        } finally {
+            task.close();
+        }
 
         assertThat(out.exists(), is(false));
     }
@@ -262,15 +297,19 @@ public class GateTaskTest {
         try {
             List<String> results = new ArrayList<String>();
             ObjectInputStream input = new ObjectInputStream(in);
-            while (true) {
-                try {
-                    String value = (String) input.readObject();
-                    results.add(value);
-                } catch (ClassNotFoundException e) {
-                    throw new AssertionError(e);
-                } catch (EOFException e) {
-                    return results;
+            try {
+                while (true) {
+                    try {
+                        String value = (String) input.readObject();
+                        results.add(value);
+                    } catch (ClassNotFoundException e) {
+                        throw new AssertionError(e);
+                    } catch (EOFException e) {
+                        return results;
+                    }
                 }
+            } finally {
+                input.close();
             }
         } finally {
             in.close();

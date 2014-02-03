@@ -60,7 +60,9 @@ public abstract class AbstractTestDataToolProvider implements TestDataToolProvid
     }
 
     @Override
-    public VerifierFactory toVerifierFactory(final DataModelSourceFactory expectedFactory, final VerifyRuleFactory ruleFactory) {
+    public VerifierFactory toVerifierFactory(
+            final DataModelSourceFactory expectedFactory,
+            final VerifyRuleFactory ruleFactory) {
         assert expectedFactory != null;
         assert ruleFactory != null;
         return new VerifierFactory() {

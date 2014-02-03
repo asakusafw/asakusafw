@@ -15,10 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import com.asakusafw.testdriver.JobExecutor;
-import com.asakusafw.testdriver.JobExecutorFactory;
-import com.asakusafw.testdriver.TestDriverContext;
-
 /**
  * An implementation of {@link JobExecutorFactory} which provides {@link DefaultJobExecutor}.
  * @since 0.6.0

@@ -1252,12 +1252,13 @@ public class CsvParserTest {
                 dateFormat,
                 dateTimeFormat);
         CsvParser parser = new CsvParser(infinite, "testing", conf);
-
         try {
             assertThat(parser.next(), is(true));
             fail();
         } catch (IOException e) {
             // ok.
+        } finally {
+            parser.close();
         }
     }
 

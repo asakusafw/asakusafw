@@ -36,6 +36,7 @@ public class SourceDataModelSourceFactory extends DataModelSourceFactory {
      * Creates a new instance.
      * @param sourceType the source object class
      * @param sourceProvider the source provider
+     * @param <T> the source data model type
      */
     public <T> SourceDataModelSourceFactory(
             Class<T> sourceType, Provider<? extends Source<? extends T>> sourceProvider) {
