@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 
 /**
  * Creates {@link Configuration}s with system defaults.
@@ -60,6 +61,10 @@ public class ConfigurationFactory extends ConfigurationProvider {
      * The default value of {@link LocalFileSystem} implementation class name.
      */
     static final String DEFAULT_LOCAL_FILE_SYSTEM = AsakusaTestLocalFileSystem.class.getName();
+
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
 
     private final Preferences preferences;
 
