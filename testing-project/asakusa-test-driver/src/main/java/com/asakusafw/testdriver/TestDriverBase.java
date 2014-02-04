@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * テストドライバの基底クラス。
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.6.0
  */
 public abstract class TestDriverBase {
 
@@ -371,5 +371,14 @@ public abstract class TestDriverBase {
         return new TraceSetting(
                 new Tracepoint(operatorClass.getName(), methodName, portKind, portName),
                 Mode.STRICT, attributes);
+    }
+
+    /**
+     * [EXPERIMENTAL] Sets the {@link JobExecutorFactory} for executing jobs in this test.
+     * @param factory the factory, or {@code null} to use a default implementation
+     * @since 0.6.0
+     */
+    public void setJobExecutorFactory(JobExecutorFactory factory) {
+        driverContext.setJobExecutorFactory(factory);
     }
 }

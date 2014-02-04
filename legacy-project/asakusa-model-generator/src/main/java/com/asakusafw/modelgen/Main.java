@@ -48,7 +48,7 @@ public class Main implements Callable<ModelRepository> {
 
     static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     /**
      * インスタンスを生成する。
@@ -332,11 +332,15 @@ public class Main implements Callable<ModelRepository> {
 
     private static List<String> loadLines(String path) throws IOException {
         Scanner scanner = new Scanner(new File(path), "UTF-8");
-        List<String> result = new ArrayList<String>();
-        while (scanner.hasNextLine()) {
-            result.add(scanner.nextLine());
+        try {
+            List<String> result = new ArrayList<String>();
+            while (scanner.hasNextLine()) {
+                result.add(scanner.nextLine());
+            }
+            return result;
+        } finally {
+            scanner.close();
         }
-        return result;
     }
 
     private static String findProperty(Properties properties, String key) {

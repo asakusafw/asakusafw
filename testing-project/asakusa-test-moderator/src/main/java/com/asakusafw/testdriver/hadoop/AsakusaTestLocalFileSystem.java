@@ -24,6 +24,7 @@ import org.apache.hadoop.fs.LocalFileSystem;
 /**
  * Creates FileSystem For Local Test With TestDriver.
  * @since 0.2.5
+ * @version 0.6.0
  */
 public class AsakusaTestLocalFileSystem extends LocalFileSystem {
 
@@ -41,4 +42,19 @@ public class AsakusaTestLocalFileSystem extends LocalFileSystem {
         setWorkingDirectory(getHomeDirectory());
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        return getClass().equals(obj.getClass());
+    }
 }

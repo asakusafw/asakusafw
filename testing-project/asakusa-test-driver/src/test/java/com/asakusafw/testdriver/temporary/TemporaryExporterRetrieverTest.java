@@ -33,6 +33,7 @@ import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.runtime.configuration.HadoopEnvironmentChecker;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+import com.asakusafw.testdriver.MockTextDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.TestContext;

@@ -465,6 +465,7 @@ public class FileResourceMirrorTest {
         while (scanner.hasNextLine()) {
             actual.add(scanner.nextLine());
         }
+        scanner.close();
         Collections.sort(actual);
         Arrays.sort(expected);
         assertThat(actual, is(Arrays.asList(expected)));

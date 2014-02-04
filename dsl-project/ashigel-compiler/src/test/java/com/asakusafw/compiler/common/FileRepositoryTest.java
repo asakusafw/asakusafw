@@ -148,6 +148,7 @@ public class FileRepositoryTest {
                         contents.add(line);
                     }
                     entries.put(location.toPath('/'), contents);
+                    scanner.close();
                 } finally {
                     input.close();
                 }
