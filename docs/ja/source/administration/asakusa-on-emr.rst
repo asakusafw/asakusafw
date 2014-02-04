@@ -86,15 +86,16 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
    * インストールはEMRのブートストラップアクションを利用して自動的に行う。
 * バッチアプリケーションは、EMRの起動後にコマンドを実行して起動する
    * EMRの起動/停止とバッチアプリケーションの実行は連動させない。
+* バッチアプリケーションはS3上に配置した入力データ(CSVファイル)に対して処理を行い、S3上に処理結果を出力する。
+   * Direct I/Oに対してS3に対してデータの入出力を行うよう設定する。
 
-この方針では、フレームワーク、アプリケーション、入力データ、その他必要なスクリプト等のすべてをS3上に配置します。
+この方針では、フレームワーク、アプリケーション、その他必要なスクリプト等のすべてをS3上に配置します。
 具体的には、以下の作業が必要です。
 
-1. Asakusa FrameworkをS3に配置する
-2. バッチアプリケーションをS3に配置する
-3. Asakusa Frameworkの設定ファイルをS3に配置する
-4. ブートストラップアクション用スクリプトをS3に配置する
-5. ステップ用スクリプトをS3に配置する
+1. Direct I/Oの設定ファイルを編集する
+2. Asakusa Frameworkの実行環境一式をS3に配置する
+3. ブートストラップアクション用スクリプトをS3に配置する
+4. ステップ用スクリプトをS3に配置する
 
 以下、これらの手順ごとの作業について説明します。
 以降の手順は、Asakusa Frameworkの開発環境（EMR操作用クライアントマシン）で行うものとします。
@@ -104,57 +105,14 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 ..  hint::
     バッチアプリケーションの実行とEMRの起動/停止を連動させる使い方も可能です。この場合、EMR起動時のコマンド実行パラメータに指定したバッチアプリケーションの実行が完了するとEMRが自動的に停止します。
 
-Asakusa FrameworkをS3に配置する
--------------------------------
-Asakusa FrameworkのデプロイメントアーカイブをS3に配置します。
-
-Asakusa Frameworkのデプロイメントアーカイブを作成するには、Asakusa Gradle Pluginを利用するプロジェクト上で、Gradleの ``assembleAsakusafw`` タスクを実行します。詳しくは、 `Asakusa Gradle Plugin利用ガイド`_ の `Asakusa Frameworkのデプロイメントアーカイブ生成`_ を参照してください。
-
-``assembleAsakusafw`` タスクを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
-
-以下にAsakusa FrameworkのデプロイメントアーカイブをS3に配置する例を示します。
-
-..  code-block:: sh
-
-    cd <プロジェクトのパス>
-    ./gradlew assembleAsakusafw
-    s3cmd --rr put build/asakusafw-0.6.0.tar.gz s3://[sample-bucket]/asakusafw/
-
-..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
-
-..  _`Asakusa Gradle Plugin利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html
-..  _`Asakusa Frameworkのデプロイメントアーカイブ生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#deployment-archive-gradle-plugin
-
-バッチアプリケーションをS3に配置する
-------------------------------------
-アプリケーションのバッチアプリケーションアーカイブをS3に配置します。
-
-バッチアプリケーションアーカイブを作成するには、Asakusa Gradle Pluginを利用するプロジェクト上で、Gradleの  ``jarBatchapp`` タスクを実行します。 詳しくは、 `Asakusa Gradle Plugin利用ガイド`_ の `バッチコンパイルとバッチアプリケーションアーカイブの生成`_ を参照してください。
-
-``jarBatchapp`` タスクを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``${baseName}-batchapps-${version}.jar`` [#]_ というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/batchapps/`` 配下に配置するものとします。
-
-以下にバッチアプリケーションアーカイブをS3に配置する例を示します。
-
-..  code-block:: sh
-
-    cd <プロジェクトのパス>
-    ./gradlew clean jarBatchapp
-    s3cmd --rr put build/*-batchapps*.jar s3://[sample-bucket]/batchapps/
-
-..  attention::
-    上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
-..  [#] アーカイブファイルの ``${baseName}`` や ``${version}`` の部分はビルドスクリプトで設定が可能です。サンプルアプリケーションのデフォルト設定では ``${baseName}`` はプロジェクトディレクトリ名が使用され、 ``${version}`` は付与されません。
-
-..  _`バッチコンパイルとバッチアプリケーションアーカイブの生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#batch-compile-gradle-plugin
-
-Asakusa Frameworkの設定ファイルをS3に配置する
----------------------------------------------
-EMR上でS3に対してデータの入出力を行うためのAsakusa Framework設定ファイルをS3に配置します。
+Direct I/Oの設定ファイルを編集する
+----------------------------------
+`Asakusa Framework スタートガイド`_ で説明したアプリケーションプロジェクトに対して、
+EMR上でS3に対してデータの入出力を行うための設定を行います。
 
 本書で説明するAsakusa Frameworkの構成では、実行するアプリケーションはDirect I/Oを使って
 S3バケットから入力ファイルを読み込み、処理の結果もS3バケットに出力ファイルを生成します。
-ここでは、Direct I/O が読み書きを行うS3 バケットのディレクトリパスを
+ここでは、Direct I/Oが指定したS3バケット上のパスに対してデータの読み書きを行うようにするため
 設定ファイル ``asakusa-resources.xml`` に記述します。
 
 以下は、 ``asakusa-resources.xml`` の設定例です。
@@ -169,17 +127,63 @@ S3バケットから入力ファイルを読み込み、処理の結果もS3バ�
 
 上記の設定例では、プロパティ ``com.asakusafw.directio.root.fs.path`` に対して、S3のバケット ``s3://[sample-bucket]/app-data`` の配下をアプリケーションの入出力ディレクトリとして使用するよう設定しています。
 
-この設定ファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/conf/`` 配下に配置するものとします。
+編集した設定ファイルは、後述の `Asakusa Frameworkの実行環境一式をS3に配置する`_ の手順で
+Asakusa Frameworkのデプロイメントアーカイブに含めるため、
+アプリケーションプロジェクト配下のディレクトリ ``src/dist/emr`` に
+``$ASAKUSA_HOME`` と同じディレクトリ構成で配置します。
 
-以下にAsakusa Frameworkの設定ファイルをS3に配置する例を示します。設定ファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、バケット名などを適切に設定したものとします。
+例えば ``asakusa-resources.xml`` は ``$ASAKUSA_HOME/core/conf`` に配置するため、
+ここでは ``src/dist/emr/core/conf`` 配下に ``asakusa-resources.xml`` を配置します。
+
+以下にAsakusa Frameworkの設定ファイルをプロジェクトディレクトリに配置する例を示します。
+設定ファイルは事前に本ドキュメントのリンクからダウンロードして ``$HOME/Downloads`` に配置し、
+バケット名などを適切に設定したものとします。
 
 ..  code-block:: sh
 
-    cd $HOME/Downloads
-    s3cmd --rr put asakusa-resources.xml s3://[sample-bucket]/conf/
+    cd <プロジェクトのパス>
+    mkdir -p src/dist/emr/core/conf
+    cp $HOME/Downloads/asakusa-resources.xml src/dist/emr/core/conf
+
+Asakusa Frameworkの実行環境一式をS3に配置する
+---------------------------------------------
+Asakusa Frameworkの実行環境一式をS3に配置します。
+Asakusa Frameworkの実行環境一式とは、以下のファイルを含みます。
+
+* Asakusa Framework本体
+* バッチアプリケーション
+* Asakusa Frameworkの設定ファイル
+
+ここでは、上記ファイルをすべて含むAsakusa Frameworkのデプロイメントアーカイブを作成します。
+以下はアプリケーションプロジェクトで
+Asakusa Frameworkのデプロイメントアーカイブを作成する例を示します
+
+..  code-block:: sh
+
+    cd <プロジェクトのパス>
+    ./gradlew clean compileBatchapp attachBatchapps attachConfEMR assembleAsakusafw
+
+..  note::
+    上記例はいくつかのGradleタスクを組み合わせて実行することで、
+    Asakusa Framework本体、バッチアプリケーション、設定ファイルをすべて同梱した
+    Asakusa Frameworkのデプロイメントアーカイブを作成しています。
+    
+    各タスクの詳細については、 `Asakusa Gradle Plugin利用ガイド`_ の 
+    `Asakusa Frameworkのデプロイメントアーカイブ生成`_ を参照してください。
+
+上記のGradleコマンドを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
+
+以下にAsakusa FrameworkのデプロイメントアーカイブをS3に配置する例を示します。
+
+..  code-block:: sh
+
+    s3cmd --rr put build/asakusafw-*.tar.gz s3://[sample-bucket]/asakusafw/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
+
+..  _`Asakusa Gradle Plugin利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html
+..  _`Asakusa Frameworkのデプロイメントアーカイブ生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#deployment-archive-gradle-plugin
 
 ブートストラップアクション用スクリプトをS3に配置する
 ----------------------------------------------------
@@ -203,8 +207,7 @@ EMRの起動時に指定することでそのシェルスクリプトを自動�
 
 ..  code-block:: sh
 
-    cd $HOME/Downloads
-    s3cmd --rr put bootstrap-deploy-asakusa.sh s3://[sample-bucket]/bootstrap-actions/
+    s3cmd --rr put ~/Downloads/bootstrap-deploy-asakusa.sh s3://[sample-bucket]/bootstrap-actions/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
@@ -232,15 +235,14 @@ EMRではステップの実行に紐づく実際の処理をいくつかの方�
 
 ..  code-block:: sh
 
-    cd $HOME/Downloads
-    s3cmd --rr put step-yaess-batch.sh s3://[sample-bucket]/steps/
+    s3cmd --rr put ~/Downloads/step-yaess-batch.sh s3://[sample-bucket]/steps/
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
 
-EMRの起動と停止
+EMRの起動と確認
 ===============
-EMRの起動と停止の方法を説明します。これらはEMR操作用クライアントマシンにインストールしたAmazon EMR CLIを使用します。
+EMRの起動と起動確認の方法を説明します。これらはEMR操作用クライアントマシンにインストールしたAmazon EMR CLIを使用します。
 
 EMRの起動
 ---------
@@ -259,7 +261,7 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
      --slave-instance-type m1.large \
      --num-instances 2 \
      --bootstrap-action s3://elasticmapreduce/bootstrap-actions/run-if \
-     --args "instance.isMaster=true,s3n://[sample-bucket]/bootstrap-actions/bootstrap-deploy-asakusa.sh"
+     --args "instance.isMaster=true,s3://[sample-bucket]/bootstrap-actions/bootstrap-deploy-asakusa.sh"
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
@@ -282,7 +284,7 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
   EMRクラスターのインスタンス数を指定します。
 
 ..  hint::
-    初期構築時のデプロイの確認などで試しに実行する段階では、EC2インスタンスタイプは低コストで利用できるインスタンスタイプを使用して、ノード数も最小構成(ノード数 ``2`` )で確認するのがよいでしょう。
+    初期構築時のデプロイの確認など、試しに実行する段階ではEC2インスタンスタイプは低コストで利用できるインスタンスタイプを使用して、ノード数も最小構成( ノード数 ``2`` )で確認するのがよいでしょう。
 
 ..  attention::
     AMIバージョンの ``3.0.0`` 以降ではインスタンスタイプに ``m1.small`` を利用することができないようです。 EMR Developer Guideの `Hadoop 2.2.0 New Features`_ にこの制約に関する記述があります。
@@ -308,13 +310,6 @@ EMR起動後に起動したEMRインスタンスに対してなにかしらの�
 
 ..  _`AWS Management Console`: http://aws.amazon.com/jp/console/
 
-EMRの停止
----------
-EMRの停止は、 ``elastic-mapreduce --terminate`` を実行します。EMR起動時に出力されたジョブフローIDを指定します。
-
-..  code-block:: sh
-
-    elastic-mapreduce --terminate --jobflow j-XXXXXXXXXXX
 
 ステータスの確認
 ----------------
@@ -333,7 +328,8 @@ EMRのジョブフローやステップの状態を確認するには、 ``elast
     elastic-mapreduce --list --active
 
 ..  [#] EMRが管理するステータスの意味やその種類については、EMRの以下のドキュメントなどを参照してください。
-    　　http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    
+    http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
 
 バッチアプリケーションの実行
 ============================
@@ -352,8 +348,8 @@ EMR環境にデプロイしたAsakusa Frameworkのバッチアプリケーショ
 --------------------
 入力データをS3に配置します。ここでは、Direct I/O を使って任意のS3バケットから入力データとなるCSVファイルを読み込むサンプルアプリケーションを例に説明します。
 
-サンプルアプリケーションは、先述の `Asakusa Frameworkの設定ファイルをS3に配置する`_ で説明した設定に対応した
-S3のディレクトリから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
+サンプルアプリケーションは、先述の `Direct I/Oの設定ファイルを編集する`_ で設定した
+S3バケット上のパスから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
 仕様に基づいてCSVファイルを配置します。
 
 例えば、  ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 入力データは ``s3://[sample-bucket]/app-data/master/item_info.csv`` や ``s3://[sample-bucket]/app-data/sales/2011-04-01.csv`` といったようなパス名で配置することができます。
@@ -381,7 +377,7 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 
     elastic-mapreduce \
      --jar s3://elasticmapreduce/libs/script-runner/script-runner.jar \
-     --args "s3n://[sample-bucket]/steps/step-yaess-batch.sh,example.summarizeSales,-A,date=2011-04-01" \
+     --args "s3://[sample-bucket]/steps/step-yaess-batch.sh,example.summarizeSales,-A,date=2011-04-01" \
      --step-name "test-step" \
      --jobflow j-XXXXXXXXXXX
 
@@ -418,14 +414,15 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 先述の `ステップの実行`_ で一意となるステップ名を指定することで、 ``grep`` で行を特定できるようにします。抽出した行のステータス部分の文字列のみを抜き出し、この値に応じて以降の処理を決定します。
 
 ..  [#] EMRが取り得るステータスの意味やその種類については、EMRの以下のドキュメントなどを参照してください。
-    　　http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    
+    http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
 
 出力データをS3から取得
 ----------------------
 出力データをS3から取得します。ここでは、 `入力データをS3に配置`_ と同様にサンプルアプリケーションを例に説明します。
 
-サンプルアプリケーションは、先述の `Asakusa Frameworkの設定ファイルをS3に配置する`_ で説明した設定に対応した
-S3のディレクトリから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
+サンプルアプリケーションは、先述の `Direct I/Oの設定ファイルを編集する`_ で設定した
+S3バケット上のパスから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
 仕様に基づいてCSVファイルを生成します。
 
 例えば、 ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 出力データは ``s3://[sample-bucket]/app-data/result/category/result.csv`` といったようなパスに出力されます。
@@ -439,9 +436,18 @@ S3のディレクトリから `Direct I/O スタートガイド`_ の表「サ�
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
+
+EMRの停止
+=========
+EMRの停止は、 ``elastic-mapreduce --terminate`` を実行します。EMR起動時に出力されたジョブフローIDを指定します。
+
+..  code-block:: sh
+
+    elastic-mapreduce --terminate --jobflow j-XXXXXXXXXXX
+
 ..  warning::
-    S3から出力データを取得後、EMRを使用しないのであれば忘れずにEMRを停止してください。
     EMRインスタンスを稼働し続けると、その分課金が発生し続けます。
+    不要になったEMRインスタンスは忘れずに停止してください。
 
 EMRに関するTips
 ===============
