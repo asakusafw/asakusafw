@@ -42,7 +42,7 @@ public abstract class TestingEnvironmentConfigurator {
     static final Logger LOG = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     /**
-     * The system property key of enabling this feature;
+     * The system property key of enabling this feature.
      */
     public static final String KEY_ENABLE = "asakusa.testdriver.configurator";
 
