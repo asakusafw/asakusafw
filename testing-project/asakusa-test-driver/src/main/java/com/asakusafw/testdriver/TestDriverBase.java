@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
 import com.asakusafw.trace.model.TraceSetting.Mode;
@@ -41,6 +42,10 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 public abstract class TestDriverBase {
 
     private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create";
+
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
 
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
     protected TestDriverContext driverContext;

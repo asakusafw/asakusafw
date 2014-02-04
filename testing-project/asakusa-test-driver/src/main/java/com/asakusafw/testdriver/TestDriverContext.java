@@ -44,6 +44,7 @@ import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.utils.collections.Maps;
 
 /**
@@ -128,6 +129,10 @@ public class TestDriverContext implements TestContext {
     public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory";
 
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
+
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
 
     private volatile File frameworkHomePath;
 
