@@ -29,6 +29,7 @@
 		<module>../asakusa-windgate-dmdl-ext</module>
 		<module>../asakusa-directio-dmdl-ext</module>
 		<module>../asakusa-test-driver-ext</module>
+		<module>../asakusa-test-driver-tools</module>
 	</modules>
 
 	<build>
