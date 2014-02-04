@@ -125,7 +125,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private static final String NAME_READER = "StreamReader";
 

@@ -32,12 +32,12 @@ public class InProcessEnvironmentConfigurator extends TestingEnvironmentConfigur
     static final Logger LOG = LoggerFactory.getLogger(InProcessEnvironmentConfigurator.class);
 
     /**
-     * The system property key of enabling this feature;
+     * The system property key of enabling this feature.
      */
     public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".inprocess";
 
     /**
-     * The default value of {@link #KEY_FEATURE_ENABLE};
+     * The default value of {@link #KEY_FEATURE_ENABLE}.
      */
     public static final String DEFAULT_FEATURE_ENABLE = "true";
 
