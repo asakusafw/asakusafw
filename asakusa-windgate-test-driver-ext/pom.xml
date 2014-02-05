@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Experimental Features for WindGate Test Driver</name>
+	<groupId>com.asakusafw.sandbox</groupId>
+	<artifactId>asakusa-windgate-test-driver-ext</artifactId>
+	<parent>
+		<artifactId>asakusa-sandbox-parent</artifactId>
+		<groupId>com.asakusafw.sandbox</groupId>
+		<version>0.6-SNAPSHOT</version>
+		<relativePath>../asakusa-sandbox-parent</relativePath>
+	</parent>
+
+	<description>Experimental Features for WindGate Test Driver</description>
+	<url>http://asakusafw.com</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
+
+	<properties>
+		<asakusafw.version>${project.version}</asakusafw.version>
+	</properties>
+
+	<packaging>jar</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-bootstrap</artifactId>
+			<version>${asakusafw.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw.sandbox</groupId>
+			<artifactId>asakusa-test-driver-ext</artifactId>
+			<version>${asakusafw.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>${hadoop.artifact.id}</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

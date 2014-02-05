@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -31,8 +32,6 @@ import org.apache.hadoop.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.common.Naming;
-import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.testdriver.DefaultJobExecutor;
 import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
@@ -48,11 +47,15 @@ public class InProcessJobExecutor extends JobExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(InProcessJobExecutor.class);
 
+    private static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
+
     private final TestDriverContext context;
 
     private final DefaultJobExecutor delegate;
 
-    private final ConfigurationProvider configurations;
+    private final ConfigurationFactory configurations;
+
+    private List<CommandEmulator> commandEmulators;
 
     /**
      * Creates a new instance.
@@ -65,11 +68,64 @@ public class InProcessJobExecutor extends JobExecutor {
         this.context = context;
         this.delegate = new DefaultJobExecutor(context);
         this.configurations = ConfigurationFactory.getDefault();
+        this.commandEmulators = null;
     }
 
     @Override
     public void validateEnvironment() {
-        delegate.validateEnvironment();
+        if (requiresValidateExecutionEnvironment() == false) {
+            LOG.debug("skipping test execution environment validation");
+            return;
+        }
+        if (context.getFrameworkHomePathOrNull() == null) {
+            throw new AssertionError(MessageFormat.format(
+                    "環境変数\"{0}\"が未設定です",
+                    TestDriverContext.ENV_FRAMEWORK_PATH));
+        }
+        String runtime = context.getRuntimeEnvironmentVersion();
+        if (runtime == null) {
+            LOG.debug("Runtime environment version is missing");
+        } else {
+            String develop = context.getDevelopmentEnvironmentVersion();
+            if (develop.equals(runtime) == false) {
+                throw new AssertionError(MessageFormat.format(
+                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
+                        develop,
+                        runtime));
+            }
+        }
+    }
+
+    @Override
+    public void validatePlan(TestExecutionPlan plan) {
+        if (requiresValidateExecutionEnvironment() == false) {
+            return;
+        }
+        List<TestExecutionPlan.Command> commands = new ArrayList<TestExecutionPlan.Command>();
+        commands.addAll(plan.getInitializers());
+        commands.addAll(plan.getImporters());
+        commands.addAll(plan.getExporters());
+        commands.addAll(plan.getFinalizers());
+
+        for (TestExecutionPlan.Command command : commands) {
+            if (findCommandEmulator(command) == null) {
+                if (configurations.getHadoopCommand() == null) {
+                    throw new AssertionError(MessageFormat.format(
+                            "コマンド\"{0}\"を検出できませんでした",
+                            "hadoop"));
+                }
+            }
+        }
+    }
+
+    private boolean requiresValidateExecutionEnvironment() {
+        String value = System.getProperty(TestDriverContext.KEY_FORCE_EXEC);
+        if (value != null) {
+            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -77,6 +133,9 @@ public class InProcessJobExecutor extends JobExecutor {
             TestExecutionPlan.Job job,
             Map<String, String> environmentVariables) throws IOException {
         assert job != null;
+        LOG.info(MessageFormat.format(
+                "Emulating hadoop job: {0}",
+                job.getClassName()));
         List<String> arguments = computeHadoopJobArguments(job);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
@@ -131,29 +190,21 @@ public class InProcessJobExecutor extends JobExecutor {
         assert arguments != null;
         arguments.add("-libjars");
         StringBuilder libjars = new StringBuilder();
-        File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        File packageFile = new File(packagePath, Naming.getJobflowClassPackageName(context.getCurrentFlowId()));
+        File packageFile = EmulatorUtils.getJobflowLibraryPath(context);
         if (packageFile.isFile() == false) {
             throw new FileNotFoundException(packageFile.getAbsolutePath());
         }
         libjars.append(packageFile.toURI());
-        File librariesPath = context.getLibrariesPackageLocation(context.getCurrentBatchId());
-        if (librariesPath.isDirectory()) {
-            for (File file : librariesPath.listFiles()) {
-                if (file.isFile() && file.getName().endsWith(".jar")) {
-                    if (libjars.length() != 0) {
-                        libjars.append(',');
-                    }
-                    libjars.append(file.toURI());
-                }
-            }
+        for (File file : EmulatorUtils.getBatchLibraryPaths(context)) {
+            libjars.append(',');
+            libjars.append(file.toURI());
         }
         arguments.add(libjars.toString());
     }
 
     private void computeAsakusaResources(List<String> arguments) {
         assert arguments != null;
-        File asakusaResources = new File(context.getFrameworkHomePath(), "core/conf/asakusa-resources.xml");
+        File asakusaResources = new File(context.getFrameworkHomePath(), PATH_ASAKUSA_RESOURCES);
         if (asakusaResources.exists()) {
             arguments.add("-conf");
             arguments.add(asakusaResources.toURI().toString());
@@ -164,6 +215,37 @@ public class InProcessJobExecutor extends JobExecutor {
     public void execute(
             TestExecutionPlan.Command command,
             Map<String, String> environmentVariables) throws IOException {
-        delegate.execute(command, environmentVariables);
+        CommandEmulator emulator = findCommandEmulator(command);
+        if (emulator != null) {
+            LOG.info(MessageFormat.format(
+                    "Emulating command ({1}): {0}",
+                    command.getCommandLineString(),
+                    emulator.getName()));
+            try {
+                emulator.execute(context, configurations, command);
+            } catch (InterruptedException e) {
+                throw (AssertionError) new AssertionError(MessageFormat.format(
+                        "コマンドの実行中に割り込みが発生しました (flowId={0}, command=\"{1}\")",
+                        context.getCurrentFlowId(),
+                        command.getCommandLineString())).initCause(e);
+            }
+        } else {
+            delegate.execute(command, environmentVariables);
+        }
+    }
+
+    private synchronized CommandEmulator findCommandEmulator(TestExecutionPlan.Command command) {
+        if (commandEmulators == null) {
+            this.commandEmulators = new ArrayList<CommandEmulator>();
+            for (CommandEmulator executor : ServiceLoader.load(CommandEmulator.class, context.getClassLoader())) {
+                this.commandEmulators.add(executor);
+            }
+        }
+        for (CommandEmulator executor : commandEmulators) {
+            if (executor.accepts(context, configurations, command)) {
+                return executor;
+            }
+        }
+        return null;
     }
 }
