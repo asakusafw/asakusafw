@@ -8,5 +8,6 @@ Asakusa Framework Sandbox
 
     windgate/index
     directio/index
+    testing/index
     administration/index
 
