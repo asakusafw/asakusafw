@@ -76,6 +76,7 @@ Asakusa Framework入門
 
     self
     release-notes
+    previous-release-notes
     changelogs
     introduction/index
     dmdl/index
