@@ -348,7 +348,7 @@ public class ConfigurationProviderTest {
      */
     @Test
     public void newInstance_auto() throws Exception {
-        File cmd = putExec("testcmd");
+        File cmd = putExec("testing/testcmd");
         File site = putConf("auto/core-site.xml");
 
         PrintWriter writer = new PrintWriter(cmd);

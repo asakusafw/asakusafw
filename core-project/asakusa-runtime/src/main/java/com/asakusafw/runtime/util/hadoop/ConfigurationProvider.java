@@ -106,7 +106,11 @@ public class ConfigurationProvider {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
         File conf = getConfigurationDirectory(environmentVariables);
-        if (conf == null || conf.isDirectory() == false) {
+        if (conf == null) {
+            LOG.warn("Hadoop configuration path is not found");
+            return null;
+        }
+        if (conf.isDirectory() == false) {
             LOG.warn(MessageFormat.format(
                     "Failed to load default Hadoop configurations ({0} is not a valid installation path)",
                     conf));
