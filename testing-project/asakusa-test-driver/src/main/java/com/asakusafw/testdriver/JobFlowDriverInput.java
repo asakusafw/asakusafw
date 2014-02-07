@@ -15,18 +15,13 @@
  */
 package com.asakusafw.testdriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * ジョブフローのテスト入力データオブジェクト。
  * @since 0.2.0
- *
+ * @version 0.6.0
  * @param <T> モデルクラス
  */
-public class JobFlowDriverInput<T> extends DriverInputBase<T> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JobFlowDriverInput.class);
+public class JobFlowDriverInput<T> extends FlowDriverInput<T, JobFlowDriverInput<T>> {
 
     /**
      * コンストラクタ。
@@ -36,20 +31,11 @@ public class JobFlowDriverInput<T> extends DriverInputBase<T> {
      * @param modelType モデルクラス。
      */
     public JobFlowDriverInput(TestDriverContext driverContext, String name, Class<T> modelType) {
-        this.driverContext = driverContext;
-        this.name = name;
-        this.modelType = modelType;
+        super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);
     }
 
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     *
-     * @param sourcePath 入力データのパス。
-     * @return this。
-     */
-    public JobFlowDriverInput<T> prepare(String sourcePath) {
-        LOG.info("prepare - ModelType:" + getModelType());
-        setSourceUri(sourcePath);
+    @Override
+    protected JobFlowDriverInput<T> getThis() {
         return this;
     }
 }

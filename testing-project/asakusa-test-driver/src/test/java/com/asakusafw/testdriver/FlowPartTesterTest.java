@@ -18,7 +18,9 @@ package com.asakusafw.testdriver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -217,16 +219,20 @@ public class FlowPartTesterTest {
         assertThat(archive, is(notNullValue()));
 
         URLClassLoader loader = new URLClassLoader(new URL[] { archive });
-        URL inUrl = loader.findResource("simple-in.json");
-        URL outUrl = loader.findResource("simple-out.json");
-        assertThat(inUrl, is(notNullValue()));
-        assertThat(outUrl, is(notNullValue()));
+        try {
+            URL inUrl = loader.findResource("simple-in.json");
+            URL outUrl = loader.findResource("simple-out.json");
+            assertThat(inUrl, is(notNullValue()));
+            assertThat(outUrl, is(notNullValue()));
 
-        FlowPartTester tester = new FlowPartTester(getClass());
-        tester.setFrameworkHomePath(framework.getHome());
-        In<Simple> in = tester.input("in", Simple.class).prepare(inUrl.toExternalForm());
-        Out<Simple> out = tester.output("out", Simple.class).verify(outUrl.toExternalForm(), new IdentityVerifier());
-        tester.runTest(new SimpleFlowPart(in, out));
+            FlowPartTester tester = new FlowPartTester(getClass());
+            tester.setFrameworkHomePath(framework.getHome());
+            In<Simple> in = tester.input("in", Simple.class).prepare(inUrl.toExternalForm());
+            Out<Simple> out = tester.output("out", Simple.class).verify(outUrl.toExternalForm(), new IdentityVerifier());
+            tester.runTest(new SimpleFlowPart(in, out));
+        } finally {
+            closeQuietly(loader);
+        }
     }
 
     /**
@@ -336,10 +342,21 @@ public class FlowPartTesterTest {
     @Test
     public void dependency_libraries() {
         FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setJobExecutorFactory(null);
         tester.setLibrariesPath(new File("src/test/lib"));
         tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
         tester.runTest(new DependencyFlowPart(in, out));
+    }
+
+    private void closeQuietly(Object object) {
+        if (object instanceof Closeable) {
+            try {
+                ((Closeable) object).close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -21,16 +21,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.tools.ToolProvider;
 
-import org.apache.commons.lang.SystemUtils;
-import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,21 +42,36 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.utils.collections.Maps;
 
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.6.0
  */
 public class TestDriverContext implements TestContext {
 
     static final Logger LOG = LoggerFactory.getLogger(TestDriverContext.class);
 
-    static final ResourceBundle INFORMATION = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
+    static final ResourceBundle INFORMATION;
+    static {
+        ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
+        } catch (MissingResourceException e) {
+            LOG.warn("Missing framework information resource", e);
+            bundle = new ListResourceBundle() {
+                @Override
+                protected Object[][] getContents() {
+                    return new Object[0][];
+                }
+            };
+        }
+        INFORMATION = bundle;
+    }
 
     /**
      * The system property key of runtime working directory.
@@ -66,6 +83,13 @@ public class TestDriverContext implements TestContext {
      * The system property key of compiler working directory.
      */
     public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir";
+
+    /**
+     * The system property key of the default framework installation path.
+     * This property will overwrite environment variables.
+     * @since 0.6.0
+     */
+    public static final String KEY_FRAMEWORK_PATH = "asakusa.testdriver.framework";
 
     /**
      * The system property key of ignoring environment checking.
@@ -97,14 +121,34 @@ public class TestDriverContext implements TestContext {
      */
     public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version";
 
+    /**
+     * The system property key of {@link JobExecutorFactory}'s implementation class name.
+     * @see #setJobExecutorFactory(JobExecutorFactory)
+     * @since 0.6.0
+     */
+    public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory";
+
     private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
 
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
+
     private volatile File frameworkHomePath;
+
     private final Class<?> callerClass;
+
     private final TestToolRepository repository;
+
     private final Map<String, String> extraConfigurations;
+
     private final Map<String, String> batchArgs;
+
+    private final Map<String, String> environmentVariables;
+
     private final FlowCompilerOptions options;
+
+    private final Set<TestExecutionPhase> skipPhases;
 
     private volatile File librariesPath;
 
@@ -118,12 +162,7 @@ public class TestDriverContext implements TestContext {
 
     private volatile File generatedCompilerWorkingDirectory;
 
-    private boolean skipCleanInput;
-    private boolean skipCleanOutput;
-    private boolean skipPrepareInput;
-    private boolean skipPrepareOutput;
-    private boolean skipRunJobflow;
-    private boolean skipVerify;
+    private volatile JobExecutorFactory jobExecutorFactory;
 
     /**
      * Creates a new instance.
@@ -138,8 +177,10 @@ public class TestDriverContext implements TestContext {
         this.repository = new TestToolRepository(contextClass.getClassLoader());
         this.extraConfigurations = new TreeMap<String, String>();
         this.batchArgs = new TreeMap<String, String>();
+        this.environmentVariables = new HashMap<String, String>(System.getenv());
         this.options = new FlowCompilerOptions();
         configureOptions();
+        this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
     }
 
     private void configureOptions() {
@@ -186,7 +227,7 @@ public class TestDriverContext implements TestContext {
      * @since 0.5.2
      */
     public String getRuntimeEnvironmentVersion() {
-        File path = getFrameworkHomePath0();
+        File path = getFrameworkHomePathOrNull();
         if (path == null) {
             return null;
         }
@@ -228,42 +269,7 @@ public class TestDriverContext implements TestContext {
      * @since 0.5.1
      */
     public void validateExecutionEnvironment() {
-        if (requiresValidateExecutionEnvironment() == false) {
-            LOG.debug("skipping test execution environment validation");
-            return;
-        }
-        if (getFrameworkHomePath0() == null) {
-            raiseInvalid(MessageFormat.format(
-                    "環境変数\"{0}\"が未設定です",
-                    ENV_FRAMEWORK_PATH));
-        }
-        if (ConfigurationProvider.findHadoopCommand() == null) {
-            raiseInvalid(MessageFormat.format(
-                    "コマンド\"{0}\"を検出できませんでした",
-                    "hadoop"));
-        }
-        String runtime = getRuntimeEnvironmentVersion();
-        if (runtime == null) {
-            LOG.debug("Runtime environment version is missing");
-        } else {
-            String develop = getDevelopmentEnvironmentVersion();
-            if (develop.equals(runtime) == false) {
-                raiseInvalid(MessageFormat.format(
-                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
-                        develop,
-                        runtime));
-            }
-        }
-    }
-
-    private boolean requiresValidateExecutionEnvironment() {
-        String value = System.getProperty(KEY_FORCE_EXEC);
-        if (value != null) {
-            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
-                return false;
-            }
-        }
-        return true;
+        getJobExecutor().validateEnvironment();
     }
 
     /**
@@ -273,18 +279,6 @@ public class TestDriverContext implements TestContext {
      */
     public void validateEnvironment() {
         validateExecutionEnvironment();
-    }
-
-    private void raiseInvalid(String message) {
-        if (SystemUtils.IS_OS_WINDOWS) {
-            LOG.warn(message);
-            LOG.info(MessageFormat.format(
-                    "この環境では現在のテストを実行できないため、スキップします: {0}",
-                    callerClass.getName()));
-            Assume.assumeTrue(false);
-        } else {
-            throw new AssertionError(message);
-        }
     }
 
     /**
@@ -301,7 +295,7 @@ public class TestDriverContext implements TestContext {
      * @throws IllegalStateException if neither the framework home path nor the environmental variable were set
      */
     public File getFrameworkHomePath() {
-        File result = getFrameworkHomePath0();
+        File result = getFrameworkHomePathOrNull();
         if (result == null) {
             throw new IllegalStateException(MessageFormat.format(
                     "環境変数{0}が未設定です",
@@ -310,13 +304,21 @@ public class TestDriverContext implements TestContext {
         return result;
     }
 
-    private File getFrameworkHomePath0() {
+    /**
+     * Returns the framework home path.
+     * @return the path, default path from environmental variable {@code ASAKUSA_HOME}, or {@code null}
+     */
+    public File getFrameworkHomePathOrNull() {
         if (frameworkHomePath == null) {
-            String defaultHomePath = System.getenv(ENV_FRAMEWORK_PATH);
-            if (defaultHomePath == null) {
-                return null;
+            String homePath = System.getProperty(KEY_FRAMEWORK_PATH);
+            if (homePath != null) {
+                return new File(homePath);
             }
-            return new File(defaultHomePath);
+            String defaultHomePath = getEnvironmentVariables0().get(ENV_FRAMEWORK_PATH);
+            if (defaultHomePath != null) {
+                return new File(defaultHomePath);
+            }
+            return null;
         }
         return frameworkHomePath;
     }
@@ -391,7 +393,8 @@ public class TestDriverContext implements TestContext {
      * @return the current user name
      */
     public String getOsUser() {
-        String user = System.getenv("USER");
+        Map<String, String> envp = getEnvironmentVariables0();
+        String user = System.getProperty("user.name", envp.get("USER"));
         return user;
     }
 
@@ -543,7 +546,16 @@ public class TestDriverContext implements TestContext {
 
     @Override
     public Map<String, String> getEnvironmentVariables() {
-        return System.getenv();
+        File home = getFrameworkHomePathOrNull();
+        Map<String, String> envp = getEnvironmentVariables0();
+        if (home != null) {
+            envp.put(ENV_FRAMEWORK_PATH, home.getAbsolutePath());
+        }
+        return envp;
+    }
+
+    private Map<String, String> getEnvironmentVariables0() {
+        return environmentVariables;
     }
 
     @Override
@@ -574,7 +586,6 @@ public class TestDriverContext implements TestContext {
         return callerClass.getClassLoader();
     }
 
-
     /**
      * Returns the current batch ID.
      * @return the current batch ID, or {@code null} if not set
@@ -584,7 +595,6 @@ public class TestDriverContext implements TestContext {
         return currentBatchId;
     }
 
-
     /**
      * Configures the current batch ID.
      * @param currentBatchId the ID
@@ -592,7 +602,6 @@ public class TestDriverContext implements TestContext {
     public void setCurrentBatchId(String currentBatchId) {
         this.currentBatchId = currentBatchId;
     }
-
 
     /**
      * Returns the current flow ID.
@@ -603,7 +612,6 @@ public class TestDriverContext implements TestContext {
         return currentFlowId;
     }
 
-
     /**
      * Configures the current flow ID.
      * @param currentFlowId the ID
@@ -611,7 +619,6 @@ public class TestDriverContext implements TestContext {
     public void setCurrentFlowId(String currentFlowId) {
         this.currentFlowId = currentFlowId;
     }
-
 
     /**
      * Returns the current execution ID.
@@ -622,7 +629,6 @@ public class TestDriverContext implements TestContext {
         return currentExecutionId;
     }
 
-
     /**
      * Returns the current execution ID.
      * @param currentExecutionId the ID
@@ -631,103 +637,92 @@ public class TestDriverContext implements TestContext {
         this.currentExecutionId = currentExecutionId;
     }
 
-
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanInput() {
-        return skipCleanInput;
+        return skipPhases.contains(TestExecutionPhase.CLEAN_INPUT);
     }
-
 
     /**
      * Sets whether this test skips to cleanup input data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipCleanInput(boolean skip) {
-        this.skipCleanInput = skip;
+        setSkipPhase(TestExecutionPhase.CLEAN_INPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanOutput() {
-        return skipCleanOutput;
+        return skipPhases.contains(TestExecutionPhase.CLEAN_OUTPUT);
     }
-
 
     /**
      * Sets whether this test skips to cleanup output data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipCleanOutput(boolean skip) {
-        this.skipCleanOutput = skip;
+        setSkipPhase(TestExecutionPhase.CLEAN_OUTPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareInput() {
-        return skipPrepareInput;
+        return skipPhases.contains(TestExecutionPhase.PREPARE_INPUT);
     }
-
 
     /**
      * Sets whether this test skips to prepare input data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipPrepareInput(boolean skip) {
-        this.skipPrepareInput = skip;
+        setSkipPhase(TestExecutionPhase.PREPARE_INPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to prepare output data source.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipPrepareOutput() {
-        return skipPrepareOutput;
+        return skipPhases.contains(TestExecutionPhase.PREPARE_OUTPUT);
     }
-
 
     /**
      * Sets whether this test skips to prepare output data source (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipPrepareOutput(boolean skip) {
-        this.skipPrepareOutput = skip;
+        setSkipPhase(TestExecutionPhase.PREPARE_OUTPUT, skip);
     }
-
 
     /**
      * Returns whether this test skips to execute jobflows.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipRunJobflow() {
-        return skipRunJobflow;
+        return skipPhases.contains(TestExecutionPhase.EXECUTE);
     }
-
 
     /**
      * Sets whether this test skips to execute jobflows (default: {@code false}).
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipRunJobflow(boolean skip) {
-        this.skipRunJobflow = skip;
+        setSkipPhase(TestExecutionPhase.EXECUTE, skip);
     }
-
 
     /**
      * Returns whether this test skips to verify the testing result.
      * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipVerify() {
-        return skipVerify;
+        return skipPhases.contains(TestExecutionPhase.VERIFY);
     }
 
     /**
@@ -735,7 +730,16 @@ public class TestDriverContext implements TestContext {
      * @param skip {@code true} to skip, otherwise {@code false}
      */
     public void setSkipVerify(boolean skip) {
-        this.skipVerify = skip;
+        setSkipPhase(TestExecutionPhase.VERIFY, skip);
+    }
+
+    private void setSkipPhase(TestExecutionPhase phase, boolean skip) {
+        assert phase != null;
+        if (skip) {
+            skipPhases.remove(phase);
+        } else {
+            skipPhases.add(phase);
+        }
     }
 
     /**
@@ -748,6 +752,42 @@ public class TestDriverContext implements TestContext {
             removeAll(generatedCompilerWorkingDirectory);
             this.generatedCompilerWorkingDirectory = null;
         }
+    }
+
+    /**
+     * Sets the {@link JobExecutorFactory} for executing jobs in this context.
+     * @param factory the factory, or {@code null} to use a default implementation
+     * @since 0.6.0
+     * @see #getJobExecutor()
+     */
+    public void setJobExecutorFactory(JobExecutorFactory factory) {
+        if (factory == null) {
+            this.jobExecutorFactory = new DefaultJobExecutorFactory();
+        } else {
+            this.jobExecutorFactory = factory;
+        }
+    }
+
+    /**
+     * Returns the {@link JobExecutor} for executes jobs in this context.
+     * @return the {@link JobExecutor} instance
+     * @since 0.6.0
+     */
+    public JobExecutor getJobExecutor() {
+        if (jobExecutorFactory != null) {
+            return jobExecutorFactory.newInstance(this);
+        }
+        String className = System.getProperty(KEY_JOB_EXECUTOR_FACTORY, DefaultJobExecutorFactory.class.getName());
+        try {
+            Class<?> aClass = Class.forName(className, false, getClassLoader());
+            this.jobExecutorFactory = aClass.asSubclass(JobExecutorFactory.class).newInstance();
+        } catch (Exception e) {
+            throw (AssertionError) new AssertionError(MessageFormat.format(
+                    "Failed to create job executor factory from \"{0}\": {1}",
+                    KEY_JOB_EXECUTOR_FACTORY,
+                    className)).initCause(e);
+        }
+        return jobExecutorFactory.newInstance(this);
     }
 
     private boolean removeAll(File path) {
@@ -767,5 +807,42 @@ public class TestDriverContext implements TestContext {
             }
         }
         return deleted;
+    }
+
+    /**
+     * Represents each phase in test execution.
+     * @since 0.6.0
+     */
+    public enum TestExecutionPhase {
+
+        /**
+         * Cleaning input.
+         */
+        CLEAN_INPUT,
+
+        /**
+         * Cleaning output.
+         */
+        CLEAN_OUTPUT,
+
+        /**
+         * Preparing input.
+         */
+        PREPARE_INPUT,
+
+        /**
+         * Preparing output.
+         */
+        PREPARE_OUTPUT,
+
+        /**
+         * Performing execution.
+         */
+        EXECUTE,
+
+        /**
+         * Performing verification.
+         */
+        VERIFY,
     }
 }

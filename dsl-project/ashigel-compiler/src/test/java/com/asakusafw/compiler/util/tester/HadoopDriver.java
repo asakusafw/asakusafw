@@ -325,6 +325,7 @@ public final class HadoopDriver implements Closeable {
             while (scanner.hasNextLine()) {
                 logger.info(scanner.nextLine());
             }
+            scanner.close();
             return process.waitFor();
         } catch (InterruptedException e) {
             throw new IOException(e);

@@ -127,6 +127,7 @@ public class SshScriptHandlerTestRoot {
         while (scanner.hasNextLine()) {
             results.add(scanner.nextLine());
         }
+        scanner.close();
         return results;
     }
 
@@ -221,6 +222,7 @@ public class SshScriptHandlerTestRoot {
     /**
      * Returns a matcher which tests whether RHS is in LHS.
      * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
+     * @param <T> the test target data type
      * @param matcher RHS
      * @return the matcher
      */

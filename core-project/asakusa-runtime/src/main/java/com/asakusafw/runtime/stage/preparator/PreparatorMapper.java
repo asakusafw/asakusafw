@@ -23,7 +23,7 @@ import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
  * The skeletal implementation to output values directly.
- * @param <T>
+ * @param <T> the input/output data model type
  * @since 0.2.5
  * @version 0.5.1
  */

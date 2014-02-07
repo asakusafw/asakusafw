@@ -41,7 +41,7 @@ import org.apache.hadoop.conf.Configuration;
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.4.0
- * @version 0.5.0
+ * @version 0.6.0
  */
 public class ConfigurationProvider {
 
@@ -95,9 +95,22 @@ public class ConfigurationProvider {
         this.loader = createLoader(current, defaultConfigPath);
     }
 
-    private static URL getConfigurationPath(Map<String, String> envp) {
-        File conf = getConfigurationDirectory(envp);
-        if (conf == null || conf.isDirectory() == false) {
+    /**
+     * Computes the default Hadoop configuration path.
+     * @param environmentVariables the current environment variables
+     * @return the detected configuration path, or {@code null} if the configuration path is not found
+     * @since 0.6.0
+     */
+    public static URL getConfigurationPath(Map<String, String> environmentVariables) {
+        if (environmentVariables == null) {
+            throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
+        }
+        File conf = getConfigurationDirectory(environmentVariables);
+        if (conf == null) {
+            LOG.warn("Hadoop configuration path is not found");
+            return null;
+        }
+        if (conf.isDirectory() == false) {
             LOG.warn(MessageFormat.format(
                     "Failed to load default Hadoop configurations ({0} is not a valid installation path)",
                     conf));
@@ -182,17 +195,23 @@ public class ConfigurationProvider {
         return findHadoopCommand(System.getenv());
     }
 
-    static File findHadoopCommand(Map<String, String> envp) {
-        assert envp != null;
-        File command = getExplicitHadoopCommand(envp);
+    /**
+     * Computes the default Hadoop command path.
+     * @param environmentVariables the current environment variables
+     * @return the detected command path, or {@code null} if the command path is not found
+     * @since 0.6.0
+     */
+    public static File findHadoopCommand(Map<String, String> environmentVariables) {
+        assert environmentVariables != null;
+        File command = getExplicitHadoopCommand(environmentVariables);
         if (command != null) {
             return command;
         }
-        File home = getExplicitHadoopDirectory(envp);
+        File home = getExplicitHadoopDirectory(environmentVariables);
         if (home != null && home.isDirectory()) {
             command = new File(home, PATH_HADOOP_COMMAND);
         } else {
-            command = findHadoopCommandFromPath(envp);
+            command = findHadoopCommandFromPath(environmentVariables);
         }
         if (command == null || command.canExecute() == false) {
             return null;

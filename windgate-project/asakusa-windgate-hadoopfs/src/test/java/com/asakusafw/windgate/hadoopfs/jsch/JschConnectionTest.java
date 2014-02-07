@@ -249,6 +249,7 @@ public class JschConnectionTest {
                     results.put(pair[0], pair[1]);
                 }
             }
+            s.close();
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
         } finally {

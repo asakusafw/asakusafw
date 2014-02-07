@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
 import com.asakusafw.trace.model.TraceSetting.Mode;
@@ -36,11 +37,15 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * テストドライバの基底クラス。
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.6.0
  */
 public abstract class TestDriverBase {
 
     private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create";
+
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
 
     /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
     protected TestDriverContext driverContext;
@@ -371,5 +376,14 @@ public abstract class TestDriverBase {
         return new TraceSetting(
                 new Tracepoint(operatorClass.getName(), methodName, portKind, portName),
                 Mode.STRICT, attributes);
+    }
+
+    /**
+     * [EXPERIMENTAL] Sets the {@link JobExecutorFactory} for executing jobs in this test.
+     * @param factory the factory, or {@code null} to use a default implementation
+     * @since 0.6.0
+     */
+    public void setJobExecutorFactory(JobExecutorFactory factory) {
+        driverContext.setJobExecutorFactory(factory);
     }
 }
