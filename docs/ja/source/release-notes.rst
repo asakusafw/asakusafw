@@ -4,6 +4,7 @@
 
 Release 0.6.0
 =============
+Feb 17, 2014
 
 .. contents::
    :local:
@@ -39,20 +40,18 @@ Mavenを使ったアプリケーションの開発もサポートしています
 Asakusa Framework ``0.7`` 系以降の将来のバージョンで、
 Mavenによるアプリケーション開発を非推奨とすることを検討しています。
 
-Shafu(車夫) - Gradleプロジェクト用Eclipse Plugin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Shafu - Gradleプロジェクト用Eclipse Plugin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 標準のビルドシステムをGradleに移行したことにあわせて、
 Gradleを利用するアプリケーションプロジェクトの開発をサポートするEclipseプラグイン
-`Shafu`_ (車夫) を公開しました。
+「Shafu (車夫)」を公開しました。
 
-* `Shafu`_ - Asakusa Gradle Plug-in Helper for Eclipse -
+* :jinrikisha:`Shafu - Asakusa Gradle Plug-in Helper for Eclipse - <shafu.html>`
 
 Shafu はバッチアプリケーション開発にGradleを利用する際に、
 Eclipseから透過的にビルドツール上の操作を行えます。
 Shafu を使うことで、ターミナル上でのビルドツールの操作が不要となり、
 Eclipse上でアプリケーション開発に必要なほとんどの作業を行うことができるようになります。
-
-..  _`Shafu`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/shafu.html
 
 テストドライバにJavaオブジェクトによるテストデータ指定を追加
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,9 +89,7 @@ Asakusa Frameworkが提供するラッパー機構を利用してHadoopの処理
 エミュレーションモードの詳細や利用方法などについては、
 以下のドキュメントを参照してください。
 
-* `エミュレーションモードによるアプリケーションテスト`_
-
-..  _`エミュレーションモードによるアプリケーションテスト`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/testing/emulation-mode.html
+* :sandbox:`エミュレーションモードによるアプリケーションテスト <testing/emulation-mode.html>`
 
 入力データサイズに応じて自動的にローカルモードでジョブを実行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,47 +117,6 @@ Asakusa Frameworkが提供するラッパー機構を利用してHadoopの処理
 
 * :doc:`application/migration-guide`
 * :doc:`administration/migration-guide`
-
-Changes
--------
-
-Enhancements
-~~~~~~~~~~~~
-* [ :issue:`341` ] - Creates directories for generated sources on eclipse task [Gradle Plugin]
-* [ :issue:`347` ] - Adds wrapper task with settings for batchapp to template project [Gradle Plugin]
-* [ :issue:`353` ] - Enables to modify compilerArgs via build script and changes default value [Gradle Plugin]
-* [ :issue:`354` ] - Adds extention point for configuring jobs to StageClient
-* [ :issue:`355` ] - Adjusts application build log
-* [ :issue:`358` ] - Add pluggable job executors for test driver
-* [ :issue:`361` ] - Add TestDriver API for preparing and verifying test data with model object collection.
-* [ :issue:`364` ] - Add pluggable testing environment configurator for test driver
-
-Bug fixes
-~~~~~~~~~
-* [ :issue:`339` ] - Fix a closing tag name
-* [ :issue:`343` ] - Incorrect hadoopWorkDirectory set on Gradle Plugin
-* [ :issue:`344` ] - generateTestbook task should set headless option [Gradle Plugin]
-* [ :issue:`350` ] - Fix a wrong Javadoc parameter explanation 
-* [ :issue:`351` ] - Generates resources.prefs file in configuration phase [Gradle Plugin]
-* [ :issue:`352` ] - Maven archetype has broken example script file
-* [ :issue:`356` ] - Task inputs/outputs property does not evaluate correctly when changing that [Gradle Plugin] 
-* [ :issue:`357` ] - TestDriver cannot accept an empty file as a JSON data input 
-* [ :issue:`359` ] - Direct I/O does not detect data source correctly when using base path with valuables
-* [ :issue:`360` ] - TestDriver fails on project with blank space path
-* [ :issue:`362` ] - TestDriverBase#setFrameworkHomePath does not work
-* [ :issue:`365` ] - Log message is not clear when ConfigurationProvider failed to find hadoop conf.
-
-Others
-~~~~~~
-* [ :issue:`340` ] - Changes standard build system on documents to Gradle-based 
-* [ :issue:`342` ] - Refactoring Gradle Plugin
-* [ :issue:`345` ] - Prepare for 0.6.0 release
-* [ :issue:`346` ] - 0.6.0 Documents
-* [ :issue:`348` ] - Refactoring Gradle Template Project [Gradle Plugin] 
-* [ :issue:`349` ] - Adds eclipse.preferences.version to asakusafw project prefs [Gradle Plugin]
-* [ :issue:`363` ] - 0.6.0 Refactoring
-
-
 
 リンク
 ------
