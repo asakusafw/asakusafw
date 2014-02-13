@@ -35,35 +35,24 @@ Asakusa Framework入門
 * :doc:`product/license`
 * :doc:`document/index`
 
+関連プロダクト
+==============
+* :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
+* :sandbox:`Asakusa Framework Sandbox <index.html>`
+
 リソース
 ========
 * `ソースリポジトリ (GitHub)`_
 * `サンプルプログラム集 (GitHub)`_
 * `課題管理 (GitHub)`_
 * `ビルドサーバ(Jenkins)`_
-* `APIリファレンス`_
-* `ePub版のダウンロード`_
+* :apiref:`APIリファレンス <index.html>`
+* :epub:`ePub版のダウンロード <AsakusaFramework.epub>`
 
 ..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 ..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
 ..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
-..  _`APIリファレンス`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/api/index.html
-..  _`ePub版のダウンロード`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/epub/AsakusaFramework.epub
-
-関連プロダクト
-==============
-* `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_
-* `Asakusa Framework Sandbox`_
-
-..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
-..  _`Asakusa Framework Sandbox`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/index.html
-
-コミュニティ
-============
-* `コミュニティサイト`_
-
-..  _`コミュニティサイト`: http://asakusafw.com
 
 ----
 

@@ -17,13 +17,13 @@ Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。W
 ..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
 
 ..  tip::
-    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである `Jinrikisha`_ (人力車) を利用する方法もあります。
+    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである Jinrikisha を利用する方法もあります。
     
-    `Jinrikisha`_ を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
+    * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
+     
+    Jinrikisha を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
     
-    なお、 `Jinrikisha`_ ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に、 `Jinrikisha`_ のドキュメントに従って開発環境を構築することを推奨します。
-
-..  _`Jinrikisha`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+    なお Jinrikisha ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に Jinrikisha のドキュメント に従って開発環境を構築することを推奨します。
 
 VMWare Playerのインストール
 ---------------------------

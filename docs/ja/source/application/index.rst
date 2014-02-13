@@ -6,7 +6,7 @@ Asakusa Frameworkによる開発を行うための開発環境の構築につい
 Asakusa Framework開発環境の新規構築
 ===================================
 
-Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフトウェアも含めた開発環境)を新規に構築する場合は、 :doc:`../introduction/start-guide` や `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_ を参照してください。
+Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフトウェアも含めた開発環境)を新規に構築する場合は、 :doc:`../introduction/start-guide` や :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>` を参照してください。
 
 アプリケーション開発プロジェクトの構築と管理
 ============================================
@@ -49,5 +49,3 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
     develop-with-jdk7
     development-environment-restriction
 
-
-..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
