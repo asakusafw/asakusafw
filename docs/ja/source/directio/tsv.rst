@@ -143,7 +143,7 @@ TSV形式の設定
     モデル定義に対してヘッダの内容が一文字でも異なる場合ヘッダ行として扱われませんが、
     TSV形式ではヘッダの設定を有効にした場合、常に先頭行に対してデータの読み込みをスキップします。
 
-..  [#] CSV形式の詳細については、 `CSV形式のDataFormatの作成 <http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/user-guide.html#csvdataformat>`_ を参照してください。
+..  [#] CSV形式の詳細については、:asakusafw:`CSV形式のDataFormatの作成 <directio/user-guide.html#csvdataformat>` を参照してください。
 
 ファイル情報の取得
 ~~~~~~~~~~~~~~~~~~
@@ -183,7 +183,9 @@ TSVから除外するプロパティ
 
 Asakusa DSLの記述
 =================
-Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述については、基本的な流れはCSVファイル連携を使った場合と同様です。Direct I/OのCSVファイルによる連携の基本的な流れについては、 `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。また、より詳細な情報は `Direct I/O ユーザガイド`_ を参照してください。
+Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述については、基本的な流れはCSVファイル連携を使った場合と同様です。
+Direct I/OのCSVファイルによる連携の基本的な流れについては、:asakusafw:`Direct I/O スタートガイド - Asakusa DSLの記述 <directio/start-guide.html#asakusa-dsl>` などを参照してください。
+また、より詳細な情報は :asakusafw:`Direct I/O ユーザガイド <directio/user-guide.html>` を参照してください。
 
 以下ではAsakusa DSLの記述に関して、Direct I/OのCSVファイル連携とTSVファイル連携で異なる部分についてのみ説明します。
 
@@ -191,16 +193,9 @@ Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述に�
 -----------------------------------------------
 TSVファイルをインポートしてHadoopの処理を行う場合、 `データモデルクラスの生成`_ で生成した ``<パッケージ名>.tsv.Abstract<データモデル名>TsvInputDescription`` クラスのサブクラスを作成して必要な情報を記述します。
 
-サブクラスの基本的な実装方法については `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。
-
 ファイルシステム上にTSVファイルを出力する
 -----------------------------------------
 ジョブフローの処理結果をTSVファイルにエクスポートする場合、 `データモデルクラスの生成`_ で生成した ``<パッケージ名>.tsv.Abstract<データモデル名>TsvOutputDescription`` クラスのサブクラスを作成して必要な情報を記述します。
-
-サブクラスの基本的な実装方法については `Direct I/O スタートガイド - Asakusa DSLの記述`_ などを参照してください。
-
-..  _`Direct I/O スタートガイド - Asakusa DSLの記述`: http://asakusafw.s3.amazonaws.com/documents/latest/develop/ja/html/directio/start-guide.html#asakusa-dsl
-..  _`Direct I/O ユーザガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/develop/ja/html/directio/user-guide.html
 
 TSVファイルフォーマット仕様
 ===========================

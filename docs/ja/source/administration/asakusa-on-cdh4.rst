@@ -6,13 +6,11 @@ CDH4上でAsakusa Frameworkを利用する
     Asakusa Framework バージョン ``0.5.3`` 以降、
     CDH4を含むHadoop2系の環境でAsakusa Frameworkを利用するためのドキュメントは、
     Asakusa Frameworkのドキュメント
-    `Hadoop2系の運用環境でAsakusa Frameworkを利用する`_
+    :asakusafw:`Hadoop2系の運用環境でAsakusa Frameworkを利用する <administration/deployment-hadoop2.html>`
     に統合されました。
      
     このページの内容は古くなっている可能性があるため、上記のドキュメントを参照してください。
     またこのページは将来削除される予定です。
-
-..  _`Hadoop2系の運用環境でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/deployment-hadoop2.html
 
 * 対象バージョン: Asakusa Framework ``0.5.0`` 以降
 
@@ -55,9 +53,9 @@ CDH4向けAsakusa Frameworkのデプロイメントアーカイブ生成
 =======================================================
 CDH4向けのAsakusa Frameworkのデプロイメントアーカイブを生成するには、
 通常のデプロイメントアーカイブの生成方法と同様に
-`Framework Organizer`_ を利用します。
+Framework Organizer を利用します。
 
-`Framework Organizer`_ の ``pom.xml`` に対して、
+Framework Organizer の ``pom.xml`` に対して、
 Asakusa Frameworkのバージョンを示すプロパティ ``asakusafw.version`` を
 ``[version]-hadoop2`` のように、通常のバージョン番号の後ろに ``-hadoop2`` を加えたものを指定します。
 例えば、Asakusa Frameworkのバージョン ``0.5.0`` のCDH4向けバージョンは、
@@ -83,11 +81,7 @@ CDH4向けデプロイメントアーカイブ(例えば ``asakusafw-0.5.0-hadoo
 
 CDH4の運用環境上にAsakusa Frameworkをデプロイする方法は
 通常のAsakusa Frameworkのデプロイ方法と同様です。
-詳しくはAsakusa Frameworkのドキュメント `運用環境の整備`_ などを参照してください。
+詳しくはAsakusa Frameworkのドキュメント :asakusafw:`運用環境の整備 <administration/index.html>` などを参照してください。
 
-..  [#] Framework Organizer のインストールについては、 `Framework Organizer`_ を参照してください。
+..  [#] Framework Organizer のインストールについては、:asakusafw:`Framework Organizer利用ガイド <administration/framework-organizer.html>` を参照してください。
 
-..  _`Framework Organizer`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/framework-organizer.html
-..  _`運用環境の整備`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/index.html
-
-    

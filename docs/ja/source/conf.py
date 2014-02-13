@@ -33,6 +33,7 @@ todo_include_todos = True
 
 extlinks = {
     'issue': ('https://github.com/asakusafw/asakusafw-sandbox/issues/%s', '#'),
+    'asakusafw': ('http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/html/%s', None)
 }
 # ------------------------------------------------------------------------------
 

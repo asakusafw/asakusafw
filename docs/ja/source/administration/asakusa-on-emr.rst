@@ -27,17 +27,14 @@ Direct I/Oを利用したサンプルアプリケーションを
 EMR上で実行するまでの手順を説明します。
 
 本書では、
-`Asakusa Framework スタートガイド`_ の説明で使用した
+:asakusafw:`Asakusa Framework スタートガイド <introduction/start-guide.html>` の説明で使用した
 サンプルアプリケーションプロジェクトを利用します。
 Asakusa Frameworkの開発環境上でサンプルアプリケーションを
 ビルド及び実行するまでの手順については、
-`Asakusa Framework スタートガイド`_ を参照してください。
+:asakusafw:`Asakusa Framework スタートガイド <introduction/start-guide.html>` を参照してください。
 
 また、Direct I/O を使ったアプリケーションの開発方法については、
-`データの直接入出力 - Direct I/O`_ などを参照して下さい。
-
-..  _`Asakusa Framework スタートガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/introduction/index.html
-..  _`データの直接入出力 - Direct I/O`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/index.html
+:asakusafw:`データの直接入出力 - Direct I/O <directio/index.html>` などを参照して下さい。
 
 AWS利用環境の準備
 =================
@@ -107,7 +104,8 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 
 Direct I/Oの設定ファイルを編集する
 ----------------------------------
-`Asakusa Framework スタートガイド`_ で説明したアプリケーションプロジェクトに対して、
+:asakusafw:`Asakusa Framework スタートガイド <introduction/start-guide.html>` 
+で説明したアプリケーションプロジェクトに対して、
 EMR上でS3に対してデータの入出力を行うための設定を行います。
 
 本書で説明するAsakusa Frameworkの構成では、実行するアプリケーションはDirect I/Oを使って
@@ -168,8 +166,8 @@ Asakusa Frameworkのデプロイメントアーカイブを作成する例を示
     Asakusa Framework本体、バッチアプリケーション、設定ファイルをすべて同梱した
     Asakusa Frameworkのデプロイメントアーカイブを作成しています。
     
-    各タスクの詳細については、 `Asakusa Gradle Plugin利用ガイド`_ の 
-    `Asakusa Frameworkのデプロイメントアーカイブ生成`_ を参照してください。
+    各タスクの詳細については、 :asakusafw:`Asakusa Gradle Plugin利用ガイド <application/gradle-plugin.html>` の 
+    :asakusafw:`Asakusa Frameworkのデプロイメントアーカイブ生成<application/gradle-plugin.html#deployment-archive-gradle-plugin>` を参照してください。
 
 上記のGradleコマンドを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
 
@@ -181,9 +179,6 @@ Asakusa Frameworkのデプロイメントアーカイブを作成する例を示
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
-
-..  _`Asakusa Gradle Plugin利用ガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html
-..  _`Asakusa Frameworkのデプロイメントアーカイブ生成`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/application/gradle-plugin.html#deployment-archive-gradle-plugin
 
 ブートストラップアクション用スクリプトをS3に配置する
 ----------------------------------------------------
@@ -272,7 +267,7 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
   EMRクラスターのマシンイメージのバージョンです。利用可能なバージョンについては EMR Developer Guide の `Choose a Machine Image`_ [#]_ などを参照してください。
 
 ..  attention::
-    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。Asakusa FrameworkをHadoop2系で利用するには、Hadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。詳しくは、 `Hadoop2系の運用環境でAsakusa Frameworkを利用する`_ を参照してください。
+    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。Asakusa FrameworkをHadoop2系で利用するには、Hadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。詳しくは、 :asakusafw:`Hadoop2系の運用環境でAsakusa Frameworkを利用する <administration/deployment-hadoop2.html>` を参照してください。
 
 ``--enable-debugging`` , ``--log-uri``
   EMRでは、各ノードのEMRやHadoopのログを非同期で収集してS3にコピーする機能が提供されています。 ``--enable-debugging`` オプションを指定するとのログ収集機能が有効になり、 ``--log-uri`` で指定したS3バケットのキー配下にログが出力されるようになります。
@@ -293,7 +288,6 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
   EMRクラスターの起動時に実行するブートストラップアクションを指定します。上記の例では、マスターインスタンスに対してAsakusa Frameworkの実行環境一式をセットアップするブートストラップアクション用スクリプトを指定しています。
 
 ..  _`Choose a Machine Image`: http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-plan-ami.html
-..  _`Hadoop2系の運用環境でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/deployment-hadoop2.html
 ..  _`Hadoop 2.2.0 New Features`: http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-hadoop-2.2.0-features.html
 
 ..  [#] 日本語版のEMR Developer Guideは最新のバージョン情報が反映されていないことがあるようなので、ここでは英語版へのリンクを記載しています。
@@ -349,7 +343,7 @@ EMR環境にデプロイしたAsakusa Frameworkのバッチアプリケーショ
 入力データをS3に配置します。ここでは、Direct I/O を使って任意のS3バケットから入力データとなるCSVファイルを読み込むサンプルアプリケーションを例に説明します。
 
 サンプルアプリケーションは、先述の `Direct I/Oの設定ファイルを編集する`_ で設定した
-S3バケット上のパスから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
+S3バケット上のパスから :asakusafw:`Direct I/O スタートガイド <directio/start-guide.html>` の表「サンプルアプリケーションが利用するパス」で記述する
 仕様に基づいてCSVファイルを配置します。
 
 例えば、  ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 入力データは ``s3://[sample-bucket]/app-data/master/item_info.csv`` や ``s3://[sample-bucket]/app-data/sales/2011-04-01.csv`` といったようなパス名で配置することができます。
@@ -364,8 +358,6 @@ S3バケット上のパスから `Direct I/O スタートガイド`_ の表「�
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずバケット名 ``[sample-bucket]`` を実際に使用するバケット名に置き換えてください。
-
-..  _`Direct I/O スタートガイド`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/directio/start-guide.html
 
 ステップの実行
 --------------
@@ -422,7 +414,7 @@ S3バケット上のパスから `Direct I/O スタートガイド`_ の表「�
 出力データをS3から取得します。ここでは、 `入力データをS3に配置`_ と同様にサンプルアプリケーションを例に説明します。
 
 サンプルアプリケーションは、先述の `Direct I/Oの設定ファイルを編集する`_ で設定した
-S3バケット上のパスから `Direct I/O スタートガイド`_ の表「サンプルアプリケーションが利用するパス」で記述する
+S3バケット上のパスから :asakusafw:`Direct I/O スタートガイド <directio/start-guide.html>` の表「サンプルアプリケーションが利用するパス」で記述する
 仕様に基づいてCSVファイルを生成します。
 
 例えば、 ``asakusa-resources.xml`` の ``com.asakusafw.directio.root.fs.path`` の値が ``s3://[sample-bucket]/app-data`` であった場合は、 出力データは ``s3://[sample-bucket]/app-data/result/category/result.csv`` といったようなパスに出力されます。

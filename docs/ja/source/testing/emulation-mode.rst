@@ -100,13 +100,11 @@ YAESSを利用したアプリケーション実行の流れと同様に以下の
 * アプリケーション実行結果の確認
 
 ..  note::
-    上記の各手順について詳しくは、 `Asakusa Framework スタートガイド - サンプルアプリケーションの実行`_  などを参照してください。
+    上記の各手順について詳しくは、:asakusafw:`Asakusa Framework スタートガイド - サンプルアプリケーションの実行 <introduction/start-guide.html#startguide-running-example>` を参照してください。
 
 バッチテストランナーを利用する場合、
 「アプリケーションの実行」の手順でYAESSコマンドの代わりに
 以下のバッチテストランナーAPIを利用します。
-
-..  _`Asakusa Framework スタートガイド - サンプルアプリケーションの実行`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/introduction/start-guide.html#startguide-running-example
 
 バッチテストランナーAPI
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,8 +118,7 @@ YAESSを利用したアプリケーション実行の流れと同様に以下の
 ``-A,--argument <name=value>``
   実行するバッチのバッチ引数を指定します。
 
-例えば `Asakusa Framework スタートガイド - サンプルアプリケーションの実行`_ で紹介している
-サンプルアプリケーションを実行する場合のオプション指定は以下のようになります。
+例えば :asakusafw:`Asakusa Framework スタートガイド - サンプルアプリケーションの実行 <introduction/start-guide.html#startguide-running-example>` で紹介しているサンプルアプリケーションを実行する場合のオプション指定は以下のようになります。
 
 ..  code-block:: sh
 
