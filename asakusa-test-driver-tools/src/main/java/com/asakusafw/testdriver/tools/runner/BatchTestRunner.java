@@ -42,6 +42,7 @@ import com.asakusafw.yaess.core.BatchScript;
 /**
  * The program entry point of Asakusa batch application runner.
  * @since 0.6.0
+ * @version 0.6.1
  */
 public class BatchTestRunner {
 
@@ -49,8 +50,10 @@ public class BatchTestRunner {
 
     /**
      * The batch application base path (relative from framework install location).
+     * @deprecated Use {@link TestDriverContext#getBatchApplicationsInstallationPath()} instead
      */
-    public static final String PATH_BATCH_APPLICATION_BASE = "batchapps";
+    @Deprecated
+    public static final String PATH_BATCH_APPLICATION_BASE = TestDriverContext.DEFAULT_BATCHAPPS_PATH;
 
     /**
      * The YAESS script path (relative from batch application directory).
@@ -92,11 +95,12 @@ public class BatchTestRunner {
      * Program entry.
      * @param args program arguments
      * @return the exit code
+     * @see #execute(String, Map)
      */
     public static int execute(String[] args) {
-        RunTask.Configuration configuration;
+        Arguments arguments;
         try {
-            configuration = parseConfiguration(args);
+            arguments = parseArguments(args);
         } catch (Exception e) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
@@ -111,37 +115,81 @@ public class BatchTestRunner {
                     Arrays.toString(args)), e);
             return 1;
         }
+        return execute(arguments);
+    }
+
+    /**
+     * Run Asakusa batch application.
+     * @param batchId the target batch ID
+     * @param batchArguments the batch arguments (nullable)
+     * @return the exit code
+     */
+    public static int execute(String batchId, Map<String, String> batchArguments) {
+        TestDriverContext context = createContext();
+        if (batchArguments != null) {
+            context.getBatchArgs().putAll(batchArguments);
+        }
+        Arguments arguments = new Arguments(context, batchId, generateExecutionId());
+        return execute(arguments);
+    }
+
+    /**
+     * Run Asakusa batch application without any batch arguments.
+     * @param batchId the target batch ID
+     * @return the exit code
+     * @see #execute(String, Map)
+     */
+    public static int execute(String batchId) {
+        return execute(batchId, null);
+    }
+
+    static int execute(Arguments arguments) {
         try {
+            RunTask.Configuration configuration = loadConfiguration(arguments);
             RunTask task = new RunTask(configuration);
             task.perform();
+        } catch (AssertionError e) {
+            LOG.error(MessageFormat.format(
+                    "Failed to executes batch application: {0}",
+                    arguments.batchId), e);
+            return 1;
         } catch (Exception e) {
             LOG.error(MessageFormat.format(
                     "Failed to executes batch application: {0}",
-                    configuration.script.getId()), e);
+                    arguments.batchId), e);
             return 1;
         }
         return 0;
     }
 
-    static RunTask.Configuration parseConfiguration(String[] args) throws ParseException {
+    static Arguments parseArguments(String[] args) throws ParseException {
         assert args != null;
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
 
-        TestDriverContext context = new TestDriverContext(BatchTestRunner.class);
-
         String batchId = cmd.getOptionValue(OPT_BATCH_ID.getOpt());
         LOG.debug("Batch ID: {}", batchId);
 
-        String executionIdPrefix = UUID.randomUUID().toString();
+        String executionIdPrefix = generateExecutionId();
         LOG.debug("Exec ID (prefix): {}", batchId);
 
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
         LOG.debug("Batch arguments: {}", arguments);
+
+        TestDriverContext context = createContext();
         context.getBatchArgs().putAll(toMap(arguments));
 
+        return new Arguments(context, batchId, executionIdPrefix);
+    }
+
+    private static String generateExecutionId() {
+        return UUID.randomUUID().toString();
+    }
+
+    static RunTask.Configuration loadConfiguration(Arguments args) {
+        assert args != null;
         BatchScript script;
-        File scriptFile = getScriptFile(context, batchId);
+        File scriptFile = getScriptFile(args.context, args.batchId);
         LOG.debug("Loading script: {}", scriptFile);
         try {
             Properties properties = loadProperties(scriptFile);
@@ -154,16 +202,23 @@ public class BatchTestRunner {
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
         return new RunTask.Configuration(
-                context,
+                args.context,
                 script,
-                executionIdPrefix);
+                args.executionIdPrefix);
+    }
+
+    private static TestDriverContext createContext() {
+        TestDriverContext context = new TestDriverContext(BatchTestRunner.class);
+
+        // NOTE: We must use the system "batchapps" path instead of a temporary location
+        context.useSystemBatchApplicationsInstallationPath(true);
+        return context;
     }
 
     private static File getScriptFile(TestDriverContext context, String batchId) {
         assert context != null;
         assert batchId != null;
-        File framework = context.getFrameworkHomePath();
-        File batchappBase = new File(framework, PATH_BATCH_APPLICATION_BASE);
+        File batchappBase = context.getBatchApplicationsInstallationPath();
         File batchapp = new File(batchappBase, batchId);
         File scriptFile = new File(batchapp, PATH_YAESS_SCRIPT);
         return scriptFile;
@@ -189,6 +244,21 @@ public class BatchTestRunner {
             return properties;
         } finally {
             in.close();
+        }
+    }
+
+    static final class Arguments {
+
+        final TestDriverContext context;
+
+        final String batchId;
+
+        final String executionIdPrefix;
+
+        public Arguments(TestDriverContext context, String batchId, String executionIdPrefix) {
+            this.context = context;
+            this.batchId = batchId;
+            this.executionIdPrefix = executionIdPrefix;
         }
     }
 }
