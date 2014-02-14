@@ -50,7 +50,7 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * テスト実行時のコンテキスト情報を管理する。
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.6.1
  */
 public class TestDriverContext implements TestContext {
 
@@ -92,6 +92,13 @@ public class TestDriverContext implements TestContext {
     public static final String KEY_FRAMEWORK_PATH = "asakusa.testdriver.framework";
 
     /**
+     * The system property key of the default batch applications installation base path.
+     * This property will overwrite environment variables.
+     * @since 0.6.1
+     */
+    public static final String KEY_BATCHAPPS_PATH = "asakusa.testdriver.batchapps";
+
+    /**
      * The system property key of ignoring environment checking.
      * @see #validateExecutionEnvironment()
      * @since 0.5.2
@@ -102,6 +109,18 @@ public class TestDriverContext implements TestContext {
      * Environmental variable: the framework home path.
      */
     public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
+
+    /**
+     * Environmental variable: the batch applications installation base path.
+     * @since 0.6.1
+     */
+    public static final String ENV_BATCHAPPS_PATH = "ASAKUSA_BATCHAPPS_HOME";
+
+    /**
+     * The default path of batch application installation base path (relative from the framework home path).
+     * @since 0.6.1
+     */
+    public static final String DEFAULT_BATCHAPPS_PATH = "batchapps";
 
     /**
      * The path to the external dependency libraries folder (relative from working directory).
@@ -161,6 +180,12 @@ public class TestDriverContext implements TestContext {
     private volatile File explicitCompilerWorkingDirectory;
 
     private volatile File generatedCompilerWorkingDirectory;
+
+    private volatile boolean useSystemBatchappsHomePath;
+
+    private volatile File explicitBatchappsHomePath;
+
+    private volatile File generatedBatchappsHomePath;
 
     private volatile JobExecutorFactory jobExecutorFactory;
 
@@ -324,6 +349,54 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Enable to use the system batch applications installation base location instead of using generated path.
+     * @param use {@code true} to use system location, or {@code false} otherwise
+     * @since 0.6.1
+     */
+    public void useSystemBatchApplicationsInstallationPath(boolean use) {
+        this.useSystemBatchappsHomePath = use;
+    }
+
+    /**
+     * Sets the path to the batch applications installation location.
+     * @param path the path to the batch applications installation location, or {@code null} to reset location
+     * @since 0.6.1
+     */
+    public void setBatchApplicationsInstallationPath(File path) {
+        this.explicitBatchappsHomePath = path;
+    }
+
+    /**
+     * Returns the path to the batch applications installation location.
+     * @return path to the batch applications installation location
+     * @since 0.6.1
+     */
+    public File getBatchApplicationsInstallationPath() {
+        if (explicitBatchappsHomePath != null) {
+            return explicitBatchappsHomePath;
+        }
+        if (generatedBatchappsHomePath != null) {
+            return generatedBatchappsHomePath;
+        }
+        String path = System.getProperty(KEY_BATCHAPPS_PATH);
+        if (path != null) {
+            return new File(path);
+        }
+        if (useSystemBatchappsHomePath) {
+            String envPath = getEnvironmentVariables0().get(ENV_BATCHAPPS_PATH);
+            if (envPath != null) {
+                return new File(envPath);
+            }
+            File frameworkHome = getFrameworkHomePathOrNull();
+            if (frameworkHome != null) {
+                return new File(frameworkHome, DEFAULT_BATCHAPPS_PATH);
+            }
+        }
+        generatedBatchappsHomePath = createTempDirPath();
+        return generatedBatchappsHomePath;
+    }
+
+    /**
      * Returns the path to the jobflow package (*.jar) deployment directory.
      * This method refers the {@link #getFrameworkHomePath() framework installed location}.
      * @param batchId target batch ID
@@ -335,7 +408,7 @@ public class TestDriverContext implements TestContext {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
-        File apps = new File(getFrameworkHomePath(), "batchapps");
+        File apps = getBatchApplicationsInstallationPath();
         File batch = new File(apps, batchId);
         File lib = new File(batch, "lib");
         return lib;
@@ -353,7 +426,7 @@ public class TestDriverContext implements TestContext {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
-        File apps = new File(getFrameworkHomePath(), "batchapps");
+        File apps = getBatchApplicationsInstallationPath();
         File batch = new File(apps, batchId);
         File lib = new File(batch, DependencyLibrariesProcessor.OUTPUT_DIRECTORY_PATH);
         return lib;
@@ -551,6 +624,7 @@ public class TestDriverContext implements TestContext {
         if (home != null) {
             envp.put(ENV_FRAMEWORK_PATH, home.getAbsolutePath());
         }
+        envp.put(ENV_BATCHAPPS_PATH, getBatchApplicationsInstallationPath().getAbsolutePath());
         return envp;
     }
 
@@ -751,6 +825,11 @@ public class TestDriverContext implements TestContext {
             LOG.debug("Deleting temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
             removeAll(generatedCompilerWorkingDirectory);
             this.generatedCompilerWorkingDirectory = null;
+        }
+        if (generatedBatchappsHomePath != null) {
+            LOG.debug("Deleting temporary batchapps directory: {}", generatedBatchappsHomePath);
+            removeAll(generatedBatchappsHomePath);
+            this.generatedBatchappsHomePath = null;
         }
     }
 

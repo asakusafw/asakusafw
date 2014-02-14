@@ -103,7 +103,7 @@ __EOF__
 fi
 
 _YS_PROFILE="$_YS_ROOT/conf/yaess.properties"
-_YS_SCRIPT="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/etc/yaess-script.properties"
+_YS_SCRIPT="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/etc/yaess-script.properties"
 _YS_CLASS="com.asakusafw.yaess.bootstrap.Yaess"
 
 cat << __EOF__

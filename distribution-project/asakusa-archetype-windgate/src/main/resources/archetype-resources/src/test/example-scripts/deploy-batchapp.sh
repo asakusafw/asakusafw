@@ -22,8 +22,13 @@ then
     exit 1
 fi
 
-rm "$ASAKUSA_HOME"/batchapps/* -fr
-cp -pr target/batchc/* "$ASAKUSA_HOME"/batchapps
+if [ "$ASAKUSA_BATCHAPPS_HOME" = "" ]
+then
+    export ASAKUSA_BATCHAPPS_HOME="$ASAKUSA_HOME/batchapps"
+fi
+
+rm "$ASAKUSA_BATCHAPPS_HOME"/* -fr
+cp -pr target/batchc/* "$ASAKUSA_BATCHAPPS_HOME"
 
 mkdir -p /tmp/windgate-$USER
 rm /tmp/windgate-$USER/* -rf
