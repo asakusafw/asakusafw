@@ -2,6 +2,52 @@
 Changelogs
 ==========
 
+Release 0.6.0
+=============
+Feb 17, 2014
+
+Enhancements
+------------
+* [ :issue:`341` ] - Creates directories for generated sources on eclipse task [Gradle Plugin]
+* [ :issue:`347` ] - Adds wrapper task with settings for batchapp to template project [Gradle Plugin]
+* [ :issue:`353` ] - Enables to modify compilerArgs via build script and changes default value [Gradle Plugin]
+* [ :issue:`354` ] - Adds extention point for configuring jobs to StageClient
+* [ :issue:`355` ] - Adjusts application build log
+* [ :issue:`358` ] - Add pluggable job executors for test driver
+* [ :issue:`361` ] - Add TestDriver API for preparing and verifying test data with model object collection.
+    * See: :doc:`testing/user-guide`
+* [ :issue:`364` ] - Add pluggable testing environment configurator for test driver
+* [ sandbox ] - Add emulation mode for TestDriver
+    * See: :sandbox:`エミュレーションモードによるアプリケーションテスト <testing/emulation-mode.html>`
+* [ sandbox ] - Add Adaptive Hadoop local mode configurator.
+
+Bug fixes
+---------
+* [ :issue:`339` ] - Fix a closing tag name
+* [ :issue:`343` ] - Incorrect hadoopWorkDirectory set on Gradle Plugin
+* [ :issue:`344` ] - generateTestbook task should set headless option [Gradle Plugin]
+* [ :issue:`350` ] - Fix a wrong Javadoc parameter explanation 
+* [ :issue:`351` ] - Generates resources.prefs file in configuration phase [Gradle Plugin]
+* [ :issue:`352` ] - Maven archetype has broken example script file
+* [ :issue:`356` ] - Task inputs/outputs property does not evaluate correctly when changing that [Gradle Plugin] 
+* [ :issue:`357` ] - TestDriver cannot accept an empty file as a JSON data input 
+* [ :issue:`359` ] - Direct I/O does not detect data source correctly when using base path with valuables
+* [ :issue:`360` ] - TestDriver fails on project with blank space path
+* [ :issue:`362` ] - TestDriverBase#setFrameworkHomePath does not work
+* [ :issue:`365` ] - Log message is not clear when ConfigurationProvider failed to find hadoop conf.
+* [ :issue:`366` ] - Framework Organizer tasks should not define in afterEvaluate block possibly [Gradle Plugin]
+
+Others
+------
+* [ :issue:`340` ] - Changes standard build system on documents to Gradle-based 
+    * See: :doc:`application/gradle-plugin`
+* [ :issue:`342` ] - Refactoring Gradle Plugin
+* [ :issue:`345` ] - Prepare for 0.6.0 release
+* [ :issue:`346` ] - 0.6.0 Documents
+* [ :issue:`348` ] - Refactoring Gradle Template Project [Gradle Plugin] 
+* [ :issue:`349` ] - Adds eclipse.preferences.version to asakusafw project prefs [Gradle Plugin]
+* [ :issue:`363` ] - 0.6.0 Refactoring
+
 Release 0.5.3
 =============
 Dec 24, 2013
@@ -29,7 +75,7 @@ Enhancements
     * See: :doc:`testing/using-excel`
 * [ :issue:`336` ] - Simplifies default log format settings on template project
 * [ sandbox ] - Direct I/O-TSV supports data header
-    * See: `Direct I/OのTSVファイル連携 <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_
+    * See: sandbox:`Direct I/OのTSVファイル連携 <directio/tsv.html>`
 
 Bug fixes
 ---------
@@ -46,7 +92,7 @@ Others
 * [ :issue:`337` ] - Fix typo
 * [ :issue:`338` ] - Fix a valid CoGroup operator method
 * [ sandbox ] - Revised documents using on Amazon EMR
-    * See: `Amazon EMR上でAsakusa Frameworkを利用する <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-emr.html>`_
+    * See: :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>`
 
 Release 0.5.2
 =============
@@ -61,7 +107,7 @@ Enhancements
     * See: :doc:`directio/user-guide`
 * [ :issue:`309` ] - TestDriver should clean compiler working directory after finishing runTest.
 * [ Sandbox ] - Direct I/O-TSV supports compression and decompression
-    * See: `Direct I/OのTSVファイル連携 <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_
+    * See: :sandbox:`Direct I/OのTSVファイル連携 <directio/tsv.html>`
 
 Bug fixes
 ---------
@@ -299,7 +345,7 @@ Enhancements
 * [ :issue:`153` ] - Multi-cluster support for YAESS
     * See: :doc:`yaess/multi-dispatch`
 * [ :issue:`154` ] - Simple job queue for YAESS (experimental)
-    * See: `Asakusa Framework Sandbox: YAESS JobQueue`_
+    * See: :doc:`yaess/jobqueue`
 * [ :issue:`155` ] - Skip specifing jobflows on yaess-batch.
     * See: :doc:`yaess/user-guide`
 * [ :issue:`156` ] - Write execution history per jobflow on YAESS.
@@ -324,8 +370,6 @@ Enhancements
 
 ..  attention::
     Direct I/O is still an experimental feature.
-
-..  _`Asakusa Framework Sandbox: YAESS JobQueue`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/yaess/jobqueue.html
 
 Bug fixes
 ---------
