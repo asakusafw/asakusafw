@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.5-SNAPSHOT</version>
+		<version>0.6-SNAPSHOT</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
@@ -32,6 +32,7 @@
 	<modules>
 		<module>collections</module>
 		<module>simple-graph</module>
+		<module>object-io</module>
 		<module>java-dom</module>
 		<module>javadoc-parser</module>
 		<module>jsr199-testing</module>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Maps;
 
@@ -66,6 +67,10 @@ public void sometest() {
 </code></pre>
  */
 public class OperatorTestEnvironment extends ExternalResource {
+
+    static {
+        TestingEnvironmentConfigurator.initialize();
+    }
 
     private RuntimeResourceManager manager;
 

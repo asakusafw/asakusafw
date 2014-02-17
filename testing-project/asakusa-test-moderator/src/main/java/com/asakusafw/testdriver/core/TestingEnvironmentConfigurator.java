@@ -1,0 +1,114 @@
+/**
+ * Copyright 2011-2014 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.asakusafw.testdriver.core;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ServiceLoader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+
+/**
+ * Configures the current testing environment.
+ * <p>
+ * To configure testing environment, clients can implement this
+ * and put the class name in
+ * {@code META-INF/services/com.asakusafw.testdriver.core.TestingEnvironmentConfigurator}.
+ * </p>
+ * @since 0.6.0
+ */
+public abstract class TestingEnvironmentConfigurator {
+
+    static final Logger LOG = LoggerFactory.getLogger(ConfigurationFactory.class);
+
+    /**
+     * The system property key of enabling this feature.
+     */
+    public static final String KEY_ENABLE = "asakusa.testdriver.configurator";
+
+    /**
+     * The default value of {@link #KEY_ENABLE}.
+     */
+    public static final String DEFAULT_ENABLE = "true";
+
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the testing environment.
+     */
+    public static synchronized void initialize() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        if (isEnabled() == false) {
+            LOG.info("Testing environment configurator is disabled");
+            return;
+        }
+        LOG.debug("Loading testing environment configurators");
+        Collection<TestingEnvironmentConfigurator> services = loadServices();
+        for (TestingEnvironmentConfigurator service : services) {
+            LOG.debug("Applying testing environment configurator: {}", service);
+            try {
+                service.configure();
+            } catch (RuntimeException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to apply testing environment configurator: {0}",
+                        service.getClass().getName()), e);
+            }
+        }
+    }
+
+    private static Collection<TestingEnvironmentConfigurator> loadServices() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = TestingEnvironmentConfigurator.class.getClassLoader();
+        }
+        List<TestingEnvironmentConfigurator> results = new ArrayList<TestingEnvironmentConfigurator>();
+        ServiceLoader<TestingEnvironmentConfigurator> loader =
+                ServiceLoader.load(TestingEnvironmentConfigurator.class, classLoader);
+        for (TestingEnvironmentConfigurator service : loader) {
+            results.add(service);
+        }
+        // sort by its class name
+        Collections.sort(results, new Comparator<TestingEnvironmentConfigurator>() {
+            @Override
+            public int compare(TestingEnvironmentConfigurator o1, TestingEnvironmentConfigurator o2) {
+                String c1 = o1.getClass().getName();
+                String c2 = o2.getClass().getName();
+                return c1.compareTo(c2);
+            }
+        });
+        return results;
+    }
+
+    private static boolean isEnabled() {
+        String value = System.getProperty(KEY_ENABLE, DEFAULT_ENABLE);
+        return value.equals("true");
+    }
+
+    /**
+     * Configures the current testing environment.
+     */
+    protected abstract void configure();
+}

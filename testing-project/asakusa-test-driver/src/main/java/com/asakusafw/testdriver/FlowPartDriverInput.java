@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,14 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 /**
  * フロー部品のテスト入力データオブジェクト。
  * @since 0.2.0
- *
+ * @version 0.6.0
  * @param <T> モデルクラス
  */
-public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> {
+public class FlowPartDriverInput<T> extends FlowDriverInput<T, FlowPartDriverInput<T>> implements In<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
+    static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverInput.class);
 
-    /** フロー記述ドライバ。 */
-    protected FlowDescriptionDriver descDriver;
+    private final DirectImporterDescription importerDescription;
 
     private final In<T> in;
 
@@ -48,46 +47,30 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
      */
     public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
-        this.driverContext = driverContext;
-        this.descDriver = descDriver;
-        this.name = name;
-        this.modelType = modelType;
-
+        super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);
         String importPath = FlowPartDriverUtils.createInputLocation(driverContext, name).toPath('/');
-        LOG.info("Import Path=" + importPath);
-        importerDescription = new DirectImporterDescription(modelType, importPath);
-        in = descDriver.createIn(name, importerDescription);
+        this.importerDescription = new DirectImporterDescription(modelType, importPath);
+        this.in = descDriver.createIn(name, importerDescription);
     }
 
-    /**
-     * テスト実行時に使用する入力データを指定する。
-     *
-     * @param sourcePath 入力データのパス。
-     * @return this。
-     */
-    public FlowPartDriverInput<T> prepare(String sourcePath) {
-        LOG.info("prepare - ModelType:" + getModelType() + ", SourcePath:" + sourcePath);
-        setSourceUri(sourcePath);
+    @Override
+    protected FlowPartDriverInput<T> getThis() {
         return this;
+    }
+
+    DirectImporterDescription getImporterDescription() {
+        return importerDescription;
     }
 
     /**
      * テストデータのデータサイズを指定する。
-     *
-     * フロー部品のテスト時にAshigel Compilerに対して最適化のヒントを与えます
-     *
+     * フロー部品のテスト時に Asakusa DSL Compiler に対して最適化のヒントを与えます。
      * @param dataSize データサイズ
-     * @return this。
+     * @return this
      * @throws UnsupportedOperationException DirectImpoterDescription以外に対する操作が行われた
      */
     public FlowPartDriverInput<T> withDataSize(DataSize dataSize) {
-        if (!(importerDescription instanceof DirectImporterDescription)) {
-            throw new UnsupportedOperationException(
-                    "withDataSize method is only support DirectImporterDescription but was: "
-                    + importerDescription.getClass().getName());
-        } else {
-            ((DirectImporterDescription) importerDescription).setDataSize(dataSize);
-        }
+        importerDescription.setDataSize(dataSize);
         return this;
     }
 
@@ -95,5 +78,4 @@ public class FlowPartDriverInput<T> extends DriverInputBase<T> implements In<T> 
     public FlowElementOutput toOutputPort() {
         return in.toOutputPort();
     }
-
 }

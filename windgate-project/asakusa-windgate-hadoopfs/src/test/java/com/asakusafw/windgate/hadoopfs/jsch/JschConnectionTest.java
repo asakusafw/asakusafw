@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -249,6 +249,7 @@ public class JschConnectionTest {
                     results.put(pair[0], pair[1]);
                 }
             }
+            s.close();
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
         } finally {

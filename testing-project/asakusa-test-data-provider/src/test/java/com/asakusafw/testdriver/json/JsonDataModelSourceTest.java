@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +84,20 @@ public class JsonDataModelSourceTest {
     public void malform() throws Exception {
         JsonDataModelSource source = open("malform");
         source.next();
+    }
+
+    /**
+     * empty file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void empty_file() throws Exception {
+        JsonDataModelSource source = open("empty");
+        try {
+            assertThat(source.next(), is(nullValue()));
+        } finally {
+            source.close();
+        }
     }
 
     private JsonDataModelSource open(String name) {

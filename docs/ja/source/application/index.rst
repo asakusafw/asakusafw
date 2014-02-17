@@ -6,18 +6,18 @@ Asakusa Frameworkによる開発を行うための開発環境の構築につい
 Asakusa Framework開発環境の新規構築
 ===================================
 
-Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフトウェアも含めた開発環境)を新規に構築する場合は、 :doc:`../introduction/start-guide` や `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_ を参照してください。
+Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフトウェアも含めた開発環境)を新規に構築する場合は、 :doc:`../introduction/start-guide` や :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>` を参照してください。
 
 アプリケーション開発プロジェクトの構築と管理
 ============================================
 
 アプリケーション開発用のプロジェクトの作成やビルド、ライブラリの管理などに関するドキュメントです。
 
+* :doc:`gradle-plugin`
 * :doc:`maven-archetype`
 * :doc:`migration-guide`
 * :doc:`sdk-artifact`
 * :doc:`legacy-module-guide`
-* :doc:`gradle-plugin` (Experimental)
 
 開発ツールの利用
 ================
@@ -40,14 +40,12 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
 ..  toctree::
     :maxdepth: 1
 
+    gradle-plugin
     maven-archetype
     migration-guide
     sdk-artifact
     legacy-module-guide
-    gradle-plugin
     dsl-visualization
     develop-with-jdk7
     development-environment-restriction
 
-
-..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html

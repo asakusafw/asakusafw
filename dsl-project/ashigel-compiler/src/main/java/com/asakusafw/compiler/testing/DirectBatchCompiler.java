@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +128,9 @@ public final class DirectBatchCompiler {
 
     private static void clean(File localWorkingDirectory) {
         assert localWorkingDirectory != null;
-        LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+        if (localWorkingDirectory.exists()) {
+            LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+        }
         delete(localWorkingDirectory);
     }
 

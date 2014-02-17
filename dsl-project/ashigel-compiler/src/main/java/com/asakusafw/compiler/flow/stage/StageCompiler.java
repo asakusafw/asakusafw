@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ public class StageCompiler {
      */
     public List<StageModel> compile(StageGraph graph) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.info("ステージグラフの各ステージを{}をコンパイルします",
+        LOG.debug("ステージグラフの各ステージを{}をコンパイルします",
                 graph.getInput().getSource().getDescription().getName());
 
         Map<FlowResourceDescription, CompiledType> resourceMap = compileResources(graph);
@@ -126,7 +126,7 @@ public class StageCompiler {
             Map<FlowResourceDescription, CompiledType> resourceMap) throws IOException {
         assert block != null;
         assert resourceMap != null;
-        LOG.info("ステージブロック{}をコンパイルします", block);
+        LOG.debug("ステージブロック{}をコンパイルします", block);
         StageModel model = analyze(block);
         blessResources(model, resourceMap);
         compileShuffle(model);

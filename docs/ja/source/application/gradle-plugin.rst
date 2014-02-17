@@ -4,11 +4,6 @@ Asakusa Gradle Plugin利用ガイド
 
 この文書では、GradleにAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加する Asakusa Gradle Plugin について説明します。
 
-..  attention::
-    Asakusa Frameworkの現在のバージョン |version| では、Asakusa Gradle Pluginは試験的機能として提供されています。
-    
-    このバージョンでは、従来のMavenベースのビルドシステムが標準となっていますが、今後のビルドシステムに対する機能拡張はAsakusa Gradle Pluginを中心に行うこと、また将来的にはGradleをベースとしたビルドシステムを標準とすることを検討しています。
-
 .. contents::
    :local:
    :depth: 2
@@ -23,14 +18,6 @@ Asakusa Gradle Plugin は、Asakusa Framework用の `Gradle <http://www.gradle.o
 --------
 Asakusa Gradle Plugin を利用するにはJava(JDK)、およびHadoopがインストールされている必要があります。 これらの導入方法については、 :doc:`../introduction/start-guide` の :ref:`startguide-development-environment` などを参考にしてください。
 
-..  note::
-    このドキュメントには Maven や Asakusa Frameworkのインストール手順も含まれますが、Asakusa Gradle Plugin の利用にはこれらの手順の実施は不要です。
-    
-..  note::
-    `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_ を使って構築した環境でも Asakusa Gradle Plugin を利用することができます。現在のバージョンの Jinrikisha に含まれるサンプルアプリケーションは従来のMavenベースのビルド環境を持つプロジェクト構成になっています。
- 
-..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
-
 なお、Gradleのインストールについては、 本書では `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_  と呼ばれるGradleを利用するためのコマンドを使う方法を推奨しています。この方法に沿ってGradleを利用する場合は前もってGradleをインストールする必要はありません。詳しくは後述の `Asakusa Gradle Pluginの導入`_ を参考にしてください。
 
 Gradleについて
@@ -43,6 +30,19 @@ Gradleに関する詳しい情報は、以下のドキュメントなどを参�
 *  `Gradle Documentation <http://www.gradle.org/documentation>`_  (Gradleの公式ドキュメントサイト)
 *  `Gradle 日本語ドキュメント <http://gradle.monochromeroad.com/docs/>`_  (公式ドキュメントの翻訳サイト)
 
+関連プロダクト
+==============
+
+Shafu
+-----
+Shafu (車夫) は、 Asakusa Framework のバッチアプリケーション開発をサポートするEclipseプラグインです。
+
+* :jinrikisha:`Shafu - Asakusa Gradle Plug-in Helper for Eclipse - <shafu.html>`
+
+Shafu は バッチアプリケーション開発に Asakusa Gradle Plugin を利用する際に、Eclipseから透過的にビルドツール上の操作を行えます。Shafuを使うことで、ターミナル上でのビルドツールの操作が不要となり、Eclipse上でアプリケーション開発に必要なほとんどの作業を行うことができるようになります。
+
+本書ではGradleを使った操作はターミナル上での利用手順として説明していますが、
+Eclipseを使った開発を行う場合は Shafu を利用してEclipse上からGradleの操作を行うことも可能です。
 
 Asakusa Gradle Pluginの導入
 ===========================
@@ -70,12 +70,16 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.5.3.tar.gz>`_ 
+* `asakusa-project-template-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.0.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.5.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.5.3.tar.gz>`_ 
+* `asakusa-example-project-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.0.tar.gz>`_ 
+
+..  note::
+    サンプルアプリケーションの内容や利用方法については、
+    :doc:`../introduction/start-guide` の :ref:`startguide-running-example`  を参照してください。
 
 プロジェクトの配置
 ------------------
@@ -109,18 +113,18 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 
     * - ファイル/ディレクトリ
       - 説明
+    * -  ``build.gradle`` 
+      - Gradleビルドスクリプト
     * -  ``src`` 
       - プロジェクトのソースディレクトリ
     * -  ``build`` 
       - プロジェクトのビルドディレクトリ（ビルド時に生成）
-    * -  ``gradle`` 
-      - Gradleラッパー (Gradle Version: 1.10)
     * -  ``gradlew`` 
       - Gradleラッパーコマンド (Unix)
     * -  ``gradlew.bat`` 
       - Gradleラッパーコマンド (Windows)
-    * -  ``build.gradle`` 
-      - ビルドスクリプト
+    * -  ``.buildtools``
+      - Gradleラッパーライブラリ (Gradle Version: 1.10)
 
 アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。  ``build`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
 
@@ -136,52 +140,13 @@ GradleラッパーはGradleを使ったビルドを実行するために使用�
 
 ビルドスクリプト( ``build.gradle`` )はプロジェクトのビルド設定を記述したGradle用のビルドスクリプトで、プロジェクトテンプレートに含まれるビルドスクリプトにはAsakusa Gradle Pluginを利用するための設定が記述されています。
 
-..  code-block:: groovy
+* :download:`build.gradle <gradle-attachment/build.gradle>`
 
-      1 buildscript {
-      2     repositories {
-      3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
-      4     }
-      5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
-      7     }
-      8 }
-      9 
-     10 apply plugin: 'asakusafw'
-     11 apply plugin: 'asakusafw-organizer'
-     12 apply plugin: 'eclipse'
-     13 
-     14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
-     16 
-     17     modelgen {
-     18         modelgenSourcePackage 'com.example.modelgen'
-     19     }
-     20     compiler {
-     21         compiledSourcePackage 'com.example.batchapp'
-     22     }
-     23 }
-     24 
-     25 asakusafwOrganizer {
-     26     asakusafwVersion = "${asakusafw.asakusafwVersion}"
-     27 }
-     28 
-     29 dependencies {
-     30     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: "${asakusafw.asakusafwVersion}"
-     31     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: "${asakusafw.asakusafwVersion}"
-     32     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: "${asakusafw.asakusafwVersion}"
-     33 
-     34     provided (group: 'org.apache.hadoop', name: 'hadoop-client', version: '1.2.1') {
-     35         exclude(module: 'junit')
-     36         exclude(module: 'mockito-all')
-     37         exclude(module: 'slf4j-log4j12')
-     38     }
-     39 }
-    
-    
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
 
 ..  note::
-    プロジェクトテンプレートに含まれるビルドスクリプトには、Asakusa Frameworkの外部連携機能としてWindGateとDirect I/Oを利用するための構成が定義されています。
+    プロジェクトテンプレートに含まれるビルドスクリプトには、Asakusa Frameworkの外部連携機能としてDirect I/OとWindGateを利用するための構成が定義されています。
 
 ソースディレクトリ
 ~~~~~~~~~~~~~~~~~~
@@ -335,14 +300,11 @@ DMDLスクリプトから演算子の実装で使用するデータモデルク�
 
 データモデルクラスに使われるJavaパッケージ名は、ビルドスクリプト( ``build.gradle`` )のプロパティ ``asakusafw/modelgen/modelgenSourcePackage`` [#]_ で指定します。プロジェクトテンプレートに含まれるビルドスクリプトの初期値は ``com.example.modelgen`` となっているので、アプリケーションが使用する適切なパッケージ名に変更してください。
 
-..  code-block:: groovy
+**build.gradle**
 
-     14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
-     16 
-     17     modelgen {
-     18         modelgenSourcePackage 'com.example.modelgen'
-     19     }
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 19-28
 
 上記のタスク実行例では ``clean`` タスクを合わせて実行しています ``。clean`` タスクはビルドディレクトリを初期化(削除)します。DMDLスクリプトでモデルの名称を変えたとき時などに使わなくなったデータモデルクラスが残らないようにするには、上記のように ``clean`` タスクを合わせて実行するとよいでしょう。
 
@@ -368,6 +330,8 @@ Javaソースファイルをコンパイルするには、 ``compileJava`` タ�
 ..  [#] EclipseなどのIDE上で作業する際に、IDEの自動ビルド機能を有効にしている場合は、ここで示すJavaソースファイルのコンパイルはソースファイルの編集や保存などのタイミングで自動的に行われます。
 
 ..  [#] Gradleには ``compileJava`` タスクの他にも、より細かい単位でソースファイルをコンパイルするためのタスクがいくつか提供されています。詳しくは Gradle のドキュメントを参照してください。
+
+.. _batch-compile-gradle-plugin:
 
 バッチコンパイルとバッチアプリケーションアーカイブの生成
 --------------------------------------------------------
@@ -476,14 +440,14 @@ Eclipseプロジェクト用の定義ファイルを作成するには、 ``ecli
 
 ..  code-block:: sh
 
-    ./gradlew compileJava eclipse
+    ./gradlew eclipse
 
-EclipseにJavaソースディレクトリを正しく認識させるためには、 ``eclipse`` タスクを実行する時点で、プロジェクトで使用するすべてのJavaソースディレクトリが存在している必要があります。 Asakusa Gradle Plugin では `Javaソースファイルのコンパイル`_ で説明した ``compileJava`` タスクを実行することで必要なソースディレクトリが生成されるので、上記の例では ``compileJava`` タスクを事前に実行しています。
-
-このコマンドを実行することによってプロジェクトディレクトリに対して ``.project`` , ``.classpath`` , ``.factorypath`` などのいくつかのEclipse用の定義ファイルが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
+このコマンドを実行することによって、プロジェクトディレクトリに対してEclipseプロジェクト用の定義ファイルやEclipse上のクラスパスに対応したソースディレクトリなどが追加されます。これにより、Eclipseからプロジェクトをインポートすることが可能になります。
 
 ..  tip::
     Eclipseからプロジェクトをインポートするには、Eclipseのメニューから  ``[File]``  ->  ``[Import]``  ->  ``[General]``  ->  ``[Existing Projects into Workspace]``  を選択し、プロジェクトディレクトリを指定します。
+
+.. _deployment-archive-gradle-plugin:
 
 Asakusa Frameworkのデプロイメントアーカイブ生成
 -----------------------------------------------
@@ -496,7 +460,7 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
 
     ./gradlew assembleAsakusafw
     
-``assembleAsakusafw`` タスクを実行すると、 ``build`` 配下に  ``asakusafw-${asakusafwVersion}.tar.gz`` という名前でデプロイメントアーカイブが作成されます。このアーカイブには WindGate, Direct I/Oを含むAsakusa Framework実行環境一式が含まれます。
+``assembleAsakusafw`` タスクを実行すると、 ``build`` 配下に  ``asakusafw-${asakusafwVersion}.tar.gz`` という名前でデプロイメントアーカイブが作成されます。このアーカイブには Direct I/O , WindGateを含むAsakusa Framework実行環境一式が含まれます。
 
 このデプロイメントアーカイブは運用環境上の$ASAKUSA_HOME配下に展開してデプロイします。より詳しくは、 :doc:`../administration/index` のデプロイメントガイドなどを参照してください。
 
@@ -550,6 +514,8 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
 
 ..  [#]  ``.``  (ドット)から始まる名前を持つファイルやディレクトリは無視され、アーカイブに含まれません。
 
+.. _include-extention-modules-gradle-plugin:
+
 拡張モジュールの同梱
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -582,6 +548,8 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
     
 このようにタスクを実行すると、テスト済のバッチアプリケーションと設定ファイル、追加ライブラリ、拡張モジュールを含むデプロイメントアーカイブを生成します。
 
+.. _gradle-plugin-customize:
+
 ビルド設定のカスタマイズ
 ========================
 
@@ -589,70 +557,21 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
 
 以下は、いくつかの基本的なカスタマイズをおこなったビルドスクリプトの例です。
 
-..  code-block:: groovy
+**build.gradle**
 
-      1 // Standard project properties
-      2 group   'com.example'
-      3 version '0.1.2'
-      4 description 'Example application'
-      5 
-      6 buildscript {
-      7     repositories {
-      8         maven { url "http://asakusafw.s3.amazonaws.com/maven/releases" }
-      9     }
-     10 
-     11     dependencies {
-     12         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
-     13     }
-     14 }
-     15 
-     16 apply plugin: 'asakusafw'
-     17 apply plugin: 'asakusafw-organizer'
-     18 
-     19 asakusafw {
-     20     asakusafwVersion = '0.5.3'
-     21 
-     22     modelgen {
-     23         modelgenSourcePackage "com.example.modelgen"
-     24     }
-     25     compiler {
-     26         compiledSourcePackage "com.example.batchapp"
-     27         // DSL compile options
-     28         compilerOptions "+enableCombiner,-compressFlowPart"
-     29     }
-     30 }
-     31 
-     32 asakusafwOrganizer {
-     33     asakusafwVersion = "${asakusafw.asakusafwVersion}"
-     34 }
-     35 
-     36 dependencies {
-     37     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: "${asakusafw.asakusafwVersion}"
-     38     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: "${asakusafw.asakusafwVersion}"
-     39     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: "${asakusafw.asakusafwVersion}"
-     40 
-     41     provided (group: 'org.apache.hadoop', name: 'hadoop-client', version: '1.2.1') {
-     42         exclude(module: 'junit')
-     43         exclude(module: 'mockito-all')
-     44         exclude(module: 'slf4j-log4j12')
-     45     }
-     46 
-     47     // Additional dependencies
-     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVersion}"
-     49 }
-    
+..  literalinclude:: gradle-attachment/custom-build.gradle
+    :language: groovy
 
 標準プロジェクトプロパティ
 --------------------------
 
 標準的なプロジェクト情報は、以下のように ビルドスクリプト のトップレベルの階層に定義します。
 
-..  code-block:: groovy
+**build.gradle**
 
-      1 // Standard project properties
-      2 group   'com.example'
-      3 version '0.1.2'
-      4 description 'Example application'
+..  literalinclude:: gradle-attachment/custom-build.gradle
+    :language: groovy
+    :lines: 1-4
 
 このうち、 ``version`` プロパティはアーカイブファイル名に付加されたり、バッチアプリケーションのコンパイル時のビルド情報ファイルに含まれたりするなど、様々な箇所で使用されます。
 
@@ -669,48 +588,28 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
 
 以下の例では、プロジェクトテンプレートのデフォルト設定に対して、モデルクラス名のパッケージ名の変更、DSLコンパイルオプションを指定するプロパティの追加を行っています。
 
-..  code-block:: groovy
+**build.gradle**
 
-     19 asakusafw {
-     20     asakusafwVersion = '0.5.3'
-     21 
-     22     modelgen {
-     23         modelgenSourcePackage "com.example.modelgen"
-     24     }
-     25     compiler {
-     26         compiledSourcePackage "com.example.batchapp"
-     27         // DSL compile options
-     28         compilerOptions "+enableCombiner,-compressFlowPart"
-     29     }
-     30 }
-
-プラグイン規約プロパティには多くの指定可能なプロパティが存在しますが、ほとんどのプロパティについては適切なデフォルト値が設定されており、多くの用途では個別に指定する必要がないようになっています。プラグイン規約プロパティの一覧については、 `Asakusa Gradle Plugin リファレンス`_  を参照してください。
+..  literalinclude:: gradle-attachment/custom-build.gradle
+    :language: groovy
+    :lines: 24-35
 
 依存関係の管理
 --------------
 
 アプリケーションのビルドで使用するライブラリの依存関係に関する設定は、ビルドスクリプトの ``dependencies`` ブロックに指定します。
 
-..  code-block:: groovy
+**build.gradle**
 
-     36 dependencies {
-     37     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: "${asakusafw.asakusafwVersion}"
-     38     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: "${asakusafw.asakusafwVersion}"
-     39     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: "${asakusafw.asakusafwVersion}"
-     40 
-     41     provided (group: 'org.apache.hadoop', name: 'hadoop-client', version: '1.2.1') {
-     42         exclude(module: 'junit')
-     43         exclude(module: 'mockito-all')
-     44         exclude(module: 'slf4j-log4j12')
-     45     }
-     46 
-     47     // Additional dependencies
-     48     compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: "${asakusafw.asakusafwVersion}"
-     49 }
+..  literalinclude:: gradle-attachment/custom-build.gradle
+    :language: groovy
+    :lines: 41-54
 
-上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である  `Direct I/O TSV <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_  を利用するための設定を追加しています。
+上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である :sandbox:`Direct I/O TSV <directio/tsv.html>` を利用するための設定を追加しています。
 
 Direct I/O TSVはDMDLコンパイラの拡張のみを行う機能であるため、運用環境に対するランタイムライブラリの配置が不要ですが、アプリケーションの演算子で利用するライブラリを追加する場合は、運用環境にもこのライブラリを配置する必要があります。これについては、次項の  `アプリケーション用依存ライブラリの追加`_  で説明します。
+
+.. _dependency-library-gradle-plugin:
 
 アプリケーション用依存ライブラリの追加
 --------------------------------------
@@ -882,10 +781,10 @@ Batch Application Plugin は、以下のリポジトリをプロジェクトに�
 規約プロパティ
 ~~~~~~~~~~~~~~
 
-Batch Application Plugin の規約プロパティはビルドスクリプトから 参照名 ``asakusafw`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティと従属する規約オブジェクトを持ちます。
+Batch Application Plugin の規約プロパティはビルドスクリプトから 参照名 ``asakusafw`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
 
-..  list-table:: Batch Application Plugin - 規約プロパティ
-    :widths: 135 102 101 113
+..  list-table:: Batch Application Plugin - 規約プロパティ ( ``asakusafw`` ブロック)
+    :widths: 2 1 2 5
     :header-rows: 1
 
     * - プロパティ名
@@ -903,90 +802,151 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
     * -  ``logbackConf`` 
       - String
       -  ``src/${project.sourceSets.test.name}/resources/logback-test.xml`` 
-      - プロジェクトのlogback設定ファイル
-    * -  ``dmdl`` 
-      - DmdlConfiguration
-      -  ``-`` 
-      - DMDLに関する規約オブジェクト
-    * -  ``dmdl.dmdlEncoding`` 
+      - プロジェクトのLogback設定ファイル [#]_
+
+..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
+..  [#] Logback設定ファイルの詳細は次のドキュメントを参照してください: http://logback.qos.ch/manual/configuration.html
+
+DMDLプロパティ
+^^^^^^^^^^^^^^
+
+DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``dmdl`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - DMDLプロパティ ( ``dmdl`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``dmdlEncoding`` 
       - String
       -  ``UTF-8`` 
       - DMDLスクリプトのエンコーディング
-    * -  ``dmdl.dmdlSourceDirectory`` 
+    * -  ``dmdlSourceDirectory`` 
       - String
       -  ``src/${project.sourceSets.main.name}/dmdl`` 
       - DMDLスクリプトのソースディレクトリ
-    * -  ``modelgen`` 
-      - ModelgenConfiguration
-      -  ``-`` 
-      - モデル生成に関する規約オブジェクト
-    * -  ``modelgen.modelgenSourcePackage`` 
+
+..  [#] これらのプロパティは規約オブジェクト ``DmdlConfiguration`` が提供します。
+
+モデル生成プロパティ
+^^^^^^^^^^^^^^^^^^^^
+
+モデル生成に関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``modelgen`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - モデル生成プロパティ ( ``modelgen`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``modelgenSourcePackage`` 
       - String
       -  ``${project.group}.modelgen`` 
       - モデルクラスに使用されるパッケージ名
-    * -  ``modelgen.modelgenSourceDirectory`` 
+    * -  ``modelgenSourceDirectory`` 
       - String
       -  ``${project.buildDir}/generated-sources/modelgen`` 
       - モデルクラスのソースディレクトリ
-    * -  ``javac`` 
-      - JavacConfiguration
-      -  ``-`` 
-      - javacに関する規約オブジェクト
-    * -  ``javac.annotationSourceDirectory`` 
+
+..  [#] これらのプロパティは規約オブジェクト ``ModelgenConfiguration`` が提供します。
+
+Javaコンパイラプロパティ
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``javac`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - Javaコンパイラプロパティ ( ``javac`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``annotationSourceDirectory`` 
       - String
       -  ``${project.buildDir}/generated-sources/annotations`` 
       - アノテーションプロセッサが生成するJavaソースの出力先
-    * -  ``javac.sourceEncoding`` 
+    * -  ``sourceEncoding`` 
       - String
       -  ``UTF-8`` 
       - プロジェクトのソースファイルのエンコーディング
-    * -  ``javac.sourceCompatibility`` 
+    * -  ``sourceCompatibility`` 
       - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6 [#]_
       -  ``1.6`` 
       - Javaソースのコンパイル時に使用するJavaバージョン互換性
-    * -  ``javac.targetCompatibility`` 
+    * -  ``targetCompatibility`` 
       - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6
       -  ``1.6`` 
       - クラス生成のターゲットJavaバージョン
-    * -  ``compiler`` 
-      - CompilerConfiguration
-      -  ``-`` 
-      - DSLコンパイラに関す規約オブジェクト
-    * -  ``compiler.compiledSourcePackage`` 
+
+..  [#] これらのプロパティは規約オブジェクト ``JavacConfiguration`` が提供します。
+..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
+
+DSLコンパイラプロパティ
+^^^^^^^^^^^^^^^^^^^^^^^
+
+DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``compiler`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - DSLコンパイラプロパティ ( ``compiler`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``compiledSourcePackage`` 
       - String
       -  ``${project.group}.batchapp`` 
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
-    * -  ``compiler.compiledSourceDirectory`` 
+    * -  ``compiledSourceDirectory`` 
       - String
       -  ``${project.buildDir}/batchc`` 
       - DSLコンパイラが生成する成果物の出力先
-    * -  ``compiler.compilerOptions`` 
+    * -  ``compilerOptions`` 
       - String
       -  ``未指定`` 
       - DSLコンパイラオプション
-    * -  ``compiler.compilerWorkDirectory`` 
+    * -  ``compilerWorkDirectory`` 
       - String
       -  ``${project.buildDir}/batchcwork`` 
       - DSLコンパイラのワーキングディレクトリ
-    * -  ``compiler.hadoopWorkDirectory`` 
+    * -  ``hadoopWorkDirectory`` 
       - String
-      -  ``${project.buildDir}/hadoopwork/${execution_id}`` 
+      -  ``target/hadoopwork/${execution_id}`` 
       - DSLコンパイラが生成するアプリケーション(Hadoopジョブ)が使用するHadoop上のワーキングディレクトリ
-    * -  ``testtools`` 
-      - TestToolsConfiguration
-      -  ``-`` 
-      - テストツールに関する規約オブジェクト
-    * -  ``testtools.testDataSheetFormat`` 
+
+..  [#] これらのプロパティは規約オブジェクト ``CompilerConfiguration`` が提供します。
+
+テストツールプロパティ
+^^^^^^^^^^^^^^^^^^^^^^
+
+テストツールに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``testtools`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - テストツールプロパティ ( ``testtools`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``testDataSheetFormat`` 
       - String
       -  ``ALL`` 
       - テストデータ定義シートのフォーマット [#]_
-    * -  ``testtools.testDataSheetDirectory`` 
+    * -  ``testDataSheetDirectory`` 
       - String
       -  ``${project.buildDir}/excel`` 
       - テストデータ定義シートの出力先
 
-..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
-..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
+..  [#] これらのプロパティは規約オブジェクト ``TestToolsConfiguration`` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
 Eclipse Pluginの拡張
@@ -1152,6 +1112,8 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 
 ..  [#] これらのプロパティは規約オブジェクト ``AsakusafwOrganizerConvention`` が提供します。
 
+.. _include-hadoop-gradle-plugin:
+
 デプロイメント構成に含むAsakusa Frameworkのバージョン
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1159,16 +1121,29 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 
 以下は、デプロイメントアーカイブに含めるAsakusa FrameworkのバージョンをHadoop2系向けバージョンに変更するビルドスクリプトの例です。
 
+**build.gradle**
+
 ..  code-block:: groovy
 
-    asakusafw {
-        asakusafwVersion = '0.5.3'
-        ....
-    }
-    
     asakusafwOrganizer {
         asakusafwVersion = "${asakusafw.asakusafwVersion}-hadoop2"
     }
+
+..  warning::
+    Hadoop2系向けバージョンは開発環境で使用するための動作検証は十分に行っていないため、
+    Hadoop2系向けバージョンは開発環境にインストール ( ``installAsakusafw`` タスクを実行 )しないことを推奨します。
+    
+    注意すべき点として、開発環境で使用するアプリケーションプロジェクト上で
+    ``asakusafwOrganizer`` ブロックの ``asakusafwVersion`` の値ををHadoop2系向けの設定にした場合、
+    このプロジェクト上で ``installAsakusafw`` をタスクを実行すると
+    開発環境にHadoop2系向けのAsakusa Frameworkがインストールされてしまいます。
+     
+    そのため、次の `Framework Organizer Pluginを単体で利用する`_ で説明しているように
+    アプリケーションプロジェクトとは独立したデプロイメント構成を管理する専用のプロジェクトを定義し、
+    このプロジェクトでHadoop2系向けのAsakusa Frameworkバージョンを指定して
+    デプロイメントアーカイブを生成するといったような利用方法を検討してください。
+
+.. _standalone-organizer-gradle-plugin:
 
 Framework Organizer Pluginを単体で利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1186,51 +1161,43 @@ Asakusa Framework の現在バージョン |version| におけるAsakusa Gradle 
 * レガシーモジュール [#]_ には未対応です。
 
 ..  [#] :doc:`../thundergate/index`
-
 ..  [#] :doc:`../application/legacy-module-guide`
 
 Asakusa Gradle Plugin マイグレーションガイド
 ============================================
 
-ここでは、Asakusa Gradle Plugin のバージョンアップ手順や、 従来のAsakusa Frameworkが提供するMavenベースのビルドシステムからAsakusa Gradle Pluginを使ったビルドシステムに移行するための手順を説明します。
+ここでは、Asakusa Gradle Plugin で構築した開発環境のバージョンアップ手順や、 従来のAsakusa Frameworkが提供するMavenベースのビルドシステムからAsakusa Gradle Pluginを使ったビルドシステムに移行するための手順を説明します。
 
-なお、Asakusa Frameworkのマイグレーション情報については、 :doc:`migration-guide` も参考にしてください。
+.. _vup-gradle-plugin:
 
-Asakusa Gradle Pluginのバージョンアップ
----------------------------------------
+Asakusa Gradle Pluginで構築した開発環境のバージョンアップ
+---------------------------------------------------------
 
-ここではプロジェクトテンプレートで提供されるビルドスクリプトを例に、Asakusa Gradle Plugin をバージョンアップする基本的な手順を説明します。
+Asakusa Gradle Plugin で構築したAsakusa Framework開発環境をバージョンアップする手順例を説明します。Asakusa Frameworkの各バージョン固有のマイグレーション情報については :doc:`migration-guide` に説明があるので、こちらも必ず確認してください。
 
 Asakusa Gradle Plugin をバージョンアップするには、ビルドスクリプト内のAsakusa Gradle Plugin のバージョン指定と、Asakusa Frameworkのバージョン指定をそれぞれ変更したのち、開発環境の再セットアップを行います。
 
 Asakusa Gradle Pluginのバージョン指定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドスクリプト内のAsakusa Gradle Pluginのバージョン ``buildscript/dependencies/classpath@version`` を変更します。プロジェクトテンプレートで提供されるビルドスクリプトでは、6行目の ``version`` の値を変更します。
+ビルドスクリプト内の ``buildscript`` ブロック内に定義しているAsakusa Gradle Pluginのクラスパス定義 (``classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins``) の バージョン指定 ``version`` の値を使用するAskusa Frameworkのバージョンに変更します。
 
-..  code-block:: groovy
+**build.gradle**
 
-      1 buildscript {
-      2     repositories {
-      3         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
-      4     }
-      5     dependencies {
-      6         classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.5.3'
-      7     }
-      8 }
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 1-8
 
 Asakusa Frameworkのバージョン指定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドスクリプト内のAsakusa Frameworkのバージョン ``asakusafw/asakusafwVersion`` を変更します。プロジェクトテンプレートで提供されるビルドスクリプトでは、15行目の ``asakusafwVersion`` の値を変更します。
+ビルドスクリプト内の ``asakusafw`` ブロック内に定義しているAsakusa Frameworkのバージョン ``asakusafwVersion`` の値を使用するAskusa Frameworkのバージョンに変更します。
 
-..  code-block:: groovy
+**build.gradle**
 
-     14 asakusafw {
-     15     asakusafwVersion = '0.5.3'
-     16 
-     17     modelgen {
-     18         modelgenSourcePackage 'com.example.modelgen'
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 19-20
 
 Asakusa Frameworkの再インストール
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1246,35 +1213,54 @@ Asakusa Frameworkの再インストール
 
 プロジェクトのフルビルドを行い、ビルドが成功することを確認してください。
 
-Eclipseを利用している場合はクラスパス設定が変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
+..  code-block:: sh
+
+    ./gradlew clean build
+
+Eclipse定義ファイルの更新
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Eclipseを利用している場合は、Eclipse用定義ファイルを更新します。
 
 ..  code-block:: sh
 
-    ./gradlew cleanEclipse clean build eclipse
+    ./gradlew cleanEclipse eclipse
 
+.. _migrate-from-maven-to-gradle:
 
 Mavenプロジェクトのマイグレーション
 -----------------------------------
 
-:doc:`../introduction/start-guide` や :doc:`../application/maven-archetype` で記載されている手順に従って構築したMavenベースのビルド定義を持つアプリケーションプロジェクトでAsakusa Gradle Pluginを使うには、まずこのプロジェクトにAsakusa Gradle Plugin用のビルドスクリプトを配置します。
+ここでは、 :doc:`../application/maven-archetype` や Asakusa Framework バージョン ``0.5.3`` 以前の :doc:`../introduction/start-guide` 及び :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>` で記載されている手順に従って構築した開発環境やMavenベースのアプリケーションプロジェクト(以下「Mavenプロジェクト」と表記)をAsakusa Gradle Pluginを使った環境にマイグレーションする手順を説明します。
 
-アプリケーションプロジェクトのプロジェクト定義( ``pom.xml`` )やビルド定義ファイル( ``build.properties`` )を編集していた場合は、この設定をAsakusa Gradle Plugin用のビルドスクリプトに反映します。
-
-プロジェクトのソースディレクトリについてはマイグレーション作業は不要で、そのまま利用することが出来ます。
-
-以降では、Mavenアーキタイプで作成したプロジェクトに対してAsakusa Gradle Pluginのプロジェクトテンプレートを適用するマイグレーション手順を紹介します。
+..  note::
+    プロジェクトのソースディレクトリに含まれるアプリケーションのソースコード(Asakusa DSL, DMDL, テストコードなど)についてはマイグレーション作業は不要で、そのまま利用することが出来ます。
 
 ..  attention::
     プロジェクトのマイグレーション作業前に、プロジェクトのバックアップとリストアの確認など、マイグレーション作業にトラブルが発生した場合に元に戻せる状態となっていることを確認してください。
 
+.. _apply-gradle-project-template:
+
 プロジェクトテンプレートの適用
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Asakusa Gradle Pluginの導入`_  で説明したAsakusa Gradle Pluginのプロジェクトテンプレートに含まれるファイル一式をアプリケーションプロジェクトに適用します。
+`Asakusa Gradle Pluginの導入`_  で説明したAsakusa Gradle Pluginのプロジェクトテンプレートに含まれるファイル一式をMavenプロジェクトに適用します。
 
-事前に確認すべき点として、MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルに対しては、従来の設定をそのまま利用したい場合にはテンプレート適用前にファイルを退避して、テンプレート適用後にこれを反映する必要があります。
+以下は、ダウンロードしたプロジェクトテンプレートを ``$HOME/workspace/migrate-app`` に適用する例です。
 
-MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルの一覧を以下に示します [#]_ 。
+..  code-block:: sh
+
+    cd ~/Downloads
+    tar xf asakusa-project-template-*.tar.gz
+    cd asakusa-project-template
+    cp -r build.gradle gradlew gradlew.bat .buildtools ~/workspace/migrate-app
+
+プロジェクト初期設定ファイルの適用
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるプロジェクトの初期設定ファイルに対しては、以下のファイル内容を確認し、必要に応じてMavenプロジェクトに適用します。
+
+MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルの一覧を以下に示します。
 
 ..  list-table:: 
     :widths: 234 218
@@ -1287,33 +1273,26 @@ MavenアーキタイプとAsakusa Gradle Pluginのプロジェクトテンプレ
     * -  ``src/test/resources/logback-test.xml`` 
       - ビルド/テスト実行時に使用されるログ定義ファイル
 
-..  [#] これらのファイルをデフォルト設定のまま利用している場合は、プロジェクトテンプレートの内容で上書きしてください。
-
-以下は、ダウンロードしたプロジェクトテンプレートを ``$HOME/workspace/migrate-app`` に適用する例です。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf asakusa-project-template-*.tar.gz
-    cp -r asakusa-project-template/* ~/workspace/migrate-app
+..  tip::
+    Mavenプロジェクトで上記の設定ファイルをデフォルト設定のまま利用している場合は、Asakusa Gradle Pluginのプロジェクトテンプレートの内容で上書きすることを推奨します。
 
 プロジェクト定義のマイグレーション
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-従来のMavenのプロジェクト定義( ``pom.xml`` )の内容をGradleのビルドスクリプト( ``build.gradle`` )に反映します。
+Mavenプロジェクトのプロジェクト定義( ``pom.xml`` )の内容をGradleのビルドスクリプト( ``build.gradle`` )に反映します。
 
 ``pom.xml`` の代表的なカスタマイズ内容として、アプリケーションで利用するライブラリ追加による依存関係の設定があります。これは ``pom.xml`` 上では ``dependencies`` 配下に定義していました。
 
 Gradle、およびAsakusa Gradle Pluginでは従来のMavenベースの依存関係の管理から一部機能が変更になっているため、  `ビルド設定のカスタマイズ`_  の内容をよく確認した上でアプリケーションに対して適切な設定を行ってください。
 
-その他に確認すべき点は、  `標準プロジェクトプロパティ`_  の内容です。これに相当する内容はMavenアーキタイプでプロジェクトを作成する際に入力した内容が ``pom.xml`` のトップレベルの階層に定義されています。以下、この箇所に該当する ``pom.xml`` の設定例です。
+その他に確認すべき点は、  `標準プロジェクトプロパティ`_  の内容です。これに相当する内容はMavenアーキタイプからプロジェクトを作成する際に入力した内容が ``pom.xml`` のトップレベルの階層に定義されています。以下、この箇所に該当する ``pom.xml`` の設定例です。
 
 ..  code-block:: xml
-
-      4     <name>Example Application</name>
-      5     <groupId>com.example</groupId>
-      6     <artifactId>migrate-app</artifactId>
-      7     <version>1.0-SNAPSHOT</version>
+         
+        <name>Example Application</name>
+        <groupId>com.example</groupId>
+        <artifactId>migrate-app</artifactId>
+        <version>1.0-SNAPSHOT</version>
 
 Gradleではこれらのプロパティについてビルドスクリプト上の定義は必須ではありませんが、必要に応じて ``pom.xml`` の設定を反映するとよいでしょう。
 
@@ -1327,20 +1306,17 @@ Gradleではこれらのプロパティについてビルドスクリプト上�
 ここで必ず確認すべき項目は、Mavenアーキタイプでプロジェクトを作成した内容が反映される以下のプロパティです。
 
 ..  list-table::
-    :widths: 113 113 113 113
+    :widths: 113 113 113
     :header-rows: 1
 
     * - プロパティ
-      - デフォルト値
       - 対応するbuild.gradle上の設定項目
       - 説明
     * -  ``asakusa.package.default`` 
-      -  ``${groupId}/batchapp`` 
-      -  ``compiler.compiledSourcePackage`` 
+      -  ``compiledSourcePackage`` 
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
     * -  ``asakusa.modelgen.package`` 
-      -  ``${groupId}/modelgen`` 
-      -  ``modelgen.modelgenSourcePackage`` 
+      -  ``modelgenSourcePackage`` 
       - モデルクラスに使用されるパッケージ名
 
 その他の項目については、 ``build.properties`` をデフォルト値のまま利用している場合は移行作業は不要です。変更しているものがある場合はBatch Application Plugin上の規約プロパティを確認し、設定を反映してください。
@@ -1359,22 +1335,28 @@ Asakusa Frameworkの再インストール
 
 プロジェクトのフルビルドを行い、ビルドが成功することを確認してください。
 
-Eclipseを利用している場合はクラスパス設定が変更になっているため必ずEclipseの作業前にGradleの ``eclipse`` タスクを実行してください。
+..  code-block:: sh
+
+    ./gradlew clean build
+
+Eclipse定義ファイルの更新
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Eclipseを利用している場合は、Eclipse用定義ファイルを更新します。
 
 ..  code-block:: sh
 
-    ./gradlew cleanEclipse clean build eclipse
-    
+    ./gradlew cleanEclipse eclipse
 
 Mavenビルド用ファイルの削除
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-従来のMavenベースのビルドシステムで利用していたファイルは、そのままプロジェクト上に残しても問題ありません。MavenベースのビルドシステムとGradleのビルドシステムを併用することもできます。
+Mavenプロジェクトのビルドで利用していたファイルは、そのままプロジェクト上に残しても問題ありません。MavenとGradleを併用することも可能です。
 
-..  note::
-    MavenベースのビルドシステムとGradleのビルドシステムの併用は設定を多重で持つことや、IDEとの連携時に注意が必要であるなどデメリットも多いことに注意してください。
+..  tip::
+    MavenとGradleの併用は設定を多重で持つことや、IDEとの連携時に注意が必要であるなどデメリットも多いことに注意してください。
 
-Mavenベースのビルドシステムで利用していたファイルを削除したい場合は、プロジェクト配下の以下のファイル、ディレクトリを削除してください。
+Mavenプロジェクトのビルドで利用していたファイルを削除したい場合は、プロジェクト配下の以下のファイル、ディレクトリを削除してください。
 
 *  ``pom.xml`` 
 *  ``build.properties`` 

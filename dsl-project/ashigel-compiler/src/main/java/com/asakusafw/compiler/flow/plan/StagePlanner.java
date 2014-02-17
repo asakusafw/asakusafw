@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ public class StagePlanner {
         if (validate(graph) == false) {
             return null;
         }
-        LOG.info("{}の実行計画を計算中", graph);
+        LOG.debug("{}の実行計画を計算中", graph);
         LOG.debug("フロー部品の圧縮: {}", options.isCompressFlowPart());
         LOG.debug("並行ステージの圧縮: {}", options.isCompressConcurrentStage());
 

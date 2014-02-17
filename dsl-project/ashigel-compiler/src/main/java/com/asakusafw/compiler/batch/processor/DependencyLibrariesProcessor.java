@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                     outputDirectory.getAbsolutePath()));
         }
 
-        LOG.info("Copying library files: {}", libraryDirectory);
+        LOG.debug("Copying library files: {}", libraryDirectory);
         for (File file : libraryDirectory.listFiles()) {
             if (file.isDirectory()) {
                 LOG.warn(MessageFormat.format(

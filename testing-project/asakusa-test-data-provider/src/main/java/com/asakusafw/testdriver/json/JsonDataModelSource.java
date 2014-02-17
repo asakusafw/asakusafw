@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.json;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
@@ -30,6 +31,7 @@ import com.google.gson.JsonStreamParser;
 /**
  * {@link DataModelSource} from JSON object stream.
  * @since 0.2.0
+ * @version 0.6.0
  */
 public class JsonDataModelSource implements DataModelSource {
 
@@ -40,6 +42,8 @@ public class JsonDataModelSource implements DataModelSource {
     private final Reader reader;
 
     private final JsonStreamParser parser;
+
+    private boolean first = true;
 
     /**
      * Creates a new instance.
@@ -63,6 +67,16 @@ public class JsonDataModelSource implements DataModelSource {
 
     @Override
     public DataModelReflection next() throws IOException {
+        if (first) {
+            try {
+                parser.hasNext();
+            } catch (JsonParseException e) {
+                if (e.getCause() instanceof EOFException) {
+                    return null;
+                }
+            }
+            first = false;
+        }
         try {
             if (parser.hasNext() == false) {
                 return null;

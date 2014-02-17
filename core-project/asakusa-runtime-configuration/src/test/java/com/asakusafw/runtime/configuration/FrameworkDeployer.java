@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,8 +170,15 @@ public class FrameworkDeployer implements TestRule {
         }
         String protocol = resource.getProtocol();
         if (protocol.equals("file")) {
-            File file = new File(resource.getPath());
-            return toClassPathRoot(aClass, file);
+            try {
+                File file = new File(resource.toURI());
+                return toClassPathRoot(aClass, file);
+            } catch (URISyntaxException e) {
+                LOG.warn(MessageFormat.format(
+                        "Failed to locate the library path (cannot convert to local file): {0}",
+                        resource), e);
+                return null;
+            }
         }
         if (protocol.equals("jar")) {
             String path = resource.getPath();

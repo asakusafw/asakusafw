@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,11 @@ import org.gradle.util.ConfigureUtil
  * Convention class for {@link AsakusafwPlugin}.
  */
 class AsakusafwPluginConvention {
+    /**
+     * Schema version of this convention.
+     */
+    static final CONVENTION_SCHEMA_VERSION = '1.0.0'
+
     final Project project
 
     /**
@@ -234,7 +239,7 @@ class AsakusafwPluginConvention {
             compiledSourceDirectory = "${project.buildDir}/batchc"
             compilerOptions = ''
             compilerWorkDirectory = "${project.buildDir}/batchcwork"
-            hadoopWorkDirectory = "${project.buildDir}/hadoopwork/" + '${execution_id}'
+            hadoopWorkDirectory = "target/hadoopwork/" + '${execution_id}'
         }
 
         def compiledSourcePackage(String compiledSourcePackage) {
@@ -295,6 +300,7 @@ class AsakusafwPluginConvention {
         def commonPrefix = 'com.asaksuafw.asakusafw.'
         def convention = [:]
 
+        convention.put(commonPrefix + 'conventionSchemaVersion', CONVENTION_SCHEMA_VERSION)
         convention.put(commonPrefix + 'asakusafwVersion', asakusafwVersion)
         convention.put(commonPrefix + 'maxHeapSize', maxHeapSize)
         convention.put(commonPrefix + 'logbackConf', logbackConf)
@@ -308,7 +314,7 @@ class AsakusafwPluginConvention {
         return convention
     }
 
-    def asMap(Object obj, String keyPrefix) {
+    static def asMap(Object obj, String keyPrefix) {
         obj.class.declaredFields.findAll{ !it.synthetic }.collectEntries {
             [keyPrefix + it.name, obj[it.name]]
         }

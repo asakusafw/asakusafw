@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +53,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
  * @since 0.1.0
- * @version 0.5.0
+ * @version 0.6.0
  */
 public abstract class AbstractStageClient extends BaseStageClient {
 
@@ -114,13 +115,17 @@ public abstract class AbstractStageClient extends BaseStageClient {
     static final Log LOG = LogFactory.getLog(AbstractStageClient.class);
 
     /**
-     * このステージに関する設定を行う。
-     * @param job 現在設定中のジョブ
-     * @param variables 変数表
+     * Configures the {@link Job} object for this stage.
+     * @param job the target job
+     * @param variables current variable table
+     * @throws IOException if failed to configure the job
+     * @throws InterruptedException if interrupted while configuring {@link Job} object
      */
-    protected void configureStage(Job job, VariableTable variables) {
-        // この実装では特に何も行わない
-        return;
+    protected void configureStage(Job job, VariableTable variables) throws IOException, InterruptedException {
+        ClassLoader loader = job.getConfiguration().getClassLoader();
+        for (StageConfigurator configurator : ServiceLoader.load(StageConfigurator.class, loader)) {
+            configurator.configure(job);
+        }
     }
 
     /**
@@ -226,9 +231,10 @@ public abstract class AbstractStageClient extends BaseStageClient {
      * @param conf asakusa job configuration
      * @return the created job
      * @throws IOException if failed to create a new job
+     * @throws InterruptedException if interrupted while creating {@link Job} object
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public Job createJob(Configuration conf) throws IOException {
+    public Job createJob(Configuration conf) throws IOException, InterruptedException {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }

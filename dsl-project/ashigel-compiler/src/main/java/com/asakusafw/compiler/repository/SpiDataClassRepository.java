@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
 
     @Override
     protected void doInitialize() {
-        LOG.info("データモデルクラスのプラグインを読み出します");
+        LOG.debug("データモデルクラスのプラグインを読み出します");
         List<DataClassRepository> results = Lists.create();
         ServiceLoader<DataClassRepository> services = ServiceLoader.load(
                 DataClassRepository.class,

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,10 +67,12 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 while (scanner.hasNextLine()) {
                     IOException exception = scanner.ioException();
                     if (exception != null) {
+                        scanner.close();
                         throw exception;
                     }
                     lines.add(scanner.nextLine());
                 }
+                scanner.close();
             } catch (IOException e) {
                 LOG.warn("Failed to initialize HtmlDifferenceSink", e);
                 lines.clear();

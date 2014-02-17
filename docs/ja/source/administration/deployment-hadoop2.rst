@@ -23,8 +23,8 @@ Hadoop2系で動作するAsakusa Frameworkのバージョンを試験的に提�
 
 Hadoop2系向けのAsakusa Frameworkのバージョン名は、
 ``[asakusafw.version]-hadoop2`` のように、通常のバージョン番号の後ろに ``-hadoop2`` を加えたものになります。
-例えば、Asakusa Frameworkのバージョン ``0.5.3`` のHadoop2系向けバージョンは、
-``0.5.3-hadoop2`` となります。
+例えば、Asakusa Frameworkのバージョン ``0.6.0`` のHadoop2系向けバージョンは、
+``0.6.0-hadoop2`` となります。
 
 Hadoop2系でAsakusa Frameworkを利用する場合、
 Hadoop2系向けのAsakusa Frameworkに対するデプロイメントアーカイブを生成し、
@@ -43,6 +43,21 @@ Hadoop1系とHadoop2系のいずれのAsakusa Frameworkでも動作するよう�
 
 Hadoop2系向けAsakusa Frameworkのデプロイメントアーカイブ生成
 ============================================================
+Hadoop2系向けAsakusa Frameworkのデプロイメントアーカイブ生成は、
+使用している開発環境に応じて以下の説明を参照してください。
+
+Asakusa Gradle Pluginを利用する
+-------------------------------
+ビルドシステムに :doc:`Gradle <../application/gradle-plugin>` を利用している場合は、
+``build.gradle`` の ``asakusafwOrganizer/asakusafwVersion`` に
+Hadoop2系向けのAsakusa Frameworkバージョンを指定してデプロイメントアーカイブを指定します。
+
+詳しくは、 :doc:`../application/gradle-plugin` の :ref:`include-hadoop-gradle-plugin` や
+:ref:`standalone-organizer-gradle-plugin` を参照してください。
+
+Framework Organizerを利用する
+-----------------------------
+ビルドシステムに :doc:`Maven <../application/maven-archetype>` を利用している場合は、
 Hadoop2系向けのAsakusa Frameworkのデプロイメントアーカイブを生成するには、
 通常のデプロイメントアーカイブの生成方法と同様に
 `Framework Organizer`_ を利用します。
@@ -51,16 +66,16 @@ Hadoop2系向けのAsakusa Frameworkのデプロイメントアーカイブを�
 Asakusa Frameworkのバージョンを示すプロパティ ``asakusafw.version`` の値に
 Hadoop2系向けのAsakusa Frameworkバージョン( ``[asakusafw.version]-hadoop2`` )を指定します。
 
-以下は、Asakusa Framework のバージョン ``0.5.3`` のHadoop2系向け
+以下は、Asakusa Framework のバージョン ``0.6.0`` のHadoop2系向け
 デプロイメントアーカイブを生成する例です [#]_ 。
 
 ..  code-block:: sh
      
     cd asakusafw-organizer
-    mvn package -Dasakusafw.version=0.5.3-hadoop2
+    mvn package -Dasakusafw.version=0.6.0-hadoop2
 
 これにより、Framework Organizerの ``target`` ディレクトリに
-Hadoop2系向けデプロイメントアーカイブ(例えば ``asakusafw-0.5.3-hadoop2-prod-windgate.tar.gz`` )
+Hadoop2系向けデプロイメントアーカイブ(例えば ``asakusafw-0.6.0-hadoop2-prod-windgate.tar.gz`` )
 が作成されます。
 
 Hadoop2系の運用環境上にAsakusa Frameworkをデプロイする方法は
@@ -70,8 +85,8 @@ Hadoop2系の運用環境上にAsakusa Frameworkをデプロイする方法は
 ..  warning::
     Hadoop2系向けバージョンは開発環境で使用するための動作検証は十分に行っていないため、
     Hadoop2系向けバージョンは開発環境にインストール ( ``antrun:run`` ) しないことを推奨します。
-
-    通常の場合、開発環境にはHadoop1系向けバージョンを利用してください。
+    
+    通常は開発環境にはHadoop1系向けバージョンを利用してください。
     また、開発環境の整備方法は :doc:`../application/index` を参照してください。
 
 ..  [#] Framework Organizer のインストールについては、 `Framework Organizer`_ を参照してください。
@@ -79,9 +94,4 @@ Hadoop2系の運用環境上にAsakusa Frameworkをデプロイする方法は
 ..  _`Framework Organizer`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/framework-organizer.html
 ..  _`運用環境の整備`: http://asakusafw.s3.amazonaws.com/documents/latest/release/ja/html/administration/index.html
 
-Asakusa Gradle Pluginを利用する場合
------------------------------------
-ビルドシステムに :doc:`Gradle <../application/gradle-plugin>` を利用している場合は、 ``build.gradle`` の ``asakusafwOrganizer/asakusafwVersion`` にHadoop2系向けのAsakusa Frameworkバージョンを指定してデプロイメントアーカイブを指定します。
-
-詳しくは、 :doc:`../application/gradle-plugin` の Framework Organizer Plugin の項などを参照してください。
     

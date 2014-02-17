@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -165,6 +165,7 @@ public abstract class DmdlTesterRoot {
     /**
      * Returns a matcher which tests whether RHS is in LHS.
      * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
+     * @param <T> the target data type
      * @param matcher RHS
      * @return the matcher
      */

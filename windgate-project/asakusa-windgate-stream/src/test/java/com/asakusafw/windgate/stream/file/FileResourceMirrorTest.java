@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -465,6 +465,7 @@ public class FileResourceMirrorTest {
         while (scanner.hasNextLine()) {
             actual.add(scanner.nextLine());
         }
+        scanner.close();
         Collections.sort(actual);
         Arrays.sort(expected);
         assertThat(actual, is(Arrays.asList(expected)));

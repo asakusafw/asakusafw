@@ -525,7 +525,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 
 
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport`
-..  [#] :doc:`../application/maven-archetype` の手順に従って、アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがデフォルトで利用可能になっています。
+..  [#] :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクト、および :doc:`../application/maven-archetype` の手順に従ってアーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがデフォルトで利用可能になっています。
 
 CSV形式のDataModelStreamSupportの作成
 -------------------------------------
@@ -811,8 +811,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
       - DMDLコンパイラプラグイン
 
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
-..  [#] アーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/maven-archetype` や :doc:`../application/sdk-artifact` を参照してください。
-
+..  [#] :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクト、および :doc:`../application/maven-archetype` の手順に従ってアーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/sdk-artifact` を参照してください。
 
 DataModelJdbcSupportの自動生成
 ------------------------------

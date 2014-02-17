@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,19 @@ public class DirectFlowCompilerTest {
     @Test
     public void folderLibraryPath() throws Exception {
         File file = extract("example.jar");
+        Class<?> aClass = load(file, "com.example.Hello");
+        File library = DirectFlowCompiler.toLibraryPath(aClass);
+        assertThat(library, not(nullValue()));
+        assertThat(file.getCanonicalFile(), is(library.getCanonicalFile()));
+    }
+
+    /**
+     * フォルダの中を検索するクラスパス。
+     * @throws Exception テスト中に例外が発生した場合
+     */
+    @Test
+    public void folderLibraryPathWithSpace() throws Exception {
+        File file = extract("example.jar", "example w space");
         Class<?> aClass = load(file, "com.example.Hello");
         File library = DirectFlowCompiler.toLibraryPath(aClass);
         assertThat(library, not(nullValue()));
@@ -418,11 +431,15 @@ public class DirectFlowCompilerTest {
     }
 
     private File extract(String name) {
-        InputStream input = open(name);
+        return extract(name, name);
+    }
+
+    private File extract(String source, String into) {
+        InputStream input = open(source);
         try {
             try {
                 ZipInputStream zip = new ZipInputStream(input);
-                File target = new File(tester.framework().getWork("temp"), name);
+                File target = new File(tester.framework().getWork("temp"), into);
                 tester.framework().extract(zip, target);
                 zip.close();
                 return target;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1252,12 +1252,13 @@ public class CsvParserTest {
                 dateFormat,
                 dateTimeFormat);
         CsvParser parser = new CsvParser(infinite, "testing", conf);
-
         try {
             assertThat(parser.next(), is(true));
             fail();
         } catch (IOException e) {
             // ok.
+        } finally {
+            parser.close();
         }
     }
 

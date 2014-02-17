@@ -61,9 +61,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 ..  attention::
     Asakusa Frameworkの現在のバージョン |version| では、Hadoop2系の対応は試験的機能として提供されています。
 
-..  [3] Amazon EMR上で利用するための情報を、 `Amazon EMR上でAsakusa Frameworkを利用する`_ (Asakusa Framework Sandbox) に公開しています。
-
-..  _`Amazon EMR上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-emr.html
+..  [3] Amazon EMR上で利用するための情報を :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>` (Asakusa Framework Sandbox) に公開しています。
 
 アプリケーション開発環境
 ========================
@@ -84,9 +82,9 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Java
       - JDK 7 (1.7.0_45) [#]_
     * - ビルドツール
-      - Apache Maven 3.0.5
-    * - ビルドツール
       - Gradle 1.10 [#]_
+    * - ビルドツール
+      - Apache Maven 3.0.5 [#]_
     * - IDE
       - Eclipse IDE for Java Developers 3.7.2
     * - IDE
@@ -96,6 +94,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 
 ..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
+..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 
 WindGate
 ========
@@ -153,10 +152,10 @@ ThunderGate
       - http://www.ubuntu.com/
     * - JDK (Java SE)
       - http://www.oracle.com/technetwork/java/javase/index.html
-    * - Apache Maven
-      - http://maven.apache.org/
     * - Gradle
       - http://www.gradle.org/
+    * - Apache Maven
+      - http://maven.apache.org/
     * - Eclipse
       - http://www.eclipse.org/
     * - PostgreSQL

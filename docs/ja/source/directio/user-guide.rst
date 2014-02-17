@@ -135,7 +135,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 ..  code-block:: xml
 
     <property>
-        <name>プロパティ名</property>
+        <name>プロパティ名</name>
         <value>値</value>
     </property>
 
@@ -629,7 +629,7 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.BinaryStreamFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopFileFormat`
 ..  [#] :doc:`../dmdl/user-guide` を参照
-..  [#] バージョン |version| ではすべてのアーキタイプでこれらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで設定されています。詳しくは :doc:`../application/maven-archetype` や :doc:`../application/sdk-artifact` を参照してください。
+..  [#] :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクト、および :doc:`../application/maven-archetype` の手順に従ってアーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/sdk-artifact` を参照してください。
 
 CSV形式のDataFormatの作成
 -------------------------

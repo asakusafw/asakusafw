@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,11 +176,11 @@ public class JobflowCompiler {
     }
 
     private void reportSummary(JobflowModel jobflow) {
-        LOG.info("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId());
-        LOG.info("Imports: {}", jobflow.getImports().size());
-        LOG.info("Exports: {}", jobflow.getExports().size());
-        LOG.info("Stages : {}", jobflow.getStages().size());
         if (LOG.isDebugEnabled()) {
+            LOG.debug("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId());
+            LOG.debug("Imports: {}", jobflow.getImports().size());
+            LOG.debug("Exports: {}", jobflow.getExports().size());
+            LOG.debug("Stages : {}", jobflow.getStages().size());
             LOG.debug("Details:");
             for (Import stage : jobflow.getImports()) {
                 LOG.debug("====");

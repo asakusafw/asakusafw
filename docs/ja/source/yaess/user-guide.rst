@@ -5,9 +5,9 @@ YAESSユーザーガイド
 この文書では、YAESSの利用方法について紹介します。
 YAESSの導入方法については、各デプロイメントガイドのYAESSに関する項目を参照してください。
 
+* :doc:`../administration/deployment-with-directio` 
 * :doc:`../administration/deployment-with-windgate` 
 * :doc:`../administration/deployment-with-thundergate` 
-* :doc:`../administration/deployment-with-directio` 
 
 .. _yaess-batch-structure:
 

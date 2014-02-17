@@ -1,219 +1,127 @@
 ==============
 リリースノート
 ==============
-Asakusa Frameworkのリリースノートです。
 
-すべての変更点一覧は :doc:`changelogs` も参照してください。
-
-Release 0.5.3
+Release 0.6.0
 =============
-Dec 24, 2013
+Feb 17, 2014
 
-`Asakusa Framework 0.5.3 documentation`_
+.. contents::
+   :local:
+   :depth: 2
+   :backlinks: none
 
-..  _`Asakusa Framework 0.5.3 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.3/release/ja/html/index.html
+新機能と主な変更点
+------------------
 
-本リリースはAsakusa Frameworkの開発版リリースです。
-主な変更内容は以下の通りです。
+標準のビルドシステムをGradleに移行
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+バッチアプリケーションの開発で使用する標準のビルドツールを
+従来のバージョンで使用していたMavenからGradleに移行しました。
 
-* Apache Hadoop 2.2.0 に試験的に対応
+バージョン ``0.5.2`` から試験的に提供していた
+:doc:`Asakusa Gradle Plugin <application/gradle-plugin>` に対して
+多くの改善とバグフィックスを行い、これを標準機能に昇格しました。
+また、Asakusa Frameworkのドキュメント全体を
+Gradleを利用した説明に変更しています。
 
- * Hadoop2系の利用については、 :doc:`administration/deployment-hadoop2` を参照してください。
+Gradleを使ったアプリケーション開発の詳細や、
+Mavenを利用しているアプリケーションプロジェクトを
+Gradleを利用したプロジェクトに移行する方法などについては
+以下のドキュメントを参照してください。
 
-* JDK 7に対応
+* :doc:`application/gradle-plugin`
 
- * 開発環境におけるJDK 7の利用については、 :doc:`application/develop-with-jdk7` を参照してください。
+Mavenの利用について
+^^^^^^^^^^^^^^^^^^^
+本バージョン、およびAsakusa Framework ``0.6`` 系では
+Mavenを使ったアプリケーションの開発もサポートしています。
 
-* Hadoopディストリビューション、アプリケーション開発環境の動作検証プラットフォームをアップデート
+Asakusa Framework ``0.7`` 系以降の将来のバージョンで、
+Mavenによるアプリケーション開発を非推奨とすることを検討しています。
 
- * :doc:`product/target-platform` を参照してください。
+Shafu - Gradleプロジェクト用Eclipse Plugin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+標準のビルドシステムをGradleに移行したことにあわせて、
+Gradleを利用するアプリケーションプロジェクトの開発をサポートするEclipseプラグイン
+「Shafu (車夫)」を公開しました。
 
-* DMDLコンパイラ, DSLコンパイラ, Direct I/O実行時のエラーメッセージを改善
-* TestDriverのExcel 2007形式によるテストデータ定義に試験的に対応。
-* その他、多くの細かな機能改善、およびバグフィックス
+* :jinrikisha:`Shafu - Asakusa Gradle Plug-in Helper for Eclipse - <shafu.html>`
 
-Release 0.5.2
-=============
-Nov 20, 2013
+Shafu はバッチアプリケーション開発にGradleを利用する際に、
+Eclipseから透過的にビルドツール上の操作を行えます。
+Shafu を使うことで、ターミナル上でのビルドツールの操作が不要となり、
+Eclipse上でアプリケーション開発に必要なほとんどの作業を行うことができるようになります。
 
-`Asakusa Framework 0.5.2 documentation`_
+テストドライバにJavaオブジェクトによるテストデータ指定を追加
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+テストドライバに指定可能なテストデータの形式を
+従来のExcelとJson形式に加え、
+Javaオブジェクトの指定が可能になりました。
 
-..  _`Asakusa Framework 0.5.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.2/release/ja/html/index.html
+詳しくは、 :doc:`testing/user-guide` の
+「入力データと期待データをJavaで記述する」を
+参照してください。
 
-本リリースはAsakusa Frameworkの開発版リリースです。
-主な変更内容は以下の通りです。
+アプリケーションビルド時のログを改善
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DMDLのコンパイルやAsakusa DSLのコンパイル、
+テストドライバの実行時に出力されるログなどの
+出力内容を改善しました。
 
-* 試験的機能として、Gradleベースの新ビルドシステムを提供
-   * 詳しくは、 :doc:`application/gradle-plugin` を参照してください。
-* Direct I/O CSV, Direct I/O TSV(Sandbox) に入出力データの圧縮/解凍機能を追加
-* その他、多くの細かな機能改善、およびバグフィックス。
+試験的機能(Sandbox)
+--------------------
 
-Release 0.5.1
-=============
-Jul 26, 2013
+アプリケーションテスト用のエミュレーションモード
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+試験的機能として、アプリケーションテスト用のエミュレーションモードを公開しました。
 
-`Asakusa Framework 0.5.1 documentation`_
+エミュレーションモードでAsakusa DSLのテストを実行すると、
+Asakusa Frameworkが提供するラッパー機構を利用してHadoopの処理を実行します。
 
-..  _`Asakusa Framework 0.5.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.1/release/ja/html/index.html
+通常のテスト実行とは異なり、テストを実行しているプロセス内でほとんどの処理が行われるため、
+デバッグモードのブレークポイントなどを利用できるようになります。
+また、カバレッジツールと連携して演算子メソッドのテストカバレッジを確認しやすくなります。
 
-本リリースはAsakusa Frameworkの開発版リリースです。
-主な変更内容は以下の通りです。
+また、エミュレーションモードと連携したインテグレーションテスト用のツールとして
+バッチテストランナーAPIを追加しました。
 
-* テストドライバに演算子のトレースログを出力する機構を追加。
-* アプリケーション依存ライブラリの管理方法を改善。
-* DMDLコンパイラの日本語メッセージリソースを追加。
-* その他、多くの細かな機能改善、およびバグフィックス。
+エミュレーションモードの詳細や利用方法などについては、
+以下のドキュメントを参照してください。
 
-Release 0.5.0
-=============
-May 9, 2013
+* :sandbox:`エミュレーションモードによるアプリケーションテスト <testing/emulation-mode.html>`
 
-`Asakusa Framework 0.5.0 documentation`_
+入力データサイズに応じて自動的にローカルモードでジョブを実行
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+試験的機能として、入力データサイズに応じて自動的に
+ローカルモードでHadoopジョブを実行する
+実行時プラグインを公開しました。
 
-..  _`Asakusa Framework 0.5.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/ja/html/index.html
+このプラグインを利用することで
+バッチの実行にかかるHadoopのオーバーヘッドが適切に調整され、
+バッチ実行時間が改善する可能性があります。
 
-本リリースはAsakusa Frameworkの開発版リリースです。
-主な変更内容は以下の通りです。
+現時点でこのプラグインは基本的な動作確認のみを行なっており、
+動作検証プラットフォームは Apache Hadoop 1.2.1 のみです。
 
-* 試験的にCDH4に対応 [#]_ 。またいくつかの動作検証プラットフォームの追加。
-* フレームワーク本体とバッチアプリケーションの構成情報を分離し、バッチアプリケーションの構成定義をシンプル化。
-* 今後のAsakusa Frameworkの拡張のベースとなるFramework本体に対する多くのリファインメント。
-* その他、多くの細かな機能改善、およびバグフィックス。
+利用方法は以下のREADMEを参照してください。
 
-..  [#] CDH4上でAsakusa Frameworkを利用するためのドキュメントを、 Sandboxプロジェクトに公開しています。
+* https://github.com/asakusafw/asakusafw-sandbox/blob/0.6.0/asakusa-runtime-ext/README.md
 
-* `Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`_
+互換性に関して
+--------------
+本リリースでは過去バージョンとの互換性に関する特別な情報はありません。
 
-..  _`Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-cdh4.html
-
-Release 0.4.0
-=============
-Aug 30, 2012
-
-`Asakusa Framework 0.4.0 documentation`_
-
-..  _`Asakusa Framework 0.4.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/ja/html/index.html
-
-本リリースはAsakusa Frameworkの安定版リリースです。
-主な変更内容は以下の通りです。
-
-* [Direct I/O] ワイルドカード指定の出力機能などを追加し、試験的機能から正式機能として昇格。
-* [Asakusa DSL] コンパイラ最適化のチューニングおよびバグフィックス。
-* [YAESS] シミュレーションモードの実行やデプロイモジュールのバージョン検証機能などを追加。
-* 動作検証プラットフォームの追加。
-* 広範囲にわたるドキュメントの拡充と改善、および多くのドキュメントバグのフィックス。
-* その他、多くの細かな機能改善、およびバグフィックス。
-
-Release 0.2.6
-=============
-May 31, 2012
-
-`Asakusa Framework 0.2.6 documentation`_
-
-..  _`Asakusa Framework 0.2.6 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.2/release/ja/html/index.html
-
-本リリースではYAESS マルチディスパッチ機能が追加されました。
-
-これによりバッチやジョブフローなどを異なる複数のHadoopクラスタに振り分けて実行したり、それぞれ異なる設定で起動したりできるようになります。
-
-* :doc:`yaess/multi-dispatch`
-
-その他、多数の機能改善やバグフィックスが行われています。 
-
-Release 0.2.5
-=============
-Jan 31, 2012
-
-本リリースでは試験的な機能として「Direct I/O」が追加されました。
-これは、Hadoopクラスターから直接バッチの入出力データを
-読み書きするための機構です。
-
-* :doc:`directio/index`
-
-また、本バージョンでは対応プラットフォームの拡張として、
-従来のバージョンで対応していた
-HadoopディストリビューションであるCDH3に加えて、
-Apache Hadoop 0.20.203.0での動作検証が行われ、
-この環境で動作するための変更が行われています。
-
-その他、細かな機能改善やバグフィックスが行われています。
-
-Release 0.2.4
-=============
-Dec 19, 2011
-
-本リリースからWindGateがGA (Generally Available) となりました。
-WindGateにはローカルのCSVに対するデータ入出力を行う機能が追加となっています。
-
-また、本リリースではドキュメントの構成を見直し、
-内容を大幅に拡充しました。
-特に「Asakusa Framework入門」の追加、および
-WindGateやYAESSに関する記述が多く追加されています。
-
-* :doc:`introduction/index`
-
-旧バージョンを使っている開発環境を0.2.4に移行するには
-マイグレーション作業が必要となります。
-詳しくは以下のマイグレーションガイドを参照してください。
+過去バージョンからのマイグレーション情報については、
+以下のドキュメントを参照してください。
 
 * :doc:`application/migration-guide`
+* :doc:`administration/migration-guide`
 
-その他、細かな機能改善やバグフィックスが行われています。
+リンク
+------
+* `Asakusa Framework 0.6.0 documentation`_
+* :doc:`previous-release-notes`
+* :doc:`changelogs`
 
-Release 0.2.3
-=============
-Nov 16, 2011
-
-本リリースでは、様々な環境に合わせて実行方法をカスタマイズ
-することが可能なバッチ実行ツール「YAESS」と
-ThunderGateの差分インポート機能を実現する
-「ThunderGateキャッシュ」機能が追加されました。
-
-* :doc:`yaess/index`
-* :doc:`thundergate/cache`
-
-今回のリリースでは、旧バージョンを使っている開発環境を
-0.2.3に移行するためにマイグレーション作業が必要となります。
-詳しくは以下のマイグレーションガイドを参照してください。
-
-* :doc:`application/migration-guide`
-
-その他、細かな機能改善やバグフィックスが行われています。
-
-Release 0.2.2
-=============
-Sep 29, 2011
-
-本リリースではExperimental Featureとして「WindGate」が追加されました。
-
-WindGateはThunderGateと同様にバッチに対するデータの外部入出力を行うモジュールですが、
-様々なプラットフォームに対応するよう設計され、ThunderGateに対してポータビリティが高いことが特徴です。
-
-* :doc:`windgate/index`
-
-その他、バグフィックスや細かい機能改善が行われています。
-
-Release 0.2.1
-=============
-Jul 27, 2011
-
-* Extract演算子の追加
-* Restructure演算子の追加
-* ThunderGateのCLOBサポート
-* その他バグフィックス
-
-Release 0.2.0
-=============
-Jun 29, 2011
-
-* DMDLの導入
-* テストドライバの大幅な改善
-* その他多くのバグフィックス
-
-
-Release 0.1.0
-=============
-Mar 30, 2011
-
-* 初版リリース
-
+..  _`Asakusa Framework 0.6.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/html/index.html

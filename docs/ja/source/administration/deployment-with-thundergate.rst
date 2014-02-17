@@ -120,7 +120,7 @@ ThunderGateを利用した構成例を以下に示します。
 
 1. Hadoopクラスターの構築
 2. データベースの構築
-3. Asakusa Frameworkのインストールアーカイブの作成
+3. Asakusa Frameworkのデプロイメントアーカイブの作成
 4. Asakusa Frameworkのデプロイ
 5. Asakusa Framework追加ライブラリのデプロイ
 6. Asakusa Framework実行時プラグインの設定
@@ -166,11 +166,11 @@ MySQL Serverの具体的なセットアップ手順は、MySQLのドキュメン
     * - ユーザのパスワード
       - ``appuser``
 
-Asakusa Frameworkのインストールアーカイブの作成
------------------------------------------------
-Asakusa Frameworkのインストールアーカイブを用意します。
+Asakusa Frameworkのデプロイメントアーカイブの作成
+-------------------------------------------------
+Asakusa Frameworkのデプロイメントアーカイブを用意します。
 
-Asakusa Frameworkのインストールアーカイブは、Framework Organizer に対して、記述指定子 ``prod-thundergate`` を持つ
+Asakusa Frameworkのデプロイメントアーカイブは、Framework Organizer に対して、記述指定子 ``prod-thundergate`` を持つ
 デプロイメントアーカイブを出力するよう指定した上で、Mavenの以下のコマンドを実行して生成します [#]_ 。
 
 ..  code-block:: sh
@@ -191,7 +191,7 @@ Asakusa Frameworkのインストールアーカイブは、Framework Organizer �
 
 Asakusa Frameworkのデプロイ
 ---------------------------
-作成したインストールアーカイブを利用し、Asakusa Frameworkを以下それぞれのモジュールを配置するマシン上にデプロイします。
+作成したデプロイメントアーカイブを利用し、Asakusa Frameworkを以下それぞれのモジュールを配置するマシン上にデプロイします。
 
 ..  list-table:: Asakusa Frameworkのデプロイが必要なモジュール
     :widths: 10 10
@@ -210,7 +210,7 @@ Asakusa Frameworkは上記すべてのモジュールから利用しているた
 一台のマシンに複数のモジュールを配置している場合は、マシンごとに1セットだけデプロイします [#]_ 。
 
 Asakusa Frameworkのデプロイ先を環境変数 ``$ASAKUSA_HOME`` とした場合、 ``$ASAKUSA_HOME`` ディレクトリを作成し、
-``$ASAKUSA_HOME`` 直下にAsakusa Framework用のインストールアーカイブ( ``asakusafw-${asakusafw.version}-prod-thundergate.tar.gz`` )を展開します。
+``$ASAKUSA_HOME`` 直下にAsakusa Framework用のデプロイメントアーカイブ( ``asakusafw-${asakusafw.version}-prod-thundergate.tar.gz`` )を展開します。
 展開後、 ``$ASAKUSA_HOME`` 配下の ``*.sh`` に実行権限を追加します。
 
 ..  code-block:: sh
@@ -253,7 +253,7 @@ Asakusaバッチアプリケーションで利用する共通ライブラリ（H
 
 ..  [#] Asakusa Framework バージョン ``0.5.1`` から、バッチアプリケーションのコンパイル時に規定のディレクトリに追加ライブラリを配置しておくことで、バッチアプリケーションアーカイブに共通ライブラリを含める機能が追加されました。この機能を使って共通ライブラリを管理する場合は、本手順で説明するデプロイ手順は不要です。
 
-    詳しくは、 :doc:`../application/maven-archetype` の :ref:`application-dependency-library` を参照してください。
+    詳しくは、 :doc:`../application/maven-archetype` の :ref:`dependency-library-maven-archetype` を参照してください。
 
 Asakusa Framework実行時プラグインの設定
 ---------------------------------------
@@ -375,7 +375,7 @@ YAESSプラグインライブラリのデプロイ
       - ○
 
 ..  note::
-    Asakusa Frameworkのインストールアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
+    Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
     あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
 
     * ``asakusa-yaess-paralleljob`` : ジョブを並列実行のためのプラグイン

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ public class FilePackager
         compile();
         JarOutputStream jar = new JarOutputStream(output);
         try {
-            LOG.info("コンパイル結果をパッケージングします");
+            LOG.debug("コンパイル結果をパッケージングします");
             List<ResourceRepository> repos = Lists.create();
             if (classDirectory.exists()) {
                 repos.add(new FileRepository(classDirectory));
@@ -286,7 +286,7 @@ public class FilePackager
         assert compiler != null;
         assert sources != null;
 
-        LOG.info("生成されたソースファイルをコンパイルしています ({}個のファイル)", sources.size());
+        LOG.debug("生成されたソースファイルをコンパイルしています ({}個のファイル)", sources.size());
         LOG.debug("コンパイル結果の出力先: {}", classDirectory);
 
         mkdir(sourceDirectory);
@@ -311,6 +311,7 @@ public class FilePackager
                     classDirectory.getCanonicalFile().toString());
             Collections.addAll(arguments, "-proc:none");
             Collections.addAll(arguments, "-Xlint:all");
+            Collections.addAll(arguments, "-Xlint:-options");
 
             StringWriter errors = new StringWriter();
             PrintWriter pw = new PrintWriter(errors);

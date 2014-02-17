@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class ShuffleAnalyzer {
      */
     public ShuffleModel analyze(StageBlock block) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.info("{}で行われるシャッフルフェーズについて分析します", block);
+        LOG.debug("{}で行われるシャッフルフェーズについて分析します", block);
 
         if (block.hasReduceBlocks() == false) {
             LOG.debug("{}ではシャッフルが行われません", block);

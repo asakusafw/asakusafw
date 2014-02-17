@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.5-SNAPSHOT</version>
+		<version>0.6-SNAPSHOT</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
@@ -38,6 +38,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-dsl-vocabulary</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>object-io</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

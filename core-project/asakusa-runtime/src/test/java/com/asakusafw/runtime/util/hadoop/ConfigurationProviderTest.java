@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -348,7 +348,7 @@ public class ConfigurationProviderTest {
      */
     @Test
     public void newInstance_auto() throws Exception {
-        File cmd = putExec("testcmd");
+        File cmd = putExec("testing/testcmd");
         File site = putConf("auto/core-site.xml");
 
         PrintWriter writer = new PrintWriter(cmd);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,9 +204,12 @@ public final class AllBatchCompilerDriver {
                     scanPath),
                     e);
         }
-        if (succeeded == false) {
+        if (succeeded) {
+            LOG.info("バッチアプリケーションの生成が完了しました");
+        } else {
             LOG.error("バッチをコンパイルする際にエラーが発生しました: {}", errorBatches);
         }
+
         return succeeded;
     }
 
@@ -222,7 +225,7 @@ public final class AllBatchCompilerDriver {
             LOG.debug("{}はバッチクラスではありません", className);
             return null;
         }
-        LOG.info("バッチクラスを発見しました: {}", className);
+        LOG.info("バッチクラスをコンパイルします: {}", className);
         return batchClass;
     }
 

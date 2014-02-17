@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,19 +48,21 @@ import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
  * {@link StageInputDriver}に指定された実際のInputFormatに処理を移譲する。
  * </p>
  * @since 0.1.0
- * @version 0.2.6
+ * @version 0.6.0
  */
 @SuppressWarnings("rawtypes")
 public class StageInputFormat extends InputFormat {
 
-    private static final String DEFAULT = "default";
+    private static final String KEY_SPLIT_COMBINER = "com.asakusafw.input.combine";
+
+    private static final String DEFAULT_SPLIT_COMBINER = "default";
 
     static final Log LOG = LogFactory.getLog(StageInputFormat.class);
 
     private static final Map<String, Class<? extends SplitCombiner>> SPLIT_COMBINERS;
     static {
         Map<String, Class<? extends SplitCombiner>> map = new HashMap<String, Class<? extends SplitCombiner>>();
-        map.put(DEFAULT, DefaultSplitCombiner.class);
+        map.put(DEFAULT_SPLIT_COMBINER, DefaultSplitCombiner.class);
         map.put("disabled", IdentitySplitCombiner.class);
         map.put("extreme", ExtremeSplitCombiner.class);
         SPLIT_COMBINERS = Collections.unmodifiableMap(map);
@@ -88,7 +90,7 @@ public class StageInputFormat extends InputFormat {
         return new ArrayList<InputSplit>(combined);
     }
 
-    private List<StageInputSplit> computeSplits(JobContext context) throws IOException, InterruptedException {
+    static List<StageInputSplit> computeSplits(JobContext context) throws IOException, InterruptedException {
         assert context != null;
         Map<FormatAndMapper, List<StageInput>> paths = getPaths(context);
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
@@ -122,17 +124,17 @@ public class StageInputFormat extends InputFormat {
         return results;
     }
 
-    private SplitCombiner getSplitCombiner(JobContext context) {
+    private static SplitCombiner getSplitCombiner(JobContext context) {
         assert context != null;
         Class<? extends SplitCombiner> combinerClass = getSplitCombinerClass(context);
         return ReflectionUtils.newInstance(combinerClass, context.getConfiguration());
     }
 
-    private Class<? extends SplitCombiner> getSplitCombinerClass(JobContext context) {
+    private static Class<? extends SplitCombiner> getSplitCombinerClass(JobContext context) {
         assert context != null;
         Configuration conf = context.getConfiguration();
-        String combinerType = conf.get("com.asakusafw.input.combine", DEFAULT);
-        if (isLocalMode(context) && combinerType.equals(DEFAULT)) {
+        String combinerType = conf.get(KEY_SPLIT_COMBINER, DEFAULT_SPLIT_COMBINER);
+        if (isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
             return ExtremeSplitCombiner.class;
         }
         Class<? extends SplitCombiner> defined = SPLIT_COMBINERS.get(combinerType);
@@ -149,12 +151,12 @@ public class StageInputFormat extends InputFormat {
         }
     }
 
-    private boolean isLocalMode(JobContext context) {
+    private static boolean isLocalMode(JobContext context) {
         assert context != null;
         return context.getConfiguration().get("mapred.job.tracker", "unknown").equals("local");
     }
 
-    private Path[] toPathArray(List<StageInput> inputs) {
+    private static Path[] toPathArray(List<StageInput> inputs) {
         assert inputs != null;
         List<Path> paths = new ArrayList<Path>();
         for (StageInput input : inputs) {
@@ -163,7 +165,7 @@ public class StageInputFormat extends InputFormat {
         return paths.toArray(new Path[paths.size()]);
     }
 
-    private Map<FormatAndMapper, List<StageInput>> getPaths(JobContext context) throws IOException {
+    private static Map<FormatAndMapper, List<StageInput>> getPaths(JobContext context) throws IOException {
         assert context != null;
         List<StageInput> inputs = StageInputDriver.getInputs(context.getConfiguration());
         Map<FormatAndMapper, List<StageInput>> paths = new HashMap<FormatAndMapper, List<StageInput>>();
@@ -179,7 +181,7 @@ public class StageInputFormat extends InputFormat {
         return paths;
     }
 
-    private Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> instantiateFormats(
+    private static Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> instantiateFormats(
             JobContext context,
             Set<FormatAndMapper> pairs) throws IOException {
         assert context != null;

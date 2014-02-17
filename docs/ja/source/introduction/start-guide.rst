@@ -17,13 +17,13 @@ Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。W
 ..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
 
 ..  tip::
-    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである `Jinrikisha`_ (人力車) を利用する方法もあります。
+    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである Jinrikisha を利用する方法もあります。
     
-    `Jinrikisha`_ を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
+    * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
+     
+    Jinrikisha を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
     
-    なお、 `Jinrikisha`_ ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に、 `Jinrikisha`_ のドキュメントに従って開発環境を構築することを推奨します。
-
-..  _`Jinrikisha`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+    なお Jinrikisha ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に Jinrikisha のドキュメント に従って開発環境を構築することを推奨します。
 
 VMWare Playerのインストール
 ---------------------------
@@ -73,62 +73,20 @@ Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.bin`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。本文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
+ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.tar.gz`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。この文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
 
-ダウンロードしたインストールアーカイブを実行します。
+ダウンロードが完了したら、以下の例を参考にしてJDKをインストールします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
-    chmod +x jdk-*
-    ./jdk-*
-
-インストールに成功すると以下のような画面が表示されます。
-
-..  code-block:: sh
-
-    Unpacking...
-    Checksumming...
-    Extracting...
-    ...
-    ...
-
-    Done.
-
-作成されたJavaのディレクトリに対して適切なオーナーの指定やディレクトリ配置を行います。
-
-..  code-block:: sh
-    
-    sudo mkdir /usr/lib/jvm
+    tar xf jdk-7u*-linux-i586.tar.gz
     sudo chown -R root:root jdk1.7.0_*/
+    sudo mkdir /usr/lib/jvm
     sudo mv jdk1.7.0_*/ /usr/lib/jvm
-    
-    cd /usr/lib/jvm
-    sudo ln -s jdk1.7.0_* java-7-oracle
+    sudo ln -s /usr/lib/jvm/jdk1.7.0_* /usr/lib/jvm/java-7-oracle
 
-..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.bin`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586-rpm.bin`` ) をダウンロードしないよう注意してください。
-
-
-Mavenのインストール
--------------------
-Asakusa Frameworkの開発環境に必要なビルドツールであるMavenをインストールします。
-
-Mavenのダウンロードサイト (http://maven.apache.org/download.html) から Maven3 のtarball ``apache-maven-3.X.X-bin.tar.gz`` ( ``XX`` はバージョン番号 ) をダウンロードします。
-
-ダウンロードが完了したら、以下の例を参考にしてMavenをインストールします。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf apache-maven-*-bin.tar.gz
-    sudo chown -R root:root apache-maven-*/
-    sudo mv apache-maven-*/ /usr/local/lib
-    sudo ln -s /usr/local/lib/apache-maven-*/bin/mvn /usr/local/bin/mvn
-
-..  note:: 
-    インターネットへの接続にプロキシサーバを経由する必要がある環境では、Mavenに対してプロキシの設定を行う必要があります。Mavenのプロキシ設定については、Mavenの次のサイト等を確認してください。
-
-    http://maven.apache.org/guides/mini/guide-proxies.html
+..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.tar.gz`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586.rpm`` ) をダウンロードしないよう注意してください。
 
 Hadoopのインストール
 --------------------
@@ -168,27 +126,60 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
 
     . ~/.profile
 
-Asakusa Frameworkのインストール
--------------------------------
+開発用Asakusa Frameworkのインストール
+-------------------------------------
 Asakusa Frameworkをインストールします。
 
-Asakusa Frameworkを開発環境にインストールするには、Asakusa Frameworkの構成ツールである Framework Organizer を利用します。
+Asakusa Frameworkを開発環境にインストールするには、
+まずAsakusa Frameworkアプリケーション用プロジェクトテンプレートをダウンロードし、
+これに含まれるビルドツール `Gradle`_ のAsakusa Frameworkインストール用タスクを実行します。
 
-このツールはMavenを使ってAsakusa Frameworkのインストールアーカイブを生成し、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkを展開します。
+この文書では基本的なプロジェクトレイアウトのみを持つプロジェクトテンプレートに
+サンプルアプリケーションを同梱したサンプルアプリケーションプロジェクトを利用します。
+サンプルアプリケーションプロジェクトは以下からダウンロードします。
 
-Framework Organizer は以下からダウンロードします。
+* `asakusa-example-project-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.0.tar.gz>`_ 
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.5.3.tar.gz
+ダウンロードが完了したら、サンプルアプリケーションプロジェクトを任意のディレクトリに配置します。
 
-ダウンロードが完了したら、以下の例を参考にしてAsakusa Frameworkをインストールします。
+ここでは ``$HOME/workspace`` 配下に配置するため、まずこのディレクトリを作成します。
+
+..  code-block:: sh
+    
+    mkdir ~/workspace
+
+``$HOME/workspace`` 配下に ``example-app`` というディレクトリ名でサンプルアプリケーションを配置します。
+
+..  code-block:: sh
+    
+    cd ~/Downloads 
+    tar xf asakusa-example-project-*.tar.gz
+    mv asakusa-example-project ~/workspace/example-app
+
+配下したサンプルアプリケーションプロジェクト上で、
+以下の例を参考にしてAsakusa FrameworkをインストールするGradleタスクを実行します。
 インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
 
 ..  code-block:: sh
      
-    cd ~/Downloads
-    tar xf asakusafw-organizer-*.tar.gz
-    cd asakusafw-organizer
-    mvn package antrun:run
+    cd ~/workspace/example-app
+    ./gradlew installAsakusafw
+
+インストールに成功した場合、画面に以下のように ``BUILD SUCCESSFUL`` と表示されます。
+
+..  code-block:: sh
+
+    ...
+    Asakusa Framework has been installed on ASAKUSA_HOME: /home/asakusa/asakusa
+
+    BUILD SUCCESSFUL
+
+    Total time: XX.XXX secs
+
+..  note::
+    以降の手順についても、Gradleのコマンド実行後に処理が成功したかを確認するには ``BUILD SUCCESSFUL`` が表示されていることを確認してください。
+
+..  _`Gradle`: http://gradle.org
 
 インストールソフトウェアの動作確認
 ----------------------------------
@@ -216,17 +207,6 @@ Java SDKの動作確認
 
     javac 1.7.0_45
 
-Mavenの動作確認
-~~~~~~~~~~~~~~~
-
-..  code-block:: sh
-
-    mvn -version
-
-    Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 22:51:28+0900)
-    ...
-
-
 Hadoopの動作確認
 ~~~~~~~~~~~~~~~~
 
@@ -247,17 +227,21 @@ Asakusa Frameworkのインストール確認
     
     cat $ASAKUSA_HOME/VERSION
     
-    asakusafw.version=0.5.3
+    asakusafw.version=0.6.0
     
     asakusafw.build.timestamp=...
     asakusafw.build.java.version=1.6.0_...
 
+
+Eclipseの環境構築
+-----------------
+Asakusa Frameworkのアプリケーション実装・テストに使用する統合開発環境(IDE)として、Eclipseの環境を構築します。
+
+..  note::
+    Asakusa Frameworkを使う上でEclipseの使用は必須ではありませんが、Asakusa FrameworkではEclipse上での開発をサポートするいくつかの機能を提供しています。ここではサンプルアプリケーションのソースを確認するなどの用途を想定して、Eclipseの環境構築手順を説明します。
+
 Eclipseのインストール
----------------------
-アプリケーションの実装・テストに使用する統合開発環境(IDE)として、Eclipseをインストールします。
-
-..  note:: Asakusa Frameworkを使う上でEclipseの使用は必須ではありません。サンプルアプリケーションのソースを確認する場合などでEclipseがあると便利であると思われるため、ここでEclipseのインストールを説明していますが、スタートガイドの手順のみを実行するのであれば、Eclipseのインストールは不要です。
-
+~~~~~~~~~~~~~~~~~~~~~
 Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から Eclipse IDE for Java Developers - Linux 32 Bit ``eclipse-java-XX-linux-gtk.tar.gz`` ( ``XX`` はバージョンを表すコード名 )  をダウンロードします。
 
 ダウンロードが完了したら、以下の例を参考にしてEclipseをインストールします。
@@ -275,116 +259,61 @@ Eclipseを起動するには、 ``$HOME/eclipse/eclipse`` を実行します。�
     $HOME/eclipse/eclipse &
 
 ..  attention::
-    GUIのファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して ``~/.profile`` で定義した環境変数を反映させるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
+    デスクトップ上のファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して ``~/.profile`` で定義した環境変数が反映されている必要がるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
 
 Eclipse起動時にワークスペースを指定するダイアログが表示されるので、デフォルトの ``$HOME/workspace`` をそのまま指定します。
 
-サンプルアプリケーションの導入と実行
-====================================
-開発環境上で Asakusa Framework のサンプルアプリケーションを実行してみます。
+Eclipseへアプリケーションプロジェクトをインポート
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+アプリケーションプロジェクトをEclipseへインポートして、Eclipse上でアプリケーションの開発を行えるようにします。
 
-アプリケーション開発プロジェクトの作成
---------------------------------------
-まず、Asakusa Frameworkのバッチアプリケーションを開発、及び管理する単位となる「プロジェクト」を作成します。
-
-Asakusa Frameworkでは、プロジェクトのテンプレートを提供しており、このテンプレートにサンプルアプリケーションも含まれています。
-
-プロジェクトのテンプレートはMavenのアーキタイプという仕組みで提供されています。Mavenのアーキタイプからプロジェクトを作成するには、以下のコマンドを実行します（Mavenがライブラリをダウンロードするため、実行に時間がかかります)。
-
-..  code-block:: sh
-
-    mkdir -p ~/workspace
-    cd ~/workspace
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml
-
-コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。ここでは、WindGateと連携するアプリケーション用のテンプレートである 1 ( ``asakusa-archetype-windgate`` ) を選択します。
-
-..  code-block:: sh
-
-    1: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.5.xml -> com.asakusafw:asakusa-archetype-directio (-)
-    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
-
-次に、Asakusa Frameworkのバージョンを選択します。ここでは 3 (バージョン 0.5.3) を選択します。
-
-..  code-block:: sh
-
-    Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.5-SNAPSHOT
-    2: 0.5.0
-    3: 0.5.1
-    4: 0.5.2
-    5: 0.5.3
-    Choose a number: 5: 5 (<-5を入力)
-
-..  attention::
-    ``-SNAPSHOT`` という名称が付いているバージョンは開発中のバージョンを表します。このバージョンはリリースバージョンと比べて不安定である可能性が高いため、使用する場合は注意が必要です。またこのバージョンはAsakusa FrameworkのMavenリポジトリが更新された場合、開発環境から自動的にライブラリの更新が行われる可能性があり、これが原因で予期しない問題が発生する可能性があります。
-
-
-この後、アプリケーションプロジェクトに関するいくつかの定義を入力します。いずれも任意の値を入力することが出来ます。
-
-ここでは、グループIDに ``com.example`` 、アーティファクトID（アプリケーションプロジェクト名）に ``example-app`` を指定します。後の項目はそのままEnterキーを入力します。
-
-最後に確認をうながされるので、そのままEnterキーを入力します。
-
-..  code-block:: sh
-
-    Define value for property 'groupId': : com.example    [<-アプリケーションのグループ名を入力。]
-    Define value for property 'artifactId': : example-app [<-アプリケーションのプロジェクト名を入力。]
-    Define value for property 'version':  1.0-SNAPSHOT: : [<-ここではそのままEnterキーを入力 (バージョン名)。]
-    Define value for property 'package':  com.example: :  [<-ここではそのままEnterキーを入力 (パッケージ名)。]
-
-    Confirm properties configuration:
-    groupId: com.example
-    artifactId: example-app
-    version: 1.0-SNAPSHOT
-    package: com.example
-    Y: : [<-そのままEnterキーを入力]
-
-入力が終わるとプロジェクトの作成が始まります。成功した場合、画面に以下のように ``BUILD SUCCESS`` と表示されます。
-
-..  code-block:: sh
-
-    ...
-    [INFO] ------------------------------------------------------------------------
-    [INFO] BUILD SUCCESS
-    [INFO] ------------------------------------------------------------------------
-    [INFO] Total time: 20.245s
-    ...
-
-これでアプリケーションプロジェクトが作成されました。
-
-..  note::
-    以降の手順についても、Mavenのコマンド実行後に処理が成功したかを確認するには ``BUILD SUCCESS`` が表示されていることを確認してください。
-
-
-サンプルアプリケーションのビルド
---------------------------------
-アプリケーションのテンプレートには、あらかじめサンプルアプリケーション（カテゴリー別売上金額集計バッチ) のソースファイルが含まれています。このサンプルアプリケーションのソースファイルをAsakusa Framework上で実行可能な形式にビルドします。
-
-アプリケーションのビルドを実行するには、Mavenの以下のコマンドを実行します（初回の実行時のみ、Mavenがライブラリをダウンロードするため、実行に時間がかかります）。
+インポートするプロジェクトのディレクトリに移動し、Gradleの以下のコマンドを実行してEclipse用の定義ファイルを作成します。
 
 ..  code-block:: sh
 
     cd ~/workspace/example-app
-    mvn clean package
+    ./gradlew eclipse
+
+これでEclipseからプロジェクトをインポート出来る状態になりました。Eclipseのメニューから ``[File]`` -> ``[Import]`` -> ``[General]`` -> ``[Existing Projects into Workspace]`` を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
+
+.. _startguide-running-example:
+
+サンプルアプリケーションの実行
+==============================
+開発環境上で Asakusa Framework のサンプルアプリケーションを実行してみます。
+
+サンプルアプリケーションの概要
+------------------------------
+サンプルアプリケーションプロジェクトには、サンプルアプリケーション「カテゴリー別売上金額集計バッチ」のソースファイルが含まれています。
+
+カテゴリー別売上金額集計バッチは、売上トランザクションデータと、商品マスタ、店舗マスタを入力として、エラーチェックを行った後、売上データを商品マスタのカテゴリ毎に集計するアプリケーションです。
+
+バッチアプリケーションの入力データ取得と出力データ生成には、Asakusa Frameworkの「Direct I/O」と呼ばれるコンポーネントを利用しています。Direct I/Oを利用して、Hadoopファイルシステム上のCSVファイルに対して入出力を行います。
+
+
+サンプルアプリケーションのビルド
+--------------------------------
+アプリケーションのソースファイルをAsakusa Framework上で実行可能な形式にビルドします。
+
+アプリケーションのビルドを実行するには、Gradleの ``build`` タスクを実行します（初回の実行時のみ、Gradleがリモートからライブラリをダウンロードするため、実行に時間がかかります）。
+
+..  code-block:: sh
+
+    cd ~/workspace/example-app
+    ./gradlew build
 
 このコマンドの実行によって、アプリケーションのプロジェクトに対して以下の処理が実行されます。
 
 1. データモデル定義DSL(DMDL)から、データモデルクラスを生成
-2. Asakusa DSLとデータモデル定義DSLから、実行可能なプログラム群（HadoopのMapReduceジョブやWindGate用の実行定義ファイルなど)を生成
+2. Asakusa DSLとデータモデル定義DSLから、実行可能なプログラム群（HadoopのMapReduceジョブなど)を生成
 3. 実行可能なプログラム群に対するテストを実行
 4. アプリケーションを実行環境に配置するためのデプロイメントアーカイブファイルを生成
 
-ビルドが成功すると、プロジェクトの ``target`` ディレクトリ配下にいくつかのファイルが作成されますが、この中の ``example-app-batchapps-1.0-SNAPSHOT.jar`` というファイルがサンプルアプリケーションが含まれるデプロイメントアーカイブファイルです。
+ビルドが成功すると、プロジェクトの ``build`` ディレクトリ配下にいくつかのファイルが作成されますが、この中の ``example-app-batchapps.jar`` というファイルがサンプルアプリケーションが含まれるデプロイメントアーカイブファイルです。
 
 ..  note::
-    このアーカイブファイルの名前は、実際には ``${artifactId}-batchapp-${version}.jar`` という命名ルールに従って作成されます。プロジェクト作成時に本ドキュメントの例以外のプロジェクト名やバージョンを指定した場合は、それに合わせて読み替えてください。
+    このアーカイブファイルの名前は、プロジェクトディレクトリ名やビルドスクリプト上に設定したバージョンなどから決定されます。本ドキュメントの例以外のプロジェクト名やバージョンを指定した場合は、それに合わせて読み替えてください。
     
-..  warning::
-    targetディレクトリの配下に似た名前のファイルとして ``${artifactId}-${version}.jar`` というファイル( ファイル名に ``batchapp`` が付いていないjarファイル)が同時に作成されますが、これはデプロイメントアーカイブファイルではないので注意してください。
-
 .. _introduction-start-guide-deploy-app:
 
 サンプルアプリケーションのデプロイ
@@ -398,24 +327,32 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 ..  code-block:: sh
 
     cd ~/workspace/example-app
-    cp target/*batchapps*.jar $ASAKUSA_HOME/batchapps
+    cp build/*batchapps*.jar $ASAKUSA_HOME/batchapps
     cd $ASAKUSA_HOME/batchapps
     jar xf *batchapps*.jar
 
 
-サンプルデータの作成と配置
---------------------------
-カテゴリー別売上金額集計バッチは、売上トランザクションデータと、商品マスタ、店舗マスタを入力として、エラーチェックを行った後、商品マスタのカテゴリ毎に集計するアプリケーションです。入力データの取得と出力データの生成はそれぞれCSVファイルに対して行うようになっています。
+サンプルデータの配置
+--------------------
+サンプルアプリケーションプロジェクトには、プロジェクトディレクトリ配下の ``src/test/example-dataset`` ディレクトリ以下にテスト用の入力データが用意されています。これらのファイルをHadoopファイルシステム上のDirect I/Oの入出力ディレクトリ(デフォルトの設定では ``target/testing/directio`` 配下にコピーします。
 
-このバッチは入力データを ``/tmp/windgate-$USER`` ( ``$USER`` はOSユーザ名に置き換え ) ディレクトリから取得するようになっています。プロジェクトにはあらかじめ ``src/test/example-dataset`` ディレクトリ以下にテストデータが用意されているので、これらのファイルを  ``/tmp/windgate-$USER`` 配下にコピーします。
+..  warning::
+    Direct I/Oの入出力ディレクトリはテスト実行時に削除されます。特にスタンドアロンモードのHadoopを利用時にデフォルトの設定のような相対パスを指定した場合、 ホームディレクトリを起点としたパスと解釈されるため注意が必要です。
+    
+    例えばホームディレクトリが ``/home/asakusa`` であった場合でデフォルト設定の相対パスを利用する場合、 テスト実行の都度 ``/home/asakusa/target/testing/directio`` ディレクトリ以下が削除されることになります。このパスに重要なデータがないことを実行前に確認してください。
+
+以下はサンプルデータの配置の実行例です。
 
 ..  code-block:: sh
-
-    mkdir -p /tmp/windgate-$USER
-    rm /tmp/windgate-$USER/* -rf
-    cd ~/workspace/example-app
-    cp -a src/test/example-dataset/* /tmp/windgate-$USER/
-
+    
+    # スタンドアロンモードに対応するため、ホームディレクトリに移動しておく
+    cd ~
+    # ファイルシステムパス上のデータをクリアしておく
+    hadoop fs -rmr target/testing/directio
+    # サンプルデータを配置する
+    hadoop fs -put ~/workspace/example-app/src/test/example-dataset/master target/testing/directio/master
+    hadoop fs -put ~/workspace/example-app/src/test/example-dataset/sales target/testing/directio/sales
+    
 .. _introduction-start-guide-run-app:
 
 サンプルアプリケーションの実行
@@ -423,10 +360,11 @@ Asakusa Frameworkでは、プロジェクトのテンプレートを提供して
 ローカルにデプロイしたサンプルアプリケーションを実行します。
 
 Asakusa Frameworkでは、バッチアプリケーションを実行するためのコマンドプログラムとして「YAESS」というツールが提供されています。
-バッチアプリケーションを実行するには、 ``$ASAKUSA_HOME/yaess/bin/yaess-batch.sh`` に実行するバッチのバッチIDを指定します。
+バッチアプリケーションを実行するには、 ``$ASAKUSA_HOME/yaess/bin/yaess-batch.sh`` に実行するバッチの
+バッチIDとバッチ引数を指定します。
 
-サンプルアプリケーション「カテゴリー別売上金額集計バッチ」のバッチは「 ``example.summarizeSales`` 」というIDを持っています。
-また、このバッチは引数に処理対象の売上日時( ``date`` )を指定し、この値に基づいて処理対象CSVファイルを特定します [#]_ 。
+サンプルアプリケーション「カテゴリー別売上金額集計バッチ」は「 ``example.summarizeSales`` 」というバッチIDを持っています。
+また、このバッチは引数に処理対象の売上日時( ``date`` )を指定し、この値に基づいて処理対象CSVファイルを特定します。
 
 バッチIDとバッチ引数を指定して、以下のようにバッチアプリケーションを実行します。
 
@@ -443,43 +381,48 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
     2013/04/22 13:50:35 INFO  [YS-BOOTSTRAP-I00999] Exiting YAESS: code=0, elapsed=12,798ms
     Finished: SUCCESS
 
-
-..  [#] より詳しく言えば、このバッチでは ``/tmp/windgate-$USER/sales/<売上日時>.csv`` という名前のCSVファイルを読み出し、
-    ``/tmp/windgate-$USER/result/category-<売上日時>.csv`` という名前のCSVファイルを作成します。
-    なお、サンプルのデータセットには ``sales/2011-04-01.csv`` が含まれています。
-
 サンプルアプリケーション実行結果の確認
 --------------------------------------
-カテゴリー別売上金額集計バッチはバッチの実行結果として、ディレクトリ ``/tmp/windgate-$USER/result`` にカテゴリー別売上金額の集計データとエラーチェックに該当したエラーレコードがCSVファイルとして出力されます。
+Asakusa FrameworkはDirect I/Oの入出力ディレクトリやファイルの一覧をリストアップするコマンド ``$ASAKUSA_HOME/directio/bin/list-file.sh`` を提供しています。このコマンドを利用して、サンプルアプリケーションの出力結果を確認します。
 
-下記は結果の例です (結果の順序は実行のたびに変わるかもしれません)。
+ここでは、Direct I/Oの入出力ディレクトリにサンプルアプリケーションが出力データを配置したパス ``result`` 以下のすべてのファイルを、サブディレクトリ含めてリストするようコマンドを実行してみます。
 
 ..  code-block:: sh
 
-    cat /tmp/windgate-$USER/result/category-2011-04-01.csv
+    $ASAKUSA_HOME/directio/bin/list-file.sh result "**/*"
+.. ***
+
+上記のコマンドを実行すると、以下のような結果が表示されます。
+
+..  code-block:: sh
+     
+    Starting List Direct I/O Files:
+     Hadoop Command: /usr/lib/hadoop/bin/hadoop
+              Class: com.asakusafw.directio.tools.DirectIoList
+          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-X.X.X.jar,...
+          Arguments: result **/*
+    file:/home/asakusa/target/testing/directio/result/category
+    file:/home/asakusa/target/testing/directio/result/error
+    file:/home/asakusa/target/testing/directio/result/error/20110401.csv
+    file:/home/asakusa/target/testing/directio/result/category/result.csv
+
+出力ファイルの一覧に対して、
+``hadoop fs -text`` コマンドを利用してファイル内容を確認します。
+以下は ``result`` 配下に生成された売上データの集計ファイル ``category/result.csv`` を表示する例です。
+
+..  code-block:: sh
+    
+    hadoop fs -text file:/home/asakusa/target/testing/directio/result/category/result.csv
+
+指定したファイルの内容が表示されます。
+売上データが商品マスタのカテゴリコード単位で集計され、売上合計の降順で整列されたCSVが出力されています。
+
+..  code-block:: sh
+    
     カテゴリコード,販売数量,売上合計
+    1600,28,5400
     1300,12,1596
     1401,15,1470
-    1600,28,5400
-
-    cat /tmp/windgate-$USER/result/error-2011-04-01.csv
-    ファイル名,行番号,日時,店舗コード,商品コード,メッセージ
-    /tmp/windgate-asakusa/sales/2011-04-01.csv,33,2011-04-01 19:00:00,9999,4922010001000,店舗不明
-    /tmp/windgate-asakusa/sales/2011-04-01.csv,35,1990-01-01 10:40:00,0001,4922010001000,商品不明
-    /tmp/windgate-asakusa/sales/2011-04-01.csv,34,2011-04-01 10:00:00,0001,9999999999999,商品不明
-
-Eclipseへアプリケーションプロジェクトをインポート
--------------------------------------------------
-アプリケーションプロジェクトをEclipseへインポートして、Eclipse上でアプリケーションの開発を行えるようにします。
-
-インポートするプロジェクトのディレクトリに移動し、Mavenの以下のコマンドを実行してEclipse用の定義ファイルを作成します。
-
-..  code-block:: sh
-
-    cd ~/workspace/example-app
-    mvn eclipse:eclipse
-
-これでEclipseからプロジェクトをインポート出来る状態になりました。Eclipseのメニューから ``[File]`` -> ``[Import]`` -> ``[General]`` -> ``[Existing Projects into Workspace]`` を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
 
 Next Step:アプリケーションの開発を行う
 ======================================

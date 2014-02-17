@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,7 @@ public class BasicScriptHandlerTestRoot {
         while (scanner.hasNextLine()) {
             results.add(scanner.nextLine());
         }
+        scanner.close();
         return results;
     }
 
@@ -198,6 +199,7 @@ public class BasicScriptHandlerTestRoot {
      * Returns a matcher which tests whether RHS is in LHS.
      * FIXME Matchers.hasItem() may be broken from JUnit 4.1.1.
      * @param matcher RHS
+     * @param <T> the test target data type
      * @return the matcher
      */
     protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {

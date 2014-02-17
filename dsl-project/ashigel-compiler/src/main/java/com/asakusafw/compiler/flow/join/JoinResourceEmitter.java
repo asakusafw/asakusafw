@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ public final class JoinResourceEmitter {
     }
 
     private Name emit() throws IOException {
-        LOG.info("{}のリソースに対するプログラムを生成します", resource);
+        LOG.debug("{}のリソースに対するプログラムを生成します", resource);
         CompilationUnit source = generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();

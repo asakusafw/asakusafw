@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Asakusa Framework Team.
+ * Copyright 2011-2014 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class AnalyzeTask {
         }
         DmdlAnalyzer analyzer = parse(repository);
         try {
-            LOG.info(Messages.getString("AnalyzeTask.monitorResolveStarting")); //$NON-NLS-1$
+            LOG.debug(Messages.getString("AnalyzeTask.monitorResolveStarting")); //$NON-NLS-1$
             return analyzer.resolve();
         } catch (DmdlSemanticException e) {
             LOG.error(Messages.getString("AnalyzeTask.monitorResolveFailed"), e); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class AnalyzeTask {
                 try {
                     AstScript script = parser.parse(resource, name);
                     for (AstModelDefinition<?> model : script.models) {
-                        LOG.info(Messages.getString("AnalyzeTask.monitorFoundModel"), model.name); //$NON-NLS-1$
+                        LOG.debug(Messages.getString("AnalyzeTask.monitorFoundModel"), model.name); //$NON-NLS-1$
                         analyzer.addModel(model);
                         count++;
                     }
@@ -133,7 +133,7 @@ public class AnalyzeTask {
                     resource.close();
                 }
             }
-            LOG.info(Messages.getString("AnalyzeTask.monitorCountModel"), count); //$NON-NLS-1$
+            LOG.debug(Messages.getString("AnalyzeTask.monitorCountModel"), count); //$NON-NLS-1$
         } finally {
             cursor.close();
         }
