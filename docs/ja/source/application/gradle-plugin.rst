@@ -30,6 +30,19 @@ Gradleに関する詳しい情報は、以下のドキュメントなどを参�
 *  `Gradle Documentation <http://www.gradle.org/documentation>`_  (Gradleの公式ドキュメントサイト)
 *  `Gradle 日本語ドキュメント <http://gradle.monochromeroad.com/docs/>`_  (公式ドキュメントの翻訳サイト)
 
+関連プロダクト
+==============
+
+Shafu
+-----
+Shafu (車夫) は、 Asakusa Framework のバッチアプリケーション開発をサポートするEclipseプラグインです。
+
+* :jinrikisha:`Shafu - Asakusa Gradle Plug-in Helper for Eclipse - <shafu.html>`
+
+Shafu は バッチアプリケーション開発に Asakusa Gradle Plugin を利用する際に、Eclipseから透過的にビルドツール上の操作を行えます。Shafuを使うことで、ターミナル上でのビルドツールの操作が不要となり、Eclipse上でアプリケーション開発に必要なほとんどの作業を行うことができるようになります。
+
+本書ではGradleを使った操作はターミナル上での利用手順として説明していますが、
+Eclipseを使った開発を行う場合は Shafu を利用してEclipse上からGradleの操作を行うことも可能です。
 
 Asakusa Gradle Pluginの導入
 ===========================
@@ -592,7 +605,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
     :language: groovy
     :lines: 41-54
 
-上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である  `Direct I/O TSV <http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/directio/tsv.html>`_  を利用するための設定を追加しています。
+上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である :sandbox:`Direct I/O TSV <directio/tsv.html>` を利用するための設定を追加しています。
 
 Direct I/O TSVはDMDLコンパイラの拡張のみを行う機能であるため、運用環境に対するランタイムライブラリの配置が不要ですが、アプリケーションの演算子で利用するライブラリを追加する場合は、運用環境にもこのライブラリを配置する必要があります。これについては、次項の  `アプリケーション用依存ライブラリの追加`_  で説明します。
 
@@ -1213,11 +1226,12 @@ Eclipseを利用している場合は、Eclipse用定義ファイルを更新し
 
     ./gradlew cleanEclipse eclipse
 
+.. _migrate-from-maven-to-gradle:
 
 Mavenプロジェクトのマイグレーション
 -----------------------------------
 
-ここでは、 :doc:`../application/maven-archetype` や Asakusa Framework バージョン ``0.6.0`` 以前の :doc:`../introduction/start-guide` 及び `Jinrikisha (人力車) - Asakusa Framework Starter Package -`_  で記載されている手順に従って構築した開発環境やMavenベースのアプリケーションプロジェクト(以下「Mavenプロジェクト」と表記)をAsakusa Gradle Pluginを使った環境にマイグレーションする手順を説明します。
+ここでは、 :doc:`../application/maven-archetype` や Asakusa Framework バージョン ``0.5.3`` 以前の :doc:`../introduction/start-guide` 及び :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>` で記載されている手順に従って構築した開発環境やMavenベースのアプリケーションプロジェクト(以下「Mavenプロジェクト」と表記)をAsakusa Gradle Pluginを使った環境にマイグレーションする手順を説明します。
 
 ..  note::
     プロジェクトのソースディレクトリに含まれるアプリケーションのソースコード(Asakusa DSL, DMDL, テストコードなど)についてはマイグレーション作業は不要で、そのまま利用することが出来ます。
@@ -1225,7 +1239,7 @@ Mavenプロジェクトのマイグレーション
 ..  attention::
     プロジェクトのマイグレーション作業前に、プロジェクトのバックアップとリストアの確認など、マイグレーション作業にトラブルが発生した場合に元に戻せる状態となっていることを確認してください。
 
-..  _`Jinrikisha (人力車) - Asakusa Framework Starter Package -`: http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/index.html
+.. _apply-gradle-project-template:
 
 プロジェクトテンプレートの適用
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
