@@ -15,8 +15,6 @@
  */
 package com.asakusafw.gradle.plugins.internal
 
-import org.gradle.api.*
-
 /**
  * Convention class for plugin internal.
  */

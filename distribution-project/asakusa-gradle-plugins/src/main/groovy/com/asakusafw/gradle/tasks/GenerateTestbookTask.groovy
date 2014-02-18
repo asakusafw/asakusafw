@@ -15,13 +15,36 @@
  */
 package com.asakusafw.gradle.tasks
 
-import org.gradle.api.tasks.SourceTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+
+import com.asakusafw.gradle.tasks.internal.AbstractAsakusaToolTask
 
 /**
  * Gradle Task for Generating test data template of TestDriver.
+ * @since 0.5.3
+ * @version 0.6.1
  */
-class GenerateTestbookTask extends SourceTask {
+class GenerateTestbookTask extends AbstractAsakusaToolTask {
+
+    /**
+     * The DMDL script source encoding.
+     */
+    @Input
+    String sourceEncoding
+
+    /**
+     * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL|DATAX|RULEX|INOUTX|INSPECTX|ALLX).
+     */
+    @Input
+    String outputSheetFormat
+
+    /**
+     * The test data template output path.
+     */
+    @OutputDirectory
+    File outputDirectory
 
     /**
      * Task Action of this task.
@@ -30,22 +53,33 @@ class GenerateTestbookTask extends SourceTask {
     def generateTestbook() {
         project.javaexec {
             main = 'com.asakusafw.testdata.generator.excel.Main'
-            classpath = project.sourceSets.main.compileClasspath
-            maxHeapSize = project.asakusafw.maxHeapSize
-            jvmArgs = [
-                    "-Djava.awt.headless=true",
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}"
-            ]
-            args = [
+            delegate.classpath = this.getToolClasspathCollection()
+            delegate.jvmArgs = this.getJvmArgs()
+            if (this.getMaxHeapSize()) {
+                delegate.maxHeapSize = this.getMaxHeapSize()
+            }
+            if (this.getLogbackConf()) {
+                delegate.systemProperties += [ 'logback.configurationFile' : this.getLogbackConf().absolutePath ]
+            }
+            delegate.systemProperties += [ 'java.awt.headless' : true ]
+            delegate.systemProperties += this.getSystemProperties()
+            delegate.args = [
                     '-format',
-                    project.asakusafw.testtools.testDataSheetFormat,
+                    this.getOutputSheetFormat(),
                     '-output',
-                    project.asakusafw.testtools.testDataSheetDirectory,
+                    this.getOutputDirectory(),
                     '-source',
-                    project.asakusafw.dmdl.dmdlSourceDirectory,
+                    this.getSourcepathCollection().asPath,
                     '-encoding',
-                    project.asakusafw.dmdl.dmdlEncoding,
+                    this.getSourceEncoding(),
             ]
+            def plugins = this.getPluginClasspathCollection()
+            if (plugins != null && !plugins.empty) {
+                delegate.args += [
+                    '-plugin',
+                    plugins.asPath
+                ]
+            }
         }
     }
 }

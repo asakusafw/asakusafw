@@ -30,12 +30,11 @@ class EclipsePluginEnhancement {
         this.project = project
         this.ant = project.ant
 
-        project.gradle.taskGraph.whenReady { taskGraph ->
-            if (!project.plugins.hasPlugin('eclipse'))
-             return
-
-            configureProject()
-            configureEclipsePlugin()
+        project.afterEvaluate {
+            if (project.plugins.hasPlugin('eclipse')) {
+                configureProject()
+                configureEclipsePlugin()
+            }
         }
     }
 
@@ -78,7 +77,7 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseProjectTask() {
-        project.eclipseProject.doLast {
+        project.tasks.eclipseProject.doLast {
             generateResourcePref()
         }
     }
@@ -93,11 +92,20 @@ class EclipsePluginEnhancement {
 
     private void extendEclipseClasspath() {
         project.eclipse.classpath {
-            file.whenMerged { classpath ->
-                classpath.entries.findAll { it.path.contains('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
-                    it.path = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${project.asakusafw.javac.sourceCompatibility}"
+            file {
+                whenMerged { classpath ->
+                    classpath.entries.findAll { it.path.contains('org.eclipse.jdt.launching.JRE_CONTAINER') }.each {
+                        it.path = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${project.asakusafw.javac.sourceCompatibility}"
+                    }
+                    classpath.entries.unique()
                 }
-                classpath.entries.unique()
+                withXml { provider ->
+                    def xml = provider.asNode()
+                    xml.appendNode 'classpathentry', [
+                        kind: 'src',
+                        path: project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('\\', '/')
+                    ]
+                }
             }
             plusConfigurations += project.configurations.provided
             noExportConfigurations += project.configurations.provided
@@ -125,7 +133,7 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseJdtTask() {
-        project.eclipseJdt.doLast {
+        project.tasks.eclipseJdt.doLast {
             generateFactorypath()
             generateAptPref()
             generateAsakusafwProjectPref()

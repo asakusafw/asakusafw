@@ -15,10 +15,14 @@
  */
 package com.asakusafw.gradle.plugins
 
+import javax.inject.Inject
+
 import org.gradle.api.*
+import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.*
 import org.gradle.api.tasks.bundling.*
 
+import com.asakusafw.gradle.plugins.internal.AsakusaDmdlSourceDelegateImpl
 import com.asakusafw.gradle.tasks.*
 
 /**
@@ -28,8 +32,16 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     public static final String ASAKUSAFW_BUILD_GROUP = 'Asakusa Framework Build'
 
+    private final FileResolver fileResolver
+
     private Project project
+
     private AntBuilder ant
+
+    @Inject
+    public AsakusafwPlugin(FileResolver fileResolver) {
+        this.fileResolver = fileResolver
+    }
 
     void apply(Project project) {
         this.project = project
@@ -48,6 +60,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         configureExtentionProperties()
         configureConfigurations()
         configureDependencies()
+        configureSourceSets()
     }
 
     private void configureExtentionProperties() {
@@ -72,6 +85,16 @@ class AsakusafwPlugin implements Plugin<Project> {
         }
     }
 
+    private void configureSourceSets() {
+        def container = project.sourceSets.main
+        def extension = new AsakusaDmdlSourceDelegateImpl(fileResolver)
+        container.convention.plugins.dmdl = extension
+
+        def dmdl = extension.dmdl
+        dmdl.srcDirs { project.asakusafw.dmdl.dmdlSourceDirectory }
+        container.java.srcDirs { project.asakusafw.modelgen.modelgenSourceDirectory }
+    }
+
     private void configureJavaPlugin() {
         configureJavaProjectProperties()
         configureJavaTaskProperties()
@@ -87,25 +110,22 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     private void configureJavaTaskProperties() {
         project.afterEvaluate {
-            [project.compileJava, project.compileTestJava].each {
+            [project.tasks.compileJava, project.tasks.compileTestJava].each {
                 it.options.encoding = project.asakusafw.javac.sourceEncoding
             }
-            project.compileJava.options.compilerArgs += ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000']
+            project.tasks.compileJava.options.compilerArgs += ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000']
+            project.tasks.compileJava.inputs.property 'annotationSourceDirectory', project.asakusafw.javac.annotationSourceDirectory
         }
     }
 
     private void configureJavaSourceSets() {
-        project.afterEvaluate {
-            project.sourceSets {
-                main.java.srcDirs += [project.asakusafw.javac.annotationSourceDirectory, project.asakusafw.modelgen.modelgenSourceDirectory]
-
-                main.compileClasspath += project.configurations.provided
-                test.compileClasspath += project.configurations.provided
-                test.runtimeClasspath += project.configurations.provided
-                main.compileClasspath += project.configurations.embedded
-                test.compileClasspath += project.configurations.embedded
-                test.runtimeClasspath += project.configurations.embedded
-            }
+        project.sourceSets {
+            main.compileClasspath += project.configurations.provided
+            test.compileClasspath += project.configurations.provided
+            test.runtimeClasspath += project.configurations.provided
+            main.compileClasspath += project.configurations.embedded
+            test.compileClasspath += project.configurations.embedded
+            test.runtimeClasspath += project.configurations.embedded
         }
     }
 
@@ -122,29 +142,61 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('compileDMDL', type: CompileDmdlTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Compiles the DMDL scripts with DMDL Compiler.'
-            source { project.asakusafw.dmdl.dmdlSourceDirectory }
-            inputs.properties ([
-                    package: { project.asakusafw.modelgen.modelgenSourcePackage },
-                    sourceencoding: { project.asakusafw.dmdl.dmdlEncoding },
-                    targetencoding: { project.asakusafw.javac.sourceEncoding }
-                    ])
-            outputs.dir { project.asakusafw.modelgen.modelgenSourceDirectory }
+            sourcepath << { project.sourceSets.main.dmdl }
+            toolClasspath << { project.sourceSets.main.compileClasspath }
+            if (System.env['ASAKUSA_HOME'] != null) {
+                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/dmdl/plugin", include: '**/*.jar') }
+            }
+            conventionMapping.with {
+                logbackConf = {
+                    if (project.asakusafw.logbackConf) {
+                        return project.file(project.asakusafw.logbackConf)
+                    } else {
+                        return null
+                    }
+                }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                packageName = { project.asakusafw.modelgen.modelgenSourcePackage }
+                sourceEncoding = { project.asakusafw.dmdl.dmdlEncoding }
+                targetEncoding = { project.asakusafw.javac.sourceEncoding }
+                outputDirectory = { project.file(project.asakusafw.modelgen.modelgenSourceDirectory) }
+            }
         }
     }
 
     private extendCompileJavaTask() {
-        project.compileJava.doFirst {
+        project.tasks.compileJava.doFirst {
             project.delete(project.asakusafw.javac.annotationSourceDirectory)
             project.mkdir(project.asakusafw.javac.annotationSourceDirectory)
         }
-        project.compileJava.dependsOn(project.compileDMDL)
+        project.tasks.compileJava.dependsOn(project.tasks.compileDMDL)
     }
 
     private defineCompileBatchappTask() {
         project.task('compileBatchapp', type: CompileBatchappTask, dependsOn: ['compileJava', 'processResources']) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Compiles the Asakusa DSL java source with Asakusa DSL Compiler.'
-            onlyIf { dependsOnTaskDidWork() }
+            sourcepath << { project.sourceSets.main.output.classesDir }
+            toolClasspath << { project.sourceSets.main.compileClasspath }
+            if (System.env['ASAKUSA_HOME'] != null) {
+                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/compiler/plugin", include: '**/*.jar') }
+            }
+            conventionMapping.with {
+                logbackConf = {
+                    if (project.asakusafw.logbackConf) {
+                        return project.file(project.asakusafw.logbackConf)
+                    } else {
+                        return null
+                    }
+                }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                frameworkVersion = { project.asakusafw.asakusafwVersion }
+                packageName = { project.asakusafw.compiler.compiledSourcePackage }
+                compilerOptions = { project.asakusafw.compiler.compilerOptions }
+                workingDirectory = { project.file(project.asakusafw.compiler.compilerWorkDirectory) }
+                hadoopWorkingDirectory = { project.asakusafw.compiler.hadoopWorkDirectory }
+                outputDirectory = { project.file(project.asakusafw.compiler.compiledSourceDirectory) }
+            }
         }
     }
 
@@ -155,24 +207,35 @@ class AsakusafwPlugin implements Plugin<Project> {
             from { project.asakusafw.compiler.compiledSourceDirectory }
             destinationDir project.buildDir
             appendix 'batchapps'
-            onlyIf { dependsOnTaskDidWork() }
         }
     }
 
     private extendAssembleTask() {
-        project.assemble.dependsOn(project.jarBatchapp)
+        project.tasks.assemble.dependsOn(project.jarBatchapp)
     }
 
     private defineGenerateTestbookTask() {
         project.task('generateTestbook', type: GenerateTestbookTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Generates the template Excel books for TestDriver.'
-            source { project.asakusafw.dmdl.dmdlSourceDirectory }
-            inputs.properties ([
-                    format: { project.asakusafw.testtools.testDataSheetFormat },
-                    encoding: { project.asakusafw.dmdl.dmdlEncoding }
-            ])
-            outputs.dir { project.asakusafw.testtools.testDataSheetDirectory }
+            sourcepath << { project.sourceSets.main.dmdl }
+            toolClasspath << { project.sourceSets.main.compileClasspath }
+            if (System.env['ASAKUSA_HOME'] != null) {
+                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/dmdl/plugin", include: '**/*.jar') }
+            }
+            conventionMapping.with {
+                logbackConf = {
+                    if (project.asakusafw.logbackConf) {
+                        return project.file(project.asakusafw.logbackConf)
+                    } else {
+                        return null
+                    }
+                }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                sourceEncoding = { project.asakusafw.dmdl.dmdlEncoding }
+                outputSheetFormat = { project.asakusafw.testtools.testDataSheetFormat }
+                outputDirectory = { project.file(project.asakusafw.testtools.testDataSheetDirectory) }
+            }
         }
     }
 
