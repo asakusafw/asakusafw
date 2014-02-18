@@ -19,3 +19,8 @@ then
     echo '$ASAKUSA_HOME'" is not defined" 1>&2
     exit 1
 fi
+
+if [ "$ASAKUSA_BATCHAPPS_HOME" = "" ]
+then
+    export ASAKUSA_BATCHAPPS_HOME="$ASAKUSA_HOME/batchapps"
+fi

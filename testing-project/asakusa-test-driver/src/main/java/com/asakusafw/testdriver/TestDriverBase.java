@@ -386,4 +386,13 @@ public abstract class TestDriverBase {
     public void setJobExecutorFactory(JobExecutorFactory factory) {
         driverContext.setJobExecutorFactory(factory);
     }
+
+    /**
+     * Returns the current test driver context (for internal use only).
+     * @return the current test driver context
+     * @since 0.6.1
+     */
+    TestDriverContext getDriverContext() {
+        return driverContext;
+    }
 }
