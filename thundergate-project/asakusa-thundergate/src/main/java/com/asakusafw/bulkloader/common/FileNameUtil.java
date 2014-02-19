@@ -61,7 +61,7 @@ public final class FileNameUtil {
             String executionId,
             String tableName) throws BulkLoaderSystemException {
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_DIR));
-        if (!fileDirectry.exists()) {
+        if (!prepareTemporaryDirectory(fileDirectry)) {
             // ディレクトリが存在しない場合は異常終了する。
             throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00017",
                     fileDirectry.getAbsolutePath());
@@ -80,6 +80,7 @@ public final class FileNameUtil {
 
         return new File(fileDirectry, strFileName.toString());
     }
+
     /**
      * Extractorに送信するImportファイル名を作成する。
      * @param tableName Import対象テーブル名
@@ -242,5 +243,19 @@ public final class FileNameUtil {
         strFileName.append(String.valueOf(seq));
         strFileName.append(Constants.EXPORT_FILE_EXTENSION);
         return new File(fileDirectry, strFileName.toString());
+    }
+
+    /**
+     * Prepares the temporary directory.
+     * @param directory the target directory path
+     * @return {@code true} if successfully prepared, otherwise {@code false}
+     */
+    public static boolean prepareTemporaryDirectory(File directory) {
+        if (directory.mkdirs() || directory.isDirectory()) {
+            directory.setReadable(true, false);
+            directory.setWritable(true, false);
+            return true;
+        }
+        return false;
     }
 }

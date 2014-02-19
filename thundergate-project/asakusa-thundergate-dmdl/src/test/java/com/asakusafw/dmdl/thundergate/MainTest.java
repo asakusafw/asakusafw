@@ -73,6 +73,7 @@ public class MainTest {
         assertThat(conf.getMatcher().acceptModel("NOT_ACCEPT"), is(false));
         assertThat(conf.getMatcher().acceptModel("DENIED"), is(false));
         assertThat(conf.getMatcher().acceptModel("__TG_CACHE_INFO"), is(false));
+        assertThat(conf.getRecordLockDdlOutput(), is(nullValue()));
     }
 
     /**
@@ -198,6 +199,27 @@ public class MainTest {
         assertThat(conf.getTimestampColumn(), is("LAST_UPDT_DATETIME"));
         assertThat(conf.getDeleteFlagColumn(), is("LOGICAL_DEL_FLG"));
         assertThat(conf.getDeleteFlagValue().toStringValue(), is("1"));
+    }
+
+    /**
+     * configuration with record lock ddl output.
+     * @throws Exception if test was failed
+     */
+    @Test
+    public void with_rlddl() throws Exception {
+        List<String> arguments = Lists.create();
+
+        File jdbc = jdbc();
+        File output = folder.newFolder("output").getCanonicalFile().getAbsoluteFile();
+        File rl = folder.newFolder("rl").getCanonicalFile().getAbsoluteFile();
+
+        Collections.addAll(arguments, "-jdbc", jdbc.getAbsolutePath());
+        Collections.addAll(arguments, "-output", output.getAbsolutePath());
+        Collections.addAll(arguments, "-encoding", "ASCII");
+        Collections.addAll(arguments, "-record_lock_ddl_output", rl.getAbsolutePath());
+        Configuration conf = Main.loadConfigurationFromArguments(arguments.toArray(new String[arguments.size()]));
+
+        assertThat(conf.getRecordLockDdlOutput(), is(rl));
     }
 
     private File jdbc() throws IOException {

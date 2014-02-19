@@ -20,12 +20,15 @@ import org.gradle.util.ConfigureUtil
 
 /**
  * Convention class for {@link AsakusafwPlugin}.
+ * @since 0.5.2
+ * @version 0.6.1
  */
 class AsakusafwPluginConvention {
+
     /**
      * Schema version of this convention.
      */
-    static final CONVENTION_SCHEMA_VERSION = '1.0.0'
+    static final CONVENTION_SCHEMA_VERSION = '1.1.0'
 
     final Project project
 
@@ -46,16 +49,21 @@ class AsakusafwPluginConvention {
     String logbackConf
 
     /** DMDL Settings */
-    DmdlConfiguration dmdl;
+    DmdlConfiguration dmdl
     /** Model Generator Settings */
-    ModelgenConfiguration modelgen;
+    ModelgenConfiguration modelgen
     /** javac Settings */
-    JavacConfiguration javac;
+    JavacConfiguration javac
     /** DSL Compiler Settings */
-    CompilerConfiguration compiler;
+    CompilerConfiguration compiler
     /** Test tools Settings */
-    TestToolsConfiguration testtools;
+    TestToolsConfiguration testtools
 
+    /**
+     * ThunderGate Settings.
+     * @since 0.6.1
+     */
+    ThunderGateConfiguration thundergate
 
     AsakusafwPluginConvention(final Project project) {
         this.project = project
@@ -68,6 +76,7 @@ class AsakusafwPluginConvention {
         javac = new JavacConfiguration(project)
         compiler = new CompilerConfiguration(project)
         testtools = new TestToolsConfiguration(project)
+        thundergate = new ThunderGateConfiguration(project)
     }
 
     def dmdl(Closure configureClousure) {
@@ -84,6 +93,9 @@ class AsakusafwPluginConvention {
     }
     def testtools(Closure configureClousure) {
         ConfigureUtil.configure(configureClousure, testtools)
+    }
+    def thundergate(Closure configureClousure) {
+        ConfigureUtil.configure(configureClousure, thundergate)
     }
 
     /**
@@ -296,6 +308,251 @@ class AsakusafwPluginConvention {
 
     }
 
+    /**
+     * ThunderGate Settings.
+     * @since 0.6.1
+     */
+    class ThunderGateConfiguration {
+
+        /**
+         * The ThunderGate default name using in the development environment (optional).
+         * ThunderGate facilities will be enabled when this value is non-null.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.database.target} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} </dd>
+         * </dl>
+         */
+        String target = null
+
+        /**
+         * DDL sources charset encoding name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (use default system encoding) </dd>
+         * </dl>
+         */
+        String ddlEncoding = null
+
+        /**
+         * The DDL source path.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'src/main/sql/modelgen'} </dd>
+         * </dl>
+         */
+        String ddlSourceDirectory = 'src/main/sql/modelgen'
+
+        /**
+         * The inclusion target table/view name pattern in regular expression (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.includes} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (includes all targets) </dd>
+         * </dl>
+         */
+        String includes = null
+
+        /**
+         * The exclusion target table/view name pattern in regular expression (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.excludes} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (no exclusion targets) </dd>
+         * </dl>
+         */
+        String excludes = null
+
+        /**
+         * The generated DMDL files output path from table/view definitions using DDLs.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.dmdl.fromddl.output} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/thundergate/dmdl"</code> </dd>
+         * </dl>
+         */
+        String dmdlOutputDirectory
+
+        /**
+         * The generated SQL files output path from table/view definitions using DDLs.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/thundergate/sql"</code> </dd>
+         * </dl>
+         */
+        String ddlOutputDirectory
+
+        /**
+         * The system ID column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.sid.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'SID'} </dd>
+         * </dl>
+         */
+        String sidColumn = 'SID'
+
+        /**
+         * The last modified timestamp column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.timestamp.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'UPDT_DATETIME'} </dd>
+         * </dl>
+         */
+        String timestampColumn = 'UPDT_DATETIME'
+
+        /**
+         * The logical delete flag column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.delete.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'DELETE_FLAG'} </dd>
+         * </dl>
+         */
+        String deleteColumn = 'DELETE_FLAG'
+
+        /**
+         * The logical delete flag value representation in DMDL (optional).
+         * Note that the text values must be enclosed with double-quotations like as {@code "<text-value>"}.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> {@code asakusa.modelgen.delete.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code '"1"'} </dd>
+         * </dl>
+         */
+        String deleteValue = '"1"'
+
+        ThunderGateConfiguration(Project project) {
+            this.dmdlOutputDirectory = "${project.buildDir}/thundergate/dmdl"
+            this.ddlOutputDirectory = "${project.buildDir}/thundergate/sql"
+        }
+
+        /**
+         * Sets the ThunderGate default name using in the development environment.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration target(String value) {
+            this.target = value
+            return this
+        }
+
+        /**
+         * Sets DDL sources charset encoding name.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration ddlEncoding(String value) {
+            this.ddlEncoding = value
+            return this
+        }
+
+        /**
+         * Sets the DDL source path.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration ddlSourceDirectory(String value) {
+            this.ddlSourceDirectory = value
+            return this
+        }
+
+        /**
+         * Sets the inclusion target table/view name pattern in regular expression.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration includes(String value) {
+            this.includes = value
+            return this
+        }
+
+        /**
+         * Sets the exclusion target table/view name pattern in regular expression.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration excludes(String value) {
+            this.excludes = value
+            return this
+        }
+
+        /**
+         * Sets the generated DMDL files output path from table/view definitions using DDLs.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration dmdlOutputDirectory(String value) {
+            this.dmdlOutputDirectory = value
+            return this
+        }
+
+        /**
+         * Sets the generated SQL files output path from table/view definitions using DDLs.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration ddlOutputDirectory(String value) {
+            this.ddlOutputDirectory = value
+            return this
+        }
+
+        /**
+         * Sets the system ID column name.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration sidColumn(String value) {
+            this.sidColumn = value
+            return this
+        }
+
+        /**
+         * Sets the last modified timestamp column name.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration timestampColumn(String value) {
+            this.timestampColumn = value
+            return this
+        }
+
+        /**
+         * Sets the logical delete flag column name.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration deleteColumn(String value) {
+            this.deleteColumn = value
+            return this
+        }
+
+        /**
+         * Sets the logical delete flag value representation in DMDL.
+         * @param value the value to set
+         * @return {@code this}
+         */
+        ThunderGateConfiguration deleteValue(Object value) {
+            this.deleteValue = value?.toString()
+            return this
+        }
+    }
+
     def getConventionProperties() {
         def commonPrefix = 'com.asaksuafw.asakusafw.'
         def convention = [:]
@@ -310,6 +567,7 @@ class AsakusafwPluginConvention {
         convention.putAll(asMap(javac, commonPrefix + 'javac.'))
         convention.putAll(asMap(compiler, commonPrefix + 'compiler.'))
         convention.putAll(asMap(testtools, commonPrefix + 'testtools.'))
+        convention.putAll(asMap(thundergate, commonPrefix + 'thundergate.'))
 
         return convention
     }
