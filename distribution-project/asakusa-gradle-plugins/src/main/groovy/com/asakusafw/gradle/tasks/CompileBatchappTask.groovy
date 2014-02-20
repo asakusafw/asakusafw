@@ -15,61 +15,132 @@
  */
 package com.asakusafw.gradle.tasks
 
-import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+
+import com.asakusafw.gradle.tasks.internal.AbstractAsakusaToolTask
 
 /**
  * Gradle Task for DSL Compile.
+ * @since 0.5.3
+ * @version 0.6.1
  */
-class CompileBatchappTask extends DefaultTask {
+class CompileBatchappTask extends AbstractAsakusaToolTask {
+
+    /**
+     * The current framework version.
+     */
+    @Optional
+    @Input
+    String frameworkVersion
+
+    /**
+     * The package name for generated sources.
+     */
+    @Input
+    String packageName
+
+    /**
+     * The Asaksua DSL compiler options
+     */
+    @Optional
+    @Input
+    String compilerOptions
+
+    /**
+     * The compiler working directory.
+     */
+    File workingDirectory
+
+    /**
+     * The working directory while running the compiled batch application
+     * (relative path from the original Hadoop working directory).
+     */
+    @Input
+    String hadoopWorkingDirectory
+
+    /**
+     * The batch application output base path.
+     */
+    @OutputDirectory
+    File outputDirectory
+
+    /**
+     * {@code true} to stop compilation immediately when detects any compilation errors.
+     */
+    @Input
+    boolean failFast = false
+
+    /**
+     * Returns the application project version.
+     * @return the application project version
+     */
+    @Input
+    def getProjectVersion() {
+        return project.version
+    }
 
     /**
      * Task Action of this task.
      */
     @TaskAction
     def compileBatchapp() {
-        def compilerPluginPath = ant.path {
-            fileset(dir:"${System.env.ASAKUSA_HOME}/compiler/plugin", includes: '**/*.jar', erroronmissingdir: false)
-        }
         def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss")
-        def javaVersion = System.properties['java.version']
+        project.delete(getOutputDirectory())
+        project.mkdir(getOutputDirectory())
 
-        project.delete(project.asakusafw.compiler.compiledSourceDirectory)
-        project.mkdir(project.asakusafw.compiler.compiledSourceDirectory)
-
-        project.javaexec {
-            main = 'com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver'
-            classpath = project.sourceSets.main.runtimeClasspath + project.configurations.provided
-            maxHeapSize = project.asakusafw.maxHeapSize
-            enableAssertions = true
-            jvmArgs = [
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}",
-                    "-Dcom.asakusafw.compiler.options=${project.asakusafw.compiler.compilerOptions}",
-                    "-Dcom.asakusafw.batchapp.build.timestamp=${timestamp}",
-                    "-Dcom.asakusafw.batchapp.build.java.version=${javaVersion}",
-                    "-Dcom.asakusafw.framework.version=${project.asakusafw.asakusafwVersion}",
-                    "-Dcom.asakusafw.batchapp.project.version=${project.version}",
-            ]
-            args = [
-                    '-output',
-                    project.asakusafw.compiler.compiledSourceDirectory,
-                    '-package',
-                    project.asakusafw.compiler.compiledSourcePackage,
-                    '-compilerwork',
-                    project.asakusafw.compiler.compilerWorkDirectory,
-                    '-hadoopwork',
-                    project.asakusafw.compiler.hadoopWorkDirectory,
-                    '-link',
-                    project.sourceSets.main.output.classesDir,
-                    '-scanpath',
-                    project.sourceSets.main.output.classesDir,
-                    '-skiperror',
-            ]
-            if (compilerPluginPath.size()) {
-                args += [
-                        '-plugin',
-                        compilerPluginPath
+        def compilerWorkingDirectory = this.getWorkingDirectory() ?: new File(project.buildDir, UUID.randomUUID().toString())
+        try {
+            project.javaexec {
+                main = 'com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver'
+                delegate.classpath = this.getSourcepathCollection() + this.getToolClasspathCollection()
+                delegate.jvmArgs = this.getJvmArgs()
+                if (this.getMaxHeapSize()) {
+                    delegate.maxHeapSize = this.getMaxHeapSize()
+                }
+                if (this.getLogbackConf()) {
+                    delegate.systemProperties += [ 'logback.configurationFile' : this.getLogbackConf().absolutePath ]
+                }
+                delegate.systemProperties += [ 'com.asakusafw.batchapp.project.version' : this.getProjectVersion() ]
+                delegate.systemProperties += [ 'com.asakusafw.batchapp.build.timestamp' : timestamp ]
+                delegate.systemProperties += [ 'com.asakusafw.batchapp.build.java.version' : System.properties['java.version'] ]
+                if (this.getCompilerOptions()) {
+                    delegate.systemProperties += [ 'com.asakusafw.compiler.options' : this.getCompilerOptions() ]
+                }
+                if (this.getFrameworkVersion()) {
+                    delegate.systemProperties += [ 'com.asakusafw.framework.version' : this.getFrameworkVersion() ]
+                }
+                delegate.enableAssertions = true
+                delegate.args = [
+                        '-output',
+                        this.getOutputDirectory(),
+                        '-package',
+                        this.getPackageName(),
+                        '-compilerwork',
+                        this.getWorkingDirectory(),
+                        '-hadoopwork',
+                        this.getHadoopWorkingDirectory(),
+                        '-link',
+                        this.getSourcepathCollection().asPath,
+                        '-scanpath',
+                        this.getSourcepathCollection().asPath,
                 ]
+                if (!isFailFast()) {
+                    delegate.args << '-skiperror'
+                }
+                def plugins = this.getPluginClasspathCollection()
+                if (plugins != null && !plugins.empty) {
+                    delegate.args += [
+                        '-plugin',
+                        plugins.asPath
+                    ]
+                }
+            }
+        } finally {
+            if (!this.getWorkingDirectory()) {
+                project.delete(compilerWorkingDirectory)
             }
         }
     }
