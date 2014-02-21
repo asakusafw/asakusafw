@@ -101,10 +101,10 @@ class EclipsePluginEnhancement {
                 }
                 withXml { provider ->
                     def xml = provider.asNode()
-                    xml.appendNode 'classpathentry', [
-                        kind: 'src',
-                        path: project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('\\', '/')
-                    ]
+                    def target = project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('¥¥', '/')
+                    if (xml.children().find { it.attributes().kind == 'src' && it.attributes().path == target } == null) {
+                        xml.appendNode 'classpathentry', [kind: 'src', path: target]
+                    }
                 }
             }
             plusConfigurations += project.configurations.provided
