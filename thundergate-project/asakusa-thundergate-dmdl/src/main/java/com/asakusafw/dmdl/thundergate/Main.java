@@ -44,7 +44,7 @@ import com.asakusafw.dmdl.parser.DmdlSyntaxException;
 /**
  * プログラムエントリ。
  * @since 0.2.0
- * @version 0.2.3
+ * @version 0.6.1
  */
 public final class Main {
 
@@ -59,6 +59,7 @@ public final class Main {
     private static final Option OPT_TIMESTAMP_COLUMN;
     private static final Option OPT_DELETE_FLAG_COLUMN;
     private static final Option OPT_DELETE_FLAG_VALUE;
+    private static final Option OPT_RECORD_LOCK_DDL_OUTPUT;
 
     private static final Options OPTIONS;
     static {
@@ -98,6 +99,11 @@ public final class Main {
         OPT_DELETE_FLAG_VALUE.setArgName("1");
         OPT_DELETE_FLAG_VALUE.setRequired(false);
 
+        OPT_RECORD_LOCK_DDL_OUTPUT = new Option("record_lock_ddl_output", true,
+                "レコードロック用のシステムテーブルを生成するDDLの生成先");
+        OPT_RECORD_LOCK_DDL_OUTPUT.setArgName("/path/to/output.sql");
+        OPT_RECORD_LOCK_DDL_OUTPUT.setRequired(false);
+
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_OUTPUT);
         OPTIONS.addOption(OPT_JDBC_CONFIG);
@@ -108,6 +114,7 @@ public final class Main {
         OPTIONS.addOption(OPT_TIMESTAMP_COLUMN);
         OPTIONS.addOption(OPT_DELETE_FLAG_COLUMN);
         OPTIONS.addOption(OPT_DELETE_FLAG_VALUE);
+        OPTIONS.addOption(OPT_RECORD_LOCK_DDL_OUTPUT);
     }
 
     private Main() {
@@ -269,6 +276,10 @@ public final class Main {
                         deleteFlagValue), e);
             }
         }
+        String recordLockDdlOutput = getOption(cmd, OPT_RECORD_LOCK_DDL_OUTPUT, false);
+        if (recordLockDdlOutput != null) {
+            result.setRecordLockDdlOutput(new File(recordLockDdlOutput));
+        }
         return result;
     }
 
@@ -300,7 +311,6 @@ public final class Main {
     private static String getOption(CommandLine cmd, Option option, boolean mandatory) {
         assert cmd != null;
         assert option != null;
-        LOG.debug("Finding Variable from arguments: {}", cmd.getArgList());
         String value = cmd.getOptionValue(option.getOpt());
         if (mandatory && value == null) {
             throw new IllegalStateException(MessageFormat.format(

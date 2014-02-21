@@ -15,22 +15,29 @@
  */
 package com.asakusafw.dmdl.thundergate;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.thundergate.emitter.RecordLockDdlEmitter;
 import com.asakusafw.dmdl.thundergate.emitter.ThunderGateModelEmitter;
 import com.asakusafw.dmdl.thundergate.model.ModelDescription;
 import com.asakusafw.dmdl.thundergate.model.ModelRepository;
+import com.asakusafw.dmdl.thundergate.model.TableModelDescription;
 import com.asakusafw.dmdl.thundergate.source.DatabaseSource;
 
 /**
  * プログラムエントリ。
+ * @since 0.2.0
+ * @version 0.6.1
  */
 public class GenerateTask implements Callable<ModelRepository> {
 
@@ -72,6 +79,7 @@ public class GenerateTask implements Callable<ModelRepository> {
             e.printStackTrace();
         }
         emit(repository);
+        generateRecordLockDdl(repository);
         return repository;
     }
 
@@ -159,6 +167,34 @@ public class GenerateTask implements Callable<ModelRepository> {
             LOG.error("{}個のモデルを正しく出力できませんでした", failedCount);
         } else {
             LOG.info("{}個のモデルを出力しました", total);
+        }
+    }
+
+    private void generateRecordLockDdl(ModelRepository repository) {
+        File output = configuration.getRecordLockDdlOutput();
+        if (output == null) {
+            return;
+        }
+        int count = 0;
+        RecordLockDdlEmitter generator = new RecordLockDdlEmitter();
+        for (TableModelDescription model : repository.allTables()) {
+            generator.addTable(model.getReference().getSimpleName());
+            count++;
+        }
+        if (count == 0) {
+            LOG.warn("レコードロック用のDDLを生成する対象のテーブルが一つもありません: {}", output);
+            return;
+        }
+        LOG.info("レコードロック用のDDLを生成しています: {}", output);
+        try {
+            FileOutputStream stream = FileUtils.openOutputStream(output);
+            try {
+                generator.appendTo(stream);
+            } finally {
+                stream.close();
+            }
+        } catch (IOException e) {
+            LOG.error("レコードロック用のDDL生成に失敗しました", e);
         }
     }
 }

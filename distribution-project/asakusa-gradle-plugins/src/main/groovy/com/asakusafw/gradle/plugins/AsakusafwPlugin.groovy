@@ -136,6 +136,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         defineJarBatchappTask()
         extendAssembleTask()
         defineGenerateTestbookTask()
+        defineGenerateThunderGateDataModelTask()
     }
 
     private void defineCompileDMDLTask() {
@@ -144,17 +145,11 @@ class AsakusafwPlugin implements Plugin<Project> {
             description 'Compiles the DMDL scripts with DMDL Compiler.'
             sourcepath << { project.sourceSets.main.dmdl }
             toolClasspath << { project.sourceSets.main.compileClasspath }
-            if (System.env['ASAKUSA_HOME'] != null) {
-                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/dmdl/plugin", include: '**/*.jar') }
+            if (isFrameworkInstalled()) {
+                pluginClasspath << { project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar') }
             }
             conventionMapping.with {
-                logbackConf = {
-                    if (project.asakusafw.logbackConf) {
-                        return project.file(project.asakusafw.logbackConf)
-                    } else {
-                        return null
-                    }
-                }
+                logbackConf = { this.findLogbackConf() }
                 maxHeapSize = { project.asakusafw.maxHeapSize }
                 packageName = { project.asakusafw.modelgen.modelgenSourcePackage }
                 sourceEncoding = { project.asakusafw.dmdl.dmdlEncoding }
@@ -178,17 +173,11 @@ class AsakusafwPlugin implements Plugin<Project> {
             description 'Compiles the Asakusa DSL java source with Asakusa DSL Compiler.'
             sourcepath << { project.sourceSets.main.output.classesDir }
             toolClasspath << { project.sourceSets.main.compileClasspath }
-            if (System.env['ASAKUSA_HOME'] != null) {
-                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/compiler/plugin", include: '**/*.jar') }
+            if (isFrameworkInstalled()) {
+                pluginClasspath << { project.fileTree(dir: getFrameworkFile('compiler/plugin'), include: '**/*.jar') }
             }
             conventionMapping.with {
-                logbackConf = {
-                    if (project.asakusafw.logbackConf) {
-                        return project.file(project.asakusafw.logbackConf)
-                    } else {
-                        return null
-                    }
-                }
+                logbackConf = { this.findLogbackConf() }
                 maxHeapSize = { project.asakusafw.maxHeapSize }
                 frameworkVersion = { project.asakusafw.asakusafwVersion }
                 packageName = { project.asakusafw.compiler.compiledSourcePackage }
@@ -220,23 +209,84 @@ class AsakusafwPlugin implements Plugin<Project> {
             description 'Generates the template Excel books for TestDriver.'
             sourcepath << { project.sourceSets.main.dmdl }
             toolClasspath << { project.sourceSets.main.compileClasspath }
-            if (System.env['ASAKUSA_HOME'] != null) {
-                pluginClasspath << { project.fileTree(dir: "${System.env.ASAKUSA_HOME}/dmdl/plugin", include: '**/*.jar') }
+            if (isFrameworkInstalled()) {
+                pluginClasspath << { project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar') }
             }
             conventionMapping.with {
-                logbackConf = {
-                    if (project.asakusafw.logbackConf) {
-                        return project.file(project.asakusafw.logbackConf)
-                    } else {
-                        return null
-                    }
-                }
+                logbackConf = { this.findLogbackConf() }
                 maxHeapSize = { project.asakusafw.maxHeapSize }
                 sourceEncoding = { project.asakusafw.dmdl.dmdlEncoding }
                 outputSheetFormat = { project.asakusafw.testtools.testDataSheetFormat }
                 outputDirectory = { project.file(project.asakusafw.testtools.testDataSheetDirectory) }
             }
         }
+    }
+
+    private void defineGenerateThunderGateDataModelTask() {
+        def thundergate = project.asakusafw.thundergate
+        def task = project.task('generateThunderGateDataModel', type: GenerateThunderGateDataModelTask) {
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Executes DDLs and generates ThunderGate data models.'
+            sourcepath << { project.fileTree(dir: thundergate.ddlSourceDirectory, include: '**/*.sql') }
+            toolClasspath << { project.sourceSets.main.compileClasspath }
+            systemDdlFiles << { getFrameworkFile('bulkloader/sql/create_table.sql') }
+            systemDdlFiles << { getFrameworkFile('bulkloader/sql/insert_import_table_lock.sql') }
+            conventionMapping.with {
+                logbackConf = { this.findLogbackConf() }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                jdbcConfiguration = { getFrameworkFile("bulkloader/conf/${thundergate.target}-jdbc.properties") }
+                ddlEncoding = { thundergate.ddlEncoding }
+                includePattern = { thundergate.includes }
+                excludePattern = { thundergate.excludes }
+                dmdlOutputDirectory = { project.file(thundergate.dmdlOutputDirectory) }
+                dmdlOutputEncoding = { project.asakusafw.dmdl.dmdlEncoding }
+                recordLockDdlOutput = { new File(project.file(thundergate.ddlOutputDirectory), 'record-lock-ddl.sql') }
+                sidColumnName = { thundergate.sidColumn }
+                timestampColumnName = { thundergate.timestampColumn }
+                deleteFlagColumnName = { thundergate.deleteColumn }
+                deleteFlagColumnValue = { thundergate.deleteValue }
+            }
+            onlyIf { thundergate.target != null }
+            doFirst { checkFrameworkInstalled() }
+        }
+        project.afterEvaluate {
+            if (project.asakusafw.thundergate.target == null) {
+                project.logger.info('Disables task: {}', task.name)
+            } else {
+                project.logger.info('Enables task: {} (using {})', task.name, task.name)
+                project.tasks.compileDMDL.dependsOn task
+                project.sourceSets.main.dmdl.srcDirs { thundergate.dmdlOutputDirectory }
+            }
+        }
+    }
+
+    File findLogbackConf() {
+        if (project.asakusafw.logbackConf) {
+            return project.file(project.asakusafw.logbackConf)
+        } else {
+            return null
+        }
+    }
+
+    boolean isFrameworkInstalled() {
+        if (System.env['ASAKUSA_HOME']) {
+            return new File(System.env['ASAKUSA_HOME']).exists()
+        }
+        return false
+    }
+
+    def checkFrameworkInstalled() {
+        if (isFrameworkInstalled()) {
+            return true
+        }
+        throw new IllegalStateException('Environment variable "ASAKUSA_HOME" is not defined')
+    }
+
+    File getFrameworkFile(String relativePath) {
+        if (System.env['ASAKUSA_HOME']) {
+            return new File(System.env['ASAKUSA_HOME'], relativePath)
+        }
+        return null
     }
 
     private void applySubPlugins() {
