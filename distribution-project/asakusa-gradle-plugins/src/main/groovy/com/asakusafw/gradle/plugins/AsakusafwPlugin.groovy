@@ -20,9 +20,10 @@ import javax.inject.Inject
 import org.gradle.api.*
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.*
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.*
 
-import com.asakusafw.gradle.plugins.internal.AsakusaDmdlSourceDelegateImpl
+import com.asakusafw.gradle.plugins.internal.DefaultAsakusaSourceSetExtension
 import com.asakusafw.gradle.tasks.*
 
 /**
@@ -78,7 +79,7 @@ class AsakusafwPlugin implements Plugin<Project> {
     private void configureDependencies() {
         project.afterEvaluate {
             project.dependencies {
-                embedded project.fileTree(dir: project.asakusafwInternal.dep.embeddedLibsDirectory, include: '*.jar')
+                embedded project.sourceSets.main.libs
                 compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.asakusafwInternal.dep.slf4jVersion
                 compile group: 'ch.qos.logback', name: 'logback-classic', version: project.asakusafwInternal.dep.logbackVersion
             }
@@ -86,13 +87,19 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSets() {
-        def container = project.sourceSets.main
-        def extension = new AsakusaDmdlSourceDelegateImpl(fileResolver)
-        container.convention.plugins.dmdl = extension
+        SourceSet container = project.sourceSets.main
+        container.convention.plugins.put('asakusafw', new DefaultAsakusaSourceSetExtension(project, container, fileResolver))
 
-        def dmdl = extension.dmdl
-        dmdl.srcDirs { project.asakusafw.dmdl.dmdlSourceDirectory }
+        // Application Libraries
+        container.libs.srcDirs { project.asakusafwInternal.dep.embeddedLibsDirectory }
+
+        // DMDL source set
+        container.dmdl.srcDirs { project.asakusafw.dmdl.dmdlSourceDirectory }
         container.java.srcDirs { project.asakusafw.modelgen.modelgenSourceDirectory }
+
+        // ThunderGate DDL source set
+        container.thundergateDdl.srcDirs { project.asakusafw.thundergate.ddlSourceDirectory }
+        // Note: the generated DMDL source files will be added later only if there are actually required
     }
 
     private void configureJavaPlugin() {
@@ -227,7 +234,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         def task = project.task('generateThunderGateDataModel', type: GenerateThunderGateDataModelTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Executes DDLs and generates ThunderGate data models.'
-            sourcepath << { project.fileTree(dir: thundergate.ddlSourceDirectory, include: '**/*.sql') }
+            sourcepath << { project.sourceSets.main.thundergateDdl }
             toolClasspath << { project.sourceSets.main.compileClasspath }
             systemDdlFiles << { getFrameworkFile('bulkloader/sql/create_table.sql') }
             systemDdlFiles << { getFrameworkFile('bulkloader/sql/insert_import_table_lock.sql') }
