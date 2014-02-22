@@ -16,25 +16,21 @@
 package com.asakusafw.gradle.plugins
 
 import groovy.xml.MarkupBuilder
+
 import org.gradle.api.*
 
 /**
- * Enhancements Gradle Eclipse Plugin for Asakusa Framework.
+ * Gradle Eclipse plugin enhancements for Asakusa Framework.
  */
 class EclipsePluginEnhancement {
 
     private Project project
-    private AntBuilder ant
 
     void apply(Project project) {
         this.project = project
-        this.ant = project.ant
-
-        project.afterEvaluate {
-            if (project.plugins.hasPlugin('eclipse')) {
-                configureProject()
-                configureEclipsePlugin()
-            }
+        afterPluginEnabled('eclipse') {
+            configureProject()
+            configureEclipsePlugin()
         }
     }
 
@@ -44,26 +40,30 @@ class EclipsePluginEnhancement {
     }
 
     private void configureConfigurations() {
-        def compileOperator = project.configurations.create('compileOperator')
-
-        compileOperator.description = 'Libraries for compiling Operator DSL on Java Annotation Processor'
+        project.configurations {
+            eclipseAnnotationProcessor {
+                description 'Libraries for compiling Operator DSL on Java Annotation Processor'
+            }
+        }
     }
 
     private void configureDependencies() {
-        project.dependencies {
-            compileOperator "com.asakusafw:asakusa-runtime:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:asakusa-dsl-vocabulary:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:ashigel-compiler:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:java-dom:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:javadoc-parser:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:jsr269-bridge:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:collections:${project.asakusafw.asakusafwVersion}"
-            compileOperator "com.asakusafw:simple-graph:${project.asakusafw.asakusafwVersion}"
-            compileOperator "commons-io:commons-io:${project.asakusafwInternal.dep.commonsIoVersion}"
-            compileOperator "commons-lang:commons-lang:${project.asakusafwInternal.dep.commonsLangVersion}"
-            compileOperator "ch.qos.logback:logback-classic:${project.asakusafwInternal.dep.logbackVersion}"
-            compileOperator "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}"
-            compileOperator "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}"
+        project.afterEvaluate {
+            project.dependencies {
+                eclipseAnnotationProcessor "com.asakusafw:asakusa-runtime:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:asakusa-dsl-vocabulary:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:ashigel-compiler:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:java-dom:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:javadoc-parser:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:jsr269-bridge:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:collections:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "com.asakusafw:simple-graph:${project.asakusafw.asakusafwVersion}"
+                eclipseAnnotationProcessor "commons-io:commons-io:${project.asakusafwInternal.dep.commonsIoVersion}"
+                eclipseAnnotationProcessor "commons-lang:commons-lang:${project.asakusafwInternal.dep.commonsLangVersion}"
+                eclipseAnnotationProcessor "ch.qos.logback:logback-classic:${project.asakusafwInternal.dep.logbackVersion}"
+                eclipseAnnotationProcessor "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}"
+                eclipseAnnotationProcessor "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}"
+            }
         }
     }
 
@@ -83,11 +83,9 @@ class EclipsePluginEnhancement {
     }
 
     private void generateResourcePref() {
-        project.mkdir('.settings')
-        project.file('.settings/org.eclipse.core.resources.prefs').text = """\
-            |eclipse.preferences.version=1
-            |encoding/<project>=UTF-8
-            |""" .stripMargin()
+        preferences('.settings/org.eclipse.core.resources.prefs') { Properties props ->
+            props.setProperty('encoding/<project>', 'UTF-8')
+        }
     }
 
     private void extendEclipseClasspath() {
@@ -98,13 +96,6 @@ class EclipsePluginEnhancement {
                         it.path = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${project.asakusafw.javac.sourceCompatibility}"
                     }
                     classpath.entries.unique()
-                }
-                withXml { provider ->
-                    def xml = provider.asNode()
-                    def target = project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('¥¥', '/')
-                    if (xml.children().find { it.attributes().kind == 'src' && it.attributes().path == target } == null) {
-                        xml.appendNode 'classpathentry', [kind: 'src', path: target]
-                    }
                 }
             }
             plusConfigurations += project.configurations.provided
@@ -127,7 +118,7 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseJdtConfiguration() {
-        project.eclipse.jdt.file.withProperties { props ->
+        project.eclipse.jdt.file.withProperties { Properties props ->
             props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
         }
     }
@@ -143,7 +134,7 @@ class EclipsePluginEnhancement {
     private void generateFactorypath() {
         project.file('.factorypath').withWriter {
             new MarkupBuilder(it).'factorypath' {
-                project.configurations.compileOperator.files.each { dep ->
+                project.configurations.eclipseAnnotationProcessor.files.each { File dep ->
                     'factorypathentry' kind: 'EXTJAR', id: dep.absolutePath, enabled: true, runInBatchMode: false
                 }
             }
@@ -151,22 +142,20 @@ class EclipsePluginEnhancement {
     }
 
     private void generateAptPref() {
-        project.file('.settings/org.eclipse.jdt.apt.core.prefs').text = """\
-            |eclipse.preferences.version=1
-            |org.eclipse.jdt.apt.aptEnabled=true
-            |org.eclipse.jdt.apt.genSrcDir=${project.relativePath(project.asakusafw.javac.annotationSourceDirectory).replace('\\', '/')}
-            |org.eclipse.jdt.apt.reconcileEnabled=true
-            |""" .stripMargin()
+        preferences('.settings/org.eclipse.jdt.apt.core.prefs') { Properties props ->
+            props.setProperty('org.eclipse.jdt.apt.aptEnabled', 'true')
+            props.setProperty('org.eclipse.jdt.apt.genSrcDir', relativePath(project.asakusafw.javac.annotationSourceDirectory))
+            props.setProperty('org.eclipse.jdt.apt.reconcileEnabled', 'true')
+        }
     }
 
     private void generateAsakusafwProjectPref() {
-        project.file('.settings/com.asakusafw.asakusafw.prefs').withWriter('UTF-8') { out ->
-            out.writeLine('eclipse.preferences.version=1')
+        preferences('.settings/com.asakusafw.asakusafw.prefs') { Properties props ->
             project.asakusafw.conventionProperties.each { key, value ->
-                if (key.endsWith('Directory')) {
-                    value = project.relativePath(value).replace('\\', '/')
+                if (key.endsWith('File') || key.endsWith('Directory')) {
+                    value = relativePath(value)
                 }
-                out.writeLine("${key}=${value}")
+                props.setProperty(key, value)
             }
         }
     }
@@ -182,6 +171,32 @@ class EclipsePluginEnhancement {
             project.delete(project.file('.factorypath'))
             project.delete(project.file('.settings/org.eclipse.jdt.apt.core.prefs'))
             project.delete(project.file('.settings/com.asakusafw.asakusafw.prefs'))
+        }
+    }
+
+    private void afterPluginEnabled(String pluginId, Closure<?> closure) {
+        project.plugins.matching({ it == project.plugins.findPlugin(pluginId) }).all {
+            // without delegate to the found plugin
+            closure.call()
+        }
+    }
+
+    private String relativePath(Object path) {
+        return project.relativePath(path).replace('\\', '/')
+    }
+
+    private void preferences(Object path, Closure<?> closure) {
+        File file = project.file(path)
+        Properties properties = new Properties()
+        if (file.exists()) {
+            file.withInputStream { stream ->
+                properties.load(stream)
+            }
+        }
+        closure.call(properties)
+        properties.setProperty('eclipse.preferences.version', '1')
+        file.withOutputStream { stream ->
+            properties.store(stream, null)
         }
     }
 }

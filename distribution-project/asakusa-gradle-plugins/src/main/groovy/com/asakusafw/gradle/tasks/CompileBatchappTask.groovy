@@ -95,7 +95,7 @@ class CompileBatchappTask extends AbstractAsakusaToolTask {
         try {
             project.javaexec {
                 main = 'com.asakusafw.compiler.bootstrap.AllBatchCompilerDriver'
-                delegate.classpath = this.getSourcepathCollection() + this.getToolClasspathCollection()
+                delegate.classpath = this.getToolClasspathCollection()
                 delegate.jvmArgs = this.getJvmArgs()
                 if (this.getMaxHeapSize()) {
                     delegate.maxHeapSize = this.getMaxHeapSize()

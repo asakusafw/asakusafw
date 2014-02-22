@@ -17,14 +17,29 @@ package com.asakusafw.gradle.plugins
 
 import javax.inject.Inject
 
-import org.gradle.api.*
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.JavaVersion
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.plugins.*
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.bundling.*
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.Jar
 
-import com.asakusafw.gradle.plugins.internal.DefaultAsakusaSourceSetExtension
-import com.asakusafw.gradle.tasks.*
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.CompilerConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.DmdlConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ModelgenConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration
+import com.asakusafw.gradle.tasks.CompileBatchappTask
+import com.asakusafw.gradle.tasks.CompileDmdlTask
+import com.asakusafw.gradle.tasks.GenerateTestbookTask
+import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
 
 /**
  * Gradle plugin for building application component blocks.
@@ -37,7 +52,7 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     private Project project
 
-    private AntBuilder ant
+    private File frameworkHome
 
     @Inject
     public AsakusafwPlugin(FileResolver fileResolver) {
@@ -46,7 +61,7 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     void apply(Project project) {
         this.project = project
-        this.ant = project.ant
+        this.frameworkHome = System.env['ASAKUSA_HOME'] == null ? null : new File(System.env['ASAKUSA_HOME'])
 
         project.plugins.apply(JavaPlugin.class)
         project.plugins.apply(AsakusafwBasePlugin.class)
@@ -65,7 +80,56 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private void configureExtentionProperties() {
-        project.extensions.create('asakusafw', AsakusafwPluginConvention, project)
+        AsakusafwPluginConvention convention = project.extensions.create('asakusafw', AsakusafwPluginConvention)
+        convention.dmdl = convention.extensions.create('dmdl', DmdlConfiguration)
+        convention.modelgen = convention.extensions.create('modelgen', ModelgenConfiguration)
+        convention.javac = convention.extensions.create('javac', JavacConfiguration)
+        convention.compiler = convention.extensions.create('compiler', CompilerConfiguration)
+        convention.testtools = convention.extensions.create('testtools', TestToolsConfiguration)
+        convention.thundergate = convention.extensions.create('thundergate', ThunderGateConfiguration)
+        convention.conventionMapping.with {
+            asakusafwVersion = { throw new InvalidUserDataException('"asakusafw.asakusafwVersion" must be set') }
+            maxHeapSize = { '1024m' }
+            logbackConf = { (String) "src/${project.sourceSets.test.name}/resources/logback-test.xml" }
+        }
+        convention.dmdl.conventionMapping.with {
+            dmdlEncoding = { 'UTF-8' }
+            dmdlSourceDirectory = { (String) "src/${project.sourceSets.main.name}/dmdl" }
+        }
+        convention.modelgen.conventionMapping.with {
+            modelgenSourcePackage = { (String) "${project.group}.modelgen" }
+            modelgenSourceDirectory = { (String) "${project.buildDir}/generated-sources/modelgen" }
+        }
+        convention.javac.conventionMapping.with {
+            annotationSourceDirectory = { (String) "${project.buildDir}/generated-sources/annotations" }
+            sourceEncoding = { 'UTF-8' }
+            sourceCompatibility = { JavaVersion.VERSION_1_6 }
+            targetCompatibility = { JavaVersion.VERSION_1_6 }
+        }
+        convention.compiler.conventionMapping.with {
+            compiledSourcePackage = { (String) "${project.group}.batchapp" }
+            compiledSourceDirectory = { (String) "${project.buildDir}/batchc" }
+            compilerOptions = { '' }
+            compilerWorkDirectory = { (String) "${project.buildDir}/batchcwork" }
+            hadoopWorkDirectory = { 'target/hadoopwork/${execution_id}' }
+        }
+        convention.testtools.conventionMapping.with {
+            testDataSheetFormat = { 'ALL' }
+            testDataSheetDirectory = { (String) "${project.buildDir}/excel" }
+        }
+        convention.thundergate.conventionMapping.with {
+            target = { null }
+            ddlEncoding = { null }
+            ddlSourceDirectory = { (String) "src/${project.sourceSets.main.name}/sql/modelgen" }
+            includes = { null }
+            excludes = { null }
+            dmdlOutputDirectory = { (String) "${project.buildDir}/thundergate/dmdl" }
+            ddlOutputDirectory = { (String) "${project.buildDir}/thundergate/sql" }
+            sidColumn = { 'SID' }
+            timestampColumn = { 'UPDT_DATETIME' }
+            deleteColumn = { 'DELETE_FLAG' }
+            deleteValue = { '"1"' }
+        }
     }
 
     private void configureConfigurations() {
@@ -88,18 +152,39 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     private void configureSourceSets() {
         SourceSet container = project.sourceSets.main
-        container.convention.plugins.put('asakusafw', new DefaultAsakusaSourceSetExtension(project, container, fileResolver))
 
         // Application Libraries
-        container.libs.srcDirs { project.asakusafwInternal.dep.embeddedLibsDirectory }
+        SourceDirectorySet libs = createSourceDirectorySet(container, 'libs', 'Application libraries')
+        libs.filter.include '*.jar'
+        libs.srcDirs { project.asakusafwInternal.dep.embeddedLibsDirectory }
 
         // DMDL source set
-        container.dmdl.srcDirs { project.asakusafw.dmdl.dmdlSourceDirectory }
+        SourceDirectorySet dmdl = createSourceDirectorySet(container, 'dmdl', 'DMDL scripts')
+        dmdl.filter.include '**/*.dmdl'
+        dmdl.srcDirs { project.asakusafw.dmdl.dmdlSourceDirectory }
         container.java.srcDirs { project.asakusafw.modelgen.modelgenSourceDirectory }
 
+        // Annotation processors
+        SourceDirectorySet annotations = createSourceDirectorySet(container, 'annotations', 'Java annotation processor results')
+        annotations.srcDirs { project.asakusafw.javac.annotationSourceDirectory }
+        container.allJava.source annotations
+        container.allSource.source annotations
+        // Note: Don't add generated directory into container.output.dirs for eclipse plug-in
+
         // ThunderGate DDL source set
-        container.thundergateDdl.srcDirs { project.asakusafw.thundergate.ddlSourceDirectory }
+        SourceDirectorySet sql = createSourceDirectorySet(container, 'thundergateDdl', 'ThunderGate DDL scripts')
+        sql.filter.include '**/*.sql'
+        sql.srcDirs { project.asakusafw.thundergate.ddlSourceDirectory }
         // Note: the generated DMDL source files will be added later only if there are actually required
+    }
+
+    private SourceDirectorySet createSourceDirectorySet(SourceSet parent, String name, String displayName) {
+        assert parent instanceof ExtensionAware
+        ExtensionContainer extensions = parent.extensions
+        // currently, project.sourceSets.main.* is not ExtensionAware
+        SourceDirectorySet extension = new DefaultSourceDirectorySet(name, displayName, fileResolver)
+        extensions.add(name, extension)
+        return extension
     }
 
     private void configureJavaPlugin() {
@@ -120,8 +205,15 @@ class AsakusafwPlugin implements Plugin<Project> {
             [project.tasks.compileJava, project.tasks.compileTestJava].each {
                 it.options.encoding = project.asakusafw.javac.sourceEncoding
             }
-            project.tasks.compileJava.options.compilerArgs += ['-s', project.asakusafw.javac.annotationSourceDirectory, '-Xmaxerrs', '10000']
-            project.tasks.compileJava.inputs.property 'annotationSourceDirectory', project.asakusafw.javac.annotationSourceDirectory
+            Set<File> annotations = project.sourceSets.main.annotations.getSrcDirs()
+            if (annotations.size() >= 1) {
+                if (annotations.size() >= 2) {
+                    throw new InvalidUserDataException("sourceSets.main.annotations has only upto 1 directory: ${annotations}")
+                }
+                File directory = annotations.iterator().next()
+                project.tasks.compileJava.options.compilerArgs += ['-s', directory.absolutePath, '-Xmaxerrs', '10000']
+                project.tasks.compileJava.inputs.property 'annotationSourceDirectory', directory.absolutePath
+            }
         }
     }
 
@@ -150,10 +242,10 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('compileDMDL', type: CompileDmdlTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Compiles the DMDL scripts with DMDL Compiler.'
-            sourcepath << { project.sourceSets.main.dmdl }
-            toolClasspath << { project.sourceSets.main.compileClasspath }
+            sourcepath << project.sourceSets.main.dmdl
+            toolClasspath << project.sourceSets.main.compileClasspath
             if (isFrameworkInstalled()) {
-                pluginClasspath << { project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar') }
+                pluginClasspath << project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar')
             }
             conventionMapping.with {
                 logbackConf = { this.findLogbackConf() }
@@ -179,16 +271,17 @@ class AsakusafwPlugin implements Plugin<Project> {
             group ASAKUSAFW_BUILD_GROUP
             description 'Compiles the Asakusa DSL java source with Asakusa DSL Compiler.'
             sourcepath << { project.sourceSets.main.output.classesDir }
-            toolClasspath << { project.sourceSets.main.compileClasspath }
+            toolClasspath << project.sourceSets.main.compileClasspath
+            toolClasspath << project.sourceSets.main.output
             if (isFrameworkInstalled()) {
-                pluginClasspath << { project.fileTree(dir: getFrameworkFile('compiler/plugin'), include: '**/*.jar') }
+                pluginClasspath << project.fileTree(dir: getFrameworkFile('compiler/plugin'), include: '**/*.jar')
             }
             conventionMapping.with {
                 logbackConf = { this.findLogbackConf() }
                 maxHeapSize = { project.asakusafw.maxHeapSize }
                 frameworkVersion = { project.asakusafw.asakusafwVersion }
                 packageName = { project.asakusafw.compiler.compiledSourcePackage }
-                compilerOptions = { project.asakusafw.compiler.compilerOptions }
+                compilerOptions = { project.asakusafw.compiler.compilerOptions ?: '' }
                 workingDirectory = { project.file(project.asakusafw.compiler.compilerWorkDirectory) }
                 hadoopWorkingDirectory = { project.asakusafw.compiler.hadoopWorkDirectory }
                 outputDirectory = { project.file(project.asakusafw.compiler.compiledSourceDirectory) }
@@ -214,10 +307,10 @@ class AsakusafwPlugin implements Plugin<Project> {
         project.task('generateTestbook', type: GenerateTestbookTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Generates the template Excel books for TestDriver.'
-            sourcepath << { project.sourceSets.main.dmdl }
-            toolClasspath << { project.sourceSets.main.compileClasspath }
+            sourcepath << project.sourceSets.main.dmdl
+            toolClasspath << project.sourceSets.main.compileClasspath
             if (isFrameworkInstalled()) {
-                pluginClasspath << { project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar') }
+                pluginClasspath << project.fileTree(dir: getFrameworkFile('dmdl/plugin'), include: '**/*.jar')
             }
             conventionMapping.with {
                 logbackConf = { this.findLogbackConf() }
@@ -234,8 +327,8 @@ class AsakusafwPlugin implements Plugin<Project> {
         def task = project.task('generateThunderGateDataModel', type: GenerateThunderGateDataModelTask) {
             group ASAKUSAFW_BUILD_GROUP
             description 'Executes DDLs and generates ThunderGate data models.'
-            sourcepath << { project.sourceSets.main.thundergateDdl }
-            toolClasspath << { project.sourceSets.main.compileClasspath }
+            sourcepath << project.sourceSets.main.thundergateDdl
+            toolClasspath << project.sourceSets.main.compileClasspath
             systemDdlFiles << { getFrameworkFile('bulkloader/sql/create_table.sql') }
             systemDdlFiles << { getFrameworkFile('bulkloader/sql/insert_import_table_lock.sql') }
             conventionMapping.with {
@@ -267,7 +360,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         }
     }
 
-    File findLogbackConf() {
+    protected File findLogbackConf() {
         if (project.asakusafw.logbackConf) {
             return project.file(project.asakusafw.logbackConf)
         } else {
@@ -275,23 +368,31 @@ class AsakusafwPlugin implements Plugin<Project> {
         }
     }
 
-    boolean isFrameworkInstalled() {
-        if (System.env['ASAKUSA_HOME']) {
-            return new File(System.env['ASAKUSA_HOME']).exists()
-        }
-        return false
+    /**
+     * Sets the Asakusa Framework home path (internal use only).
+     * @param path the home path
+     */
+    protected void setFrameworkHome(File path) {
+        this.frameworkHome = path
     }
 
-    def checkFrameworkInstalled() {
+    protected boolean isFrameworkInstalled() {
+        return frameworkHome != null && frameworkHome.exists()
+    }
+
+    protected def checkFrameworkInstalled() {
         if (isFrameworkInstalled()) {
             return true
         }
-        throw new IllegalStateException('Environment variable "ASAKUSA_HOME" is not defined')
+        if (frameworkHome == null) {
+            throw new IllegalStateException('Environment variable "ASAKUSA_HOME" is not defined')
+        }
+        throw new IllegalStateException("Environment variable 'ASAKUSA_HOME' is not valid: ${this.frameworkHome}")
     }
 
-    File getFrameworkFile(String relativePath) {
-        if (System.env['ASAKUSA_HOME']) {
-            return new File(System.env['ASAKUSA_HOME'], relativePath)
+    protected File getFrameworkFile(String relativePath) {
+        if (frameworkHome != null) {
+            return new File(frameworkHome, relativePath)
         }
         return null
     }
