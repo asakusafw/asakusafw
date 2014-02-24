@@ -15,9 +15,6 @@
  */
 package com.asakusafw.gradle.plugins
 
-import org.gradle.api.*
-import org.gradle.util.ConfigureUtil
-
 /**
  * Convention class for {@link AsakusafwOrganizerPlugin}.
  * @since 0.5.2
@@ -25,16 +22,26 @@ import org.gradle.util.ConfigureUtil
  */
 class AsakusafwOrganizerPluginConvention {
 
-    final Project project
-
     /**
      * Asakusa Framework Version.
      * This property must be specified in project configuration
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> pom.xml - {@code properties/asakusafw.version} </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> N/A </dd>
+     * </dl>
      */
     String asakusafwVersion
 
     /**
      * Working directory of Framework Organizer.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> N/A </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> <code>"${project.buildDir}/asakusafw-assembly"</code> </dd>
+     * </dl>
      */
     String assembleDir
 
@@ -44,21 +51,11 @@ class AsakusafwOrganizerPluginConvention {
      */
     ThunderGateConfiguration thundergate
 
-    AsakusafwOrganizerPluginConvention(final Project project) {
-        this.project = project
-        assembleDir = "${project.buildDir}/asakusafw-assembly"
-        thundergate = new ThunderGateConfiguration(project)
-    }
-
-    def thundergate(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, thundergate)
-    }
-
     /**
-     * ThunderGate Settings.
+     * ThunderGate settings for the Asakusa Framework organizer.
      * @since 0.6.1
      */
-    class ThunderGateConfiguration {
+    static class ThunderGateConfiguration {
 
         /**
          * Configuration whether ThunderGate is enabled or not.
@@ -70,7 +67,7 @@ class AsakusafwOrganizerPluginConvention {
          *     <dd> {@code false} </dd>
          * </dl>
          */
-        boolean enabled = false
+        boolean enabled
 
         /**
          * The ThunderGate default name using in the development environment (optional).
@@ -81,38 +78,17 @@ class AsakusafwOrganizerPluginConvention {
          *     <dd> {@code null} </dd>
          * </dl>
          */
-        String target = null
-
-        ThunderGateConfiguration(Project project) {
-            //NOP
-        }
+        String target
 
         /**
-         * Returns whether ThunderGate is enabled or not.
-         * @return {@code true} if ThunderGate is enabled, otherwise {@code false}
+         * Sets the ThunderGate default target name using in the development environment.
+         * @param value the target name
          */
-        public boolean isEnabled() {
-            return this.enabled || this.getTarget() != null
-        }
-
-        /**
-         * Sets whether ThunderGate is enabled or not.
-         * @param value {@code true} to enable ThunderGate
-         * @return {@code this}
-         */
-        ThunderGateConfiguration enabled(boolean value = true) {
-            this.enabled = value
-            return this
-        }
-
-        /**
-         * Sets the ThunderGate default name using in the development environment.
-         * @param value the value to set
-         * @return {@code this}
-         */
-        ThunderGateConfiguration target(String value) {
+        void setTarget(String value) {
             this.target = value
-            return this
+            if (value != null && !isEnabled()) {
+                setEnabled(true)
+            }
         }
     }
 }

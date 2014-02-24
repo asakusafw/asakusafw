@@ -18,6 +18,8 @@ package com.asakusafw.gradle.plugins
 import org.gradle.api.*
 import org.gradle.api.tasks.bundling.*
 
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration
+
 /**
  * Gradle plugin for assembling and Installing Asakusa Framework.
  */
@@ -26,18 +28,15 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     public static final String ASAKUSAFW_ORGANIZER_GROUP = 'Asakusa Framework Organizer'
 
     private Project project
-    private AntBuilder ant
 
     void apply(Project project) {
         this.project = project
-        this.ant = project.ant
 
         project.plugins.apply(AsakusafwBasePlugin.class)
 
         configureProject()
         defineOrganizerTasks()
     }
-
 
     private void configureProject() {
         configureExtentionProperties()
@@ -46,7 +45,16 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     }
 
     private void configureExtentionProperties() {
-        project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention, project)
+        AsakusafwOrganizerPluginConvention convention = project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention)
+        convention.thundergate = convention.extensions.create('thundergate', ThunderGateConfiguration)
+        convention.conventionMapping.with {
+            asakusafwVersion = { throw new InvalidUserDataException('"asakusafw.asakusafwVersion" must be set') }
+            assembleDir = { (String) "${project.buildDir}/asakusafw-assembly" }
+        }
+        convention.thundergate.conventionMapping.with {
+            enabled = { false }
+            target = { null }
+        }
     }
 
     private void configureConfigurations() {
