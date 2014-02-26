@@ -73,6 +73,17 @@ class AsakusafwPluginConvention {
     String logbackConf
 
     /**
+     * The base Java package name used in Asakusa Framework code generation.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> (may be specified in {@code mvn archetype:generate}) </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> {@code project.group} </dd>
+     * </dl>
+     */
+    String basePackage
+
+    /**
      * DMDL settings.
      */
     DmdlConfiguration dmdl
@@ -142,7 +153,7 @@ class AsakusafwPluginConvention {
          *   <dt> Migration from Maven-Archetype: </dt>
          *     <dd> build.properties: {@code asakusa.modelgen.package} </dd>
          *   <dt> Default value: </dt>
-         *     <dd> <code>"${project.group}.modelgen"</code> </dd>
+         *     <dd> <code>"${project.asakusafw.basePackage}.modelgen"</code> </dd>
          * </dl>
          */
         String modelgenSourcePackage
@@ -228,7 +239,7 @@ class AsakusafwPluginConvention {
          *   <dt> Migration from Maven-Archetype: </dt>
          *     <dd> build.properties - {@code asakusa.package.default} </dd>
          *   <dt> Default value: </dt>
-         *     <dd> <code>"${project.group}.batchapp"</code> </dd>
+         *     <dd> <code>"${project.asakusafw.basePackage}.batchapp"</code> </dd>
          * </dl>
          */
         String compiledSourcePackage

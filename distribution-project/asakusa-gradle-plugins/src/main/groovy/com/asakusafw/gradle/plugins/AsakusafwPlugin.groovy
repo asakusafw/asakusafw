@@ -91,13 +91,19 @@ class AsakusafwPlugin implements Plugin<Project> {
             asakusafwVersion = { throw new InvalidUserDataException('"asakusafw.asakusafwVersion" must be set') }
             maxHeapSize = { '1024m' }
             logbackConf = { (String) "src/${project.sourceSets.test.name}/resources/logback-test.xml" }
+            basePackage = {
+                if (project.group == null || project.group == '') {
+                    throw new InvalidUserDataException('"asakusafw.basePackage" must be specified')
+                }
+                return project.group
+            }
         }
         convention.dmdl.conventionMapping.with {
             dmdlEncoding = { 'UTF-8' }
             dmdlSourceDirectory = { (String) "src/${project.sourceSets.main.name}/dmdl" }
         }
         convention.modelgen.conventionMapping.with {
-            modelgenSourcePackage = { (String) "${project.group}.modelgen" }
+            modelgenSourcePackage = { (String) "${project.asakusafw.basePackage}.modelgen" }
             modelgenSourceDirectory = { (String) "${project.buildDir}/generated-sources/modelgen" }
         }
         convention.javac.conventionMapping.with {
@@ -107,7 +113,7 @@ class AsakusafwPlugin implements Plugin<Project> {
             targetCompatibility = { JavaVersion.VERSION_1_6 }
         }
         convention.compiler.conventionMapping.with {
-            compiledSourcePackage = { (String) "${project.group}.batchapp" }
+            compiledSourcePackage = { (String) "${project.asakusafw.basePackage}.batchapp" }
             compiledSourceDirectory = { (String) "${project.buildDir}/batchc" }
             compilerOptions = { '' }
             compilerWorkDirectory = { (String) "${project.buildDir}/batchcwork" }
