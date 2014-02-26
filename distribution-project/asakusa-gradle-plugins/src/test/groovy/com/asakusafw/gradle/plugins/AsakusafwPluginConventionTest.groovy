@@ -74,6 +74,7 @@ class AsakusafwPluginConventionTest {
         }
         assert convention.maxHeapSize == '1024m'
         assert convention.logbackConf == "src/${project.sourceSets.test.name}/resources/logback-test.xml"
+        assert convention.basePackage == project.group
 
         assert convention.dmdl instanceof DmdlConfiguration
         assert convention.modelgen instanceof ModelgenConfiguration
@@ -97,7 +98,7 @@ class AsakusafwPluginConventionTest {
      */
     @Test
     void modelgen_defaults() {
-        assert convention.modelgen.modelgenSourcePackage == "${project.group}.modelgen"
+        assert convention.modelgen.modelgenSourcePackage == "${project.asakusafw.basePackage}.modelgen"
         assert convention.modelgen.modelgenSourceDirectory == "${project.buildDir}/generated-sources/modelgen"
     }
 
@@ -117,7 +118,7 @@ class AsakusafwPluginConventionTest {
      */
     @Test
     void compiler_defaults() {
-        assert convention.compiler.compiledSourcePackage == "${project.group}.batchapp"
+        assert convention.compiler.compiledSourcePackage == "${project.asakusafw.basePackage}.batchapp"
         assert convention.compiler.compiledSourceDirectory == "${project.buildDir}/batchc"
         assert convention.compiler.compilerOptions == ''
         assert convention.compiler.compilerWorkDirectory == "${project.buildDir}/batchcwork"
@@ -149,5 +150,34 @@ class AsakusafwPluginConventionTest {
         assert convention.thundergate.sidColumn == 'SID'
         assert convention.thundergate.target == null
         assert convention.thundergate.timestampColumn == 'UPDT_DATETIME'
+    }
+
+    /**
+     * Test for {@code project.asakusafw.basePackage} value.
+     */
+    @Test
+    void basePackage_transitive() {
+        project.group = null
+        try {
+            convention.modelgen.getModelgenSourcePackage()
+            fail()
+        } catch (Exception e) {
+            // ok
+        }
+        try {
+            convention.compiler.getCompiledSourcePackage()
+            fail()
+        } catch (Exception e) {
+            // ok
+        }
+
+        project.group 'testing.t1'
+        assert convention.basePackage == 'testing.t1'
+        assert convention.modelgen.modelgenSourcePackage == 'testing.t1.modelgen'
+        assert convention.compiler.compiledSourcePackage == 'testing.t1.batchapp'
+
+        convention.basePackage 'testing.t2'
+        assert convention.modelgen.modelgenSourcePackage == 'testing.t2.modelgen'
+        assert convention.compiler.compiledSourcePackage == 'testing.t2.batchapp'
     }
 }

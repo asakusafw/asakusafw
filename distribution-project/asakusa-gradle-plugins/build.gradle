@@ -37,6 +37,13 @@ dependencies {
     deployerJars 'org.springframework.build.aws:org.springframework.build.aws.maven:3.0.0.RELEASE'
 }
 
+project.sourceCompatibility = JavaVersion.toVersion('1.6')
+project.targetCompatibility = JavaVersion.toVersion('1.6')
+
+tasks.withType(AbstractCompile) { task ->
+    task.options.encoding = 'UTF-8'
+}
+
 groovydoc {
     docTitle "Asakusa Gradle Plugins ${version}"
     windowTitle "Asakusa Gradle Plugins ${version}"
@@ -165,5 +172,6 @@ task assembleTemplates {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion '1.10'
+    jarFile file('.buildtools/gradlew.jar')
 }
