@@ -18,6 +18,8 @@ package com.asakusafw.compiler.directio;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -279,6 +281,27 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * use variables in base path.
+     * @throws Exception if failed
+     */
+    @Test
+    public void variable_basepath() throws Exception {
+        useFrameworkConf("split-io-conf.xml");
+        put("input-split/input.txt", "1Hello");
+        put("other-split/other.txt", "2Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "${input}", "input.txt"));
+        Out<Line1> out = tester.output("out1", new Output(format, "${output}", "output.txt"));
+
+        tester.variables().defineVariable("input", "input");
+        tester.variables().defineVariable("output", "output");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output-split/output.txt");
+        assertThat(list.size(), is(1));
+        assertThat(list, hasItem("1Hello"));
+    }
+
+    /**
      * delete file.
      * @throws Exception if failed
      */
@@ -496,6 +519,35 @@ public class DirectFileIoProcessorRunTest {
         }
     }
 
+    private void useFrameworkConf(String name) {
+        File file = tester.framework().getCoreConfigurationFile();
+        if (file == null) {
+            throw new AssertionError("Missing original framework conf");
+        }
+        InputStream input = getClass().getResourceAsStream(name);
+        assertThat(name, input, is(notNullValue()));
+        try {
+            try {
+                OutputStream output = new FileOutputStream(file);
+                try {
+                    byte[] buf = new byte[256];
+                    while (true) {
+                        int read = input.read(buf);
+                        if (read < 0) {
+                            break;
+                        }
+                        output.write(buf, 0, read);
+                    }
+                } finally {
+                    output.close();
+                }
+            } finally {
+                input.close();
+            }
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     private static class Input extends DirectFileInputDescription {
 

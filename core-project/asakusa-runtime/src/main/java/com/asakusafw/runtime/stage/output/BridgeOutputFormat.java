@@ -66,7 +66,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * A bridge implementation for Hadoop {@link OutputFormat}.
  * @since 0.2.5
- * @version 0.4.0
+ * @version 0.6.1
  */
 public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
@@ -130,6 +130,11 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
     private static void save(Configuration conf, List<OutputSpec> specs) {
         assert conf != null;
         assert specs != null;
+        for (OutputSpec spec : specs) {
+            if (spec.resolved) {
+                throw new IllegalStateException();
+            }
+        }
         try {
             ByteArrayOutputStream sink = new ByteArrayOutputStream();
             DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)));
@@ -155,6 +160,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         if (encoded == null) {
             return Collections.emptyList();
         }
+        VariableTable table = getVariableTable(context);
         try {
             ByteArrayInputStream source = new ByteArrayInputStream(encoded.getBytes(ASCII));
             DataInputStream input = new DataInputStream(new GZIPInputStream(new Base64InputStream(source)));
@@ -169,13 +175,27 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             int specCount = WritableUtils.readVInt(input);
             for (int specIndex = 0; specIndex < specCount; specIndex++) {
                 String basePath = WritableUtils.readString(input);
+                try {
+                    basePath = table.parse(basePath);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            "Invalid basePath: {0}",
+                            basePath), e);
+                }
                 int patternCount = WritableUtils.readVInt(input);
                 List<String> patterns = new ArrayList<String>();
                 for (int patternIndex = 0; patternIndex < patternCount; patternIndex++) {
                     String pattern = WritableUtils.readString(input);
+                    try {
+                        pattern = table.parse(pattern);
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalStateException(MessageFormat.format(
+                                "Invalid delete pattern: {0}",
+                                pattern), e);
+                    }
                     patterns.add(pattern);
                 }
-                results.add(new OutputSpec(basePath, patterns));
+                results.add(new OutputSpec(basePath, patterns, true));
             }
             return results;
         } catch (IOException e) {
@@ -192,7 +212,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
         DirectDataSourceRepository repo = getDataSourceRepository(context);
         List<OutputSpec> specs = getSpecs(context);
-        VariableTable table = getVariableTable(context);
         for (OutputSpec spec : specs) {
             try {
                 repo.getContainerPath(spec.basePath);
@@ -203,8 +222,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             for (String pattern : spec.deletePatterns) {
                 try {
-                    String resolved = table.parse(pattern);
-                    FilePattern.compile(resolved);
+                    FilePattern.compile(pattern);
                 } catch (IllegalArgumentException e) {
                     throw new IOException(MessageFormat.format(
                             "Invalid delete pattern: {0}",
@@ -260,10 +278,17 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         final List<String> deletePatterns;
 
+        final boolean resolved;
+
         OutputSpec(String basePath, List<String> deletePatterns) {
+            this(basePath, deletePatterns, false);
+        }
+
+        OutputSpec(String basePath, List<String> deletePatterns, boolean resolved) {
             assert basePath != null;
             this.basePath = basePath;
             this.deletePatterns = deletePatterns;
+            this.resolved = resolved;
         }
 
         @Override
@@ -516,7 +541,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
         private void cleanOutput(JobContext jobContext) throws IOException {
             assert jobContext != null;
-            VariableTable variables = getVariableTable(jobContext);
             for (OutputSpec spec : outputSpecs) {
                 if (spec.deletePatterns.isEmpty()) {
                     continue;
@@ -527,14 +551,13 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     DirectDataSource repo = repository.getRelatedDataSource(spec.basePath);
                     String basePath = repository.getComponentPath(spec.basePath);
                     for (String pattern : spec.deletePatterns) {
-                        String resolved = variables.parse(pattern);
-                        FilePattern resources = FilePattern.compile(resolved);
+                        FilePattern resources = FilePattern.compile(pattern);
                         if (LOG.isInfoEnabled()) {
                             LOG.info(MessageFormat.format(
                                     "Deleting output: datasource={0}, basePath={1}, pattern={2}",
                                     id,
                                     basePath,
-                                    resolved));
+                                    pattern));
                         }
                         boolean succeed = repo.delete(basePath, resources, true, context.getCounter());
                         if (LOG.isDebugEnabled()) {
@@ -542,7 +565,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                                     "Deleted output (succeed={3}): datasource={0}, basePath={1}, pattern={2}",
                                     id,
                                     basePath,
-                                    resolved,
+                                    pattern,
                                     succeed));
                         }
                     }
