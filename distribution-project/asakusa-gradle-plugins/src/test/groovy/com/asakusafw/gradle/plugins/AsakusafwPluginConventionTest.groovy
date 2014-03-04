@@ -180,4 +180,12 @@ class AsakusafwPluginConventionTest {
         assert convention.modelgen.modelgenSourcePackage == 'testing.t2.modelgen'
         assert convention.compiler.compiledSourcePackage == 'testing.t2.batchapp'
     }
+
+    /**
+     * Test for {@code project.asakusafw} convention default values.
+     */
+    @Test
+    void conventionProperties_defaults() {
+        assert convention.getConventionProperties() != null
+    }
 }

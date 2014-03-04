@@ -457,7 +457,13 @@ class AsakusafwPluginConvention {
         for (Field field : declared.declaredFields.findAll{ !it.synthetic && !Modifier.isStatic(it.getModifiers()) && obj.hasProperty(it.name) }) {
             String propertyKey = keyPrefix + field.name
             Class<?> propertyType = field.type
-            Object propertyValue = obj.getAt(field.name)
+            Object propertyValue;
+            try {
+                propertyValue = obj.getAt(field.name)
+            } catch (Exception e) {
+                // ignores unset value
+                propertyValue = null
+            }
             if (propertyValue != null && isConventionMember(propertyType)) {
                 results += asMap(propertyType, propertyValue, propertyKey + '.')
             } else {
