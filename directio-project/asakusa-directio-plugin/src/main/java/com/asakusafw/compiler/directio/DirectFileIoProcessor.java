@@ -61,7 +61,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 /**
  * Processes {@link DirectFileInputDescription} and {@link DirectFileOutputDescription}.
  * @since 0.2.5
- * @version 0.4.0
+ * @version 0.6.1
  */
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
@@ -342,6 +342,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         attributes.put(DirectDataSourceConstants.KEY_FORMAT_CLASS, desc.getFormat().getName());
         attributes.put(DirectDataSourceConstants.KEY_BASE_PATH, desc.getBasePath());
         attributes.put(DirectDataSourceConstants.KEY_RESOURCE_PATH, desc.getResourcePattern());
+        attributes.put(DirectDataSourceConstants.KEY_OPTIONAL, String.valueOf(desc.isOptional()));
         return attributes;
     }
 
