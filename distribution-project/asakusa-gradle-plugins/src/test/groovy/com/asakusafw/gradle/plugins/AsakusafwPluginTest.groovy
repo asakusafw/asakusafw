@@ -32,6 +32,7 @@ import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
 import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
+import com.asakusafw.gradle.tasks.RunBatchappTask
 
 /**
  * Test for {@link AsakusafwPlugin}.
@@ -197,6 +198,27 @@ class AsakusafwPluginTest {
         assert task.sourceEncoding == convention.dmdl.dmdlEncoding
         assert task.outputSheetFormat == convention.testtools.testDataSheetFormat
         assert task.outputDirectory == project.file(convention.testtools.testDataSheetDirectory)
+    }
+
+    /**
+     * Test for {@code project.tasks.testRunBatchapp}.
+     */
+    @Test
+    void tasks_testRunBatchapp() {
+        AsakusafwPluginConvention convention = project.asakusafw
+        convention.logbackConf 'testing/logback'
+        convention.maxHeapSize '1G'
+
+        convention.compiler.compiledSourceDirectory 'testing/compiled'
+
+        RunBatchappTask task = project.tasks.testRunBatchapp
+        assert task.logbackConf == project.file(convention.logbackConf)
+        assert task.maxHeapSize == convention.maxHeapSize
+        assert project.file(task.systemProperties['asakusa.testdriver.batchapps']) == project.file(convention.compiler.compiledSourceDirectory)
+        assert task.jvmArgs.isEmpty()
+
+        assert task.batchId == null
+        assert task.batchArguments.isEmpty()
     }
 
     /**
