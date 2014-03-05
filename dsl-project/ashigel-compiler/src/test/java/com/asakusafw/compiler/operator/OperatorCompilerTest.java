@@ -131,4 +131,15 @@ public class OperatorCompilerTest extends OperatorCompilerTestRoot {
         Object result = invoke(impl, "example", "hello", 100);
         assertThat(result, is((Object) "hello100!"));
     }
+
+    /**
+     * Operators with private overload methods.
+     */
+    @Test
+    public void withPrivateOverload() {
+        add("com.example.PrivateOverload");
+        ClassLoader loader = start(new MockOperatorProcessor());
+        create(loader, "com.example.PrivateOverloadFactory");
+        create(loader, "com.example.PrivateOverloadImpl");
+    }
 }
