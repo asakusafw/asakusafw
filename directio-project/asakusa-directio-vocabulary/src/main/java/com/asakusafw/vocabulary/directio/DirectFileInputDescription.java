@@ -29,7 +29,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.6.1
  */
 public abstract class DirectFileInputDescription implements ImporterDescription {
 
@@ -118,6 +118,16 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      * @return the class of {@link DataFormat}
      */
     public abstract Class<? extends DataFormat<?>> getFormat();
+
+    /**
+     * Returns whether the target input is optional or not.
+     * Optional input allow executing jobs even if there are no files for the input.
+     * @return {@code true} if the target input is optional, otherwise {@code false}
+     * @since 0.6.1
+     */
+    public boolean isOptional() {
+        return false;
+    }
 
     @Override
     public DataSize getDataSize() {
