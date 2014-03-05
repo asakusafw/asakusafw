@@ -29,6 +29,8 @@ import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.javadoc.Javadoc
 
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.CompilerConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.DmdlConfiguration
@@ -194,9 +196,22 @@ class AsakusafwPlugin implements Plugin<Project> {
     }
 
     private void configureJavaPlugin() {
-        configureJavaProjectProperties()
-        configureJavaTaskProperties()
+        // NOTE: Must configure project.sourceSets first for organizing *.compileClasspath/runtimeClasspath
         configureJavaSourceSets()
+        configureJavaProjectProperties()
+        configureJavaTasks()
+    }
+
+    private void configureJavaSourceSets() {
+        // FIXME This REDEFINES compileClasspath/runtimeClasspath, please change it to modify FileCollections
+        project.sourceSets {
+            main.compileClasspath += project.configurations.provided
+            test.compileClasspath += project.configurations.provided
+            test.runtimeClasspath += project.configurations.provided
+            main.compileClasspath += project.configurations.embedded
+            test.compileClasspath += project.configurations.embedded
+            test.runtimeClasspath += project.configurations.embedded
+        }
     }
 
     private void configureJavaProjectProperties() {
@@ -206,10 +221,15 @@ class AsakusafwPlugin implements Plugin<Project> {
         }
     }
 
-    private void configureJavaTaskProperties() {
+    private void configureJavaTasks() {
+        configureJavaCompileTask()
+        configureJavadocTask()
+    }
+
+    private void configureJavaCompileTask() {
         project.afterEvaluate {
-            [project.tasks.compileJava, project.tasks.compileTestJava].each {
-                it.options.encoding = project.asakusafw.javac.sourceEncoding
+            [project.tasks.compileJava, project.tasks.compileTestJava].each { JavaCompile task ->
+                task.options.encoding = project.asakusafw.javac.sourceEncoding
             }
             Set<File> annotations = project.sourceSets.main.annotations.getSrcDirs()
             if (annotations.size() >= 1) {
@@ -223,14 +243,23 @@ class AsakusafwPlugin implements Plugin<Project> {
         }
     }
 
-    private void configureJavaSourceSets() {
-        project.sourceSets {
-            main.compileClasspath += project.configurations.provided
-            test.compileClasspath += project.configurations.provided
-            test.runtimeClasspath += project.configurations.provided
-            main.compileClasspath += project.configurations.embedded
-            test.compileClasspath += project.configurations.embedded
-            test.runtimeClasspath += project.configurations.embedded
+    private void configureJavadocTask() {
+        project.tasks.javadoc { Javadoc task ->
+            // XXX Must reassign compileClasspath because sourceSets.main.compileClasspath is REDEFINED.
+            task.classpath = project.sourceSets.main.compileClasspath
+            if (task.options.hasProperty('docEncoding')) {
+                task.options.docEncoding = 'UTF-8'
+            }
+            if (task.options.hasProperty('charSet')) {
+                task.options.charSet = 'UTF-8'
+            }
+            task.dependsOn project.tasks.compileJava
+        }
+        project.afterEvaluate {
+            project.tasks.javadoc { Javadoc task ->
+                task.options.encoding = project.asakusafw.javac.sourceEncoding
+                task.options.source = String.valueOf(project.asakusafw.javac.sourceCompatibility)
+            }
         }
     }
 
