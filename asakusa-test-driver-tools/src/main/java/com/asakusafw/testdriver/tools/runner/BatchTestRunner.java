@@ -136,7 +136,7 @@ public class BatchTestRunner {
         return execute(batchId, null);
     }
 
-    static int execute(Arguments arguments) {
+    private static int execute(Arguments arguments) {
         try {
             RunTask.Configuration configuration = loadConfiguration(arguments);
             RunTask task = new RunTask(configuration);
@@ -151,6 +151,8 @@ public class BatchTestRunner {
                     "Failed to executes batch application: {0}",
                     arguments.batchId), e);
             return 1;
+        } finally {
+            arguments.context.cleanUpTemporaryResources();
         }
         return 0;
     }
