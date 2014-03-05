@@ -49,13 +49,6 @@ public class BatchTestRunner {
     static final Logger LOG = LoggerFactory.getLogger(BatchTestRunner.class);
 
     /**
-     * The batch application base path (relative from framework install location).
-     * @deprecated Use {@link TestDriverContext#getBatchApplicationsInstallationPath()} instead
-     */
-    @Deprecated
-    public static final String PATH_BATCH_APPLICATION_BASE = TestDriverContext.DEFAULT_BATCHAPPS_PATH;
-
-    /**
      * The YAESS script path (relative from batch application directory).
      */
     public static final String PATH_YAESS_SCRIPT = "etc/yaess-script.properties";
