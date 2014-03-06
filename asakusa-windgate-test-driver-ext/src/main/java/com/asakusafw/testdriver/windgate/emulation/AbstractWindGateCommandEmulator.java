@@ -65,11 +65,6 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
     private static final int ARG_PROFILE = 1;
 
     @Override
-    public String getName() {
-        return "windgate";
-    }
-
-    @Override
     public final void execute(
             TestDriverContext context,
             ConfigurationFactory configurations,

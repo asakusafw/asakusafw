@@ -61,5 +61,37 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-plugin</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-test-moderator</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-stream</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-hadoopfs</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-runtime-configuration</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>tests</classifier>
+			<optional>true</optional>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
