@@ -47,7 +47,7 @@ public class InProcessJobExecutor extends JobExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(InProcessJobExecutor.class);
 
-    private static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
+    static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
 
     private final TestDriverContext context;
 
@@ -62,12 +62,25 @@ public class InProcessJobExecutor extends JobExecutor {
      * @param context the current test context
      */
     public InProcessJobExecutor(TestDriverContext context) {
+        this(context, ConfigurationFactory.getDefault());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param context the current test context
+     * @param configurations the configurations factory
+     */
+    public InProcessJobExecutor(TestDriverContext context, ConfigurationFactory configurations) {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        if (configurations == null) {
+            throw new IllegalArgumentException("configurations must not be null"); //$NON-NLS-1$
+        }
         this.context = context;
+        // FIXME pass the configurations object into default job executor
         this.delegate = new DefaultJobExecutor(context);
-        this.configurations = ConfigurationFactory.getDefault();
+        this.configurations = configurations;
         this.commandEmulators = null;
     }
 
@@ -195,6 +208,8 @@ public class InProcessJobExecutor extends JobExecutor {
             throw new FileNotFoundException(packageFile.getAbsolutePath());
         }
         libjars.append(packageFile.toURI());
+
+        // Note: already in classpath?
         for (File file : EmulatorUtils.getBatchLibraryPaths(context)) {
             libjars.append(',');
             libjars.append(file.toURI());
@@ -204,11 +219,15 @@ public class InProcessJobExecutor extends JobExecutor {
 
     private void computeAsakusaResources(List<String> arguments) {
         assert arguments != null;
-        File asakusaResources = new File(context.getFrameworkHomePath(), PATH_ASAKUSA_RESOURCES);
+        File asakusaResources = getAsakusaResoucesPath();
         if (asakusaResources.exists()) {
             arguments.add("-conf");
             arguments.add(asakusaResources.toURI().toString());
         }
+    }
+
+    File getAsakusaResoucesPath() {
+        return new File(context.getFrameworkHomePath(), PATH_ASAKUSA_RESOURCES);
     }
 
     @Override
