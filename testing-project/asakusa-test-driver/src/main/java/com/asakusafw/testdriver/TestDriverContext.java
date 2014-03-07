@@ -821,12 +821,12 @@ public class TestDriverContext implements TestContext {
      * @since 0.5.2
      */
     public void cleanUpTemporaryResources() {
-        if (generatedCompilerWorkingDirectory != null) {
+        if (generatedCompilerWorkingDirectory != null && generatedCompilerWorkingDirectory.exists()) {
             LOG.debug("Deleting temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
             removeAll(generatedCompilerWorkingDirectory);
             this.generatedCompilerWorkingDirectory = null;
         }
-        if (generatedBatchappsHomePath != null) {
+        if (generatedBatchappsHomePath != null && generatedBatchappsHomePath.exists()) {
             LOG.debug("Deleting temporary batchapps directory: {}", generatedBatchappsHomePath);
             removeAll(generatedBatchappsHomePath);
             this.generatedBatchappsHomePath = null;

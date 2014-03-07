@@ -47,7 +47,7 @@ public class SimpleFlowPart extends FlowDescription {
     @Override
     protected void describe() {
         SimpleOperatorFactory factory = new SimpleOperatorFactory();
-        SetValue operator = factory.setValue(in, "Hello, world!");
+        SetValue operator = factory.setValue(in, "?");
         out.add(operator.out);
     }
 }

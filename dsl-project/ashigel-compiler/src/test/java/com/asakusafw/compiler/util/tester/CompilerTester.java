@@ -61,6 +61,7 @@ import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
@@ -73,6 +74,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * コンパイラのテストを行う。
+ * @since 0.1.0
+ * @version 0.6.1
  */
 public class CompilerTester implements TestRule {
 
@@ -109,10 +112,35 @@ public class CompilerTester implements TestRule {
 
     /**
      * Creates a new instance.
+     * @param configurations the Hadoop configuration provider (nullable)
+     * @since 0.6.1
+     */
+    public CompilerTester(ConfigurationProvider configurations) {
+        this(configurations, true);
+    }
+
+    /**
+     * Creates a new instance.
      * @param createFramework creates framework structure from src/.../dist.
      */
     public CompilerTester(boolean createFramework) {
-        this.hadoopDriver = HadoopDriver.createInstance();
+        this(null, createFramework);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param configurations the Hadoop configuration provider (nullable)
+     * @param createFramework creates framework structure from src/.../dist.
+     * @since 0.6.1
+     */
+    public CompilerTester(ConfigurationProvider configurations, boolean createFramework) {
+        HadoopDriver driver;
+        if (configurations == null) {
+            driver = HadoopDriver.createInstance();
+        } else {
+            driver = HadoopDriver.createInstance(configurations);
+        }
+        this.hadoopDriver = driver;
         this.frameworkDeployer = new FrameworkDeployer(createFramework);
         this.flow = new FlowDescriptionDriver();
         this.testClass = getClass();

@@ -379,8 +379,9 @@ public abstract class TestDriverBase {
     }
 
     /**
-     * [EXPERIMENTAL] Sets the {@link JobExecutorFactory} for executing jobs in this test.
+     * Sets the {@link JobExecutorFactory} for executing jobs in this test.
      * @param factory the factory, or {@code null} to use a default implementation
+     * @see TestDriverContext#KEY_JOB_EXECUTOR_FACTORY
      * @since 0.6.0
      */
     public void setJobExecutorFactory(JobExecutorFactory factory) {

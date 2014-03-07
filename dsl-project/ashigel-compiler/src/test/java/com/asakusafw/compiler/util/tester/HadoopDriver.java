@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,13 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.util.GenericOptionsParser;
+import org.apache.hadoop.util.ReflectionUtils;
+import org.apache.hadoop.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +49,8 @@ import com.asakusafw.utils.collections.Lists;
 
 /**
  * A driver for control Hadoop jobs for testing.
+ * @since 0.1.0
+ * @version 0.6.1
  */
 public final class HadoopDriver implements Closeable {
 
@@ -55,14 +63,32 @@ public final class HadoopDriver implements Closeable {
      */
     public static final String RUNTIME_WORK_ROOT = "target/testing";
 
+    static final String PREFIX_KEY = "hadoop.";
+
+    static final String KEY_INPROCESS = PREFIX_KEY + "inprocess";
+
     private final File command;
+
+    private final ConfigurationProvider configurations;
 
     private final Configuration configuration;
 
-    private HadoopDriver() {
+    private boolean fork;
+
+    private HadoopDriver(ConfigurationProvider configurations) {
         this.command = ConfigurationProvider.findHadoopCommand();
-        this.configuration = new ConfigurationProvider().newInstance();
+        this.configurations = configurations;
+        this.configuration = configurations.newInstance();
         this.logger = LOG;
+        this.fork = isSet(KEY_INPROCESS) == false;
+    }
+
+    private static boolean isSet(String key) {
+        String value = System.getProperty(key);
+        if (value == null) {
+            return false;
+        }
+        return value.isEmpty() || value.equalsIgnoreCase("true");
     }
 
     /**
@@ -75,6 +101,14 @@ public final class HadoopDriver implements Closeable {
             throw new IllegalArgumentException("logger must not be null"); //$NON-NLS-1$
         }
         this.logger = logger;
+    }
+
+    /**
+     * Changes fork mode.
+     * @param fork {@code true} to run with fork, otherwise {@code false}
+     */
+    public void setFork(boolean fork) {
+        this.fork = fork;
     }
 
     /**
@@ -107,7 +141,17 @@ public final class HadoopDriver implements Closeable {
      * @return 生成したインスタンス
      */
     public static HadoopDriver createInstance() {
-        return new HadoopDriver();
+        return new HadoopDriver(new ConfigurationProvider());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param configurations the Hadoop configuration provider
+     * @return the created instance
+     * @since 0.6.1
+     */
+    public static HadoopDriver createInstance(ConfigurationProvider configurations) {
+        return new HadoopDriver(configurations);
     }
 
     /**
@@ -135,19 +179,19 @@ public final class HadoopDriver implements Closeable {
         if (temp.mkdirs() == false) {
             throw new IOException(temp.getAbsolutePath());
         }
-        copyFromHadoop(location.toPath('/'), temp);
+        copyFromHadoop(location, temp);
 
         List<ModelInput<T>> sources = Lists.create();
         if (location.isPrefix()) {
             for (File file : temp.listFiles()) {
-                if (file.isFile() && file.getName().startsWith("_") == false) {
+                if (isCopyTarget(file)) {
                     sources.add(TemporaryStorage.openInput(configuration, modelType, new Path(file.toURI())));
                 }
             }
         } else {
             for (File folder : temp.listFiles()) {
                 for (File file : folder.listFiles()) {
-                    if (file.isFile() && file.getName().startsWith("_") == false) {
+                    if (isCopyTarget(file)) {
                         sources.add(TemporaryStorage.openInput(configuration, modelType, new Path(file.toURI())));
                     }
                 }
@@ -164,6 +208,12 @@ public final class HadoopDriver implements Closeable {
                 onInputCompleted(temp, location);
             }
         };
+    }
+
+    private boolean isCopyTarget(File file) {
+        return file.isFile()
+                && file.getName().startsWith("_") == false
+                && file.getName().startsWith(".") == false;
     }
 
     /**
@@ -240,7 +290,20 @@ public final class HadoopDriver implements Closeable {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
-        logger.info("run {} with {}", className, libjars);
+        if (fork) {
+            return runFork(runtimeLib, libjars, className, conf, properties);
+        } else {
+            return runInProcess(runtimeLib, libjars, className, conf, properties);
+        }
+    }
+
+    private boolean runFork(
+            File runtimeLib,
+            List<File> libjars,
+            String className,
+            File conf,
+            Map<String, String> properties) throws IOException {
+        logger.info("FORK EXEC: {} with {}", className, libjars);
         List<String> arguments = Lists.create();
         arguments.add("jar");
         arguments.add(runtimeLib.getAbsolutePath());
@@ -267,29 +330,110 @@ public final class HadoopDriver implements Closeable {
             arguments.add(MessageFormat.format("{0}={1}", entry.getKey(), entry.getValue()));
         }
 
-        int ret = invoke(arguments.toArray(new String[arguments.size()]));
-        if (ret != 0) {
-            logger.info("running {} returned {}", className, ret);
+        int exitValue = invoke(arguments.toArray(new String[arguments.size()]));
+        if (exitValue != 0) {
+            logger.info("running {} returned {}", className, exitValue);
             return false;
         }
         return true;
     }
 
-    private void copyFromHadoop(String source, File destination) throws IOException {
-        if (source == null) {
-            throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
+    private boolean runInProcess(
+            File runtimeLib,
+            List<File> libjars,
+            String className,
+            File confFile,
+            Map<String, String> properties) throws IOException {
+        logger.info("EMULATE: {} with {}", className, libjars);
+        List<String> arguments = new ArrayList<String>();
+        addHadoopConf(arguments, confFile);
+        addHadoopLibjars(libjars, arguments);
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        try {
+            GenericOptionsParser parser = new GenericOptionsParser(
+                    configurations.newInstance(), arguments.toArray(new String[arguments.size()]));
+            Configuration conf = parser.getConfiguration();
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                conf.set(entry.getKey(), entry.getValue());
+            }
+            try {
+                Class<?> stageClass = conf.getClassLoader().loadClass(className);
+                Tool tool = (Tool) ReflectionUtils.newInstance(stageClass, conf);
+                int exitValue = tool.run(new String[0]);
+                if (exitValue != 0) {
+                    logger.info("running {} returned {}", className, exitValue);
+                    return false;
+                }
+                return true;
+            } catch (Exception e) {
+                logger.info("error occurred", e);
+                return false;
+            } finally {
+                dispose(conf);
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
         }
-        if (destination == null) {
-            throw new IllegalArgumentException("destination must not be null"); //$NON-NLS-1$
+    }
+
+    private void addHadoopConf(List<String> arguments, File confFile) {
+        if (confFile == null) {
+            return;
         }
-        logger.info("copy {} to {}", source, destination);
-        int ret = invoke("fs", "-get", source, destination.getAbsolutePath());
-        if (ret != 0) {
+        arguments.add("-conf");
+        arguments.add(confFile.getAbsolutePath());
+    }
+
+    private void addHadoopLibjars(List<File> jars, List<String> arguments) {
+        assert jars != null;
+        if (jars.isEmpty()) {
+            return;
+        }
+        arguments.add("-libjars");
+        StringBuilder libjars = new StringBuilder();
+        for (File file : jars) {
+            if (libjars.length() != 0) {
+                libjars.append(',');
+            }
+            libjars.append(file.toURI());
+        }
+        arguments.add(libjars.toString());
+    }
+
+    private void dispose(Configuration conf) {
+        ClassLoader cl = conf.getClassLoader();
+        if (cl instanceof Closeable) {
+            try {
+                ((Closeable) cl).close();
+            } catch (IOException e) {
+                LOG.debug("Failed to dispose a ClassLoader", e);
+            }
+        }
+    }
+
+    private void copyFromHadoop(Location location, File targetDirectory) throws IOException {
+        targetDirectory.mkdirs();
+        logger.info("copy {} to {}", location, targetDirectory);
+
+        Path path = new Path(location.toPath('/'));
+        FileSystem fs = path.getFileSystem(configuration);
+        FileStatus[] list = fs.globStatus(path);
+        if (list == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to fs -get: result={0}, source={1}, destination={2}",
-                    String.valueOf(ret),
-                    source,
-                    destination.getAbsolutePath()));
+                    "Failed to fs -get: source={0}, destination={1}",
+                    path,
+                    targetDirectory));
+        }
+        for (FileStatus status : list) {
+            Path p = status.getPath();
+            try {
+                fs.copyToLocalFile(p, new Path(new File(targetDirectory, p.getName()).toURI()));
+            } catch (IOException e) {
+                throw new IOException(MessageFormat.format(
+                        "Failed to fs -get: source={0}, destination={1}",
+                        p,
+                        targetDirectory), e);
+            }
         }
     }
 
@@ -299,12 +443,16 @@ public final class HadoopDriver implements Closeable {
      */
     public void clean() throws IOException {
         logger.info("clean user directory");
-        int ret = invoke("fs", "-rmr", toPath().toPath('/'));
-        if (ret != 0) {
+        Path path = new Path(toPath().toPath('/'));
+        FileSystem fs = path.getFileSystem(configuration);
+        try {
+            if (fs.exists(path)) {
+                fs.delete(path, true);
+            }
+        } catch (IOException e) {
             logger.info(MessageFormat.format(
-                    "Failed to fs -rmr {0}: result={1}",
-                    toPath(),
-                    String.valueOf(ret)));
+                    "Failed to fs -rmr {0}",
+                    toPath()), e);
         }
     }
 

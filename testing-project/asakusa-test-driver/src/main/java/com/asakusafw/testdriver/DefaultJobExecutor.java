@@ -38,6 +38,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * A default implementation of {@link JobExecutor}.
  * @since 0.6.0
+ * @version 0.6.1
  */
 public class DefaultJobExecutor extends JobExecutor {
 
@@ -57,11 +58,24 @@ public class DefaultJobExecutor extends JobExecutor {
      * @param context the current test context
      */
     public DefaultJobExecutor(TestDriverContext context) {
+        this(context, ConfigurationFactory.getDefault());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param context the current test context
+     * @param configurations the configurations factory
+     * @since 0.6.1
+     */
+    public DefaultJobExecutor(TestDriverContext context, ConfigurationFactory configurations) {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        if (configurations == null) {
+            throw new IllegalArgumentException("configurations must not be null"); //$NON-NLS-1$
+        }
         this.context = context;
-        this.configurations = ConfigurationFactory.getDefault();
+        this.configurations = configurations;
     }
 
     /**
