@@ -1,8 +1,6 @@
-#In-process Hadoop Job Executor Plug-in for Asakusa Test Driver
+# Experimental Features for Test Driver
 
-This enables to run Hadoop jobs in test execution process.
+This project provides no special features.
 
-Please add this artifact to the target project dependency, and run flowpart/jobflow/batch test cases.
-You can disable this feature to set "-Dasakusa.testdriver.configurator.inprocess=false"
-
-Note that, this still spawns sub-processes for command jobs such as ThunderGate or WindGate.
+## In-process Hadoop Job Executor
+The in-process Hadoop job executor feature has been moved onto `com.asakusafw:asakusa-test-inprocess` since `0.6.1`.
