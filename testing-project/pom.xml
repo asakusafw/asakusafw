@@ -36,6 +36,7 @@
 		<module>asakusa-test-moderator</module>
 		<module>asakusa-test-trace-model</module>
 		<module>asakusa-test-trace-plugin</module>
+		<module>asakusa-test-inprocess</module>
 	</modules>
 
 </project>
