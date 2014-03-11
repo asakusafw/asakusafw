@@ -711,11 +711,11 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 型
       - 説明
     * -  ``compileDMDL`` 
-      -  ``-`` 
+      -  ``-`` [#]_
       - SourceTask
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
-      -  ``classes`` 
+      -  ``compileJava, processResources`` 
       - Task
       - DSLコンパイラを使ってバッチアプリケーションを生成する
     * -  ``jarBatchapp`` 
@@ -726,6 +726,12 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       -  ``-`` 
       - SourceTask
       - テストデータ定義シートを生成する
+    * -  ``generateThunderGateDataModel`` 
+      -  ``-`` 
+      - 
+      - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
+
+..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 
@@ -949,6 +955,66 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
 ..  [#] これらのプロパティは規約オブジェクト ``TestToolsConfiguration`` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``target`` 
+      - String
+      -  ``未指定`` 
+      - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる
+    * -  ``ddlEncoding`` 
+      - String
+      -  ``未指定`` 
+      - MySQLメタデータ登録用DDLファイルのエンコーディング
+    * -  ``ddlSourceDirectory`` 
+      - String
+      -  ``src/${project.sourceSets.main.name}/sql/modelgen`` 
+      - MySQLメタデータ登録用DDLファイルのソースディレクトリ
+    * -  ``includes`` 
+      - String
+      -  ``未指定`` 
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象とするモデル名を正規表現の書式で指定
+    * -  ``excludes`` 
+      - String
+      -  ``未指定`` 
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象外とするモデル名を正規表現の書式で指定
+    * -  ``dmdlOutputDirectory`` 
+      - String
+      -  ``${project.buildDir}/thundergate/dmdl`` 
+      - MySQLメタデータから生成されるDMDLスクリプトの出力先
+    * -  ``ddlOutputDirectory`` 
+      - String
+      -  ``${project.buildDir}/thundergate/sql`` 
+      - ThunderGate管理テーブル用DDLスクリプトの出力先
+    * -  ``sidColumn`` 
+      - String
+      -  ``SID`` 
+      - ThunderGateが入出力を行う業務テーブルのシステムIDカラム名
+    * -  ``timestampColumn`` 
+      - String
+      -  ``UPDT_DATETIME`` 
+      - ThunderGateが入出力を行う業務テーブルの更新日時カラム名
+    * -  ``deleteColumn`` 
+      - String
+      -  ``DELETE_FLAG`` 
+      - ThunderGateが入出力を行う論理削除フラグカラム名
+    * -  ``deleteValue`` 
+      - String
+      -  ``1`` 
+      - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
+
+..  [#] これらのプロパティは規約オブジェクト ``ThunderGateConfiguration`` が提供します。
+
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
 Batch Application Plugin は Gradleが提供するEclipse Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
@@ -1015,6 +1081,10 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       -  ``-`` 
       - Task
       - デプロイメント構成にWindGateを追加する
+    * -  ``attachComponentThunderGate`` 
+      -  ``-`` 
+      - Task
+      - デプロイメント構成にThunderGateを追加する
     * -  ``attachComponentDevelopment`` 
       -  ``-`` 
       - Task
@@ -1114,6 +1184,33 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 
 .. _include-hadoop-gradle-plugin:
 
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateに関する規約プロパティは、 ``asakusafw-organizer`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``enabled``
+      - boolean
+      - false
+      - この値をtrueにするとThunderGate用の構成を行う
+    * -  ``target`` 
+      - String
+      -  ``未指定`` 
+      - デプロイメント構成の設定に含めるThunderGateのターゲット。
+
+..  [#] これらのプロパティは規約オブジェクト ``ThunderGateConfiguration`` が提供します。
+
+Eclipse Pluginの拡張
+~~~~~~~~~~~~~~~~~~~~
+Batch Application Plugin は Gradleが提供するEclipse Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
 デプロイメント構成に含むAsakusa Frameworkのバージョン
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1157,10 +1254,8 @@ Framework Organizer Pluginを単体で利用する
 
 Asakusa Framework の現在バージョン |version| におけるAsakusa Gradle Pluginの制約事項を以下に挙げます。
 
-* ThunderGate [#]_ には未対応です。
 * レガシーモジュール [#]_ には未対応です。
 
-..  [#] :doc:`../thundergate/index`
 ..  [#] :doc:`../application/legacy-module-guide`
 
 Asakusa Gradle Plugin マイグレーションガイド
