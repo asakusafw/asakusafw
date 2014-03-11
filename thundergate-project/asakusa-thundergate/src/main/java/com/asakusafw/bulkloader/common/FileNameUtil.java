@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.runtime.util.VariableTable;
 
 
@@ -41,6 +42,8 @@ public final class FileNameUtil {
      * このクラス。
      */
     private static final Class<?> CLASS = FileNameUtil.class;
+
+    private static final Log LOG = new Log(CLASS);
 
     private FileNameUtil() {
         return;
@@ -252,8 +255,12 @@ public final class FileNameUtil {
      */
     public static boolean prepareTemporaryDirectory(File directory) {
         if (directory.mkdirs() || directory.isDirectory()) {
-            directory.setReadable(true, false);
-            directory.setWritable(true, false);
+            if (directory.setReadable(true, false) == false && directory.canRead() == false) {
+                LOG.debugMessage("Failed to set readable: {0}", directory);
+            }
+            if (directory.setWritable(true, false) == false && directory.canWrite() == false) {
+                LOG.debugMessage("Failed to set writable: {0}", directory);
+            }
             return true;
         }
         return false;

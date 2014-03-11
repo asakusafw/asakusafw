@@ -260,6 +260,7 @@ final class ProcessUtil {
                 stdout.get();
             } catch (ExecutionException e) {
                 // don't care
+                LOG.debug("Error occurred while waiting stdout is closed", e);
             }
             return exit;
         } finally {

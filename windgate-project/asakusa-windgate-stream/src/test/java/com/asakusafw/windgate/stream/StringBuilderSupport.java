@@ -27,6 +27,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 /**
  * Supports {@link StringBuilder}.
  */
+@SuppressWarnings("resource")
 public class StringBuilderSupport implements DataModelStreamSupport<StringBuilder> {
 
     @Override

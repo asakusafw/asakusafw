@@ -285,7 +285,8 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             TaskAttemptContext context) throws IOException, InterruptedException {
         if (split instanceof BridgeInputSplit) {
             BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
-            DataFormat<?> format = ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
+            DataFormat<?> format =
+                    ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
             return createRecordReader(format, bridgeInfo, context);
         } else if (split instanceof NullInputSplit) {
             return createNullRecordReader(context);
