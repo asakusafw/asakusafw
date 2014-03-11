@@ -730,6 +730,10 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       -  ``-`` 
       - 
       - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
+    * -  ``testRunBatchapp`` 
+      -  ``-`` 
+      - RunBatchappTask
+      - バッチテストランナーを実行する
 
 ..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
 
@@ -1023,6 +1027,23 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 * Javaのバージョンやエンコーディングに関する設定
 
 また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
+
+バッチテストランナーの実行 (Experimental)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``testRunBatchapp`` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナー [#]_ をGradleタスクとして実行することができます。
+
+..  attention::
+    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供されています。
+
+``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時のコマンドライン引数として ``--id`` にバッチID、 ``--arguments`` にバッチ引数を指定します。
+
+``testRunBatchapp`` タスクの実行例は以下の通りです。
+
+..  code-block:: groovy
+    
+    ./gradlew testRunBatchapp --id example.summarizeSales --arguments date=2011-04-01
+
+..  [#] バッチテストランナーの詳細は :doc:`../testing/user-guide` の :ref:`testing-userguide-integration-test` を参照してください。
 
 Framework Organizer Plugin
 --------------------------
