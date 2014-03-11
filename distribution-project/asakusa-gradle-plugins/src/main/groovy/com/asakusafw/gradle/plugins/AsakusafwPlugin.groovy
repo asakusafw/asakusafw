@@ -42,6 +42,7 @@ import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
 import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
+import com.asakusafw.gradle.tasks.RunBatchappTask
 
 /**
  * Gradle plugin for building application component blocks.
@@ -270,6 +271,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         defineJarBatchappTask()
         extendAssembleTask()
         defineGenerateTestbookTask()
+        defineTestRunBatchappTask()
         defineGenerateThunderGateDataModelTask()
     }
 
@@ -354,6 +356,20 @@ class AsakusafwPlugin implements Plugin<Project> {
                 outputSheetFormat = { project.asakusafw.testtools.testDataSheetFormat }
                 outputDirectory = { project.file(project.asakusafw.testtools.testDataSheetDirectory) }
             }
+        }
+    }
+
+    private void defineTestRunBatchappTask() {
+        project.tasks.create('testRunBatchapp', RunBatchappTask) { RunBatchappTask task ->
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Executes Asakusa Batch Application [Experimental].'
+            task.toolClasspath = project.files({ project.sourceSets.test.runtimeClasspath })
+            task.systemProperties.put 'asakusa.testdriver.batchapps', { project.tasks.compileBatchapp.outputDirectory }
+            task.conventionMapping.with {
+                logbackConf = { this.findLogbackConf() }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+            }
+            task.dependsOn project.tasks.compileBatchapp
         }
     }
 
