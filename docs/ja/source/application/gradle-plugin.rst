@@ -712,11 +712,11 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 説明
     * -  ``compileDMDL`` 
       -  ``-`` [#]_
-      - SourceTask
+      - CompileDmdlTask
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
       -  ``compileJava, processResources`` 
-      - Task
+      - CompileBatchappTask
       - DSLコンパイラを使ってバッチアプリケーションを生成する
     * -  ``jarBatchapp`` 
       -  ``compileBatchapp`` 
@@ -724,11 +724,11 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - バッチアプリケーションアーカイブを生成する
     * -  ``generateTestbook`` 
       -  ``-`` 
-      - SourceTask
+      - GenerateTestbookTask
       - テストデータ定義シートを生成する
     * -  ``generateThunderGateDataModel`` 
       -  ``-`` 
-      - 
+      - GenerateThunderGateDataModelTask
       - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
     * -  ``testRunBatchapp`` 
       -  ``-`` 
@@ -813,6 +813,10 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       - String
       -  ``src/${project.sourceSets.test.name}/resources/logback-test.xml`` 
       - プロジェクトのLogback設定ファイル [#]_
+    * -  ``basePackage`` 
+      - String
+      -  ``${project.group}`` 
+      - プラグインの各タスクでJavaソースコードの生成時に指定する基底Javaパッケージ
 
 ..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
 ..  [#] Logback設定ファイルの詳細は次のドキュメントを参照してください: http://logback.qos.ch/manual/configuration.html
@@ -856,7 +860,7 @@ DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参�
       - 説明
     * -  ``modelgenSourcePackage`` 
       - String
-      -  ``${project.group}.modelgen`` 
+      -  ``${asakusafw.basePackage}.modelgen`` 
       - モデルクラスに使用されるパッケージ名
     * -  ``modelgenSourceDirectory`` 
       - String
@@ -887,11 +891,11 @@ Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``UTF-8`` 
       - プロジェクトのソースファイルのエンコーディング
     * -  ``sourceCompatibility`` 
-      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6 [#]_
+      - JavaVersion。StringやNumberで設定することも可能。例： ``'1.6'`` や ``1.6`` [#]_
       -  ``1.6`` 
       - Javaソースのコンパイル時に使用するJavaバージョン互換性
     * -  ``targetCompatibility`` 
-      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6
+      - JavaVersion。StringやNumberで設定することも可能。例： ``'1.6'`` や ``1.6``
       -  ``1.6`` 
       - クラス生成のターゲットJavaバージョン
 
@@ -913,7 +917,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       - 説明
     * -  ``compiledSourcePackage`` 
       - String
-      -  ``${project.group}.batchapp`` 
+      -  ``${asakusafw.basePackage}.batchapp`` 
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
     * -  ``compiledSourceDirectory`` 
       - String
@@ -1128,29 +1132,19 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       - デプロイメント構成にディストリビューション名に対応するディレクトリを追加する [#]_
     * -  ``attachAssembleDev`` 
       -  ``attachBatchapps,`` 
-        
          ``attachComponentCore,`` 
-        
          ``attachComponentDirectIo,`` 
-        
          ``attachComponentYaess,`` 
-        
          ``attachComponentWindGate,`` 
-        
          ``attachComponentDevelopment,`` 
-        
          ``attachComponentOperation`` 
       - Task
       - 開発環境向けのデプロイメント構成を構築する
     * -  ``attachAssemble`` 
       -  ``attachComponentCore,`` 
-        
          ``attachComponentDirectIo,`` 
-        
          ``attachComponentYaess,`` 
-        
          ``attachComponentWindGate,`` 
-        
          ``attachComponentOperation`` 
       - Task
       - 運用環境向けのデプロイメント構成を構築する
