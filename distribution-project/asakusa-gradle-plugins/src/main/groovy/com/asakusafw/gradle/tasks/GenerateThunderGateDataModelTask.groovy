@@ -256,6 +256,7 @@ class GenerateThunderGateDataModelTask extends AbstractAsakusaToolTask {
             url: jdbcConf.jdbc.url,
             userid: jdbcConf.jdbc.user,
             password: jdbcConf.jdbc.password,
+            caching: false,
             classpath: getToolClasspathCollection().asPath
         ]
         if (getDdlEncoding()) {
