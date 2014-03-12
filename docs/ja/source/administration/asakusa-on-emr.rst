@@ -97,7 +97,7 @@ EMR環境に対してAsakusa Framework実行環境一式をデプロイし、
 以下、これらの手順ごとの作業について説明します。
 以降の手順は、Asakusa Frameworkの開発環境（EMR操作用クライアントマシン）で行うものとします。
 
-また、Asakusa Frameworkのバージョンは ``0.6.0`` を用いて説明します。
+また、Asakusa Frameworkのバージョンは ``0.6.1`` を用いて説明します。
 
 ..  hint::
     バッチアプリケーションの実行とEMRの起動/停止を連動させる使い方も可能です。この場合、EMR起動時のコマンド実行パラメータに指定したバッチアプリケーションの実行が完了するとEMRが自動的に停止します。
@@ -169,7 +169,7 @@ Asakusa Frameworkのデプロイメントアーカイブを作成する例を示
     各タスクの詳細については、 :asakusafw:`Asakusa Gradle Plugin利用ガイド <application/gradle-plugin.html>` の 
     :asakusafw:`Asakusa Frameworkのデプロイメントアーカイブ生成<application/gradle-plugin.html#deployment-archive-gradle-plugin>` を参照してください。
 
-上記のGradleコマンドを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
+上記のGradleコマンドを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.6.1.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
 
 以下にAsakusa FrameworkのデプロイメントアーカイブをS3に配置する例を示します。
 
