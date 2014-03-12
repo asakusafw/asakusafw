@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import com.asakusafw.windgate.core.BaseProfile;
 import com.asakusafw.windgate.core.ProfileContext;
+import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.session.SessionProfile;
 
 /**
@@ -34,7 +35,7 @@ import com.asakusafw.windgate.core.session.SessionProfile;
 public class ResourceProfileTest {
 
     /**
-     * Test method for {@link ResourceProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom() {

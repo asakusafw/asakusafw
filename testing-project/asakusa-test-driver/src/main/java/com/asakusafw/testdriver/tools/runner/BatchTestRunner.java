@@ -44,7 +44,7 @@ import com.asakusafw.yaess.core.BatchScript;
  * @since 0.6.0
  * @version 0.6.1
  */
-public class BatchTestRunner {
+public final class BatchTestRunner {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTestRunner.class);
 
@@ -71,6 +71,10 @@ public class BatchTestRunner {
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_BATCH_ID);
         OPTIONS.addOption(OPT_ARGUMENT);
+    }
+
+    private BatchTestRunner() {
+        return;
     }
 
     /**

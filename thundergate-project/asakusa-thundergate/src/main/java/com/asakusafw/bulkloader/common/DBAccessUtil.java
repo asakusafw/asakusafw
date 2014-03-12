@@ -104,7 +104,7 @@ public final class DBAccessUtil {
      * ジョブフロー実行IDを条件に検索を行い、
      * 指定されていない場合は全件を検索する。
      * @param executionId ジョブフロー実行ID
-     * @return ジョブフロー実行テーブル
+     * @return ジョブフロー実行テーブル, never {@code null}
      * @throws BulkLoaderSystemException SQL例外が発生した場合
      */
     public static List<ExporterBean> selectRunningJobFlow(String executionId) throws BulkLoaderSystemException {

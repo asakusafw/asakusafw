@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.windgate.core.ProfileContext;
+import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.file.session.FileSessionProvider;
 
 /**
@@ -41,7 +42,7 @@ public class SessionProfileTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     /**
-     * Test method for {@link SessionProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom() {
@@ -54,7 +55,7 @@ public class SessionProfileTest {
     }
 
     /**
-     * Test method for {@link SessionProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom_configure() {

@@ -91,7 +91,6 @@ class RunBatchappTask extends DefaultTask {
             if (sawEscape) {
                 buf.append c
                 sawEscape = false
-                continue
             } else if (c == '\\') {
                 sawEscape = true
             } else if (c == ',') {
