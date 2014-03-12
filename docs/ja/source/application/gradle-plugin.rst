@@ -691,11 +691,13 @@ Batch Application Plugin はAsakusa Framework の バッチアプリケーショ
 使用方法
 ~~~~~~~~
 
-Batch Application Pluginを使うためには、ビルドスクリプトに下記を含めます：
+Batch Application Plugin [#]_ を使うためには、ビルドスクリプトに下記を含めます：
 
 ..  code-block:: groovy
 
     apply plugin: 'asakusafw'
+
+..  [#] :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPlugin`
 
 タスク
 ~~~~~~
@@ -703,39 +705,44 @@ Batch Application Pluginを使うためには、ビルドスクリプトに下�
 Batch Application Plugin は、以下のタスクをプロジェクトに追加します。
 
 ..  list-table:: Batch Application Plugin - タスク
-    :widths: 113 113 113 113
+    :widths: 113 63 113 163
     :header-rows: 1
 
     * - タスク名
       - 依存先
       - 型
       - 説明
-    * -  ``compileDMDL`` 
+    * -  ``compileDMDL``
       -  ``-`` [#]_
-      - CompileDmdlTask
+      - ``CompileDmdlTask`` [#]_
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
       -  ``compileJava, processResources`` 
-      - CompileBatchappTask
+      - ``CompileBatchappTask`` [#]_
       - DSLコンパイラを使ってバッチアプリケーションを生成する
     * -  ``jarBatchapp`` 
       -  ``compileBatchapp`` 
-      - Jar
+      - ``Jar``
       - バッチアプリケーションアーカイブを生成する
     * -  ``generateTestbook`` 
       -  ``-`` 
-      - GenerateTestbookTask
+      - ``GenerateTestbookTask`` [#]_
       - テストデータ定義シートを生成する
     * -  ``generateThunderGateDataModel`` 
       -  ``-`` 
-      - GenerateThunderGateDataModelTask
+      - ``GenerateThunderGateDataModelTask`` [#]_
       - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
     * -  ``testRunBatchapp`` 
       -  ``-`` 
-      - RunBatchappTask
+      - ``RunBatchappTask`` [#]_
       - バッチテストランナーを実行する
 
 ..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileBatchappTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 
@@ -749,11 +756,11 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 説明
     * -  ``compileJava`` 
       -  ``compileDMDL`` 
-      - JavaCompile
+      - ``JavaCompile``
       - Javaソースファイルをコンパイルする
     * -  ``assemble`` 
       -  ``jarBatchapp`` 
-      - Task
+      - ``Task``
       - プロジェクトのすべてのアーカイブを構築する
 
 依存関係の管理
@@ -818,7 +825,7 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       -  ``${project.group}`` 
       - プラグインの各タスクでJavaソースコードの生成時に指定する基底Javaパッケージ
 
-..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention` が提供します。
 ..  [#] Logback設定ファイルの詳細は次のドキュメントを参照してください: http://logback.qos.ch/manual/configuration.html
 
 DMDLプロパティ
@@ -843,7 +850,7 @@ DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参�
       -  ``src/${project.sourceSets.main.name}/dmdl`` 
       - DMDLスクリプトのソースディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``DmdlConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.DmdlConfiguration` が提供します。
 
 モデル生成プロパティ
 ^^^^^^^^^^^^^^^^^^^^
@@ -867,7 +874,7 @@ DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参�
       -  ``${project.buildDir}/generated-sources/modelgen`` 
       - モデルクラスのソースディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``ModelgenConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ModelgenConfiguration` が提供します。
 
 Javaコンパイラプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -899,7 +906,7 @@ Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``1.6`` 
       - クラス生成のターゲットJavaバージョン
 
-..  [#] これらのプロパティは規約オブジェクト ``JavacConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration` が提供します。
 ..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
 
 DSLコンパイラプロパティ
@@ -936,7 +943,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``target/hadoopwork/${execution_id}`` 
       - DSLコンパイラが生成するアプリケーション(Hadoopジョブ)が使用するHadoop上のワーキングディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``CompilerConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.CompilerConfiguration` が提供します。
 
 テストツールプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -960,7 +967,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``${project.buildDir}/excel`` 
       - テストデータ定義シートの出力先
 
-..  [#] これらのプロパティは規約オブジェクト ``TestToolsConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
 
 ThunderGateプロパティ
@@ -1021,7 +1028,7 @@ ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内
       -  ``1`` 
       - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
 
-..  [#] これらのプロパティは規約オブジェクト ``ThunderGateConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
 
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
@@ -1063,11 +1070,13 @@ Framework Organizer Plugin が提供する機能には次のようなものが�
 使用方法
 ~~~~~~~~
 
-Framework Organizer Pluginを使うためには、ビルドスクリプトに下記を含めます：
+Framework Organizer Plugin [#]_ を使うためには、ビルドスクリプトに下記を含めます：
 
 ..  code-block:: groovy
 
     apply plugin: 'asakusafw-organizer'
+
+..  [#] :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPlugin`
 
 タスク
 ~~~~~~
@@ -1084,51 +1093,51 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       - 説明
     * -  ``cleanAssembleAsakusafw`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成の構築時に利用するワーキングディレクトリを初期化する [#]_
     * -  ``attachBatchapps`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にバッチアプリケーションを追加する [#]_
     * -  ``attachComponentCore`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にランタイムコアモジュールを追加する
     * -  ``attachComponentDirectIo`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にDirect I/Oを追加する
     * -  ``attachComponentYaess`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にYAESSを追加する
     * -  ``attachComponentWindGate`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にWindGateを追加する
     * -  ``attachComponentThunderGate`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にThunderGateを追加する
     * -  ``attachComponentDevelopment`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成に開発ツールを追加する
     * -  ``attachComponentOperation`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成に運用ツールを追加する
     * -  ``attachExtensionYaessJobQueue`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にYAESS JobQueue Pluginを追加する
     * -  ``attachExtensionWindGateRetryable`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にWindGate Retryable Pluginを追加する
     * -  ``attachConf<``  ``DistributionName``  ``>`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にディストリビューション名に対応するディレクトリを追加する [#]_
     * -  ``attachAssembleDev`` 
       -  ``attachBatchapps,`` 
@@ -1138,7 +1147,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
          ``attachComponentWindGate,`` 
          ``attachComponentDevelopment,`` 
          ``attachComponentOperation`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成を構築する
     * -  ``attachAssemble`` 
       -  ``attachComponentCore,`` 
@@ -1146,23 +1155,23 @@ Framework Organizer Plugin は、以下のタスクを定義します。
          ``attachComponentYaess,`` 
          ``attachComponentWindGate,`` 
          ``attachComponentOperation`` 
-      - Task
+      - ``Task``
       - 運用環境向けのデプロイメント構成を構築する
     * -  ``assembleCustomAsakusafw`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - 任意のデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``assembleDevAsakusafw`` 
       -  ``attachAssembleDev`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``assembleAsakusafw`` 
       -  ``attachAssemble`` 
-      - Task
+      - ``Task``
       - 運用環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``installAsakusafw`` 
       -  ``attachAssembleDev`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成をローカル環境にインストールする [#]_
 
 ..  [#]  ``cleanAssembleAsakusafw`` タスクは ``attach`` をプレフィックスに持つタスクが呼ばれるタスクグラフ構成が構築された場合に、 ``attach`` を持つタスク群が実行される前に一度だけ自動的に実行されます。
@@ -1195,7 +1204,7 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
       -  ``${project.buildDir}/asakusafw-assembly`` 
       - デプロイメント構成の構築時に利用するワーキングディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``AsakusafwOrganizerConvention`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention` が提供します。
 
 .. _include-hadoop-gradle-plugin:
 
@@ -1221,11 +1230,8 @@ ThunderGateに関する規約プロパティは、 ``asakusafw-organizer`` ブ�
       -  ``未指定`` 
       - デプロイメント構成の設定に含めるThunderGateのターゲット。
 
-..  [#] これらのプロパティは規約オブジェクト ``ThunderGateConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。
 
-Eclipse Pluginの拡張
-~~~~~~~~~~~~~~~~~~~~
-Batch Application Plugin は Gradleが提供するEclipse Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
 デプロイメント構成に含むAsakusa Frameworkのバージョン
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

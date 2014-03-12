@@ -40,7 +40,8 @@ extlinks = {
     'epub': ('http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/epub/%s', None)
 }
 javadoclinks = {
-    'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/api/%s.html', "")
+    'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/api/%s.html', ""),
+    'gradledoc': ('http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/gradle-plugins/%s.html', "")
 }
 # ------------------------------------------------------------------------------
 
