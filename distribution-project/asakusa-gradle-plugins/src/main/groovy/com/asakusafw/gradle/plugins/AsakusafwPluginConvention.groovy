@@ -256,7 +256,7 @@ class AsakusafwPluginConvention {
         String compiledSourceDirectory
 
         /**
-         * DSL Compiler options
+         * DSL Compiler options.
          * <dl>
          *   <dt> Migration from Maven-Archetype: </dt>
          *     <dd> build.properties - {@code asakusa.compiler.options} </dd>

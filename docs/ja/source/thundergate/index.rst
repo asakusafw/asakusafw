@@ -16,7 +16,6 @@ ThunderGateは「オンラインシステムのRDBMSとHadoopの連携」を念�
 * 現在はMySQLのみ対応
 * データベースサーバー上での実行が必要
 * ThunderGate用の管理テーブルや管理カラムが必要
-* ビルドシステムはMavenにのみ対応
 
 RDBMSと連携する汎用的なツールは、 :doc:`../windgate/index` も参照してください。
 
