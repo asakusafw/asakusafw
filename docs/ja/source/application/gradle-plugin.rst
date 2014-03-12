@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.0.tar.gz>`_ 
+* `asakusa-project-template-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.1.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.0.tar.gz>`_ 
+* `asakusa-example-project-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.1.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
