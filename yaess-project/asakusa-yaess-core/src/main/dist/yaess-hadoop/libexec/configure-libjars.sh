@@ -27,9 +27,9 @@ then
     done
 fi
 
-if [ "$_OPT_BATCH_ID" != "" -a -d "$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib" ]
+if [ "$_OPT_BATCH_ID" != "" -a -d "$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/usr/lib" ]
 then
-    _OPT_LIBRARIES_PATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/usr/lib"
+    _OPT_LIBRARIES_PATH="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/usr/lib"
     for f in $(ls "$_OPT_LIBRARIES_PATH")
     do
         if [ -f "$_OPT_LIBRARIES_PATH/$f" ]

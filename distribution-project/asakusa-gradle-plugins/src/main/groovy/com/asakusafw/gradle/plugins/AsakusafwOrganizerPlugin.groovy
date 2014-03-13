@@ -18,6 +18,8 @@ package com.asakusafw.gradle.plugins
 import org.gradle.api.*
 import org.gradle.api.tasks.bundling.*
 
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration
+
 /**
  * Gradle plugin for assembling and Installing Asakusa Framework.
  */
@@ -26,18 +28,15 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     public static final String ASAKUSAFW_ORGANIZER_GROUP = 'Asakusa Framework Organizer'
 
     private Project project
-    private AntBuilder ant
 
     void apply(Project project) {
         this.project = project
-        this.ant = project.ant
 
         project.plugins.apply(AsakusafwBasePlugin.class)
 
         configureProject()
         defineOrganizerTasks()
     }
-
 
     private void configureProject() {
         configureExtentionProperties()
@@ -46,7 +45,16 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     }
 
     private void configureExtentionProperties() {
-        project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention, project)
+        AsakusafwOrganizerPluginConvention convention = project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention)
+        convention.thundergate = convention.extensions.create('thundergate', ThunderGateConfiguration)
+        convention.conventionMapping.with {
+            asakusafwVersion = { throw new InvalidUserDataException('"asakusafw.asakusafwVersion" must be set') }
+            assembleDir = { (String) "${project.buildDir}/asakusafw-assembly" }
+        }
+        convention.thundergate.conventionMapping.with {
+            enabled = { false }
+            target = { null }
+        }
     }
 
     private void configureConfigurations() {
@@ -95,6 +103,17 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 description = "Distribution contents of Asakusa Framework development tools."
             }
 
+            asakusafwThunderGateDist {
+                description = "Distribution contents of Asakusa Framework ThunderGate tools."
+            }
+            asakusafwThunderGateCoreLib {
+                description = "Distribution libraries of Asakusa Framework ThunderGate modules for core runtime."
+                transitive = false
+            }
+            asakusafwThunderGateLib {
+                description = "Distribution libraries of Asakusa Framework ThunderGate modules."
+            }
+
             asakusafwOperationDist {
                 description = "Distribution contents of Asakusa Framework operation tools."
             }
@@ -139,7 +158,6 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 asakusafwYaessTool "com.asakusafw:asakusa-yaess-tools:${project.asakusafwOrganizer.asakusafwVersion}@jar"
                 asakusafwYaessTool "com.google.code.gson:gson:${project.asakusafwInternal.dep.gsonVersion}@jar"
 
-
                 asakusafwWindGateDist "com.asakusafw:asakusa-windgate-plugin:${project.asakusafwOrganizer.asakusafwVersion}:dist@jar"
                 asakusafwWindGateDist "com.asakusafw:asakusa-windgate-hadoopfs:${project.asakusafwOrganizer.asakusafwVersion}:dist@jar"
                 asakusafwWindGateLib "com.asakusafw:asakusa-windgate-bootstrap:${project.asakusafwOrganizer.asakusafwVersion}@jar"
@@ -158,6 +176,16 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 asakusafwWindGateSshLib "ch.qos.logback:logback-core:${project.asakusafwInternal.dep.logbackVersion}@jar"
                 asakusafwWindGateSshLib "org.slf4j:slf4j-api:${project.asakusafwInternal.dep.slf4jVersion}@jar"
                 asakusafwWindGateSshLib "org.slf4j:jul-to-slf4j:${project.asakusafwInternal.dep.slf4jVersion}@jar"
+
+                asakusafwThunderGateDist "com.asakusafw:asakusa-thundergate:${project.asakusafwOrganizer.asakusafwVersion}:dist@jar"
+                asakusafwThunderGateLib "com.asakusafw:asakusa-thundergate:${project.asakusafwOrganizer.asakusafwVersion}@jar"
+                asakusafwThunderGateLib "commons-configuration:commons-configuration:${project.asakusafwInternal.dep.commonsConfigurationVersion}@jar"
+                asakusafwThunderGateLib "commons-io:commons-io:${project.asakusafwInternal.dep.commonsIoVersion}@jar"
+                asakusafwThunderGateLib "commons-lang:commons-lang:${project.asakusafwInternal.dep.commonsLangVersion}@jar"
+                asakusafwThunderGateLib "commons-logging:commons-logging:${project.asakusafwInternal.dep.commonsLoggingVersion}@jar"
+                asakusafwThunderGateLib "log4j:log4j:${project.asakusafwInternal.dep.log4jVersion}@jar"
+                asakusafwThunderGateLib "mysql:mysql-connector-java:${project.asakusafwInternal.dep.mysqlConnectorJavaVersion}@jar"
+                asakusafwThunderGateCoreLib "com.asakusafw:asakusa-thundergate-runtime:${project.asakusafwOrganizer.asakusafwVersion}@jar"
 
                 asakusafwDevelopmentDist "com.asakusafw:asakusa-test-driver:${project.asakusafwOrganizer.asakusafwVersion}:dist@jar"
                 asakusafwDevelopmentDist "com.asakusafw:asakusa-development-tools:${project.asakusafwOrganizer.asakusafwVersion}:dist@jar"
@@ -274,6 +302,19 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         attachComponentWindGate.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
         attachComponentWindGate.setDescription('Attaches WindGate component files to assembly.')
 
+        def attachComponentThunderGate = project.task('attachComponentThunderGate') << {
+            unpackThunderGateDists project.configurations.asakusafwThunderGateDist, project.asakusafwOrganizer.thundergate.target
+            project.copy {
+                from project.configurations.asakusafwThunderGateLib
+                into "${project.asakusafwOrganizer.assembleDir}/bulkloader/lib"
+            }
+            project.copy {
+                from project.configurations.asakusafwThunderGateCoreLib
+                into "${project.asakusafwOrganizer.assembleDir}/core/lib"
+            }
+        }
+        attachComponentThunderGate.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
+        attachComponentThunderGate.setDescription('Attaches ThunderGate component files to assembly.')
 
         def attachComponentDevelopment = project.task('attachComponentDevelopment') << {
             unpackDists project.configurations.asakusafwDevelopmentDist
@@ -309,30 +350,37 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         attachExtensionWindGateRetryable.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
         attachExtensionWindGateRetryable.setDescription('Attaches WindGateRetryable files to assembly.')
 
-        def devDependsTasks = [
-                'attachComponentCore',
-                'attachComponentDirectIo',
-                'attachComponentYaess',
-                'attachComponentWindGate',
-                'attachComponentDevelopment',
-                'attachComponentOperation'
-        ]
-        if (project.plugins.hasPlugin('asakusafw')) {
-            devDependsTasks += 'attachBatchapps'
-        }
-        def attachAssembleDev = project.task('attachAssembleDev', dependsOn: devDependsTasks)
+        def attachAssembleDev = project.task('attachAssembleDev', dependsOn: [
+                attachComponentCore,
+                attachComponentDirectIo,
+                attachComponentYaess,
+                attachComponentWindGate,
+                attachComponentDevelopment,
+                attachComponentOperation
+        ])
         attachAssembleDev.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
         attachAssembleDev.setDescription('Attaches application development environment files to assembly.')
 
         def attachAssemble = project.task('attachAssemble', dependsOn: [
-                'attachComponentCore',
-                'attachComponentDirectIo',
-                'attachComponentYaess',
-                'attachComponentWindGate',
-                'attachComponentOperation'
+                attachComponentCore,
+                attachComponentDirectIo,
+                attachComponentYaess,
+                attachComponentWindGate,
+                attachComponentOperation
         ])
         attachAssemble.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
         attachAssemble.setDescription('Attaches framework files to assembly with default configuration.')
+        project.afterEvaluate {
+            if (project.asakusafwOrganizer.thundergate.isEnabled()) {
+                project.logger.info 'Enabling ThunderGate'
+                attachAssemble.dependsOn attachComponentThunderGate
+                attachAssembleDev.dependsOn attachComponentThunderGate
+            }
+            if (project.plugins.hasPlugin('asakusafw')) {
+                project.logger.info 'Enabling batchapps'
+                attachAssembleDev.dependsOn attachBatchapps
+            }
+        }
 
         project.afterEvaluate {
             def assembleAsakusafw = project.task('assembleAsakusafw', dependsOn: 'attachAssemble', type: Tar) {
@@ -402,4 +450,19 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         }
     }
 
+    def unpackThunderGateDists(distConf, targetName) {
+        distConf.files.each { dist ->
+            project.copy {
+                from project.zipTree(dist)
+                into project.asakusafwOrganizer.assembleDir
+                exclude 'META-INF/'
+                filesMatching('**/*.sh') { f ->
+                    f.setMode(0755)
+                }
+                if (targetName) {
+                    rename(/\[\w+\]-jdbc\.properties/, "${targetName}-jdbc.properties")
+                }
+            }
+        }
+    }
 }

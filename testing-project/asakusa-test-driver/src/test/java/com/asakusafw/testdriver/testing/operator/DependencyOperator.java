@@ -31,7 +31,7 @@ public abstract class DependencyOperator {
     public void setValue(Simple model) {
         try {
             Class.forName("com.asakusafw.example.Dependency");
-            model.setValueAsString("Hello, world!");
+            model.setValueAsString(model.getValueAsString() + "?");
         } catch (ClassNotFoundException e) {
             throw new AssertionError(e);
         }

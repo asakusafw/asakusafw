@@ -379,11 +379,21 @@ public abstract class TestDriverBase {
     }
 
     /**
-     * [EXPERIMENTAL] Sets the {@link JobExecutorFactory} for executing jobs in this test.
+     * Sets the {@link JobExecutorFactory} for executing jobs in this test.
      * @param factory the factory, or {@code null} to use a default implementation
+     * @see TestDriverContext#KEY_JOB_EXECUTOR_FACTORY
      * @since 0.6.0
      */
     public void setJobExecutorFactory(JobExecutorFactory factory) {
         driverContext.setJobExecutorFactory(factory);
+    }
+
+    /**
+     * Returns the current test driver context (for internal use only).
+     * @return the current test driver context
+     * @since 0.6.1
+     */
+    TestDriverContext getDriverContext() {
+        return driverContext;
     }
 }

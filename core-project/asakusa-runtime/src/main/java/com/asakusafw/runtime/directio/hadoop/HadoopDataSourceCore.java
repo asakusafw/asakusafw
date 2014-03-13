@@ -618,7 +618,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
     Path getLocalAttemptOutput(OutputAttemptContext context) throws IOException {
         assert context != null;
         Path tempPath = HadoopDataSourceUtil.getLocalTemporaryDirectory(profile.getLocalFileSystem());
-        String suffix = String.format("%s-%s",
+        String suffix = String.format("%s-%s-%s",
+                context.getTransactionId(),
                 context.getAttemptId(),
                 context.getOutputId());
         return append(tempPath, suffix);

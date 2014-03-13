@@ -40,6 +40,7 @@
 		<module>asakusa-windgate-stream</module>
 		<module>asakusa-windgate-test-moderator</module>
 		<module>asakusa-windgate-vocabulary</module>
+		<module>asakusa-windgate-test-inprocess</module>
 	</modules>
 
 </project>

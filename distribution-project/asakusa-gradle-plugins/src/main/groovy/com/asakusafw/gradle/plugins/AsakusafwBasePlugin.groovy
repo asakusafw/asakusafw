@@ -15,8 +15,9 @@
  */
 package com.asakusafw.gradle.plugins
 
-import com.asakusafw.gradle.plugins.internal.AsakusafwInternalPluginConvention
 import org.gradle.api.*
+
+import com.asakusafw.gradle.plugins.internal.AsakusafwInternalPluginConvention
 
 /**
  * Base class of Asakusa Framework Gradle Plugin.
@@ -24,12 +25,9 @@ import org.gradle.api.*
 class AsakusafwBasePlugin implements Plugin<Project> {
 
     private Project project
-    private AntBuilder ant
 
     void apply(Project project) {
         this.project = project
-        this.ant = project.ant
-
         configureProject()
     }
 

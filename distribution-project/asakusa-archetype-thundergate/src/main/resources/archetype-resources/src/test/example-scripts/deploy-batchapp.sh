@@ -22,8 +22,13 @@ then
     exit 1
 fi
 
-rm "$ASAKUSA_HOME"/batchapps/* -fr
-cp -pr target/batchc/* "$ASAKUSA_HOME"/batchapps
+if [ "$ASAKUSA_BATCHAPPS_HOME" = "" ]
+then
+    export ASAKUSA_BATCHAPPS_HOME="$ASAKUSA_HOME/batchapps"
+fi
+
+rm "$ASAKUSA_BATCHAPPS_HOME"/* -fr
+cp -pr target/batchc/* "$ASAKUSA_BATCHAPPS_HOME"
 
 cp -a src/test/example-dataset /tmp
 mysql -u asakusa -pasakusa -D asakusa < src/test/sql/import-example-dataset.sql

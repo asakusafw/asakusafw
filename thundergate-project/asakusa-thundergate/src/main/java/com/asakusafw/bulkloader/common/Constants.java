@@ -27,7 +27,8 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * Import処理/Export処理用の定数クラス。
  * @author yuta.shirai
- *
+ * @since 0.1.0
+ * @version 0.6.1
  */
 public final class Constants {
 
@@ -39,6 +40,12 @@ public final class Constants {
      * 環境変数名 ASAKSAF/WのHOMEディレクトリ。
      */
     public static final String ASAKUSA_HOME = "ASAKUSA_HOME";
+
+    /**
+     * Environmental variable: the batch applications installation base path.
+     * @since 0.6.1
+     */
+    public static final String BATCHAPPS_PATH = "ASAKUSA_BATCHAPPS_HOME";
 
     /**
      * 環境変数名 ThunderGateのHOMEディレクトリ。

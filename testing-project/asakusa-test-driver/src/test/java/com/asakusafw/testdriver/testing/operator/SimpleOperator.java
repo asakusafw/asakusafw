@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver.testing.operator;
 
+import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.operator.Update;
 
@@ -31,6 +32,18 @@ public abstract class SimpleOperator {
      */
     @Update
     public void setValue(Simple model, String value) {
-        model.setValueAsString(value);
+        String orig = model.getValueAsString();
+        if (orig.equals("ERROR")) {
+            throw new RuntimeException();
+        }
+        model.setValueAsString(orig + value + arg("t1") + arg("t2") + arg("t3"));
+    }
+
+    private String arg(String key) {
+        String value = BatchContext.get(key);
+        if (value == null) {
+            return "";
+        }
+        return value;
     }
 }

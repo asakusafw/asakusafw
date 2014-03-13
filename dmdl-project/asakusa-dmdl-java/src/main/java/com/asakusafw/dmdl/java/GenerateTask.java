@@ -79,7 +79,8 @@ public class GenerateTask {
     }
 
     private DmdlSemantics analyze() throws IOException {
-        AnalyzeTask analyzer = new AnalyzeTask(Messages.getString("GenerateTask.name"), conf.getServiceClassLoader()); //$NON-NLS-1$
+        AnalyzeTask analyzer =
+                new AnalyzeTask(Messages.getString("GenerateTask.name"), conf.getServiceClassLoader()); //$NON-NLS-1$
         return analyzer.process(conf.getSource());
     }
 }
