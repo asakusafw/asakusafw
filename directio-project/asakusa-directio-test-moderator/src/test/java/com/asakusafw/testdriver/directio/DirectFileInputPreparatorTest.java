@@ -202,8 +202,8 @@ public class DirectFileInputPreparatorTest {
      */
     @Test
     public void createOutput_variables() throws Exception {
-        profile.add("root", HadoopDataSource.class, "/");
-        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.add("vars", HadoopDataSource.class, "base");
+        profile.add("vars", new File(folder.getRoot(), "testing"));
         profile.put();
 
         DirectFileInputPreparator testee = new DirectFileInputPreparator();
@@ -212,7 +212,7 @@ public class DirectFileInputPreparatorTest {
                 new MockInputDescription("${vbase}", "${vinput}.txt", format),
                 profile.getTextContext("vbase", "base", "vinput", "input"));
         put(output, "Hello, world!");
-        assertThat(get("base/input.txt"), is(Arrays.asList("Hello, world!")));
+        assertThat(get("testing/input.txt"), is(Arrays.asList("Hello, world!")));
     }
 
     /**

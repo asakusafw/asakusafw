@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.0.tar.gz>`_ 
+* `asakusa-project-template-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.1.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.6.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.0.tar.gz>`_ 
+* `asakusa-example-project-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.1.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
@@ -691,11 +691,13 @@ Batch Application Plugin はAsakusa Framework の バッチアプリケーショ
 使用方法
 ~~~~~~~~
 
-Batch Application Pluginを使うためには、ビルドスクリプトに下記を含めます：
+Batch Application Plugin [#]_ を使うためには、ビルドスクリプトに下記を含めます：
 
 ..  code-block:: groovy
 
     apply plugin: 'asakusafw'
+
+..  [#] :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPlugin`
 
 タスク
 ~~~~~~
@@ -703,29 +705,44 @@ Batch Application Pluginを使うためには、ビルドスクリプトに下�
 Batch Application Plugin は、以下のタスクをプロジェクトに追加します。
 
 ..  list-table:: Batch Application Plugin - タスク
-    :widths: 113 113 113 113
+    :widths: 113 63 113 163
     :header-rows: 1
 
     * - タスク名
       - 依存先
       - 型
       - 説明
-    * -  ``compileDMDL`` 
-      -  ``-`` 
-      - SourceTask
+    * -  ``compileDMDL``
+      -  ``-`` [#]_
+      - ``CompileDmdlTask`` [#]_
       - DMDLコンパイラを使ってモデルクラスを生成する
     * -  ``compileBatchapp`` 
-      -  ``classes`` 
-      - Task
+      -  ``compileJava, processResources`` 
+      - ``CompileBatchappTask`` [#]_
       - DSLコンパイラを使ってバッチアプリケーションを生成する
     * -  ``jarBatchapp`` 
       -  ``compileBatchapp`` 
-      - Jar
+      - ``Jar``
       - バッチアプリケーションアーカイブを生成する
     * -  ``generateTestbook`` 
       -  ``-`` 
-      - SourceTask
+      - ``GenerateTestbookTask`` [#]_
       - テストデータ定義シートを生成する
+    * -  ``generateThunderGateDataModel`` 
+      -  ``-`` 
+      - ``GenerateThunderGateDataModelTask`` [#]_
+      - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
+    * -  ``testRunBatchapp`` 
+      -  ``-`` 
+      - ``RunBatchappTask`` [#]_
+      - バッチテストランナーを実行する
+
+..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileBatchappTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 
@@ -739,11 +756,11 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 説明
     * -  ``compileJava`` 
       -  ``compileDMDL`` 
-      - JavaCompile
+      - ``JavaCompile``
       - Javaソースファイルをコンパイルする
     * -  ``assemble`` 
       -  ``jarBatchapp`` 
-      - Task
+      - ``Task``
       - プロジェクトのすべてのアーカイブを構築する
 
 依存関係の管理
@@ -803,8 +820,12 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       - String
       -  ``src/${project.sourceSets.test.name}/resources/logback-test.xml`` 
       - プロジェクトのLogback設定ファイル [#]_
+    * -  ``basePackage`` 
+      - String
+      -  ``${project.group}`` 
+      - プラグインの各タスクでJavaソースコードの生成時に指定する基底Javaパッケージ
 
-..  [#] これらのプロパティは規約オブジェクト ``AsakusafwConvention`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention` が提供します。
 ..  [#] Logback設定ファイルの詳細は次のドキュメントを参照してください: http://logback.qos.ch/manual/configuration.html
 
 DMDLプロパティ
@@ -829,7 +850,7 @@ DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参�
       -  ``src/${project.sourceSets.main.name}/dmdl`` 
       - DMDLスクリプトのソースディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``DmdlConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.DmdlConfiguration` が提供します。
 
 モデル生成プロパティ
 ^^^^^^^^^^^^^^^^^^^^
@@ -846,14 +867,14 @@ DMDLに関する規約プロパティは、 ``asakusafw`` ブロック内の参�
       - 説明
     * -  ``modelgenSourcePackage`` 
       - String
-      -  ``${project.group}.modelgen`` 
+      -  ``${asakusafw.basePackage}.modelgen`` 
       - モデルクラスに使用されるパッケージ名
     * -  ``modelgenSourceDirectory`` 
       - String
       -  ``${project.buildDir}/generated-sources/modelgen`` 
       - モデルクラスのソースディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``ModelgenConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ModelgenConfiguration` が提供します。
 
 Javaコンパイラプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -877,15 +898,15 @@ Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``UTF-8`` 
       - プロジェクトのソースファイルのエンコーディング
     * -  ``sourceCompatibility`` 
-      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6 [#]_
+      - JavaVersion。StringやNumberで設定することも可能。例： ``'1.6'`` や ``1.6`` [#]_
       -  ``1.6`` 
       - Javaソースのコンパイル時に使用するJavaバージョン互換性
     * -  ``targetCompatibility`` 
-      - JavaVersion。StringやNumberで設定することも可能。例： '1.6' や 1.6
+      - JavaVersion。StringやNumberで設定することも可能。例： ``'1.6'`` や ``1.6``
       -  ``1.6`` 
       - クラス生成のターゲットJavaバージョン
 
-..  [#] これらのプロパティは規約オブジェクト ``JavacConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration` が提供します。
 ..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
 
 DSLコンパイラプロパティ
@@ -903,7 +924,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       - 説明
     * -  ``compiledSourcePackage`` 
       - String
-      -  ``${project.group}.batchapp`` 
+      -  ``${asakusafw.basePackage}.batchapp`` 
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
     * -  ``compiledSourceDirectory`` 
       - String
@@ -922,7 +943,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``target/hadoopwork/${execution_id}`` 
       - DSLコンパイラが生成するアプリケーション(Hadoopジョブ)が使用するHadoop上のワーキングディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``CompilerConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.CompilerConfiguration` が提供します。
 
 テストツールプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -946,8 +967,68 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       -  ``${project.buildDir}/excel`` 
       - テストデータ定義シートの出力先
 
-..  [#] これらのプロパティは規約オブジェクト ``TestToolsConfiguration`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
+
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``target`` 
+      - String
+      -  ``未指定`` 
+      - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる
+    * -  ``ddlEncoding`` 
+      - String
+      -  ``未指定`` 
+      - MySQLメタデータ登録用DDLファイルのエンコーディング
+    * -  ``ddlSourceDirectory`` 
+      - String
+      -  ``src/${project.sourceSets.main.name}/sql/modelgen`` 
+      - MySQLメタデータ登録用DDLファイルのソースディレクトリ
+    * -  ``includes`` 
+      - String
+      -  ``未指定`` 
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象とするモデル名を正規表現の書式で指定
+    * -  ``excludes`` 
+      - String
+      -  ``未指定`` 
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象外とするモデル名を正規表現の書式で指定
+    * -  ``dmdlOutputDirectory`` 
+      - String
+      -  ``${project.buildDir}/thundergate/dmdl`` 
+      - MySQLメタデータから生成されるDMDLスクリプトの出力先
+    * -  ``ddlOutputDirectory`` 
+      - String
+      -  ``${project.buildDir}/thundergate/sql`` 
+      - ThunderGate管理テーブル用DDLスクリプトの出力先
+    * -  ``sidColumn`` 
+      - String
+      -  ``SID`` 
+      - ThunderGateが入出力を行う業務テーブルのシステムIDカラム名
+    * -  ``timestampColumn`` 
+      - String
+      -  ``UPDT_DATETIME`` 
+      - ThunderGateが入出力を行う業務テーブルの更新日時カラム名
+    * -  ``deleteColumn`` 
+      - String
+      -  ``DELETE_FLAG`` 
+      - ThunderGateが入出力を行う論理削除フラグカラム名
+    * -  ``deleteValue`` 
+      - String
+      -  ``1`` 
+      - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
 
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
@@ -957,6 +1038,23 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 * Javaのバージョンやエンコーディングに関する設定
 
 また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
+
+バッチテストランナーの実行 (Experimental)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``testRunBatchapp`` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナー [#]_ をGradleタスクとして実行することができます。
+
+..  attention::
+    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供されています。
+
+``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時のコマンドライン引数として ``--id`` にバッチID、 ``--arguments`` にバッチ引数を指定します。
+
+``testRunBatchapp`` タスクの実行例は以下の通りです。
+
+..  code-block:: groovy
+    
+    ./gradlew testRunBatchapp --id example.summarizeSales --arguments date=2011-04-01
+
+..  [#] バッチテストランナーの詳細は :doc:`../testing/user-guide` の :ref:`testing-userguide-integration-test` を参照してください。
 
 Framework Organizer Plugin
 --------------------------
@@ -972,11 +1070,13 @@ Framework Organizer Plugin が提供する機能には次のようなものが�
 使用方法
 ~~~~~~~~
 
-Framework Organizer Pluginを使うためには、ビルドスクリプトに下記を含めます：
+Framework Organizer Plugin [#]_ を使うためには、ビルドスクリプトに下記を含めます：
 
 ..  code-block:: groovy
 
     apply plugin: 'asakusafw-organizer'
+
+..  [#] :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPlugin`
 
 タスク
 ~~~~~~
@@ -993,91 +1093,85 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       - 説明
     * -  ``cleanAssembleAsakusafw`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成の構築時に利用するワーキングディレクトリを初期化する [#]_
     * -  ``attachBatchapps`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にバッチアプリケーションを追加する [#]_
     * -  ``attachComponentCore`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にランタイムコアモジュールを追加する
     * -  ``attachComponentDirectIo`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にDirect I/Oを追加する
     * -  ``attachComponentYaess`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にYAESSを追加する
     * -  ``attachComponentWindGate`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にWindGateを追加する
+    * -  ``attachComponentThunderGate`` 
+      -  ``-`` 
+      - ``Task``
+      - デプロイメント構成にThunderGateを追加する
     * -  ``attachComponentDevelopment`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成に開発ツールを追加する
     * -  ``attachComponentOperation`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成に運用ツールを追加する
     * -  ``attachExtensionYaessJobQueue`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にYAESS JobQueue Pluginを追加する
     * -  ``attachExtensionWindGateRetryable`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にWindGate Retryable Pluginを追加する
     * -  ``attachConf<``  ``DistributionName``  ``>`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - デプロイメント構成にディストリビューション名に対応するディレクトリを追加する [#]_
     * -  ``attachAssembleDev`` 
       -  ``attachBatchapps,`` 
-        
          ``attachComponentCore,`` 
-        
          ``attachComponentDirectIo,`` 
-        
          ``attachComponentYaess,`` 
-        
          ``attachComponentWindGate,`` 
-        
          ``attachComponentDevelopment,`` 
-        
          ``attachComponentOperation`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成を構築する
     * -  ``attachAssemble`` 
       -  ``attachComponentCore,`` 
-        
          ``attachComponentDirectIo,`` 
-        
          ``attachComponentYaess,`` 
-        
          ``attachComponentWindGate,`` 
-        
          ``attachComponentOperation`` 
-      - Task
+      - ``Task``
       - 運用環境向けのデプロイメント構成を構築する
     * -  ``assembleCustomAsakusafw`` 
       -  ``-`` 
-      - Task
+      - ``Task``
       - 任意のデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``assembleDevAsakusafw`` 
       -  ``attachAssembleDev`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``assembleAsakusafw`` 
       -  ``attachAssemble`` 
-      - Task
+      - ``Task``
       - 運用環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
     * -  ``installAsakusafw`` 
       -  ``attachAssembleDev`` 
-      - Task
+      - ``Task``
       - 開発環境向けのデプロイメント構成をローカル環境にインストールする [#]_
 
 ..  [#]  ``cleanAssembleAsakusafw`` タスクは ``attach`` をプレフィックスに持つタスクが呼ばれるタスクグラフ構成が構築された場合に、 ``attach`` を持つタスク群が実行される前に一度だけ自動的に実行されます。
@@ -1110,9 +1204,33 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
       -  ``${project.buildDir}/asakusafw-assembly`` 
       - デプロイメント構成の構築時に利用するワーキングディレクトリ
 
-..  [#] これらのプロパティは規約オブジェクト ``AsakusafwOrganizerConvention`` が提供します。
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention` が提供します。
 
 .. _include-hadoop-gradle-plugin:
+
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateに関する規約プロパティは、 ``asakusafw-organizer`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``enabled``
+      - boolean
+      - false
+      - この値をtrueにするとThunderGate用の構成を行う
+    * -  ``target`` 
+      - String
+      -  ``未指定`` 
+      - デプロイメント構成の設定に含めるThunderGateのターゲット。
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。
 
 デプロイメント構成に含むAsakusa Frameworkのバージョン
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1157,10 +1275,8 @@ Framework Organizer Pluginを単体で利用する
 
 Asakusa Framework の現在バージョン |version| におけるAsakusa Gradle Pluginの制約事項を以下に挙げます。
 
-* ThunderGate [#]_ には未対応です。
 * レガシーモジュール [#]_ には未対応です。
 
-..  [#] :doc:`../thundergate/index`
 ..  [#] :doc:`../application/legacy-module-guide`
 
 Asakusa Gradle Plugin マイグレーションガイド

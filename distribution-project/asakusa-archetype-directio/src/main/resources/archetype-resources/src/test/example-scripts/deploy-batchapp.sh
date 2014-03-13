@@ -22,8 +22,13 @@ then
     exit 1
 fi
 
-rm "$ASAKUSA_HOME"/batchapps/* -fr
-cp -pr target/batchc/* "$ASAKUSA_HOME"/batchapps
+if [ "$ASAKUSA_BATCHAPPS_HOME" = "" ]
+then
+    export ASAKUSA_BATCHAPPS_HOME="$ASAKUSA_HOME/batchapps"
+fi
+
+rm "$ASAKUSA_BATCHAPPS_HOME"/* -fr
+cp -pr target/batchc/* "$ASAKUSA_BATCHAPPS_HOME"
 
 PROJECT_PATH=$PWD
 $ASAKUSA_HOME/directio/bin/delete-file.sh -r "/" "*"

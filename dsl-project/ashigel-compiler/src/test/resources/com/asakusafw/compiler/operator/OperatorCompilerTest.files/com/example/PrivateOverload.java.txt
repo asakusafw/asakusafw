@@ -1,0 +1,15 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class PrivateOverload {
+
+    @MockOperator
+    public CharSequence method(String string, int param) {
+        return string;
+    }
+
+    // overload method
+    private void method() {}
+}

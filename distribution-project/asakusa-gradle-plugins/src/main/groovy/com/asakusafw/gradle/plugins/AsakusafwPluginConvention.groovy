@@ -15,312 +15,470 @@
  */
 package com.asakusafw.gradle.plugins
 
-import org.gradle.api.*
-import org.gradle.util.ConfigureUtil
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
+
+import org.gradle.api.JavaVersion
 
 /**
  * Convention class for {@link AsakusafwPlugin}.
+ * @since 0.5.2
+ * @version 0.6.1
  */
 class AsakusafwPluginConvention {
+
     /**
      * Schema version of this convention.
      */
-    static final CONVENTION_SCHEMA_VERSION = '1.0.0'
+    static final CONVENTION_SCHEMA_VERSION = '1.1.0'
 
-    final Project project
+    /**
+     * The schema version of this convention.
+     * @since 0.6.1
+     */
+    final String conventionSchemaVersion = CONVENTION_SCHEMA_VERSION
 
     /**
      * Asakusa Framework Version.
-     * This property must be specified in project configuration
+     * This property must be specified in project configuration.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> pom.xml - {@code properties/asakusafw.version} </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> N/A </dd>
+     * </dl>
      */
     String asakusafwVersion
 
     /**
      * Maximum heap size for Model Generator process.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> N/A </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> {@code '1024m'} </dd>
+     * </dl>
      */
     String maxHeapSize
 
     /**
      * Logback configuration file path.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> N/A </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> <code>"src/${project.sourceSets.test.name}/resources/logback-test.xml"</code> </dd>
+     * </dl>
      */
     String logbackConf
 
-    /** DMDL Settings */
-    DmdlConfiguration dmdl;
-    /** Model Generator Settings */
-    ModelgenConfiguration modelgen;
-    /** javac Settings */
-    JavacConfiguration javac;
-    /** DSL Compiler Settings */
-    CompilerConfiguration compiler;
-    /** Test tools Settings */
-    TestToolsConfiguration testtools;
-
-
-    AsakusafwPluginConvention(final Project project) {
-        this.project = project
-
-        maxHeapSize = '1024m'
-        logbackConf = "src/${project.sourceSets.test.name}/resources/logback-test.xml"
-
-        dmdl = new DmdlConfiguration(project)
-        modelgen = new ModelgenConfiguration(project)
-        javac = new JavacConfiguration(project)
-        compiler = new CompilerConfiguration(project)
-        testtools = new TestToolsConfiguration(project)
-    }
-
-    def dmdl(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, dmdl)
-    }
-    def modelgen(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, modelgen)
-    }
-    def javac(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, javac)
-    }
-    def compiler(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, compiler)
-    }
-    def testtools(Closure configureClousure) {
-        ConfigureUtil.configure(configureClousure, testtools)
-    }
+    /**
+     * The base Java package name used in Asakusa Framework code generation.
+     * <dl>
+     *   <dt> Migration from Maven-Archetype: </dt>
+     *     <dd> (may be specified in {@code mvn archetype:generate}) </dd>
+     *   <dt> Default value: </dt>
+     *     <dd> {@code project.group} </dd>
+     * </dl>
+     */
+    String basePackage
 
     /**
-     * DMDL Settings
+     * DMDL settings.
      */
-    class DmdlConfiguration {
+    DmdlConfiguration dmdl
+
+    /**
+     * Model generator settings.
+     */
+    ModelgenConfiguration modelgen
+
+    /**
+     * Java compiler settings.
+     */
+    JavacConfiguration javac
+
+    /**
+     * DSL compiler settings.
+     */
+    CompilerConfiguration compiler
+
+    /**
+     * Test tools settings.
+     */
+    TestToolsConfiguration testtools
+
+    /**
+     * ThunderGate settings.
+     * @since 0.6.1
+     */
+    ThunderGateConfiguration thundergate
+
+    /**
+     * DMDL settings for building Asakusa batch applications.
+     */
+    static class DmdlConfiguration {
 
         /**
-         * Character Encoding using DMDL.
-         * [Migration from Maven-Archetype] build.properties: asakusa.dmdl.encoding
+         * The character encoding using in DMDL sources.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.dmdl.encoding} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'UTF-8'} </dd>
+         * </dl>
          */
         String dmdlEncoding
 
         /**
          * The directory stored dmdl sources.
-         * [Migration from Maven-Archetype] build.properties: asakusa.dmdl.dir
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.dmdl.dir} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"src/${project.sourceSets.main.name}/dmdl"</code> </dd>
+         * </dl>
          */
         String dmdlSourceDirectory
-
-        DmdlConfiguration(Project project) {
-            dmdlEncoding = 'UTF-8'
-            dmdlSourceDirectory = "src/${project.sourceSets.main.name}/dmdl"
-        }
-
-        def dmdlEncoding(String dmdlEncoding) {
-            this.dmdlEncoding = dmdlEncoding
-        }
-
-        def dmdlSourceDirectory(String dmdlSourceDirectory) {
-            this.dmdlSourceDirectory = dmdlSourceDirectory
-        }
-
     }
 
     /**
-     * Model Generator Settings
+     * Model Generator settings for building Asakusa batch applications.
      */
-    class ModelgenConfiguration {
+    static class ModelgenConfiguration {
+
         /**
-         * Package name that is used Model classes generetad by Model Generator.
-         * [Migration from Maven-Archetype] build.properties: asakusa.modelgen.package
+         * Package name that is used Model classes generated by Model Generator.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.package} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.asakusafw.basePackage}.modelgen"</code> </dd>
+         * </dl>
          */
         String modelgenSourcePackage
 
         /**
          * The directory where model sources are generated.
-         * [Migration from Maven-Archetype] build.properties: asakusa.modelgen.output
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.output} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/generated-sources/modelgen"</code> </dd>
+         * </dl>
          */
         String modelgenSourceDirectory
-
-        ModelgenConfiguration(Project project) {
-            modelgenSourcePackage = "${project.group}.modelgen"
-            modelgenSourceDirectory = "${project.buildDir}/generated-sources/modelgen"
-        }
-
-        def modelgenSourcePackage(String modelgenSourcePackage) {
-            this.modelgenSourcePackage = modelgenSourcePackage
-        }
-
-        def modelgenSourceDirectory(String modelgenSourceDirectory) {
-            this.modelgenSourceDirectory = modelgenSourceDirectory
-        }
-
     }
 
     /**
-     * Javac Settings
+     * Java compiler settings for building Asakusa batch applications.
      */
-    class JavacConfiguration {
+    static class JavacConfiguration {
 
         /**
          * The directory where compiled operator impl/factory sources are generated.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/generated-sources/annotations"</code> </dd>
+         * </dl>
          */
         String annotationSourceDirectory
 
         /**
          * Java source encoding of project.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> pom.xml - {@code properties/project.build.sourceEncoding} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'UTF-8'} </dd>
+         * </dl>
          */
         String sourceEncoding
 
         /**
          * Java version compatibility to use when compiling Java source.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code '1.6'} </dd>
+         * </dl>
          */
         JavaVersion sourceCompatibility
 
         /**
          * Java version to generate classes for.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code '1.6'} </dd>
+         * </dl>
          */
         JavaVersion targetCompatibility
 
-        JavacConfiguration(Project project) {
-            annotationSourceDirectory = "${project.buildDir}/generated-sources/annotations"
-            sourceEncoding = 'UTF-8'
-            sourceCompatibility = JavaVersion.toVersion(1.6)
-            targetCompatibility = JavaVersion.toVersion(1.6)
+        void sourceCompatibility(Object value) {
+            this.sourceCompatibility = JavaVersion.toVersion(value)
         }
 
-        def annotationSourceDirectory(String annotationSourceDirectory) {
-            this.annotationSourceDirectory = annotationSourceDirectory
+        void targetCompatibility(Object value) {
+            this.targetCompatibility = JavaVersion.toVersion(value)
         }
-
-        def sourceEncoding(String sourceEncoding) {
-            this.sourceEncoding = sourceEncoding
-        }
-
-        def sourceCompatibility(Object sourceCompatibility) {
-            this.sourceCompatibility = JavaVersion.toVersion(sourceCompatibility)
-        }
-
-        def targetCompatibility(Object targetCompatibility) {
-            this.targetCompatibility = JavaVersion.toVersion(targetCompatibility)
-        }
-
     }
 
     /**
-     * DSL Compiler Settings
+     * DSL compiler settings for building Asakusa batch applications.
      */
-    class CompilerConfiguration {
+    static class CompilerConfiguration {
 
         /**
          * Package name that is used batch compiled classes for Hadoop MapReduce, JobClient and so on.
-         * [Migration from Maven-Archetype] build.properties: asakusa.package.default
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.package.default} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.asakusafw.basePackage}.batchapp"</code> </dd>
+         * </dl>
          */
         String compiledSourcePackage
 
         /**
          * The directory where batch compiled sources are stored.
-         * [Migration from Maven-Archetype] build.properties: asakusa.batchc.dir
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.batchc.dir} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/batchc"</code> </dd>
+         * </dl>
          */
         String compiledSourceDirectory
 
         /**
-         * DSL Compiler options
-         * [Migration from Maven-Archetype] pom.xml: asakusa.compiler.options
+         * DSL Compiler options.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.compiler.options} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code ''} </dd>
+         * </dl>
          */
         String compilerOptions
 
         /**
          * The directory where work files for batch compile are stored.
-         * [Migration from Maven-Archetype] build.properties: asakusa.compilerwork.dir
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.compilerwork.dir} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/batchcwork"</code> </dd>
+         * </dl>
          */
         String compilerWorkDirectory
 
         /**
          * The working root directory when used hadoop job execution.
-         * [Migration from Maven-Archetype] build.properties: asakusa.hadoopwork.dir
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.hadoopwork.dir} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>'target/hadoopwork/${execution_id}'</code> </dd>
+         * </dl>
          */
         String hadoopWorkDirectory
-
-        CompilerConfiguration(Project project) {
-            compiledSourcePackage = "${project.group}.batchapp"
-            compiledSourceDirectory = "${project.buildDir}/batchc"
-            compilerOptions = ''
-            compilerWorkDirectory = "${project.buildDir}/batchcwork"
-            hadoopWorkDirectory = "target/hadoopwork/" + '${execution_id}'
-        }
-
-        def compiledSourcePackage(String compiledSourcePackage) {
-            this.compiledSourcePackage = compiledSourcePackage
-        }
-
-        def compiledSourceDirectory(String compiledSourceDirectory) {
-            this.compiledSourceDirectory = compiledSourceDirectory
-        }
-
-        def compilerOptions(String compilerOptions) {
-            this.compilerOptions = compilerOptions
-        }
-
-        def compilerWorkDirectory(String compilerWorkDirectory) {
-            this.compilerWorkDirectory = compilerWorkDirectory
-        }
-
-        def hadoopWorkDirectory(String hadoopWorkDirectory) {
-            this.hadoopWorkDirectory = hadoopWorkDirectory
-        }
-
     }
 
     /**
-     * Test tools Settings
+     * Test tools settings for building Asakusa batch applications.
      */
-    class TestToolsConfiguration {
+    static class TestToolsConfiguration {
 
         /**
-         * The format of test data sheet (DATA|RULE|INOUT|INSPECT|ALL|DATAX|RULEX|INOUTX|INSPECTX|ALLX)
-         * [Migration from Maven-Archetype] build.properties: asakusa.testdatasheet.format
+         * The format of test data sheet.
+         * This must be {@code (DATA|RULE|INOUT|INSPECT|ALL|DATAX|RULEX|INOUTX|INSPECTX|ALLX)}.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.testdatasheet.format} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'ALL'} </dd>
+         * </dl>
          */
         String testDataSheetFormat
 
         /**
          * The directory where test data sheet files are generated.
-         * [Migration from Maven-Archetype] build.properties: asakusa.testdatasheet.output
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties - {@code asakusa.testdatasheet.output} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/excel"</code> </dd>
+         * </dl>
          */
         String testDataSheetDirectory
+    }
 
-        TestToolsConfiguration(Project project) {
-            testDataSheetFormat = 'ALL'
-            testDataSheetDirectory = "${project.buildDir}/excel"
-        }
+    /**
+     * ThunderGate settings for building Asakusa batch applications.
+     * @since 0.6.1
+     */
+    static class ThunderGateConfiguration {
 
-        def testDataSheetFormat(String testDataSheetFormat) {
-            this.testDataSheetFormat = testDataSheetFormat
-        }
+        /**
+         * The ThunderGate default name using in the development environment (optional).
+         * ThunderGate facilities will be enabled when this value is non-null.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.database.target} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (disable ThunderGate facility) </dd>
+         * </dl>
+         */
+        String target
 
-        def testDataSheetDirectory(String testDataSheetDirectory) {
-            this.testDataSheetDirectory = testDataSheetDirectory
-        }
+        /**
+         * DDL sources charset encoding name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (use default system encoding) </dd>
+         * </dl>
+         */
+        String ddlEncoding
 
+        /**
+         * The DDL source path.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"src/${project.sourceSets.main.name}/sql/modelgen"</code> </dd>
+         * </dl>
+         */
+        String ddlSourceDirectory
+
+        /**
+         * The inclusion target table/view name pattern in regular expression (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.includes} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (includes all targets) </dd>
+         * </dl>
+         */
+        String includes
+
+        /**
+         * The exclusion target table/view name pattern in regular expression (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.excludes} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code null} (no exclusion targets) </dd>
+         * </dl>
+         */
+        String excludes
+
+        /**
+         * The generated DMDL files output path from table/view definitions using DDLs.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.dmdl.fromddl.output} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/thundergate/dmdl"</code> </dd>
+         * </dl>
+         */
+        String dmdlOutputDirectory
+
+        /**
+         * The generated SQL files output path from table/view definitions using DDLs.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> N/A </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> <code>"${project.buildDir}/thundergate/sql"</code> </dd>
+         * </dl>
+         */
+        String ddlOutputDirectory
+
+        /**
+         * The system ID column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.sid.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'SID'} </dd>
+         * </dl>
+         */
+        String sidColumn
+
+        /**
+         * The last modified timestamp column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.timestamp.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'UPDT_DATETIME'} </dd>
+         * </dl>
+         */
+        String timestampColumn
+
+        /**
+         * The logical delete flag column name (optional).
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.delete.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code 'DELETE_FLAG'} </dd>
+         * </dl>
+         */
+        String deleteColumn
+
+        /**
+         * The logical delete flag value representation in DMDL (optional).
+         * Note that the text values must be enclosed with double-quotations like as {@code "<text-value>"}.
+         * <dl>
+         *   <dt> Migration from Maven-Archetype: </dt>
+         *     <dd> build.properties: {@code asakusa.modelgen.delete.column} </dd>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code '"1"'} </dd>
+         * </dl>
+         */
+        String deleteValue
     }
 
     def getConventionProperties() {
-        def commonPrefix = 'com.asaksuafw.asakusafw.'
-        def convention = [:]
-
-        convention.put(commonPrefix + 'conventionSchemaVersion', CONVENTION_SCHEMA_VERSION)
-        convention.put(commonPrefix + 'asakusafwVersion', asakusafwVersion)
-        convention.put(commonPrefix + 'maxHeapSize', maxHeapSize)
-        convention.put(commonPrefix + 'logbackConf', logbackConf)
-
-        convention.putAll(asMap(dmdl, commonPrefix + 'dmdl.'))
-        convention.putAll(asMap(modelgen, commonPrefix + 'modelgen.'))
-        convention.putAll(asMap(javac, commonPrefix + 'javac.'))
-        convention.putAll(asMap(compiler, commonPrefix + 'compiler.'))
-        convention.putAll(asMap(testtools, commonPrefix + 'testtools.'))
-
-        return convention
+        return asMap(AsakusafwPluginConvention, this, 'com.asaksuafw.asakusafw.')
     }
 
-    static def asMap(Object obj, String keyPrefix) {
-        obj.class.declaredFields.findAll{ !it.synthetic }.collectEntries {
-            [keyPrefix + it.name, obj[it.name]]
+    private static def asMap(Class<?> declared, Object obj, String keyPrefix) {
+        def results = [:]
+        for (Field field : declared.declaredFields.findAll{ !it.synthetic && !Modifier.isStatic(it.getModifiers()) && obj.hasProperty(it.name) }) {
+            String propertyKey = keyPrefix + field.name
+            Class<?> propertyType = field.type
+            Object propertyValue;
+            try {
+                propertyValue = obj.getAt(field.name)
+            } catch (Exception e) {
+                // ignores unset value
+                propertyValue = null
+            }
+            if (propertyValue != null && isConventionMember(propertyType)) {
+                results += asMap(propertyType, propertyValue, propertyKey + '.')
+            } else {
+                results[propertyKey] = propertyValue?.toString() ?: ''
+            }
         }
+        return results
+    }
+
+    private static boolean isConventionMember(Class<?> target) {
+        if (target == null || target.isPrimitive() || target == String) {
+            return false
+        } else if (AsakusafwPluginConvention.class.isAssignableFrom(target)) {
+            return true
+        }
+        return isConventionMember(target.getEnclosingClass())
     }
 }
-
-
-
-

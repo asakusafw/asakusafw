@@ -76,6 +76,20 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * Private methods can have a name as same as other operator methods.
+     */
+    @Test
+    public void withPrivateOverload() {
+        add("com.example.PrivateOverload");
+        start(new Collector(new MockOperatorProcessor()) {
+            @Override
+            protected void onCollected(List<OperatorClass> classes) {
+                assertThat(classes.size(), is(1));
+            }
+        });
+    }
+
+    /**
      * 演算子メソッドはそもそもメソッド。
      */
     @Test

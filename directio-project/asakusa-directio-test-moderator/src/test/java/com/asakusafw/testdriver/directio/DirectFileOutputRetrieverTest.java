@@ -283,11 +283,11 @@ public class DirectFileOutputRetrieverTest {
      */
     @Test
     public void createInput_variables() throws Exception {
-        profile.add("root", HadoopDataSource.class, "/");
-        profile.add("root", HadoopDataSourceProfile.KEY_PATH, folder.getRoot().toURI().toURL().toString());
+        profile.add("vars", HadoopDataSource.class, "base");
+        profile.add("vars", new File(folder.getRoot(), "testing"));
         profile.put();
 
-        put("base/output.txt", "Hello, world!");
+        put("testing/output.txt", "Hello, world!");
 
         DirectFileOutputRetriever testee = new DirectFileOutputRetriever();
         DataModelSource input = testee.createSource(

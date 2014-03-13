@@ -80,7 +80,7 @@ cd
 _YS_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
 _YS_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
 _YS_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
-_YS_APP_LIB="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
+_YS_APP_LIB="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 
 _YS_LIBJARS="$_YS_APP_LIB"
 import "$_YS_ROOT/libexec/configure-libjars.sh"

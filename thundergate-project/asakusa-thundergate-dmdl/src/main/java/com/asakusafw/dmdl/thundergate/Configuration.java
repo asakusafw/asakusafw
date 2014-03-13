@@ -20,10 +20,10 @@ import java.nio.charset.Charset;
 
 import com.asakusafw.dmdl.model.AstLiteral;
 
-
 /**
  * このアプリケーションの設定情報。
  * @since 0.2.0
+ * @version 0.6.1
  */
 public class Configuration {
 
@@ -50,6 +50,8 @@ public class Configuration {
     private String deleteFlagColumn;
 
     private AstLiteral deleteFlagValue;
+
+    private File recordLockDdlOutput;
 
     /**
      * 使用するJDBC Driverを返す。
@@ -249,5 +251,23 @@ public class Configuration {
      */
     public void setDeleteFlagValue(AstLiteral deleteFlagValue) {
         this.deleteFlagValue = deleteFlagValue;
+    }
+
+    /**
+     * Returns the output target path of record lock tables DDL file.
+     * @return the output target path, or {@code null} if it is not required
+     * @since 0.6.1
+     */
+    public File getRecordLockDdlOutput() {
+        return recordLockDdlOutput;
+    }
+
+    /**
+     * Sets the output target path of record lock tables DDL file.
+     * @param file the output target path, or {@code null} if it is not required
+     * @since 0.6.1
+     */
+    public void setRecordLockDdlOutput(File file) {
+        this.recordLockDdlOutput = file;
     }
 }

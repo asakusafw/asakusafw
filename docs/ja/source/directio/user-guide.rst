@@ -993,6 +993,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
+``boolean isOptional()``
+    入力にとるファイルが存在しない場合に、バッチ全体を異常終了させるには ``false`` を、空の入力として処理を続行する場合には ``true`` を、それぞれ戻り値に指定します。
+
+    省略した場合、ファイルが存在しない場合にバッチ全体を異常終了させます ( ``false`` )。
+
 ``DataSize getDataSize()``
     入力の推定データサイズを返します。
 
@@ -1022,6 +1027,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         @Override
         public Class<? extends DataFormat<?>> getFormat() {
             return DocumentCsvFormat.class;
+        }
+
+        @Override
+        public boolean isOptional() {
+            return true;
         }
 
         @Override

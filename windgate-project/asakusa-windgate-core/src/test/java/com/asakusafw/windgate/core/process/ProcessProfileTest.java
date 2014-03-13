@@ -33,7 +33,7 @@ import com.asakusafw.windgate.core.session.SessionProfile;
 public class ProcessProfileTest {
 
     /**
-     * Test method for {@link ProcessProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom() {
@@ -49,7 +49,7 @@ public class ProcessProfileTest {
     }
 
     /**
-     * Test method for {@link ProcessProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom_configured() {
@@ -69,7 +69,7 @@ public class ProcessProfileTest {
     }
 
     /**
-     * Test method for {@link ProcessProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link ProcessProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom_multiple() {
