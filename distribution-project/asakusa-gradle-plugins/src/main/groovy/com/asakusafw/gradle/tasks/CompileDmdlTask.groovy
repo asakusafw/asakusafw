@@ -15,44 +15,76 @@
  */
 package com.asakusafw.gradle.tasks
 
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
+
+import com.asakusafw.gradle.tasks.internal.AbstractAsakusaToolTask
 
 /**
  * Gradle Task for DMDL Compile.
+ * @since 0.5.3
+ * @version 0.6.1
  */
-class CompileDmdlTask extends SourceTask {
+class CompileDmdlTask extends AbstractAsakusaToolTask {
+
+    /**
+     * The data model base package name.
+     */
+    @Input
+    String packageName
+
+    /**
+     * The DMDL script source encoding.
+     */
+    @Input
+    String sourceEncoding
+
+    /**
+     * The Java data model source encoding.
+     */
+    @Input
+    String targetEncoding
+
+    /**
+     * The data model classes output base path.
+     */
+    @OutputDirectory
+    File outputDirectory
 
     /**
      * Task Action of this task.
      */
     @TaskAction
     def compileDmdl() {
-        def dmdlPluginPath = ant.path {
-            fileset(dir:"${System.env.ASAKUSA_HOME}/dmdl/plugin", includes: '**/*.jar', erroronmissingdir: false)
-        }
         project.javaexec {
-            main = 'com.asakusafw.dmdl.java.Main'
-            classpath = project.sourceSets.main.compileClasspath
-            maxHeapSize = project.asakusafw.maxHeapSize
-            jvmArgs = [
-                    "-Dlogback.configurationFile=${project.asakusafw.logbackConf}"
-            ]
-            args = [
+            delegate.main = 'com.asakusafw.dmdl.java.Main'
+            delegate.classpath = this.getToolClasspathCollection()
+            delegate.jvmArgs = this.getJvmArgs()
+            if (this.getMaxHeapSize()) {
+                delegate.maxHeapSize = this.getMaxHeapSize()
+            }
+            if (this.getLogbackConf()) {
+                delegate.systemProperties += [ 'logback.configurationFile' : this.getLogbackConf().absolutePath ]
+            }
+            delegate.systemProperties += this.getSystemProperties()
+            delegate.args = [
                     '-output',
-                    project.asakusafw.modelgen.modelgenSourceDirectory,
+                    getOutputDirectory(),
                     '-package',
-                    project.asakusafw.modelgen.modelgenSourcePackage,
+                    getPackageName(),
                     '-source',
-                    project.asakusafw.dmdl.dmdlSourceDirectory,
+                    getSourcepathCollection().asPath,
                     '-sourceencoding',
-                    project.asakusafw.dmdl.dmdlEncoding,
+                    getSourceEncoding(),
                     '-targetencoding',
-                    project.asakusafw.javac.sourceEncoding
+                    getTargetEncoding()
             ]
-            if (dmdlPluginPath.size()) {
-                args += [
-                        '-plugin',
-                        dmdlPluginPath
+            def plugins = this.getPluginClasspathCollection()
+            if (plugins != null && !plugins.empty) {
+                delegate.args += [
+                    '-plugin',
+                    plugins.asPath
                 ]
             }
         }

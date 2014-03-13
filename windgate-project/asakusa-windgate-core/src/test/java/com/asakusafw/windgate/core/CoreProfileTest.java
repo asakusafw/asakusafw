@@ -28,7 +28,7 @@ import org.junit.Test;
 public class CoreProfileTest {
 
     /**
-     * Test method for {@link CoreProfile#loadFrom(java.util.Properties, java.lang.ClassLoader)}.
+     * Test method for {@link CoreProfile#loadFrom(Properties, ProfileContext)}.
      */
     @Test
     public void loadFrom() {

@@ -1094,12 +1094,18 @@ public class JobFlowParamLoader {
         fileName.append(jobflowId);
         fileName.append(Constants.DSL_PROP_EXTENSION);
 
-        String appHome = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME);
-        File file1 = new File(appHome, Constants.JOBFLOW_PACKAGE_PATH_BEFORE);
-        File file2 = new File(file1, batchId);
-        File file3 = new File(file2, Constants.JOBFLOW_PACKAGE_PATH_AFTER);
-        File file4 = new File(file3, fileName.toString());
+        File appsHome;
+        String explicitBatchappsHome = ConfigurationLoader.getEnvProperty(Constants.BATCHAPPS_PATH);
+        if (explicitBatchappsHome != null) {
+            appsHome = new File(explicitBatchappsHome);
+        } else {
+            String frameworkHome = ConfigurationLoader.getEnvProperty(Constants.ASAKUSA_HOME);
+            appsHome = new File(frameworkHome, Constants.JOBFLOW_PACKAGE_PATH_BEFORE);
+        }
+        File appPath = new File(appsHome, batchId);
+        File appLibs = new File(appPath, Constants.JOBFLOW_PACKAGE_PATH_AFTER);
+        File jobflowLib = new File(appLibs, fileName.toString());
 
-        return file4;
+        return jobflowLib;
     }
 }

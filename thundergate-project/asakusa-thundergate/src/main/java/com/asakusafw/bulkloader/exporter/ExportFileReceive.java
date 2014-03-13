@@ -57,7 +57,7 @@ public class ExportFileReceive {
     public boolean receiveFile(ExporterBean bean) {
         // Exportファイルを置くディレクトリ名を作成
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_EXP_FILE_DIR));
-        if (!fileDirectry.exists()) {
+        if (!FileNameUtil.prepareTemporaryDirectory(fileDirectry)) {
             // ディレクトリが存在しない場合は異常終了する。
             LOG.error("TG-EXPORTER-02001", fileDirectry.getAbsolutePath());
             return false;

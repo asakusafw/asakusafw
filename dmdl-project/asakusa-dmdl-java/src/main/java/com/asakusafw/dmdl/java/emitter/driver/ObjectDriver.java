@@ -71,9 +71,9 @@ public class ObjectDriver extends JavaDataModelDriver {
             .toStatement());
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, buffer)
-                .method("append", Models.toLiteral(f, MessageFormat.format( //$NON-NLS-1$
-                        ", {0}=", //$NON-NLS-1$
-                        context.getFieldName(property))))
+                .method("append", //$NON-NLS-1$
+                        Models.toLiteral(f,
+                                MessageFormat.format(", {0}=", context.getFieldName(property)))) //$NON-NLS-1$
                 .toStatement());
             statements.add(new ExpressionBuilder(f, buffer)
                 .method("append", new ExpressionBuilder(f, f.newThis()) //$NON-NLS-1$

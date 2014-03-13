@@ -23,8 +23,8 @@ Hadoop2系で動作するAsakusa Frameworkのバージョンを試験的に提�
 
 Hadoop2系向けのAsakusa Frameworkのバージョン名は、
 ``[asakusafw.version]-hadoop2`` のように、通常のバージョン番号の後ろに ``-hadoop2`` を加えたものになります。
-例えば、Asakusa Frameworkのバージョン ``0.6.0`` のHadoop2系向けバージョンは、
-``0.6.0-hadoop2`` となります。
+例えば、Asakusa Frameworkのバージョン ``0.6.1`` のHadoop2系向けバージョンは、
+``0.6.1-hadoop2`` となります。
 
 Hadoop2系でAsakusa Frameworkを利用する場合、
 Hadoop2系向けのAsakusa Frameworkに対するデプロイメントアーカイブを生成し、
@@ -66,16 +66,16 @@ Hadoop2系向けのAsakusa Frameworkのデプロイメントアーカイブを�
 Asakusa Frameworkのバージョンを示すプロパティ ``asakusafw.version`` の値に
 Hadoop2系向けのAsakusa Frameworkバージョン( ``[asakusafw.version]-hadoop2`` )を指定します。
 
-以下は、Asakusa Framework のバージョン ``0.6.0`` のHadoop2系向け
+以下は、Asakusa Framework のバージョン ``0.6.1`` のHadoop2系向け
 デプロイメントアーカイブを生成する例です [#]_ 。
 
 ..  code-block:: sh
      
     cd asakusafw-organizer
-    mvn package -Dasakusafw.version=0.6.0-hadoop2
+    mvn package -Dasakusafw.version=0.6.1-hadoop2
 
 これにより、Framework Organizerの ``target`` ディレクトリに
-Hadoop2系向けデプロイメントアーカイブ(例えば ``asakusafw-0.6.0-hadoop2-prod-windgate.tar.gz`` )
+Hadoop2系向けデプロイメントアーカイブ(例えば ``asakusafw-0.6.1-hadoop2-prod-windgate.tar.gz`` )
 が作成されます。
 
 Hadoop2系の運用環境上にAsakusa Frameworkをデプロイする方法は

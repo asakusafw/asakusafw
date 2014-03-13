@@ -68,7 +68,7 @@ import "$_TG_ROOT/conf/env.sh"
 import "$_TG_ROOT/libexec/validate-env.sh"
 import "$_TG_ROOT/libexec/configure-hadoop-cmd.sh"
 
-_TG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_BATCH_ID/lib/jobflow-${_FLOW_ID}.jar"
+_TG_CLASSPATH="$ASAKUSA_BATCHAPPS_HOME/$_BATCH_ID/lib/jobflow-${_FLOW_ID}.jar"
 import "$_TG_ROOT/libexec/configure-classpath.sh"
 
 export BULKLOADER_HOME=$ASAKUSA_HOME/bulkloader 1>&2

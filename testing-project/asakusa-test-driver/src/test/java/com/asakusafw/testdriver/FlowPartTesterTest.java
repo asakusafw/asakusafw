@@ -350,6 +350,62 @@ public class FlowPartTesterTest {
         tester.runTest(new DependencyFlowPart(in, out));
     }
 
+    /**
+     * batchapps directory must be escaped.
+     */
+    @Test
+    public void escape_batchapps() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+
+        File escaped = tester.getDriverContext().getBatchApplicationsInstallationPath();
+        tester.runTest(new SimpleFlowPart(in, out));
+
+        assertThat(getDefaultBatchappsLocation().exists(), is(false));
+
+        // escaped batchapps location must be deleted after run the test.
+        assertThat(escaped.exists(), is(false));
+    }
+
+    /**
+     * using explicit batchapps location.
+     */
+    @Test
+    public void use_explicit_batchapps_location() {
+        File explicitBatchappsLocation = framework.getWork("explicit-batchapps");
+
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.getDriverContext().setBatchApplicationsInstallationPath(explicitBatchappsLocation);
+        tester.setFrameworkHomePath(framework.getHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+
+        assertThat(explicitBatchappsLocation.exists(), is(true));
+        assertThat(getDefaultBatchappsLocation().exists(), is(false));
+    }
+
+    /**
+     * using system batchapps location.
+     */
+    @Test
+    public void use_system_batchapps_location() {
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.getDriverContext().useSystemBatchApplicationsInstallationPath(true);
+        tester.setFrameworkHomePath(framework.getHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        tester.runTest(new SimpleFlowPart(in, out));
+
+        assertThat(getDefaultBatchappsLocation().exists(), is(true));
+    }
+
+    private File getDefaultBatchappsLocation() {
+        return new File(framework.getHome(), TestDriverContext.DEFAULT_BATCHAPPS_PATH);
+    }
+
     private void closeQuietly(Object object) {
         if (object instanceof Closeable) {
             try {

@@ -139,12 +139,11 @@ public class GetCacheInfoRemote extends Configured implements Tool {
      * Executes the program with the specified input/output.
      * @param input input stream
      * @param output output stream
-     * @throws IOException
-     * @throws BulkLoaderSystemException
+     * @throws BulkLoaderSystemException if failed to execute
      */
     void execute(
             FileList.Reader input,
-            FileList.Writer output) throws IOException, BulkLoaderSystemException {
+            FileList.Writer output) throws BulkLoaderSystemException {
         assert input != null;
         assert output != null;
         try {

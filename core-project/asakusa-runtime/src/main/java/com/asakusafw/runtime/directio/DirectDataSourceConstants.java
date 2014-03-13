@@ -18,7 +18,7 @@ package com.asakusafw.runtime.directio;
 /**
  * Constants for {@link DirectDataSource} facility.
  * @since 0.2.5
- * @version 0.4.0
+ * @version 0.6.1
  */
 public final class DirectDataSourceConstants {
 
@@ -47,6 +47,20 @@ public final class DirectDataSourceConstants {
      * @since 0.4.0
      */
     public static final String PREFIX_DELETE_PATTERN = "deletePattern.";
+
+    /**
+     * The attribute key name of whether the target input is optional.
+     * The value must be {@code "true"}, {@code "false"},
+     * or {@code null} ({@link #DEFAULT_OPTIONAL default value}).
+     * @since 0.6.1
+     */
+    public static final String KEY_OPTIONAL = "optional";
+
+    /**
+     * The default value of {@link #KEY_OPTIONAL}.
+     * @since 0.6.1
+     */
+    public static final String DEFAULT_OPTIONAL = "false";
 
     private DirectDataSourceConstants() {
         return;
