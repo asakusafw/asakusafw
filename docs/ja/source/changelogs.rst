@@ -2,6 +2,30 @@
 Changelogs
 ==========
 
+Release 0.6.1
+=============
+Mar 19, 2014
+
+Enhancements
+------------
+* [ :issue:`367` ] - Keeps batchapps in ASAKUSA_HOME clean when running TestDriver.
+* [ :issue:`368` ] - Improves details of Batch Application Plugin [Gradle Plugin]
+* [ :issue:`369` ] - Gradle Plugin supports ThunderGate
+* [ :issue:`372` ] - Introduce optional input definition to DirectFileInputDescription
+* [ :issue:`374` ] - Promotes inprocess testing and batch test runner from sandbox featuret
+* [ :issue:`375` ] - Add RunBatchappTask for running BatchTestRunner via Gradle Task
+
+Bug fixes
+---------
+* [ :issue:`371` ] - Fails to resolve data source from Direct I/O output base path with variables
+* [ :issue:`373` ] - Failed to compile Operator class with overloaded private methods
+* [ :issue:`378` ] - Running local job with parallel may conflict in local attempt output area
+
+Others
+------
+* [ :issue:`376` ] - 0.6.1 Documents
+* [ :issue:`377` ] - 0.6.1 Refactoring
+
 Release 0.6.0
 =============
 Feb 17, 2014
