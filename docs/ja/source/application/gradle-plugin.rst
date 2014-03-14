@@ -1046,7 +1046,13 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 ..  attention::
     Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供されています。
 
-``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時のコマンドライン引数として ``--id`` にバッチID、 ``--arguments`` にバッチ引数を指定します。
+``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時に以下のコマンドライン引数を指定します。
+
+``--id``
+  実行するバッチアプリケーションのバッチID
+  
+``--arguments``
+  バッチ引数を ``key=value`` 形式で指定。複数のバッチ引数がある場合はカンマ区切りで指定 ( ``key1=value1,key2=value2`` )。
 
 ``testRunBatchapp`` タスクの実行例は以下の通りです。
 
