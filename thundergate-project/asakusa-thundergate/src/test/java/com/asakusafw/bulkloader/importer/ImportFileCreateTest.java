@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.asakusafw.bulkloader.bean.ImportBean;
@@ -507,6 +508,7 @@ public class ImportFileCreateTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void createImportFileTest08() throws Exception {
         // テストデータを指定
         File testDataDir = new File("src/test/data/importer/ImportFileCreateTest/createImportFileTest01");
@@ -532,7 +534,7 @@ public class ImportFileCreateTest {
 
         // プロパティを書き換え
         Properties prop = ConfigurationLoader.getProperty();
-        prop.setProperty(Constants.PROP_KEY_IMP_FILE_DIR, "sc/test/data/importer/temp");
+        prop.setProperty(Constants.PROP_KEY_IMP_FILE_DIR, "src/test/data/importer/temp");
         ConfigurationLoader.setProperty(prop);
 
         String jobflowSid = "1";

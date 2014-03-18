@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
+import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.runtime.util.VariableTable;
 
 
@@ -41,6 +42,8 @@ public final class FileNameUtil {
      * このクラス。
      */
     private static final Class<?> CLASS = FileNameUtil.class;
+
+    private static final Log LOG = new Log(CLASS);
 
     private FileNameUtil() {
         return;
@@ -61,7 +64,7 @@ public final class FileNameUtil {
             String executionId,
             String tableName) throws BulkLoaderSystemException {
         File fileDirectry = new File(ConfigurationLoader.getProperty(Constants.PROP_KEY_IMP_FILE_DIR));
-        if (!fileDirectry.exists()) {
+        if (!prepareTemporaryDirectory(fileDirectry)) {
             // ディレクトリが存在しない場合は異常終了する。
             throw new BulkLoaderSystemException(CLASS, "TG-COMMON-00017",
                     fileDirectry.getAbsolutePath());
@@ -80,6 +83,7 @@ public final class FileNameUtil {
 
         return new File(fileDirectry, strFileName.toString());
     }
+
     /**
      * Extractorに送信するImportファイル名を作成する。
      * @param tableName Import対象テーブル名
@@ -242,5 +246,23 @@ public final class FileNameUtil {
         strFileName.append(String.valueOf(seq));
         strFileName.append(Constants.EXPORT_FILE_EXTENSION);
         return new File(fileDirectry, strFileName.toString());
+    }
+
+    /**
+     * Prepares the temporary directory.
+     * @param directory the target directory path
+     * @return {@code true} if successfully prepared, otherwise {@code false}
+     */
+    public static boolean prepareTemporaryDirectory(File directory) {
+        if (directory.mkdirs() || directory.isDirectory()) {
+            if (directory.setReadable(true, false) == false && directory.canRead() == false) {
+                LOG.debugMessage("Failed to set readable: {0}", directory);
+            }
+            if (directory.setWritable(true, false) == false && directory.canWrite() == false) {
+                LOG.debugMessage("Failed to set writable: {0}", directory);
+            }
+            return true;
+        }
+        return false;
     }
 }

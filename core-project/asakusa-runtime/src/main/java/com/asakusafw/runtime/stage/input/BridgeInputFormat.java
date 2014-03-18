@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * A bridge implementation for Hadoop {@link InputFormat}.
  * @since 0.2.5
+ * @version 0.6.1
  */
 public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
@@ -107,6 +109,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                 }
             }
         }
+        if (results.isEmpty()) {
+            // Execute this job even if there are no input fragments.
+            // It will create empty output files required by successive jobs.
+            results.add(new NullInputSplit());
+        }
         if (LOG.isInfoEnabled()) {
             LOG.info(MessageFormat.format(
                     "Finish computing splits for Direct I/O: input={0}, fragments={1}, size={2}",
@@ -133,12 +140,21 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (fragments.isEmpty()) {
             String id = repo.getRelatedId(group.containerPath);
             String containerPath = repo.getContainerPath(group.containerPath);
-            throw new IOException(MessageFormat.format(
-                    "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
-                    id,
-                    getBasePath(containerPath, path),
-                    path.pattern,
-                    format.getSupportedType().getName()));
+            if (path.optional) {
+                LOG.info(MessageFormat.format(
+                        "Skipped optional input (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
+                        id,
+                        getBasePath(containerPath, path),
+                        path.pattern,
+                        format.getSupportedType().getName()));
+            } else {
+                throw new IOException(MessageFormat.format(
+                        "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
+                        id,
+                        getBasePath(containerPath, path),
+                        path.pattern,
+                        format.getSupportedType().getName()));
+            }
         }
         return fragments;
     }
@@ -177,7 +193,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                 paths = new ArrayList<InputPath>();
                 results.put(group, paths);
             }
-            paths.add(new InputPath(basePath, pattern));
+            paths.add(new InputPath(basePath, pattern, extractOptional(input)));
         }
         return results;
     }
@@ -209,6 +225,15 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                     extractBasePath(input),
                     value), e);
         }
+    }
+
+    private boolean extractOptional(StageInput input) {
+        assert input != null;
+        String value = input.getAttributes().get(DirectDataSourceConstants.KEY_OPTIONAL);
+        if (value == null) {
+            value = DirectDataSourceConstants.DEFAULT_OPTIONAL;
+        }
+        return value.equals("true");
     }
 
     private Class<?> extractDataClass(JobContext context, StageInput input) throws IOException {
@@ -258,10 +283,18 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
     public RecordReader<NullWritable, Object> createRecordReader(
             InputSplit split,
             TaskAttemptContext context) throws IOException, InterruptedException {
-        assert split instanceof BridgeInputSplit;
-        BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
-        DataFormat<?> format = ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
-        return createRecordReader(format, bridgeInfo, context);
+        if (split instanceof BridgeInputSplit) {
+            BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
+            DataFormat<?> format =
+                    ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
+            return createRecordReader(format, bridgeInfo, context);
+        } else if (split instanceof NullInputSplit) {
+            return createNullRecordReader(context);
+        } else {
+            throw new IOException(MessageFormat.format(
+                    "Unknown input split: {0}",
+                    split));
+        }
     }
 
     private <T> RecordReader<NullWritable, Object> createRecordReader(
@@ -277,6 +310,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         Counter counter = new Counter();
         ModelInput<T> input = createInput(context, split.group.containerPath, type, format, counter, split.fragment);
         return new BridgeRecordReader<T>(input, buffer, counter, split.fragment.getSize());
+    }
+
+    private RecordReader<NullWritable, Object> createNullRecordReader(TaskAttemptContext context) {
+        assert context != null;
+        return new NullRecordReader<NullWritable, Object>();
     }
 
     private <T> ModelInput<T> createInput(
@@ -363,11 +401,14 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         final FilePattern pattern;
 
-        InputPath(String componentPath, FilePattern pattern) {
+        final boolean optional;
+
+        InputPath(String componentPath, FilePattern pattern, boolean optional) {
             assert componentPath != null;
             assert pattern != null;
             this.componentPath = componentPath;
             this.pattern = pattern;
+            this.optional = optional;
         }
     }
 
@@ -555,6 +596,97 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             }
             closed = true;
             input.close();
+        }
+    }
+
+    /**
+     * Empty implementation for Hadoop {@link InputSplit}.
+     * @since 0.6.1
+     */
+    public static final class NullInputSplit extends InputSplit implements Writable, Configurable {
+
+        volatile Configuration conf;
+
+        /**
+         * Creates a new instance for {@link Writable} facilities.
+         */
+        public NullInputSplit() {
+            return;
+        }
+
+        @Override
+        public Configuration getConf() {
+            return conf;
+        }
+
+        @Override
+        public void setConf(Configuration conf) {
+            this.conf = conf;
+        }
+
+        @Override
+        public long getLength() throws IOException, InterruptedException {
+            return 0;
+        }
+
+        @Override
+        public String[] getLocations() throws IOException, InterruptedException {
+            return new String[0];
+        }
+
+        @Override
+        public void readFields(DataInput in) throws IOException {
+            return;
+        }
+
+        @Override
+        public void write(DataOutput out) throws IOException {
+            return;
+        }
+    }
+
+    /**
+     * Empty implementation for Hadoop {@link RecordReader}.
+     * @param <KEYIN> the key type
+     * @param <VALUEIN> the value type
+     */
+    public static final class NullRecordReader<KEYIN, VALUEIN> extends RecordReader<KEYIN, VALUEIN> {
+
+        /**
+         * Creates a new instance.
+         */
+        public NullRecordReader() {
+            return;
+        }
+
+        @Override
+        public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
+            return;
+        }
+
+        @Override
+        public boolean nextKeyValue() throws IOException, InterruptedException {
+            return false;
+        }
+
+        @Override
+        public KEYIN getCurrentKey() throws IOException, InterruptedException {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public VALUEIN getCurrentValue() throws IOException, InterruptedException {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public float getProgress() throws IOException, InterruptedException {
+            return 1.0f;
+        }
+
+        @Override
+        public void close() throws IOException {
+            return;
         }
     }
 }

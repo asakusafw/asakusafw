@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>com.asakusafw.runtime.core.Report.Delegate</name>
+		<value>com.asakusafw.runtime.core.Report$Default</value>
+	</property>
+	<property>
+		<name>com.asakusafw.output.system.dir</name>
+		<value>target/testing/directio-system</value>
+	</property>
+    <property>
+        <name>com.asakusafw.directio.input</name>
+        <value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
+    </property>
+    <property>
+        <name>com.asakusafw.directio.input.path</name>
+        <value>input</value>
+    </property>
+    <property>
+        <name>com.asakusafw.directio.input.fs.path</name>
+        <value>target/testing/directio-fs/input-split</value>
+    </property>
+    <property>
+        <name>com.asakusafw.directio.output</name>
+        <value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
+    </property>
+    <property>
+        <name>com.asakusafw.directio.output.path</name>
+        <value>output</value>
+    </property>
+    <property>
+        <name>com.asakusafw.directio.output.fs.path</name>
+        <value>target/testing/directio-fs/output-split</value>
+    </property>
+</configuration>

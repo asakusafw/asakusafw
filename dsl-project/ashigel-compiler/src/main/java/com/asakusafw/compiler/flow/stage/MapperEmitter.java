@@ -209,7 +209,8 @@ public class MapperEmitter {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
             results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
             results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
+            results.put("stageId",
+                    Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
             results.put("stageUnitId", Models.toLiteral(factory, "m" + unit.getSerialNumber()));
             return results;
         }

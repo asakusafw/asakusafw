@@ -18,6 +18,7 @@ package com.asakusafw.testdriver.directio;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.junit.rules.ExternalResource;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
+import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.testdriver.core.TestContext;
@@ -97,6 +99,19 @@ public class ProfileContext extends ExternalResource {
                 aClass,
                 AbstractDirectDataSource.class);
         add(id, HadoopDataSourceUtil.KEY_PATH, path);
+    }
+
+    /**
+     * Adds a datasource file system path mapping.
+     * @param id datasource ID
+     * @param path target file system path
+     */
+    public void add(String id, File path) {
+        try {
+            add(id, HadoopDataSourceProfile.KEY_PATH, path.toURI().toURL().toString());
+        } catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**

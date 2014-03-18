@@ -34,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -197,6 +198,7 @@ public class ExportFileReceiveTest {
      * @throws Exception
      */
     @SuppressWarnings("deprecation")
+    @Ignore
     @Test
     public void receiveFileTest03() throws Exception {
         // テストデータを指定

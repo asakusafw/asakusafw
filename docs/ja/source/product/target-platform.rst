@@ -88,7 +88,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - IDE
       - Eclipse IDE for Java Developers 3.7.2
     * - IDE
-      - Eclipse IDE for Java Developers 4.3.1
+      - Eclipse IDE for Java Developers 4.3.2
     * - Hadoop
       - Apache Hadoop 1.2.1
 

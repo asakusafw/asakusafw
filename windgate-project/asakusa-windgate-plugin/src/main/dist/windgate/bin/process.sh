@@ -103,7 +103,7 @@ _WG_ARGUMENTS="$_WG_ARGUMENTS,user=$USER"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,batch_id=$_OPT_BATCH_ID"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,flow_id=$_OPT_FLOW_ID"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,execution_id=$_OPT_EXECUTION_ID"
-_WG_CLASSPATH="$ASAKUSA_HOME/batchapps/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
+_WG_CLASSPATH="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
 _WG_CLASS="com.asakusafw.windgate.bootstrap.WindGate"
 
 import "$_WG_ROOT/libexec/configure-classpath.sh"

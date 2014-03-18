@@ -130,7 +130,8 @@ public final class CommandLineUtils {
                         Pattern.compile(".*\\.dmdl"), //$NON-NLS-1$
                         Pattern.compile("^\\..*"))); //$NON-NLS-1$
             } else {
-                LOG.warn(MessageFormat.format(Messages.getString("CommandLineUtils.warnMissingFile"), file)); //$NON-NLS-1$
+                LOG.warn(MessageFormat.format(
+                        Messages.getString("CommandLineUtils.warnMissingFile"), file)); //$NON-NLS-1$
             }
         }
         if (repositories.size() == 1) {

@@ -220,10 +220,13 @@ public class OperatorClassCollector {
                     && kind.isInterface() == false) {
                 continue;
             }
+            if (member.getModifiers().contains(Modifier.PUBLIC) == false) {
+                continue;
+            }
             String id = member.getSimpleName().toString().toUpperCase();
             if (saw.containsKey(id)) {
                 raiseInvalid(member, MessageFormat.format(
-                    "{0}は演算子クラス内のほかのメンバー{1}と異なる名前を指定してください",
+                    "メソッド\"{0}\"は演算子クラス内のほかのメンバー\"{1}\"と異なる名前を指定してください",
                     "{0}", //$NON-NLS-1$
                     member.getSimpleName()));
             } else {

@@ -459,7 +459,8 @@ public class DmdlAnalyzer {
                 report(new Diagnostic(
                         Level.ERROR,
                         property,
-                        Messages.getString("DmdlAnalyzer.diagnosticInconsistentSummarizeAggregateFunction"), //$NON-NLS-1$
+                        Messages.getString(
+                                "DmdlAnalyzer.diagnosticInconsistentSummarizeAggregateFunction"), //$NON-NLS-1$
                         property.aggregator.toString(),
                         property.source.identifier,
                         original.getType()));
@@ -739,7 +740,8 @@ public class DmdlAnalyzer {
                         report(new Diagnostic(
                                 Level.ERROR,
                                 property.name,
-                                Messages.getString("DmdlAnalyzer.diagnosticInconsistentTypeRepordProperty"), //$NON-NLS-1$
+                                Messages.getString(
+                                        "DmdlAnalyzer.diagnosticInconsistentTypeRepordProperty"), //$NON-NLS-1$
                                 property.name,
                                 model.getName()));
                     }
