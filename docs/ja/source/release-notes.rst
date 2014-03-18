@@ -2,9 +2,45 @@
 リリースノート
 ==============
 
+Release 0.6.1
+=============
+Mar 19, 2014
+
+`Asakusa Framework 0.6.1 documentation`_
+
+..  _`Asakusa Framework 0.6.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.1/release/ja/html/index.html
+
+新機能と主な変更点
+------------------
+本リリースの新機能と主な変更点は以下の通りです。
+
+* 以下の機能をSandboxから標準機能に昇格
+   * テストドライバのエミュレーションモード実行: :doc:`testing/emulation-mode`
+   * バッチテストランナーAPI: :doc:`testing/user-guide` - :ref:`testing-userguide-integration-test`
+* Direct I/O の入力ファイルが存在しない場合にエラーとせず処理を続行するオプションを追加。
+   * ``DirectFileInputDescription#isOptional()`` : :doc:`directio/user-guide`
+* Asakusa Gradle Plugin が ThunderGate に対応、また内部動作と拡張性に関する多くの改善。
+
+その他、細かな機能改善およびバグフィックスが含まれます。
+すべての変更点は :doc:`changelogs` を参照してください。
+
+互換性に関して
+--------------
+本リリースでは過去バージョンとの互換性に関する特別な情報はありません。
+
+過去バージョンからのマイグレーション情報については、
+以下のドキュメントを参照してください。
+
+* :doc:`application/migration-guide`
+* :doc:`administration/migration-guide`
+
 Release 0.6.0
 =============
 Feb 17, 2014
+
+`Asakusa Framework 0.6.0 documentation`_
+
+..  _`Asakusa Framework 0.6.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/html/index.html
 
 .. contents::
    :local:
@@ -119,9 +155,7 @@ Asakusa Frameworkが提供するラッパー機構を利用してHadoopの処理
 * :doc:`administration/migration-guide`
 
 リンク
-------
-* `Asakusa Framework 0.6.0 documentation`_
+======
 * :doc:`previous-release-notes`
 * :doc:`changelogs`
 
-..  _`Asakusa Framework 0.6.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/html/index.html
