@@ -736,6 +736,10 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       -  ``-`` 
       - ``RunBatchappTask`` [#]_
       - バッチテストランナーを実行する
+    * -  ``summarizeYaessJob`` 
+      -  ``-`` 
+      - ``AnalyzeYaessLogTask`` [#]_
+      - YAESS Log Analyzerを実行する [#]_
 
 ..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
@@ -743,6 +747,8 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.AnalyzeYaessLogTask`
+..  [#] YAESS Log Analyzerやその使い方については、 :doc:`yaess-log-visualization` を参照してください。
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 

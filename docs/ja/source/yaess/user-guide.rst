@@ -1084,4 +1084,14 @@ YAESSは即座に ``finalize`` フェーズの実行を試みた後、バッチ�
 
 ..  [#] :javadoc:`com.asakusafw.runtime.core.context.InconsistentApplicationException`
 
+実行結果の確認
+--------------
+YAESSの実行結果を確認するには
+`YAESSのログ設定`_ で設定した内容に基づいて出力されたログを確認します。
+
+YAESSのログ内容については、 :doc:`log-table` も参照してください。
+
+また、YAESSのログの概要を把握するためのツールとして、
+YAESS Log Analyzerツールが提供されています。
+詳しくは、 :doc:`../application/yaess-log-visualization` を参照してください。
 
