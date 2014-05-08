@@ -32,6 +32,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 
+import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
@@ -230,8 +231,7 @@ public class StageResourceDriver implements Closeable {
         job.getConfiguration().setStrings(
                 getLocalCacheNameKey(resourceName),
                 localNames.toArray(new String[localNames.size()]));
-        if ((job.getConfiguration().get("mapred.job.tracker", "local").equals("local"))
-                && (job.getConfiguration().get("mapreduce.jobtracker.address", "local").equals("local"))) {
+        if (JobCompatibility.isLocalMode(job)) {
             LOG.info("symlinks for distributed cache will not be created in standalone mode");
         } else {
             DistributedCache.createSymlink(job.getConfiguration());
