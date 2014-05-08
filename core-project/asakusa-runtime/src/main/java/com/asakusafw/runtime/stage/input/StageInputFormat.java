@@ -134,7 +134,7 @@ public class StageInputFormat extends InputFormat {
         assert context != null;
         Configuration conf = context.getConfiguration();
         String combinerType = conf.get(KEY_SPLIT_COMBINER, DEFAULT_SPLIT_COMBINER);
-        if (isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
+        if (JobCompatibility.isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
             return ExtremeSplitCombiner.class;
         }
         Class<? extends SplitCombiner> defined = SPLIT_COMBINERS.get(combinerType);
@@ -149,11 +149,6 @@ public class StageInputFormat extends InputFormat {
                     combinerType), e);
             return IdentitySplitCombiner.class;
         }
-    }
-
-    private static boolean isLocalMode(JobContext context) {
-        assert context != null;
-        return context.getConfiguration().get("mapred.job.tracker", "unknown").equals("local");
     }
 
     private static Path[] toPathArray(List<StageInput> inputs) {
