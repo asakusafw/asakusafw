@@ -45,12 +45,14 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
 
     @Override
     public void setupJob(JobContext jobContext) throws IOException {
+        logJob(jobContext);
         org.apache.hadoop.mapreduce.TaskAttemptContext taskContext = toTaskAttemptContext(jobContext);
         committer(taskContext).setupJob(taskContext);
     }
 
     @Override
     public void abortJob(JobContext jobContext, int status) throws IOException {
+        logJob(jobContext);
         JobStatus.State state = convert(status);
         org.apache.hadoop.mapreduce.TaskAttemptContext taskContext = toTaskAttemptContext(jobContext);
         committer(taskContext).abortJob(taskContext, state);
@@ -68,33 +70,39 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
     @SuppressWarnings("deprecation")
     @Override
     public void cleanupJob(JobContext jobContext) throws IOException {
+        logJob(jobContext);
         org.apache.hadoop.mapreduce.TaskAttemptContext taskContext = toTaskAttemptContext(jobContext);
         committer(taskContext).cleanupJob(taskContext);
     }
 
     @Override
     public void commitJob(JobContext jobContext) throws IOException {
+        logJob(jobContext);
         org.apache.hadoop.mapreduce.TaskAttemptContext taskContext = toTaskAttemptContext(jobContext);
         committer(taskContext).commitJob(taskContext);
     }
 
     @Override
     public void setupTask(TaskAttemptContext taskContext) throws IOException {
+        logTask(taskContext);
         committer(taskContext).setupTask(taskContext);
     }
 
     @Override
     public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException {
+        logTask(taskContext);
         return committer(taskContext).needsTaskCommit(taskContext);
     }
 
     @Override
     public void commitTask(TaskAttemptContext taskContext) throws IOException {
+        logTask(taskContext);
         committer(taskContext).commitTask(taskContext);
     }
 
     @Override
     public void abortTask(TaskAttemptContext taskContext) throws IOException {
+        logTask(taskContext);
         committer(taskContext).abortTask(taskContext);
     }
 
@@ -108,7 +116,11 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
 
     private org.apache.hadoop.mapreduce.TaskAttemptContext toTaskAttemptContext(JobContext jobContext) {
         assert jobContext != null;
-        final Progressable progressable = jobContext.getProgressible();
+        // NOTE: Only in Hadoop 2.x, JobContext can be instance of TaskAttemptContext.
+        if (TaskAttemptContext.class.isInstance(jobContext)) {
+            return TaskAttemptContext.class.cast(jobContext);
+        }
+        Progressable progressable = jobContext.getProgressible();
         if (progressable == null) {
             LOG.warn(MessageFormat.format(
                     "JobContext has no progressable object: {0}",
@@ -122,5 +134,23 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
         }
         TaskAttemptID id = JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(jobContext.getJobID()));
         return JobCompatibility.newTaskAttemptContext(jobContext.getConfiguration(), id, progressable);
+    }
+
+    private void logJob(JobContext jobContext) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Old-style output committer is used in the job: {0} ({1})",
+                    jobContext.getJobName(),
+                    jobContext.getJobID()));
+        }
+    }
+
+    private void logTask(TaskAttemptContext taskContext) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Old-style output committer is used in the task: {0} ({1})",
+                    taskContext.getJobName(),
+                    taskContext.getTaskAttemptID()));
+        }
     }
 }
