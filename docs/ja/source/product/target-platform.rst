@@ -82,7 +82,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Java
       - JDK 7 (1.7.0_45) [#]_
     * - ビルドツール
-      - Gradle 1.10 [#]_
+      - Gradle 1.12 [#]_
     * - ビルドツール
       - Apache Maven 3.0.5 [#]_
     * - IDE
