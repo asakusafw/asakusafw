@@ -124,7 +124,7 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
     * -  ``gradlew.bat`` 
       - Gradleラッパーコマンド (Windows)
     * -  ``.buildtools``
-      - Gradleラッパーライブラリ (Gradle Version: 1.10)
+      - Gradleラッパーライブラリ (Gradle Version: 1.12)
 
 アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。  ``build`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
 

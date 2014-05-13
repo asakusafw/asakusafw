@@ -8,7 +8,7 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion '1.10'
+    gradleVersion '1.12'
     jarFile file('.buildtools/gradlew.jar')
 }
 
