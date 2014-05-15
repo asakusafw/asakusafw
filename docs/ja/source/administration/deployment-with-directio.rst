@@ -148,10 +148,10 @@ Asakusa Frameworkのデプロイメントアーカイブの作成や設定は、
 Asakusa Frameworkのデプロイメントアーカイブのファイル名は ``asakusafw-`` から始まるtarファイルですが、
 そのファイル名は使用しているビルド環境や構成によって異なります。
     
-例えば、Gradleを使った開発環境でAsaksa Framework バージョン ``0.6.1`` を使っている場合、
+例えば、Gradleを使った開発環境でAsaksa Framework バージョン ``0.6.2`` を使っている場合、
 ファイル名は以下のようになります。
 
-* ``asakusafw-0.6.1.tar.gz``
+* ``asakusafw-0.6.2.tar.gz``
 
 以降本書では、Asakusa Frameworkのデプロイメントアーカイブ名を使った操作手順例では
 デプロイメントアーカイブのファイル名を ``asakusafw-*.tar.gz`` と表記します。
