@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.tools.log.util;
+package com.asakusafw.utils.io.csv;
 
 import java.io.Closeable;
 import java.io.Flushable;
@@ -21,13 +21,15 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.asakusafw.utils.io.RecordWriter;
+
 /**
  * A simple implementation of CSV writer.
  * @since 0.6.2
  */
 public class CsvWriter implements RecordWriter {
 
-    private final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])");
+    private static final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])");
 
     private final Appendable writer;
 

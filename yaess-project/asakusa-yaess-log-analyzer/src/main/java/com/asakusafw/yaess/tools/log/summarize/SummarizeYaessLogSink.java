@@ -29,11 +29,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.utils.io.RecordWriter;
 import com.asakusafw.utils.io.Sink;
 import com.asakusafw.yaess.tools.log.YaessJobId;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
 import com.asakusafw.yaess.tools.log.util.Filter;
-import com.asakusafw.yaess.tools.log.util.RecordWriter;
 
 /**
  * Summarizes {@link YaessLogRecord}s.

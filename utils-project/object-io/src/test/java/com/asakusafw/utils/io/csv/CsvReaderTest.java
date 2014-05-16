@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.tools.log.util;
+package com.asakusafw.utils.io.csv;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.asakusafw.utils.io.csv.CsvReader;
 
 /**
  * Test for {@link CsvReader}.

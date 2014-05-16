@@ -18,7 +18,7 @@ package com.asakusafw.yaess.tools.log.summarize;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asakusafw.yaess.tools.log.util.RecordWriter;
+import com.asakusafw.utils.io.RecordWriter;
 
 /**
  * An implementation of {@link RecordWriter} into {@link List}.

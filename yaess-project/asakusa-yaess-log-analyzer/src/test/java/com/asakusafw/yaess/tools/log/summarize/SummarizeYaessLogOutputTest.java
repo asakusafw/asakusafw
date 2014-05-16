@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.utils.io.Sink;
+import com.asakusafw.utils.io.csv.CsvReader;
 import com.asakusafw.yaess.tools.log.YaessJobId;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
-import com.asakusafw.yaess.tools.log.util.CsvReader;
 
 /**
  * Test for {@link SummarizeYaessLogOutput}.
