@@ -254,7 +254,7 @@ public class DmdlAnalyzer {
             List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
             results.add(new ReduceTerm<AstJoin>(term, source, mappings, grouping));
         }
-        if (checkJoinTerms(model, results)) {
+        if (context.getWorld().hasError() == false && checkJoinTerms(model, results)) {
             model.putTrait(JoinTrait.class, new JoinTrait(expression, results));
         }
     }
