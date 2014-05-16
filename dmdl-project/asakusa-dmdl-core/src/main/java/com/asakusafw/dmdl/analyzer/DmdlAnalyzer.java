@@ -238,7 +238,14 @@ public class DmdlAnalyzer {
         assert expression != null;
         LOG.debug("Resolving joined: {}", model.getName()); //$NON-NLS-1$
         List<ReduceTerm<AstJoin>> results = Lists.create();
-        for (AstJoin term : extract(expression)) {
+        List<AstJoin> terms = extract(expression);
+        if (terms.size() >= 3) {
+            report(new Diagnostic(
+                    Level.ERROR,
+                    expression,
+                    Messages.getString("DmdlAnalyzer.diagnosticTooManyJoinTerms"))); //$NON-NLS-1$
+        }
+        for (AstJoin term : terms) {
             LOG.debug("Resolving joined term: {} -> {}", model.getName(), term.reference.name); //$NON-NLS-1$
             ModelSymbol source = context.getWorld().createModelSymbol(term.reference.name);
             if (source.findDeclaration() == null) {
