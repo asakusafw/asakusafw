@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.tools.log.util;
+package com.asakusafw.utils.io.csv;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import com.asakusafw.utils.io.csv.CsvWriter;
 
 /**
  * Test for {@link CsvWriter}.

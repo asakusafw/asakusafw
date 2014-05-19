@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.asakusafw.utils.io.Sink;
+import com.asakusafw.utils.io.csv.CsvWriter;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
 import com.asakusafw.yaess.tools.log.YaessLogOutput;
 import com.asakusafw.yaess.tools.log.util.LogCodeRegexFilter;
-import com.asakusafw.yaess.tools.log.util.CsvWriter;
 import com.asakusafw.yaess.tools.log.util.Filter;
 
 /**

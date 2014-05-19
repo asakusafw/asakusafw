@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.tools.log.util;
+package com.asakusafw.utils.io;
 
 import java.io.Closeable;
 import java.io.Flushable;

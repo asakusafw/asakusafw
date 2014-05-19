@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.yaess.tools.log.util;
+package com.asakusafw.utils.io.csv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.io.Source;
 
@@ -31,8 +28,6 @@ import com.asakusafw.utils.io.Source;
  * @since 0.6.2
  */
 public class CsvReader implements Source<List<String>> {
-
-    static final Logger LOG = LoggerFactory.getLogger(CsvReader.class);
 
     private final Reader reader;
 
