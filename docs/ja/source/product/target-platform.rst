@@ -30,7 +30,12 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 6 (1.6.0_31)
       - |version|
     * - CDH4
-      - 4.5.0
+      - 4.6.0 (MRv1)
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2 [2]_
+    * - CDH5
+      - 5.0.1 (MRv1/MRv2)
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2 [2]_
@@ -75,6 +80,8 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - Product/Version
     * - OS
       - Ubuntu Desktop 12.04
+    * - OS
+      - Ubuntu Desktop 14.04
     * - OS
       - CentOS 6.2
     * - Java
