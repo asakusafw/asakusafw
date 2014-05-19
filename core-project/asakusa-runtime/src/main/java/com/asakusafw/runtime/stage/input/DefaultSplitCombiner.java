@@ -37,6 +37,7 @@ import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 /**
  * A default implementation of {@link SplitCombiner}.
  * @since 0.2.6
+ * @version 0.6.2
  */
 public class DefaultSplitCombiner extends SplitCombiner {
 
@@ -50,6 +51,13 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
     static final String KEY_MUTATION_RATIO = "com.asakusafw.input.combine.ga.mutation";
 
+    /**
+     * The configuration key of the limit input size (in bytes) for
+     * combining all splits for a mapper into a single split.
+     * @since 0.6.2
+     */
+    static final String KEY_TINY_LIMIT = "com.asakusafw.input.combine.tiny.limit";
+
     static final double DEFAULT_LOCAL_SCORE_FACTOR = 3.0;
 
     static final double DEFAULT_GOBAL_SCORE_FACTOR = 5.0;
@@ -59,6 +67,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
     static final int DEFAULT_GENERATIONS = 50;
 
     static final float DEFAULT_MUTATION_RATIO = 0.001f;
+
+    static final long DEFAULT_TINY_LIMIT = -1L;
 
     static final int MIN_POPULATIONS = 10;
 
@@ -78,10 +88,11 @@ public class DefaultSplitCombiner extends SplitCombiner {
         int populations = context.getConfiguration().getInt(KEY_POPULATIONS, DEFAULT_POPULATIONS);
         int generations = context.getConfiguration().getInt(KEY_GENERATIONS, DEFAULT_GENERATIONS);
         double mutations = context.getConfiguration().getFloat(KEY_MUTATION_RATIO, DEFAULT_MUTATION_RATIO);
+        long tinyLimit = context.getConfiguration().getLong(KEY_TINY_LIMIT, DEFAULT_TINY_LIMIT);
         populations = Math.max(populations, MIN_POPULATIONS);
         generations = Math.max(generations, MIN_GENERATIONS);
         mutations = Math.max(mutations, MIN_MUTATION_RATIO);
-        return combine(max, populations, generations, mutations, splits);
+        return combine(max, populations, generations, mutations, tinyLimit, splits);
     }
 
     List<StageInputSplit> combine(
@@ -91,12 +102,24 @@ public class DefaultSplitCombiner extends SplitCombiner {
             double mutations,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
         assert splits != null;
+        return combine(max, populations, generations, mutations, DEFAULT_TINY_LIMIT, splits);
+    }
+
+    List<StageInputSplit> combine(
+            int max,
+            int populations,
+            int generations,
+            double mutations,
+            long tinyLimit,
+            List<StageInputSplit> splits) throws IOException, InterruptedException {
+        assert splits != null;
         Map<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> groups = Util.groupByMapper(splits);
         List<StageInputSplit> results = new ArrayList<StageInputSplit>();
         for (Map.Entry<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> entry : groups.entrySet()) {
             Class<? extends Mapper<?, ?, ?, ?>> mapper = entry.getKey();
             List<Source> sources = entry.getValue();
-            List<StageInputSplit> combined = combineSources(mapper, sources, max, populations, generations, mutations);
+            List<StageInputSplit> combined = combineSources(
+                    mapper, sources, max, populations, generations, mutations, tinyLimit);
             results.addAll(combined);
         }
         return results;
@@ -121,11 +144,18 @@ public class DefaultSplitCombiner extends SplitCombiner {
             Class<? extends Mapper<?, ?, ?, ?>> mapper,
             List<Source> sources,
             int max,
-            int populations,
-            int generations,
-            double mutations) throws IOException, InterruptedException {
+            int populations, int generations, double mutations,
+            long tinyLimit) throws IOException, InterruptedException {
         assert sources != null;
         assert max > 0;
+        if (isTinyInput(sources, tinyLimit)) {
+            LOG.debug(MessageFormat.format(
+                    "Mapper inputs are tiny: < {2} bytes in {1} input(s) ({0})",
+                    mapper.getName(),
+                    sources.size(),
+                    tinyLimit));
+            return Collections.singletonList(new StageInputSplit(mapper, sources));
+        }
         if (sources.size() <= max) {
             List<StageInputSplit> results = new ArrayList<StageInputSplit>();
             for (Source source : sources) {
@@ -167,6 +197,20 @@ public class DefaultSplitCombiner extends SplitCombiner {
                     results.size()));
         }
         return results;
+    }
+
+    private boolean isTinyInput(List<Source> sources, long limit) throws IOException, InterruptedException {
+        if (limit < 0L || sources.size() <= 1) {
+            return false;
+        }
+        long total = 0L;
+        for (Source source : sources) {
+            total += source.getSplit().getLength();
+            if (total > limit) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<StageInputSplit> resolve(Environment env, Gene gene, Class<? extends Mapper<?, ?, ?, ?>> mapper) {

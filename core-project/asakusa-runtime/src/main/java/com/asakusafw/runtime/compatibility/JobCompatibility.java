@@ -16,10 +16,14 @@
 package com.asakusafw.runtime.compatibility;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.RecordWriter;
@@ -38,8 +42,26 @@ import org.apache.hadoop.util.Progressable;
 /**
  * Compatibility for job APIs.
  * @since 0.5.0
+ * @version 0.6.2
  */
 public final class JobCompatibility {
+
+    static final Log LOG = LogFactory.getLog(JobCompatibility.class);
+
+    private static final Constructor<TaskID> TASK_ID_MR2;
+    static {
+        Constructor<TaskID> ctor;
+        try {
+            ctor = TaskID.class.getConstructor(JobID.class, TaskType.class, int.class);
+        } catch (NoSuchMethodException e) {
+            LOG.debug("Failed to detect constructor: TaskID(JobID, TaskType, int)", e);
+            ctor = null;
+        } catch (Exception e) {
+            LOG.warn("Failed to detect constructor: TaskID(JobID, TaskType, int)", e);
+            ctor = null;
+        }
+        TASK_ID_MR2 = ctor;
+    }
 
     private JobCompatibility() {
         return;
@@ -124,7 +146,18 @@ public final class JobCompatibility {
         if (jobId == null) {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
-        return new TaskID(jobId, TaskType.JOB_SETUP, 0);
+        if (TASK_ID_MR2 != null) {
+            try {
+                return TASK_ID_MR2.newInstance(jobId, TaskType.JOB_SETUP, 0);
+            } catch (Exception e) {
+                LOG.warn("Failed to invoke: TaskID(JobID, TaskType, int)", e);
+                // fall-through...
+            }
+        }
+        // NOTE: for Hadoop 2.x MR1
+        @SuppressWarnings("deprecation")
+        TaskID result = new TaskID(jobId, true, 0);
+        return result;
     }
 
     /**
@@ -155,6 +188,21 @@ public final class JobCompatibility {
         } else {
             return context.getCounter(TaskCounter.REDUCE_OUTPUT_RECORDS);
         }
+    }
+
+    /**
+     * Returns whether the current job is on the local mode or not.
+     * @param context the current context
+     * @return {@code true} if the target job is running on the local mode, otherwise {@code false}
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.6.2
+     */
+    public static boolean isLocalMode(JobContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        // FIXME We don't detect local mode in Hadoop 2.x
+        return false;
     }
 
     /**

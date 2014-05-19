@@ -88,7 +88,7 @@ public final class MasterKindOperatorAnalyzer {
         DataModelMirror selectorTx = environment.loadDataModel(selectorParams.get(1).asType());
         if (isValidTx(operatorTx, selectorTx) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の1つめの引数は、{1}のスーパータイプでなければなりません",
+                    "マスタ選択を行うメソッド{0}の2つめの引数は、{1}のスーパータイプでなければなりません",
                     selectorMethod.getSimpleName(),
                     operatorTx));
         }

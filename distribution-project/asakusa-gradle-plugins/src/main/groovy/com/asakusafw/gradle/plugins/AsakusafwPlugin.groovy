@@ -38,6 +38,7 @@ import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ModelgenConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration
+import com.asakusafw.gradle.tasks.AnalyzeYaessLogTask
 import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
@@ -147,6 +148,9 @@ class AsakusafwPlugin implements Plugin<Project> {
 
         def embedded = project.configurations.create('embedded')
         embedded.description = 'Project embedded libraries'
+
+        def asakusaYaessLogAnalyzer = project.configurations.create('asakusaYaessLogAnalyzer')
+        asakusaYaessLogAnalyzer.description = 'Asakusa YAESS Log Analyzer Libraries'
     }
 
     private void configureDependencies() {
@@ -155,6 +159,8 @@ class AsakusafwPlugin implements Plugin<Project> {
                 embedded project.sourceSets.main.libs
                 compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.asakusafwInternal.dep.slf4jVersion
                 compile group: 'ch.qos.logback', name: 'logback-classic', version: project.asakusafwInternal.dep.logbackVersion
+                asakusaYaessLogAnalyzer group: 'com.asakusafw', name: 'asakusa-yaess-log-analyzer', version: project.asakusafw.asakusafwVersion
+                asakusaYaessLogAnalyzer group: 'ch.qos.logback', name: 'logback-classic', version: project.asakusafwInternal.dep.logbackVersion
             }
         }
     }
@@ -272,6 +278,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         extendAssembleTask()
         defineGenerateTestbookTask()
         defineTestRunBatchappTask()
+        defineSummarizeYaessJobTask()
         defineGenerateThunderGateDataModelTask()
     }
 
@@ -370,6 +377,25 @@ class AsakusafwPlugin implements Plugin<Project> {
                 maxHeapSize = { project.asakusafw.maxHeapSize }
             }
             task.dependsOn project.tasks.compileBatchapp
+        }
+    }
+
+    private void defineSummarizeYaessJobTask() {
+        project.task('summarizeYaessJob', type: AnalyzeYaessLogTask) { AnalyzeYaessLogTask task ->
+            group ASAKUSAFW_BUILD_GROUP
+            description 'Analyzes YAESS job execution from log file [Experimental].'
+            task.toolClasspath += project.configurations.asakusaYaessLogAnalyzer
+            task.inputDriver = 'com.asakusafw.yaess.tools.log.basic.BasicYaessLogInput'
+            task.outputDriver = 'com.asakusafw.yaess.tools.log.summarize.SummarizeYaessLogOutput'
+            task.inputArguments.put 'encoding', 'UTF-8'
+            task.outputArguments.put 'encoding', 'UTF-8'
+            task.outputArguments.put 'code', /YS-CORE-\w04\d{3}/
+            task.conventionMapping.with {
+                logbackConf = { this.findLogbackConf() }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                inputFile = { throw new InvalidUserDataException("${task.name} --input </path/to/yaess-log> must be specified") }
+                outputFile = { new File(project.buildDir, 'reports/yaess-jobs.csv') }
+            }
         }
     }
 
