@@ -591,7 +591,7 @@ DMDLコンパイラが生成するプログラムを拡張できます。
 ..  code-block:: none
 
     "名前空間付きのモデル"
-    @namespace(value = com.example.your.namespace)
+    @namespace(value = your.namespace)
     example = { ... };
 
 ..  note::

@@ -25,6 +25,7 @@ Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフト�
 Asakusa Frameworkが提供する開発ツールに関するドキュメントです。
 
 * :doc:`dsl-visualization`
+* :doc:`yaess-log-visualization` (Experimental)
 
 プラットフォーム関連
 ====================
@@ -46,6 +47,7 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
     sdk-artifact
     legacy-module-guide
     dsl-visualization
+    yaess-log-visualization
     develop-with-jdk7
     development-environment-restriction
 

@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.1.tar.gz>`_ 
+* `asakusa-project-template-0.6.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.6.2.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.6.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.1.tar.gz>`_ 
+* `asakusa-example-project-0.6.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.2.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
@@ -124,7 +124,7 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
     * -  ``gradlew.bat`` 
       - Gradleラッパーコマンド (Windows)
     * -  ``.buildtools``
-      - Gradleラッパーライブラリ (Gradle Version: 1.10)
+      - Gradleラッパーライブラリ (Gradle Version: 1.12)
 
 アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。  ``build`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
 
@@ -736,6 +736,10 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       -  ``-`` 
       - ``RunBatchappTask`` [#]_
       - バッチテストランナーを実行する
+    * -  ``summarizeYaessJob`` 
+      -  ``-`` 
+      - ``AnalyzeYaessLogTask`` [#]_
+      - YAESS Log Analyzerを実行する [#]_
 
 ..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
@@ -743,6 +747,8 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.AnalyzeYaessLogTask`
+..  [#] YAESS Log Analyzerやその使い方については、 :doc:`yaess-log-visualization` を参照してください。
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 

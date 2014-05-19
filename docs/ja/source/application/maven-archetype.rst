@@ -67,7 +67,7 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6-release.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.6.1`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.6.2`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
@@ -82,7 +82,8 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
     Choose com.asakusafw:asakusa-archetype-windgate version: 
     1: 0.6.0
     2: 0.6.1
-    Choose a number: 2: 2 (<-2を入力)
+    3: 0.6.2
+    Choose a number: 3: 3 (<-3を入力)
 
 
 ..  [#] Mavenアーキタイププラグインはアーキタイプカタログを利用して対話式にプロジェクトを作成するほかに、必要なパラメータを指定して非対話式にプロジェクトを作成することも出来ます。詳しくは、Mavenアーキタイププラグインのドキュメントなどを参照してください。
@@ -659,7 +660,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.6.1</asakusafw.version>
+    <asakusafw.version>0.6.2</asakusafw.version>
 
 ..  note::
     アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。

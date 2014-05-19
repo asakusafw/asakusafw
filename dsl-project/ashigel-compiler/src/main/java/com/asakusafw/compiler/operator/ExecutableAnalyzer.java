@@ -420,7 +420,7 @@ public class ExecutableAnalyzer {
         }
         for (ShuffleKey.Order order : key.getOrderings()) {
             if (model.findProperty(order.getProperty()) == null) {
-                error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
+                error(position, "@Keyのorderに指定されたプロパティ\"{0}\"が見つかりません({1})",
                         order.getProperty(),
                         model);
             }
