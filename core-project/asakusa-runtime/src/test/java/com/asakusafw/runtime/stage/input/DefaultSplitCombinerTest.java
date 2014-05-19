@@ -83,6 +83,50 @@ public class DefaultSplitCombinerTest {
     }
 
     /**
+     * with tiny inputs.
+     * @throws Exception if failed
+     */
+    @Test
+    public void tiny() throws Exception {
+        DefaultSplitCombiner combiner = new DefaultSplitCombiner();
+        List<StageInputSplit> combined = combine(combiner, 10, 10L, list(
+                split(0, 1, "a"),
+                split(1, 1, "a"),
+                split(2, 1, "a"),
+                split(3, 1, "b"),
+                split(4, 1, "b"),
+                split(5, 1, "b"),
+                split(6, 1, "b"),
+                split(7, 1, "b"),
+                split(8, 1, "b"),
+                split(9, 1, "b")));
+        assertThat(combined.size(), is(1));
+        assertSan(combined);
+    }
+
+    /**
+     * with non-tiny inputs.
+     * @throws Exception if failed
+     */
+    @Test
+    public void tiny_over() throws Exception {
+        DefaultSplitCombiner combiner = new DefaultSplitCombiner();
+        List<StageInputSplit> combined = combine(combiner, 10, 9L, list(
+                split(0, 1, "a"),
+                split(1, 1, "a"),
+                split(2, 1, "a"),
+                split(3, 1, "b"),
+                split(4, 1, "b"),
+                split(5, 1, "b"),
+                split(6, 1, "b"),
+                split(7, 1, "b"),
+                split(8, 1, "b"),
+                split(9, 1, "b")));
+        assertThat(combined.size(), is(10));
+        assertSan(combined);
+    }
+
+    /**
      * with simple GA.
      * @throws Exception if failed
      */
@@ -203,11 +247,20 @@ public class DefaultSplitCombinerTest {
             DefaultSplitCombiner combiner,
             int slots,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
+        return combine(combiner, slots, DefaultSplitCombiner.DEFAULT_TINY_LIMIT, splits);
+    }
+
+    private List<StageInputSplit> combine(
+            DefaultSplitCombiner combiner,
+            int slots,
+            long limit,
+            List<StageInputSplit> splits) throws IOException, InterruptedException {
         return combiner.combine(
                 slots,
                 DefaultSplitCombiner.DEFAULT_POPULATIONS,
                 DefaultSplitCombiner.DEFAULT_GENERATIONS,
                 DefaultSplitCombiner.DEFAULT_MUTATION_RATIO,
+                limit,
                 splits);
     }
 

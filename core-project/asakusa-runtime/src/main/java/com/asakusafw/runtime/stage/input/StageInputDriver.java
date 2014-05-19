@@ -63,6 +63,8 @@ public final class StageInputDriver {
 
     private static final String KEY = "com.asakusafw.stage.input";
 
+    private static final String KEY_SIZE_CACHE = "com.asakusafw.stage.input.size.cache";
+
     /**
      * Sets the input specification for this job.
      * @param job current job
@@ -109,6 +111,19 @@ public final class StageInputDriver {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        long cached = context.getConfiguration().getLong(KEY_SIZE_CACHE, Integer.MIN_VALUE);
+        if (cached != Integer.MIN_VALUE) {
+            return cached;
+        }
+        long result = estimateInputSize0(context);
+        if (result >= 0) {
+            context.getConfiguration().setLong(KEY_SIZE_CACHE, result);
+        }
+        return result;
+    }
+
+    private static long estimateInputSize0(JobContext context) throws InterruptedException {
+        assert context != null;
         try {
             long results = 0L;
             List<StageInputSplit> splits = StageInputFormat.computeSplits(context);

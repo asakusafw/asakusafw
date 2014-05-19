@@ -225,10 +225,7 @@ public class OperatorClassCollector {
             }
             String id = member.getSimpleName().toString().toUpperCase();
             if (saw.containsKey(id)) {
-                raiseInvalid(member, MessageFormat.format(
-                    "メソッド\"{0}\"は演算子クラス内のほかのメンバー\"{1}\"と異なる名前を指定してください",
-                    "{0}", //$NON-NLS-1$
-                    member.getSimpleName()));
+                raiseInvalid(member, "{0}は演算子クラス内のほかの演算子メソッドと異なる名前を指定してください(名前判定は大文字、小文字を無視します)");
             } else {
                 saw.put(id, member);
             }
