@@ -2,6 +2,34 @@
 Changelogs
 ==========
 
+Release 0.6.2
+=============
+May 22, 2014
+
+Enhancements
+------------
+* [ :issue:`325` ] - DMDL Compiler should fail when defining more than 3 model join as joined model.
+* [ :issue:`386` ] - Optimize split combiner for tiny inputs
+* [ :issue:`388` ] - Bumps up default Gradle version to 1.12.
+* [ :issue:`389` ] - Add Gradle task for generating YAESS log summary report
+* [ :issue:`391` ] - Add reducer simplifier for tiny inputs
+
+Bug fixes
+---------
+* [ :issue:`326` ] - Unreadable error message when DMDL compiles joined model with no joined key property.
+* [ :issue:`379` ] - Insert a dropped character
+* [ :issue:`380` ] - Wrong index of the transaction parameter
+* [ :issue:`381` ] - Wrong error message when the name not existing is specified as @Key.order
+* [ :issue:`382` ] - Adds local mode detection logic to JobCompatibilty layer.
+* [ :issue:`383` ] - Unclear message when enum name overlaps in Operator
+* [ :issue:`385` ] - Reduce task infrequently fails with NoSuchMethodError:TaskID on MRv1
+* [ :issue:`387` ] - SystemProperty configration via task property does not work on some Gradle tasks.
+
+Others
+------
+* [ :issue:`390` ] - 0.6.2 Documents
+* [ :issue:`392` ] - 0.6.2 Refactoring
+
 Release 0.6.1
 =============
 Mar 19, 2014
