@@ -15,6 +15,8 @@
  */
 package com.asakusafw.gradle.plugins
 
+import java.util.regex.Pattern
+
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.testfixtures.ProjectBuilder
@@ -28,11 +30,13 @@ import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.DmdlConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ModelgenConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration
+import com.asakusafw.gradle.tasks.AnalyzeYaessLogTask
 import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
 import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
 import com.asakusafw.gradle.tasks.RunBatchappTask
+import com.asakusafw.gradle.tasks.internal.ResolutionUtils
 
 /**
  * Test for {@link AsakusafwPlugin}.
@@ -219,6 +223,47 @@ class AsakusafwPluginTest {
 
         assert task.batchId == null
         assert task.batchArguments.isEmpty()
+    }
+
+    /**
+     * Test for {@code project.tasks.summarizeYaessJob}.
+     */
+    @Test
+    void tasks_summarizeYaessJob() {
+        AsakusafwPluginConvention convention = project.asakusafw
+        AnalyzeYaessLogTask task = project.tasks.summarizeYaessJob
+        assert task.logbackConf == project.file(convention.logbackConf)
+        assert task.maxHeapSize == convention.maxHeapSize
+
+        assert task.systemProperties.isEmpty()
+        assert task.jvmArgs.isEmpty()
+
+        assert task.inputDriver == 'com.asakusafw.yaess.tools.log.basic.BasicYaessLogInput'
+        assert task.outputDriver == 'com.asakusafw.yaess.tools.log.summarize.SummarizeYaessLogOutput'
+
+        try {
+            task.getInputFile()
+            assert false, 'expeced exception'
+        } catch (Exception e) {
+            // ok
+        }
+        task.setInput('input.log')
+        assert task.inputFile == project.file('input.log')
+
+        task.outputFile == project.file('reports/yaess-job.csv')
+        task.setOutput('output.csv')
+        task.outputFile == project.file('output.csv')
+
+        def inputArguments = ResolutionUtils.resolveToStringMap(task.inputArguments)
+        assert inputArguments.get('encoding') == 'UTF-8'
+
+        def outputArguments = ResolutionUtils.resolveToStringMap(task.outputArguments)
+        assert outputArguments.get('encoding') == 'UTF-8'
+
+        assert 'YS-CORE-I04123'.matches(outputArguments.get('code'))
+        assert !'YS-CORE-I09123'.matches(outputArguments.get('code'))
+        assert !'YS-OTHER-I04123'.matches(outputArguments.get('code'))
+        assert !'OTHER-CORE-I04123'.matches(outputArguments.get('code'))
     }
 
     /**

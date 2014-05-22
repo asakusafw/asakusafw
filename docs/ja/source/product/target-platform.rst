@@ -30,7 +30,12 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 6 (1.6.0_31)
       - |version|
     * - CDH4
-      - 4.5.0
+      - 4.6.0 (MRv1)
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2 [2]_
+    * - CDH5
+      - 5.0.1 (MRv1/MRv2)
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2 [2]_
@@ -41,13 +46,13 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - |version|
     * - Amazon EMR [3]_
       - Hadoop 1.0.3
-      - AMI 2.4.2
-      - JDK 7 (1.7.0_40)
+      - AMI 2.4.5
+      - JDK 7 (1.7.0_60 EA)
       - |version|
     * - Amazon EMR
-      - Hadoop 2.2.0
-      - AMI 3.0.2
-      - JDK 7 (1.7.0_45)
+      - Hadoop 2.4.0
+      - AMI 3.1.0
+      - JDK 7 (1.7.0_60 EA)
       - |version|-hadoop2 [2]_
     * - Amazon EMR
       - MapR 3.0.2 (M3/M5/M7)
@@ -76,13 +81,15 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - OS
       - Ubuntu Desktop 12.04
     * - OS
+      - Ubuntu Desktop 14.04
+    * - OS
       - CentOS 6.2
     * - Java
       - JDK 6 (1.6.0_45)
     * - Java
       - JDK 7 (1.7.0_45) [#]_
     * - ビルドツール
-      - Gradle 1.10 [#]_
+      - Gradle 1.12 [#]_
     * - ビルドツール
       - Apache Maven 3.0.5 [#]_
     * - IDE

@@ -112,6 +112,7 @@ class CompileBatchappTask extends AbstractAsakusaToolTask {
                 if (this.getFrameworkVersion()) {
                     delegate.systemProperties += [ 'com.asakusafw.framework.version' : this.getFrameworkVersion() ]
                 }
+                delegate.systemProperties += this.getSystemProperties()
                 delegate.enableAssertions = true
                 delegate.args = [
                         '-output',
