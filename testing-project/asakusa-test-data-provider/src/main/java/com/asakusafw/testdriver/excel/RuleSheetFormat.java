@@ -17,7 +17,7 @@ package com.asakusafw.testdriver.excel;
 
 /**
  * Format of verification rule description on Excel Sheet.
- * @since 0.2.0
+ * @since 0.7.0
  */
 public enum RuleSheetFormat {
 
@@ -61,13 +61,19 @@ public enum RuleSheetFormat {
      * Each item must be set on the same column below this cell.
      */
     COMMENTS("コメント", 2, 3),
+
+    /**
+     * Title of options of property.
+     * Each item must be set on the same column below this cell.
+     */
+    EXTRA_OPTIONS("オプション", 2, 4),
     ;
 
     /**
      * Format ID which this extractor supports.
      * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
      */
-    public static final String FORMAT_VERSION = "EVR-1.0.0";
+    public static final String FORMAT_VERSION = "EVR-2.0.0";
 
     private final String title;
 
