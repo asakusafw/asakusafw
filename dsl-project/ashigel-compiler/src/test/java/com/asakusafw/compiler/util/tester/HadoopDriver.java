@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.MultipleModelInput;
+import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.ToolLauncher;
@@ -53,6 +54,10 @@ import com.asakusafw.utils.collections.Lists;
  * @version 0.6.1
  */
 public final class HadoopDriver implements Closeable {
+
+    static {
+        CoreCompatibility.verifyFrameworkVersion();
+    }
 
     static final Logger LOG = LoggerFactory.getLogger(HadoopDriver.class);
 
