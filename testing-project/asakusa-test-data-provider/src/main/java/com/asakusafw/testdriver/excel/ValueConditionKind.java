@@ -18,6 +18,7 @@ package com.asakusafw.testdriver.excel;
 /**
  * Kind of value predicate represented in each cell.
  * @since 0.2.0
+ * @version 0.7.0
  */
 public enum ValueConditionKind {
 
@@ -37,7 +38,7 @@ public enum ValueConditionKind {
     EQUAL("=", "完全一致", "すべて"),
 
     /**
-     * Accepts if expected data appeares in the actual data.
+     * Accepts if expected data appears in the actual data.
      */
     CONTAIN("<=", "部分一致", "文字列"),
 
@@ -50,6 +51,12 @@ public enum ValueConditionKind {
      * Accepts if actual date/time is between test started time and its finished time.
      */
     NOW("Now", "現在時刻", "日付または時刻"),
+
+    /**
+     * Accepts if the user defined rule recognize the actual data.
+     * @since 0.7.0
+     */
+    EXPRESSION("Expr", "特殊ルール", "特殊"),
     ;
 
     private final String symbol;
