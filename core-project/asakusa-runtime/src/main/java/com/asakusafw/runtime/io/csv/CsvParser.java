@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.io.Text;
 
 import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.runtime.io.csv.CsvFormatException.Reason;
@@ -108,8 +107,6 @@ public class CsvParser implements RecordParser {
     private int currentPhysicalHeadLine = 1;
 
     private CsvFormatException.Status exceptionStatus = null;
-
-    private final Text textBuffer = new Text();
 
     /**
      * Creates a new instance.
@@ -529,146 +526,178 @@ public class CsvParser implements RecordParser {
     public void fill(BooleanOption option) throws CsvFormatException, IOException {
         seekBuffer();
         if (lineBuffer.hasRemaining()) {
-            option.modify(toBooleanValue());
+            boolean value = trueFormat.contentEquals(lineBuffer);
+            option.modify(value);
         } else {
             option.setNull();
         }
     }
 
-    private boolean toBooleanValue() {
-        return trueFormat.contentEquals(lineBuffer);
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(ByteOption option) throws CsvFormatException, IOException {
         seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(ByteOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toByteValue());
+            try {
+                byte value = Byte.parseByte(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "byte value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private byte toByteValue() throws CsvFormatException {
-        try {
-            return Byte.parseByte(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "byte value"), e);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(ShortOption option) throws CsvFormatException, IOException {
         seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(ShortOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toShortValue());
+            try {
+                short value = Short.parseShort(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "short value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private short toShortValue() throws CsvFormatException {
-        try {
-            return Short.parseShort(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "short value"), e);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(IntOption option) throws CsvFormatException, IOException {
         seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(IntOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toIntValue());
+            try {
+                int value = Integer.parseInt(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "int value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private int toIntValue() throws CsvFormatException {
-        try {
-            return Integer.parseInt(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "int value"), e);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(LongOption option) throws CsvFormatException, IOException {
         seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(LongOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toLongValue());
+            try {
+                long value = Long.parseLong(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "long value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private long toLongValue() throws CsvFormatException {
-        try {
-            return Long.parseLong(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "long value"), e);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(FloatOption option) throws CsvFormatException, IOException {
         seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(FloatOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toFloatValue());
+            try {
+                float value = Float.parseFloat(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "float value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private float toFloatValue() throws CsvFormatException {
-        try {
-            return Float.parseFloat(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "float value"), e);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(DoubleOption option) throws CsvFormatException, IOException {
         seekBuffer();
-        if (lineBuffer.hasRemaining()) {
-            option.modify(toDoubleValue());
-        } else {
-            option.setNull();
-        }
-    }
-
-    private double toDoubleValue() throws CsvFormatException {
-        try {
-            return Double.parseDouble(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "double value"), e);
-        }
+        fill0(option, true);
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void fill(DecimalOption option) throws CsvFormatException, IOException {
-        seekBuffer();
+    private void fill0(DoubleOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toDecimalValue());
+            try {
+                double value = Double.parseDouble(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "double value"), e);
+            }
         } else {
             option.setNull();
         }
     }
 
-    private BigDecimal toDecimalValue() throws CsvFormatException {
-        try {
-            return new BigDecimal(lineBuffer.toString());
-        } catch (NumberFormatException e) {
-            throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "decimal value"), e);
+    @Override
+    public void fill(DecimalOption option) throws CsvFormatException, IOException {
+        seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(DecimalOption option, boolean doRecover) throws CsvFormatException {
+        if (lineBuffer.hasRemaining()) {
+            try {
+                BigDecimal value = new BigDecimal(lineBuffer.toString());
+                option.modify(value);
+            } catch (NumberFormatException e) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(createStatusInLine(Reason.INVALID_CELL_FORMAT, "decimal value"), e);
+            }
+        } else {
+            option.setNull();
         }
     }
 
@@ -677,57 +706,61 @@ public class CsvParser implements RecordParser {
     public void fill(StringOption option) throws CsvFormatException, IOException {
         seekBuffer();
         if (lineBuffer.hasRemaining()) {
-            option.modify(toTextValue());
+            String value = lineBuffer.toString();
+            option.modify(value);
         } else {
             option.setNull();
         }
     }
 
-    private Text toTextValue() {
-        textBuffer.set(lineBuffer.toString());
-        return textBuffer;
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void fill(DateOption option) throws CsvFormatException, IOException {
         seekBuffer();
-        if (lineBuffer.hasRemaining()) {
-            option.modify(toDateValue());
-        } else {
-            option.setNull();
-        }
-    }
-
-    private int toDateValue() throws CsvFormatException {
-        int result = dateFormat.parse(lineBuffer);
-        if (result < 0) {
-            throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.getPattern()),
-                    null);
-        }
-        return result;
+        fill0(option, true);
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public void fill(DateTimeOption option) throws CsvFormatException, IOException {
-        seekBuffer();
+    private void fill0(DateOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
-            option.modify(toDateTimeValue());
+            int value = dateFormat.parse(lineBuffer);
+            if (value < 0) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(
+                        createStatusInLine(Reason.INVALID_CELL_FORMAT, dateFormat.getPattern()),
+                        null);
+            }
+            option.modify(value);
         } else {
             option.setNull();
         }
     }
 
-    private long toDateTimeValue() throws CsvFormatException {
-        long result = dateTimeFormat.parse(lineBuffer);
-        if (result < 0) {
-            throw new CsvFormatException(
-                    createStatusInLine(Reason.INVALID_CELL_FORMAT, dateTimeFormat.getPattern()),
-                    null);
+    @Override
+    public void fill(DateTimeOption option) throws CsvFormatException, IOException {
+        seekBuffer();
+        fill0(option, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void fill0(DateTimeOption option, boolean doRecover) throws CsvFormatException {
+        if (lineBuffer.hasRemaining()) {
+            long value = dateTimeFormat.parse(lineBuffer);
+            if (value < 0) {
+                if (doRecover && trimWhitespaces()) {
+                    fill0(option, false);
+                    return;
+                }
+                throw new CsvFormatException(
+                        createStatusInLine(Reason.INVALID_CELL_FORMAT, dateTimeFormat.getPattern()),
+                        null);
+            }
+            option.modify(value);
+        } else {
+            option.setNull();
         }
-        return result;
     }
 
     private Status createStatusInLine(Reason reason, String expected) {
@@ -769,6 +802,29 @@ public class CsvParser implements RecordParser {
         }
         lineBuffer.limit(cellBeginPositions.get(cellBeginPositions.position() + 1));
         lineBuffer.position(cellBeginPositions.get());
+    }
+
+    private boolean trimWhitespaces() {
+        boolean trim = false;
+        for (int i = lineBuffer.position(), n = lineBuffer.limit(); i < n; i++) {
+            char c = lineBuffer.get(i);
+            if (Character.isWhitespace(c)) {
+                trim = true;
+                lineBuffer.position(i + 1);
+            } else {
+                break;
+            }
+        }
+        for (int i = lineBuffer.limit() - 1, n = lineBuffer.position(); i >= n; i--) {
+            char c = lineBuffer.get(i);
+            if (Character.isWhitespace(c)) {
+                trim = true;
+                lineBuffer.limit(i);
+            } else {
+                break;
+            }
+        }
+        return trim;
     }
 
     @Override
