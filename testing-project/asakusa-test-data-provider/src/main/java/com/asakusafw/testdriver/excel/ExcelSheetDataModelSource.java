@@ -23,8 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,9 +139,13 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             for (Map.Entry<PropertyName, Integer> entry : names.entrySet()) {
                 Cell cell = row.getCell(entry.getValue(), Row.CREATE_NULL_AS_BLANK);
                 int type = cell.getCellType();
-                if (type == Cell.CELL_TYPE_FORMULA || type == Cell.CELL_TYPE_ERROR) {
+                if (type == Cell.CELL_TYPE_FORMULA) {
+                    evaluateInCell(cell);
+                    type = cell.getCellType();
+                }
+                if (type == Cell.CELL_TYPE_ERROR) {
                     throw new IOException(MessageFormat.format(
-                            "セルに数式を利用できません: (pos=({1}, {2}), id={0})",
+                            "セルの値にエラーがあります: (pos=({1}, {2}), id={0})",
                             id,
                             row.getRowNum() + 1,
                             cell.getColumnIndex() + 1));
@@ -157,6 +163,20 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             }
         }
         return null;
+    }
+
+    private void evaluateInCell(Cell cell) throws IOException {
+        try {
+            Workbook workbook = cell.getSheet().getWorkbook();
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator.evaluateInCell(cell);
+        } catch (RuntimeException e) {
+            throw new IOException(MessageFormat.format(
+                    "セルの数式を計算できませんでした: (pos=({1}, {2}), id={0})",
+                    id,
+                    cell.getRowIndex() + 1,
+                    cell.getColumnIndex() + 1), e);
+        }
     }
 
     @Override
