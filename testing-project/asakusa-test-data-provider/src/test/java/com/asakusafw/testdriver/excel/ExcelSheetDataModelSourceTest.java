@@ -118,6 +118,10 @@ public class ExcelSheetDataModelSourceTest {
         assertThat(r1.number, is(100));
         assertThat(r1.text, is("100"));
 
+        Simple r2 = next(source);
+        assertThat(r2.number, is(200));
+        assertThat(r2.text, is("200"));
+
         end(source);
     }
 
@@ -154,6 +158,9 @@ public class ExcelSheetDataModelSourceTest {
         Simple r4 = next(source);
         assertThat(r4.booleanValue, is(false));
 
+        Simple r5 = next(source);
+        assertThat(r5.booleanValue, is(true));
+
         end(source);
     }
 
@@ -176,6 +183,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r4 = next(source);
         assertThat(r4.byteValue, is((byte) +2));
+
+        Simple r5 = next(source);
+        assertThat(r5.byteValue, is((byte) 1));
 
         end(source);
     }
@@ -200,6 +210,9 @@ public class ExcelSheetDataModelSourceTest {
         Simple r4 = next(source);
         assertThat(r4.shortValue, is((short) +10000));
 
+        Simple r5 = next(source);
+        assertThat(r5.shortValue, is((short) 1));
+
         end(source);
     }
 
@@ -222,6 +235,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r4 = next(source);
         assertThat(r4.number, is(+200000));
+
+        Simple r5 = next(source);
+        assertThat(r5.number, is(1));
 
         end(source);
     }
@@ -246,6 +262,9 @@ public class ExcelSheetDataModelSourceTest {
         Simple r4 = next(source);
         assertThat(r4.longValue, is(Long.MAX_VALUE));
 
+        Simple r5 = next(source);
+        assertThat(r5.longValue, is(1L));
+
         end(source);
     }
 
@@ -268,6 +287,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r4 = next(source);
         assertThat(r4.floatValue, is(+1000.0f));
+
+        Simple r5 = next(source);
+        assertThat(r5.floatValue, is(1f));
 
         end(source);
     }
@@ -292,6 +314,9 @@ public class ExcelSheetDataModelSourceTest {
         Simple r4 = next(source);
         assertThat(r4.doubleValue, is(+1000.0d));
 
+        Simple r5 = next(source);
+        assertThat(r5.doubleValue, is(1d));
+
         end(source);
     }
 
@@ -314,6 +339,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r4 = next(source);
         assertThat(r4.bigIntegerValue, is(dec(Long.MAX_VALUE).add(BigDecimal.ONE).toBigInteger()));
+
+        Simple r5 = next(source);
+        assertThat(r5.bigIntegerValue, is(BigDecimal.ONE.toBigInteger()));
 
         end(source);
     }
@@ -338,6 +366,9 @@ public class ExcelSheetDataModelSourceTest {
         Simple r4 = next(source);
         assertThat(r4.bigDecimalValue, is(new BigDecimal("1.4142135623730950488016887242097")));
 
+        Simple r5 = next(source);
+        assertThat(r5.bigDecimalValue, is(new BigDecimal("1.1")));
+
         end(source);
     }
 
@@ -354,6 +385,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r2 = next(source);
         assertThat(r2.dateValue, is(date(2040, 1, 1)));
+
+        Simple r3 = next(source);
+        assertThat(r3.dateValue, is(date(2014, 6, 6)));
 
         end(source);
     }
@@ -378,6 +412,9 @@ public class ExcelSheetDataModelSourceTest {
 
         Simple r2 = next(source);
         assertThat(r2.datetimeValue, is(datetime(2040, 1, 1, 2, 3, 4)));
+
+        Simple r3 = next(source);
+        assertThat(r3.datetimeValue, is(datetime(2014, 6, 6, 7, 8, 9)));
 
         end(source);
     }
@@ -557,7 +594,17 @@ public class ExcelSheetDataModelSourceTest {
      */
     @Test(expected = IOException.class)
     public void formula() throws Exception {
-        ExcelSheetDataModelSource source = open("formula.xls");
+        ExcelSheetDataModelSource source = open("formula_error.xls");
+        source.next();
+    }
+
+    /**
+     * error cell.
+     * @throws Exception if occur
+     */
+    @Test(expected = IOException.class)
+    public void cell_error() throws Exception {
+        ExcelSheetDataModelSource source = open("cell_error.xls");
         source.next();
     }
 
