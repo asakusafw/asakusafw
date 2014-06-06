@@ -1,1 +1,2 @@
+com.asakusafw.testdriver.excel.extension.ExcelSheetOrdinalRule
 com.asakusafw.testdriver.excel.extension.ExcelSheetApproximateRule
