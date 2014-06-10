@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -458,6 +459,12 @@ public final class HadoopDriver implements Closeable {
 
     private int invoke(String... arguments) throws IOException {
         String hadoop = getHadoopCommand();
+        if (hadoop == null) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to detect \"{0}\" command for testing: {1}",
+                    hadoop,
+                    Arrays.toString(arguments)));
+        }
         List<String> commands = Lists.create();
         commands.add(hadoop);
         Collections.addAll(commands, arguments);
