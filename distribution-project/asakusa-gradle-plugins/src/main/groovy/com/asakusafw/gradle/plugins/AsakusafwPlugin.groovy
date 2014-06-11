@@ -393,8 +393,13 @@ class AsakusafwPlugin implements Plugin<Project> {
             task.conventionMapping.with {
                 logbackConf = { this.findLogbackConf() }
                 maxHeapSize = { project.asakusafw.maxHeapSize }
-                inputFile = { throw new InvalidUserDataException("${task.name} --input </path/to/yaess-log> must be specified") }
+                // Note: no default value for 'inputFile' property
                 outputFile = { new File(project.buildDir, 'reports/yaess-jobs.csv') }
+            }
+            task.doFirst {
+                if (task.getInputFile() == null) {
+                    throw new InvalidUserDataException("${task.name} --input </path/to/yaess-log> must be specified")
+                }
             }
         }
     }

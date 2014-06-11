@@ -15,8 +15,6 @@
  */
 package com.asakusafw.gradle.plugins
 
-import java.util.regex.Pattern
-
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.testfixtures.ProjectBuilder
@@ -241,12 +239,7 @@ class AsakusafwPluginTest {
         assert task.inputDriver == 'com.asakusafw.yaess.tools.log.basic.BasicYaessLogInput'
         assert task.outputDriver == 'com.asakusafw.yaess.tools.log.summarize.SummarizeYaessLogOutput'
 
-        try {
-            task.getInputFile()
-            assert false, 'expeced exception'
-        } catch (Exception e) {
-            // ok
-        }
+        assert task.inputFile == null
         task.setInput('input.log')
         assert task.inputFile == project.file('input.log')
 
