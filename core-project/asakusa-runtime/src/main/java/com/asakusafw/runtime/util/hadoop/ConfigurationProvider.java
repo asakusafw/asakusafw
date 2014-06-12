@@ -38,12 +38,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 
+import com.asakusafw.runtime.compatibility.CoreCompatibility;
+
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.4.0
  * @version 0.6.0
  */
 public class ConfigurationProvider {
+
+    static {
+        CoreCompatibility.verifyFrameworkVersion();
+    }
 
     private static final String ENV_PATH = "PATH";
 
