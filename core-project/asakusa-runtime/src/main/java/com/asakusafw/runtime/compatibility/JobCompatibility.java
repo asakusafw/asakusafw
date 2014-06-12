@@ -17,6 +17,7 @@ package com.asakusafw.runtime.compatibility;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +48,8 @@ import org.apache.hadoop.util.Progressable;
 public final class JobCompatibility {
 
     static final Log LOG = LogFactory.getLog(JobCompatibility.class);
+
+    private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker";
 
     private static final Constructor<TaskID> TASK_ID_MR2;
     static {
@@ -201,8 +204,27 @@ public final class JobCompatibility {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        // FIXME We don't detect local mode in Hadoop 2.x
-        return false;
+        String mode = getJobMode(context);
+        if (mode == null) {
+            LOG.warn(MessageFormat.format(
+                    "Inconsistent configuration: the default value of \"{0}\" is not set",
+                    KEY_JOBTRACKER_ADDRESS));
+            return false;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Detecting local mode configuraiton: {0}={1}",
+                    KEY_JOBTRACKER_ADDRESS, mode));
+        }
+        return isRemoteJob(mode) == false;
+    }
+
+    private static String getJobMode(JobContext context) {
+        return context.getConfiguration().get(KEY_JOBTRACKER_ADDRESS);
+    }
+
+    private static boolean isRemoteJob(String modeName) {
+        return modeName != null && modeName.equals("local") == false;
     }
 
     /**
