@@ -195,6 +195,18 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         }
     }
 
+    @Override
+    public String extractComments(Row row) throws FormatException {
+        String value = getStringCell(row, ConditionSheetItem.COLUMN_COMMENT);
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String extractOptions(Row row) throws FormatException {
+        // no such field
+        return "";
+    }
+
     private String getStringCell(Row row, ConditionSheetItem item) throws FormatException {
         assert row != null;
         assert item != null;
