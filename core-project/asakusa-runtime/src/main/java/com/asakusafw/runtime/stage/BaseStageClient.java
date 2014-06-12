@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
+import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
@@ -29,6 +30,10 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
  * @since 0.2.6
  */
 public abstract class BaseStageClient extends Configured implements Tool {
+
+    static {
+        CoreCompatibility.verifyFrameworkVersion();
+    }
 
     /**
      * {@link #getBatchId()}のメソッド名。
