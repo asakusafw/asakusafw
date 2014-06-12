@@ -32,7 +32,7 @@ public final class CoreCompatibility {
     /**
      * Represents the target version.
      */
-    private static final FrameworkVersion TARGET = FrameworkVersion.DONT_CARE;
+    private static final FrameworkVersion TARGET = FrameworkVersion.HADOOP_V2;
 
     private CoreCompatibility() {
         return;
