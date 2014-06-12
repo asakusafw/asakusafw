@@ -26,6 +26,7 @@ import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.mapreduce.MRConfig;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.StatusReporter;
@@ -57,7 +58,9 @@ public final class JobCompatibility {
         try {
             ctor = TaskID.class.getConstructor(JobID.class, TaskType.class, int.class);
         } catch (NoSuchMethodException e) {
-            LOG.debug("Failed to detect constructor: TaskID(JobID, TaskType, int)", e);
+            if (LOG.isDebugEnabled() && isMRv1() == false) {
+                LOG.debug("Failed to detect constructor: TaskID(JobID, TaskType, int)", e);
+            }
             ctor = null;
         } catch (Exception e) {
             LOG.warn("Failed to detect constructor: TaskID(JobID, TaskType, int)", e);
@@ -204,6 +207,21 @@ public final class JobCompatibility {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
+        if (isMRv1()) {
+            return isLocalModeMRv1(context);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "{0}={1}",
+                    MRConfig.FRAMEWORK_NAME,
+                    context.getConfiguration().get(MRConfig.FRAMEWORK_NAME)));
+        }
+        String name = context.getConfiguration().get(MRConfig.FRAMEWORK_NAME, MRConfig.LOCAL_FRAMEWORK_NAME);
+        return name.equals(MRConfig.LOCAL_FRAMEWORK_NAME);
+    }
+
+    private static boolean isLocalModeMRv1(JobContext context) {
+        assert context != null;
         String mode = getJobMode(context);
         if (mode == null) {
             LOG.warn(MessageFormat.format(
@@ -225,6 +243,10 @@ public final class JobCompatibility {
 
     private static boolean isRemoteJob(String modeName) {
         return modeName != null && modeName.equals("local") == false;
+    }
+
+    private static boolean isMRv1() {
+        return CoreCompatibility.FrameworkVersion.get() == CoreCompatibility.FrameworkVersion.HADOOP_V2_MR1;
     }
 
     /**
