@@ -163,13 +163,14 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
         if (buildNullity(property, value, nullity) == false) {
             return;
         }
-        buildValue(property, context, value);
+        String extraOptions = extractor.extractOptions(row);
+        buildValue(property, context, value, extraOptions);
     }
 
     private boolean buildNullity(
             VerifyRuleBuilder.Property property,
             ValueConditionKind value,
-            NullityConditionKind nullity) {
+            NullityConditionKind nullity) throws ExcelRuleExtractor.FormatException {
         assert property != null;
         assert value != null;
         assert nullity != null;
@@ -196,7 +197,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             property.accept(isNull());
             return false;
         default:
-            throw new AssertionError(MessageFormat.format(
+            throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
                     "Unknown nullity constraint \"{1}\": {0}",
                     property,
                     nullity));
@@ -207,7 +208,8 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
     private void buildValue(
             VerifyRuleBuilder.Property property,
             VerifyContext context,
-            ValueConditionKind value) throws ExcelRuleExtractor.FormatException {
+            ValueConditionKind value,
+            String extraOptions) throws ExcelRuleExtractor.FormatException {
         assert property != null;
         assert context != null;
         assert value != null;
@@ -243,11 +245,30 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
                 throw typeError(property, ValueConditionKind.NOW);
             }
             break;
+        case EXPRESSION:
+            buildExpression(property, context, extraOptions);
+            break;
         default:
-            throw new AssertionError(MessageFormat.format(
+            throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
                     "Unknown value constraint \"{1}\": {0}",
                     property,
                     value));
+        }
+    }
+
+    private void buildExpression(
+            VerifyRuleBuilder.Property property,
+            VerifyContext context,
+            String expression) throws ExcelRuleExtractor.FormatException {
+        ExcelSheetRuleExtensionRepository repo = ExcelSheetRuleExtensionRepository.get(context);
+        ValuePredicate<?> resolved = repo.resolve(context, property.getName(), property.getType(), expression);
+        if (resolved != null) {
+            property.accept(resolved);
+        } else {
+            throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
+                    "Unsupported optional expression: {0} -> \"{1}\"",
+                    property.getName(),
+                    expression));
         }
     }
 

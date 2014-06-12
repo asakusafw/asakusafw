@@ -338,6 +338,41 @@ public class ExcelSheetRuleProviderTest {
     }
 
     /**
+     * {@link ValueConditionKind} - expr.
+     * @throws Exception if occur
+     */
+    @Test
+    public void value_expr() throws Exception {
+        ExcelSheetRuleProvider provider = new ExcelSheetRuleProvider();
+        VerifyRule rule = provider.get(SIMPLE, context(10), uri("verify/value_approx.xls", ":0"));
+        assertThat(rule, not(nullValue()));
+
+        assertThat(rule.verify(num(1, 1.0), num(1, 1.0)), is(nullValue()));
+        assertThat(rule.verify(num(1, 1.0), num(1, 1.49)), is(nullValue()));
+        assertThat(rule.verify(num(1, 1.0), num(1, 1.51)), is(notNullValue()));
+        assertThat(rule.verify(num(1, 1.0), num(1, 0.51)), is(nullValue()));
+        assertThat(rule.verify(num(1, 1.0), num(1, 0.49)), is(notNullValue()));
+    }
+
+    /**
+     * {@link ValueConditionKind} - expr.
+     * @throws Exception if occur
+     */
+    @Test(expected = IOException.class)
+    public void value_expr_unsupported() throws Exception {
+        rule("verify/value_expr_unsupported.xls");
+    }
+
+    /**
+     * {@link ValueConditionKind} - expr.
+     * @throws Exception if occur
+     */
+    @Test(expected = IOException.class)
+    public void value_expr_invalid() throws Exception {
+        rule("verify/value_approx_error.xls");
+    }
+
+    /**
      * {@link NullityConditionKind} - normal checking.
      * @throws Exception if occur
      */
@@ -423,6 +458,13 @@ public class ExcelSheetRuleProviderTest {
     private DataModelReflection datetime(Calendar dateTime) {
         Simple simple = new Simple();
         simple.datetimeValue = dateTime;
+        return SIMPLE.toReflection(simple);
+    }
+
+    private DataModelReflection num(Integer number, double value) {
+        Simple simple = new Simple();
+        simple.number = number;
+        simple.doubleValue = value;
         return SIMPLE.toReflection(simple);
     }
 

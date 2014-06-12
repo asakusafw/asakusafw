@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.excel;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,15 +28,18 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**
  * Default implementation of {@link ExcelRuleExtractor}.
- * @since 0.2.0
+ * @since 0.6.0
  */
 public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
 
     /**
-     * Format ID which this extractor supports.
-     * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
+     * Format IDs which this extractor supports.
+     * @since 0.7.0
      */
-    public static final String FORMAT = RuleSheetFormat.FORMAT_VERSION;
+    public static final Set<String> SUPPORTED_FORMATS = new HashSet<String>(Arrays.asList(new String[] {
+            "EVR-1.0.0",
+            RuleSheetFormat.FORMAT_VERSION,
+    }));
 
     @Override
     public boolean supports(Sheet sheet) {
@@ -49,7 +53,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         }
 
         String format = getStringCell(sheet, item.getRowIndex(), item.getColumnIndex() + 1);
-        return format != null && format.equals(FORMAT);
+        return SUPPORTED_FORMATS.contains(format);
     }
 
     @Override
@@ -150,6 +154,18 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
                     Arrays.asList(NullityConditionKind.getOptions())));
         }
         return condition;
+    }
+
+    @Override
+    public String extractComments(Row row) throws FormatException {
+        String value = getStringCell(row, RuleSheetFormat.COMMENTS);
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String extractOptions(Row row) throws FormatException {
+        String value = getStringCell(row, RuleSheetFormat.EXTRA_OPTIONS);
+        return value == null ? "" : value;
     }
 
     private String getStringCell(Row row, RuleSheetFormat item) throws FormatException {
