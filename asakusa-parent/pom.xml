@@ -39,6 +39,7 @@
 		<!-- artifact id/versions -->
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
 		<hadoop.version>1.2.1</hadoop.version>
+		<hive.version>0.13.1</hive.version>
 		<mysql.jdbc.version>5.1.25</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.configuration.version>1.8</commons.configuration.version>
@@ -502,6 +503,11 @@ encoding/<project>=UTF-8
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-tools</artifactId>
 				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hive</groupId>
+				<artifactId>hive-exec</artifactId>
+				<version>${hive.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>

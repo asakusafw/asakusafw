@@ -15,8 +15,6 @@
  */
 package com.asakusafw.gradle.plugins
 
-import java.util.regex.Pattern
-
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.testfixtures.ProjectBuilder
@@ -33,6 +31,7 @@ import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfigu
 import com.asakusafw.gradle.tasks.AnalyzeYaessLogTask
 import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
+import com.asakusafw.gradle.tasks.GenerateHiveDdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
 import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
 import com.asakusafw.gradle.tasks.RunBatchappTask
@@ -223,6 +222,41 @@ class AsakusafwPluginTest {
 
         assert task.batchId == null
         assert task.batchArguments.isEmpty()
+    }
+
+    /**
+     * Test for {@code project.tasks.generateHiveDDL}.
+     */
+    @Test
+    void tasks_generateHiveDDL() {
+        AsakusafwPluginConvention convention = project.asakusafw
+        convention.logbackConf 'testing/logback'
+        convention.maxHeapSize '1G'
+
+        GenerateHiveDdlTask task = project.tasks.generateHiveDDL
+        assert task.logbackConf == project.file(convention.logbackConf)
+        assert task.maxHeapSize == convention.maxHeapSize
+        assert task.systemProperties.isEmpty()
+        assert task.jvmArgs.isEmpty()
+
+        assert task.sourcepath.contains(project.sourceSets.main.output.classesDir)
+        assert task.pluginClasspath.isEmpty()
+
+        assert task.outputFile == project.file("${project.buildDir}/hive-ddl/${project.name}.sql")
+        task.setOptOutput('testing/output')
+        assert task.outputFile == project.file('testing/output')
+
+        assert task.include == null
+        task.setOptInclude('testing_include')
+        assert task.include == 'testing_include'
+
+        assert task.location == null
+        task.setOptLocation('/testing/location')
+        assert task.location == '/testing/location'
+
+        assert task.databaseName == null
+        task.setOptDatabaseName('testdb')
+        assert task.databaseName == 'testdb'
     }
 
     /**
