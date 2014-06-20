@@ -31,6 +31,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -284,7 +285,12 @@ public abstract class AbstractStageClient extends BaseStageClient {
         String operationId = getOperationId();
 
         LOG.info(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
-        job.setJarByClass(clientClass);
+        String jar = job.getConfiguration().get(PROP_APPLICATION_JAR);
+        if (jar == null || (job.getConfiguration() instanceof JobConf) == false) {
+            job.setJarByClass(clientClass);
+        } else {
+            ((JobConf) job.getConfiguration()).setJar(jar);
+        }
 
         LOG.info(MessageFormat.format("Hadoop Job Name: {0}", operationId));
         job.setJobName(operationId);

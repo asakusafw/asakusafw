@@ -15,20 +15,12 @@
  */
 package com.asakusafw.runtime.stage;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.LinkedList;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
 /**
  * ツールを起動するプログラムエントリ。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public final class ToolLauncher {
 
@@ -61,86 +53,8 @@ public final class ToolLauncher {
         if (args == null) {
             throw new IllegalArgumentException("args must not be null"); //$NON-NLS-1$
         }
-        LinkedList<String> arguments = new LinkedList<String>();
-        Collections.addAll(arguments, args);
-        int result = main(arguments);
+        int result = ApplicationLauncher.exec(args);
         System.exit(result);
-    }
-
-    private static int main(LinkedList<String> args) {
-        assert args != null;
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "The first argument of StageLauncher must be a class name of Tool");
-        }
-        String main = args.removeFirst();
-        Tool tool;
-        try {
-            URL[] libraries = parseLibraries(args);
-            ClassLoader loader = createLoader(libraries);
-            tool = newTool(main, loader);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return LAUNCH_ERROR;
-        }
-        try {
-            return ToolRunner.run(tool, args.toArray(new String[args.size()]));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return CLIENT_ERROR;
-        }
-    }
-
-    private static URL[] parseLibraries(LinkedList<String> args) throws IOException {
-        assert args != null;
-        GenericOptionsParser options =
-            new GenericOptionsParser(args.toArray(new String[args.size()]));
-        Configuration conf = options.getConfiguration();
-        return GenericOptionsParser.getLibJars(conf);
-    }
-
-    private static ClassLoader createLoader(URL[] libraries) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if (loader == null) {
-            loader = ToolLauncher.class.getClassLoader();
-        }
-        if (libraries == null || libraries.length == 0) {
-            return loader;
-        }
-        return new URLClassLoader(libraries, loader);
-    }
-
-    private static Tool newTool(String className, ClassLoader loader) {
-        assert className != null;
-        assert loader != null;
-        Class<?> aClass;
-        try {
-            aClass = Class.forName(
-                    className,
-                    false,
-                    loader);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Failed to load a Tool class ({0})",
-                    className),
-                    e);
-        }
-        if (Tool.class.isAssignableFrom(aClass) == false) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "The first argument of ToolLauncher must be a subclass of Tool ({0})",
-                    className));
-        }
-        ClassLoader context = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(loader);
-            return aClass.asSubclass(Tool.class).newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Failed to instantiate a Tool class ({0})",
-                    aClass));
-        } finally {
-            Thread.currentThread().setContextClassLoader(context);
-        }
     }
 
     private ToolLauncher() {
