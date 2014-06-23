@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdata.generator.excel;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -25,11 +26,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 /**
  * Keeps cell styles.
  * @since 0.2.0
- * @version 0.5.3
+ * @version 0.7.0
  */
 public class WorkbookInfo {
 
     final Workbook workbook;
+
+    final SpreadsheetVersion version;
 
     private final CellStyle commonStyle;
 
@@ -57,6 +60,7 @@ public class WorkbookInfo {
             throw new IllegalArgumentException("workbook must not be null"); //$NON-NLS-1$
         }
         this.workbook = workbook;
+        this.version = WorkbookGenerator.getSpreadsheetVersion(workbook);
 
         Font font = workbook.createFont();
         // font.setFontName("ＭＳ ゴシック");
