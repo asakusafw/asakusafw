@@ -50,7 +50,7 @@ class AsakusafwPluginConventionTest {
 
             // NOTE: must set group after convention is created
             project.group = 'com.example.testing'
-            project.verion = '0.1.0'
+            project.version = '0.1.0'
             return stmt
         }
     }

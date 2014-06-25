@@ -15,6 +15,8 @@
  */
 package com.asakusafw.dmdl.util;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,14 +27,20 @@ import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
+import com.asakusafw.dmdl.model.AstNode;
+import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
+import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.dmdl.semantics.Type;
+import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 
 /**
  * Utility methods for {@link AstAttribute}.
  * @since 0.2.0
+ * @version 0.7.0
  */
 public final class AttributeUtil {
 
@@ -95,15 +103,18 @@ public final class AttributeUtil {
      * @param attribute target attribute
      * @param elements elements in target attribute
      * @param elementName target element name
+     * @param literalKind target element kind
      * @param mandatory {@code true} for mandatory element (report error if the element is not in map)
-     * @return the extracted string, or {@code null} if is not defined or not a string
+     * @return the extracted literal, or {@code null} if is not defined or not a valid literal
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
      */
-    public static String takeString(
+    public static AstLiteral takeLiteral(
             DmdlSemantics environment,
             AstAttribute attribute,
             Map<String, AstAttributeElement> elements,
             String elementName,
+            LiteralKind literalKind,
             boolean mandatory) {
         if (environment == null) {
             throw new IllegalArgumentException("environment must not be null"); //$NON-NLS-1$
@@ -117,6 +128,9 @@ public final class AttributeUtil {
         if (elementName == null) {
             throw new IllegalArgumentException("elementName must not be null"); //$NON-NLS-1$
         }
+        if (literalKind == null) {
+            throw new IllegalArgumentException("literalKind must not be null"); //$NON-NLS-1$
+        }
         AstAttributeElement target = elements.remove(elementName);
         if (target == null) {
             if (mandatory) {
@@ -128,27 +142,159 @@ public final class AttributeUtil {
                         elementName));
             }
             return null;
-        } else if ((target.value instanceof AstLiteral) == false) {
+        } else if (isLiteral(target.value, literalKind) == false) {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     target,
                     Messages.getString("AttributeUtil.diagnosticNotLiteral"), //$NON-NLS-1$
                     attribute.name.toString(),
-                    elementName));
+                    elementName,
+                    literalKind));
             return null;
         } else {
-            AstLiteral literal = (AstLiteral) target.value;
-            if (literal.kind != LiteralKind.STRING) {
-                environment.report(new Diagnostic(
-                        Level.ERROR,
-                        target,
-                        Messages.getString("AttributeUtil.diagnosticNotStringLiteral"), //$NON-NLS-1$
-                        attribute.name.toString(),
-                        elementName));
-                return null;
-            }
+            return (AstLiteral) target.value;
+        }
+    }
+
+    private static boolean isLiteral(AstNode node, LiteralKind kind) {
+        if (node instanceof AstLiteral) {
+            return ((AstLiteral) node).getKind() == kind;
+        }
+        return false;
+    }
+
+    /**
+     * Removes {@link AstAttributeElement} from {@code elements} and extracts string value from it.
+     * If the element is not a string literal, this reports error into the {@code environment}.
+     * @param environment current environment
+     * @param attribute target attribute
+     * @param elements elements in target attribute
+     * @param elementName target element name
+     * @param mandatory {@code true} for mandatory element (report error if the element is not in map)
+     * @return the extracted string, or {@code null} if is not defined or not a string
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static String takeString(
+            DmdlSemantics environment,
+            AstAttribute attribute,
+            Map<String, AstAttributeElement> elements,
+            String elementName,
+            boolean mandatory) {
+        AstLiteral literal = takeLiteral(environment, attribute, elements, elementName, LiteralKind.STRING, mandatory);
+        if (literal != null) {
             return literal.toStringValue();
         }
+        return null;
+    }
+
+    /**
+     * Checks field type and report diagnostics.
+     * @param environment the current environment
+     * @param declaration the target declaration
+     * @param attribute the target attribute
+     * @param types expected types
+     * @return {@code true} if check is successfully completed, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public static boolean checkFieldType(
+            DmdlSemantics environment,
+            PropertyDeclaration declaration,
+            AstAttribute attribute,
+            BasicTypeKind... types) {
+        if (environment == null) {
+            throw new IllegalArgumentException("environment must not be null"); //$NON-NLS-1$
+        }
+        if (declaration == null) {
+            throw new IllegalArgumentException("declaration must not be null"); //$NON-NLS-1$
+        }
+        if (attribute == null) {
+            throw new IllegalArgumentException("attribute must not be null"); //$NON-NLS-1$
+        }
+        if (types == null) {
+            throw new IllegalArgumentException("types must not be null"); //$NON-NLS-1$
+        }
+        Type type = declaration.getType();
+        if (type instanceof BasicType) {
+            BasicTypeKind kind = ((BasicType) type).getKind();
+            for (BasicTypeKind accept : types) {
+                if (kind == accept) {
+                    return true;
+                }
+            }
+        }
+        environment.report(new Diagnostic(
+                Level.ERROR,
+                attribute,
+                Messages.getString("AttributeUtil.diagnosticInvalidTypeElement"), //$NON-NLS-1$
+                declaration.getOwner().getName().identifier,
+                declaration.getName().identifier,
+                attribute.name.toString(),
+                Arrays.asList(types)));
+        return false;
+    }
+
+    /**
+     * Checks which string is not null and report diagnostics.
+     * @param environment the current environment
+     * @param targetNode the target node
+     * @param targetLabel the target label
+     * @param value the target value
+     * @return {@code true} if check is successfully completed, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public static boolean checkPresent(
+            DmdlSemantics environment,
+            AstNode targetNode,
+            String targetLabel,
+            String value) {
+        if (value == null || value.isEmpty()) {
+            environment.report(new Diagnostic(
+                    Level.ERROR,
+                    targetNode,
+                    Messages.getString("AttributeUtil.diagnosticEmptyString"), //$NON-NLS-1$
+                    targetLabel));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks integer range and report diagnostics.
+     * @param environment the current environment
+     * @param targetNode the target node
+     * @param targetLabel the target label
+     * @param value the target value
+     * @param minimum the minimum value (inclusive), or {@code null} to unlimited
+     * @param maximum the maximum value (inclusive), or {@code null} to unlimited
+     * @return {@code true} if check is successfully completed, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public static boolean checkRange(
+            DmdlSemantics environment,
+            AstNode targetNode,
+            String targetLabel,
+            BigInteger value,
+            Long minimum, Long maximum) {
+        if (maximum != null && value.compareTo(BigInteger.valueOf(maximum)) > 0) {
+            environment.report(new Diagnostic(
+                    Level.ERROR,
+                    targetNode,
+                    Messages.getString("AttributeUtil.diagnosticNumberTooLarge"), //$NON-NLS-1$
+                    targetLabel,
+                    maximum,
+                    value));
+            return false;
+        } else if (minimum != null && value.compareTo(BigInteger.valueOf(minimum)) < 0) {
+            environment.report(new Diagnostic(
+                    Level.ERROR,
+                    targetNode,
+                    Messages.getString("AttributeUtil.diagnosticNumberTooSmall"), //$NON-NLS-1$
+                    targetLabel,
+                    minimum,
+                    value));
+            return false;
+        }
+        return true;
     }
 
     private AttributeUtil() {

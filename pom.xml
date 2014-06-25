@@ -35,6 +35,7 @@
 		<module>windgate-project</module>
 		<module>thundergate-project</module>
 		<module>yaess-project</module>
+		<module>hive-project</module>
 		<module>operation-project</module>
 		<module>development-project</module>
 		<module>legacy-project</module>
