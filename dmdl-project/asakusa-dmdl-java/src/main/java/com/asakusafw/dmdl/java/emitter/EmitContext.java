@@ -119,7 +119,7 @@ public final class EmitContext {
                         Models.append(factory,
                                 config.getBasePackage(),
                                 namespace,
-                                factory.newSimpleName(categoryName))),
+                                Models.toName(factory, categoryName))),
                 ImportBuilder.Strategy.TOP_LEVEL);
         this.imports.resolvePackageMember(this.typeName);
         this.fieldNames = collectFieldNames(model);

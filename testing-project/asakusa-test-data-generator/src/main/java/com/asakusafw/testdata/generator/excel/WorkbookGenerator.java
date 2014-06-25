@@ -115,6 +115,48 @@ public class WorkbookGenerator implements TemplateGenerator {
     }
 
     /**
+     * Returns spreadsheet version for the target workbook.
+     * @param fileName the target workbook path
+     * @return the target version
+     * @since 0.7.0
+     */
+    public static SpreadsheetVersion getSpreadsheetVersion(String fileName) {
+        if (fileName == null) {
+            throw new IllegalArgumentException("fileName must not be null"); //$NON-NLS-1$
+        }
+        if (fileName.endsWith(".xls")) {
+            return SpreadsheetVersion.EXCEL97;
+        } else if (fileName.endsWith("xlsx")) {
+            return SpreadsheetVersion.EXCEL2007;
+        } else {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "サポートしていないExcelワークブックの形式です: {0}",
+                    fileName));
+        }
+    }
+
+    /**
+     * Returns spreadsheet version for the target workbook.
+     * @param workbook the target workbook
+     * @return the target version
+     * @since 0.7.0
+     */
+    public static SpreadsheetVersion getSpreadsheetVersion(Workbook workbook) {
+        if (workbook == null) {
+            throw new IllegalArgumentException("workbook must not be null"); //$NON-NLS-1$
+        }
+        if (workbook instanceof HSSFWorkbook) {
+            return SpreadsheetVersion.EXCEL97;
+        } else if (workbook instanceof XSSFWorkbook) {
+            return SpreadsheetVersion.EXCEL2007;
+        } else {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "サポートしていないExcelワークブックの形式です: {0}",
+                    workbook.getClass().getName()));
+        }
+    }
+
+    /**
      * Creates a new empty workbook for the target version.
      * @param version the target version
      * @return the created workbook

@@ -41,6 +41,7 @@ import com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfigu
 import com.asakusafw.gradle.tasks.AnalyzeYaessLogTask
 import com.asakusafw.gradle.tasks.CompileBatchappTask
 import com.asakusafw.gradle.tasks.CompileDmdlTask
+import com.asakusafw.gradle.tasks.GenerateHiveDdlTask
 import com.asakusafw.gradle.tasks.GenerateTestbookTask
 import com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask
 import com.asakusafw.gradle.tasks.RunBatchappTask
@@ -151,6 +152,10 @@ class AsakusafwPlugin implements Plugin<Project> {
 
         def asakusaYaessLogAnalyzer = project.configurations.create('asakusaYaessLogAnalyzer')
         asakusaYaessLogAnalyzer.description = 'Asakusa YAESS Log Analyzer Libraries'
+
+        def asakusaHiveCli = project.configurations.create('asakusaHiveCli')
+        asakusaHiveCli.description = 'Asakusa Hive CLI Libraries'
+        asakusaHiveCli.extendsFrom project.configurations.compile
     }
 
     private void configureDependencies() {
@@ -161,6 +166,7 @@ class AsakusafwPlugin implements Plugin<Project> {
                 compile group: 'ch.qos.logback', name: 'logback-classic', version: project.asakusafwInternal.dep.logbackVersion
                 asakusaYaessLogAnalyzer group: 'com.asakusafw', name: 'asakusa-yaess-log-analyzer', version: project.asakusafw.asakusafwVersion
                 asakusaYaessLogAnalyzer group: 'ch.qos.logback', name: 'logback-classic', version: project.asakusafwInternal.dep.logbackVersion
+                asakusaHiveCli group: 'com.asakusafw', name: 'asakusa-hive-cli', version: project.asakusafw.asakusafwVersion
             }
         }
     }
@@ -277,6 +283,7 @@ class AsakusafwPlugin implements Plugin<Project> {
         defineJarBatchappTask()
         extendAssembleTask()
         defineGenerateTestbookTask()
+        defineGenerateHiveDdlTask()
         defineTestRunBatchappTask()
         defineSummarizeYaessJobTask()
         defineGenerateThunderGateDataModelTask()
@@ -363,6 +370,22 @@ class AsakusafwPlugin implements Plugin<Project> {
                 outputSheetFormat = { project.asakusafw.testtools.testDataSheetFormat }
                 outputDirectory = { project.file(project.asakusafw.testtools.testDataSheetDirectory) }
             }
+        }
+    }
+
+    private void defineGenerateHiveDdlTask() {
+        project.tasks.create('generateHiveDDL', GenerateHiveDdlTask) { GenerateHiveDdlTask task ->
+            task.group ASAKUSAFW_BUILD_GROUP
+            task.description 'Generates Hive DDL file from Data Models [Experimental].'
+            task.toolClasspath += project.configurations.asakusaHiveCli
+            task.toolClasspath += project.sourceSets.main.compileClasspath
+            task.sourcepath = project.files({ project.sourceSets.main.output.classesDir })
+            task.conventionMapping.with {
+                logbackConf = { this.findLogbackConf() }
+                maxHeapSize = { project.asakusafw.maxHeapSize }
+                outputFile = { project.file("${project.buildDir}/hive-ddl/${project.name}.sql") }
+            }
+            task.dependsOn project.tasks.compileJava
         }
     }
 

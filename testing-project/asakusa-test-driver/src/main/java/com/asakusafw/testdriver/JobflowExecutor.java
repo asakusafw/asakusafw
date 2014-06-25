@@ -379,7 +379,6 @@ public class JobflowExecutor {
         }
         if (context.isSkipVerify() == false) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%n"));
             boolean sawError = false;
             for (DriverOutputBase<?> output : outputs) {
                 String name = output.getName();
@@ -403,12 +402,14 @@ public class JobflowExecutor {
                             output.getVerifier());
                     if (diffList.isEmpty() == false) {
                         sawError = true;
-                        LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {
+                        String message = MessageFormat.format(
+                                "{0}.{1}の出力{2}には{3}個の差異があります",
                                 info.getJobflow().getBatchId(),
                                 info.getJobflow().getFlowId(),
                                 output.getName(),
-                                diffList.size(),
-                        });
+                                diffList.size());
+                        sb.append(String.format("%s:%n", message));
+                        LOG.warn(message);
                         if (output.getDifferenceSink() != null) {
                             LOG.debug("出力{}の差異を出力しています: {}", name, output.getDifferenceSink());
                             moderator.save(output.getModelType(), diffList, output.getDifferenceSink());

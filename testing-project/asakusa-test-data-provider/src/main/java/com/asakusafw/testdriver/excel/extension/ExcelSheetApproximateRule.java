@@ -99,6 +99,21 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
                         name,
                         magnitude), e);
             }
+        case DATE:
+        case DATETIME:
+            try {
+                int value = Integer.parseInt(magnitude);
+                if (type == PropertyType.DATE) {
+                    return Predicates.dateRange(minus ? -value : 0, plus ? +value : 0);
+                } else {
+                    return Predicates.timeRange(minus ? -value : 0, plus ? +value : 0);
+                }
+            } catch (NumberFormatException e) {
+                throw new FormatException(MessageFormat.format(
+                        "Invalid approx(~) error \"{1}\": {0}",
+                        name,
+                        magnitude), e);
+            }
         default:
             throw new FormatException(MessageFormat.format(
                     "Property does not support approx(~) expression: {0}",

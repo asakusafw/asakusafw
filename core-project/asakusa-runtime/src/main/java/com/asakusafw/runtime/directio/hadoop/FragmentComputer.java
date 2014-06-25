@@ -16,29 +16,22 @@
 package com.asakusafw.runtime.directio.hadoop;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.asakusafw.runtime.directio.DirectInputFragment;
 
 /**
  * compute fragments.
  * @since 0.2.5
+ * @version 0.7.0
  */
 class FragmentComputer {
 
     static final long MAX_MIN_SIZE = Long.MAX_VALUE / 8;
-
-    static final double MIN_LOCALITY = 0.125;
-
-    static final double PRUNE_REL_LOCALITY = 0.75;
 
     private final long minSize;
 
@@ -50,10 +43,18 @@ class FragmentComputer {
 
     /**
      * Creates a new instance.
+     * @since 0.7.0
+     */
+    public FragmentComputer() {
+        this(-1L, -1L, false, false);
+    }
+
+    /**
+     * Creates a new instance.
      * @param minSize minimum fragment size, or {@code < 0} for restrict fragmentation
      * @param prefSize preferred fragment size
      * @param combineBlocks whether combines blocks
-     * @param splitBlocks whether split blocks
+     * @param splitBlocks {@code true} to split fragments
      */
     public FragmentComputer(long minSize, long prefSize, boolean combineBlocks, boolean splitBlocks) {
         this.minSize = Math.min(minSize, MAX_MIN_SIZE);
@@ -77,105 +78,38 @@ class FragmentComputer {
         if (blocks == null) {
             throw new IllegalArgumentException("blocks must not be null"); //$NON-NLS-1$
         }
-        BlockMap map = createBlockMap(path, fileSize, blocks);
+        BlockMap map = BlockMap.create(path, fileSize, blocks, combineBlocks);
         List<DirectInputFragment> fragments = computeFragments(map);
         return fragments;
     }
 
-    private BlockMap createBlockMap(String path, long fileSize, Collection<BlockInfo> blockList) {
-        assert path != null;
-        assert blockList != null;
-        BlockInfo[] blocks = blockList.toArray(new BlockInfo[blockList.size()]);
-        Arrays.sort(blocks, new Comparator<BlockInfo>() {
-            @Override
-            public int compare(BlockInfo o1, BlockInfo o2) {
-                int startDiff = compareLong(o1.start, o2.start);
-                if (startDiff != 0) {
-                    return startDiff;
-                }
-                return -compareLong(o1.hosts.length, o2.hosts.length);
-            }
-        });
-        long lastOffset = 0;
-        List<BlockInfo> results = new ArrayList<BlockInfo>();
-        for (BlockInfo block : blocks) {
-            // if block is out of bounds, skip it
-            if (block.start >= fileSize) {
-                continue;
-            }
-            // if block is gapped, add a padding block
-            if (lastOffset < block.start) {
-                results.add(new BlockInfo(lastOffset, block.start, null));
-            }
-            long start = Math.max(lastOffset, block.start);
-            long end = Math.min(fileSize, block.end);
-            // if block is empty, skip it
-            if (start >= end) {
-                continue;
-            }
-
-            results.add(new BlockInfo(start, end, block.hosts));
-            lastOffset = end;
-        }
-        assert lastOffset <= fileSize;
-        if (lastOffset < fileSize) {
-            results.add(new BlockInfo(lastOffset, fileSize, null));
-        }
-        if (results.isEmpty()) {
-            results.add(new BlockInfo(0, fileSize, null));
-        }
-        if (combineBlocks) {
-            results = combine(results);
-        }
-        return new BlockMap(path, results.toArray(new BlockInfo[results.size()]));
-    }
-
-    private List<BlockInfo> combine(List<BlockInfo> blocks) {
-        assert blocks != null;
-        List<BlockInfo> results = new ArrayList<BlockInfo>(blocks.size());
-        Iterator<BlockInfo> iter = blocks.iterator();
-        assert iter.hasNext();
-        BlockInfo last = iter.next();
-        while (iter.hasNext()) {
-            BlockInfo next = iter.next();
-            if (last.isSameOwner(next)) {
-                last = new BlockInfo(last.start, next.end, last.hosts);
-            } else {
-                results.add(last);
-                last = next;
-            }
-        }
-        results.add(last);
-        return results;
-    }
-
     private List<DirectInputFragment> computeFragments(BlockMap map) {
         assert map != null;
-        long size = map.size;
+        long size = map.getFileSize();
         if (canFragmentation() == false || size / 2 < minSize) {
             return Collections.singletonList(map.get(0, size));
         }
         assert minSize > 0;
-        assert map.size > minSize;
-        BitSet processed = new BitSet(map.blocks.length);
-        BlockInfo[] blocks = map.blocks;
-        assert size == blocks[blocks.length - 1].end;
+        assert map.getFileSize() > minSize;
+        List<BlockInfo> blocks = map.getBlocks();
+        BitSet processed = new BitSet(blocks.size());
+        assert size == blocks.get(blocks.size() - 1).end;
         List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
-        for (int index = processed.nextClearBit(0); index < blocks.length; index = processed.nextClearBit(index + 1)) {
+        for (int index = processed.nextClearBit(0); index < blocks.size(); index = processed.nextClearBit(index + 1)) {
             int lastIndex = index + 1;
-            BlockInfo startBlock = blocks[index];
+            BlockInfo startBlock = blocks.get(index);
             assert size - startBlock.start >= minSize;
-            while (blocks[lastIndex - 1].end - startBlock.start < minSize) {
+            while (blocks.get(lastIndex - 1).end - startBlock.start < minSize) {
                 lastIndex++;
-                assert lastIndex <= blocks.length;
+                assert lastIndex <= blocks.size();
             }
-            long rest = size - blocks[lastIndex - 1].end;
+            long rest = size - blocks.get(lastIndex - 1).end;
             if (rest < minSize) {
-                lastIndex = blocks.length;
+                lastIndex = blocks.size();
             }
             processed.set(index, lastIndex);
             long start = startBlock.start;
-            long end = blocks[lastIndex - 1].end;
+            long end = blocks.get(lastIndex - 1).end;
             if (splitBlocks) {
                 long groupSize = end - start;
                 int fragmentCount = Math.max((int) (groupSize / prefSize), 1);
@@ -223,98 +157,7 @@ class FragmentComputer {
             assert offset == expectedOffset : offset + " != " + expectedOffset;
             expectedOffset = offset + fragment.getSize();
         }
-        assert map.size == expectedOffset : map.size + " != " + expectedOffset;
+        assert map.getFileSize() == expectedOffset : map.getFileSize() + " != " + expectedOffset;
         return true;
-    }
-
-    static int compareLong(long offset1, long offset2) {
-        if (offset1 < offset2) {
-            return -1;
-        } else if (offset1 > offset2) {
-            return +1;
-        }
-        return 0;
-    }
-
-    private static class BlockMap {
-
-        final String path;
-
-        final BlockInfo[] blocks;
-
-        final long size;
-
-        BlockMap(String path, BlockInfo[] blocks) {
-            assert path != null;
-            assert blocks != null;
-            assert blocks.length >= 1;
-            this.path = path;
-            this.blocks = blocks;
-            this.size = blocks[blocks.length - 1].end - blocks[0].start;
-        }
-
-        public DirectInputFragment get(long start, long end) {
-            List<String> hosts = computeHosts(start, end);
-            return new DirectInputFragment(path, start, end - start, hosts);
-        }
-
-        private List<String> computeHosts(long start, long end) {
-            assert start <= end;
-            if (start == end) {
-                return Collections.emptyList();
-            }
-            List<Map.Entry<String, Long>> rank = computeLocalityRank(start, end);
-            if (rank.isEmpty()) {
-                return Collections.emptyList();
-            }
-            long max = rank.get(0).getValue();
-            if (max < (end - start) * MIN_LOCALITY) {
-                return Collections.emptyList();
-            }
-            long threshold = (long) (max * PRUNE_REL_LOCALITY);
-            List<String> results = new ArrayList<String>();
-            for (int i = 0, n = rank.size(); i < n; i++) {
-                Map.Entry<String, Long> block = rank.get(i);
-                if (block.getValue() < threshold) {
-                    break;
-                }
-                results.add(block.getKey());
-            }
-            return results;
-        }
-
-        private List<Map.Entry<String, Long>> computeLocalityRank(long start, long end) {
-            Map<String, Long> ownBytes = new HashMap<String, Long>();
-            for (BlockInfo block : blocks) {
-                if (block.end < start) {
-                    continue;
-                }
-                if (block.start >= end) {
-                    break;
-                }
-                long s = Math.max(start, block.start);
-                long e = Math.min(end, block.end);
-                long length = e - s;
-                for (String node : block.hosts) {
-                    Long bytes = ownBytes.get(node);
-                    if (bytes == null) {
-                        ownBytes.put(node, length);
-                    } else {
-                        ownBytes.put(node, bytes + length);
-                    }
-                }
-            }
-            if (ownBytes.isEmpty()) {
-                return Collections.emptyList();
-            }
-            List<Map.Entry<String, Long>> entries = new ArrayList<Map.Entry<String, Long>>(ownBytes.entrySet());
-            Collections.sort(entries, new Comparator<Map.Entry<String, Long>>() {
-                @Override
-                public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                    return -compareLong(o1.getValue(), o2.getValue());
-                }
-            });
-            return entries;
-        }
     }
 }
