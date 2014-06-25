@@ -98,10 +98,8 @@ class EclipsePluginEnhancement {
                     classpath.entries.unique()
                 }
             }
-            plusConfigurations += project.configurations.provided
-            noExportConfigurations += project.configurations.provided
-            plusConfigurations += project.configurations.embedded
-            noExportConfigurations += project.configurations.embedded
+            plusConfigurations += [project.configurations.provided, project.configurations.embedded]
+            noExportConfigurations += [project.configurations.provided, project.configurations.embedded]
         }
         project.eclipseClasspath.doFirst {
             makeGeneratedSourceDir()
