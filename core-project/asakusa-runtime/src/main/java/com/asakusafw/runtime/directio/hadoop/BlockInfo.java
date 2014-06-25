@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.directio.hadoop;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Block information.
@@ -46,6 +47,32 @@ public final class BlockInfo {
             this.hosts = hosts.clone();
             Arrays.sort(this.hosts);
         }
+    }
+
+    /**
+     * Returns the start byte position of this block in the file.
+     * @return start byte position (inclusive)
+     * @since 0.7.0
+     */
+    public long getStart() {
+        return start;
+    }
+
+    /**
+     * Returns the end byte position of this block in the file.
+     * @return end byte position (exclusive)
+     * @since 0.7.0
+     */
+    public long getEnd() {
+        return end;
+    }
+
+    /**
+     * @return the hosts
+     * @since 0.7.0
+     */
+    public List<String> getHosts() {
+        return Arrays.asList(hosts);
     }
 
     /**
