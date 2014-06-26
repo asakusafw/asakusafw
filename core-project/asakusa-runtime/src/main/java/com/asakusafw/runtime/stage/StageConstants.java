@@ -22,7 +22,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Constants for each stage.
  * @since 0.2.5
- * @version 0.5.0
+ * @version 0.7.0
  */
 public final class StageConstants {
 
@@ -56,6 +56,12 @@ public final class StageConstants {
      * 環境変数表のプロパティキー。
      */
     public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs";
+
+    /**
+     * The application JAR path.
+     * @since 0.7.0
+     */
+    public static final String PROP_APPLICATION_JAR = "com.asakusafw.appJar";
 
     /**
      * 実行ユーザー名の変数名。
