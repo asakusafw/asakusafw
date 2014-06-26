@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 import com.asakusafw.vocabulary.windgate.Constants;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
+import com.asakusafw.vocabulary.windgate.WindGateProcessDescription;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ProcessScript;
@@ -107,6 +109,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         for (InputDescription input : inputs) {
             WindGateImporterDescription desc = extract(input);
             try {
+                validateCommonProperties(desc);
                 if (desc.getDriverScript() == null) {
                     throw new IllegalStateException(MessageFormat.format(
                             "Driver script is not defined: {0}",
@@ -125,6 +128,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         for (OutputDescription output : outputs) {
             WindGateExporterDescription desc = extract(output);
             try {
+                validateCommonProperties(desc);
                 if (desc.getDriverScript() == null) {
                     throw new IllegalStateException(MessageFormat.format(
                             "Driver script is not defined: {0}",
@@ -141,6 +145,22 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             }
         }
         return valid;
+    }
+
+    private void validateCommonProperties(WindGateProcessDescription desc) {
+        String profileName = desc.getProfileName();
+        if (profileName == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "{1} must not be null: {0}",
+                    desc.getClass().getName(),
+                    "getProfileName()"));
+        }
+        if (profileName.isEmpty()) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "{1} must not be empty string: {0}",
+                    desc.getClass().getName(),
+                    "getProfileName()"));
+        }
     }
 
     @Override

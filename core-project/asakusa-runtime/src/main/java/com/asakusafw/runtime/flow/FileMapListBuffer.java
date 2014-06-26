@@ -27,9 +27,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Writable;
 
+import com.asakusafw.runtime.io.util.BufferedFileInput;
+import com.asakusafw.runtime.io.util.BufferedFileOutput;
+
 /**
  * Implementation of {@link ListBuffer} using a file as backing store.
  * @param <E> element type
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class FileMapListBuffer<E extends Writable>
         extends AbstractList<E> implements ListBuffer<E>, RandomAccess {
@@ -39,6 +44,8 @@ public class FileMapListBuffer<E extends Writable>
     private static final int DEFAULT_BUFFER_SIZE = 256;
 
     private static final int MINIMUM_BUFFER_SIZE = 32;
+
+    private static final int FILE_BUFFER_SIZE = 256 * 1024;
 
     private final BackingStore backingStore;
 
@@ -66,7 +73,7 @@ public class FileMapListBuffer<E extends Writable>
      */
     @SuppressWarnings("unchecked")
     public FileMapListBuffer(int bufferSize) {
-        this.backingStore = new BackingStore();
+        this.backingStore = new BackingStore(FILE_BUFFER_SIZE);
         this.pageBuffer = (E[]) new Writable[Math.max(bufferSize, MINIMUM_BUFFER_SIZE)];
         this.size = 0;
         this.cursor = -1;
@@ -92,7 +99,7 @@ public class FileMapListBuffer<E extends Writable>
 
     @Override
     public boolean isExpandRequired() {
-        return limit <= toElementOffsetInPage(cursor);
+        return limit <= getOffsetInPage(cursor);
     }
 
     @Override
@@ -104,7 +111,7 @@ public class FileMapListBuffer<E extends Writable>
     @Override
     public E advance() {
         escapePage(cursor);
-        E next = pageBuffer[toElementOffsetInPage(cursor)];
+        E next = pageBuffer[getOffsetInPage(cursor)];
         cursor++;
         return next;
     }
@@ -120,11 +127,7 @@ public class FileMapListBuffer<E extends Writable>
             throw new IndexOutOfBoundsException();
         }
         restorePage(index);
-        return pageBuffer[toElementOffsetInPage(index)];
-    }
-
-    private int toElementOffsetInPage(int index) {
-        return index % pageBuffer.length;
+        return pageBuffer[getOffsetInPage(index)];
     }
 
     private void escapePage(int index) {
@@ -170,10 +173,14 @@ public class FileMapListBuffer<E extends Writable>
         return index / pageBuffer.length;
     }
 
+    private int getOffsetInPage(int index) {
+        return index % pageBuffer.length;
+    }
+
     @Override
     public void shrink() {
         try {
-            backingStore.shrink();
+            backingStore.disposeMapFile();
         } catch (IOException e) {
             LOG.warn("Failed to shrink the backing store", e);
         }
@@ -193,14 +200,24 @@ public class FileMapListBuffer<E extends Writable>
 
         private RandomAccessFile mapFile;
 
+        private BufferedFileOutput fileOutput;
+
+        private BufferedFileInput fileInput;
+
+        private final byte[] inputBuffer;
+
+        private final byte[] outputBuffer;
+
         private long cursor;
 
         private long[] pageIndex;
 
-        public BackingStore() {
+        public BackingStore(int bufferSize) {
             cursor = NOT_SAVED;
             pageIndex = new long[INITIAL_INDEX_SIZE];
             Arrays.fill(pageIndex, NOT_SAVED);
+            this.inputBuffer = new byte[bufferSize];
+            this.outputBuffer = new byte[bufferSize];
         }
 
         public boolean isSaved(int page) {
@@ -214,39 +231,47 @@ public class FileMapListBuffer<E extends Writable>
             prepareMapFile(objects);
             prepaerPageIndex(pageNumber);
             assert mapFile != null;
+            assert fileInput != null;
+            assert fileOutput != null;
             assert pageNumber < pageIndex.length;
-            mapFile.seek(cursor);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(MessageFormat.format(
                         "Saving a page into backing store: path={0}, index={1}, cursor={2}",
                         mapFilePath,
                         pageNumber * objects.length,
                         cursor));
             }
+            fileOutput.seek(cursor);
             for (Writable writable : objects) {
-                writable.write(mapFile);
+                writable.write(fileOutput);
             }
             pageIndex[pageNumber] = cursor;
-            cursor = mapFile.getFilePointer();
+            cursor = fileOutput.getPosition();
         }
 
-        private void prepareMapFile(Writable[] objects) throws IOException {
-            if (cursor == NOT_SAVED) {
-                assert mapFile == null;
-                assert mapFilePath == null;
-                mapFilePath = File.createTempFile(PAGE_STORE_PREFIX, PAGE_STORE_SUFFIX);
-                LOG.info(MessageFormat.format(
-                        "Initializing a backing store for FileMapListBuffer: {0}",
-                        mapFilePath));
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format(
-                            "Preparing map file: path={0}, sample={1}",
-                            mapFilePath,
-                            objects[0]));
-                }
-                mapFile = new RandomAccessFile(mapFilePath, "rw");
-                cursor = 0;
+        public void restore(int pageNumber, Writable[] objects) throws IOException {
+            if (isSaved(pageNumber) == false) {
+                throw new IOException(MessageFormat.format(
+                        "Page {0} is not saved",
+                        pageNumber));
             }
+            long start = pageIndex[pageNumber];
+            assert start != NOT_SAVED;
+            assert fileInput != null;
+            assert fileOutput != null;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(MessageFormat.format(
+                        "Restoring a page from backing store: path={0}, index={1}, cursor={2}",
+                        mapFilePath,
+                        pageNumber * objects.length,
+                        start));
+            }
+            fileOutput.sync();
+            fileInput.seek(start);
+            for (Writable writable : objects) {
+                writable.readFields(fileInput);
+            }
+            fileOutput.sync();
         }
 
         private void prepaerPageIndex(int pageNumber) {
@@ -258,33 +283,38 @@ public class FileMapListBuffer<E extends Writable>
             pageIndex = newPageIndex;
         }
 
-        public void restore(int pageNumber, Writable[] objects) throws IOException {
-            if (isSaved(pageNumber) == false) {
-                throw new IOException(MessageFormat.format(
-                        "Page {0} is not saved",
-                        pageNumber));
-            }
-            long start = pageIndex[pageNumber];
-            assert start != NOT_SAVED;
-            assert mapFile != null;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Restoring a page from backing store: path={0}, index={1}, cursor={2}",
-                        mapFilePath,
-                        pageNumber * objects.length,
-                        start));
-            }
-            mapFile.seek(start);
-            for (Writable writable : objects) {
-                writable.readFields(mapFile);
+        private void prepareMapFile(Writable[] objects) throws IOException {
+            if (cursor == NOT_SAVED) {
+                assert mapFile == null;
+                assert mapFilePath == null;
+                assert fileInput == null;
+                assert fileOutput == null;
+                mapFilePath = File.createTempFile(PAGE_STORE_PREFIX, PAGE_STORE_SUFFIX);
+                LOG.info(MessageFormat.format(
+                        "Initializing a backing store for FileMapListBuffer: {0}",
+                        mapFilePath));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Preparing map file: path={0}, example={1}",
+                            mapFilePath,
+                            objects[0]));
+                }
+                mapFile = new RandomAccessFile(mapFilePath, "rw");
+                fileInput = new BufferedFileInput(mapFile, inputBuffer);
+                fileOutput = new BufferedFileOutput(mapFile, outputBuffer);
+                cursor = 0;
             }
         }
 
-        public void shrink() throws IOException {
+        public void disposeMapFile() throws IOException {
             if (cursor != NOT_SAVED) {
                 assert mapFile != null;
                 assert mapFilePath != null;
+                assert fileInput != null;
+                assert fileOutput != null;
                 mapFile.close();
+                fileInput.close();
+                fileOutput.close();
                 if (mapFilePath.delete() == false) {
                     LOG.warn(MessageFormat.format(
                             "Failed to delete map file: {0}",
@@ -294,9 +324,13 @@ public class FileMapListBuffer<E extends Writable>
                 cursor = NOT_SAVED;
                 mapFile = null;
                 mapFilePath = null;
+                fileInput = null;
+                fileOutput = null;
             }
             assert mapFile == null;
             assert mapFilePath == null;
+            assert fileInput == null;
+            assert fileOutput == null;
         }
     }
 }
