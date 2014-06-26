@@ -33,6 +33,7 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.stage.launcher.LauncherOptionsParser;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
@@ -257,6 +258,8 @@ public class JobflowExecutor {
         dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
         dPropMap.put(StageConstants.PROP_EXECUTION_ID, commands.getExecutionId());
         dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
+        // disables libraries cache
+        dPropMap.put(LauncherOptionsParser.KEY_CACHE_ENABLED, String.valueOf(false));
         dPropMap.putAll(context.getExtraConfigurations());
         return dPropMap;
     }
