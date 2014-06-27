@@ -52,6 +52,12 @@ class AsakusafwOrganizerPluginConvention {
     ThunderGateConfiguration thundergate
 
     /**
+     * Hive Settings.
+     * @since 0.7.0
+     */
+    HiveConfiguration hive
+
+    /**
      * ThunderGate settings for the Asakusa Framework organizer.
      * @since 0.6.1
      */
@@ -90,5 +96,22 @@ class AsakusafwOrganizerPluginConvention {
                 setEnabled(true)
             }
         }
+    }
+
+    /**
+     * Hive settings for the Asakusa Framework organizer.
+     * @since 0.7.0
+     */
+    static class HiveConfiguration {
+
+        /**
+         * Libraries for Direct I/O Hive runtime.
+         * <dl>
+         *   <dt> Default value: </dt>
+         *     <dd> Framework default hive version </dd>
+         * </dl>
+         */
+        List<?> libraries = []
+
     }
 }

@@ -42,9 +42,11 @@
 		<module>asakusa-sdk-app-thundergate</module>
 		<module>asakusa-sdk-test-thundergate</module>
 		<module>asakusa-sdk-dmdl-thundergate</module>
+		<module>asakusa-sdk-dmdl-hive</module>
 		<module>asakusa-sdk-core</module>
 		<module>asakusa-sdk-directio</module>
 		<module>asakusa-sdk-windgate</module>
 		<module>asakusa-sdk-thundergate</module>
+		<module>asakusa-sdk-hive</module>
 	</modules>
 </project>
