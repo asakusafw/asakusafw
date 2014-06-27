@@ -89,4 +89,13 @@ class AsakusafwOrganizerPluginConventionTest {
         assert convention.thundergate.enabled
         assert convention.thundergate.target == 'testing'
     }
+
+    /**
+     * Test for {@code project.asakusafwOrganizer.hive} convention default values.
+     */
+    @Test
+    public void hive_defaults() {
+        assert convention.hive.libraries == ['org.apache.hive:hive-exec:0.13.1@jar']
+    }
+
 }

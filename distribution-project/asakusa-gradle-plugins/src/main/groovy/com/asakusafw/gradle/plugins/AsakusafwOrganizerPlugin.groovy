@@ -19,6 +19,7 @@ import org.gradle.api.*
 import org.gradle.api.tasks.bundling.*
 
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration
 
 /**
  * Gradle plugin for assembling and Installing Asakusa Framework.
@@ -47,6 +48,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     private void configureExtentionProperties() {
         AsakusafwOrganizerPluginConvention convention = project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention)
         convention.thundergate = convention.extensions.create('thundergate', ThunderGateConfiguration)
+        convention.hive = convention.extensions.create('hive', HiveConfiguration)
         convention.conventionMapping.with {
             asakusafwVersion = { throw new InvalidUserDataException('"asakusafw.asakusafwVersion" must be set') }
             assembleDir = { (String) "${project.buildDir}/asakusafw-assembly" }
@@ -55,6 +57,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             enabled = { false }
             target = { null }
         }
+        convention.hive.libraries.add(project.asakusafwInternal.dep.hiveArtifact + '@jar')
     }
 
     private void configureConfigurations() {
@@ -126,6 +129,9 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             }
             asakusafwWindGateRetryablePluginLib {
                 description = "Plugin distribution libraries of WindGate retryable."
+            }
+            asakusafwDirectIoHivePluginLib {
+                description = "Plugin distribution libraries of Direct I/O Hive."
             }
         }
     }
@@ -205,6 +211,11 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 asakusafwYaessJobQueuePluginLib "commons-logging:commons-logging:${project.asakusafwInternal.dep.commonsLoggingVersion}@jar"
 
                 asakusafwWindGateRetryablePluginLib "com.asakusafw:asakusa-windgate-retryable:${project.asakusafwOrganizer.asakusafwVersion}@jar"
+
+                asakusafwDirectIoHivePluginLib "com.asakusafw:asakusa-hive-core:${project.asakusafwOrganizer.asakusafwVersion}@jar"
+                for (Object library : project.asakusafwOrganizer.hive.libraries) {
+                    asakusafwDirectIoHivePluginLib library
+                }
             }
         }
     }
@@ -349,6 +360,15 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         }
         attachExtensionWindGateRetryable.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
         attachExtensionWindGateRetryable.setDescription('Attaches WindGateRetryable files to assembly.')
+
+        def attachExtensionDirectIoHive = project.task('attachExtensionDirectIoHive') << {
+            project.copy {
+                from project.configurations.asakusafwDirectIoHivePluginLib
+                into "${project.asakusafwOrganizer.assembleDir}/ext/lib"
+            }
+        }
+        attachExtensionDirectIoHive.setGroup(ASAKUSAFW_ORGANIZER_GROUP)
+        attachExtensionDirectIoHive.setDescription('Attaches DirectIoHive files to assembly.')
 
         def attachAssembleDev = project.task('attachAssembleDev', dependsOn: [
                 attachComponentCore,
