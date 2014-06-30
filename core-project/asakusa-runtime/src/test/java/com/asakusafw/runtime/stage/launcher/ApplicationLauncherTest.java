@@ -64,6 +64,7 @@ public class ApplicationLauncherTest extends LauncherTestRoot {
                 Bootstrap.class.getName(),
         });
         assertThat(status, is(0));
+        assertThat(conf.getBoolean(ApplicationLauncher.KEY_LAUNCHER_USED, false), is(true));
         assertThat(ok.get(), is(true));
     }
 

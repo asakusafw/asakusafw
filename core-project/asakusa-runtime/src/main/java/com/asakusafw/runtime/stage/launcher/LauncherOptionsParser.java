@@ -64,7 +64,7 @@ import com.asakusafw.runtime.util.lock.LocalFileLockProvider;
  */
 public class LauncherOptionsParser {
 
-    static final Log LOG = LogFactory.getLog(ApplicationLauncher.class);
+    static final Log LOG = LogFactory.getLog(LauncherOptionsParser.class);
 
     private static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
         @Override

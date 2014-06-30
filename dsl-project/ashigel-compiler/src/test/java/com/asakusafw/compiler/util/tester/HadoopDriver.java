@@ -33,9 +33,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.ReflectionUtils;
-import org.apache.hadoop.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +41,7 @@ import com.asakusafw.compiler.testing.MultipleModelInput;
 import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.stage.ToolLauncher;
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.utils.collections.Lists;
@@ -268,7 +265,7 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * Executes the target job using {@link ToolLauncher}.
+     * Executes the target job using {@link ApplicationLauncher}.
      * @param runtimeLib core runtime library
      * @param className target class name
      * @param libjars extra libraries
@@ -313,7 +310,7 @@ public final class HadoopDriver implements Closeable {
         List<String> arguments = Lists.create();
         arguments.add("jar");
         arguments.add(runtimeLib.getAbsolutePath());
-        arguments.add(ToolLauncher.class.getName());
+        arguments.add(ApplicationLauncher.class.getName());
         arguments.add(className);
 
         if (libjars.isEmpty() == false) {
@@ -352,20 +349,17 @@ public final class HadoopDriver implements Closeable {
             Map<String, String> properties) throws IOException {
         logger.info("EMULATE: {} with {}", className, libjars);
         List<String> arguments = new ArrayList<String>();
+        arguments.add(className);
         addHadoopConf(arguments, confFile);
         addHadoopLibjars(libjars, arguments);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
-            GenericOptionsParser parser = new GenericOptionsParser(
-                    configurations.newInstance(), arguments.toArray(new String[arguments.size()]));
-            Configuration conf = parser.getConfiguration();
+            Configuration conf = configurations.newInstance();
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 conf.set(entry.getKey(), entry.getValue());
             }
             try {
-                Class<?> stageClass = conf.getClassLoader().loadClass(className);
-                Tool tool = (Tool) ReflectionUtils.newInstance(stageClass, conf);
-                int exitValue = tool.run(new String[0]);
+                int exitValue = ApplicationLauncher.exec(conf, arguments.toArray(new String[arguments.size()]));
                 if (exitValue != 0) {
                     logger.info("running {} returned {}", className, exitValue);
                     return false;
@@ -374,8 +368,6 @@ public final class HadoopDriver implements Closeable {
             } catch (Exception e) {
                 logger.info("error occurred", e);
                 return false;
-            } finally {
-                dispose(conf);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(original);
@@ -404,17 +396,6 @@ public final class HadoopDriver implements Closeable {
             libjars.append(file.toURI());
         }
         arguments.add(libjars.toString());
-    }
-
-    private void dispose(Configuration conf) {
-        ClassLoader cl = conf.getClassLoader();
-        if (cl instanceof Closeable) {
-            try {
-                ((Closeable) cl).close();
-            } catch (IOException e) {
-                LOG.debug("Failed to dispose a ClassLoader", e);
-            }
-        }
     }
 
     private void copyFromHadoop(Location location, File targetDirectory) throws IOException {
