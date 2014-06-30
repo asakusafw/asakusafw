@@ -174,5 +174,15 @@ public class Context {
                 driver.process(environment, declaration, attribute);
             }
         }
+
+        @Override
+        public void verify(
+                DmdlSemantics environment,
+                Declaration declaration,
+                AstAttribute attribute) {
+            for (AttributeDriver driver : drivers) {
+                driver.verify(environment, declaration, attribute);
+            }
+        }
     }
 }

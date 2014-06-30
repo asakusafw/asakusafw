@@ -18,8 +18,8 @@ package com.asakusafw.directio.hive.orc;
 import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 
-import com.asakusafw.directio.hive.serde.DataModelDriver.ExceptionHandlingStrategy;
-import com.asakusafw.directio.hive.serde.DataModelDriver.FieldMappingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 
 /**
  * Represents the ORCFile format configurations.

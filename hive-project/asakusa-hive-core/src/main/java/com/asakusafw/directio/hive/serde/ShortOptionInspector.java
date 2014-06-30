@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.ShortObjectInspec
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.runtime.value.ShortOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link ShortOption} object.
@@ -35,12 +36,8 @@ public class ShortOptionInspector extends AbstractValueInspector implements Shor
     }
 
     @Override
-    public Object copyObject(Object o) {
-        ShortOption object = (ShortOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new ShortOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new ShortOption();
     }
 
     @Override

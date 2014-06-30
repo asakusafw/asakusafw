@@ -15,8 +15,6 @@
  */
 package com.asakusafw.directio.hive.serde;
 
-import java.util.Calendar;
-
 import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.TimestampObjectInspector;
 
@@ -59,8 +57,6 @@ public class DateTimeOptionDriver extends AbstractValueDriver {
 
     @SuppressWarnings("deprecation")
     private void setDate(ValueOption<?> target, java.sql.Timestamp entity) {
-        Calendar work = DateOptionDriver.getCalendarCache();
-        work.setTime(entity);
-        ((DateTimeOption) target).modify(DateUtil.getSecondFromCalendar(work));
+        ((DateTimeOption) target).modify(DateUtil.getSecondFromDate(entity));
     }
 }

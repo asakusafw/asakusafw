@@ -21,8 +21,8 @@ import java.util.Map;
 import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 
-import com.asakusafw.directio.hive.serde.DataModelDriver.ExceptionHandlingStrategy;
-import com.asakusafw.directio.hive.serde.DataModelDriver.FieldMappingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelTrait;

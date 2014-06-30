@@ -24,8 +24,8 @@ import org.junit.Test;
 
 import com.asakusafw.directio.hive.orc.AbstractOrcFileFormat;
 import com.asakusafw.directio.hive.orc.OrcFormatConfiguration;
-import com.asakusafw.directio.hive.serde.DataModelDriver.ExceptionHandlingStrategy;
-import com.asakusafw.directio.hive.serde.DataModelDriver.FieldMappingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.directio.hive.common.GeneratorTesterRoot;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelEmitter;
 

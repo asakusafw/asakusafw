@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.BooleanWritable;
 
 import com.asakusafw.runtime.value.BooleanOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link BooleanOption} object.
@@ -35,12 +36,8 @@ public class BooleanOptionInspector extends AbstractValueInspector implements Bo
     }
 
     @Override
-    public Object copyObject(Object o) {
-        BooleanOption object = (BooleanOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new BooleanOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new BooleanOption();
     }
 
     @Override

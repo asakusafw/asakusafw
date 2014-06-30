@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.LongWritable;
 
 import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link LongOption} object.
@@ -35,12 +36,8 @@ public class LongOptionInspector extends AbstractValueInspector implements LongO
     }
 
     @Override
-    public Object copyObject(Object o) {
-        LongOption object = (LongOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new LongOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new LongOption();
     }
 
     @Override

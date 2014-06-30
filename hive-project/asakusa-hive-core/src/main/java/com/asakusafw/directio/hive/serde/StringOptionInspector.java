@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.Text;
 
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link StringOption} object.
@@ -34,16 +35,9 @@ public class StringOptionInspector extends AbstractValueInspector implements Str
         super(TypeInfoFactory.stringTypeInfo);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public Object copyObject(Object o) {
-        StringOption object = (StringOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        StringOption copy = new StringOption();
-        copy.copyFrom(object);
-        return copy;
+    protected ValueOption<?> newObject() {
+        return new StringOption();
     }
 
     @Override

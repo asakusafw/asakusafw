@@ -22,9 +22,11 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.VarcharTypeInfo;
 
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link StringOption} object.
+ * @since 0.7.0
  */
 public class VarcharStringOptionInspector extends AbstractValueInspector implements HiveVarcharObjectInspector {
 
@@ -50,16 +52,9 @@ public class VarcharStringOptionInspector extends AbstractValueInspector impleme
         this.length = info.getLength();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public Object copyObject(Object o) {
-        StringOption object = (StringOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        StringOption copy = new StringOption();
-        copy.copyFrom(object);
-        return copy;
+    protected ValueOption<?> newObject() {
+        return new StringOption();
     }
 
     @Override

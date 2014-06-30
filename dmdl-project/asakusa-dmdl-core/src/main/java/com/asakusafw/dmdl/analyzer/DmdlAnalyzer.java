@@ -152,6 +152,8 @@ public class DmdlAnalyzer {
         checkDiagnostics();
         resolveAttributes();
         checkDiagnostics();
+        verifyAttributes();
+        checkDiagnostics();
         return context.getWorld();
     }
 
@@ -642,6 +644,30 @@ public class DmdlAnalyzer {
             }
             LOG.debug("Processing attribute: {} -> {}", name, driver); //$NON-NLS-1$
             driver.process(context.getWorld(), declaration, attribute);
+        }
+    }
+
+    private void verifyAttributes() {
+        for (ModelDeclaration model : context.getWorld().getDeclaredModels()) {
+            LOG.debug("Verifying attributes: {}", model.getName()); //$NON-NLS-1$
+            verifyAttributes(model);
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                verifyAttributes(property);
+            }
+        }
+    }
+
+    private void verifyAttributes(Declaration declaration) {
+        assert declaration != null;
+        for (AstAttribute attribute : declaration.getAttributes()) {
+            String name = attribute.name.toString();
+            AttributeDriver driver = context.findAttributeDriver(attribute);
+            if (driver == null) {
+                // may not occur
+                continue;
+            }
+            LOG.debug("Verifying attribute: {} -> {}", name, driver); //$NON-NLS-1$
+            driver.verify(context.getWorld(), declaration, attribute);
         }
     }
 
