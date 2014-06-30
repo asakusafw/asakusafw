@@ -42,6 +42,7 @@ import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
+import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.utils.collections.Lists;
@@ -49,7 +50,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * A driver for control Hadoop jobs for testing.
  * @since 0.1.0
- * @version 0.6.1
+ * @version 0.7.0
  */
 public final class HadoopDriver implements Closeable {
 
@@ -332,6 +333,7 @@ public final class HadoopDriver implements Closeable {
             arguments.add("-D");
             arguments.add(MessageFormat.format("{0}={1}", entry.getKey(), entry.getValue()));
         }
+        addSuppressCopyLibraries(arguments);
 
         int exitValue = invoke(arguments.toArray(new String[arguments.size()]));
         if (exitValue != 0) {
@@ -352,6 +354,7 @@ public final class HadoopDriver implements Closeable {
         arguments.add(className);
         addHadoopConf(arguments, confFile);
         addHadoopLibjars(libjars, arguments);
+        addSuppressCopyLibraries(arguments);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Configuration conf = configurations.newInstance();
@@ -396,6 +399,13 @@ public final class HadoopDriver implements Closeable {
             libjars.append(file.toURI());
         }
         arguments.add(libjars.toString());
+    }
+
+    private void addSuppressCopyLibraries(List<String> arguments) {
+        arguments.add("-D");
+        arguments.add(MessageFormat.format("{0}={1}",
+                LibraryCopySuppressionConfigurator.KEY_ENABLED,
+                String.valueOf(true)));
     }
 
     private void copyFromHadoop(Location location, File targetDirectory) throws IOException {
