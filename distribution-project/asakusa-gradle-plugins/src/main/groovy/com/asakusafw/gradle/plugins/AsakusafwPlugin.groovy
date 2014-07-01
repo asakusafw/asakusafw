@@ -504,6 +504,7 @@ class AsakusafwPlugin implements Plugin<Project> {
 
     private void applySubPlugins() {
         new EclipsePluginEnhancement().apply(project)
+        new IdeaPluginEnhancement().apply(project)
     }
 
 }
