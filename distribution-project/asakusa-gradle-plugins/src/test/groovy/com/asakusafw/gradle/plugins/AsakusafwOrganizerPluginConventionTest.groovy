@@ -95,7 +95,7 @@ class AsakusafwOrganizerPluginConventionTest {
      */
     @Test
     public void hive_defaults() {
-        assert convention.hive.libraries == ['org.apache.hive:hive-exec:0.13.1@jar']
+        assert convention.hive.libraries == ['org.apache.hive:hive-exec:0.13.1@jar', 'org.xerial.snappy:snappy-java:1.0.5@jar']
     }
 
 }

@@ -58,6 +58,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             target = { null }
         }
         convention.hive.libraries.add(project.asakusafwInternal.dep.hiveArtifact + '@jar')
+        convention.hive.libraries.add(project.asakusafwInternal.dep.snappyArtifact + '@jar')
     }
 
     private void configureConfigurations() {
