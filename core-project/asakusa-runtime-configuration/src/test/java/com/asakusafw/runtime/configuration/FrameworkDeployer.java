@@ -37,7 +37,7 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.runtime.stage.ToolLauncher;
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
 /**
  * Deploys mock framework environment.
@@ -128,7 +128,7 @@ public class FrameworkDeployer implements TestRule {
 
     void deployRuntimeLibrary() throws IOException {
         LOG.debug("Deploying runtime library");
-        runtimeLib = deployLibrary(ToolLauncher.class, "core/lib/asakusa-runtime-all.jar");
+        runtimeLib = deployLibrary(ApplicationLauncher.class, "core/lib/asakusa-runtime-all.jar");
     }
 
     /**
