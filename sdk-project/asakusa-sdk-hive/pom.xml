@@ -28,6 +28,12 @@
 			<groupId>com.asakusafw.sdk</groupId>
 			<artifactId>asakusa-sdk-dmdl-hive</artifactId>
 			<version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+           </exclusions>
 		</dependency>
 	</dependencies>
 </project>

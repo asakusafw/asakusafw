@@ -30,13 +30,19 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-/**
+/**W
  * The Asakusa application launcher.
  * @since 0.7.0
  */
 public final class ApplicationLauncher {
 
     static final Log LOG = LogFactory.getLog(ApplicationLauncher.class);
+
+    /**
+     * The configuration key of whether the application may be launched via {@link ApplicationLauncher}.
+     * This will be only set by this class.
+     */
+    public static final String KEY_LAUNCHER_USED = "com.asakusafw.launcher.used";
 
     /**
      * Failed to prepare the application.
@@ -84,6 +90,7 @@ public final class ApplicationLauncher {
                     "Preparing application: {0}",
                     Arrays.toString(args)));
         }
+        configuration.setBoolean(KEY_LAUNCHER_USED, true);
         LauncherOptions options;
         try {
             options = LauncherOptionsParser.parse(configuration, args);
