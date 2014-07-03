@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.inprocess;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,12 +25,10 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.ReflectionUtils;
-import org.apache.hadoop.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.testdriver.DefaultJobExecutor;
 import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
@@ -148,19 +145,17 @@ public class InProcessJobExecutor extends JobExecutor {
         LOG.info(MessageFormat.format(
                 "Emulating hadoop job: {0}",
                 job.getClassName()));
-        List<String> arguments = computeHadoopJobArguments(job);
+        List<String> arguments = new ArrayList<String>();
+        arguments.add(job.getClassName());
+        arguments.addAll(computeHadoopJobArguments(job));
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
-            GenericOptionsParser parser = new GenericOptionsParser(
-                    configurations.newInstance(), arguments.toArray(new String[arguments.size()]));
-            Configuration conf = parser.getConfiguration();
+            Configuration conf = configurations.newInstance();
             for (Map.Entry<String, String> entry : job.getProperties().entrySet()) {
                 conf.set(entry.getKey(), entry.getValue());
             }
             try {
-                Class<?> stageClass = conf.getClassLoader().loadClass(job.getClassName());
-                Tool tool = (Tool) ReflectionUtils.newInstance(stageClass, conf);
-                int exitValue = tool.run(new String[0]);
+                int exitValue = ApplicationLauncher.exec(conf, arguments.toArray(new String[arguments.size()]));
                 if (exitValue != 0) {
                     throw new AssertionError(MessageFormat.format(
                             "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1})",
@@ -171,22 +166,9 @@ public class InProcessJobExecutor extends JobExecutor {
                 throw (AssertionError) new AssertionError(MessageFormat.format(
                         "Hadoopジョブの実行に失敗しました (flowId={0})",
                         context.getCurrentFlowId())).initCause(e);
-            } finally {
-                dispose(conf);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(original);
-        }
-    }
-
-    private void dispose(Configuration conf) {
-        ClassLoader cl = conf.getClassLoader();
-        if (cl instanceof Closeable) {
-            try {
-                ((Closeable) cl).close();
-            } catch (IOException e) {
-                LOG.debug("Failed to dispose a ClassLoader", e);
-            }
         }
     }
 
