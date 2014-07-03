@@ -36,8 +36,8 @@ import com.asakusafw.directio.hive.common.HiveFieldInfo;
 import com.asakusafw.directio.hive.common.HiveTableInfo;
 import com.asakusafw.directio.hive.common.RowFormatInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
-import com.asakusafw.directio.hive.serde.DataModelDriver;
 import com.asakusafw.directio.hive.serde.DataModelInspector;
+import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
@@ -155,7 +155,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
             FileSystem fileSystem, Path path,
             long offset, long fragmentSize,
             Counter counter) throws IOException, InterruptedException {
-        DataModelDriver.Configuration driverConf = new DataModelDriver.Configuration();
+        DataModelMapping driverConf = new DataModelMapping();
         OrcFormatConfiguration conf = getFormatConfiguration();
         if (conf.getFieldMappingStrategy() != null) {
             driverConf.setFieldMappingStrategy(conf.getFieldMappingStrategy());

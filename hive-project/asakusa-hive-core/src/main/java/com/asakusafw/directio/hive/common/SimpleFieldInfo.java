@@ -19,6 +19,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
 /**
  * A simple implementation of {@link HiveFieldInfo}.
+ * @since 0.7.0
  */
 public class SimpleFieldInfo implements HiveFieldInfo {
 

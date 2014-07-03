@@ -40,6 +40,7 @@
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
 		<hadoop.version>2.4.1</hadoop.version>
 		<hive.version>0.13.1</hive.version>
+		<snappy.version>1.0.5</snappy.version>
 		<mysql.jdbc.version>5.1.25</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.configuration.version>1.8</commons.configuration.version>
@@ -508,6 +509,16 @@ encoding/<project>=UTF-8
 				<groupId>org.apache.hive</groupId>
 				<artifactId>hive-exec</artifactId>
 				<version>${hive.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>

@@ -26,6 +26,8 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * and put the class name in
  * {@code META-INF/services/com.asakusafw.dmdl.spi.AttributeDriver}.
  * </p>
+ * @since 0.2.0
+ * @version 0.7.0
  */
 public abstract class AttributeDriver {
 
@@ -46,6 +48,23 @@ public abstract class AttributeDriver {
             DmdlSemantics environment,
             Declaration declaration,
             AstAttribute attribute);
+
+    /**
+     * Verifies the attributed declaration.
+     * This will be invoked after all attributes are
+     * {@link #process(DmdlSemantics, Declaration, AstAttribute) processed}.
+     * @param environment the processing environment
+     * @param attribute the attribute with the {@link #getTargetName() target name}
+     * @param declaration the declaration with the {@code attribute}
+     * @see #getTargetName()
+     * @since 0.7.0
+     */
+    public void verify(
+            DmdlSemantics environment,
+            Declaration declaration,
+            AstAttribute attribute) {
+        return;
+    }
 
     @Override
     public String toString() {

@@ -24,7 +24,6 @@ import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
-import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
@@ -68,7 +67,7 @@ public class HiveDecimalDriver extends PropertyAttributeDriver {
             DmdlSemantics environment,
             PropertyDeclaration declaration,
             AstAttribute attribute) {
-        if (Util.checkProperty(environment, declaration, attribute, BasicTypeKind.DECIMAL) == false) {
+        if (Util.checkProperty(environment, declaration, attribute, HiveFieldTrait.TypeKind.DECIMAL) == false) {
             return;
         }
         HiveFieldTrait trait = HiveFieldTrait.get(declaration);

@@ -15,11 +15,19 @@
  */
 package com.asakusafw.dmdl.directio.hive.common;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.concurrent.Callable;
+
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
+import com.asakusafw.directio.hive.serde.StringValueSerdeFactory;
+import com.asakusafw.directio.hive.serde.TimestampValueSerdeFactory;
 import com.asakusafw.directio.hive.serde.ValueSerdeFactory;
+import com.asakusafw.dmdl.java.emitter.EmitContext;
+import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.dmdl.semantics.type.BasicType;
 
 /**
  * Attributes for Hive column field.
@@ -117,6 +125,20 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
     }
 
     /**
+     * Sets the timestamp type info.
+     */
+    public void setTimestampTypeInfo() {
+        this.typeKind = TypeKind.TIMESTAMP;
+    }
+
+    /**
+     * Sets the string type info.
+     */
+    public void setStringTypeInfo() {
+        this.typeKind = TypeKind.STRING;
+    }
+
+    /**
      * Sets the decimal type info.
      * @param precision the precision
      * @param scale the scale
@@ -154,32 +176,11 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
         HiveFieldTrait field = HiveFieldTrait.get(property);
         switch (field.getTypeKind()) {
         case NATURAL:
-            switch (((BasicType) property.getType()).getKind()) {
-            case BOOLEAN:
-                return ValueSerdeFactory.BOOLEAN.getTypeInfo();
-            case BYTE:
-                return ValueSerdeFactory.BYTE.getTypeInfo();
-            case DATE:
-                return ValueSerdeFactory.DATE.getTypeInfo();
-            case DECIMAL:
-                return ValueSerdeFactory.DECIMAL.getTypeInfo();
-            case DOUBLE:
-                return ValueSerdeFactory.DOUBLE.getTypeInfo();
-            case FLOAT:
-                return ValueSerdeFactory.FLOAT.getTypeInfo();
-            case INT:
-                return ValueSerdeFactory.INT.getTypeInfo();
-            case LONG:
-                return ValueSerdeFactory.LONG.getTypeInfo();
-            case SHORT:
-                return ValueSerdeFactory.SHORT.getTypeInfo();
-            case DATETIME:
-                return ValueSerdeFactory.DATE_TIME.getTypeInfo();
-            case TEXT:
-                return ValueSerdeFactory.STRING.getTypeInfo();
-            default:
-                throw new AssertionError(property.getType());
-            }
+            return getNaturalTypeInfo(property);
+        case TIMESTAMP:
+            return TimestampValueSerdeFactory.getCommonTypeInfo();
+        case STRING:
+            return StringValueSerdeFactory.getCommonTypeInfo();
         case CHAR:
             return ValueSerdeFactory.getChar(field.getStringLength()).getTypeInfo();
         case VARCHAR:
@@ -189,6 +190,17 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
         default:
             throw new AssertionError(field.getTypeKind());
         }
+    }
+
+    /**
+     * Returns the natural type information for the property.
+     * @param property the target property
+     * @return the natural type information
+     */
+    public static TypeInfo getNaturalTypeInfo(PropertyDeclaration property) {
+        Class<?> valueClass = EmitContext.getFieldTypeAsClass(property);
+        ValueSerdeFactory serde = ValueSerdeFactory.fromClass(valueClass);
+        return serde.getTypeInfo();
     }
 
     /**
@@ -213,21 +225,92 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
         /**
          * Use property natural type.
          */
-        NATURAL,
+        NATURAL(new Acceptor() {
+            @Override
+            protected boolean accepts(Class<?> valueClass) {
+                return ValueSerdeFactory.fromClass(valueClass) != null;
+            }
+        }),
+
+        /**
+         * timestamp type.
+         */
+        TIMESTAMP(new Acceptor() {
+            @Override
+            protected boolean accepts(Class<?> valueClass) {
+                return TimestampValueSerdeFactory.fromClass(valueClass) != null;
+            }
+        }),
+
+        /**
+         * string type.
+         */
+        STRING(new Acceptor() {
+            @Override
+            protected boolean accepts(Class<?> valueClass) {
+                return StringValueSerdeFactory.fromClass(valueClass) != null;
+            }
+        }),
 
         /**
          * decimal type.
          */
-        DECIMAL,
+        DECIMAL(BasicTypeKind.DECIMAL),
 
         /**
          * char type.
          */
-        CHAR,
+        CHAR(BasicTypeKind.TEXT),
 
         /**
          * varchar type.
          */
-        VARCHAR,
+        VARCHAR(BasicTypeKind.TEXT),
+        ;
+
+        private final Set<BasicTypeKind> supportedKinds;
+
+        private TypeKind(Callable<Set<BasicTypeKind>> lazy) {
+            try {
+                this.supportedKinds = Collections.unmodifiableSet(lazy.call());
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        private TypeKind(BasicTypeKind... kinds) {
+            EnumSet<BasicTypeKind> set = EnumSet.noneOf(BasicTypeKind.class);
+            Collections.addAll(set, kinds);
+            this.supportedKinds = Collections.unmodifiableSet(set);
+        }
+
+        /**
+         * Returns the supported kinds.
+         * @return the supported kinds
+         */
+        public Set<BasicTypeKind> getSupportedKinds() {
+            return supportedKinds;
+        }
+
+        private static abstract class Acceptor implements Callable<Set<BasicTypeKind>> {
+
+            Acceptor() {
+                return;
+            }
+
+            @Override
+            public Set<BasicTypeKind> call() {
+                EnumSet<BasicTypeKind> results = EnumSet.noneOf(BasicTypeKind.class);
+                for (BasicTypeKind kind : BasicTypeKind.values()) {
+                    Class<?> valueClass = EmitContext.getFieldTypeAsClass(kind);
+                    if (accepts(valueClass)) {
+                        results.add(kind);
+                    }
+                }
+                return results;
+            }
+
+            protected abstract boolean accepts(Class<?> valueClass);
+        }
     }
 }

@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.IntWritable;
 
 import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link IntOption} object.
@@ -35,12 +36,8 @@ public class IntOptionInspector extends AbstractValueInspector implements IntObj
     }
 
     @Override
-    public Object copyObject(Object o) {
-        IntOption object = (IntOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new IntOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new IntOption();
     }
 
     @Override

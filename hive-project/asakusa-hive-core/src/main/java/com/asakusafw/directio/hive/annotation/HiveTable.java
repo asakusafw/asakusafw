@@ -26,6 +26,7 @@ import com.asakusafw.directio.hive.common.HiveTableInfo;
 
 /**
  * Hive table annotation.
+ * @since 0.7.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

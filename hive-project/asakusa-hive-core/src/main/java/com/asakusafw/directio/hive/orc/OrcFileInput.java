@@ -24,6 +24,7 @@ import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.RecordReader;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 
+import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelDriver;
 import com.asakusafw.runtime.directio.Counter;
@@ -38,7 +39,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
 
     private final DataModelDescriptor descriptor;
 
-    private final DataModelDriver.Configuration configuration;
+    private final DataModelMapping configuration;
 
     private final FileSystem fileSystem;
 
@@ -72,7 +73,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
             FileSystem fileSystem, Path path,
             long offset, long fragmentSize,
             Counter counter) {
-        this(descriptor, new DataModelDriver.Configuration(), fileSystem, path, offset, fragmentSize, counter);
+        this(descriptor, new DataModelMapping(), fileSystem, path, offset, fragmentSize, counter);
     }
 
     /**
@@ -87,7 +88,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
      */
     public OrcFileInput(
             DataModelDescriptor descriptor,
-            DataModelDriver.Configuration configuration,
+            DataModelMapping configuration,
             FileSystem fileSystem, Path path,
             long offset, long fragmentSize,
             Counter counter) {

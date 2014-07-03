@@ -25,6 +25,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.HiveDecimalUtils;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link DecimalOption} object.
@@ -49,12 +50,8 @@ public class DecimalOptionInspector extends AbstractValueInspector implements Hi
     }
 
     @Override
-    public Object copyObject(Object o) {
-        DecimalOption object = (DecimalOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new DecimalOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new DecimalOption();
     }
 
     @Override
