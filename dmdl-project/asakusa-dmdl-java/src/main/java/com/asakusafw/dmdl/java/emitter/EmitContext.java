@@ -66,6 +66,8 @@ import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Emitting context.
+ * @since 0.2.0
+ * @version 0.7.0
  */
 public final class EmitContext {
 
@@ -301,6 +303,17 @@ public final class EmitContext {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public Type getValueType(PropertyDeclaration property) {
+        return resolve(getValueTypeAsClass(property));
+    }
+
+    /**
+     * Returns the corresponded property value type as related class object.
+     * @param property target property
+     * @return the corresponded type
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    public static Class<?> getValueTypeAsClass(PropertyDeclaration property) {
         if (property == null) {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
@@ -308,27 +321,27 @@ public final class EmitContext {
             BasicType bt = (BasicType) property.getType();
             switch (bt.getKind()) {
             case BOOLEAN:
-                return resolve(boolean.class);
+                return boolean.class;
             case DATE:
-                return resolve(Date.class);
+                return Date.class;
             case DATETIME:
-                return resolve(DateTime.class);
+                return DateTime.class;
             case DECIMAL:
-                return resolve(BigDecimal.class);
+                return BigDecimal.class;
             case DOUBLE:
-                return resolve(double.class);
+                return double.class;
             case FLOAT:
-                return resolve(float.class);
+                return float.class;
             case BYTE:
-                return resolve(byte.class);
+                return byte.class;
             case SHORT:
-                return resolve(short.class);
+                return short.class;
             case INT:
-                return resolve(int.class);
+                return int.class;
             case LONG:
-                return resolve(long.class);
+                return long.class;
             case TEXT:
-                return resolve(Text.class);
+                return Text.class;
             default:
                 throw new IllegalArgumentException(MessageFormat.format(
                         "Unsupported basic type: {0}", //$NON-NLS-1$
@@ -345,41 +358,65 @@ public final class EmitContext {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public Type getFieldType(PropertyDeclaration property) {
+        return resolve(getFieldTypeAsClass(property));
+    }
+
+    /**
+     * Returns the corresponded property data type as related class object.
+     * @param property target property
+     * @return the corresponded type
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    public static Class<?> getFieldTypeAsClass(PropertyDeclaration property) {
         if (property == null) {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
         if (property.getType() instanceof BasicType) {
-            BasicType bt = (BasicType) property.getType();
-            switch (bt.getKind()) {
-            case BOOLEAN:
-                return resolve(BooleanOption.class);
-            case DATE:
-                return resolve(DateOption.class);
-            case DATETIME:
-                return resolve(DateTimeOption.class);
-            case DECIMAL:
-                return resolve(DecimalOption.class);
-            case BYTE:
-                return resolve(ByteOption.class);
-            case SHORT:
-                return resolve(ShortOption.class);
-            case INT:
-                return resolve(IntOption.class);
-            case LONG:
-                return resolve(LongOption.class);
-            case FLOAT:
-                return resolve(FloatOption.class);
-            case DOUBLE:
-                return resolve(DoubleOption.class);
-            case TEXT:
-                return resolve(StringOption.class);
-            default:
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Unsupported basic type: {0}", //$NON-NLS-1$
-                        bt.getKind()));
-            }
+            return getFieldTypeAsClass(((BasicType) property.getType()).getKind());
         }
         throw new IllegalArgumentException();
+    }
+
+    /**
+     * Returns the corresponded property data type as related class object.
+     * @param type the type
+     * @return the corresponded type
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    public static Class<?> getFieldTypeAsClass(BasicTypeKind type) {
+        if (type == null) {
+            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+        }
+        switch (type) {
+        case BOOLEAN:
+            return BooleanOption.class;
+        case DATE:
+            return DateOption.class;
+        case DATETIME:
+            return DateTimeOption.class;
+        case DECIMAL:
+            return DecimalOption.class;
+        case BYTE:
+            return ByteOption.class;
+        case SHORT:
+            return ShortOption.class;
+        case INT:
+            return IntOption.class;
+        case LONG:
+            return LongOption.class;
+        case FLOAT:
+            return FloatOption.class;
+        case DOUBLE:
+            return DoubleOption.class;
+        case TEXT:
+            return StringOption.class;
+        default:
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Unsupported basic type: {0}", //$NON-NLS-1$
+                    type));
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.DoubleObjectInspe
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link DoubleOption} object.
@@ -35,12 +36,8 @@ public class DoubleOptionInspector extends AbstractValueInspector implements Dou
     }
 
     @Override
-    public Object copyObject(Object o) {
-        DoubleOption object = (DoubleOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new DoubleOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new DoubleOption();
     }
 
     @Override

@@ -15,8 +15,6 @@
  */
 package com.asakusafw.directio.hive.serde;
 
-import java.util.Calendar;
-
 import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.DateObjectInspector;
 
@@ -29,13 +27,6 @@ import com.asakusafw.runtime.value.ValueOption;
  * @since 0.7.0
  */
 public class DateOptionDriver extends AbstractValueDriver {
-
-    private static final ThreadLocal<Calendar> CALENDAR_CACHE = new ThreadLocal<Calendar>() {
-        @Override
-        protected Calendar initialValue() {
-            return Calendar.getInstance();
-        }
-    };
 
     private final DateObjectInspector inspector;
 
@@ -66,12 +57,6 @@ public class DateOptionDriver extends AbstractValueDriver {
 
     @SuppressWarnings("deprecation")
     private void setDate(ValueOption<?> target, java.sql.Date entity) {
-        Calendar work = getCalendarCache();
-        work.setTime(entity);
-        ((DateOption) target).modify(DateUtil.getDayFromCalendar(work));
-    }
-
-    static Calendar getCalendarCache() {
-        return CALENDAR_CACHE.get();
+        ((DateOption) target).modify(DateUtil.getDayFromDate(entity));
     }
 }

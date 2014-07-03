@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Hive field annotation.
+ * @since 0.7.0
  */
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

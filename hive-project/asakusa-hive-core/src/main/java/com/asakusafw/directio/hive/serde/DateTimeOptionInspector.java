@@ -21,6 +21,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link DateTimeOption} object.
@@ -36,12 +37,8 @@ public class DateTimeOptionInspector extends AbstractValueInspector implements T
     }
 
     @Override
-    public Object copyObject(Object o) {
-        DateTimeOption object = (DateTimeOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new DateTimeOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new DateTimeOption();
     }
 
     @Override

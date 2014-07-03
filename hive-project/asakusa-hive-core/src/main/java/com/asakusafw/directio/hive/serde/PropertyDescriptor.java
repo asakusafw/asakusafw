@@ -28,7 +28,7 @@ import com.asakusafw.runtime.value.ValueOption;
  * Represents a property in data model object.
  * @since 0.7.0
  */
-public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, ValueSerde {
+public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, ValueSerde, PropertyExtractor {
 
     private final String name;
 
@@ -57,16 +57,17 @@ public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, 
         this.comment = comment;
     }
 
-    /**
-     * Returns the target property for the data model.
-     * @param dataModel the target data model
-     * @return the target property, never returns {@code null}
-     */
+    @Override
     public abstract ValueOption<?> extract(Object dataModel);
 
     @Override
     public TypeInfo getTypeInfo() {
         return serde.getTypeInfo();
+    }
+
+    @Override
+    public Class<? extends ValueOption<?>> getValueClass() {
+        return serde.getValueClass();
     }
 
     @Override

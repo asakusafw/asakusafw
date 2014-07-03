@@ -157,7 +157,7 @@ public enum ValueSerdeFactory implements ValueSerde {
     /**
      * {@link DateTimeOption}.
      */
-    DATE_TIME(DateTimeOption.class, new DateTimeOptionInspector()) {
+    DATETIME(DateTimeOption.class, new DateTimeOptionInspector()) {
         @Override
         public ValueDriver getDriver(ObjectInspector target) {
             return new DateTimeOptionDriver((TimestampObjectInspector) target);
@@ -176,17 +176,14 @@ public enum ValueSerdeFactory implements ValueSerde {
         this.objectInspector = objectInspector;
     }
 
-    /**
-     * Returns the target {@link ValueOption} class.
-     * @return the target class
-     */
-    public Class<? extends ValueOption<?>> getValueOptionClass() {
-        return valueOptionClass;
-    }
-
     @Override
     public TypeInfo getTypeInfo() {
         return objectInspector.getTypeInfo();
+    }
+
+    @Override
+    public Class<? extends ValueOption<?>> getValueClass() {
+        return valueOptionClass;
     }
 
     @Override
@@ -205,6 +202,10 @@ public enum ValueSerdeFactory implements ValueSerde {
             @Override
             public TypeInfo getTypeInfo() {
                 return inspector.getTypeInfo();
+            }
+            @Override
+            public Class<? extends ValueOption<?>> getValueClass() {
+                return StringOption.class;
             }
             @Override
             public ObjectInspector getInspector() {
@@ -228,6 +229,10 @@ public enum ValueSerdeFactory implements ValueSerde {
             @Override
             public TypeInfo getTypeInfo() {
                 return inspector.getTypeInfo();
+            }
+            @Override
+            public Class<? extends ValueOption<?>> getValueClass() {
+                return StringOption.class;
             }
             @Override
             public ObjectInspector getInspector() {
@@ -254,6 +259,10 @@ public enum ValueSerdeFactory implements ValueSerde {
                 return inspector.getTypeInfo();
             }
             @Override
+            public Class<? extends ValueOption<?>> getValueClass() {
+                return DecimalOption.class;
+            }
+            @Override
             public ObjectInspector getInspector() {
                 return inspector;
             }
@@ -270,18 +279,18 @@ public enum ValueSerdeFactory implements ValueSerde {
      * @return the default {@link ValueSerde} for the target {@link ValueOption} class,
      *    or {@code null} if the target class has no {@link ValueSerde} object
      */
-    public static ValueSerde fromClass(Class<?> aClass) {
+    public static ValueSerdeFactory fromClass(Class<?> aClass) {
         return Lazy.FROM_CLASS.get(aClass);
     }
 
     private static final class Lazy {
 
-        static final Map<Class<? extends ValueOption<?>>, ValueSerde> FROM_CLASS;
+        static final Map<Class<? extends ValueOption<?>>, ValueSerdeFactory> FROM_CLASS;
         static {
-            Map<Class<? extends ValueOption<?>>, ValueSerde> map =
-                    new HashMap<Class<? extends ValueOption<?>>, ValueSerde>();
+            Map<Class<? extends ValueOption<?>>, ValueSerdeFactory> map =
+                    new HashMap<Class<? extends ValueOption<?>>, ValueSerdeFactory>();
             for (ValueSerdeFactory serde : ValueSerdeFactory.values()) {
-                map.put(serde.getValueOptionClass(), serde);
+                map.put(serde.getValueClass(), serde);
             }
             FROM_CLASS = map;
         }

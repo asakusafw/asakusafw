@@ -18,8 +18,6 @@ package com.asakusafw.directio.hive.serde;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import com.asakusafw.directio.hive.serde.PropertyDescriptor;
-import com.asakusafw.directio.hive.serde.ValueSerde;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**

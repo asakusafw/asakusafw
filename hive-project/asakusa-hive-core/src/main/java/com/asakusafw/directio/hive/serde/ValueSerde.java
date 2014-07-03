@@ -33,6 +33,12 @@ public interface ValueSerde {
     TypeInfo getTypeInfo();
 
     /**
+     * Returns the {@link ValueOption} class.
+     * @return the {@link ValueOption} class
+     */
+    Class<? extends ValueOption<?>> getValueClass();
+
+    /**
      * Returns an {@link ObjectInspector}.
      * @return the {@link ObjectInspector}
      */
