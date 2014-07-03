@@ -42,6 +42,7 @@ class AsakusafwInternalPluginConvention {
         String commonsLoggingVersion
         String mysqlConnectorJavaVersion
         String hiveArtifact
+        String snappyArtifact
 
         String embeddedLibsDirectory
 
@@ -60,6 +61,7 @@ class AsakusafwInternalPluginConvention {
             commonsLoggingVersion = '1.1.1'
             mysqlConnectorJavaVersion = '5.1.25'
             hiveArtifact = 'org.apache.hive:hive-exec:0.13.1'
+            snappyArtifact = 'org.xerial.snappy:snappy-java:1.0.5'
 
             embeddedLibsDirectory = "src/main/libs"
         }
