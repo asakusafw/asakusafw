@@ -29,6 +29,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector.Pr
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
@@ -53,7 +54,7 @@ public class DataModelDriver {
      * @param sourceInspector the object inspector for the drive data
      */
     public DataModelDriver(DataModelDescriptor descriptor, StructObjectInspector sourceInspector) {
-        this(descriptor, sourceInspector, new Configuration());
+        this(descriptor, sourceInspector, new DataModelMapping());
     }
 
     /**
@@ -63,7 +64,7 @@ public class DataModelDriver {
      * @param configuration the driver configuration
      */
     public DataModelDriver(
-            DataModelDescriptor descriptor, StructObjectInspector sourceInspector, Configuration configuration) {
+            DataModelDescriptor descriptor, StructObjectInspector sourceInspector, DataModelMapping configuration) {
         this.sourceInspector = sourceInspector;
         List<Mapping> mappings;
         switch (configuration.getFieldMappingStrategy()) {
@@ -143,7 +144,7 @@ public class DataModelDriver {
         return mappings;
     }
 
-    private boolean checkMapping(DataModelDescriptor descriptor, Mapping mapping, Configuration configuration) {
+    private boolean checkMapping(DataModelDescriptor descriptor, Mapping mapping, DataModelMapping configuration) {
         assert mapping.source != null || mapping.target != null;
         if (mapping.source == null) {
             handleException(configuration.getOnMissingSource(), MessageFormat.format(
@@ -218,124 +219,6 @@ public class DataModelDriver {
             Object value = inspector.getStructFieldData(source, sources[i]);
             ValueOption<?> option = targets[i].extract(dataModel);
             drivers[i].set(option, value);
-        }
-    }
-
-    /**
-     * Mapping strategy between source field and target field.
-     * @since 0.7.0
-     */
-    public enum FieldMappingStrategy {
-
-        /**
-         * Mapping fields by their name.
-         */
-        NAME,
-
-        /**
-         * Mapping fields by their position.
-         */
-        POSITION,
-    }
-
-    /**
-     * Exception handling strategy.
-     * @since 0.7.0
-     */
-    public enum ExceptionHandlingStrategy {
-
-        /**
-         * Ignores on exception.
-         */
-        IGNORE,
-
-        /**
-         * Logging on exception.
-         */
-        LOGGING,
-
-        /**
-         * Raise {@link IllegalArgumentException} on exception.
-         */
-        FAIL,
-    }
-
-    /**
-     * Configuration for {@link DataModelDriver}.
-     * @since 0.7.0
-     */
-    public static final class Configuration {
-
-        private FieldMappingStrategy fieldMappingStrategy = FieldMappingStrategy.NAME;
-
-        private ExceptionHandlingStrategy onMissingSource = ExceptionHandlingStrategy.LOGGING;
-
-        private ExceptionHandlingStrategy onMissingTarget = ExceptionHandlingStrategy.LOGGING;
-
-        private ExceptionHandlingStrategy onIncompatibleType = ExceptionHandlingStrategy.LOGGING;
-
-        /**
-         * Returns the field mapping strategy.
-         * @return the field mapping strategy
-         */
-        public FieldMappingStrategy getFieldMappingStrategy() {
-            return fieldMappingStrategy;
-        }
-
-        /**
-         * Sets the field mapping strategy.
-         * @param value the strategy
-         */
-        public void setFieldMappingStrategy(FieldMappingStrategy value) {
-            this.fieldMappingStrategy = value;
-        }
-
-        /**
-         * Returns the exception handling strategy for missing source fields.
-         * @return the exception handling strategy
-         */
-        public ExceptionHandlingStrategy getOnMissingSource() {
-            return onMissingSource;
-        }
-
-        /**
-         * Sets the exception handling strategy for missing source fields.
-         * @param value the strategy
-         */
-        public void setOnMissingSource(ExceptionHandlingStrategy value) {
-            this.onMissingSource = value;
-        }
-
-        /**
-         * Returns the exception handling strategy for missing target fields.
-         * @return the exception handling strategy
-         */
-        public ExceptionHandlingStrategy getOnMissingTarget() {
-            return onMissingTarget;
-        }
-
-        /**
-         * Sets the exception handling strategy for missing target fields.
-         * @param value the strategy
-         */
-        public void setOnMissingTarget(ExceptionHandlingStrategy value) {
-            this.onMissingTarget = value;
-        }
-
-        /**
-         * Returns the exception handling strategy for incompatible field type.
-         * @return the exception handling strategy
-         */
-        public ExceptionHandlingStrategy getOnIncompatibleType() {
-            return onIncompatibleType;
-        }
-
-        /**
-         * Sets the exception handling strategy for incompatible field type.
-         * @param value the strategy
-         */
-        public void setOnIncompatibleType(ExceptionHandlingStrategy value) {
-            this.onIncompatibleType = value;
         }
     }
 

@@ -15,6 +15,8 @@
  */
 package com.asakusafw.dmdl.directio.hive.common;
 
+import java.util.Set;
+
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -30,6 +32,15 @@ final class Util {
 
     private Util() {
         return;
+    }
+
+    static boolean checkProperty(
+            DmdlSemantics environment,
+            PropertyDeclaration declaration,
+            AstAttribute attribute,
+            HiveFieldTrait.TypeKind target) {
+        Set<BasicTypeKind> kinds = target.getSupportedKinds();
+        return checkProperty(environment, declaration, attribute, kinds.toArray(new BasicTypeKind[kinds.size()]));
     }
 
     static boolean checkProperty(

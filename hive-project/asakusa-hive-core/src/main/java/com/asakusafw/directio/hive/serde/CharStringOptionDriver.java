@@ -24,6 +24,7 @@ import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * An implementation of {@link ValueDriver} for {@link StringOption} using {@code char}.
+ * @since 0.7.0
  */
 public class CharStringOptionDriver extends AbstractValueDriver {
 

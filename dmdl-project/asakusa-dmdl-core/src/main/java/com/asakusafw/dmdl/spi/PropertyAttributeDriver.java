@@ -25,6 +25,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 /**
  * {@link AttributeDriver} for {@link PropertyDeclaration}s.
  * @since 0.2.4
+ * @version 0.7.0
  */
 public abstract class PropertyAttributeDriver extends AttributeDriver {
 
@@ -45,6 +46,18 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
         process(environment, (PropertyDeclaration) declaration, attribute);
     }
 
+    @Override
+    public final void verify(
+            DmdlSemantics environment,
+            Declaration declaration,
+            AstAttribute attribute) {
+        assert attribute.name.toString().equals(getTargetName());
+        if ((declaration instanceof PropertyDeclaration) == false) {
+            return;
+        }
+        verify(environment, (PropertyDeclaration) declaration, attribute);
+    }
+
     /**
      * Processes and modifies the attributed property declaration.
      * @param environment the processing environment
@@ -56,4 +69,21 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
             DmdlSemantics environment,
             PropertyDeclaration declaration,
             AstAttribute attribute);
+
+    /**
+     * Verifies the attributed declaration.
+     * This will be invoked after all attributes are
+     * {@link AttributeDriver#process(DmdlSemantics, Declaration, AstAttribute) processed}.
+     * @param environment the processing environment
+     * @param attribute the attribute with the {@link #getTargetName() target name}
+     * @param declaration the model declaration with the {@code attribute}
+     * @see #getTargetName()
+     * @since 0.7.0
+     */
+    public void verify(
+            DmdlSemantics environment,
+            PropertyDeclaration declaration,
+            AstAttribute attribute) {
+        return;
+    }
 }

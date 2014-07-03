@@ -29,8 +29,8 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.serde.DataModelDriver.ExceptionHandlingStrategy;
-import com.asakusafw.directio.hive.serde.DataModelDriver.FieldMappingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
+import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.directio.hive.serde.mock.MockSimple;
 import com.asakusafw.directio.hive.serde.mock.MockTypes;
 import com.asakusafw.runtime.value.Date;
@@ -93,7 +93,7 @@ public class DataModelDriverTest {
         }
         DataModelDescriptor mangled = new DataModelDescriptor(descriptor.getDataModelClass(), properties);
 
-        DataModelDriver.Configuration config = new DataModelDriver.Configuration();
+        DataModelMapping config = new DataModelMapping();
         config.setFieldMappingStrategy(FieldMappingStrategy.NAME);
         config.setOnMissingSource(ExceptionHandlingStrategy.FAIL);
         config.setOnMissingTarget(ExceptionHandlingStrategy.IGNORE);

@@ -173,6 +173,86 @@ public class HiveDataModelEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * decimal with string info.
+     */
+    @Test
+    public void decimal_w_string() {
+        emitDrivers.add(new HiveDataModelEmitter());
+        emitDrivers.add(new OrcFileEmitter());
+        ModelLoader loader = generateJava(new String[] {
+                "@directio.hive.orc",
+                "model = {",
+                "  @directio.hive.string",
+                "  simple : DECIMAL;",
+                "};"
+        });
+        DataModelDescriptor descriptor = descriptor(loader, "ModelDescriptorFactory");
+        PropertyDescriptor property = descriptor.findPropertyDescriptor("simple");
+        assertThat(property, is(notNullValue()));
+        assertThat(property.getTypeInfo(), is((TypeInfo) TypeInfoFactory.stringTypeInfo));
+    }
+
+    /**
+     * date with string info.
+     */
+    @Test
+    public void date_w_string() {
+        emitDrivers.add(new HiveDataModelEmitter());
+        emitDrivers.add(new OrcFileEmitter());
+        ModelLoader loader = generateJava(new String[] {
+                "@directio.hive.orc",
+                "model = {",
+                "  @directio.hive.string",
+                "  simple : DATE;",
+                "};"
+        });
+        DataModelDescriptor descriptor = descriptor(loader, "ModelDescriptorFactory");
+        PropertyDescriptor property = descriptor.findPropertyDescriptor("simple");
+        assertThat(property, is(notNullValue()));
+        assertThat(property.getTypeInfo(), is((TypeInfo) TypeInfoFactory.stringTypeInfo));
+    }
+
+    /**
+     * date-time with string info.
+     */
+    @Test
+    public void datetime_w_string() {
+        emitDrivers.add(new HiveDataModelEmitter());
+        emitDrivers.add(new OrcFileEmitter());
+        ModelLoader loader = generateJava(new String[] {
+                "@directio.hive.orc",
+                "model = {",
+                "  @directio.hive.string",
+                "  simple : DATETIME;",
+                "};"
+        });
+        DataModelDescriptor descriptor = descriptor(loader, "ModelDescriptorFactory");
+        PropertyDescriptor property = descriptor.findPropertyDescriptor("simple");
+        assertThat(property, is(notNullValue()));
+        assertThat(property.getTypeInfo(), is((TypeInfo) TypeInfoFactory.stringTypeInfo));
+    }
+
+    /**
+     * with timestamp info.
+     */
+    @Test
+    public void w_timestamp() {
+        emitDrivers.add(new HiveDataModelEmitter());
+        emitDrivers.add(new OrcFileEmitter());
+        ModelLoader loader = generateJava(new String[] {
+                "@directio.hive.orc",
+                "model = {",
+                "  @directio.hive.timestamp",
+                "  simple : DATE;",
+                "};"
+        });
+        DataModelDescriptor descriptor = descriptor(loader, "ModelDescriptorFactory");
+        PropertyDescriptor property = descriptor.findPropertyDescriptor("simple");
+        assertThat(property, is(notNullValue()));
+        assertThat(property.getTypeInfo(), is((TypeInfo) TypeInfoFactory.timestampTypeInfo));
+    }
+
+    /**
      * with detail decimal info.
      */
     @Test

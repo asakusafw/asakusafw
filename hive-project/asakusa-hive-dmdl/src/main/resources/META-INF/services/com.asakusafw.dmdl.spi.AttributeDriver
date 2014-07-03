@@ -1,6 +1,9 @@
-com.asakusafw.dmdl.directio.hive.orc.OrcFileDriver
 com.asakusafw.dmdl.directio.hive.common.HiveFieldDriver
+com.asakusafw.dmdl.directio.hive.common.HiveStringDriver
+com.asakusafw.dmdl.directio.hive.common.HiveTimestampDriver
 com.asakusafw.dmdl.directio.hive.common.HiveDecimalDriver
 com.asakusafw.dmdl.directio.hive.common.HiveCharDriver
 com.asakusafw.dmdl.directio.hive.common.HiveVarcharDriver
 com.asakusafw.dmdl.directio.hive.common.HiveIgnoreDriver
+com.asakusafw.dmdl.directio.hive.orc.OrcFileDriver
+com.asakusafw.dmdl.directio.hive.parquet.ParquetFileDriver

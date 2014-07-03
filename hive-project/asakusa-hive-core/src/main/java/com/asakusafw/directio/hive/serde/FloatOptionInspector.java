@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.FloatWritable;
 
 import com.asakusafw.runtime.value.FloatOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link FloatOption} object.
@@ -35,12 +36,8 @@ public class FloatOptionInspector extends AbstractValueInspector implements Floa
     }
 
     @Override
-    public Object copyObject(Object o) {
-        FloatOption object = (FloatOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new FloatOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new FloatOption();
     }
 
     @Override

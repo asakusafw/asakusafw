@@ -20,6 +20,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.ByteObjectInspect
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.runtime.value.ByteOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Inspects {@link ByteOption} object.
@@ -35,12 +36,8 @@ public class ByteOptionInspector extends AbstractValueInspector implements ByteO
     }
 
     @Override
-    public Object copyObject(Object o) {
-        ByteOption object = (ByteOption) o;
-        if (object == null || object.isNull()) {
-            return null;
-        }
-        return new ByteOption(object.get());
+    protected ValueOption<?> newObject() {
+        return new ByteOption();
     }
 
     @Override

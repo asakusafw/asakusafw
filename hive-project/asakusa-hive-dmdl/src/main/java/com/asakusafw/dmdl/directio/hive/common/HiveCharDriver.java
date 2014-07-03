@@ -23,7 +23,6 @@ import org.apache.hadoop.hive.common.type.HiveChar;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
-import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
@@ -61,7 +60,7 @@ public class HiveCharDriver extends PropertyAttributeDriver {
             DmdlSemantics environment,
             PropertyDeclaration declaration,
             AstAttribute attribute) {
-        if (Util.checkProperty(environment, declaration, attribute, BasicTypeKind.TEXT) == false) {
+        if (Util.checkProperty(environment, declaration, attribute, HiveFieldTrait.TypeKind.CHAR) == false) {
             return;
         }
         HiveFieldTrait trait = HiveFieldTrait.get(declaration);

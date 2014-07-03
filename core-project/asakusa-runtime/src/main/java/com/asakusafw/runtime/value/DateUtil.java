@@ -19,8 +19,17 @@ import java.util.Calendar;
 
 /**
  * 日付に関するユーティリティ群。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public final class DateUtil {
+
+    private static final ThreadLocal<Calendar> CALENDAR_CACHE = new ThreadLocal<Calendar>() {
+        @Override
+        protected Calendar initialValue() {
+            return Calendar.getInstance();
+        }
+    };
 
     /**
      * 平年の年間日数。
@@ -128,6 +137,16 @@ public final class DateUtil {
     }
 
     /**
+     * 日付を西暦0001/01/01からの経過日数に変換して返す。
+     * @param date 対象の日付オブジェクト
+     * @return 日付に対応する西暦0001/01/01からの経過日数
+     * @since 0.7.0
+     */
+    public static int getDayFromDate(java.util.Date date) {
+        return getDayFromCalendar(toCachedCalendar(date));
+    }
+
+    /**
      * 西暦0001/01/01からの経過日数で指定された日付を対象のカレンダーに設定する。
      * 時、分、秒、ミリ秒のフィールドは0に設定される。
      * @param days 西暦0001/01/01からの経過日数
@@ -172,6 +191,22 @@ public final class DateUtil {
         result += calendar.get(Calendar.MINUTE) * 60;
         result += calendar.get(Calendar.SECOND);
         return result;
+    }
+
+    /**
+     * 時刻を西暦0001/01/01 00:00:00からの経過秒数に変換して返す。
+     * @param date 対象の日付オブジェクト
+     * @return 西暦0001/01/01 00:00:00からの経過秒数 (0起算)
+     * @since 0.7.0
+     */
+    public static long getSecondFromDate(java.util.Date date) {
+        return getSecondFromCalendar(toCachedCalendar(date));
+    }
+
+    private static Calendar toCachedCalendar(java.util.Date date) {
+        Calendar work = CALENDAR_CACHE.get();
+        work.setTime(date);
+        return work;
     }
 
     /**

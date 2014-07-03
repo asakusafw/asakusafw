@@ -18,6 +18,8 @@ package com.asakusafw.directio.hive.serde;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.AbstractPrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 
+import com.asakusafw.runtime.value.ValueOption;
+
 /**
  * An abstract implementation of {@link AbstractPrimitiveObjectInspector}.
  * @since 0.7.0
@@ -36,4 +38,22 @@ public abstract class AbstractValueInspector extends AbstractPrimitiveObjectInsp
     public boolean preferWritable() {
         return false;
     }
+
+    @SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
+    @Override
+    public final Object copyObject(Object o) {
+        ValueOption<?> object = (ValueOption<?>) o;
+        if (object == null || object.isNull()) {
+            return null;
+        }
+        ValueOption copy = newObject();
+        copy.copyFrom(object);
+        return copy;
+    }
+
+    /**
+     * Creates a new instance for supported {@link ValueOption} type.
+     * @return the created instance
+     */
+    protected abstract ValueOption<?> newObject();
 }

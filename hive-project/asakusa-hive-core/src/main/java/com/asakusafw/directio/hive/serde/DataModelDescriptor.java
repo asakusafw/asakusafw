@@ -15,6 +15,7 @@
  */
 package com.asakusafw.directio.hive.serde;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -109,5 +110,16 @@ public class DataModelDescriptor {
 
     private String normalizeName(String name) {
         return name.toUpperCase(Locale.ENGLISH);
+    }
+
+    @Override
+    public String toString() {
+        String name = getDataModelClass().getName();
+        String c = getDataModelComment();
+        if (c == null) {
+            return name;
+        } else {
+            return MessageFormat.format("{0} ({1})", getDataModelClass().getName(), c);
+        }
     }
 }

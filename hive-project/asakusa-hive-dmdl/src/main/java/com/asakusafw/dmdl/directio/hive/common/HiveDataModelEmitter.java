@@ -31,11 +31,12 @@ import com.asakusafw.directio.hive.annotation.HiveTable;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelDescriptorBuilder;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
+import com.asakusafw.directio.hive.serde.StringValueSerdeFactory;
+import com.asakusafw.directio.hive.serde.TimestampValueSerdeFactory;
 import com.asakusafw.directio.hive.serde.ValueSerdeFactory;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.AstDescription;
-import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
@@ -174,7 +175,15 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         switch (field.getTypeKind()) {
         case NATURAL:
             return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                .field(getValueSerdeConstantName(f, (BasicType) property.getType()))
+                .field(getValueSerdeNaturalName(f, (BasicType) property.getType()))
+                .toExpression();
+        case STRING:
+            return new TypeBuilder(f, context.resolve(StringValueSerdeFactory.class))
+                .field(getValueSerdeStringName(f, (BasicType) property.getType()))
+                .toExpression();
+        case TIMESTAMP:
+            return new TypeBuilder(f, context.resolve(TimestampValueSerdeFactory.class))
+                .field(getValueSerdeTimestampName(f, (BasicType) property.getType()))
                 .toExpression();
         case CHAR:
             return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
@@ -195,26 +204,22 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         }
     }
 
-    private static SimpleName getValueSerdeConstantName(ModelFactory f, BasicType type) {
-        BasicTypeKind kind = type.getKind();
-        switch (kind) {
-        case BOOLEAN:
-        case BYTE:
-        case DATE:
-        case DECIMAL:
-        case DOUBLE:
-        case FLOAT:
-        case INT:
-        case LONG:
-        case SHORT:
-            return f.newSimpleName(kind.name());
-        case DATETIME:
-            return f.newSimpleName(ValueSerdeFactory.DATE_TIME.name());
-        case TEXT:
-            return f.newSimpleName(ValueSerdeFactory.STRING.name());
-        default:
-            throw new AssertionError(type);
-        }
+    private static SimpleName getValueSerdeNaturalName(ModelFactory f, BasicType type) {
+        Class<?> valueClass = EmitContext.getFieldTypeAsClass(type.getKind());
+        Enum<?> element = ValueSerdeFactory.fromClass(valueClass);
+        return f.newSimpleName(element.name());
+    }
+
+    private static SimpleName getValueSerdeStringName(ModelFactory f, BasicType type) {
+        Class<?> valueClass = EmitContext.getFieldTypeAsClass(type.getKind());
+        Enum<?> element = StringValueSerdeFactory.fromClass(valueClass);
+        return f.newSimpleName(element.name());
+    }
+
+    private static SimpleName getValueSerdeTimestampName(ModelFactory f, BasicType type) {
+        Class<?> valueClass = EmitContext.getFieldTypeAsClass(type.getKind());
+        Enum<?> element = TimestampValueSerdeFactory.fromClass(valueClass);
+        return f.newSimpleName(element.name());
     }
 
     private static class Generator {
@@ -343,51 +348,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         }
 
         private Expression computeValueType(PropertyDeclaration property) {
-            HiveFieldTrait field = HiveFieldTrait.get(property);
-            switch (field.getTypeKind()) {
-            case NATURAL:
-                return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                    .field(getValueSerdeConstantName((BasicType) property.getType()))
-                    .toExpression();
-            case CHAR:
-                return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                    .method("getChar", Models.toLiteral(f, field.getStringLength()))
-                    .toExpression();
-            case VARCHAR:
-                return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                    .method("getVarchar", Models.toLiteral(f, field.getStringLength()))
-                    .toExpression();
-            case DECIMAL:
-                return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                    .method("getDecimal",
-                            Models.toLiteral(f, field.getDecimalPrecision()),
-                            Models.toLiteral(f, field.getDecimalScale()))
-                    .toExpression();
-            default:
-                throw new AssertionError(field.getTypeKind());
-            }
-        }
-
-        private SimpleName getValueSerdeConstantName(BasicType type) {
-            BasicTypeKind kind = type.getKind();
-            switch (kind) {
-            case BOOLEAN:
-            case BYTE:
-            case DATE:
-            case DECIMAL:
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-            case LONG:
-            case SHORT:
-                return f.newSimpleName(kind.name());
-            case DATETIME:
-                return f.newSimpleName(ValueSerdeFactory.DATE_TIME.name());
-            case TEXT:
-                return f.newSimpleName(ValueSerdeFactory.STRING.name());
-            default:
-                throw new AssertionError(type);
-            }
+            return HiveDataModelEmitter.computeValueType(context, property);
         }
 
         private ConstructorDeclaration createConstructor() {
