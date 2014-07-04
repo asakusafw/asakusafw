@@ -211,7 +211,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         putScript("arguments.sh", new File(target));
 
         Map<String, String> conf = map();
-        conf.put(JschProcessExecutor.KEY_USER, "${USER}");
+        conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
@@ -281,7 +281,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
 
     private CommandScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
-        conf.put(JschProcessExecutor.KEY_USER, "${USER}");
+        conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
