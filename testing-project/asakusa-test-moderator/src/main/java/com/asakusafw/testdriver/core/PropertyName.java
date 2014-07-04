@@ -25,10 +25,33 @@ import java.util.List;
 /**
  * The normal-form of property names.
  * @since 0.2.0
+ * @version 0.7.0
  */
 public final class PropertyName implements Comparable<PropertyName>, Serializable {
 
     private static final long serialVersionUID = -362878710044414915L;
+
+    /**
+     * The system property key of property name segment separator.
+     * @since 0.7.0
+     */
+    public static final String KEY_SEGMENT_SEPARATOR = "com.asakusafw.testdriver.property.segmentSeparator";
+
+    static final String DEFAULT_SEGMENT_SEPARATOR = "-";
+
+    static final String SEGMENT_SEPARATOR;
+    static {
+        String separator = null;
+        try {
+            separator = System.getProperty(KEY_SEGMENT_SEPARATOR, DEFAULT_SEGMENT_SEPARATOR);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        if (separator == null || separator.isEmpty()) {
+            separator = DEFAULT_SEGMENT_SEPARATOR;
+        }
+        SEGMENT_SEPARATOR = separator;
+    }
 
     private final List<String> originalWords;
 
@@ -168,7 +191,7 @@ public final class PropertyName implements Comparable<PropertyName>, Serializabl
         assert iter.hasNext();
         buf.append(iter.next());
         while (iter.hasNext()) {
-            buf.append('-');
+            buf.append(SEGMENT_SEPARATOR);
             buf.append(iter.next());
         }
         return buf.toString();
