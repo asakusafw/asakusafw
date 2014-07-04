@@ -269,7 +269,7 @@ public class JschProcessExecutorTest {
         Assume.assumeTrue(file.delete());
 
         Map<String, String> config = new HashMap<String, String>();
-        config.put(JschProcessExecutor.KEY_USER, "${USER}");
+        config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
@@ -311,7 +311,7 @@ public class JschProcessExecutorTest {
         script.setExecutable(true);
 
         Map<String, String> config = new HashMap<String, String>();
-        config.put(JschProcessExecutor.KEY_USER, "${USER}");
+        config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
@@ -343,7 +343,7 @@ public class JschProcessExecutorTest {
     @Test
     public void execute_missing() throws Exception {
         Map<String, String> config = new HashMap<String, String>();
-        config.put(JschProcessExecutor.KEY_USER, "${USER}");
+        config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
@@ -372,7 +372,7 @@ public class JschProcessExecutorTest {
         Assume.assumeTrue(file.delete());
 
         Map<String, String> config = new HashMap<String, String>();
-        config.put(JschProcessExecutor.KEY_USER, "${USER}");
+        config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
@@ -411,7 +411,7 @@ public class JschProcessExecutorTest {
         script.setExecutable(true);
 
         Map<String, String> config = new HashMap<String, String>();
-        config.put(JschProcessExecutor.KEY_USER, "${USER}");
+        config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
