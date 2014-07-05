@@ -16,7 +16,10 @@
 package com.asakusafw.directio.hive.orc;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile.WriterOptions;
@@ -32,6 +35,10 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @since 0.7.0
  */
 public class OrcFileOutput<T> implements ModelOutput<T> {
+
+    static final Log LOG = LogFactory.getLog(OrcFileOutput.class);
+
+    private final DataModelDescriptor descriptor;
 
     private final Path path;
 
@@ -53,6 +60,7 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
             Path path,
             WriterOptions options,
             Counter counter) {
+        this.descriptor = descriptor;
         this.path = path;
         this.options = options;
         this.counter = counter;
@@ -70,6 +78,12 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
     private Writer prepare() throws IOException {
         Writer writer = currentWriter;
         if (writer == null) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Creating ORCFile ({0}): {1}",
+                        descriptor.getDataModelClass().getSimpleName(),
+                        path));
+            }
             writer = OrcFile.createWriter(path, options);
             currentWriter = writer;
         }

@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import parquet.column.ColumnDescriptor;
 import parquet.io.api.GroupConverter;
@@ -46,7 +46,7 @@ import com.asakusafw.directio.hive.serde.PropertyDescriptor;
  */
 public class DataModelMaterializer extends RecordMaterializer<Object> {
 
-    static final Logger LOG = LoggerFactory.getLogger(DataModelMaterializer.class);
+    static final Log LOG = LogFactory.getLog(DataModelMaterializer.class);
 
     private final MessageType materializeSchema;
 
@@ -124,6 +124,14 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
             if (checkMapping(descriptor, mapping, configuration)) {
                 assert mapping.source != null;
                 assert mapping.target != null;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Map Parquet column: {0}:{1} -> {2}:{3}",
+                            mapping.source.getPath()[0],
+                            mapping.source.getType(),
+                            mapping.target.getFieldName(),
+                            mapping.target.getFieldTypeInfo()));
+                }
                 int index = schema.getFieldIndex(mapping.source.getPath()[0]);
                 propertyMap.put(index, mapping);
             }
@@ -176,7 +184,9 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         List<Mapping> mappings = new ArrayList<Mapping>();
         int limit = Math.min(sources.size(), targets.size());
         for (int i = 0; i < limit; i++) {
-            mappings.add(new Mapping(sources.get(i), targets.get(i)));
+            ColumnDescriptor s = sources.get(i);
+            PropertyDescriptor t = targets.get(i);
+            mappings.add(new Mapping(s, t));
         }
         for (int i = limit, n = sources.size(); i < n; i++) {
             mappings.add(new Mapping(sources.get(i), null));
@@ -194,10 +204,10 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         assert mapping.source != null || mapping.target != null;
         if (mapping.source == null) {
             handleException(configuration.getOnMissingSource(), MessageFormat.format(
-                    "Source field is not found: model={0}, field={1}:{2}",
+                    "Source field is not found: model={0}, field={1}:{2}(data model)",
                     descriptor.getDataModelClass().getName(),
                     mapping.target.getFieldName(),
-                    mapping.target.getFieldObjectInspector().getTypeName()));
+                    mapping.target.getFieldTypeInfo()));
             return false;
         } else if (mapping.target == null) {
             handleException(configuration.getOnMissingTarget(), MessageFormat.format(
@@ -208,12 +218,12 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
             return false;
         } else if (isCompatible(mapping.source, mapping.target) == false) {
             handleException(configuration.getOnIncompatibleType(), MessageFormat.format(
-                    "Field type is incompatible: model={0}, source={1}:{2}(Parquet), target={3}:{4}",
+                    "Field types are incompatible: model={0}, source={1}:{2}(Parquet), target={3}:{4}(data model)",
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getPath()[0],
                     mapping.source.getType(),
                     mapping.target.getFieldName(),
-                    mapping.target.getFieldObjectInspector().getTypeName()));
+                    mapping.target.getFieldTypeInfo()));
             return false;
         } else {
             return true;

@@ -72,9 +72,9 @@ public class DirectFileInputDescriptionGenerator {
     private void emit() throws IOException {
         ClassDeclaration decl = f.newClassDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0} for ", description.getDescription())
+                    .text("{0} for ", description.getDescription()) //$NON-NLS-1$
                     .linkType(context.resolve(description.getModelClassName()))
-                    .text(".")
+                    .text(".") //$NON-NLS-1$
                     .toJavadoc(),
                 getClassAttributes(),
                 context.getTypeName(),
@@ -119,15 +119,15 @@ public class DirectFileInputDescriptionGenerator {
 
     private MethodDeclaration createGetModelTypeMethod(Name value) {
         Type type = f.newParameterizedType(context.resolve(Class.class), f.newWildcard());
-        return createGetMethod("getModelType", type, f.newClassLiteral(context.resolve(value)));
+        return createGetMethod("getModelType", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetBasePathMethod(String value) {
-        return createGetMethod("getBasePath", context.resolve(String.class), Models.toLiteral(f, value));
+        return createGetMethod("getBasePath", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetResourcePatternMethod(String value) {
-        return createGetMethod("getResourcePattern", context.resolve(String.class), Models.toLiteral(f, value));
+        return createGetMethod("getResourcePattern", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetFormatMethod(Name value) {
@@ -135,16 +135,16 @@ public class DirectFileInputDescriptionGenerator {
                 context.resolve(Class.class),
                 f.newWildcard(WildcardBoundKind.UPPER_BOUNDED, f.newParameterizedType(
                         context.resolve(DataFormat.class), f.newWildcard())));
-        return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value)));
+        return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
     }
 
     private MethodDeclaration createIsOptionalMethod(boolean value) {
-        return createGetMethod("isOptional", context.resolve(boolean.class), Models.toLiteral(f, value));
+        return createGetMethod("isOptional", context.resolve(boolean.class), Models.toLiteral(f, value)); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetDataSizeMethod(DataSize value) {
         Type type = context.resolve(DataSize.class);
-        return createGetMethod("getDataSize", type, new TypeBuilder(f, type)
+        return createGetMethod("getDataSize", type, new TypeBuilder(f, type) //$NON-NLS-1$
                 .field(value.name())
                 .toExpression());
     }
