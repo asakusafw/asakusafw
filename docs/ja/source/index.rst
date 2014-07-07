@@ -13,7 +13,6 @@ Asakusa Framework Sandbox は :asakusafw:`Asakusa Framework <index.html>` の
 
     windgate/index
     directio/index
-    testing/index
     administration/index
 
 リソース

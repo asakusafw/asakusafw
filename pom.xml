@@ -28,9 +28,6 @@
 		<module>asakusa-runtime-ext</module>
 		<module>asakusa-windgate-dmdl-ext</module>
 		<module>asakusa-directio-dmdl-ext</module>
-		<module>asakusa-test-driver-ext</module>
-		<module>asakusa-test-driver-tools</module>
-		<module>asakusa-windgate-test-driver-ext</module>
 	</modules>
 
 	<build>
