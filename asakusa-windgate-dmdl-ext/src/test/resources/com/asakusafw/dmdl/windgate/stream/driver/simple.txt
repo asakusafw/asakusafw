@@ -1,0 +1,4 @@
+@windgate.stream_format(type = "TSV")
+simple = {
+    value : TEXT;
+};

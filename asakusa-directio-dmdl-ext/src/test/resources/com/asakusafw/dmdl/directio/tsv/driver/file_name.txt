@@ -1,0 +1,6 @@
+@directio.tsv
+file_name = {
+    @directio.tsv.file_name
+    path : TEXT;
+    value : TEXT;
+};

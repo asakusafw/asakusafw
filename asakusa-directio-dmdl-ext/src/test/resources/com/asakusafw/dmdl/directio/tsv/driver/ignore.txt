@@ -1,0 +1,6 @@
+@directio.tsv
+ignore = {
+    @directio.tsv.ignore
+    ignore : TEXT;
+    value : TEXT;
+};

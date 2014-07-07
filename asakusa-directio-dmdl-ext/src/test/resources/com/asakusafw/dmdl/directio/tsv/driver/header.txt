@@ -1,0 +1,7 @@
+@directio.tsv(has_header = TRUE)
+header = {
+    @directio.tsv.field(name = "#The key")
+    key : INT;
+    @directio.tsv.field(name = "Hello, world!")
+    value : TEXT;
+};
