@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-sandbox-parent</artifactId>
 		<groupId>com.asakusafw.sandbox</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.7-SNAPSHOT</version>
 		<relativePath>../asakusa-sandbox-parent</relativePath>
 	</parent>
 
