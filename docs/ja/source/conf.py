@@ -34,7 +34,6 @@ todo_include_todos = True
 
 extlinks = {
     'issue': ('https://github.com/asakusafw/asakusafw/issues/%s', '#'),
-    'sandbox': ('http://asakusafw.s3.amazonaws.com/documents/0.6.2/sandbox/ja/html/%s', None),
     'jinrikisha': ('http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/%s', None),
     'apiref': ('http://asakusafw.s3.amazonaws.com/documents/0.6.2/release/api/%s', None),
     'epub': ('http://asakusafw.s3.amazonaws.com/documents/0.6.2/release/ja/epub/%s', None)

@@ -70,7 +70,7 @@ Enhancements
     * See: :doc:`testing/user-guide`
 * [ :issue:`364` ] - Add pluggable testing environment configurator for test driver
 * [ sandbox ] - Add emulation mode for TestDriver
-    * See: :sandbox:`エミュレーションモードによるアプリケーションテスト <testing/emulation-mode.html>`
+    * See: :doc:`testing/emulation-mode`
 * [ sandbox ] - Add Adaptive Hadoop local mode configurator.
 
 Bug fixes
@@ -144,7 +144,7 @@ Others
 * [ :issue:`337` ] - Fix typo
 * [ :issue:`338` ] - Fix a valid CoGroup operator method
 * [ sandbox ] - Revised documents using on Amazon EMR
-    * See: :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>`
+    * See: :doc:`sandbox/asakusa-on-emr`
 
 Release 0.5.2
 =============
@@ -159,7 +159,7 @@ Enhancements
     * See: :doc:`directio/user-guide`
 * [ :issue:`309` ] - TestDriver should clean compiler working directory after finishing runTest.
 * [ Sandbox ] - Direct I/O-TSV supports compression and decompression
-    * See: :sandbox:`Direct I/OのTSVファイル連携 <directio/tsv.html>`
+    * See: :doc:`sandbox/directio-tsv`
 
 Bug fixes
 ---------

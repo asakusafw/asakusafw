@@ -143,7 +143,7 @@ TSV形式の設定
     モデル定義に対してヘッダの内容が一文字でも異なる場合ヘッダ行として扱われませんが、
     TSV形式ではヘッダの設定を有効にした場合、常に先頭行に対してデータの読み込みをスキップします。
 
-..  [#] CSV形式の詳細については、:asakusafw:`CSV形式のDataFormatの作成 <directio/user-guide.html#csvdataformat>` を参照してください。
+..  [#] CSV形式の詳細については、:doc:`../directio/user-guide` を参照してください。
 
 ファイル情報の取得
 ~~~~~~~~~~~~~~~~~~
@@ -184,8 +184,7 @@ TSVから除外するプロパティ
 Asakusa DSLの記述
 =================
 Direct I/OのTSVファイル連携を使った場合のAsakusa DSLの記述については、基本的な流れはCSVファイル連携を使った場合と同様です。
-Direct I/OのCSVファイルによる連携の基本的な流れについては、:asakusafw:`Direct I/O スタートガイド - Asakusa DSLの記述 <directio/start-guide.html#asakusa-dsl>` などを参照してください。
-また、より詳細な情報は :asakusafw:`Direct I/O ユーザガイド <directio/user-guide.html>` を参照してください。
+Direct I/OのCSVファイルによる連携の基本的な流れについては、:doc:`../directio/start-guide` などを参照してください。
 
 以下ではAsakusa DSLの記述に関して、Direct I/OのCSVファイル連携とTSVファイル連携で異なる部分についてのみ説明します。
 

@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Extended DMDL Plug-ins for Direct I/O</name>
+	<name>Extended DMDL Plug-ins for WindGate</name>
 	<groupId>com.asakusafw.sandbox</groupId>
-	<artifactId>asakusa-directio-dmdl-ext</artifactId>
+	<artifactId>asakusa-windgate-dmdl-ext</artifactId>
 	<parent>
 		<artifactId>asakusa-sandbox-parent</artifactId>
 		<groupId>com.asakusafw.sandbox</groupId>
@@ -11,7 +11,7 @@
 		<relativePath>../asakusa-sandbox-parent</relativePath>
 	</parent>
 
-	<description>Data Model Definition Language More Extensions for Direct I/O</description>
+	<description>Data Model Definition Language More Extensions for WindGat</description>
 	<url>http://asakusafw.com</url>
 	<licenses>
 		<license>
@@ -27,6 +27,11 @@
 
 	<packaging>jar</packaging>
 	<dependencies>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-core</artifactId>
+			<version>${asakusafw.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-dmdl-core</artifactId>
@@ -53,13 +58,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>${asakusafw.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
 			<artifactId>jsr199-testing</artifactId>
+			<version>${asakusafw.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
