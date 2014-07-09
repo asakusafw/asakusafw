@@ -106,7 +106,7 @@ public class HiveDecimalDriver extends PropertyAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         attribute,
-                        "@{0}({1}={2}) must be >= @{0}({3}={4})",
+                        Messages.getString("HiveDecimalDriver.diagnosticPrecisionLessThanScale"), //$NON-NLS-1$
                         TARGET_NAME,
                         ELEMENT_PRECISION_NAME, precisionValue,
                         ELEMENT_SCALE_NAME, scaleValue));
@@ -118,6 +118,6 @@ public class HiveDecimalDriver extends PropertyAttributeDriver {
     }
 
     private static String label(String key) {
-        return String.format("@%s(%s)", TARGET_NAME, key);
+        return String.format("@%s(%s)", TARGET_NAME, key); //$NON-NLS-1$
     }
 }

@@ -74,15 +74,17 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(HiveDataModelEmitter.class);
 
+    static final String PATTERN_FACTORY = "{0}DescriptorFactory"; //$NON-NLS-1$
+
     /**
      * Category name for Hive common.
      */
-    public static final String CATEGORY = "hive.common";
+    public static final String CATEGORY = "hive.common"; //$NON-NLS-1$
 
     /**
      * The getter method name.
      */
-    public static final String NAME_GETTER_METHOD = "get";
+    public static final String NAME_GETTER_METHOD = "get"; //$NON-NLS-1$
 
     /**
      * Returns the generated class name for this.
@@ -137,9 +139,9 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         ModelFactory f = context.getModelFactory();
         return new AttributeBuilder(f)
             .annotation(context.resolve(HiveField.class),
-                    "name", Models.toLiteral(f, name),
-                    "type", Models.toLiteral(f, type.getQualifiedName()),
-                    "ignore", Models.toLiteral(f, present == false))
+                    "name", Models.toLiteral(f, name), //$NON-NLS-1$
+                    "type", Models.toLiteral(f, type.getQualifiedName()), //$NON-NLS-1$
+                    "ignore", Models.toLiteral(f, present == false)) //$NON-NLS-1$
             .toAnnotations();
     }
 
@@ -151,7 +153,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                 com.asakusafw.dmdl.semantics.Type type = prop.getType();
                 if ((type instanceof BasicType) == false) {
                     throw new IOException(MessageFormat.format(
-                            "Property type \"{0}\" is not supported: {1}.{2} ",
+                            Messages.getString("HiveDataModelEmitter.diagnosticUnsupportedPropertyType"), //$NON-NLS-1$
                             type,
                             prop.getOwner().getName().identifier,
                             prop.getName().identifier));
@@ -166,7 +168,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY,
-                "{0}DescriptorFactory");
+                PATTERN_FACTORY);
     }
 
     static Expression computeValueType(EmitContext context, PropertyDeclaration property) {
@@ -187,15 +189,15 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                 .toExpression();
         case CHAR:
             return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                .method("getChar", Models.toLiteral(f, field.getStringLength()))
+                .method("getChar", Models.toLiteral(f, field.getStringLength())) //$NON-NLS-1$
                 .toExpression();
         case VARCHAR:
             return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                .method("getVarchar", Models.toLiteral(f, field.getStringLength()))
+                .method("getVarchar", Models.toLiteral(f, field.getStringLength())) //$NON-NLS-1$
                 .toExpression();
         case DECIMAL:
             return new TypeBuilder(f, context.resolve(ValueSerdeFactory.class))
-                .method("getDecimal",
+                .method("getDecimal", //$NON-NLS-1$
                         Models.toLiteral(f, field.getDecimalPrecision()),
                         Models.toLiteral(f, field.getDecimalScale()))
                 .toExpression();
@@ -224,7 +226,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
 
     private static class Generator {
 
-        private static final String NAME_SINGLETON_FIELD = "SINGLETON";
+        private static final String NAME_SINGLETON_FIELD = "SINGLETON"; //$NON-NLS-1$
 
         private final EmitContext context;
 
@@ -245,9 +247,9 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Hive table information for ")
+                        .text("Hive table information for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -285,14 +287,14 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
 
         private InitializerDeclaration createStaticInitializer() {
             List<Statement> statements = Lists.create();
-            SimpleName builder = f.newSimpleName("builder");
+            SimpleName builder = f.newSimpleName("builder"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(DataModelDescriptorBuilder.class))
                     .newObject(f.newClassLiteral(context.resolve(model.getSymbol())))
                     .toLocalVariableDeclaration(context.resolve(DataModelDescriptorBuilder.class), builder));
             AstDescription description = model.getDescription();
             if (description != null) {
                 statements.add(new ExpressionBuilder(f, builder)
-                        .method("comment", Models.toLiteral(f, description.getText()))
+                        .method("comment", Models.toLiteral(f, description.getText())) //$NON-NLS-1$
                         .toStatement());
             }
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
@@ -302,12 +304,12 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                 }
                 Expression descriptor = createNewPropertyDescriptor(property);
                 statements.add(new ExpressionBuilder(f, builder)
-                    .method("property", descriptor)
+                    .method("property", descriptor) //$NON-NLS-1$
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, f.newSimpleName(NAME_SINGLETON_FIELD))
                     .assignFrom(new ExpressionBuilder(f, builder)
-                            .method("build")
+                            .method("build") //$NON-NLS-1$
                             .toExpression())
                     .toStatement());
             return f.newInitializerDeclaration(
@@ -326,7 +328,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
             } else {
                 comment = Models.toLiteral(f, description.getText());
             }
-            SimpleName dataModel = f.newSimpleName("dataModel");
+            SimpleName dataModel = f.newSimpleName("dataModel"); //$NON-NLS-1$
             ClassBody block = f.newClassBody(Arrays.asList(f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -336,7 +338,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                     new TypeBuilder(f, context.resolve(ValueOption.class))
                         .parameterize(f.newWildcard())
                         .toType(),
-                    f.newSimpleName("extract"),
+                    f.newSimpleName("extract"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(Object.class), dataModel)),
                     Arrays.asList(new ExpressionBuilder(f, dataModel)
                             .castTo(context.resolve(model.getSymbol()))
@@ -363,11 +365,11 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         private MethodDeclaration createGetterMethod() {
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
-                        .text("Returns a data model descriptor for ")
+                        .text("Returns a data model descriptor for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .returns()
-                            .text("the descriptor object")
+                            .text("the descriptor object") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

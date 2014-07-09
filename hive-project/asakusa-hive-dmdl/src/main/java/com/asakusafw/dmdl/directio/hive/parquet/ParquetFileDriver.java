@@ -171,9 +171,10 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             if (driver == null) {
                 environment.report(new Diagnostic(Diagnostic.Level.ERROR,
                         property.getOriginalAst(),
-                        "Parquet file does not support \"{0}\" type ({1})",
-                        property.getType(),
-                        typeInfo.getQualifiedName()));
+                        Messages.getString("ParquetFileDriver.diagnosticUnsupportedPropertyType"), //$NON-NLS-1$
+                        typeInfo.getQualifiedName(),
+                        property.getName().identifier,
+                        property.getType()));
             }
         }
     }
@@ -231,9 +232,10 @@ public class ParquetFileDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         formatVersion,
-                        "@{0}({1}) must be a valid Parquet file version number: {2}",
+                        Messages.getString("ParquetFileDriver.diagnosticUnknownElement"), //$NON-NLS-1$
                         TARGET_NAME,
                         ELEMENT_FORMAT_VERSION,
+                        Messages.getString("ParquetFileDriver.labelVersion"), //$NON-NLS-1$
                         symbol));
             }
         }
@@ -244,7 +246,7 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
         CompressionCodecName option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_COMPRESSION, "compression name",
+                ELEMENT_COMPRESSION, Messages.getString("ParquetFileDriver.labelCompression"), //$NON-NLS-1$
                 CompressionCodecName.values());
         if (option != null) {
             result.configuration().withCompressionCodecName(option);
@@ -256,7 +258,7 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
         FieldMappingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_FIELD_MAPPING, "field mapping strategy name",
+                ELEMENT_FIELD_MAPPING, Messages.getString("ParquetFileDriver.labelFieldMappingStrategy"), //$NON-NLS-1$
                 FieldMappingStrategy.values());
         if (option != null) {
             result.configuration().withFieldMappingStrategy(option);
@@ -268,7 +270,8 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_MISSING_SOURCE, "exception handling strategy name",
+                ELEMENT_MISSING_SOURCE,
+                Messages.getString("ParquetFileDriver.labelExceptionMappingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnMissingSource(option);
@@ -280,7 +283,8 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_MISSING_TARGET, "exception handling strategy name",
+                ELEMENT_MISSING_TARGET,
+                Messages.getString("ParquetFileDriver.labelExceptionMappingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnMissingTarget(option);
@@ -292,7 +296,8 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_INCOMPATIBLE_TYPE, "exception handling strategy name",
+                ELEMENT_INCOMPATIBLE_TYPE,
+                Messages.getString("ParquetFileDriver.labelExceptionMappingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnIncompatibleType(option);
@@ -310,7 +315,7 @@ public class ParquetFileDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         literal,
-                        "@{0}({1}) must be a valid {2}: {3}",
+                        Messages.getString("ParquetFileDriver.diagnosticUnknownElement"), //$NON-NLS-1$
                         TARGET_NAME,
                         key,
                         description,
@@ -398,7 +403,7 @@ public class ParquetFileDriver extends ModelAttributeDriver {
     }
 
     private static String label(String key) {
-        return String.format("@%s(%s)", TARGET_NAME, key);
+        return String.format("@%s(%s)", TARGET_NAME, key); //$NON-NLS-1$
     }
 
     private <T extends Enum<?>> T find(T[] values, String symbol) {

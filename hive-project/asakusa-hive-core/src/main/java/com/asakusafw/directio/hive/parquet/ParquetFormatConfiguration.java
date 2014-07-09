@@ -265,4 +265,33 @@ public class ParquetFormatConfiguration {
     public WriterVersion getWriterVersion() {
         return writerVersion;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ParquetFormatConfiguration [fieldMappingStrategy=");
+        builder.append(fieldMappingStrategy);
+        builder.append(", onMissingSource=");
+        builder.append(onMissingSource);
+        builder.append(", onMissingTarget=");
+        builder.append(onMissingTarget);
+        builder.append(", onIncompatibleType=");
+        builder.append(onIncompatibleType);
+        builder.append(", compressionCodecName=");
+        builder.append(compressionCodecName);
+        builder.append(", blockSize=");
+        builder.append(blockSize);
+        builder.append(", dataPageSize=");
+        builder.append(dataPageSize);
+        builder.append(", dictionaryPageSize=");
+        builder.append(dictionaryPageSize);
+        builder.append(", enableDictionary=");
+        builder.append(enableDictionary);
+        builder.append(", enableValidation=");
+        builder.append(enableValidation);
+        builder.append(", writerVersion=");
+        builder.append(writerVersion);
+        builder.append("]");
+        return builder.toString();
+    }
 }

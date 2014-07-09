@@ -16,7 +16,10 @@
 package com.asakusafw.directio.hive.orc;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
@@ -24,9 +27,9 @@ import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.RecordReader;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 
-import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelDriver;
+import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.io.ModelInput;
 
@@ -36,6 +39,8 @@ import com.asakusafw.runtime.io.ModelInput;
  * @since 0.7.0
  */
 public class OrcFileInput<T> implements ModelInput<T> {
+
+    static final Log LOG = LogFactory.getLog(OrcFileInput.class);
 
     private final DataModelDescriptor descriptor;
 
@@ -118,9 +123,24 @@ public class OrcFileInput<T> implements ModelInput<T> {
     private RecordReader prepare() throws IOException {
         RecordReader reader = currentReader;
         if (reader == null) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loading ORCFile metadata ({0}): {1}",
+                        descriptor.getDataModelClass().getSimpleName(),
+                        path));
+            }
             Reader orc = OrcFile.createReader(fileSystem, path);
             StructObjectInspector sourceInspector = (StructObjectInspector) orc.getObjectInspector();
             driver = new DataModelDriver(descriptor, sourceInspector, configuration);
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loading ORCFile contents ({0}): path={1}, range={2}+{3}",
+                        descriptor.getDataModelClass().getSimpleName(),
+                        path,
+                        offset,
+                        fragmentSize));
+            }
+            // TODO projection
             reader = orc.rows(offset, fragmentSize, null);
             currentReader = reader;
         }

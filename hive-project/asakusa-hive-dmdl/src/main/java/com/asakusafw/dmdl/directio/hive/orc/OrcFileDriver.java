@@ -20,12 +20,15 @@ import java.util.Map;
 
 import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
+import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelTrait;
+import com.asakusafw.dmdl.directio.hive.common.HiveFieldTrait;
 import com.asakusafw.dmdl.directio.hive.common.Namer;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -34,6 +37,7 @@ import com.asakusafw.dmdl.model.AstLiteral;
 import com.asakusafw.dmdl.model.LiteralKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
+import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -124,6 +128,24 @@ public class OrcFileDriver extends ModelAttributeDriver {
         baseTrait.setOriginalAst(attribute, false);
     }
 
+    @Override
+    public void verify(DmdlSemantics environment, ModelDeclaration declaration, AstAttribute attribute) {
+        for (PropertyDeclaration property : declaration.getDeclaredProperties()) {
+            if (HiveFieldTrait.get(property).isColumnPresent() == false) {
+                continue;
+            }
+            TypeInfo typeInfo = HiveFieldTrait.getTypeInfo(property);
+            if ((typeInfo instanceof PrimitiveTypeInfo) == false) {
+                environment.report(new Diagnostic(Diagnostic.Level.ERROR,
+                        property.getOriginalAst(),
+                        Messages.getString("OrcFileDriver.diagnosticUnsupportedPropertyType"), //$NON-NLS-1$
+                        typeInfo.getQualifiedName(),
+                        property.getName().identifier,
+                        property.getType()));
+            }
+        }
+    }
+
     private OrcFileTrait analyzeElements(
             DmdlSemantics environment,
             AstAttribute attribute,
@@ -172,9 +194,10 @@ public class OrcFileDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         formatVersion,
-                        "@{0}({1}) must be a valid ORCFile version number: {2}",
+                        Messages.getString("OrcFileDriver.diagnosticUnknownElement"), //$NON-NLS-1$
                         TARGET_NAME,
                         ELEMENT_FORMAT_VERSION,
+                        Messages.getString("OrcFileDriver.labelVersion"), //$NON-NLS-1$
                         symbol));
             }
         }
@@ -185,7 +208,7 @@ public class OrcFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
         CompressionKind option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_COMPRESSION_KIND, "compression name",
+                ELEMENT_COMPRESSION_KIND, Messages.getString("OrcFileDriver.labelCompression"), //$NON-NLS-1$
                 CompressionKind.values());
         if (option != null) {
             result.configuration().withCompressionKind(option);
@@ -197,7 +220,7 @@ public class OrcFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
         FieldMappingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_FIELD_MAPPING, "field mapping strategy name",
+                ELEMENT_FIELD_MAPPING, Messages.getString("OrcFileDriver.labelFieldMappingStrategy"), //$NON-NLS-1$
                 FieldMappingStrategy.values());
         if (option != null) {
             result.configuration().withFieldMappingStrategy(option);
@@ -209,7 +232,8 @@ public class OrcFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_MISSING_SOURCE, "exception handling strategy name",
+                ELEMENT_MISSING_SOURCE,
+                Messages.getString("OrcFileDriver.labelExceptionHandlingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnMissingSource(option);
@@ -221,7 +245,8 @@ public class OrcFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_MISSING_TARGET, "exception handling strategy name",
+                ELEMENT_MISSING_TARGET,
+                Messages.getString("OrcFileDriver.labelExceptionHandlingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnMissingTarget(option);
@@ -233,7 +258,8 @@ public class OrcFileDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
         ExceptionHandlingStrategy option = consumeOption(
                 environment, attribute, elements,
-                ELEMENT_INCOMPATIBLE_TYPE, "exception handling strategy name",
+                ELEMENT_INCOMPATIBLE_TYPE,
+                Messages.getString("OrcFileDriver.labelExceptionHandlingStrategy"), //$NON-NLS-1$
                 ExceptionHandlingStrategy.values());
         if (option != null) {
             result.configuration().withOnIncompatibleType(option);
@@ -251,7 +277,7 @@ public class OrcFileDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         literal,
-                        "@{0}({1}) must be a valid {2}: {3}",
+                        Messages.getString("OrcFileDriver.diagnosticUnknownElement"), //$NON-NLS-1$
                         TARGET_NAME,
                         key,
                         description,
@@ -286,7 +312,7 @@ public class OrcFileDriver extends ModelAttributeDriver {
     }
 
     private static String label(String key) {
-        return String.format("@%s(%s)", TARGET_NAME, key);
+        return String.format("@%s(%s)", TARGET_NAME, key); //$NON-NLS-1$
     }
 
     private <T extends Enum<?>> T find(T[] values, String symbol) {

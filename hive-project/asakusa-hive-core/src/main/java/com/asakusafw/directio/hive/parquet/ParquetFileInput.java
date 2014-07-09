@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import parquet.column.page.PageReadStore;
 import parquet.hadoop.ParquetFileReader;
@@ -48,7 +48,7 @@ import com.asakusafw.runtime.io.ModelInput;
  */
 public class ParquetFileInput<T> implements ModelInput<T> {
 
-    static final Logger LOG = LoggerFactory.getLogger(ParquetFileInput.class);
+    static final Log LOG = LogFactory.getLog(ParquetFileInput.class);
 
     private final DataModelDescriptor descriptor;
 
@@ -141,9 +141,10 @@ public class ParquetFileInput<T> implements ModelInput<T> {
 
     private PageReadStore fetchRowGroup() throws IOException {
         if (fileReader == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Analyzing parquet file: {0}",
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loading Parquet file metadata ({0}): {1}",
+                        descriptor.getDataModelClass().getSimpleName(),
                         path));
             }
             ParquetMetadata footer = ParquetFileReader.readFooter(hadoopConfiguration, path);
@@ -153,6 +154,14 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             }
             long totalRecords = computeTotalRecords(blocks);
             this.averageBytesPerRecord = (double) fragmentSize / totalRecords;
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loading Parquet file contents ({0}): path={1}, range={2}+{3}",
+                        descriptor.getDataModelClass().getSimpleName(),
+                        path,
+                        offset,
+                        fragmentSize));
+            }
             this.fileReader = new ParquetFileReader(
                     hadoopConfiguration,
                     path,
