@@ -1,0 +1,14 @@
+@windgate.stream_format(type = "TSV")
+types = {
+    c_int : INT;
+    c_text : TEXT;
+    c_boolean : BOOLEAN;
+    c_byte : BYTE;
+    c_short : SHORT;
+    c_long : LONG;
+    c_float : FLOAT;
+    c_double : DOUBLE;
+    c_decimal : DECIMAL;
+    c_date : DATE;
+    c_datetime : DATETIME;
+};
