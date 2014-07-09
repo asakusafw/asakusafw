@@ -24,6 +24,7 @@ import java.util.Map;
 import parquet.column.Dictionary;
 import parquet.io.api.Binary;
 import parquet.io.api.RecordConsumer;
+import parquet.schema.OriginalType;
 import parquet.schema.PrimitiveType;
 import parquet.schema.PrimitiveType.PrimitiveTypeName;
 import parquet.schema.Type;
@@ -92,7 +93,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
 
     @Override
     public Type getType(String name) {
-        return new PrimitiveType(Repetition.OPTIONAL, PrimitiveTypeName.BINARY, name);
+        return new PrimitiveType(Repetition.OPTIONAL, PrimitiveTypeName.BINARY, name, OriginalType.UTF8);
     }
 
     /**
