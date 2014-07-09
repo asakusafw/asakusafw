@@ -605,7 +605,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
     :language: groovy
     :lines: 41-54
 
-上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である :sandbox:`Direct I/O TSV <directio/tsv.html>` を利用するための設定を追加しています。
+上記の例では、Asakusa Framework のDirect I/O に TSVフォーマットのファイルを扱うための拡張機能である :doc:`../sandbox/directio-tsv` を利用するための設定を追加しています。
 
 Direct I/O TSVはDMDLコンパイラの拡張のみを行う機能であるため、運用環境に対するランタイムライブラリの配置が不要ですが、アプリケーションの演算子で利用するライブラリを追加する場合は、運用環境にもこのライブラリを配置する必要があります。これについては、次項の  `アプリケーション用依存ライブラリの追加`_  で説明します。
 

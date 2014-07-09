@@ -66,7 +66,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 ..  attention::
     Asakusa Frameworkの現在のバージョン |version| では、Hadoop2系の対応は試験的機能として提供されています。
 
-..  [3] Amazon EMR上で利用するための情報を :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>` (Asakusa Framework Sandbox) に公開しています。
+..  [3] Amazon EMR上で利用するための情報を :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox) に公開しています。
 
 アプリケーション開発環境
 ========================

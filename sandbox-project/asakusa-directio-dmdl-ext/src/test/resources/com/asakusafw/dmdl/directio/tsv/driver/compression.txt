@@ -1,0 +1,6 @@
+@directio.tsv(
+    compression = "gzip"
+)
+compression = {
+    value : TEXT;
+};
