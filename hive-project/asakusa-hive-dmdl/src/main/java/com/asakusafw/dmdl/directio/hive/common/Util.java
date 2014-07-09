@@ -59,7 +59,7 @@ final class Util {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     attribute,
-                    "Other @directio.hive.* is already declared in {0}.{1}",
+                    Messages.getString("Util.diagnosticDuplicatePropertyAttribute"), //$NON-NLS-1$
                     declaration.getOwner().getName().identifier,
                     declaration.getName().identifier));
             return false;

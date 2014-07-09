@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import com.asakusafw.directio.hive.serde.StringValueSerdeFactory;
 import com.asakusafw.directio.hive.serde.TimestampValueSerdeFactory;
@@ -28,6 +29,7 @@ import com.asakusafw.directio.hive.serde.ValueSerdeFactory;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.dmdl.semantics.type.BasicType;
 
 /**
  * Attributes for Hive column field.
@@ -198,6 +200,9 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
      * @return the natural type information
      */
     public static TypeInfo getNaturalTypeInfo(PropertyDeclaration property) {
+        if ((property.getType() instanceof BasicType) == false) {
+            return TypeInfoFactory.unknownTypeInfo;
+        }
         Class<?> valueClass = EmitContext.getFieldTypeAsClass(property);
         ValueSerdeFactory serde = ValueSerdeFactory.fromClass(valueClass);
         return serde.getTypeInfo();

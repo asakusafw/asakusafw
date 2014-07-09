@@ -85,6 +85,14 @@ public class DataModelDriver {
                 assert mapping.target != null;
                 sources.add(mapping.source);
                 targets.add(mapping.target);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Map column: {0}:{1} -> {2}:{3}",
+                            mapping.source.getFieldName(),
+                            mapping.source.getFieldObjectInspector().getTypeName(),
+                            mapping.target.getFieldName(),
+                            mapping.target.getFieldTypeInfo()));
+                }
             }
         }
         assert sources.size() == targets.size();

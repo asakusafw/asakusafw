@@ -110,9 +110,10 @@ public class HadoopDataSourceCore implements DirectDataSource {
         List<DirectInputFragment> results;
         if (format instanceof StripedDataFormat<?>) {
             StripedDataFormat.InputContext context = new StripedDataFormat.InputContext(
-                    stats,  fs,
+                    dataType,
+                    stats, fs,
                     p.getMinimumFragmentSize(), p.getPreferredFragmentSize(),
-                    p.isSplitBlocks(),  p.isCombineBlocks());
+                    p.isSplitBlocks(), p.isCombineBlocks());
             StripedDataFormat<T> sformat = (StripedDataFormat<T>) format;
             results = sformat.computeInputFragments(context);
         } else if (format instanceof FragmentableDataFormat<?>) {

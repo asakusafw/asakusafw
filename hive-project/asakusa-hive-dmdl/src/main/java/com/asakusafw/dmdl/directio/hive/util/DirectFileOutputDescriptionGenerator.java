@@ -71,9 +71,9 @@ public class DirectFileOutputDescriptionGenerator {
     private void emit() throws IOException {
         ClassDeclaration decl = f.newClassDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0} for ", description.getDescription())
+                    .text("{0} for ", description.getDescription()) //$NON-NLS-1$
                     .linkType(context.resolve(description.getModelClassName()))
-                    .text(".")
+                    .text(".") //$NON-NLS-1$
                     .toJavadoc(),
                 getClassAttributes(),
                 context.getTypeName(),
@@ -118,15 +118,15 @@ public class DirectFileOutputDescriptionGenerator {
 
     private MethodDeclaration createGetModelTypeMethod(Name value) {
         Type type = f.newParameterizedType(context.resolve(Class.class), f.newWildcard());
-        return createGetMethod("getModelType", type, f.newClassLiteral(context.resolve(value)));
+        return createGetMethod("getModelType", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetBasePathMethod(String value) {
-        return createGetMethod("getBasePath", context.resolve(String.class), Models.toLiteral(f, value));
+        return createGetMethod("getBasePath", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetResourcePatternMethod(String value) {
-        return createGetMethod("getResourcePattern", context.resolve(String.class), Models.toLiteral(f, value));
+        return createGetMethod("getResourcePattern", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetFormatMethod(Name value) {
@@ -134,15 +134,15 @@ public class DirectFileOutputDescriptionGenerator {
                 context.resolve(Class.class),
                 f.newWildcard(WildcardBoundKind.UPPER_BOUNDED, f.newParameterizedType(
                         context.resolve(DataFormat.class), f.newWildcard())));
-        return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value)));
+        return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetOrderMethod(List<String> values) {
-        return createGetListOfStringMethod("getOrder", values);
+        return createGetListOfStringMethod("getOrder", values); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetDeletePatternsMethod(List<String> values) {
-        return createGetListOfStringMethod("getDeletePatterns", values);
+        return createGetListOfStringMethod("getDeletePatterns", values); //$NON-NLS-1$
     }
 
     private MethodDeclaration createGetListOfStringMethod(String name, List<String> values) {
@@ -152,7 +152,7 @@ public class DirectFileOutputDescriptionGenerator {
         }
         Type type = f.newParameterizedType(context.resolve(List.class), context.resolve(String.class));
         Expression value = new TypeBuilder(f, context.resolve(Arrays.class))
-            .method("asList", arguments)
+            .method("asList", arguments) //$NON-NLS-1$
             .toExpression();
         return createGetMethod(name, type, value);
     }

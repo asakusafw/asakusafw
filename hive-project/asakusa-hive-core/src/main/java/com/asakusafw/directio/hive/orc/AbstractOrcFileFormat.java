@@ -16,11 +16,14 @@
 package com.asakusafw.directio.hive.orc;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -53,6 +56,8 @@ import com.asakusafw.runtime.io.ModelOutput;
  */
 public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         implements StripedDataFormat<T>, HiveTableInfo {
+
+    static final Log LOG = LogFactory.getLog(AbstractOrcFileFormat.class);
 
     /**
      * Returns the format configuration.
@@ -122,7 +127,21 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         // TODO parallel?
         List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
         for (FileStatus status : context.getInputFiles()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loading ORCFile metadata ({0}): {1}",
+                        context.getDataType().getSimpleName(),
+                        status.getPath()));
+            }
             Reader orc = OrcFile.createReader(context.getFileSystem(), status.getPath());
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Loaded ORCFile metadata ({0}): path={1}, rows={2}, deser-size={3}",
+                        context.getDataType().getSimpleName(),
+                        status.getPath(),
+                        orc.getNumberOfRows(),
+                        orc.getRawDataSize()));
+            }
             BlockMap blockMap = BlockMap.create(
                     status.getPath().toString(),
                     status.getLen(),
@@ -133,6 +152,15 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
                 long begin = stripe.getOffset();
                 long end = begin + stripe.getLength();
                 DirectInputFragment fragment = blockMap.get(begin, end);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Detect ORCFile stripe: path={0}, rows={1}, range={2}+{3}, allocation={4}",
+                            fragment.getPath(),
+                            stripe.getNumberOfRows(),
+                            fragment.getOffset(),
+                            fragment.getSize(),
+                            fragment.getOwnerNodeNames()));
+                }
                 results.add(fragment);
             }
         }
@@ -157,6 +185,12 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
             Counter counter) throws IOException, InterruptedException {
         DataModelMapping driverConf = new DataModelMapping();
         OrcFormatConfiguration conf = getFormatConfiguration();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "ORCFile input ({0}): {1}",
+                    path,
+                    conf));
+        }
         if (conf.getFieldMappingStrategy() != null) {
             driverConf.setFieldMappingStrategy(conf.getFieldMappingStrategy());
         }
@@ -185,6 +219,12 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         options.inspector(new DataModelInspector(getDataModelDescriptor()));
 
         OrcFormatConfiguration conf = getFormatConfiguration();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "ORCFile output ({0}): {1}",
+                    path,
+                    conf));
+        }
         Version formatVersion = conf.getFormatVersion();
         if (formatVersion != null) {
             options.version(formatVersion);

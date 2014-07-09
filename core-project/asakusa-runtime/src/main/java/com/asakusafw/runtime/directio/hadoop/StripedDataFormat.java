@@ -48,6 +48,8 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
      */
     public static class InputContext {
 
+        private final Class<?> dataType;
+
         private final FileSystem fileSystem;
 
         private final Collection<? extends FileStatus> inputFiles;
@@ -62,6 +64,7 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
 
         /**
          * Creates a new instance.
+         * @param dataType the target datatype
          * @param inputFiles the input files information
          * @param fileSystem the file system for input files
          * @param minimumFragmentSize the minimum fragment size, or {@code < 0} if fragmentation is not expected
@@ -70,16 +73,26 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
          * @param combineBlocks {@code true} to combine multiple splits into a single fragment
          */
         public InputContext(
+                Class<?> dataType,
                 Collection<? extends FileStatus> inputFiles,
                 FileSystem fileSystem,
                 long minimumFragmentSize,  long preferredFragmentSize,
                 boolean splitBlocks, boolean combineBlocks) {
+            this.dataType = dataType;
             this.inputFiles = inputFiles;
             this.fileSystem = fileSystem;
             this.minimumFragmentSize = minimumFragmentSize;
             this.preferredFragmentSize = preferredFragmentSize;
             this.splitBlocks = splitBlocks;
             this.combineBlocks = combineBlocks;
+        }
+
+        /**
+         * Returns the target data type.
+         * @return the data type
+         */
+        public Class<?> getDataType() {
+            return dataType;
         }
 
         /**
@@ -91,7 +104,8 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
         }
 
         /**
-         * @return the inputFiles
+         * Returns the input files information.
+         * @return the input files information
          */
         public Collection<? extends FileStatus> getInputFiles() {
             return inputFiles;

@@ -273,6 +273,7 @@ public class ParquetFileFormatTest {
 
         FileStatus stat = fs.getFileStatus(new Path(file.toURI()));
         List<DirectInputFragment> fragments = format.computeInputFragments(new StripedDataFormat.InputContext(
+                MockSimple.class,
                 Arrays.asList(stat), fs,
                 -1L, -1L,
                 false, false));
