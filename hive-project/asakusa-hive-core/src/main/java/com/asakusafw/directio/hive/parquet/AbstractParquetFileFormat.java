@@ -22,11 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import parquet.column.ParquetProperties.WriterVersion;
 import parquet.hadoop.Footer;
@@ -56,7 +56,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         implements StripedDataFormat<T>, HiveTableInfo {
 
-    static final Logger LOG = LoggerFactory.getLogger(AbstractParquetFileFormat.class);
+    static final Log LOG = LogFactory.getLog(AbstractParquetFileFormat.class);
 
     /**
      * Returns the format configuration.
@@ -112,10 +112,29 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
     public List<DirectInputFragment> computeInputFragments(
             InputContext context) throws IOException, InterruptedException {
         List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
-        for (FileStatus status : context.getInputFiles()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Computing parquet blocks: {0}",
+        List<FileStatus> files = new ArrayList<FileStatus>(context.getInputFiles());
+        Map<Path, FileStatus> pathMap = new HashMap<Path, FileStatus>();
+        for (FileStatus status : files) {
+            pathMap.put(status.getPath(), status);
+        }
+        if (LOG.isInfoEnabled()) {
+            LOG.info(MessageFormat.format(
+                    "Loading Parquet {1} file(s) metadata ({0})",
+                    context.getDataType().getSimpleName(),
+                    files.size()));
+        }
+        List<Footer> footers = ParquetFileReader.readAllFootersInParallel(getConf(), files);
+        for (Footer footer : footers) {
+            Path path = footer.getFile();
+            FileStatus status = pathMap.get(path);
+            if (status == null) {
+                // may not occur
+                status = context.getFileSystem().getFileStatus(path);
+            }
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Analyzing Parquet file metadata ({0}): {1}",
+                        context.getDataType().getSimpleName(),
                         status.getPath()));
             }
             BlockMap blockMap = BlockMap.create(
@@ -123,32 +142,31 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
                     status.getLen(),
                     BlockMap.computeBlocks(context.getFileSystem(), status),
                     false);
-            List<Footer> footers = ParquetFileReader.readFooters(getConf(), status);
-            for (Footer footer : footers) {
-                for (BlockMetaData block : footer.getParquetMetadata().getBlocks()) {
-                    if (block.getColumns().isEmpty()) {
-                        continue;
-                    }
-                    long begin = Long.MAX_VALUE;
-                    long end = -1L;
-                    for (ColumnChunkMetaData column : block.getColumns()) {
-                        long offset = column.getFirstDataPageOffset();
-                        long size = column.getTotalSize();
-                        begin = Math.min(begin, offset);
-                        end = Math.max(end, offset + size);
-                    }
-                    assert begin >= 0;
-                    assert end >= 0;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(MessageFormat.format(
-                                "Found parquet block: path={0}, begin={1}, end={2}",
-                                status.getPath(),
-                                begin,
-                                end));
-                    }
-                    DirectInputFragment fragment = blockMap.get(begin, end);
-                    results.add(fragment);
+            for (BlockMetaData block : footer.getParquetMetadata().getBlocks()) {
+                if (block.getColumns().isEmpty()) {
+                    continue;
                 }
+                long begin = Long.MAX_VALUE;
+                long end = -1L;
+                for (ColumnChunkMetaData column : block.getColumns()) {
+                    long offset = column.getFirstDataPageOffset();
+                    long size = column.getTotalSize();
+                    begin = Math.min(begin, offset);
+                    end = Math.max(end, offset + size);
+                }
+                assert begin >= 0;
+                assert end >= 0;
+                DirectInputFragment fragment = blockMap.get(begin, end);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Detect Parquet file block: path={0}, rows={1}, range={2}+{3}, allocation={4}",
+                            status.getPath(),
+                            block.getRowCount(),
+                            begin,
+                            end - begin,
+                            fragment.getOwnerNodeNames()));
+                }
+                results.add(fragment);
             }
         }
         return results;
@@ -172,6 +190,12 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
             Counter counter) throws IOException, InterruptedException {
         DataModelMapping driverConf = new DataModelMapping();
         ParquetFormatConfiguration conf = getFormatConfiguration();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Parquet file input ({0}): {1}",
+                    path,
+                    conf));
+        }
         if (conf.getFieldMappingStrategy() != null) {
             driverConf.setFieldMappingStrategy(conf.getFieldMappingStrategy());
         }
@@ -199,6 +223,12 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
             Counter counter) throws IOException, InterruptedException {
         ParquetFileOutput.Options options = new ParquetFileOutput.Options();
         ParquetFormatConfiguration conf = getFormatConfiguration();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Parquet file output ({0}): {1}",
+                    path,
+                    conf));
+        }
         CompressionCodecName compress = conf.getCompressionCodecName();
         if (compress != null) {
             options.setCompressionCodecName(compress);

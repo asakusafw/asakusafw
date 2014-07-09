@@ -18,10 +18,10 @@ package com.asakusafw.directio.hive.parquet;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import parquet.column.ParquetProperties.WriterVersion;
 import parquet.hadoop.ParquetWriter;
@@ -39,7 +39,9 @@ import com.asakusafw.runtime.io.ModelOutput;
  */
 public class ParquetFileOutput<T> implements ModelOutput<T> {
 
-    static final Logger LOG = LoggerFactory.getLogger(ParquetFileOutput.class);
+    static final Log LOG = LogFactory.getLog(ParquetFileOutput.class);
+
+    private final DataModelDescriptor descriptor;
 
     private final DataModelWriteSupport writeSupport;
 
@@ -66,6 +68,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
             ParquetFileOutput.Options options,
             Counter counter) {
         this.writeSupport = new DataModelWriteSupport(descriptor);
+        this.descriptor = descriptor;
         this.path = path;
         this.options = options;
         this.counter = counter;
@@ -84,9 +87,10 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
     private ParquetWriter<T> prepareWriter() throws IOException {
         ParquetWriter<T> writer = currentWriter;
         if (writer == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Creating parquet file: {0}",
+            if (LOG.isInfoEnabled()) {
+                LOG.info(MessageFormat.format(
+                        "Creating parquet file ({0}): {1}",
+                        descriptor.getDataModelClass().getSimpleName(),
                         path));
             }
             Options opts = options;

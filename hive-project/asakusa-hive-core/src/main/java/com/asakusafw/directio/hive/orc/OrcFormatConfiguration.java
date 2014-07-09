@@ -181,4 +181,25 @@ public class OrcFormatConfiguration {
     public Long getStripeSize() {
         return stripeSize;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("OrcFormatConfiguration [fieldMappingStrategy=");
+        builder.append(fieldMappingStrategy);
+        builder.append(", onMissingSource=");
+        builder.append(onMissingSource);
+        builder.append(", onMissingTarget=");
+        builder.append(onMissingTarget);
+        builder.append(", onIncompatibleType=");
+        builder.append(onIncompatibleType);
+        builder.append(", formatVersion=");
+        builder.append(formatVersion);
+        builder.append(", compressionKind=");
+        builder.append(compressionKind);
+        builder.append(", stripeSize=");
+        builder.append(stripeSize);
+        builder.append("]");
+        return builder.toString();
+    }
 }

@@ -63,22 +63,22 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
     /**
      * Category name for Hive Parquet file.
      */
-    public static final String CATEGORY = "hive.parquet";
+    public static final String CATEGORY = "hive.parquet"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for data format.
      */
-    public static final String PATTERN_FORMAT = "{0}ParquetFileFormat";
+    public static final String PATTERN_FORMAT = "{0}ParquetFileFormat"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for skeleton of input description.
      */
-    public static final String PATTERN_INPUT_DESCRIPTION = "Abstract{0}ParquetFileInputDescription";
+    public static final String PATTERN_INPUT_DESCRIPTION = "Abstract{0}ParquetFileInputDescription"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for skeleton of output description.
      */
-    public static final String PATTERN_OUTPUT_DESCRIPTION = "Abstract{0}ParquetFileOutputDescription";
+    public static final String PATTERN_OUTPUT_DESCRIPTION = "Abstract{0}ParquetFileOutputDescription"; //$NON-NLS-1$
 
     /**
      * Returns the generated class name for this.
@@ -118,7 +118,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_INPUT_DESCRIPTION);
         DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
-                "Parquet file input", context.getQualifiedTypeName());
+                "Parquet file output", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
@@ -132,7 +132,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_OUTPUT_DESCRIPTION);
         DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
-                "Parquet file input", context.getQualifiedTypeName());
+                "Parquet file input", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
@@ -159,9 +159,9 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Hive Parquet data format for ")
+                        .text("Hive Parquet data format for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -187,7 +187,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetTableNameMethod() {
             Expression value = Models.toLiteral(f, ParquetFileTrait.getTableName(model));
-            return createMethod("getTableName", context.resolve(String.class), value);
+            return createMethod("getTableName", context.resolve(String.class), value); //$NON-NLS-1$
         }
 
         private MethodDeclaration createGetDataModelDescriptorMethod() {
@@ -195,11 +195,11 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             Expression value = new TypeBuilder(f, context.resolve(factory))
                 .method(HiveDataModelEmitter.NAME_GETTER_METHOD)
                 .toExpression();
-            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value);
+            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value); //$NON-NLS-1$
         }
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
-            SimpleName result = f.newSimpleName("result");
+            SimpleName result = f.newSimpleName("result"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(f, context.resolve(ParquetFormatConfiguration.class))
                     .newObject()
@@ -208,7 +208,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             ParquetFormatConfiguration conf = model.getTrait(ParquetFileTrait.class).configuration();
             if (conf.getFieldMappingStrategy() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withFieldMappingStrategy",
+                        .method("withFieldMappingStrategy", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(FieldMappingStrategy.class))
                             .field(conf.getFieldMappingStrategy().name())
                             .toExpression())
@@ -216,7 +216,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnMissingSource() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnMissingSource",
+                        .method("withOnMissingSource", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnMissingSource().name())
                             .toExpression())
@@ -224,7 +224,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnMissingTarget() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnMissingTarget",
+                        .method("withOnMissingTarget", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnMissingTarget().name())
                             .toExpression())
@@ -232,7 +232,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnIncompatibleType() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnIncompatibleType",
+                        .method("withOnIncompatibleType", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnIncompatibleType().name())
                             .toExpression())
@@ -240,39 +240,39 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getCompressionCodecName() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withCompressionCodecName", new TypeBuilder(f, context.resolve(CompressionCodecName.class))
+                    .method("withCompressionCodecName", new TypeBuilder(f, context.resolve(CompressionCodecName.class)) //$NON-NLS-1$
                         .field(conf.getCompressionCodecName().name())
                         .toExpression())
                     .toStatement());
             }
             if (conf.getBlockSize() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withBlockSize", Models.toLiteral(f, conf.getBlockSize()))
+                    .method("withBlockSize", Models.toLiteral(f, conf.getBlockSize())) //$NON-NLS-1$
                     .toStatement());
             }
             if (conf.getDataPageSize() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withDataPageSize", Models.toLiteral(f, conf.getDataPageSize()))
+                    .method("withDataPageSize", Models.toLiteral(f, conf.getDataPageSize())) //$NON-NLS-1$
                     .toStatement());
             }
             if (conf.getDictionaryPageSize() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withDictionaryPageSize", Models.toLiteral(f, conf.getDictionaryPageSize()))
+                    .method("withDictionaryPageSize", Models.toLiteral(f, conf.getDictionaryPageSize())) //$NON-NLS-1$
                     .toStatement());
             }
             if (conf.getEnableDictionary() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withEnableDictionary", Models.toLiteral(f, conf.getEnableDictionary()))
+                    .method("withEnableDictionary", Models.toLiteral(f, conf.getEnableDictionary())) //$NON-NLS-1$
                     .toStatement());
             }
             if (conf.getEnableValidation() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withEnableValidation", Models.toLiteral(f, conf.getEnableValidation()))
+                    .method("withEnableValidation", Models.toLiteral(f, conf.getEnableValidation())) //$NON-NLS-1$
                     .toStatement());
             }
             if (conf.getWriterVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withWriterVersion", new TypeBuilder(f, context.resolve(WriterVersion.class))
+                    .method("withWriterVersion", new TypeBuilder(f, context.resolve(WriterVersion.class)) //$NON-NLS-1$
                         .field(conf.getWriterVersion().name())
                         .toExpression())
                     .toStatement());
@@ -285,7 +285,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(ParquetFormatConfiguration.class),
-                    f.newSimpleName("getFormatConfiguration"),
+                    f.newSimpleName("getFormatConfiguration"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     statements);
         }

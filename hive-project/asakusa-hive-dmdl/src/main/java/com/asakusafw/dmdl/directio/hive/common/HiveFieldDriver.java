@@ -80,6 +80,6 @@ public class HiveFieldDriver extends PropertyAttributeDriver {
     }
 
     private static String label(String key) {
-        return String.format("@%s(%s)", TARGET_NAME, key);
+        return String.format("@%s(%s)", TARGET_NAME, key); //$NON-NLS-1$
     }
 }

@@ -62,22 +62,22 @@ public class OrcFileEmitter extends JavaDataModelDriver {
     /**
      * Category name for Hive ORC.
      */
-    public static final String CATEGORY = "hive.orc";
+    public static final String CATEGORY = "hive.orc"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for data format.
      */
-    public static final String PATTERN_FORMAT = "{0}OrcFileFormat";
+    public static final String PATTERN_FORMAT = "{0}OrcFileFormat"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for skeleton of input description.
      */
-    public static final String PATTERN_INPUT_DESCRIPTION = "Abstract{0}OrcFileInputDescription";
+    public static final String PATTERN_INPUT_DESCRIPTION = "Abstract{0}OrcFileInputDescription"; //$NON-NLS-1$
 
     /**
      * Simple class name pattern for skeleton of output description.
      */
-    public static final String PATTERN_OUTPUT_DESCRIPTION = "Abstract{0}OrcFileOutputDescription";
+    public static final String PATTERN_OUTPUT_DESCRIPTION = "Abstract{0}OrcFileOutputDescription"; //$NON-NLS-1$
 
     /**
      * Returns the generated class name for this.
@@ -117,7 +117,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_INPUT_DESCRIPTION);
         DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
-                "ORCFile input", context.getQualifiedTypeName());
+                "ORCFile input", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
@@ -131,7 +131,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_OUTPUT_DESCRIPTION);
         DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
-                "ORCFile input", context.getQualifiedTypeName());
+                "ORCFile output", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
@@ -158,9 +158,9 @@ public class OrcFileEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Hive ORCFile data format for ")
+                        .text("Hive ORCFile data format for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -186,7 +186,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetTableNameMethod() {
             Expression value = Models.toLiteral(f, OrcFileTrait.getTableName(model));
-            return createMethod("getTableName", context.resolve(String.class), value);
+            return createMethod("getTableName", context.resolve(String.class), value); //$NON-NLS-1$
         }
 
         private MethodDeclaration createGetDataModelDescriptorMethod() {
@@ -194,11 +194,11 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             Expression value = new TypeBuilder(f, context.resolve(factory))
                 .method(HiveDataModelEmitter.NAME_GETTER_METHOD)
                 .toExpression();
-            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value);
+            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value); //$NON-NLS-1$
         }
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
-            SimpleName result = f.newSimpleName("result");
+            SimpleName result = f.newSimpleName("result"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(f, context.resolve(OrcFormatConfiguration.class))
                     .newObject()
@@ -207,7 +207,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             OrcFormatConfiguration conf = model.getTrait(OrcFileTrait.class).configuration();
             if (conf.getFieldMappingStrategy() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withFieldMappingStrategy",
+                        .method("withFieldMappingStrategy", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(FieldMappingStrategy.class))
                             .field(conf.getFieldMappingStrategy().name())
                             .toExpression())
@@ -215,7 +215,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnMissingSource() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnMissingSource",
+                        .method("withOnMissingSource", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnMissingSource().name())
                             .toExpression())
@@ -223,7 +223,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnMissingTarget() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnMissingTarget",
+                        .method("withOnMissingTarget", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnMissingTarget().name())
                             .toExpression())
@@ -231,7 +231,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getOnIncompatibleType() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withOnIncompatibleType",
+                        .method("withOnIncompatibleType", //$NON-NLS-1$
                                 new TypeBuilder(f, context.resolve(ExceptionHandlingStrategy.class))
                             .field(conf.getOnIncompatibleType().name())
                             .toExpression())
@@ -239,21 +239,21 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getFormatVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withFormatVersion", new TypeBuilder(f, context.resolve(OrcFile.Version.class))
+                        .method("withFormatVersion", new TypeBuilder(f, context.resolve(OrcFile.Version.class)) //$NON-NLS-1$
                             .field(conf.getFormatVersion().name())
                             .toExpression())
                         .toStatement());
             }
             if (conf.getCompressionKind() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withCompressionKind", new TypeBuilder(f, context.resolve(CompressionKind.class))
+                    .method("withCompressionKind", new TypeBuilder(f, context.resolve(CompressionKind.class)) //$NON-NLS-1$
                         .field(conf.getCompressionKind().name())
                         .toExpression())
                     .toStatement());
             }
             if (conf.getStripeSize() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withStripeSize", Models.toLiteral(f, (long) conf.getStripeSize()))
+                    .method("withStripeSize", Models.toLiteral(f, (long) conf.getStripeSize())) //$NON-NLS-1$
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, result).toReturnStatement());
@@ -264,7 +264,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(OrcFormatConfiguration.class),
-                    f.newSimpleName("getFormatConfiguration"),
+                    f.newSimpleName("getFormatConfiguration"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     statements);
         }
