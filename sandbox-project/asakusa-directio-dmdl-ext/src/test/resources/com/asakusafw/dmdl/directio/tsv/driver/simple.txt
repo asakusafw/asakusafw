@@ -1,0 +1,4 @@
+@directio.tsv
+simple = {
+    value : TEXT;
+};

@@ -40,7 +40,7 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 クラウドプラットフォーム
 ------------------------
 
-* :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>` (Asakusa Framework Sandbox Document)
+* :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox Document)
 
 その他
 ======
