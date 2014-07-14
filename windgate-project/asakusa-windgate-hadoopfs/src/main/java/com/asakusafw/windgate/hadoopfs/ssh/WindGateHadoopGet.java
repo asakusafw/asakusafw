@@ -51,11 +51,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
  * @since 0.2.2
  * @version 0.4.0
  */
-public class WindGateHadoopGet {
-
-    static {
-        StdioHelper.load();
-    }
+public class WindGateHadoopGet extends WindGateHadoopBase {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopGet.class);
 

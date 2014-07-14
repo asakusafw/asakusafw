@@ -18,6 +18,8 @@ package com.asakusafw.bulkloader.common;
 import java.io.File;
 import java.util.List;
 
+import org.apache.hadoop.io.nativeio.NativeIO;
+
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.log.LogInitializer;
@@ -63,6 +65,8 @@ public final class BulkLoaderInitializer {
             String jobflowId,
             String executionId,
             List<String> properties) {
+        // Eagerly initializes Hadoop native libraries
+        NativeIO.isAvailable();
         return initialize(jobflowId, executionId, properties, false, true, false, null);
     }
 
