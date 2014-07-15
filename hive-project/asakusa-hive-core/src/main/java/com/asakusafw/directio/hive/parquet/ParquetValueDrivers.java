@@ -27,6 +27,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 import parquet.column.Dictionary;
 import parquet.io.api.Binary;
+import parquet.schema.OriginalType;
 import parquet.schema.PrimitiveType;
 import parquet.schema.PrimitiveType.PrimitiveTypeName;
 import parquet.schema.Type;
@@ -158,6 +159,10 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
         public ValueWriter getWriter() {
             return BasicValueWriter.STRING;
         }
+        @Override
+        public Type getType(String name) {
+            return new PrimitiveType(Repetition.OPTIONAL, typeName, name, OriginalType.UTF8);
+        }
     },
     ;
 
@@ -167,7 +172,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
     private final TypeInfo typeInfo;
 
-    private PrimitiveTypeName typeName;
+    final PrimitiveTypeName typeName;
 
     private ParquetValueDrivers(
             Class<? extends ValueOption<?>>
