@@ -102,7 +102,7 @@ public enum TimestampValueSerdeFactory implements ValueSerde {
         }
     }
 
-    static abstract class AbstractTimestampInspector extends AbstractValueInspector
+    abstract static class AbstractTimestampInspector extends AbstractValueInspector
             implements TimestampObjectInspector {
 
         protected AbstractTimestampInspector() {
@@ -130,7 +130,7 @@ public enum TimestampValueSerdeFactory implements ValueSerde {
         }
     }
 
-    static abstract class AbstractTimestampDriver extends AbstractValueDriver {
+    abstract static class AbstractTimestampDriver extends AbstractValueDriver {
 
         private final TimestampObjectInspector inspector;
 

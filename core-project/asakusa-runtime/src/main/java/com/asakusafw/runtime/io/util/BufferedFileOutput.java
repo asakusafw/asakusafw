@@ -25,7 +25,7 @@ import java.util.RandomAccess;
 import org.apache.hadoop.io.Text;
 
 /**
- * An implementation of {@link DataOutput} for {@link RandomAccessFile}
+ * An implementation of {@link DataOutput} for {@link RandomAccessFile}.
  * @since 0.7.0
  */
 public class BufferedFileOutput implements RandomAccess, DataOutput, Flushable, Closeable {

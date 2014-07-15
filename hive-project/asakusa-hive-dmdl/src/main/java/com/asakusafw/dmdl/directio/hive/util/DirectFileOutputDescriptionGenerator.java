@@ -44,7 +44,7 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
  * Generates an implementation of {@link DirectFileOutputDescription}.
  * @since 0.7.0
  */
-public class DirectFileOutputDescriptionGenerator {
+public final class DirectFileOutputDescriptionGenerator {
 
     private final EmitContext context;
 
@@ -117,16 +117,24 @@ public class DirectFileOutputDescriptionGenerator {
     }
 
     private MethodDeclaration createGetModelTypeMethod(Name value) {
-        Type type = f.newParameterizedType(context.resolve(Class.class), f.newWildcard());
-        return createGetMethod("getModelType", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
+        return createGetMethod(
+                "getModelType", //$NON-NLS-1$
+                f.newParameterizedType(context.resolve(Class.class), f.newWildcard()),
+                f.newClassLiteral(context.resolve(value)));
     }
 
     private MethodDeclaration createGetBasePathMethod(String value) {
-        return createGetMethod("getBasePath", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
+        return createGetMethod(
+                "getBasePath", //$NON-NLS-1$
+                context.resolve(String.class),
+                Models.toLiteral(f, value));
     }
 
     private MethodDeclaration createGetResourcePatternMethod(String value) {
-        return createGetMethod("getResourcePattern", context.resolve(String.class), Models.toLiteral(f, value)); //$NON-NLS-1$
+        return createGetMethod(
+                "getResourcePattern", //$NON-NLS-1$
+                context.resolve(String.class),
+                Models.toLiteral(f, value));
     }
 
     private MethodDeclaration createGetFormatMethod(Name value) {

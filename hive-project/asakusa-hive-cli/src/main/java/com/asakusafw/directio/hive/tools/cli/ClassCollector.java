@@ -132,9 +132,9 @@ public class ClassCollector {
     }
 
     private static boolean isHidden(File file) {
-        return file.getName().startsWith(".") || //$NON-NLS-1$
-                file.exists() == false ||
-                file.isHidden();
+        return file.getName().startsWith(".")
+                || file.exists() == false
+                || file.isHidden();
     }
 
     private static boolean isClassFile(File file) {

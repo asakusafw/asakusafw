@@ -121,7 +121,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
         }
     }
 
-    static abstract class AbstractWriter implements ValueWriter {
+    abstract static class AbstractWriter implements ValueWriter {
 
         protected abstract String toString(Object value);
 
@@ -131,7 +131,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
         }
     }
 
-    static abstract class AbstractConverter<T> extends ValueConverter {
+    abstract static class AbstractConverter<T> extends ValueConverter {
 
         private T[] dict;
 
@@ -179,7 +179,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
         }
     }
 
-    static abstract class AbstractIntConverter extends ValueConverter {
+    abstract static class AbstractIntConverter extends ValueConverter {
 
         private int[] dict;
 
@@ -226,7 +226,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
         }
     }
 
-    static abstract class AbstractLongConverter extends ValueConverter {
+    abstract static class AbstractLongConverter extends ValueConverter {
 
         private long[] dict;
 

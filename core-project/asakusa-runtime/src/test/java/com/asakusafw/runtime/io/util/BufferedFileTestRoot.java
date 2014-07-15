@@ -63,6 +63,7 @@ public class BufferedFileTestRoot {
     /**
      * Manages the target resource.
      * @param resource resource
+     * @param <T> the target type
      * @return resource
      */
     public <T> T manage(T resource) {

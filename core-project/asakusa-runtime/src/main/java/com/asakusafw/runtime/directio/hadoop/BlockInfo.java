@@ -68,7 +68,8 @@ public final class BlockInfo {
     }
 
     /**
-     * @return the hosts
+     * Returns the host names.
+     * @return the host names
      * @since 0.7.0
      */
     public List<String> getHosts() {

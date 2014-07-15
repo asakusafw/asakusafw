@@ -165,7 +165,7 @@ public class ApplicationLauncherTest extends LauncherTestRoot {
         assertThat(status, is(ApplicationLauncher.CLIENT_ERROR));
     }
 
-    private static abstract class Callback extends Configured implements Tool {
+    private abstract static class Callback extends Configured implements Tool {
         public Callback() {
             return;
         }

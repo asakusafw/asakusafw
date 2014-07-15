@@ -372,7 +372,7 @@ public class ExcelSheetApproximateRuleTest {
         assertThat(pred.describeExpected(expected, actual), pred.accepts(expected, actual), is(true));
     }
 
-    private static <T> void assertNg(ValuePredicate<Object> pred, Object expected, Object actual) {
+    private static void assertNg(ValuePredicate<Object> pred, Object expected, Object actual) {
         assertThat(pred.describeExpected(expected, actual), pred.accepts(expected, actual), is(false));
     }
 
