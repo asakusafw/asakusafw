@@ -25,7 +25,7 @@ import com.asakusafw.runtime.directio.DataFormat;
  */
 public class OrcFileFormat<T> extends AbstractOrcFileFormat<T> {
 
-    private String tableName;
+    private final String tableName;
 
     private final OrcFormatConfiguration configuration;
 
@@ -41,6 +41,7 @@ public class OrcFileFormat<T> extends AbstractOrcFileFormat<T> {
             String tableName,
             OrcFormatConfiguration configuration,
             DataModelDescriptor descriptor) {
+        this.tableName = tableName;
         this.descriptor = descriptor;
         this.configuration = configuration;
     }

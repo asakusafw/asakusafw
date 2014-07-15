@@ -28,7 +28,7 @@ import com.asakusafw.directio.hive.common.RowFormatInfo;
  * Emits Hive QL.
  * @since 0.7.0
  */
-public class HiveQlEmitter {
+public final class HiveQlEmitter {
 
     private HiveQlEmitter() {
         return;

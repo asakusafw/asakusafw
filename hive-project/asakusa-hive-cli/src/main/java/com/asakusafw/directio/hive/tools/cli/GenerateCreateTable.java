@@ -57,7 +57,7 @@ public final class GenerateCreateTable {
     static final Option OPT_CLASSPATH;
     static final Option OPT_PLUGINPATH;
     static final Option OPT_OUTPUT;
-    static Options OPTIONS;
+    static final Options OPTIONS;
 
     static {
         OPT_LOCATION = new Option("l", "location", true, "table output location"); //$NON-NLS-1$ //$NON-NLS-2$

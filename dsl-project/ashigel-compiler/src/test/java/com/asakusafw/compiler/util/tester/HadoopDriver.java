@@ -348,7 +348,7 @@ public final class HadoopDriver implements Closeable {
             List<File> libjars,
             String className,
             File confFile,
-            Map<String, String> properties) throws IOException {
+            Map<String, String> properties) {
         logger.info("EMULATE: {} with {}", className, libjars);
         List<String> arguments = new ArrayList<String>();
         arguments.add(className);

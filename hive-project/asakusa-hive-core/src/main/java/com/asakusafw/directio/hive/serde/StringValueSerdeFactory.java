@@ -132,7 +132,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
         }
     }
 
-    static abstract class AbstractStringInspector extends AbstractValueInspector
+    abstract static class AbstractStringInspector extends AbstractValueInspector
             implements StringObjectInspector {
 
         protected AbstractStringInspector() {
@@ -160,7 +160,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
         }
     }
 
-    static abstract class AbstractStringDriver extends AbstractValueDriver {
+    abstract static class AbstractStringDriver extends AbstractValueDriver {
 
         private final StringObjectInspector inspector;
 

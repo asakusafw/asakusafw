@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class LauncherOptionsParserTest extends LauncherTestRoot {
     @After
     public void after() throws Exception {
         for (LauncherOptions options : optionsManager) {
-            URLClassLoader loader = options.getApplicationClassLoader();
+            ClassLoader loader = options.getApplicationClassLoader();
             if (loader instanceof Closeable) {
                 ((Closeable) loader).close();
             }

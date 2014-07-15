@@ -224,7 +224,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         return f.newSimpleName(element.name());
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private static final String NAME_SINGLETON_FIELD = "SINGLETON"; //$NON-NLS-1$
 

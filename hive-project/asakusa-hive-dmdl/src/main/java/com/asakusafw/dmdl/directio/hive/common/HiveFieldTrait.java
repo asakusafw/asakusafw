@@ -152,7 +152,7 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
     }
 
     /**
-     * Sets the char type info
+     * Sets the char type info.
      * @param length the character string length
      */
     public void setCharTypeInfo(int length) {
@@ -161,7 +161,7 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
     }
 
     /**
-     * Sets the varchar type info
+     * Sets the varchar type info.
      * @param length the character string length
      */
     public void setVarcharTypeInfo(int length) {
@@ -297,7 +297,7 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
             return supportedKinds;
         }
 
-        private static abstract class Acceptor implements Callable<Set<BasicTypeKind>> {
+        private abstract static class Acceptor implements Callable<Set<BasicTypeKind>> {
 
             Acceptor() {
                 return;
