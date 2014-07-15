@@ -37,11 +37,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
  * @since 0.2.2
  * @version 0.4.0
  */
-public class WindGateHadoopPut {
-
-    static {
-        StdioHelper.load();
-    }
+public class WindGateHadoopPut extends WindGateHadoopBase {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopPut.class);
 

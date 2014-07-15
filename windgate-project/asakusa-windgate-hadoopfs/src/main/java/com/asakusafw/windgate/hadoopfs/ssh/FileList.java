@@ -19,6 +19,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
@@ -38,12 +39,15 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 /**
  * A file list transfer protocol.
  * @since 0.2.2
+ * @version 0.7.0
  */
 public final class FileList {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(FileList.class);
 
     static final Logger LOG = LoggerFactory.getLogger(FileList.class);
+
+    static final int PREAMBLE_MARGIN = 128 * 1024;
 
     static final String FIRST_ENTRY_NAME = ".__FIRST_ENTRY__"; //$NON-NLS-1$
 
@@ -74,6 +78,10 @@ public final class FileList {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Creating a new file list reader");
+        byte[] dropped = FileListUtil.dropPreamble(input, PREAMBLE_MARGIN);
+        if (dropped.length >= 1) {
+            WGLOG.warn("W19002", new String(dropped, Charset.defaultCharset()));
+        }
         return new Reader(input);
     }
 
@@ -89,6 +97,7 @@ public final class FileList {
             throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Creating a new file list writer");
+        FileListUtil.putPreamble(output);
         return new Writer(output);
     }
 
@@ -122,6 +131,7 @@ public final class FileList {
             if (first == null || first.getName().equals(FIRST_ENTRY_NAME) == false) {
                 throw new IOException("file list is broken");
             }
+            this.input.closeEntry();
         }
 
         /**

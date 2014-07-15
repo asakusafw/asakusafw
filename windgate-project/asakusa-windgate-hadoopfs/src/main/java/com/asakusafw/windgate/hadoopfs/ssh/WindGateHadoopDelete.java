@@ -39,11 +39,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
  * @since 0.2.2
  * @version 0.4.0
  */
-public class WindGateHadoopDelete {
-
-    static {
-        StdioHelper.load();
-    }
+public class WindGateHadoopDelete extends WindGateHadoopBase {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopDelete.class);
 

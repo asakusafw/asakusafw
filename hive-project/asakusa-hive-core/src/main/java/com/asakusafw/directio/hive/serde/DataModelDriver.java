@@ -17,6 +17,7 @@ package com.asakusafw.directio.hive.serde;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -211,6 +212,24 @@ public class DataModelDriver {
         default:
             throw new AssertionError(strategy);
         }
+    }
+
+    /**
+     * Returns the source object inspector.
+     * @return the source object inspector
+     */
+    public StructObjectInspector getSourceInspector() {
+        return sourceInspector;
+    }
+
+    /**
+     * Returns source field references which will be actually mapped into the data model.
+     * @return source field references
+     */
+    public List<StructField> getSourceFields() {
+        List<StructField> results = new ArrayList<StructField>();
+        Collections.addAll(results, this.sourceFields);
+        return results;
     }
 
     /**
