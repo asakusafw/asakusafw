@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.apache.hadoop.fs.Path;
 import org.junit.Rule;
@@ -118,6 +119,34 @@ public class FileListTest {
             read(reader, "example1.txt", "Hello1, world!");
             read(reader, "example2.txt", "Hello2, world!");
             read(reader, "example3.txt", "Hello3, world!");
+            assertThat(reader.next(), is(false));
+            reader.close();
+        } finally {
+            input.close();
+        }
+    }
+
+    /**
+     * Unexpected messages before transfer.
+     * @throws Exception if failed
+     */
+    @Test
+    public void unexpected_header() throws Exception {
+        File file = folder.newFile("testing.filelist");
+        FileOutputStream output = new FileOutputStream(file);
+        try {
+            output.write("Hello, world!@A_INVALID_HEADER@".getBytes(Charset.forName("UTF-8")));
+            FileList.Writer writer = FileList.createWriter(output);
+            write(writer, "example.txt", "Hello, world!");
+            writer.close();
+        } finally {
+            output.close();
+        }
+
+        FileInputStream input = new FileInputStream(file);
+        try {
+            FileList.Reader reader = FileList.createReader(input);
+            read(reader, "example.txt", "Hello, world!");
             assertThat(reader.next(), is(false));
             reader.close();
         } finally {
