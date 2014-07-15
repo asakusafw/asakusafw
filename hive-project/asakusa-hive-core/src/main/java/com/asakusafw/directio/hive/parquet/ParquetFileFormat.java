@@ -25,7 +25,7 @@ import com.asakusafw.runtime.directio.DataFormat;
  */
 public class ParquetFileFormat<T> extends AbstractParquetFileFormat<T> {
 
-    private String tableName;
+    private final String tableName;
 
     private final ParquetFormatConfiguration configuration;
 
@@ -41,6 +41,7 @@ public class ParquetFileFormat<T> extends AbstractParquetFileFormat<T> {
             String tableName,
             ParquetFormatConfiguration configuration,
             DataModelDescriptor descriptor) {
+        this.tableName = tableName;
         this.descriptor = descriptor;
         this.configuration = configuration;
     }

@@ -62,7 +62,7 @@ import com.asakusafw.runtime.util.lock.LocalFileLockProvider;
  * Converts application arguments into {@link LauncherOptions}.
  * @since 0.7.0
  */
-public class LauncherOptionsParser {
+public final class LauncherOptionsParser {
 
     static final Log LOG = LogFactory.getLog(LauncherOptionsParser.class);
 

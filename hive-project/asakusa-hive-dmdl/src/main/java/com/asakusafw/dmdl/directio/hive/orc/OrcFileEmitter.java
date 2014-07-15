@@ -136,7 +136,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private final EmitContext context;
 
@@ -194,7 +194,10 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             Expression value = new TypeBuilder(f, context.resolve(factory))
                 .method(HiveDataModelEmitter.NAME_GETTER_METHOD)
                 .toExpression();
-            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value); //$NON-NLS-1$
+            return createMethod(
+                    "getDataModelDescriptor", //$NON-NLS-1$
+                    context.resolve(DataModelDescriptor.class),
+                    value);
         }
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
@@ -239,16 +242,18 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getFormatVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                        .method("withFormatVersion", new TypeBuilder(f, context.resolve(OrcFile.Version.class)) //$NON-NLS-1$
-                            .field(conf.getFormatVersion().name())
-                            .toExpression())
+                        .method("withFormatVersion", //$NON-NLS-1$
+                                new TypeBuilder(f, context.resolve(OrcFile.Version.class))
+                                    .field(conf.getFormatVersion().name())
+                                    .toExpression())
                         .toStatement());
             }
             if (conf.getCompressionKind() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withCompressionKind", new TypeBuilder(f, context.resolve(CompressionKind.class)) //$NON-NLS-1$
-                        .field(conf.getCompressionKind().name())
-                        .toExpression())
+                    .method("withCompressionKind", //$NON-NLS-1$
+                            new TypeBuilder(f, context.resolve(CompressionKind.class))
+                                .field(conf.getCompressionKind().name())
+                                .toExpression())
                     .toStatement());
             }
             if (conf.getStripeSize() != null) {

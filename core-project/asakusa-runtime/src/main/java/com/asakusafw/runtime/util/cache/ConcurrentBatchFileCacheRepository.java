@@ -123,7 +123,11 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
                             results.put(file, result);
                         }
                     } catch (TimeoutException e) {
-                        // do nothing
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace(MessageFormat.format(
+                                    "Trying to wait for next task complete: {0}",
+                                    file), e);
+                        }
                     }
                 }
             }

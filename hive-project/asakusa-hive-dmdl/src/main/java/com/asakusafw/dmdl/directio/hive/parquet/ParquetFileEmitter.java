@@ -137,7 +137,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
-    private static class Generator {
+    private static final class Generator {
 
         private final EmitContext context;
 
@@ -195,7 +195,10 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             Expression value = new TypeBuilder(f, context.resolve(factory))
                 .method(HiveDataModelEmitter.NAME_GETTER_METHOD)
                 .toExpression();
-            return createMethod("getDataModelDescriptor", context.resolve(DataModelDescriptor.class), value); //$NON-NLS-1$
+            return createMethod(
+                    "getDataModelDescriptor", //$NON-NLS-1$
+                    context.resolve(DataModelDescriptor.class),
+                    value);
         }
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
@@ -240,9 +243,10 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getCompressionCodecName() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withCompressionCodecName", new TypeBuilder(f, context.resolve(CompressionCodecName.class)) //$NON-NLS-1$
-                        .field(conf.getCompressionCodecName().name())
-                        .toExpression())
+                    .method("withCompressionCodecName", //$NON-NLS-1$
+                            new TypeBuilder(f, context.resolve(CompressionCodecName.class))
+                                .field(conf.getCompressionCodecName().name())
+                                .toExpression())
                     .toStatement());
             }
             if (conf.getBlockSize() != null) {
@@ -272,9 +276,10 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             }
             if (conf.getWriterVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
-                    .method("withWriterVersion", new TypeBuilder(f, context.resolve(WriterVersion.class)) //$NON-NLS-1$
-                        .field(conf.getWriterVersion().name())
-                        .toExpression())
+                    .method("withWriterVersion", //$NON-NLS-1$
+                            new TypeBuilder(f, context.resolve(WriterVersion.class))
+                                .field(conf.getWriterVersion().name())
+                                .toExpression())
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, result).toReturnStatement());

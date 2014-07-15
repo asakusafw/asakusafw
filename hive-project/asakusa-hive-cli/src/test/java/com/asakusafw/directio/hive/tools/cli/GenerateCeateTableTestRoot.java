@@ -69,7 +69,7 @@ public class GenerateCeateTableTestRoot {
     /**
      * Mock {@link HiveTableInfo} for testing.
      */
-    public static abstract class MockInfo implements HiveTableInfo {
+    public abstract static class MockInfo implements HiveTableInfo {
 
         /**
          * Returns the delegated table.
