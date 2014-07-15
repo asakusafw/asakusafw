@@ -63,15 +63,19 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
     private static TraceActionFactory extractFactory(ResourceConfiguration configuration) throws IOException {
         String factoryClass = configuration.get(KEY_FACTORY_CLASS, null);
         if (factoryClass == null) {
-            LOG.info(MessageFormat.format(
-                    "The configuration key \"{0}\" is not set, we use \"{1}\"",
-                    KEY_FACTORY_CLASS,
-                    DEFAULT_FACTORY_CLASS));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "The configuration key \"{0}\" is not set, we use \"{1}\"",
+                        KEY_FACTORY_CLASS,
+                        DEFAULT_FACTORY_CLASS));
+            }
             factoryClass = DEFAULT_FACTORY_CLASS;
         } else {
-            LOG.info(MessageFormat.format(
-                    "Data-flow tracing support: {0}",
-                    factoryClass));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Data-flow tracing support: {0}",
+                        factoryClass));
+            }
         }
         try {
             return configuration.getClassLoader().loadClass(factoryClass)
