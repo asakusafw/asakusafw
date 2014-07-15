@@ -21,11 +21,8 @@ import java.text.MessageFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -34,15 +31,17 @@ import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.security.TokenCache;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
  * A temporary output format.
  * @param <T> target type
  * @since 0.2.5
+ * @version 0.7.0
  */
 public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T> {
 
@@ -110,10 +109,8 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
             throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
         }
         CompressionCodec codec = null;
-        CompressionType compressionType = CompressionType.NONE;
         Configuration conf = context.getConfiguration();
         if (FileOutputFormat.getCompressOutput(context)) {
-            compressionType = SequenceFileOutputFormat.getOutputCompressionType(context);
             Class<?> codecClass = FileOutputFormat.getOutputCompressorClass(context, DefaultCodec.class);
             codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
         }
@@ -121,21 +118,12 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
         Path file = new Path(
                 committer.getWorkPath(),
                 FileOutputFormat.getUniqueFile(context, name, ""));
-        FileSystem fs = file.getFileSystem(conf);
-        final SequenceFile.Writer out = SequenceFile.createWriter(
-                fs,
-                conf,
-                file,
-                NullWritable.class,
-                dataType,
-                compressionType, codec,
-                context);
-
+        final ModelOutput<V> out = TemporaryStorage.openOutput(conf, dataType, file, codec);
         return new RecordWriter<NullWritable, V>() {
 
             @Override
             public void write(NullWritable key, V value) throws IOException {
-                out.append(key, value);
+                out.write(value);
             }
 
             @Override

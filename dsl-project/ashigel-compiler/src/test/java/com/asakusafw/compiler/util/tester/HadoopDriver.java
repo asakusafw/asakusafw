@@ -333,7 +333,7 @@ public final class HadoopDriver implements Closeable {
             arguments.add("-D");
             arguments.add(MessageFormat.format("{0}={1}", entry.getKey(), entry.getValue()));
         }
-        addSuppressCopyLibraries(arguments);
+        //addSuppressCopyLibraries(arguments);
 
         int exitValue = invoke(arguments.toArray(new String[arguments.size()]));
         if (exitValue != 0) {

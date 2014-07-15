@@ -20,10 +20,18 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.jar.JarFile;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.SequenceFile;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -58,6 +66,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.io.sequencefile.SequenceFileModelOutput;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.external.FileExporterDescription;
 
@@ -213,13 +222,13 @@ public class HadoopFileIoProcessorTest {
     public void input_single() throws Exception {
         JobflowInfo info = tester.compileJobflow(NormalInputJob.class);
 
-        ModelOutput<Ex1> s10 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
+        ModelOutput<Ex1> s10 = openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
         writeEx1(s10, 1, 2);
 
-        ModelOutput<Ex1> s20 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
+        ModelOutput<Ex1> s20 = openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
         writeEx1(s20, 3, 4, 5);
 
-        ModelOutput<Ex1> s21 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-1", '/'));
+        ModelOutput<Ex1> s21 = openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-1", '/'));
         writeEx1(s21, 6, 7, 8, 9);
 
         assertThat(tester.run(info), is(true));
@@ -235,13 +244,13 @@ public class HadoopFileIoProcessorTest {
         tester.options().setHashJoinForTiny(true);
         JobflowInfo info = tester.compileJobflow(TinyInputJob.class);
 
-        ModelOutput<Ex2> s10 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
+        ModelOutput<Ex2> s10 = openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
         writeEx2(s10, 1, 2);
 
-        ModelOutput<Ex2> s20 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
+        ModelOutput<Ex2> s20 = openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
         writeEx2(s20, 3, 4, 5);
 
-        ModelOutput<Ex2> s21 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-1", '/'));
+        ModelOutput<Ex2> s21 = openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-1", '/'));
         writeEx2(s21, 6, 7, 8, 9);
 
         assertThat(tester.run(info), is(true));
@@ -257,14 +266,14 @@ public class HadoopFileIoProcessorTest {
         tester.options().setHashJoinForTiny(true);
         JobflowInfo info = tester.compileJobflow(MixedInputJob.class);
 
-        ModelOutput<Ex1> s10 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
+        ModelOutput<Ex1> s10 = openOutput(Ex1.class, Location.fromPath("target/testing/in/normal1-0", '/'));
         writeEx1(s10, 1, 2);
-        ModelOutput<Ex1> s20 = tester.openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
+        ModelOutput<Ex1> s20 = openOutput(Ex1.class, Location.fromPath("target/testing/in/normal2-0", '/'));
         writeEx1(s20, 3, 4);
 
-        ModelOutput<Ex2> t10 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
+        ModelOutput<Ex2> t10 = openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny1-0", '/'));
         writeEx2(t10, 5, 6);
-        ModelOutput<Ex2> t20 = tester.openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
+        ModelOutput<Ex2> t20 = openOutput(Ex2.class, Location.fromPath("target/testing/in/tiny2-0", '/'));
         writeEx2(t20, 7, 8);
 
         assertThat(tester.run(info), is(true));
@@ -441,6 +450,14 @@ public class HadoopFileIoProcessorTest {
         checlValues(out2, 200);
     }
 
+    private <T> ModelOutput<T> openOutput(Class<T> aClass, Location location) throws IOException {
+        Configuration conf = tester.configuration();
+        Path path = new Path(location.toPath('/'));
+        FileSystem fs = path.getFileSystem(conf);
+        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, NullWritable.class, aClass);
+        return new SequenceFileModelOutput<T>(writer);
+    }
+
     private void checkSids(List<Ex1> results) {
         assertThat(results.size(), is(10));
         assertThat(results.get(0).getSidOption().isNull(), is(true));
@@ -481,15 +498,30 @@ public class HadoopFileIoProcessorTest {
     private List<Ex1> getList(Class<? extends FileExporterDescription> exporter) {
         try {
             FileExporterDescription instance = exporter.newInstance();
-            return tester.getList(
-                    Ex1.class,
-                    Location.fromPath(instance.getPathPrefix(), '/'),
-                    new Comparator<Ex1>() {
-                        @Override
-                        public int compare(Ex1 o1, Ex1 o2) {
-                            return o1.getSidOption().compareTo(o2.getSidOption());
-                        }
-                    });
+            Path path = new Path(Location.fromPath(instance.getPathPrefix(), '/').toString());
+            FileSystem fs = path.getFileSystem(tester.configuration());
+            FileStatus[] statuses = fs.globStatus(path);
+            List<Ex1> results = new ArrayList<Ex1>();
+            for (FileStatus status : statuses) {
+                SequenceFile.Reader reader = new SequenceFile.Reader(fs, status.getPath(), tester.configuration());
+                try {
+                    Ex1 model = new Ex1();
+                    while (reader.next(NullWritable.get(), model)) {
+                        Ex1 copy = new Ex1();
+                        copy.copyFrom(model);
+                        results.add(copy);
+                    }
+                } finally {
+                    reader.close();
+                }
+            }
+            Collections.sort(results, new Comparator<Ex1>() {
+                @Override
+                public int compare(Ex1 o1, Ex1 o2) {
+                    return o1.getSidOption().compareTo(o2.getSidOption());
+                }
+            });
+            return results;
         } catch (Exception e) {
             throw new AssertionError(e);
         }
