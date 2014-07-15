@@ -17,6 +17,9 @@ package com.asakusafw.directio.hive.orc;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +28,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.RecordReader;
+import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
@@ -140,11 +144,33 @@ public class OrcFileInput<T> implements ModelInput<T> {
                         offset,
                         fragmentSize));
             }
-            // TODO projection
-            reader = orc.rows(offset, fragmentSize, null);
+            boolean[] availableColumns = computeAvailableColumns(orc);
+            reader = orc.rows(offset, fragmentSize, availableColumns);
             currentReader = reader;
         }
         return reader;
+    }
+
+    private boolean[] computeAvailableColumns(Reader orc) {
+        assert driver != null;
+        StructObjectInspector inspector = driver.getSourceInspector();
+        List<? extends StructField> all = inspector.getAllStructFieldRefs();
+        Set<StructField> projected = new HashSet<StructField>(driver.getSourceFields());
+        // the first type must be a root type
+        boolean[] availables = new boolean[all.size() + 1];
+        availables[0] = true;
+        for (int i = 0, n = all.size(); i < n; i++) {
+            StructField field = all.get(i);
+            boolean available = projected.contains(field);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "ORCFile projection: column={0}, include={1}",
+                        field.getFieldName(),
+                        available));
+            }
+            availables[i + 1] = available;
+        }
+        return availables;
     }
 
     private void advanceCounter(long nextCount) {
