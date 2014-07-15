@@ -28,7 +28,7 @@ import com.asakusafw.runtime.value.DateUtil;
  * date and date-time utilities.
  * @since 0.7.0
  */
-public class TemporalUtil {
+public final class TemporalUtil {
 
     private static final ThreadLocal<DateFormat> DATE_FORMAT_CACHE = new ThreadLocal<DateFormat>() {
         @Override

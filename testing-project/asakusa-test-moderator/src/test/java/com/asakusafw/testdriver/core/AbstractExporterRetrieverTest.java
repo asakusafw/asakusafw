@@ -82,7 +82,7 @@ public class AbstractExporterRetrieverTest {
         obj.getDescriptionClass();
     }
 
-    static abstract class DummyExporterDescription implements ExporterDescription {
+    abstract static class DummyExporterDescription implements ExporterDescription {
         // no special members
     }
 }

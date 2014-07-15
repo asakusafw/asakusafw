@@ -44,4 +44,14 @@
       <Bug pattern="URF_UNREAD_FIELD" />
     </Or>
   </Match>
+  <Match class="com.asakusafw.runtime.io.util.BufferedFileInput">
+    <Or>
+      <Bug pattern="EI_EXPOSE_REP2" />
+    </Or>
+  </Match>
+  <Match class="com.asakusafw.runtime.io.util.BufferedFileOutput">
+    <Or>
+      <Bug pattern="EI_EXPOSE_REP2" />
+    </Or>
+  </Match>
 </FindBugsFilter>

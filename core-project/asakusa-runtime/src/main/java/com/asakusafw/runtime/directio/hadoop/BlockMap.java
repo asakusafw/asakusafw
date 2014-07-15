@@ -37,7 +37,7 @@ import com.asakusafw.runtime.directio.DirectInputFragment;
  * @see BlockInfo
  * @since 0.7.0
  */
-public class BlockMap {
+public final class BlockMap {
 
     static final double MIN_LOCALITY = 0.125;
 

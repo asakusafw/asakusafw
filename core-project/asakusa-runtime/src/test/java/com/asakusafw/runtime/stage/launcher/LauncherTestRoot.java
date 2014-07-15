@@ -58,7 +58,7 @@ public abstract class LauncherTestRoot {
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             @Override
             public Void run() {
-                URLClassLoader loader = new URLClassLoader(urls);
+                ClassLoader loader = new URLClassLoader(urls);
                 try {
                     assertThat(loader.getResource(resourceName), is(notNullValue()));
                 } finally {

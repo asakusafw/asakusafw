@@ -32,5 +32,5 @@ public interface FileCacheRepository {
      * @throws IOException if failed to put the file into cache
      * @throws InterruptedException if interrupted while resolving cache file
      */
-    public Path resolve(Path file) throws IOException, InterruptedException;
+    Path resolve(Path file) throws IOException, InterruptedException;
 }
