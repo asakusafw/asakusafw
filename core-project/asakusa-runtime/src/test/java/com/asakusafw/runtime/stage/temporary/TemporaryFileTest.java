@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -120,6 +121,42 @@ public class TemporaryFileTest {
     @Test
     public void large_w_TemporaryStorage() throws Exception {
         doIo_w_TemporaryStorage(110000000);
+    }
+
+    /**
+     * Writes {@link NullWritable}s.
+     * @throws Exception if failed
+     */
+    @Test
+    public void null_entry() throws Exception {
+        // eagerly initializes snappy
+        Snappy.getNativeLibraryVersion();
+
+        File file = folder.newFile();
+        ModelOutput<NullWritable> out = new TemporaryFileOutput<NullWritable>(
+                new BufferedOutputStream(new FileOutputStream(file)),
+                NullWritable.class.getName(),
+                1024,
+                256 * 1024);
+        try {
+            out.write(NullWritable.get());
+            out.write(NullWritable.get());
+            out.write(NullWritable.get());
+        } finally {
+            out.close();
+        }
+
+        TemporaryFileInput<NullWritable> in = new TemporaryFileInput<NullWritable>(
+                new BufferedInputStream(new FileInputStream(file)),
+                0);
+        try {
+            assertThat(in.readTo(NullWritable.get()), is(true));
+            assertThat(in.readTo(NullWritable.get()), is(true));
+            assertThat(in.readTo(NullWritable.get()), is(true));
+            assertThat(in.readTo(NullWritable.get()), is(false));
+        } finally {
+            in.close();
+        }
     }
 
     private void doIo(int count) throws IOException {

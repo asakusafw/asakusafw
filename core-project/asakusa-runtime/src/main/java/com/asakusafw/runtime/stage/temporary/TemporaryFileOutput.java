@@ -64,8 +64,14 @@ public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
 
     @Override
     public void write(T model) throws IOException {
+        int before = buffer.getLength();
         model.write(buffer);
-        if (buffer.getLength() >= pageBreakThreashold) {
+        int length = buffer.getLength();
+        if (length - before == 0) {
+            // 0-bytes entry
+            buffer.write(TemporaryFile.EMPTY_ENTRY_PADDING);
+        }
+        if (length >= pageBreakThreashold) {
             flush();
         }
     }

@@ -87,7 +87,16 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
         if (prepareBuffer() == false) {
             return false;
         }
+        int before = buffer.getPosition();
         model.readFields(buffer);
+        int position = buffer.getPosition();
+        if (position - before == 0) {
+            // read 0-bytes entry
+            int c = buffer.read();
+            if (c != TemporaryFile.EMPTY_ENTRY_PADDING) {
+                throw new IOException("Invalid empty entry padding");
+            }
+        }
         return true;
     }
 
