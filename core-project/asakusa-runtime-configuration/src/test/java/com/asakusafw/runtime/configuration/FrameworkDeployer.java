@@ -26,6 +26,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -36,6 +41,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
@@ -54,7 +60,9 @@ public class FrameworkDeployer implements TestRule {
 
     private File work;
 
-    private File runtimeLib;
+    private File bootstrapJar;
+
+    private final List<File> runtimeJars = new ArrayList<File>();
 
     /**
      * Creates a new instance with creating default layout.
@@ -128,7 +136,70 @@ public class FrameworkDeployer implements TestRule {
 
     void deployRuntimeLibrary() throws IOException {
         LOG.debug("Deploying runtime library");
-        runtimeLib = deployLibrary(ApplicationLauncher.class, "core/lib/asakusa-runtime-all.jar");
+        bootstrapJar = deployFatLibrary("core/lib/asakusa-runtime-all.jar",
+                ApplicationLauncher.class,
+                Snappy.class);
+    }
+
+    private File deployFatLibrary(String targetPath, Class<?>... classes) throws IOException {
+        if (classes.length == 1) {
+            return deployLibrary(classes[0], targetPath);
+        }
+        List<File> paths = new ArrayList<File>();
+        for (Class<?> aClass : classes) {
+            File path = findLibraryPathFromClass(aClass);
+            if (path == null) {
+                throw new IOException(MessageFormat.format(
+                        "Failed to detect library archive for \"{0}\"",
+                        aClass.getName()));
+            }
+            paths.add(path);
+        }
+        File target = new File(getHome(), targetPath);
+        deployFatLibrary(paths, target);
+        return target;
+    }
+
+    private void deployFatLibrary(List<File> paths, File target) throws IOException {
+        prepareParent(target);
+        Set<String> saw = new HashSet<String>();
+        ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(target));
+        try {
+            for (File path : paths) {
+                if (path.isDirectory()) {
+                    putEntry(zip, path, null, saw);
+                } else {
+                    mergeEntries(zip, path, saw);
+                }
+            }
+        } finally {
+            zip.close();
+        }
+    }
+
+    private void mergeEntries(ZipOutputStream zip, File file, Set<String> saw) throws IOException {
+        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+        try {
+            while (true) {
+                ZipEntry entry = in.getNextEntry();
+                if (entry == null) {
+                    break;
+                }
+                if (saw.contains(entry.getName())) {
+                    continue;
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Copy into archive: {} -> {}",
+                            entry.getName(),
+                            file);
+                }
+                saw.add(entry.getName());
+                zip.putNextEntry(new ZipEntry(entry.getName()));
+                copyStream(in, zip);
+            }
+        } finally {
+            in.close();
+        }
     }
 
     /**
@@ -261,7 +332,7 @@ public class FrameworkDeployer implements TestRule {
             OutputStream output = new FileOutputStream(target);
             try {
                 ZipOutputStream zip = new ZipOutputStream(output);
-                putEntry(zip, source, null);
+                putEntry(zip, source, null, new HashSet<String>());
                 zip.close();
             } finally {
                 output.close();
@@ -270,16 +341,23 @@ public class FrameworkDeployer implements TestRule {
         return target;
     }
 
-    private void putEntry(ZipOutputStream zip, File source, String path) throws IOException {
+    private void putEntry(
+            ZipOutputStream zip,
+            File source, String path,
+            Set<String> saw) throws IOException {
         assert zip != null;
         assert source != null;
         assert !(source.isFile() && path == null);
         if (source.isDirectory()) {
             for (File child : source.listFiles()) {
                 String next = (path == null) ? child.getName() : path + '/' + child.getName();
-                putEntry(zip, child, next);
+                putEntry(zip, child, next, saw);
             }
         } else {
+            if (saw.contains(path)) {
+                return;
+            }
+            saw.add(path);
             zip.putNextEntry(new ZipEntry(path));
             InputStream in = new FileInputStream(source);
             try {
@@ -462,7 +540,15 @@ public class FrameworkDeployer implements TestRule {
      * @return the path, or {@code null} if not put
      */
     public File getCoreRuntimeLibrary() {
-        return runtimeLib;
+        return bootstrapJar;
+    }
+
+    /**
+     * Returns the paths to the runtime libraries (except the core library).
+     * @return the paths
+     */
+    public List<File> getRuntimeLibraries() {
+        return Collections.unmodifiableList(runtimeJars);
     }
 
     /**
