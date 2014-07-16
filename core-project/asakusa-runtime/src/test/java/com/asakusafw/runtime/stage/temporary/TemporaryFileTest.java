@@ -82,7 +82,7 @@ public class TemporaryFileTest {
      */
     @Test
     public void large() throws Exception {
-        doIo(100000000);
+        doIo(110000000);
     }
 
     /**
@@ -119,7 +119,7 @@ public class TemporaryFileTest {
     @Ignore
     @Test
     public void large_w_TemporaryStorage() throws Exception {
-        doIo_w_TemporaryStorage(100000000);
+        doIo_w_TemporaryStorage(110000000);
     }
 
     private void doIo(int count) throws IOException {
