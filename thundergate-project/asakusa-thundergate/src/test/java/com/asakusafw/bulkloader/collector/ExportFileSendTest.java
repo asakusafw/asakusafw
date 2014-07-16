@@ -17,8 +17,10 @@ package com.asakusafw.bulkloader.collector;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +29,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import test.modelgen.table.model.ImportTarget1;
 
@@ -45,6 +53,8 @@ import com.asakusafw.bulkloader.common.Constants;
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.testutil.UnitTestUtil;
 import com.asakusafw.bulkloader.transfer.FileList;
+import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
  * ExportFileSendのテストクラス
@@ -53,8 +63,15 @@ import com.asakusafw.bulkloader.transfer.FileList;
  *
  */
 public class ExportFileSendTest {
+
+    /**
+     * A temporary folder.
+     */
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     /** Importerで読み込むプロパティファイル */
-    private static List<String> propertys = Arrays.asList(new String[]{"bulkloader-conf-db.properties", "bulkloader-conf-hc.properties"});
+    private static List<String> properties = Arrays.asList(new String[]{"bulkloader-conf-db.properties", "bulkloader-conf-hc.properties"});
     /** ジョブフローID */
     private static String jobflowId = "JOB_FLOW01";
     /** ジョブフロー実行ID */
@@ -71,7 +88,7 @@ public class ExportFileSendTest {
     }
     @Before
     public void setUp() throws Exception {
-        BulkLoaderInitializer.initDBServer(jobflowId, executionId, propertys, "target1");
+        BulkLoaderInitializer.initDBServer(jobflowId, executionId, properties, "target1");
         UnitTestUtil.startUp();
     }
     @After
@@ -203,7 +220,7 @@ public class ExportFileSendTest {
      */
     @Test
     public void sendTest01() throws Exception {
-        File inFile = new File("src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq");
+        File inFile = prepareInput("src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq");
         File outFile = new File("target/asakusa-thundergate/READ_EXPORT_TARGET1-1.zip");
         Class<ImportTarget1> targetTableModel = ImportTarget1.class;
         String tableName = "EXP_TARGET1";
@@ -226,8 +243,8 @@ public class ExportFileSendTest {
 
         // ファイルを削除
         outFile.delete();
-
     }
+
     /**
      *
      * <p>
@@ -245,7 +262,7 @@ public class ExportFileSendTest {
     @Test
     public void sendTest02() throws Exception {
 //        File inFile = new File("src/test/data/collector/sendTest02/READ_EXPORT_TARGET1-2.seq");
-        File inFile = new File("src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq");
+        File inFile = prepareInput("src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq");
         File outFile = new File("target/asakusa-thundergate/READ_EXPORT_TARGET1-2.zip");
         Class<ImportTarget1> targetTableModel = ImportTarget1.class;
         String tableName = "EXP_TARGET1";
@@ -332,7 +349,7 @@ public class ExportFileSendTest {
      */
     @Test
     public void sendTest04() throws Exception {
-        File inFile = new File("src/test/data/collector/sendTest04/READ_EXPORT_TARGET1-4.seq");
+        File inFile = prepareInput("src/test/data/collector/sendTest04/READ_EXPORT_TARGET1-4.seq");
         File outFile = new File("target/asakusa-thundergate/READ_EXPORT_TARGET1-4.zip");
         Class<ImportTarget1> targetTableModel = ImportTarget1.class;
         String tableName = "EXP_TARGET1";
@@ -404,7 +421,7 @@ public class ExportFileSendTest {
      *
      * 正常系：ファイルの読み込みに成功するケース(ファイル名をワイルドカード指定)
     * 詳細の設定は以下の通り
-    * ・入力ファイル：src/test/data/collector/sendTest01/READ_*
+    * ・入力ファイル：src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq
     * ・出力ファイル：target/asakusa-thundergate/READ_EXPORT_TARGET1-1.tsv
      *
      * </p>
@@ -413,7 +430,8 @@ public class ExportFileSendTest {
      */
     @Test
     public void sendTest06() throws Exception {
-        File inFile = new File("src/test/data/collector/sendTest01/READ_*");
+        File inFile = prepareInput("src/test/data/collector/sendTest01/READ_EXPORT_TARGET1-1.seq");
+        inFile = new File(inFile.getParentFile(), inFile.getName() + "*");
         File outFile = new File("target/asakusa-thundergate/READ_EXPORT_TARGET1-1.zip");
         Class<ImportTarget1> targetTableModel = ImportTarget1.class;
         String tableName = "EXP_TARGET1";
@@ -436,7 +454,33 @@ public class ExportFileSendTest {
 
         // ファイルを削除
         outFile.delete();
+    }
 
+    @SuppressWarnings("unchecked")
+    private File prepareInput(String path) throws IOException {
+        File result = folder.newFile();
+        Path p = new Path(new File(path).toURI());
+        FileSystem fs = p.getFileSystem(new Configuration());
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs, p, fs.getConf());
+        try {
+            Writable buffer = (Writable) reader.getValueClass().newInstance();
+            ModelOutput<Writable> output = (ModelOutput<Writable>) TemporaryStorage.openOutput(
+                    fs.getConf(),
+                    reader.getValueClass(),
+                    new BufferedOutputStream(new FileOutputStream(result)));
+            try {
+                while (reader.next(NullWritable.get(), buffer)) {
+                    output.write(buffer);
+                }
+            } finally {
+                output.close();
+            }
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        } finally {
+            reader.close();
+        }
+        return result;
     }
 }
 
