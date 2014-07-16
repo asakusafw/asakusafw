@@ -15,6 +15,7 @@
 			<outputDirectory>/</outputDirectory>
 			<includes>
 				<include>com.asakusafw:asakusa-runtime</include>
+				<include>org.xerial.snappy:snappy-java</include>
 			</includes>
 			<unpack>true</unpack>
 			<unpackOptions>

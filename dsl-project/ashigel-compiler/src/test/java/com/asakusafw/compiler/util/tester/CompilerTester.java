@@ -415,6 +415,8 @@ public class CompilerTester implements TestRule {
 
         List<File> libjars = new ArrayList<File>();
         libjars.add(info.getPackageFile());
+        libjars.add(frameworkDeployer.getCoreRuntimeLibrary());
+        libjars.addAll(frameworkDeployer.getRuntimeLibraries());
         libjars.addAll(libraries);
 
         if (stages) {
@@ -580,7 +582,7 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、モデルオブジェクトの列をシーケンスファイルとして書き出す。
+     * 指定位置のファイルを開き、モデルオブジェクトの列をテンポラリファイルとして書き出す。
      * @param <T> モデルオブジェクトの種類
      * @param type モデルオブジェクトの種類
      * @param location 対象の位置
@@ -595,7 +597,7 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 対象のインポーターが書き出す先をシーケンスファイルとして書き出す。
+     * 対象のインポーターが書き出す先をテンポラリファイルとして書き出す。
      * @param <T> モデルオブジェクトの種類
      * @param type モデルオブジェクトの種類
      * @param importer 対象のインポーター
@@ -613,7 +615,7 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、シーケンスファイルをモデルオブジェクトの列として読みだす。
+     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
      * @param <T> モデルオブジェクトの種類
      * @param type モデルオブジェクトの種類
      * @param location 対象の位置
@@ -694,7 +696,7 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、シーケンスファイルをモデルオブジェクトの列として読みだす。
+     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
      * @param <T> モデルオブジェクトの種類
      * @param type モデルオブジェクトの種類
      * @param location 対象の位置
@@ -726,7 +728,7 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、シーケンスファイルをモデルオブジェクトの列として読みだす。
+     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
      * @param <T> モデルオブジェクトの種類
      * @param type モデルオブジェクトの種類
      * @param location 対象の位置

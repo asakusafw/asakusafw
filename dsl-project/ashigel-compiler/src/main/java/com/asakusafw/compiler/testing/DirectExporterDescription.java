@@ -33,7 +33,7 @@ public class DirectExporterDescription extends TemporaryOutputDescription {
     /**
      * インスタンスを生成する。
      * @param modelType エクスポートするモデルのデータ型
-     * @param pathPrefix エクスポート先のシーケンスファイルへの相対パス(接頭辞)、
+     * @param pathPrefix エクスポート先のファイルへの相対パス(接頭辞)、
      *     パスは必ず{@code -*}で終わる必要がある
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
