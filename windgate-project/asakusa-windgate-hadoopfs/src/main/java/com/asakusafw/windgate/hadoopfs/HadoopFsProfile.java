@@ -23,7 +23,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 /**
  * A structured profile for {@link HadoopFsMirror}.
  * @since 0.2.2
- * @version 0.4.0
+ * @version 0.7.0
  */
 public class HadoopFsProfile {
 
@@ -56,19 +55,30 @@ public class HadoopFsProfile {
 
     private final Path basePath;
 
-    private final CompressionCodec compressionCodec;
-
     /**
      * Creates a new instance.
      * @param resourceName the resource name
      * @param basePath the base path
      * @param compressionCodec the compression codec, or {@code null} if does not compress
      * @throws IllegalArgumentException if any parameter is {@code null}
+     * @deprecated Use {@link #HadoopFsProfile(String, Path)} instead
      */
+    @Deprecated
     public HadoopFsProfile(
             String resourceName,
             Path basePath,
             CompressionCodec compressionCodec) {
+        this(resourceName, basePath);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param resourceName the resource name
+     * @param basePath the base path
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     * @since 0.7.0
+     */
+    public HadoopFsProfile(String resourceName, Path basePath) {
         if (resourceName == null) {
             throw new IllegalArgumentException("resourceName must not be null"); //$NON-NLS-1$
         }
@@ -77,7 +87,6 @@ public class HadoopFsProfile {
         }
         this.resourceName = resourceName;
         this.basePath = basePath;
-        this.compressionCodec = compressionCodec;
     }
 
     /**
@@ -97,8 +106,8 @@ public class HadoopFsProfile {
         }
         String name = profile.getName();
         Path basePath = extractBasePath(configuration, profile);
-        CompressionCodec compressionCodec = extractCompressionCodec(configuration, profile);
-        return new HadoopFsProfile(name, basePath, compressionCodec);
+        extractCompressionCodec(configuration, profile);
+        return new HadoopFsProfile(name, basePath);
     }
 
     private static Path extractBasePath(Configuration configuration, ResourceProfile profile) throws IOException {
@@ -126,34 +135,16 @@ public class HadoopFsProfile {
         }
     }
 
-    private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
+    private static void extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
         assert configuration != null;
         assert profile != null;
-        String raw = extract(profile, KEY_COMPRESSION, false);
-        CompressionCodec compressionCodec;
-        try {
-            if (raw == null) {
-                compressionCodec = null;
-            } else {
-                Class<?> codecClass = configuration.getClassByName(raw);
-                compressionCodec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, configuration);
-            }
-        } catch (Exception e) {
-            WGLOG.error(e, "E00001",
+        String compressionCodecString = extract(profile, KEY_COMPRESSION, false);
+        if (compressionCodecString != null) {
+            WGLOG.warn("W00001",
                     profile.getName(),
                     KEY_COMPRESSION,
-                    raw);
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "The \"{1}\" must be a valid CompressionCodec class name: {2} (resource={0})",
-                    profile.getName(),
-                    KEY_COMPRESSION,
-                    raw), e);
+                    compressionCodecString);
         }
-        WGLOG.info("I00001",
-                profile.getName(),
-                KEY_COMPRESSION,
-                compressionCodec == null ? null : raw);
-        return compressionCodec;
     }
 
     private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
@@ -209,8 +200,10 @@ public class HadoopFsProfile {
     /**
      * Returns the compression codec of putting sequence files.
      * @return the compression codec, or {@code null} if does not compress
+     * @deprecated from {@code 0.7.0}, WindGate does not use sequence files
      */
+    @Deprecated
     public CompressionCodec getCompressionCodec() {
-        return compressionCodec;
+        return null;
     }
 }

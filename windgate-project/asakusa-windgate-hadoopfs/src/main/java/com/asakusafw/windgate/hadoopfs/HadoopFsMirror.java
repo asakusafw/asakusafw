@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,11 +164,10 @@ public class HadoopFsMirror extends ResourceMirror {
         ModelOutput<T> output = null;
         boolean succeeded = false;
         try {
-            CompressionCodec codec = profile.getCompressionCodec();
             if (RuntimeContext.get().isSimulation()) {
                 output = new VoidModelOutput<T>();
             } else {
-                output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path, codec);
+                output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path);
             }
             DrainDriver<T> result = new ModelOutputDrainDriver<T>(output);
             succeeded = true;

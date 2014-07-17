@@ -75,7 +75,7 @@ public class FileListModelInputProvider<T> implements ModelInputProvider<T> {
         InputStream content = fileList.openContent();
         boolean succeeded = false;
         try {
-            LOG.debug("Opening next sequence file: {}", status.getPath());
+            LOG.debug("Opening next temporary file: {}", status.getPath());
             ModelInput<T> input = TemporaryStorage.openInput(conf, dataModelClass, status, content);
             succeeded = true;
             return input;
@@ -88,7 +88,7 @@ public class FileListModelInputProvider<T> implements ModelInputProvider<T> {
 
     @Override
     public void close() throws IOException {
-        LOG.debug("Closing sequence file list");
+        LOG.debug("Closing temporary file list");
         fileList.close();
     }
 }

@@ -68,7 +68,6 @@ public class HadoopFsProfileTest {
         HadoopFsProfile profile = HadoopFsProfile.convert(hadoopConf, resourceProfile);
         assertThat(profile.getResourceName(), is("testing"));
         assertThat(profile.getBasePath().toUri().getScheme(), is("file"));
-        assertThat(profile.getCompressionCodec(), is(nullValue()));
     }
 
     /**
@@ -185,45 +184,6 @@ public class HadoopFsProfileTest {
 
         HadoopFsProfile profile = HadoopFsProfile.convert(hadoopConf, resourceProfile);
         assertThat(profile.getResourceName(), is("testing"));
-        assertThat(profile.getCompressionCodec(), instanceOf(DefaultCodec.class));
-    }
-
-    /**
-     * Converts a resource profile with compression codec.
-     * @throws Exception if failed
-     */
-    @Test
-    public void convert_compression_parameterize() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
-        conf.put(HadoopFsProfile.KEY_COMPRESSION, "${COMPRESSION}");
-
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("COMPRESSION", DefaultCodec.class.getName());
-        ResourceProfile resourceProfile = new ResourceProfile(
-                "testing",
-                HadoopFsProvider.class,
-                new ProfileContext(getClass().getClassLoader(), new ParameterList(parameters)),
-                conf);
-
-        HadoopFsProfile profile = HadoopFsProfile.convert(hadoopConf, resourceProfile);
-        assertThat(profile.getResourceName(), is("testing"));
-        assertThat(profile.getCompressionCodec(), instanceOf(DefaultCodec.class));
-    }
-
-    /**
-     * Attempts to convert a resource profile with invalid compression codec.
-     * @throws Exception if failed
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void convert_invalid_compression() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
-        conf.put(HadoopFsProfile.KEY_COMPRESSION, "INVALID");
-        ResourceProfile resourceProfile = new ResourceProfile(
-                "testing",
-                HadoopFsProvider.class,
-                new ProfileContext(getClass().getClassLoader(), new ParameterList()),
-                conf);
-
-        HadoopFsProfile.convert(hadoopConf, resourceProfile);
+        // may occur warn log
     }
 }

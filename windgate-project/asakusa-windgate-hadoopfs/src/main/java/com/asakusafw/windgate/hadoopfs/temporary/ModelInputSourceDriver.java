@@ -96,7 +96,7 @@ public class ModelInputSourceDriver<T> implements SourceDriver<T> {
 
     @Override
     public void close() throws IOException {
-        LOG.debug("Closing sequence file source");
+        LOG.debug("Closing temporary file source");
         sawNext = false;
         try {
             if (currentInput != null) {
