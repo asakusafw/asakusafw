@@ -50,6 +50,11 @@ public final class TemporaryFile {
      */
     public static final int PAGE_HEADER_EOF = -1;
 
+    /**
+     * The padding byte for empty entries.
+     */
+    public static final int EMPTY_ENTRY_PADDING = 0;
+
     private static final Charset ENCODING = Charset.forName("UTF-8");
 
     /**

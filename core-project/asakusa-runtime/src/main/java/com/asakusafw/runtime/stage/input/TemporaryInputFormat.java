@@ -17,11 +17,13 @@ package com.asakusafw.runtime.stage.input;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -61,8 +63,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
 
     @Override
     public List<InputSplit> getSplits(JobContext context) throws IOException, InterruptedException {
-        Path[] paths = FileInputFormat.getInputPaths(context);
-        return getSplits(context, paths);
+        return getSplits(context.getConfiguration(), getInputPaths(context));
     }
 
     /**
@@ -87,38 +88,45 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         for (StageInput input : inputList) {
             paths.add(new Path(input.getPathString()));
         }
-        return getSplits(context, paths.toArray(new Path[paths.size()]));
+        return getSplits(context.getConfiguration(), paths);
     }
 
-    private List<InputSplit> getSplits(JobContext context, Path[] paths) throws IOException {
-        long splitSize = context.getConfiguration().getLong(KEY_DEFAULT_SPLIT_SIZE, DEFAULT_SPLIT_SIZE);
-        if (splitSize > 0) {
-            long remain = splitSize % TemporaryFile.BLOCK_SIZE;
-            splitSize += TemporaryFile.BLOCK_SIZE - remain;
-        }
+    private List<InputSplit> getSplits(Configuration configuration, List<Path> paths) throws IOException {
+        long splitSize = configuration.getLong(KEY_DEFAULT_SPLIT_SIZE, DEFAULT_SPLIT_SIZE);
         List<InputSplit> results = new ArrayList<InputSplit>();
         for (Path path : paths) {
-            FileSystem fs = path.getFileSystem(context.getConfiguration());
+            FileSystem fs = path.getFileSystem(configuration);
             FileStatus[] statuses = fs.globStatus(path);
             if (statuses == null) {
                 continue;
             }
             for (FileStatus status : statuses) {
-                results.addAll(extractSplits(fs, status, splitSize));
+                BlockMap blockMap = BlockMap.create(
+                        status.getPath().toString(),
+                        status.getLen(),
+                        BlockMap.computeBlocks(fs, status),
+                        false);
+                results.addAll(computeSplits(status.getPath(), blockMap, splitSize));
             }
         }
         return results;
     }
 
-    private List<FileSplit> extractSplits(
-            FileSystem fs,
-            FileStatus status,
-            long splitSize) throws IOException {
-        BlockMap blockMap = BlockMap.create(
-                status.getPath().toString(),
-                status.getLen(),
-                BlockMap.computeBlocks(fs, status),
-                false);
+    /**
+     * Compute input splits for the target file.
+     * @param path the target file path
+     * @param blockMap the file block map
+     * @param splitSize the expected split size, or {@code <= 0} to prevent splits
+     * @return the computed input splits for the file
+     */
+    static List<FileSplit> computeSplits(Path path, BlockMap blockMap, long splitSize) {
+        long align = splitSize;
+        if (splitSize > 0) {
+            long remain = splitSize % TemporaryFile.BLOCK_SIZE;
+            if (remain != 0) {
+                align += TemporaryFile.BLOCK_SIZE - remain;
+            }
+        }
         long size = blockMap.getFileSize();
         long start = 0;
         List<FileSplit> results = new ArrayList<FileSplit>();
@@ -132,22 +140,19 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
             if (remain != 0) {
                 end = Math.min(size, end + (TemporaryFile.BLOCK_SIZE - remain));
             }
-            results.addAll(createSplits(status.getPath(), blockMap, start, end, splitSize));
+            results.addAll(createSplits(path, blockMap, start, end, align));
             start = end;
         }
         return results;
     }
 
-    private List<FileSplit> createSplits(Path path, BlockMap blockMap, long start, long end, long splitSize) {
+    private static List<FileSplit> createSplits(
+            Path path, BlockMap blockMap, long start, long end, long splitSize) {
         if (start >= end) {
             return Collections.emptyList();
         }
         if (splitSize <= 0) {
-            DirectInputFragment f = blockMap.get(start, end);
-            List<String> owners = f.getOwnerNodeNames();
-            FileSplit split = new FileSplit(
-                    path, start, end,
-                    owners.toArray(new String[owners.size()]));
+            FileSplit split = getSplit(blockMap, path, start, end);
             return Collections.singletonList(split);
         }
         long threashold = (long) (splitSize * 1.2);
@@ -160,15 +165,20 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
             } else {
                 next = current + splitSize;
             }
-            DirectInputFragment f = blockMap.get(start, next);
-            List<String> owners = f.getOwnerNodeNames();
-            FileSplit split = new FileSplit(
-                    path, start, end,
-                    owners.toArray(new String[owners.size()]));
+            FileSplit split = getSplit(blockMap, path, current, next);
             results.add(split);
             current = next;
         }
         return results;
+    }
+
+    private static FileSplit getSplit(BlockMap blockMap, Path path, long start, long end) {
+        DirectInputFragment f = blockMap.get(start, end);
+        List<String> owners = f.getOwnerNodeNames();
+        FileSplit split = new FileSplit(
+                path, start, end - start,
+                owners.toArray(new String[owners.size()]));
+        return split;
     }
 
     /**
@@ -188,7 +198,25 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         FileInputFormat.setInputPaths(job, paths.toArray(new Path[paths.size()]));
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Returns input paths.
+     * @param context current job
+     * @return the input paths, or an empty list if they are not set
+     * @throws IOException if failed to resolve paths
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    public static List<Path> getInputPaths(JobContext context) throws IOException {
+        if (context == null) {
+            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
+        }
+        Path[] paths = FileInputFormat.getInputPaths(context);
+        if (paths == null || paths.length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(paths);
+    }
+
     @Override
     public RecordReader<NullWritable, T> createRecordReader(
             InputSplit split,
@@ -196,6 +224,15 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         FileSplit s = (FileSplit) split;
         assert s.getStart() % TemporaryFile.BLOCK_SIZE == 0;
         assert s.getStart() > 0 || s.getLength() > 0;
+        return createRecordReader();
+    }
+
+    /**
+     * Create a record reader for this input format.
+     * @return the record reader
+     */
+    @SuppressWarnings("unchecked")
+    static <T> RecordReader<NullWritable, T> createRecordReader() {
         return (RecordReader<NullWritable, T>) new Reader<Writable>();
     }
 
@@ -223,6 +260,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
             boolean succeed = false;
             try {
                 if (s.getStart() != 0) {
+                    assert s.getStart() % TemporaryFile.BLOCK_SIZE == 0;
                     stream.seek(s.getStart());
                 }
                 this.input = (TemporaryFileInput<T>) new TemporaryFileInput<Writable>(stream, blocks);
@@ -239,8 +277,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         }
 
         private int computeBlocks(FileSplit s) {
-            long length = s.getLength();
-            length += TemporaryFile.BLOCK_SIZE - 1;
+            long length = s.getLength() + TemporaryFile.BLOCK_SIZE - 1;
             return (int) (length / TemporaryFile.BLOCK_SIZE);
         }
 
