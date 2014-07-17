@@ -87,7 +87,16 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
         if (prepareBuffer() == false) {
             return false;
         }
+        int before = buffer.getPosition();
         model.readFields(buffer);
+        int position = buffer.getPosition();
+        if (position - before == 0) {
+            // read 0-bytes entry
+            int c = buffer.read();
+            if (c != TemporaryFile.EMPTY_ENTRY_PADDING) {
+                throw new IOException("Invalid empty entry padding");
+            }
+        }
         return true;
     }
 
@@ -114,6 +123,7 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
                 sawEof = true;
                 return false;
             }
+            positionInBlock += headSize;
             int size = TemporaryFile.readString(input, buf);
             if (size < 0) {
                 sawEof = true;
@@ -123,11 +133,11 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
             this.dataTypeName = buf.toString();
         }
         int value = TemporaryFile.readPageHeader(input);
-        positionInBlock += TemporaryFile.PAGE_HEADER_SIZE;
         if (value == TemporaryFile.PAGE_HEADER_EOF) {
             sawEof = true;
             return false;
         }
+        positionInBlock += TemporaryFile.PAGE_HEADER_SIZE;
         if (value == TemporaryFile.PAGE_HEADER_EOB) {
             if (blockRest == 0) {
                 return false;
