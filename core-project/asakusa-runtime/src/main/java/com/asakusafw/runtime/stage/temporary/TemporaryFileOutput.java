@@ -64,8 +64,14 @@ public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
 
     @Override
     public void write(T model) throws IOException {
+        int before = buffer.getLength();
         model.write(buffer);
-        if (buffer.getLength() >= pageBreakThreashold) {
+        int length = buffer.getLength();
+        if (length - before == 0) {
+            // 0-bytes entry
+            buffer.write(TemporaryFile.EMPTY_ENTRY_PADDING);
+        }
+        if (length >= pageBreakThreashold) {
             flush();
         }
     }
@@ -90,11 +96,11 @@ public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
         }
         byte[] buf = TemporaryFile.getInstantBuffer(Snappy.maxCompressedLength(length));
         int compressed = Snappy.compress(buffer.getData(), 0, length, buf, 0);
-        flush(buf, compressed);
+        writeContentPage(buf, compressed);
         buffer.reset();
     }
 
-    private void flush(byte[] contents, int length) throws IOException {
+    private void writeContentPage(byte[] contents, int length) throws IOException {
         if (TemporaryFile.canWritePage(positionInBlock, length) == false) {
             if (TemporaryFile.canWritePage(0, length) == false) {
                 throw new IOException(MessageFormat.format(
