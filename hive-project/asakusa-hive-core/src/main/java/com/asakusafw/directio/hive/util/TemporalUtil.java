@@ -118,75 +118,6 @@ public final class TemporalUtil {
     }
 
     /**
-     * Returns a string representation of {@link Date}.
-     * @param elapsedDays the elapsed days from 0001/01/01
-     * @return string representation
-     */
-    public static String toDateString(int elapsedDays) {
-        StringBuilder buf = STRING_BUILDER_CACHE.get();
-        buf.setLength(0);
-        appendDateString(buf, elapsedDays);
-        return buf.toString();
-    }
-
-    /**
-     * Returns a string representation of {@link DateTime}.
-     * @param elapsedSeconds the elapsed seconds from 0001/01/01 00:00:00
-     * @return string representation
-     */
-    public static String toTimestampString(long elapsedSeconds) {
-        StringBuilder buf = STRING_BUILDER_CACHE.get();
-        buf.setLength(0);
-        appendDateString(buf, DateUtil.getDayFromSeconds(elapsedSeconds));
-        buf.append(DATE_TIME_SEPARATOR);
-        appendTimeString(buf, DateUtil.getSecondOfDay(elapsedSeconds));
-        return buf.toString();
-    }
-
-    private static void appendDateString(StringBuilder buf, int days) {
-        int year = DateUtil.getYearFromDay(days);
-        boolean leap = DateUtil.isLeap(year);
-        int dayInYear = days - DateUtil.getDayFromYear(year);
-        int month = DateUtil.getMonthOfYear(dayInYear, leap);
-        int day = DateUtil.getDayOfMonth(dayInYear, DateUtil.isLeap(year));
-
-        fill(buf, 4, year);
-        buf.append(DATE_SEGMENT_SEPARATOR);
-        fill(buf, 2, month);
-        buf.append(DATE_SEGMENT_SEPARATOR);
-        fill(buf, 2, day);
-    }
-
-    private static void appendTimeString(StringBuilder buf, int seconds) {
-        int hour = seconds / (60 * 60);
-        int minute = seconds / 60 % 60;
-        int second = seconds % 60;
-        fill(buf, 2, hour);
-        buf.append(TIME_SEGMENT_SEPARATOR);
-        fill(buf, 2, minute);
-        buf.append(TIME_SEGMENT_SEPARATOR);
-        fill(buf, 2, second);
-    }
-
-    private static void fill(StringBuilder buf, int columns, int value) {
-        int required = countColumns(value);
-        for (int i = required; i < columns; i++) {
-            buf.append('0');
-        }
-        buf.append(value);
-    }
-
-    private static int countColumns(int value) {
-        if (value == 0) {
-            return 1;
-        } else if (value < 0) {
-            return 1 + countColumns(-value);
-        }
-        double log = Math.log10(value);
-        return (int) Math.floor(log) + 1;
-    }
-
-    /**
      * Parses a {@code timestamp} value.
      * @param value the timestamp value
      * @return the seconds for {@link DateTime} object
@@ -238,6 +169,32 @@ public final class TemporalUtil {
         return result;
     }
 
+    /**
+     * Returns a string representation of {@link Date}.
+     * @param elapsedDays the elapsed days from 0001/01/01
+     * @return string representation
+     */
+    public static String toDateString(int elapsedDays) {
+        StringBuilder buf = STRING_BUILDER_CACHE.get();
+        buf.setLength(0);
+        DateUtil.toDateString(elapsedDays, DATE_SEGMENT_SEPARATOR, buf);
+        return buf.toString();
+    }
+
+    /**
+     * Returns a string representation of {@link DateTime}.
+     * @param elapsedSeconds the elapsed seconds from 0001/01/01 00:00:00
+     * @return string representation
+     */
+    public static String toTimestampString(long elapsedSeconds) {
+        StringBuilder buf = STRING_BUILDER_CACHE.get();
+        buf.setLength(0);
+        DateUtil.toDateTimeString(
+                elapsedSeconds,
+                DATE_SEGMENT_SEPARATOR, DATE_TIME_SEPARATOR, TIME_SEGMENT_SEPARATOR,
+                buf);
+        return buf.toString();
+    }
 
     private TemporalUtil() {
         return;

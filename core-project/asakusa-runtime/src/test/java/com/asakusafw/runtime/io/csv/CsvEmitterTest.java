@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import com.asakusafw.runtime.io.util.VoidOutputStream;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
@@ -67,28 +68,16 @@ public class CsvEmitterTest {
     private String dateTimeFormat = CsvConfiguration.DEFAULT_DATE_TIME_FORMAT;
 
     private CsvEmitter createEmitter() {
-        CsvConfiguration conf = new CsvConfiguration(
-                CsvConfiguration.DEFAULT_CHARSET,
-                headers,
-                trueFormat,
-                falseFormat,
-                dateFormat,
-                dateTimeFormat);
+        CsvConfiguration conf = createConfiguration();
         return new CsvEmitter(output, testName.getMethodName(), conf);
     }
 
     private CsvParser createParser() {
-        CsvConfiguration conf = new CsvConfiguration(
-                CsvConfiguration.DEFAULT_CHARSET,
-                headers,
-                trueFormat,
-                falseFormat,
-                dateFormat,
-                dateTimeFormat);
+        CsvConfiguration conf = createConfiguration();
         return new CsvParser(new ByteArrayInputStream(output.toByteArray()), testName.getMethodName(), conf);
     }
 
-    private void assertRestorable(ValueOption<?> option) {
+    private CsvConfiguration createConfiguration() {
         CsvConfiguration conf = new CsvConfiguration(
                 CsvConfiguration.DEFAULT_CHARSET,
                 headers,
@@ -96,6 +85,11 @@ public class CsvEmitterTest {
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
+        return conf;
+    }
+
+    private void assertRestorable(ValueOption<?> option) {
+        CsvConfiguration conf = createConfiguration();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         CsvEmitter emitter = new CsvEmitter(buffer, testName.getMethodName(), conf);
         try {
@@ -537,5 +531,43 @@ public class CsvEmitterTest {
 
         assertThat(parser.next(), is(false));
         parser.close();
+    }
+
+    /**
+     * Simple stress test for {@link Date} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_date() throws Exception {
+        int count = 5000000;
+        CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration());
+        try {
+            DateOption value = new DateOption(new Date(1999, 12, 31));
+            for (int i = 0; i < count; i++) {
+                emitter.emit(value);
+                emitter.endRecord();
+            }
+        } finally {
+            emitter.close();
+        }
+    }
+
+    /**
+     * Simple stress test for {@link DateTime} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_datetime() throws Exception {
+        int count = 5000000;
+        CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration());
+        try {
+            DateTimeOption value = new DateTimeOption(new DateTime(1999, 12, 31, 1, 23, 45));
+            for (int i = 0; i < count; i++) {
+                emitter.emit(value);
+                emitter.endRecord();
+            }
+        } finally {
+            emitter.close();
+        }
     }
 }

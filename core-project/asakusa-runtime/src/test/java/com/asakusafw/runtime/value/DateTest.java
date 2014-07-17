@@ -121,6 +121,17 @@ public class DateTest {
     }
 
     /**
+     * parses standard date string.
+     */
+    @Test
+    public void parse_standard() {
+        Date date = Date.valueOf("1234-01-02", Date.Format.STANDARD);
+        assertThat(date.getYear(), is(1234));
+        assertThat(date.getMonth(), is(1));
+        assertThat(date.getDay(), is(2));
+    }
+
+    /**
      * 最初の日付の文字列解析。
      */
     @Test
