@@ -19,7 +19,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A pattern describes file location.
@@ -87,6 +89,7 @@ character:
  * </tr>
  * </table>
  * @since 0.2.5
+ * @version 0.7.0
  */
 public class FilePattern implements ResourcePattern {
 
@@ -147,15 +150,37 @@ public class FilePattern implements ResourcePattern {
     }
 
     /**
+     * Returns the pattern element kinds appeared in this pattern.
+     * @return the pattern element kinds
+     * @since 0.7.0
+     */
+    public Set<PatternElementKind> getPatternElementKinds() {
+        Set<PatternElementKind> results = EnumSet.noneOf(PatternElementKind.class);
+        for (Segment segment : segments) {
+            for (PatternElement element : segment.getElements()) {
+                results.add(element.getKind());
+            }
+        }
+        return results;
+    }
+
+    /**
      * Returns whether this pattern contains variables (${var}).
      * @return {@code true} if contains
      */
     public boolean containsVariables() {
+        return getPatternElementKinds().contains(PatternElementKind.VARIABLE);
+    }
+
+    /**
+     * Returns whether this pattern contains traverse ({@code **}).
+     * @return {@code true} if contains
+     * @since 0.7.0
+     */
+    public boolean containsTraverse() {
         for (Segment segment : segments) {
-            for (PatternElement element : segment.getElements()) {
-                if (element.getKind() == PatternElementKind.VARIABLE) {
-                    return true;
-                }
+            if (segment.isTraverse()) {
+                return true;
             }
         }
         return false;
@@ -458,24 +483,40 @@ public class FilePattern implements ResourcePattern {
         /**
          * Normal token.
          */
-        TOKEN,
+        TOKEN("a"),
 
         /**
          * Variable.
          * If element is this kind, the element must be type of {@link Variable}.
          */
-        VARIABLE,
+        VARIABLE("${...}"),
 
         /**
          * Selection.
          * If element is this kind, the element must be type of {@link Selection}.
          */
-        SELECTION,
+        SELECTION("{...|...}"),
 
         /**
          * Any string.
          */
-        WILDCARD,
+        WILDCARD("*"),
+        ;
+
+        private final String symbol;
+
+        private PatternElementKind(String symbol) {
+            this.symbol = symbol;
+        }
+
+        /**
+         * Returns a general symbol of this element kind.
+         * @return the symbol
+         * @since 0.7.0
+         */
+        public String getSymbol() {
+            return symbol;
+        }
     }
 
     /**
