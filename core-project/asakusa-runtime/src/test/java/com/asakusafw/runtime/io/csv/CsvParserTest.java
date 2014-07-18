@@ -15,8 +15,9 @@
  */
 package com.asakusafw.runtime.io.csv;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -66,6 +67,14 @@ public class CsvParserTest {
     private String dateTimeFormat = CsvConfiguration.DEFAULT_DATE_TIME_FORMAT;
 
     private CsvParser create(String content) {
+        CsvConfiguration conf = createConfiguration();
+        return new CsvParser(
+                new ByteArrayInputStream(content.getBytes(conf.getCharset())),
+                testName.getMethodName(),
+                conf);
+    }
+
+    private CsvConfiguration createConfiguration() {
         CsvConfiguration conf = new CsvConfiguration(
                 CsvConfiguration.DEFAULT_CHARSET,
                 headers,
@@ -73,10 +82,7 @@ public class CsvParserTest {
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        return new CsvParser(
-                new ByteArrayInputStream(content.getBytes(conf.getCharset())),
-                testName.getMethodName(),
-                conf);
+        return conf;
     }
 
     /**
@@ -1304,13 +1310,7 @@ public class CsvParserTest {
                 return 'a';
             }
         };
-        CsvConfiguration conf = new CsvConfiguration(
-                CsvConfiguration.DEFAULT_CHARSET,
-                headers,
-                trueFormat,
-                falseFormat,
-                dateFormat,
-                dateTimeFormat);
+        CsvConfiguration conf = createConfiguration();
         CsvParser parser = new CsvParser(infinite, "testing", conf);
         try {
             assertThat(parser.next(), is(true));
@@ -1362,6 +1362,89 @@ public class CsvParserTest {
             assertThat(e.getStatus().getReason(), is(Reason.TOO_LONG_RECORD));
         }
         assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * Simple stress test for {@link Date} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_date() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("1999-12-31\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DateOption date = new DateOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DateOption(new Date(1999, 12, 31))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * Simple stress test for {@link DateTime} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_datetime() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("1999-12-31 01:23:45\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DateTimeOption date = new DateTimeOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DateTimeOption(new DateTime(1999, 12, 31, 1, 23, 45))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    private static class RCReader extends InputStream {
+
+        private final byte[] element;
+
+        private final int limit;
+
+        private int offset;
+
+        public RCReader(byte[] element, int count) {
+            this.element = element;
+            this.limit = element.length * count;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (offset >= limit) {
+                return -1;
+            }
+            return element[offset++ % element.length];
+        }
+
+        @Override
+        public void close() throws IOException {
+            return;
+        }
     }
 
     private void assertFill(CsvParser parser, String expect) throws CsvFormatException, IOException {

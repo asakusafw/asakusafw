@@ -227,6 +227,8 @@ public class DateTime implements Comparable<DateTime> {
 
     /**
      * 日付のフォーマット。
+     * @since 0.1.0
+     * @version 0.7.0
      */
     public enum Format {
 
@@ -257,6 +259,26 @@ public class DateTime implements Comparable<DateTime> {
                 return seconds;
             }
         },
+        /**
+         * {@code YYYY-MM-DD hh:mm:ss}の形式。
+         * @since 0.7.0
+         */
+        STANDARD {
+            @Override
+            public long parse(String timeString) {
+                if (timeString == null) {
+                    throw new IllegalArgumentException("dateString must not be null"); //$NON-NLS-1$
+                }
+                long value = DateUtil.parseDateTime(timeString, '-', ' ', ':');
+                if (value < 0) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "\"{0}\" is not form of \"{1}\"",
+                            timeString,
+                            "YYYY-MM-DD hh:mm:ss"));
+                }
+                return value;
+            }
+        }
         ;
 
         /**

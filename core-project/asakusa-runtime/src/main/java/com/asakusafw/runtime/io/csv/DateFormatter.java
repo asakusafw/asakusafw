@@ -19,17 +19,40 @@ import java.nio.CharBuffer;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asakusafw.runtime.value.DateUtil;
 
 /**
  * Date formatter.
  * @since 0.4.0
+ * @version 0.7.0
  */
 abstract class DateFormatter {
 
-    private static final DateFormatter[] BUILTIN = new DateFormatter[] {
-        new Direct(),
+    private static final Factory[] BUILTIN = new Factory[] {
+        new Factory() {
+            @Override
+            public DateFormatter of(String pattern) {
+                if (pattern.equals(Direct.PATTERN)) {
+                    return new Direct();
+                }
+                return null;
+            }
+        },
+        new Factory() {
+            @Override
+            public DateFormatter of(String pattern) {
+                return Standard.of(pattern);
+            }
+        },
+        new Factory() {
+            @Override
+            public DateFormatter of(String pattern) {
+                return new Default(new SimpleDateFormat(pattern));
+            }
+        },
     };
 
     abstract String getPattern();
@@ -39,12 +62,18 @@ abstract class DateFormatter {
     abstract CharSequence format(int elapsedDate);
 
     static DateFormatter newInstance(String pattern) {
-        for (DateFormatter f : BUILTIN) {
-            if (f.getPattern().equals(pattern)) {
-                return f;
+        for (Factory f : BUILTIN) {
+            DateFormatter formatter = f.of(pattern);
+            if (formatter != null) {
+                return formatter;
             }
         }
-        return new Default(new SimpleDateFormat(pattern));
+        throw new AssertionError(pattern);
+    }
+
+    private interface Factory {
+
+        DateFormatter of(String pattern);
     }
 
     private static final class Default extends DateFormatter {
@@ -84,7 +113,76 @@ abstract class DateFormatter {
         }
     }
 
+    private static final class Standard extends DateFormatter {
+
+        private static final Pattern META_PATTERN = Pattern.compile(
+                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd");
+
+        private final StringBuilder buffer = new StringBuilder(10);
+
+        private final DateFormatter next;
+
+        private final char separator;
+
+        public Standard(char separator) {
+            this.separator = separator;
+            this.next = new Default(new SimpleDateFormat(getPattern()));
+        }
+
+        static Standard of(String pattern) {
+            Matcher matcher = META_PATTERN.matcher(pattern);
+            if (matcher.matches()) {
+                char separator = extract(matcher, 1);
+                return new Standard(separator);
+            }
+            return null;
+        }
+
+        private static char extract(Matcher matcher, int group) {
+            String value = matcher.group(group);
+            if (value.length() == 1) {
+                return value.charAt(0);
+            }
+            if (value.length() == 3) {
+                if (value.charAt(0) != '\'' && value.charAt(2) != '\'') {
+                    throw new IllegalStateException();
+                }
+                return value.charAt(1);
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        String getPattern() {
+            buffer.setLength(0);
+            buffer.append("yyyy");
+            buffer.append(separator);
+            buffer.append("MM");
+            buffer.append(separator);
+            buffer.append("dd");
+            return buffer.toString();
+        }
+
+        @Override
+        int parse(CharSequence sequence) {
+            int value = DateUtil.parseDate(sequence, separator);
+            if (value >= 0) {
+                return value;
+            }
+            return next.parse(sequence);
+        }
+
+        @Override
+        CharSequence format(int elapsedDate) {
+            buffer.setLength(0);
+            DateUtil.toDateString(elapsedDate, separator, buffer);
+            return buffer;
+        }
+    }
+
     private static final class Direct extends DateFormatter {
+
+        private static final String PATTERN = "yyyyMMdd";
 
         private static final int POS_YEAR = 0;
 
@@ -102,7 +200,7 @@ abstract class DateFormatter {
 
         @Override
         String getPattern() {
-            return "yyyyMMdd";
+            return PATTERN;
         }
 
         @Override

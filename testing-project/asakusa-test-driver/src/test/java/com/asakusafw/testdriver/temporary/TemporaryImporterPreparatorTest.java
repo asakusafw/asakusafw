@@ -79,7 +79,7 @@ public class TemporaryImporterPreparatorTest {
     }
 
     /**
-     * sequence file.
+     * simple case.
      * @throws Exception if test was failed
      */
     @Test

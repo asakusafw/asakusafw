@@ -28,7 +28,7 @@ import com.asakusafw.runtime.io.ModelInput;
 public interface ModelInputProvider<T> extends Closeable {
 
     /**
-     * Returns true iff the next sequence file exists,
+     * Returns true iff the next temporary file exists,
      * and then the {@link #open()} method returns it.
      * @return {@code true} if the next data model object exists, otherwise {@code false}
      * @throws IOException if failed to prepare the next data
@@ -36,9 +36,9 @@ public interface ModelInputProvider<T> extends Closeable {
     boolean next() throws IOException;
 
     /**
-     * Opens the current sequence file prepared by the {@link #next()} method.
-     * This operation can perform only once for each sequence file.
-     * @return the current sequence file contents
+     * Opens the current temporary file prepared by the {@link #next()} method.
+     * This operation can perform only once for each temporary file.
+     * @return the current temporary file contents
      * @throws IOException if failed to open the file
      */
     ModelInput<T> open() throws IOException;

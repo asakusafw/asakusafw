@@ -433,6 +433,194 @@ public final class DateUtil {
 //        return seconds;
 //    }
 
+    private static final int COL_YEAR_BEGIN = 0;
+
+    private static final int COL_YEAR_END = COL_YEAR_BEGIN + 4;
+
+    private static final int COL_MONTH_BEGIN = COL_YEAR_END + 1;
+
+    private static final int COL_MONTH_END = COL_MONTH_BEGIN + 2;
+
+    private static final int COL_DAY_BEGIN = COL_MONTH_END + 1;
+
+    private static final int COL_DAY_END = COL_DAY_BEGIN + 2;
+
+    private static final int COL_HOUR_BEGIN = COL_DAY_END + 1;
+
+    private static final int COL_HOUR_END = COL_HOUR_BEGIN + 2;
+
+    private static final int COL_MINUTE_BEGIN = COL_HOUR_END + 1;
+
+    private static final int COL_MINUTE_END = COL_MINUTE_BEGIN + 2;
+
+    private static final int COL_SECOND_BEGIN = COL_MINUTE_END + 1;
+
+    private static final int COL_SECOND_END = COL_SECOND_BEGIN + 2;
+
+    /**
+     * Parses a {@code Date} value.
+     * @param value the date value
+     * @param dateSegmentSeparator the separator char between each date segment
+     * @return the days for {@link Date} object
+     * @since 0.7.0
+     */
+    public static int parseDate(
+            CharSequence value,
+            char dateSegmentSeparator) {
+        int length = value.length();
+        if (length == COL_DAY_END
+                && is(value, COL_YEAR_END, dateSegmentSeparator)
+                && is(value, COL_MONTH_END, dateSegmentSeparator)) {
+            int year = parse(value, COL_YEAR_BEGIN, COL_YEAR_END);
+            int month = parse(value, COL_MONTH_BEGIN, COL_MONTH_END);
+            int day = parse(value, COL_DAY_BEGIN, COL_DAY_END);
+            if (year > 0 && month > 0 && day > 0) {
+                return DateUtil.getDayFromDate(year, month, day);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Parses a {@code DateTime} value.
+     * @param value the date-time value
+     * @param dateSegmentSeparator the separator char between each date segment
+     * @param dateTimeSeparator the separator char between date and time
+     * @param timeSegmentSeparator the separator char between each time segment
+     * @return the seconds for {@link DateTime} object
+     * @since 0.7.0
+     */
+    public static long parseDateTime(
+            CharSequence value,
+            char dateSegmentSeparator,
+            char dateTimeSeparator,
+            char timeSegmentSeparator) {
+        int length = value.length();
+        if (length >= COL_SECOND_END
+                && is(value, COL_YEAR_END, dateSegmentSeparator)
+                && is(value, COL_MONTH_END, dateSegmentSeparator)
+                && is(value, COL_DAY_END, dateTimeSeparator)
+                && is(value, COL_HOUR_END, timeSegmentSeparator)
+                && is(value, COL_MINUTE_END, timeSegmentSeparator)) {
+            int year = parse(value, COL_YEAR_BEGIN, COL_YEAR_END);
+            int month = parse(value, COL_MONTH_BEGIN, COL_MONTH_END);
+            int day = parse(value, COL_DAY_BEGIN, COL_DAY_END);
+            int hour = parse(value, COL_HOUR_BEGIN, COL_HOUR_END);
+            int minute = parse(value, COL_MINUTE_BEGIN, COL_MINUTE_END);
+            int second = parse(value, COL_SECOND_BEGIN, COL_SECOND_END);
+            if (year > 0 && month > 0 && day > 0
+                    && hour > 0 && minute > 0 && second > 0) {
+                long result = DateUtil.getDayFromDate(year, month, day) * 86400L;
+                result += DateUtil.getSecondFromTime(hour, minute, second);
+                return result;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean is(CharSequence string, int column, char value) {
+        return string.charAt(column) == value;
+    }
+
+    private static int parse(CharSequence string, int begin, int end) {
+        int result = 0;
+        for (int i = begin; i < end; i++) {
+            char c = string.charAt(i);
+            if (c < '0' || '9' < c) {
+                return -1;
+            }
+            result = (result * 10) + (c - '0');
+        }
+        return result;
+    }
+
+
+    /**
+     * Appends a string representation of {@link Date}.
+     * @param elapsedDays the elapsed days from 0001/01/01
+     * @param dateSegmentSeparator the separator char between each date segment
+     * @param target the target buffer
+     * @since 0.7.0
+     */
+    public static void toDateString(
+            int elapsedDays,
+            char dateSegmentSeparator,
+            StringBuilder target) {
+        appendDateString(target, elapsedDays, dateSegmentSeparator);
+    }
+
+    /**
+     * Appends a string representation of {@link DateTime}.
+     * @param elapsedSeconds the elapsed seconds from 0001/01/01 00:00:00
+     * @param dateSegmentSeparator the separator char between each date segment
+     * @param dateTimeSeparator the separator char between date and time
+     * @param timeSegmentSeparator the separator char between each time segment
+     * @param target the target buffer
+     * @since 0.7.0
+     */
+    public static void toDateTimeString(
+            long elapsedSeconds,
+            char dateSegmentSeparator,
+            char dateTimeSeparator,
+            char timeSegmentSeparator,
+            StringBuilder target) {
+        appendDateString(target, DateUtil.getDayFromSeconds(elapsedSeconds), dateSegmentSeparator);
+        target.append(dateTimeSeparator);
+        appendTimeString(target, DateUtil.getSecondOfDay(elapsedSeconds), timeSegmentSeparator);
+    }
+
+    private static void appendDateString(StringBuilder buf, int days, char separator) {
+        int year = DateUtil.getYearFromDay(days);
+        boolean leap = DateUtil.isLeap(year);
+        int dayInYear = days - DateUtil.getDayFromYear(year);
+        int month = DateUtil.getMonthOfYear(dayInYear, leap);
+        int day = DateUtil.getDayOfMonth(dayInYear, DateUtil.isLeap(year));
+
+        fill(buf, 4, year);
+        buf.append(separator);
+        fill(buf, 2, month);
+        buf.append(separator);
+        fill(buf, 2, day);
+    }
+
+    private static void appendTimeString(StringBuilder buf, int seconds, char separator) {
+        int hour = seconds / (60 * 60);
+        int minute = seconds / 60 % 60;
+        int second = seconds % 60;
+        fill(buf, 2, hour);
+        buf.append(separator);
+        fill(buf, 2, minute);
+        buf.append(separator);
+        fill(buf, 2, second);
+    }
+
+    private static void fill(StringBuilder buf, int columns, int value) {
+        if (value < 0) {
+            buf.append('-');
+            if (value == Integer.MIN_VALUE) {
+                fill(buf, columns - 2, -(value / 10));
+                buf.append('8');
+            } else {
+                fill(buf, columns - 1, -value);
+            }
+        } else {
+            int required = countColumns(value);
+            for (int i = required; i < columns; i++) {
+                buf.append('0');
+            }
+            buf.append(value);
+        }
+    }
+
+    private static int countColumns(int value) {
+        assert value >= 0;
+        if (value == 0) {
+            return 1;
+        }
+        double log = Math.log10(value);
+        return (int) Math.floor(log) + 1;
+    }
+
     private DateUtil() {
         throw new AssertionError();
     }

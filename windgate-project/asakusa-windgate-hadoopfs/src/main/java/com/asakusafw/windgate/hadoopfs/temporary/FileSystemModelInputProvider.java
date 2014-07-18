@@ -182,7 +182,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
     @Override
     public ModelInput<T> open() throws IOException {
         if (current == null) {
-            throw new IOException("Current sequence file is not prepared");
+            throw new IOException("Current temporary file is not prepared");
         }
         ModelInput<T> result = current.input;
         current = null;

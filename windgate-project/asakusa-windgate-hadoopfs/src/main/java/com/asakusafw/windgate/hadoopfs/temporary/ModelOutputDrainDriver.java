@@ -58,7 +58,7 @@ public class ModelOutputDrainDriver<T> implements DrainDriver<T> {
 
     @Override
     public void close() throws IOException {
-        LOG.debug("Closing sequence file drain");
+        LOG.debug("Closing temporary file drain");
         output.close();
     }
 }

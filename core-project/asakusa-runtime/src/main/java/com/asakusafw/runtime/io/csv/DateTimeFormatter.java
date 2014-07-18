@@ -19,17 +19,40 @@ import java.nio.CharBuffer;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asakusafw.runtime.value.DateUtil;
 
 /**
  * DateTime formatter.
  * @since 0.4.0
+ * @version 0.7.0
  */
 abstract class DateTimeFormatter {
 
-    private static final DateTimeFormatter[] BUILTIN = new DateTimeFormatter[] {
-        new Direct(),
+    private static final Factory[] BUILTIN = new Factory[] {
+        new Factory() {
+            @Override
+            public DateTimeFormatter of(String pattern) {
+                if (pattern.equals(Direct.PATTERN)) {
+                    return new Direct();
+                }
+                return null;
+            }
+        },
+        new Factory() {
+            @Override
+            public DateTimeFormatter of(String pattern) {
+                return Standard.of(pattern);
+            }
+        },
+        new Factory() {
+            @Override
+            public DateTimeFormatter of(String pattern) {
+                return new Default(new SimpleDateFormat(pattern));
+            }
+        },
     };
 
     abstract String getPattern();
@@ -39,12 +62,18 @@ abstract class DateTimeFormatter {
     abstract CharSequence format(long elapsedSeconds);
 
     static DateTimeFormatter newInstance(String pattern) {
-        for (DateTimeFormatter f : BUILTIN) {
-            if (f.getPattern().equals(pattern)) {
-                return f;
+        for (Factory f : BUILTIN) {
+            DateTimeFormatter formatter = f.of(pattern);
+            if (formatter != null) {
+                return formatter;
             }
         }
-        return new Default(new SimpleDateFormat(pattern));
+        throw new AssertionError(pattern);
+    }
+
+    private interface Factory {
+
+        DateTimeFormatter of(String pattern);
     }
 
     private static final class Default extends DateTimeFormatter {
@@ -84,7 +113,94 @@ abstract class DateTimeFormatter {
         }
     }
 
+    private static final class Standard extends DateTimeFormatter {
+
+        private static final Pattern META_PATTERN = Pattern.compile(
+                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd"
+                + "([ \\-\\._]|'[a-zA-Z \\-\\._]')"
+                + "HH([ \\-\\.:_]|'[a-zA-Z \\-\\.:_]')mm\\3ss");
+
+        private final StringBuilder buffer = new StringBuilder(10);
+
+        private final DateTimeFormatter next;
+
+        private final char dateSegmentSeparator;
+
+        private final char dateTimeSeparator;
+
+        private final char timeSegmentSeparator;
+
+        public Standard(char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
+            this.dateSegmentSeparator = dateSegmentSeparator;
+            this.dateTimeSeparator = dateTimeSeparator;
+            this.timeSegmentSeparator = timeSegmentSeparator;
+            this.next = new Default(new SimpleDateFormat(getPattern()));
+        }
+
+        static Standard of(String pattern) {
+            Matcher matcher = META_PATTERN.matcher(pattern);
+            if (matcher.matches()) {
+                char dateSegment = extract(matcher, 1);
+                char dateTime = extract(matcher, 2);
+                char timeSegment = extract(matcher, 3);
+                return new Standard(dateSegment, dateTime, timeSegment);
+            }
+            return null;
+        }
+
+        private static char extract(Matcher matcher, int group) {
+            String value = matcher.group(group);
+            if (value.length() == 1) {
+                return value.charAt(0);
+            }
+            if (value.length() == 3) {
+                if (value.charAt(0) != '\'' && value.charAt(2) != '\'') {
+                    throw new IllegalStateException();
+                }
+                return value.charAt(1);
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        String getPattern() {
+            buffer.setLength(0);
+            buffer.append("yyyy");
+            buffer.append(dateSegmentSeparator);
+            buffer.append("MM");
+            buffer.append(dateSegmentSeparator);
+            buffer.append("dd");
+            buffer.append(dateTimeSeparator);
+            buffer.append("HH");
+            buffer.append(timeSegmentSeparator);
+            buffer.append("mm");
+            buffer.append(timeSegmentSeparator);
+            buffer.append("ss");
+            return buffer.toString();
+        }
+
+        @Override
+        long parse(CharSequence sequence) {
+            long value = DateUtil.parseDateTime(
+                    sequence, dateSegmentSeparator, dateTimeSeparator, timeSegmentSeparator);
+            if (value >= 0) {
+                return value;
+            }
+            return next.parse(sequence);
+        }
+
+        @Override
+        CharSequence format(long elapsedSeconds) {
+            buffer.setLength(0);
+            DateUtil.toDateTimeString(
+                    elapsedSeconds, dateSegmentSeparator, dateTimeSeparator, timeSegmentSeparator, buffer);
+            return buffer;
+        }
+    }
+
     private static final class Direct extends DateTimeFormatter {
+
+        static final String PATTERN = "yyyyMMddHHmmss";
 
         private static final int POS_YEAR = 0;
 
@@ -108,7 +224,7 @@ abstract class DateTimeFormatter {
 
         @Override
         String getPattern() {
-            return "yyyyMMddHHmmss";
+            return PATTERN;
         }
 
         @Override
