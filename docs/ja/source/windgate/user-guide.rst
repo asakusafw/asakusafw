@@ -201,14 +201,9 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
       - :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider`
     * - ``resource.hadoop.basePath``
       - 転送先のベースパス (省略可)
-    * - ``resource.hadoop.compression``
-      - 転送時に利用する圧縮コーデッククラス名 (省略可)
 
 ``resource.hadoop.basePath`` は転送先のベースパスで、省略時はHadoopのデフォルト設定を利用します。
 URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシステム上のパスを指定できます。
-
-``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
-この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
 
 上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
@@ -219,7 +214,9 @@ URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシ�
     通常の利用方法では、 ``resource.hadoop.basePath`` を設定する必要はありません。
     既定値以外のファイルシステムを利用する場合などに利用することを想定しています。
 
-..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+..  attention::
+    Asakusa Framework ``0.7.0`` より、設定 ``resource.hadoop.compression`` は利用できなくなりました。
+    転送時の圧縮はフレームワークが規定する内部の形式を利用するようになります。
 
 Hadoopを利用する際の環境変数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -251,8 +248,6 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
       - ローカルの秘密鍵の位置
     * - ``resource.hadoop.passPhrase``
       - 秘密鍵のパスフレーズ
-    * - ``resource.hadoop.compression``
-      - 転送時に利用する圧縮コーデッククラス名 (省略可)
     * - ``resource.hadoop.env.ASAKUSA_HOME``
       - ログイン先の Asakusa Framework のインストール先
     * - ``resource.hadoop.env.<name>``
@@ -260,19 +255,20 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 
 上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
-`同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
-この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
-
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` 、
 および ``windgate/lib`` ディレクトリに JSch [#]_ の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
 
-リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です (SequenceFileの設定などを利用します)。
+リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です。
 必要な環境変数については `Hadoopを利用する際の環境変数`_ を参照してください。
 
 ..  attention::
     Asakusa Framework ``0.2.x`` 以前の設定項目 ``resource.hadoop.target`` はバージョン ``0.4.0`` より非推奨になりました。
     代わりに ``resource.hadoop.env.ASAKUSA_HOME`` にログイン先の Asakusa Framework のインストール先を指定してください。
+
+..  attention::
+    Asakusa Framework ``0.7.0`` より、設定 ``resource.hadoop.compression`` は利用できなくなりました。
+    転送時の圧縮はフレームワークが規定する内部の形式を利用するようになります。
 
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 

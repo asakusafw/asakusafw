@@ -483,7 +483,7 @@ public class HadoopFsMirrorTest {
     }
 
     private HadoopFsProfile profile() {
-        return new HadoopFsProfile("target", working, null);
+        return new HadoopFsProfile("target", working);
     }
 
     private GateScript script(ProcessScript<?>... processes) {

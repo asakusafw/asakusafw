@@ -43,6 +43,7 @@ import com.asakusafw.compiler.flow.mapreduce.copy.CopyDescription;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
 import com.asakusafw.runtime.stage.input.BridgeInputFormat;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
@@ -66,6 +67,9 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(DirectFileIoProcessor.class);
+
+    private static final Set<PatternElementKind> INVALID_BASE_PATH_KIND =
+            EnumSet.of(PatternElementKind.WILDCARD, PatternElementKind.SELECTION);
 
     private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern";
 
@@ -114,6 +118,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean validateInput(InputDescription input) {
         boolean valid = true;
         DirectFileInputDescription desc = extract(input);
+        valid &= checkBasePath(desc.getClass(), desc.getBasePath(), "入力ベースパス");
         String pattern = desc.getResourcePattern();
         try {
             FilePattern.compile(pattern);
@@ -131,6 +136,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean validateOutput(OutputDescription output) {
         boolean valid = true;
         DirectFileOutputDescription desc = extract(output);
+        valid &= checkBasePath(desc.getClass(), desc.getBasePath(), "出力ベースパス");
         DataClass dataType = getEnvironment().getDataClasses().load(desc.getModelType());
         String pattern = desc.getResourcePattern();
         List<CompiledResourcePattern> compiledPattern;
@@ -201,6 +207,39 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         }
 
         valid &= validateFormat(desc.getClass(), desc.getModelType(), desc.getFormat());
+        return valid;
+    }
+
+    private boolean checkBasePath(Class<?> theClass, String basePath, String name) {
+        boolean valid = true;
+        try {
+            FilePattern pattern = FilePattern.compile(basePath);
+            if (pattern.containsTraverse()) {
+                getEnvironment().error(
+                        "{0}にワイルドカード (**) を利用できません: {1}",
+                        name,
+                        theClass.getName());
+                valid = false;
+            }
+            Set<PatternElementKind> kinds = pattern.getPatternElementKinds();
+            for (PatternElementKind kind : kinds) {
+                if (INVALID_BASE_PATH_KIND.contains(kind)) {
+                    getEnvironment().error(
+                            "{0}に \"{1}\" を利用できません: {2}",
+                            name,
+                            kind.getSymbol(),
+                            theClass.getName());
+                    valid = false;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            getEnvironment().error(
+                    "{0}が不正です ({2}): {1}",
+                    name,
+                    e.getMessage(),
+                    theClass.getName());
+            valid = false;
+        }
         return valid;
     }
 

@@ -29,7 +29,6 @@ import org.junit.Test;
  */
 public class DateTimeTest {
 
-
     /**
      * 西暦1583-1600の範囲で、日付からyear, month, day, hour, minute, secondを正しく計算できるか確認。
      */
@@ -116,6 +115,20 @@ public class DateTimeTest {
     @Test
     public void parse() {
         DateTime time = DateTime.valueOf("12340102123456", DateTime.Format.SIMPLE);
+        assertThat(time.getYear(), is(1234));
+        assertThat(time.getMonth(), is(1));
+        assertThat(time.getDay(), is(2));
+        assertThat(time.getHour(), is(12));
+        assertThat(time.getMinute(), is(34));
+        assertThat(time.getSecond(), is(56));
+    }
+
+    /**
+     * parses standard date-time string.
+     */
+    @Test
+    public void parse_standard() {
+        DateTime time = DateTime.valueOf("1234-01-02 12:34:56", DateTime.Format.STANDARD);
         assertThat(time.getYear(), is(1234));
         assertThat(time.getMonth(), is(1));
         assertThat(time.getDay(), is(2));

@@ -188,6 +188,8 @@ public class Date implements Comparable<Date> {
 
     /**
      * 日付のフォーマット。
+     * @since 0.1.0
+     * @version 0.7.0
      */
     public enum Format {
 
@@ -210,6 +212,27 @@ public class Date implements Comparable<Date> {
                 int month = get(dateString, 4, 6);
                 int day = get(dateString, 6, 8);
                 return DateUtil.getDayFromDate(year, month, day);
+            }
+        },
+
+        /**
+         * {@code YYYY-MM-DD}の形式。
+         * @since 0.7.0
+         */
+        STANDARD {
+            @Override
+            public int parse(String dateString) {
+                if (dateString == null) {
+                    throw new IllegalArgumentException("dateString must not be null"); //$NON-NLS-1$
+                }
+                int value = DateUtil.parseDate(dateString, '-');
+                if (value < 0) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "\"{0}\" is not form of \"{1}\"",
+                            dateString,
+                            "YYYY-MM-DD"));
+                }
+                return value;
             }
         },
         ;
