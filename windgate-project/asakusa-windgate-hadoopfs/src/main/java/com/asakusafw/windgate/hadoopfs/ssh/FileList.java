@@ -135,7 +135,7 @@ public final class FileList {
         }
 
         /**
-         * Returns true iff the next sequence file exists,
+         * Returns true iff the next temporary file exists,
          * and then the {@link #getCurrentFile()} and {@link #openContent()} method returns it.
          * @return {@code true} if the next data model object exists, otherwise {@code false}
          * @throws IOException if failed to prepare the next data
@@ -201,7 +201,7 @@ public final class FileList {
 
         /**
          * Opens the current file status prepared by the {@link #next()} method.
-         * @return the current sequence file contents
+         * @return the current temporary file contents
          * @throws IOException if failed to get status
          */
         public FileStatus getCurrentFile() throws IOException {
@@ -211,8 +211,8 @@ public final class FileList {
 
         /**
          * Opens the current file content prepared by the {@link #next()} method.
-         * This operation can perform only once for each sequence file.
-         * @return the current sequence file contents
+         * This operation can perform only once for each temporary file.
+         * @return the current temporary file contents
          * @throws IOException if failed to open the file
          */
         public InputStream openContent() throws IOException {

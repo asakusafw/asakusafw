@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 /**
  * A structured profile for {@link AbstractSshHadoopFsMirror}.
  * @since 0.2.2
- * @version 0.4.0
+ * @version 0.7.0
  */
 public class SshProfile {
 
@@ -119,8 +118,6 @@ public class SshProfile {
 
     private final String passPhrase;
 
-    private final CompressionCodec compressionCodec;
-
     private final Map<String, String> environmentVariables;
 
     /**
@@ -135,7 +132,9 @@ public class SshProfile {
      * @param compressionCodec the compression codec, or {@code null} if does not compress
      * @param env environment variables
      * @throws IllegalArgumentException if any parameter is {@code null}
+     * @deprecated Use {@link #SshProfile(String, String, String, String, int, String, String, Map)} instead
      */
+    @Deprecated
     public SshProfile(
             String name,
             String target,
@@ -145,6 +144,31 @@ public class SshProfile {
             String privateKey,
             String passPhrase,
             CompressionCodec compressionCodec,
+            Map<String, String> env) {
+        this(name, target, user, host, port, privateKey, passPhrase, env);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param name the resource name
+     * @param target the remote target installed path
+     * @param user the connection user name
+     * @param host the connection target host
+     * @param port the connection target port
+     * @param privateKey the path to the private key file
+     * @param passPhrase the passphrase of target private key
+     * @param env environment variables
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     * @since 0.7.0
+     */
+    public SshProfile(
+            String name,
+            String target,
+            String user,
+            String host,
+            int port,
+            String privateKey,
+            String passPhrase,
             Map<String, String> env) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
@@ -174,7 +198,6 @@ public class SshProfile {
         this.port = port;
         this.privateKey = privateKey;
         this.passPhrase = passPhrase;
-        this.compressionCodec = compressionCodec;
         this.environmentVariables = Collections.unmodifiableMap(env);
     }
 
@@ -199,7 +222,7 @@ public class SshProfile {
         int port = extractPort(profile);
         String privateKey = extract(profile, KEY_PRIVATE_KEY, true);
         String passPhrase = extractPassPhrase(profile);
-        CompressionCodec compressionCodec = extractCompressionCodec(configuration, profile);
+        extractCompressionCodec(configuration, profile);
         Map<String, String> env = extractEnv(profile);
         if (target == null) {
             String home = env.get("ASAKUSA_HOME");
@@ -227,7 +250,6 @@ public class SshProfile {
                 port,
                 privateKey,
                 passPhrase,
-                compressionCodec,
                 env);
     }
 
@@ -308,34 +330,16 @@ public class SshProfile {
         return passPhrase;
     }
 
-    private static CompressionCodec extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
+    private static void extractCompressionCodec(Configuration configuration, ResourceProfile profile) {
         assert configuration != null;
         assert profile != null;
         String compressionCodecString = extract(profile, KEY_COMPRESSION, false);
-        CompressionCodec compressionCodec;
-        try {
-            if (compressionCodecString == null) {
-                compressionCodec = null;
-            } else {
-                Class<?> codecClass = configuration.getClassByName(compressionCodecString);
-                compressionCodec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, configuration);
-            }
-        } catch (Exception e) {
-            WGLOG.error(e, "E10001",
+        if (compressionCodecString != null) {
+            WGLOG.warn("W10001",
                     profile.getName(),
                     KEY_COMPRESSION,
                     compressionCodecString);
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "The \"{1}\" must be a valid CompressionCodec class name: {2} (resource={0})",
-                    profile.getName(),
-                    KEY_COMPRESSION,
-                    compressionCodecString), e);
         }
-        WGLOG.info("I10001",
-                profile.getName(),
-                KEY_COMPRESSION,
-                compressionCodec == null ? null : compressionCodecString);
-        return compressionCodec;
     }
 
     /**
@@ -430,19 +434,21 @@ public class SshProfile {
     }
 
     /**
-     * Returns the compression codec of putting sequence files.
-     * @return the compression codec, or {@code null} if does not compress
-     */
-    public CompressionCodec getCompressionCodec() {
-        return compressionCodec;
-    }
-
-    /**
      * Returns the additional remote environment variables.
      * @return the remote environment variables
      * @since 0.4.0
      */
     public Map<String, String> getEnvironmentVariables() {
         return environmentVariables;
+    }
+
+    /**
+     * Returns the compression codec of putting sequence files.
+     * @return the compression codec, or {@code null} if does not compress
+     * @deprecated from {@code 0.7.0}, WindGate does not use sequence files
+     */
+    @Deprecated
+    public CompressionCodec getCompressionCodec() {
+        return null;
     }
 }
