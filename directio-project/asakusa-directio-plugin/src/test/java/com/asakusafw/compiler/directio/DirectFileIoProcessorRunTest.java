@@ -382,7 +382,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input-3.txt");
         put("input/other.txt", "Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
-        Out<Line1> out = tester.output("out1", new Output(format, "output-*", "output.txt"));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
 
         List<Path> list = find("output/output-*.txt");
