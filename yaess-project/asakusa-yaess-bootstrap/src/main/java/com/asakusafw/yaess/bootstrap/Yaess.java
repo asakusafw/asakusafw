@@ -33,6 +33,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.yaess.basic.ExitCodeException;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.YaessLogger;
@@ -175,6 +176,9 @@ public final class Yaess {
                 throw new AssertionError(conf.mode);
             }
             return 0;
+        } catch (ExitCodeException e) {
+            YSLOG.error("E00003", conf);
+            return 1;
         } catch (Exception e) {
             YSLOG.error(e, "E00003", conf);
             return 1;

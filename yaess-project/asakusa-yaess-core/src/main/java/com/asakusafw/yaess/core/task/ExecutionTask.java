@@ -46,8 +46,27 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
-import com.asakusafw.yaess.core.*;
+import com.asakusafw.yaess.basic.ExitCodeException;
+import com.asakusafw.yaess.core.BatchScript;
+import com.asakusafw.yaess.core.CommandScript;
+import com.asakusafw.yaess.core.CommandScriptHandler;
+import com.asakusafw.yaess.core.ExecutionContext;
+import com.asakusafw.yaess.core.ExecutionLock;
+import com.asakusafw.yaess.core.ExecutionLockProvider;
+import com.asakusafw.yaess.core.ExecutionMonitorProvider;
+import com.asakusafw.yaess.core.ExecutionPhase;
+import com.asakusafw.yaess.core.ExecutionScript;
+import com.asakusafw.yaess.core.FlowScript;
+import com.asakusafw.yaess.core.HadoopScript;
+import com.asakusafw.yaess.core.HadoopScriptHandler;
+import com.asakusafw.yaess.core.Job;
+import com.asakusafw.yaess.core.JobScheduler;
 import com.asakusafw.yaess.core.JobScheduler.ErrorHandler;
+import com.asakusafw.yaess.core.PhaseMonitor;
+import com.asakusafw.yaess.core.ServiceProfile;
+import com.asakusafw.yaess.core.YaessCoreLogger;
+import com.asakusafw.yaess.core.YaessLogger;
+import com.asakusafw.yaess.core.YaessProfile;
 
 /**
  * Task to execute target batch, flow, or phase.
@@ -388,6 +407,9 @@ public class ExecutionTask {
                 lock.close();
             }
             YSLOG.info("I01001", batchId);
+        } catch (ExitCodeException e) {
+            YSLOG.error("E01001", batchId);
+            throw e;
         } catch (IOException e) {
             YSLOG.error(e, "E01001", batchId);
             throw e;
@@ -583,6 +605,9 @@ public class ExecutionTask {
                 YSLOG.warn(e, "W02003", batchId, flow.getId(), executionId);
             }
             YSLOG.info("I02001", batchId, flow.getId(), executionId);
+        } catch (ExitCodeException e) {
+            YSLOG.error("E02001", batchId, flow.getId(), executionId);
+            throw e;
         } catch (IOException e) {
             YSLOG.error(e, "E02001", batchId, flow.getId(), executionId);
             throw e;
@@ -649,6 +674,10 @@ public class ExecutionTask {
             }
             YSLOG.info("I03001",
                     context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+        } catch (ExitCodeException e) {
+            YSLOG.error("E03001",
+                    context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
+            throw e;
         } catch (IOException e) {
             YSLOG.error(e, "E03001",
                     context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
