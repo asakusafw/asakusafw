@@ -252,13 +252,6 @@ public abstract class AbstractJobScheduler extends JobScheduler {
         private void handleException(Job job, IOException exception) throws IOException {
             assert job != null;
             assert exception != null;
-            YSLOG.error(exception, "E21001",
-                    context.getBatchId(),
-                    context.getFlowId(),
-                    context.getExecutionId(),
-                    context.getPhase(),
-                    job.getJobLabel(),
-                    job.getServiceLabel());
             if (handler.handle(context, exception) == false) {
                 cancelExecution();
                 throw exception;
