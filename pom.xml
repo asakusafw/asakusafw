@@ -4,7 +4,7 @@
 	<name>Asakusa Framework Aggregator POM</name>
 	<groupId>com.asakusafw</groupId>
 	<artifactId>asakusa-root-project</artifactId>
-	<version>0.7-hadoop2-SNAPSHOT</version>
+	<version>0.7.0-BETA1-hadoop2</version>
 	<packaging>pom</packaging>
 
 	<description>Asakusa Framework Aggregator POM</description>
