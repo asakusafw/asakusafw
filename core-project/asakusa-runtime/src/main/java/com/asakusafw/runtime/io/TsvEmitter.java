@@ -208,7 +208,6 @@ public class TsvEmitter implements RecordEmitter {
         if (emitNull(option)) {
             return;
         }
-        // TODO BigDecimal
         lineBuffer.append(option.get());
     }
 

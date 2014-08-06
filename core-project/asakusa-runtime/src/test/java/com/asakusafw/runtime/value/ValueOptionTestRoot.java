@@ -123,7 +123,7 @@ public class ValueOptionTestRoot {
         }
     }
 
-    private byte[] toBytes(Writable value) {
+    byte[] toBytes(Writable value) {
         try {
             ByteArrayOutputStream write = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(write);
