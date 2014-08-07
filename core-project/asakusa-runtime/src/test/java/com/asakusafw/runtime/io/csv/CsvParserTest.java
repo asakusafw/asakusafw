@@ -1365,6 +1365,34 @@ public class CsvParserTest {
     }
 
     /**
+     * Simple stress test for {@link DecimalOption} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_decimal() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("3.141592\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DecimalOption date = new DecimalOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DecimalOption(new BigDecimal("3.141592"))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
      * Simple stress test for {@link Date} type.
      * @throws Exception if failed
      */

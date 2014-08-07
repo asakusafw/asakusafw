@@ -687,7 +687,7 @@ public class CsvParser implements RecordParser {
     private void fill0(DecimalOption option, boolean doRecover) throws CsvFormatException {
         if (lineBuffer.hasRemaining()) {
             try {
-                BigDecimal value = new BigDecimal(lineBuffer.toString());
+                BigDecimal value = toBigDecimal();
                 option.modify(value);
             } catch (NumberFormatException e) {
                 if (doRecover && trimWhitespaces()) {
@@ -698,6 +698,17 @@ public class CsvParser implements RecordParser {
             }
         } else {
             option.setNull();
+        }
+    }
+
+    private BigDecimal toBigDecimal() {
+        if (lineBuffer.hasArray()) {
+            char[] array = lineBuffer.array();
+            int offset = lineBuffer.arrayOffset() + lineBuffer.position();
+            int length = lineBuffer.remaining();
+            return new BigDecimal(array, offset, length);
+        } else {
+            return new BigDecimal(lineBuffer.toString());
         }
     }
 
