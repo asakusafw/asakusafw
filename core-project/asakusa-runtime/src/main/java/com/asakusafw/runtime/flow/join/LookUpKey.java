@@ -16,9 +16,11 @@
 package com.asakusafw.runtime.flow.join;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
+
+import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
  * {@link LookUpTable}に利用可能なキー。
@@ -27,7 +29,7 @@ public class LookUpKey {
 
     private static final int INITIAL_SIZE = 256;
 
-    private DataOutputBuffer buffer;
+    private final DataBuffer buffer;
 
     /**
      * インスタンスを生成する。
@@ -41,7 +43,7 @@ public class LookUpKey {
      * @param bufferSize 初期バッファサイズ
      */
     public LookUpKey(int bufferSize) {
-        this.buffer = new DataOutputBuffer(bufferSize);
+        this.buffer = new DataBuffer(bufferSize);
     }
 
     /**
@@ -49,7 +51,7 @@ public class LookUpKey {
      * @throws IOException リセットに失敗した場合
      */
     public void reset() throws IOException {
-        buffer.reset();
+        buffer.reset(0, 0);
     }
 
     /**
@@ -71,8 +73,9 @@ public class LookUpKey {
      * @throws IOException コピーに失敗した場合
      */
     public LookUpKey copy() throws IOException {
-        LookUpKey result = new LookUpKey(buffer.getLength());
-        result.buffer.write(buffer.getData(), 0, buffer.getLength());
+        LookUpKey result = new LookUpKey(0);
+        byte[] contents = Arrays.copyOfRange(buffer.getData(), buffer.getReadPosition(), buffer.getReadLimit());
+        result.buffer.reset(contents, 0, contents.length);
         return result;
     }
 
@@ -81,7 +84,7 @@ public class LookUpKey {
         final int prime = 31;
         int result = 1;
         byte[] b = buffer.getData();
-        for (int i = 0, n = buffer.getLength(); i < n; i++) {
+        for (int i = buffer.getReadPosition(), n = buffer.getReadLimit(); i < n; i++) {
             result = result * prime + b[i];
         }
         return result;
@@ -99,13 +102,15 @@ public class LookUpKey {
             return false;
         }
         LookUpKey other = (LookUpKey) obj;
-        if (buffer.getLength() != other.buffer.getLength()) {
+        if (buffer.getReadRemaining() != other.buffer.getReadRemaining()) {
             return false;
         }
         byte[] b1 = buffer.getData();
         byte[] b2 = other.buffer.getData();
-        for (int i = 0, n = buffer.getLength(); i < n; i++) {
-            if (b1[i] != b2[i]) {
+        int o1 = buffer.getReadPosition();
+        int o2 = other.buffer.getReadPosition();
+        for (int i = 0, n = buffer.getReadRemaining(); i < n; i++) {
+            if (b1[o1 + i] != b2[o2 + i]) {
                 return false;
             }
         }

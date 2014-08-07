@@ -23,11 +23,12 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.security.SecureRandom;
 
-import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
+
+import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
  * ソート可能なスロット。
@@ -64,7 +65,7 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
 
     private final SecureRandom random = new SecureRandom();
 
-    private final DataOutputBuffer buffer = new DataOutputBuffer();
+    private final DataBuffer buffer = new DataBuffer();
 
     private int slotNumber = -1;
 
@@ -74,7 +75,7 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
      */
     public void begin(int slot) {
         this.slotNumber = slot;
-        buffer.reset();
+        buffer.reset(0, 0);
     }
 
     /**
@@ -114,15 +115,15 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     @Override
     public void write(DataOutput out) throws IOException {
         WritableUtils.writeVInt(out, slotNumber);
-        WritableUtils.writeVInt(out, buffer.getLength());
-        out.write(buffer.getData(), 0, buffer.getLength());
+        WritableUtils.writeVInt(out, buffer.getReadLimit());
+        out.write(buffer.getData(), 0, buffer.getReadLimit());
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        buffer.reset();
         this.slotNumber = WritableUtils.readVInt(in);
         int length = WritableUtils.readVInt(in);
+        buffer.reset(0, 0);
         buffer.write(in, length);
     }
 
@@ -134,24 +135,24 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
             return +1;
         }
         return WritableComparator.compareBytes(
-                buffer.getData(), 0, buffer.getLength(),
-                o.buffer.getData(), 0, o.buffer.getLength());
+                buffer.getData(), 0, buffer.getReadLimit(),
+                o.buffer.getData(), 0, o.buffer.getReadLimit());
     }
 
     int hashCode(int ignoreTailBits) {
         int ignoreTailBytes = ignoreTailBits / Byte.SIZE;
         int ignoreTailByteMask = -1 << (ignoreTailBits & (Byte.SIZE - 1));
-        if (buffer.getLength() <= ignoreTailBytes) {
+        if (buffer.getReadLimit() <= ignoreTailBytes) {
             return 0;
         }
         int hash = 1;
         final int prime = 31;
         hash = hash * prime + slotNumber;
         byte[] content = buffer.getData();
-        for (int i = 0, n = buffer.getLength() - ignoreTailBytes - 1; i < n; i++) {
+        for (int i = 0, n = buffer.getReadLimit() - ignoreTailBytes - 1; i < n; i++) {
             hash = hash * prime + content[i];
         }
-        hash = hash * prime + (content[buffer.getLength() - ignoreTailBytes - 1] & ignoreTailByteMask);
+        hash = hash * prime + (content[buffer.getReadLimit() - ignoreTailBytes - 1] & ignoreTailByteMask);
         return hash;
     }
 

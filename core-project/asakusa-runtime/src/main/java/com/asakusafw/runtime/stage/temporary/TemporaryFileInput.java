@@ -17,13 +17,13 @@ package com.asakusafw.runtime.stage.temporary;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 
-import org.apache.hadoop.io.DataInputBuffer;
-import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.Writable;
-import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.util.DataBuffer;
+import com.asakusafw.runtime.stage.temporary.TemporaryFileInputHelper.Result;
 
 /**
  * Input raw data.
@@ -32,15 +32,13 @@ import com.asakusafw.runtime.io.ModelInput;
  */
 public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
 
-    private final InputStream input;
+    private final TemporaryFileInputHelper helper;
 
-    private final DataInputBuffer buffer = new DataInputBuffer();
+    private DataBuffer buffer;
 
     private int positionInBlock = 0;
 
     private int currentBlock = 0;
-
-    private int blockRest;
 
     private String dataTypeName;
 
@@ -52,8 +50,8 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
      * @param blocks the number of blocks to read, or {@code 0} to read all pages in the stream
      */
     public TemporaryFileInput(InputStream input, int blocks) {
-        this.input = input;
-        this.blockRest = Math.max(blocks - 1, -1);
+        this.helper = new TemporaryFileInputHelper(input, blocks);
+        helper.initialize();
     }
 
     /**
@@ -87,9 +85,10 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
         if (prepareBuffer() == false) {
             return false;
         }
-        int before = buffer.getPosition();
+        assert buffer != null;
+        int before = buffer.getReadPosition();
         model.readFields(buffer);
-        int position = buffer.getPosition();
+        int position = buffer.getReadPosition();
         if (position - before == 0) {
             // read 0-bytes entry
             int c = buffer.read();
@@ -97,83 +96,37 @@ public class TemporaryFileInput<T extends Writable> implements ModelInput<T> {
                 throw new IOException("Invalid empty entry padding");
             }
         }
+        if (buffer.getReadRemaining() == 0) {
+            helper.releaseBuffer(buffer);
+            buffer = null;
+        }
         return true;
     }
 
     private boolean prepareBuffer() throws IOException {
-        int length = buffer.getLength();
-        if (length == 0) {
-            return readPage();
+        if (buffer != null && buffer.getReadRemaining() == 0) {
+            helper.releaseBuffer(buffer);
+            buffer = null;
         }
-        int position = buffer.getPosition();
-        if (position < length) {
-            return true;
-        }
-        return readPage();
-    }
-
-    private boolean readPage() throws IOException {
-        if (sawEof) {
-            return false;
-        }
-        if (positionInBlock == 0) {
-            StringBuilder buf = new StringBuilder();
-            int headSize = TemporaryFile.readBlockHeader(input);
-            if (headSize < 0) {
-                sawEof = true;
-                return false;
+        if (buffer == null) {
+            try {
+                Result result = helper.getNextPage();
+                this.buffer = result.buffer;
+                this.sawEof = result.sawEof;
+                this.positionInBlock = result.positionInBlock;
+                this.currentBlock = result.currentBlock;
+                if (result.dataTypeName != null) {
+                    this.dataTypeName = result.dataTypeName;
+                }
+            } catch (InterruptedException e) {
+                throw (IOException) new InterruptedIOException().initCause(e);
             }
-            positionInBlock += headSize;
-            int size = TemporaryFile.readString(input, buf);
-            if (size < 0) {
-                sawEof = true;
-                return false;
-            }
-            positionInBlock += size;
-            this.dataTypeName = buf.toString();
         }
-        int value = TemporaryFile.readPageHeader(input);
-        if (value == TemporaryFile.PAGE_HEADER_EOF) {
-            sawEof = true;
-            return false;
-        }
-        positionInBlock += TemporaryFile.PAGE_HEADER_SIZE;
-        if (value == TemporaryFile.PAGE_HEADER_EOB) {
-            if (blockRest == 0) {
-                return false;
-            }
-            IOUtils.skipFully(input, TemporaryFile.BLOCK_SIZE - positionInBlock);
-            positionInBlock = 0;
-            currentBlock++;
-            if (blockRest > 0) {
-                blockRest--;
-            }
-            return readPage();
-        }
-        byte[] b = readFully(value);
-        fillBuffer(b, value);
-        return true;
-    }
-
-    private byte[] readFully(int length) throws IOException {
-        byte[] b = TemporaryFile.getInstantBuffer(length);
-        IOUtils.readFully(input, b, 0, length);
-        positionInBlock += length;
-        return b;
-    }
-
-    private void fillBuffer(byte[] bytes, int length) throws IOException {
-        int rawLength = Snappy.uncompressedLength(bytes, 0, length);
-        byte[] data = buffer.getData();
-        if (data.length < rawLength) {
-            data = new byte[(int) (rawLength * 1.2)];
-        }
-        Snappy.uncompress(bytes, 0, length, data, 0);
-        buffer.reset(data, rawLength);
+        return sawEof == false;
     }
 
     @Override
     public void close() throws IOException {
-        input.close();
+        helper.close();
     }
 }
