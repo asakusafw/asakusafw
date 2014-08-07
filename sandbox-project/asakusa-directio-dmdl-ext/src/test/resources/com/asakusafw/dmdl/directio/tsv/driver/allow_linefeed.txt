@@ -1,0 +1,4 @@
+@directio.tsv(allow_linefeed = TRUE)
+simple = {
+    value : TEXT;
+};

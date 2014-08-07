@@ -16,14 +16,13 @@
 package com.asakusafw.runtime.stage.temporary;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.text.MessageFormat;
 
-import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
-import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
  * Output raw data.
@@ -32,17 +31,11 @@ import com.asakusafw.runtime.io.ModelOutput;
  */
 public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
 
-    private static final byte[] ZEROS = new byte[64 * 1024];
+    private final TemporaryFileOutputHelper helper;
 
-    private final OutputStream output;
-
-    private final String dataTypeName;
-
-    private final DataOutputBuffer buffer;
+    private DataBuffer buffer;
 
     private final int pageBreakThreashold;
-
-    private int positionInBlock = 0;
 
     /**
      * Creates a new instance.
@@ -56,17 +49,17 @@ public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
             String dateTypeName,
             int initialBufferSize,
             int pageBreakThreashold) {
-        this.output = output;
-        this.dataTypeName = dateTypeName;
-        this.buffer = new DataOutputBuffer(initialBufferSize);
+        this.helper = new TemporaryFileOutputHelper(output, dateTypeName);
+        this.helper.initialize(initialBufferSize);
         this.pageBreakThreashold = pageBreakThreashold;
     }
 
     @Override
     public void write(T model) throws IOException {
-        int before = buffer.getLength();
+        prepareBuffer();
+        int before = buffer.getWritePosition();
         model.write(buffer);
-        int length = buffer.getLength();
+        int length = buffer.getWritePosition();
         if (length - before == 0) {
             // 0-bytes entry
             buffer.write(TemporaryFile.EMPTY_ENTRY_PADDING);
@@ -76,59 +69,33 @@ public class TemporaryFileOutput<T extends Writable> implements ModelOutput<T> {
         }
     }
 
+    private void prepareBuffer() throws IOException {
+        if (buffer == null) {
+            try {
+                buffer = helper.acquireBuffer();
+                buffer.reset(0, 0);
+            } catch (InterruptedException e) {
+                throw (IOException) new InterruptedIOException().initCause(e);
+            }
+        }
+    }
+
+    private void flush() throws IOException {
+        prepareBuffer();
+        try {
+            helper.putNextPage(buffer);
+        } catch (InterruptedException e) {
+            throw (IOException) new InterruptedIOException().initCause(e);
+        }
+        buffer = null;
+    }
+
     @Override
     public void close() throws IOException {
         try {
             flush();
         } finally {
-            output.close();
+            helper.close();
         }
-    }
-
-    private void flush() throws IOException {
-        if (positionInBlock == 0) {
-            positionInBlock += TemporaryFile.writeBlockHeader(output);
-            positionInBlock += TemporaryFile.writeString(output, dataTypeName);
-        }
-        int length = buffer.getLength();
-        if (length <= 0) {
-            return;
-        }
-        byte[] buf = TemporaryFile.getInstantBuffer(Snappy.maxCompressedLength(length));
-        int compressed = Snappy.compress(buffer.getData(), 0, length, buf, 0);
-        writeContentPage(buf, compressed);
-        buffer.reset();
-    }
-
-    private void writeContentPage(byte[] contents, int length) throws IOException {
-        if (TemporaryFile.canWritePage(positionInBlock, length) == false) {
-            if (TemporaryFile.canWritePage(0, length) == false) {
-                throw new IOException(MessageFormat.format(
-                        "Page size is too large: {1} (> {0})",
-                        TemporaryFile.BLOCK_SIZE,
-                        length));
-            }
-            writeEndOfPage();
-            positionInBlock = 0;
-            positionInBlock += TemporaryFile.writeBlockHeader(output);
-            positionInBlock += TemporaryFile.writeString(output, dataTypeName);
-        }
-        TemporaryFile.writeContentPageMark(output, length);
-        output.write(contents, 0, length);
-        positionInBlock += TemporaryFile.PAGE_HEADER_SIZE + length;
-    }
-
-    private void writeEndOfPage() throws IOException {
-        TemporaryFile.writeEndOfBlockMark(output);
-        positionInBlock += TemporaryFile.PAGE_HEADER_SIZE;
-        int rest = TemporaryFile.BLOCK_SIZE - positionInBlock;
-        assert rest >= 0;
-        byte[] zeros = ZEROS;
-        while (rest > 0) {
-            int size = Math.min(rest, zeros.length);
-            output.write(zeros, 0, size);
-            rest -= size;
-        }
-        positionInBlock = TemporaryFile.BLOCK_SIZE;
     }
 }

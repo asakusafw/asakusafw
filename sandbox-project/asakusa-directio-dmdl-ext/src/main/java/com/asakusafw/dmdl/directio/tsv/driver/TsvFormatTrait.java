@@ -62,11 +62,13 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
     /**
      * The TSV format configuration.
      * @since 0.5.0
-     * @version 0.5.2
+     * @version 0.7.0
      */
     public static class Configuration {
 
         private String charsetName = DEFAULT_CHARSET.name();
+
+        private boolean allowLinefeed = false;
 
         private String codecName = null;
 
@@ -78,6 +80,24 @@ public class TsvFormatTrait implements Trait<TsvFormatTrait> {
          */
         public String getCharsetName() {
             return charsetName;
+        }
+
+        /**
+         * Returns whether each value can contain linefeed.
+         * @return {@code true} if allowed, otherwise {@code false}
+         * @since 0.7.0
+         */
+        public boolean isAllowLinefeed() {
+            return allowLinefeed;
+        }
+
+        /**
+         * Sets whether each value can contain linefeed.
+         * @param allow {@code true} if allowed, otherwise {@code false}
+         * @since 0.7.0
+         */
+        public void setAllowLinefeed(boolean allow) {
+            this.allowLinefeed = allow;
         }
 
         /**

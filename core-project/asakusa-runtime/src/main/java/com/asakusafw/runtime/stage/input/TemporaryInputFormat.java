@@ -229,6 +229,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
 
     /**
      * Create a record reader for this input format.
+     * @param <T> the value type
      * @return the record reader
      */
     @SuppressWarnings("unchecked")

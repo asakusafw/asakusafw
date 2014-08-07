@@ -39,7 +39,7 @@ public class OrcFormatConfiguration {
 
     private CompressionKind compressionKind = CompressionKind.SNAPPY;
 
-    private Long stripeSize;
+    private Long stripeSize = 64L * 1024 * 1024;
 
     /**
      * Clears all properties.

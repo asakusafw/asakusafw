@@ -50,9 +50,9 @@ public final class TemporaryStorage {
 
     static final Log LOG = LogFactory.getLog(TemporaryStorage.class);
 
-    private static final int OUTPUT_INIT_BUFFER_SIZE = 256 * 1024;
+    private static final int OUTPUT_INIT_BUFFER_SIZE = 300 * 1024;
 
-    private static final int OUTPUT_PAGE_SIZE = 128 * 1024;
+    private static final int OUTPUT_PAGE_SIZE = 256 * 1024;
 
     /**
      * Resolves the raw path pattern into the concrete path list.

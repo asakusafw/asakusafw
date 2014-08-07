@@ -38,10 +38,10 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.directio.hive.serde.DataModelDescriptorEditor;
-import com.asakusafw.directio.hive.serde.FieldPropertyDescriptor;
-import com.asakusafw.directio.hive.serde.ValueSerde;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
+import com.asakusafw.directio.hive.serde.FieldPropertyDescriptor;
+import com.asakusafw.directio.hive.serde.ValueSerde;
 import com.asakusafw.directio.hive.serde.mock.MockSimple;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
@@ -103,8 +103,9 @@ public class OrcFileFormatTest {
     @Test
     public void table_properties_default() {
         Map<String, String> props = format(MockSimple.class).getTableProperties();
-        assertThat(props.size(), is(1));
+        assertThat(props.size(), is(2));
         assertThat(props, hasEntry("orc.compress", "SNAPPY"));
+        assertThat(props, hasEntry("orc.stripe.size", String.valueOf(64L * 1024 * 1024)));
     }
 
     /**

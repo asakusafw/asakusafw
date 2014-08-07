@@ -214,23 +214,23 @@ public class DefaultSplitCombinerTest {
         String[][] locations = {
                 { },
                 { "a", "b" },
-                { },
+                { "b", "c" },
                 { "a" },
                 { "c" },
-                { "b, c" },
+                { "b", "c" },
                 { "d" },
-                { "e, f" },
-                { "a, g" },
+                { "e", "f" },
+                { "a", "g" },
         };
         List<StageInputSplit> splits = new ArrayList<StageInputSplit>();
         long total = 0;
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             long size = i * 10 + 100;
             splits.add(split(i, size, locations[i % locations.length]));
             total += size;
         }
         DefaultSplitCombiner combiner = new DefaultSplitCombiner();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i < 12; i += 2) {
             int slots = i * 5;
             int prefSlots = i * 10 / 9;
             List<StageInputSplit> combined = combine(combiner, slots, splits);
@@ -247,7 +247,12 @@ public class DefaultSplitCombinerTest {
             DefaultSplitCombiner combiner,
             int slots,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
-        return combine(combiner, slots, DefaultSplitCombiner.DEFAULT_TINY_LIMIT, splits);
+        return combiner.combine(
+                new DefaultSplitCombiner.Configuration()
+                    .withSlotsPerInput(slots)
+                    .withGenerations(1000)
+                    .withNonLocalPenaltyRatio(10),
+                splits);
     }
 
     private List<StageInputSplit> combine(
@@ -256,11 +261,9 @@ public class DefaultSplitCombinerTest {
             long limit,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
         return combiner.combine(
-                slots,
-                DefaultSplitCombiner.DEFAULT_POPULATIONS,
-                DefaultSplitCombiner.DEFAULT_GENERATIONS,
-                DefaultSplitCombiner.DEFAULT_MUTATION_RATIO,
-                limit,
+                new DefaultSplitCombiner.Configuration()
+                    .withSlotsPerInput(slots)
+                    .withTinyLimit(limit),
                 splits);
     }
 
