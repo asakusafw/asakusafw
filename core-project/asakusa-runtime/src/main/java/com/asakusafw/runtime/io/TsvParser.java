@@ -313,7 +313,6 @@ public final class TsvParser implements RecordParser {
         assertHasRest(option, lookAhead);
         charBuffer[0] = (char) lookAhead;
         int length = readString(1, option);
-        // TODO BigDecimal
         option.modify(new BigDecimal(charBuffer, 0, length + 1));
         fillLookAhead();
     }

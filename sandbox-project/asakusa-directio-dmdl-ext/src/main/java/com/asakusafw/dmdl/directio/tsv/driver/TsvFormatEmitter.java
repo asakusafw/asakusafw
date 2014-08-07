@@ -308,7 +308,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private boolean isFastMode() {
-            return conf.getCodecName() == null;
+            return conf.isAllowLinefeed() == false && conf.getCodecName() == null;
         }
 
         private MethodDeclaration createCreateReader() {

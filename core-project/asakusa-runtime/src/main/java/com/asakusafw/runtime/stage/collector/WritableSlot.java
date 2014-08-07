@@ -19,19 +19,17 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.io.DataInputBuffer;
-import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
+
+import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
  * 任意の{@link Writable}を保持するスロット。
  */
 public class WritableSlot implements Writable {
 
-    private final DataOutputBuffer output = new DataOutputBuffer();
-
-    private final DataInputBuffer input = new DataInputBuffer();
+    private final DataBuffer buffer = new DataBuffer();
 
     /**
      * このオブジェクトに指定の{@link Writable}オブジェクトの内容を書き出す。
@@ -39,8 +37,8 @@ public class WritableSlot implements Writable {
      * @throws IOException 書き出せなかった場合
      */
     public void store(Writable data) throws IOException {
-        output.reset();
-        data.write(output);
+        buffer.reset(0, 0);
+        data.write(buffer);
     }
 
     /**
@@ -49,20 +47,20 @@ public class WritableSlot implements Writable {
      * @throws IOException 書き出せなかった場合
      */
     public void loadTo(Writable data) throws IOException {
-        input.reset(output.getData(), output.getLength());
-        data.readFields(input);
+        buffer.reset(0, buffer.getReadLimit());
+        data.readFields(buffer);
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        WritableUtils.writeVInt(out, output.getLength());
-        out.write(output.getData(), 0, output.getLength());
+        WritableUtils.writeVInt(out, buffer.getReadRemaining());
+        out.write(buffer.getData(), buffer.getReadPosition(), buffer.getReadRemaining());
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        output.reset();
+        buffer.reset(0, 0);
         int length = WritableUtils.readVInt(in);
-        output.write(in, length);
+        buffer.write(in, length);
     }
 }

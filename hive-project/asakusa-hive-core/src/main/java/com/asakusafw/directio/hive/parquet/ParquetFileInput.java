@@ -213,7 +213,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             }
             assert begin >= 0L;
             assert end >= 0L;
-            if (this.offset <= begin && end <= this.offset + this.fragmentSize) {
+            if (this.offset <= begin && end <= this.offset + this.fragmentSize && block.getRowCount() != 0) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
                             "Detected a target parquet block: {0} ({1}+{2})",
