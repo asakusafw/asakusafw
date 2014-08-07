@@ -36,10 +36,11 @@ The attributed declaration can have:
 <ul>
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
 <li> with {@code has_header=TRUE|FALSE} as whether header is required (default: FALSE) </li>
+<li> with {@code allow_linefeed=TRUE|FALSE} as whether each field can contain linefeed (default: FALSE) </li>
 <li> with {@code compression=[string-literal]} as compression name (default: plain) </li>
 </ul>
  * @since 0.5.0
- * @version 0.5.2
+ * @version 0.7.0
  */
 public class TsvFormatDriver extends ModelAttributeDriver {
 
@@ -65,6 +66,12 @@ public class TsvFormatDriver extends ModelAttributeDriver {
      */
     public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
 
+    /**
+     * The element name of whether value can contain linefeed.
+     * @since 0.7.0
+     */
+    public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed"; //$NON-NLS-1$
+
     @Override
     public String getTargetName() {
         return TARGET_NAME;
@@ -85,6 +92,7 @@ public class TsvFormatDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements) {
         AstLiteral charset = take(environment, elements, ELEMENT_CHARSET_NAME, LiteralKind.STRING);
         AstLiteral header = take(environment, elements, ELEMENT_HAS_HEADER_NAME, LiteralKind.BOOLEAN);
+        AstLiteral linefeed = take(environment, elements, ELEMENT_ALLOW_LINEFEED, LiteralKind.BOOLEAN);
         AstLiteral codec = take(environment, elements, ELEMENT_CODEC_NAME, LiteralKind.STRING);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
 
@@ -94,6 +102,9 @@ public class TsvFormatDriver extends ModelAttributeDriver {
         }
         if (header != null) {
             result.setEnableHeader(header.toBooleanValue());
+        }
+        if (linefeed != null) {
+            result.setAllowLinefeed(linefeed.toBooleanValue());
         }
         if (codec != null && checkNotEmpty(environment, ELEMENT_CODEC_NAME, codec)) {
             result.setCodecName(codec.toStringValue());
