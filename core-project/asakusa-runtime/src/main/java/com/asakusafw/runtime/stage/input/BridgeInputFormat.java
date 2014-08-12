@@ -42,12 +42,14 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.stage.StageConstants;
@@ -57,7 +59,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * A bridge implementation for Hadoop {@link InputFormat}.
  * @since 0.2.5
- * @version 0.6.1
+ * @version 0.7.0
  */
 public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
@@ -99,10 +101,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         for (Map.Entry<DirectInputGroup, List<InputPath>> entry : patternGroups.entrySet()) {
             DirectInputGroup group = entry.getKey();
             List<InputPath> paths = entry.getValue();
-            DataFormat<?> format = ReflectionUtils.newInstance(group.formatClass, context.getConfiguration());
             DirectDataSource dataSource = repo.getRelatedDataSource(group.containerPath);
+            DataFormat<?> format = ReflectionUtils.newInstance(group.formatClass, context.getConfiguration());
+            DataDefinition<?> definition = SimpleDataDefinition.newInstance(group.dataType, format);
             for (InputPath path : paths) {
-                List<DirectInputFragment> fragments = getFragments(repo, group, path, format, dataSource);
+                List<DirectInputFragment> fragments = getFragments(repo, group, path, definition, dataSource);
                 for (DirectInputFragment fragment : fragments) {
                     totalSize += fragment.getSize();
                     results.add(new BridgeInputSplit(group, fragment));
@@ -128,15 +131,14 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             DirectDataSourceRepository repo,
             DirectInputGroup group,
             InputPath path,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectDataSource dataSource) throws IOException, InterruptedException {
         assert group != null;
         assert path != null;
-        assert format != null;
+        assert definition != null;
         assert dataSource != null;
-        Class<? extends T> dataType = group.dataType.asSubclass(format.getSupportedType());
         List<DirectInputFragment> fragments =
-            dataSource.findInputFragments(dataType, format, path.componentPath, path.pattern);
+            dataSource.findInputFragments(definition, path.componentPath, path.pattern);
         if (fragments.isEmpty()) {
             String id = repo.getRelatedId(group.containerPath);
             String containerPath = repo.getContainerPath(group.containerPath);
@@ -146,14 +148,14 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                         id,
                         getBasePath(containerPath, path),
                         path.pattern,
-                        format.getSupportedType().getName()));
+                        definition.getDataFormat().getSupportedType().getName()));
             } else {
                 throw new IOException(MessageFormat.format(
                         "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
                         id,
                         getBasePath(containerPath, path),
                         path.pattern,
-                        format.getSupportedType().getName()));
+                        definition.getDataFormat().getSupportedType().getName()));
             }
         }
         return fragments;
@@ -287,7 +289,8 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
             DataFormat<?> format =
                     ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
-            return createRecordReader(format, bridgeInfo, context);
+            DataDefinition<?> definition = SimpleDataDefinition.newInstance(bridgeInfo.group.dataType, format);
+            return createRecordReader(definition, bridgeInfo, context);
         } else if (split instanceof NullInputSplit) {
             return createNullRecordReader(context);
         } else {
@@ -298,17 +301,16 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
     }
 
     private <T> RecordReader<NullWritable, Object> createRecordReader(
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             BridgeInputSplit split,
             TaskAttemptContext context) throws IOException, InterruptedException {
-        assert format != null;
+        assert definition != null;
         assert split != null;
         assert context != null;
         Configuration conf = context.getConfiguration();
-        Class<? extends T> type = split.group.dataType.asSubclass(format.getSupportedType());
-        T buffer = ReflectionUtils.newInstance(type, conf);
+        T buffer = ReflectionUtils.newInstance(definition.getDataClass(), conf);
         Counter counter = new Counter();
-        ModelInput<T> input = createInput(context, split.group.containerPath, type, format, counter, split.fragment);
+        ModelInput<T> input = createInput(context, split.group.containerPath, definition, counter, split.fragment);
         return new BridgeRecordReader<T>(input, buffer, counter, split.fragment.getSize());
     }
 
@@ -320,19 +322,17 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
     private <T> ModelInput<T> createInput(
             TaskAttemptContext context,
             String containerPath,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             Counter counter,
             DirectInputFragment fragment) throws IOException, InterruptedException {
         assert context != null;
         assert containerPath != null;
-        assert dataType != null;
-        assert format != null;
+        assert definition != null;
         assert counter != null;
         assert fragment != null;
         DirectDataSourceRepository repo = getDataSourceRepository(context);
         DirectDataSource ds = repo.getRelatedDataSource(containerPath);
-        return ds.openInput(dataType, format, fragment, counter);
+        return ds.openInput(definition, fragment, counter);
     }
 
     private static DirectDataSourceRepository getDataSourceRepository(JobContext context) {

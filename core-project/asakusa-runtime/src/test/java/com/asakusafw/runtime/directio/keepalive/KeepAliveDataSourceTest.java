@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
@@ -64,7 +64,7 @@ public class KeepAliveDataSourceTest {
      */
     @Test
     public void testOpenInput() throws Exception {
-        ModelInput<Object> input = ds.openInput(null, null, null, counter);
+        ModelInput<Object> input = ds.openInput(null, null, counter);
         try {
             assertKeepAlive(true);
         } finally {
@@ -79,7 +79,7 @@ public class KeepAliveDataSourceTest {
      */
     @Test
     public void testOpenOutput() throws Exception {
-        ModelOutput<Object> output = ds.openOutput(null, null, null, null, null, counter);
+        ModelOutput<Object> output = ds.openOutput(null, null, null, null, counter);
         try {
             assertKeepAlive(true);
         } finally {
@@ -204,16 +204,17 @@ public class KeepAliveDataSourceTest {
         }
 
         @Override
-        public <T> List<DirectInputFragment> findInputFragments(Class<? extends T> dataType,
-                DataFormat<T> format, String basePath, ResourcePattern resourcePattern)
-                throws IOException, InterruptedException {
+        public <T> List<DirectInputFragment> findInputFragments(
+                DataDefinition<T> definition,
+                String basePath,
+                ResourcePattern resourcePattern) throws IOException, InterruptedException {
             return Collections.emptyList();
         }
 
         @Override
-        public <T> ModelInput<T> openInput(Class<? extends T> dataType, DataFormat<T> format,
-                DirectInputFragment fragment, Counter counter) throws IOException,
-                InterruptedException {
+        public <T> ModelInput<T> openInput(DataDefinition<T> definition,
+                DirectInputFragment fragment,
+                Counter counter) throws IOException, InterruptedException {
             return new ModelInput<T>() {
                 @Override
                 public boolean readTo(T model) throws IOException {
@@ -227,9 +228,12 @@ public class KeepAliveDataSourceTest {
         }
 
         @Override
-        public <T> ModelOutput<T> openOutput(OutputAttemptContext context,
-                Class<? extends T> dataType, DataFormat<T> format, String basePath,
-                String resourcePath, Counter counter) throws IOException, InterruptedException {
+        public <T> ModelOutput<T> openOutput(
+                OutputAttemptContext context,
+                DataDefinition<T> definition,
+                String basePath,
+                String resourcePath,
+                Counter counter) throws IOException, InterruptedException {
             return new ModelOutput<T>() {
                 @Override
                 public void write(T model) throws IOException {

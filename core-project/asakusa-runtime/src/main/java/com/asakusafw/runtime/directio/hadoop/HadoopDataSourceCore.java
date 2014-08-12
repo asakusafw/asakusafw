@@ -30,6 +30,7 @@ import org.apache.hadoop.fs.Path;
 import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
@@ -71,8 +72,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
@@ -107,6 +107,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
                         stat.getLen()));
             }
         }
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
         List<DirectInputFragment> results;
         if (format instanceof StripedDataFormat<?>) {
             StripedDataFormat.InputContext context = new StripedDataFormat.InputContext(
@@ -194,8 +196,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
@@ -206,6 +207,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
         HadoopFileFormat<T> fileFormat = convertFormat(format);
         ModelInput<T> input = fileFormat.createInput(
                 dataType,
@@ -228,8 +231,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     @Override
     public <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
@@ -258,6 +260,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
             fs = profile.getFileSystem();
             attempt = getAttemptOutput(context);
         }
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
         Path file = append(append(attempt, basePath), resourcePath);
         HadoopFileFormat<T> fileFormat = convertFormat(format);
         ModelOutput<T> output = fileFormat.createOutput(dataType, fs, file, counter);

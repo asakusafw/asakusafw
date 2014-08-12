@@ -40,6 +40,7 @@ import com.asakusafw.runtime.directio.DirectDataSourceProvider;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceCore;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
@@ -200,8 +201,7 @@ public class DirectIoCommandTestRoot {
             ds.setupAttemptOutput(aContext);
             ModelOutput<StringBuilder> output = ds.openOutput(
                     aContext,
-                    StringBuilder.class,
-                    new MockFormat(),
+                    SimpleDataDefinition.newInstance(StringBuilder.class, new MockFormat()),
                     "",
                     executionId,
                     new Counter());
