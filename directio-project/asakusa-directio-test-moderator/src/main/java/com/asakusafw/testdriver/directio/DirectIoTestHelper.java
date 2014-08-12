@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
@@ -40,6 +41,7 @@ import com.asakusafw.runtime.directio.FilePattern.PatternElement;
 import com.asakusafw.runtime.directio.FilePattern.Segment;
 import com.asakusafw.runtime.directio.FilePattern.Selection;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.io.ModelInput;
@@ -54,6 +56,7 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 /**
  * Utilities for this package.
  * @since 0.2.5
+ * @version 0.7.0
  */
 public final class DirectIoTestHelper {
 
@@ -220,12 +223,13 @@ public final class DirectIoTestHelper {
                 id,
                 description.getClass().getName(),
         });
+        DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
         try {
             dataSource.setupTransactionOutput(outputContext.getTransactionContext());
             dataSource.setupAttemptOutput(outputContext);
             Counter counter = new Counter();
-            final ModelOutput<T> output =
-                dataSource.openOutput(outputContext, dataType, format, basePath, outputPath, counter);
+            final ModelOutput<T> output = dataSource.openOutput(
+                    outputContext, definition, basePath, outputPath, counter);
             return new ModelOutput<T>() {
                 @Override
                 public void write(T model) throws IOException {
@@ -259,7 +263,7 @@ public final class DirectIoTestHelper {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public <T> ModelInput<T> openInput(
-            final Class<T> dataType,
+            Class<T> dataType,
             DirectFileOutputDescription description) throws IOException {
         if (dataType == null) {
             throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
@@ -267,7 +271,8 @@ public final class DirectIoTestHelper {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        final DataFormat<T> format = createFormat(dataType, description.getFormat());
+        DataFormat<T> format = createFormat(dataType, description.getFormat());
+        final DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
         final Counter counter = new Counter();
         try {
             FilePattern pattern = toInputPattern(description.getResourcePattern());
@@ -277,8 +282,7 @@ public final class DirectIoTestHelper {
                     id,
                     description.getClass().getName(),
             });
-            final List<DirectInputFragment> fragments =
-                dataSource.findInputFragments(dataType, format, basePath, pattern);
+            final List<DirectInputFragment> fragments = dataSource.findInputFragments(definition, basePath, pattern);
             return new ModelInput<T>() {
 
                 private final Iterator<DirectInputFragment> iterator = fragments.iterator();
@@ -294,7 +298,7 @@ public final class DirectIoTestHelper {
                             }
                             DirectInputFragment fragment = iterator.next();
                             try {
-                                current = dataSource.openInput(dataType, format, fragment, counter);
+                                current = dataSource.openInput(definition, fragment, counter);
                             } catch (InterruptedException e) {
                                 throw (IOException) new InterruptedIOException("interrupted").initCause(e);
                             }
