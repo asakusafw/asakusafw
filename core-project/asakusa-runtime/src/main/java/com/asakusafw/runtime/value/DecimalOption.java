@@ -408,10 +408,10 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
             return;
         }
 
-        void set(BigDecimal decimal) {
-            this.scale = decimal.scale();
+        void set(BigDecimal newValue) {
+            this.scale = newValue.scale();
 
-            BigInteger unscaled = decimal.unscaledValue();
+            BigInteger unscaled = newValue.unscaledValue();
             if (unscaled.signum() >= 0) {
                 this.plus = true;
             } else {
@@ -421,14 +421,14 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
             setUnsigned(unscaled);
         }
 
-        void set(boolean plus, int scale, byte[] bytes, int offset, int length) {
-            byte[] target = setMeta(plus, scale, length);
-            System.arraycopy(bytes, offset, target, target.length - length, length);
+        void set(boolean newPlus, int newScale, byte[] data, int offset, int length) {
+            byte[] target = setMeta(newPlus, newScale, length);
+            System.arraycopy(data, offset, target, target.length - length, length);
         }
 
-        byte[] setMeta(boolean plus, int scale, int length) {
-            this.plus = plus;
-            this.scale = scale;
+        byte[] setMeta(boolean newPlus, int newScale, int length) {
+            this.plus = newPlus;
+            this.scale = newScale;
             return ensureBuffer(length);
         }
 

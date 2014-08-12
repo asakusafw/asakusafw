@@ -39,8 +39,7 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
 
     @Override
     public <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
         return Collections.emptyList();
@@ -48,8 +47,7 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
 
     @Override
     public <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
         return new ModelInput<T>() {
@@ -67,11 +65,9 @@ public class MockDirectDataSource extends AbstractDirectDataSource {
     @Override
     public <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
-            String resourcePath,
-            Counter counter) throws IOException, InterruptedException {
+            String resourcePath, Counter counter) throws IOException, InterruptedException {
         return new ModelOutput<T>() {
             @Override
             public void write(T model) throws IOException {

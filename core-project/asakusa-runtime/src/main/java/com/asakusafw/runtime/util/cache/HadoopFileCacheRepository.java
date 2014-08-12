@@ -18,6 +18,7 @@ package com.asakusafw.runtime.util.cache;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 import org.apache.commons.logging.Log;
@@ -27,7 +28,6 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.util.PureJavaCrc32;
 
 import com.asakusafw.runtime.util.lock.LockObject;
 import com.asakusafw.runtime.util.lock.LockProvider;
@@ -163,7 +163,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                     "Computing checksum: {0}",
                     file));
         }
-        Checksum checksum = new PureJavaCrc32();
+        Checksum checksum = new CRC32();
         byte[] buf = byteBuffers.get();
         FSDataInputStream input = fs.open(file);
         try {
