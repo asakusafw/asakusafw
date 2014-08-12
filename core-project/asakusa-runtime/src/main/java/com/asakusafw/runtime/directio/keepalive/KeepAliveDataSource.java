@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
@@ -32,6 +32,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 /**
  * A wrapper of {@link DirectDataSource} that sends heartbeat continuously.
  * @since 0.2.6
+ * @version 0.7.0
  */
 public class KeepAliveDataSource implements DirectDataSource {
 
@@ -55,32 +56,29 @@ public class KeepAliveDataSource implements DirectDataSource {
 
     @Override
     public <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
-        return entity.findInputFragments(dataType, format, basePath, resourcePattern);
+        return entity.findInputFragments(definition, basePath, resourcePattern);
     }
 
     @Override
     public <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
-        ModelInput<T> input = entity.openInput(dataType, format, fragment, counter);
+        ModelInput<T> input = entity.openInput(definition, fragment, counter);
         return new WrappedModelInput<T>(input, heartbeat, counter);
     }
 
     @Override
     public <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
-        ModelOutput<T> output = entity.openOutput(context, dataType, format, basePath, resourcePath, counter);
+        ModelOutput<T> output = entity.openOutput(context, definition, basePath, resourcePath, counter);
         return new WrappedModelOutput<T>(output, heartbeat, counter);
     }
 

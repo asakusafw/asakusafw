@@ -47,10 +47,12 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.util.CountInputStream;
 import com.asakusafw.runtime.directio.util.CountOutputStream;
 import com.asakusafw.runtime.io.ModelInput;
@@ -68,7 +70,7 @@ public class HadoopDataSourceCoreTest {
     @Rule
     public final TemporaryFolder temp = new TemporaryFolder();
 
-    private final DataFormat<StringBuilder> format;
+    private final DataDefinition<StringBuilder> definition;
 
     private Configuration conf;
 
@@ -101,7 +103,7 @@ public class HadoopDataSourceCoreTest {
      * @param format the format.
      */
     public HadoopDataSourceCoreTest(DataFormat<StringBuilder> format) {
-        this.format = format;
+        this.definition = SimpleDataDefinition.newInstance(StringBuilder.class, format);
     }
 
     /**
@@ -111,8 +113,8 @@ public class HadoopDataSourceCoreTest {
     @Before
     public void setUp() throws Exception {
         conf = new Configuration(true);
-        if (format instanceof Configurable) {
-            ((Configurable) format).setConf(conf);
+        if (definition.getDataFormat() instanceof Configurable) {
+            ((Configurable) definition.getDataFormat()).setConf(conf);
         }
         mapping = new File(temp.getRoot(), "mapping").getCanonicalFile();
         temporary = new File(temp.getRoot(), "temporary").getCanonicalFile();
@@ -137,8 +139,7 @@ public class HadoopDataSourceCoreTest {
 
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
-                StringBuilder.class,
-                format,
+                definition,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
@@ -160,8 +161,7 @@ public class HadoopDataSourceCoreTest {
 
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
-                StringBuilder.class,
-                format,
+                definition,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(1));
@@ -187,8 +187,7 @@ public class HadoopDataSourceCoreTest {
         profile.setPreferredFragmentSize(fragmentSize);
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
-                StringBuilder.class,
-                format,
+                definition,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(greaterThanOrEqualTo(fragmentCount / 2)));
@@ -211,8 +210,7 @@ public class HadoopDataSourceCoreTest {
 
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         List<DirectInputFragment> fragments = core.findInputFragments(
-                StringBuilder.class,
-                format,
+                definition,
                 "input",
                 FilePattern.compile("**"));
         assertThat(fragments.size(), is(3));
@@ -235,8 +233,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -270,8 +267,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -308,8 +304,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -347,8 +342,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -381,8 +375,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -415,8 +408,7 @@ public class HadoopDataSourceCoreTest {
         for (int i = 0; i < 3; i++) {
             ModelOutput<StringBuilder> output = core.openOutput(
                     context,
-                    StringBuilder.class,
-                    format,
+                    definition,
                     "output",
                     "file" + i + ".txt",
                     counter);
@@ -444,8 +436,7 @@ public class HadoopDataSourceCoreTest {
         setup(core);
         ModelOutput<StringBuilder> output = core.openOutput(
                 context,
-                StringBuilder.class,
-                format,
+                definition,
                 "output",
                 "file.txt",
                 counter);
@@ -555,7 +546,7 @@ public class HadoopDataSourceCoreTest {
             HadoopDataSourceCore core, List<DirectInputFragment> fragments) throws IOException, InterruptedException {
         List<String> results = new ArrayList<String>();
         for (DirectInputFragment fragment : fragments) {
-            ModelInput<StringBuilder> input = core.openInput(StringBuilder.class, format, fragment, counter);
+            ModelInput<StringBuilder> input = core.openInput(definition, fragment, counter);
             try {
                 StringBuilder buf = new StringBuilder();
                 while (input.readTo(buf)) {

@@ -27,7 +27,7 @@ import org.apache.hadoop.fs.FileSystem;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectInputFragment;
@@ -42,7 +42,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 /**
  * An implementation of {@link AbstractDirectDataSource} using {@link FileSystem}.
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.7.0
  */
 public class HadoopDataSource extends AbstractDirectDataSource implements Configurable {
 
@@ -87,31 +87,28 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
 
     @Override
     public <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
-        return core.findInputFragments(dataType, format, basePath, resourcePattern);
+        return core.findInputFragments(definition, basePath, resourcePattern);
     }
 
     @Override
     public <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
-        return core.openInput(dataType, format, fragment, counter);
+        return core.openInput(definition, fragment, counter);
     }
 
     @Override
     public <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
-        return core.openOutput(context, dataType, format, basePath, resourcePath, counter);
+        return core.openOutput(context, definition, basePath, resourcePath, counter);
     }
 
     @Override

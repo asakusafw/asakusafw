@@ -21,10 +21,11 @@ import org.apache.hadoop.conf.Configurable;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.ReducerWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -35,6 +36,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Reducer for direct output.
  * @since 0.2.5
+ * @version 0.7.0
  */
 public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         AbstractDirectOutputKey, AbstractDirectOutputValue,
@@ -67,14 +69,15 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         String path = variables.parse(group.getPath(), false);
         String id = repository.getRelatedId(path);
         OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, id);
-        DataFormat format = configure(context, group.getFormat());
+        DataDefinition definition = SimpleDataDefinition.newInstance(
+                group.getDataType(),
+                configure(context, group.getFormat()));
         DirectDataSource datasource = repository.getRelatedDataSource(path);
         String basePath = repository.getComponentPath(path);
         String resourcePath = variables.parse(group.getResourcePath());
-        Class dataType = group.getDataType();
 
         Counter counter = new Counter();
-        ModelOutput output = datasource.openOutput(outputContext, dataType, format, basePath, resourcePath, counter);
+        ModelOutput output = datasource.openOutput(outputContext, definition, basePath, resourcePath, counter);
 
         long records = 0;
         try {
