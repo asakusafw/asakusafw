@@ -965,6 +965,8 @@ DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してく�
         hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar,$ASAKUSA_HOME/batchapps/<バッチID>/lib/jobflow-<フローID>.jar" -text "<path/to/sequence-file>"
 
 
+.. _directio-dsl-input-description:
+
 ファイルを入力に利用するDSL
 ---------------------------
 Direct I/Oを利用してファイルからデータを読み出す場合、 ``DirectFileInputDescription`` [#]_ クラスのサブクラスを作成して必要な情報を記述します。
@@ -1100,6 +1102,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 ..  note::
     「変数」に関する挙動は、パターンの解釈の前に一度変数をすべて展開し、
     展開後の文字列をパターンとして解釈して利用しています。
+
+.. _directio-dsl-output-description:
 
 ファイルを出力に利用するDSL
 ---------------------------
