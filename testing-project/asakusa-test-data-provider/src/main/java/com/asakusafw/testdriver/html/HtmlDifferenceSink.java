@@ -80,7 +80,11 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    // ignored
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to close CSS file: {}",
+                                HtmlDifferenceSink.class.getResource(CSS_FILE_NAME)), e);
+                    }
                 }
             }
         }
