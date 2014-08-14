@@ -60,7 +60,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     private DifferenceSinkFactory differenceSink;
 
-    private DataModelSourceFilter filter;
+    private DataModelSourceFilter resultFilter;
 
     /**
      * Creates a new instance.
@@ -82,10 +82,10 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     public VerifierFactory getVerifier() {
         if (verifier == null) {
             return null;
-        } else if (filter == null) {
+        } else if (resultFilter == null) {
             return verifier;
         } else {
-            return toVerifierFactory(verifier, filter);
+            return toVerifierFactory(verifier, resultFilter);
         }
     }
 
@@ -158,12 +158,12 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * Sets the data model source filter for this output.
+     * Sets the data model source filter for actual results of this output.
      * @param filter the source filter
      * @since 0.7.0
      */
     protected final void setResultFilter(DataModelSourceFilter filter) {
-        this.filter = filter;
+        this.resultFilter = filter;
     }
 
     /**

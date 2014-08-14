@@ -90,6 +90,12 @@ public class PropertyCondition<T> {
                 }
             } catch (IllegalArgumentException ex) {
                 // this means "ERROR" in ternary, continue checking rest conditions
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(MessageFormat.format(
+                            "Error occurred while evaluating predicate: predicate={0}, expected={1}, actual={2}",
+                            predicate,
+                            e, a), ex);
+                }
             }
         }
         return false;
