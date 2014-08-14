@@ -524,9 +524,7 @@ Hive DDLの生成
     
 ``generateHiveDDL`` タスクを実行すると、プロジェクトの ``build/hive-ddl`` ディレクトリ配下にHiveのDDL文を含むSQLファイルが生成されます。
 
-詳しくは、 :doc:`../application/gradle-plugin` のXXXを参照してください。
-
-..  todo:: Reference
+詳しくは、 :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-task-hiveddl` を参照してください。
 
 ..  hint::
     Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
@@ -547,9 +545,7 @@ Hive連携モジュールを利用したバッチアプリケーションを実�
     }
     ...
 
-詳しくは、 :doc:`../application/gradle-plugin` のXXXを参照してください。
-
-..  todo:: Reference
+詳しくは、 :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-oraganizer-hive` を参照してください。
 
 また、Hive連携モジュール用のライブラリのうち特にHiveのライブラリはファイルサイズが大きいため、Hadoopジョブの実行のつどHadoopクラスターにライブラリを配布することでパフォーマンスに悪影響を与える可能性があります。このため、ライブラリキャッシュの設定を行いHive連携モジュール用のライブラリをキャッシュすることを推奨します。
 

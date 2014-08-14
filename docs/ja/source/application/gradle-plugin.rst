@@ -740,6 +740,10 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       -  ``-`` 
       - ``AnalyzeYaessLogTask`` [#]_
       - YAESS Log Analyzerを実行する [#]_
+    * -  ``generateHiveDDL`` 
+      -  ``-`` 
+      - ``GenerateHiveDdlTask`` [#]_
+      - DMDLからHive用のDDLファイルを生成する
 
 ..  [#] ThunderGateの設定を有効にした場合、 ``generateThunderGateDataModel`` タスクが依存先に追加されます
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
@@ -749,6 +753,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.AnalyzeYaessLogTask`
 ..  [#] YAESS Log Analyzerやその使い方については、 :doc:`yaess-log-visualization` を参照してください。
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateHiveDdlTask`
 
 またBatch Application Plugin は、自動適用される以下のタスクに対してタスク依存関係を追加します。
 
@@ -1054,19 +1059,60 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 
 ``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時に以下のコマンドライン引数を指定します。
 
-``--id``
+``--id batch-id``
   実行するバッチアプリケーションのバッチID
   
-``--arguments``
+``--arguments key1=value1 [,key2=value2]``
   バッチ引数を ``key=value`` 形式で指定。複数のバッチ引数がある場合はカンマ区切りで指定 ( ``key1=value1,key2=value2`` )。
 
 ``testRunBatchapp`` タスクの実行例は以下の通りです。
 
-..  code-block:: groovy
+..  code-block:: sh
     
     ./gradlew testRunBatchapp --id example.summarizeSales --arguments date=2011-04-01
 
 ..  [#] バッチテストランナーの詳細は :doc:`../testing/user-guide` の :ref:`testing-userguide-integration-test` を参照してください。
+    
+.. _gradle-plugin-task-hiveddl:
+
+Hive用DDLファイルの生成
+~~~~~~~~~~~~~~~~~~~~~~~
+``generateHiveDDL`` は Hive連携用の拡張属性 [#]_ を持つDMDLスクリプトからをHive用のDDLファイルを生成します。
+ 
+``generateHiveDDL`` タスクを実行すると、プロジェクトの ``build/hive-ddl``
+ディレクトリ配下にHiveのテーブル作成用の ``CREATE TABLE`` 文を含むSQLファイルが生成されます。
+
+``generateHiveDDL`` タスクは ``gradlew`` コマンド実行時に以下のコマンドラインオプションを指定することができます。
+
+``--location /path/to/base-location``
+  生成する ``CREATE TABLE`` 文に ``LOCATION`` (テーブルに対応するファイルを配置するHDFS上のパス) を追加する。
+  このオプションを指定すると、 ``LOCATION`` の値に ``<指定したパス>/<table-name>`` が設定される。
+
+  指定がない場合は ``LOCATION`` 句は未指定
+  
+``--database-name database-name``
+  生成する ``CRATE TABLE`` 文のテーブル名の前にデータベース名を付与する
+
+  指定がない場合は データベース名は未指定
+
+``--include regex-table-name-pattern``
+  指定した正規表現にマッチするテーブルに対してのみDDLを生成
+
+  指定がない場合はすべてのテーブルに対してDDLを生成する
+
+``--output /path/to/ddloutput``
+  指定した出力先のパスにDDLファイルを生成する
+
+  指定がない場合のファイルパスは ``${project.buildDir}/hive-ddl/${project.name}.sql``
+
+``generateHiveDDL`` タスクの実行例は以下の通りです。
+
+..  code-block:: sh
+    
+    ./gradlew generateHiveDDL --location /home/hadoop/target/testing/directio/tables --include item
+
+
+..  [#] Hiveとの連携については、 :doc:`../directio/using-hive` を参照してください。
 
 Framework Organizer Plugin
 --------------------------
@@ -1218,8 +1264,6 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention` が提供します。
 
-.. _include-hadoop-gradle-plugin:
-
 ThunderGateプロパティ
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -1243,6 +1287,30 @@ ThunderGateに関する規約プロパティは、 ``asakusafw-organizer`` ブ�
       - デプロイメント構成の設定に含めるThunderGateのターゲット。
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。
+
+.. _gradle-plugin-oraganizer-hive:
+
+Hiveプロパティ
+^^^^^^^^^^^^^^
+
+Hive連携に関する規約プロパティは、 ``asakusafw-organizer`` ブロック内の参照名 ``hive`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - Hiveプロパティ ( ``hive`` ブロック)
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``enabled``
+      - boolean
+      - false
+      - この値をtrueにするとHive連携モジュール用の構成を行う
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration` が提供します。
+
+.. _include-hadoop-gradle-plugin:
 
 デプロイメント構成に含むAsakusa Frameworkのバージョン
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
