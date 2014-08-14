@@ -32,6 +32,9 @@ import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.TestModerator;
+import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -45,9 +48,9 @@ public class JobFlowTester extends TestDriverBase {
 
     static final Logger LOG = LoggerFactory.getLogger(JobFlowTester.class);
     /** 入力データのリスト。 */
-    protected List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
+    protected final List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
     /** 出力データのリスト。 */
-    protected List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
+    protected final List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
 
     /**
      * コンストラクタ。
@@ -106,6 +109,9 @@ public class JobFlowTester extends TestDriverBase {
     private void runTestInternal(Class<? extends FlowDescription> jobFlowDescriptionClass) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
+        LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+        validateTestCondition();
+
         // フローコンパイラの実行
         LOG.info("ジョブフローをコンパイルしています: {}", jobFlowDescriptionClass.getName());
         JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
@@ -157,5 +163,29 @@ public class JobFlowTester extends TestDriverBase {
 
         LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
         executor.verify(jobflowInfo, verifyContext, outputs);
+    }
+
+    private void validateTestCondition() throws IOException {
+        TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (DriverInputBase<?> port : inputs) {
+            String label = String.format("Input(%s)", port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+        }
+        for (DriverOutputBase<?> port : outputs) {
+            String label = String.format("Output(%s)", port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+            VerifierFactory verifier = port.getVerifier();
+            if (verifier != null) {
+                moderator.validate(type, label, verifier);
+            }
+        }
     }
 }
