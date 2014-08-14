@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
@@ -25,20 +26,28 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
+import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestRule;
+import com.asakusafw.testdriver.core.Verifier;
 import com.asakusafw.testdriver.core.VerifierFactory;
+import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
 
 /**
  * テストドライバのテスト出力データの親クラス。
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.7.0
  * @param <T> モデルクラス
  */
 public class DriverOutputBase<T> extends DriverInputBase<T> {
@@ -50,6 +59,8 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     private DataModelSinkFactory resultSink;
 
     private DifferenceSinkFactory differenceSink;
+
+    private DataModelSourceFilter filter;
 
     /**
      * Creates a new instance.
@@ -69,7 +80,13 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      * @since 0.2.3
      */
     public VerifierFactory getVerifier() {
-        return verifier;
+        if (verifier == null) {
+            return null;
+        } else if (filter == null) {
+            return verifier;
+        } else {
+            return toVerifierFactory(verifier, filter);
+        }
     }
 
     /**
@@ -141,6 +158,15 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
+     * Sets the data model source filter for this output.
+     * @param filter the source filter
+     * @since 0.7.0
+     */
+    protected final void setResultFilter(DataModelSourceFilter filter) {
+        this.filter = filter;
+    }
+
+    /**
      * Converts an output path to {@link DataModelSinkFactory} to write to the path.
      * @param path the output path
      * @return the target sink factory
@@ -178,6 +204,43 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final DifferenceSinkFactory toDifferenceSinkFactory(File path) {
         return getTestTools().getDifferenceSinkFactory(path.toURI());
+    }
+
+    /**
+     * Converts an model transformer into {@link DataModelSourceFilter}.
+     * @param transformer the data model transformer
+     * @return the filter which transforms each data model objects using the transformer
+     * @since 0.7.0
+     */
+    protected final DataModelSourceFilter toDataModelSourceFilter(final ModelTransformer<? super T> transformer) {
+        final DataModelDefinition<T> definition = getDataModelDefinition();
+        return new DataModelSourceFilter() {
+            @Override
+            public DataModelSource apply(final DataModelSource source) {
+                return new DataModelSource() {
+                    @Override
+                    public DataModelReflection next() throws IOException {
+                        DataModelReflection next = source.next();
+                        if (next == null) {
+                            return null;
+                        }
+                        T object = definition.toObject(next);
+                        transformer.transform(object);
+                        return definition.toReflection(object);
+                    }
+                    @Override
+                    public void close() throws IOException {
+                        source.close();
+                    }
+                };
+            }
+            @Override
+            public String toString() {
+                return MessageFormat.format(
+                        "Filter(transformer={0})",
+                        transformer);
+            }
+        };
     }
 
     /**
@@ -224,6 +287,44 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected final VerifierFactory toVerifierFactory(
             DataModelSourceFactory expectedFactory, VerifyRuleFactory ruleFactory) {
         return getTestTools().toVerifierFactory(expectedFactory, ruleFactory);
+    }
+
+    /**
+     * Converts a pair of expected data set factory and verify rule factory into {@link VerifyRuleFactory}.
+     * @param verifierFactory the original verifier factory
+     * @param sourceFilter the filter for verifier input
+     * @return the {@link VerifierFactory} which provides a verifier using the filtered input
+     * @since 0.7.0
+     */
+    protected final VerifierFactory toVerifierFactory(
+            final VerifierFactory verifierFactory,
+            final DataModelSourceFilter sourceFilter) {
+        return new VerifierFactory() {
+            @Override
+            public <M> Verifier createVerifier(
+                    DataModelDefinition<M> definition,
+                    VerifyContext context) throws IOException {
+                final Verifier delegate = verifierFactory.createVerifier(definition, context);
+                return new Verifier() {
+                    @Override
+                    public List<Difference> verify(DataModelSource results) throws IOException {
+                        DataModelSource filtered = sourceFilter.apply(results);
+                        return delegate.verify(filtered);
+                    }
+                    @Override
+                    public void close() throws IOException {
+                        delegate.close();
+                    }
+                };
+            }
+            @Override
+            public String toString() {
+                return MessageFormat.format(
+                        "Verifier(verifier={0}, filter={1})",
+                        verifierFactory,
+                        sourceFilter);
+            }
+        };
     }
 
     /**

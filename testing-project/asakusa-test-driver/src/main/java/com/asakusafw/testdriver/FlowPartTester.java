@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.TestModerator;
+import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -103,6 +106,9 @@ public class FlowPartTester extends TestDriverBase {
     private void runTestInternal(FlowDescription flowDescription) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
+        LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+        validateTestCondition();
+
         // フローコンパイラの実行
         LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
         FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
@@ -153,5 +159,29 @@ public class FlowPartTester extends TestDriverBase {
         // 実行結果の検証
         LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
         executor.verify(jobflowInfo, verifyContext, outputs);
+    }
+
+    private void validateTestCondition() throws IOException {
+        TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (DriverInputBase<?> port : inputs) {
+            String label = String.format("Input(%s)", port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+        }
+        for (DriverOutputBase<?> port : outputs) {
+            String label = String.format("Output(%s)", port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+            VerifierFactory verifier = port.getVerifier();
+            if (verifier != null) {
+                moderator.validate(type, label, verifier);
+            }
+        }
     }
 }

@@ -27,6 +27,8 @@ Direct I/Oの入力には次のような特徴があります。
 
 以降では上記の特徴に関するアーキテクチャを紹介します。
 
+.. _directio-input-split:
+
 入力データの分割
 ----------------
 Direct I/Oでデータを読み出す際、以下の条件をすべて満たした場合にデータを小さな断片に分割し、断片ごとに分散して読み出します。
@@ -605,8 +607,6 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
 また、データモデルと対象のファイル形式をマッピングする ``DataFormat`` [#]_ の作成が必要です。
 ``DataFormat`` のサブタイプとして、任意のストリームを取り扱う ``BinaryStreamFormat`` [#]_ や、Hadoopのファイルを取り扱う ``HadoopFileFormat`` [#]_ を現在利用できます ( ``DataFormat`` は直接実装できません ) 。
 
-上記のうち、CSVファイルを読み書きするための実装クラスは、DMDLコンパイラの拡張 [#]_ を利用して自動的に生成できます。
-
 なお、以降の機能を利用するには次のライブラリやプラグインが必要です [#]_ 。
 
 ..  list-table:: Direct I/Oで利用するライブラリ等
@@ -628,342 +628,23 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.BinaryStreamFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopFileFormat`
-..  [#] :doc:`../dmdl/user-guide` を参照
 ..  [#] :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクト、および :doc:`../application/maven-archetype` の手順に従ってアーキタイプ ``asakusa-archetype-windgate`` から作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/sdk-artifact` を参照してください。
 
-CSV形式のDataFormatの作成
--------------------------
-CSV形式 [#]_ に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに対応するDMDLスクリプトに ``@directio.csv`` を指定します。
-
-..  code-block:: none
-
-    @directio.csv
-    document = {
-        "the name of this document"
-        name : TEXT;
-
-        "the content of this document"
-        content : TEXT;
-    };
-
-上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.csv.<データモデル名>CsvFormat`` というクラスが自動生成されます。
-このクラスは ``DataFormat`` を実装し、データモデル内のプロパティが順番に並んでいるCSVを取り扱えます。
-
-また、 単純な `ファイルを入力に利用するDSL`_ と `ファイルを出力に利用するDSL`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvInputDescription`` 、後者は ``<出力先パッケージ>.csv.Abstract<データモデル名>CsvOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
-
-この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-directio-dmdl`` を追加する必要があります。
-DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
-
-..  note::
-    この機構は :doc:`WindGate <../windgate/user-guide>` のものと将来統合されるかもしれません。
-
-..  [#] ここでのCSV形式は、RFC 4180 (http://www.ietf.org/rfc/rfc4180.txt) で提唱されている形式を一部変更したものです。
-    文字セットをASCIIの範囲外にも拡張したり、CRLF以外にもLFのみも改行と見なしたり、ダブルクウォート文字の取り扱いを緩くしたりなどの拡張を加えています。
-    `CSV形式の注意点`_ も参照してください。
-
-
-CSV形式の設定
-~~~~~~~~~~~~~
-``@directio.csv`` 属性には、次のような要素を指定できます。
-
-..  list-table:: CSV形式の設定
-    :widths: 10 10 20 60
-    :header-rows: 1
-
-    * - 要素
-      - 型
-      - 既定値
-      - 内容
-    * - ``charset``
-      - 文字列
-      - ``"UTF-8"``
-      - ファイルの文字エンコーディング
-    * - ``allow_linefeed``
-      - 論理値
-      - ``FALSE``
-      - ``TRUE`` で値内にLFを含められる。 ``FALSE`` で不許可
-    * - ``has_header``
-      - 論理値
-      - ``FALSE``
-      - ``TRUE`` でヘッダの利用を許可。 ``FALSE`` で不許可
-    * - ``true``
-      - 文字列
-      - ``"true"``
-      - ``BOOLEAN`` 型の ``TRUE`` 値の表現形式
-    * - ``false``
-      - 文字列
-      - ``"false"``
-      - ``BOOLEAN`` 型の ``FALSE`` 値の表現形式
-    * - ``date``
-      - 文字列
-      - ``"yyyy-MM-dd"``
-      - ``DATE`` 型の表現形式
-    * - ``datetime``
-      - 文字列
-      - ``"yyyy-MM-dd HH:mm:ss"``
-      - ``DATETIME`` 型の表現形式
-    * - ``compression``
-      - 文字列
-      - なし
-      - ファイルの圧縮形式
-
-なお、 ``date`` および ``datetime`` には ``SimpleDateFormat`` [#]_ の形式で日付や時刻を指定します。
-
-また、 ``compression`` には、 ``"gzip"`` または ``CompressionCodec`` [#]_ のサブタイプのクラス名を指定します [#]_ 。
-ここで指定した圧縮形式で対象のファイルが読み書きされるようになりますが、代わりに `入力データの分割`_ が行われなくなります。
-
-..  attention::
-    デフォルトでは ``allow_linefeed`` には ``FALSE`` が設定されていて、文字列の内部などに改行文字 LF を含められないようになっています。
-    この設定を ``TRUE`` にすることでLFを含められるようになりますが、代わりに `入力データの分割`_ が行われなくなります。
-    詳しくは `CSV形式の注意点`_ を参照してください。
-
-以下はDMDLスクリプトの記述例です。
-
-..  code-block:: none
-
-    @directio.csv(
-        charset = "ISO-2022-JP",
-        allow_linefeed = TRUE,
-        has_header = TRUE,
-        true = "1",
-        false = "0",
-        date = "yyyy/MM/dd",
-        datetime = "yyyy/MM/dd HH:mm:ss",
-        compression = "gzip",
-    )
-    model = {
-        ...
-    };
-
-..  [#] ``java.text.SimpleDateFormat``
-..  [#] ``org.apache.hadoop.io.compress.CompressionCodec``
-..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
-
-ヘッダの設定
-~~~~~~~~~~~~
-`CSV形式の設定`_ でヘッダを有効にしている場合、出力の一行目にプロパティ名が表示されます。
-ここで表示される内容を変更するには、それぞれのプロパティに ``@directio.csv.field`` 属性を指定し、さらに ``name`` 要素でフィールド名を指定します。
-
-以下はヘッダの内容の付加したDMDLスクリプトの記述例です。
-
-..  code-block:: none
-
-    @directio.csv
-    document = {
-        "the name of this document"
-        @directio.csv.field(name = "題名")
-        name : TEXT;
-
-        "the content of this document"
-        @directio.csv.field(name = "内容")
-        content : TEXT;
-    };
-
-ファイル情報の取得
-~~~~~~~~~~~~~~~~~~
-解析中のCSVファイルに関する属性を取得する場合、それぞれ以下の属性をプロパティに指定します。
-
-..  list-table:: ファイル情報の取得に関する属性
-    :widths: 4 2 4
-    :header-rows: 1
-
-    * - 属性
-      - 型
-      - 内容
-    * - ``@directio.csv.file_name``
-      - ``TEXT``
-      - ファイル名
-    * - ``@directio.csv.line_number``
-      - ``INT`` , ``LONG``
-      - テキスト行番号 (1起算)
-    * - ``@directio.csv.record_number``
-      - ``INT`` , ``LONG``
-      - レコード番号 (1起算)
-
-上記の属性が指定されたプロパティは、CSVのフィールドから除外されます。
-
-..  attention::
-    ``@directio.csv.line_number`` または ``@directio.csv.record_number`` が指定された場合、 `入力データの分割`_ が行われなくなります。
-    詳しくは `CSV形式の注意点`_ を参照してください。
-
-..  attention::
-    これらの属性はCSVの解析時のみ有効です。
-    CSVを書き出す際には無視されます。
-
-CSVから除外するプロパティ
-~~~~~~~~~~~~~~~~~~~~~~~~~
-特定のプロパティをCSVのフィールドとして取り扱いたくない場合、プロパティに ``@directio.csv.ignore`` を指定します。
-
-CSV形式の注意点
-~~~~~~~~~~~~~~~
-自動生成でサポートするCSV形式を利用するうえで、いくつかの注意点があります。
-
-* 改行文字は CRLF または LF のみ、CRのみです
-
-  * ただしCRのみを利用している場合、入力データの分割が正しく行われません
-
-* CSVに空の文字列を書き出しても、読み出し時に ``null`` として取り扱われます
-* 論理値は復元時に、値が ``true`` で指定した文字列の場合には ``true`` , 空の場合には ``null`` , それ以外の場合には ``false`` となります
-* ヘッダが一文字でも異なる場合、解析時にヘッダとして取り扱われません
-* 1レコードが10MBを超える場合、正しく解析できません
-* 以下のいずれかが指定された場合、 `入力データの分割`_ は行われなくなります
-
-  * ``@directio.csv( compression = ... )``
-  * ``@directio.csv( allow_linefeed = TRUE )``
-  * ``@directio.csv.line_number``
-  * ``@directio.csv.record_number``
-
-
-シーケンスファイル形式のDataFormatの作成
-----------------------------------------
-Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 ``SequenceFileFormat`` [#]_ のサブクラスを作成します。
-
-..  hint::
-    以降の記述は、Asakusa Frameworkの外部で作成されたシーケンスファイルを利用する際の方法です。
-    シーケンスファイルにAsakusa Frameworkのデータモデル形式を直接利用する場合 `内部データ形式を利用したシーケンスファイル形式のDataFormatの作成`_ なども利用可能です。
-
-``SequenceFileFormat`` は ``HadoopFileFormat`` のサブクラスで、シーケンスファイルを読み書きするための骨格実装が提供されています。
-
-このクラスを継承する際には、以下の型引数を ``SequenceFileFormat<K, V, T>`` にそれぞれ指定してください。
-
-``K``
-    対象シーケンスファイルのキーオブジェクトの型
-
-``V``
-    対象シーケンスファイルの値オブジェクトの型
-
-``T``
-    アプリケーションで利用するデータモデルオブジェクトの型
-
-このクラスでは、下記のメソッドをオーバーライドします。
-
-``Class<T> getSupportedType()``
-    対象となるデータモデルのクラスを戻り値に指定します。
-
-``K createKeyObject()``
-    対象のシーケンスファイルのキーと同じクラスのオブジェクトを戻り値に指定します。
-
-``V createValueObject()``
-    対象のシーケンスファイルの値と同じクラスのオブジェクトを戻り値に指定します。
-
-``void copyToModel(K key, V value, T model)``
-    シーケンスファイルから読み出したキー ( ``key`` ) と 値 ( ``value`` ) の内容を、対象のデータモデルオブジェクト ( ``model`` ) に設定します。
-    このメソッドは、シーケンスファイルからデータ読み出す際に、レコードごとに起動されます。
-    このメソッドによって変更されたデータモデルオブジェクトは、以降の処理の入力として利用されます。
-
-``void copyFromModel(T model, K key, V value)``
-    結果を表すデータモデルオブジェクトの内容を、シーケンスファイルのキー ( ``key`` ) と値 ( ``value`` ) に設定します。
-    このメソッドは、シーケンスファイルにデータを書き込む際に、レコードごとに起動されます。
-    このメソッドによって変更されたキーと値がそのままシーケンスファイルに書き出されます。
-
-``CompressionCodec getCompressionCodec(Path path)``
-    シーケンスファイルの作成時に利用する圧縮コーデックを指定します。
-
-    オーバーライドしない場合、全体の設定情報をもとに圧縮コーデックを決定します。
-    詳しくは `シーケンスファイルの圧縮`_ を参照してください。
-
-以下はシーケンスファイル形式のDataFormatの実装例です。
-
-..  code-block:: java
-
-    public class ExampleSequenceFormat extends SequenceFileFormat<LongWritable, Text, MyData> {
-
-        @Override
-        public Class<MyData> getSupportedType() {
-            return MyData.class;
-        }
-
-        @Override
-        protected LongWritable createKeyObject() {
-            return new LongWritable();
-        }
-
-        @Override
-        protected Text createValueObject() {
-            return new Text();
-        }
-
-        @Override
-        protected void copyToModel(LongWritable key, Text value, MyData model) {
-            model.setPosition(key.get());
-            model.setText(value);
-        }
-
-        @Override
-        protected void copyFromModel(MyData model, LongWritable key, Text value) {
-            key.set(model.getPositionOption().or(0L));
-            value.set(model.getTextOption().or("(null)"));
-        }
-    }
-
-..  hint::
-    この機能は、 `Apache Sqoop`_ 等のツールと連携することを想定して提供されています。
-
-..  [#] ``org.apache.hadoop.io.SequenceFile``
-..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.SequenceFileFormat`
-
-..  _`Apache Sqoop` : http://sqoop.apache.org/
-
-シーケンスファイルの圧縮
-~~~~~~~~~~~~~~~~~~~~~~~~
-``SequenceFileFormat`` を利用してシーケンスファイルを作成する場合、以下のいくつかの方法で圧縮形式を指定できます。
-以下、上から順に該当する項目があれば、そこで設定された圧縮形式を利用します。
-
-``SequenceFileFormat.getCompressionCodec(Path path)`` をオーバーライド
-    オーバーライドしたメソッドが返す圧縮コーデックを利用します。
-
-    ``null`` を指定した場合、圧縮は行われません。
-
-設定ファイルで ``com.asakusafw.output.sequencefile.compression.codec`` を指定
-    上記の設定値に ``CompressionCodec`` [#]_ を実装したクラス名を指定すると、その圧縮コーデックを利用します。
-
-    なお、利用する圧縮コーデックはあらかじめHadoopクラスターの全台に導入されている必要があります。
-
-上記いずれの指定もない場合、シーケンスファイルの圧縮を行いません。
-
-..  note::
-    上記の設定はシーケンスファイル作成時のみ有効です。
-    シーケンスファイルを読み出す際には、シーケンスファイルの圧縮形式を自動的に判別します。
-
-..  [#] ``org.apache.hadoop.io.compress.CompressionCodec``
-
-内部データ形式を利用したシーケンスファイル形式のDataFormatの作成
-----------------------------------------------------------------
-シーケンスファイル対し、Asakusa Frameworkで利用するデータモデル形式を直接保存したり復元したりするような ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.sequence_file`` を指定します。
-
-..  code-block:: none
-
-    @directio.sequence_file
-    document = {
-        "the name of this document"
-        name : TEXT;
-
-        "the content of this document"
-        content : TEXT;
-    };
-
-上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.sequencefile.<データモデル名>SequenceFileFormat`` というクラスが自動生成されます。
-このクラスは ``DataFormat`` を実装し、対象のデータモデルオブジェクトをHadoopの直列化機構を直接利用したシーケンスファイルを取り扱えます。
-
-また、 単純な `ファイルを入力に利用するDSL`_ と `ファイルを出力に利用するDSL`_ の骨格も自動生成します。前者は ``<出力先パッケージ>.sequencefile.Abstract<データモデル名>SequenceFileInputDescription`` 、後者は ``<出力先パッケージ>.sequencefile.Abstract<データモデル名>SequenceFileOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
-
-この機能を利用するには、DMDLコンパイラのプラグインに ``asakusa-directio-dmdl`` を追加する必要があります。
-DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してください。
-
-..  warning::
-    シーケンスファイルの形式や、内部データのバイナリ表現はHadoopやAsakusa Frameworkのメジャーバージョンアップの際に変更になる場合があります。
-    データを長期にわたって保管する場合、CSVなどのポータブルな形式を利用することを推奨します。
-
-..  hint::
-    DMDLのデータモデル定義で、同一のデータモデルに ``@directio.csv`` と ``@directio.sequence_file`` の両方を指定することもできます。
-
-..  note::
-    シーケンスファイルの中身をテキスト形式で確認する場合、以下のコマンドを利用すると便利です。
-
-    ..  code-block:: sh
-    
-        hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar,$ASAKUSA_HOME/batchapps/<バッチID>/lib/jobflow-<フローID>.jar" -text "<path/to/sequence-file>"
-
+データフォーマットの作成
+------------------------
+Direct I/Oはいくつかのファイルフォーマットにおいて、
+``DataFormat`` の実装クラスをDMDLコンパイラの拡張を利用して
+自動的に生成する機能を提供したり、実装用の基底クラスを提供しています。
+
+Direct I/Oが提供する各ファイルフォーマットの利用方法については、
+以下のドキュメントを参照してください。
+
+* :doc:`csv-format`
+* :doc:`sequencefile-format`
+* :doc:`using-hive` (カラムナフォーマットファイルの利用)
+* :doc:`../sandbox/directio-tsv` (Sandbox)
+
+.. _directio-dsl-input-description:
 
 ファイルを入力に利用するDSL
 ---------------------------
@@ -1100,6 +781,8 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 ..  note::
     「変数」に関する挙動は、パターンの解釈の前に一度変数をすべて展開し、
     展開後の文字列をパターンとして解釈して利用しています。
+
+.. _directio-dsl-output-description:
 
 ファイルを出力に利用するDSL
 ---------------------------

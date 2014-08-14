@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * Result verifier.
  * @since 0.2.3
+ * @see Verifier.Validatable
  */
 public interface Verifier extends Closeable {
 
@@ -33,4 +34,19 @@ public interface Verifier extends Closeable {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     List<Difference> verify(DataModelSource results) throws IOException;
+
+    /**
+     * An extension interface for {@link Verifier}.
+     * @since 0.7.0
+     */
+    public interface Validatable {
+
+        /**
+         * Validates this object.
+         * Clients should dispose this object after the invoking this method
+         * and must not invoke {@link Verifier#verify(DataModelSource)}.
+         * @throws IOException if validation was failed
+         */
+        void validate() throws IOException;
+    }
 }
