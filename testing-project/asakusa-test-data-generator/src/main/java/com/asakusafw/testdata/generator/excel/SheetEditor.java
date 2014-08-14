@@ -189,6 +189,9 @@ public class SheetEditor {
             comments.setCellValue(property.getDescription() == null
                     ? property.getType().toString() : property.getDescription().getText());
 
+            Cell options = getCell(sheet, RuleSheetFormat.EXTRA_OPTIONS, index, 0);
+            options.setCellStyle(info.dataStyle);
+
             index++;
         }
 
