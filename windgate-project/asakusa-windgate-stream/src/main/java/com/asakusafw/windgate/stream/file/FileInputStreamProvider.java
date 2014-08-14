@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -84,8 +85,12 @@ public class FileInputStreamProvider extends InputStreamProvider {
             if (succeed == false) {
                 try {
                     stream.close();
-                } catch (IOException ignored) {
-                    // ignored
+                } catch (IOException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to dispose input: {0}",
+                                current), e);
+                    }
                 }
             }
         }

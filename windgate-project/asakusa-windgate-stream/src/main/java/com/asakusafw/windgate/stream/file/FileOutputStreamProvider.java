@@ -100,8 +100,12 @@ public class FileOutputStreamProvider extends OutputStreamProvider {
             if (succeed == false) {
                 try {
                     stream.close();
-                } catch (IOException ignored) {
-                    // ignored
+                } catch (IOException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to dispose input: {0}",
+                                current), e);
+                    }
                 }
             }
         }
