@@ -22,8 +22,9 @@ import java.util.List;
 /**
  * Rule based {@link Verifier}.
  * @since 0.2.3
+ * @version 0.7.0
  */
-public class VerifyRuleVerifier implements Verifier {
+public class VerifyRuleVerifier implements Verifier, Verifier.Validatable {
 
     private final DataModelSource expected;
 
@@ -58,6 +59,16 @@ public class VerifyRuleVerifier implements Verifier {
         differences.addAll(engine.inspectInput(results));
         differences.addAll(engine.inspectRest());
         return differences;
+    }
+
+    @Override
+    public void validate() throws IOException {
+        VerifyEngine engine = new VerifyEngine(rule);
+        try {
+            engine.addExpected(expected);
+        } finally {
+            expected.close();
+        }
     }
 
     @Override

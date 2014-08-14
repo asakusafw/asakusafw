@@ -99,7 +99,7 @@ JobQueueサーバー・コンポーネントのインストール
 ----------------------------------------------
 JobQueueサーバーに必要なコンポーネントをダウンロードします。
 
-* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.6.2.tar.gz
+* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.7.0.tar.gz
 
 ダウンロードが完了したら、以下の例を参考にしてJobQueueサーバーのコンポーネントを ``$ASAKUSA_HOME`` にインストールします
 (標準の ``~/Downloads`` にダウンロードした場合の例です)。

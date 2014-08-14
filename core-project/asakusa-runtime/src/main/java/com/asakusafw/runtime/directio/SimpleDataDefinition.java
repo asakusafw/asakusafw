@@ -20,7 +20,7 @@ package com.asakusafw.runtime.directio;
  * @param <T> the data type
  * @since 0.7.0
  */
-public class SimpleDataDefinition<T> implements DataDefinition<T> {
+public final class SimpleDataDefinition<T> implements DataDefinition<T> {
 
     private final Class<? extends T> dataClass;
 
