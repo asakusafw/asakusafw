@@ -18,8 +18,12 @@ package com.asakusafw.runtime.value;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.math.BigDecimal;
 
+import org.apache.hadoop.io.DataInputBuffer;
+import org.apache.hadoop.io.IOUtils.NullOutputStream;
 import org.junit.Test;
 
 /**
@@ -230,6 +234,124 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
         DecimalOption option = new DecimalOption();
         DecimalOption restored = restore(option);
         assertThat(restored.isNull(), is(true));
+    }
+
+    /**
+     * heavy write.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_write() throws Exception {
+        int count = 10000000;
+        DecimalOption option = new DecimalOption(new BigDecimal("3.14"));
+        DataOutput out = new DataOutputStream(new NullOutputStream());
+        for (int i = 0; i < count; i++) {
+            option.write(out);
+        }
+    }
+
+    /**
+     * heavy read.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_read() throws Exception {
+        int count = 10000000;
+        DecimalOption value = new DecimalOption(new BigDecimal("3.14"));
+        byte[] bytes = toBytes(value);
+        DecimalOption buf = new DecimalOption();
+        DataInputBuffer in = new DataInputBuffer();
+        for (int i = 0; i < count; i++) {
+            in.reset(bytes, bytes.length);
+            buf.readFields(in);
+            if (i == 0) {
+                assertThat(buf, is(value));
+            }
+        }
+    }
+
+    /**
+     * heavy read.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_read_large() throws Exception {
+        int count = 10000000;
+        DecimalOption value = new DecimalOption(new BigDecimal(Long.MAX_VALUE).multiply(BigDecimal.TEN));
+        byte[] bytes = toBytes(value);
+        DecimalOption buf = new DecimalOption();
+        DataInputBuffer in = new DataInputBuffer();
+        for (int i = 0; i < count; i++) {
+            in.reset(bytes, bytes.length);
+            buf.readFields(in);
+            if (i == 0) {
+                assertThat(buf, is(value));
+            }
+        }
+    }
+
+    /**
+     * heavy restore.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_restore() throws Exception {
+        int count = 10000000;
+        DecimalOption value = new DecimalOption(new BigDecimal("3.14"));
+        byte[] bytes = toBytes(value);
+        DecimalOption buf = new DecimalOption();
+        for (int i = 0; i < count; i++) {
+            buf.restore(bytes, 0, bytes.length);
+            if (i == 0) {
+                assertThat(buf, is(value));
+            }
+        }
+    }
+
+    /**
+     * heavy restore.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_restore_large() throws Exception {
+        int count = 10000000;
+        DecimalOption value = new DecimalOption(new BigDecimal(Long.MAX_VALUE).multiply(BigDecimal.TEN));
+        byte[] bytes = toBytes(value);
+        DecimalOption buf = new DecimalOption();
+        for (int i = 0; i < count; i++) {
+            buf.restore(bytes, 0, bytes.length);
+            if (i == 0) {
+                assertThat(buf, is(value));
+            }
+        }
+    }
+
+    /**
+     * heavy compare bytes.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_compareBytes_same_scale() throws Exception {
+        int count = 10000000;
+        byte[] a = toBytes(new DecimalOption(new BigDecimal("3.14")));
+        byte[] b = toBytes(new DecimalOption(new BigDecimal("1.41")));
+        for (int i = 0; i < count; i++) {
+            DecimalOption.compareBytes(a, 0, a.length, b, 0, b.length);
+        }
+    }
+
+    /**
+     * heavy compare bytes.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_compareBytes_diff_scale() throws Exception {
+        int count = 10000000;
+        byte[] a = toBytes(new DecimalOption(new BigDecimal("3.14")));
+        byte[] b = toBytes(new DecimalOption(new BigDecimal("1.414")));
+        for (int i = 0; i < count; i++) {
+            DecimalOption.compareBytes(a, 0, a.length, b, 0, b.length);
+        }
     }
 
     private BigDecimal decimal(long value) {

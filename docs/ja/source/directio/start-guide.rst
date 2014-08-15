@@ -274,7 +274,7 @@ CSV入出力への対応
 #. ``<パッケージ名>.csv.Abstract<データモデル名>CsvInputDescription``
 #. ``<パッケージ名>.csv.Abstract<データモデル名>CsvOutputDescription``
 
-より細かな設定については :doc:`user-guide` を参照してください。
+より細かな設定については :doc:`csv-format` を参照してください。
 
 Asakusa DSLの記述
 -----------------

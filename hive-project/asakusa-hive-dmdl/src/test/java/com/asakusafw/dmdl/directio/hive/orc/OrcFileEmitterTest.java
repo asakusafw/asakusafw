@@ -54,7 +54,7 @@ public class OrcFileEmitterTest extends GeneratorTesterRoot {
         OrcFormatConfiguration conf = format.getFormatConfiguration();
         assertThat(conf.getFormatVersion(), is(nullValue()));
         assertThat(conf.getCompressionKind(), is(CompressionKind.SNAPPY));
-        assertThat(conf.getStripeSize(), is(nullValue()));
+        assertThat(conf.getStripeSize(), is(64L * 1024 * 1024));
 
         assertThat(loader.exists(OrcFileEmitter.CATEGORY, "AbstractModelOrcFileInputDescription"), is(true));
         assertThat(loader.exists(OrcFileEmitter.CATEGORY, "AbstractModelOrcFileOutputDescription"), is(true));

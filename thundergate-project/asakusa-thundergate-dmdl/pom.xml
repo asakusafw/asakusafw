@@ -73,6 +73,10 @@
 			<artifactId>commons-cli</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jsr199-testing</artifactId>
 			<version>${project.version}</version>

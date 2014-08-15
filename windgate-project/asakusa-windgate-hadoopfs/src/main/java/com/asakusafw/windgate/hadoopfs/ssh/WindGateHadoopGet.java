@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -178,7 +179,11 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
                 try {
                     next.input.close();
                 } catch (IOException e) {
-                    // ignored
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to dispose input: {0}",
+                                next.status.getPath()), e);
+                    }
                 }
             }
         }

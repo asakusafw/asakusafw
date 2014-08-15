@@ -74,7 +74,7 @@ ThunderGateを利用したバッチアプリケーションを新しく作成す
 
 ..  code-block:: none
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7.xml
 
 コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
 ここでは、 ``asakusa-archetype-thundergate`` のテンプレートを選択します。
