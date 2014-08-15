@@ -36,5 +36,8 @@ Asakusa Frameworkの外部で作成されたシーケンスファイルを利用
 
     start-guide
     user-guide
+    csv-format
+    sequencefile-format
+    using-hive
     tools-guide
 

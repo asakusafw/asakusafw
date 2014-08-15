@@ -14,6 +14,7 @@ Asakusa Framework の拡張機能群です。
     windgate-tsv
     directio-tsv
     asakusa-on-emr
+    asakusa-with-hive
 
 ..  attention::
     試験的機能とは以下のような状態で公開されている機能を示します。

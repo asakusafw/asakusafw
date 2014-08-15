@@ -24,10 +24,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
+import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -38,7 +40,7 @@ import com.asakusafw.runtime.util.VariableTable;
  * Mapper which directly creates file for direct output.
  * @param <T> target data type
  * @since 0.4.0
- * @version 0.5.1
+ * @version 0.7.0
  */
 public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRuntimeResource<
         Object, T,
@@ -119,6 +121,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
                     Pattern.quote("*"),
                     String.format("%04d", context.getTaskAttemptID().getTaskID().getId()));
             String resourcePath = variables.parse(unresolvedResourcePath);
+            DataDefinition<? super T> definition = SimpleDataDefinition.newInstance(dataType, format);
 
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(
@@ -131,8 +134,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             int records = 0;
             ModelOutput<? super T> output = datasource.openOutput(
                     outputContext,
-                    dataType,
-                    format,
+                    definition,
                     basePath,
                     resourcePath,
                     outputContext.getCounter());

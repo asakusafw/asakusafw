@@ -30,7 +30,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -117,7 +116,6 @@ public class TemporaryFileTest {
      * Large file.
      * @throws Exception if failed
      */
-    @Ignore
     @Test
     public void large_w_TemporaryStorage() throws Exception {
         doIo_w_TemporaryStorage(110000000);
@@ -170,8 +168,8 @@ public class TemporaryFileTest {
         ModelOutput<Text> out = new TemporaryFileOutput<Text>(
                 new BufferedOutputStream(new FileOutputStream(file)),
                 Text.class.getName(),
-                1024,
-                256 * 1024);
+                530 * 1024,
+                512 * 1024);
         try {
             for (int i = 0; i < count; i++) {
                 out.write(value);
@@ -193,7 +191,7 @@ public class TemporaryFileTest {
             Text result = new Text();
             assertThat(in.getDataTypeName(), is(Text.class.getName()));
             for (int i = 0; i < count; i++) {
-                assertThat(in.readTo(result), is(true));
+                assertTrue(in.readTo(result));
                 if (i == 0) {
                     assertThat(result, is(value));
                 }
@@ -241,7 +239,7 @@ public class TemporaryFileTest {
         try {
             Text result = new Text();
             for (int i = 0; i < count; i++) {
-                assertThat(in.readTo(result), is(true));
+                assertTrue(in.readTo(result));
                 if (i == 0) {
                     assertThat(result, is(value));
                 }

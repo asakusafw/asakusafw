@@ -37,13 +37,13 @@ import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 /**
  * A default implementation of {@link SplitCombiner}.
  * @since 0.2.6
- * @version 0.6.2
+ * @version 0.7.0
  */
 public class DefaultSplitCombiner extends SplitCombiner {
 
     static final Log LOG = LogFactory.getLog(DefaultSplitCombiner.class);
 
-    static final String KEY_MAX = "com.asakusafw.input.combine.max";
+    static final String KEY_SLOTS_PER_INPUT = "com.asakusafw.input.combine.max";
 
     static final String KEY_GENERATIONS = "com.asakusafw.input.combine.ga.generation";
 
@@ -58,17 +58,39 @@ public class DefaultSplitCombiner extends SplitCombiner {
      */
     static final String KEY_TINY_LIMIT = "com.asakusafw.input.combine.tiny.limit";
 
-    static final double DEFAULT_LOCAL_SCORE_FACTOR = 3.0;
+    /**
+     * The configuration key of weight for average time comparing to the worst time penalty.
+     * @since 0.7.0
+     */
+    static final String KEY_AVERAGE_TIME_WEIGHT = "com.asakusafw.input.combine.ga.averageTimeWeight";
 
-    static final double DEFAULT_GOBAL_SCORE_FACTOR = 5.0;
+    /**
+     * The configuration key of penalty ratio for non-local data accesses (should be {@code > 1.0}).
+     * @since 0.7.0
+     */
+    static final String KEY_NON_LOCAL_PENALTY_RATIO = "com.asakusafw.input.combine.ga.nonLocalPenalty";
 
-    static final int DEFAULT_POPULATIONS = 20;
+    /**
+     * The configuration key of initial locality ratio (should be {@code [0, 1]}).
+     * @since 0.7.0
+     */
+    static final String KEY_INITIAL_LOCALITY_RATIO = "com.asakusafw.input.combine.ga.initialLoacality";
 
-    static final int DEFAULT_GENERATIONS = 50;
+    static final int DEFAULT_SLOTS_PER_INPUT = Integer.MAX_VALUE;
+
+    static final int DEFAULT_POPULATIONS = 50;
+
+    static final int DEFAULT_GENERATIONS = 100;
 
     static final float DEFAULT_MUTATION_RATIO = 0.001f;
 
     static final long DEFAULT_TINY_LIMIT = -1L;
+
+    static final float DEFAULT_AVERAGE_TIME_WEIGHT = 1.0f;
+
+    static final float DEFAULT_NON_LOCAL_PENALTY_RATIO = 2.0f;
+
+    static final float DEFAULT_INITIAL_LOCALITY_RATIO = 0.8f;
 
     static final int MIN_POPULATIONS = 10;
 
@@ -84,33 +106,26 @@ public class DefaultSplitCombiner extends SplitCombiner {
     protected List<StageInputSplit> combine(
             JobContext context,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
-        int max = getMaxSplitsPerMapper(context);
-        int populations = context.getConfiguration().getInt(KEY_POPULATIONS, DEFAULT_POPULATIONS);
-        int generations = context.getConfiguration().getInt(KEY_GENERATIONS, DEFAULT_GENERATIONS);
-        double mutations = context.getConfiguration().getFloat(KEY_MUTATION_RATIO, DEFAULT_MUTATION_RATIO);
-        long tinyLimit = context.getConfiguration().getLong(KEY_TINY_LIMIT, DEFAULT_TINY_LIMIT);
-        populations = Math.max(populations, MIN_POPULATIONS);
-        generations = Math.max(generations, MIN_GENERATIONS);
-        mutations = Math.max(mutations, MIN_MUTATION_RATIO);
-        return combine(max, populations, generations, mutations, tinyLimit, splits);
+        Configuration conf = new Configuration();
+        conf.withSlotsPerInput(getMaxSplitsPerMapper(context));
+        conf.withPopulations(context.getConfiguration().getInt(KEY_POPULATIONS, DEFAULT_POPULATIONS));
+        conf.withGenerations(context.getConfiguration().getInt(KEY_GENERATIONS, DEFAULT_GENERATIONS));
+        conf.withMutations(context.getConfiguration().getFloat(KEY_MUTATION_RATIO, DEFAULT_MUTATION_RATIO));
+        conf.withTinyLimit(context.getConfiguration().getLong(KEY_TINY_LIMIT, DEFAULT_TINY_LIMIT));
+        conf.withAverageTimeWeight(context.getConfiguration().getFloat(
+                KEY_AVERAGE_TIME_WEIGHT,
+                DEFAULT_AVERAGE_TIME_WEIGHT));
+        conf.withNonLocalPenaltyRatio(context.getConfiguration().getFloat(
+                KEY_NON_LOCAL_PENALTY_RATIO,
+                DEFAULT_NON_LOCAL_PENALTY_RATIO));
+        conf.withInitialLocalityRatio(context.getConfiguration().getFloat(
+                KEY_INITIAL_LOCALITY_RATIO,
+                DEFAULT_INITIAL_LOCALITY_RATIO));
+        return combine(conf, splits);
     }
 
     List<StageInputSplit> combine(
-            int max,
-            int populations,
-            int generations,
-            double mutations,
-            List<StageInputSplit> splits) throws IOException, InterruptedException {
-        assert splits != null;
-        return combine(max, populations, generations, mutations, DEFAULT_TINY_LIMIT, splits);
-    }
-
-    List<StageInputSplit> combine(
-            int max,
-            int populations,
-            int generations,
-            double mutations,
-            long tinyLimit,
+            Configuration configuration,
             List<StageInputSplit> splits) throws IOException, InterruptedException {
         assert splits != null;
         Map<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> groups = Util.groupByMapper(splits);
@@ -118,8 +133,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         for (Map.Entry<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> entry : groups.entrySet()) {
             Class<? extends Mapper<?, ?, ?, ?>> mapper = entry.getKey();
             List<Source> sources = entry.getValue();
-            List<StageInputSplit> combined = combineSources(
-                    mapper, sources, max, populations, generations, mutations, tinyLimit);
+            List<StageInputSplit> combined = combineSources(mapper, sources, configuration);
             results.addAll(combined);
         }
         return results;
@@ -127,36 +141,34 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
     private int getMaxSplitsPerMapper(JobContext context) {
         assert context != null;
-        int max = context.getConfiguration().getInt(KEY_MAX, -1);
+        int max = context.getConfiguration().getInt(KEY_SLOTS_PER_INPUT, -1);
         if (max > 0) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
                         "Combine split configuration: {0}={1}",
-                        KEY_MAX,
+                        KEY_SLOTS_PER_INPUT,
                         max));
             }
             return max;
         }
-        return Integer.MAX_VALUE;
+        return DEFAULT_SLOTS_PER_INPUT;
     }
 
     private List<StageInputSplit> combineSources(
             Class<? extends Mapper<?, ?, ?, ?>> mapper,
             List<Source> sources,
-            int max,
-            int populations, int generations, double mutations,
-            long tinyLimit) throws IOException, InterruptedException {
+            Configuration configuration) throws IOException, InterruptedException {
         assert sources != null;
-        assert max > 0;
-        if (isTinyInput(sources, tinyLimit)) {
+        assert configuration.slotsPerInput > 0;
+        if (isTinyInput(sources, configuration.tinyLimit)) {
             LOG.debug(MessageFormat.format(
                     "Mapper inputs are tiny: < {2} bytes in {1} input(s) ({0})",
                     mapper.getName(),
                     sources.size(),
-                    tinyLimit));
+                    configuration.tinyLimit));
             return Collections.singletonList(new StageInputSplit(mapper, sources));
         }
-        if (sources.size() <= max) {
+        if (sources.size() <= configuration.slotsPerInput) {
             List<StageInputSplit> results = new ArrayList<StageInputSplit>();
             for (Source source : sources) {
                 results.add(new StageInputSplit(mapper, Collections.singletonList(source)));
@@ -168,33 +180,34 @@ public class DefaultSplitCombiner extends SplitCombiner {
                     "Combining splits: {1} -> {2} ({0})",
                     mapper.getName(),
                     sources.size(),
-                    max));
+                    configuration.slotsPerInput));
         }
-        if (max == 1) {
+        if (configuration.slotsPerInput == 1) {
             return Collections.singletonList(new StageInputSplit(mapper, sources));
         }
+        long begin = 0;
         if (LOG.isDebugEnabled()) {
+            begin = System.currentTimeMillis();
             LOG.debug(MessageFormat.format(
-                    "Start GA: {1} -> {2} ({0})",
+                    "Start GA: {1}splits -> {2}slots (mapper={0})",
                     mapper.getName(),
                     sources.size(),
-                    max));
+                    configuration.slotsPerInput));
             LOG.debug(MessageFormat.format(
-                    "GA parameters: schema-length={0}, populations={1}, generations={2}, mutation-ratio={3}",
-                    max,
-                    populations,
-                    generations,
-                    mutations));
+                    "GA parameters: {0}",
+                    configuration.getGaParametersString()));
         }
-        Environment env = createEnvironment(max, populations, generations, mutations, sources);
+        Environment env = createEnvironment(configuration, sources);
         Gene gene = compute(env);
         List<StageInputSplit> results = resolve(env, gene, mapper);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish GA: {1} -> {2} ({0})",
+                    "Finish GA: {1}splits -> {2}slots (elapsed={4}ms, locality={3}, mapper={0})",
                     mapper.getName(),
                     sources.size(),
-                    results.size()));
+                    results.size(),
+                    gene.getLocality(),
+                    System.currentTimeMillis() - begin));
         }
         return results;
     }
@@ -273,10 +286,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
     }
 
     private Environment createEnvironment(
-            int slots,
-            int populations,
-            int generations,
-            double mutations,
+            Configuration configuration,
             List<Source> sources) throws IOException, InterruptedException {
         assert sources != null;
         Map<String, Integer> locationIds = new HashMap<String, Integer>();
@@ -295,8 +305,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
                     locations.set(id);
                 }
             }
-            double localScore = length * DEFAULT_LOCAL_SCORE_FACTOR;
-            double globalScore = length * DEFAULT_GOBAL_SCORE_FACTOR;
+            double localScore = length;
+            double globalScore = length * configuration.nonLocalPenaltyRatio;
             results.add(new SplitDef(source, locations, localScore, globalScore));
         }
         if (locationIds.isEmpty()) {
@@ -307,8 +317,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
             locations[entry.getValue()] = entry.getKey();
         }
         SplitDef[] splitDefs = results.toArray(new SplitDef[results.size()]);
-        SlotDef[] slotDefs = resolveSlots(slots, locations, results);
-        return new Environment(locations, splitDefs, slotDefs, populations, generations, mutations);
+        SlotDef[] slotDefs = resolveSlots(configuration.slotsPerInput, locations, results);
+        return new Environment(locations, splitDefs, slotDefs, configuration);
     }
 
     private SlotDef[] resolveSlots(int slots, String[] locationNames, List<SplitDef> splits) {
@@ -331,7 +341,14 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
         SlotDef[] results = new SlotDef[slots];
         for (int i = 0; i < results.length; i++) {
-            results[i] = new SlotDef(pairs[i % pairs.length].location);
+            LocationAndTime pair = pairs[i % pairs.length];
+            SlotDef slot = new SlotDef(pair.location, locationNames[pair.location]);
+            results[i] = slot;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(MessageFormat.format(
+                        "Slot[{0}]: {1}",
+                        i, slot));
+            }
         }
         return results;
     }
@@ -354,6 +371,14 @@ public class DefaultSplitCombiner extends SplitCombiner {
             // populate
             populate(env, parent, current);
         }
+
+        if (LOG.isTraceEnabled()) {
+            for (int i = 0; i < current.length; i++) {
+                LOG.trace(MessageFormat.format(
+                        "Gene[{0}]: {1}",
+                        i, current[i]));
+            }
+        }
         return findBest(current);
     }
 
@@ -372,7 +397,12 @@ public class DefaultSplitCombiner extends SplitCombiner {
         Random random = env.random;
         int[] schema = gene.schema;
         for (int i = 0; i < schema.length; i++) {
-            schema[i] = random.nextInt(env.slots.length);
+            if (random.nextDouble() < env.locality) {
+                schema[i] = env.getRandomLocalSlot(env.splits[i]);
+            } else {
+                schema[i] = env.getRandomSlot();
+            }
+            assert 0 <= schema[i] && schema[i] < env.slots.length;
         }
         gene.eval();
     }
@@ -389,7 +419,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         if (changed && LOG.isTraceEnabled()) {
             LOG.trace(MessageFormat.format(
                     "Current best gene: {0}",
-                    best.time));
+                    best));
         }
         return best;
     }
@@ -405,7 +435,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         Gene parentBest = findBest(parent);
         Gene nextBest = next[0];
         System.arraycopy(parentBest.schema, 0, nextBest.schema, 0, schemaLength);
-        nextBest.time = parentBest.time;
+        nextBest.score = parentBest.score;
 
         // sort by score
         Arrays.sort(parent, Gene.COMPARATOR);
@@ -448,6 +478,126 @@ public class DefaultSplitCombiner extends SplitCombiner {
         }
     }
 
+    /**
+     * Configuration for {@link DefaultSplitCombiner}.
+     * @since 0.7.0
+     */
+    public static final class Configuration {
+
+        int slotsPerInput = DEFAULT_SLOTS_PER_INPUT;
+
+        int populations = DEFAULT_POPULATIONS;
+
+        int generations = DEFAULT_GENERATIONS;
+
+        double mutations = DEFAULT_MUTATION_RATIO;
+
+        long tinyLimit = DEFAULT_TINY_LIMIT;
+
+        double averageTimeWeight = DEFAULT_AVERAGE_TIME_WEIGHT;
+
+        double nonLocalPenaltyRatio = DEFAULT_NON_LOCAL_PENALTY_RATIO;
+
+        double initialLocalityRatio = DEFAULT_INITIAL_LOCALITY_RATIO;
+
+        /**
+         * Sets the allocated slots per each input (mapper).
+         * @param value the value
+         * @return this
+         */
+        public Configuration withSlotsPerInput(int value) {
+            this.slotsPerInput = Math.max(value, 1);
+            return this;
+        }
+
+        /**
+         * Sets the GA populations.
+         * @param value the value
+         * @return this
+         */
+        public Configuration withPopulations(int value) {
+            this.populations = Math.max(value, MIN_POPULATIONS);
+            return this;
+        }
+
+        /**
+         * Sets the GA generations.
+         * @param value the value
+         * @return this
+         */
+        public Configuration withGenerations(int value) {
+            this.generations = Math.max(value, MIN_GENERATIONS);
+            return this;
+        }
+
+        /**
+         * Sets the GA mutation ratio.
+         * @param value the value
+         * @return this
+         */
+        public Configuration withMutations(double value) {
+            this.mutations = Math.max(value, MIN_MUTATION_RATIO);
+            return this;
+        }
+
+        /**
+         * Sets the limit input size (in bytes) for combining all splits for a mapper into a single split.
+         * @param value the value, or {@code -1} to disable
+         * @return this
+         */
+        public Configuration withTinyLimit(long value) {
+            this.tinyLimit = value;
+            return this;
+        }
+
+        /**
+         * Sets the initial locality ratio (should be {@code > 1.0}).
+         * @param value the value
+         * @return this
+         */
+        public Configuration withInitialLocalityRatio(double value) {
+            this.initialLocalityRatio = value;
+            return this;
+        }
+
+        /**
+         * Sets the average time weight to the worst time penalty for the gene score.
+         * @param value the value
+         * @return this
+         */
+        public Configuration withAverageTimeWeight(double value) {
+            this.averageTimeWeight = value;
+            return this;
+        }
+
+        /**
+         * Sets the penalty ratio for non-local data accesses (should be {@code > 1.0}).
+         * @param value the value
+         * @return this
+         */
+        public Configuration withNonLocalPenaltyRatio(double value) {
+            this.nonLocalPenaltyRatio = Math.max(value, 1.01);
+            return this;
+        }
+
+        /**
+         * Returns the GA parameters as string.
+         * @return the GA parameters
+         */
+        String getGaParametersString() {
+            return MessageFormat.format(
+                    "schema-base={0}, populations={1}, generations={2}, mutation-ratio={3}, "
+                    + "initial-locality={4}, non-local-penalty={5}, average-time-weight={6}",
+                    slotsPerInput,
+                    populations,
+                    generations,
+                    mutations,
+                    initialLocalityRatio,
+                    nonLocalPenaltyRatio,
+                    averageTimeWeight);
+        }
+    }
+
     private static final class Environment {
 
         final Random random = new Random(1234567L);
@@ -464,22 +614,62 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
         final double mutations;
 
+        final double averageTimeWeight;
+
+        final double locality;
+
         Environment(
                 String[] locations,
                 SplitDef[] splits,
                 SlotDef[] slots,
-                int populations,
-                int generations,
-                double mutations) {
+                Configuration configuration) {
             assert locations != null;
             assert splits != null;
             assert slots != null;
             this.locations = locations;
             this.splits = splits;
             this.slots = slots;
-            this.populations = populations;
-            this.generations = generations;
-            this.mutations = mutations;
+            this.populations = configuration.populations;
+            this.generations = configuration.generations;
+            this.mutations = configuration.mutations;
+            this.locality = configuration.initialLocalityRatio;
+            this.averageTimeWeight = configuration.averageTimeWeight;
+        }
+
+        public int getRandomSlot() {
+            return random.nextInt(slots.length);
+        }
+
+        public int getRandomLocalSlot(SplitDef split) {
+            BitSet localSlots = computeLocalSlots(split);
+            int cardinality = localSlots.cardinality();
+            if (cardinality == 0) {
+                return getRandomSlot();
+            }
+            int nth = random.nextInt(cardinality);
+            int current = localSlots.nextSetBit(0);
+            for (int i = 0; i < nth; i++) {
+                assert current >= 0;
+                assert current < slots.length;
+                current = localSlots.nextSetBit(current + 1);
+            }
+            assert current >= 0;
+            assert current < slots.length;
+            return current;
+        }
+
+        private BitSet computeLocalSlots(SplitDef split) {
+            if (split.locations.cardinality() == 0) {
+                return new BitSet();
+            }
+            BitSet bits = new BitSet();
+            SlotDef[] ss = slots;
+            for (int i = 0; i < ss.length; i++) {
+                if (split.isLocal(ss[i])) {
+                    bits.set(i);
+                }
+            }
+            return bits;
         }
     }
 
@@ -487,8 +677,18 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
         final int location;
 
-        SlotDef(int location) {
+        final String symbol;
+
+        SlotDef(int location, String symbol) {
             this.location = location;
+            this.symbol = symbol;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format(
+                    "{0}[{1}]",
+                    symbol, location);
         }
     }
 
@@ -509,6 +709,10 @@ public class DefaultSplitCombiner extends SplitCombiner {
             this.locations = locations;
             this.localTime = localScore;
             this.globalTime = globalScore;
+        }
+
+        boolean isLocal(SlotDef slot) {
+            return locations.get(slot.location);
         }
 
         double eval(SlotDef slot) {
@@ -583,7 +787,13 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
         final int[] schema;
 
-        double time;
+        double bestTime;
+
+        double worstTime;
+
+        double averageTime;
+
+        double score;
 
         private final double[] slotScoreBuf;
 
@@ -594,7 +804,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         }
 
         public boolean isBetterThan(Gene other) {
-            return time < other.time;
+            return score < other.score;
         }
 
         public void eval() {
@@ -608,13 +818,50 @@ public class DefaultSplitCombiner extends SplitCombiner {
                 SlotDef slot = env.slots[slotId];
                 slotScores[slotId] += split.eval(slot);
             }
-            double max = slotScores[0];
+            double best = slotScores[0];
+            double worst = slotScores[0];
+            double total = slotScores[0];
             for (int i = 1; i < slotScores.length; i++) {
-                if (slotScores[i] > max) {
-                    max = slotScores[i];
+                double slotScore = slotScores[i];
+                total += slotScore;
+                if (slotScore < best) {
+                    best = slotScore;
+                }
+                if (slotScore > worst) {
+                    worst = slotScore;
                 }
             }
-            this.time = max;
+            double average = total / slotScores.length;
+            this.bestTime = best;
+            this.worstTime = worst;
+            this.averageTime = average;
+            this.score = worst + average * env.averageTimeWeight;
+        }
+
+        public double getLocality() {
+            double totalTime = 0;
+            double localTime = 0;
+            for (int splitId = 0; splitId < schema.length; splitId++) {
+                int slotId = schema[splitId];
+                SplitDef split = environment.splits[splitId];
+                SlotDef slot = environment.slots[slotId];
+                totalTime += split.localTime;
+                if (split.isLocal(slot)) {
+                    localTime += split.localTime;
+                }
+            }
+            return localTime / totalTime;
+        }
+
+        @Override
+        public String toString() {
+            eval();
+            return MessageFormat.format(
+                    "best-time={0}, worst-time={1}, average-time={2}, locality={3}",
+                    Math.round(bestTime),
+                    Math.round(worstTime),
+                    Math.round(averageTime),
+                    getLocality());
         }
 
         private enum GeneComparator implements Comparator<Gene> {
@@ -623,8 +870,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
             ;
             @Override
             public int compare(Gene o1, Gene o2) {
-                double a = o1.time;
-                double b = o2.time;
+                double a = o1.score;
+                double b = o2.score;
                 if (a < b) {
                     return -1;
                 } else if (a > b) {

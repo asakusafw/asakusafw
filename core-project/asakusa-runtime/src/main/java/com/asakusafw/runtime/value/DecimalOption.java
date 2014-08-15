@@ -20,7 +20,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.Arrays;
 
 import org.apache.hadoop.io.WritableComparator;
@@ -30,8 +29,30 @@ import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
  * {@code null}値を許容する10進数。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public final class DecimalOption extends ValueOption<DecimalOption> {
+
+    private static final int HEAD_NULL = 0x00;
+
+    private static final int MASK_PRESENT = 0x80;
+
+    private static final int MASK_PLUS = 0x40;
+
+    private static final ThreadLocal<DecimalBuffer> BUFFER_MAIN = new ThreadLocal<DecimalBuffer>() {
+        @Override
+        protected DecimalBuffer initialValue() {
+            return new DecimalBuffer();
+        }
+    };
+
+    private static final ThreadLocal<DecimalBuffer> BUFFER_SUB = new ThreadLocal<DecimalBuffer>() {
+        @Override
+        protected DecimalBuffer initialValue() {
+            return new DecimalBuffer();
+        }
+    };
 
     private BigDecimal entity = BigDecimal.ZERO;
 
@@ -47,7 +68,6 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * @param valueOrNull the initial value
      */
     public DecimalOption(BigDecimal valueOrNull) {
-        super();
         if (valueOrNull != null) {
             this.entity = valueOrNull;
             this.nullValue = false;
@@ -209,52 +229,68 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     @Override
     public void write(DataOutput out) throws IOException {
         if (nullValue) {
-            WritableUtils.writeVLong(out, -1);
+            out.writeByte(HEAD_NULL);
         } else {
-            BigDecimal decimal = entity;
-            WritableUtils.writeVInt(out, decimal.precision());
-            WritableUtils.writeVInt(out, decimal.scale());
-            BigInteger unscaled = decimal.unscaledValue();
-            byte[] bytes = unscaled.toByteArray();
-            WritableUtils.writeVInt(out, bytes.length);
-            out.write(bytes);
+            DecimalBuffer buffer = BUFFER_MAIN.get();
+            buffer.set(entity);
+
+            int head = MASK_PRESENT;
+            if (buffer.plus) {
+                head |= MASK_PLUS;
+            }
+            out.writeByte(head);
+            WritableUtils.writeVInt(out, buffer.scale);
+            byte[] bs = buffer.unsigned;
+            int length = bs.length;
+            for (int i = 0; i < bs.length; i++) {
+                if (bs[i] == 0) {
+                    length--;
+                } else {
+                    break;
+                }
+            }
+            WritableUtils.writeVInt(out, length);
+            if (length != 0) {
+                out.write(bs, bs.length - length, length);
+            }
         }
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void readFields(DataInput in) throws IOException {
-        int precision = WritableUtils.readVInt(in);
-        if (precision == -1) {
+        int head = in.readByte() & 0xff;
+        if ((head & MASK_PRESENT) == 0) {
             setNull();
-        } else {
-            int scale = WritableUtils.readVInt(in);
-            int byteCount = WritableUtils.readVInt(in);
-            byte[] bytes = new byte[byteCount];
-            in.readFully(bytes);
-            modify(new BigDecimal(new BigInteger(bytes), scale, new MathContext(precision)));
+            return;
         }
+        boolean plus = (head & MASK_PLUS) != 0;
+        int scale = WritableUtils.readVInt(in);
+        int length = WritableUtils.readVInt(in);
+
+        DecimalBuffer buffer = BUFFER_MAIN.get();
+        byte[] target = buffer.setMeta(plus, scale, length);
+        in.readFully(target, target.length - length, length);
+        modify(buffer.toBigDecimal());
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int restore(byte[] bytes, int offset, int limit) throws IOException {
         int cursor = offset;
-        int precision = WritableComparator.readVInt(bytes, cursor);
-        cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
-        if (precision < 0) {
+        int head = bytes[cursor++] & 0xff;
+        if ((head & MASK_PRESENT) == 0) {
             setNull();
         } else {
+            boolean plus = (head & MASK_PLUS) != 0;
             int scale = WritableComparator.readVInt(bytes, cursor);
             cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
-
-            int bytesCount = WritableComparator.readVInt(bytes, cursor);
+            int length = WritableComparator.readVInt(bytes, cursor);
             cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
-
-            byte[] unscaled = Arrays.copyOfRange(bytes, cursor, cursor + bytesCount);
-            cursor += bytesCount;
-
-            modify(new BigDecimal(new BigInteger(unscaled), scale, new MathContext(precision)));
+            DecimalBuffer buffer = BUFFER_MAIN.get();
+            buffer.set(plus, scale, bytes, cursor, length);
+            cursor += length;
+            modify(buffer.toBigDecimal());
         }
         return cursor - offset;
     }
@@ -279,15 +315,13 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     public static int getBytesLength(byte[] bytes, int offset, int length) {
         try {
             int cursor = offset;
-            int precSize = WritableUtils.decodeVIntSize(bytes[cursor]);
-            if (WritableComparator.readVInt(bytes, offset) < 0) {
-                return precSize;
+            int head = bytes[cursor++] & 0xff;
+            if ((head & MASK_PRESENT) != 0) {
+                cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+                int bytesLength = WritableComparator.readVInt(bytes, cursor);
+                cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
+                cursor += bytesLength;
             }
-            cursor += precSize;
-            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
-            int bytesCount = WritableComparator.readVInt(bytes, cursor);
-            cursor += WritableUtils.decodeVIntSize(bytes[cursor]);
-            cursor += bytesCount;
             return cursor - offset;
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -308,21 +342,33 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
             byte[] b1, int s1, int l1,
             byte[] b2, int s2, int l2) {
         try {
-            // precision
+            // head
             int cursor1 = s1;
             int cursor2 = s2;
-            int prec1 = WritableComparator.readVInt(b1, cursor1);
-            int prec2 = WritableComparator.readVInt(b2, cursor2);
-            if (prec1 < 0) {
-                if (prec2 < 0) {
+            int h1 = b1[cursor1++] & 0xff;
+            int h2 = b2[cursor2++] & 0xff;
+
+            // nullity
+            boolean null1 = (h1 & MASK_PRESENT) == 0;
+            boolean null2 = (h2 & MASK_PRESENT) == 0;
+            if (null1) {
+                if (null2) {
                     return 0;
+                } else {
+                    return -1;
                 }
-                return -1;
-            } else if (prec2 < 0) {
+            } else if (null2) {
                 return +1;
             }
-            cursor1 += WritableUtils.decodeVIntSize(b1[cursor1]);
-            cursor2 += WritableUtils.decodeVIntSize(b2[cursor2]);
+
+            // sign
+            boolean plus1 = (h1 & MASK_PLUS) != 0;
+            boolean plus2 = (h2 & MASK_PLUS) != 0;
+            if (plus1 && plus2 == false) {
+                return +1;
+            } else if (plus1 == false && plus2) {
+                return -1;
+            }
 
             // scale
             int scale1 = WritableComparator.readVInt(b1, cursor1);
@@ -336,24 +382,221 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
             cursor1 += WritableUtils.decodeVIntSize(b1[cursor1]);
             cursor2 += WritableUtils.decodeVIntSize(b2[cursor2]);
 
-            // check sig
-            if (b1[cursor1] < 0 && b2[cursor2] >= 0) {
-                return -1;
-            } else if (b1[cursor1] >= 0 && b2[cursor2] < 0) {
-                return +1;
-            }
+            DecimalBuffer d1 = BUFFER_MAIN.get();
+            d1.set(plus1, scale1, b1, cursor1, bytesCount1);
 
-            // bytes
-            BigInteger unscale1 = new BigInteger(Arrays.copyOfRange(b1, cursor1, cursor1 + bytesCount1));
-            BigInteger unscale2 = new BigInteger(Arrays.copyOfRange(b2, cursor2, cursor2 + bytesCount2));
-            if (scale1 > scale2) {
-                unscale2 = unscale2.multiply(BigInteger.TEN.pow(scale1 - scale2));
-            } else if (scale1 < scale2) {
-                unscale1 = unscale1.multiply(BigInteger.TEN.pow(scale2 - scale1));
-            }
-            return unscale1.compareTo(unscale2);
+            DecimalBuffer d2 = BUFFER_SUB.get();
+            d2.set(plus2, scale2, b2, cursor2, bytesCount2);
+
+            return DecimalBuffer.compare(d1, d2);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private static final class DecimalBuffer {
+
+        private static final byte[] EMPTY = new byte[0];
+
+        boolean plus;
+
+        int scale;
+
+        byte[] unsigned = EMPTY;
+
+        public DecimalBuffer() {
+            return;
+        }
+
+        void set(BigDecimal newValue) {
+            this.scale = newValue.scale();
+
+            BigInteger unscaled = newValue.unscaledValue();
+            if (unscaled.signum() >= 0) {
+                this.plus = true;
+            } else {
+                this.plus = false;
+                unscaled = unscaled.negate();
+            }
+            setUnsigned(unscaled);
+        }
+
+        void set(boolean newPlus, int newScale, byte[] data, int offset, int length) {
+            byte[] target = setMeta(newPlus, newScale, length);
+            System.arraycopy(data, offset, target, target.length - length, length);
+        }
+
+        byte[] setMeta(boolean newPlus, int newScale, int length) {
+            this.plus = newPlus;
+            this.scale = newScale;
+            return ensureBuffer(length);
+        }
+
+        byte[] ensureBuffer(int length) {
+            if (unsigned.length < length) {
+                this.unsigned = new byte[length];
+            } else if (unsigned.length > length) {
+                Arrays.fill(this.unsigned, 0, unsigned.length - length, (byte) 0);
+            }
+            return unsigned;
+        }
+
+        BigDecimal toBigDecimal() {
+            if (isZero()) {
+                return new BigDecimal(BigInteger.ZERO, this.scale);
+            }
+            long compact = toUnsignedCompact();
+            if (compact >= 0L) {
+                return BigDecimal.valueOf(this.plus ? compact : -compact, this.scale);
+            }
+            return new BigDecimal(new BigInteger(this.plus ? +1 : -1, this.unsigned), this.scale);
+        }
+
+        private BigDecimal toUnsignedBigDecimal() {
+            if (isZero()) {
+                return new BigDecimal(BigInteger.ZERO, this.scale);
+            }
+            long compact = toUnsignedCompact();
+            if (compact >= 0L) {
+                return BigDecimal.valueOf(compact, this.scale);
+            }
+            return new BigDecimal(new BigInteger(1, this.unsigned), this.scale);
+        }
+
+        private long toUnsignedCompact() {
+            byte[] bs = this.unsigned;
+            int offset = 0;
+            if (bs.length >= 8) {
+                offset = bs.length - 8;
+                for (int i = 0; i < offset; i++) {
+                    if (bs[i] != 0) {
+                        return -1L;
+                    }
+                }
+                if ((bs[offset] & 0x80) != 0) {
+                    return -1L;
+                }
+            }
+            long result = 0;
+            assert bs.length - offset <= 8;
+            for (int i = offset; i < bs.length; i++) {
+                result = (result << 8) | (bs[i] & 0xff);
+            }
+            assert result >= 0;
+            return result;
+        }
+
+        private boolean isZero() {
+            byte[] bs = this.unsigned;
+            for (int i = 0; i < bs.length; i++) {
+                if (bs[i] != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void setUnsigned(BigInteger value) {
+            int sign = value.signum();
+            byte[] target = this.unsigned;
+            if (sign == 0) {
+                Arrays.fill(target, (byte) 0);
+                return;
+            }
+            assert sign > 0;
+
+            int bits = value.bitLength();
+            if (bits <= Integer.SIZE - 1) {
+                int v = value.intValue();
+                assert v > 0;
+                byte[] bytes = ensureBuffer(4);
+                int offset = bytes.length - 4;
+                bytes[offset + 0] = (byte) ((v >> 24) & 0xff);
+                bytes[offset + 1] = (byte) ((v >> 16) & 0xff);
+                bytes[offset + 2] = (byte) ((v >>  8) & 0xff);
+                bytes[offset + 3] = (byte) ((v >>  0) & 0xff);
+            } else if (bits <= Long.SIZE - 1) {
+                long v = value.longValue();
+                assert v > 0;
+                byte[] bytes = ensureBuffer(8);
+                int offset = bytes.length - 8;
+                bytes[offset + 0] = (byte) ((v >> 56) & 0xff);
+                bytes[offset + 1] = (byte) ((v >> 48) & 0xff);
+                bytes[offset + 2] = (byte) ((v >> 40) & 0xff);
+                bytes[offset + 3] = (byte) ((v >> 32) & 0xff);
+                bytes[offset + 4] = (byte) ((v >> 24) & 0xff);
+                bytes[offset + 5] = (byte) ((v >> 16) & 0xff);
+                bytes[offset + 6] = (byte) ((v >>  8) & 0xff);
+                bytes[offset + 7] = (byte) ((v >>  0) & 0xff);
+            } else {
+                byte[] bytes = value.toByteArray();
+                if (target.length <= bytes.length) {
+                    this.unsigned = bytes;
+                } else {
+                    Arrays.fill(target, 0, target.length - bytes.length, (byte) 0);
+                    System.arraycopy(bytes, 0, target, target.length - bytes.length, bytes.length);
+                }
+            }
+        }
+
+        public static int compare(DecimalBuffer o1, DecimalBuffer o2) {
+            if (o1.plus) {
+                if (o2.plus == false) {
+                    return +1;
+                }
+            } else if (o2.plus) {
+                return -1;
+            }
+            int unsignedCompare = compareAbsolute(o1, o2);
+            if (o1.plus) {
+                return unsignedCompare;
+            } else {
+                return -unsignedCompare;
+            }
+        }
+
+        private static int compareAbsolute(DecimalBuffer o1, DecimalBuffer o2) {
+            if (o1.isZero()) {
+                if (o2.isZero() == false) {
+                    return -1;
+                }
+            } else if (o2.isZero()) {
+                return +1;
+            }
+            if (o1.scale == o2.scale) {
+                return compareAbsolute(o1.unsigned, o2.unsigned);
+            }
+            return o1.toUnsignedBigDecimal().compareTo(o2.toUnsignedBigDecimal());
+        }
+
+        private static int compareAbsolute(byte[] a, byte[] b) {
+            int aOffset = 0;
+            int bOffset = 0;
+            if (a.length > b.length) {
+                aOffset = a.length - b.length;
+            } else {
+                bOffset = b.length - a.length;
+            }
+            for (int i = 0; i < aOffset; i++) {
+                if (a[i] != 0) {
+                    return +1;
+                }
+            }
+            for (int i = 0; i < bOffset; i++) {
+                if (b[i] != 0) {
+                    return -1;
+                }
+            }
+            for (int i = 0, n = Math.min(a.length, b.length); i < n; i++) {
+                int aBits = a[i + aOffset] & 0xff;
+                int bBits = b[i + bOffset] & 0xff;
+                if (aBits > bBits) {
+                    return +1;
+                } else if (aBits < bBits) {
+                    return -1;
+                }
+            }
+            return 0;
         }
     }
 }
