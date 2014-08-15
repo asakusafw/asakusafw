@@ -12,6 +12,7 @@ Asakusa Frameworkが提供する外部システム連携の各モジュールご
 * :doc:`deployment-with-windgate`
 * :doc:`deployment-with-thundergate`
 * :doc:`configure-hadoop-parameters`
+* :doc:`configure-library-cache`
 * :doc:`migration-guide`
 
 追加モジュールのデプロイ
@@ -58,6 +59,7 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
     deployment-with-thundergate
     framework-organizer
     configure-hadoop-parameters
+    configure-library-cache
     migration-guide
     deployment-extension-module
     deployment-runtime-plugins

@@ -38,7 +38,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * </li>
  * <li>
  *     Create output contents onto temporary output area in
- *     {@link #openOutput(OutputAttemptContext, Class, DataFormat, String, String, Counter)}.
+ *     {@link #openOutput(OutputAttemptContext, DataDefinition, String, String, Counter)}.
  * </li>
  * <li>
  *     Move output contents from temporary area to staging area in
@@ -58,6 +58,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * </li>
  * </ol>
  * @since 0.2.5
+ * @version 0.7.0
  * @see AbstractDirectDataSource
  */
 public interface DirectDataSource {
@@ -65,8 +66,7 @@ public interface DirectDataSource {
     /**
      * Collects input fragments about target resources.
      * @param <T> target data type
-     * @param dataType target data type
-     * @param format format of target resource
+     * @param definition the data definition
      * @param basePath base path of target resources
      * @param resourcePattern search pattern of target resources from {@code basePath}
      * @return the found fragments of resources
@@ -75,16 +75,14 @@ public interface DirectDataSource {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException;
 
     /**
      * Opens a fragment for input.
      * @param <T> target data type
-     * @param dataType target data type
-     * @param format format of target fragment
+     * @param definition the data definition
      * @param fragment target fragment
      * @param counter counter object
      * @return {@link ModelInput} to obtain contents in the fragment
@@ -93,8 +91,7 @@ public interface DirectDataSource {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException;
 
@@ -102,8 +99,7 @@ public interface DirectDataSource {
      * Opens a resource for output.
      * @param <T> target data type
      * @param context current output attempt context
-     * @param dataType target data type
-     * @param format format of target resource
+     * @param definition the data definition
      * @param basePath base path of target resource
      * @param resourcePath target resource path from {@code basePath}
      * @param counter counter object
@@ -115,8 +111,7 @@ public interface DirectDataSource {
      */
     <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException;

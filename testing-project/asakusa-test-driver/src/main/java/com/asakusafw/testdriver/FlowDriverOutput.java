@@ -21,8 +21,10 @@ import java.util.List;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.VerifierFactory;
@@ -35,6 +37,7 @@ import com.asakusafw.utils.io.Source;
  * @param <T> the output data model type
  * @param <S> the implementation class type
  * @since 0.6.0
+ * @version 0.7.0
  */
 public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> extends DriverOutputBase<T> {
 
@@ -82,6 +85,20 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         setVerifier(factory);
+        return getThis();
+    }
+
+    /**
+     * テスト結果のデータを検証前に変形するフィルタを指定する。
+     * @param filter 変形に利用するフィルタ
+     * @return this
+     * @since 0.7.0
+     */
+    public S filter(DataModelSourceFilter filter) {
+        if (filter == null) {
+            throw new IllegalArgumentException("filter must not be null"); //$NON-NLS-1$
+        }
+        setResultFilter(filter);
         return getThis();
     }
 
@@ -387,6 +404,19 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
             throw new IllegalArgumentException("modelVerifier must not be null"); //$NON-NLS-1$
         }
         return verify(toDataModelSourceFactory(expectedProvider), modelVerifier);
+    }
+
+    /**
+     * テスト結果のデータを検証前に変形する。
+     * @param transformer データモデルを変形する規則
+     * @return this
+     * @since 0.7.0
+     */
+    public S transform(ModelTransformer<? super T> transformer) {
+        if (transformer == null) {
+            throw new IllegalArgumentException("transformer must not be null"); //$NON-NLS-1$
+        }
+        return filter(toDataModelSourceFilter(transformer));
     }
 
     /**

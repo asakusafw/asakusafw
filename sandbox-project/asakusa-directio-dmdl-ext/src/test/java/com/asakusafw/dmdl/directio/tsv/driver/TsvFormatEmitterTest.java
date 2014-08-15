@@ -61,6 +61,7 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe.getMinimumFragmentSize(), greaterThan(0L));
 
         model.set("value", new Text("Hello, world!"));
 
@@ -122,6 +123,36 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ allow_linefeed.
+     * @throws Exception if failed
+     */
+    @Test
+    public void w_allow_linefeed() throws Exception {
+        ModelLoader loaded = generateJava("allow_linefeed");
+        ModelWrapper model = loaded.newModel("Simple");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "SimpleTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe.getMinimumFragmentSize(), lessThan(0L));
+
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
+        writer.write(model.unwrap());
+        writer.close();
+
+        Object buffer = loaded.newModel("Simple").unwrap();
+        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output));
+        assertThat(reader.readTo(buffer), is(true));
+        assertThat(buffer, is(model.unwrap()));
+        assertThat(reader.readTo(buffer), is(false));
+    }
+
+    /**
      * With compression.
      * @throws Exception if failed
      */
@@ -134,6 +165,7 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe.getMinimumFragmentSize(), lessThan(0L));
 
         model.set("value", new Text("Hello, world!"));
 

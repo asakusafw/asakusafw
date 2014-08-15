@@ -79,6 +79,85 @@ public class TestModerator {
     }
 
     /**
+     * Validates {@link DataModelSource}s.
+     * @param modelClass class of data model
+     * @param label label of the target source
+     * @param target validation target
+     * @throws IOException if validation was failed
+     */
+    public void validate(
+            Class<?> modelClass,
+            String label,
+            DataModelSourceFactory target) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
+        if (label == null) {
+            throw new IllegalArgumentException("label must not be null"); //$NON-NLS-1$
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
+        }
+        DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
+        try {
+            DataModelSource s = target.createSource(definition, context);
+            try {
+                while (true) {
+                    DataModelReflection next = s.next();
+                    if (next == null) {
+                        break;
+                    }
+                }
+            } finally {
+                s.close();
+            }
+        } catch (IOException e) {
+            throw new IOException(MessageFormat.format(
+                    "テストデータの検証に失敗しました: {0}",
+                    label), e);
+        }
+    }
+    /**
+     * Validates {@link Verifier}s.
+     * @param modelClass class of data model
+     * @param label label of the target source
+     * @param target validation target
+     * @throws IOException if validation was failed
+     */
+    public void validate(
+            Class<?> modelClass,
+            String label,
+            VerifierFactory target) throws IOException {
+        if (modelClass == null) {
+            throw new IllegalArgumentException("modelClass must not be null"); //$NON-NLS-1$
+        }
+        if (label == null) {
+            throw new IllegalArgumentException("label must not be null"); //$NON-NLS-1$
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
+        }
+        VerifyContext verifyContext = new VerifyContext(context);
+        verifyContext.testFinished();
+
+        DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
+        try {
+            Verifier verifier = target.createVerifier(definition, verifyContext);
+            try {
+                if (verifier instanceof Verifier.Validatable) {
+                    ((Verifier.Validatable) verifier).validate();
+                }
+            } finally {
+                verifier.close();
+            }
+        } catch (IOException e) {
+            throw new IOException(MessageFormat.format(
+                    "テスト条件の検証に失敗しました: {0}",
+                    label), e);
+        }
+    }
+
+    /**
      * Prepares the target importer's input using the specified source.
      * @param modelClass class of data model
      * @param description target importer

@@ -15,7 +15,9 @@
  */
 package com.asakusafw.runtime.stage.optimizer;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
@@ -51,6 +54,18 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
     public static final boolean DEFAULT_ENABLED = false;
 
     static final String KEY_CONF_LIBRARIES = "tmpjars";
+
+    static final Method CONFIGURATION_UNSET;
+
+    static {
+        Method method;
+        try {
+            method = Configuration.class.getMethod("unset", String.class);
+        } catch (Exception e) {
+            method = null;
+        }
+        CONFIGURATION_UNSET = method;
+    }
 
     @Override
     public void configure(Job job) throws IOException, InterruptedException {
@@ -101,10 +116,42 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
                 result.append(library);
             }
         }
-        if (result.length() == 0) {
-            conf.unset(KEY_CONF_LIBRARIES);
-        } else {
+        if (result.length() > 0) {
             conf.set(KEY_CONF_LIBRARIES, result.toString());
+        } else {
+            if (CONFIGURATION_UNSET != null) {
+                try {
+                    CONFIGURATION_UNSET.invoke(conf, KEY_CONF_LIBRARIES);
+                    return;
+                } catch (Exception e) {
+                    LOG.warn(MessageFormat.format(
+                            "Failed to invoke {0}",
+                            CONFIGURATION_UNSET), e);
+                }
+            }
+            String newLibraries = selectLibraries(libraries);
+            conf.set(KEY_CONF_LIBRARIES, newLibraries);
         }
+    }
+
+    static String selectLibraries(String libraries) {
+        String minLibrary = null;
+        long minSize = Long.MAX_VALUE;
+        for (String library : libraries.split(",")) {
+            Path path = new Path(library);
+            String scheme = path.toUri().getScheme();
+            if (scheme != null && scheme.equals("file")) {
+                File file = new File(path.toUri());
+                long size = file.length();
+                if (size < minSize) {
+                    minLibrary = library;
+                    minSize = size;
+                }
+            }
+        }
+        if (minLibrary != null) {
+            return minLibrary;
+        }
+        return libraries;
     }
 }
