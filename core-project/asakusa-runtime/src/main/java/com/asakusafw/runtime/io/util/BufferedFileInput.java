@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.RandomAccess;
 
-import org.apache.hadoop.io.Text;
-
 /**
  * An implementation of {@link DataInput} for {@link RandomAccessFile}.
  * @since 0.7.0
@@ -225,8 +223,7 @@ public class BufferedFileInput implements RandomAccess, DataInput, Closeable {
 
     @Override
     public String readUTF() throws IOException {
-        // TODO use modified UTF-8
-        return Text.readString(this);
+        return DataIoUtils.readUTF(this);
     }
 
     private byte read() throws IOException {
