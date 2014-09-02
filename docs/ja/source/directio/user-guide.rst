@@ -3,8 +3,6 @@ Direct I/O ユーザーガイド
 =========================
 
 この文書では、Direct I/Oの利用方法について紹介します。
-Direct I/Oの導入方法については :doc:`../administration/deployment-with-directio` を参照してください。
-
 
 データソース
 ============

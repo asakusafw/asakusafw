@@ -338,9 +338,7 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
 
-* :doc:`../administration/deployment-with-directio`
-* :doc:`../administration/deployment-with-windgate`
-* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-guide`
 
 ..  warning::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。
