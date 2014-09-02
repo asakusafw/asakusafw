@@ -61,7 +61,7 @@
 
 		<!-- build timestamp -->
 		<timestamp>${maven.build.timestamp}</timestamp>
-		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss (z)</maven.build.timestamp.format>
 
 		<!-- build configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

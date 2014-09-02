@@ -18,9 +18,7 @@ Asakusa Frameworkのバージョンアップに伴う機能追加や変更につ
 --------------------
 運用環境のマイグレーションは、基本的にはマイグレーション対象バージョンで環境全体を再度デプロイします。運用環境のデプロイについては、以下のドキュメントを参照してください。
 
-* :doc:`deployment-with-directio`
-* :doc:`deployment-with-windgate`
-* :doc:`deployment-with-thundergate`
+* :doc:`deployment-guide`
 
 ..  attention::
     Asakusa Frameworkのマイグレーションを行う際には、基本的には合わせてマイグレーション対象バージョンでバッチコンパイルを行ったバッチアプリケーションをデプロイする必要があります。
@@ -64,7 +62,7 @@ WindGateプロファイルについては、 :doc:`../windgate/user-guide` を�
 
 ThunderGateのデプロイ
 ~~~~~~~~~~~~~~~~~~~~~
-ThunderGateは0.4.0でデプロイ手順や設定ファイルのフォーマットが全体的に見直されました。詳しくは :doc:`deployment-with-thundergate` や :doc:`../thundergate/user-guide` を参照してください。
+ThunderGateは0.4.0でデプロイ手順や設定ファイルのフォーマットが全体的に見直されました。詳しくは :doc:`../thundergate/user-guide` を参照してください。
 
 
 0.2.4 へのマイグレーション

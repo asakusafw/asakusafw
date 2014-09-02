@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.RandomAccess;
 
-import org.apache.hadoop.io.Text;
-
 /**
  * An implementation of {@link DataOutput} for {@link RandomAccessFile}.
  * @since 0.7.0
@@ -204,8 +202,7 @@ public class BufferedFileOutput implements RandomAccess, DataOutput, Flushable, 
 
     @Override
     public void writeUTF(String s) throws IOException {
-        // TODO use modified UTF-8
-        Text.writeString(this, s);
+        DataIoUtils.writeUTF(this, s);
     }
 
     @Override

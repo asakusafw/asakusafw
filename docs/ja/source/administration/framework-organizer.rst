@@ -1,6 +1,6 @@
-=============================
-Framework Organizer利用ガイド
-=============================
+===================================
+Maven Framework Organizer利用ガイド
+===================================
 この文書では、Asakusa Frameworkの構成ツールであるFramework Organizerについて説明します。
 
 Framework Organizerを使ってAsakusa Frameworkのデプロイメントメントアーカイブを生成する方法、及び開発環境にAsakusa Frameworkをインストールする方法などを説明します。
@@ -67,7 +67,7 @@ Framework Organizerの標準構成では、以下のデプロイメントアー�
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。Framework Organizerに対して ``antrun:run`` ゴールを実行することによって、このアーカイブを開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
 
 ..  note::
     WindGate向けのデプロイメントアーカイブ ``asakusafw-${asakusafw-version}-windgate.tar.gz`` には Direct I/O も含まれているため、Direct I/Oを使う運用環境に対しても、このアーカイブを利用することができます。
@@ -124,13 +124,13 @@ Framework Organizerで指定することが出来るデプロイメントアー�
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``prod-windgate``
       - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
     * - ``prod-thundergate``
       - ``asakusafw-${asakusafw-version}-prod-thundergate.tar.gz``
-      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-thundergate` を参照してください。
+      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。
     * - ``prod-directio``
       - ``asakusafw-${asakusafw-version}-directio.tar.gz``
-      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-directio` を参照してください。
+      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。
 
 生成するデプロイメントアーカイブを指定するには、Framework Organizerの ``pom.xml`` に対して ``maven-assembly-plugin`` のプラグインの定義にデプロイメントアーカイブ生成用の設定を追加します。
 

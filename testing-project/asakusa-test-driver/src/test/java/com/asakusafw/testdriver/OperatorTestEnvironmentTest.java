@@ -20,12 +20,14 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.Report.Level;
 import com.asakusafw.runtime.core.ResourceConfiguration;
+import com.asakusafw.runtime.flow.RuntimeResourceManager;
 
 /**
  * Test for {@link OperatorTestEnvironment}.
@@ -86,6 +88,46 @@ public class OperatorTestEnvironmentTest {
             assertThat(BatchContext.get("hello"), is("world"));
         } finally {
             env.after();
+        }
+    }
+
+    /**
+     * Missing implicit configuration file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void missing_implicit_configuraion() throws Exception {
+        Assume.assumeThat(
+                getClass().getResource(RuntimeResourceManager.CONFIGURATION_FILE_NAME),
+                is(nullValue()));
+
+        OperatorTestEnvironment env = new OperatorTestEnvironment();
+        env.before();
+        try {
+            // we can use Report API even if 'asakusa-resources.xml' does not exist
+            Report.info("OK");
+        } finally {
+            env.after();
+        }
+        assertThat(Collector.lastMessage, is("cleanup"));
+    }
+
+    /**
+     * Missing explicit configuration file.
+     * @throws Exception if failed
+     */
+    @Test
+    public void missing_explicit_configuraion() throws Exception {
+        OperatorTestEnvironment env = new OperatorTestEnvironment("__MISSING__.xml");
+        try {
+            env.before();
+            try {
+                fail("missing explicit configuration");
+            } finally {
+                env.after();
+            }
+        } catch (RuntimeException e) {
+            // ok.
         }
     }
 

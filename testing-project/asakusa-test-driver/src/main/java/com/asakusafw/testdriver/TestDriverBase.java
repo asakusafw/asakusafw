@@ -184,6 +184,16 @@ public abstract class TestDriverBase {
     }
 
     /**
+     * テスト条件の検証をスキップするかを設定する。
+     * @param skip
+     *            テスト条件の検証をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * @since 0.7.0
+     */
+    public void skipValidateCondition(boolean skip) {
+        driverContext.setSkipValidateCondition(skip);
+    }
+
+    /**
      * 入力データのクリーニング(truncate)をスキップするかを設定する。
      *
      * @param skip
