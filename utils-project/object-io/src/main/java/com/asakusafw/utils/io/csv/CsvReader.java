@@ -63,7 +63,7 @@ public class CsvReader implements Source<List<String>> {
                     state = State.ESCAPE_BODY;
                     break;
                 case BODY:
-                    // FIXME invalid case
+                    // invalid case
                     state = State.ESCAPE_BODY;
                     break;
                 case ESCAPE_BODY:
@@ -132,7 +132,7 @@ public class CsvReader implements Source<List<String>> {
                     buf.setLength(0);
                     break LOOP;
                 case ESCAPE_BODY:
-                    // FIXME invalid state
+                    // invalid state
                     line.add(buf.toString());
                     buf.setLength(0);
                     break LOOP;
@@ -151,7 +151,7 @@ public class CsvReader implements Source<List<String>> {
                     buf.append((char) c);
                     break;
                 case ESCAPE_QUOTE:
-                    // FIXME invalid state
+                    // invalid state
                     state = State.BODY;
                     buf.append((char) c);
                     break;

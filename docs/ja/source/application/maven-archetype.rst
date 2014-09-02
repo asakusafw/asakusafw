@@ -197,8 +197,6 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
       - 演算子DSLのテスト用ソースディレクトリ
     * - ``src/test/resources/logback-test.xml``
       - ビルド/テスト実行時に使用されるログ定義ファイル
-    * - ``src/test/resources/asakusa-resources.xml``
-      - テスト実行時に使用される実行時プラグイン設定ファイル
     * - ``src/test/resources/${package}/batch``
       - バッチDSLのテストデータ用ディレクトリ
     * - ``src/test/resources/${package}/flowpart``
@@ -338,9 +336,7 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
 
-* :doc:`../administration/deployment-with-directio`
-* :doc:`../administration/deployment-with-windgate`
-* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-guide`
 
 ..  warning::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。

@@ -109,8 +109,10 @@ public class JobFlowTester extends TestDriverBase {
     private void runTestInternal(Class<? extends FlowDescription> jobFlowDescriptionClass) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
-        LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
-        validateTestCondition();
+        if (driverContext.isSkipValidateCondition() == false) {
+            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            validateTestCondition();
+        }
 
         // フローコンパイラの実行
         LOG.info("ジョブフローをコンパイルしています: {}", jobFlowDescriptionClass.getName());

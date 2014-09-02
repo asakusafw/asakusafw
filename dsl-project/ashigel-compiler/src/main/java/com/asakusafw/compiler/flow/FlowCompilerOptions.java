@@ -53,7 +53,7 @@ public class FlowCompilerOptions {
     public enum Item {
 
         /**
-         * オプション項目: Combinerを有効にする (Experimental)。
+         * オプション項目: Combinerを有効にする。
          * <p>
          * デフォルトでは無効 (false)。
          * </p>

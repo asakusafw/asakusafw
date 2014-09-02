@@ -22,7 +22,6 @@ import java.io.EOFException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
-import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
 /**
@@ -292,9 +291,8 @@ public class BufferedFileInputTest extends BufferedFileTestRoot {
      */
     @Test
     public void testReadUTF() throws Exception {
-        // TODO for implementation
         RandomAccessFile file = file();
-        Text.writeString(file, "Hello, world!");
+        DataIoUtils.writeUTF(file, "Hello, world!");
         file.seek(0);
 
         BufferedFileInput buf = manage(new BufferedFileInput(file, 256));

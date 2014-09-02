@@ -21,8 +21,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.apache.hadoop.io.Text;
-
 /**
  * A data buffer with {@link DataInput} and {@link DataOutput} interfaces.
  * @since 0.7.0
@@ -263,8 +261,7 @@ public class DataBuffer implements DataInput, DataOutput {
 
     @Override
     public String readUTF() throws IOException {
-        // TODO use modified UTF-8
-        return Text.readString(this);
+        return DataIoUtils.readUTF(this);
     }
 
     private int prepareRead(int length) throws EOFException {
@@ -369,8 +366,7 @@ public class DataBuffer implements DataInput, DataOutput {
 
     @Override
     public void writeUTF(String s) throws IOException {
-        // TODO use modified UTF-8
-        Text.writeString(this, s);
+        DataIoUtils.writeUTF(this, s);
     }
 
     /**
