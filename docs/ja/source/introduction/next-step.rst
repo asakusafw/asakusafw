@@ -155,9 +155,7 @@ Asakusa DSLのジョブフローについては、外部システムとの連携
 開発したバッチアプリケーションを運用環境（Hadoopクラスター、及び外部システムとの連携）で実行する準備を行います。
 運用環境の構築については、以下のドキュメントを参照してください。
 
-* :doc:`../administration/deployment-with-directio`
-* :doc:`../administration/deployment-with-windgate`
-* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-guide`
 
 運用環境の構築が完了したら、バッチアプリケーションを実行してみましょう。
 

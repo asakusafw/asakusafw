@@ -5,12 +5,8 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 
 運用環境のデプロイ
 ==================
-
-Asakusa Frameworkが提供する外部システム連携の各モジュールごとに運用環境のデプロイ方法を示したドキュメントです。
-
-* :doc:`deployment-with-directio`
-* :doc:`deployment-with-windgate`
-* :doc:`deployment-with-thundergate`
+* :doc:`deployment-guide`
+* :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
 * :doc:`configure-library-cache`
 * :doc:`migration-guide`
@@ -22,7 +18,6 @@ Asakusa Frameworkが提供する追加モジュールを運用環境にデプロ
 
 * :doc:`deployment-extension-module`
 * :doc:`deployment-runtime-plugins`
-* :doc:`deployment-cleaner`
 
 運用ツールの利用
 ================
@@ -36,8 +31,6 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
 
-* :doc:`deployment-hadoop2`
-
 クラウドプラットフォーム
 ------------------------
 
@@ -48,23 +41,32 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 * :doc:`generate-deployment-archive-from-source`
 
+非推奨機能
+==========
+
+Asakusa Framework バージョン |version| において、以下のドキュメントで説明する機能は非推奨となっています。
+
+* :doc:`framework-organizer`
+* :doc:`deployment-cleaner`
+
+..  attention::
+    非推奨となった機能のうち、その多くは、現在のバージョンで代替となる推奨機能が提供されています。
+
 関連するドキュメント
 ====================
 
 ..  toctree::
     :maxdepth: 1
 
-    deployment-with-directio
-    deployment-with-windgate
-    deployment-with-thundergate
-    framework-organizer
+    deployment-guide
+    deployment-architecture
     configure-hadoop-parameters
     configure-library-cache
     migration-guide
     deployment-extension-module
     deployment-runtime-plugins
-    deployment-cleaner
     utility-tool-user-guide
-    deployment-hadoop2
     generate-deployment-archive-from-source
+    framework-organizer
+    deployment-cleaner
 

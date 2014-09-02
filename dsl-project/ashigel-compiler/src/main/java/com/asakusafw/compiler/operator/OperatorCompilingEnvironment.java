@@ -130,7 +130,6 @@ public class OperatorCompilingEnvironment {
      */
     public void emit(CompilationUnit unit) throws IOException {
         Precondition.checkMustNotBeNull(unit, "unit"); //$NON-NLS-1$
-        // TODO add header comments
         Filer filer = getProcessingEnvironment().getFiler();
         new Jsr269(factory).emit(filer, unit);
     }

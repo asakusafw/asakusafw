@@ -9,13 +9,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブ [#]_ に
 
 拡張モジュールを実行環境にデプロイすることで、Asakusa Frameworkの拡張機能やレガシーモジュールを利用することが出来ます。
 
-..  [#] Asakusa Frameworkのデプロイメントアーカイブの作成や設定は、
-        使用している開発環境に応じた以下のドキュメントを参照してください。
-        
-        * Gradleを使った開発環境
-           * :doc:`../application/gradle-plugin` - :ref:`deployment-archive-gradle-plugin`
-        * Mavenを使った開発環境
-           * :doc:`framework-organizer` - :ref:`deployment-archive-maven-archetype`
+..  [#] Asakusa Frameworkのデプロイメントアーカイブの作成については、 :doc:`deployment-guide` を参照してください。
 
 ..  [#] レガシーモジュールについては、 :doc:`../application/legacy-module-guide` を参照してください。
 

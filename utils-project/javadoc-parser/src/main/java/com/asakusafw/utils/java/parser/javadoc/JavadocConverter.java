@@ -44,7 +44,7 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * ドキュメンテーションコメントをIrenkaのモデルに変換する。
+ * ドキュメンテーションコメントを{@code java-dom}のモデルに変換する。
  */
 public class JavadocConverter {
 

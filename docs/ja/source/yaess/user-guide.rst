@@ -3,11 +3,6 @@ YAESSユーザーガイド
 ===================
 
 この文書では、YAESSの利用方法について紹介します。
-YAESSの導入方法については、各デプロイメントガイドのYAESSに関する項目を参照してください。
-
-* :doc:`../administration/deployment-with-directio` 
-* :doc:`../administration/deployment-with-windgate` 
-* :doc:`../administration/deployment-with-thundergate` 
 
 .. _yaess-batch-structure:
 
@@ -849,6 +844,19 @@ YAESSのいくつかの機能を利用するには、追加のプラグインラ
 
 標準的なプラグインはYAESS導入時に自動的にプラグインが追加されますが、その他のプラグインは拡張モジュールとして提供されるため、必要に応じて拡張モジュールを導入してください。
 
+..  note::
+    Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのYAESS用プラグインライブラリとして、
+    あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
+    
+    * ``asakusa-yaess-paralleljob`` : ジョブを並列実行のためのプラグイン
+    * ``asakusa-yaess-jsch`` : SSH経由でジョブを起動するためのプラグイン
+    * ``jsch`` : ``asakusa-yaess-jsch`` が依存するSSH接続用ライブラリ
+    * ``asakusa-yaess-flowlog`` : ジョブフローごとに進捗状況を個別ファイルに出力するためのプラグイン
+    * ``asakusa-yaess-multidispatch`` : ジョブの実行クラスタの振り分けを行うためのプラグイン
+
+YAESSを含むAsakusa Frameworkの運用環境の構築については、
+:doc:`../administration/deployment-guide` を参照してください。
+
 拡張モジュールの一覧やその導入方法については、 :doc:`../administration/deployment-extension-module` を参照してください。
 
 
@@ -860,12 +868,7 @@ YAESSの `プロファイルセット`_ を作成し終えたら、それを利�
 --------------------------------
 YAESSを利用してバッチアプリケーションを実行する場合、YAESSを実行する環境上に同アプリケーションをデプロイする必要があります。
 
-アプリケーションのデプロイ方法は、各デプロイメントガイドの「バッチアプリケーションのデプロイ」を参照してください。
-
-* :doc:`../administration/deployment-with-windgate` 
-* :doc:`../administration/deployment-with-thundergate` 
-* :doc:`../administration/deployment-with-directio` 
-
+運用環境のデプロイメントに関しては、 :doc:`../administration/deployment-guide` を参照してください。
 
 実行計画の確認
 --------------

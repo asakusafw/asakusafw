@@ -166,9 +166,6 @@ Asakusa Frameworkのデプロイメントアーカイブを作成する例を示
     Asakusa Framework本体、バッチアプリケーション、設定ファイルをすべて同梱した
     Asakusa Frameworkのデプロイメントアーカイブを作成しています。
     
-    各タスクの詳細については、 :doc:`../application/gradle-plugin` の 
-    :ref:`deployment-archive-gradle-plugin` を参照してください。
-
 上記のGradleコマンドを実行すると、プロジェクトの ``build`` ディレクトリ配下に ``asakusafw-0.7.0.tar.gz`` というアーカイブファイルが作成されます。このアーカイブファイルをS3バケット上の任意のディレクトリに配置します。ここでは ``s3://[sample-bucket]/asakusafw/`` 配下に配置するものとします。
 
 以下にAsakusa FrameworkのデプロイメントアーカイブをS3に配置する例を示します。
@@ -267,7 +264,9 @@ EMRの起動は ``elastic-mapreduce`` を ``--create`` オプション付きで�
   EMRクラスターのマシンイメージのバージョンです。利用可能なバージョンについては EMR Developer Guide の `Choose a Machine Image`_ [#]_ などを参照してください。
 
 ..  attention::
-    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。Asakusa FrameworkをHadoop2系で利用するには、Hadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。詳しくは、 :doc:`../administration/deployment-hadoop2` を参照してください。
+    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。Asakusa FrameworkをHadoop2系で利用するには、Hadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。
+    
+    詳しくは、 :doc:`../administration/deployment-guide` を参照してください。
 
 ``--enable-debugging`` , ``--log-uri``
   EMRでは、各ノードのEMRやHadoopのログを非同期で収集してS3にコピーする機能が提供されています。 ``--enable-debugging`` オプションを指定するとのログ収集機能が有効になり、 ``--log-uri`` で指定したS3バケットのキー配下にログが出力されるようになります。
