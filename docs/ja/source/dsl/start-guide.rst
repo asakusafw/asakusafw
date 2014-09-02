@@ -332,7 +332,7 @@ Asakusa Frameworkは、演算子メソッドを記述する際にいくつか便
 :doc:`../introduction/start-guide` の流れで作成したEclipseプロジェクト上では、通常のJavaを使った開発と同様、
 ソースを記述するとインクリメンタルビルドによって演算子のコンパイルが自動的に行われるほか、注釈プロセッサによって演算子用のJavaソースが以下のディレクトリに自動生成されます。
 
-* ``<プロジェクトのルート>/target/generated-sources/annotations``
+* ``<プロジェクトのルート>/build/generated-sources/annotations``
 
 または、Gradleを利用してJavaコンパイラを実行すると、注釈プロセッサを起動できます。
 

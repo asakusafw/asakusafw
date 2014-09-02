@@ -714,6 +714,24 @@ public class TestDriverContext implements TestContext {
     /**
      * Returns whether this test skips to cleanup input data source.
      * @return {@code true} to skip, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public boolean isSkipValidateCondition() {
+        return skipPhases.contains(TestExecutionPhase.VALIDATE_CONDITION);
+    }
+
+    /**
+     * Sets whether this test skips to cleanup input data source (default: {@code false}).
+     * @param skip {@code true} to skip, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public void setSkipValidateCondition(boolean skip) {
+        setSkipPhase(TestExecutionPhase.VALIDATE_CONDITION, skip);
+    }
+
+    /**
+     * Returns whether this test skips to cleanup input data source.
+     * @return {@code true} to skip, otherwise {@code false}
      */
     public boolean isSkipCleanInput() {
         return skipPhases.contains(TestExecutionPhase.CLEAN_INPUT);
@@ -810,9 +828,9 @@ public class TestDriverContext implements TestContext {
     private void setSkipPhase(TestExecutionPhase phase, boolean skip) {
         assert phase != null;
         if (skip) {
-            skipPhases.remove(phase);
-        } else {
             skipPhases.add(phase);
+        } else {
+            skipPhases.remove(phase);
         }
     }
 
@@ -893,6 +911,12 @@ public class TestDriverContext implements TestContext {
      * @since 0.6.0
      */
     public enum TestExecutionPhase {
+
+        /**
+         * Validating test conditions.
+         * @since 0.7.0
+         */
+        VALIDATE_CONDITION,
 
         /**
          * Cleaning input.

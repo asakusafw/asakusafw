@@ -85,7 +85,6 @@ public class ShufflePartitionerEmitterTest extends JobflowCompilerTestRoot {
         p02 = part.getPartition(k, v, 100);
         assertThat(p01, is(p02));
 
-        // TODO これが確実に違うかどうかは内部仕様による
         setShuffleKeyValue(seg1, k, v, ex1);
         p01 = part.getPartition(k, v, 100);
         ex1.setValue(101);
