@@ -197,8 +197,6 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
       - 演算子DSLのテスト用ソースディレクトリ
     * - ``src/test/resources/logback-test.xml``
       - ビルド/テスト実行時に使用されるログ定義ファイル
-    * - ``src/test/resources/asakusa-resources.xml``
-      - テスト実行時に使用される実行時プラグイン設定ファイル
     * - ``src/test/resources/${package}/batch``
       - バッチDSLのテストデータ用ディレクトリ
     * - ``src/test/resources/${package}/flowpart``
