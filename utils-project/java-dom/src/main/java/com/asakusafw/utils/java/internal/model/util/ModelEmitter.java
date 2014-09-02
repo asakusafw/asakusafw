@@ -36,7 +36,7 @@ public class ModelEmitter {
 
     private static final EmitEngine ENGINE = new EmitEngine();
 
-    private PrintWriter writer;
+    private final PrintWriter writer;
 
     /**
      * インスタンスを生成する。
@@ -795,7 +795,6 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         }
         if (appears(elem.getExceptionTypes())) {
             context.keyword("throws");
-            // TODO indentation
             processJoinWithComma(elem.getExceptionTypes(), context);
         }
         if (appears(elem.getBody())) {
@@ -1341,7 +1340,6 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
 
     private void processParameters(List<? extends Model> elements,
             EmitContext context) {
-        // TODO indentation
         context.symbol("(");
         processJoinWithComma(elements, context);
         context.separator(")");

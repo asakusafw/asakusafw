@@ -144,7 +144,7 @@ public final class VisualAnalyzer {
         assert stage != null;
         Set<VisualBlock> nodes = Sets.create();
         for (FlowBlock block : stage.getMapBlocks()) {
-            // TODO "cluster"'s bug of dot
+            // "cluster"'s bug of dot
             nodes.add(convertBlock(null, block));
         }
         for (FlowBlock block : stage.getReduceBlocks()) {

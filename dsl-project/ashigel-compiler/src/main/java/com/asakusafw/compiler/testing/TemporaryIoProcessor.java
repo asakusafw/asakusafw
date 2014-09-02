@@ -133,7 +133,6 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
                     moduleId,
                     resolved,
                     entry.getKey());
-            // TODO not sure
             results.add(new ExternalIoStage(getId(), stage, context.getOutputContext()));
         }
         return results;
