@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.flowpart.DependencyFlowPart;
+import com.asakusafw.testdriver.testing.flowpart.InvalidFlowPart;
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -325,15 +326,16 @@ public class FlowPartTesterTest {
     public void skip() {
         FlowPartTester tester = new FlowPartTester(getClass());
         tester.setFrameworkHomePath(framework.getHome());
+        tester.skipValidateCondition(true);
         tester.skipCleanInput(true);
         tester.skipCleanOutput(true);
         tester.skipPrepareInput(true);
         tester.skipPrepareOutput(true);
         tester.skipRunJobflow(true);
         tester.skipVerify(true);
-        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
-        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.runTest(new SimpleFlowPart(in, out));
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/invalid-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/invalid-out.json", new IdentityVerifier());
+        tester.runTest(new InvalidFlowPart(in, out));
     }
 
     /**

@@ -51,7 +51,6 @@ public class Recoverer {
      */
     private static final List<String> PROPERTIES = Constants.PROPERTIES_DB;
 
-    // TODO enumの利用を検討。
     /**
      * 起動方法 ジョブフロー実行ID指定有無。
      */

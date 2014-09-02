@@ -95,9 +95,11 @@ public class BatchTester extends TestDriverBase {
     private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
 
-        LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
-        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
-            validateTestCondition(entry.getValue(), entry.getKey());
+        if (driverContext.isSkipValidateCondition() == false) {
+            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+                validateTestCondition(entry.getValue(), entry.getKey());
+            }
         }
 
         // 初期化

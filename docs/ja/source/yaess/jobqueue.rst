@@ -71,18 +71,14 @@ JobQueueサーバーがダウンから復旧したら、次回以降のYAESSの�
 
 JobQueueのデプロイメント構成
 ============================
-JobQueueをデプロイするにあたって、まずはAsakusa Frameworkの全体構成を決定する必要があります。上述の `JobQueueを利用する際の構成例`_ を参考に構成を検討してください。また、Asakusa Frameworkが提供する外部システム連携の機能に従って、デプロイメント構成を検討します。これについて、詳しくは各デプロイメントガイドを参考にしてください。
+JobQueueをデプロイするにあたって、まずはAsakusa Frameworkの全体構成を決定する必要があります。上述の `JobQueueを利用する際の構成例`_ を参考に構成を検討してください。
 
-* :doc:`../administration/deployment-with-windgate` 
-* :doc:`../administration/deployment-with-thundergate` 
-* :doc:`../administration/deployment-with-directio` 
-
-上記デプロイメントガイドの「モジュール」の説明に対応づけると、JobQueueのコンポーネントは以下のモジュールに含まれることになります。
+また、Asakusa Frameworkが提供する外部システム連携の機能に従って、デプロイメント構成を検討します。これについて、詳しくは :doc:`../administration/deployment-architecture` を参考にしてください。このドキュメントの「モジュール」の説明に対応づけると、JobQueueのコンポーネントは以下のモジュールに含まれることになります。
 
 * JobQueueサーバ: Hadoopクライアントモジュール
 * JobQueueクライアントプラグイン: バッチ起動モジュール
 
-以降では、上記のデプロイメントガイドに従って構築された運用環境に対して、JobQueueサーバとJobQueueクライアントプラグインを導入し利用する方法について説明します。
+以降では運用環境に対して、JobQueueサーバとJobQueueクライアントプラグインを導入し利用する方法について説明します。
 
 JobQueueサーバーの利用方法
 ==========================
@@ -257,6 +253,8 @@ Tomcatの起動
     {"application":"asakusa-jobqueue","configurations":{"ASAKUSA_HOME":"/home/asakusa/asakusa","core.worker":4,"hadoop.log.dir":"/tmp/hadoop-asakusa/logs"}}
 
 ..  [#] コンテキストパスを ``jobqueue`` にした場合、 http://localhost:8080/jobqueue にアクセスしてください。
+
+.. _yaess-plugin-jobqueue-client:
 
 JobQueueクライアントプラグインの利用方法
 ========================================

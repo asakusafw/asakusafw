@@ -397,7 +397,6 @@ public class StagePlanner {
 
         LOG.debug("ステージ中のブロックグループを検証しています");
 
-        // TODO グラフライブラリを使って書き換え
         LinkedList<FlowBlockGroup> groups = new LinkedList<FlowBlockGroup>();
         for (FlowBlock block : blocks) {
             // Reducerが後続するMapperは対象としない

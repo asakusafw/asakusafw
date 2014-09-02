@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 
-import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
 /**
@@ -292,14 +291,13 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
      * @throws Exception if failed     */
     @Test
     public void testWriteUTF() throws Exception {
-        // TODO for implementation
         RandomAccessFile file = file();
         BufferedFileOutput buf = manage(new BufferedFileOutput(file, 100));
         buf.writeUTF("Hello, world!");
         buf.flush();
 
         file.seek(0);
-        assertThat(Text.readString(file), is("Hello, world!"));
+        assertThat(DataIoUtils.readUTF(file), is("Hello, world!"));
 
         eof(file);
     }
