@@ -90,6 +90,10 @@ TSV形式の設定
       - 文字列
       - ``"UTF-8"``
       - ファイルの文字エンコーディング
+    * - ``allow_linefeed``
+      - 論理値
+      - ``FALSE``
+      - ``TRUE`` で値内にLFを含められる。 ``FALSE`` で不許可
     * - ``has_header``
       - 論理値
       - ``FALSE``
@@ -101,6 +105,10 @@ TSV形式の設定
 
 ``compression`` には、 ``"gzip"`` または ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
 ここで指定した圧縮形式で対象のファイルが読み書きされるようになりますが、代わりにファイルの分割読み出しが行われなくなります。
+
+..  attention::
+    デフォルトでは ``allow_linefeed`` には ``FALSE`` が設定されていて、文字列の内部などに改行文字 LF を含められないようになっています。
+    この設定を ``TRUE`` にすることでLFを含められるようになりますが、代わりに :ref:`directio-input-split` が行われなくなります。
 
 以下はDMDLスクリプトの記述例です。
 
