@@ -8,6 +8,7 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 * :doc:`deployment-guide`
 * :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
+* :doc:`configure-task-optimization`
 * :doc:`configure-library-cache`
 * :doc:`migration-guide`
 
@@ -61,6 +62,7 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
     deployment-guide
     deployment-architecture
     configure-hadoop-parameters
+    configure-task-optimization
     configure-library-cache
     migration-guide
     deployment-extension-module
