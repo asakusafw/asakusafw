@@ -521,7 +521,7 @@ Asakusa Gradle Pluginはいくつかのプラグインから構成されてい�
     * -  ``asakusafw`` 
       -  Batch Application Plugin
       -  ``java`` 
-      -  ``eclipse`` 
+      -  ``eclipse`` , ``idea``
       - Asakusa Framework の バッチアプリケーションを開発を行うための支援機能をプロジェクトに追加する。
     * -  ``asakusafw-organizer`` 
       -  Framework Organizer Plugin
@@ -926,12 +926,23 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 
 また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
 
-バッチテストランナーの実行 (Experimental)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Idea Pluginの拡張
+~~~~~~~~~~~~~~~~~
+
+..  attention::
+    Asakusa Framework バージョン |version| では、 Idea Pluginの拡張は試験的機能として提供しています。
+
+Batch Application Plugin は Gradleが提供するIdea Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
+
+* OperatorDSLコンパイラを実行するためのAnnotation Processorの設定
+* Javaのバージョンやエンコーディングに関する設定
+
+バッチテストランナーの実行
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``testRunBatchapp`` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナー [#]_ をGradleタスクとして実行することができます。
 
 ..  attention::
-    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供されています。
+    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供しています。
 
 ``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時に以下のコマンドライン引数を指定します。
 
