@@ -82,9 +82,9 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - OS
       - CentOS 6.2
     * - Java
-      - JDK 6 (1.6.0_45)
+      - JDK 6 (1.6.0_45) [#]_
     * - Java
-      - JDK 7 (1.7.0_45) [#]_
+      - JDK 7 (1.7.0_45)
     * - ビルドツール
       - Gradle 1.12 [#]_
     * - ビルドツール
@@ -96,7 +96,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Hadoop
       - Apache Hadoop 1.2.1
 
-..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
+..  [#] JDK 6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 

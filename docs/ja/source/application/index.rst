@@ -31,7 +31,7 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
 特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
 
 * :doc:`using-hadoop`
-* :doc:`develop-with-jdk7`
+* :doc:`using-jdk`
 
 非推奨機能
 ==========
@@ -58,7 +58,7 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
     dsl-visualization
     yaess-log-visualization
     using-hadoop
-    develop-with-jdk7
+    using-jdk
     gradle-plugin-deprecated
     maven-archetype
     legacy-module-guide

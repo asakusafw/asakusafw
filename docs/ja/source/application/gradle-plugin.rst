@@ -786,7 +786,7 @@ Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       - クラス生成のターゲットJavaバージョン
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration` が提供します。
-..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
+..  [#] JDK6Iを利用するなどの場合に変更します。 詳しくは :doc:`using-jdk` を参照してください。
 
 DSLコンパイラプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^^
