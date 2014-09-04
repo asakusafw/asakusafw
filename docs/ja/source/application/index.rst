@@ -55,6 +55,7 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
     gradle-plugin
     sdk-artifact
     migration-guide
+    previous-migration-guide
     dsl-visualization
     yaess-log-visualization
     using-hadoop

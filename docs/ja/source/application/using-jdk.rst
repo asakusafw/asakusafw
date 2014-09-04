@@ -76,6 +76,8 @@ EclipseのJRE用クラスパスコンテナ
 
 ..  [#] Asakusa Gradle Plugin はソースコードのバージョンに対応するEclipseのJRE用クラスパスコンテナを設定します。
 
+.. _using-jdk6:
+
 JDK6向け設定
 ------------
 アプリケーションプロジェクトをJDK6向けの設定に変更する場合、
