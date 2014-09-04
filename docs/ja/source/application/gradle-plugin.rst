@@ -1323,6 +1323,8 @@ YAESSの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブ
 
 ..  [#] これらの機能は :gradledoc:`com.asakusafw.gradle.assembly.AssemblyHandler` が提供します。
 
+.. _gradle-plugin-oraganizer-profile:
+
 プロファイルの管理
 ~~~~~~~~~~~~~~~~~~
 Framework Organizer Pluginでは、
