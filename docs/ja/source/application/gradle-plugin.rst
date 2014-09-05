@@ -908,7 +908,7 @@ ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内
       - ThunderGateが入出力を行う論理削除フラグカラム名
     * -  ``deleteValue`` 
       - String
-      -  ``1`` 
+      -  ``'1'`` 
       - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
@@ -1490,7 +1490,7 @@ Asakusa Gradle Pluginのバージョン指定
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
     例えば Asakusa Framework バージョン ``0.7.0`` では ``0.7.0`` のような値となります。
     
-    次の手順の ``Asakusa Frameworkのバージョン指定`` とは異なり、バージョン番号に
+    次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に
     ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
 Asakusa Frameworkのバージョン指定
@@ -1721,9 +1721,9 @@ Mavenプロジェクトのビルドで利用していた以下のファイル、
 *  ``build.properties`` 
 *  ``target`` 
 
-Framework Organizerのマイグレーション
--------------------------------------
+Maven Framework Organizerのマイグレーション
+-------------------------------------------
 
-従来の Framework Organizer [#]_ で提供していた機能は、 `Framework Organizer Plugin`_  によって提供されます。詳しくは Framework Organizer Plugin のドキュメントを参照してください。
+従来の Maven Framework Organizer [#]_ で提供していた機能は、 `Framework Organizer Plugin`_  によって提供されます。詳しくは Framework Organizer Plugin のドキュメントを参照してください。
 
 ..  [#] :doc:`../administration/framework-organizer`
