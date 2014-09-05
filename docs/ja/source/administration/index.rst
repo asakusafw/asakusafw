@@ -8,16 +8,10 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 * :doc:`deployment-guide`
 * :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
+* :doc:`configure-task-optimization`
 * :doc:`configure-library-cache`
-* :doc:`migration-guide`
-
-追加モジュールのデプロイ
-========================
-
-Asakusa Frameworkが提供する追加モジュールを運用環境にデプロイする方法を示したドキュメントです。
-
-* :doc:`deployment-extension-module`
 * :doc:`deployment-runtime-plugins`
+* :doc:`migration-guide`
 
 運用ツールの利用
 ================
@@ -61,10 +55,10 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
     deployment-guide
     deployment-architecture
     configure-hadoop-parameters
+    configure-task-optimization
     configure-library-cache
-    migration-guide
-    deployment-extension-module
     deployment-runtime-plugins
+    migration-guide
     utility-tool-user-guide
     generate-deployment-archive-from-source
     framework-organizer

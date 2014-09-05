@@ -93,9 +93,9 @@ Tomcatの構築手順やSSL、ベーシック認証の設定等は、Tomcatの�
 
 JobQueueサーバー・コンポーネントのインストール
 ----------------------------------------------
-JobQueueサーバーに必要なコンポーネントをダウンロードします。
+JobQueueサーバーに必要なコンポーネントを以下のページからダウンロードします。
 
-* http://www.asakusafw.com/download/jobqueue/asakusa-jobqueue-server-0.7.0.tar.gz
+* https://github.com/asakusafw/asakusafw-jobqueue-server/wiki/Downloads
 
 ダウンロードが完了したら、以下の例を参考にしてJobQueueサーバーのコンポーネントを ``$ASAKUSA_HOME`` にインストールします
 (標準の ``~/Downloads`` にダウンロードした場合の例です)。

@@ -15,9 +15,8 @@ SDkアーティファクトを利用することで、
 またAsakusa Frameworkのバージョンアップなどに伴う
 マイグレーション作業を容易にします。
 
-アプリケーションプロジェクトのビルド定義
-( Gradleプロジェクトの場合は ``build.gradle`` , Mavenプロジェクトの場合は ``pom.xml`` )では
-SDKアーティファクトを依存性定義に使用することを推奨します。
+アプリケーションプロジェクトのビルド定義で指定するライブラリには
+SDKアーティファクトを使用することを推奨します。
 
 SDKアーティファクト一覧
 =======================
@@ -46,12 +45,13 @@ Asakusa Frameworkが提供するSDKアーティファクトは以下のものが
     * - ``asakusa-sdk-directio``
       - 0.5.0
       - Direct I/Oを使用するアプリケーション開発プロジェクトで必要となるライブラリをまとめたアーティファクト。
+    * - ``asakusa-sdk-hive``
+      - 0.7.0
+      - Direct I/O Hiveを使用するアプリケーション開発プロジェクトで必要となるライブラリをまとめたアーティファクト。
 
 SDKアーティファクトの利用方法
 =============================
 
-Gradleプロジェクト
-------------------
 :doc:`gradle-plugin` などの手順で構築した
 GradleプロジェクトでSDKアーティファクトを使用する場合は
 build.gradleの ``dependencies`` ブロック内に ``compile`` 依存関係(コンフィグレーション)に対して
@@ -67,32 +67,4 @@ build.gradleの ``dependencies`` ブロック内に ``compile`` 依存関係(コ
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: asakusafw.asakusafwVersion
-
-Mavenプロジェクト
------------------
-:doc:`maven-archetype` などの手順で構築した
-MavenプロジェクトでSDKアーティファクトを使用する場合は
-pom.xmlの ``<dependencies>`` 内に依存定義( ``<dependency>`` )を追加します。
-
-例えば、Direct I/O と WindGate を使った
-アプリケーション開発プロジェクト向けに
-依存性定義を行う場合は、以下のようになります。
-
-..  code-block:: xml
-        
-		<dependency>
-			<groupId>com.asakusafw.sdk</groupId>
-			<artifactId>asakusa-sdk-core</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw.sdk</groupId>
-			<artifactId>asakusa-sdk-directio</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw.sdk</groupId>
-			<artifactId>asakusa-sdk-windgate</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
 
