@@ -1,6 +1,18 @@
 ===================================
 Maven Framework Organizer利用ガイド
 ===================================
+
+..  warning::
+    Asakusa Framework バージョン ``0.7.0`` 以降では、
+    本書で説明するMavenを使ったデプロイメントは非推奨となっています。
+    
+    バージョン ``0.7.0`` からはGradleを利用してデプロイメントを行うことを推奨しています。
+    詳しくは以下のドキュメントを参照してください。
+    
+    * :doc:`../application/gradle-plugin`
+    * :doc:`../application/migration-guide`
+    * :doc:`deployment-guide`
+
 この文書では、Asakusa Frameworkの構成ツールであるFramework Organizerについて説明します。
 
 Framework Organizerを使ってAsakusa Frameworkのデプロイメントメントアーカイブを生成する方法、及び開発環境にAsakusa Frameworkをインストールする方法などを説明します。

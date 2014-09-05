@@ -20,10 +20,7 @@ Direct I/OのTSVファイル連携モジュールはAsakusa FrameworkのMavenリ
 
 TSVファイル連携モジュールの利用方法
 ===================================
-
-Gradleプロジェクト
-------------------
-GradleプロジェクトでTSVファイル連携モジュールを使用する場合は
+TSVファイル連携モジュールを使用する場合はアプリケーションプロジェクトの
 ``build.gradle`` の ``dependencies`` ブロック内に ``compile`` 依存関係(コンフィグレーション)に対して
 依存定義を追加します。
 
@@ -32,22 +29,6 @@ GradleプロジェクトでTSVファイル連携モジュールを使用する�
     dependencies {
         ...
         compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: asakusafw.asakusafwVersion
-
-Mavenプロジェクト
-=================
-MavenプロジェクトでTSVファイル連携モジュールを使用する場合は
-Direct I/O用アーキタイプ ``asakusa-archetype-directio`` から作成したプロジェクトの ``pom.xml`` に以下の依存性定義を追加します。
-
-..  code-block:: xml
-
-	<dependencies>
-        ...
-		<dependency>
-			<groupId>com.asakusafw.sandbox</groupId>
-			<artifactId>asakusa-directio-dmdl-ext</artifactId>
-			<version>${asakusafw.version}</version>
-			<scope>compile</scope>
-		</dependency>
 
 モデルクラスの生成
 ==================
@@ -183,11 +164,11 @@ TSVから除外するプロパティ
 
 データモデルクラスの生成
 ~~~~~~~~~~~~~~~~~~~~~~~~
-データモデルクラスの生成は通常のDMDLで提供する方法と同様に、Mavenの ``generate-sources`` フェーズを実行して生成します。
+データモデルクラスの生成は通常のDMDLで提供する方法と同様に、Gradleの ``compileDMDL`` タスクを実行して生成します。
 
 ..  code-block:: sh
-
-    mvn generate-sources
+    
+    ./gradlew compileDMDL
 
 Asakusa DSLの記述
 =================
