@@ -24,11 +24,6 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
-    * - CDH3
-      - Update 5 (u5)
-      - CentOS 6 (6.2)
-      - JDK 6 (1.6.0_31)
-      - |version|-hadoop1
     * - CDH4
       - 4.6.0 (MRv1)
       - CentOS 6 (6.2)
@@ -82,23 +77,26 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - OS
       - CentOS 6.2
     * - Java
-      - JDK 6 (1.6.0_45)
+      - JDK 6 (1.6.0_45) [#]_
     * - Java
-      - JDK 7 (1.7.0_45) [#]_
+      - JDK 7 (1.7.0_60)
     * - ビルドツール
-      - Gradle 1.12 [#]_
+      - Gradle 2.0 [#]_
     * - ビルドツール
       - Apache Maven 3.0.5 [#]_
     * - IDE
-      - Eclipse IDE for Java Developers 3.7.2
-    * - IDE
       - Eclipse IDE for Java Developers 4.3.2
+    * - IDE
+      - Eclipse IDE for Java Developers 4.4.0
     * - Hadoop
       - Apache Hadoop 1.2.1
+    * - Hadoop
+      - Apache Hadoop 2.4.1 [#]_
 
-..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
+..  [#] JDK 6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
 ========
@@ -111,7 +109,7 @@ WindGate
     * - 種類
       - Product/Version
     * - DBMS
-      - PostgreSQL 9.1.4
+      - PostgreSQL 9.3
     * - JDBC Driver
       - PostgreSQL JDBC Driver 9.1 Build 901
 
