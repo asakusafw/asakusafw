@@ -42,7 +42,7 @@ Enhancements
 * [ :issue:`438` ] - OperatorTestEnvironment enables to eliminate loading asakusa-resources.xml
 * [ :issue:`439` ] - Add timezone of build timestamp to VERSION file
 * [ :issue-sdk:`2` ] - Bumps up default java version of application project to 1.7
-* [ :issue-sdk:`3` ] - Bumps up default Gradle version of project template to 2.0
+* [ :issue-sdk:`3` ] - Bumps up default Gradle version of project template to 2.1
 * [ :issue-sdk:`4` ] - Update Maven plugins and depedency libraries to recent versions (0.7.0)
 * [ :issue-sdk:`9` ] - Improves error message for Gradle Plugin
 * [ :issue-sdk:`10` ] - Enabled to attach Direct I/O Hive libraries for Gradle Plugin
@@ -68,6 +68,8 @@ Bug fixes
 * [ :issue:`424` ] - DMDL japanese message resource for WindGate has inconsistent property key
 * [ :issue:`435` ] - ThunderGate DMDL project fails build on old Hadoop version.
 * [ :issue:`437` ] - Regression: each skip method of XXTester performs the inverse operation
+* [ :issue:`440` ] - Operator Compiler does not work correctly on Eclipse 4.4
+* [ :issue:`441` ] - Direct I/O CSV/TSV with GZIP compression does not work on MapR
 * [ :issue-sdk:`6` ] - ResolutionUtils does not resolve String type argument correctly
 
 Others

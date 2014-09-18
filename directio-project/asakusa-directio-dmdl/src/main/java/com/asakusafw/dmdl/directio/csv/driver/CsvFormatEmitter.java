@@ -39,6 +39,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
+import com.asakusafw.runtime.directio.hadoop.ConfigurableBinaryStreamFormat;
 import com.asakusafw.runtime.directio.util.DelimiterRangeInputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -221,6 +222,8 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private void emit() throws IOException {
+            Class<?> superClass = isHadoopConfRequired() ? ConfigurableBinaryStreamFormat.class
+                    : BinaryStreamFormat.class;
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
                         .text("CSV format for ")
@@ -233,7 +236,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.getTypeName(),
                     f.newParameterizedType(
-                            context.resolve(BinaryStreamFormat.class),
+                            context.resolve(superClass),
                             context.resolve(model.getSymbol())),
                     Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
                     createMembers());
@@ -386,6 +389,10 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 }
             }
             return true;
+        }
+
+        private boolean isHadoopConfRequired() {
+            return conf.getCodecName() != null;
         }
 
         private MethodDeclaration createCreateReader() {
@@ -548,13 +555,14 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 codecName = CODEC_SHORT_NAMES.get(codecName);
             }
             assert codecName != null;
+            assert isHadoopConfRequired();
             return new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils")))
                 .method("newInstance",
                         new TypeBuilder(f, context.resolve(Models.toName(f, codecName)))
                             .dotClass()
                             .toExpression(),
-                        new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.conf.Configuration")))
-                            .newObject(Models.toLiteral(f, false))
+                        new ExpressionBuilder(f, f.newThis())
+                            .method("getConf")
                             .toExpression())
                 .toExpression();
         }

@@ -20,40 +20,30 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 6 (1.6.0_31)
       - |version|-hadoop1
     * - Apache Hadoop
-      - 2.2.0
+      - 2.4.1
       - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
-      - |version|-hadoop2
-    * - CDH4
-      - 4.6.0 (MRv1)
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
+      - JDK 7 (1.7.0_67)
       - |version|-hadoop2
     * - CDH5
-      - 5.0.1 (MRv1/MRv2)
+      - 5.1.2 (MRv1/MRv2)
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
     * - MapR
-      - 3.0.2 (M3/M5/M7)
-      - Ubuntu 12.04
-      - JDK 6 (1.6.0_32)
+      - 3.1.1 (M3/M5/M7)
+      - CentOS 6 (6.5)
+      - JDK 7 (1.7.0_55)
       - |version|-hadoop1
     * - Amazon EMR [#]_
       - Hadoop 1.0.3
-      - AMI 2.4.5
-      - JDK 7 (1.7.0_60 EA)
+      - AMI 2.4.6
+      - JDK 7 (1.7.0_60)
       - |version|-hadoop1
     * - Amazon EMR
       - Hadoop 2.4.0
-      - AMI 3.1.0
-      - JDK 7 (1.7.0_60 EA)
+      - AMI 3.2.0
+      - JDK 7 (1.7.0_65)
       - |version|-hadoop2
-    * - Amazon EMR
-      - MapR 3.0.2 (M3/M5/M7)
-      - AMI 2.4.2
-      - JDK 7 (1.7.0_40)
-      - |version|-hadoop1
 
 ..  [#] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
         詳しくは :doc:`../administration/deployment-guide` を参照してください。
@@ -81,7 +71,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - Java
       - JDK 7 (1.7.0_60)
     * - ビルドツール
-      - Gradle 2.0 [#]_
+      - Gradle 2.1 [#]_
     * - ビルドツール
       - Apache Maven 3.0.5 [#]_
     * - IDE

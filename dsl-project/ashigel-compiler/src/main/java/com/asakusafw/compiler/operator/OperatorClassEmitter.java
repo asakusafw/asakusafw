@@ -20,7 +20,9 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.processing.FilerException;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 import org.slf4j.Logger;
@@ -44,7 +46,11 @@ public class OperatorClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(OperatorClassEmitter.class);
 
-    private OperatorCompilingEnvironment environment;
+    private static final String KEY_SUFFIX_FACTORY = "FACTORY";
+
+    private static final String KEY_SUFFIX_IMPLEMENTATION = "IMPLEMENTATION";
+
+    private final OperatorCompilingEnvironment environment;
 
     private boolean sawError;
 
@@ -81,6 +87,10 @@ public class OperatorClassEmitter {
 
     private void emitImplementation(OperatorClass operatorClass) {
         assert operatorClass != null;
+        String key = getResourceKey(operatorClass, KEY_SUFFIX_IMPLEMENTATION);
+        if (key != null && environment.isResourceGenerated(key)) {
+            return;
+        }
         ModelFactory f = environment.getFactory();
         PackageDeclaration packageDecl = getPackage(f, operatorClass);
         ImportBuilder imports = getImportBuilder(f, packageDecl);
@@ -97,7 +107,7 @@ public class OperatorClassEmitter {
         List<ImportDeclaration> decls = imports.toImportDeclarations();
 
         try {
-            emit(f, packageDecl, decls, type);
+            emit(key, f, packageDecl, decls, type, operatorClass.getElement());
         } catch (IOException e) {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -110,6 +120,10 @@ public class OperatorClassEmitter {
 
     private void emitFactory(OperatorClass operatorClass) {
         assert operatorClass != null;
+        String key = getResourceKey(operatorClass, KEY_SUFFIX_FACTORY);
+        if (key != null && environment.isResourceGenerated(key)) {
+            return;
+        }
         ModelFactory f = environment.getFactory();
         PackageDeclaration packageDecl = getPackage(f, operatorClass);
         ImportBuilder imports = getImportBuilder(f, packageDecl);
@@ -126,7 +140,7 @@ public class OperatorClassEmitter {
         List<ImportDeclaration> decls = imports.toImportDeclarations();
 
         try {
-            emit(f, packageDecl, decls, type);
+            emit(key, f, packageDecl, decls, type, operatorClass.getElement());
         } catch (IOException e) {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -137,19 +151,34 @@ public class OperatorClassEmitter {
         }
     }
 
+    private String getResourceKey(OperatorClass operatorClass, String suffix) {
+        assert operatorClass != null;
+        return String.format("%s::%s", operatorClass.getElement().getQualifiedName(), suffix);
+    }
+
     private void emit(
+            String key,
             ModelFactory factory,
             PackageDeclaration packageDecl,
             List<ImportDeclaration> importDecls,
-            TypeDeclaration typeDecl) throws IOException {
+            TypeDeclaration typeDecl,
+            TypeElement originating) throws IOException {
 
         CompilationUnit unit = factory.newCompilationUnit(
                 packageDecl,
                 importDecls,
                 Collections.singletonList(typeDecl),
                 Collections.<Comment>emptyList());
-
-        environment.emit(unit);
+        try {
+            environment.emit(unit, originating);
+            if (key != null) {
+                environment.setResourceGenerated(key);
+            }
+        } catch (FilerException e) {
+            LOG.debug(MessageFormat.format(
+                    "{0} has been already created in this session",
+                    typeDecl.getName().toNameString()), e);
+        }
     }
 
     private PackageDeclaration getPackage(

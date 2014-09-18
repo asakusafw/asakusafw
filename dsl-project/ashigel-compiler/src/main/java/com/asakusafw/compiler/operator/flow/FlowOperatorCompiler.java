@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -44,14 +46,14 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * フロー部品をもとにした演算子ファクトリーを生成する。
  * @since 0.1.0
- * @version 0.5.3
+ * @version 0.7.0
  */
 public class FlowOperatorCompiler implements Processor {
 
     /**
      * このコンパイラのバージョン。
      */
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.1.0";
 
     static final Logger LOG = LoggerFactory.getLogger(FlowOperatorCompiler.class);
 
@@ -98,12 +100,26 @@ public class FlowOperatorCompiler implements Processor {
         try {
             start(roundEnv);
         } catch (OperatorCompilerException e) {
-            environment.getMessager().printMessage(
-                    Diagnostic.Kind.ERROR,
-                    e.getMessage());
+            if (e.getKind() != null) {
+                environment.getMessager().printMessage(
+                        e.getKind(),
+                        e.getMessage());
+            }
             LOG.debug(e.getMessage(), e);
+        } catch (RuntimeException e) {
+            environment.getMessager().printMessage(Diagnostic.Kind.ERROR, toDetailString(e));
+            LOG.error("フロー演算子のコンパイルに失敗しました", e);
         }
         return false;
+    }
+
+    private String toDetailString(RuntimeException e) {
+        StringWriter writer = new StringWriter();
+        PrintWriter pw = new PrintWriter(writer);
+        pw.println("フロー演算子のコンパイルに失敗しました:");
+        e.printStackTrace(pw);
+        pw.close();
+        return writer.toString();
     }
 
     private void start(RoundEnvironment roundEnv) {

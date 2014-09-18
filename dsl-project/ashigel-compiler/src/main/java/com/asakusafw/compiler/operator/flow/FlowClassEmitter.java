@@ -20,7 +20,9 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.processing.FilerException;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 import org.slf4j.Logger;
@@ -40,10 +42,14 @@ import com.asakusafw.utils.java.model.util.ImportBuilder.Strategy;
 
 /**
  * {@link FlowPartClass}をファイルに出力する。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class FlowClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowClassEmitter.class);
+
+    private static final String KEY_SUFFIX_FACTORY = "FACTORY";
 
     private final OperatorCompilingEnvironment environment;
 
@@ -64,6 +70,10 @@ public class FlowClassEmitter {
      */
     public void emit(FlowPartClass aClass) {
         assert aClass != null;
+        String key = getResourceKey(aClass, KEY_SUFFIX_FACTORY);
+        if (key != null && environment.isResourceGenerated(key)) {
+            return;
+        }
         ModelFactory f = environment.getFactory();
         PackageDeclaration packageDecl = getPackage(f, aClass);
         ImportBuilder imports = getImportBuilder(f, packageDecl);
@@ -76,7 +86,7 @@ public class FlowClassEmitter {
         List<ImportDeclaration> decls = imports.toImportDeclarations();
 
         try {
-            emit(f, packageDecl, decls, type);
+            emit(key, f, packageDecl, decls, type, aClass.getElement());
         } catch (IOException e) {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -88,10 +98,12 @@ public class FlowClassEmitter {
     }
 
     private void emit(
+            String key,
             ModelFactory factory,
             PackageDeclaration packageDecl,
             List<ImportDeclaration> importDecls,
-            TypeDeclaration typeDecl) throws IOException {
+            TypeDeclaration typeDecl,
+            TypeElement originating) throws IOException {
 
         CompilationUnit unit = factory.newCompilationUnit(
                 packageDecl,
@@ -99,7 +111,21 @@ public class FlowClassEmitter {
                 Collections.singletonList(typeDecl),
                 Collections.<Comment>emptyList());
 
-        environment.emit(unit);
+        try {
+            environment.emit(unit, originating);
+            if (key != null) {
+                environment.setResourceGenerated(key);
+            }
+        } catch (FilerException e) {
+            LOG.debug(MessageFormat.format(
+                    "{0} has been already created in this session",
+                    typeDecl.getName().toNameString()), e);
+        }
+    }
+
+    private String getResourceKey(FlowPartClass aClass, String suffix) {
+        assert aClass != null;
+        return String.format("%s::%s", aClass.getElement().getQualifiedName(), suffix);
     }
 
     private PackageDeclaration getPackage(
