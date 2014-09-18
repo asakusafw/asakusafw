@@ -42,7 +42,7 @@ Enhancements
 * [ :issue:`438` ] - OperatorTestEnvironment enables to eliminate loading asakusa-resources.xml
 * [ :issue:`439` ] - Add timezone of build timestamp to VERSION file
 * [ :issue-sdk:`2` ] - Bumps up default java version of application project to 1.7
-* [ :issue-sdk:`3` ] - Bumps up default Gradle version of project template to 2.0
+* [ :issue-sdk:`3` ] - Bumps up default Gradle version of project template to 2.1
 * [ :issue-sdk:`4` ] - Update Maven plugins and depedency libraries to recent versions (0.7.0)
 * [ :issue-sdk:`9` ] - Improves error message for Gradle Plugin
 * [ :issue-sdk:`10` ] - Enabled to attach Direct I/O Hive libraries for Gradle Plugin

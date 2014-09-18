@@ -97,7 +97,7 @@ Java Development Kit (JDK)
 
   Java 7に対応していないHadoopディストリビューション上でアプリケーションを実行する場合、手動でJDK 6に戻す必要があります。
 Gradle
-  Gradle 2.0に対応しました。
+  Gradle 2.1に対応しました。
 
   以前のAsakusa FrameworkはGradle 2.0以降に対応していません。プロジェクトのAsakusa Frameworkのバージョンをダウングレードする場合に注意が必要です。
 Maven
