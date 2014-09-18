@@ -121,7 +121,8 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
     }
 
     // FIXME for supporting parquet-hadoop 1.2.5
-    private enum ParquetVersion {
+    // 'static' suppresses checkstyle warnings
+    private static enum ParquetVersion {
 
         // Note: put newer version on top
 
@@ -193,7 +194,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
 
         final int parameterCount;
 
-        private volatile transient Constructor<?> constructor;
+        private transient volatile Constructor<?> constructor;
 
         private ParquetVersion(int parameterCount) {
             this.parameterCount = parameterCount;
