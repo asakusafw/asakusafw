@@ -68,6 +68,8 @@ Bug fixes
 * [ :issue:`424` ] - DMDL japanese message resource for WindGate has inconsistent property key
 * [ :issue:`435` ] - ThunderGate DMDL project fails build on old Hadoop version.
 * [ :issue:`437` ] - Regression: each skip method of XXTester performs the inverse operation
+* [ :issue:`440` ] - Operator Compiler does not work correctly on Eclipse 4.4
+* [ :issue:`441` ] - Direct I/O CSV/TSV with GZIP compression does not work on MapR
 * [ :issue-sdk:`6` ] - ResolutionUtils does not resolve String type argument correctly
 
 Others
