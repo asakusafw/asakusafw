@@ -42,6 +42,14 @@ Hadoop2系向けAsakusa Framework
 Asakusa Frameworkの実行モジュールを
 運用環境にデプロイする必要があります。
 
+..  warning:: 
+    Asakusa Framework バージョン ``0.7.0`` から
+    Asakusa Frameworkのバージョン体系が変更になりました。
+    
+    Asakusa Framework バージョン ``0.6.x`` 以前のバージョンからのマイグレーションを検討する場合、
+    必ず :ref:`versioning-sysytem-changing` ( :doc:`../application/migration-guide` ) の内容を
+    確認してください。
+
 ..  attention::
     Asakusa FrameworkとHadoopで異なるHadoopバージョン系を指定した場合、
     バッチ実行時にバリデーションエラーとなります。
@@ -59,47 +67,6 @@ Asakusa Frameworkの実行モジュールを
 
 ..  _`Apache Hadoop Documentation`: http://hadoop.apache.org/docs/current/
 ..  _`CDH`: http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
-
-Asakusa Frameworkのバージョン体系変更
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-..  warning:: 
-    Asakusa Framework バージョン ``0.6.x`` 以前のバージョンからのマイグレーションを検討する場合、本内容を必ずお読みください。
-
-Asakusa Framework バージョン ``0.6.x`` 以前では、
-Hadoop1系向けAsakusa Frameworkは バージョン ``0.x.x`` のようなバージョン体系でリリースされていました。
-
-バージョン ``0.7.0`` からのHadoop1系向けAsakusa Frameworkは
-バージョン体系が ``0.x.x-hadoop1`` のように
-バージョン番号に ``-hadoop1`` というサフィックスを指定するようになりました。
-
-``0.6.x`` 以前のバージョンからのマイグレーションを行う際には、
-アプリケーションプロジェクトのビルドスクリプト ( ``build.gradle`` ) などに含まれる
-バージョン番号に必ず新しいバージョン体系を指定してください。
-
-なおHadoop2系向けのAsakusa Frameworkは以前のバージョンと同様に、
-バージョン番号に ``-hadoop2`` というサフィックスを指定します。
-
-例として、利用するAsakusa Framework を 
-``0.6.2`` から ``0.7.0`` に変更する場合の
-``build.gradle`` のバージョン指定を示します。
-
-Asakusa Framework ``0.6.2`` を利用するプロジェクトのバージョン指定
-
-**build.gradle**
-
-..  code-block:: groovy
-    
-    asakusafw {
-        asakusafwVersion '0.6.2'
-
-Asakusa Framework ``0.7.0`` を利用するプロジェクトのバージョン指定
-
-**build.gradle**
-
-..  code-block:: groovy
-    
-    asakusafw {
-        asakusafwVersion '0.7.0-hadoop1'
 
 Hadoopクラスターの構築について
 ------------------------------

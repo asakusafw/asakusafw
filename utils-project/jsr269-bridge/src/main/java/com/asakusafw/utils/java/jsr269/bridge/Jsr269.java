@@ -57,8 +57,12 @@ import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * {@code JSR-269}が規定するモデルオブジェクトをこのライブラリに適した構造に変換する。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class Jsr269 {
+
+    private static final Element[] EMPTY_ELEMENTS = new Element[0];
 
     private static final EnumMap<javax.lang.model.element.Modifier, ModifierKind> MODIFIERS;
     static {
@@ -397,6 +401,19 @@ public class Jsr269 {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public void emit(Filer filer, CompilationUnit unit) throws IOException {
+        emit(filer, unit, EMPTY_ELEMENTS);
+    }
+
+    /**
+     * 指定のファイラーを利用して、コンパイル単位の内容を出力する。
+     * @param filer 利用するファイラー
+     * @param unit 出力するコンパイル単位
+     * @param originatingElements 生成するコンパイル単位の元になった要素
+     * @throws IOException 出力時にエラーが発生した場合
+     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * @since 0.7.0
+     */
+    public void emit(Filer filer, CompilationUnit unit, Element... originatingElements) throws IOException {
         if (filer == null) {
             throw new IllegalArgumentException("filer must not be null"); //$NON-NLS-1$
         }
@@ -414,7 +431,7 @@ public class Jsr269 {
         } else {
             name.append(primary.getName());
         }
-        JavaFileObject source = filer.createSourceFile(name);
+        JavaFileObject source = filer.createSourceFile(name, originatingElements);
         Writer writer = source.openWriter();
         try {
             PrintWriter output = new PrintWriter(writer);

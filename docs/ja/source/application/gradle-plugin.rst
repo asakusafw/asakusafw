@@ -521,7 +521,7 @@ Asakusa Gradle Pluginはいくつかのプラグインから構成されてい�
     * -  ``asakusafw`` 
       -  Batch Application Plugin
       -  ``java`` 
-      -  ``eclipse`` 
+      -  ``eclipse`` , ``idea``
       - Asakusa Framework の バッチアプリケーションを開発を行うための支援機能をプロジェクトに追加する。
     * -  ``asakusafw-organizer`` 
       -  Framework Organizer Plugin
@@ -786,7 +786,7 @@ Javaコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
       - クラス生成のターゲットJavaバージョン
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.JavacConfiguration` が提供します。
-..  [#] JDK 7で追加になった言語機能やAPIを利用するなどの場合に変更します。 詳しくは :doc:`develop-with-jdk7` を参照してください。
+..  [#] JDK6Iを利用するなどの場合に変更します。 詳しくは :doc:`using-jdk` を参照してください。
 
 DSLコンパイラプロパティ
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -908,7 +908,7 @@ ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内
       - ThunderGateが入出力を行う論理削除フラグカラム名
     * -  ``deleteValue`` 
       - String
-      -  ``1`` 
+      -  ``'1'`` 
       - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
@@ -926,12 +926,23 @@ Batch Application Plugin は Gradleが提供するEclipse Pluginが提供する�
 
 また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
 
-バッチテストランナーの実行 (Experimental)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Idea Pluginの拡張
+~~~~~~~~~~~~~~~~~
+
+..  attention::
+    Asakusa Framework バージョン |version| では、 Idea Pluginの拡張は試験的機能として提供しています。
+
+Batch Application Plugin は Gradleが提供するIdea Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
+
+* OperatorDSLコンパイラを実行するためのAnnotation Processorの設定
+* Javaのバージョンやエンコーディングに関する設定
+
+バッチテストランナーの実行
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``testRunBatchapp`` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナー [#]_ をGradleタスクとして実行することができます。
 
 ..  attention::
-    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供されています。
+    Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供しています。
 
 ``testRunBatchapp`` タスクは ``gradlew`` コマンド実行時に以下のコマンドライン引数を指定します。
 
@@ -1312,6 +1323,8 @@ YAESSの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブ
 
 ..  [#] これらの機能は :gradledoc:`com.asakusafw.gradle.assembly.AssemblyHandler` が提供します。
 
+.. _gradle-plugin-oraganizer-profile:
+
 プロファイルの管理
 ~~~~~~~~~~~~~~~~~~
 Framework Organizer Pluginでは、
@@ -1464,7 +1477,7 @@ Asakusa Gradle Plugin をバージョンアップするには、ビルドスク�
 Asakusa Gradle Pluginのバージョン指定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドスクリプト内の ``buildscript`` ブロック内に定義しているAsakusa Gradle Pluginのクラスパス定義 (``classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins``) の バージョン指定 ``version`` の値を使用するAskusa Frameworkのバージョンに変更します。
+ビルドスクリプト内の ``buildscript`` ブロック内に定義しているAsakusa Gradle Pluginのクラスパス定義 (``classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins``) の バージョン指定 ``version`` の値をアップデートするAsakusa Gradle Pluginのバージョンに変更します。
 
 **build.gradle**
 
@@ -1472,6 +1485,13 @@ Asakusa Gradle Pluginのバージョン指定
     :language: groovy
     :lines: 1-8
     :emphasize-lines: 6
+
+..  attention::
+    ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
+    例えば Asakusa Framework バージョン ``0.7.0`` では ``0.7.0`` のような値となります。
+    
+    次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に
+    ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
 Asakusa Frameworkのバージョン指定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1483,6 +1503,14 @@ Asakusa Frameworkのバージョン指定
 ..  literalinclude:: gradle-attachment/build.gradle
     :language: groovy
     :lines: 19-20
+
+..  attention::
+    ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
+    例えば Asakusa Framework バージョン ``0.7.0`` では ``0.7.0-hadoop1`` のような値となります。
+    バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
+    
+    バージョン ``0.6.x`` からのマイグレーションを検討する場合は、
+    :ref:`versioning-sysytem-changing` ( :doc:`migration-guide` ) の内容を必ず確認してください。
 
 Asakusa Frameworkの再インストール
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1510,6 +1538,43 @@ Eclipseを利用している場合は、Eclipse用定義ファイルを更新し
 ..  code-block:: sh
 
     ./gradlew cleanEclipse eclipse
+
+
+.. _vup-gradle-wrapper:
+
+プロジェクトで利用するGradleのバージョンアップ
+----------------------------------------------
+
+アプリケーションプロジェクトで利用するGradle (Gradle Wrapper) をバージョンアップする手順例を説明します。Asakusa Frameworkの各バージョン固有のマイグレーション情報については :doc:`migration-guide` に説明があるので、こちらも必ず確認してください。
+
+Gradleのバージョン指定
+~~~~~~~~~~~~~~~~~~~~~~
+
+ビルドスクリプト内の ``task wrapper`` ブロック内に定義しているGradle Wrapperのディストリビューション
+``distributionUrl`` の値を、使用するGradle Wrapperのバージョンに応じて変更します。
+
+**build.gradle**
+
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 10-13
+
+..  attention::
+    Asakusa Framework バージョン ``0.6.2`` 以前では、
+    ``task wrapper`` ブロック内にはGradle Wrapperのバージョン指定に
+    ``distributionUrl`` ではなく ``gradleVersion`` という値を使用していました。
+    
+    バージョン ``0.6.2`` 以前からのマイグレーションを行う場合は、
+    ``gradleVersion`` を削除して ``distributionUrl`` を指定してください。
+
+Gradle Wrapperの再生成
+~~~~~~~~~~~~~~~~~~~~~~
+
+プロジェクトのGradle Wrapperを再生成します。
+
+..  code-block:: sh
+
+    ./gradlew wrapper
 
 .. _migrate-from-maven-to-gradle:
 
@@ -1656,9 +1721,9 @@ Mavenプロジェクトのビルドで利用していた以下のファイル、
 *  ``build.properties`` 
 *  ``target`` 
 
-Framework Organizerのマイグレーション
--------------------------------------
+Maven Framework Organizerのマイグレーション
+-------------------------------------------
 
-従来の Framework Organizer [#]_ で提供していた機能は、 `Framework Organizer Plugin`_  によって提供されます。詳しくは Framework Organizer Plugin のドキュメントを参照してください。
+従来の Maven Framework Organizer [#]_ で提供していた機能は、 `Framework Organizer Plugin`_  によって提供されます。詳しくは Framework Organizer Plugin のドキュメントを参照してください。
 
 ..  [#] :doc:`../administration/framework-organizer`

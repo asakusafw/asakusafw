@@ -2,6 +2,90 @@
 Changelogs
 ==========
 
+Release 0.7.0
+=============
+Sep XX, 2014
+
+..  todo:: Release Date
+
+Enhancements
+------------
+* [ :issue:`370` ] - Validate test data at first
+* [ :issue:`394` ] - Trim space option for Direct I/O CSV
+* [ :issue:`395` ] - Introduces Testdriver rule extension for approximate numeric evaluation
+* [ :issue:`396` ] - Improves platform Hadoop version consistency check
+* [ :issue:`397` ] - evaluate formula for ExcelSheetDataModelSource
+* [ :issue:`399` ] - Revise assertion error message on test driver.
+* [ :issue:`402` ] - Refactoring TestDriver API for generating excel testdata template
+* [ :issue:`403` ] - Supports Hive ORC file format for Direct I/O
+* [ :issue:`404` ] - Improve performance of InputBuffer.ESCAPE in co-group operator.
+* [ :issue:`405` ] - Cache jar files for application and framework runtime libraries
+* [ :issue:`406` ] - Improves TestDriver performance with large application libraries.
+* [ :issue:`408` ] - Supports Gradle project on IntelliJ IDEA
+* [ :issue:`409` ] - Supports Parquet file format for Direct I/O
+* [ :issue:`410` ] - Bumps up default depedency hadoop2 version
+* [ :issue:`411` ] - Bumps up JSch version
+* [ :issue:`417` ] - Suppresses TraceDriverLifecycleManager log
+* [ :issue:`422` ] - Update Maven plugins and depedency libraries to recent versions (0.7.0)
+* [ :issue:`423` ] - Optimize application intermediate file format
+* [ :issue:`425` ] - Improves configuration variable loading for ThunderGate
+* [ :issue:`426` ] - Improves CSV parser performance about date/datetime
+* [ :issue:`427` ] - Improves Direct I/O compiler basepath validation
+* [ :issue:`428` ] - Preloads snappy library on TestDriver to ensure configuration
+* [ :issue:`429` ] - Add cross-compile settings profile to framework pom
+* [ :issue:`430` ] - Add to call progress for heartbeat when writing task output
+* [ :issue:`431` ] - Revises YAESS log for redundant stacktrace on non-zero exit code
+* [ :issue:`432` ] - Revises GA based split combiner
+* [ :issue:`433` ] - Improves DecimalOption ser/de performance
+* [ :issue:`434` ] - Add allow_linefeed option for Direct I/O TSV
+* [ :issue:`436` ] - Add TestDriver API for transforming actual data before verifying
+* [ :issue:`438` ] - OperatorTestEnvironment enables to eliminate loading asakusa-resources.xml
+* [ :issue:`439` ] - Add timezone of build timestamp to VERSION file
+* [ :issue-sdk:`2` ] - Bumps up default java version of application project to 1.7
+* [ :issue-sdk:`3` ] - Bumps up default Gradle version of project template to 2.1
+* [ :issue-sdk:`4` ] - Update Maven plugins and depedency libraries to recent versions (0.7.0)
+* [ :issue-sdk:`9` ] - Improves error message for Gradle Plugin
+* [ :issue-sdk:`10` ] - Enabled to attach Direct I/O Hive libraries for Gradle Plugin
+* [ :issue-sdk:`11` ] - Bumps up test data sheet version in application template projects
+* [ :issue-sdk:`13` ] - Fixes task execution ordering of Framework Organizer Plugin
+* [ :issue-sdk:`14` ] - Introduces deployment profile for Framework Organizer Plugin
+* [ :issue-sdk:`15` ] - Enables to execute thundergate build tasks with installAsakusafw
+* [ :issue-sdk:`16` ] - Improves to clean DSL compile tasks
+* [ :issue-sdk:`17` ] - Removes unnecessary files from gradle project template
+* [ :issue-sdk:`18` ] - Add timezone of build timestamp to build.log
+
+Bug fixes
+---------
+* [ :issue:`382` ] - Adds local mode detection logic to JobCompatibilty layer. (REOPEN)
+* [ :issue:`393` ] - Error message is not clear when the profile name returned from WindGateProcessDescription is null.
+* [ :issue:`398` ] - Running gradle tasks fails
+* [ :issue:`400` ] - NPE on HadoopDriver#getHadoopCommand in DSL compiler tests
+* [ :issue:`401` ] - Dependency resolution fails with already resolved when using += operatior on Gradle 2.0
+* [ :issue:`412` ] - Some test cases fail when $USER environment variable does not exist
+* [ :issue:`413` ] - Enable to replace property name separator in TestDriver
+* [ :issue:`414` ] - Revise logging of Direct I/O Hive
+* [ :issue:`418` ] - ThunderGate and WindGate SSH may fail with native library warning message on Hadoop2/JDK7
+* [ :issue:`424` ] - DMDL japanese message resource for WindGate has inconsistent property key
+* [ :issue:`435` ] - ThunderGate DMDL project fails build on old Hadoop version.
+* [ :issue:`437` ] - Regression: each skip method of XXTester performs the inverse operation
+* [ :issue:`440` ] - Operator Compiler does not work correctly on Eclipse 4.4
+* [ :issue:`441` ] - Direct I/O CSV/TSV with GZIP compression does not work on MapR
+* [ :issue-sdk:`6` ] - ResolutionUtils does not resolve String type argument correctly
+
+Others
+------
+* [ :issue:`415` ] - Transfers application sdk projects to asakusafw-sdk repository
+* [ :issue:`416` ] - Integrates asakusafw-sandbox projects in asakusafw repository
+* [ :issue:`419` ] - Transfers jobqueue server projects to asakusafw-jobqueue-server repository
+* [ :issue:`420` ] - 0.7.0 Documents
+* [ :issue:`421` ] - 0.7.0 Refactoring
+* [ :issue-sdk:`1` ] - Transfers application sdk projects from asakusafw repository
+* [ :issue-sdk:`5` ] - Remove snappy assembly for including asakusa runtime
+* [ :issue-sdk:`7` ] - 0.7.0 Refactoring
+* [ :issue-sdk:`8` ] - Add cross-compile settings to gradle plugin build
+* [ :issue-sdk:`12` ] - Changes mavenCentral() to flatten URL in Gradle Plugin
+
+
 Release 0.6.2
 =============
 May 22, 2014

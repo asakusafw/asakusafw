@@ -28,6 +28,7 @@ import org.apache.hadoop.io.Text;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.dmdl.java.emitter.driver.WritableDriver;
@@ -80,6 +81,7 @@ public class SequenceFileFormatEmitterTest extends GeneratorTesterRoot {
         ModelLoader loaded = generateJava("simple");
         ModelWrapper model = loaded.newModel("Simple");
         DataFormat<?> support = (DataFormat<?>) loaded.newObject("sequencefile", "SimpleSequenceFileFormat");
+        assertThat(support, is(instanceOf(Configurable.class)));
         Thread.currentThread().setContextClassLoader(support.getClass().getClassLoader());
 
         Configuration conf = new Configuration();
