@@ -20,17 +20,28 @@ import java.util.Map;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.repository.SpiDataModelMirrorRepository;
+import com.asakusafw.utils.collections.Maps;
 
 /**
  * Operator DSLコンパイラのオプション一覧。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public final class OperatorCompilerOptions {
 
-    private ClassLoader serviceClassLoader;
-    private DataModelMirrorRepository dataModelRepository;
+    private final ClassLoader serviceClassLoader;
 
-    private OperatorCompilerOptions() {
-        return;
+    private final DataModelMirrorRepository dataModelRepository;
+
+    private final Map<String, String> properties;
+
+    private OperatorCompilerOptions(
+            ClassLoader serviceClassLoader,
+            DataModelMirrorRepository dataModelRepository,
+            Map<String, String> properties) {
+        this.serviceClassLoader = serviceClassLoader;
+        this.dataModelRepository = dataModelRepository;
+        this.properties = properties;
     }
 
     /**
@@ -42,17 +53,10 @@ public final class OperatorCompilerOptions {
      */
     public static OperatorCompilerOptions parse(Map<String, String> options) {
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
-        OperatorCompilerOptions result = new OperatorCompilerOptions();
-        result.serviceClassLoader = OperatorCompilerOptions.class.getClassLoader();
-        result.dataModelRepository = new SpiDataModelMirrorRepository(result.serviceClassLoader);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return MessageFormat.format(
-                "{0}'{''}'",
-                getClass().getSimpleName());
+        ClassLoader serviceClassLoader = OperatorCompilerOptions.class.getClassLoader();
+        DataModelMirrorRepository dataModelRepository = new SpiDataModelMirrorRepository(serviceClassLoader);
+        Map<String, String> properties = Maps.freeze(options);
+        return new OperatorCompilerOptions(serviceClassLoader, dataModelRepository, properties);
     }
 
     /**
@@ -69,5 +73,35 @@ public final class OperatorCompilerOptions {
      */
     public DataModelMirrorRepository getDataModelRepository() {
         return dataModelRepository;
+    }
+
+    /**
+     * Returns the compiler properties.
+     * @return the properties
+     * @since 0.7.0
+     */
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    /**
+     * Returns a compiler property.
+     * @param key the property key
+     * @param defaultValue the default value
+     * @return the target property, or the default value if the target property is not defined
+     * @since 0.7.0
+     */
+    public String getProperty(String key, String defaultValue) {
+        Precondition.checkMustNotBeNull(key, "key"); //$NON-NLS-1$
+        String value = getProperties().get(key);
+        return value == null ? defaultValue : value;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "{0}{1}",
+                getClass().getSimpleName(),
+                getProperties());
     }
 }

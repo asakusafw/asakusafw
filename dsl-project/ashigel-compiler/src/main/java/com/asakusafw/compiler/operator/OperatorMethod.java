@@ -22,12 +22,16 @@ import com.asakusafw.compiler.common.Precondition;
 
 /**
  * 演算子メソッドの構造。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class OperatorMethod {
 
-    private ExecutableElement element;
+    private final ExecutableElement element;
 
-    private OperatorProcessor processor;
+    private final OperatorProcessor processor;
+
+    private final AnnotationMirror annotation;
 
     /**
      * インスタンスを生成する。
@@ -40,6 +44,26 @@ public class OperatorMethod {
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
         this.element = element;
         this.processor = processor;
+
+        // fail fast
+        this.annotation = processor.getOperatorAnnotation(element);
+        Precondition.checkMustNotBeNull(annotation, "annotation"); //$NON-NLS-1$
+    }
+
+    /**
+     * Creates a new instance.
+     * @param annotation operator annotation
+     * @param element target operator method
+     * @param processor corresponded operator processor
+     * @since 0.7.0
+     */
+    public OperatorMethod(AnnotationMirror annotation, ExecutableElement element, OperatorProcessor processor) {
+        Precondition.checkMustNotBeNull(annotation, "annotation"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
+        this.annotation = annotation;
+        this.element = element;
+        this.processor = processor;
     }
 
     /**
@@ -47,7 +71,7 @@ public class OperatorMethod {
      * @return 付与された演算子注釈
      */
     public AnnotationMirror getAnnotation() {
-        return processor.getOperatorAnnotation(element);
+        return annotation;
     }
 
     /**

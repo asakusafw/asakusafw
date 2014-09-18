@@ -29,6 +29,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 
@@ -38,9 +39,10 @@ import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
-
 /**
  * 演算子クラスを集計する。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class OperatorClassCollector {
 
@@ -77,23 +79,42 @@ public class OperatorClassCollector {
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
         Class<? extends Annotation> target = processor.getTargetAnnotationType();
         assert target != null;
+        TypeElement annotation = environment.getElementUtils().getTypeElement(target.getCanonicalName());
+        assert annotation != null;
+        TypeMirror annotationType = annotation.asType();
 
-        Set<? extends Element> elements = round.getElementsAnnotatedWith(target);
+        Set<? extends Element> elements = round.getElementsAnnotatedWith(annotation);
         for (Element element : elements) {
             ExecutableElement method = toOperatorMethodElement(element);
             if (method == null) {
                 continue;
             }
-            registerMethod(processor, method);
+            AnnotationMirror annotationMirror = findAnnotation(annotationType, method);
+            if (annotationMirror == null) {
+                raiseInvalid(element, "演算子{0}の注釈を正しく解析できませんでした");
+                continue;
+            }
+            registerMethod(annotationMirror, processor, method);
         }
     }
 
+    private AnnotationMirror findAnnotation(TypeMirror annotationType, Element element) {
+        for (AnnotationMirror annotation : element.getAnnotationMirrors()) {
+            if (environment.getTypeUtils().isSameType(annotationType, annotation.getAnnotationType())) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
     private void registerMethod(
+            AnnotationMirror annotation,
             OperatorProcessor processor,
             ExecutableElement method) {
+        assert annotation != null;
         assert processor != null;
         assert method != null;
-        targetMethods.add(new TargetMethod(method, processor));
+        targetMethods.add(new TargetMethod(annotation, method, processor));
     }
 
     private ExecutableElement toOperatorMethodElement(Element element) {
@@ -140,7 +161,7 @@ public class OperatorClassCollector {
      */
     public List<OperatorClass> collect() {
         if (sawError) {
-            throw new OperatorCompilerException("演算子メソッドの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null, "演算子メソッドの分析に失敗したため、処理を中止します");
         }
         Map<TypeElement, List<TargetMethod>> mapping = Maps.create();
         for (TargetMethod target : targetMethods) {
@@ -154,7 +175,7 @@ public class OperatorClassCollector {
         }
 
         if (sawError) {
-            throw new OperatorCompilerException("演算子クラスの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null, "演算子クラスの分析に失敗したため、処理を中止します");
         }
         return results;
     }
@@ -171,7 +192,7 @@ public class OperatorClassCollector {
 
         OperatorClass result = new OperatorClass(type);
         for (TargetMethod target : targets) {
-            result.add(target.method, target.processor);
+            result.add(target.annotation, target.method, target.processor);
         }
         return result;
     }
@@ -284,6 +305,8 @@ public class OperatorClassCollector {
 
     private static class TargetMethod {
 
+        final AnnotationMirror annotation;
+
         final TypeElement type;
 
         final ExecutableElement method;
@@ -291,10 +314,13 @@ public class OperatorClassCollector {
         final OperatorProcessor processor;
 
         public TargetMethod(
+                AnnotationMirror annotation,
                 ExecutableElement method,
                 OperatorProcessor processor) {
+            assert annotation != null;
             assert method != null;
             assert processor != null;
+            this.annotation = annotation;
             this.type = (TypeElement) method.getEnclosingElement();
             this.method = method;
             this.processor = processor;

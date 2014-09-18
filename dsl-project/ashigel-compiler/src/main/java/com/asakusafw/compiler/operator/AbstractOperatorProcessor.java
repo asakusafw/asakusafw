@@ -36,14 +36,14 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
  * <p>
  * サブクラスは{@link TargetOperator}の注釈を付与することで、対象にする演算子注釈を判断する。
  * </p>
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public abstract class AbstractOperatorProcessor implements OperatorProcessor {
 
     private OperatorCompilingEnvironment environment;
 
     private Class<? extends Annotation> targetOperatorAnnotation;
-
-    private TypeMirror targetOperatorAnnotationType;
 
     @Override
     public void initialize(OperatorCompilingEnvironment env) {
@@ -69,15 +69,13 @@ public abstract class AbstractOperatorProcessor implements OperatorProcessor {
 
     @Override
     public synchronized AnnotationMirror getOperatorAnnotation(ExecutableElement element) {
-        if (targetOperatorAnnotationType == null) {
-            this.targetOperatorAnnotationType = environment
+        TypeMirror targetType = environment
                 .getElementUtils()
-                .getTypeElement(targetOperatorAnnotation.getCanonicalName())
+                .getTypeElement(targetOperatorAnnotation.getName())
                 .asType();
-        }
         Types types = environment.getTypeUtils();
         for (AnnotationMirror annotation : element.getAnnotationMirrors()) {
-            if (types.isSameType(annotation.getAnnotationType(), targetOperatorAnnotationType)) {
+            if (types.isSameType(annotation.getAnnotationType(), targetType)) {
                 return annotation;
             }
         }
