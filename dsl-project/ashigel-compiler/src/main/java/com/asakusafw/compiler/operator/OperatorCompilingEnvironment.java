@@ -16,11 +16,12 @@
 package com.asakusafw.compiler.operator;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -29,15 +30,23 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
  * Operator DSL Compilerの環境。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class OperatorCompilingEnvironment {
+
+    private static final Element[] EMPTY_ELEMENTS = new Element[0];
+
+    private static final String KEY_FORCE_GENERATE = "com.asakusafw.operator.generate.force";
+
+    private static final String DEFAULT_FORCE_GENERATE = "false";
 
     private final ProcessingEnvironment processingEnvironment;
 
@@ -45,7 +54,9 @@ public class OperatorCompilingEnvironment {
 
     private final OperatorCompilerOptions options;
 
-    private final Map<Class<?>, DeclaredType> rawTypeCache = Maps.create();
+    private final boolean forceGenerate;
+
+    private final Set<String> generatedResourceKeys = Sets.create();
 
     /**
      * インスタンスを生成する。
@@ -64,6 +75,7 @@ public class OperatorCompilingEnvironment {
         this.processingEnvironment = processingEnvironment;
         this.factory = factory;
         this.options = options;
+        this.forceGenerate = Boolean.parseBoolean(options.getProperty(KEY_FORCE_GENERATE, DEFAULT_FORCE_GENERATE));
     }
 
     /**
@@ -129,9 +141,21 @@ public class OperatorCompilingEnvironment {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public void emit(CompilationUnit unit) throws IOException {
+        emit(unit, EMPTY_ELEMENTS);
+    }
+
+    /**
+     * 指定のコンパイル単位をソースコードとして適切な位置に出力する。
+     * @param unit 対象のコンパイル単位
+     * @param originatingElements 生成するソースコードの元になった要素の一覧
+     * @throws IOException 出力に失敗した場合
+     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * @since 0.7.0
+     */
+    public void emit(CompilationUnit unit, Element... originatingElements) throws IOException {
         Precondition.checkMustNotBeNull(unit, "unit"); //$NON-NLS-1$
         Filer filer = getProcessingEnvironment().getFiler();
-        new Jsr269(factory).emit(filer, unit);
+        new Jsr269(factory).emit(filer, unit, originatingElements);
     }
 
     /**
@@ -156,16 +180,11 @@ public class OperatorCompilingEnvironment {
      */
     public DeclaredType getDeclaredType(Class<?> type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
-        DeclaredType result = rawTypeCache.get(type);
-        if (result == null) {
-            TypeElement elem = getElementUtils().getTypeElement(type.getName());
-            if (elem == null) {
-                throw new IllegalStateException(type.getName());
-            }
-            result = getTypeUtils().getDeclaredType(elem);
-            rawTypeCache.put(type, result);
+        TypeElement elem = getElementUtils().getTypeElement(type.getName());
+        if (elem == null) {
+            throw new IllegalStateException(type.getName());
         }
-        return result;
+        return getTypeUtils().getDeclaredType(elem);
     }
 
     /**
@@ -182,5 +201,29 @@ public class OperatorCompilingEnvironment {
             return getTypeUtils().getDeclaredType(element);
         }
         return getTypeUtils().erasure(type);
+    }
+
+    /**
+     * Sets the target resources is generated.
+     * @param key the target resource key
+     * @since 0.7.0
+     */
+    public void setResourceGenerated(String key) {
+        Precondition.checkMustNotBeNull(key, "key"); //$NON-NLS-1$
+        generatedResourceKeys.add(key);
+    }
+
+    /**
+     * Returns whether the target resources is generated or not.
+     * @param key the target resource key
+     * @return {@code true} if it is already generated, otherwise {@code false}
+     * @since 0.7.0
+     */
+    public boolean isResourceGenerated(String key) {
+        Precondition.checkMustNotBeNull(key, "key"); //$NON-NLS-1$
+        if (forceGenerate) {
+            return false;
+        }
+        return generatedResourceKeys.contains(key);
     }
 }

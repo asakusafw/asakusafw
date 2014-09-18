@@ -3,376 +3,173 @@
 ==============================
 この文書では、Asakusa Framework のバージョンアップに伴う、開発環境のマイグレーション手順について解説します。
 
-Gradleプロジェクトのマイグレーション手順
-========================================
-:doc:`../introduction/start-guide` や :doc:`gradle-plugin` の手順に従って構築したアプリケーションプロジェクトについては、まず以下のドキュメントを参照してマイグレーションを実施してください。
+本書で説明しているバージョン以前のマイグレーション情報については、 :doc:`previous-migration-guide` を参照してください。
 
-* :ref:`vup-gradle-plugin`
+バージョン共通のマイグレーション手順
+====================================
+ここでは、各バージョン共通のマイグレーション手順について説明します。
 
-上記ドキュメントの手順に加えて、バージョンによっては
-後述するバージョン固有のマイグレーション手順が必要となる場合があるので、
-必ず以下の内容を確認してください。
+ここで説明する手順に加えて、マイグレーション先のバージョンや現在利用している環境によっては
+後述するバージョン固有のマイグレーション手順が必要となる場合があるので
+必ずその内容も確認してください。
 
-なお、複数バージョンをまたいだマイグレーションを行う場合は中間のバージョンの手順も確認し、パッチ適用手順などが提供されていた場合は、必ずそのパッチを順次適用するようにしてください。
+Gradleプロジェクトのマイグレーション
+------------------------------------
+バージョン 0.6.0 以降の :doc:`../introduction/start-guide` や :doc:`gradle-plugin` の手順に従って構築したGradleベースのアプリケーションプロジェクトについては、以下のドキュメントを参照してマイグレーションを実施してください。
 
-0.6.2 へのマイグレーション
---------------------------
-バージョン0.6.2におけるバージョン固有のマイグレーション手順はありません。
-各バージョン共通のマイグレーション手順のみを実施してください。
+* :ref:`vup-gradle-plugin` ( :doc:`gradle-plugin` )
 
-0.6.1 へのマイグレーション
---------------------------
-バージョン0.6.1におけるバージョン固有のマイグレーション手順はありません。
-各バージョン共通のマイグレーション手順のみを実施してください。
+Mavenプロジェクトのマイグレーション
+-----------------------------------
+バージョン 0.5.3 以前の :doc:`../introduction/start-guide` や :doc:`maven-archetype` の手順に従って構築したMavenベースのアプリケーションプロジェクトについては、以下のドキュメンを参照してGradleプロジェクトへのマイグレーションを実施してください。
 
-0.6.0 へのマイグレーション
---------------------------
-バージョン0.6.0ではプロジェクトテンプレートに含まれるファイルに対して
-細かな修正やディレクトリ構成の変更が行われたため、
-バージョン0.6.0で提供しているプロジェクトテンプレートの内容に置き換えることを推奨します。
+* :ref:`migrate-from-maven-to-gradle` ( :doc:`gradle-plugin` )
 
-プロジェクトテンプレートの置き換えについては、
-:doc:`gradle-plugin` の :ref:`apply-gradle-project-template` の項などを参照してください。
+バージョン 0.7.0 へのマイグレーション
+=====================================
 
-Mavenプロジェクトのマイグレーション手順
-=======================================
-バージョン 0.5.3 以前の :doc:`../introduction/start-guide` や :doc:`maven-archetype` の手順に従って構築したアプリケーションプロジェクトについては、まず以下のドキュメントを参照してマイグレーションを実施してください。
+..  warning::
+    バージョン 0.7.0 は以前のバージョンからいくつかの重要な変更が行われました。
+    マイグレーションを検討する際には必ず以下の内容を確認してください。
 
-* :ref:`vup-maven-archetype`
+.. _versioning-sysytem-changing:
 
-上記ドキュメントの手順に加えて、バージョンによっては
-後述するバージョン固有のマイグレーション手順が必要となる場合があるので、
-必ず以下の内容を確認してください。
+Asakusa Frameworkのバージョン体系の変更
+---------------------------------------
+バージョン 0.7.0 から Hadoop2系への対応が正式対応となりました。
+正式にサポートするHadoopのバージョンラインが複数になったことに伴い、
+Asakusa Frameworkのバージョン体系が以下のようになりました。
 
-なお、複数バージョンをまたいだマイグレーションを行う場合は中間のバージョンの手順も確認し、パッチ適用手順などが提供されていた場合は、必ずそのパッチを順次適用するようにしてください。
+Hadoop1系向けAsakusa Framework
+  Asakusa Framework バージョン ``0.x.x-hadoop1`` というバージョン名でリリース
 
-0.6.2 へのマイグレーション
---------------------------
-バージョン0.6.1におけるバージョン固有のマイグレーション手順はありません。
-各バージョン共通のマイグレーション手順のみを実施してください。
+Hadoop2系向けAsakusa Framework
+  Asakusa Framework バージョン ``0.x.x-hadoop2`` というバージョン名でリリース
 
-0.6.1 へのマイグレーション
---------------------------
-バージョン0.6.1におけるバージョン固有のマイグレーション手順はありません。
-各バージョン共通のマイグレーション手順のみを実施してください。
+バージョン ``0.6.x`` 以前では
+Hadoop1系向けAsakusa Frameworkは バージョン ``0.x.x`` のような
+バージョン体系でリリースされていましたが、
+バージョン ``0.7.0`` 以降では
+Hadoop1系向けAsakusa Frameworkは バージョン ``0.x.x-hadoop1`` のように
+**バージョン番号に '-hadoop1' という接尾辞を指定** するように変更されています。
 
-0.6.0 へのマイグレーション
---------------------------
-バージョン0.6.0におけるバージョン固有のマイグレーション手順はありません。
-各バージョン共通のマイグレーション手順のみを実施してください。
+``0.6.x`` 以前のバージョンからのマイグレーションを行う際には、
+アプリケーションプロジェクトのビルドスクリプト ( ``build.gradle`` ) などに含まれる
+Asakusa Frameworkバージョンに必ず新しいバージョン体系を指定してください。
 
-Gradleプロジェクトへの移行
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-MavenプロジェクトをGradleプロジェクトに移行する場合は、
-:doc:`gradle-plugin` の :ref:`migrate-from-maven-to-gradle` の項を参照してください。
+なおHadoop2系向けのAsakusa Frameworkは以前のバージョンと同様に、
+バージョン番号に ``-hadoop2`` という接尾辞を指定します。
 
-0.5.3 へのマイグレーション
---------------------------
+例として、利用するAsakusa Framework を 
+``0.6.2`` から ``0.7.0`` に変更する場合の
+``build.gradle`` のバージョン指定を示します。
 
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.5.3ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.5.3向けに変更してください。
+**build.gradle** : Asakusa Framework ``0.6.2`` を利用するプロジェクトのバージョン指定
 
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-053pom.patch <migration/asakusa-archetype-thundergate-053pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-053pom.patch <migration/asakusa-archetype-windgate-053pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-053pom.patch <migration/asakusa-archetype-directio-053pom.patch>`
+..  code-block:: groovy
+    
+    asakusafw {
+        asakusafwVersion '0.6.2'
 
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+**build.gradle** : Asakusa Framework ``0.7.0`` を利用するプロジェクトのバージョン指定
 
-..  code-block:: sh
+..  code-block:: groovy
+    
+    asakusafw {
+        asakusafwVersion '0.7.0-hadoop1'
 
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-053pom.patch
+..  attention::
+    ``build.gradle`` には先頭に ``buildscript`` ブロックで
+    Asakusa Gradle Plugin のバージョンを指定しますが、
+    このバージョンは Asakusa Frameworkのバージョン指定とは異なり、
+    バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.5.3のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
+**build.gradle** 
 
-0.5.2 へのマイグレーション
---------------------------
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 1-8
+    :emphasize-lines: 6
 
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.5.2ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.5.2向けに変更してください。
+開発環境と運用環境で異なるHadoopバージョンを使用する
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+バージョン 0.7.0 では、開発環境で使用するHadoopはHadoop1系の利用を推奨しています。
 
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-052pom.patch <migration/asakusa-archetype-thundergate-052pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-052pom.patch <migration/asakusa-archetype-windgate-052pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-052pom.patch <migration/asakusa-archetype-directio-052pom.patch>`
+また、:jinrikisha:`Jinrikisha <index.xml>` や :doc:`../introduction/start-guide`
+の手順に従ってセットアップされる開発環境はHadoop1系が利用されます。
 
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+..  note::
+    開発環境でHadoop1系の利用を推奨している主な理由は、
+    現時点では開発環境の動作検証で使用しているHadoopプラットフォームにおいて、
+    スタンドアロンモードの実行効率が
+    Hadoop1系のほうが良好であると判断しているためです。
+    
+    Asakusa Frameworkが開発環境で動作検証を行なっている
+    Hadoopプラットフォームの情報は、 :doc:`../product/target-platform` を参照してください。
 
-..  code-block:: sh
+バージョン ``0.6.x`` 以前では 開発環境と運用環境で異なるHadoopバージョンを利用する場合に、
+開発環境を構成するアプリケーションプロジェクトとは別に、運用環境を構成する独立したプロジェクトの作成を推奨していました。
 
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-052pom.patch
+バージョン ``0.7.0`` からはそれぞれの環境の構成を「プロファイル」として記述し、
+アプリケーションプロジェクト内で複数のプロファイルを管理する方式を推奨しています。
 
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.5.2のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
+プロファイルの利用方法
+(例えば開発環境でHadoop1系を利用し、運用環境でHadoop2系を利用するための設定)
+については、以下のドキュメントを参照してください。
 
-``hadoop.version`` の変更
-~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.5.2では Apache Hadoop 1.2.1 がデフォルトで依存するHadoopのライブラリバージョンとなりました。
+* :doc:`../administration/deployment-guide`
 
-0.5.1 へのマイグレーション
---------------------------
+また、この変更に伴いバージョン ``0.6.x`` で提供していた
+Asakusa Gradle Pluginの一部機能が非推奨になりました。
+非推奨となったAsakusa Gradle Pluginについては、
+以下のドキュメントを参照してください。
 
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.5.1ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.5.1向けに変更してください。
+* :doc:`gradle-plugin-deprecated`
 
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-051pom.patch <migration/asakusa-archetype-thundergate-051pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-051pom.patch <migration/asakusa-archetype-windgate-051pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-051pom.patch <migration/asakusa-archetype-directio-051pom.patch>`
+標準設定で使用するJavaバージョンの変更
+--------------------------------------
+バージョン 0.7.0 から Asakusa Gradle Pluginでアプリケーションプロジェクトに設定される
+Javaバージョンが JDK6 から JDK7 に変更になりました。
 
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+Java 7に対応していないHadoopディストリビューション上で
+アプリケーションを実行する場合、プロジェクトの設定でJDK 6を利用するよう
+変更する必要があります。
 
-..  code-block:: sh
+プロジェクトで利用するJavaバージョンをJDK 6に変更する手順は、
+以下のドキュメントを参照してください。
 
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-051pom.patch
+* :ref:`using-jdk6` ( :doc:`using-jdk` )
 
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.5.1のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
+プロジェクトテンプレートのGradleバージョンの変更
+------------------------------------------------
+バージョン 0.7.0 から プロジェクトテンプレートに標準で設定される
+Gradleバージョンが 1.12 から 2.1 に変更になりました。
 
-0.5.0 へのマイグレーション
---------------------------
+過去のバージョンで作成したアプリケーションプロジェクトの
+Gradleのバージョンを変更する場合は、
+以下のドキュメントを参照してください。
 
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.5.0ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.5.0向けに変更してください。
+* :ref:`vup-gradle-wrapper` ( :doc:`gradle-plugin` )
 
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-050pom.patch <migration/asakusa-archetype-thundergate-050pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-050pom.patch <migration/asakusa-archetype-windgate-050pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-050pom.patch <migration/asakusa-archetype-directio-050pom.patch>`
+..  attention::
+    バージョン 0.6.2 以前のAsakusa FrameworkはGradle 2.0以降に対応していません。
+    プロジェクトのAsakusa Frameworkのバージョンをダウングレードする場合は、
+    必ず利用するGradleのバージョンを合わせて変更してください
 
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
+Mavenプロジェクトの非推奨化
+---------------------------
+バージョン 0.7.0 から Mavenプロジェクトは非推奨になりました。
 
-..  code-block:: sh
+本バージョンにおいては、 Mavenプロジェクトからでも
+Asakusa Frameworkの多くの機能は従来通り利用できますが、
+本バージョンからMavenプロジェクト特有の機能の動作検証は行われなくなったため、
+Gradleプロジェクトへの移行を強く推奨します。
 
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-050pom.patch
+MavenプロジェクトからGradleプロジェクトへのマイグレーション手順については、
+`Mavenプロジェクトのマイグレーション`_ を参照してください。
 
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.5.0のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
-
-``hadoop.version`` の変更
-~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.5.0では Apache Hadoop 1.1.2 がデフォルトで依存するHadoopのライブラリバージョンとなりました。
-
-0.4.0 へのマイグレーション
---------------------------
-
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.4.0ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.4.0向けに変更してください。
-
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-040pom.patch <migration/asakusa-archetype-thundergate-040pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-040pom.patch <migration/asakusa-archetype-windgate-040pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-040pom.patch <migration/asakusa-archetype-directio-040pom.patch>`
-
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
-
-..  code-block:: sh
-
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-040pom.patch
-
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.4.0のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
-
-不要ファイルの削除
-~~~~~~~~~~~~~~~~~~
-アプリケーションプロジェクトに含まれる ``src/main/assembly`` ディレクトリとその配下に含まれるファイルは不要になりました。このディレクトリは削除することができます。
-
-``hadoop.version`` の変更
-~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.4.0ではCDH3 Update 5をデフォルトの依存バージョンとしており、動作検証もこのバージョンで実施しているため、アプリケーションプロジェクトの依存バージョンもこれに合わせることを推奨します。
-
-上記のpom.xmlのパッチを適用すると依存するCDH3のバージョン定義がCDH3 Update 5に変更されるので、開発環境にインストールしたHadoopもCDH3 Update 5にアップデートすることを推奨します。
-
-
-0.2.6 へのマイグレーション
---------------------------
-
-アセンブリディスクリプタの変更
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.2.6ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が変更になったため、これらのファイルをバージョン0.2.6が提供するファイルに変更してください。変更手順は以下の通りです。
-
-1. バージョン0.2.6のアーキタイプからダミーのプロジェクトを任意のディレクトリに作成する。
-2. 作成したプロジェクトの ``src/main/assembly`` に含まれるすべてのファイルを既存のアプリケーションプロジェクトの `src/main/assembly` 配下にコピーする。
-3. 1で作成したダミーのプロジェクトを削除する。
-
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.2.6ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.6向けに変更してください。
-
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-026pom.patch <migration/asakusa-archetype-thundergate-026pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-026pom.patch <migration/asakusa-archetype-windgate-026pom.patch>`
-* アーキタイプ: ``asakusa-archetype-directio``  (Direct I/Oを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-directio-026pom.patch <migration/asakusa-archetype-directio-026pom.patch>`
-
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
-
-..  code-block:: sh
-
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-026pom.patch
-
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.2.6のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
-
-CDHバージョンの変更
-~~~~~~~~~~~~~~~~~~~
-バージョン0.2.6ではCDH3 Update 4をデフォルトの依存バージョンとしており、動作検証もこのバージョンで実施しているため、アプリケーションプロジェクトの依存バージョンもこれに合わせることを推奨します。
-
-上記のpom.xmlのパッチを適用すると依存するCDH3のバージョン定義がCDH3 Update 4に変更されるので、開発環境にインストールしたHadoopもCDH3 Update 4にアップデートすることを推奨します。
-
-0.2.5 へのマイグレーション
---------------------------
-
-アセンブリディスクリプタの変更
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.2.5ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が追加/変更になったため、これらのファイルをバージョン0.2.5が提供するファイルに変更してください。変更手順は以下の通りです。
-
-1. バージョン0.2.5のアーキタイプからダミーのプロジェクトを任意のディレクトリに作成する。
-2. 作成したプロジェクトの ``src/main/assembly`` に含まれるすべてのファイルを既存のアプリケーションプロジェクトの `src/main/assembly` 配下にコピーする。
-3. 1で作成したダミーのプロジェクトを削除する。
-
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.2.5ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.5向けに変更してください。
-
-* アーキタイプ: ``asakusa-archetype-thundergate``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-thundergate-025pom.patch <migration/asakusa-archetype-thundergate-025pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-025pom.patch <migration/asakusa-archetype-windgate-025pom.patch>`
-
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
-
-..  code-block:: sh
-
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-025pom.patch
-
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.2.5のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
-
-0.2.4 へのマイグレーション
---------------------------
-
-アセンブリディスクリプタの変更
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-バージョン0.2.4ではアプリケーションプロジェクトに含まれるアセンブリディスクリプタ (プロジェクトの ``src/main/assembly`` 配下のファイル) が追加/変更になったため、これらのファイルをバージョン0.2.4が提供するファイルに変更してください。変更手順は以下の通りです。
-
-1. バージョン0.2.4のアーキタイプからダミーのプロジェクトを任意のディレクトリに作成する。
-2. 作成したプロジェクトの ``src/main/assembly`` に含まれるすべてのファイルを既存のアプリケーションプロジェクトの `src/main/assembly` 配下にコピーする。
-3. 1で作成したダミーのプロジェクトを削除する。
-
-pom.xmlの変更
-~~~~~~~~~~~~~
-バージョン0.2.4ではアプリケーションプロジェクトに含まれるpom.xmlに変更が行われたため、以下のパッチファイルを適用してpom.xmlを0.2.4向けに変更してください。
-
-* アーキタイプ: ``asakusa-archetype-batchapp``  (ThunderGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-batchapp-024pom.patch <migration/asakusa-archetype-batchapp-024pom.patch>`
-* アーキタイプ: ``asakusa-archetype-windgate``  (WindGateを使用したアプリケーション向け) 用パッチファイル
-   * :download:`asakusa-archetype-windgate-024pom.patch <migration/asakusa-archetype-windgate-024pom.patch>`
-
-上記のパッチをpatchコマンドなどを使用して適用します。以下パッチファイルを ``/tmp`` に配置した場合の適用例です。
-
-..  code-block:: sh
-
-    cd app-project
-    patch < /tmp/asakusa-archetype-windgate-024pom.patch
-
-pom.xmlを手動で変更している場合、パッチファイルがそのまま適用出来ないかもしれません。その場合、パッチファイルの内容を確認して手動で変更を取り込むか、バージョン0.2.4のアーキタイプからプロジェクトを生成し、その中に含まれるpom.xmlに対してアプリケーション側で変更した内容を反映させたものを使用してください。
-
-WindGateの仕様変更
-~~~~~~~~~~~~~~~~~~
-WindGateは本バージョンからCSV連携モジュールが追加となり、またWindGateのデフォルトコンフィグレーションはDBMS連携用の設定からCSV連携用の設定に変更されました。また、プロファイル定義ファイルに設定可能ないくつかの項目が追加されました。そのほか、WindGate用のアーキタイプから生成されるサンプルプログラムは、CSV連携用のアプリケーションに変更されています。
-
-過去バージョンで作成したDBMS連携向けアプリケーションはそのまま動作しますが、バージョン0.2.4で追加された機能を使用する場合は、 WindGateのドキュメント :doc:`../windgate/user-guide` を参照して下さい。
-
-0.2.3 へのマイグレーション
---------------------------
-バージョン0.2.3ではThunderGateのキャッシュ機能、及びYAESSが追加されたため、必要に応じて DSLの仕様変更、及び開発環境の構成変更に対応する必要があります。
-
-ジョブフローDSLの仕様変更
-~~~~~~~~~~~~~~~~~~~~~~~~~
-*(ThunderGate用アーキタイプ asakusa-archetype-batchapp から生成したアプリケーションプロジェクトについては、以下の変更を行なってください。)*
-
-ジョブフローDSLのThunderGate用インポータ記述用親クラス (DbImporterDescription [#]_ ) において、キャッシュ有効/無効を指定するメソッド isCacheEnabled() がデフォルト実装され、戻り値 ``false`` を返すようになりました。
-
-また、 ThunderGate用アーキタイプ ``asakusa-archetype-batchapp`` から生成されるサンプルアプリケーションのインポータ記述用親クラス (DefaultDbImporterDescription) のisCacheEnabled() メソッドが削除されました。
-
-これらの変更の目的は、バージョン0.2.3で追加されたThunderGateキャッシュ機能について、デフォルトではキャッシュOFF（過去バージョンと同じ動作）とするためですが、バージョン0.2.2までの DefaultDbImporterDescription をそのまま実装しているアプリケーションについては、isCacheEnabled() が ``true`` を返すよう実装されているため意図せずキャッシュがONに設定される可能性があるため、アプリケーションの実装を確認の上、必要であれば ソースを修正してください。
-
-..  [#] com.asakusafw.vocabulary.bulkloader.DbImporterDescription
-
-build.propertiesの項目追加/変更
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*(ThunderGate用アーキタイプ asakusa-archetype-batchapp から生成したアプリケーションプロジェクトについては、以下の変更を行なってください。)*
-
-* ThunderGateキャッシュ機能用のプロパティ追加
-   * asakusa.modelgen.sid.column
-   * asakusa.modelgen.timestamp.column
-   * asakusa.modelgen.delete.column
-   * asakusa.modelgen.delete.value
-* asakusa.modelgen.excludes のデフォルトが変更
-   * ThunderGateが使用するテーブルについてはデフォルトでモデル生成対象から除外されるようになったため、このプロパティで除外指定を行う必要がなくなりました。
-
-バージョン0.2.3の変更箇所を以下に示します。以下の定義をアプリケーションプロジェクトの build.properties に追加した上で、必要に応じてアプリケーション毎に適切な値に変更して下さい。
-
-..  code-block:: properties
-
-    # A regular expression string which excludes model name with model generation.
-    asakusa.modelgen.excludes=.*_RL
-    # The system ID column name (optional).
-    asakusa.modelgen.sid.column=SID
-    # The last modified timestamp column name (optional).
-    asakusa.modelgen.timestamp.column=UPDT_DATETIME
-    # The logical delete flag column name (optional).
-    asakusa.modelgen.delete.column=DELETE_FLAG
-    # Logical delete flag value (optional).
-    asakusa.modelgen.delete.value="1"
-
-ビルドスクリプトの更新
-~~~~~~~~~~~~~~~~~~~~~~
-*(この変更はすべてのアプリケーションプロジェクトに対して実施してください)*
-
-アプリケーションプロジェクトの以下のファイルを、バージョン0.2.3のアーキタイプ(asakusa-archetype-batchapp もしくは asakusa-archetype-windgate)から生成したプロジェクトに含まれるファイルで上書き更新してください。
-
-* src/main/assembly/asakusa-install-dev.xml
-* src/main/scripts/asakusa-build.xml
-
-YAESS用依存定義の追加
-~~~~~~~~~~~~~~~~~~~~~
-*(この変更はYAESSを使用する場合に実施して下さい)*
-
-YAESSを使用する場合、アプリケーションプロジェクトのpom.xmlについて、以下のdependencyを追加してください。
-
-..  code-block:: xml
-
-        <dependency>
-            <groupId>com.asakusafw</groupId>
-            <artifactId>asakusa-yaess-plugin</artifactId> <version>${asakusafw.version}</version>
-        </dependency>
-
-CDHバージョンの変更
-~~~~~~~~~~~~~~~~~~~
-バージョン0.2.3ではCDH3 Update2をデフォルトの依存バージョンとしており、動作検証もこのバージョンで実施しているため、アプリケーションプロジェクトの依存バージョンもこれに合わせることを推奨します。
-
-アプリケーションプロジェクトのpom.xmlについて、以下の変更を行ってください。
-
-..  code-block:: xml
-
-    <cloudera.cdh.version>0.20.2-cdh3u2</cloudera.cdh.version>
+..  attention::
+    バージョン 0.7.0 のドキュメントから
+    動作検証が行われていない
+    一部のMavenプロジェクト向け機能に関する説明が削除されました。
 

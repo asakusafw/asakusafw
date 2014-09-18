@@ -1,6 +1,6 @@
-================
-Hiveとの連携形式
-================
+====================
+Direct I/OのHive連携
+====================
 
 ..  attention::
     Asakusa Framework バージョン |version| では、Direct I/O のHive連携機能は試験的機能として提供しています。
@@ -38,10 +38,13 @@ GradleプロジェクトでHive 連携モジュール を使用する場合は `
 以下、 ``build.gradleの`` 設定例です。
 
 ..  code-block:: groovy
-
+    :emphasize-lines: 2,10
+    
     asakusafwOrganizer {
-        asakusafwVersion asakusafw.asakusafwVersion
         hive.enabled true
+        profiles.prod {
+            asakusafwVersion asakusafw.asakusafwVersion
+        }
     }
     
     dependencies {
@@ -516,7 +519,7 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 Hive DDLの生成
 --------------
 
-アプリケーションの開発にGradleプロジェクトを利用している場合、 Hive連携モジュールを利用するDMDLスクリプトからHiveのDDLを生成す る ``generateHiveDDL`` タスクを利用することができます 。
+アプリケーションの開発にGradleプロジェクトを利用している場合、 Hive連携モジュールを利用するDMDLスクリプトからHiveのDDLを生成する ``generateHiveDDL`` タスクを利用することができます。
 
 ..  code-block:: sh
 
@@ -526,28 +529,11 @@ Hive DDLの生成
 
 詳しくは、 :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-task-hiveddl` を参照してください。
 
-..  hint::
-    Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
+また、Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
 
-Hive連携用ライブラリの配置とライブラリキャッシュの利用
--------------------------------------------------------
-
-Hive連携モジュールを利用したバッチアプリケーションを実行するには、Hive連携モジュール用のライブラリ(HiveのライブラリやDirect I/Oの拡張ライブラリ)を実行環境に配置する必要があります。
-
-アプリケーションの開発にGradleプロジェクトを利用している場合、 ``build.gradle`` の ``asakusafwOrganizer`` ブロックに ``hive.enabled true`` を追加した後、Asakusa Frameworkの生成タスク( ``installAsakusafw`` , ``assembleAsakusafw`` など)を実行します。
-
-..  code-block:: groovy
-
-    ...
-    asakusafwOrganizer {
-        asakusafwVersion asakusafw.asakusafwVersion
-        hive.enabled true
-    }
-    ...
-
-詳しくは、 :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-oraganizer-hive` を参照してください。
-
-また、Hive連携モジュール用のライブラリのうち特にHiveのライブラリはファイルサイズが大きいため、Hadoopジョブの実行のつどHadoopクラスターにライブラリを配布することでパフォーマンスに悪影響を与える可能性があります。このため、ライブラリキャッシュの設定を行いHive連携モジュール用のライブラリをキャッシュすることを推奨します。
+ライブラリキャッシュの利用
+--------------------------
+Hive連携モジュールが使用する実行ライブラリはファイルサイズが大きいため、Hadoopジョブの実行のつどHadoopクラスターにライブラリを配布することでパフォーマンスに悪影響を与える可能性があります。このため、ライブラリキャッシュの設定を行いHive連携モジュール用のライブラリをキャッシュすることを推奨します。
 
 ライブラリキャッシュの利用方法については詳しくは、 :doc:`../administration/configure-library-cache` を参照してください。
 

@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +63,7 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
         assertThat(unsafe.getMinimumFragmentSize(), greaterThan(0L));
 
         model.set("value", new Text("Hello, world!"));
@@ -165,6 +168,7 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(instanceOf(Configurable.class)));
         assertThat(unsafe.getMinimumFragmentSize(), lessThan(0L));
 
         model.set("value", new Text("Hello, world!"));
