@@ -30,6 +30,11 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 * :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox Document)
 
+Hadoopエコシステム連携
+----------------------
+
+* :doc:`../sandbox/asakusa-with-hive` (Asakusa Framework Sandbox Document)
+
 その他
 ======
 
