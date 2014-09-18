@@ -152,6 +152,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
 ..  warning::
     バージョン 0.7.0 以降では、以下のタスクは削除されました。
      
+    * ``attachAssemble``
     * ``attachAssembleDev``
     * ``assembleCustomAsakusafw``
     * ``assembleDevAsakusafw``
