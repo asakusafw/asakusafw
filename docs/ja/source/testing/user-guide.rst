@@ -698,6 +698,9 @@ Javaオブジェクトによるテストデータ定義
 
 スキップを行う場合、 ``Tester`` クラスが提供する以下のメソッドを利用します。
 
+``void skipValidateCondition(boolean skip)``
+    テスト条件の検証をスキップするかを設定する。
+
 ``void skipCleanInput(boolean skip)``
     入力データのクリーニング(truncate)をスキップするかを設定する。
 

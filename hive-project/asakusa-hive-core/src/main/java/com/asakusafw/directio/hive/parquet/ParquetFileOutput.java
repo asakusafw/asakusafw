@@ -16,13 +16,17 @@
 package com.asakusafw.directio.hive.parquet;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
+import parquet.column.ParquetProperties;
 import parquet.column.ParquetProperties.WriterVersion;
 import parquet.hadoop.ParquetWriter;
 import parquet.hadoop.api.WriteSupport;
@@ -41,7 +45,11 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
 
     static final Log LOG = LogFactory.getLog(ParquetFileOutput.class);
 
+    static final ParquetVersion LIBRARY_VERSION = ParquetVersion.getSupportedVersion();
+
     private final DataModelDescriptor descriptor;
+
+    private final Configuration configuration;
 
     private final DataModelWriteSupport writeSupport;
 
@@ -69,6 +77,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
             Counter counter) {
         this.writeSupport = new DataModelWriteSupport(descriptor);
         this.descriptor = descriptor;
+        this.configuration = configuration;
         this.path = path;
         this.options = options;
         this.counter = counter;
@@ -94,16 +103,11 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                         path));
             }
             Options opts = options;
-            writer = new ParquetWriter<T>(
+            writer = LIBRARY_VERSION.newInstance(
                     path,
                     (WriteSupport<T>) writeSupport,
-                    opts.getCompressionCodecName(),
-                    opts.getBlockSize(),
-                    opts.getDataPageSize(),
-                    opts.getDictionaryPageSize(),
-                    opts.isEnableDictionary(),
-                    opts.isEnableValidation(),
-                    opts.getWriterVersion());
+                    opts,
+                    configuration);
             currentWriter = writer;
         }
         return writer;
@@ -113,6 +117,155 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
     public void close() throws IOException {
         if (currentWriter != null) {
             currentWriter.close();
+        }
+    }
+
+    // FIXME for supporting parquet-hadoop 1.2.5
+    // 'static' suppresses checkstyle warnings
+    private static enum ParquetVersion {
+
+        // Note: put newer version on top
+
+        V_NEW(10),
+
+        V_13(9) {
+            @Override
+            <T> ParquetWriter<T> newInstance(
+                    Path path,
+                    WriteSupport<T> writeSupport,
+                    ParquetFileOutput.Options options,
+                    Configuration configuration) throws IOException {
+                return new ParquetWriter<T>(
+                        path,
+                        writeSupport,
+                        options.getCompressionCodecName(),
+                        options.getBlockSize(),
+                        options.getDataPageSize(),
+                        options.getDictionaryPageSize(),
+                        options.isEnableDictionary(),
+                        options.isEnableValidation(),
+                        options.getWriterVersion());
+            }
+        },
+
+        V_12(8) {
+            @Override
+            <T> ParquetWriter<T> newInstance(
+                    Path path,
+                    WriteSupport<T> writeSupport,
+                    ParquetFileOutput.Options options,
+                    Configuration configuration) throws IOException {
+                return new ParquetWriter<T>(
+                        path,
+                        writeSupport,
+                        options.getCompressionCodecName(),
+                        options.getBlockSize(),
+                        options.getDataPageSize(),
+                        options.getDictionaryPageSize(),
+                        options.isEnableDictionary(),
+                        options.isEnableValidation());
+            }
+        },
+
+        UNKNOWN(2) {
+            @Override
+            <T> ParquetWriter<T> newInstance(
+                    Path path,
+                    WriteSupport<T> writeSupport,
+                    ParquetFileOutput.Options options,
+                    Configuration configuration) throws IOException {
+                return new ParquetWriter<T>(path, writeSupport);
+            }
+        },
+        ;
+
+        private static final Class<?>[] PARAMETER_TYPES = {
+            Path.class,                 //
+            WriteSupport.class,         // 2: minimum
+            CompressionCodecName.class, //
+            int.class,                  //
+            int.class,                  //
+            int.class,                  //
+            boolean.class,              //
+            boolean.class,              // 8: v1.2
+            ParquetProperties.WriterVersion.class, // 9: v1.3
+            Configuration.class,        // 10 ~
+        };
+
+        final int parameterCount;
+
+        private transient volatile Constructor<?> constructor;
+
+        private ParquetVersion(int parameterCount) {
+            this.parameterCount = parameterCount;
+        }
+
+        private Constructor<?> resolve() {
+            if (constructor != null) {
+                return constructor;
+            }
+            Class<?>[] params = Arrays.copyOfRange(PARAMETER_TYPES, 0, parameterCount);
+            try {
+                constructor = ParquetWriter.class.getConstructor(params);
+            } catch (Exception e) {
+                LOG.trace(MessageFormat.format(
+                        "Mismatch Parquet library version: {0} {1}",
+                        name(),
+                        Arrays.toString(params)), e);
+                return null;
+            }
+            return constructor;
+        }
+
+        static ParquetVersion getSupportedVersion() {
+            for (ParquetVersion version : values()) {
+                if (version.resolve() != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Detected Parquet library version: {0}",
+                                version));
+                    }
+                    return version;
+                }
+            }
+            throw new IllegalStateException();
+        }
+
+        @SuppressWarnings("unchecked")
+        <T> ParquetWriter<T> newInstance(
+                Path path,
+                WriteSupport<T> writeSupport,
+                ParquetFileOutput.Options options,
+                Configuration configuration) throws IOException {
+            Object[] argumentsCandidate = {
+                    path,
+                    writeSupport,
+                    options.getCompressionCodecName(),
+                    options.getBlockSize(),
+                    options.getDataPageSize(),
+                    options.getDictionaryPageSize(),
+                    options.isEnableDictionary(),
+                    options.isEnableValidation(),
+                    options.getWriterVersion(),
+                    configuration,
+            };
+            Object[] arguments = Arrays.copyOfRange(argumentsCandidate, 0, parameterCount);
+            try {
+                return (ParquetWriter<T>) resolve().newInstance(arguments);
+            } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                } else if (cause instanceof RuntimeException) {
+                    throw (RuntimeException) cause;
+                } else if (cause instanceof Error) {
+                    throw (Error) cause;
+                } else {
+                    throw new IllegalStateException(e);
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 

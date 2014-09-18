@@ -300,7 +300,7 @@ public class FlowPartClassCollector {
      */
     public List<FlowPartClass> collect() {
         if (sawError) {
-            throw new OperatorCompilerException("フロー部品クラスの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null, "フロー部品クラスの分析に失敗したため、処理を中止します");
         }
         return collected;
     }

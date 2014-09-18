@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,6 +82,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
 
         model.set("value", new Text("hello-world"));
 
@@ -183,6 +185,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(instanceOf(Configurable.class)));
 
         model.set("value", new Text("hello"));
 

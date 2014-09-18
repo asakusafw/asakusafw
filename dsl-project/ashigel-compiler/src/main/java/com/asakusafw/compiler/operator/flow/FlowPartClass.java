@@ -29,15 +29,15 @@ import com.asakusafw.utils.java.model.syntax.DocElement;
  */
 public class FlowPartClass {
 
-    private TypeElement element;
+    private final TypeElement element;
 
-    private List<DocElement> documentation;
+    private final List<DocElement> documentation;
 
-    private List<OperatorPortDeclaration> inputPorts;
+    private final List<OperatorPortDeclaration> inputPorts;
 
-    private List<OperatorPortDeclaration> outputPorts;
+    private final List<OperatorPortDeclaration> outputPorts;
 
-    private List<OperatorPortDeclaration> parameters;
+    private final List<OperatorPortDeclaration> parameters;
 
     /**
      * インスタンスを生成する。
