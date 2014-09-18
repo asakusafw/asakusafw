@@ -49,19 +49,19 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
  */
 public class ImplementationBuilder {
 
-    private ExecutableElement element;
+    private final ExecutableElement element;
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private ImportBuilder importer;
+    private final ImportBuilder importer;
 
-    private NameGenerator names;
+    private final NameGenerator names;
 
-    private Jsr269 converter;
+    private final Jsr269 converter;
 
-    private List<Statement> statements;
+    private final List<Statement> statements;
 
-    private List<FieldDeclaration> fields;
+    private final List<FieldDeclaration> fields;
 
     /**
      * インスタンスを生成する。

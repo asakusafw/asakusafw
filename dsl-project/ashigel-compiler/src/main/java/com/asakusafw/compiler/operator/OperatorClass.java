@@ -17,6 +17,7 @@ package com.asakusafw.compiler.operator;
 
 import java.util.List;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
@@ -25,12 +26,14 @@ import com.asakusafw.utils.collections.Lists;
 
 /**
  * 演算子クラスの構造を表現する。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class OperatorClass {
 
-    private TypeElement element;
+    private final TypeElement element;
 
-    private List<OperatorMethod> methods;
+    private final List<OperatorMethod> methods;
 
     /**
      * インスタンスを生成する。
@@ -49,6 +52,26 @@ public class OperatorClass {
      */
     public TypeElement getElement() {
         return this.element;
+    }
+
+    /**
+     * Registers an operator method into this class.
+     * @param annotation the operator annotation
+     * @param methodElement the operator method
+     * @param processor corresponded operator method
+     */
+    public void add(
+            AnnotationMirror annotation,
+            ExecutableElement methodElement,
+            OperatorProcessor processor) {
+        Precondition.checkMustNotBeNull(annotation, "annotation"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(methodElement, "methodElement"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
+        if (element.equals(methodElement.getEnclosingElement()) == false) {
+            throw new IllegalArgumentException("methodElement must be a member of this class"); //$NON-NLS-1$
+        }
+        OperatorMethod method = new OperatorMethod(annotation, methodElement, processor);
+        methods.add(method);
     }
 
     /**

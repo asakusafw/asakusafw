@@ -92,12 +92,12 @@ Mapタスクのスケジューリングを改善
 --------------
 本リリースには、過去のリリースに対していくつかの潜在的な非互換性が存在します。
 
-Java Development Kit (JDK)
+Java SE Development Kit (JDK)
   アプリケーションプロジェクトの標準設定で利用するJavaのバージョンをJDK 6からJDK 7に変更しました。
 
   Java 7に対応していないHadoopディストリビューション上でアプリケーションを実行する場合、手動でJDK 6に戻す必要があります。
 Gradle
-  Gradle 2.0に対応しました。
+  Gradle 2.1に対応しました。
 
   以前のAsakusa FrameworkはGradle 2.0以降に対応していません。プロジェクトのAsakusa Frameworkのバージョンをダウングレードする場合に注意が必要です。
 Maven
