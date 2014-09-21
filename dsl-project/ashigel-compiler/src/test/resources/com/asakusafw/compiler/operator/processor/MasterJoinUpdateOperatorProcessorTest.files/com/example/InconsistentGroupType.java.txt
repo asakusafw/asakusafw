@@ -1,0 +1,18 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class InconsistentGroupType {
+
+    @MasterJoinUpdate
+    public void example(
+            @Key(group = "key") MockKeyValue1 a,
+            @Key(group = "value") MockKeyValue2 b) {
+        return;
+    }
+}

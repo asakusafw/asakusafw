@@ -1,0 +1,20 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class InconsistentGroupCount {
+
+    @CoGroup
+    public void example(
+            @Key(group = { "key", "value" }) java.util.List<MockKeyValue1> a,
+            @Key(group = "key") java.util.List<MockKeyValue2> b,
+            Result<MockKeyValue1> r1,
+            Result<MockKeyValue2> r2) {
+        //
+    }
+}

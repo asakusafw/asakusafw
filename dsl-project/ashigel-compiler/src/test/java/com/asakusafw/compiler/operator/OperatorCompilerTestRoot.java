@@ -324,7 +324,7 @@ public class OperatorCompilerTestRoot {
         compiler.addProcessor(proc);
         List<Diagnostic<? extends JavaFileObject>> diagnostics = doCompile();
         proc.rethrow();
-        assertThat(diagnostics.isEmpty(), is(false));
+        assertThat(diagnostics, not(hasSize(0)));
     }
 
     /**
@@ -335,7 +335,7 @@ public class OperatorCompilerTestRoot {
         compiler.addProcessor(new DelegateProcessor(callback));
         List<Diagnostic<? extends JavaFileObject>> diagnostics = doCompile();
         callback.rethrow();
-        assertThat(diagnostics.isEmpty(), is(false));
+        assertThat(diagnostics, not(hasSize(0)));
     }
 
     private ClassLoader start() {

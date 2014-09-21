@@ -250,4 +250,22 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
         add("com.example.NoKey");
         error(new MasterJoinUpdateOperatorProcessor());
     }
+
+    /**
+     * Grouping key properties are inconsistent.
+     */
+    @Test
+    public void inconsistentGroupCount() {
+        add("com.example.InconsistentGroupCount");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
+
+    /**
+     * Grouping key properties have inconsistent types.
+     */
+    @Test
+    public void inconsistentGroupType() {
+        add("com.example.InconsistentGroupType");
+        error(new MasterJoinUpdateOperatorProcessor());
+    }
 }
