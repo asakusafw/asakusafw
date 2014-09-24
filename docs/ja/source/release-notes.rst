@@ -4,9 +4,7 @@
 
 Release 0.7.0
 =============
-Sep XX, 2014
-
-..  todo:: Release Date
+Sep 25, 2014
 
 `Asakusa Framework 0.7.0 documentation`_
 
