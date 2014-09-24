@@ -41,7 +41,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - |version|-hadoop1
     * - Amazon EMR
       - Hadoop 2.4.0
-      - AMI 3.2.0
+      - AMI 3.2.1
       - JDK 7 (1.7.0_65)
       - |version|-hadoop2
 
