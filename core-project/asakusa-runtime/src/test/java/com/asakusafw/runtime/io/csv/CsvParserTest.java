@@ -15,8 +15,9 @@
  */
 package com.asakusafw.runtime.io.csv;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -66,6 +67,14 @@ public class CsvParserTest {
     private String dateTimeFormat = CsvConfiguration.DEFAULT_DATE_TIME_FORMAT;
 
     private CsvParser create(String content) {
+        CsvConfiguration conf = createConfiguration();
+        return new CsvParser(
+                new ByteArrayInputStream(content.getBytes(conf.getCharset())),
+                testName.getMethodName(),
+                conf);
+    }
+
+    private CsvConfiguration createConfiguration() {
         CsvConfiguration conf = new CsvConfiguration(
                 CsvConfiguration.DEFAULT_CHARSET,
                 headers,
@@ -73,10 +82,7 @@ public class CsvParserTest {
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
-        return new CsvParser(
-                new ByteArrayInputStream(content.getBytes(conf.getCharset())),
-                testName.getMethodName(),
-                conf);
+        return conf;
     }
 
     /**
@@ -112,7 +118,7 @@ public class CsvParserTest {
      */
     @Test
     public void byte_values() throws Exception {
-        CsvParser parser = create("0,1,50,-1,-50,127,-128,");
+        CsvParser parser = create("0,1,50,-1,-50,127,-128, 0,0 ,");
         ByteOption option = new ByteOption();
 
         assertThat(parser.next(), is(true));
@@ -137,6 +143,12 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.get(), is((byte) -128));
+
+        parser.fill(option);
+        assertThat(option.get(), is((byte) 0));
+
+        parser.fill(option);
+        assertThat(option.get(), is((byte) 0));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -169,7 +181,7 @@ public class CsvParserTest {
     public void short_values() throws Exception {
         CsvParser parser = create("0,1,50,-1,-50,"
                 + Short.MAX_VALUE + ","
-                + Short.MIN_VALUE + ",");
+                + Short.MIN_VALUE + ", 0,0 ,");
         ShortOption option = new ShortOption();
 
         assertThat(parser.next(), is(true));
@@ -194,6 +206,12 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.get(), is(Short.MIN_VALUE));
+
+        parser.fill(option);
+        assertThat(option.get(), is((short) 0));
+
+        parser.fill(option);
+        assertThat(option.get(), is((short) 0));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -226,7 +244,7 @@ public class CsvParserTest {
     public void int_values() throws Exception {
         CsvParser parser = create("0,1,50,-1,-50,"
                 + Integer.MAX_VALUE + ","
-                + Integer.MIN_VALUE + ",");
+                + Integer.MIN_VALUE + ", 0,0 ,");
         IntOption option = new IntOption();
 
         assertThat(parser.next(), is(true));
@@ -251,6 +269,12 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.get(), is(Integer.MIN_VALUE));
+
+        parser.fill(option);
+        assertThat(option.get(), is(0));
+
+        parser.fill(option);
+        assertThat(option.get(), is(0));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -283,7 +307,7 @@ public class CsvParserTest {
     public void long_values() throws Exception {
         CsvParser parser = create("0,1,50,-1,-50,"
                 + Long.MAX_VALUE + ","
-                + Long.MIN_VALUE + ",");
+                + Long.MIN_VALUE + ", 0,0 ,");
         LongOption option = new LongOption();
 
         assertThat(parser.next(), is(true));
@@ -308,6 +332,12 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.get(), is(Long.MIN_VALUE));
+
+        parser.fill(option);
+        assertThat(option.get(), is((long) 0));
+
+        parser.fill(option);
+        assertThat(option.get(), is((long) 0));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -340,7 +370,7 @@ public class CsvParserTest {
     public void float_values() throws Exception {
         CsvParser parser = create(
                 "0,1,50,-1,-50,"
-                + "0.5,-0.5,100.,-100.,");
+                + "0.5,-0.5,100.,-100., 0,0 ,");
         FloatOption option = new FloatOption();
 
         assertThat(parser.next(), is(true));
@@ -373,6 +403,12 @@ public class CsvParserTest {
         assertThat(option.get(), is((float) -100.));
 
         parser.fill(option);
+        assertThat(option.get(), is((float) 0));
+
+        parser.fill(option);
+        assertThat(option.get(), is((float) 0));
+
+        parser.fill(option);
         assertThat(option.isNull(), is(true));
 
         parser.endRecord();
@@ -403,7 +439,7 @@ public class CsvParserTest {
     public void double_values() throws Exception {
         CsvParser parser = create(
                 "0,1,50,-1,-50,"
-                + "0.5,-0.5,100.,-100.,");
+                + "0.5,-0.5,100.,-100., 0,0 ,");
         DoubleOption option = new DoubleOption();
 
         assertThat(parser.next(), is(true));
@@ -436,6 +472,12 @@ public class CsvParserTest {
         assertThat(option.get(), is(-100.));
 
         parser.fill(option);
+        assertThat(option.get(), is((double) 0));
+
+        parser.fill(option);
+        assertThat(option.get(), is((double) 0));
+
+        parser.fill(option);
         assertThat(option.isNull(), is(true));
 
         parser.endRecord();
@@ -466,7 +508,7 @@ public class CsvParserTest {
     public void decimal_values() throws Exception {
         CsvParser parser = create(
                 "0,1,50,-1,-50,"
-                + "0.5,-0.5,3.1415,-3.1415,");
+                + "0.5,-0.5,3.1415,-3.1415, 0,0 , ,");
         DecimalOption option = new DecimalOption();
 
         assertThat(parser.next(), is(true));
@@ -497,6 +539,15 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.get(), is(decimal("-3.1415")));
+
+        parser.fill(option);
+        assertThat(option.get(), is(decimal("0")));
+
+        parser.fill(option);
+        assertThat(option.get(), is(decimal("0")));
+
+        parser.fill(option);
+        assertThat(option.isNull(), is(true));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -534,7 +585,7 @@ public class CsvParserTest {
         CsvParser parser = create(
                 "Hello,"
                 + "\u3042\u3044\u3046\u3048\u304a,"
-                + "\",\"\"\r\n\",");
+                + "\",\"\"\r\n\", ,");
         StringOption option = new StringOption();
 
         assertThat(parser.next(), is(true));
@@ -547,6 +598,9 @@ public class CsvParserTest {
 
         parser.fill(option);
         assertThat(option.getAsString(), is(",\"\r\n"));
+
+        parser.fill(option);
+        assertThat(option.getAsString(), is(" "));
 
         parser.fill(option);
         assertThat(option.isNull(), is(true));
@@ -564,13 +618,17 @@ public class CsvParserTest {
         dateFormat = "yyyy/MM/dd";
         CsvParser parser = create(
                 "2011/03/31,"
-                + "1971/4/1,");
+                + "1971/4/1,"
+                + " 1971/4/1 ,");
         DateOption option = new DateOption();
 
         assertThat(parser.next(), is(true));
 
         parser.fill(option);
         assertThat(option.get(), is(new Date(2011, 3, 31)));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new Date(1971, 4, 1)));
 
         parser.fill(option);
         assertThat(option.get(), is(new Date(1971, 4, 1)));
@@ -634,13 +692,17 @@ public class CsvParserTest {
         dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
         CsvParser parser = create(
                 "2011/03/31 23:59:59,"
-                + "1971/4/1 1:2:3,");
+                + "1971/4/1 1:2:3,"
+                + " 1971/4/1 1:2:3 ,");
         DateTimeOption option = new DateTimeOption();
 
         assertThat(parser.next(), is(true));
 
         parser.fill(option);
         assertThat(option.get(), is(new DateTime(2011, 3, 31, 23, 59, 59)));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new DateTime(1971, 4, 1, 1, 2, 3)));
 
         parser.fill(option);
         assertThat(option.get(), is(new DateTime(1971, 4, 1, 1, 2, 3)));
@@ -661,13 +723,17 @@ public class CsvParserTest {
         dateTimeFormat = "yyyyMMddHHmmss";
         CsvParser parser = create(
                 "20110331235959,"
-                + "19710401010203,");
+                + "19710401010203,"
+                + " 19710401010203 ,");
         DateTimeOption option = new DateTimeOption();
 
         assertThat(parser.next(), is(true));
 
         parser.fill(option);
         assertThat(option.get(), is(new DateTime(2011, 3, 31, 23, 59, 59)));
+
+        parser.fill(option);
+        assertThat(option.get(), is(new DateTime(1971, 4, 1, 1, 2, 3)));
 
         parser.fill(option);
         assertThat(option.get(), is(new DateTime(1971, 4, 1, 1, 2, 3)));
@@ -1244,13 +1310,7 @@ public class CsvParserTest {
                 return 'a';
             }
         };
-        CsvConfiguration conf = new CsvConfiguration(
-                CsvConfiguration.DEFAULT_CHARSET,
-                headers,
-                trueFormat,
-                falseFormat,
-                dateFormat,
-                dateTimeFormat);
+        CsvConfiguration conf = createConfiguration();
         CsvParser parser = new CsvParser(infinite, "testing", conf);
         try {
             assertThat(parser.next(), is(true));
@@ -1302,6 +1362,117 @@ public class CsvParserTest {
             assertThat(e.getStatus().getReason(), is(Reason.TOO_LONG_RECORD));
         }
         assertThat(parser.next(), is(false));
+    }
+
+    /**
+     * Simple stress test for {@link DecimalOption} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_decimal() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("3.141592\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DecimalOption date = new DecimalOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DecimalOption(new BigDecimal("3.141592"))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * Simple stress test for {@link Date} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_date() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("1999-12-31\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DateOption date = new DateOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DateOption(new Date(1999, 12, 31))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * Simple stress test for {@link DateTime} type.
+     * @throws Exception if failed
+     */
+    @Test
+    public void stress_datetime() throws Exception {
+        int count = 5000000;
+        CsvConfiguration conf = createConfiguration();
+        RCReader reader = new RCReader("1999-12-31 01:23:45\r\n".getBytes(conf.getCharset()), count);
+        try {
+            int rows = 0;
+            CsvParser parser = new CsvParser(reader, "testing", conf);
+            DateTimeOption date = new DateTimeOption();
+            while (parser.next()) {
+                parser.fill(date);
+                parser.endRecord();
+                if (rows == 0) {
+                    assertThat(date, is(new DateTimeOption(new DateTime(1999, 12, 31, 1, 23, 45))));
+                }
+                rows++;
+            }
+            parser.close();
+            assertThat(rows, is(count));
+        } finally {
+            reader.close();
+        }
+    }
+
+    private static class RCReader extends InputStream {
+
+        private final byte[] element;
+
+        private final int limit;
+
+        private int offset;
+
+        public RCReader(byte[] element, int count) {
+            this.element = element;
+            this.limit = element.length * count;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (offset >= limit) {
+                return -1;
+            }
+            return element[offset++ % element.length];
+        }
+
+        @Override
+        public void close() throws IOException {
+            return;
+        }
     }
 
     private void assertFill(CsvParser parser, String expect) throws CsvFormatException, IOException {

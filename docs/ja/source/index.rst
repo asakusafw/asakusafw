@@ -38,7 +38,7 @@ Asakusa Framework入門
 関連プロダクト
 ==============
 * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
-* :sandbox:`Asakusa Framework Sandbox <index.html>`
+* :doc:`sandbox/index`
 
 リソース
 ========
@@ -78,4 +78,5 @@ Asakusa Framework入門
     application/index
     administration/index
     product/index
+    sandbox/index
     document/index

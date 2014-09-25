@@ -90,7 +90,6 @@ Asakusa Framework Checks
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
-    <module name="DoubleCheckedLocking"/>
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
     <module name="HiddenField">
@@ -101,7 +100,7 @@ Asakusa Framework Checks
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
     <module name="MagicNumber">
-      <property name="severity" value="info"/>
+      <property name="severity" value="ignore"/>
       <property name="ignoreNumbers" value="-1, 0, 1, 2, 10, 24, 60"/>
     </module>
     <module name="MissingSwitchDefault"/>

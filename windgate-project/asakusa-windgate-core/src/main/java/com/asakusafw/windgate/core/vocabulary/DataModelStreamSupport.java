@@ -23,9 +23,6 @@ import java.io.OutputStream;
 /**
  * Supports {@link InputStream} / {@link OutputStream} for data models.
  * This implementation class must have public constructor without any parameters.
- * <p><em>
- * Currently this interface is experimental.
- * </em></p>
  * @param <T> the type of target data model
  * @since 0.2.2
  */

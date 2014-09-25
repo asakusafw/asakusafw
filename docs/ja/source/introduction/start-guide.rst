@@ -138,7 +138,7 @@ Asakusa Frameworkを開発環境にインストールするには、
 サンプルアプリケーションを同梱したサンプルアプリケーションプロジェクトを利用します。
 サンプルアプリケーションプロジェクトは以下からダウンロードします。
 
-* `asakusa-example-project-0.6.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.6.2.tar.gz>`_ 
+* `asakusa-example-project-0.7.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.0.tar.gz>`_ 
 
 ダウンロードが完了したら、サンプルアプリケーションプロジェクトを任意のディレクトリに配置します。
 
@@ -227,7 +227,7 @@ Asakusa Frameworkのインストール確認
     
     cat $ASAKUSA_HOME/VERSION
     
-    asakusafw.version=0.6.2
+    asakusafw.version=0.7.0
     
     asakusafw.build.timestamp=...
     asakusafw.build.java.version=1.6.0_...
@@ -334,7 +334,7 @@ Eclipseへアプリケーションプロジェクトをインポート
 
 サンプルデータの配置
 --------------------
-サンプルアプリケーションプロジェクトには、プロジェクトディレクトリ配下の ``src/test/example-dataset`` ディレクトリ以下にテスト用の入力データが用意されています。これらのファイルをHadoopファイルシステム上のDirect I/Oの入出力ディレクトリ(デフォルトの設定では ``target/testing/directio`` 配下にコピーします。
+サンプルアプリケーションプロジェクトには、プロジェクトディレクトリ配下の ``src/test/example-dataset`` ディレクトリ以下にテスト用の入力データが用意されています。これらのファイルをHadoopファイルシステム上のDirect I/Oの入出力ディレクトリ(デフォルトの設定では ``target/testing/directio`` 配下) にコピーします。
 
 ..  warning::
     Direct I/Oの入出力ディレクトリはテスト実行時に削除されます。特にスタンドアロンモードのHadoopを利用時にデフォルトの設定のような相対パスを指定した場合、 ホームディレクトリを起点としたパスと解釈されるため注意が必要です。

@@ -13,60 +13,42 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - Version
       - OS
       - JDK
-      - 検証バージョン [1]_
+      - 検証バージョン [#]_
     * - Apache Hadoop
       - 1.2.1
       - CentOS 6 (6.2)
       - JDK 6 (1.6.0_31)
-      - |version|
+      - |version|-hadoop1
     * - Apache Hadoop
-      - 2.2.0
+      - 2.4.1
       - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
-      - |version|-hadoop2 [2]_
-    * - CDH3
-      - Update 5 (u5)
-      - CentOS 6 (6.2)
-      - JDK 6 (1.6.0_31)
-      - |version|
-    * - CDH4
-      - 4.6.0 (MRv1)
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
-      - |version|-hadoop2 [2]_
+      - JDK 7 (1.7.0_67)
+      - |version|-hadoop2
     * - CDH5
-      - 5.0.1 (MRv1/MRv2)
+      - 5.1.2 (MRv1/MRv2)
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
-      - |version|-hadoop2 [2]_
+      - |version|-hadoop2
     * - MapR
-      - 3.0.2 (M3/M5/M7)
-      - Ubuntu 12.04
-      - JDK 6 (1.6.0_32)
-      - |version|
-    * - Amazon EMR [3]_
+      - 3.1.1 (M3/M5/M7)
+      - CentOS 6 (6.5)
+      - JDK 7 (1.7.0_55)
+      - |version|-hadoop1
+    * - Amazon EMR [#]_
       - Hadoop 1.0.3
-      - AMI 2.4.5
-      - JDK 7 (1.7.0_60 EA)
-      - |version|
+      - AMI 2.4.6
+      - JDK 7 (1.7.0_60)
+      - |version|-hadoop1
     * - Amazon EMR
       - Hadoop 2.4.0
-      - AMI 3.1.0
-      - JDK 7 (1.7.0_60 EA)
-      - |version|-hadoop2 [2]_
-    * - Amazon EMR
-      - MapR 3.0.2 (M3/M5/M7)
-      - AMI 2.4.2
-      - JDK 7 (1.7.0_40)
-      - |version|
+      - AMI 3.2.1
+      - JDK 7 (1.7.0_65)
+      - |version|-hadoop2
 
-..  [1] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
-..  [2] 検証バージョンに ``-hadoop2`` と記載されている行に対応するHadoopディストリビューションでは、Hadoop2系向けのAsakusa Frameworkバージョンが必要です。詳しくは :doc:`../administration/deployment-hadoop2` を参照してください。
+..  [#] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
+        詳しくは :doc:`../administration/deployment-guide` を参照してください。
 
-..  attention::
-    Asakusa Frameworkの現在のバージョン |version| では、Hadoop2系の対応は試験的機能として提供されています。
-
-..  [3] Amazon EMR上で利用するための情報を :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>` (Asakusa Framework Sandbox) に公開しています。
+..  [#] Amazon EMR上で利用するための情報を :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox) に公開しています。
 
 アプリケーション開発環境
 ========================
@@ -85,23 +67,26 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - OS
       - CentOS 6.2
     * - Java
-      - JDK 6 (1.6.0_45)
+      - JDK 6 (1.6.0_45) [#]_
     * - Java
-      - JDK 7 (1.7.0_45) [#]_
+      - JDK 7 (1.7.0_60)
     * - ビルドツール
-      - Gradle 1.12 [#]_
+      - Gradle 2.1 [#]_
     * - ビルドツール
       - Apache Maven 3.0.5 [#]_
     * - IDE
-      - Eclipse IDE for Java Developers 3.7.2
-    * - IDE
       - Eclipse IDE for Java Developers 4.3.2
+    * - IDE
+      - Eclipse IDE for Java Developers 4.4.0
     * - Hadoop
       - Apache Hadoop 1.2.1
+    * - Hadoop
+      - Apache Hadoop 2.4.1 [#]_
 
-..  [#] JDK 7の利用については、 :doc:`../application/develop-with-jdk7` を参照してください。
+..  [#] JDK 6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
 ========
@@ -114,7 +99,7 @@ WindGate
     * - 種類
       - Product/Version
     * - DBMS
-      - PostgreSQL 9.1.4
+      - PostgreSQL 9.3
     * - JDBC Driver
       - PostgreSQL JDBC Driver 9.1 Build 901
 

@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.operator;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -54,14 +56,14 @@ import com.asakusafw.utils.java.model.util.Models;
  * サービスとして登録しておくことで、このプロセッサから自動的に参照する。
  * </p>
  * @since 0.1.0
- * @version 0.5.3
+ * @version 0.7.0
  */
 public class OperatorCompiler implements Processor {
 
     /**
      * このコンパイラのバージョン。
      */
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.1.0";
 
     static final Logger LOG = LoggerFactory.getLogger(OperatorCompiler.class);
 
@@ -199,17 +201,26 @@ public class OperatorCompiler implements Processor {
         try {
             start(roundEnv);
         } catch (OperatorCompilerException e) {
-            environment.getMessager().printMessage(
-                    Diagnostic.Kind.ERROR,
-                    e.getMessage());
+            if (e.getKind() != null) {
+                environment.getMessager().printMessage(
+                        e.getKind(),
+                        e.getMessage());
+            }
             LOG.debug(e.getMessage(), e);
         } catch (RuntimeException e) {
-            environment.getMessager().printMessage(Diagnostic.Kind.ERROR, MessageFormat.format(
-                    "演算子のコンパイルに失敗しました ({0})",
-                    e.toString()));
+            environment.getMessager().printMessage(Diagnostic.Kind.ERROR, toDetailString(e));
             LOG.error("演算子のコンパイルに失敗しました", e);
         }
         return false;
+    }
+
+    private String toDetailString(RuntimeException e) {
+        StringWriter writer = new StringWriter();
+        PrintWriter pw = new PrintWriter(writer);
+        pw.println("演算子のコンパイルに失敗しました:");
+        e.printStackTrace(pw);
+        pw.close();
+        return writer.toString();
     }
 
     private void start(RoundEnvironment roundEnv) {

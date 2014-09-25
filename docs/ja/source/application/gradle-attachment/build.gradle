@@ -3,12 +3,12 @@ buildscript {
         maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
     }
     dependencies {
-        classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.6.2'
+        classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.7.0'
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion '1.12'
+    distributionUrl 'http://services.gradle.org/distributions/gradle-2.1-bin.zip'
     jarFile file('.buildtools/gradlew.jar')
 }
 
@@ -17,7 +17,7 @@ apply plugin: 'asakusafw-organizer'
 apply plugin: 'eclipse'
 
 asakusafw {
-    asakusafwVersion '0.6.2'
+    asakusafwVersion '0.7.0-hadoop1'
 
     modelgen {
         modelgenSourcePackage 'com.example.modelgen'
@@ -28,7 +28,9 @@ asakusafw {
 }
 
 asakusafwOrganizer {
-    asakusafwVersion asakusafw.asakusafwVersion
+    profiles.prod {
+        asakusafwVersion asakusafw.asakusafwVersion
+    }
 }
 
 dependencies {

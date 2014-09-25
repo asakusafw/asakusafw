@@ -133,8 +133,9 @@
         new OperatorTestEnvironment("conf/asakusa-test-resources.xml");
 
 ここに指定する位置は、クラスパス上の位置です。
-特に指定せずに ``OperatorTestEnvironment`` クラスをインスタンス化した場合には、
-クラスパスルートの ``asakusa-resources.xml`` というファイルを利用します [#]_ 。
+
+引数を指定せずに ``OperatorTestEnvironment`` クラスをインスタンス化した場合には、クラスパスルートの ``asakusa-resources.xml`` というファイルを利用します。
+このファイルがない場合、最低限の設定のみを自動的に行います。
 
 その他、 ``OperatorTestEnvironment`` クラスの ``configure`` メソッドを利用して
 個々のプラグインの設定を行うことも可能です。
@@ -161,7 +162,6 @@
     演算子メソッドに対する操作は必ず ``reload`` メソッドの呼出し後に記述してください。
 
 ..  [#] 実行時プラグインについては、 :doc:`../administration/deployment-runtime-plugins` を参照してください。
-..  [#] :doc:`../application/gradle-plugin` の手順に従って作成したプロジェクトでは ``src/test/resources/asakusa-resources.xml`` が配置されるため、デフォルトの状態ではこのファイルが利用されます。
 
 .. _testing-userguide-dataflow-test:
 
@@ -697,6 +697,9 @@ Javaオブジェクトによるテストデータ定義
 * 出力データの検証をスキップしてテストドライバAPIの外側で独自のロジックによる検証を行う。
 
 スキップを行う場合、 ``Tester`` クラスが提供する以下のメソッドを利用します。
+
+``void skipValidateCondition(boolean skip)``
+    テスト条件の検証をスキップするかを設定する。
 
 ``void skipCleanInput(boolean skip)``
     入力データのクリーニング(truncate)をスキップするかを設定する。

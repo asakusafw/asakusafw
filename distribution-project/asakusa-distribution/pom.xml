@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.7-SNAPSHOT</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
@@ -39,6 +39,7 @@
 								<descriptor>src/main/resources/assemblies/prod-thundergate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/prod-windgate.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-windgate-retryable-plugin.xml</descriptor>
+								<descriptor>src/main/resources/assemblies/ext-directio-hive-plugin.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-yaess-jobqueue-plugin.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-cleaner.xml</descriptor>
 								<descriptor>src/main/resources/assemblies/ext-experimental-shell-script.xml</descriptor>
@@ -169,6 +170,13 @@
 			<artifactId>asakusa-directio-tools</artifactId>
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
+		</dependency>
+
+        <!-- Direct I/O Hive -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-hive-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- YAESS -->
@@ -308,6 +316,21 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons.logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-exec</artifactId>
+			<version>${hive.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

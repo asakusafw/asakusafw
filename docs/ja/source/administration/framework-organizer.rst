@@ -1,6 +1,18 @@
-=============================
-Framework Organizer利用ガイド
-=============================
+===================================
+Maven Framework Organizer利用ガイド
+===================================
+
+..  warning::
+    Asakusa Framework バージョン ``0.7.0`` 以降では、
+    本書で説明するMavenを使ったデプロイメントは非推奨となっています。
+    
+    バージョン ``0.7.0`` からはGradleを利用してデプロイメントを行うことを推奨しています。
+    詳しくは以下のドキュメントを参照してください。
+    
+    * :doc:`../application/gradle-plugin`
+    * :doc:`../application/migration-guide`
+    * :doc:`deployment-guide`
+
 この文書では、Asakusa Frameworkの構成ツールであるFramework Organizerについて説明します。
 
 Framework Organizerを使ってAsakusa Frameworkのデプロイメントメントアーカイブを生成する方法、及び開発環境にAsakusa Frameworkをインストールする方法などを説明します。
@@ -29,7 +41,7 @@ Framework Organizerのインストール
 =================================
 Framework Organizer は以下からダウンロードします。
 
-* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.6.2.tar.gz
+* http://www.asakusafw.com/download/framework-organizer/asakusafw-organizer-0.7.0.tar.gz
 
 ダウンロードが完了したら、任意のディレクトリでFramework Organizerを展開します。
 
@@ -67,7 +79,7 @@ Framework Organizerの標準構成では、以下のデプロイメントアー�
     * - ``asakusafw-${asakusafw-version}-dev.tar.gz``
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。Framework Organizerに対して ``antrun:run`` ゴールを実行することによって、このアーカイブを開発環境にインストールする。
     * - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
 
 ..  note::
     WindGate向けのデプロイメントアーカイブ ``asakusafw-${asakusafw-version}-windgate.tar.gz`` には Direct I/O も含まれているため、Direct I/Oを使う運用環境に対しても、このアーカイブを利用することができます。
@@ -82,14 +94,14 @@ Asakusa Frameworkのバージョン指定はFramework Organizerの ``pom.xml`` �
 pom.xml を変更する
 ~~~~~~~~~~~~~~~~~~
 ``pom.xml`` を編集する場合、 ``properties`` 要素のサブ要素として指定されている ``asakusafw.version`` の内容を変更します。
-以下は、 ``asakusafw.version`` に Asakusa Frameworkのバージョン ``0.6.2`` を指定する例です。
+以下は、 ``asakusafw.version`` に Asakusa Frameworkのバージョン ``0.7.0`` を指定する例です。
 
 ..  code-block:: xml
    
     ...
      
 	<properties>
-		<asakusafw.version>0.6.2</asakusafw.version>
+		<asakusafw.version>0.7.0</asakusafw.version>
 	
     ...
 
@@ -97,12 +109,12 @@ pom.xml を変更する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``mvn`` コマンドのパラメータで指定する場合、 ``-D`` オプションに続いてプロパティキーとその値を指定します。
 
-以下は、Asakusa Framework のバージョン ``0.6.2`` で試験的に提供している、Hadoop2系で利用するためのAsakusa Frameworkバージョンを指定する例です [#]_ 。
+以下は、Asakusa Framework のバージョン ``0.7.0`` で試験的に提供している、Hadoop2系で利用するためのAsakusa Frameworkバージョンを指定する例です [#]_ 。
 
 ..  code-block:: sh
      
     cd asakusafw-organizer
-    mvn package -Dasakusafw.version=0.6.2-hadoop2
+    mvn package -Dasakusafw.version=0.7.0-hadoop2
 
 ..  [#] Hadoop2系でAsakusa Frameworkを利用する方法について詳しくは :doc:`deployment-hadoop2` を参照してください。
 
@@ -124,13 +136,13 @@ Framework Organizerで指定することが出来るデプロイメントアー�
       - Asakusa Frameworkを開発環境に展開するためのアーカイブ。後述の ``antrun:run`` ゴールを実行することによって開発環境にインストールする。
     * - ``prod-windgate``
       - ``asakusafw-${asakusafw-version}-windgate.tar.gz``
-      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-windgate` を参照してください。
+      - Asakusa FrameworkとWindGateを運用環境に展開するためのアーカイブ。
     * - ``prod-thundergate``
       - ``asakusafw-${asakusafw-version}-prod-thundergate.tar.gz``
-      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-thundergate` を参照してください。
+      - Asakusa FrameworkとThunderGateを運用環境に展開するためのアーカイブ。
     * - ``prod-directio``
       - ``asakusafw-${asakusafw-version}-directio.tar.gz``
-      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。詳しくは :doc:`../administration/deployment-with-directio` を参照してください。
+      - Asakusa Frameworkを運用環境に展開するためのアーカイブ。
 
 生成するデプロイメントアーカイブを指定するには、Framework Organizerの ``pom.xml`` に対して ``maven-assembly-plugin`` のプラグインの定義にデプロイメントアーカイブ生成用の設定を追加します。
 
@@ -215,7 +227,7 @@ Asakusa Frameworkのバージョンを指定してインストールする
 ..  code-block:: sh
     
     cd asakusafw-organizer
-    mvn antrun:run -Dasakusafw.version=0.6.2-hadoop2
+    mvn antrun:run -Dasakusafw.version=0.7.0-hadoop2
 
 コマンドパラメータでバージョンを指定する場合も、
 デプロイメントアーカイブの生成とAsakusa Frameworkのインストールを同時に行うことができます。
@@ -223,7 +235,7 @@ Asakusa Frameworkのバージョンを指定してインストールする
 ..  code-block:: sh
     
     cd asakusafw-organizer
-    mvn package antrun:run -Dasakusafw.version=0.6.2-hadoop2
+    mvn package antrun:run -Dasakusafw.version=0.7.0-hadoop2
 
 
 ThunderGateを利用する場合の追加設定

@@ -76,7 +76,7 @@ public class AbstractSshHadoopFsMirrorTest {
     private final SshProfile profile;
     {
         Map<String, String> emptyMap = Collections.emptyMap();
-        profile = new SshProfile("dummy", "dummy", "user", "host", 0, "id", "pass", null, emptyMap) {
+        profile = new SshProfile("dummy", "dummy", "user", "host", 0, "id", "pass", emptyMap) {
             @Override
             public String getGetCommand() {
                 return "get";

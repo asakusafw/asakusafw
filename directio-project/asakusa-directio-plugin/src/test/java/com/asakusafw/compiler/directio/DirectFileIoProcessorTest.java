@@ -294,6 +294,22 @@ public class DirectFileIoProcessorTest {
     }
 
     /**
+     * invalid input base-path.
+     */
+    @Test
+    public void invalid_input_basePath_wildcard() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn(
+                "in1",
+                new Input(Line1.class, format, "input/*", "input.txt", DataSize.UNKNOWN));
+        Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
      * invalid input resource.
      */
     @Test
@@ -351,6 +367,21 @@ public class DirectFileIoProcessorTest {
                 "in1",
                 new Input(Line1.class, VoidFormat.class, "input", "*", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
+
+        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, is(nullValue()));
+    }
+
+    /**
+     * invalid output base-path.
+     */
+    @Test
+    public void invalid_output_basePath_wildcard() {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
+        Out<Line1> out = flow.createOut("out1",
+                new Output(Line1.class, format, "output/*", "output.txt", "position"));
 
         FlowDescription desc = new IdentityFlow<Line1>(in, out);
         JobflowInfo info = compile(flow, desc);

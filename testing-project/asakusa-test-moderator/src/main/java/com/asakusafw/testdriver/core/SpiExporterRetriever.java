@@ -129,7 +129,7 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
                 description));
     }
 
-    private <T extends ExporterDescription, V> DataModelSource createSource0(
+    private <T extends ExporterDescription> DataModelSource createSource0(
             DataModelDefinition<?> definition,
             ExporterRetriever<T> retriever,
             ExporterDescription description,

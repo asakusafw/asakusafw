@@ -113,6 +113,7 @@ public class ResultOutput<T> implements Result<T> {
     public void add(T result) {
         try {
             writer.write(getKey(result), result);
+            context.progress();
             records++;
         } catch (Exception e) {
             throw new Result.OutputException(e);

@@ -38,7 +38,7 @@ public class CacheInfo {
     /**
      * The version of this cache feature.
      */
-    public static final String FEATURE_VERSION = "0.1.0";
+    public static final String FEATURE_VERSION = "0.2.0";
 
     /**
      * The key name of feature version.

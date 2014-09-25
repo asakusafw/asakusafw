@@ -771,7 +771,7 @@ public class ExportDataCopy {
                 // ユーザー変数をセットする
                 try {
                     stmt = conn.prepareStatement(setUserParamSql);
-                    long param = Long.valueOf(sid) - 1L;
+                    long param = Long.parseLong(sid) - 1L;
                     stmt.setLong(1, param);
                     copyCount = DBConnection.executeUpdate(
                             stmt,

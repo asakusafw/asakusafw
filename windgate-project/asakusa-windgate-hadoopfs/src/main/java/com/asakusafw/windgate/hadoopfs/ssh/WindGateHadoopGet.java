@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,11 +52,7 @@ import com.asakusafw.windgate.hadoopfs.ssh.FileList.Writer;
  * @since 0.2.2
  * @version 0.4.0
  */
-public class WindGateHadoopGet {
-
-    static {
-        StdioHelper.load();
-    }
+public class WindGateHadoopGet extends WindGateHadoopBase {
 
     static final WindGateLogger WGLOG = new HadoopFsLogger(WindGateHadoopGet.class);
 
@@ -182,7 +179,11 @@ public class WindGateHadoopGet {
                 try {
                     next.input.close();
                 } catch (IOException e) {
-                    // ignored
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "Failed to dispose input: {0}",
+                                next.status.getPath()), e);
+                    }
                 }
             }
         }

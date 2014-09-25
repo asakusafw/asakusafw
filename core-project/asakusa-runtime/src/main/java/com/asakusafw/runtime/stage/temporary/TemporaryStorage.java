@@ -44,10 +44,15 @@ import com.asakusafw.runtime.io.sequencefile.SequenceFileUtil;
 /**
  * Access to the temporary storage.
  * @since 0.2.5
+ * @version 0.7.0
  */
 public final class TemporaryStorage {
 
     static final Log LOG = LogFactory.getLog(TemporaryStorage.class);
+
+    private static final int OUTPUT_INIT_BUFFER_SIZE = 300 * 1024;
+
+    private static final int OUTPUT_PAGE_SIZE = 256 * 1024;
 
     /**
      * Resolves the raw path pattern into the concrete path list.
@@ -113,6 +118,9 @@ public final class TemporaryStorage {
                     path,
                     fs.getUri()));
         }
+        if (Writable.class.isAssignableFrom(dataType)) {
+            return (ModelInput<V>) new TemporaryFileInput<Writable>(fs.open(path), 0);
+        }
         SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
         return (ModelInput<V>) new SequenceFileModelInput<Writable>(reader);
     }
@@ -146,6 +154,9 @@ public final class TemporaryStorage {
         if (input == null) {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
+        if (Writable.class.isAssignableFrom(dataType)) {
+            return (ModelInput<V>) new TemporaryFileInput<Writable>(input, 0);
+        }
         SequenceFile.Reader reader = SequenceFileUtil.openReader(input, status, conf);
         return (ModelInput<V>) new SequenceFileModelInput<Writable>(reader, input);
     }
@@ -160,6 +171,7 @@ public final class TemporaryStorage {
      * @throws IOException if failed to open output
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
+    @SuppressWarnings("unchecked")
     public static <V> ModelOutput<V> openOutput(
             Configuration conf,
             Class<V> dataType,
@@ -179,6 +191,12 @@ public final class TemporaryStorage {
                     "Opening temporary output: {0} (fs={1})",
                     path,
                     fs.getUri()));
+        }
+        if (Writable.class.isAssignableFrom(dataType)) {
+            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+                    fs.create(path, true),
+                    dataType.getName(),
+                    OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
         SequenceFile.Writer out = SequenceFile.createWriter(
                 fs,
@@ -200,6 +218,7 @@ public final class TemporaryStorage {
      * @throws IOException if failed to open output
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
+    @SuppressWarnings("unchecked")
     public static <V> ModelOutput<V> openOutput(
             Configuration conf,
             Class<V> dataType,
@@ -220,6 +239,12 @@ public final class TemporaryStorage {
                     "Opening temporary output: {0} (fs={1})",
                     path,
                     fs.getUri()));
+        }
+        if (Writable.class.isAssignableFrom(dataType)) {
+            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+                    fs.create(path, true),
+                    dataType.getName(),
+                    OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
         SequenceFile.Writer out;
         if (compressionCodec == null) {
@@ -271,6 +296,7 @@ public final class TemporaryStorage {
      * @throws IOException if failed to open output
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
+    @SuppressWarnings("unchecked")
     public static <V> ModelOutput<V> openOutput(
             Configuration conf,
             Class<V> dataType,
@@ -284,6 +310,12 @@ public final class TemporaryStorage {
         }
         if (output == null) {
             throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
+        }
+        if (Writable.class.isAssignableFrom(dataType)) {
+            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+                    output,
+                    dataType.getName(),
+                    OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
         SequenceFile.Writer out = SequenceFileUtil.openWriter(
                 output, conf, NullWritable.class, dataType, compressionCodec);

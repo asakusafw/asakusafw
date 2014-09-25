@@ -252,7 +252,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
 
         Map<String, String> conf = map();
         conf.put("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
-        conf.put(JschProcessExecutor.KEY_USER, "${USER}");
+        conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
@@ -277,7 +277,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
                 map());
 
         HadoopScriptHandler handler = handler(
-                JschProcessExecutor.KEY_USER, "${USER}",
+                JschProcessExecutor.KEY_USER, System.getProperty("user.name"),
                 JschProcessExecutor.KEY_HOST, "localhost",
                 JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         ExecutionContext context = new ExecutionContext(
@@ -352,7 +352,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
 
     private HadoopScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
-        conf.put(JschProcessExecutor.KEY_USER, "${USER}");
+        conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(

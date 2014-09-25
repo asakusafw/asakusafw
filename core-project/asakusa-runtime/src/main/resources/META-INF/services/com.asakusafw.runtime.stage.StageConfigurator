@@ -1,1 +1,2 @@
 com.asakusafw.runtime.stage.optimizer.ReducerSimplifierConfigurator
+com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator

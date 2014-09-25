@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.7-SNAPSHOT</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
@@ -44,6 +44,11 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>${hadoop.artifact.id}</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial.snappy</groupId>
+			<artifactId>snappy-java</artifactId>
+			<version>${snappy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>

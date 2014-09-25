@@ -1,8 +1,8 @@
 ======================
 WindGateユーザーガイド
 ======================
+
 この文書では、WindGateの利用方法について紹介します。
-WindGateの導入方法については :doc:`../administration/deployment-with-windgate` を参照してください。
 
 WindGateプロファイル
 ====================
@@ -178,7 +178,7 @@ WindGateは二つのリソースの間でデータを転送するツールです
 ``process.basic.retryInterval`` が指定されていない場合は即座に再実行します。
 
 なお、このプロセスを利用するには、プラグインライブラリに ``asakusa-windgate-retryable`` の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+詳しくは `プラグインライブラリの管理`_ を参照してください。
 
 Hadoopクラスタの設定
 --------------------
@@ -201,25 +201,22 @@ WindGateを起動したコンピュータ上のHadoopを利用するには、 ``
       - :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider`
     * - ``resource.hadoop.basePath``
       - 転送先のベースパス (省略可)
-    * - ``resource.hadoop.compression``
-      - 転送時に利用する圧縮コーデッククラス名 (省略可)
 
 ``resource.hadoop.basePath`` は転送先のベースパスで、省略時はHadoopのデフォルト設定を利用します。
 URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシステム上のパスを指定できます。
 
-``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
-この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
-
 上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+詳しくは `プラグインライブラリの管理`_ を参照してください。
 
 ..  note::
     通常の利用方法では、 ``resource.hadoop.basePath`` を設定する必要はありません。
     既定値以外のファイルシステムを利用する場合などに利用することを想定しています。
 
-..  [#] ``org.apache.hadoop.io.compress.DefaultCodec`` などが標準で用意されています
+..  attention::
+    Asakusa Framework ``0.7.0`` より、設定 ``resource.hadoop.compression`` は利用できなくなりました。
+    転送時の圧縮はフレームワークが規定する内部の形式を利用するようになります。
 
 Hadoopを利用する際の環境変数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -227,6 +224,8 @@ Hadoopクラスタと通信するリソースを利用するには、WindGateの
 WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
 
 環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
+
+.. _windgate-userguide-ssh-hadoop:
 
 SSH経由でリモートのHadoopを利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,8 +250,6 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
       - ローカルの秘密鍵の位置
     * - ``resource.hadoop.passPhrase``
       - 秘密鍵のパスフレーズ
-    * - ``resource.hadoop.compression``
-      - 転送時に利用する圧縮コーデッククラス名 (省略可)
     * - ``resource.hadoop.env.ASAKUSA_HOME``
       - ログイン先の Asakusa Framework のインストール先
     * - ``resource.hadoop.env.<name>``
@@ -260,19 +257,20 @@ WindGateからリモートコンピュータにSSHで接続し、そこにイン
 
 上記の設定のうち、先頭の ``resource.hadoop`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
-`同一環境上のHadoopを利用する`_ 際と同様に、 ``resource.hadoop.compression`` には、 ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します。
-この項目を省略した場合、非圧縮のシーケンスファイルを配置します。
-
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-hadoopfs`` 、
 および ``windgate/lib`` ディレクトリに JSch [#]_ の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+詳しくは `プラグインライブラリの管理`_ を参照してください。
 
-リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です (SequenceFileの設定などを利用します)。
+リモートと通信する際に、SSHで接続する元でもHadoopの設定が必要です。
 必要な環境変数については `Hadoopを利用する際の環境変数`_ を参照してください。
 
 ..  attention::
     Asakusa Framework ``0.2.x`` 以前の設定項目 ``resource.hadoop.target`` はバージョン ``0.4.0`` より非推奨になりました。
     代わりに ``resource.hadoop.env.ASAKUSA_HOME`` にログイン先の Asakusa Framework のインストール先を指定してください。
+
+..  attention::
+    Asakusa Framework ``0.7.0`` より、設定 ``resource.hadoop.compression`` は利用できなくなりました。
+    転送時の圧縮はフレームワークが規定する内部の形式を利用するようになります。
 
 ..  [#] http://www.jcraft.com/jsch/ (Version 0.1.45以上)
 
@@ -329,7 +327,7 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
 上記の設定のうち、先頭の ``resource.local`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-stream`` の追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+詳しくは `プラグインライブラリの管理`_ を参照してください。
 
 ..  warning::
     開発環境では、ベースパスに壊れてもよいディレクトリを指定してください。
@@ -391,7 +389,7 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
 上記の設定のうち、先頭の ``resource.jdbc`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
 なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
-詳しくは `プラグインライブラリの管理`_ や :doc:`../administration/deployment-with-windgate` を参照してください。
+詳しくは `プラグインライブラリの管理`_ を参照してください。
 
 ..  [#] この値は ``Statement.setFetchSize()`` に設定します。
     PostgreSQL等ではこの設定によってカーソルを利用するモードになります。
@@ -495,6 +493,17 @@ WindGateの様々な機能は、プラグイン機構を利用して実現して
 標準的なものはWindGate導入時に自動的にプラグインが追加されますが、
 その他のプラグインは拡張モジュールとして提供されるため、
 必要に応じて拡張モジュールを導入してください。
+
+..  note::
+    Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのWindGate用プラグインライブラリとして、
+    あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
+    
+    * ``asakusa-windgate-stream`` : ローカルのファイルシステムと連携するためのプラグイン
+    * ``asakusa-windgate-jdbc`` : JDBC経由でDBMSと連携するためのプラグイン
+    * ``asakusa-windgate-hadoopfs`` : Hadoopと連携するためのプラグイン
+    
+WindGateを含むAsakusa Frameworkの運用環境の構築については、
+:doc:`../administration/deployment-guide` を参照してください。
 
 拡張モジュールの一覧やその導入方法については、 :doc:`../administration/deployment-extension-module` を参照してください。
 

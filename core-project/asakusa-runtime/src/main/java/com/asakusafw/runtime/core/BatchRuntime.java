@@ -43,7 +43,7 @@ public final class BatchRuntime {
     public static void require(int major, int minor) {
         if (major != VERSION_MAJOR || minor != VERSION_MINOR) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Inconsistent version: runtime-version={0}, buildtime-version={2}",
+                    "Inconsistent version: runtime-version={0}, buildtime-version={1}",
                     toString(VERSION_MAJOR, VERSION_MINOR),
                     toString(major, minor)));
         }

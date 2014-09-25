@@ -1,6 +1,17 @@
 ===========================
 Mavenアーキタイプ利用ガイド
 ===========================
+
+..  warning::
+    Asakusa Framework バージョン ``0.7.0`` 以降では、
+    本書で説明するMavenを使ったアプリケーション開発は非推奨となっています。
+    
+    バージョン ``0.7.0`` からはGradleを利用してアプリケーション開発を行うことを推奨しています。
+    詳しくは以下のドキュメントを参照してください。
+    
+    * :doc:`gradle-plugin`
+    * :doc:`migration-guide`
+
 この文書では、Asakusa Frameworkが提供しているMavenアーキタイプを使って、アプリケーション開発用のテンプレートからプロジェクトを作成し、アプリケーション開発環境を準備する手順を説明します。
 
 また、作成したプロジェクト上でAsakusa Frameworkが提供するモデル生成ツールやAsakusa DSLコンパイラを使用する方法、およびこれらのツールに関する設定方法を説明します。
@@ -49,12 +60,12 @@ Asakusa Frameworkが公開しているMavenアーキタイプカタログを指�
 
 Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを定義したアーキタイプカタログを以下のURLで公開しています。
 
-* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6-release.xml
+* http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7-release.xml
 
 ..  note::
     Asakusa Frameworkが公開しているテスト用のバージョン (スナップショットビルドやRC版）を使用したい場合は、アーキタイプカタログURLを以下のURLに変更します。
 
-    * http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6-develop.xml
+    * http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7-develop.xml
 
 ..  note::
     過去バージョンを含むすべてのバージョンを参照したい場合はアーキタイプカタログURLを以下のURLに変更します。 
@@ -65,25 +76,23 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
 ..  code-block:: sh
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.6-release.xml
+    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7-release.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.6.2`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.7.0`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
 
 ..  code-block:: sh
 
     ...
     Choose archetype:
-    1: http://.../archetype-catalog-0.6-release.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://.../archetype-catalog-0.6-release.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://.../archetype-catalog-0.6-release.xml -> com.asakusafw:asakusa-archetype-directio (-)
+    1: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-windgate (-)
+    2: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
+    3: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-directio (-)
     Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
 
     ...
     Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.6.0
-    2: 0.6.1
-    3: 0.6.2
-    Choose a number: 3: 3 (<-3を入力)
+    1: 0.7.0
+    Choose a number: 1: 1 (<-1を入力)
 
 
 ..  [#] Mavenアーキタイププラグインはアーキタイプカタログを利用して対話式にプロジェクトを作成するほかに、必要なパラメータを指定して非対話式にプロジェクトを作成することも出来ます。詳しくは、Mavenアーキタイププラグインのドキュメントなどを参照してください。
@@ -199,8 +208,6 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
       - 演算子DSLのテスト用ソースディレクトリ
     * - ``src/test/resources/logback-test.xml``
       - ビルド/テスト実行時に使用されるログ定義ファイル
-    * - ``src/test/resources/asakusa-resources.xml``
-      - テスト実行時に使用される実行時プラグイン設定ファイル
     * - ``src/test/resources/${package}/batch``
       - バッチDSLのテストデータ用ディレクトリ
     * - ``src/test/resources/${package}/flowpart``
@@ -340,9 +347,7 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 
 ``${artifactid}-batchapps-${version}.jar`` はHadoopクラスタ上でjarファイルを展開してデプロイします。Hadoopクラスタへのアプリケーションのデプロイについては以下を参照してください。
 
-* :doc:`../administration/deployment-with-directio`
-* :doc:`../administration/deployment-with-windgate`
-* :doc:`../administration/deployment-with-thundergate`
+* :doc:`../administration/deployment-guide`
 
 ..  warning::
     バッチコンパイルを実行すると、 ``target`` ディレクトリ配下には ``${artifactid}-batchapps-${version}.jar`` の他に ``${artifactid}-${version}.jar`` , ``${artifactid}-${version}-sources.jar`` という名前のjarファイルも同時に作成されます。
@@ -660,7 +665,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.6.2</asakusafw.version>
+    <asakusafw.version>0.7.0</asakusafw.version>
 
 ..  note::
     アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。

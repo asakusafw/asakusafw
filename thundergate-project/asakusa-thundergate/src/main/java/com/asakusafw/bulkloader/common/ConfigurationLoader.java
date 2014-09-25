@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
 /**
  * 設定を読み込んで保持するクラス。
@@ -355,6 +356,7 @@ public final class ConfigurationLoader {
             prop.setProperty(Constants.PROP_KEY_LOG_CONF_PATH, resolvePath(Constants.PROP_DEFAULT_LOG_CONF_PATH));
         }
     }
+
     /**
      * ファイルからプロパティを読み込む。
      * @param propertyPaths 読み込むプロパティファイル
@@ -364,10 +366,18 @@ public final class ConfigurationLoader {
     private static void loadProperties(List<String> propertyPaths) throws IOException {
         assert propertyPaths != null;
         Properties properties = loadRawProperties(propertyPaths);
-
-        VariableTable variables = new VariableTable();
-        variables.defineVariables(System.getenv());
+        VariableTable variables = new VariableTable(RedefineStrategy.IGNORE);
+        putAll(variables, sysProp);
+        putAll(variables, env);
         prop.putAll(resolveProperties(variables, properties));
+    }
+
+    private static void putAll(VariableTable variables, Map<?, ?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                variables.defineVariable((String) entry.getKey(), (String) entry.getValue());
+            }
+        }
     }
 
     private static Properties loadRawProperties(List<String> propertyPaths) throws IOException {

@@ -39,10 +39,12 @@ import com.asakusafw.testdriver.core.DataModelSink;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.DifferenceSink;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
+import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestRule;
@@ -295,6 +297,7 @@ public class FlowDriverOutputTest {
     @Test
     public void verify_iterable_verifier() {
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+
         mock.verify(list("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -306,6 +309,53 @@ public class FlowDriverOutputTest {
     public void verify_privider_verifier() {
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
         mock.verify(provider("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#filter(DataModelSourceFilter)}.
+     */
+    @Test
+    public void filter() {
+        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        DataModelSourceFilter filter = new DataModelSourceFilter() {
+            @Override
+            public DataModelSource apply(final DataModelSource source) {
+                return new DataModelSource() {
+                    @Override
+                    public DataModelReflection next() throws IOException {
+                        DataModelReflection next = source.next();
+                        if (next == null || DEFINITION.toObject(next).toString().equals("Hello2")) {
+                            return next;
+                        }
+                        return next;
+                    }
+                    @Override
+                    public void close() throws IOException {
+                        source.close();
+                    }
+                };
+            }
+        };
+        mock.filter(filter);
+        mock.verify(list("Hello1", "Hello3"), "data/dummy");
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#transform(ModelTransformer)}.
+     */
+    @Test
+    public void transform() {
+        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3!"));
+        ModelTransformer<Text> transformer = new ModelTransformer<Text>() {
+            @Override
+            public void transform(Text model) {
+                model.set(model.toString() + "!");
+            }
+        };
+        mock.transform(transformer);
+        mock.verify(list("Hello1!", "Hello2!", "Hello3!"), "data/dummy");
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
 

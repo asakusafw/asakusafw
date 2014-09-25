@@ -15,6 +15,8 @@
  */
 package com.asakusafw.testdriver;
 
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -39,7 +41,7 @@ import com.asakusafw.utils.collections.Maps;
 public OperatorTestEnvironment resource = new OperatorTestEnvironment();
 </code></pre>
  * <p>
- * 上記のように記述することで、クラスパス上の{@code asakusa-resources.xml}というファイルを読みだし、
+ * 上記のように記述することで、クラスパス上の{@code asakusa-resources.xml}というファイルがあれば読みだし、
  * 各種プラグインが提供するクラスを利用できるようになる。
  * </p>
  * <p>
@@ -65,6 +67,8 @@ public void sometest() {
     &lt;test code&gt;
 }
 </code></pre>
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class OperatorTestEnvironment extends ExternalResource {
 
@@ -72,9 +76,17 @@ public class OperatorTestEnvironment extends ExternalResource {
         TestingEnvironmentConfigurator.initialize();
     }
 
+    /**
+     * The embedded default configuration file.
+     * @since 0.7.0
+     */
+    static final String DEFAULT_CONFIGURATION_PATH = "default-asakusa-resources.xml";
+
     private RuntimeResourceManager manager;
 
     private final String configurationPath;
+
+    private final boolean explicitConfigurationPath;
 
     private final Map<String, String> batchArguments;
 
@@ -86,7 +98,7 @@ public class OperatorTestEnvironment extends ExternalResource {
      * インスタンスを生成する。
      */
     public OperatorTestEnvironment() {
-        this(RuntimeResourceManager.CONFIGURATION_FILE_NAME);
+        this(RuntimeResourceManager.CONFIGURATION_FILE_NAME, false);
     }
 
     /**
@@ -95,10 +107,15 @@ public class OperatorTestEnvironment extends ExternalResource {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public OperatorTestEnvironment(String configurationPath) {
+        this(configurationPath, true);
+    }
+
+    private OperatorTestEnvironment(String configurationPath, boolean explicit) {
         if (configurationPath == null) {
             throw new IllegalArgumentException("configurationPath must not be null"); //$NON-NLS-1$
         }
         this.configurationPath = configurationPath;
+        this.explicitConfigurationPath = explicit;
         this.extraConfigurations = Maps.create();
         this.batchArguments = Maps.create();
         this.dirty = false;
@@ -193,7 +210,17 @@ public class OperatorTestEnvironment extends ExternalResource {
      */
     protected Configuration createConfig() {
         Configuration conf = ConfigurationFactory.getDefault().newInstance();
-        conf.addResource(configurationPath);
+        URL resource = conf.getClassLoader().getResource(configurationPath);
+        if (resource == null && explicitConfigurationPath == false) {
+            // if implicit configuration file is not found, we use the embedded default configuration file
+            resource = OperatorTestEnvironment.class.getResource(DEFAULT_CONFIGURATION_PATH);
+        }
+        if (resource == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "演算子テスト用の設定ファイルが見つかりません: {0}",
+                    configurationPath));
+        }
+        conf.addResource(resource);
         return conf;
     }
 

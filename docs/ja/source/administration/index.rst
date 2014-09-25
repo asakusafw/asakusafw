@@ -5,23 +5,13 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 
 運用環境のデプロイ
 ==================
-
-Asakusa Frameworkが提供する外部システム連携の各モジュールごとに運用環境のデプロイ方法を示したドキュメントです。
-
-* :doc:`deployment-with-directio`
-* :doc:`deployment-with-windgate`
-* :doc:`deployment-with-thundergate`
+* :doc:`deployment-guide`
+* :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
-* :doc:`migration-guide`
-
-追加モジュールのデプロイ
-========================
-
-Asakusa Frameworkが提供する追加モジュールを運用環境にデプロイする方法を示したドキュメントです。
-
-* :doc:`deployment-extension-module`
+* :doc:`configure-task-optimization`
+* :doc:`configure-library-cache`
 * :doc:`deployment-runtime-plugins`
-* :doc:`deployment-cleaner`
+* :doc:`migration-guide`
 
 運用ツールの利用
 ================
@@ -35,17 +25,31 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
 
-* :doc:`deployment-hadoop2`
-
 クラウドプラットフォーム
 ------------------------
 
-* :sandbox:`Amazon EMR上でAsakusa Frameworkを利用する <administration/asakusa-on-emr.html>` (Asakusa Framework Sandbox Document)
+* :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox Document)
+
+Hadoopエコシステム連携
+----------------------
+
+* :doc:`../sandbox/asakusa-with-hive` (Asakusa Framework Sandbox Document)
 
 その他
 ======
 
 * :doc:`generate-deployment-archive-from-source`
+
+非推奨機能
+==========
+
+Asakusa Framework バージョン |version| において、以下のドキュメントで説明する機能は非推奨となっています。
+
+* :doc:`framework-organizer`
+* :doc:`deployment-cleaner`
+
+..  attention::
+    非推奨となった機能のうち、その多くは、現在のバージョンで代替となる推奨機能が提供されています。
 
 関連するドキュメント
 ====================
@@ -53,16 +57,15 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 ..  toctree::
     :maxdepth: 1
 
-    deployment-with-directio
-    deployment-with-windgate
-    deployment-with-thundergate
-    framework-organizer
+    deployment-guide
+    deployment-architecture
     configure-hadoop-parameters
-    migration-guide
-    deployment-extension-module
+    configure-task-optimization
+    configure-library-cache
     deployment-runtime-plugins
-    deployment-cleaner
+    migration-guide
     utility-tool-user-guide
-    deployment-hadoop2
     generate-deployment-archive-from-source
+    framework-organizer
+    deployment-cleaner
 

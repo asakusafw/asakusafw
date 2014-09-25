@@ -72,7 +72,6 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
      * </p>
      * @param other 対象の値
      */
-    @SuppressWarnings("deprecation")
     public final void min(V other) {
         if (this == other) {
             return;
@@ -92,7 +91,6 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
      * </p>
      * @param other 対象の値
      */
-    @SuppressWarnings("deprecation")
     public final void max(V other) {
         if (this == other) {
             return;

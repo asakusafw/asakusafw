@@ -19,12 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.fs.BlockLocation;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -32,6 +30,7 @@ import org.apache.hadoop.fs.Path;
 import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
@@ -47,7 +46,7 @@ import com.asakusafw.runtime.io.ModelOutput;
 /**
  * An implementation of {@link DirectDataSource} using {@link FileSystem}.
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.7.0
  */
 public class HadoopDataSourceCore implements DirectDataSource {
 
@@ -73,8 +72,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
     @Override
     public <T> List<DirectInputFragment> findInputFragments(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
@@ -85,13 +83,13 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     resourcePattern));
         }
         FilePattern pattern = validate(resourcePattern);
-        FragmentableDataFormat<T> sformat = validateFragmentable(format);
         HadoopDataSourceProfile p = profile;
         FileSystem fs = p.getFileSystem();
         Path root = p.getFileSystemPath();
         Path base = append(root, basePath);
+        Path temporary = p.getTemporaryFileSystemPath();
         List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
-        stats = filesOnly(stats);
+        stats = filesOnly(stats, temporary);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -109,42 +107,26 @@ public class HadoopDataSourceCore implements DirectDataSource {
                         stat.getLen()));
             }
         }
-        long minSize = p.getMinimumFragmentSize(sformat);
-        long prefSize = p.getPreferredFragmentSize(sformat);
-        boolean combineBlocks = p.isCombineBlocks();
-        boolean splitBlocks = p.isSplitBlocks();
-        Path temporary = p.getTemporaryFileSystemPath();
-        FragmentComputer optimizer = new FragmentComputer(minSize, prefSize, combineBlocks, splitBlocks);
-        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
-        for (FileStatus stat : stats) {
-            if (isIn(stat, temporary)) {
-                continue;
-            }
-            String path = stat.getPath().toString();
-            long fileSize = stat.getLen();
-            List<BlockInfo> blocks = toBlocks(stat);
-            if (LOG.isTraceEnabled()) {
-                for (BlockInfo block : blocks) {
-                    LOG.trace(MessageFormat.format(
-                            "Original BlockInfo (path={0}, start={1}, end={2}, hosts={3})",
-                            path,
-                            block.start,
-                            block.end,
-                            block.hosts == null ? null : Arrays.toString(block.hosts)));
-                }
-            }
-            List<DirectInputFragment> fragments = optimizer.computeFragments(path, fileSize, blocks);
-            if (LOG.isTraceEnabled()) {
-                for (DirectInputFragment fragment : fragments) {
-                    LOG.trace(MessageFormat.format(
-                            "Fragment found (path={0}, offset={1}, size={2}, owners={3})",
-                            fragment.getPath(),
-                            fragment.getOffset(),
-                            fragment.getSize(),
-                            fragment.getOwnerNodeNames()));
-                }
-            }
-            results.addAll(fragments);
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
+        List<DirectInputFragment> results;
+        if (format instanceof StripedDataFormat<?>) {
+            StripedDataFormat.InputContext context = new StripedDataFormat.InputContext(
+                    dataType,
+                    stats, fs,
+                    p.getMinimumFragmentSize(), p.getPreferredFragmentSize(),
+                    p.isSplitBlocks(), p.isCombineBlocks());
+            StripedDataFormat<T> sformat = (StripedDataFormat<T>) format;
+            results = sformat.computeInputFragments(context);
+        } else if (format instanceof FragmentableDataFormat<?>) {
+            FragmentableDataFormat<T> sformat = (FragmentableDataFormat<T>) format;
+            FragmentComputer optimizer = new FragmentComputer(
+                    p.getMinimumFragmentSize(sformat), p.getPreferredFragmentSize(sformat),
+                    p.isCombineBlocks(), p.isSplitBlocks());
+            results = computeInputFragments(optimizer, stats);
+        } else {
+            FragmentComputer optimizer = new FragmentComputer();
+            results = computeInputFragments(optimizer, stats);
         }
 
         if (LOG.isDebugEnabled()) {
@@ -168,31 +150,53 @@ public class HadoopDataSourceCore implements DirectDataSource {
         return false;
     }
 
-    private List<BlockInfo> toBlocks(FileStatus stat) throws IOException {
-        BlockLocation[] locations = profile.getFileSystem().getFileBlockLocations(stat, 0, stat.getLen());
-        List<BlockInfo> results = new ArrayList<BlockInfo>();
-        for (BlockLocation location : locations) {
-            long length = location.getLength();
-            long start = location.getOffset();
-            results.add(new BlockInfo(start, start + length, location.getHosts()));
-        }
-        return results;
-    }
-
-    private List<FileStatus> filesOnly(List<FileStatus> stats) {
+    private List<FileStatus> filesOnly(List<FileStatus> stats, Path temporary) {
         List<FileStatus> results = new ArrayList<FileStatus>();
         for (FileStatus stat : stats) {
-            if (FileSystemCompatibility.isDirectory(stat) == false) {
+            if (FileSystemCompatibility.isDirectory(stat) == false && isIn(stat, temporary) == false) {
                 results.add(stat);
             }
         }
         return results;
     }
 
+    private List<DirectInputFragment> computeInputFragments(
+            FragmentComputer fragmentComputer,
+            List<FileStatus> stats) throws IOException {
+        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
+        for (FileStatus stat : stats) {
+            String path = stat.getPath().toString();
+            long fileSize = stat.getLen();
+            List<BlockInfo> blocks = BlockMap.computeBlocks(profile.getFileSystem(), stat);
+            if (LOG.isTraceEnabled()) {
+                for (BlockInfo block : blocks) {
+                    LOG.trace(MessageFormat.format(
+                            "Original BlockInfo (path={0}, start={1}, end={2}, hosts={3})",
+                            path,
+                            block.getStart(),
+                            block.getEnd(),
+                            block.getHosts()));
+                }
+            }
+            List<DirectInputFragment> fragments = fragmentComputer.computeFragments(path, fileSize, blocks);
+            if (LOG.isTraceEnabled()) {
+                for (DirectInputFragment fragment : fragments) {
+                    LOG.trace(MessageFormat.format(
+                            "Fragment found (path={0}, offset={1}, size={2}, owners={3})",
+                            fragment.getPath(),
+                            fragment.getOffset(),
+                            fragment.getSize(),
+                            fragment.getOwnerNodeNames()));
+                }
+            }
+            results.addAll(fragments);
+        }
+        return results;
+    }
+
     @Override
     public <T> ModelInput<T> openInput(
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
@@ -203,6 +207,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
         HadoopFileFormat<T> fileFormat = convertFormat(format);
         ModelInput<T> input = fileFormat.createInput(
                 dataType,
@@ -225,8 +231,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     @Override
     public <T> ModelOutput<T> openOutput(
             OutputAttemptContext context,
-            Class<? extends T> dataType,
-            DataFormat<T> format,
+            DataDefinition<T> definition,
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
@@ -255,6 +260,8 @@ public class HadoopDataSourceCore implements DirectDataSource {
             fs = profile.getFileSystem();
             attempt = getAttemptOutput(context);
         }
+        DataFormat<T> format = definition.getDataFormat();
+        Class<? extends T> dataType = definition.getDataClass();
         Path file = append(append(attempt, basePath), resourcePath);
         HadoopFileFormat<T> fileFormat = convertFormat(format);
         ModelOutput<T> output = fileFormat.createOutput(dataType, fs, file, counter);
@@ -284,18 +291,6 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     pattern.getClass().getName()));
         }
         return (FilePattern) pattern;
-    }
-
-    private <T> FragmentableDataFormat<T> validateFragmentable(DataFormat<T> format) throws IOException {
-        assert format != null;
-        if ((format instanceof FragmentableDataFormat<?>) == false) {
-            throw new IOException(MessageFormat.format(
-                    "{2} must be a subtype of {1} (path={0})",
-                    profile.getContextPath(),
-                    FragmentableDataFormat.class.getName(),
-                    format.getClass().getName()));
-        }
-        return (FragmentableDataFormat<T>) format;
     }
 
     private <T> HadoopFileFormat<T> convertFormat(DataFormat<T> format) throws IOException {

@@ -14,10 +14,8 @@ Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフト�
 アプリケーション開発用のプロジェクトの作成やビルド、ライブラリの管理などに関するドキュメントです。
 
 * :doc:`gradle-plugin`
-* :doc:`maven-archetype`
-* :doc:`migration-guide`
 * :doc:`sdk-artifact`
-* :doc:`legacy-module-guide`
+* :doc:`migration-guide`
 
 開発ツールの利用
 ================
@@ -32,8 +30,21 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
 
 特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
 
-* :doc:`develop-with-jdk7`
-* :doc:`development-environment-restriction`
+* :doc:`using-hadoop`
+* :doc:`using-jdk`
+
+非推奨機能
+==========
+
+Asakusa Framework バージョン |version| において、以下のドキュメントで説明する機能は非推奨となっています。
+
+* :doc:`gradle-plugin-deprecated`
+* :doc:`maven-archetype`
+* :doc:`legacy-module-guide`
+
+..  attention::
+    非推奨となった機能のうち、その多くは、現在のバージョンで代替となる推奨機能が提供されています。
+    詳しくはドキュメント内の説明を参照してください。
 
 関連するドキュメント
 ====================
@@ -42,12 +53,14 @@ Asakusa Frameworkが提供する開発ツールに関するドキュメントで
     :maxdepth: 1
 
     gradle-plugin
-    maven-archetype
-    migration-guide
     sdk-artifact
-    legacy-module-guide
+    migration-guide
+    previous-migration-guide
     dsl-visualization
     yaess-log-visualization
-    develop-with-jdk7
-    development-environment-restriction
+    using-hadoop
+    using-jdk
+    gradle-plugin-deprecated
+    maven-archetype
+    legacy-module-guide
 

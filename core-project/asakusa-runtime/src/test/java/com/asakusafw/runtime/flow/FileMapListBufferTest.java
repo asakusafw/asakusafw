@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Writable;
 import org.junit.Test;
@@ -90,9 +91,9 @@ public class FileMapListBufferTest {
      */
     @Test
     public void createBigList() {
-        int size = 100000;
-
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        int size = 10000000;
+        long begin = System.currentTimeMillis();
+        ListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
         buf.begin();
         for (int i = 0; i < size; i++) {
             if (buf.isExpandRequired()) {
@@ -101,6 +102,18 @@ public class FileMapListBufferTest {
             buf.advance().value = String.valueOf(i);
         }
         buf.end();
+        long written = System.currentTimeMillis();
+        System.out.println(MessageFormat.format(
+                "Elapsed for write: {0}ms",
+                written - begin));
+
+        for (int i = 0; i < size; i++) {
+            buf.get(i);
+        }
+        long read = System.currentTimeMillis();
+        System.out.println(MessageFormat.format(
+                "Elapsed for read: {0}ms",
+                read - written));
 
         assertThat(buf.size(), is(size));
 

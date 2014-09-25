@@ -282,6 +282,70 @@ public class WindGateIoProcessorTest {
         assertThat(info, is(nullValue()));
     }
 
+    /**
+     * importer description w/o profile name.
+     * @throws Exception if failed
+     */
+    @Test
+    public void importer_wo_profile() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Simple> in = flow.createIn("in1", new Import(Simple.class, null, dummy()));
+        Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
+
+        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, nullValue());
+    }
+
+    /**
+     * importer description w/o profile name.
+     * @throws Exception if failed
+     */
+    @Test
+    public void importer_w_empty_profile() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Simple> in = flow.createIn("in1", new Import(Simple.class, "", dummy()));
+        Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
+
+        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, nullValue());
+    }
+
+    /**
+     * exporter description w/o profile name.
+     * @throws Exception if failed
+     */
+    @Test
+    public void exporter_wo_profile() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
+        Out<Simple> out = flow.createOut("out1", new Export(Simple.class, null, dummy()));
+
+        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, nullValue());
+    }
+
+    /**
+     * exporter description w/o profile name.
+     * @throws Exception if failed
+     */
+    @Test
+    public void exporter_w_empty_profile() throws Exception {
+        FlowDescriptionDriver flow = new FlowDescriptionDriver();
+        In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
+        Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "", dummy()));
+
+        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+
+        JobflowInfo info = compile(flow, desc);
+        assertThat(info, nullValue());
+    }
+
     JobflowInfo compile(FlowDescriptionDriver flow, FlowDescription desc) {
         try {
             return DirectFlowCompiler.compile(

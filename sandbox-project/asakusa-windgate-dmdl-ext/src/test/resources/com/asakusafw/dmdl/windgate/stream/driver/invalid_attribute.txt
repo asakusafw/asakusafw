@@ -1,0 +1,4 @@
+@windgate.stream_format(type = "INVALID")
+invalid_attribute = {
+    value : TEXT;
+};

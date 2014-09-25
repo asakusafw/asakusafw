@@ -25,6 +25,7 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
 /**
  * Extracts rules from Excel sheet.
  * @since 0.2.0
+ * @version 0.7.0
  */
 public interface ExcelRuleExtractor {
 
@@ -80,6 +81,26 @@ public interface ExcelRuleExtractor {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     NullityConditionKind extractNullityCondition(Row row) throws FormatException;
+
+    /**
+     * Extracts comments from the row.
+     * @param row source row
+     * @return comment for the property, or an empty string if there are no comments
+     * @throws FormatException if the sheet format is invalid
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    String extractComments(Row row) throws FormatException;
+
+    /**
+     * Extracts extra options from the row.
+     * @param row source row
+     * @return extra options for the property, or an empty string if there are no comments
+     * @throws FormatException if the sheet format is invalid
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.0
+     */
+    String extractOptions(Row row) throws FormatException;
 
     /**
      * Invalid format of excel condition sheet.

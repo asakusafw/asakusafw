@@ -33,6 +33,8 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.compiler.testing.StageInfo;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.stage.launcher.LauncherOptionsParser;
+import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
@@ -257,6 +259,10 @@ public class JobflowExecutor {
         dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
         dPropMap.put(StageConstants.PROP_EXECUTION_ID, commands.getExecutionId());
         dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
+        // disables libraries cache
+        dPropMap.put(LauncherOptionsParser.KEY_CACHE_ENABLED, String.valueOf(false));
+        // suppresses library copying only if is on local mode
+        dPropMap.put(LibraryCopySuppressionConfigurator.KEY_ENABLED, String.valueOf(true));
         dPropMap.putAll(context.getExtraConfigurations());
         return dPropMap;
     }
@@ -379,7 +385,6 @@ public class JobflowExecutor {
         }
         if (context.isSkipVerify() == false) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%n"));
             boolean sawError = false;
             for (DriverOutputBase<?> output : outputs) {
                 String name = output.getName();
@@ -403,12 +408,14 @@ public class JobflowExecutor {
                             output.getVerifier());
                     if (diffList.isEmpty() == false) {
                         sawError = true;
-                        LOG.warn("{}.{}の出力{}には{}個の差異があります", new Object[] {
+                        String message = MessageFormat.format(
+                                "{0}.{1}の出力{2}には{3}個の差異があります",
                                 info.getJobflow().getBatchId(),
                                 info.getJobflow().getFlowId(),
                                 output.getName(),
-                                diffList.size(),
-                        });
+                                diffList.size());
+                        sb.append(String.format("%s:%n", message));
+                        LOG.warn(message);
                         if (output.getDifferenceSink() != null) {
                             LOG.debug("出力{}の差異を出力しています: {}", name, output.getDifferenceSink());
                             moderator.save(output.getModelType(), diffList, output.getDifferenceSink());

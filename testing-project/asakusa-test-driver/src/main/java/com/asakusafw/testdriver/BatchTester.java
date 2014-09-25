@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -33,8 +34,10 @@ import com.asakusafw.compiler.testing.BatchInfo;
 import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.TestModerator;
+import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
@@ -46,7 +49,7 @@ public class BatchTester extends TestDriverBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
-    private final Map<String, JobFlowTester> jobFlowMap = Maps.create();
+    private final Map<String, JobFlowTester> jobFlowMap = new LinkedHashMap<String, JobFlowTester>();
 
     /**
      * コンストラクタ。
@@ -91,6 +94,13 @@ public class BatchTester extends TestDriverBase {
 
     private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
         LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
+
+        if (driverContext.isSkipValidateCondition() == false) {
+            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+                validateTestCondition(entry.getValue(), entry.getKey());
+            }
+        }
 
         // 初期化
         LOG.info("バッチをコンパイルしています: {}", batchDescriptionClass.getName());
@@ -162,6 +172,30 @@ public class BatchTester extends TestDriverBase {
                 LOG.info("ジョブフローの実行結果を検証しています: {}#{}",
                         batchDescriptionClass.getName(), flowId);
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
+            }
+        }
+    }
+
+    private void validateTestCondition(JobFlowTester flow, String id) throws IOException {
+        TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (DriverInputBase<?> port : flow.inputs) {
+            String label = String.format("Input(flow=%s, name=%s)", id, port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+        }
+        for (DriverOutputBase<?> port : flow.outputs) {
+            String label = String.format("Output(flow=%s, name=%s)", id, port.getName());
+            Class<?> type = port.getModelType();
+            DataModelSourceFactory source = port.getSource();
+            if (source != null) {
+                moderator.validate(type, label, source);
+            }
+            VerifierFactory verifier = port.getVerifier();
+            if (verifier != null) {
+                moderator.validate(type, label, verifier);
             }
         }
     }

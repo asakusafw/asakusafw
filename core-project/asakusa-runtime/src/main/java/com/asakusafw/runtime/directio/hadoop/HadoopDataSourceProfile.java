@@ -226,6 +226,14 @@ public class HadoopDataSourceProfile {
     }
 
     /**
+     * Returns the minimum fragment size.
+     * @return the minimum fragment size, or {@code < 0} if fragmentation is restricted
+     */
+    public long getMinimumFragmentSize() {
+        return minimumFragmentSize <= 0 ? -1 : minimumFragmentSize;
+    }
+
+    /**
      * Configures the minimum fragment size in bytes.
      * @param size the size, or {@code <= 0} to restrict fragmentation
      */
@@ -260,6 +268,18 @@ public class HadoopDataSourceProfile {
     }
 
     /**
+     * Returns the preferred fragment size.
+     * @return the preferred fragment size
+     */
+    public long getPreferredFragmentSize() {
+        long min = getMinimumFragmentSize();
+        if (min <= 0) {
+            return -1;
+        }
+        return preferredFragmentSize <= 0 ? -1 : preferredFragmentSize;
+    }
+
+    /**
      * Configures the preferred fragment size in bytes.
      * @param size the size
      */
@@ -268,7 +288,7 @@ public class HadoopDataSourceProfile {
     }
 
     /**
-     * Returns whether splits blocks for optimization.
+     * Returns whether split DFS block into multiple splits for optimization.
      * @return the {@code true} to split, otherwise {@code false}
      */
     public boolean isSplitBlocks() {
@@ -284,7 +304,7 @@ public class HadoopDataSourceProfile {
     }
 
     /**
-     * Returns whether combines blocks for optimization.
+     * Returns whether combines multiple blocks into a fragment for optimization.
      * @return the {@code true} to combine, otherwise {@code false}
      */
     public boolean isCombineBlocks() {

@@ -1,0 +1,3 @@
+com.asakusafw.dmdl.directio.hive.common.HiveDataModelEmitter
+com.asakusafw.dmdl.directio.hive.orc.OrcFileEmitter
+com.asakusafw.dmdl.directio.hive.parquet.ParquetFileEmitter
