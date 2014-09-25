@@ -184,7 +184,8 @@ EMR向けのプロファイルとして ``profiles.emr`` ブロックを追加�
 ------------------------------
 Akakusa Frameworkの実行環境一式を含むデプロイメントアーカイブを作成します。
 
-デプロイメントアーカイブの作成には、 Gradleの assemble タスクを実行します。
+デプロイメントアーカイブを作成するには、
+アプリケーションプロジェクト上でGradleの ``assemble`` タスクを実行します。
 
 ..  code-block:: sh
      
@@ -221,7 +222,17 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 
 ..  code-block:: sh
     
-    aws s3 cp build/asakusafw-*-emr.tar.gz s3://[mybucket]/asakusafw/
+    aws s3 cp build/asakusafw-0.7.0-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
+
+アップロード後のバケットを確認します。
+
+..  code-block:: sh
+    
+    aws s3 ls s3://[mybucket]/asakusafw/
+    
+..  code-block:: sh
+    
+    2014-09-19 12:36:45    5186529 asakusafw-0.7.0-hadoop2-emr.tar.gz
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずアップロード先のS3バケットのパスを実際に使用するパスに置き換えてください。
@@ -366,8 +377,12 @@ CLI
 
 ..  code-block:: sh
     
-    aws emr describe-cluster --cluster-id j-XXXXXXXXXXXXX
+    aws emr describe-cluster --cluster-id j-XXXXXXXXXXXXX \
      --query 'Cluster.Status.State'
+
+..  code-block:: json
+    
+    "WAITING"
 
 ..  hint::
     上記例の ``--query`` オプションによって全体の出力から結果ステータスの項目を抽出しています。
@@ -480,6 +495,17 @@ AWS CLI を使ったデプロイ例を以下に示します。
     Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar,\
     Args=s3://asakusafw/emr/deploy-asakusa.sh,\
     s3://[mybucket]/asakusafw/asakusafw-0.7.0-hadoop2-emr.tar.gz
+
+ステップを登録すると、以下のようにステップIDが表示されます。
+ステップIDはステップの実行結果を確認する場合などで使用します。
+
+..  code-block:: json
+    
+    {
+        "StepIds": [
+            "s-XXXXXXXXXXXXX"
+        ]
+    }
 
 デプロイの結果を確認します。
  
@@ -614,18 +640,6 @@ AWS CLI を使ったバッチアプリケーション実行例を以下に示し
     また、 ``Args`` の値に複数の引数を指定する場合は、
     半角スペースではなくカンマ区切りになることに注意してください。
     
-
-ステップを登録すると、以下のようにステップIDが表示されます。
-ステップIDはステップの実行結果を確認する場合などで使用します。
-
-..  code-block:: json
-    
-    {
-        "StepIds": [
-            "s-XXXXXXXXXXXXX"
-        ]
-    }
-
 アプリケーションの実行結果を確認
 --------------------------------
 `アプリケーションのステップを実行`_ で実行したステップの実行結果を確認します。

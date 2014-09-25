@@ -28,14 +28,14 @@ Direct I/OのHive連携モジュールを利用するには、利用するアプ
 Gradleプロジェクトの設定
 ------------------------
 
-GradleプロジェクトでHive 連携モジュール を使用する場合は ``build.gradleに対して`` 以下の定義を追加します。
+GradleプロジェクトでHive 連携モジュールを使用する場合は ``build.gradle`` に対して以下の定義を追加します。
 
 * Framework Organizerに対してHiveの構成を有効化する
    * ``asakusafwOrganizer`` ブロックに ``hive.enabled true`` を追加
 * Hive連携モジュールSDKを依存関係に追加する
    * ``dependencies`` ブロックの ``compile`` に対して ``asakusa-sdk-hive`` を 追加
 
-以下、 ``build.gradleの`` 設定例です。
+以下、 ``build.gradle`` の設定例です。
 
 ..  code-block:: groovy
     :emphasize-lines: 2,10
@@ -57,7 +57,7 @@ GradleプロジェクトでHive 連携モジュール を使用する場合は `
 Eclipseを利用している場合は、 ``eclipse`` タスクを実行してEclipseのプロジェクト情報を再構成します。
 
 ..  attention::
-    Hiveとの連携機能はMavenプロジェクトをサポートしていません。Hiveとの連携機能を利用する場合はGradleプロジェクトを利用してください。
+    MavenプロジェクトはHiveとの連携機能をサポートしていません。Hiveとの連携機能を利用する場合はGradleプロジェクトを利用してください。
 
 カラムナフォーマットファイルの入出力
 ====================================
