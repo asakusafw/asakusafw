@@ -1749,7 +1749,7 @@ Flow DSLからは次のように利用します。
 ..  code-block:: java
 
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
-    public void invalid(List<Hoge> list, Result<Hoge> result) {
+    public void invalid(@Key(group = "id") List<Hoge> list, Result<Hoge> result) {
         // 二つ取り出すとaの内容が保証されない
         Hoge a = list.get(0);
         Hoge b = list.get(1);
@@ -1767,7 +1767,7 @@ Flow DSLからは次のように利用します。
     Hoge b = new Hoge();
 
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
-    public void valid(List<Hoge> list, Result<Hoge> result) {
+    public void valid(@Key(group = "id") List<Hoge> list, Result<Hoge> result) {
         a.copyFrom(list.get(0));
         b.copyFrom(list.get(1));
         b.setValue(100);

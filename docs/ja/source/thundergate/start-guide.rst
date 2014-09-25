@@ -64,23 +64,47 @@ MySQLのインストールが完了したら、Asakusa Frameworkのデータモ�
 
 アプリケーションの開発準備
 ==========================
-ThunderGateを利用したバッチアプリケーションを新しく作成する場合、Mavenのアーキタイプ ``asakusa-archetype-thundergate`` を利用すると簡単です。
+ThunderGateを利用したバッチアプリケーションを新しく作成する場合、 :doc:`../application/gradle-plugin` で説明するGradleプロジェクトのテンプレートを利用すると簡単です。
 
-以降、このドキュメントではこのアーキタイプから作成したプロジェクトを利用して説明を進めます。
+以降、このドキュメントではこのテンプレートから作成したプロジェクトを利用して説明を進めます。
 
-アプリケーション開発プロジェクトの作成
---------------------------------------
-コマンドラインコンソールでアプリケーションプロジェクトを作成したいディレクトリに移動し、以下のコマンドを実行してください。
+Gradleプロジェクトの設定
+------------------------
+GradleプロジェクトでThunderGateを使用する場合は ``build.gradle`` に対して以下の定義を追加します。
 
-..  code-block:: none
+* 開発環境用の `JDBC接続設定`_ ファイルを配置する
+   * ``asakusafw`` ブロックに ``thundergate.jdbcFile <JDBC接続設定ファイルのパス>`` を追加
+* Framework Organizerに対してThunderGateの構成を有効化する
+   * ``asakusafwOrganizer`` ブロックに ``thundergate.enabled true`` を追加
+* ThunderGate用SDKを依存関係に追加する
+   * ``dependencies`` ブロックの ``compile`` に対して ``asakusa-sdk-thundergate`` を 追加
+   * ``dependencies`` ブロックの ``compile`` に対して ``mysql-connector-java`` を 追加
 
-    mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7.xml
+以下、 ``build.gradle`` の設定例です。
 
-コマンドを実行すると、Asakusa Frameworkが提供するプロジェクトテンプレートのうち、どれを使用するかを選択する画面が表示されます。
-ここでは、 ``asakusa-archetype-thundergate`` のテンプレートを選択します。
+..  code-block:: groovy
+    :emphasize-lines: 4, 8, 14-15
+    
+    asakusafw {
+        ...
+    
+        thundergate.jdbcFile 'src/dist/common/bulkloader/conf/asakusa-jdbc.properties'
+    }
+    
+    asakusafwOrganizer {
+        thundergate.enabled true
+        ...
+    }
+    
+    dependencies {
+        compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: asakusafw.asakusafwVersion
+        compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-thundergate', version: asakusafw.asakusafwVersion
+        compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.25'
+        ...
 
-以降、質問に順に答えていきアプリケーション開発プロジェクトを作成します。
-成功すると、アプリケーションのプロジェクト名 ( ``artifactId`` ) で指定した名前のディレクトリが作成されます。
+上記の設定後、 ``installAsakusafw`` タスクを実行して開発環境のAsakusa Frameworkを再インストールします。
+
+Eclipseを利用している場合は、 ``eclipse`` タスクを実行してEclipseのプロジェクト情報を再構成します。
 
 JDBC接続設定
 ------------
@@ -88,6 +112,12 @@ ThunderGateはRDBMSに対してJDBC接続を経由してデータの入出力を
 
 ターゲットに対するJDBC接続設定を定義したプロパティファイルは、 ``$ASAKUSA_HOME/bulkloader/conf`` 配下に ``<ターゲット名>-jdbc.properties`` という名前で配置します。標準ではターゲット名 ``asakusa`` 用のJDBC接続定義ファイルとして ``asakusa-jdbc.properties`` が配置されています。
 
+また、開発環境では :doc:`with-dmdl` で説明する、DDLからDMDLスクリプトを生成する機能が利用できます。
+このときDDLの登録先であるMySQLのデータベース接続設定情報をもつJDBC接続設定ファイルを
+``build.gradle`` の ``thundergate.jdbcFile`` に設定します。
+
+..  hint::
+    このファイルは ``$ASAKUSA_HOME/bulkloader/conf/asakusa-jdbc.properties`` をコピーして作成することもできます。
 
 JDBC接続設定について詳しくは、 :doc:`user-guide` の :ref:`thundergate-jdbc-configuration-file` を参照してください。
 
@@ -140,7 +170,7 @@ Hadoopクライアント用設定について詳しくは、 :doc:`user-guide` �
 サンプルアプリケーションのビルドを行います。処理内容や手順は :doc:`../introduction/start-guide` と同様です。ここではビルドコマンドのみを示します。
 
 ..  warning::
-    ビルド時に実行されるモデル生成処理(Mavenの ``generate-sources`` フェーズにて実行)時に、
+    ビルド時に実行されるモデル生成処理(Gradleの ``compileDMDL`` タスクにて実行)時に、
     `MySQLのインストールとユーザ、データベース作成`_ で作成したデータベースが再作成(DROP/CREATE)されます。
     このデータベースには重要なデータを配置しないでください。
 
@@ -148,7 +178,7 @@ Hadoopクライアント用設定について詳しくは、 :doc:`user-guide` �
 
 ..  code-block:: none
 
-    mvn clean package
+    ./gradlew build
 
 
 サンプルデータの配置
@@ -213,7 +243,7 @@ Hadoopクライアント用設定について詳しくは、 :doc:`user-guide` �
 
 データモデルクラスの生成
 ------------------------
-データモデルクラスを作成するには、データモデルの定義情報を記述後にMavenの ``generate-sources`` フェーズを実行します。
+データモデルクラスを作成するには、データモデルの定義情報を記述後にGradleの ``compileDMDL`` タスクを実行します。
 
 ThunderGateではモデルをDMDLで記述するほかにThunderGate特有の機能として、ThunderGateが入出力に利用するデータベースのテーブル定義情報を記述したDDLスクリプトや、結合や集計を定義した専用のビュー定義情報を記述したDDLスクリプトから対応するDMDLスクリプトを生成出来るようになっています。
 
@@ -222,7 +252,7 @@ DMDLの記述方法については :doc:`../dmdl/start-guide` などを参考に
 
 またテーブルやビューのDDLスクリプトからDMDLスクリプトを生成する機能を使う場合、DDLスクリプトはプロジェクトの ``src/main/sql/modelgen`` ディレクトリ以下に配置し、DDLスクリプトのファイル名には ``.sql`` の拡張子を付けて保存します。
 
-DDLスクリプトは Mavenの ``generate-sources`` 実行時に一時的にDMDLスクリプトに変換され [#]_ 、続けて ``src/main/dmdl`` 配下のDMDLと合わせてデータモデルクラスを生成します。
+DDLスクリプトは ``compileDMDL`` タスク実行時に一時的にDMDLスクリプトに変換され [#]_ 、続けて ``src/main/dmdl`` 配下のDMDLと合わせてデータモデルクラスを生成します。
 DDLスクリプトの記述方法については :doc:`with-dmdl` を参照してください。
 
 ..  [#] ディレクトリはプロジェクトの設定ファイル ``build.properties`` で変更可能です。
