@@ -42,7 +42,7 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
 ..  attention::
     以降で説明する、デプロイメントアーカイブ構築のカスタマイズ方法について、
     バージョン 0.7.0 以降では、 ``attach`` から始まる各タスクを組み合わせる方式から
-    ``build.gradle`` 内の ``asaksuafwOrganizer`` ブロックで
+    ``build.gradle`` 内の ``asakusafwOrganizer`` ブロックで
     デプロイメント構成を定義する方法を推奨するよう変更しています。
     
     詳しくは、 :doc:`../administration/deployment-guide` を参照してください。
@@ -144,7 +144,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
     
     デプロイメントアーカイブ構築のカスタマイズ方法について、
     バージョン 0.7.0 以降では、 ``attach`` から始まる各タスクを組み合わせる方式から
-    ``build.gradle`` 内の ``asaksuafwOrganizer`` ブロックで
+    ``build.gradle`` 内の ``asakusafwOrganizer`` ブロックで
     デプロイメント構成を定義する方法を推奨するよう変更しています。
     
     詳しくは、 :doc:`../administration/deployment-guide` や :ref:`asakusa-gradle-plugin-reference` を参照してください。
