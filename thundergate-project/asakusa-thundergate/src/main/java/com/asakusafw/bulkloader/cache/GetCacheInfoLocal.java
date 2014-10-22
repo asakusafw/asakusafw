@@ -42,7 +42,7 @@ import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
-import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
+import com.asakusafw.bulkloader.transfer.RemoteFileListProviderFactory;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.thundergate.runtime.cache.CacheInfo;
 
@@ -278,6 +278,6 @@ public class GetCacheInfoLocal {
                 jobflowId,
                 executionId);
 
-        return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
+        return new RemoteFileListProviderFactory(sshPath, hostName, userName).newInstance(command, env);
     }
 }
