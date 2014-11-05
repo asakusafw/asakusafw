@@ -24,16 +24,21 @@ import java.text.MessageFormat;
 /**
  * A data buffer with {@link DataInput} and {@link DataOutput} interfaces.
  * @since 0.7.0
+ * @version 0.7.1
  */
 public class DataBuffer implements DataInput, DataOutput {
 
     private static final byte[] EMPTY = new byte[0];
 
-    private static final double BUFFER_EXPANSION_FACTOR = 1.5;
+    private static final double DEFAULT_BUFFER_EXPANSION_FACTOR = 1.5;
+
+    private static final double MINIMUM_BUFFER_EXPANSION_FACTOR = 1.1;
 
     private static final int MINIMUM_EXPANSION_SIZE = 256;
 
     private byte[] buffer;
+
+    private final double expansionFactor;
 
     private int readCursor;
 
@@ -51,7 +56,18 @@ public class DataBuffer implements DataInput, DataOutput {
      * @param initialCapacity the initial buffer capacity in bytes
      */
     public DataBuffer(int initialCapacity) {
+        this(initialCapacity, DEFAULT_BUFFER_EXPANSION_FACTOR);
+    }
+
+    /**
+     * Creates a new instance with empty buffer.
+     * @param initialCapacity the initial buffer capacity in bytes
+     * @param expansionFactor the buffer expansion factor
+     * @since 0.7.1
+     */
+    public DataBuffer(int initialCapacity, double expansionFactor) {
         this.buffer = initialCapacity == 0 ? EMPTY : new byte[initialCapacity];
+        this.expansionFactor = Math.max(MINIMUM_BUFFER_EXPANSION_FACTOR, expansionFactor);
     }
 
     /**
@@ -388,7 +404,7 @@ public class DataBuffer implements DataInput, DataOutput {
         int offset = writeCursor;
         if (buffer.length < offset + length) {
             int newSize = Math.max(
-                    Math.max(offset + length, (int) (buffer.length * BUFFER_EXPANSION_FACTOR)) + 1,
+                    Math.max(offset + length, (int) (buffer.length * expansionFactor)) + 1,
                     MINIMUM_EXPANSION_SIZE);
             ensureCapacity(newSize);
         }

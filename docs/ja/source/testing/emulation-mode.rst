@@ -45,6 +45,9 @@
       - ``asakusa-test-inprocess``
       - テストドライバ実行をエミュレーションモードに変更
     * - ``com.asakusafw``
+      - ``asakusa-test-inprocess-ext``
+      - 独自のエンジンを利用したエミュレーションモードで実行 (Experimental)
+    * - ``com.asakusafw``
       - ``asakusa-windgate-test-inprocess``
       - :doc:`WindGate <../windgate/index>` をエミュレーションモードで実行 [#]_
 

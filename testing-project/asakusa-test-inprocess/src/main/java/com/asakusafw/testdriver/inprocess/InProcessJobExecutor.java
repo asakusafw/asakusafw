@@ -28,6 +28,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.stage.JobRunner;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.testdriver.DefaultJobExecutor;
 import com.asakusafw.testdriver.JobExecutor;
@@ -151,6 +153,7 @@ public class InProcessJobExecutor extends JobExecutor {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Configuration conf = configurations.newInstance();
+            configure(conf);
             for (Map.Entry<String, String> entry : job.getProperties().entrySet()) {
                 conf.set(entry.getKey(), entry.getValue());
             }
@@ -169,6 +172,13 @@ public class InProcessJobExecutor extends JobExecutor {
             }
         } finally {
             Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    private void configure(Configuration conf) {
+        Class<? extends JobRunner> jobRunner = EmulatorUtils.getCustomJobRunnerClass(context);
+        if (jobRunner != null) {
+            conf.set(StageConstants.PROP_JOB_RUNNER, jobRunner.getName());
         }
     }
 
