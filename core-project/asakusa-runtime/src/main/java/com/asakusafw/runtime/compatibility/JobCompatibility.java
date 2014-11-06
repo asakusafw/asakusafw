@@ -92,7 +92,11 @@ public final class JobCompatibility {
                 method.setAccessible(true);
                 break;
             } catch (Exception e) {
-                // ignored
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(MessageFormat.format(
+                            "failed to detect {0}.setJobID() method",
+                            aClass.getName()), e);
+                }
             }
         }
         if (method != null) {
