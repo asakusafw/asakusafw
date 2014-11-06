@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.configuration;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -163,7 +165,7 @@ public class FrameworkDeployer implements TestRule {
     private void deployFatLibrary(List<File> paths, File target) throws IOException {
         prepareParent(target);
         Set<String> saw = new HashSet<String>();
-        ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(target));
+        ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)));
         try {
             for (File path : paths) {
                 if (path.isDirectory()) {
@@ -178,7 +180,7 @@ public class FrameworkDeployer implements TestRule {
     }
 
     private void mergeEntries(ZipOutputStream zip, File file, Set<String> saw) throws IOException {
-        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+        ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
         try {
             while (true) {
                 ZipEntry entry = in.getNextEntry();
@@ -188,8 +190,8 @@ public class FrameworkDeployer implements TestRule {
                 if (saw.contains(entry.getName())) {
                     continue;
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Copy into archive: {} -> {}",
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Copy into archive: {} -> {}",
                             entry.getName(),
                             file);
                 }
@@ -329,7 +331,7 @@ public class FrameworkDeployer implements TestRule {
         } else {
             LOG.debug("Package into archive: {} -> {}", source, target);
             prepareParent(target);
-            OutputStream output = new FileOutputStream(target);
+            OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
             try {
                 ZipOutputStream zip = new ZipOutputStream(output);
                 putEntry(zip, source, null, new HashSet<String>());
@@ -359,9 +361,9 @@ public class FrameworkDeployer implements TestRule {
             }
             saw.add(path);
             zip.putNextEntry(new ZipEntry(path));
-            InputStream in = new FileInputStream(source);
+            InputStream in = new BufferedInputStream(new FileInputStream(source));
             try {
-                LOG.debug("Copy into archive: {} -> {}", source, path);
+                LOG.trace("Copy into archive: {} -> {}", source, path);
                 copyStream(in, zip);
             } finally {
                 in.close();
@@ -411,7 +413,7 @@ public class FrameworkDeployer implements TestRule {
             throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
         prepareParent(target);
-        OutputStream output = new FileOutputStream(target);
+        OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
         try {
             copyStream(input, output);
         } finally {
@@ -423,10 +425,10 @@ public class FrameworkDeployer implements TestRule {
     private void copyFile(File source, File target) throws FileNotFoundException, IOException {
         assert source != null;
         assert target != null;
-        InputStream input = new FileInputStream(source);
+        InputStream input = new BufferedInputStream(new FileInputStream(source));
         try {
             prepareParent(target);
-            OutputStream output = new FileOutputStream(target);
+            OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
             try {
                 copyStream(input, output);
             } finally {
@@ -475,7 +477,7 @@ public class FrameworkDeployer implements TestRule {
         if (target == null) {
             throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
-        InputStream input = new FileInputStream(target);
+        InputStream input = new BufferedInputStream(new FileInputStream(target));
         try {
             ZipInputStream zip = new ZipInputStream(input);
             extract(zip, target);

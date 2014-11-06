@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.WeakHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -51,6 +52,7 @@ import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
 
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
@@ -78,7 +80,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     private static final String KEY = "com.asakusafw.output.bridge";
 
-    private OutputCommitter outputCommitter;
+    private final Map<TaskAttemptID, OutputCommitter> commiterCache =
+            new WeakHashMap<TaskAttemptID, OutputCommitter>();
 
     /**
      * Returns whether this stage has an output corresponding this format.
@@ -240,15 +243,14 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     @Override
     public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
-        return getOutputCommitter((JobContext) context);
-    }
-
-    OutputCommitter getOutputCommitter(JobContext context) throws IOException {
         synchronized (this) {
-            if (outputCommitter == null) {
-                outputCommitter = createOutputCommitter(context);
+            TaskAttemptID id = context.getTaskAttemptID();
+            OutputCommitter committer = commiterCache.get(id);
+            if (committer == null) {
+                committer = createOutputCommitter(context);
             }
-            return outputCommitter;
+            commiterCache.put(id, committer);
+            return committer;
         }
     }
 

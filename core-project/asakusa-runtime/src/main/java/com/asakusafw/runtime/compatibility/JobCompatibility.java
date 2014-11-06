@@ -16,18 +16,26 @@
 package com.asakusafw.runtime.compatibility;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.RawComparator;
+import org.apache.hadoop.mapred.RawKeyValueIterator;
 import org.apache.hadoop.mapred.Task;
 import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
@@ -38,9 +46,28 @@ import org.apache.hadoop.util.Progressable;
 /**
  * Compatibility for job APIs.
  * @since 0.5.0
- * @version 0.6.2
+ * @version 0.7.1
  */
 public final class JobCompatibility {
+
+    private static final Method SET_JOB_ID;
+    static {
+        Method method = null;
+        for (Class<?> aClass = Job.class; aClass != null; aClass = aClass.getSuperclass()) {
+            try {
+                method = aClass.getDeclaredMethod("setJobID", JobID.class);
+                method.setAccessible(true);
+                break;
+            } catch (Exception e) {
+                // ignored
+            }
+        }
+        if (method != null) {
+            SET_JOB_ID = method;
+        } else {
+            SET_JOB_ID = null;
+        }
+    }
 
     static final Log LOG = LogFactory.getLog(JobCompatibility.class);
 
@@ -116,7 +143,17 @@ public final class JobCompatibility {
      * @return the created ID
      */
     public static JobID newJobId() {
-        return new JobID("dummyjob", 0);
+        return newJobId(0);
+    }
+
+    /**
+     * Creates a new job ID.
+     * @param id the local ID
+     * @return the created ID
+     * @since 0.7.1
+     */
+    public static JobID newJobId(int id) {
+        return new JobID("dummyjob", id);
     }
 
     /**
@@ -126,10 +163,37 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static TaskID newTaskId(JobID jobId) {
+        return newMapTaskId(jobId, 0);
+    }
+
+    /**
+     * Creates a new map task ID.
+     * @param jobId parent job ID
+     * @param id the local ID
+     * @return the created ID
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static TaskID newMapTaskId(JobID jobId, int id) {
         if (jobId == null) {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
-        return new TaskID(jobId, true, 0);
+        return new TaskID(jobId, true, id);
+    }
+
+    /**
+     * Creates a new reduce task ID.
+     * @param jobId parent job ID
+     * @param id the local ID
+     * @return the created ID
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static TaskID newReduceTaskId(JobID jobId, int id) {
+        if (jobId == null) {
+            throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
+        }
+        return new TaskID(jobId, false, id);
     }
 
     /**
@@ -139,10 +203,49 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static TaskAttemptID newTaskAttemptId(TaskID taskId) {
+        return newTaskAttemptId(taskId, 0);
+    }
+
+    /**
+     * Creates a new task attempt ID.
+     * @param taskId parent task ID
+     * @param id the local ID
+     * @return the created ID
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static TaskAttemptID newTaskAttemptId(TaskID taskId, int id) {
         if (taskId == null) {
             throw new IllegalArgumentException("taskId must not be null"); //$NON-NLS-1$
         }
-        return new TaskAttemptID(taskId, 0);
+        return new TaskAttemptID(taskId, id);
+    }
+
+    /**
+     * Sets the job ID to the job object.
+     * @param job the job object
+     * @param id the job ID
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static void setJobId(Job job, JobID id) {
+        if (job == null) {
+            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
+        }
+        if (SET_JOB_ID != null) {
+            try {
+                SET_JOB_ID.invoke(job, id);
+            } catch (IllegalAccessException e) {
+                throw new UnsupportedOperationException(e);
+            } catch (InvocationTargetException e) {
+                throw new UnsupportedOperationException(e.getCause());
+            }
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -194,6 +297,80 @@ public final class JobCompatibility {
 
     private static boolean isRemoteJob(String modeName) {
         return modeName != null && modeName.equals("local") == false;
+    }
+
+    /**
+     * Creates a {@link Mapper} context.
+     * @param configuration the current configuration
+     * @param id the current task ID
+     * @param reader the input reader
+     * @param writer the output writer
+     * @param committer the output committer
+     * @param split the input split
+     * @param <KEYIN> input key type
+     * @param <VALUEIN> input value type
+     * @param <KEYOUT> output key type
+     * @param <VALUEOUT> output value type
+     * @return the created context
+     * @throws IOException if failed to build a context by I/O error
+     * @throws InterruptedException if interrupted while initializing context
+     * @since 0.7.1
+     */
+    public static <KEYIN, VALUEIN, KEYOUT, VALUEOUT>
+    Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>.Context newMapperContext(
+            Configuration configuration,
+            TaskAttemptID id,
+            RecordReader<KEYIN, VALUEIN> reader,
+            RecordWriter<KEYOUT, VALUEOUT> writer,
+            OutputCommitter committer,
+            InputSplit split) throws IOException, InterruptedException {
+        Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> mapper = new Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>();
+        return mapper.new Context(
+                configuration,
+                id,
+                reader,  writer, committer,
+                new MockStatusReporter(),
+                split);
+    }
+
+    /**
+     * Creates a {@link Reducer} context.
+     * @param configuration the current configuration
+     * @param id the current task ID
+     * @param reader the shuffle result iterator
+     * @param inputKeyClass the input key class
+     * @param inputValueClass the input value class
+     * @param writer the output writer
+     * @param committer the output committer
+     * @param comparator the grouping comparator
+     * @param <KEYIN> input key type
+     * @param <VALUEIN> input value type
+     * @param <KEYOUT> output key type
+     * @param <VALUEOUT> output value type
+     * @return the created context
+     * @throws IOException if failed to build a context by I/O error
+     * @throws InterruptedException if interrupted while initializing context
+     * @since 0.7.1
+     */
+    public static <KEYIN, VALUEIN, KEYOUT, VALUEOUT>
+    Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>.Context newReducerContext(
+            Configuration configuration,
+            TaskAttemptID id,
+            RawKeyValueIterator reader,
+            Class<KEYIN> inputKeyClass, Class<VALUEIN> inputValueClass,
+            RecordWriter<KEYOUT, VALUEOUT> writer,
+            OutputCommitter committer,
+            RawComparator<KEYIN> comparator) throws IOException, InterruptedException {
+        Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> reducer = new Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>();
+        StatusReporter reporter = new MockStatusReporter();
+        return reducer.new Context(
+                configuration,
+                id,
+                reader,
+                reporter.getCounter("asakusafw", "inputKey"),
+                reporter.getCounter("asakusafw", "inputValue"),
+                writer, committer, reporter, comparator,
+                inputKeyClass, inputValueClass);
     }
 
     /**

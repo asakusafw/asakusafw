@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.utils.io;
-
-import java.io.IOException;
-import java.util.NoSuchElementException;
-
 /**
- * Represents an empty source.
- * @param <T> object type
- * @since 0.6.0
+ * Test configurator for small jobs.
  */
-public class EmptySource<T> implements Source<T> {
-
-    @Override
-    public void close() {
-        return;
-    }
-
-    @Override
-    public boolean next() throws IOException, InterruptedException {
-        return false;
-    }
-
-    @Override
-    public T get() throws IOException, InterruptedException {
-        throw new NoSuchElementException();
-    }
-}
+package com.asakusafw.testdriver.smalljob;
