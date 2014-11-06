@@ -50,6 +50,10 @@ import org.apache.hadoop.util.Progressable;
  */
 public final class JobCompatibility {
 
+    static final Log LOG = LogFactory.getLog(JobCompatibility.class);
+
+    private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker";
+
     private static final Method SET_JOB_ID;
     static {
         Method method = null;
@@ -59,7 +63,11 @@ public final class JobCompatibility {
                 method.setAccessible(true);
                 break;
             } catch (Exception e) {
-                // ignored
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(MessageFormat.format(
+                            "failed to detect {0}.setJobID() method",
+                            aClass.getName()), e);
+                }
             }
         }
         if (method != null) {
@@ -68,10 +76,6 @@ public final class JobCompatibility {
             SET_JOB_ID = null;
         }
     }
-
-    static final Log LOG = LogFactory.getLog(JobCompatibility.class);
-
-    private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker";
 
     private JobCompatibility() {
         return;

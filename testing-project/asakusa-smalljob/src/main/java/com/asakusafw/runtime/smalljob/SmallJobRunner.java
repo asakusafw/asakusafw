@@ -18,9 +18,12 @@ package com.asakusafw.runtime.smalljob;
 import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.serializer.SerializationFactory;
@@ -45,8 +48,11 @@ import com.asakusafw.runtime.stage.JobRunner;
 
 /**
  * An implementation of {@link JobRunner} for small jobs.
+ * @since 0.7.1
  */
 public class SmallJobRunner implements JobRunner {
+
+    static final Log LOG = LogFactory.getLog(SmallJobRunner.class);
 
     private static final String KEY_BUFFER_SIZE_MB = "io.sort.mb";
 
@@ -63,6 +69,11 @@ public class SmallJobRunner implements JobRunner {
     @Override
     public boolean run(Job job) throws IOException, InterruptedException, ClassNotFoundException {
         JobID jobId = newJobId(new Random().nextInt(Integer.MAX_VALUE));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "starting job: {0}",
+                    jobId));
+        }
         setJobId(job, jobId);
         TaskID taskId = newMapTaskId(jobId, 0);
         Configuration conf = job.getConfiguration();
@@ -96,7 +107,9 @@ public class SmallJobRunner implements JobRunner {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void runMap(Job job, KeyValueSorter<?, ?> sorter) throws IOException, InterruptedException, ClassNotFoundException {
+    private void runMap(
+            Job job,
+            KeyValueSorter<?, ?> sorter) throws IOException, InterruptedException, ClassNotFoundException {
         Configuration conf = job.getConfiguration();
         InputFormat<?, ?> input = ReflectionUtils.newInstance(job.getInputFormatClass(), conf);
         List<InputSplit> splits = input.getSplits(job);
@@ -104,6 +117,13 @@ public class SmallJobRunner implements JobRunner {
         for (InputSplit split : splits) {
             TaskAttemptID id = newTaskAttemptId(newMapTaskId(job.getJobID(), serial++), 0);
             Mapper<?, ?, ?, ?> mapper = ReflectionUtils.newInstance(job.getMapperClass(), conf);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "starting mapper: {0}@{1} ({2}bytes)",
+                        mapper.getClass().getName(),
+                        id,
+                        split.getLength()));
+            }
             TaskAttemptContext context = newTaskAttemptContext(conf, id);
             // we always obtain a new OutputFormat object / OutputFormat.getOutputCommiter() may be cached
             OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
@@ -146,11 +166,20 @@ public class SmallJobRunner implements JobRunner {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void runReduce(Job job, KeyValueSorter<?, ?> sorter) throws ClassNotFoundException, IOException, InterruptedException {
+    private void runReduce(
+            Job job,
+            KeyValueSorter<?, ?> sorter) throws ClassNotFoundException, IOException, InterruptedException {
         Configuration conf = job.getConfiguration();
         OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
         TaskAttemptID id = newTaskAttemptId(newReduceTaskId(job.getJobID(), 1), 0);
         Reducer<?, ?, ?, ?> reducer = ReflectionUtils.newInstance(job.getReducerClass(), conf);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "starting reducer: {0}@{1} ({2}records)",
+                    reducer.getClass().getName(),
+                    id,
+                    sorter.getRecordCount()));
+        }
         TaskAttemptContext context = newTaskAttemptContext(conf, id);
         OutputCommitter committer = output.getOutputCommitter(context);
         committer.setupTask(context);

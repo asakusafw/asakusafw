@@ -15,7 +15,6 @@
  */
 package com.asakusafw.runtime.smalljob;
 
-
 /**
  * Byte array slice of key-value pair.
  * @since 0.7.1

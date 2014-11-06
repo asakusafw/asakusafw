@@ -304,7 +304,7 @@ public final class Sources {
                 try {
                     element.close();
                 } catch (IOException e) {
-                    if (firstException != null) {
+                    if (firstException == null) {
                         firstException = e;
                     }
                 }
