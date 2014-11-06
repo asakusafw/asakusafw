@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.serializer.SerializationFactory;
 import org.apache.hadoop.io.serializer.Serializer;
@@ -47,6 +50,8 @@ import com.asakusafw.utils.io.Sources;
  * @since 0.7.1
  */
 public class KeyValueSorter<K, V> implements Closeable {
+
+    static final Log LOG = LogFactory.getLog(KeyValueSorter.class);
 
     private static final int MAX_RECORD_PER_PAGE = 100000;
 
@@ -156,13 +161,20 @@ public class KeyValueSorter<K, V> implements Closeable {
         if (count == 0) {
             return;
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "flush sorter page buffer: {0}records, {1}bytes",
+                    page.getCount(),
+                    page.getSizeInBytes()));
+        }
         if (partialPageBuffer.getWritePosition() + page.getSizeInBytes() <= bufferLimit) {
             // prevent extra buffer expansion / copy
             partialPageBuffer.ensureCapacity(partialPageBuffer.getWritePosition() + page.getSizeInBytes());
         }
         Integer[] is = indices;
         if (is.length < count) {
-            indices = is = new Integer[page.getCount()];
+            is = new Integer[page.getCount()];
+            indices = is;
         }
         for (int i = 0; i < count; i++) {
             is[i] = Integer.valueOf(i);
@@ -205,14 +217,20 @@ public class KeyValueSorter<K, V> implements Closeable {
     }
 
     private void spillOut() throws IOException, InterruptedException {
-        File file = File.createTempFile("shuffle", ".tmp");
+        File file = File.createTempFile("kvsorter", ".tmp");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "spill-out sorter block: {0}bytes -> {1}",
+                    partialPageBuffer.getWritePosition(),
+                    file));
+        }
         boolean success = false;
         try {
             dumpMerged(file);
             success = true;
         } finally {
             if (success == false) {
-                file.delete();
+                deleteTemporaryFile(file);
             }
         }
         sortedBlocks.add(file);
@@ -259,6 +277,11 @@ public class KeyValueSorter<K, V> implements Closeable {
     }
 
     private List<StreamSource> createSpillOutSources() throws IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "merge sorter block files: {0}files",
+                    sortedBlocks.size()));
+        }
         List<StreamSource> sources = new ArrayList<StreamSource>();
         boolean succeed = false;
         try {
@@ -278,10 +301,23 @@ public class KeyValueSorter<K, V> implements Closeable {
 
     @Override
     public void close() throws IOException {
-        for (Iterator<File> iter = sortedBlocks.iterator(); iter.hasNext(); ) {
+        for (Iterator<File> iter = sortedBlocks.iterator(); iter.hasNext();) {
             File file = iter.next();
-            file.delete();
+            deleteTemporaryFile(file);
             iter.remove();
+        }
+    }
+
+    private void deleteTemporaryFile(File file) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "deleting temporary file: {0}",
+                    file));
+        }
+        if (file.delete() == false && file.exists()) {
+            LOG.warn(MessageFormat.format(
+                    "failed to delete sorter block file: {0}",
+                    file));
         }
     }
 
@@ -332,7 +368,8 @@ public class KeyValueSorter<K, V> implements Closeable {
                 int newSize = ((int) (offset * 0.6) + 1) * 2;
                 int[] newInts = new int[newSize];
                 System.arraycopy(pos, 0, newInts, 0, offset);
-                keyValueLimitPositions = pos = newInts;
+                pos = newInts;
+                keyValueLimitPositions = pos;
             }
             keySerializer.serialize(key);
             pos[offset++] = buffer.getWritePosition();
