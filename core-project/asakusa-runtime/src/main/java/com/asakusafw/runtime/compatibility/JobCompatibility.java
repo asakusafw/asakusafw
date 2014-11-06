@@ -192,7 +192,16 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static TaskID newTaskId(JobID jobId) {
-        return newMapTaskId(jobId, 0);
+        if (jobId == null) {
+            throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
+        }
+        if (TASK_ID_MR2 != null) {
+            TaskID result = newTaskIdMr2(jobId, TaskType.JOB_SETUP, 0);
+            if (result != null) {
+                return result;
+            }
+        }
+        return newTaskIdMr1(jobId, true, 0);
     }
 
     /**
@@ -208,17 +217,12 @@ public final class JobCompatibility {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
         if (TASK_ID_MR2 != null) {
-            try {
-                return TASK_ID_MR2.newInstance(jobId, TaskType.JOB_SETUP, 0);
-            } catch (Exception e) {
-                LOG.warn("Failed to invoke: TaskID(JobID, TaskType, int)", e);
-                // fall-through...
+            TaskID result = newTaskIdMr2(jobId, TaskType.MAP, id);
+            if (result != null) {
+                return result;
             }
         }
-        // NOTE: for Hadoop 2.x MR1
-        @SuppressWarnings("deprecation")
-        TaskID result = new TaskID(jobId, true, id);
-        return result;
+        return newTaskIdMr1(jobId, true, id);
     }
 
     /**
@@ -233,10 +237,29 @@ public final class JobCompatibility {
         if (jobId == null) {
             throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
         }
+        if (TASK_ID_MR2 != null) {
+            TaskID result = newTaskIdMr2(jobId, TaskType.REDUCE, id);
+            if (result != null) {
+                return result;
+            }
+        }
+        return newTaskIdMr1(jobId, false, id);
+    }
+
+    private static TaskID newTaskIdMr1(JobID jobId, boolean isMap, int id) {
         // NOTE: for Hadoop 2.x MR1
         @SuppressWarnings("deprecation")
-        TaskID result = new TaskID(jobId, false, id);
+        TaskID result = new TaskID(jobId, isMap, id);
         return result;
+    }
+
+    private static TaskID newTaskIdMr2(Object... arguments) {
+        try {
+            return TASK_ID_MR2.newInstance(arguments);
+        } catch (Exception e) {
+            LOG.warn("Failed to invoke: TaskID(JobID, TaskType, int)", e);
+            return null;
+        }
     }
 
     /**
