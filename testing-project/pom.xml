@@ -37,6 +37,8 @@
 		<module>asakusa-test-trace-model</module>
 		<module>asakusa-test-trace-plugin</module>
 		<module>asakusa-test-inprocess</module>
+		<module>asakusa-smalljob</module>
+		<module>asakusa-test-inprocess-ext</module>
 	</modules>
 
 </project>

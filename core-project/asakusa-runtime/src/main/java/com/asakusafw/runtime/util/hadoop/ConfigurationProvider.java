@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -77,6 +78,8 @@ public class ConfigurationProvider {
 
     static final Log LOG = LogFactory.getLog(ConfigurationProvider.class);
 
+    private static final AtomicBoolean SAW_HADOOP_CONF_MISSING = new AtomicBoolean();
+
     private static final Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
 
     private final ClassLoader loader;
@@ -113,7 +116,10 @@ public class ConfigurationProvider {
         }
         File conf = getConfigurationDirectory(environmentVariables);
         if (conf == null) {
-            LOG.warn("Hadoop configuration path is not found");
+            // show warning only the first time
+            if (SAW_HADOOP_CONF_MISSING.compareAndSet(false, true)) {
+                LOG.warn("Hadoop configuration path is not found");
+            }
             return null;
         }
         if (conf.isDirectory() == false) {

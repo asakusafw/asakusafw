@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class StageResourceDriver implements Closeable {
             return null;
         }
         assert remotePath != null;
-        for (Path path : DistributedCache.getLocalCacheFiles(configuration)) {
+        for (Path path : getLocalCacheFiles()) {
             String localFileName = path.getName();
             if (remoteName.equals(localFileName) == false) {
                 continue;
@@ -166,6 +167,15 @@ public class StageResourceDriver implements Closeable {
                     localName));
         }
         return remotePath;
+    }
+
+    private List<Path> getLocalCacheFiles() throws IOException {
+        Path[] results = DistributedCache.getLocalCacheFiles(configuration);
+        if (results == null) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(results);
+        }
     }
 
     private boolean isLocal(FileSystem fs) {
