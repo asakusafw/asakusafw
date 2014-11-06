@@ -60,4 +60,10 @@
       <Bug pattern="EI_EXPOSE_REP2" />
     </Or>
   </Match>
+  <Match class="com.asakusafw.runtime.smalljob.KeyValueSlice">
+    <Or>
+      <Bug pattern="EI_EXPOSE_REP" />
+      <Bug pattern="EI_EXPOSE_REP2" />
+    </Or>
+  </Match>
 </FindBugsFilter>
