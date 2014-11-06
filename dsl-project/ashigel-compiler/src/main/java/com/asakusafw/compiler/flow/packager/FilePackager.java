@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.flow.packager;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,10 +50,10 @@ import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.common.FileRepository;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.Packager;
-import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -122,7 +124,7 @@ public class FilePackager
         File directory = resourceFiler.getFolderFor(packageNameOrNull);
         File file = new File(directory, relativePath);
         mkdir(file.getParentFile());
-        return new FileOutputStream(file);
+        return buffering(new FileOutputStream(file));
     }
 
     private void mkdir(File file) throws IOException {
@@ -142,7 +144,7 @@ public class FilePackager
             return;
         }
         compile();
-        JarOutputStream jar = new JarOutputStream(output);
+        JarOutputStream jar = new JarOutputStream(buffering(output));
         try {
             LOG.debug("コンパイル結果をパッケージングします");
             List<ResourceRepository> repos = Lists.create();
@@ -172,7 +174,7 @@ public class FilePackager
             return;
         }
         LOG.debug("生成されたソースプログラムをパッケージングします");
-        JarOutputStream jar = new JarOutputStream(output);
+        JarOutputStream jar = new JarOutputStream(buffering(output));
         try {
             boolean exists = drain(
                     jar,
@@ -227,7 +229,7 @@ public class FilePackager
                     continue;
                 }
                 saw.add(location);
-                addEntry(jar, cursor.openResource(), location);
+                addEntry(jar, buffering(cursor.openResource()), location);
             }
         } finally {
             cursor.close();
@@ -362,6 +364,20 @@ public class FilePackager
             }
         }
         return sourceFiles;
+    }
+
+    private InputStream buffering(InputStream input) {
+        if (input instanceof BufferedInputStream) {
+            return input;
+        }
+        return new BufferedInputStream(input);
+    }
+
+    private OutputStream buffering(OutputStream output) {
+        if (output instanceof BufferedOutputStream) {
+            return output;
+        }
+        return new BufferedOutputStream(output);
     }
 
     private boolean skipCompile() {
