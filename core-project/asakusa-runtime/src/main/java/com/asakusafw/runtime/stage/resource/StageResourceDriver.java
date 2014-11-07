@@ -29,21 +29,29 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
  * ステージリソースを利用するためのドライバ。
+ * @since 0.1.0
+ * @version 0.7.1
  */
 public class StageResourceDriver implements Closeable {
 
     static final Log LOG = LogFactory.getLog(StageResourceDriver.class);
 
-    private static final String PREFIX_LOCAL_CACHE_NAME = "com.asakusafw.cache.";
+    private static final String KEY_PREFIX = "com.asakusafw.cache.";
+
+    private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "name.";
+
+    private static final String KEY_SIZE = KEY_PREFIX + "size";
 
     private final Configuration configuration;
 
@@ -211,41 +219,59 @@ public class StageResourceDriver implements Closeable {
         if (resourceName == null) {
             throw new IllegalArgumentException("resourceName must not be null"); //$NON-NLS-1$
         }
-        List<Path> list = TemporaryStorage.list(job.getConfiguration(), new Path(resourcePath));
+        Configuration conf = job.getConfiguration();
+        List<FileStatus> list = TemporaryStorage.listStatus(conf, new Path(resourcePath));
         if (list.isEmpty()) {
             throw new IOException(MessageFormat.format(
                     "Resource not found: {0}",
                     resourcePath));
         }
-        String[] added = job.getConfiguration().getStrings(getLocalCacheNameKey(resourceName));
+        String[] added = conf.getStrings(getLocalCacheNameKey(resourceName));
         List<String> localNames = new ArrayList<String>();
         if (added != null && added.length >= 1) {
             Collections.addAll(localNames, added);
         }
+        long size = conf.getLong(KEY_SIZE, 0L);
         int index = localNames.size();
-        for (Path path : list) {
+        for (FileStatus status : list) {
             String name = String.format("%s-%04d", resourceName, index++);
             StringBuilder buf = new StringBuilder();
-            buf.append(path.toString());
+            buf.append(status.getPath().toString());
             buf.append('#');
             buf.append(name);
 
             localNames.add(name);
             try {
                 URI uri = new URI(buf.toString());
-                DistributedCache.addCacheFile(uri, job.getConfiguration());
+                DistributedCache.addCacheFile(uri, conf);
             } catch (URISyntaxException e) {
                 throw new IllegalStateException(e);
             }
+            size += status.getLen();
         }
-        job.getConfiguration().setStrings(
+        conf.setStrings(
                 getLocalCacheNameKey(resourceName),
                 localNames.toArray(new String[localNames.size()]));
+        conf.setLong(KEY_SIZE, size);
         if (JobCompatibility.isLocalMode(job)) {
             LOG.info("symlinks for distributed cache will not be created in standalone mode");
         } else {
-            DistributedCache.createSymlink(job.getConfiguration());
+            DistributedCache.createSymlink(conf);
         }
+    }
+    /**
+     * Returns the estimated resource data-size.
+     * @param context the current job context
+     * @return the estimated resource data-size in bytes
+     * @throws InterruptedException if interrupted while
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static long estimateResourceSize(JobContext context) throws InterruptedException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        return context.getConfiguration().getLong(KEY_SIZE, 0L);
     }
 
     private static String getLocalCacheNameKey(String resourceName) {

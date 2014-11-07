@@ -219,6 +219,13 @@ public class SmallJobRunner implements JobRunner {
         int bufferSize = getTotalBufferSize(job.getConfiguration());
         int pageSize = (int) (bufferSize / PAGE_PER_BLOCK);
         int blockSize = bufferSize - pageSize;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "shuffle buffer size: {1}bytes/page, {2}bytes/block ({0})",
+                    job.getJobID(),
+                    pageSize,
+                    blockSize));
+        }
         return new KeyValueSorter<K, V>(
                 new SerializationFactory(job.getConfiguration()),
                 key, value, job.getSortComparator(),
