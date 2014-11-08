@@ -37,12 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.TestDriverContext;
+import com.asakusafw.vocabulary.batch.Batch;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.yaess.core.BatchScript;
 
 /**
  * The program entry point of Asakusa batch application runner.
  * @since 0.6.0
- * @version 0.6.1
+ * @version 0.7.1
  */
 public final class BatchTestRunner {
 
@@ -55,6 +57,7 @@ public final class BatchTestRunner {
 
     static final Option OPT_BATCH_ID;
     static final Option OPT_ARGUMENT;
+    static final Option OPT_PROPERTY;
 
     private static final Options OPTIONS;
     static {
@@ -68,13 +71,171 @@ public final class BatchTestRunner {
         OPT_ARGUMENT.setArgName("name=value");
         OPT_ARGUMENT.setRequired(false);
 
+        OPT_PROPERTY = new Option("D", "property", true, "hadoop property");
+        OPT_PROPERTY.setArgs(2);
+        OPT_PROPERTY.setValueSeparator('=');
+        OPT_PROPERTY.setArgName("name=value");
+        OPT_PROPERTY.setRequired(false);
+
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_BATCH_ID);
         OPTIONS.addOption(OPT_ARGUMENT);
     }
 
-    private BatchTestRunner() {
-        return;
+    private final TestDriverContext context;
+
+    private final String batchId;
+
+    private final String executionIdPrefix;
+
+    /**
+     * Creates a new instance.
+     * @param batchClass the target batch class
+     * @since 0.7.1
+     */
+    public BatchTestRunner(Class<? extends BatchDescription> batchClass) {
+        if (batchClass == null) {
+            throw new IllegalArgumentException("batchClass must not be null"); //$NON-NLS-1$
+        }
+        Batch annotation = batchClass.getAnnotation(Batch.class);
+        if (annotation == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "\"{0}\" must be annotated with @{1}",
+                    batchClass.getName(),
+                    Batch.class.getSimpleName()));
+        }
+
+        this.context = new TestDriverContext(batchClass);
+        this.batchId = annotation.name();
+        this.executionIdPrefix = UUID.randomUUID().toString();
+        initialize();
+    }
+
+    /**
+     * Creates a new instance.
+     * @param batchId the target batch ID
+     * @since 0.7.1
+     */
+    public BatchTestRunner(String batchId) {
+        if (batchId == null) {
+            throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
+        }
+        this.context = new TestDriverContext(BatchTestRunner.class);
+        this.batchId = batchId;
+        this.executionIdPrefix = UUID.randomUUID().toString();
+        initialize();
+    }
+
+    private void initialize() {
+        // NOTE: We must use the system "batchapps" path instead of a temporary location
+        context.useSystemBatchApplicationsInstallationPath(true);
+    }
+
+    /**
+     * Sets the Asakusa Framework installation path.
+     * The default value is {@code $ASAKUSA_HOME}.
+     * @param path the framework installation path
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withFramework(File path) {
+        context.setFrameworkHomePath(path);
+        return this;
+    }
+
+    /**
+     * Sets the Asakusa batch applications installation path.
+     * The default value is {@code $ASAKUSA_HOME/batchapps}.
+     * @param path the batch applications installation path
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withApplications(File path) {
+        context.setBatchApplicationsInstallationPath(path);
+        return this;
+    }
+
+    /**
+     * Sets a batch argument for this runner.
+     * @param name the argument name
+     * @param value the argument value
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withArgument(String name, String value) {
+        context.getBatchArgs().put(name, value);
+        return this;
+    }
+
+    /**
+     * Sets batch arguments for this runner.
+     * @param arguments the arguments name value map
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withArguments(Map<String, String> arguments) {
+        if (arguments != null) {
+            context.getBatchArgs().putAll(arguments);
+        }
+        return this;
+    }
+
+    /**
+     * Sets a Hadoop property for this runner.
+     * @param key the property key
+     * @param value the property value
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withProperty(String key, String value) {
+        context.getExtraConfigurations().put(key, value);
+        return this;
+    }
+
+    /**
+     * Sets Hadoop properties for this runner.
+     * @param properties the properties key value map
+     * @return this
+     * @since 0.7.1
+     */
+    public BatchTestRunner withProperties(Map<String, String> properties) {
+        if (properties != null) {
+            context.getExtraConfigurations().putAll(properties);
+        }
+        return this;
+    }
+
+    /**
+     * Run Asakusa batch application.
+     * @return the exit code
+     * @since 0.7.1
+     */
+    public int execute() {
+        long t0 = System.currentTimeMillis();
+        try {
+            RunTask.Configuration configuration = loadConfiguration();
+            RunTask task = new RunTask(configuration);
+            task.perform();
+        } catch (AssertionError e) {
+            LOG.error(MessageFormat.format(
+                    "Failed to executes batch application: {0}",
+                    batchId), e);
+            return 1;
+        } catch (Exception e) {
+            LOG.error(MessageFormat.format(
+                    "Failed to executes batch application: {0}",
+                    batchId), e);
+            return 1;
+        } finally {
+            context.cleanUpTemporaryResources();
+        }
+        if (LOG.isInfoEnabled()) {
+            long t1 = System.currentTimeMillis();
+            LOG.info(MessageFormat.format(
+                    "Elapsed: {0}ms",
+                    t1 - t0));
+        }
+        return 0;
     }
 
     /**
@@ -95,9 +256,9 @@ public final class BatchTestRunner {
      * @see #execute(String, Map)
      */
     public static int execute(String[] args) {
-        Arguments arguments;
+        BatchTestRunner runner;
         try {
-            arguments = parseArguments(args);
+            runner = parseArguments(args);
         } catch (Exception e) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
@@ -112,7 +273,7 @@ public final class BatchTestRunner {
                     Arrays.toString(args)), e);
             return 1;
         }
-        return execute(arguments);
+        return runner.execute();
     }
 
     /**
@@ -122,12 +283,9 @@ public final class BatchTestRunner {
      * @return the exit code
      */
     public static int execute(String batchId, Map<String, String> batchArguments) {
-        TestDriverContext context = createContext();
-        if (batchArguments != null) {
-            context.getBatchArgs().putAll(batchArguments);
-        }
-        Arguments arguments = new Arguments(context, batchId, generateExecutionId());
-        return execute(arguments);
+        return new BatchTestRunner(batchId)
+            .withArguments(batchArguments)
+            .execute();
     }
 
     /**
@@ -140,28 +298,7 @@ public final class BatchTestRunner {
         return execute(batchId, null);
     }
 
-    private static int execute(Arguments arguments) {
-        try {
-            RunTask.Configuration configuration = loadConfiguration(arguments);
-            RunTask task = new RunTask(configuration);
-            task.perform();
-        } catch (AssertionError e) {
-            LOG.error(MessageFormat.format(
-                    "Failed to executes batch application: {0}",
-                    arguments.batchId), e);
-            return 1;
-        } catch (Exception e) {
-            LOG.error(MessageFormat.format(
-                    "Failed to executes batch application: {0}",
-                    arguments.batchId), e);
-            return 1;
-        } finally {
-            arguments.context.cleanUpTemporaryResources();
-        }
-        return 0;
-    }
-
-    static Arguments parseArguments(String[] args) throws ParseException {
+    static BatchTestRunner parseArguments(String[] args) throws ParseException {
         assert args != null;
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
@@ -169,26 +306,20 @@ public final class BatchTestRunner {
         String batchId = cmd.getOptionValue(OPT_BATCH_ID.getOpt());
         LOG.debug("Batch ID: {}", batchId);
 
-        String executionIdPrefix = generateExecutionId();
-        LOG.debug("Exec ID (prefix): {}", batchId);
-
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
         LOG.debug("Batch arguments: {}", arguments);
 
-        TestDriverContext context = createContext();
-        context.getBatchArgs().putAll(toMap(arguments));
+        Properties properties = cmd.getOptionProperties(OPT_PROPERTY.getOpt());
+        LOG.debug("Extra properties: {}", arguments);
 
-        return new Arguments(context, batchId, executionIdPrefix);
+        return new BatchTestRunner(batchId)
+            .withArguments(toMap(arguments))
+            .withProperties(toMap(properties));
     }
 
-    private static String generateExecutionId() {
-        return UUID.randomUUID().toString();
-    }
-
-    static RunTask.Configuration loadConfiguration(Arguments args) {
-        assert args != null;
+    private RunTask.Configuration loadConfiguration() {
         BatchScript script;
-        File scriptFile = getScriptFile(args.context, args.batchId);
+        File scriptFile = getScriptFile(context, batchId);
         LOG.debug("Loading script: {}", scriptFile);
         try {
             Properties properties = loadProperties(scriptFile);
@@ -201,17 +332,9 @@ public final class BatchTestRunner {
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
         return new RunTask.Configuration(
-                args.context,
+                context,
                 script,
-                args.executionIdPrefix);
-    }
-
-    private static TestDriverContext createContext() {
-        TestDriverContext context = new TestDriverContext(BatchTestRunner.class);
-
-        // NOTE: We must use the system "batchapps" path instead of a temporary location
-        context.useSystemBatchApplicationsInstallationPath(true);
-        return context;
+                executionIdPrefix);
     }
 
     private static File getScriptFile(TestDriverContext context, String batchId) {
@@ -243,21 +366,6 @@ public final class BatchTestRunner {
             return properties;
         } finally {
             in.close();
-        }
-    }
-
-    static final class Arguments {
-
-        final TestDriverContext context;
-
-        final String batchId;
-
-        final String executionIdPrefix;
-
-        public Arguments(TestDriverContext context, String batchId, String executionIdPrefix) {
-            this.context = context;
-            this.batchId = batchId;
-            this.executionIdPrefix = executionIdPrefix;
         }
     }
 }
