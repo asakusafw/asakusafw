@@ -49,13 +49,19 @@ public class StageResourceDriver implements Closeable {
 
     private static final String KEY_PREFIX = "com.asakusafw.cache.";
 
-    private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "name.";
+    private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "local.";
+
+    private static final String PREFIX_REMOTE_PATH = KEY_PREFIX + "remote.";
 
     private static final String KEY_SIZE = KEY_PREFIX + "size";
+
+    private static final String KEY_ACCESS_MODE = KEY_PREFIX + "mode";
 
     private final Configuration configuration;
 
     private final FileSystem localFileSystem;
+
+    private final AccessMode accessMode;
 
     /**
      * インスタンスを生成する。
@@ -69,6 +75,7 @@ public class StageResourceDriver implements Closeable {
         }
         this.configuration = configuration;
         this.localFileSystem = FileSystem.getLocal(configuration);
+        this.accessMode = AccessMode.decode(configuration.get(KEY_ACCESS_MODE));
     }
 
     /**
@@ -91,11 +98,34 @@ public class StageResourceDriver implements Closeable {
             throw new IllegalArgumentException("cacheName must not be null"); //$NON-NLS-1$
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding cache: " + resourceName);
+            LOG.debug(MessageFormat.format(
+                    "finding stage resource: {0} (mode={1})",
+                    resourceName,
+                    accessMode));
         }
-        String[] localNames = getConfiguration().getStrings(getLocalCacheNameKey(resourceName));
+        switch (accessMode) {
+        case DIRECT:
+            return findCacheFromRemote(resourceName);
+        case CACHE:
+            return findCacheFromCached(resourceName);
+        default:
+            throw new AssertionError(accessMode);
+        }
+    }
+
+    private List<Path> findCacheFromRemote(String resourceName) {
+        assert resourceName != null;
         List<Path> results = new ArrayList<Path>();
-        for (String localName : localNames) {
+        for (String remotePath : restoreStrings(getConfiguration(), getRemotePathKey(resourceName))) {
+            results.add(new Path(remotePath));
+        }
+        return results;
+    }
+
+    private List<Path> findCacheFromCached(String resourceName) throws IOException {
+        assert resourceName != null;
+        List<Path> results = new ArrayList<Path>();
+        for (String localName : restoreStrings(getConfiguration(), getLocalCacheNameKey(resourceName))) {
             Path resolvedPath = findLocalCache(resourceName, localName);
             if (resolvedPath == null) {
                 return Collections.emptyList();
@@ -226,11 +256,8 @@ public class StageResourceDriver implements Closeable {
                     "Resource not found: {0}",
                     resourcePath));
         }
-        String[] added = conf.getStrings(getLocalCacheNameKey(resourceName));
-        List<String> localNames = new ArrayList<String>();
-        if (added != null && added.length >= 1) {
-            Collections.addAll(localNames, added);
-        }
+        List<String> localNames = restoreStrings(conf, getLocalCacheNameKey(resourceName));
+        List<String> remotePaths = restoreStrings(conf, getRemotePathKey(resourceName));
         long size = conf.getLong(KEY_SIZE, 0L);
         int index = localNames.size();
         for (FileStatus status : list) {
@@ -239,10 +266,12 @@ public class StageResourceDriver implements Closeable {
             buf.append(status.getPath().toString());
             buf.append('#');
             buf.append(name);
+            String cachePath = buf.toString();
 
+            remotePaths.add(status.getPath().toString());
             localNames.add(name);
             try {
-                URI uri = new URI(buf.toString());
+                URI uri = new URI(cachePath);
                 DistributedCache.addCacheFile(uri, conf);
             } catch (URISyntaxException e) {
                 throw new IllegalStateException(e);
@@ -252,6 +281,9 @@ public class StageResourceDriver implements Closeable {
         conf.setStrings(
                 getLocalCacheNameKey(resourceName),
                 localNames.toArray(new String[localNames.size()]));
+        conf.setStrings(
+                getRemotePathKey(resourceName),
+                remotePaths.toArray(new String[localNames.size()]));
         conf.setLong(KEY_SIZE, size);
         if (JobCompatibility.isLocalMode(job)) {
             LOG.info("symlinks for distributed cache will not be created in standalone mode");
@@ -259,6 +291,18 @@ public class StageResourceDriver implements Closeable {
             DistributedCache.createSymlink(conf);
         }
     }
+
+    private static ArrayList<String> restoreStrings(Configuration conf, String key) {
+        assert conf != null;
+        assert key != null;
+        ArrayList<String> results = new ArrayList<String>();
+        String[] old = conf.getStrings(key);
+        if (old != null && old.length >= 1) {
+            Collections.addAll(results, old);
+        }
+        return results;
+    }
+
     /**
      * Returns the estimated resource data-size.
      * @param context the current job context
@@ -274,8 +318,79 @@ public class StageResourceDriver implements Closeable {
         return context.getConfiguration().getLong(KEY_SIZE, 0L);
     }
 
+    /**
+     * Returns the access mode for stage resources in the job.
+     * @param context the current job context
+     * @return the access mode
+     * @since 0.7.1
+     */
+    public static AccessMode getAccessMode(JobContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        return AccessMode.decode(context.getConfiguration().get(KEY_ACCESS_MODE));
+    }
+
+    /**
+     * Sets the access mode for stage resources in the job.
+     * @param context the current job context
+     * @param mode the access mode
+     * @since 0.7.1
+     */
+    public static void setAccessMode(JobContext context, AccessMode mode) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (mode == null) {
+            throw new IllegalArgumentException("mode must not be null"); //$NON-NLS-1$
+        }
+        context.getConfiguration().set(KEY_ACCESS_MODE, mode.encode());
+    }
+
     private static String getLocalCacheNameKey(String resourceName) {
         assert resourceName != null;
         return PREFIX_LOCAL_CACHE_NAME + resourceName;
+    }
+
+    private static String getRemotePathKey(String resourceName) {
+        assert resourceName != null;
+        return PREFIX_REMOTE_PATH + resourceName;
+    }
+
+    /**
+     * Represents the access mode for {@link StageResourceDriver}.
+     * @since 0.7.1
+     */
+    public static enum AccessMode {
+
+        /**
+         * Accesses to resources via distributed cache.
+         */
+        CACHE,
+
+        /**
+         * Accesses to resources directly.
+         */
+        DIRECT,
+        ;
+
+        private static final AccessMode DEFAULT = CACHE;
+
+        String encode() {
+            return name();
+        }
+
+        static AccessMode decode(String value) {
+            if (value != null) {
+                try {
+                    return AccessMode.valueOf(value);
+                } catch (IllegalArgumentException e) {
+                    LOG.warn(MessageFormat.format(
+                            "invalid access mode for stage resources: {0}",
+                            value), e);
+                }
+            }
+            return DEFAULT;
+        }
     }
 }

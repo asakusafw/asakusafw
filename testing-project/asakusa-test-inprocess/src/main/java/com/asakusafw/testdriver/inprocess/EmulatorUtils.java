@@ -16,52 +16,22 @@
 package com.asakusafw.testdriver.inprocess;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.asakusafw.compiler.common.Naming;
-import com.asakusafw.runtime.stage.JobRunner;
 import com.asakusafw.testdriver.TestDriverContext;
 
 /**
  * Utilities for emulated executions.
  * @since 0.6.0
- * @version 0.7.1
  */
 public final class EmulatorUtils {
 
     static final String KEY_PREFIX = "com.asakusafw.testdriver.inprocess";
 
-    /**
-     * The system property for a custom {@link JobRunner} class name.
-     * @since 0.7.1
-     */
-    public static final String KEY_JOB_RUNNER_CLASS = KEY_PREFIX + ".jobRunner";
-
     private EmulatorUtils() {
         return;
-    }
-
-    /**
-     * Returns the custom {@link JobRunner} class.
-     * @param context the current context
-     * @return the custom {@link JobRunner} class, or {@code null} if it is not defined
-     * @since 0.7.1
-     */
-    public static Class<? extends JobRunner> getCustomJobRunnerClass(TestDriverContext context) {
-        String value = System.getProperty(KEY_JOB_RUNNER_CLASS);
-        if (value == null) {
-            return null;
-        }
-        try {
-            Class<?> aClass = context.getClassLoader().loadClass(value);
-            return aClass.asSubclass(JobRunner.class);
-        } catch (Exception e) {
-            throw (AssertionError) new AssertionError(MessageFormat.format(
-                    "failed to load a JobRunner class: {0}",
-                    value)).initCause(e);
-        }
     }
 
     /**

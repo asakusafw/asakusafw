@@ -1,1 +1,1 @@
-com.asakusafw.testdriver.smalljob.SmallJobEnvironmentConfigurator
+com.asakusafw.testdriver.inprocess.optimize.InProcessEnvironmentOptimizer
