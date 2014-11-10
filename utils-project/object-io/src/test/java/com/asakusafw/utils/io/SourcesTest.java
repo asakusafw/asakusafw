@@ -105,6 +105,25 @@ public class SourcesTest {
 
     /**
      * Test method for {@link Sources#merge(java.util.List, java.util.Comparator)}.
+     */
+    @Test
+    public void merge_empty() {
+        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        check(Sources.merge(cursors, IntBuf.COMPARATOR));
+    }
+
+    /**
+     * Test method for {@link Sources#merge(java.util.List, java.util.Comparator)}.
+     */
+    @Test
+    public void merge_single() {
+        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        cursors.add(Sources.wrap(array(1, 2, 3)));
+        check(Sources.merge(cursors, IntBuf.COMPARATOR), 1, 2, 3);
+    }
+
+    /**
+     * Test method for {@link Sources#merge(java.util.List, java.util.Comparator)}.
      * @throws Exception if failed
      */
     @Test

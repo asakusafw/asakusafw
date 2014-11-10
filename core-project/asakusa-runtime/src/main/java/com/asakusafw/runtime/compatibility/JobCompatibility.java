@@ -52,6 +52,8 @@ public final class JobCompatibility {
 
     static final Log LOG = LogFactory.getLog(JobCompatibility.class);
 
+    private static final String NAME_DUMMY_JOB = "asakusafw";
+
     private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker";
 
     private static final Method SET_JOB_ID;
@@ -157,7 +159,7 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static JobID newJobId(int id) {
-        return new JobID("dummyjob", id);
+        return new JobID(NAME_DUMMY_JOB, id);
     }
 
     /**

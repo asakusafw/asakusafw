@@ -25,7 +25,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 /**
  * ステージへの入力。
  * @since 0.1.0
- * @version 0.2.5
+ * @version 0.7.1
  */
 public class StageInput {
 
@@ -115,5 +115,34 @@ public class StageInput {
      */
     public Map<String, String> getAttributes() {
         return attributes;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + pathString.hashCode();
+        result = prime * result + formatClass.hashCode();
+        result = prime * result + mapperClass.hashCode();
+        result = prime * result + attributes.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        StageInput other = (StageInput) obj;
+        return pathString.equals(other.pathString)
+                && formatClass.equals(other.formatClass)
+                && mapperClass.equals(other.mapperClass)
+                && attributes.equals(other.attributes);
     }
 }
