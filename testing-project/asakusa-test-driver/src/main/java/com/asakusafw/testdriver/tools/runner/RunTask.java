@@ -265,6 +265,7 @@ public class RunTask {
     /**
      * Represents a configuration for {@link RunTask}.
      * @since 0.6.0
+     * @version 0.7.1
      */
     public static final class Configuration {
 
@@ -289,9 +290,10 @@ public class RunTask {
         }
 
         /**
-         * Sets whether jobflow clean up is enabled or not
+         * Sets whether jobflow clean up is enabled or not.
          * @param enable {@code true} if it is enabled
          * @return this
+         * @since 0.7.1
          */
         public Configuration withCleanUp(boolean enable) {
             this.cleanUp = enable;
