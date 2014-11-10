@@ -21,12 +21,12 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.compiler.operator.processor.MasterKindOperatorAnalyzer.ResolveException;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 
@@ -64,14 +64,15 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
             return null;
         }
 
-        ShuffleKey masterKey = a.getParameterKey(0);
+        ShuffleKeySpec masterKey = a.getParameterKeySpec(0);
         if (masterKey == null) {
             a.error("マスタつき更新演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
         }
-        ShuffleKey transactionKey = a.getParameterKey(1);
+        ShuffleKeySpec transactionKey = a.getParameterKeySpec(1);
         if (transactionKey == null) {
             a.error("マスタつき更新演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
         }
+        a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
             selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
@@ -104,13 +105,13 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
                 a.getParameterName(0),
                 a.getParameterType(0).getType(),
                 0,
-                masterKey);
+                masterKey.getKey());
         builder.addInput(
                 a.getParameterDocument(1),
                 a.getParameterName(1),
                 a.getParameterType(1).getType(),
                 1,
-                transactionKey);
+                transactionKey.getKey());
         builder.addOutput(
                 "引き当ておよび更新が成功したデータ",
                 annotation.updatedPort(),

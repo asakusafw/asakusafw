@@ -21,6 +21,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
@@ -29,7 +30,6 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.GroupSort;
 import com.asakusafw.vocabulary.operator.Unique;
 
@@ -62,11 +62,12 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        ShuffleKey key = a.getParameterKey(0);
+        ShuffleKeySpec key = a.getParameterKeySpec(0);
         if (key == null) {
             a.error("重複検出演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
             return null;
         }
+        a.validateShuffleKeys(key);
         if (a.hasError()) {
             return null;
         }
@@ -80,7 +81,7 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterName(0),
                 a.getParameterType(0).getType(),
                 0,
-                key);
+                key.getKey());
         builder.addOutput(
                 "項目の内容が一意であるデータが流れる出力",
                 "unique",

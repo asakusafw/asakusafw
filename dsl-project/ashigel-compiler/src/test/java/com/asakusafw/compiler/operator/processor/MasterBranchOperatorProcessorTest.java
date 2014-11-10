@@ -381,4 +381,24 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
         add("com.example.ExampleEnum");
         error(new MasterBranchOperatorProcessor());
     }
+
+    /**
+     * Grouping key properties are inconsistent.
+     */
+    @Test
+    public void inconsistentGroupCount() {
+        add("com.example.InconsistentGroupCount");
+        add("com.example.ExampleEnum");
+        error(new MasterBranchOperatorProcessor());
+    }
+
+    /**
+     * Grouping key properties have inconsistent types.
+     */
+    @Test
+    public void inconsistentGroupType() {
+        add("com.example.InconsistentGroupType");
+        add("com.example.ExampleEnum");
+        error(new MasterBranchOperatorProcessor());
+    }
 }
