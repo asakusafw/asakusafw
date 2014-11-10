@@ -1,0 +1,5 @@
+a = {
+    k : INT;
+    v : INT;
+};
+summarized b = a => { any k -> k; sum v -> v_option; } % k;

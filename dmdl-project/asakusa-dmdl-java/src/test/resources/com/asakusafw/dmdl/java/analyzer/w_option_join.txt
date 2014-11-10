@@ -1,0 +1,10 @@
+a = {
+    k : INT;
+    v : TEXT;
+};
+b = {
+    k : INT;
+    v : TEXT;
+};
+
+joined c = a % k + b -> { k -> k; v -> v_option; } % k;

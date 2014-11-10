@@ -1,0 +1,4 @@
+simple = {
+    value : INT;
+    prop_option : TEXT;
+};

@@ -1,0 +1,16 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class InconsistentGroupCount {
+
+    @MasterCheck
+    public abstract boolean example(
+            @Key(group = { "key", "value" }) MockKeyValue1 a,
+            @Key(group = "key") MockKeyValue2 b);
+}

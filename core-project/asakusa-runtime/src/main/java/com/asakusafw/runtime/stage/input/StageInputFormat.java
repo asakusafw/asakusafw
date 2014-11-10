@@ -173,7 +173,7 @@ public class StageInputFormat extends InputFormat {
     }
 
     /**
-     * Sets the {@link SplitCombiner} class for the current job
+     * Sets the {@link SplitCombiner} class for the current job.
      * @param context the current job context
      * @param aClass the {@link SplitCombiner} class
      * @since 0.7.1

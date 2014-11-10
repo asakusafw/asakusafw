@@ -66,7 +66,7 @@ import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 /**
  * フローグラフを書き換えてJoinを最適化する。
  * @since 0.1.0
- * @version 0.2.5
+ * @version 0.7.0
  */
 public class JoinRewriter extends FlowCompilingEnvironment.Initialized implements FlowGraphRewriter {
 
@@ -211,11 +211,18 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         if (master.equals(input) == false) {
             return false;
         }
+        FlowResourceDescription resource = createResource(source, master, tx);
+        if (resource == null) {
+            // if the join precondition is wrong, we skip optimization and
+            // succeeding operation will raise some informative diagnostics
+            return false;
+        }
+
         OperatorDescription.Builder builder = createSideDataOperator(desc, sideDataType);
         builder.addInput(
                 tx.getDescription().getName(),
                 tx.getDescription().getDataType());
-        builder.addResource(createResource(source, master, tx));
+        builder.addResource(resource);
 
         FlowElement rewrite = new FlowElement(builder.toDescription());
         for (FlowElementOutput upstream : tx.getOpposites()) {
@@ -250,12 +257,25 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         assert source != null;
         assert master != null;
         assert tx != null;
-        return new JoinResourceDescription(
+        JoinResourceDescription resource = new JoinResourceDescription(
                 source,
                 toDataClass(master),
                 toJoinKey(master),
                 toDataClass(tx),
                 toJoinKey(tx));
+        List<Property> aKeys = resource.getMasterJoinKeys();
+        List<Property> bKeys = resource.getTransactionJoinKeys();
+        if (aKeys.size() != bKeys.size()) {
+            return null;
+        }
+        for (int i = 0, n = aKeys.size(); i < n; i++) {
+            Property a = aKeys.get(i);
+            Property b = bKeys.get(i);
+            if (a.getType().equals(b.getType()) == false) {
+                return null;
+            }
+        }
+        return resource;
     }
 
     private DataClass toDataClass(FlowElementInput input) {
