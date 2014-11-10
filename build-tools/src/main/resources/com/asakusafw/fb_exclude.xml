@@ -60,7 +60,7 @@
       <Bug pattern="EI_EXPOSE_REP2" />
     </Or>
   </Match>
-  <Match class="com.asakusafw.runtime.smalljob.KeyValueSlice">
+  <Match class="com.asakusafw.runtime.mapreduce.simple.KeyValueSlice">
     <Or>
       <Bug pattern="EI_EXPOSE_REP" />
       <Bug pattern="EI_EXPOSE_REP2" />
