@@ -43,12 +43,14 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
  * 各ステージのシャッフルフェーズで行われる内容を解析する。
+ * @since 0.1.0
+ * @version 0.7.0
  */
 public class ShuffleAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(ShuffleAnalyzer.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     private boolean sawError;
 
@@ -152,7 +154,7 @@ public class ShuffleAnalyzer {
         for (int i = 1, n = segmentsInElement.size(); i < n; i++) {
             List<ShuffleModel.Term> other = getGroupingTerms(segmentsInElement.get(i));
             if (group.size() != other.size()) {
-                environment.error(
+                error(
                         "グループ化項目の個数が一致しません: {0}",
                         first.getPort().getOwner());
                 break;
@@ -161,7 +163,7 @@ public class ShuffleAnalyzer {
                 Property firstTerm = group.get(j).getSource();
                 Property otherTerm = other.get(j).getSource();
                 if (isCompatible(firstTerm.getType(), otherTerm.getType()) == false) {
-                    environment.error(
+                    error(
                             "グループ化項目の種類が一致しません: {0}",
                             first.getPort().getOwner());
                 }
@@ -172,7 +174,6 @@ public class ShuffleAnalyzer {
     private boolean isCompatible(Type a, Type b) {
         assert a != null;
         assert b != null;
-        // TODO 完全に一致させなくてもよい場合についても考える
         return a.equals(b);
     }
 
@@ -272,7 +273,6 @@ public class ShuffleAnalyzer {
                 arrange = ShuffleModel.Arrangement.DESCENDING;
             }
 
-            // TODO この時点でセグメント間のGROUP KEYに関して型をそろえておく必要がある
             terms.add(new ShuffleModel.Term(
                     termId,
                     property,

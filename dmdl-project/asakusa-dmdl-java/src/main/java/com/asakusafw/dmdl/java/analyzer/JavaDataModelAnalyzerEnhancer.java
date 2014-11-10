@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.dmdl.java.analyzer;
+
+import com.asakusafw.dmdl.analyzer.DmdlAnalyzerEnhancer;
+import com.asakusafw.dmdl.model.AstModelDefinition;
+import com.asakusafw.dmdl.semantics.DmdlSemantics;
+
 /**
- * Configurators for stage client.
+ * Enhances DMDL analyzer for Java data model generation.
+ * @since 0.7.0
  */
-package com.asakusafw.runtime.stage.configurator;
+public class JavaDataModelAnalyzerEnhancer extends DmdlAnalyzerEnhancer {
+
+    @Override
+    public void validateSyntax(DmdlSemantics root, AstModelDefinition<?> definition) {
+        definition.accept(null, new ExtraSyntaxValidator(root));
+    }
+}

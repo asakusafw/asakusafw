@@ -28,7 +28,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
  * Import処理/Export処理用の定数クラス。
  * @author yuta.shirai
  * @since 0.1.0
- * @version 0.6.1
+ * @version 0.7.1
  */
 public final class Constants {
 
@@ -124,10 +124,18 @@ public final class Constants {
      * プロパティKEY SSHのパス。
      */
     public static final String PROP_KEY_SSH_PATH = "ssh.path";
+
     /**
      * プロパティKEY HDFSのNameノードのIPアドレス又はホスト名。
      */
     public static final String PROP_KEY_NAMENODE_HOST = "hadoop-cluster.host";
+
+    /**
+     * Value of {@link #PROP_KEY_NAMENODE_HOST} to use local processes for connecting between DB and HC.
+     * @since 0.7.1
+     */
+    public static final String PROP_VALUE_NON_REMOTE_HOST = "-";
+
     /**
      * プロパティKEY HDFSのNameノードのユーザー名。
      */

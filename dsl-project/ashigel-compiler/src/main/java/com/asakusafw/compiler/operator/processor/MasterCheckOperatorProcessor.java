@@ -23,6 +23,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.ImplementationBuilder;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
@@ -33,7 +34,6 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
@@ -68,14 +68,15 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        ShuffleKey masterKey = a.getParameterKey(0);
+        ShuffleKeySpec masterKey = a.getParameterKeySpec(0);
         if (masterKey == null) {
             a.error("マスタ確認演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
         }
-        ShuffleKey transactionKey = a.getParameterKey(1);
+        ShuffleKeySpec transactionKey = a.getParameterKeySpec(1);
         if (transactionKey == null) {
             a.error("マスタ確認演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
         }
+        a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
             selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
@@ -107,13 +108,13 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterName(0),
                 a.getParameterType(0).getType(),
                 0,
-                masterKey);
+                masterKey.getKey());
         builder.addInput(
                 a.getParameterDocument(1),
                 a.getParameterName(1),
                 a.getParameterType(1).getType(),
                 1,
-                transactionKey);
+                transactionKey.getKey());
         builder.addOutput(
                 a.getParameterName(0) + "の引き当てに成功した" + a.getParameterName(1),
                 annotation.foundPort(),

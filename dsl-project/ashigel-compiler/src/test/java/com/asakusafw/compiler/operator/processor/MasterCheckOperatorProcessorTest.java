@@ -146,4 +146,22 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
         add("com.example.Parameterized");
         error(new MasterCheckOperatorProcessor());
     }
+
+    /**
+     * Grouping key properties are inconsistent.
+     */
+    @Test
+    public void inconsistentGroupCount() {
+        add("com.example.InconsistentGroupCount");
+        error(new MasterCheckOperatorProcessor());
+    }
+
+    /**
+     * Grouping key properties have inconsistent types.
+     */
+    @Test
+    public void inconsistentGroupType() {
+        add("com.example.InconsistentGroupType");
+        error(new MasterCheckOperatorProcessor());
+    }
 }

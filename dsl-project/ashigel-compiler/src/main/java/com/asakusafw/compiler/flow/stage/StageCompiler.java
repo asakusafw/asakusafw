@@ -197,10 +197,13 @@ public class StageCompiler {
 
     private StageModel analyze(StageBlock block) throws IOException {
         ShuffleModel shuffle = shuffleAnalyzer.analyze(block);
-        StageModel model = mapredAnalyzer.analyze(block, shuffle);
-        if (mapredAnalyzer.hasError() || shuffleAnalyzer.hasError()) {
-            mapredAnalyzer.clearError();
+        if (shuffleAnalyzer.hasError()) {
             shuffleAnalyzer.clearError();
+            throw new IOException("ステージのコンパイルは中断されました");
+        }
+        StageModel model = mapredAnalyzer.analyze(block, shuffle);
+        if (mapredAnalyzer.hasError()) {
+            mapredAnalyzer.clearError();
             throw new IOException("ステージのコンパイルは中断されました");
         }
         return model;
