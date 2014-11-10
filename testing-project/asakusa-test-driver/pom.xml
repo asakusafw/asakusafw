@@ -254,7 +254,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-smalljob</artifactId>
+			<artifactId>asakusa-simple-mapreduce</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -41,7 +41,7 @@ import com.asakusafw.compiler.testing.MultipleModelInput;
 import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.smalljob.SmallJobRunner;
+import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
@@ -75,6 +75,8 @@ public final class HadoopDriver implements Closeable {
 
     static final String KEY_SMALLJOB = PREFIX_KEY + "smalljob";
 
+    static final String KEY_BUILTIN_MAPREDUCE = PREFIX_KEY + "builtin";
+
     private final File command;
 
     private final ConfigurationProvider configurations;
@@ -83,15 +85,15 @@ public final class HadoopDriver implements Closeable {
 
     private boolean inProcess;
 
-    private final boolean smallJob;
+    private final boolean simpleMr;
 
     private HadoopDriver(ConfigurationProvider configurations) {
         this.command = ConfigurationProvider.findHadoopCommand();
         this.configurations = configurations;
         this.configuration = configurations.newInstance();
         this.logger = LOG;
-        this.smallJob = isSet(KEY_SMALLJOB);
-        this.inProcess = smallJob || isSet(KEY_INPROCESS);
+        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE) || isSet(KEY_SMALLJOB);
+        this.inProcess = simpleMr || isSet(KEY_INPROCESS);
     }
 
     private static boolean isSet(String key) {
@@ -361,7 +363,7 @@ public final class HadoopDriver implements Closeable {
         arguments.add(className);
         addHadoopConf(arguments, confFile);
         addHadoopLibjars(libjars, arguments);
-        addSmallJobRunner(arguments);
+        addBuiltInMapReduceJobRunner(arguments);
         addSuppressCopyLibraries(arguments);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
@@ -416,12 +418,12 @@ public final class HadoopDriver implements Closeable {
                 String.valueOf(true)));
     }
 
-    private void addSmallJobRunner(List<String> arguments) {
-        if (smallJob) {
+    private void addBuiltInMapReduceJobRunner(List<String> arguments) {
+        if (simpleMr) {
             arguments.add("-D");
             arguments.add(MessageFormat.format("{0}={1}",
                     StageConstants.PROP_JOB_RUNNER,
-                    SmallJobRunner.class.getName()));
+                    SimpleJobRunner.class.getName()));
         }
     }
 

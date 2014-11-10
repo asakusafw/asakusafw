@@ -199,6 +199,10 @@ public final class Sources {
             Comparator<? super T> comparator) {
         if (sortedSources.isEmpty()) {
             return empty();
+        } else if (sortedSources.size() == 1) {
+            @SuppressWarnings("unchecked")
+            Source<T> source = (Source<T>) sortedSources.get(0);
+            return source;
         }
         return new HeapSource<T>(sortedSources, comparator);
     }

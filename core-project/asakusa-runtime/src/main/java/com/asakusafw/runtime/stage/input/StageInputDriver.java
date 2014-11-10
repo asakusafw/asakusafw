@@ -125,6 +125,10 @@ public final class StageInputDriver {
     private static long estimateInputSize0(JobContext context) throws InterruptedException {
         assert context != null;
         try {
+            long t0 = -1L;
+            if (LOG.isDebugEnabled()) {
+                t0 = System.currentTimeMillis();
+            }
             long results = 0L;
             List<StageInputSplit> splits = StageInputFormat.computeSplits(context);
             for (StageInputSplit split : splits) {
@@ -133,6 +137,13 @@ public final class StageInputDriver {
                     return -1L;
                 }
                 results += size;
+            }
+            if (LOG.isDebugEnabled()) {
+                long t1 = System.currentTimeMillis();
+                LOG.debug(MessageFormat.format(
+                        "estimated stage input size: {0}bytes, elapsed={1}ms",
+                        results,
+                        t1 - t0));
             }
             return results;
         } catch (IOException e) {
