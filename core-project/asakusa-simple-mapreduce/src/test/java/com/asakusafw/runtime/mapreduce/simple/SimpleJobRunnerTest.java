@@ -174,7 +174,7 @@ public class SimpleJobRunnerTest {
 
     private Job newJob() throws IOException {
         Job job = JobCompatibility.newJob(new Configuration());
-        job.getConfiguration().setInt("io.sort.mb", 16);
+        job.getConfiguration().setInt(SimpleJobRunner.KEY_BUFFER_SIZE, 16 * 1024 * 1024);
         return job;
     }
 
