@@ -41,7 +41,7 @@ import com.asakusafw.dmdl.spi.TypeDriver;
 /**
  * Analyzes DMDL models from input DMDL scripts.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public class AnalyzeTask {
 
@@ -69,7 +69,7 @@ public class AnalyzeTask {
      * @param analyzerEnhancer enhances behavior of {@link DmdlAnalyzer}
      * @param serviceClassLoader class loader to load the plug-ins
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @version 0.7.0
+     * @since 0.7.1
      */
     public AnalyzeTask(String processName, DmdlAnalyzerEnhancer analyzerEnhancer, ClassLoader serviceClassLoader) {
         if (processName == null) {

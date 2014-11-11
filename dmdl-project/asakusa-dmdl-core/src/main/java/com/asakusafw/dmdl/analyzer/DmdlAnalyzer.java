@@ -72,7 +72,7 @@ import com.asakusafw.utils.graph.Graphs;
 /**
  * Analyzes DMDL AST and builds DMDL semantic models.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public class DmdlAnalyzer {
 
@@ -102,7 +102,7 @@ public class DmdlAnalyzer {
      * @param typeDrivers type resolvers
      * @param attributeDrivers attributed analyzers
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @since 0.7.0
+     * @since 0.7.1
      */
     public DmdlAnalyzer(
             DmdlAnalyzerEnhancer enhancer,
