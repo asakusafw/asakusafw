@@ -278,6 +278,34 @@ Direct I/O HiveはMapRが提供するHiveライブラリを利用する必要が
 
 ..  _`MapR`: https://www.mapr.com/
 
+.. _deployment-extention-libraries-example:
+
+外部ライブラリの配置
+^^^^^^^^^^^^^^^^^^^^
+外部ライブラリやAsakusa Frameworkが標準で同梱しない、特別な実行時プラグインを利用する場合、
+``$ASAKUSA_HOME/ext/lib`` 配下にライブラリを配置すると利用可能になります [#]_ 。
+
+これらのライブラリをデプロイメントアーカイブに同梱するには、
+以下のように書けます。
+
+**build.gradle**
+
+..  code-block:: groovy
+    :emphasize-lines: 2
+    
+    asakusafwOrganizer {
+        extension {
+            libraries += ['joda-time:joda-time:2.5']
+        }
+
+..  note::
+    この機能では、指定したライブラリの推移的依存関係となるライブラリは含まれません。
+
+..  note::
+    リポジトリ上に存在しないライブラリを同梱したい場合には、 `設定ファイルの同梱`_ と同様の方法などで、ライブラリファイルを配置するのがよいでしょう。
+
+..  [#] 実行時プラグインの配置については、 :doc:`deployment-runtime-plugins` の内容も参照してください。
+
 複数の運用環境向けのデプロイ管理
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 バッチアプリケーションを実行する運用環境が複数ある場合、
