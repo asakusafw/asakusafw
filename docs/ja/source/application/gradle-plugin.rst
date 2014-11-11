@@ -1504,6 +1504,20 @@ Asakusa Frameworkのバージョン指定
     :language: groovy
     :lines: 19-20
 
+また、 ``asakusafwOrganizer`` ブロック内に定義しているAsakusa Frameworkのバージョン ``asakusafwVersion`` の値を、
+使用するAsakusa Frameworkのバージョンに変更します。
+
+なおデフォルト設定のまま使用している場合は以下のように
+``asakusafw`` ブロックの ``asakusafwVersion`` の値を参照しているため変更は不要ですが、
+Hadoop2系向けのバージョン ( ``-hadoop2`` ) を指定している場合やプロファイル固有の設定を追加している場合などで
+特定バージョンの値を直接設定している場合は、これらの値を忘れずに変更してください。
+
+**build.gradle**
+
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 30-33
+
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
     例えば Asakusa Framework バージョン ``0.7.1`` では ``0.7.1-hadoop1`` のような値となります。
