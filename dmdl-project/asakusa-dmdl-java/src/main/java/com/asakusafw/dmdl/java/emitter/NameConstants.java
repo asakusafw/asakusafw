@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 /**
  * Constants about Java names.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public final class NameConstants {
 
@@ -52,7 +52,7 @@ public final class NameConstants {
 
     /**
      * The property getter name suffix.
-     * @since 0.7.0
+     * @since 0.7.1
      */
     public static final String PROPERTY_GETTER_SUFFIX = "option"; //$NON-NLS-1$
 

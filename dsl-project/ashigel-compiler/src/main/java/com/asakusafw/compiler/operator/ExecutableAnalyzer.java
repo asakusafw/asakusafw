@@ -64,7 +64,7 @@ import com.asakusafw.vocabulary.operator.Volatile;
 /**
  * メソッドやコンストラクターの宣言を解析する。
  * @since 0.1.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public class ExecutableAnalyzer {
 
@@ -324,7 +324,7 @@ public class ExecutableAnalyzer {
      * Returns the shuffle key spec of the target parameter.
      * @param index the parameter index
      * @return the spec, or {@code null} if the key is not valid
-     * @since 0.7.0
+     * @since 0.7.1
      */
     public ShuffleKeySpec getParameterKeySpec(int index) {
         VariableElement parameter = executable.getParameters().get(index);
@@ -607,7 +607,7 @@ public class ExecutableAnalyzer {
 
     /**
      * Represents a {@link ShuffleKey} with original parameter info.
-     * @since 0.7.0
+     * @since 0.7.1
      */
     public static class ShuffleKeySpec {
 

@@ -44,7 +44,7 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 /**
  * 各ステージのシャッフルフェーズで行われる内容を解析する。
  * @since 0.1.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public class ShuffleAnalyzer {
 
