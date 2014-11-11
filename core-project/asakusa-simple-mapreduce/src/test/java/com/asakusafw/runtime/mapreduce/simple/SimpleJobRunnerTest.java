@@ -172,6 +172,33 @@ public class SimpleJobRunnerTest {
                 (t1 - t0) / count));
     }
 
+    /**
+     * Test for wrong job.
+     * @throws Exception if failed
+     */
+    @Test
+    public void exception() throws Exception {
+        Job job = newJob();
+        job.setJobName("w/ exception");
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setMapperClass(InvalidMapper.class);
+        job.setNumReduceTasks(0);
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(Text.class);
+
+        File inputDir = folder.newFolder();
+        File inputFile = new File(inputDir, "input.txt");
+        write(inputFile, "testing");
+
+        File outputDir = folder.newFolder();
+        outputDir.delete();
+
+        FileInputFormat.setInputPaths(job, new Path(inputFile.toURI()));
+        FileOutputFormat.setOutputPath(job, new Path(outputDir.toURI()));
+        assertThat(new SimpleJobRunner().run(job), is(false));
+    }
+
     private Job newJob() throws IOException {
         Job job = JobCompatibility.newJob(new Configuration());
         job.getConfiguration().setInt("io.sort.mb", 16);
@@ -306,6 +333,16 @@ public class SimpleJobRunnerTest {
             }
             count.set(total);
             context.write(key, count);
+        }
+    }
+
+    /**
+     * raise I/O error.
+     */
+    public static final class InvalidMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
+        @Override
+        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            throw new IOException();
         }
     }
 }
