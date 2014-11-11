@@ -34,7 +34,7 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 
 /**
  * Validates syntax for Java data model generation.
- * @since 0.7.0
+ * @since 0.7.1
  */
 class ExtraSyntaxValidator extends AbstractVisitor<AstModelDefinition<?>, Void> {
 
