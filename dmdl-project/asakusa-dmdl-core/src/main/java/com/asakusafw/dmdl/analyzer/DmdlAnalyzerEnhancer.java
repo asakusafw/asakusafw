@@ -20,7 +20,7 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 
 /**
  * Enhances {@link DmdlAnalyzer}.
- * @since 0.7.0
+ * @since 0.7.1
  */
 public abstract class DmdlAnalyzerEnhancer {
 

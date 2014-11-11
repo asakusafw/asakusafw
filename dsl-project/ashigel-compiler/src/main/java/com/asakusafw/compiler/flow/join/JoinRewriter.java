@@ -66,7 +66,7 @@ import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 /**
  * フローグラフを書き換えてJoinを最適化する。
  * @since 0.1.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public class JoinRewriter extends FlowCompilingEnvironment.Initialized implements FlowGraphRewriter {
 

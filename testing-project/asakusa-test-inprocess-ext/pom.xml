@@ -37,11 +37,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-runtime-inprocess</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-test-inprocess</artifactId>
 			<version>${project.version}</version>
 		</dependency>
