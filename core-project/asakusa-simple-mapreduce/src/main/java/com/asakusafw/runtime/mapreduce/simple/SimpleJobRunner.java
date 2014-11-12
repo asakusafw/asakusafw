@@ -75,7 +75,7 @@ public class SimpleJobRunner implements JobRunner {
     private static final boolean DEFAULT_COMPRESS_BLOCK = false;
 
     @Override
-    public boolean run(Job job) throws IOException, InterruptedException, ClassNotFoundException {
+    public boolean run(Job job) throws InterruptedException {
         JobID jobId = newJobId(new Random().nextInt(Integer.MAX_VALUE));
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -84,7 +84,23 @@ public class SimpleJobRunner implements JobRunner {
                     job.getJobName()));
         }
         setJobId(job, jobId);
-        TaskID taskId = newMapTaskId(jobId, 0);
+        try {
+            runJob(job);
+            return true;
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            LOG.error(MessageFormat.format(
+                    "exception was occurred while executing job: {0} ({1})",
+                    job.getJobID(),
+                    job.getJobName()), e);
+            return false;
+        }
+    }
+
+    private void runJob(Job job) throws ClassNotFoundException, IOException, InterruptedException {
+        assert job.getJobID() != null;
+        TaskID taskId = newMapTaskId(job.getJobID(), 0);
         Configuration conf = job.getConfiguration();
         OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
         OutputCommitter committer = output.getOutputCommitter(
@@ -125,7 +141,6 @@ public class SimpleJobRunner implements JobRunner {
                 }
             }
         }
-        return true;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
