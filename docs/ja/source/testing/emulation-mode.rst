@@ -10,6 +10,8 @@
 
 エミュレーションモードではテストを実行しているプロセス内でほとんどの処理が行われ、デバッグモードのブレークポイントなどを利用できるようになります。
 
+さらに、Asakusa Framework バージョン ``0.7.1`` から追加されたスモールジョブ実行エンジンを併用することで、Hadoopジョブの実行を高速化し、テスト実行に要する時間を短縮できます。
+
 ..  attention::
     本機能はアプリケーションプロジェクトのHadoopライブラリを利用するため、標準で設定されたものと異なるHadoopディストリビューションやバージョンを利用する際に、正しく動かない可能性があります。
 
@@ -46,7 +48,7 @@
       - テストドライバ実行をエミュレーションモードに変更
     * - ``com.asakusafw``
       - ``asakusa-test-inprocess-ext``
-      - 独自のエンジンを利用したエミュレーションモードで実行 (Experimental)
+      - スモールジョブ実行エンジンを利用したエミュレーションモードで実行 (Experimental)
     * - ``com.asakusafw``
       - ``asakusa-windgate-test-inprocess``
       - :doc:`WindGate <../windgate/index>` をエミュレーションモードで実行 [#]_
@@ -59,8 +61,8 @@
 アプリケーションプロジェクトの設定
 ----------------------------------
 Gradleプロジェクトでエミュレーションモードを使用する場合は
-``build.gradle`` の ``dependencies`` ブロック内に ``testRuntime`` 依存関係(コンフィグレーション)に対して
-依存定義を追加します。
+``build.gradle`` の ``dependencies`` ブロック内に
+``asakusa-test-inprocess`` を利用する依存定義を追加します。
 
 ..  code-block:: groovy
 
@@ -68,6 +70,23 @@ Gradleプロジェクトでエミュレーションモードを使用する場�
         ...
         testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess', version: asakusafw.asakusafwVersion
 
+スモールジョブ実行エンジンの有効化
+----------------------------------
+..  attention::
+    Asakusa Framework バージョン |version| では、スモールジョブ実行エンジンを利用したエミュレーションモード実行は試験的機能として提供しています。
+
+Gradleプロジェクトでスモールジョブ実行エンジンを利用したエミュレーションモードを使用する場合は
+``build.gradle`` の ``dependencies`` ブロック内に
+``asakusa-test-inprocess-ext`` を利用する依存定義を追加します。
+
+..  code-block:: groovy
+
+    dependencies {
+        ...
+        testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess-ext', version: asakusafw.asakusafwVersion
+
+スモールジョブ実行エンジンの有効化
+----------------------------------
 Gradle上でのテストドライバ実行
 ------------------------------
 `アプリケーションプロジェクトの設定`_ を行った状態で Gradleの ``test`` タスクを実行すると、
