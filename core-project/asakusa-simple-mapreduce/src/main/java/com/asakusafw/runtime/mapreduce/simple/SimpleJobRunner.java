@@ -66,9 +66,7 @@ public class SimpleJobRunner implements JobRunner {
      */
     public static final String KEY_COMPRESS_BLOCK = KEY_PREFIX + "shuffle.compress";
 
-    static final String KEY_SYSTEM_BUFFER_SIZE_MB = "io.sort.mb";
-
-    private static final int DEFAULT_BUFFER_SIZE = 20 * 1024 * 1024;
+    private static final int DEFAULT_BUFFER_SIZE = 64 * 1024 * 1024;
 
     private static final int MIN_BUFFER_SIZE = 2 * 1024 * 1024;
 
@@ -281,9 +279,6 @@ public class SimpleJobRunner implements JobRunner {
 
     private KeyValueSorter.Options getSorterOptions(Configuration configuration) {
         long bufferSize = configuration.getLong(KEY_BUFFER_SIZE, -1);
-        if (bufferSize < 0) {
-            bufferSize = configuration.getLong(KEY_SYSTEM_BUFFER_SIZE_MB, -1) * 1024 * 1024;
-        }
         if (bufferSize < 0) {
             bufferSize = DEFAULT_BUFFER_SIZE;
         } else {
