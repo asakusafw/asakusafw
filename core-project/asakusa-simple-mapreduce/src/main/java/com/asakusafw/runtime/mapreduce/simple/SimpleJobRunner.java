@@ -66,9 +66,7 @@ public class SimpleJobRunner implements JobRunner {
      */
     public static final String KEY_COMPRESS_BLOCK = KEY_PREFIX + "shuffle.compress";
 
-    static final String KEY_SYSTEM_BUFFER_SIZE_MB = "io.sort.mb";
-
-    private static final int DEFAULT_BUFFER_SIZE = 20 * 1024 * 1024;
+    private static final int DEFAULT_BUFFER_SIZE = 64 * 1024 * 1024;
 
     private static final int MIN_BUFFER_SIZE = 2 * 1024 * 1024;
 
@@ -77,7 +75,7 @@ public class SimpleJobRunner implements JobRunner {
     private static final boolean DEFAULT_COMPRESS_BLOCK = false;
 
     @Override
-    public boolean run(Job job) throws IOException, InterruptedException, ClassNotFoundException {
+    public boolean run(Job job) throws InterruptedException {
         JobID jobId = newJobId(new Random().nextInt(Integer.MAX_VALUE));
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -86,7 +84,23 @@ public class SimpleJobRunner implements JobRunner {
                     job.getJobName()));
         }
         setJobId(job, jobId);
-        TaskID taskId = newMapTaskId(jobId, 0);
+        try {
+            runJob(job);
+            return true;
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            LOG.error(MessageFormat.format(
+                    "exception was occurred while executing job: {0} ({1})",
+                    job.getJobID(),
+                    job.getJobName()), e);
+            return false;
+        }
+    }
+
+    private void runJob(Job job) throws ClassNotFoundException, IOException, InterruptedException {
+        assert job.getJobID() != null;
+        TaskID taskId = newMapTaskId(job.getJobID(), 0);
         Configuration conf = job.getConfiguration();
         OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
         OutputCommitter committer = output.getOutputCommitter(
@@ -127,7 +141,6 @@ public class SimpleJobRunner implements JobRunner {
                 }
             }
         }
-        return true;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -281,9 +294,6 @@ public class SimpleJobRunner implements JobRunner {
 
     private KeyValueSorter.Options getSorterOptions(Configuration configuration) {
         long bufferSize = configuration.getLong(KEY_BUFFER_SIZE, -1);
-        if (bufferSize < 0) {
-            bufferSize = configuration.getLong(KEY_SYSTEM_BUFFER_SIZE_MB, -1) * 1024 * 1024;
-        }
         if (bufferSize < 0) {
             bufferSize = DEFAULT_BUFFER_SIZE;
         } else {

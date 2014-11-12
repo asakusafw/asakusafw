@@ -17,6 +17,8 @@ package com.asakusafw.runtime.configuration;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +37,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -53,6 +58,9 @@ import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 public class FrameworkDeployer implements TestRule {
 
     static final Logger LOG = LoggerFactory.getLogger(FrameworkDeployer.class);
+
+    private static final AtomicReference<Reference<byte[]>> BOOTSTRAP_JAR_CACHE =
+            new AtomicReference<Reference<byte[]>>();
 
     final TemporaryFolder folder = new TemporaryFolder();
 
@@ -138,9 +146,30 @@ public class FrameworkDeployer implements TestRule {
 
     void deployRuntimeLibrary() throws IOException {
         LOG.debug("Deploying runtime library");
-        bootstrapJar = deployFatLibrary("core/lib/asakusa-runtime-all.jar",
-                ApplicationLauncher.class,
-                Snappy.class);
+        Reference<byte[]> ref = BOOTSTRAP_JAR_CACHE.get();
+        byte[] cached = ref == null ? null : ref.get();
+        if (cached != null) {
+            bootstrapJar = dump(
+                    new ByteArrayInputStream(cached),
+                    toFrameworkFile("core/lib/asakusa-runtime-all.jar"));
+        } else {
+            bootstrapJar = deployFatLibrary("core/lib/asakusa-runtime-all.jar",
+                    ApplicationLauncher.class,
+                    Snappy.class);
+            int length = (int) bootstrapJar.length();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(1024, length));
+            try {
+                InputStream in = new FileInputStream(bootstrapJar);
+                try {
+                    copyStream(in, buffer);
+                } finally {
+                    in.close();
+                }
+            } finally {
+                buffer.close();
+            }
+            BOOTSTRAP_JAR_CACHE.set(new SoftReference<byte[]>(buffer.toByteArray()));
+        }
     }
 
     private File deployFatLibrary(String targetPath, Class<?>... classes) throws IOException {
@@ -157,7 +186,7 @@ public class FrameworkDeployer implements TestRule {
             }
             paths.add(path);
         }
-        File target = new File(getHome(), targetPath);
+        File target = toFrameworkFile(targetPath);
         deployFatLibrary(paths, target);
         return target;
     }
@@ -219,9 +248,13 @@ public class FrameworkDeployer implements TestRule {
                     "Failed to detect library archive for \"{0}\"",
                     targetPath));
         }
-        File target = new File(getHome(), targetPath);
+        File target = toFrameworkFile(targetPath);
         deployLibrary(archive, target);
         return target;
+    }
+
+    private File toFrameworkFile(String targetPath) {
+        return new File(getHome(), targetPath);
     }
 
     /**
