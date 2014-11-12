@@ -1275,6 +1275,28 @@ YAESSの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブ
 
 ..  [#] 詳しくは :doc:`../yaess/jobqueue` の :ref:`yaess-plugin-jobqueue-client` を参照してください。
 
+フレームワーク拡張プロパティ
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Asakusa Frameworkの拡張構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``extension`` でアクセスできます [#]_ 。この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - フレームワーク拡張プロパティ ( ``extension`` ブロック )
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * -  ``libraries``
+      - java.util.List
+      - ``[]``
+      - ``$ASAKUSA_HOME/ext/lib`` 配下に配置するライブラリ [#]_
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ExtensionConfiguration` が提供します。
+
+..  [#] 明示的に指定されたライブラリのみを配置し、明示的でない依存ライブラリ等は自動的に配置しません。
+
 デプロイメントアーカイブの編集
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 デプロイメントアーカイブの構成方法として、
