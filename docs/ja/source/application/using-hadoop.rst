@@ -82,7 +82,7 @@ Hadoopバージョンに関するプロジェクト設定
 ..  code-block:: groovy
      
         asakusafw {
-            asakusafwVersion '0.7.0-hadoop1'
+            asakusafwVersion '0.7.1-hadoop1'
             ...
         }
         
@@ -107,7 +107,7 @@ Hadoopバージョンに関するプロジェクト設定
 ``asakusafw`` ブロックの ``asakusafwVersion`` は
 開発環境で使用するAsakusa Frameworkのライブラリバージョンを指定します。
 Hadoop2系向けのAsakusa Frameworkライブラリを指定する場合、
-``0.7.0-hadoop2`` のように指定します。
+``0.7.1-hadoop2`` のように指定します。
 
 ``dependencies`` ブロックの ``org.apache.hadoop:hadoop-client`` で指定している ``version`` は、
 開発環境で使用するHadoopのライブラリバージョンを指定します。

@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.0.tar.gz>`_ 
+* `asakusa-project-template-0.7.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.1.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.0.tar.gz>`_ 
+* `asakusa-example-project-0.7.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.1.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
@@ -1488,7 +1488,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.0`` では ``0.7.0`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.1`` では ``0.7.1`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に
     ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
@@ -1504,9 +1504,23 @@ Asakusa Frameworkのバージョン指定
     :language: groovy
     :lines: 19-20
 
+また、 ``asakusafwOrganizer`` ブロック内に定義しているAsakusa Frameworkのバージョン ``asakusafwVersion`` の値を、
+使用するAsakusa Frameworkのバージョンに変更します。
+
+なおデフォルト設定のまま使用している場合は以下のように
+``asakusafw`` ブロックの ``asakusafwVersion`` の値を参照しているため変更は不要ですが、
+Hadoop2系向けのバージョン ( ``-hadoop2`` ) を指定している場合やプロファイル固有の設定を追加している場合などで
+特定バージョンの値を直接設定している場合は、これらの値を忘れずに変更してください。
+
+**build.gradle**
+
+..  literalinclude:: gradle-attachment/build.gradle
+    :language: groovy
+    :lines: 30-33
+
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.0`` では ``0.7.0-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.1`` では ``0.7.1-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、
