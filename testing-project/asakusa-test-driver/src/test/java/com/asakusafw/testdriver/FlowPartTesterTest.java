@@ -26,10 +26,8 @@ import java.net.URLClassLoader;
 
 import org.junit.Assume;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
-import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.flowpart.DependencyFlowPart;
 import com.asakusafw.testdriver.testing.flowpart.InvalidFlowPart;
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
@@ -41,13 +39,7 @@ import com.asakusafw.vocabulary.flow.Out;
 /**
  * Test for {@link FlowPartTester}.
  */
-public class FlowPartTesterTest {
-
-    /**
-     * Temporary framework installation target.
-     */
-    @Rule
-    public FrameworkDeployer framework = new FrameworkDeployer();
+public class FlowPartTesterTest extends TesterTestRoot {
 
     /**
      * simple testing.

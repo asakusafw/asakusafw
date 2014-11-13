@@ -80,6 +80,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
         if (a.hasError()) {
             return null;
         }
+        assert foldKey != null;
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(FlowBoundary.SHUFFLE);

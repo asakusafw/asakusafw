@@ -28,10 +28,9 @@ import org.apache.hadoop.io.serializer.SerializationFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
+import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.io.util.DataBuffer;
-import com.asakusafw.runtime.mapreduce.simple.KeyValueSlice;
-import com.asakusafw.runtime.mapreduce.simple.KeyValueSorter;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.utils.io.Source;
 
@@ -39,6 +38,12 @@ import com.asakusafw.utils.io.Source;
  * Test class for {@link KeyValueSorter}.
  */
 public class KeyValueSorterTest {
+
+    /**
+     * The temporary folder.
+     */
+    @Rule
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     final LinkedList<Object> resources = new LinkedList<Object>();
 
@@ -61,12 +66,7 @@ public class KeyValueSorterTest {
         }
     };
 
-    final KeyValueSorter<IntWritable, Text> sorter = manage(new KeyValueSorter<IntWritable, Text>(
-            new SerializationFactory(new ConfigurationProvider().newInstance()),
-            IntWritable.class,
-            Text.class,
-            new IntWritable.Comparator(),
-            new KeyValueSorter.Options().withBufferSize(0)));
+    KeyValueSorter<IntWritable, Text> sorter;
 
     final IntWritable keyWritable = new IntWritable();
 
@@ -165,11 +165,25 @@ public class KeyValueSorterTest {
     private void put(int value) throws IOException, InterruptedException {
         keyWritable.set(value);
         valueWritable.set(String.valueOf(value));
-        sorter.put(keyWritable, valueWritable);
+        sorter().put(keyWritable, valueWritable);
     }
 
     private Source<IntWritable> sort() throws IOException, InterruptedException {
-        return manage(new DeserSource(sorter.sort()));
+        return manage(new DeserSource(sorter().sort()));
+    }
+
+    private KeyValueSorter<IntWritable, Text> sorter() throws IOException {
+        if (sorter == null) {
+            sorter = manage(new KeyValueSorter<IntWritable, Text>(
+                    new SerializationFactory(new ConfigurationProvider().newInstance()),
+                    IntWritable.class,
+                    Text.class,
+                    new IntWritable.Comparator(),
+                    new KeyValueSorter.Options()
+                        .withBufferSize(0)
+                        .withTemporaryDirectory(temporaryFolder.newFolder())));
+        }
+        return sorter;
     }
 
     private <T> T manage(T object) {

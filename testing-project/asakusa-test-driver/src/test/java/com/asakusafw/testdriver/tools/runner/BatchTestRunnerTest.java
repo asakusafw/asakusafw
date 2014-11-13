@@ -32,6 +32,7 @@ import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
+import org.junit.runner.Description;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
@@ -42,6 +43,7 @@ import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.TestDriverContext;
+import com.asakusafw.testdriver.TesterTestRoot;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testdriver.testing.batch.SimpleBatch;
@@ -58,7 +60,12 @@ public class BatchTestRunnerTest {
      * Compiler testing tool.
      */
     @Rule
-    public final CompilerTester tester = new CompilerTester(ConfigurationFactory.getDefault(), true);
+    public final CompilerTester tester = new CompilerTester(ConfigurationFactory.getDefault(), true) {
+        @Override
+        protected void configure(Description description) throws IOException {
+            TesterTestRoot.installTo(framework());
+        }
+    };
 
     /**
      * Keeps system properties.

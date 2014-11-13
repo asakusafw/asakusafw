@@ -37,7 +37,7 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>${groupId}</include>
+									<include>${project.groupId}</include>
 									<include>org.xerial.snappy:snappy-java</include>
 								</includes>
 							</artifactSet>

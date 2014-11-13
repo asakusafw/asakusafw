@@ -177,8 +177,9 @@ public class CompilerTester implements TestRule {
     /**
      * Configures this object.
      * @param description test description
+     * @throws Exception if failed to configure
      */
-    protected void configure(Description description) {
+    protected void configure(Description description) throws Exception {
         return;
     }
 
