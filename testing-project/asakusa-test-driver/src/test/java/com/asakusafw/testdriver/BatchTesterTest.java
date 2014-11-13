@@ -15,23 +15,15 @@
  */
 package com.asakusafw.testdriver;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.batch.SimpleBatch;
 import com.asakusafw.testdriver.testing.model.Simple;
 
 /**
  * Test for {@link BatchTester}.
  */
-public class BatchTesterTest {
-
-    /**
-     * Temporary framework installation target.
-     */
-    @Rule
-    public FrameworkDeployer framework = new FrameworkDeployer();
+public class BatchTesterTest extends TesterTestRoot {
 
     /**
      * simple testing.

@@ -17,6 +17,7 @@ package com.asakusafw.runtime.mapreduce.simple;
 
 import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -60,6 +61,11 @@ public class SimpleJobRunner implements JobRunner {
      * Hadoop property key of shuffle buffer size.
      */
     public static final String KEY_BUFFER_SIZE = KEY_PREFIX + "shuffle.buffer";
+
+    /**
+     * Hadoop property key of shuffle temporary directory.
+     */
+    public static final String KEY_TEMPORARY_LOCATION = KEY_PREFIX + "shuffle.tempdir";
 
     /**
      * Hadoop property key of whether block file compression is enabled or not.
@@ -299,9 +305,21 @@ public class SimpleJobRunner implements JobRunner {
         } else {
             bufferSize = Math.max(MIN_BUFFER_SIZE, Math.min(MAX_BUFFER_SIZE, bufferSize));
         }
+        File temporaryDirectory = null;
+        String tempdirString = configuration.get(KEY_TEMPORARY_LOCATION);
+        if (tempdirString != null) {
+            temporaryDirectory = new File(tempdirString);
+            if (temporaryDirectory.mkdirs() == false && temporaryDirectory.isDirectory() == false) {
+                LOG.warn(MessageFormat.format(
+                        "failed to prepare shuffle temporary directory: {0}={1}",
+                        KEY_TEMPORARY_LOCATION,
+                        temporaryDirectory));
+            }
+        }
         boolean compress = configuration.getBoolean(KEY_COMPRESS_BLOCK, DEFAULT_COMPRESS_BLOCK);
         KeyValueSorter.Options options = new KeyValueSorter.Options()
             .withBufferSize((int) bufferSize)
+            .withTemporaryDirectory(temporaryDirectory)
             .withCompressBlock(compress);
         return options;
     }

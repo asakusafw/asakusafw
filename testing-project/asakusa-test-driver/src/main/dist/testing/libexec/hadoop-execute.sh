@@ -79,7 +79,6 @@ cat << __EOF__
 Starting TestDriver Hadoop Job:
  Hadoop Command: $HADOOP_CMD
     App Library: $_OPT_APP_LIB
-   Execution ID: $_OPT_EXECUTION_ID
           Class: $_OPT_CLASS_NAME
   All Libraries: $_TD_LIBJARS
   Defined Props: $TD_HADOOP_PROPERTIES
