@@ -95,7 +95,7 @@ public class KeyValueSorter<K, V> implements Closeable {
                 options.getPageSize() / 4, options.getPageSize(),
                 serialization, keyClass, valueClass, comparator);
         this.blockBuffer = new BlockBuffer(0, options.getBlockSize());
-        this.blockStore = new BlockStore(options.isCompressBlock());
+        this.blockStore = new BlockStore(options.getTemporaryDirectory(), options.isCompressBlock());
         this.comparator = new KeyValueSliceComparator(comparator);
     }
 
@@ -245,6 +245,8 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private int blockSize = DEFAULT_BLOCK_SIZE;
 
+        private File temporaryDirectory;
+
         private boolean compressBlock;
 
         /**
@@ -261,6 +263,14 @@ public class KeyValueSorter<K, V> implements Closeable {
          */
         public int getBlockSize() {
             return blockSize;
+        }
+
+        /**
+         * Returns the temporary directory for storing spill-out block files.
+         * @return the temporary directory, or {@code null} if it is not set
+         */
+        public File getTemporaryDirectory() {
+            return temporaryDirectory;
         }
 
         /**
@@ -298,6 +308,16 @@ public class KeyValueSorter<K, V> implements Closeable {
             int block = in(blockBufferSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             this.blockSize = block;
             this.pageSize = page;
+            return this;
+        }
+
+        /**
+         * Sets the temporary directory for the sorter.
+         * @param path the temporary directory path
+         * @return this
+         */
+        public Options withTemporaryDirectory(File path) {
+            this.temporaryDirectory = path;
             return this;
         }
 
@@ -510,11 +530,14 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final List<File> files = new ArrayList<File>();
 
+        private final File temporaryDirectory;
+
         private final boolean compress;
 
         private long totalSize;
 
-        public BlockStore(boolean compress) {
+        public BlockStore(File temporaryDirectory, boolean compress) {
+            this.temporaryDirectory = temporaryDirectory;
             this.compress = compress;
         }
 
@@ -527,7 +550,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             if (LOG.isDebugEnabled()) {
                 t0 = System.currentTimeMillis();
             }
-            File file = File.createTempFile(NAME_PREFIX_BLOCK_FILE, ".tmp");
+            File file = createTemporaryFile();
             boolean success = false;
             try {
                 DataOutputStream output = createBlockFileOutput(file);
@@ -561,6 +584,10 @@ public class KeyValueSorter<K, V> implements Closeable {
                         t1 - t0));
             }
             totalSize += size;
+        }
+
+        private File createTemporaryFile() throws IOException {
+            return File.createTempFile(NAME_PREFIX_BLOCK_FILE, ".tmp", temporaryDirectory);
         }
 
         void reset() {
