@@ -95,6 +95,8 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
         if (a.hasError()) {
             return null;
         }
+        assert masterKey != null;
+        assert transactionKey != null;
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(FlowBoundary.SHUFFLE);
