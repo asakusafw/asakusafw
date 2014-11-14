@@ -23,6 +23,7 @@ Bug fixes
 * [ :issue:`446` ] - DMDL property name ends with 'option' should be error
 * [ :issue:`447` ] - Fix parsing DMDL name follows arrow symbol
 * [ :issue:`453` ] - DateTime.parseDateTime() does not handle correctly
+* [ :issue:`454` ] - Direct I/O writes redundant warn log when cleaning temp area
 
 Others
 ------
